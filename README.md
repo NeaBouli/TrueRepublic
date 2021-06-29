@@ -1,8 +1,6 @@
 # pnyx
 Pnyx is a blockchain-based token for direct democracy.
 
-From the Swarm-App to the Proxy-Party (draft)
-Abstract
 The proxy-party is controlled by its party rank via an app. It offers its members direct political
 participation in a secure manner. The voting process is transparent and all activities are secured by
 blockchain technology. At the same time, data protection is ensured, because all activities are stored
