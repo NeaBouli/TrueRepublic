@@ -1,0 +1,16 @@
+@startuml
+top to bottom direction
+actor User as u
+
+package Blockchain {
+  usecase "Place Vote" as UC1
+  usecase "Mark as Voted" as UC2
+  usecase "Refund Coins" as UC3
+}
+
+u --> UC1
+UC1 --> UC2
+UC2 --> UC3
+UC3 --> u
+
+@enduml
