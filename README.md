@@ -5,3 +5,4 @@ The proxy-party is controlled by its members via an app and offers them direct p
 
 more:
 https://www.dropbox.com/s/1z33cn1r7r89mzv/Skizze_Schwarmtool_eng.pdf?dl=0
+#
