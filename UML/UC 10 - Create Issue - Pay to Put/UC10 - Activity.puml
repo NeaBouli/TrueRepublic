@@ -1,5 +1,6 @@
 @startuml "UC10 Create Issue"
-"Issue Creator" -> "Input Valid": Create Issue
+"Issue Creator" -> "Input Valid": Save
+"Issue Creator" -> "Issue Creator": Cancel
 
 alt Input Valid
 
