@@ -6,7 +6,7 @@ alt Input Valid
     "Input Valid" -> "Sufficent Fund": Check Balance
 
     alt Sufficent Fund
-        "Sufficent Fund" -> Issue: Issue Created
+        "Sufficent Fund" -> Issue: Create Issue
         "Issue" -> "Issue Creator": Pay To Put
     else Insufficient Fund
         "Sufficent Fund" -> "Issue Creator" : Not Enough Funding
