@@ -1,0 +1,33 @@
+@startuml "UC10 Create Issue"
+"Issue Creator" -> "Input Valid": Save
+"Issue Creator" -> "Issue Creator": Cancel
+
+alt Input Valid
+
+    "Input Valid" -> "Sufficent Fund": Check Balance
+
+    alt Sufficent Fund
+        "Sufficent Fund" -> Issue: Create Issue
+        "Issue" -> "Blockchain": Add 
+        
+        alt Store Success
+             "Blockchain" -> "Issue Creator": Pay To Put
+        else Blockchain Error
+            "Blockchain" -> "Issue Creator" : Blockchain Error
+        end
+         
+    else Insufficient Fund
+        "Sufficent Fund" -> "Issue Creator" : Not Enough Funding
+     end
+    
+else Required Field Empty
+
+    "Input Valid" -> "Issue Creator": Required field missing
+
+else Input Out Of Bounds
+
+   "Input Valid" -> "Issue Creator": Input out of bounds
+
+end
+
+@enduml
