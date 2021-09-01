@@ -1,0 +1,37 @@
+@startuml "UC10 Create Issue"
+
+"Contributors" -> "Issue List": Show Top Issues (Default)
+
+"Issue List" -> "Filtered Issue List": Show Latest Issues
+"Issue List" -> "Filtered Issue List": Search For Tags
+
+"Issue List" -> "Issue": Drill Down
+"Issue List" -> "Suggestions": Show Existing
+"Filtered Issue List" -> "Issue": Drill Down
+"Filtered Issue List" -> "Suggestions": Show Existing
+
+"Suggestions" -> "Suggestion": Create Suggestion
+
+alt Input Valid
+    "Suggestion" -> Blockchain: Check Balance
+
+    alt Sufficent Funds
+        Blockchain -> Blockchain: Add
+        Blockchain -> Suggestions: Put Into List
+    else Insufficient Funds
+        Blockchain -> Suggestions: Error
+    end
+else Invalid Input
+    "Suggestion" -> Suggestions: Error
+end
+
+"Suggestions" -> Suggestion: Stake
+"Suggestion" -> Suggestion: Stake
+
+alt Input Valid
+    Suggestion -> Blockchain: Icrement Stake Count
+else Invalid Input
+    Suggestion -> Suggestion: Error
+end
+
+@enduml

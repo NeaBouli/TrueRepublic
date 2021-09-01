@@ -8,11 +8,18 @@ alt Input Valid
 
     alt Sufficent Fund
         "Sufficent Fund" -> Issue: Create Issue
-        "Issue" -> "Issue Creator": Pay To Put
+        "Issue" -> "Blockchain": Add 
+        
+        alt Store Success
+             "Blockchain" -> "Issue Creator": Pay To Put
+        else Blockchain Error
+            "Blockchain" -> "Issue Creator" : Blockchain Error
+        end
+         
     else Insufficient Fund
         "Sufficent Fund" -> "Issue Creator" : Not Enough Funding
-    end
-
+     end
+    
 else Required Field Empty
 
     "Input Valid" -> "Issue Creator": Required field missing
