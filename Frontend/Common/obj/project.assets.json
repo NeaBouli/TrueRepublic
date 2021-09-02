@@ -15,11 +15,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Windows User\\source\\repos\\Common\\Common\\Common.csproj",
+      "projectUniqueName": "C:\\Users\\Windows User\\Documents\\pnyx\\Frontend\\Common\\Common.csproj",
       "projectName": "Common",
-      "projectPath": "C:\\Users\\Windows User\\source\\repos\\Common\\Common\\Common.csproj",
+      "projectPath": "C:\\Users\\Windows User\\Documents\\pnyx\\Frontend\\Common\\Common.csproj",
       "packagesPath": "C:\\Users\\Windows User\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\Windows User\\source\\repos\\Common\\Common\\obj\\",
+      "outputPath": "C:\\Users\\Windows User\\Documents\\pnyx\\Frontend\\Common\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages",
