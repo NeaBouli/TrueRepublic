@@ -123,6 +123,8 @@ namespace Common
         /// </returns>
         public bool IsValid()
         {
+            // TODO: put into service - entity should be data only
+
             if (string.IsNullOrEmpty(Tags))
             {
                 ErrorMessage = "Tags are required";
