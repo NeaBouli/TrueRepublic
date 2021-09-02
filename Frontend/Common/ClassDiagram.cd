@@ -1,0 +1,31 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="Common.Issue">
+    <Position X="4" Y="1.25" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AQQCAAAAAAAgAGAAAAgAAAAAAAAAAEAAAAABAAAAAAA=</HashCode>
+      <FileName>Issue.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsCollectionAssociation>
+      <Property Name="Suggestions" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Class Name="Common.Suggestion">
+    <Position X="7.25" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAggAAAAAAAAAAAAIAAAAAQAAAABAAAAAAA=</HashCode>
+      <FileName>Suggestion.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Common.User">
+    <Position X="3.75" Y="4.5" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAAAAIAAAAAAAAAAAAAAAIAAAQAAAAAAAAA=</HashCode>
+      <FileName>User.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsCollectionAssociation>
+      <Property Name="StakedSuggestions" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>
