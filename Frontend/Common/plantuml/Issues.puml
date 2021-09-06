@@ -1,0 +1,13 @@
+@startuml
+class Issues {
+    + GetAllValidIssues() : IEnumerable<Issue>
+    + GetTopStakedIssues(limit:int) : List<Issue>
+    + GetTopStakedIssuesPercentage(percentage:decimal) : List<Issue>
+    + GetIssuesByTags(tags:string) : IEnumerable<Issue>
+    + GetTopStakedIssuesByTags(tags:string, limit:int) : IEnumerable<Issue>
+    + GetTopStakesIssuesPercentageByTags(tags:string, percentage:decimal) : List<Issue>
+}
+class "List`1"<T> {
+}
+Issues --> "AllIssues<Issue>" "List`1"
+@enduml

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
 
 namespace Common.Entities
 {
@@ -113,14 +114,7 @@ namespace Common.Entities
         /// <returns>The total stake count for all assigned stakes</returns>
         public int GetTotalStakeCount()
         {
-            int totalStakeCount = 0;
-
-            foreach (Suggestion suggestion in Suggestions)
-            {
-                totalStakeCount += suggestion.StakeCount;
-            }
-
-            return totalStakeCount;
+            return Suggestions.Sum(suggestion => suggestion.StakeCount);
         }
 
         /// <summary>
@@ -129,9 +123,19 @@ namespace Common.Entities
         /// <returns>The tags</returns>
         public IEnumerable<string> GetTags()
         {
-            string[] tags = Tags.Split(new char[] {' '}, StringSplitOptions.RemoveEmptyEntries);
+            return GetTags(Tags);
+        }
 
-            foreach (string tag in tags)
+        /// <summary>
+        /// Gets the tags.
+        /// </summary>
+        /// <param name="tags">The tags.</param>
+        /// <returns>The tags as list</returns>
+        public static IEnumerable<string> GetTags(string tags)
+        {
+            string[] tagItems = tags.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+
+            foreach (string tag in tagItems)
             {
                 yield return tag;
             }
@@ -148,16 +152,24 @@ namespace Common.Entities
         {
             List<string> tags = new List<string>(GetTags());
 
-            foreach (var tagFromList in tags)
+            return tags.Any(tagFromList => 
+                string.Equals(tag, tagFromList, StringComparison.OrdinalIgnoreCase) || 
+                string.Equals($"#{tag}", tagFromList, StringComparison.OrdinalIgnoreCase));
+        }
+
+        /// <summary>
+        /// Gets the top suggestions.
+        /// </summary>
+        /// <param name="limit">The limit.</param>
+        /// <returns>The top suggestions from the list</returns>
+        public List<Suggestion> GetTopSuggestions(int limit)
+        {
+            if (limit >= Suggestions.Count)
             {
-                if (string.Equals(tag, tagFromList, StringComparison.OrdinalIgnoreCase) ||
-                    string.Equals($"#{tag}", tagFromList, StringComparison.OrdinalIgnoreCase))
-                {
-                    return true;
-                }
+                return Suggestions;
             }
 
-            return false;
+            return Suggestions.OrderByDescending(s => s.StakeCount).Take(limit).ToList();
         }
 
         /// <summary>
@@ -188,33 +200,15 @@ namespace Common.Entities
                 return false;
             }
 
-            if (!string.IsNullOrEmpty(Tags) && Tags.Length > 255)
-            {
-                ErrorMessage = "Tags must be < 255 characters";
-                return false;
-            }
-
             if (!string.IsNullOrEmpty(Tags) && Tags.Length < 5)
             {
                 ErrorMessage = "Tags must be >= 5 characters";
                 return false;
             }
 
-            if (!string.IsNullOrEmpty(Title) && Title.Length > 255)
-            {
-                ErrorMessage = "Title must be < 255 characters";
-                return false;
-            }
-
             if (!string.IsNullOrEmpty(Title) && Title.Length < 5)
             {
                 ErrorMessage = "Title must be >= 5 characters";
-                return false;
-            }
-
-            if (!string.IsNullOrEmpty(Description) && Description.Length > 255)
-            {
-                ErrorMessage = "Description must be < 255 characters";
                 return false;
             }
 

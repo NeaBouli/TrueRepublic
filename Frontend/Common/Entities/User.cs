@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Common.Entities
@@ -16,6 +17,7 @@ namespace Common.Entities
         /// <value>
         /// The identifier.
         /// </value>
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public Guid Id { get; set; }
 
         /// <summary>
@@ -25,6 +27,7 @@ namespace Common.Entities
         /// The unique external user identifier.
         /// </value>
         /// <remarks>Mapping to the external authentication system unique user id</remarks>
+        [Required]
         public Guid UniqueExternalUserId { get; set; }
 
         /// <summary>
@@ -34,6 +37,7 @@ namespace Common.Entities
         /// The name of the user.
         /// </value>
         /// <remarks>Will be automatically created by the system</remarks>
+        [Required]
         public string UserName { get; set; }
 
         /// <summary>

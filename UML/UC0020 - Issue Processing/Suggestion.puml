@@ -7,5 +7,4 @@ class Suggestion {
 }
 Suggestion --> "Id" Guid
 Suggestion --> "CreateDate" DateTime
-Suggestion --> "StakeArea" StakeArea
 @enduml

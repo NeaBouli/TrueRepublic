@@ -1,6 +1,6 @@
 @startuml
 !include .\\Issue.puml
-!include .\\StakeArea.puml
+!include .\\Issues.puml
 !include .\\Suggestion.puml
 !include .\\User.puml
 @enduml

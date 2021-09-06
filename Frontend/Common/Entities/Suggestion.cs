@@ -58,13 +58,5 @@ namespace Common.Entities
         /// The stake count.
         /// </value>
         public int StakeCount { get; set; }
-
-        /// <summary>
-        /// Gets or sets the stake area.
-        /// </summary>
-        /// <value>
-        /// The stake area.
-        /// </value>
-        public StakeArea StakeArea { get; set; }
     }
 }

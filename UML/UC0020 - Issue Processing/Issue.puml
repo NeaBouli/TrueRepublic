@@ -7,6 +7,11 @@ class Issue {
     + Description : string <<get>> <<set>>
     + DueDate : DateTime? <<get>> <<set>>
     + ErrorMessage : string <<get>>
+    + GetTotalStakeCount() : int
+    + GetTags() : IEnumerable<string>
+    + {static} GetTags(tags:string) : IEnumerable<string>
+    + HasTag(tag:string) : bool
+    + GetTopSuggestions(limit:int) : List<Suggestion>
     + IsValid() : bool
 }
 class "List`1"<T> {
