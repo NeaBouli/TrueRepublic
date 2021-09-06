@@ -1,0 +1,17 @@
+@startuml
+class Issue {
+    + Issue()
+    + Issue(tags:string, title:string, description:string, dueDate:DateTime?)
+    + Tags : string <<get>> <<set>>
+    + Title : string <<get>> <<set>>
+    + Description : string <<get>> <<set>>
+    + DueDate : DateTime? <<get>> <<set>>
+    + ErrorMessage : string <<get>>
+    + IsValid() : bool
+}
+class "List`1"<T> {
+}
+Issue --> "Id" Guid
+Issue --> "CreateDate" DateTime
+Issue --> "Suggestions<Suggestion>" "List`1"
+@enduml
