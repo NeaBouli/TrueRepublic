@@ -1,10 +1,12 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Common
+namespace Common.Entities
 {
     /// <summary>
     /// Implementation of the suggestion
     /// </summary>
+    [Table("Suggestions")]
     public class Suggestion
     {
         /// <summary>
@@ -46,6 +48,7 @@ namespace Common
         /// <value>
         /// The create date.
         /// </value>
+        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
         public DateTime CreateDate { get; set; }
 
         /// <summary>

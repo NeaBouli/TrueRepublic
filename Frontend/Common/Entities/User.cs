@@ -1,14 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Common
+namespace Common.Entities
 {
     /// <summary>
     /// Implementation of the user class
     /// </summary>
+    [Table("Users")]
     public class User
     {
         /// <summary>

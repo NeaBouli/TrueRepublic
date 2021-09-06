@@ -1,12 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Common
+namespace Common.Entities
 {
     /// <summary>
     /// Implementation of the issue class
     /// </summary>
     /// <remarks>Record cannot be changed after it was created. Creator will not be tracked</remarks>
+    [Table("Issues")]
     public class Issue
     {
         /// <summary>Initializes a new instance of the <see cref="Issue" /> class.</summary>
@@ -40,6 +43,7 @@ namespace Common
         /// <value>
         /// The identifier.
         /// </value>
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public Guid Id { get; set; }
 
         /// <summary>
@@ -48,6 +52,7 @@ namespace Common
         /// <value>
         /// The tags.
         /// </value>
+        [Required]
         public string Tags { get; set; }
 
         /// <summary>
@@ -56,6 +61,7 @@ namespace Common
         /// <value>
         /// The title.
         /// </value>
+        [Required]
         public string Title { get; set; }
 
         /// <summary>
@@ -64,6 +70,7 @@ namespace Common
         /// <value>
         /// The description.
         /// </value>
+        [Required]
         public string Description { get; set; }
 
         /// <summary>
@@ -80,6 +87,7 @@ namespace Common
         /// <value>
         /// The create date.
         /// </value>
+        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
         public DateTime CreateDate { get; set; }
 
         /// <summary>
@@ -88,6 +96,7 @@ namespace Common
         /// <value>
         /// The error message.
         /// </value>
+        [NotMapped]
         public string ErrorMessage { get; private set; }
 
         /// <summary>
@@ -98,22 +107,58 @@ namespace Common
         /// </value>
         public List<Suggestion> Suggestions => new List<Suggestion>();
 
-        // TODO: only relevant for later
         /// <summary>
         /// Gets the total stake count.
         /// </summary>
         /// <returns>The total stake count for all assigned stakes</returns>
-        //public int GetTotalStakeCount()
-        //{
-        //    int totalStakeCount = 0;
+        public int GetTotalStakeCount()
+        {
+            int totalStakeCount = 0;
 
-        //    foreach(Suggestion suggestion in Suggestions)
-        //    {
-        //        totalStakeCount = totalStakeCount + suggestion.StakeCount;
-        //    }
+            foreach (Suggestion suggestion in Suggestions)
+            {
+                totalStakeCount += suggestion.StakeCount;
+            }
 
-        //    return totalStakeCount;
-        //}
+            return totalStakeCount;
+        }
+
+        /// <summary>
+        /// Gets the tags.
+        /// </summary>
+        /// <returns>The tags</returns>
+        public IEnumerable<string> GetTags()
+        {
+            string[] tags = Tags.Split(new char[] {' '}, StringSplitOptions.RemoveEmptyEntries);
+
+            foreach (string tag in tags)
+            {
+                yield return tag;
+            }
+        }
+
+        /// <summary>
+        /// Determines whether the specified tag has tag.
+        /// </summary>
+        /// <param name="tag">The tag.</param>
+        /// <returns>
+        ///   <c>true</c> if the specified tag has tag; otherwise, <c>false</c>.
+        /// </returns>
+        public bool HasTag(string tag)
+        {
+            List<string> tags = new List<string>(GetTags());
+
+            foreach (var tagFromList in tags)
+            {
+                if (string.Equals(tag, tagFromList, StringComparison.OrdinalIgnoreCase) ||
+                    string.Equals($"#{tag}", tagFromList, StringComparison.OrdinalIgnoreCase))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
 
         /// <summary>
         /// Returns true if ... is valid.

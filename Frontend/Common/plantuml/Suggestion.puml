@@ -1,0 +1,11 @@
+@startuml
+class Suggestion {
+    + Suggestion()
+    + ShortDescription : string <<get>> <<set>>
+    + Description : string <<get>> <<set>>
+    + StakeCount : int <<get>> <<set>>
+}
+Suggestion --> "Id" Guid
+Suggestion --> "CreateDate" DateTime
+Suggestion --> "StakeArea" StakeArea
+@enduml

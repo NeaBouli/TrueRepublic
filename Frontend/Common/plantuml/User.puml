@@ -1,0 +1,10 @@
+@startuml
+class User {
+    + UserName : string <<get>> <<set>>
+}
+class "List`1"<T> {
+}
+User --> "Id" Guid
+User --> "UniqueExternalUserId" Guid
+User --> "StakedSuggestions<Suggestion>" "List`1"
+@enduml

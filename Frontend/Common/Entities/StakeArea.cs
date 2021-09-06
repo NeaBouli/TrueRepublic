@@ -1,4 +1,4 @@
-﻿namespace Common
+﻿namespace Common.Entities
 {
     /// <summary>
     /// Implementation of the stake area
