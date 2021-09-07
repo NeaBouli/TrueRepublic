@@ -1,7 +1,0 @@
-@startuml
-enum StakeArea {
-    NotSet,
-    Green,
-    Red,
-}
-@enduml

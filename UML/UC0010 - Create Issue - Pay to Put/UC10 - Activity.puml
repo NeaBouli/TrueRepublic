@@ -7,8 +7,7 @@ alt Input Valid
     "Input Valid" -> "Sufficent Fund": Check Balance
 
     alt Sufficent Fund
-        "Sufficent Fund" -> Issue: Create Issue
-        "Issue" -> "Blockchain": Add 
+        "Sufficent Fund" -> Blockchain: Create Issue
         
         alt Store Success
              "Blockchain" -> "Issue Creator": Pay To Put

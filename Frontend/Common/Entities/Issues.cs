@@ -17,11 +17,12 @@ namespace Common.Entities
         /// <summary>
         /// Gets all valid issues.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>All valid issues that contain at least one stake</returns>
         public IEnumerable<Issue> GetAllValidIssues()
         {
-            return AllIssues.Where(issue => issue.DueDate == null || 
-                                            issue.DueDate >= DateTime.Now);
+            return AllIssues
+                .Where(issue => issue.DueDate == null || issue.DueDate >= DateTime.Now)
+                .Where(issue => issue.Suggestions.Any(suggestion => suggestion.IsStaked)).ToList();
         }
 
         /// <summary>
@@ -75,7 +76,7 @@ namespace Common.Entities
 
             foreach (Issue issue in GetAllValidIssues())
             {
-                foreach (string tag in tagsList.Where(tag => issue.HasTag(tag)))
+                foreach (string _ in tagsList.Where(tag => issue.HasTag(tag)))
                 {
                     yield return issue;
                 }

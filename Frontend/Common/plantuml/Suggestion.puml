@@ -4,6 +4,7 @@ class Suggestion {
     + ShortDescription : string <<get>> <<set>>
     + Description : string <<get>> <<set>>
     + StakeCount : int <<get>> <<set>>
+    + IsStaked : bool <<get>>
 }
 Suggestion --> "Id" Guid
 Suggestion --> "CreateDate" DateTime

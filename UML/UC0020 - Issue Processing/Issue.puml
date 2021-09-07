@@ -12,6 +12,7 @@ class Issue {
     + {static} GetTags(tags:string) : IEnumerable<string>
     + HasTag(tag:string) : bool
     + GetTopSuggestions(limit:int) : List<Suggestion>
+    + GetTopSuggestionsPercentage(percentage:decimal, maxCount:int) : List<Suggestion>
     + IsValid() : bool
 }
 class "List`1"<T> {

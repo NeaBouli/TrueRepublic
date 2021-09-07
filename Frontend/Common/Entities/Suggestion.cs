@@ -58,5 +58,13 @@ namespace Common.Entities
         /// The stake count.
         /// </value>
         public int StakeCount { get; set; }
+
+        /// <summary>
+        /// Gets a value indicating whether this instance is staked.
+        /// </summary>
+        /// <value>
+        ///   <c>true</c> if this instance is staked; otherwise, <c>false</c>.
+        /// </value>
+        public bool IsStaked => StakeCount > 0;
     }
 }
