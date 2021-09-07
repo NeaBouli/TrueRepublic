@@ -76,10 +76,9 @@ namespace Common.Entities
 
             foreach (Issue issue in GetAllValidIssues())
             {
-                foreach (string _ in tagsList.Where(tag => issue.HasTag(tag)))
+                if (tagsList.Any(tag => issue.HasTag(tag)))
                 {
                     yield return issue;
-                    yield break;
                 }
             }
         }
