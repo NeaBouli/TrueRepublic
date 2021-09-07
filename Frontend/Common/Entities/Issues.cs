@@ -79,6 +79,7 @@ namespace Common.Entities
                 foreach (string _ in tagsList.Where(tag => issue.HasTag(tag)))
                 {
                     yield return issue;
+                    yield break;
                 }
             }
         }
