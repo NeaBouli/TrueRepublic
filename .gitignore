@@ -3,3 +3,7 @@
 ################################################################################
 
 /Frontend/Common/bin/Debug/net5.0
+/Frontend/Common/Services/IssuesDatabaseService.cs
+/Frontend/Common/obj/Debug/net5.0
+/Frontend/TestConsole/bin/Debug/net5.0
+/Frontend/TestConsole/obj

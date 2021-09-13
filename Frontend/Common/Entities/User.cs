@@ -17,7 +17,7 @@ namespace Common.Entities
         /// <value>
         /// The identifier.
         /// </value>
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        [Key]
         public Guid Id { get; set; }
 
         /// <summary>
@@ -41,12 +41,21 @@ namespace Common.Entities
         public string UserName { get; set; }
 
         /// <summary>
+        /// Gets or sets the wallet.
+        /// </summary>
+        /// <value>
+        /// The wallet.
+        /// </value>
+        [Required]
+        public Wallet Wallet { get; set; }
+
+        /// <summary>
         /// Gets or sets the staked suggestions.
         /// </summary>
         /// <value>
         /// The staked suggestions.
         /// </value>
         /// <remarks>Only one suggestion can be staked per Issue</remarks>
-        public List<Suggestion> StakedSuggestions { get; set; }
+        public List<StakedSuggestion> StakedSuggestions { get; set; }
     }
 }

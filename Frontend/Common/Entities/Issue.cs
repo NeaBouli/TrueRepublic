@@ -44,7 +44,7 @@ namespace Common.Entities
         /// <value>
         /// The identifier.
         /// </value>
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        [Key]
         public Guid Id { get; set; }
 
         /// <summary>

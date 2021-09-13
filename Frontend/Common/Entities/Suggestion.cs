@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Common.Entities
@@ -24,6 +25,7 @@ namespace Common.Entities
         /// <value>
         /// The identifier.
         /// </value>
+        [Key]
         public Guid Id { get; set; }
 
         /// <summary>
