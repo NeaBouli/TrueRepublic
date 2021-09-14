@@ -1,24 +1,24 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Windows User\\Documents\\pnyx\\Frontend\\Common\\Common.csproj": {}
+    "C:\\Users\\andre\\OneDrive\\Dokumente\\pnyx\\Frontend\\Common\\Common.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Windows User\\Documents\\pnyx\\Frontend\\Common\\Common.csproj": {
+    "C:\\Users\\andre\\OneDrive\\Dokumente\\pnyx\\Frontend\\Common\\Common.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Windows User\\Documents\\pnyx\\Frontend\\Common\\Common.csproj",
+        "projectUniqueName": "C:\\Users\\andre\\OneDrive\\Dokumente\\pnyx\\Frontend\\Common\\Common.csproj",
         "projectName": "Common",
-        "projectPath": "C:\\Users\\Windows User\\Documents\\pnyx\\Frontend\\Common\\Common.csproj",
-        "packagesPath": "C:\\Users\\Windows User\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Windows User\\Documents\\pnyx\\Frontend\\Common\\obj\\",
+        "projectPath": "C:\\Users\\andre\\OneDrive\\Dokumente\\pnyx\\Frontend\\Common\\Common.csproj",
+        "packagesPath": "C:\\Users\\andre\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\andre\\OneDrive\\Dokumente\\pnyx\\Frontend\\Common\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages",
           "C:\\Program Files (x86)\\Microsoft\\Xamarin\\NuGet\\"
         ],
         "configFilePaths": [
-          "C:\\Users\\Windows User\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\andre\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Xamarin.Offline.config"
@@ -28,7 +28,7 @@
         ],
         "sources": {
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-          "https://api.nuget.org/v3/index.json": {}
+          "https://www.nuget.org/api/v2": {}
         },
         "frameworks": {
           "net5.0": {
@@ -45,6 +45,24 @@
       "frameworks": {
         "net5.0": {
           "targetAlias": "net5.0",
+          "dependencies": {
+            "ExcelDataReader": {
+              "target": "Package",
+              "version": "[3.6.0, )"
+            },
+            "ExcelDataReader.DataSet": {
+              "target": "Package",
+              "version": "[3.6.0, )"
+            },
+            "Microsoft.EntityFrameworkCore": {
+              "target": "Package",
+              "version": "[5.0.9, )"
+            },
+            "Microsoft.EntityFrameworkCore.SqlServer": {
+              "target": "Package",
+              "version": "[5.0.9, )"
+            }
+          },
           "imports": [
             "net461",
             "net462",
@@ -60,7 +78,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.204\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.400\\RuntimeIdentifierGraph.json"
         }
       }
     }

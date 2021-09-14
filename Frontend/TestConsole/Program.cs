@@ -1,5 +1,5 @@
 ﻿using System;
-using Common.Data;
+using Common.Services;
 using Microsoft.Extensions.Configuration;
 
 namespace TestConsole
@@ -16,6 +16,9 @@ namespace TestConsole
                 .AddJsonFile("appsettings.json").Build();
 
             string dbConnectString = config["DBConnectString"];
+
+            DatabaseInitializationService.DbConnectString = dbConnectString;
+            DatabaseInitializationService.CreateDbIfNotExisting();
 
 
 

@@ -4,7 +4,7 @@ using Common.Entities;
 
 namespace Common.Interfaces
 {
-    public interface ITransactionTypeInMemoryService
+    public interface ITransactionTypeService
     {
         /// <summary>
         /// Gets the transaction types.
@@ -20,9 +20,16 @@ namespace Common.Interfaces
         TransactionType GetTransactionType(TransactionTypeNames transactionTypeName);
 
         /// <summary>
+        /// Adds the specified transaction type.
+        /// </summary>
+        /// <param name="transactionType">Type of the transaction.</param>
+        void Add(TransactionType transactionType);
+
+        /// <summary>
         /// Imports the specified data table.
         /// </summary>
         /// <param name="dataTable">The data table.</param>
-        public void Import(DataTable dataTable);
+        /// <returns>The number of imported records</returns>
+        int Import(DataTable dataTable);
     }
 }

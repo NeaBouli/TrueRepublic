@@ -65,6 +65,10 @@ namespace Common.Data
             modelBuilder.Entity<User>()
                 .HasIndex(u => u.UserName)
                 .IsUnique();
+
+            modelBuilder.Entity<User>()
+                .HasIndex(u => u.UniqueExternalUserId)
+                .IsUnique();
         }
 
         /// <summary>

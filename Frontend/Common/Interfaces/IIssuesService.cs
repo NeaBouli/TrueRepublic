@@ -78,6 +78,11 @@ namespace Common.Interfaces
         /// <returns>The issue for the given issue guid</returns>
         Issue GetIssue(Guid issueGuid);
 
-        public void Import(DataTable dataTable);
+        /// <summary>
+        /// Imports the specified data table.
+        /// </summary>
+        /// <param name="dataTable">The data table.</param>
+        /// <returns>The number of imported records</returns>
+        public int Import(DataTable dataTable);
     }
 }

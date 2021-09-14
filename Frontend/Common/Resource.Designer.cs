@@ -77,5 +77,14 @@ namespace Common {
                 return ResourceManager.GetString("ErrorNotEnoughFounding", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unknown transaction type name in excel sheet {0}.
+        /// </summary>
+        internal static string ErrorUnknownTransactionTypeName {
+            get {
+                return ResourceManager.GetString("ErrorUnknownTransactionTypeName", resourceCulture);
+            }
+        }
     }
 }

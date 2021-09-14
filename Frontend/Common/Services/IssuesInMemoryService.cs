@@ -163,7 +163,7 @@ namespace Common.Services
         /// <exception cref="System.InvalidOperationException"></exception>
         public Guid AddIssue(Issue issue, User user)
         {
-            TransactionTypeInMemoryService transactionTypeBaseService = new TransactionTypeInMemoryService(_transactionTypes);
+            TransactionTypeService transactionTypeBaseService = new TransactionTypeService();
             TransactionType transactionType = transactionTypeBaseService.GetTransactionType(TransactionTypeNames.AddIssue);
 
             Wallet wallet = user.Wallet;
@@ -198,7 +198,7 @@ namespace Common.Services
             return _allIssues.FirstOrDefault(i => i.Id.ToString() == issueId.ToString());
         }
 
-        public void Import(DataTable issues)
+        public int Import(DataTable issues)
         {
             throw new NotImplementedException();
         }

@@ -104,4 +104,7 @@
 	<data name="ErrorDbConnectStringCannotBeEmpty" xml:space="preserve">
 		<value>DbConnectString cannot be empty</value>
 	</data>
+	<data name="ErrorUnknownTransactionTypeName" xml:space="preserve">
+		<value>Unknown transaction type name in excel sheet {0}</value>
+	</data>
 </root>

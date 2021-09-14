@@ -1,24 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
-using Common.Data;
 using Common.Entities;
 using Common.Interfaces;
 
 namespace Common.Services
 {
-    public class IssuesDatabaseService : IIssuesService
+    public class IssuesService : IIssuesService
     {
-        public static string DbConnectString { get; set; }
-
-        public IssuesDatabaseService()
-        {
-            if (string.IsNullOrEmpty(DbConnectString))
-            {
-                throw new InvalidOperationException(Resource.ErrorDbConnectStringCannotBeEmpty);
-            }
-        }
-
         public List<Issue> GetAllIssues()
         {
             throw new NotImplementedException();
@@ -64,7 +53,7 @@ namespace Common.Services
             throw new NotImplementedException();
         }
 
-        public void Import(DataTable issues)
+        public int Import(DataTable issues)
         {
             throw new NotImplementedException();
         }

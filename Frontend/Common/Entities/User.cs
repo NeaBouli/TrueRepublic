@@ -46,7 +46,6 @@ namespace Common.Entities
         /// <value>
         /// The wallet.
         /// </value>
-        [Required]
         public Wallet Wallet { get; set; }
 
         /// <summary>
