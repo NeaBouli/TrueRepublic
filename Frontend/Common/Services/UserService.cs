@@ -43,25 +43,12 @@ namespace Common.Services
         }
 
         /// <summary>
-        /// Gets the name of the user by.
-        /// </summary>
-        /// <param name="name">The name.</param>
-        /// <returns>The user if found otherwise null</returns>
-        public User GetUserByName(string name)
-        {
-            DbServiceContext dbServiceContext = DatabaseInitializationService.GetDbServiceContext();
-
-            using (dbServiceContext)
-            {
-                return dbServiceContext.User.FirstOrDefault(u => u.UserName == name);
-            }
-        }
-
-        /// <summary>
         /// Imports the specified data table.
         /// </summary>
         /// <param name="dataTable">The data table.</param>
-        /// <returns>The number of imported records</returns>
+        /// <returns>
+        /// The number of imported records
+        /// </returns>
         public int Import(DataTable dataTable)
         {
             List<User> users = GetUsers();
@@ -78,6 +65,7 @@ namespace Common.Services
                 User user = new()
                 {
                     UserName = row["UserName"].ToString(),
+                    ImportId = Convert.ToInt32(row["ID"].ToString()),
                     StakedSuggestions = new List<StakedSuggestion>()
                 };
 

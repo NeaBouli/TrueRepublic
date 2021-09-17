@@ -29,7 +29,9 @@ namespace Common.Interfaces
         /// Imports the specified data table.
         /// </summary>
         /// <param name="dataTable">The data table.</param>
-        /// <returns>The number of imported records</returns>
+        /// <returns>
+        /// The number of imported records
+        /// </returns>
         int Import(DataTable dataTable);
     }
 }

@@ -8,19 +8,19 @@ namespace Common.Interfaces
     /// <summary>
     /// Implementation of the IIssues Service interface
     /// </summary>
-    public interface IIssuesService
+    public interface IIssueService
     {
         /// <summary>
         /// Gets all issues.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>Gets all issues</returns>
         List<Issue> GetAllIssues();
 
         /// <summary>
         /// Gets all valid issues.
         /// </summary>
         /// <returns>All valid issues that contain at least one stake</returns>
-        IEnumerable<Issue> GetAllValidIssues(bool onlyStaked = false);
+        List<Issue> GetAllValidIssues(bool onlyStaked = false);
 
         /// <summary>
         /// Gets the top staked issues.
@@ -43,7 +43,7 @@ namespace Common.Interfaces
         /// </summary>
         /// <param name="tags">The tags.</param>
         /// <returns>All the issues that contain to at least one of the given tags</returns>
-        IEnumerable<Issue> GetIssuesByTags(string tags);
+        List<Issue> GetIssuesByTags(string tags);
 
         /// <summary>
         /// Gets the top staked issues by tags.
@@ -51,7 +51,7 @@ namespace Common.Interfaces
         /// <param name="tags">The tags.</param>
         /// <param name="limit">The limit.</param>
         /// <returns>The top staked issues by tags</returns>
-        IEnumerable<Issue> GetTopStakedIssuesByTags(string tags, int limit);
+        List<Issue> GetTopStakedIssuesByTags(string tags, int limit);
 
         /// <summary>
         /// Gets the top stakes issues percentage by tags.
@@ -65,18 +65,18 @@ namespace Common.Interfaces
         /// Adds the issue.
         /// </summary>
         /// <param name="issue">The issue.</param>
-        /// <param name="user">The user.</param>
+        /// <param name="userId">The user identifier.</param>
         /// <returns>
         /// The guid of the issue added
         /// </returns>
-        public Guid AddIssue(Issue issue, User user);
+        public Guid AddIssue(Issue issue, Guid userId);
 
         /// <summary>
         /// Gets the issue.
         /// </summary>
-        /// <param name="issueGuid">The issue unique identifier.</param>
+        /// <param name="issueId">The issue unique identifier.</param>
         /// <returns>The issue for the given issue guid</returns>
-        Issue GetIssue(Guid issueGuid);
+        Issue GetIssue(Guid issueId);
 
         /// <summary>
         /// Imports the specified data table.

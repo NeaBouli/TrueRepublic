@@ -3,7 +3,7 @@
   <Class Name="Common.Entities.Issue">
     <Position X="4" Y="1.25" Width="2.5" />
     <TypeIdentifier>
-      <HashCode>AQQCAACAQAAgAGAAAAgEQAAAAAAAAEAAAAABAAAAAAA=</HashCode>
+      <HashCode>AQQCAACAQAAgAGIAAAgEQAAAAAAAAEAAAAABAAAAAAA=</HashCode>
       <FileName>Entities\Issue.cs</FileName>
     </TypeIdentifier>
     <ShowAsCollectionAssociation>
@@ -13,25 +13,15 @@
   <Class Name="Common.Entities.Suggestion">
     <Position X="7.75" Y="1.75" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAACAAAAAAggAAAAAAAAAAAAIAAAAAAAAAABAAAAAAA=</HashCode>
+      <HashCode>AAACAAAAAAggAAAAAAAAAAAAIAAAAAAAAAABABAAAAA=</HashCode>
       <FileName>Entities\Suggestion.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="Common.Entities.User">
     <Position X="4" Y="5.25" Width="2.5" />
     <TypeIdentifier>
-      <HashCode>AAACAAAAAAAAAIAAAAAAAAAAAAAAAIAAAQAAAAAAAAA=</HashCode>
+      <HashCode>AAACAAAAAAAAAIAAAAAAAAAAACAAAIAAAQAAAAAAAAA=</HashCode>
       <FileName>Entities\User.cs</FileName>
-    </TypeIdentifier>
-    <ShowAsCollectionAssociation>
-      <Property Name="StakedSuggestions" />
-    </ShowAsCollectionAssociation>
-  </Class>
-  <Class Name="Common.Entities.Issues">
-    <Position X="0.75" Y="1.25" Width="2.75" />
-    <TypeIdentifier>
-      <HashCode>AAAIAAgAAAAAAAAAAgAAAAAAAAQAAgAIAAAAAAAAgAA=</HashCode>
-      <FileName>Entities\Issues.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Font Name="Segoe UI" Size="9" />

@@ -21,17 +21,12 @@ namespace Common.Interfaces
         User GetUserById(Guid id);
 
         /// <summary>
-        /// Gets the name of the user by.
-        /// </summary>
-        /// <param name="name">The name.</param>
-        /// <returns>The user if found otherwise null</returns>
-        User GetUserByName(string name);
-
-        /// <summary>
         /// Imports the specified data table.
         /// </summary>
         /// <param name="dataTable">The data table.</param>
-        /// <returns>The number of imported records</returns>
+        /// <returns>
+        /// The number of imported records
+        /// </returns>
         int Import(DataTable dataTable);
 
         /// <summary>

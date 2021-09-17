@@ -40,6 +40,14 @@ namespace Common.Entities
         public Guid Id { get; set; }
 
         /// <summary>
+        /// Gets or sets the import identifier.
+        /// </summary>
+        /// <value>
+        /// The import identifier.
+        /// </value>
+        public int? ImportId { get; set; }
+
+        /// <summary>
         /// Gets or sets the suggestion.
         /// </summary>
         /// <value>

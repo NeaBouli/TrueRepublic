@@ -28,6 +28,14 @@ namespace Common.Entities
         public Guid Id { get; set; }
 
         /// <summary>
+        /// Gets or sets the import identifier.
+        /// </summary>
+        /// <value>
+        /// The import identifier.
+        /// </value>
+        public int? ImportId { get; set; }
+
+        /// <summary>
         /// Gets or sets the total balance.
         /// </summary>
         /// <value>
@@ -71,6 +79,6 @@ namespace Common.Entities
         /// <value>
         /// The wallet transactions.
         /// </value>
-        public List<WalletTransaction> WalletTransactions { get; }
+        public List<WalletTransaction> WalletTransactions { get; set; }
     }
 }

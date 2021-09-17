@@ -2,63 +2,61 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using Common.Data;
 using Common.Entities;
 using Common.Interfaces;
 
 namespace Common.Services
 {
     /// <summary>
-    /// Implementation of an abstract issue service
+    /// Implementation of the issue service
     /// </summary>
-    public class IssuesInMemoryService : IIssuesService
+    /// <seealso cref="Common.Interfaces.IIssueService" />
+    public class IssueService : IIssueService
     {
-        /// <summary>
-        /// All issues
-        /// </summary>
-        private readonly List<Issue> _allIssues;
-
-        /// <summary>
-        /// The transaction types
-        /// </summary>
-        private readonly List<TransactionType> _transactionTypes;
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="IssuesInMemoryService" /> class.
-        /// </summary>
-        /// <param name="allIssues">All issues.</param>
-        /// <param name="transactionTypes">The transaction types.</param>
-        public IssuesInMemoryService(List<Issue> allIssues, List<TransactionType> transactionTypes)
-        {
-            _allIssues = allIssues;
-            _transactionTypes = transactionTypes;
-        }
-
         /// <summary>
         /// Gets all issues.
         /// </summary>
-        /// <returns>Gets all issues</returns>
+        /// <returns>
+        /// Gets all issues
+        /// </returns>
         public List<Issue> GetAllIssues()
         {
-            return _allIssues;
+            DbServiceContext dbServiceContext = DatabaseInitializationService.GetDbServiceContext();
+
+            using (dbServiceContext)
+            {
+                return dbServiceContext.Issues.ToList();
+            }
         }
 
         /// <summary>
         /// Gets all valid issues.
         /// </summary>
-        /// <returns>All valid issues that contain at least one stake</returns>
-        public IEnumerable<Issue> GetAllValidIssues(bool onlyStaked = false)
+        /// <param name="onlyStaked"></param>
+        /// <returns>
+        /// All valid issues that contain at least one stake
+        /// </returns>
+        public List<Issue> GetAllValidIssues(bool onlyStaked = false)
         {
-            IEnumerable<Issue> allIssues = GetAllIssues()
-                .Where(issue => issue.DueDate == null || issue.DueDate >= DateTime.Now);
+            DbServiceContext dbServiceContext = DatabaseInitializationService.GetDbServiceContext();
 
-            return !onlyStaked ? allIssues : allIssues.Where(issue => issue.Suggestions.Any(suggestion => suggestion.IsStaked)).ToList();
+            using (dbServiceContext)
+            {
+                List<Issue> allIssues = dbServiceContext.Issues
+                    .Where(issue => issue.DueDate == null || issue.DueDate >= DateTime.Now).ToList();
+
+                return !onlyStaked ? allIssues : allIssues.Where(issue => issue.Suggestions.Any(suggestion => suggestion.IsStaked)).ToList();
+            }
         }
 
         /// <summary>
         /// Gets the top staked issues.
         /// </summary>
         /// <param name="limit">The limit.</param>
-        /// <returns>The top staked issues depending on the limit</returns>
+        /// <returns>
+        /// The top staked issues depending on the limit
+        /// </returns>
         public List<Issue> GetTopStakedIssues(int limit)
         {
             List<Issue> issues = new List<Issue>(GetAllValidIssues());
@@ -98,18 +96,24 @@ namespace Common.Services
         /// Gets the issues by tags.
         /// </summary>
         /// <param name="tags">The tags.</param>
-        /// <returns>All the issues that contain to at least one of the given tags</returns>
-        public IEnumerable<Issue> GetIssuesByTags(string tags)
+        /// <returns>
+        /// All the issues that contain to at least one of the given tags
+        /// </returns>
+        public List<Issue> GetIssuesByTags(string tags)
         {
             List<string> tagsList = new List<string>(Issue.GetTags(tags));
+
+            List<Issue> issues = new List<Issue>();
 
             foreach (Issue issue in GetAllValidIssues())
             {
                 if (tagsList.Any(tag => issue.HasTag(tag)))
                 {
-                    yield return issue;
+                    issues.Add(issue);
                 }
             }
+
+            return issues;
         }
 
         /// <summary>
@@ -117,8 +121,10 @@ namespace Common.Services
         /// </summary>
         /// <param name="tags">The tags.</param>
         /// <param name="limit">The limit.</param>
-        /// <returns>The top staked issues by tags</returns>
-        public IEnumerable<Issue> GetTopStakedIssuesByTags(string tags, int limit)
+        /// <returns>
+        /// The top staked issues by tags
+        /// </returns>
+        public List<Issue> GetTopStakedIssuesByTags(string tags, int limit)
         {
             List<Issue> issues = new List<Issue>(GetIssuesByTags(tags));
 
@@ -130,12 +136,6 @@ namespace Common.Services
             return issues.OrderByDescending(i => i.GetTotalStakeCount()).Take(limit).ToList();
         }
 
-        /// <summary>
-        /// Gets the top stakes issues percentage by tags.
-        /// </summary>
-        /// <param name="tags">The tags.</param>
-        /// <param name="percentage">The percentage.</param>
-        /// <returns>The top staked issues in percent by tags</returns>
         public List<Issue> GetTopStakesIssuesPercentageByTags(string tags, decimal percentage = 100)
         {
             List<Issue> issues = new List<Issue>(GetIssuesByTags(tags));
@@ -156,15 +156,25 @@ namespace Common.Services
         /// Adds the issue.
         /// </summary>
         /// <param name="issue">The issue.</param>
-        /// <param name="user">The user.</param>
+        /// <param name="userId">The user identifier.</param>
         /// <returns>
         /// The guid of the issue added
         /// </returns>
-        /// <exception cref="System.InvalidOperationException"></exception>
-        public Guid AddIssue(Issue issue, User user)
+        /// <exception cref="System.InvalidOperationException">
+        /// Will be thrown if user is not found
+        /// </exception>
+        public Guid AddIssue(Issue issue, Guid userId)
         {
-            TransactionTypeService transactionTypeBaseService = new TransactionTypeService();
-            TransactionType transactionType = transactionTypeBaseService.GetTransactionType(TransactionTypeNames.AddIssue);
+            TransactionTypeService transactionTypeService = new TransactionTypeService();
+            TransactionType transactionType = transactionTypeService.GetTransactionType(TransactionTypeNames.AddIssue);
+
+            UserService userService = new UserService();
+            User user = userService.GetUserById(userId);
+
+            if (user == null)
+            {
+                throw new InvalidOperationException(string.Format(Resource.ErrorUserIdNotFound, userId));
+            }
 
             Wallet wallet = user.Wallet;
 
@@ -183,19 +193,31 @@ namespace Common.Services
 
             wallet.AddTransaction(walletTransaction);
 
-            _allIssues.Add(issue);
+            DbServiceContext dbServiceContext = DatabaseInitializationService.GetDbServiceContext();
 
-            return issue.Id;
+            using (dbServiceContext)
+            {
+                dbServiceContext.Issues.Add(issue);
+                dbServiceContext.SaveChanges();
+                return issue.Id;
+            }
         }
 
         /// <summary>
         /// Gets the issue.
         /// </summary>
-        /// <param name="issueId">The issue identifier.</param>
-        /// <returns>The issue for the given id or null if not found</returns>
+        /// <param name="issueId">The issue unique identifier.</param>
+        /// <returns>
+        /// The issue for the given issue guid
+        /// </returns>
         public Issue GetIssue(Guid issueId)
         {
-            return _allIssues.FirstOrDefault(i => i.Id.ToString() == issueId.ToString());
+            DbServiceContext dbServiceContext = DatabaseInitializationService.GetDbServiceContext();
+
+            using (dbServiceContext)
+            {
+                return dbServiceContext.Issues.FirstOrDefault(i => i.Id.ToString() == issueId.ToString());
+            }
         }
 
         public int Import(DataTable issues)

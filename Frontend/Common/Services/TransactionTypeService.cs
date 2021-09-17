@@ -66,6 +66,7 @@ namespace Common.Services
                 TransactionType transactionType = new()
                 {
                     Name = row["Name"].ToString(),
+                    ImportId = Convert.ToInt32(row["ID"].ToString()),
                     Fee = Convert.ToDouble(row["Fee"].ToString())
                 };
 

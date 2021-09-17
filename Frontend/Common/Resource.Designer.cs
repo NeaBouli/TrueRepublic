@@ -79,11 +79,47 @@ namespace Common {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Transaction type {0} not found.
+        /// </summary>
+        internal static string ErrorTransactionTypeNotFound {
+            get {
+                return ResourceManager.GetString("ErrorTransactionTypeNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Unknown transaction type name in excel sheet {0}.
         /// </summary>
         internal static string ErrorUnknownTransactionTypeName {
             get {
                 return ResourceManager.GetString("ErrorUnknownTransactionTypeName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to User Id {0} not found.
+        /// </summary>
+        internal static string ErrorUserIdNotFound {
+            get {
+                return ResourceManager.GetString("ErrorUserIdNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Wallet for user id {0} not found.
+        /// </summary>
+        internal static string ErrorWalletForUserIdNotFound {
+            get {
+                return ResourceManager.GetString("ErrorWalletForUserIdNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Wallet for user {0} not found.
+        /// </summary>
+        internal static string ErrorWalletForUserNotFound {
+            get {
+                return ResourceManager.GetString("ErrorWalletForUserNotFound", resourceCulture);
             }
         }
     }

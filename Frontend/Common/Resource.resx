@@ -107,4 +107,16 @@
 	<data name="ErrorUnknownTransactionTypeName" xml:space="preserve">
 		<value>Unknown transaction type name in excel sheet {0}</value>
 	</data>
+	<data name="ErrorTransactionTypeNotFound" xml:space="preserve">
+		<value>Transaction type {0} not found</value>
+	</data>
+	<data name="ErrorWalletForUserIdNotFound" xml:space="preserve">
+		<value>Wallet for user id {0} not found</value>
+	</data>
+	<data name="ErrorWalletForUserNotFound" xml:space="preserve">
+		<value>Wallet for user {0} not found</value>
+	</data>
+	<data name="ErrorUserIdNotFound" xml:space="preserve">
+		<value>User Id {0} not found</value>
+	</data>
 </root>

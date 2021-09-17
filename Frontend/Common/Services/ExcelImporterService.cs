@@ -26,31 +26,30 @@ namespace Common.Services
             ExcelDataContext.FullPathToXlsFile = fullPathToExcelFile;
             ExcelDataContext excelDataContext = ExcelDataContext.GetInstance();
 
-            // TODO: check if db table is empty
-            foreach (DataTable sheet in excelDataContext.Sheets)
+            foreach (DataTable dataTable in excelDataContext.Sheets)
             {
-                switch (sheet.TableName)
+                switch (dataTable.TableName)
                 {
                     case "TransactionTypes":
-                        ImportTransactionTypes(sheet);
+                        ImportTransactionTypes(dataTable);
                         break;
                     case "Users":
-                        ImportUsers(sheet);
+                        ImportUsers(dataTable);
                         break;
                     case "Wallets":
-                        ImportWallets(sheet);
+                        ImportWallets(dataTable);
                         break;
                     case "WalletTransactions":
-                        ImportWalletTransactions(sheet);
+                        ImportWalletTransactions(dataTable);
                         break;
                     case "Issues":
-                        ImportIssues(sheet);
+                        ImportIssues(dataTable);
                         break;
                     case "Suggestions":
-                        ImportSuggestions(sheet);
+                        ImportSuggestions(dataTable);
                         break;
                     case "StakedSuggestions":
-                        ImportStakedSuggestions(sheet);
+                        ImportStakedSuggestions(dataTable);
                         break;
                     default:
                         throw new NotImplementedException();
@@ -58,27 +57,27 @@ namespace Common.Services
             }
         }
 
-        private void ImportStakedSuggestions(DataTable sheet)
+        private void ImportStakedSuggestions(DataTable dataTable)
         {
             throw new NotImplementedException();
         }
 
-        private void ImportSuggestions(DataTable sheet)
+        private void ImportSuggestions(DataTable dataTable)
         {
             throw new NotImplementedException();
         }
 
-        private void ImportIssues(DataTable sheet)
+        private void ImportIssues(DataTable dataTable)
         {
             throw new NotImplementedException();
         }
 
-        private void ImportWalletTransactions(DataTable sheet)
+        private void ImportWalletTransactions(DataTable dataTable)
         {
             throw new NotImplementedException();
         }
 
-        private void ImportWallets(DataTable sheet)
+        private void ImportWallets(DataTable dataTable)
         {
             throw new NotImplementedException();
         }
@@ -86,21 +85,21 @@ namespace Common.Services
         /// <summary>
         /// Imports the users.
         /// </summary>
-        /// <param name="sheet">The sheet.</param>
-        private void ImportUsers(DataTable sheet)
+        /// <param name="dataTable">The data table.</param>
+        private void ImportUsers(DataTable dataTable)
         {
             UserService userService = new UserService();
-            OnTableImported(new NameCountEventArgs("Users", userService.Import(sheet)));
+            OnTableImported(new NameCountEventArgs("Users", userService.Import(dataTable)));
         }
 
         /// <summary>
         /// Imports the transaction types.
         /// </summary>
-        /// <param name="sheet">The sheet.</param>
-        private void ImportTransactionTypes(DataTable sheet)
+        /// <param name="dataTable">The data table.</param>
+        private void ImportTransactionTypes(DataTable dataTable)
         {
             TransactionTypeService transactionTypeDbService = new();
-            OnTableImported(new NameCountEventArgs("ImportTransactionTypes", transactionTypeDbService.Import(sheet)));
+            OnTableImported(new NameCountEventArgs("TransactionTypes", transactionTypeDbService.Import(dataTable)));
         }
 
         /// <summary>
