@@ -27,7 +27,7 @@ namespace Common.Entities
         /// <param name="title">The title.</param>
         /// <param name="description">The description.</param>
         /// <param name="dueDate">The due date.</param>
-        public Issue(string tags, string title, string description, DateTime? dueDate = null)
+        public Issue(string tags, string title, string description, DateTime dueDate)
         {
             Id = Guid.NewGuid();
             CreateDate = DateTime.Now;
@@ -88,7 +88,7 @@ namespace Common.Entities
         /// <value>
         /// The due date.
         /// </value>
-        public DateTime? DueDate { get; set; }
+        public DateTime DueDate { get; set; }
 
         /// <summary>
         /// Gets or sets the create date.
@@ -114,7 +114,7 @@ namespace Common.Entities
         /// <value>
         /// The suggestions.
         /// </value>
-        public List<Suggestion> Suggestions => new List<Suggestion>();
+        public List<Suggestion> Suggestions;
 
         /// <summary>
         /// Gets the total stake count.
@@ -254,21 +254,12 @@ namespace Common.Entities
                 return false;
             }
 
-            if (DueDate != null && DueDate < DateTime.Now)
+            double differenceDays = DueDate.Subtract(DateTime.Now).TotalDays;
+
+            if (differenceDays < 5)
             {
-                ErrorMessage = "Due Date must be in future";
+                ErrorMessage = "Due Date must be at least 5 days in the future";
                 return false;
-            }
-
-            if (DueDate != null)
-            {
-                double differenceDays = ((DateTime)DueDate).Subtract(DateTime.Now).TotalDays;
-
-                if (differenceDays < 5)
-                {
-                    ErrorMessage = "Due Date must be at least 5 days in the future";
-                    return false;
-                }
             }
 
             ErrorMessage = string.Empty;

@@ -80,39 +80,41 @@ namespace Common.Services
 
             using (dbServiceContext)
             {
-                int wallets = dbServiceContext.Wallets.Count();
+                int count = dbServiceContext.Wallets.Count();
 
-                if (wallets > 0)
+                if (count > 0)
                 {
                     return 0;
                 }
-
-                List<User> users = dbServiceContext.User
-                    .Include(u => u.Wallet)
-                    .ToList();
 
                 int recordCount = 0;
 
                 foreach (DataRow row in dataTable.Rows)
                 {
-                    int id = Convert.ToInt32(row["ID"].ToString());
+                    int id = Convert.ToInt32(row["UserID"].ToString());
 
-                    User user = users.FirstOrDefault(u => u.ImportId == id);
+                    User user = dbServiceContext.User
+                        .Include(u => u.Wallet)
+                        .FirstOrDefault(u => u.ImportId == id);
 
                     if (user != null)
                     {
                         Wallet wallet = new Wallet
                         {
+                            ImportId = Convert.ToInt32(row["ID"].ToString()),
                             TotalBalance = Convert.ToDouble(row["TotalBalance"].ToString()),
                             WalletTransactions = new List<WalletTransaction>()
                         };
 
                         user.Wallet = wallet;
 
-                        dbServiceContext.SaveChanges();
-
                         recordCount++;
                     }
+                }
+
+                if (recordCount > 0)
+                {
+                    dbServiceContext.SaveChanges();
                 }
 
                 return recordCount;

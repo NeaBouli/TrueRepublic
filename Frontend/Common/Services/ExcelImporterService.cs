@@ -72,14 +72,24 @@ namespace Common.Services
             throw new NotImplementedException();
         }
 
+        /// <summary>
+        /// Imports the wallet transactions.
+        /// </summary>
+        /// <param name="dataTable">The data table.</param>
         private void ImportWalletTransactions(DataTable dataTable)
         {
-            throw new NotImplementedException();
+            WalletTransactionService walletTransactionService = new WalletTransactionService();
+            OnTableImported(new NameCountEventArgs("WalletTransactions", walletTransactionService.Import(dataTable)));
         }
 
+        /// <summary>
+        /// Imports the wallets.
+        /// </summary>
+        /// <param name="dataTable">The data table.</param>
         private void ImportWallets(DataTable dataTable)
         {
-            throw new NotImplementedException();
+            WalletService walletService = new WalletService();
+            OnTableImported(new NameCountEventArgs("Wallets", walletService.Import(dataTable)));
         }
 
         /// <summary>

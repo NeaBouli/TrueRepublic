@@ -5,6 +5,7 @@ using System.Linq;
 using Common.Data;
 using Common.Entities;
 using Common.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace Common.Services
 {
@@ -26,7 +27,9 @@ namespace Common.Services
 
             using (dbServiceContext)
             {
-                return dbServiceContext.Issues.ToList();
+                return dbServiceContext.Issues
+                    .Include(i => i.Suggestions)
+                    .ToList();
             }
         }
 
@@ -44,7 +47,7 @@ namespace Common.Services
             using (dbServiceContext)
             {
                 List<Issue> allIssues = dbServiceContext.Issues
-                    .Where(issue => issue.DueDate == null || issue.DueDate >= DateTime.Now).ToList();
+                    .Where(issue => issue.DueDate >= DateTime.Now).ToList();
 
                 return !onlyStaked ? allIssues : allIssues.Where(issue => issue.Suggestions.Any(suggestion => suggestion.IsStaked)).ToList();
             }
