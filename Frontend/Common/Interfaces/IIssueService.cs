@@ -14,13 +14,13 @@ namespace Common.Interfaces
         /// Gets all issues.
         /// </summary>
         /// <returns>Gets all issues</returns>
-        List<Issue> GetAllIssues();
+        List<Issue> GetAllIssues(bool includeSuggestions = false);
 
         /// <summary>
         /// Gets all valid issues.
         /// </summary>
         /// <returns>All valid issues that contain at least one stake</returns>
-        List<Issue> GetAllValidIssues(bool onlyStaked = false);
+        List<Issue> GetAllValidIssues(bool includeSuggestions = false, bool onlyStaked = false);
 
         /// <summary>
         /// Gets the top staked issues.

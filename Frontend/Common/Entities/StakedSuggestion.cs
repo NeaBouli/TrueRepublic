@@ -31,6 +31,14 @@ namespace Common.Entities
         public DateTime ValidTill => CreateDate.AddDays(30);
 
         /// <summary>
+        /// Gets a value indicating whether this instance is expired.
+        /// </summary>
+        /// <value>
+        ///   <c>true</c> if this instance is expired; otherwise, <c>false</c>.
+        /// </value>
+        public bool IsExpired => ValidTill < DateTime.Now;
+
+        /// <summary>
         /// Gets or sets the identifier.
         /// </summary>
         /// <value>

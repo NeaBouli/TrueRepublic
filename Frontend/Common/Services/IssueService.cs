@@ -21,35 +21,67 @@ namespace Common.Services
         /// <returns>
         /// Gets all issues
         /// </returns>
-        public List<Issue> GetAllIssues()
+        public List<Issue> GetAllIssues(bool includeSuggestions = false)
         {
             DbServiceContext dbServiceContext = DatabaseInitializationService.GetDbServiceContext();
 
             using (dbServiceContext)
             {
-                return dbServiceContext.Issues
-                    .Include(i => i.Suggestions)
-                    .ToList();
+                List<Issue> issues;
+
+                if (!includeSuggestions)
+                {
+                    issues = dbServiceContext.Issues.ToList();
+                }
+                else
+                {
+                    issues = dbServiceContext.Issues
+                        .Include(i => i.Suggestions)
+                        .ToList();
+
+                    foreach (Issue issue in issues)
+                    {
+                        SuggestionService.UpdateStakes(issue.Suggestions);
+                    }
+                }
+
+                return issues;
             }
         }
 
         /// <summary>
         /// Gets all valid issues.
         /// </summary>
+        /// <param name="includeSuggestions"></param>
         /// <param name="onlyStaked"></param>
         /// <returns>
         /// All valid issues that contain at least one stake
         /// </returns>
-        public List<Issue> GetAllValidIssues(bool onlyStaked = false)
+        public List<Issue> GetAllValidIssues(bool includeSuggestions = false, bool onlyStaked = false)
         {
             DbServiceContext dbServiceContext = DatabaseInitializationService.GetDbServiceContext();
 
             using (dbServiceContext)
             {
-                List<Issue> allIssues = dbServiceContext.Issues
-                    .Where(issue => issue.DueDate >= DateTime.Now).ToList();
+                if (!includeSuggestions)
+                {
+                    return dbServiceContext.Issues
+                        .Where(issue => issue.DueDate >= DateTime.Now)
+                        .ToList();
+                }
 
-                return !onlyStaked ? allIssues : allIssues.Where(issue => issue.Suggestions.Any(suggestion => suggestion.IsStaked)).ToList();
+                List<Issue> issues = dbServiceContext.Issues
+                    .Include(i => i.Suggestions)
+                    .Where(issue => issue.DueDate >= DateTime.Now)
+                    .ToList();
+
+                foreach (Issue issue in issues)
+                {
+                    SuggestionService.UpdateStakes(issue.Suggestions);
+                }
+
+                return !onlyStaked ? 
+                    issues : issues.Where(issue => issue.Suggestions.Any(suggestion => suggestion.IsStaked)).ToList();
             }
         }
 
@@ -223,9 +255,55 @@ namespace Common.Services
             }
         }
 
-        public int Import(DataTable issues)
+        /// <summary>
+        /// Imports the specified data table.
+        /// </summary>
+        /// <param name="dataTable">The data table.</param>
+        /// <returns>
+        /// The number of imported records
+        /// </returns>
+        public int Import(DataTable dataTable)
         {
-            throw new NotImplementedException();
+            DbServiceContext dbServiceContext = DatabaseInitializationService.GetDbServiceContext();
+
+            using (dbServiceContext)
+            {
+                int count = dbServiceContext.Issues.Count();
+
+                if (count > 0)
+                {
+                    return 0;
+                }
+
+                int recordCount = 0;
+
+                foreach (DataRow row in dataTable.Rows)
+                {
+                    Issue issue = new Issue
+                    {
+                        ImportId = Convert.ToInt32(row["ID"].ToString()),
+                        Tags = row["Tags"].ToString(),
+                        Description = row["Description"].ToString(),
+                        Suggestions = new List<Suggestion>()
+                    };
+
+                    string value = row["DueDate"].ToString();
+
+                    if (value != null)
+                    {
+                        issue.DueDate = DateTime.Now.Date.AddDays(Convert.ToInt32(value));
+                    }
+
+                    recordCount++;
+                }
+
+                if (recordCount > 0)
+                {
+                    dbServiceContext.SaveChanges();
+                }
+
+                return recordCount;
+            }
         }
     }
 }
