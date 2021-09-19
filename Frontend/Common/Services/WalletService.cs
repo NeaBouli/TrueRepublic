@@ -44,7 +44,7 @@ namespace Common.Services
 
             using (dbServiceContext)
             {
-                TransactionType transactionType = GetTransActionType(dbServiceContext, transactionTypeName);
+                TransactionType transactionType = GetTransactionType(dbServiceContext, transactionTypeName);
 
                 Wallet wallet = GetWalletForUserId(dbServiceContext, userId);
 
@@ -65,6 +65,34 @@ namespace Common.Services
             {
                 return GetWalletForUserId(dbServiceContext, userId);
             }
+        }
+
+        public void AddTransaction(Guid userId, TransactionTypeNames transactionTypeName, Guid? transactionId)
+        {
+            if (!HasEnoughFundingForTransaction(userId, transactionTypeName))
+            {
+                throw new InvalidOperationException(Resource.ErrorNotEnoughFounding);
+            }
+
+            Wallet wallet = GetWalletForUser(userId);
+
+            if (wallet == null)
+            {
+                throw new InvalidOperationException($"Wallet for user {userId} not found");
+            }
+
+            TransactionTypeService transactionTypeService = new TransactionTypeService();
+            TransactionType transactionType = transactionTypeService.GetTransactionType(transactionTypeName);
+
+            WalletTransaction walletTransaction = new WalletTransaction
+            {
+                Balance = transactionType.Fee,
+                TransactionId = transactionId,
+                TransactionType = transactionType
+            };
+
+            WalletTransactionService walletTransactionService = new WalletTransactionService();
+            walletTransactionService.AddWalletTransaction(wallet, walletTransaction);
         }
 
         /// <summary>
@@ -128,7 +156,7 @@ namespace Common.Services
         /// <param name="transactionTypeName">Name of the transaction type.</param>
         /// <returns>The transaction type</returns>
         /// <exception cref="System.InvalidOperationException">Will be thrown if not found</exception>
-        private static TransactionType GetTransActionType(DbServiceContext dbServiceContext, TransactionTypeNames transactionTypeName)
+        private static TransactionType GetTransactionType(DbServiceContext dbServiceContext, TransactionTypeNames transactionTypeName)
         {
             TransactionType transactionType = dbServiceContext.TransactionTypes
                 .FirstOrDefault(t => t.Name == transactionTypeName.ToString());

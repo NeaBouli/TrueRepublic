@@ -6,6 +6,9 @@ using System.Linq;
 
 namespace Common.Entities
 {
+    // TODO: what status can an issue have: staking, voting, closed
+    // TODO: who changes the status at which condition
+
     /// <summary>
     /// Implementation of the issue class
     /// </summary>
@@ -98,15 +101,6 @@ namespace Common.Entities
         /// </value>
         [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
         public DateTime CreateDate { get; set; }
-
-        /// <summary>
-        /// Gets the error message.
-        /// </summary>
-        /// <value>
-        /// The error message.
-        /// </value>
-        [NotMapped]
-        public string ErrorMessage { get; private set; }
 
         /// <summary>
         /// Gets the suggestions.
@@ -206,64 +200,6 @@ namespace Common.Entities
             }
 
             return Suggestions.OrderByDescending(s => s.StakeCount).ThenBy(t => t.CreateDate).Take(limit).ToList();
-        }
-
-        /// <summary>
-        /// Returns true if ... is valid.
-        /// </summary>
-        /// <returns>
-        ///   <c>true</c> if this instance is valid; otherwise, <c>false</c>.
-        /// </returns>
-        public bool IsValid()
-        {
-            // TODO: put into service - entity should be data only
-
-            if (string.IsNullOrEmpty(Tags))
-            {
-                ErrorMessage = "Tags are required";
-                return false;
-            }
-
-            if (string.IsNullOrEmpty(Title))
-            {
-                ErrorMessage = "Title is required";
-                return false;
-            }
-
-            if (string.IsNullOrEmpty(Description))
-            {
-                ErrorMessage = "Description is required";
-                return false;
-            }
-
-            if (!string.IsNullOrEmpty(Tags) && Tags.Length < 5)
-            {
-                ErrorMessage = "Tags must be >= 5 characters";
-                return false;
-            }
-
-            if (!string.IsNullOrEmpty(Title) && Title.Length < 5)
-            {
-                ErrorMessage = "Title must be >= 5 characters";
-                return false;
-            }
-
-            if (!string.IsNullOrEmpty(Description) && Description.Length < 5)
-            {
-                ErrorMessage = "Description must be >= 5 characters";
-                return false;
-            }
-
-            double differenceDays = DueDate.Subtract(DateTime.Now).TotalDays;
-
-            if (differenceDays < 5)
-            {
-                ErrorMessage = "Due Date must be at least 5 days in the future";
-                return false;
-            }
-
-            ErrorMessage = string.Empty;
-            return true;
         }
     }
 }

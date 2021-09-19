@@ -69,7 +69,8 @@ namespace Common.Services
 
         private void ImportIssues(DataTable dataTable)
         {
-            throw new NotImplementedException();
+            IssueService issueService = new IssueService();
+            OnTableImported(new NameCountEventArgs("Issues", issueService.Import(dataTable)));
         }
 
         /// <summary>

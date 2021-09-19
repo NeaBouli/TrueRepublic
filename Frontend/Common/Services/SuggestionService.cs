@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using Common.Data;
 using Common.Entities;
@@ -12,6 +13,11 @@ namespace Common.Services
     /// </summary>
     public class SuggestionService
     {
+        /// <summary>
+        /// Gets the suggestions for issue.
+        /// </summary>
+        /// <param name="issueId">The issue identifier.</param>
+        /// <returns></returns>
         public List<Suggestion> GetSuggestionsForIssue(Guid issueId)
         {
             DbServiceContext dbServiceContext = DatabaseInitializationService.GetDbServiceContext();
@@ -27,67 +33,9 @@ namespace Common.Services
                     return null;
                 }
 
-                SuggestionService.UpdateStakes(issue.Suggestions);
+                UpdateStakes(issue.Suggestions);
 
                 return issue.Suggestions;
-            }
-        }
-
-        /// <summary>
-        /// Rolls the back invalid staked suggestions.
-        /// </summary>
-        public void RollBackInvalidStakedSuggestions()
-        {
-            DbServiceContext dbServiceContext = DatabaseInitializationService.GetDbServiceContext();
-
-            using (dbServiceContext)
-            {
-                List<StakedSuggestion> invalidStakedSuggestions =
-                    dbServiceContext.StakedSuggestions.Where(s => s.IsExpired).ToList();
-
-                if (invalidStakedSuggestions.Count == 0)
-                {
-                    return;
-                }
-
-                List<Wallet> wallets = dbServiceContext.Wallets.ToList();
-
-                foreach (StakedSuggestion stakedSuggestion in invalidStakedSuggestions)
-                {
-                    foreach (Wallet wallet in wallets)
-                    {
-                        List<WalletTransaction> walletTransactionsToAdd = new List<WalletTransaction>();
-                        double balanceChange = 0;
-
-                        foreach (WalletTransaction walletTransaction in wallet.WalletTransactions)
-                        {
-                            if (walletTransaction.TransactionId != null &&
-                                walletTransaction.TransactionId.ToString() == stakedSuggestion.Id.ToString() &&
-                                walletTransaction.TransactionType.Name ==
-                                TransactionTypeNames.StakeSuggestion.ToString())
-                            {
-                                WalletTransaction walletTransactionToAdd = new WalletTransaction
-                                {
-                                    Balance = (-1) * walletTransaction.Balance,
-                                    CreateDate = DateTime.Now,
-                                    TransactionId = walletTransaction.TransactionId
-                                };
-                                walletTransactionToAdd.TransactionType = new TransactionType
-                                {
-                                    Name = TransactionTypeNames.StakeSuggestionRollback.ToString(),
-                                    Id = Guid.NewGuid(),
-                                    Fee = walletTransactionToAdd.Balance
-                                };
-
-                                balanceChange += walletTransactionToAdd.Balance;
-                                walletTransactionsToAdd.Add(walletTransactionToAdd);
-                            }
-                        }
-
-                        wallet.WalletTransactions.AddRange(walletTransactionsToAdd);
-                        wallet.TotalBalance += balanceChange;
-                    }
-                }
             }
         }
 
@@ -111,6 +59,11 @@ namespace Common.Services
                     suggestion.StakeCount = count;
                 }
             }
+        }
+
+        public int Import(DataTable dataTable)
+        {
+            throw new NotImplementedException();
         }
     }
 }

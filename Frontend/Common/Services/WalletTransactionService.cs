@@ -61,6 +61,23 @@ namespace Common.Services
         }
 
         /// <summary>
+        /// Adds the wallet transaction.
+        /// </summary>
+        /// <param name="wallet">The wallet.</param>
+        /// <param name="walletTransaction">The wallet transaction.</param>
+        public void AddWalletTransaction(Wallet wallet, WalletTransaction walletTransaction)
+        {
+            DbServiceContext dbServiceContext = DatabaseInitializationService.GetDbServiceContext();
+
+            using (dbServiceContext)
+            {
+                wallet.AddTransaction(walletTransaction);
+
+                dbServiceContext.SaveChanges();
+            }
+        }
+
+        /// <summary>
         /// Imports the specified data table.
         /// </summary>
         /// <param name="dataTable">The data table.</param>

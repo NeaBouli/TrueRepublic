@@ -17,6 +17,13 @@ namespace Common.Interfaces
         List<WalletTransaction> GetWalletTransactionsForUser(Guid userId, DateTime? fromDate = null, DateTime? toDate = null);
 
         /// <summary>
+        /// Adds the wallet transaction.
+        /// </summary>
+        /// <param name="wallet">The wallet.</param>
+        /// <param name="walletTransaction">The wallet transaction.</param>
+        void AddWalletTransaction(Wallet wallet, WalletTransaction walletTransaction);
+
+        /// <summary>
         /// Imports the specified data table.
         /// </summary>
         /// <param name="dataTable">The data table.</param>

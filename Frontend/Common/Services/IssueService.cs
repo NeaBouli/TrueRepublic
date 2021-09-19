@@ -94,7 +94,7 @@ namespace Common.Services
         /// </returns>
         public List<Issue> GetTopStakedIssues(int limit)
         {
-            List<Issue> issues = new List<Issue>(GetAllValidIssues());
+            List<Issue> issues = new List<Issue>(GetAllValidIssues(true, true));
 
             if (limit <= issues.Count)
             {
@@ -113,7 +113,7 @@ namespace Common.Services
         /// </returns>
         public List<Issue> GetTopStakedIssuesPercentage(decimal percentage)
         {
-            List<Issue> issues = new List<Issue>(GetAllValidIssues());
+            List<Issue> issues = new List<Issue>(GetAllValidIssues(true, true));
 
             if (percentage >= 100)
             {
@@ -140,7 +140,7 @@ namespace Common.Services
 
             List<Issue> issues = new List<Issue>();
 
-            foreach (Issue issue in GetAllValidIssues())
+            foreach (Issue issue in GetAllValidIssues(true, true))
             {
                 if (tagsList.Any(tag => issue.HasTag(tag)))
                 {
@@ -171,6 +171,14 @@ namespace Common.Services
             return issues.OrderByDescending(i => i.GetTotalStakeCount()).Take(limit).ToList();
         }
 
+        /// <summary>
+        /// Gets the top stakes issues percentage by tags.
+        /// </summary>
+        /// <param name="tags">The tags.</param>
+        /// <param name="percentage">The percentage.</param>
+        /// <returns>
+        /// The top staked issues in percent by tags
+        /// </returns>
         public List<Issue> GetTopStakesIssuesPercentageByTags(string tags, decimal percentage = 100)
         {
             List<Issue> issues = new List<Issue>(GetIssuesByTags(tags));
@@ -200,6 +208,13 @@ namespace Common.Services
         /// </exception>
         public Guid AddIssue(Issue issue, Guid userId)
         {
+            (bool valid, string errorMessage) = IsValid(issue);
+
+            if (!valid)
+            {
+                throw new InvalidOperationException(errorMessage);
+            }
+
             TransactionTypeService transactionTypeService = new TransactionTypeService();
             TransactionType transactionType = transactionTypeService.GetTransactionType(TransactionTypeNames.AddIssue);
 
@@ -228,6 +243,8 @@ namespace Common.Services
 
             wallet.AddTransaction(walletTransaction);
 
+            issue.Suggestions ??= new List<Suggestion>();
+
             DbServiceContext dbServiceContext = DatabaseInitializationService.GetDbServiceContext();
 
             using (dbServiceContext)
@@ -242,16 +259,32 @@ namespace Common.Services
         /// Gets the issue.
         /// </summary>
         /// <param name="issueId">The issue unique identifier.</param>
+        /// <param name="includeSuggestions">if set to <c>true</c> [with suggestions].</param>
         /// <returns>
         /// The issue for the given issue guid
         /// </returns>
-        public Issue GetIssue(Guid issueId)
+        public Issue GetIssue(Guid issueId, bool includeSuggestions = false)
         {
             DbServiceContext dbServiceContext = DatabaseInitializationService.GetDbServiceContext();
 
             using (dbServiceContext)
             {
-                return dbServiceContext.Issues.FirstOrDefault(i => i.Id.ToString() == issueId.ToString());
+                if (!includeSuggestions)
+                {
+                    return dbServiceContext.Issues
+                        .FirstOrDefault(i => i.Id.ToString() == issueId.ToString());
+                }
+
+                Issue issue = dbServiceContext.Issues
+                    .Include(i => i.Suggestions)
+                    .FirstOrDefault(i => i.Id.ToString() == issueId.ToString());
+
+                if (issue != null)
+                {
+                    SuggestionService.UpdateStakes(issue.Suggestions);
+                }
+
+                return issue;
             }
         }
 
@@ -304,6 +337,64 @@ namespace Common.Services
 
                 return recordCount;
             }
+        }
+
+        /// <summary>
+        /// Returns true if issue is valid.
+        /// </summary>
+        /// <param name="issue">The issue.</param>
+        /// <returns>
+        ///   <c>true</c> if this instance is valid; otherwise, <c>false</c>.
+        /// </returns>
+        private static (bool valid, string errorMessage) IsValid(Issue issue)
+        {
+            string errorMessage = string.Empty;
+
+            if (string.IsNullOrEmpty(issue.Tags))
+            {
+                errorMessage = Resource.ErrorTagsAreRequired;
+                return (false, errorMessage);
+            }
+
+            if (string.IsNullOrEmpty(issue.Title))
+            {
+                errorMessage = Resource.ErrorTitleIsRequired;
+                return (false, errorMessage);
+            }
+
+            if (string.IsNullOrEmpty(issue.Description))
+            {
+                errorMessage = Resource.ErrorDescriptionIsRequired;
+                return (false, errorMessage);
+            }
+
+            if (!string.IsNullOrEmpty(issue.Tags) && issue.Tags.Length < 5)
+            {
+                errorMessage = Resource.ErrorTagsNotLongEnough;
+                return (false, errorMessage);
+            }
+
+            if (!string.IsNullOrEmpty(issue.Title) && issue.Title.Length < 5)
+            {
+                errorMessage = Resource.ErrorTitleNotLongEnough;
+                return (false, errorMessage);
+            }
+
+            if (!string.IsNullOrEmpty(issue.Description) && issue.Description.Length < 5)
+            {
+                errorMessage = Resource.ErrorDescriptionNotLongEnough;
+                return (false, errorMessage);
+            }
+
+            double differenceDays = issue.DueDate.Subtract(DateTime.Now).TotalDays;
+
+            if (differenceDays < 5)
+            {
+                errorMessage = Resource.ErrorDueDateToShort;
+                return (false, errorMessage);
+            }
+
+            return (true, errorMessage);
         }
     }
 }

@@ -119,4 +119,28 @@
 	<data name="ErrorUserIdNotFound" xml:space="preserve">
 		<value>User Id {0} not found</value>
 	</data>
+	<data name="ErrorTagsAreRequired" xml:space="preserve">
+		<value>Tags are required</value>
+	</data>
+	<data name="ErrorTitleIsRequired" xml:space="preserve">
+		<value>Title is required</value>
+	</data>
+	<data name="ErrorDescriptionIsRequired" xml:space="preserve">
+		<value>Description is required</value>
+	</data>
+	<data name="ErrorTagsNotLongEnough" xml:space="preserve">
+		<value>Tags must be &gt;= 5 characters</value>
+	</data>
+	<data name="ErrorTitleNotLongEnough" xml:space="preserve">
+		<value>Title must be &gt;= 5 characters</value>
+	</data>
+	<data name="ErrorDescriptionNotLongEnough" xml:space="preserve">
+		<value>Description must be &gt;= 5 characters</value>
+	</data>
+	<data name="ErrorDueDateToShort" xml:space="preserve">
+		<value>Due Date must be at least 5 days in the future</value>
+	</data>
+	<data name="ErrorSuggestionAlreadyStakedForUser" xml:space="preserve">
+		<value>Suggestion is already staked for user</value>
+	</data>
 </root>

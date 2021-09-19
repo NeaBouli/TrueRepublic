@@ -70,11 +70,83 @@ namespace Common {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Description is required.
+        /// </summary>
+        internal static string ErrorDescriptionIsRequired {
+            get {
+                return ResourceManager.GetString("ErrorDescriptionIsRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Description must be &gt;= 5 characters.
+        /// </summary>
+        internal static string ErrorDescriptionNotLongEnough {
+            get {
+                return ResourceManager.GetString("ErrorDescriptionNotLongEnough", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Due Date must be at least 5 days in the future.
+        /// </summary>
+        internal static string ErrorDueDateToShort {
+            get {
+                return ResourceManager.GetString("ErrorDueDateToShort", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Not enough funding.
         /// </summary>
         internal static string ErrorNotEnoughFounding {
             get {
                 return ResourceManager.GetString("ErrorNotEnoughFounding", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Suggestion is already staked for user.
+        /// </summary>
+        internal static string ErrorSuggestionAlreadyStakedForUser {
+            get {
+                return ResourceManager.GetString("ErrorSuggestionAlreadyStakedForUser", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Tags are required.
+        /// </summary>
+        internal static string ErrorTagsAreRequired {
+            get {
+                return ResourceManager.GetString("ErrorTagsAreRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Tags must be &gt;= 5 characters.
+        /// </summary>
+        internal static string ErrorTagsNotLongEnough {
+            get {
+                return ResourceManager.GetString("ErrorTagsNotLongEnough", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Title is required.
+        /// </summary>
+        internal static string ErrorTitleIsRequired {
+            get {
+                return ResourceManager.GetString("ErrorTitleIsRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Title must be &gt;= 5 characters.
+        /// </summary>
+        internal static string ErrorTitleNotLongEnough {
+            get {
+                return ResourceManager.GetString("ErrorTitleNotLongEnough", resourceCulture);
             }
         }
         

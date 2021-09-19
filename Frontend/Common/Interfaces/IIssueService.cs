@@ -75,8 +75,11 @@ namespace Common.Interfaces
         /// Gets the issue.
         /// </summary>
         /// <param name="issueId">The issue unique identifier.</param>
-        /// <returns>The issue for the given issue guid</returns>
-        Issue GetIssue(Guid issueId);
+        /// <param name="includeSuggestions">if set to <c>true</c> [with suggestions].</param>
+        /// <returns>
+        /// The issue for the given issue guid
+        /// </returns>
+        Issue GetIssue(Guid issueId, bool includeSuggestions = false);
 
         /// <summary>
         /// Imports the specified data table.

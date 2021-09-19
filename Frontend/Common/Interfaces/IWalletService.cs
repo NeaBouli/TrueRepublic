@@ -30,6 +30,14 @@ namespace Common.Interfaces
         Wallet GetWalletForUser(Guid userId);
 
         /// <summary>
+        /// Adds the transaction.
+        /// </summary>
+        /// <param name="userId">The user identifier.</param>
+        /// <param name="transactionTypeName">Name of the transaction type.</param>
+        /// <param name="transactionId">The transaction identifier.</param>
+        void AddTransaction(Guid userId, TransactionTypeNames transactionTypeName, Guid? transactionId);
+
+        /// <summary>
         /// Imports the specified data table.
         /// </summary>
         /// <param name="dataTable">The data table.</param>
