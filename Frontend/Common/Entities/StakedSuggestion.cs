@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Common.Entities
 {
@@ -20,6 +21,7 @@ namespace Common.Entities
         /// <value>
         /// The create date.
         /// </value>
+        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
         public DateTime CreateDate { get; set; }
 
         /// <summary>
@@ -36,6 +38,7 @@ namespace Common.Entities
         /// <value>
         ///   <c>true</c> if this instance is expired; otherwise, <c>false</c>.
         /// </value>
+        [NotMapped]
         public bool IsExpired => ValidTill < DateTime.Now;
 
         /// <summary>

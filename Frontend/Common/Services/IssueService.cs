@@ -317,15 +317,18 @@ namespace Common.Services
                         ImportId = Convert.ToInt32(row["ID"].ToString()),
                         Tags = row["Tags"].ToString(),
                         Description = row["Description"].ToString(),
+                        Title = row["Title"].ToString(),
                         Suggestions = new List<Suggestion>()
                     };
 
-                    string value = row["DueDate"].ToString();
+                    string value = row["DueDateDays"].ToString();
 
                     if (value != null)
                     {
                         issue.DueDate = DateTime.Now.Date.AddDays(Convert.ToInt32(value));
                     }
+
+                    dbServiceContext.Issues.AddRange(issue);
 
                     recordCount++;
                 }

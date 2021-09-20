@@ -12,6 +12,14 @@ namespace Common.Entities
     public class User
     {
         /// <summary>
+        /// Initializes a new instance of the <see cref="User"/> class.
+        /// </summary>
+        public User()
+        {
+            Id = Guid.NewGuid();
+        }
+
+        /// <summary>
         /// Gets or sets the identifier.
         /// </summary>
         /// <value>
@@ -55,6 +63,14 @@ namespace Common.Entities
         /// The wallet.
         /// </value>
         public Wallet Wallet { get; set; }
+
+        /// <summary>
+        /// Gets or sets the wallet identifier.
+        /// </summary>
+        /// <value>
+        /// The wallet identifier.
+        /// </value>
+        public Guid? WalletId { get; set; }
 
         /// <summary>
         /// Gets or sets the staked suggestions.

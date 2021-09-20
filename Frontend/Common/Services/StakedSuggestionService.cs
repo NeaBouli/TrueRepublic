@@ -56,8 +56,6 @@ namespace Common.Services
             // TODO: move into StakedSuggestionService
             // TODO: under which conditions is this triggered and why is this needed?
 
-            // TODO: would be much easier if we track the user id
-
             DbServiceContext dbServiceContext = DatabaseInitializationService.GetDbServiceContext();
 
             using (dbServiceContext)
@@ -72,53 +70,20 @@ namespace Common.Services
 
                 WalletService walletService = new WalletService();
 
-                foreach (StakedSuggestion stakedSuggestion in invalidStakedSuggestions)
+                foreach (User user in dbServiceContext.User.Include(u => u.StakedSuggestions).ToList())
                 {
-                    // TODO: implementation
-                }
-
-                throw new NotImplementedException();
-
-                /*
-                List<Wallet> wallets = dbServiceContext.Wallets.ToList();
-
-                foreach (StakedSuggestion stakedSuggestion in invalidStakedSuggestions)
-                {
-                    foreach (Wallet wallet in wallets)
+                    foreach (StakedSuggestion stakedSuggestion in invalidStakedSuggestions)
                     {
-                        List<WalletTransaction> walletTransactionsToAdd = new List<WalletTransaction>();
-                        double balanceChange = 0;
-
-                        foreach (WalletTransaction walletTransaction in wallet.WalletTransactions)
+                        if (!user.StakedSuggestions.Contains(stakedSuggestion))
                         {
-                            if (walletTransaction.TransactionId != null &&
-                                walletTransaction.TransactionId.ToString() == stakedSuggestion.Id.ToString() &&
-                                walletTransaction.TransactionType.Name ==
-                                TransactionTypeNames.StakeSuggestion.ToString())
-                            {
-                                WalletTransaction walletTransactionToAdd = new WalletTransaction
-                                {
-                                    Balance = (-1) * walletTransaction.Balance,
-                                    CreateDate = DateTime.Now,
-                                    TransactionId = walletTransaction.TransactionId
-                                };
-                                walletTransactionToAdd.TransactionType = new TransactionType
-                                {
-                                    Name = TransactionTypeNames.StakeSuggestionRollback.ToString(),
-                                    Id = Guid.NewGuid(),
-                                    Fee = walletTransactionToAdd.Balance
-                                };
-
-                                balanceChange += walletTransactionToAdd.Balance;
-                                walletTransactionsToAdd.Add(walletTransactionToAdd);
-                            }
+                            continue;
                         }
-
-                        wallet.WalletTransactions.AddRange(walletTransactionsToAdd);
-                        wallet.TotalBalance += balanceChange;
-                    }             
+                        
+                        Guid userId = user.Id;
+                        Guid suggestionId = stakedSuggestion.Suggestion.Id;
+                        walletService.AddTransaction(userId, TransactionTypeNames.StakeSuggestionRollback, suggestionId);
+                    }
                 }
-                */
             }
         }
 

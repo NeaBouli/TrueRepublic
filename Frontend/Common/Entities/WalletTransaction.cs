@@ -27,6 +27,15 @@ namespace Common.Entities
         public Guid Id { get; set; }
 
         /// <summary>
+        /// Gets or sets the wallet identifier.
+        /// </summary>
+        /// <value>
+        /// The wallet identifier.
+        /// </value>
+        [Required]
+        public Guid WalletId { get; set; }
+
+        /// <summary>
         /// Gets or sets the import identifier.
         /// </summary>
         /// <value>

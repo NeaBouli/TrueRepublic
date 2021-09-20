@@ -48,7 +48,12 @@ namespace Common.Services
 
                 Wallet wallet = GetWalletForUserId(dbServiceContext, userId);
 
-                return wallet.TotalBalance >= transactionType.Fee;
+                if (wallet == null)
+                {
+                    throw new InvalidOperationException($"Wallet for user {userId} not found");
+                }
+
+                return wallet.TotalBalance + transactionType.Fee >= 0;
             }
         }
 
@@ -125,25 +130,27 @@ namespace Common.Services
                         .Include(u => u.Wallet)
                         .FirstOrDefault(u => u.ImportId == id);
 
-                    if (user != null)
+                    if (user != null && user.Wallet == null)
                     {
                         Wallet wallet = new Wallet
                         {
                             ImportId = Convert.ToInt32(row["ID"].ToString()),
-                            TotalBalance = Convert.ToDouble(row["TotalBalance"].ToString()),
-                            WalletTransactions = new List<WalletTransaction>()
+                            TotalBalance = Convert.ToDouble(row["TotalBalance"].ToString())
                         };
 
-                        user.Wallet = wallet;
+                        dbServiceContext.Wallets.Add(wallet);
+                        user.WalletId = wallet.Id;
+
+                        dbServiceContext.SaveChanges();
 
                         recordCount++;
                     }
                 }
 
-                if (recordCount > 0)
-                {
-                    dbServiceContext.SaveChanges();
-                }
+                //if (recordCount > 0)
+                //{
+                //    dbServiceContext.SaveChanges();
+                //}
 
                 return recordCount;
             }

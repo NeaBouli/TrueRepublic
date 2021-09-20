@@ -53,7 +53,7 @@ namespace Common.Entities
         /// </returns>
         public bool HasEnoughFunding(double balance)
         {
-            return TotalBalance >= Math.Abs(balance);
+            return TotalBalance + balance >= 0;
         }
 
         /// <summary>

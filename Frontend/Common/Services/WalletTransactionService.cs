@@ -110,7 +110,7 @@ namespace Common.Services
                         .Include(u => u.Wallet.WalletTransactions)
                         .FirstOrDefault(u => u.Wallet.ImportId == id);
 
-                    if (user != null)
+                    if (user != null && user.Wallet != null)
                     {
                         string key = row["TransactionTypeID"].ToString();
 
@@ -122,10 +122,17 @@ namespace Common.Services
                             {
                                 ImportId = Convert.ToInt32(row["ID"].ToString()),
                                 Balance = Convert.ToDouble(row["Balance"].ToString()),
-                                TransactionType = transactionType
+                                TransactionType = transactionType,
+                                WalletId = user.Wallet.Id
                             };
 
-                            user.Wallet.WalletTransactions.Add(walletTransaction);
+                            if (dataTable.Columns.Contains("TransactionID") && 
+                                !string.IsNullOrEmpty(row["TransactionID"].ToString()))
+                            {
+                                // TODO: add reference to transaction here
+                            }
+
+                            dbServiceContext.WalletTransactions.Add(walletTransaction);
 
                             recordCount++;
                         }

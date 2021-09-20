@@ -20,9 +20,8 @@ namespace TestConsole
             DatabaseInitializationService.DbConnectString = dbConnectString;
             DatabaseInitializationService.CreateDbIfNotExisting();
 
-
-
-            // TODO: import test data from excels if db was created - ask user which one to import
+            ExcelImporterService excelImporterService = new ExcelImporterService();
+            excelImporterService.ImportExcelFile("TestData.xlsx");
 
             // maybe put this one directly into the Gui
             // TODO: simulation: get issues, create issue, get suggestions, create suggestion, stake, show wallet, show transaction types

@@ -42,7 +42,7 @@ namespace Common.Entities
         /// <value>
         /// The short description.
         /// </value>
-        public string ShortDescription { get; set; }
+        public string Title { get; set; }
 
         /// <summary>
         /// Gets or sets the description.
@@ -67,6 +67,7 @@ namespace Common.Entities
         /// <value>
         /// The stake count.
         /// </value>
+        [NotMapped]
         public int StakeCount { get; set; }
 
         /// <summary>
@@ -75,6 +76,7 @@ namespace Common.Entities
         /// <value>
         ///   <c>true</c> if this instance is staked; otherwise, <c>false</c>.
         /// </value>
+        [NotMapped]
         public bool IsStaked => StakeCount > 0;
     }
 }

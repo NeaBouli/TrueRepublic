@@ -69,9 +69,19 @@ namespace Common.Services
                     StakedSuggestions = new List<StakedSuggestion>()
                 };
 
-                string uniqueExternalUserId = row["UniqueExternalUserId"].ToString();
-                user.UniqueExternalUserId = string.IsNullOrEmpty(uniqueExternalUserId) ?
-                    Guid.NewGuid() : Guid.Parse(uniqueExternalUserId);
+                if (dataTable.Columns.Contains("UniqueExternalUserId"))
+                {
+                    var uniqueExternalUserId = row["UniqueExternalUserId"].ToString();
+
+                    if (!string.IsNullOrEmpty(uniqueExternalUserId))
+                    {
+                        user.UniqueExternalUserId = Guid.Parse(uniqueExternalUserId);
+                    }
+                }
+                else
+                {
+                    user.UniqueExternalUserId = Guid.NewGuid();
+                }
 
                 Add(user);
 

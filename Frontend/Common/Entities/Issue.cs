@@ -91,6 +91,7 @@ namespace Common.Entities
         /// <value>
         /// The due date.
         /// </value>
+        [Required]
         public DateTime DueDate { get; set; }
 
         /// <summary>
@@ -99,7 +100,7 @@ namespace Common.Entities
         /// <value>
         /// The create date.
         /// </value>
-        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
+        [Required]
         public DateTime CreateDate { get; set; }
 
         /// <summary>
