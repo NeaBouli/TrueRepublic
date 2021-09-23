@@ -59,6 +59,8 @@ namespace Common.Services
         /// </returns>
         public List<Issue> GetAllValidIssues(bool includeSuggestions = false, bool onlyStaked = false)
         {
+            // TODO: DueDate can be null
+
             DbServiceContext dbServiceContext = DatabaseInitializationService.GetDbServiceContext();
 
             using (dbServiceContext)
@@ -108,10 +110,11 @@ namespace Common.Services
         /// Gets the top staked issues percent.
         /// </summary>
         /// <param name="percentage">The percentage.</param>
+        /// <param name="limitNumber">The limit number.</param>
         /// <returns>
         /// The top stacked issues depending on a percentage
         /// </returns>
-        public List<Issue> GetTopStakedIssuesPercentage(decimal percentage)
+        public List<Issue> GetTopStakedIssuesPercentage(decimal percentage, int limitNumber = 0)
         {
             List<Issue> issues = new List<Issue>(GetAllValidIssues(true, true));
 
@@ -123,6 +126,11 @@ namespace Common.Services
             decimal count = Convert.ToDecimal(issues.Count);
 
             int limit = Convert.ToInt32(Math.Round(percentage / 100 * count));
+
+            if (limitNumber > 0 && limit > limitNumber)
+            {
+                limit = limitNumber;
+            }
 
             return GetTopStakedIssues(limit);
         }
@@ -176,10 +184,11 @@ namespace Common.Services
         /// </summary>
         /// <param name="tags">The tags.</param>
         /// <param name="percentage">The percentage.</param>
+        /// <param name="limitNumber">The limit number.</param>
         /// <returns>
         /// The top staked issues in percent by tags
         /// </returns>
-        public List<Issue> GetTopStakesIssuesPercentageByTags(string tags, decimal percentage = 100)
+        public List<Issue> GetTopStakesIssuesPercentageByTags(string tags, decimal percentage = 100, int limitNumber = 0)
         {
             List<Issue> issues = new List<Issue>(GetIssuesByTags(tags));
 
@@ -191,6 +200,11 @@ namespace Common.Services
             decimal count = Convert.ToDecimal(issues.Count);
 
             int limit = Convert.ToInt32(Math.Round(percentage / 100 * count));
+
+            if (limitNumber > 0 && limit > limitNumber)
+            {
+                limit = limitNumber;
+            }
 
             return GetTopStakedIssues(limit);
         }
@@ -389,9 +403,9 @@ namespace Common.Services
                 return (false, errorMessage);
             }
 
-            double differenceDays = issue.DueDate.Subtract(DateTime.Now).TotalDays;
+            double? differenceDays = issue.DueDate?.Subtract(DateTime.Now).TotalDays;
 
-            if (differenceDays < 5)
+            if (differenceDays is < 5)
             {
                 errorMessage = Resource.ErrorDueDateToShort;
                 return (false, errorMessage);

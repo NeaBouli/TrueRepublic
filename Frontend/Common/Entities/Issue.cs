@@ -85,14 +85,15 @@ namespace Common.Entities
         [Required]
         public string Description { get; set; }
 
+        // TODO: remove and put in interval (snapshot)
+
         /// <summary>
         /// Gets or sets the due date.
         /// </summary>
         /// <value>
         /// The due date.
         /// </value>
-        [Required]
-        public DateTime DueDate { get; set; }
+        public DateTime? DueDate { get; set; }
 
         /// <summary>
         /// Gets or sets the create date.

@@ -34,18 +34,67 @@ namespace Common.Services
         /// </summary>
         /// <param name="suggestionId">The suggestion identifier.</param>
         /// <param name="userId">The user identifier.</param>
-        /// <exception cref="System.InvalidOperationException"></exception>
+        /// <exception cref="System.InvalidOperationException">ErrorSuggestionAlreadyStakedForUser</exception>
         public void Stake(Guid suggestionId, Guid userId)
         {
+            // TODO: refactor
+
+            // old code
             List<StakedSuggestion> stakedSuggestionsForUser = GetStakedSuggestionsForUser(userId);
 
-            if (stakedSuggestionsForUser.Any(stakedSuggestion => stakedSuggestion.Suggestion.Id.ToString() == suggestionId.ToString()))
+            if (stakedSuggestionsForUser.Any(stakedSuggestion =>
+                stakedSuggestion.Suggestion.Id.ToString() == suggestionId.ToString()))
             {
                 throw new InvalidOperationException(Resource.ErrorSuggestionAlreadyStakedForUser);
             }
 
             WalletService walletService = new WalletService();
-            walletService.AddTransaction(userId, TransactionTypeNames.StakeSuggestion, suggestionId);
+
+            DbServiceContext dbServiceContext = DatabaseInitializationService.GetDbServiceContext();
+
+            using (dbServiceContext)
+            {
+
+                Guid? issueId =
+                    stakedSuggestionsForUser.FirstOrDefault(s => s.Suggestion.Id.ToString() == suggestionId.ToString())
+                        ?.IssueId;
+
+                if (issueId != null)
+                {
+                    StakedSuggestion existingStakedSuggestion =
+                        stakedSuggestionsForUser.FirstOrDefault(
+                            s => s.IssueId.ToString() == issueId.ToString() &&
+                                 suggestionId.ToString() != s.Suggestion.Id.ToString());
+
+                    if (existingStakedSuggestion != null)
+                    {
+                        walletService.AddTransaction(userId, TransactionTypeNames.StakeSuggestionRollback,
+                            suggestionId);
+
+
+                        dbServiceContext.Remove(existingStakedSuggestion);
+                    }
+                }
+
+                walletService.AddTransaction(userId, TransactionTypeNames.StakeSuggestion, suggestionId);
+
+                // TODO: add staked suggestion
+                StakedSuggestion stakedSuggestion = new StakedSuggestion();
+                stakedSuggestion.Suggestion =
+                    dbServiceContext.Suggestions.FirstOrDefault(s => s.Id.ToString() == suggestionId.ToString());
+                if (stakedSuggestion.Suggestion != null)
+                {
+                    stakedSuggestion.IssueId = stakedSuggestion.Suggestion.IssueId;
+                }
+
+                User user = dbServiceContext.User.FirstOrDefault(u => u.Id.ToString() == userId.ToString());
+                if (user != null)
+                {
+                    user.StakedSuggestions.Add(stakedSuggestion);
+                }
+
+                dbServiceContext.SaveChanges();
+            }
         }
 
         /// <summary>
@@ -53,8 +102,8 @@ namespace Common.Services
         /// </summary>
         public void RollBackInvalidStakedSuggestions()
         {
-            // TODO: move into StakedSuggestionService
             // TODO: under which conditions is this triggered and why is this needed?
+            // TODO: refactor
 
             DbServiceContext dbServiceContext = DatabaseInitializationService.GetDbServiceContext();
 

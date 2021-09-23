@@ -3,25 +3,46 @@
   <Class Name="Common.Entities.Issue">
     <Position X="4" Y="1.25" Width="2.5" />
     <TypeIdentifier>
-      <HashCode>AQQCAACAQAAgAGIAAAgEQAAAAAAAAEAAAAABAAAAAAA=</HashCode>
+      <HashCode>AAQCAACAQAAgAGIAAAAEQAEAAAAAAEAAAAABAAAAAAA=</HashCode>
       <FileName>Entities\Issue.cs</FileName>
     </TypeIdentifier>
     <ShowAsCollectionAssociation>
-      <Property Name="Suggestions" />
+      <Field Name="Suggestions" />
     </ShowAsCollectionAssociation>
   </Class>
   <Class Name="Common.Entities.Suggestion">
     <Position X="7.75" Y="1.75" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAACAAAAAAggAAAAAAAAAAAAIAAAAAAAAAABABAAAAA=</HashCode>
+      <HashCode>AAACAAAAAAAgAEAAAAAAAAEAIAAAAAAAAAABABAAAAA=</HashCode>
       <FileName>Entities\Suggestion.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="Common.Entities.User">
     <Position X="4" Y="5.25" Width="2.5" />
     <TypeIdentifier>
-      <HashCode>AAACAAAAAAAAAIAAAAAAAAAAACAAAIAAAQAAAAAAAAA=</HashCode>
+      <HashCode>AAADAAAAAAAAAIAAAAAAAAEAACAAAIAAAQAAAAAAAAA=</HashCode>
       <FileName>Entities\User.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Common.Entities.StakedSuggestion">
+    <Position X="7.5" Y="5.25" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAIAAAAAAAAAAAAAAEAAAAAAAAAAAABAAAAggA=</HashCode>
+      <FileName>Entities\StakedSuggestion.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Common.Entities.Wallet">
+    <Position X="10" Y="1.75" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAAAEAAAAAAAAAEACAAABBAAAAAAAAAAAAA=</HashCode>
+      <FileName>Entities\Wallet.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Common.Entities.WalletTransaction">
+    <Position X="10.5" Y="5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAADAAAAAAAAAAAAACgAAAEAAAAAAAEAAAABAAAAAAA=</HashCode>
+      <FileName>Entities\WalletTransaction.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Font Name="Segoe UI" Size="9" />

@@ -29,6 +29,15 @@ namespace Common.Entities
         public Guid Id { get; set; }
 
         /// <summary>
+        /// Gets or sets the issue identifier.
+        /// </summary>
+        /// <value>
+        /// The issue identifier.
+        /// </value>
+        [Required]
+        public Guid IssueId { get; set; }
+
+        /// <summary>
         /// Gets or sets the import identifier.
         /// </summary>
         /// <value>

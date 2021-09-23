@@ -33,10 +33,11 @@ namespace Common.Interfaces
         /// Gets the top staked issues percent.
         /// </summary>
         /// <param name="percentage">The percentage.</param>
+        /// <param name="limitNumber">The limit number.</param>
         /// <returns>
         /// The top stacked issues depending on a percentage
         /// </returns>
-        List<Issue> GetTopStakedIssuesPercentage(decimal percentage);
+        List<Issue> GetTopStakedIssuesPercentage(decimal percentage, int limitNumber = 0);
 
         /// <summary>
         /// Gets the issues by tags.
@@ -58,8 +59,11 @@ namespace Common.Interfaces
         /// </summary>
         /// <param name="tags">The tags.</param>
         /// <param name="percentage">The percentage.</param>
-        /// <returns>The top staked issues in percent by tags</returns>
-        List<Issue> GetTopStakesIssuesPercentageByTags(string tags, decimal percentage = 100);
+        /// <param name="limitNumber">The limit number.</param>
+        /// <returns>
+        /// The top staked issues in percent by tags
+        /// </returns>
+        List<Issue> GetTopStakesIssuesPercentageByTags(string tags, decimal percentage = 100, int limitNumber = 0);
 
         /// <summary>
         /// Adds the issue.

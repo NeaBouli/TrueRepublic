@@ -59,6 +59,15 @@ namespace Common.Entities
         public int? ImportId { get; set; }
 
         /// <summary>
+        /// Gets or sets the issue identifier.
+        /// </summary>
+        /// <value>
+        /// The issue identifier.
+        /// </value>
+        [Required]
+        public Guid IssueId { get; set; }
+
+        /// <summary>
         /// Gets or sets the suggestion.
         /// </summary>
         /// <value>
