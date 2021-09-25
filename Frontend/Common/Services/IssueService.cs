@@ -4,7 +4,6 @@ using System.Data;
 using System.Linq;
 using Common.Data;
 using Common.Entities;
-using Common.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace Common.Services
@@ -12,8 +11,7 @@ namespace Common.Services
     /// <summary>
     /// Implementation of the issue service
     /// </summary>
-    /// <seealso cref="Common.Interfaces.IIssueService" />
-    public class IssueService : IIssueService
+    public class IssueService
     {
         /// <summary>
         /// Gets all issues.
@@ -21,82 +19,73 @@ namespace Common.Services
         /// <returns>
         /// Gets all issues
         /// </returns>
-        public List<Issue> GetAllIssues(bool includeSuggestions = false)
+        public List<Issue> GetAllIssues(DbServiceContext dbServiceContext, bool includeSuggestions = false)
         {
-            DbServiceContext dbServiceContext = DatabaseInitializationService.GetDbServiceContext();
+            List<Issue> issues;
 
-            using (dbServiceContext)
+            if (!includeSuggestions)
             {
-                List<Issue> issues;
-
-                if (!includeSuggestions)
-                {
-                    issues = dbServiceContext.Issues.ToList();
-                }
-                else
-                {
-                    issues = dbServiceContext.Issues
-                        .Include(i => i.Suggestions)
-                        .ToList();
-
-                    foreach (Issue issue in issues)
-                    {
-                        SuggestionService.UpdateStakes(issue.Suggestions);
-                    }
-                }
-
-                return issues;
+                issues = dbServiceContext.Issues.ToList();
             }
+            else
+            {
+                issues = dbServiceContext.Issues
+                    .Include(i => i.Suggestions)
+                    .ToList();
+
+                foreach (Issue issue in issues)
+                {
+                    SuggestionService.UpdateStakes(dbServiceContext, issue.Suggestions);
+                }
+            }
+
+            return issues;
         }
 
         /// <summary>
         /// Gets all valid issues.
         /// </summary>
-        /// <param name="includeSuggestions"></param>
-        /// <param name="onlyStaked"></param>
+        /// <param name="dbServiceContext">The database service context.</param>
+        /// <param name="includeSuggestions">if set to <c>true</c> [include suggestions].</param>
+        /// <param name="onlyStaked">if set to <c>true</c> [only staked].</param>
         /// <returns>
         /// All valid issues that contain at least one stake
         /// </returns>
-        public List<Issue> GetAllValidIssues(bool includeSuggestions = false, bool onlyStaked = false)
+        public List<Issue> GetAllValidIssues(DbServiceContext dbServiceContext, bool includeSuggestions = false, bool onlyStaked = false)
         {
-            // TODO: DueDate can be null
-
-            DbServiceContext dbServiceContext = DatabaseInitializationService.GetDbServiceContext();
-
-            using (dbServiceContext)
+            if (!includeSuggestions)
             {
-                if (!includeSuggestions)
-                {
-                    return dbServiceContext.Issues
-                        .Where(issue => issue.DueDate >= DateTime.Now)
-                        .ToList();
-                }
-
-                List<Issue> issues = dbServiceContext.Issues
-                    .Include(i => i.Suggestions)
+                return dbServiceContext.Issues
                     .Where(issue => issue.DueDate >= DateTime.Now)
                     .ToList();
-
-                foreach (Issue issue in issues)
-                {
-                    SuggestionService.UpdateStakes(issue.Suggestions);
-                }
-
-                return !onlyStaked ? 
-                    issues : issues.Where(issue => issue.Suggestions.Any(suggestion => suggestion.IsStaked)).ToList();
             }
+
+            List<Issue> issues = dbServiceContext.Issues
+                .Include(i => i.Suggestions)
+                .Where(issue => issue.DueDate >= DateTime.Now)
+                .ToList();
+
+            foreach (Issue issue in issues)
+            {
+                SuggestionService.UpdateStakes(dbServiceContext, issue.Suggestions);
+            }
+
+            return !onlyStaked
+                ? issues
+                : issues.Where(issue => issue.Suggestions.Any(suggestion => suggestion.IsStaked)).ToList();
         }
 
         /// <summary>
         /// Gets the top staked issues.
         /// </summary>
+        /// <param name="dbServiceContext">The database service context.</param>
         /// <param name="limit">The limit.</param>
         /// <returns>
         /// The top staked issues depending on the limit
         /// </returns>
-        public List<Issue> GetTopStakedIssues(int limit)
+        public List<Issue> GetTopStakedIssues(DbServiceContext dbServiceContext, int limit)
         {
-            List<Issue> issues = new List<Issue>(GetAllValidIssues(true, true));
+            List<Issue> issues = new List<Issue>(GetAllValidIssues(dbServiceContext, true, true));
 
             if (limit <= issues.Count)
             {
@@ -109,14 +98,15 @@ namespace Common.Services
         /// <summary>
         /// Gets the top staked issues percent.
         /// </summary>
+        /// <param name="dbServiceContext">The database service context.</param>
         /// <param name="percentage">The percentage.</param>
         /// <param name="limitNumber">The limit number.</param>
         /// <returns>
         /// The top stacked issues depending on a percentage
         /// </returns>
-        public List<Issue> GetTopStakedIssuesPercentage(decimal percentage, int limitNumber = 0)
+        public List<Issue> GetTopStakedIssuesPercentage(DbServiceContext dbServiceContext, decimal percentage, int limitNumber = 0)
         {
-            List<Issue> issues = new List<Issue>(GetAllValidIssues(true, true));
+            List<Issue> issues = new List<Issue>(GetAllValidIssues(dbServiceContext, true, true));
 
             if (percentage >= 100)
             {
@@ -132,23 +122,24 @@ namespace Common.Services
                 limit = limitNumber;
             }
 
-            return GetTopStakedIssues(limit);
+            return GetTopStakedIssues(dbServiceContext, limit);
         }
 
         /// <summary>
         /// Gets the issues by tags.
         /// </summary>
+        /// <param name="dbServiceContext">The database service context.</param>
         /// <param name="tags">The tags.</param>
         /// <returns>
         /// All the issues that contain to at least one of the given tags
         /// </returns>
-        public List<Issue> GetIssuesByTags(string tags)
+        public List<Issue> GetIssuesByTags(DbServiceContext dbServiceContext, string tags)
         {
             List<string> tagsList = new List<string>(Issue.GetTags(tags));
 
             List<Issue> issues = new List<Issue>();
 
-            foreach (Issue issue in GetAllValidIssues(true, true))
+            foreach (Issue issue in GetAllValidIssues(dbServiceContext, true, true))
             {
                 if (tagsList.Any(tag => issue.HasTag(tag)))
                 {
@@ -162,14 +153,15 @@ namespace Common.Services
         /// <summary>
         /// Gets the top staked issues by tags.
         /// </summary>
+        /// <param name="dbServiceContext">The database service context.</param>
         /// <param name="tags">The tags.</param>
         /// <param name="limit">The limit.</param>
         /// <returns>
         /// The top staked issues by tags
         /// </returns>
-        public List<Issue> GetTopStakedIssuesByTags(string tags, int limit)
+        public List<Issue> GetTopStakedIssuesByTags(DbServiceContext dbServiceContext, string tags, int limit)
         {
-            List<Issue> issues = new List<Issue>(GetIssuesByTags(tags));
+            List<Issue> issues = new List<Issue>(GetIssuesByTags(dbServiceContext, tags));
 
             if (limit == 0)
             {
@@ -182,15 +174,16 @@ namespace Common.Services
         /// <summary>
         /// Gets the top stakes issues percentage by tags.
         /// </summary>
+        /// <param name="dbServiceContext">The database service context.</param>
         /// <param name="tags">The tags.</param>
         /// <param name="percentage">The percentage.</param>
         /// <param name="limitNumber">The limit number.</param>
         /// <returns>
         /// The top staked issues in percent by tags
         /// </returns>
-        public List<Issue> GetTopStakesIssuesPercentageByTags(string tags, decimal percentage = 100, int limitNumber = 0)
+        public List<Issue> GetTopStakesIssuesPercentageByTags(DbServiceContext dbServiceContext, string tags, decimal percentage = 100, int limitNumber = 0)
         {
-            List<Issue> issues = new List<Issue>(GetIssuesByTags(tags));
+            List<Issue> issues = new List<Issue>(GetIssuesByTags(dbServiceContext, tags));
 
             if (percentage >= 100)
             {
@@ -206,21 +199,20 @@ namespace Common.Services
                 limit = limitNumber;
             }
 
-            return GetTopStakedIssues(limit);
+            return GetTopStakedIssues(dbServiceContext, limit);
         }
 
         /// <summary>
         /// Adds the issue.
         /// </summary>
+        /// <param name="dbServiceContext">The database service context.</param>
         /// <param name="issue">The issue.</param>
         /// <param name="userId">The user identifier.</param>
         /// <returns>
         /// The guid of the issue added
         /// </returns>
-        /// <exception cref="System.InvalidOperationException">
-        /// Will be thrown if user is not found
-        /// </exception>
-        public Guid AddIssue(Issue issue, Guid userId)
+        /// <exception cref="System.InvalidOperationException">Will be thrown if user is not found</exception>
+        public Guid AddIssue(DbServiceContext dbServiceContext, Issue issue, Guid userId)
         {
             (bool valid, string errorMessage) = IsValid(issue);
 
@@ -230,10 +222,10 @@ namespace Common.Services
             }
 
             TransactionTypeService transactionTypeService = new TransactionTypeService();
-            TransactionType transactionType = transactionTypeService.GetTransactionType(TransactionTypeNames.AddIssue);
+            TransactionType transactionType = transactionTypeService.GetTransactionType(dbServiceContext, TransactionTypeNames.AddIssue);
 
             UserService userService = new UserService();
-            User user = userService.GetUserById(userId);
+            User user = userService.GetUserById(dbServiceContext, userId);
 
             if (user == null)
             {
@@ -259,47 +251,39 @@ namespace Common.Services
 
             issue.Suggestions ??= new List<Suggestion>();
 
-            DbServiceContext dbServiceContext = DatabaseInitializationService.GetDbServiceContext();
+            dbServiceContext.Issues.Add(issue);
+            dbServiceContext.SaveChanges();
 
-            using (dbServiceContext)
-            {
-                dbServiceContext.Issues.Add(issue);
-                dbServiceContext.SaveChanges();
-                return issue.Id;
-            }
+            return issue.Id;
         }
 
         /// <summary>
         /// Gets the issue.
         /// </summary>
+        /// <param name="dbServiceContext">The database service context.</param>
         /// <param name="issueId">The issue unique identifier.</param>
         /// <param name="includeSuggestions">if set to <c>true</c> [with suggestions].</param>
         /// <returns>
         /// The issue for the given issue guid
         /// </returns>
-        public Issue GetIssue(Guid issueId, bool includeSuggestions = false)
+        public Issue GetIssue(DbServiceContext dbServiceContext, Guid issueId, bool includeSuggestions = false)
         {
-            DbServiceContext dbServiceContext = DatabaseInitializationService.GetDbServiceContext();
-
-            using (dbServiceContext)
+            if (!includeSuggestions)
             {
-                if (!includeSuggestions)
-                {
-                    return dbServiceContext.Issues
-                        .FirstOrDefault(i => i.Id.ToString() == issueId.ToString());
-                }
-
-                Issue issue = dbServiceContext.Issues
-                    .Include(i => i.Suggestions)
+                return dbServiceContext.Issues
                     .FirstOrDefault(i => i.Id.ToString() == issueId.ToString());
-
-                if (issue != null)
-                {
-                    SuggestionService.UpdateStakes(issue.Suggestions);
-                }
-
-                return issue;
             }
+
+            Issue issue = dbServiceContext.Issues
+                .Include(i => i.Suggestions)
+                .FirstOrDefault(i => i.Id.ToString() == issueId.ToString());
+
+            if (issue != null)
+            {
+                SuggestionService.UpdateStakes(dbServiceContext, issue.Suggestions);
+            }
+
+            return issue;
         }
 
         /// <summary>
@@ -331,18 +315,17 @@ namespace Common.Services
                         ImportId = Convert.ToInt32(row["ID"].ToString()),
                         Tags = row["Tags"].ToString(),
                         Description = row["Description"].ToString(),
-                        Title = row["Title"].ToString(),
-                        Suggestions = new List<Suggestion>()
+                        Title = row["Title"].ToString()
                     };
 
                     string value = row["DueDateDays"].ToString();
 
-                    if (value != null)
+                    if (!string.IsNullOrEmpty(value))
                     {
                         issue.DueDate = DateTime.Now.Date.AddDays(Convert.ToInt32(value));
                     }
 
-                    dbServiceContext.Issues.AddRange(issue);
+                    dbServiceContext.Issues.Add(issue);
 
                     recordCount++;
                 }

@@ -59,12 +59,14 @@ namespace Common.Services
 
         private void ImportStakedSuggestions(DataTable dataTable)
         {
-            throw new NotImplementedException();
+            StakedSuggestionService stakedSuggestionService = new StakedSuggestionService();
+            OnTableImported(new NameCountEventArgs("StakedSuggestions", stakedSuggestionService.Import(dataTable)));
         }
 
         private void ImportSuggestions(DataTable dataTable)
         {
-            throw new NotImplementedException();
+            SuggestionService suggestionService = new SuggestionService();
+            OnTableImported(new NameCountEventArgs("Suggestions", suggestionService.Import(dataTable)));
         }
 
         private void ImportIssues(DataTable dataTable)

@@ -4,7 +4,6 @@ using System.Data;
 using System.Linq;
 using Common.Data;
 using Common.Entities;
-using Common.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace Common.Services
@@ -12,69 +11,59 @@ namespace Common.Services
     /// <summary>
     /// Implementation of the wallet transaction service
     /// </summary>
-    public class WalletTransactionService : IWalletTransactionService
+    public class WalletTransactionService
     {
         /// <summary>
         /// Gets the wallet transactions for user.
         /// </summary>
+        /// <param name="dbServiceContext">The database service context.</param>
         /// <param name="userId">The user identifier.</param>
         /// <param name="fromDate">From date.</param>
         /// <param name="toDate">To date.</param>
-        /// <returns>The wallet transactions for the user</returns>
-        public List<WalletTransaction> GetWalletTransactionsForUser(Guid userId, DateTime? fromDate = null, DateTime? toDate = null)
+        /// <returns>The wallet transactions for the use</returns>
+        public List<WalletTransaction> GetWalletTransactionsForUser(DbServiceContext dbServiceContext, Guid userId, DateTime? fromDate,
+            DateTime? toDate)
         {
-            DbServiceContext dbServiceContext = DatabaseInitializationService.GetDbServiceContext();
+            User user = dbServiceContext.User
+                .Include(u => u.Wallet)
+                .Include(u => u.Wallet.WalletTransactions)
+                .FirstOrDefault(u => u.Id.ToString() == userId.ToString());
 
-            using (dbServiceContext)
+            if (user == null)
             {
-                User user = dbServiceContext.User
-                    .Include(u => u.Wallet)
-                    .Include(u => u.Wallet.WalletTransactions)
-                    .FirstOrDefault(u => u.Id.ToString() == userId.ToString());
+                return null;
+            }
 
-                if (user == null)
-                {
-                    return null;
-                }
+            if (fromDate == null && toDate == null)
+            {
+                return user.Wallet.WalletTransactions;
+            }
 
-                if (fromDate == null && toDate == null)
-                {
-                    return user.Wallet.WalletTransactions;
-                }
-
-                if (fromDate == null)
-                {
-                    return user.Wallet.WalletTransactions
-                        .Where(w => w.CreateDate <= (DateTime)toDate).ToList();
-                }
-
-                if (toDate == null)
-                {
-                    return user.Wallet.WalletTransactions
-                        .Where(w => w.CreateDate >= (DateTime)fromDate).ToList();
-                }
-
+            if (fromDate == null)
+            {
                 return user.Wallet.WalletTransactions
-                    .Where(w => w.CreateDate <= (DateTime) toDate)
+                    .Where(w => w.CreateDate <= (DateTime) toDate).ToList();
+            }
+
+            if (toDate == null)
+            {
+                return user.Wallet.WalletTransactions
                     .Where(w => w.CreateDate >= (DateTime) fromDate).ToList();
             }
+
+            return user.Wallet.WalletTransactions
+                .Where(w => w.CreateDate <= (DateTime) toDate)
+                .Where(w => w.CreateDate >= (DateTime) fromDate).ToList();
         }
 
         /// <summary>
         /// Adds the wallet transaction.
         /// </summary>
-        /// <param name="wallet">The wallet.</param>
+        /// <param name="dbServiceContext">The database service context.</param>
         /// <param name="walletTransaction">The wallet transaction.</param>
-        public void AddWalletTransaction(Wallet wallet, WalletTransaction walletTransaction)
+        public void AddWalletTransaction(DbServiceContext dbServiceContext, WalletTransaction walletTransaction)
         {
-            DbServiceContext dbServiceContext = DatabaseInitializationService.GetDbServiceContext();
-
-            using (dbServiceContext)
-            {
-                wallet.AddTransaction(walletTransaction);
-
-                dbServiceContext.SaveChanges();
-            }
+            dbServiceContext.WalletTransactions.Add(walletTransaction);
         }
 
         /// <summary>
@@ -126,10 +115,17 @@ namespace Common.Services
                                 WalletId = user.Wallet.Id
                             };
 
-                            if (dataTable.Columns.Contains("TransactionID") && 
-                                !string.IsNullOrEmpty(row["TransactionID"].ToString()))
+                            string importId = row["TransactionID"].ToString();
+
+                            if (!string.IsNullOrEmpty(importId))
                             {
-                                // TODO: add reference to transaction here
+                                if (transactionType.Name == TransactionTypeNames.StakeSuggestion.ToString())
+                                {
+                                    Guid? transactionId = dbServiceContext.StakedSuggestions
+                                        .FirstOrDefault(s => s.ImportId == Convert.ToInt32(importId))?.Id;
+
+                                    walletTransaction.TransactionId = transactionId;
+                                }
                             }
 
                             dbServiceContext.WalletTransactions.Add(walletTransaction);

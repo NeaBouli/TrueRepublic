@@ -80,5 +80,13 @@ namespace Common.Entities
         /// </value>
         /// <remarks>Only one suggestion can be staked per Issue</remarks>
         public List<StakedSuggestion> StakedSuggestions { get; set; }
+
+        /// <summary>
+        /// Gets or sets the votes.
+        /// </summary>
+        /// <value>
+        /// The votes.
+        /// </value>
+        public List<Vote> Votes { get; set; }
     }
 }

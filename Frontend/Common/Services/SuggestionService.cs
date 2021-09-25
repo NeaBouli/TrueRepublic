@@ -16,54 +16,88 @@ namespace Common.Services
         /// <summary>
         /// Gets the suggestions for issue.
         /// </summary>
+        /// <param name="dbServiceContext">The database service context.</param>
         /// <param name="issueId">The issue identifier.</param>
         /// <returns></returns>
-        public List<Suggestion> GetSuggestionsForIssue(Guid issueId)
+        public List<Suggestion> GetSuggestionsForIssue(DbServiceContext dbServiceContext, Guid issueId)
         {
-            DbServiceContext dbServiceContext = DatabaseInitializationService.GetDbServiceContext();
+            Issue issue = dbServiceContext.Issues
+                .Include(i => i.Suggestions)
+                .FirstOrDefault(i => i.Id.ToString() == issueId.ToString());
 
-            using (dbServiceContext)
+            if (issue == null)
             {
-                Issue issue = dbServiceContext.Issues
-                    .Include(i => i.Suggestions)
-                    .FirstOrDefault(i => i.Id.ToString() == issueId.ToString());
-
-                if (issue == null)
-                {
-                    return null;
-                }
-
-                UpdateStakes(issue.Suggestions);
-
-                return issue.Suggestions;
+                return null;
             }
+
+            UpdateStakes(dbServiceContext, issue.Suggestions);
+
+            return issue.Suggestions;
         }
 
         /// <summary>
         /// Updates the stakes.
         /// </summary>
+        /// <param name="dbServiceContext">The database service context.</param>
         /// <param name="suggestions">The suggestions.</param>
-        public static void UpdateStakes(List<Suggestion> suggestions)
+        public static void UpdateStakes(DbServiceContext dbServiceContext, List<Suggestion> suggestions)
         {
-            DbServiceContext dbServiceContext = DatabaseInitializationService.GetDbServiceContext();
-
-            using (dbServiceContext)
+            foreach (Suggestion suggestion in suggestions)
             {
-                foreach (Suggestion suggestion in suggestions)
-                {
-                    int count = dbServiceContext.StakedSuggestions
-                        .Include(s => s.Suggestion)
-                        .Where(s => s.Suggestion.Id.ToString() == suggestion.Id.ToString())
-                        .ToList().Count;
+                int count = dbServiceContext.StakedSuggestions
+                    .Include(s => s.Suggestion)
+                    .Where(s => s.Suggestion.Id.ToString() == suggestion.Id.ToString())
+                    .ToList().Count;
 
-                    suggestion.StakeCount = count;
-                }
+                suggestion.StakeCount = count;
             }
         }
 
         public int Import(DataTable dataTable)
         {
-            throw new NotImplementedException();
+            DbServiceContext dbServiceContext = DatabaseInitializationService.GetDbServiceContext();
+
+            using (dbServiceContext)
+            {
+                int count = dbServiceContext.Suggestions.Count();
+
+                if (count > 0)
+                {
+                    return 0;
+                }
+
+                int recordCount = 0;
+
+                foreach (DataRow row in dataTable.Rows)
+                {
+                    Suggestion suggestion = new Suggestion
+                    {
+                        ImportId = Convert.ToInt32(row["ID"].ToString()),
+                        Description = row["Description"].ToString(),
+                        Title = row["Title"].ToString(),
+                    };
+
+                    int importIssueId = Convert.ToInt32(row["IssueId"].ToString());
+
+                    Guid? issueId = dbServiceContext.Issues.FirstOrDefault(i => i.ImportId == importIssueId)?.Id;
+
+                    if (issueId != null)
+                    {
+                        suggestion.IssueId = (Guid)issueId;
+                    }
+
+                    dbServiceContext.Suggestions.Add(suggestion);
+
+                    recordCount++;
+                }
+
+                if (recordCount > 0)
+                {
+                    dbServiceContext.SaveChanges();
+                }
+
+                return recordCount;
+            }
         }
     }
 }

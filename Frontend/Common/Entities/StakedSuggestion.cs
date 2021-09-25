@@ -16,12 +16,23 @@ namespace Common.Entities
         }
 
         /// <summary>
+        /// Initializes a new instance of the <see cref="StakedSuggestion"/> class.
+        /// </summary>
+        public StakedSuggestion(int expirationDays)
+        {
+            ExpirationDays = expirationDays;
+            Id = Guid.NewGuid();
+            CreateDate = DateTime.Now;
+        }
+
+        /// <summary>
         /// Gets or sets the create date.
         /// </summary>
         /// <value>
         /// The create date.
         /// </value>
-        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
+        [Required]
+
         public DateTime CreateDate { get; set; }
 
         /// <summary>
@@ -30,7 +41,7 @@ namespace Common.Entities
         /// <value>
         /// The valid till.
         /// </value>
-        public DateTime ValidTill => CreateDate.AddDays(30);
+        public DateTime ValidTill => CreateDate.AddDays(ExpirationDays);
 
         /// <summary>
         /// Gets a value indicating whether this instance is expired.
@@ -68,11 +79,35 @@ namespace Common.Entities
         public Guid IssueId { get; set; }
 
         /// <summary>
+        /// Gets or sets the user identifier.
+        /// </summary>
+        /// <value>
+        /// The user identifier.
+        /// </value>
+        [Required]
+        public Guid UserId { get; set; }
+
+        /// <summary>
         /// Gets or sets the suggestion.
         /// </summary>
         /// <value>
         /// The suggestion.
         /// </value>
         public Suggestion Suggestion { get; set; }
+
+        /// <summary>
+        /// Gets or sets the suggestion identifier.
+        /// </summary>
+        /// <value>
+        /// The suggestion identifier.
+        /// </value>
+        [Required]
+        public Guid SuggestionId { get; set; }
+
+        /// <summary>
+        /// The expiration days
+        /// </summary>
+        [NotMapped]
+        public int ExpirationDays { get; }
     }
 }

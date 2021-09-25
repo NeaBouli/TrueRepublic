@@ -67,7 +67,7 @@ namespace Common.Entities
         /// <value>
         /// The create date.
         /// </value>
-        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
+        [Required]
         public DateTime CreateDate { get; set; }
 
         /// <summary>

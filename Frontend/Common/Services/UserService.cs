@@ -4,42 +4,25 @@ using System.Data;
 using System.Linq;
 using Common.Data;
 using Common.Entities;
-using Common.Interfaces;
 
 namespace Common.Services
 {
     /// <summary>
     /// Implementation of the user service
     /// </summary>
-    public class UserService : IUserService
+    public class UserService
     {
-        /// <summary>
-        /// Gets the users.
-        /// </summary>
-        /// <returns></returns>
-        public List<User> GetUsers()
-        {
-            DbServiceContext dbServiceContext = DatabaseInitializationService.GetDbServiceContext();
-
-            using (dbServiceContext)
-            {
-                return dbServiceContext.User.ToList();
-            }
-        }
-
         /// <summary>
         /// Gets the user by identifier.
         /// </summary>
+        /// <param name="dbServiceContext">The database service context.</param>
         /// <param name="id">The identifier.</param>
-        /// <returns>The user if found otherwise null</returns>
-        public User GetUserById(Guid id)
+        /// <returns>
+        /// The user if found otherwise null
+        /// </returns>
+        public User GetUserById(DbServiceContext dbServiceContext , Guid id)
         {
-            DbServiceContext dbServiceContext = DatabaseInitializationService.GetDbServiceContext();
-
-            using (dbServiceContext)
-            {
-                return dbServiceContext.User.FirstOrDefault(u => u.Id.ToString() == id.ToString());
-            }
+            return dbServiceContext.User.FirstOrDefault(u => u.Id.ToString() == id.ToString());
         }
 
         /// <summary>
@@ -51,9 +34,9 @@ namespace Common.Services
         /// </returns>
         public int Import(DataTable dataTable)
         {
-            List<User> users = GetUsers();
-
-            if (users.Count > 0)
+            using DbServiceContext dbServiceContext = DatabaseInitializationService.GetDbServiceContext();
+            
+            if (dbServiceContext.User.ToList().Count > 0)
             {
                 return 0;
             }
@@ -83,27 +66,17 @@ namespace Common.Services
                     user.UniqueExternalUserId = Guid.NewGuid();
                 }
 
-                Add(user);
+                dbServiceContext.User.Add(user);
 
                 recordCount++;
             }
 
-            return recordCount;
-        }
-
-        /// <summary>
-        /// Adds the specified user.
-        /// </summary>
-        /// <param name="user">The user.</param>
-        public void Add(User user)
-        {
-            DbServiceContext dbServiceContext = DatabaseInitializationService.GetDbServiceContext();
-
-            using (dbServiceContext)
+            if (recordCount > 0)
             {
-                dbServiceContext.User.Add(user);
                 dbServiceContext.SaveChanges();
             }
+
+            return recordCount;
         }
     }
 }

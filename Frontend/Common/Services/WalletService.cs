@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using Common.Data;
 using Common.Entities;
-using Common.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace Common.Services
@@ -12,74 +10,63 @@ namespace Common.Services
     /// <summary>
     /// Implementation of the wallet service
     /// </summary>
-    public class WalletService : IWalletService
+    public class WalletService
     {
         /// <summary>
         /// Gets the total balance ot all wallets
         /// </summary>
         /// <returns>The total balance of all wallets</returns>
-        public double GetTotalBalance()
+        public double GetTotalBalance(DbServiceContext dbServiceContext)
         {
-            DbServiceContext dbServiceContext = DatabaseInitializationService.GetDbServiceContext();
-
             double totalBalance = 0;
 
-            using (dbServiceContext)
-            {
-                return Enumerable.Aggregate(dbServiceContext.Wallets, totalBalance, (current, wallet) => current + wallet.TotalBalance);
-            }
+            return Enumerable.Aggregate(dbServiceContext.Wallets, totalBalance,
+                (current, wallet) => current + wallet.TotalBalance);
         }
 
         /// <summary>
-        /// Determines whether [has enough funding for transaction] [the specified user identifier].
+        /// Determines whether [has enough funding for transaction] [the specified database service context].
         /// </summary>
+        /// <param name="dbServiceContext">The database service context.</param>
         /// <param name="userId">The user identifier.</param>
         /// <param name="transactionTypeName">Name of the transaction type.</param>
         /// <returns>
-        ///   <c>true</c> if [has enough funding for transaction] [the specified user identifier]; otherwise, <c>false</c>.
+        ///   <c>true</c> if [has enough funding for transaction] [the specified database service context]; otherwise, <c>false</c>.
         /// </returns>
-        public bool HasEnoughFundingForTransaction(Guid userId, TransactionTypeNames transactionTypeName)
+        /// <exception cref="System.InvalidOperationException">Wallet for user {userId} not found</exception>
+        private bool HasEnoughFundingForTransaction(DbServiceContext dbServiceContext, Guid userId,
+            TransactionTypeNames transactionTypeName)
         {
-            DbServiceContext dbServiceContext = DatabaseInitializationService.GetDbServiceContext();
+            TransactionType transactionType = GetTransactionType(dbServiceContext, transactionTypeName);
 
-            using (dbServiceContext)
+            Wallet wallet = GetWalletForUserId(dbServiceContext, userId);
+
+            if (wallet == null)
             {
-                TransactionType transactionType = GetTransactionType(dbServiceContext, transactionTypeName);
-
-                Wallet wallet = GetWalletForUserId(dbServiceContext, userId);
-
-                if (wallet == null)
-                {
-                    throw new InvalidOperationException($"Wallet for user {userId} not found");
-                }
-
-                return wallet.TotalBalance + transactionType.Fee >= 0;
+                throw new InvalidOperationException($"Wallet for user {userId} not found");
             }
+
+            return wallet.TotalBalance + transactionType.Fee >= 0;
         }
 
         /// <summary>
-        /// Gets the wallet for user.
+        /// Adds the transaction.
         /// </summary>
+        /// <param name="dbServiceContext">The database service context.</param>
         /// <param name="userId">The user identifier.</param>
-        /// <returns>The wallet for the user</returns>
-        public Wallet GetWalletForUser(Guid userId)
+        /// <param name="transactionTypeName">Name of the transaction type.</param>
+        /// <param name="transactionId">The transaction identifier.</param>
+        /// <exception cref="System.InvalidOperationException">
+        /// Wallet for user {userId} not found
+        /// </exception>
+        public void AddTransaction(DbServiceContext dbServiceContext, Guid userId, TransactionTypeNames transactionTypeName, Guid? transactionId)
         {
-            DbServiceContext dbServiceContext = DatabaseInitializationService.GetDbServiceContext();
-
-            using (dbServiceContext)
-            {
-                return GetWalletForUserId(dbServiceContext, userId);
-            }
-        }
-
-        public void AddTransaction(Guid userId, TransactionTypeNames transactionTypeName, Guid? transactionId)
-        {
-            if (!HasEnoughFundingForTransaction(userId, transactionTypeName))
+            if (!HasEnoughFundingForTransaction(dbServiceContext, userId, transactionTypeName))
             {
                 throw new InvalidOperationException(Resource.ErrorNotEnoughFounding);
             }
 
-            Wallet wallet = GetWalletForUser(userId);
+            Wallet wallet = GetWalletForUserId(dbServiceContext, userId);
 
             if (wallet == null)
             {
@@ -87,7 +74,7 @@ namespace Common.Services
             }
 
             TransactionTypeService transactionTypeService = new TransactionTypeService();
-            TransactionType transactionType = transactionTypeService.GetTransactionType(transactionTypeName);
+            TransactionType transactionType = transactionTypeService.GetTransactionType(dbServiceContext, transactionTypeName);
 
             WalletTransaction walletTransaction = new WalletTransaction
             {
@@ -97,7 +84,7 @@ namespace Common.Services
             };
 
             WalletTransactionService walletTransactionService = new WalletTransactionService();
-            walletTransactionService.AddWalletTransaction(wallet, walletTransaction);
+            walletTransactionService.AddWalletTransaction(dbServiceContext, walletTransaction);
         }
 
         /// <summary>
@@ -111,49 +98,45 @@ namespace Common.Services
         {
             DbServiceContext dbServiceContext = DatabaseInitializationService.GetDbServiceContext();
 
-            using (dbServiceContext)
+            using DbServiceContext context = dbServiceContext;
+            int count = dbServiceContext.Wallets.Count();
+
+            if (count > 0)
             {
-                int count = dbServiceContext.Wallets.Count();
-
-                if (count > 0)
-                {
-                    return 0;
-                }
-
-                int recordCount = 0;
-
-                foreach (DataRow row in dataTable.Rows)
-                {
-                    int id = Convert.ToInt32(row["UserID"].ToString());
-
-                    User user = dbServiceContext.User
-                        .Include(u => u.Wallet)
-                        .FirstOrDefault(u => u.ImportId == id);
-
-                    if (user != null && user.Wallet == null)
-                    {
-                        Wallet wallet = new Wallet
-                        {
-                            ImportId = Convert.ToInt32(row["ID"].ToString()),
-                            TotalBalance = Convert.ToDouble(row["TotalBalance"].ToString())
-                        };
-
-                        dbServiceContext.Wallets.Add(wallet);
-                        user.WalletId = wallet.Id;
-
-                        dbServiceContext.SaveChanges();
-
-                        recordCount++;
-                    }
-                }
-
-                //if (recordCount > 0)
-                //{
-                //    dbServiceContext.SaveChanges();
-                //}
-
-                return recordCount;
+                return 0;
             }
+
+            int recordCount = 0;
+
+            foreach (DataRow row in dataTable.Rows)
+            {
+                int id = Convert.ToInt32(row["UserID"].ToString());
+
+                User user = dbServiceContext.User
+                    .Include(u => u.Wallet)
+                    .FirstOrDefault(u => u.ImportId == id);
+
+                if (user != null && user.Wallet == null)
+                {
+                    Wallet wallet = new Wallet
+                    {
+                        ImportId = Convert.ToInt32(row["ID"].ToString()),
+                        TotalBalance = Convert.ToDouble(row["TotalBalance"].ToString())
+                    };
+
+                    dbServiceContext.Wallets.Add(wallet);
+                    user.WalletId = wallet.Id;
+
+                    recordCount++;
+                }
+            }
+
+            if (recordCount > 0)
+            {
+                dbServiceContext.SaveChanges();
+            }
+
+            return recordCount;
         }
 
         /// <summary>

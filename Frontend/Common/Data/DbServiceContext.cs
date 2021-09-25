@@ -126,5 +126,13 @@ namespace Common.Data
         /// The transaction types.
         /// </value>
         public DbSet<TransactionType> TransactionTypes { get; set; }
+
+        /// <summary>
+        /// Gets or sets the votes.
+        /// </summary>
+        /// <value>
+        /// The votes.
+        /// </value>
+        public DbSet<Vote> Votes { get; set; }
     }
 }
