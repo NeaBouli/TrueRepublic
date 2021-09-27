@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using Common.Data;
 
 namespace Common.Entities
 {
@@ -54,23 +55,6 @@ namespace Common.Entities
         public bool HasEnoughFunding(double balance)
         {
             return TotalBalance + balance >= 0;
-        }
-
-        /// <summary>
-        /// Adds the transaction.
-        /// </summary>
-        /// <param name="walletTransaction">The wallet transaction.</param>
-        /// <exception cref="System.InvalidOperationException">Not enough funding</exception>
-        public void AddTransaction(WalletTransaction walletTransaction)
-        {
-            if (walletTransaction.Balance < 0 && !HasEnoughFunding(walletTransaction.Balance))
-            {
-                throw new InvalidOperationException(Resource.ErrorNotEnoughFounding);
-            }
-
-            WalletTransactions.Add(walletTransaction);
-
-            TotalBalance += walletTransaction.Balance;
         }
 
         /// <summary>

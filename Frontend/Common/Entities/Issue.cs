@@ -24,24 +24,6 @@ namespace Common.Entities
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="Issue"/> class.
-        /// </summary>
-        /// <param name="tags">The tags.</param>
-        /// <param name="title">The title.</param>
-        /// <param name="description">The description.</param>
-        /// <param name="dueDate">The due date.</param>
-        public Issue(string tags, string title, string description, DateTime dueDate)
-        {
-            Id = Guid.NewGuid();
-            CreateDate = DateTime.Now;
-
-            Tags = tags;
-            Title = title;
-            Description = description;
-            DueDate = dueDate;
-        }
-
-        /// <summary>
         /// Gets or sets the identifier.
         /// </summary>
         /// <value>
@@ -110,7 +92,7 @@ namespace Common.Entities
         /// <value>
         /// The suggestions.
         /// </value>
-        public List<Suggestion> Suggestions;
+        public List<Suggestion> Suggestions { get; set; }
 
         /// <summary>
         /// Gets the total stake count.

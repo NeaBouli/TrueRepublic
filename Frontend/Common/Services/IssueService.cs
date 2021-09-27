@@ -19,50 +19,11 @@ namespace Common.Services
         /// <returns>
         /// Gets all issues
         /// </returns>
-        public List<Issue> GetAllIssues(DbServiceContext dbServiceContext, bool includeSuggestions = false)
+        public List<Issue> GetAll(DbServiceContext dbServiceContext, PaginatedList paginatedList = null)
         {
-            List<Issue> issues;
-
-            if (!includeSuggestions)
-            {
-                issues = dbServiceContext.Issues.ToList();
-            }
-            else
-            {
-                issues = dbServiceContext.Issues
-                    .Include(i => i.Suggestions)
-                    .ToList();
-
-                foreach (Issue issue in issues)
-                {
-                    SuggestionService.UpdateStakes(dbServiceContext, issue.Suggestions);
-                }
-            }
-
-            return issues;
-        }
-
-        /// <summary>
-        /// Gets all valid issues.
-        /// </summary>
-        /// <param name="dbServiceContext">The database service context.</param>
-        /// <param name="includeSuggestions">if set to <c>true</c> [include suggestions].</param>
-        /// <param name="onlyStaked">if set to <c>true</c> [only staked].</param>
-        /// <returns>
-        /// All valid issues that contain at least one stake
-        /// </returns>
-        public List<Issue> GetAllValidIssues(DbServiceContext dbServiceContext, bool includeSuggestions = false, bool onlyStaked = false)
-        {
-            if (!includeSuggestions)
-            {
-                return dbServiceContext.Issues
-                    .Where(issue => issue.DueDate >= DateTime.Now)
-                    .ToList();
-            }
-
             List<Issue> issues = dbServiceContext.Issues
                 .Include(i => i.Suggestions)
-                .Where(issue => issue.DueDate >= DateTime.Now)
+                .Where(i => i.DueDate == null || (DateTime)i.DueDate >= DateTime.Now)
                 .ToList();
 
             foreach (Issue issue in issues)
@@ -70,29 +31,12 @@ namespace Common.Services
                 SuggestionService.UpdateStakes(dbServiceContext, issue.Suggestions);
             }
 
-            return !onlyStaked
-                ? issues
-                : issues.Where(issue => issue.Suggestions.Any(suggestion => suggestion.IsStaked)).ToList();
-        }
+            List<Issue> issuesProcessed = issues.OrderByDescending(i => i.GetTotalStakeCount())
+                .ThenByDescending(i => i.CreateDate).ToList();
 
-        /// <summary>
-        /// Gets the top staked issues.
-        /// </summary>
-        /// <param name="dbServiceContext">The database service context.</param>
-        /// <param name="limit">The limit.</param>
-        /// <returns>
-        /// The top staked issues depending on the limit
-        /// </returns>
-        public List<Issue> GetTopStakedIssues(DbServiceContext dbServiceContext, int limit)
-        {
-            List<Issue> issues = new List<Issue>(GetAllValidIssues(dbServiceContext, true, true));
+            issuesProcessed = ProcessPaginatedList(paginatedList, issuesProcessed);
 
-            if (limit <= issues.Count)
-            {
-                return issues;
-            }
-
-            return issues.OrderByDescending(i => i.GetTotalStakeCount()).Take(limit).ToList();
+            return issuesProcessed;
         }
 
         /// <summary>
@@ -100,13 +44,13 @@ namespace Common.Services
         /// </summary>
         /// <param name="dbServiceContext">The database service context.</param>
         /// <param name="percentage">The percentage.</param>
-        /// <param name="limitNumber">The limit number.</param>
+        /// <param name="paginatedList">The paginated list.</param>
         /// <returns>
         /// The top stacked issues depending on a percentage
         /// </returns>
-        public List<Issue> GetTopStakedIssuesPercentage(DbServiceContext dbServiceContext, decimal percentage, int limitNumber = 0)
+        public List<Issue> GetTopStaked(DbServiceContext dbServiceContext, decimal percentage, PaginatedList paginatedList = null)
         {
-            List<Issue> issues = new List<Issue>(GetAllValidIssues(dbServiceContext, true, true));
+            List<Issue> issues = GetAll(dbServiceContext);
 
             if (percentage >= 100)
             {
@@ -117,12 +61,11 @@ namespace Common.Services
 
             int limit = Convert.ToInt32(Math.Round(percentage / 100 * count));
 
-            if (limitNumber > 0 && limit > limitNumber)
-            {
-                limit = limitNumber;
-            }
+            List<Issue> issuesProcessed = issues.Take(limit).ToList();
 
-            return GetTopStakedIssues(dbServiceContext, limit);
+            issuesProcessed = ProcessPaginatedList(paginatedList, issuesProcessed);
+
+            return issuesProcessed;
         }
 
         /// <summary>
@@ -130,45 +73,15 @@ namespace Common.Services
         /// </summary>
         /// <param name="dbServiceContext">The database service context.</param>
         /// <param name="tags">The tags.</param>
+        /// <param name="paginatedList">The paginated list.</param>
         /// <returns>
         /// All the issues that contain to at least one of the given tags
         /// </returns>
-        public List<Issue> GetIssuesByTags(DbServiceContext dbServiceContext, string tags)
+        public List<Issue> GetByTags(DbServiceContext dbServiceContext, string tags, PaginatedList paginatedList = null)
         {
-            List<string> tagsList = new List<string>(Issue.GetTags(tags));
+            List<Issue> issues = GetAll(dbServiceContext);
 
-            List<Issue> issues = new List<Issue>();
-
-            foreach (Issue issue in GetAllValidIssues(dbServiceContext, true, true))
-            {
-                if (tagsList.Any(tag => issue.HasTag(tag)))
-                {
-                    issues.Add(issue);
-                }
-            }
-
-            return issues;
-        }
-
-        /// <summary>
-        /// Gets the top staked issues by tags.
-        /// </summary>
-        /// <param name="dbServiceContext">The database service context.</param>
-        /// <param name="tags">The tags.</param>
-        /// <param name="limit">The limit.</param>
-        /// <returns>
-        /// The top staked issues by tags
-        /// </returns>
-        public List<Issue> GetTopStakedIssuesByTags(DbServiceContext dbServiceContext, string tags, int limit)
-        {
-            List<Issue> issues = new List<Issue>(GetIssuesByTags(dbServiceContext, tags));
-
-            if (limit == 0)
-            {
-                return issues;
-            }
-
-            return issues.OrderByDescending(i => i.GetTotalStakeCount()).Take(limit).ToList();
+            return GetByTags(tags, issues, paginatedList);
         }
 
         /// <summary>
@@ -177,49 +90,58 @@ namespace Common.Services
         /// <param name="dbServiceContext">The database service context.</param>
         /// <param name="tags">The tags.</param>
         /// <param name="percentage">The percentage.</param>
-        /// <param name="limitNumber">The limit number.</param>
+        /// <param name="paginatedList">The paginated list.</param>
         /// <returns>
         /// The top staked issues in percent by tags
         /// </returns>
-        public List<Issue> GetTopStakesIssuesPercentageByTags(DbServiceContext dbServiceContext, string tags, decimal percentage = 100, int limitNumber = 0)
+        public List<Issue> GetTopStakedByTags(DbServiceContext dbServiceContext, string tags, int percentage, PaginatedList paginatedList = null)
         {
-            List<Issue> issues = new List<Issue>(GetIssuesByTags(dbServiceContext, tags));
+            List<Issue> issues = GetTopStaked(dbServiceContext, percentage);
 
-            if (percentage >= 100)
+            return GetByTags(tags, issues, paginatedList);
+        }
+
+        /// <summary>
+        /// Gets the by identifier.
+        /// </summary>
+        /// <param name="dbServiceContext">The database service context.</param>
+        /// <param name="id">The identifier.</param>
+        /// <returns>The issue by id or null if not found</returns>
+        public Issue GetById(DbServiceContext dbServiceContext, string id)
+        {
+            Issue issue = dbServiceContext.Issues
+                .Include(i => i.Suggestions)
+                .FirstOrDefault(i => i.Id.ToString() == id);
+
+            if (issue != null)
             {
-                return issues;
+                SuggestionService.UpdateStakes(dbServiceContext, issue.Suggestions);
             }
 
-            decimal count = Convert.ToDecimal(issues.Count);
-
-            int limit = Convert.ToInt32(Math.Round(percentage / 100 * count));
-
-            if (limitNumber > 0 && limit > limitNumber)
-            {
-                limit = limitNumber;
-            }
-
-            return GetTopStakedIssues(dbServiceContext, limit);
+            return issue;
         }
 
         /// <summary>
         /// Adds the issue.
         /// </summary>
         /// <param name="dbServiceContext">The database service context.</param>
-        /// <param name="issue">The issue.</param>
-        /// <param name="userId">The user identifier.</param>
+        /// <param name="issueSubmission">The issue submission.</param>
         /// <returns>
         /// The guid of the issue added
         /// </returns>
         /// <exception cref="System.InvalidOperationException">Will be thrown if user is not found</exception>
-        public Guid AddIssue(DbServiceContext dbServiceContext, Issue issue, Guid userId)
+        public Guid Add(DbServiceContext dbServiceContext, IssueSubmission issueSubmission)
         {
+            Issue issue = issueSubmission.ToIssue();
+
             (bool valid, string errorMessage) = IsValid(issue);
 
             if (!valid)
             {
                 throw new InvalidOperationException(errorMessage);
             }
+
+            Guid userId = issueSubmission.UserId;
 
             TransactionTypeService transactionTypeService = new TransactionTypeService();
             TransactionType transactionType = transactionTypeService.GetTransactionType(dbServiceContext, TransactionTypeNames.AddIssue);
@@ -242,48 +164,21 @@ namespace Common.Services
             WalletTransaction walletTransaction = new WalletTransaction
             {
                 // transaction fee must be negative for cost
+                WalletId = wallet.Id,
                 Balance = transactionType.Fee,
                 CreateDate = DateTime.Now,
                 TransactionType = transactionType
             };
 
-            wallet.AddTransaction(walletTransaction);
-
+            wallet.TotalBalance += walletTransaction.Balance;
+            dbServiceContext.WalletTransactions.Add(walletTransaction);
+            
             issue.Suggestions ??= new List<Suggestion>();
 
             dbServiceContext.Issues.Add(issue);
             dbServiceContext.SaveChanges();
 
             return issue.Id;
-        }
-
-        /// <summary>
-        /// Gets the issue.
-        /// </summary>
-        /// <param name="dbServiceContext">The database service context.</param>
-        /// <param name="issueId">The issue unique identifier.</param>
-        /// <param name="includeSuggestions">if set to <c>true</c> [with suggestions].</param>
-        /// <returns>
-        /// The issue for the given issue guid
-        /// </returns>
-        public Issue GetIssue(DbServiceContext dbServiceContext, Guid issueId, bool includeSuggestions = false)
-        {
-            if (!includeSuggestions)
-            {
-                return dbServiceContext.Issues
-                    .FirstOrDefault(i => i.Id.ToString() == issueId.ToString());
-            }
-
-            Issue issue = dbServiceContext.Issues
-                .Include(i => i.Suggestions)
-                .FirstOrDefault(i => i.Id.ToString() == issueId.ToString());
-
-            if (issue != null)
-            {
-                SuggestionService.UpdateStakes(dbServiceContext, issue.Suggestions);
-            }
-
-            return issue;
         }
 
         /// <summary>
@@ -337,6 +232,59 @@ namespace Common.Services
 
                 return recordCount;
             }
+        }
+
+        /// <summary>
+        /// Gets the issues by tags.
+        /// </summary>
+        /// <param name="tags">The tags.</param>
+        /// <param name="issues">The issues.</param>
+        /// <param name="paginatedList">The paginated list.</param>
+        /// <returns>The issues from the list containing at least one tag</returns>
+        private static List<Issue> GetByTags(string tags, List<Issue> issues, PaginatedList paginatedList)
+        {
+            List<string> tagsList = new List<string>(Issue.GetTags(tags));
+
+            List<Issue> issuesProcessed = new List<Issue>();
+
+            foreach (Issue issue in issues)
+            {
+                if (tagsList.Any(tag => issue.HasTag(tag)))
+                {
+                    issuesProcessed.Add(issue);
+                }
+            }
+
+            issuesProcessed = ProcessPaginatedList(paginatedList, issuesProcessed);
+
+            return issuesProcessed;
+        }
+
+        /// <summary>
+        /// Processes the paginated list.
+        /// </summary>
+        /// <param name="paginatedList">The paginated list.</param>
+        /// <param name="issues">The issues.</param>
+        /// <returns></returns>
+        private static List<Issue> ProcessPaginatedList(PaginatedList paginatedList, List<Issue> issues)
+        {
+            if (paginatedList is {ItemsPerPage: > 0})
+            {
+                issues = issues
+                    .Skip(paginatedList.Skip)
+                    .Take(paginatedList.ItemsPerPage)
+                    .ToList();
+            }
+
+            if (paginatedList is { GetDetails: false })
+            {
+                foreach (Issue issue in issues)
+                {
+                    issue.Suggestions = new List<Suggestion>();
+                }
+            }
+
+            return issues;
         }
 
         /// <summary>

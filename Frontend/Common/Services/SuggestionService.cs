@@ -45,8 +45,7 @@ namespace Common.Services
             foreach (Suggestion suggestion in suggestions)
             {
                 int count = dbServiceContext.StakedSuggestions
-                    .Include(s => s.Suggestion)
-                    .Where(s => s.Suggestion.Id.ToString() == suggestion.Id.ToString())
+                    .Where(s => s.SuggestionId.ToString() == suggestion.Id.ToString())
                     .ToList().Count;
 
                 suggestion.StakeCount = count;

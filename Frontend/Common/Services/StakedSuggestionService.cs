@@ -44,7 +44,7 @@ namespace Common.Services
 
             dbServiceContext.SaveChanges();
         }
-
+        
         /// <summary>
         /// Adds the stake suggestion.
         /// </summary>
@@ -60,7 +60,7 @@ namespace Common.Services
                 dbServiceContext.Suggestions.FirstOrDefault(s => s.Id.ToString() == suggestionId.ToString());
             if (suggestion != null)
             {
-                stakedSuggestion.IssueId = stakedSuggestion.Suggestion.IssueId;
+                stakedSuggestion.IssueId = suggestion.IssueId;
                 stakedSuggestion.UserId = userId;
             }
 
@@ -72,13 +72,13 @@ namespace Common.Services
             List<StakedSuggestion> stakedSuggestionsForUser)
         {
             Guid? issueId = stakedSuggestionsForUser
-                .FirstOrDefault(s => s.Suggestion.Id.ToString() == suggestionId.ToString())?.IssueId;
+                .FirstOrDefault(s => s.SuggestionId.ToString() == suggestionId.ToString())?.IssueId;
 
             if (issueId != null)
             {
                 StakedSuggestion existingStakedSuggestion = stakedSuggestionsForUser
                     .FirstOrDefault(s => s.IssueId.ToString() == issueId.ToString() &&
-                                         suggestionId.ToString() != s.Suggestion.Id.ToString());
+                                         suggestionId.ToString() != s.SuggestionId.ToString());
 
                 if (existingStakedSuggestion != null)
                 {
@@ -94,7 +94,7 @@ namespace Common.Services
             List<StakedSuggestion> stakedSuggestionsForUser)
         {
             if (stakedSuggestionsForUser.Any(stakedSuggestion =>
-                stakedSuggestion.Suggestion.Id.ToString() == suggestionId.ToString()))
+                stakedSuggestion.SuggestionId.ToString() == suggestionId.ToString()))
             {
                 throw new InvalidOperationException(Resource.ErrorSuggestionAlreadyStakedForUser);
             }
@@ -125,7 +125,7 @@ namespace Common.Services
                     }
 
                     Guid userId = user.Id;
-                    Guid suggestionId = stakedSuggestion.Suggestion.Id;
+                    Guid suggestionId = stakedSuggestion.SuggestionId;
                     walletService.AddTransaction(dbServiceContext, userId, TransactionTypeNames.StakeSuggestionRollback,
                         suggestionId);
                 }

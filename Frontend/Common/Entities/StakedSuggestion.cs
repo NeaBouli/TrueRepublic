@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Common.Entities
 {
+    [Table("StakedSuggestions")]
     public class StakedSuggestion
     {
         /// <summary>
@@ -96,10 +97,10 @@ namespace Common.Entities
         public Suggestion Suggestion { get; set; }
 
         /// <summary>
-        /// Gets or sets the suggestion identifier.
+        /// Gets or sets the suggestion fk.
         /// </summary>
         /// <value>
-        /// The suggestion identifier.
+        /// The suggestion fk.
         /// </value>
         [Required]
         public Guid SuggestionId { get; set; }

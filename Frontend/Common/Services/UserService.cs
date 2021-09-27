@@ -4,6 +4,7 @@ using System.Data;
 using System.Linq;
 using Common.Data;
 using Common.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace Common.Services
 {
@@ -20,9 +21,11 @@ namespace Common.Services
         /// <returns>
         /// The user if found otherwise null
         /// </returns>
-        public User GetUserById(DbServiceContext dbServiceContext , Guid id)
+        public User GetUserById(DbServiceContext dbServiceContext, Guid id)
         {
-            return dbServiceContext.User.FirstOrDefault(u => u.Id.ToString() == id.ToString());
+            return dbServiceContext.User
+                .Include(u => u.Wallet)
+                .FirstOrDefault(u => u.Id.ToString() == id.ToString());
         }
 
         /// <summary>
@@ -59,6 +62,10 @@ namespace Common.Services
                     if (!string.IsNullOrEmpty(uniqueExternalUserId))
                     {
                         user.UniqueExternalUserId = Guid.Parse(uniqueExternalUserId);
+                    }
+                    else
+                    {
+                        user.UniqueExternalUserId = Guid.NewGuid();
                     }
                 }
                 else
