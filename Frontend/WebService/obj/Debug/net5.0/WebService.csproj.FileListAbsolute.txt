@@ -60,3 +60,4 @@ C:\Users\andre\OneDrive\Dokumente\pnyx\Frontend\WebService\bin\Debug\net5.0\runt
 C:\Users\andre\OneDrive\Dokumente\pnyx\Frontend\WebService\bin\Debug\net5.0\Common.dll
 C:\Users\andre\OneDrive\Dokumente\pnyx\Frontend\WebService\bin\Debug\net5.0\Common.pdb
 C:\Users\andre\OneDrive\Dokumente\pnyx\Frontend\WebService\obj\Debug\net5.0\WebService.csproj.AssemblyReference.cache
+C:\Users\andre\OneDrive\Dokumente\pnyx\Frontend\WebService\obj\Debug\net5.0\WebService.MvcApplicationPartsAssemblyInfo.cs

@@ -101,3 +101,4 @@ C:\Users\andre\OneDrive\Dokumente\pnyx\Frontend\WebApp\obj\Debug\net5.0\WebApp.d
 C:\Users\andre\OneDrive\Dokumente\pnyx\Frontend\WebApp\obj\Debug\net5.0\ref\WebApp.dll
 C:\Users\andre\OneDrive\Dokumente\pnyx\Frontend\WebApp\obj\Debug\net5.0\WebApp.pdb
 C:\Users\andre\OneDrive\Dokumente\pnyx\Frontend\WebApp\obj\Debug\net5.0\WebApp.genruntimeconfig.cache
+C:\Users\andre\OneDrive\Dokumente\pnyx\Frontend\WebApp\obj\Debug\net5.0\WebApp.csproj.AssemblyReference.cache

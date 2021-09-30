@@ -19,7 +19,7 @@ namespace Common.Services
         /// <param name="dbServiceContext">The database service context.</param>
         /// <param name="issueId">The issue identifier.</param>
         /// <returns></returns>
-        public List<Suggestion> GetSuggestionsForIssue(DbServiceContext dbServiceContext, Guid issueId)
+        private List<Suggestion> GetSuggestionsForIssue(DbServiceContext dbServiceContext, Guid issueId)
         {
             Issue issue = dbServiceContext.Issues
                 .Include(i => i.Suggestions)

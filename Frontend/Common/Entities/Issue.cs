@@ -95,6 +95,15 @@ namespace Common.Entities
         public List<Suggestion> Suggestions { get; set; }
 
         /// <summary>
+        /// Gets or sets a value indicating whether this instance is top staked.
+        /// </summary>
+        /// <value>
+        ///   <c>true</c> if this instance is top staked; otherwise, <c>false</c>.
+        /// </value>
+        [NotMapped]
+        public bool IsTopStaked { get; set; }
+
+        /// <summary>
         /// Gets the total stake count.
         /// </summary>
         /// <returns>The total stake count for all assigned stakes</returns>
@@ -148,7 +157,7 @@ namespace Common.Entities
         /// </summary>
         /// <param name="limit">The limit.</param>
         /// <returns>The top suggestions from the list</returns>
-        public List<Suggestion> GetTopSuggestions(int limit)
+        private List<Suggestion> GetTopSuggestions(int limit)
         {
             if (limit >= Suggestions.Count)
             {
@@ -167,7 +176,7 @@ namespace Common.Entities
         /// The top suggestions from the list
         /// </returns>
         /// <remarks>Example: green area has to be chosen that only 10% (x %) are in red limit to 12</remarks>
-        public List<Suggestion> GetTopSuggestionsPercentage(decimal percentage, int maxCount = 0)
+        private List<Suggestion> GetTopSuggestionsPercentage(decimal percentage, int maxCount = 0)
         {
             if (percentage >= 100)
             {

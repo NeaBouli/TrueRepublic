@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Threading.Tasks;
 using Common.Data;
 using Common.Entities;
 using Common.Services;
@@ -52,9 +51,11 @@ namespace WebService.Controllers
         {
             DbServiceContext dbServiceContext = DatabaseInitializationService.GetDbServiceContext();
 
+            decimal topStakedIssuesPercent = Convert.ToDecimal(_configuration["TopStakedIssuesPercent"]);
+
             using (dbServiceContext)
             {
-                IssueService issueService = new IssueService();
+                IssueService issueService = new IssueService(topStakedIssuesPercent);
 
                 return Ok(issueService.GetAll(dbServiceContext, paginatedList));
             }
@@ -64,19 +65,22 @@ namespace WebService.Controllers
         /// Gets the top staked.
         /// </summary>
         /// <param name="paginatedList">The paginated list.</param>
-        /// <param name="percentage">The percentage.</param>
-        /// <returns>All valid issues</returns>
-        [Route("GetTopStaked/{percentage}")]
+        /// <returns>
+        /// All valid issues
+        /// </returns>
+        [Route("GetTopStaked")]
         [HttpGet]
-        public IActionResult GetTopStaked([FromQuery] PaginatedList paginatedList, int percentage)
+        public IActionResult GetTopStaked([FromQuery] PaginatedList paginatedList)
         {
             DbServiceContext dbServiceContext = DatabaseInitializationService.GetDbServiceContext();
 
+            decimal topStakedIssuesPercent = Convert.ToDecimal(_configuration["TopStakedIssuesPercent"]);
+
             using (dbServiceContext)
             {
-                IssueService issueService = new IssueService();
+                IssueService issueService = new IssueService(topStakedIssuesPercent);
 
-                return Ok(issueService.GetTopStaked(dbServiceContext, Convert.ToDecimal(percentage.ToString()), paginatedList));
+                return Ok(issueService.GetTopStaked(dbServiceContext, paginatedList));
             }
         }
 
@@ -104,20 +108,23 @@ namespace WebService.Controllers
         /// Gets the top staked issues by tags.
         /// </summary>
         /// <param name="paginatedList">The paginated list.</param>
-        /// <param name="percentage">The percentage.</param>
         /// <param name="tags">The tags.</param>
-        /// <returns>All valid issues</returns>
-        [Route("GetTopStakedByTags/{percentage}/{tags}")]
+        /// <returns>
+        /// All valid issues
+        /// </returns>
+        [Route("GetTopStakedByTags/{tags}")]
         [HttpGet]
-        public IActionResult GetTopStakedByTags([FromQuery] PaginatedList paginatedList, int percentage, string tags)
+        public IActionResult GetTopStakedByTags([FromQuery] PaginatedList paginatedList, string tags)
         {
             DbServiceContext dbServiceContext = DatabaseInitializationService.GetDbServiceContext();
 
+            decimal topStakedIssuesPercent = Convert.ToDecimal(_configuration["TopStakedIssuesPercent"]);
+
             using (dbServiceContext)
             {
-                IssueService issueService = new IssueService();
+                IssueService issueService = new IssueService(topStakedIssuesPercent);
 
-                return Ok(issueService.GetTopStakedByTags(dbServiceContext, tags, percentage, paginatedList));
+                return Ok(issueService.GetTopStakedByTags(dbServiceContext, tags, paginatedList));
             }
         }
 

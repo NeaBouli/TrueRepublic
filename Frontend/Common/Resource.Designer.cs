@@ -151,6 +151,15 @@ namespace Common {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to topStakedIssuesPercent needs to be set in constructor.
+        /// </summary>
+        internal static string ErrorTopStakeIssuesPercentNeedsToBeSet {
+            get {
+                return ResourceManager.GetString("ErrorTopStakeIssuesPercentNeedsToBeSet", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Transaction type {0} not found.
         /// </summary>
         internal static string ErrorTransactionTypeNotFound {

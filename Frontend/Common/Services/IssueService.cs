@@ -14,6 +14,28 @@ namespace Common.Services
     public class IssueService
     {
         /// <summary>
+        /// The top staked issues percent
+        /// </summary>
+        private readonly decimal _topStakedIssuesPercent;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="IssueService"/> class.
+        /// </summary>
+        public IssueService()
+        {
+            _topStakedIssuesPercent = 0;
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="IssueService"/> class.
+        /// </summary>
+        /// <param name="topStakedIssuesPercent">The top staked issues percent.</param>
+        public IssueService(decimal topStakedIssuesPercent)
+        {
+            _topStakedIssuesPercent = topStakedIssuesPercent;
+        }
+
+        /// <summary>
         /// Gets all issues.
         /// </summary>
         /// <returns>
@@ -21,6 +43,11 @@ namespace Common.Services
         /// </returns>
         public List<Issue> GetAll(DbServiceContext dbServiceContext, PaginatedList paginatedList = null)
         {
+            if (_topStakedIssuesPercent == 0)
+            {
+                throw new InvalidOperationException(Resource.ErrorTopStakeIssuesPercentNeedsToBeSet);
+            }
+
             List<Issue> issues = dbServiceContext.Issues
                 .Include(i => i.Suggestions)
                 .Where(i => i.DueDate == null || (DateTime)i.DueDate >= DateTime.Now)
@@ -30,6 +57,8 @@ namespace Common.Services
             {
                 SuggestionService.UpdateStakes(dbServiceContext, issue.Suggestions);
             }
+
+            SetTopStaked(issues);
 
             List<Issue> issuesProcessed = issues.OrderByDescending(i => i.GetTotalStakeCount())
                 .ThenByDescending(i => i.CreateDate).ToList();
@@ -43,23 +72,27 @@ namespace Common.Services
         /// Gets the top staked issues percent.
         /// </summary>
         /// <param name="dbServiceContext">The database service context.</param>
-        /// <param name="percentage">The percentage.</param>
         /// <param name="paginatedList">The paginated list.</param>
         /// <returns>
         /// The top stacked issues depending on a percentage
         /// </returns>
-        public List<Issue> GetTopStaked(DbServiceContext dbServiceContext, decimal percentage, PaginatedList paginatedList = null)
+        public List<Issue> GetTopStaked(DbServiceContext dbServiceContext, PaginatedList paginatedList = null)
         {
+            if (_topStakedIssuesPercent == 0)
+            {
+                throw new InvalidOperationException(Resource.ErrorTopStakeIssuesPercentNeedsToBeSet);
+            }
+
             List<Issue> issues = GetAll(dbServiceContext);
 
-            if (percentage >= 100)
+            if (_topStakedIssuesPercent >= 100)
             {
                 return issues;
             }
 
             decimal count = Convert.ToDecimal(issues.Count);
 
-            int limit = Convert.ToInt32(Math.Round(percentage / 100 * count));
+            int limit = Convert.ToInt32(Math.Round(_topStakedIssuesPercent / 100 * count));
 
             List<Issue> issuesProcessed = issues.Take(limit).ToList();
 
@@ -89,14 +122,18 @@ namespace Common.Services
         /// </summary>
         /// <param name="dbServiceContext">The database service context.</param>
         /// <param name="tags">The tags.</param>
-        /// <param name="percentage">The percentage.</param>
         /// <param name="paginatedList">The paginated list.</param>
         /// <returns>
         /// The top staked issues in percent by tags
         /// </returns>
-        public List<Issue> GetTopStakedByTags(DbServiceContext dbServiceContext, string tags, int percentage, PaginatedList paginatedList = null)
+        public List<Issue> GetTopStakedByTags(DbServiceContext dbServiceContext, string tags, PaginatedList paginatedList = null)
         {
-            List<Issue> issues = GetTopStaked(dbServiceContext, percentage);
+            if (_topStakedIssuesPercent == 0)
+            {
+                throw new InvalidOperationException(Resource.ErrorTopStakeIssuesPercentNeedsToBeSet);
+            }
+
+            List<Issue> issues = GetTopStaked(dbServiceContext);
 
             return GetByTags(tags, issues, paginatedList);
         }
@@ -167,7 +204,8 @@ namespace Common.Services
                 WalletId = wallet.Id,
                 Balance = transactionType.Fee,
                 CreateDate = DateTime.Now,
-                TransactionType = transactionType
+                TransactionType = transactionType,
+                TransactionId = issue.Id
             };
 
             wallet.TotalBalance += walletTransaction.Balance;
@@ -285,6 +323,25 @@ namespace Common.Services
             }
 
             return issues;
+        }
+
+        /// <summary>
+        /// Sets the top staked.
+        /// </summary>
+        /// <param name="issues">The issues.</param>
+        private void SetTopStaked(List<Issue> issues)
+        {
+            int topStakedIssuesCount = (int)Math.Round(issues.Count * _topStakedIssuesPercent, 0);
+
+            List<Issue> topStakedIssues = issues
+                .OrderByDescending(i => i.GetTotalStakeCount())
+                .Take(topStakedIssuesCount)
+                .ToList();
+
+            foreach (Issue issue in topStakedIssues)
+            {
+                issue.IsTopStaked = true;
+            }
         }
 
         /// <summary>
