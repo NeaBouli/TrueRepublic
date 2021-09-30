@@ -87,6 +87,15 @@ namespace Common.Entities
         public DateTime CreateDate { get; set; }
 
         /// <summary>
+        /// Gets or sets the creator user identifier.
+        /// </summary>
+        /// <value>
+        /// The creator user identifier.
+        /// </value>
+        [Required]
+        public Guid CreatorUserId { get; set; }
+
+        /// <summary>
         /// Gets the suggestions.
         /// </summary>
         /// <value>
@@ -102,6 +111,24 @@ namespace Common.Entities
         /// </value>
         [NotMapped]
         public bool IsTopStaked { get; set; }
+
+        /// <summary>
+        /// Determines whether this instance can edit the specified user identifier.
+        /// </summary>
+        /// <param name="userId">The user identifier.</param>
+        /// <returns>
+        ///   <c>true</c> if this instance can edit the specified user identifier; otherwise, <c>false</c>.
+        /// </returns>
+        public bool CanEdit(Guid userId)
+        {
+            if (userId.ToString() == CreatorUserId.ToString() &&
+                (Suggestions == null || Suggestions.Count == 0))
+            {
+                return true;
+            }
+
+            return false;
+        }
 
         /// <summary>
         /// Determines whether [has my stake].

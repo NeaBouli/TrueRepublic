@@ -221,6 +221,43 @@ namespace Common.Services
         }
 
         /// <summary>
+        /// Updates the specified database service context.
+        /// </summary>
+        /// <param name="dbServiceContext">The database service context.</param>
+        /// <param name="issueSubmission">The issue submission.</param>
+        /// <exception cref="System.InvalidOperationException">IssueCannotBeEditedAnymore, ErrorIssueNotFound, ErrorIsNotValid</exception>
+        public void Update(DbServiceContext dbServiceContext, IssueSubmission issueSubmission)
+        {
+            Issue issueToUpdate = dbServiceContext.Issues
+                .FirstOrDefault(i => i.Id.ToString() == issueSubmission.Id.ToString());
+
+            if (issueToUpdate == null)
+            {
+                throw new InvalidOperationException(Resource.ErrorIssueNotFound);
+            }
+
+            if (!issueToUpdate.CanEdit(issueSubmission.UserId))
+            {
+                throw new InvalidOperationException(Resource.IssueCannotBeEditedAnymore);
+            }
+
+            issueToUpdate.DueDate = issueSubmission.DueDate;
+            issueToUpdate.Tags = issueSubmission.Tags;
+            issueToUpdate.Description = issueSubmission.Description;
+            issueToUpdate.Title = issueSubmission.Title;
+
+            (bool valid, string errorMessage) = IsValid(issueSubmission.ToIssue());
+
+            if (!valid)
+            {
+                throw new InvalidOperationException(errorMessage);
+            }
+
+            dbServiceContext.Issues.Update(issueToUpdate);
+            dbServiceContext.SaveChanges();
+        }
+
+        /// <summary>
         /// Imports the specified data table.
         /// </summary>
         /// <param name="dataTable">The data table.</param>
@@ -257,6 +294,19 @@ namespace Common.Services
                     if (!string.IsNullOrEmpty(value))
                     {
                         issue.DueDate = DateTime.Now.Date.AddDays(Convert.ToInt32(value));
+                    }
+
+                    string userId = row["CreatorUserID"].ToString();
+
+                    if (!string.IsNullOrEmpty(userId))
+                    {
+                        User user = dbServiceContext.User
+                            .FirstOrDefault(u => u.ImportId == Convert.ToInt32(userId));
+
+                        if (user != null)
+                        {
+                            issue.CreatorUserId = user.Id;
+                        }
                     }
 
                     dbServiceContext.Issues.Add(issue);

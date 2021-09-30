@@ -149,4 +149,10 @@
 	<data name="ErrorExpirationDaysNeedsToBeSet" xml:space="preserve">
 		<value>Expiration Days needs to be set in the constructor</value>
 	</data>
+	<data name="IssueCannotBeEditedAnymore" xml:space="preserve">
+		<value>Issue cannot be edited anymore</value>
+	</data>
+	<data name="ErrorIssueNotFound" xml:space="preserve">
+		<value>Issue not found</value>
+	</data>
 </root>

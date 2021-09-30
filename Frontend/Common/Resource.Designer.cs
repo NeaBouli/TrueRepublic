@@ -106,6 +106,15 @@ namespace Common {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Issue not found.
+        /// </summary>
+        internal static string ErrorIssueNotFound {
+            get {
+                return ResourceManager.GetString("ErrorIssueNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Not enough funding.
         /// </summary>
         internal static string ErrorNotEnoughFounding {
@@ -210,6 +219,15 @@ namespace Common {
         internal static string ErrorWalletForUserNotFound {
             get {
                 return ResourceManager.GetString("ErrorWalletForUserNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Issue cannot be edited anymore.
+        /// </summary>
+        internal static string IssueCannotBeEditedAnymore {
+            get {
+                return ResourceManager.GetString("IssueCannotBeEditedAnymore", resourceCulture);
             }
         }
     }

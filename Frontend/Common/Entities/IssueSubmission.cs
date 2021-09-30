@@ -11,6 +11,14 @@ namespace Common.Entities
     public class IssueSubmission
     {
         /// <summary>
+        /// Gets or sets the identifier.
+        /// </summary>
+        /// <value>
+        /// The identifier.
+        /// </value>
+        public Guid? Id { get; set; }
+
+        /// <summary>
         /// Gets or sets the user identifier.
         /// </summary>
         /// <value>
@@ -68,8 +76,14 @@ namespace Common.Entities
                 DueDate = DueDate,
                 Description = Description,
                 Tags = Tags,
-                Title = Title
+                Title = Title,
+                CreatorUserId = UserId
             };
+
+            if (Id != null)
+            {
+                issue.Id = (Guid)Id;
+            }
 
             return issue;
         }
