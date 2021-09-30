@@ -10,6 +10,28 @@ namespace Common.Services
 {
     public class StakedSuggestionService
     {
+        /// <summary>
+        /// The expiration days
+        /// </summary>
+        private readonly int _expirationDays;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="StakedSuggestionService"/> class.
+        /// </summary>
+        public StakedSuggestionService()
+        {
+            _expirationDays = 0;
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="StakedSuggestionService"/> class.
+        /// </summary>
+        /// <param name="expirationDays">The expiration days.</param>
+        public StakedSuggestionService(int expirationDays)
+        {
+            _expirationDays = expirationDays;
+        }
+
         public List<StakedSuggestion> GetStakedSuggestionsForUser(DbServiceContext dbServiceContext, Guid userId)
         {
             RollBackInvalidStakedSuggestions(dbServiceContext);
@@ -25,10 +47,14 @@ namespace Common.Services
         /// <param name="dbServiceContext">The database service context.</param>
         /// <param name="suggestionId">The suggestion identifier.</param>
         /// <param name="userId">The user identifier.</param>
-        /// <param name="expirationDays">The expiration days.</param>
         /// <exception cref="System.InvalidOperationException">ErrorSuggestionAlreadyStakedForUser</exception>
-        public void Stake(DbServiceContext dbServiceContext, Guid suggestionId, Guid userId, int expirationDays)
+        public void Stake(DbServiceContext dbServiceContext, Guid suggestionId, Guid userId)
         {
+            if (_expirationDays == 0)
+            {
+                throw new InvalidOperationException(Resource.ErrorExpirationDaysNeedsToBeSet);
+            }
+
             List<StakedSuggestion> stakedSuggestionsForUser = GetStakedSuggestionsForUser(dbServiceContext, userId);
 
             ThrowExceptionIfAlreadyStaked(suggestionId, stakedSuggestionsForUser);
@@ -40,22 +66,26 @@ namespace Common.Services
 
             walletService.AddTransaction(dbServiceContext, userId, TransactionTypeNames.StakeSuggestion, suggestionId);
 
-            AddStakeSuggestion(dbServiceContext, suggestionId, userId, expirationDays);
+            AddStakeSuggestion(dbServiceContext, suggestionId, userId);
 
             dbServiceContext.SaveChanges();
         }
-        
+
         /// <summary>
         /// Adds the stake suggestion.
         /// </summary>
         /// <param name="dbServiceContext">The database service context.</param>
         /// <param name="suggestionId">The suggestion identifier.</param>
         /// <param name="userId">The user identifier.</param>
-        /// <param name="expirationDays">The expiration days.</param>
-        private static void AddStakeSuggestion(DbServiceContext dbServiceContext, Guid suggestionId, Guid userId,
-            int expirationDays)
+        /// <exception cref="System.InvalidOperationException"></exception>
+        private void AddStakeSuggestion(DbServiceContext dbServiceContext, Guid suggestionId, Guid userId)
         {
-            StakedSuggestion stakedSuggestion = new StakedSuggestion(expirationDays);
+            if (_expirationDays == 0)
+            {
+                throw new InvalidOperationException(Resource.ErrorExpirationDaysNeedsToBeSet);
+            }
+
+            StakedSuggestion stakedSuggestion = new StakedSuggestion(_expirationDays);
             Suggestion suggestion =
                 dbServiceContext.Suggestions.FirstOrDefault(s => s.Id.ToString() == suggestionId.ToString());
             if (suggestion != null)
@@ -67,6 +97,14 @@ namespace Common.Services
             dbServiceContext.StakedSuggestions.Add(stakedSuggestion);
         }
 
+        /// <summary>
+        /// Rollbacks the other stake for issue if already existing.
+        /// </summary>
+        /// <param name="dbServiceContext">The database service context.</param>
+        /// <param name="walletService">The wallet service.</param>
+        /// <param name="suggestionId">The suggestion identifier.</param>
+        /// <param name="userId">The user identifier.</param>
+        /// <param name="stakedSuggestionsForUser">The staked suggestions for user.</param>
         private static void RollbackOtherStakeForIssueIfAlreadyExisting(DbServiceContext dbServiceContext,
             WalletService walletService, Guid suggestionId, Guid userId,
             List<StakedSuggestion> stakedSuggestionsForUser)
@@ -132,6 +170,11 @@ namespace Common.Services
             }
         }
 
+        /// <summary>
+        /// Imports the specified data table.
+        /// </summary>
+        /// <param name="dataTable">The data table.</param>
+        /// <returns>The number of imported records</returns>
         public int Import(DataTable dataTable)
         {
             DbServiceContext dbServiceContext = DatabaseInitializationService.GetDbServiceContext();

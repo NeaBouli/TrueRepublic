@@ -45,7 +45,7 @@ namespace Common.Services
         {
             if (_topStakedIssuesPercent == 0)
             {
-                throw new InvalidOperationException(Resource.ErrorTopStakeIssuesPercentNeedsToBeSet);
+                throw new InvalidOperationException(Resource.ErrorTopStakePercentNeedsToBeSet);
             }
 
             List<Issue> issues = dbServiceContext.Issues
@@ -56,6 +56,7 @@ namespace Common.Services
             foreach (Issue issue in issues)
             {
                 SuggestionService.UpdateStakes(dbServiceContext, issue.Suggestions);
+                SuggestionService.SetHasMyStake(dbServiceContext, issue);
             }
 
             SetTopStaked(issues);
@@ -80,7 +81,7 @@ namespace Common.Services
         {
             if (_topStakedIssuesPercent == 0)
             {
-                throw new InvalidOperationException(Resource.ErrorTopStakeIssuesPercentNeedsToBeSet);
+                throw new InvalidOperationException(Resource.ErrorTopStakePercentNeedsToBeSet);
             }
 
             List<Issue> issues = GetAll(dbServiceContext);
@@ -130,7 +131,7 @@ namespace Common.Services
         {
             if (_topStakedIssuesPercent == 0)
             {
-                throw new InvalidOperationException(Resource.ErrorTopStakeIssuesPercentNeedsToBeSet);
+                throw new InvalidOperationException(Resource.ErrorTopStakePercentNeedsToBeSet);
             }
 
             List<Issue> issues = GetTopStaked(dbServiceContext);

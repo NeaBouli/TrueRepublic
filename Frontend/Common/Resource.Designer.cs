@@ -97,6 +97,15 @@ namespace Common {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Expiration Days needs to be set in the constructor.
+        /// </summary>
+        internal static string ErrorExpirationDaysNeedsToBeSet {
+            get {
+                return ResourceManager.GetString("ErrorExpirationDaysNeedsToBeSet", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Not enough funding.
         /// </summary>
         internal static string ErrorNotEnoughFounding {
@@ -151,11 +160,11 @@ namespace Common {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to topStakedIssuesPercent needs to be set in constructor.
+        ///   Looks up a localized string similar to Top Staked Percent needs to be set in constructor.
         /// </summary>
-        internal static string ErrorTopStakeIssuesPercentNeedsToBeSet {
+        internal static string ErrorTopStakePercentNeedsToBeSet {
             get {
-                return ResourceManager.GetString("ErrorTopStakeIssuesPercentNeedsToBeSet", resourceCulture);
+                return ResourceManager.GetString("ErrorTopStakePercentNeedsToBeSet", resourceCulture);
             }
         }
         

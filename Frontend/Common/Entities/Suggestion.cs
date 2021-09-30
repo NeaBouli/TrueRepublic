@@ -11,6 +11,11 @@ namespace Common.Entities
     public class Suggestion
     {
         /// <summary>
+        /// The is top staked
+        /// </summary>
+        private bool _isTopStaked;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="Suggestion"/> class.
         /// </summary>
         public Suggestion()
@@ -87,5 +92,28 @@ namespace Common.Entities
         /// </value>
         [NotMapped]
         public bool IsStaked => StakeCount > 0;
+
+        /// <summary>
+        /// Gets or sets a value indicating whether this instance is top staked.
+        /// </summary>
+        /// <value>
+        ///   <c>true</c> if this instance is top staked; otherwise, <c>false</c>.
+        /// </value>
+        [NotMapped]
+        public bool IsTopStaked
+        {
+            get => IsStaked && _isTopStaked;
+
+            set => _isTopStaked = value;
+        }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether this instance has my stake.
+        /// </summary>
+        /// <value>
+        ///   <c>true</c> if this instance has my stake; otherwise, <c>false</c>.
+        /// </value>
+        [NotMapped]
+        public bool HasMyStake { get; set; }
     }
 }

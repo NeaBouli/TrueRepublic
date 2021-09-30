@@ -104,6 +104,17 @@ namespace Common.Entities
         public bool IsTopStaked { get; set; }
 
         /// <summary>
+        /// Determines whether [has my stake].
+        /// </summary>
+        /// <returns>
+        ///   <c>true</c> if [has my stake]; otherwise, <c>false</c>.
+        /// </returns>
+        public bool HasMyStake()
+        {
+            return Suggestions.Any(suggestion => suggestion.HasMyStake);
+        }
+
+        /// <summary>
         /// Gets the total stake count.
         /// </summary>
         /// <returns>The total stake count for all assigned stakes</returns>

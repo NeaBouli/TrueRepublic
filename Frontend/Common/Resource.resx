@@ -143,7 +143,10 @@
 	<data name="ErrorSuggestionAlreadyStakedForUser" xml:space="preserve">
 		<value>Suggestion is already staked for user</value>
 	</data>
-	<data name="ErrorTopStakeIssuesPercentNeedsToBeSet" xml:space="preserve">
-		<value>topStakedIssuesPercent needs to be set in constructor</value>
+	<data name="ErrorTopStakePercentNeedsToBeSet" xml:space="preserve">
+		<value>Top Staked Percent needs to be set in constructor</value>
+	</data>
+	<data name="ErrorExpirationDaysNeedsToBeSet" xml:space="preserve">
+		<value>Expiration Days needs to be set in the constructor</value>
 	</data>
 </root>

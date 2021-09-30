@@ -13,26 +13,78 @@ namespace Common.Services
     /// </summary>
     public class SuggestionService
     {
+        private readonly decimal _topStakedSuggestionsPercent;
+
         /// <summary>
-        /// Gets the suggestions for issue.
+        /// Initializes a new instance of the <see cref="SuggestionService"/> class.
+        /// </summary>
+        public SuggestionService()
+        {
+            _topStakedSuggestionsPercent = 0;
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SuggestionService"/> class.
+        /// </summary>
+        /// <param name="topStakedSuggestionsPercent">The top staked suggestions percent.</param>
+        public SuggestionService(decimal topStakedSuggestionsPercent)
+        {
+            _topStakedSuggestionsPercent = topStakedSuggestionsPercent;
+        }
+
+        /// <summary>
+        /// Gets the by identifier.
         /// </summary>
         /// <param name="dbServiceContext">The database service context.</param>
-        /// <param name="issueId">The issue identifier.</param>
-        /// <returns></returns>
-        private List<Suggestion> GetSuggestionsForIssue(DbServiceContext dbServiceContext, Guid issueId)
+        /// <param name="id">The identifier.</param>
+        /// <returns>Gets the suggestions for the given id</returns>
+        /// <exception cref="System.InvalidOperationException"></exception>
+        public List<Suggestion> GetById(DbServiceContext dbServiceContext, string id)
         {
+            if (_topStakedSuggestionsPercent == 0)
+            {
+                throw new InvalidOperationException(Resource.ErrorTopStakePercentNeedsToBeSet);
+            }
+
             Issue issue = dbServiceContext.Issues
                 .Include(i => i.Suggestions)
-                .FirstOrDefault(i => i.Id.ToString() == issueId.ToString());
+                .FirstOrDefault(i => i.Id.ToString() == id);
 
             if (issue == null)
             {
                 return null;
             }
 
+            issue.Suggestions ??= new List<Suggestion>();
+
             UpdateStakes(dbServiceContext, issue.Suggestions);
 
+            SetTopStaked(issue.Suggestions);
+
+            SetHasMyStake(dbServiceContext, issue);
+
             return issue.Suggestions;
+        }
+
+        /// <summary>
+        /// Sets the has my stake.
+        /// </summary>
+        /// <param name="dbServiceContext">The database service context.</param>
+        /// <param name="issue">The issue.</param>
+        public static void SetHasMyStake(DbServiceContext dbServiceContext, Issue issue)
+        {
+            StakedSuggestion stakedSuggestion = dbServiceContext.StakedSuggestions
+                .FirstOrDefault(s => s.IssueId.ToString() == issue.Id.ToString());
+
+            if (stakedSuggestion != null)
+            {
+                foreach (var suggestion in issue.Suggestions
+                    .Where(suggestion => suggestion.Id.ToString() == stakedSuggestion.SuggestionId.ToString()))
+                {
+                    suggestion.HasMyStake = true;
+                    break;
+                }
+            }
         }
 
         /// <summary>
@@ -52,6 +104,70 @@ namespace Common.Services
             }
         }
 
+        /// <summary>
+        /// Adds the specified database service context.
+        /// </summary>
+        /// <param name="dbServiceContext">The database service context.</param>
+        /// <param name="suggestionSubmission">The suggestion submission.</param>
+        /// <returns></returns>
+        /// <exception cref="System.InvalidOperationException">
+        /// </exception>
+        public Guid Add(DbServiceContext dbServiceContext, SuggestionSubmission suggestionSubmission)
+        {
+            Suggestion suggestion = suggestionSubmission.ToSuggestion();
+
+            (bool valid, string errorMessage) = IsValid(suggestion);
+
+            if (!valid)
+            {
+                throw new InvalidOperationException(errorMessage);
+            }
+
+            Guid userId = suggestionSubmission.UserId;
+
+            TransactionTypeService transactionTypeService = new TransactionTypeService();
+            TransactionType transactionType = transactionTypeService.GetTransactionType(dbServiceContext, TransactionTypeNames.AddSuggestion);
+
+            UserService userService = new UserService();
+            User user = userService.GetUserById(dbServiceContext, userId);
+
+            if (user == null)
+            {
+                throw new InvalidOperationException(string.Format(Resource.ErrorUserIdNotFound, userId));
+            }
+
+            Wallet wallet = user.Wallet;
+
+            if (!wallet.HasEnoughFunding(transactionType.Fee))
+            {
+                throw new InvalidOperationException(Resource.ErrorNotEnoughFounding);
+            }
+
+            WalletTransaction walletTransaction = new WalletTransaction
+            {
+                // transaction fee must be negative for cost
+                WalletId = wallet.Id,
+                Balance = transactionType.Fee,
+                CreateDate = DateTime.Now,
+                TransactionType = transactionType,
+                TransactionId = suggestion.Id
+            };
+
+            wallet.TotalBalance += walletTransaction.Balance;
+            dbServiceContext.WalletTransactions.Add(walletTransaction);
+
+
+            dbServiceContext.Suggestions.Add(suggestion);
+            dbServiceContext.SaveChanges();
+
+            return suggestion.Id;
+        }
+
+        /// <summary>
+        /// Imports the specified data table.
+        /// </summary>
+        /// <param name="dataTable">The data table.</param>
+        /// <returns>The number of imported records</returns>
         public int Import(DataTable dataTable)
         {
             DbServiceContext dbServiceContext = DatabaseInitializationService.GetDbServiceContext();
@@ -97,6 +213,63 @@ namespace Common.Services
 
                 return recordCount;
             }
+        }
+
+        /// <summary>
+        /// Sets the top staked.
+        /// </summary>
+        /// <param name="suggestions">The suggestions.</param>
+        private void SetTopStaked(List<Suggestion> suggestions)
+        {
+            int topStakedIssuesCount = (int)Math.Round(suggestions.Count * _topStakedSuggestionsPercent, 0);
+
+            List<Suggestion> topStakedSuggestions = suggestions
+                .OrderByDescending(i => i.StakeCount)
+                .Take(topStakedIssuesCount)
+                .ToList();
+
+            foreach (var suggestion in topStakedSuggestions)
+            {
+                suggestion.IsTopStaked = true;
+            }
+        }
+
+        /// <summary>
+        /// Returns true if ... is valid.
+        /// </summary>
+        /// <param name="suggestion">The suggestion.</param>
+        /// <returns>
+        ///   <c>true</c> if this instance is valid; otherwise, <c>false</c>.
+        /// </returns>
+        private (bool, string) IsValid(Suggestion suggestion)
+        {
+            string errorMessage = string.Empty;
+
+            if (string.IsNullOrEmpty(suggestion.Title))
+            {
+                errorMessage = Resource.ErrorTitleIsRequired;
+                return (false, errorMessage);
+            }
+
+            if (string.IsNullOrEmpty(suggestion.Description))
+            {
+                errorMessage = Resource.ErrorDescriptionIsRequired;
+                return (false, errorMessage);
+            }
+
+            if (!string.IsNullOrEmpty(suggestion.Title) && suggestion.Title.Length < 5)
+            {
+                errorMessage = Resource.ErrorTitleNotLongEnough;
+                return (false, errorMessage);
+            }
+
+            if (!string.IsNullOrEmpty(suggestion.Description) && suggestion.Description.Length < 5)
+            {
+                errorMessage = Resource.ErrorDescriptionNotLongEnough;
+                return (false, errorMessage);
+            }
+
+            return (true, errorMessage);
         }
     }
 }
