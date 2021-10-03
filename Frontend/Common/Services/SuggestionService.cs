@@ -39,7 +39,7 @@ namespace Common.Services
         /// <param name="id">The identifier.</param>
         /// <returns>Gets the suggestions for the given id</returns>
         /// <exception cref="System.InvalidOperationException"></exception>
-        public List<Suggestion> GetById(DbServiceContext dbServiceContext, string id)
+        public List<Suggestion> GetByIssueId(DbServiceContext dbServiceContext, string id)
         {
             if (_topStakedSuggestionsPercent == 0)
             {
@@ -63,7 +63,36 @@ namespace Common.Services
 
             SetHasMyStake(dbServiceContext, issue);
 
-            return issue.Suggestions;
+            return issue.Suggestions.OrderByDescending(s => s.IsTopStaked).ThenBy(s => s.CreateDate).ToList();
+        }
+
+        /// <summary>
+        /// Gets the by suggestion identifier.
+        /// </summary>
+        /// <param name="dbServiceContext">The database service context.</param>
+        /// <param name="id">The identifier.</param>
+        /// <returns></returns>
+        /// <exception cref="System.InvalidOperationException"></exception>
+        public Suggestion GetBySuggestionId(DbServiceContext dbServiceContext, string id)
+        {
+            if (_topStakedSuggestionsPercent == 0)
+            {
+                throw new InvalidOperationException(Resource.ErrorTopStakePercentNeedsToBeSet);
+            }
+
+            Suggestion suggestion = dbServiceContext.Suggestions
+                .FirstOrDefault(s => s.Id.ToString() == id);
+
+            if (suggestion == null)
+            {
+                return null;
+            }
+
+            UpdateStakes(dbServiceContext, new List<Suggestion> { suggestion });
+
+            SetTopStaked(new List<Suggestion> { suggestion });
+
+            return suggestion;
         }
 
         /// <summary>
@@ -164,6 +193,42 @@ namespace Common.Services
         }
 
         /// <summary>
+        /// Updates the specified database service context.
+        /// </summary>
+        /// <param name="dbServiceContext">The database service context.</param>
+        /// <param name="suggestionSubmission">The suggestion submission.</param>
+        /// <exception cref="System.InvalidOperationException">
+        /// </exception>
+        public void Update(DbServiceContext dbServiceContext, SuggestionSubmission suggestionSubmission)
+        {
+            Suggestion suggestionToUpdate = dbServiceContext.Suggestions
+                .FirstOrDefault(s => s.Id.ToString() == suggestionSubmission.Id.ToString());
+
+            if (suggestionToUpdate == null)
+            {
+                throw new InvalidOperationException(Resource.ErrorIssueNotFound);
+            }
+
+            if (!suggestionToUpdate.CanEdit(suggestionSubmission.UserId))
+            {
+                throw new InvalidOperationException(Resource.IssueCannotBeEditedAnymore);
+            }
+
+            suggestionToUpdate.Description = suggestionSubmission.Description;
+            suggestionToUpdate.Title = suggestionSubmission.Title;
+
+            (bool valid, string errorMessage) = IsValid(suggestionSubmission.ToSuggestion());
+
+            if (!valid)
+            {
+                throw new InvalidOperationException(errorMessage);
+            }
+
+            dbServiceContext.Suggestions.Update(suggestionToUpdate);
+            dbServiceContext.SaveChanges();
+        }
+
+        /// <summary>
         /// Imports the specified data table.
         /// </summary>
         /// <param name="dataTable">The data table.</param>
@@ -199,6 +264,19 @@ namespace Common.Services
                     if (issueId != null)
                     {
                         suggestion.IssueId = (Guid)issueId;
+                    }
+
+                    string userId = row["CreatorUserID"].ToString();
+
+                    if (!string.IsNullOrEmpty(userId))
+                    {
+                        User user = dbServiceContext.User
+                            .FirstOrDefault(u => u.ImportId == Convert.ToInt32(userId));
+
+                        if (user != null)
+                        {
+                            suggestion.CreatorUserId = user.Id;
+                        }
                     }
 
                     dbServiceContext.Suggestions.Add(suggestion);

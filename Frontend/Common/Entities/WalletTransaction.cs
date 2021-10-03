@@ -63,6 +63,15 @@ namespace Common.Entities
         public TransactionType TransactionType { get; set; }
 
         /// <summary>
+        /// Gets or sets the transaction type identifier.
+        /// </summary>
+        /// <value>
+        /// The transaction type identifier.
+        /// </value>
+        [Required]
+        public Guid TransactionTypeId { get; set; }
+
+        /// <summary>
         /// Gets or sets the transaction identifier.
         /// </summary>
         /// <value>

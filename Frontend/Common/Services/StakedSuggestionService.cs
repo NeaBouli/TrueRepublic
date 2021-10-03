@@ -24,7 +24,7 @@ namespace Common.Services
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="StakedSuggestionService"/> class.
+        /// Initializes a new instance of the <see cref="StakedSuggestionService" /> class.
         /// </summary>
         /// <param name="expirationDays">The expiration days.</param>
         public StakedSuggestionService(int expirationDays)
@@ -36,9 +36,11 @@ namespace Common.Services
         {
             RollBackInvalidStakedSuggestions(dbServiceContext);
 
-            return dbServiceContext.User
+            List<StakedSuggestion> stakedSuggestionsForUser = dbServiceContext.User
                 .FirstOrDefault(u => u.Id.ToString() == userId.ToString())?
-                .StakedSuggestions;
+                .StakedSuggestions ?? new List<StakedSuggestion>();
+
+            return stakedSuggestionsForUser;
         }
 
         /// <summary>
@@ -66,7 +68,7 @@ namespace Common.Services
 
             walletService.AddTransaction(dbServiceContext, userId, TransactionTypeNames.StakeSuggestion, suggestionId);
 
-            AddStakeSuggestion(dbServiceContext, suggestionId, userId);
+            AddStakedSuggestion(dbServiceContext, suggestionId, userId);
 
             dbServiceContext.SaveChanges();
         }
@@ -78,7 +80,7 @@ namespace Common.Services
         /// <param name="suggestionId">The suggestion identifier.</param>
         /// <param name="userId">The user identifier.</param>
         /// <exception cref="System.InvalidOperationException"></exception>
-        private void AddStakeSuggestion(DbServiceContext dbServiceContext, Guid suggestionId, Guid userId)
+        private void AddStakedSuggestion(DbServiceContext dbServiceContext, Guid suggestionId, Guid userId)
         {
             if (_expirationDays == 0)
             {
@@ -88,9 +90,11 @@ namespace Common.Services
             StakedSuggestion stakedSuggestion = new StakedSuggestion(_expirationDays);
             Suggestion suggestion =
                 dbServiceContext.Suggestions.FirstOrDefault(s => s.Id.ToString() == suggestionId.ToString());
+
             if (suggestion != null)
             {
                 stakedSuggestion.IssueId = suggestion.IssueId;
+                stakedSuggestion.SuggestionId = suggestion.Id;
                 stakedSuggestion.UserId = userId;
             }
 
@@ -128,6 +132,12 @@ namespace Common.Services
             }
         }
 
+        /// <summary>
+        /// Throws the exception if already staked.
+        /// </summary>
+        /// <param name="suggestionId">The suggestion identifier.</param>
+        /// <param name="stakedSuggestionsForUser">The staked suggestions for user.</param>
+        /// <exception cref="System.InvalidOperationException">ErrorSuggestionAlreadyStakedForUser</exception>
         private static void ThrowExceptionIfAlreadyStaked(Guid suggestionId,
             List<StakedSuggestion> stakedSuggestionsForUser)
         {
@@ -143,8 +153,8 @@ namespace Common.Services
         /// </summary>
         public void RollBackInvalidStakedSuggestions(DbServiceContext dbServiceContext)
         {
-            List<StakedSuggestion> invalidStakedSuggestions =
-                dbServiceContext.StakedSuggestions.Where(s => s.IsExpired).ToList();
+            List<StakedSuggestion> invalidStakedSuggestions = dbServiceContext.StakedSuggestions
+                .Where(s => s.CreateDate.AddDays(s.ExpirationDays) < DateTime.Now).ToList();
 
             if (invalidStakedSuggestions.Count == 0)
             {
@@ -223,6 +233,8 @@ namespace Common.Services
                             stakedSuggestion.UserId = user.Id;
                         }
                     }
+
+                    stakedSuggestion.ExpirationDays = 30;
 
                     if (stakedSuggestion.SuggestionId.ToString() != Guid.Empty.ToString() &&
                         stakedSuggestion.UserId.ToString() != Guid.Empty.ToString())

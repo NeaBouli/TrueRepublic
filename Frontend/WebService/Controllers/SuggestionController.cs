@@ -26,6 +26,11 @@ namespace WebService.Controllers
         /// </summary>
         private readonly IConfiguration _configuration;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SuggestionController"/> class.
+        /// </summary>
+        /// <param name="logger">The logger.</param>
+        /// <param name="configuration">The configuration.</param>
         public SuggestionController(ILogger<IssueController> logger, IConfiguration configuration)
         {
             _logger = logger;
@@ -39,23 +44,48 @@ namespace WebService.Controllers
         /// </summary>
         /// <param name="id">The identifier.</param>
         /// <returns>The issue if found</returns>
-        [HttpGet("{id}")]
-        public IActionResult GetById(string id)
+        [HttpGet("Issue/{id}")]
+        public IActionResult GetByIssueId(string id)
         {
             DbServiceContext dbServiceContext = DatabaseInitializationService.GetDbServiceContext();
 
             using (dbServiceContext)
             {
-                SuggestionService suggestionService = new SuggestionService();
+                SuggestionService suggestionService = new SuggestionService(Convert.ToInt32(_configuration["TopStakedSuggestionsPercent"]));
 
-                List<Suggestion> suggestions = suggestionService.GetById(dbServiceContext, id);
+                List<Suggestion> suggestions = suggestionService.GetByIssueId(dbServiceContext, id);
 
                 if (suggestions == null)
                 {
-                    return Ok(new List<Suggestion>());
+                    return NotFound();
                 }
 
                 return Ok(suggestions);
+            }
+        }
+
+        /// <summary>
+        /// Gets the by identifier.
+        /// </summary>
+        /// <param name="id">The identifier.</param>
+        /// <returns>The issue if found</returns>
+        [HttpGet("Suggestion/{id}")]
+        public IActionResult GetBySuggestionId(string id)
+        {
+            DbServiceContext dbServiceContext = DatabaseInitializationService.GetDbServiceContext();
+
+            using (dbServiceContext)
+            {
+                SuggestionService suggestionService = new SuggestionService(Convert.ToInt32(_configuration["TopStakedSuggestionsPercent"]));
+
+                var suggestion = suggestionService.GetBySuggestionId(dbServiceContext, id);
+
+                if (suggestion == null)
+                {
+                    return NotFound();
+                }
+
+                return Ok(suggestion);
             }
         }
 
@@ -76,6 +106,49 @@ namespace WebService.Controllers
                 Guid result = suggestionService.Add(dbServiceContext, suggestionSubmission);
 
                 return Ok(result);
+            }
+        }
+
+        /// <summary>
+        /// Updates the specified suggestion submission.
+        /// </summary>
+        /// <param name="suggestionSubmission">The suggestion submission.</param>
+        /// <returns>The http status for the transaction</returns>
+        [HttpPut]
+        public IActionResult Update([FromBody] SuggestionSubmission suggestionSubmission)
+        {
+            DbServiceContext dbServiceContext = DatabaseInitializationService.GetDbServiceContext();
+
+            using (dbServiceContext)
+            {
+                SuggestionService suggestionService = new SuggestionService();
+
+                suggestionService.Update(dbServiceContext, suggestionSubmission);
+
+                return Ok();
+            }
+        }
+
+        /// <summary>
+        /// Stakes the suggestion.
+        /// </summary>
+        /// <param name="userIdItemId">The user identifier item identifier.</param>
+        /// <returns>
+        /// The http status for the transaction
+        /// </returns>
+        [HttpPut("StakeSuggestion")]
+        public IActionResult StakeSuggestion([FromBody] UserIdItemId userIdItemId)
+        {
+            DbServiceContext dbServiceContext = DatabaseInitializationService.GetDbServiceContext();
+
+            using (dbServiceContext)
+            {
+                StakedSuggestionService stakedSuggestionService =
+                    new StakedSuggestionService(int.Parse(_configuration["SuggestionStakeLifetimeDays"]));
+
+                stakedSuggestionService.Stake(dbServiceContext, userIdItemId.ItemId, userIdItemId.UserId);
+
+                return Ok();
             }
         }
     }

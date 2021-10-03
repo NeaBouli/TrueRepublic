@@ -25,6 +25,25 @@ namespace Common.Services
         }
 
         /// <summary>
+        /// Gets the total balance.
+        /// </summary>
+        /// <param name="dbServiceContext">The database service context.</param>
+        /// <param name="userId">The user identifier.</param>
+        /// <returns>The total balance for the user -1 if not found</returns>
+        public double GetTotalBalance(DbServiceContext dbServiceContext, string userId)
+        {
+            Wallet wallet = dbServiceContext.User
+                .Include(u => u.Wallet).FirstOrDefault(u => u.Id.ToString() == userId)?.Wallet;
+
+            if (wallet == null)
+            {
+                return -1;
+            }
+
+            return wallet.TotalBalance;
+        }
+
+        /// <summary>
         /// Determines whether [has enough funding for transaction] [the specified database service context].
         /// </summary>
         /// <param name="dbServiceContext">The database service context.</param>
@@ -80,11 +99,13 @@ namespace Common.Services
             {
                 Balance = transactionType.Fee,
                 TransactionId = transactionId,
-                TransactionType = transactionType
+                TransactionType = transactionType,
+                WalletId = wallet.Id
             };
 
-            WalletTransactionService walletTransactionService = new WalletTransactionService();
-            walletTransactionService.AddWalletTransaction(dbServiceContext, walletTransaction);
+            wallet.TotalBalance += transactionType.Fee;
+
+            dbServiceContext.WalletTransactions.Add(walletTransaction);
         }
 
         /// <summary>
