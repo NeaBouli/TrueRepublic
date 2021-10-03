@@ -18,52 +18,48 @@ namespace Common.Services
         /// </summary>
         /// <param name="dbServiceContext">The database service context.</param>
         /// <param name="userId">The user identifier.</param>
-        /// <param name="fromDate">From date.</param>
-        /// <param name="toDate">To date.</param>
-        /// <returns>The wallet transactions for the use</returns>
-        public List<WalletTransaction> GetWalletTransactionsForUser(DbServiceContext dbServiceContext, Guid userId, DateTime? fromDate,
-            DateTime? toDate)
+        /// <param name="paginatedList">The paginated list.</param>
+        /// <param name="limit">The limit.</param>
+        /// <returns>
+        /// The wallet transactions for the use
+        /// </returns>
+        public List<WalletTransaction> GetWalletTransactionsForUser(DbServiceContext dbServiceContext, string userId, PaginatedList paginatedList, int limit = 0)
         {
             User user = dbServiceContext.User
                 .Include(u => u.Wallet)
                 .Include(u => u.Wallet.WalletTransactions)
-                .FirstOrDefault(u => u.Id.ToString() == userId.ToString());
+                .FirstOrDefault(u => u.Id.ToString() == userId);
 
             if (user == null)
             {
                 return null;
             }
 
-            if (fromDate == null && toDate == null)
+            List<WalletTransaction> walletTransactions;
+
+            if (limit == 0)
             {
-                return user.Wallet.WalletTransactions;
+                walletTransactions = user.Wallet.WalletTransactions
+                    .OrderByDescending(w => w.CreateDate)
+                    .ToList();
+            }
+            else
+            {
+                walletTransactions = user.Wallet.WalletTransactions
+                    .OrderByDescending(w => w.CreateDate)
+                    .Take(limit)
+                    .ToList();
             }
 
-            if (fromDate == null)
+            Dictionary<string, TransactionType> transactionTypes = dbServiceContext.TransactionTypes
+                .ToDictionary(t => t.Id.ToString(), t => t);
+
+            foreach (WalletTransaction walletTransaction in walletTransactions)
             {
-                return user.Wallet.WalletTransactions
-                    .Where(w => w.CreateDate <= (DateTime) toDate).ToList();
+                walletTransaction.TransactionType = transactionTypes[walletTransaction.TransactionTypeId.ToString()];
             }
 
-            if (toDate == null)
-            {
-                return user.Wallet.WalletTransactions
-                    .Where(w => w.CreateDate >= (DateTime) fromDate).ToList();
-            }
-
-            return user.Wallet.WalletTransactions
-                .Where(w => w.CreateDate <= (DateTime) toDate)
-                .Where(w => w.CreateDate >= (DateTime) fromDate).ToList();
-        }
-
-        /// <summary>
-        /// Adds the wallet transaction.
-        /// </summary>
-        /// <param name="dbServiceContext">The database service context.</param>
-        /// <param name="walletTransaction">The wallet transaction.</param>
-        public void AddWalletTransaction(DbServiceContext dbServiceContext, WalletTransaction walletTransaction)
-        {
-            dbServiceContext.WalletTransactions.Add(walletTransaction);
+            return ProcessPaginatedList(paginatedList, walletTransactions);
         }
 
         /// <summary>
@@ -142,6 +138,25 @@ namespace Common.Services
 
                 return recordCount;
             }
+        }
+
+        /// <summary>
+        /// Processes the paginated list.
+        /// </summary>
+        /// <param name="paginatedList">The paginated list.</param>
+        /// <param name="walletTransactions">The wallet transactions.</param>
+        /// <returns></returns>
+        private static List<WalletTransaction> ProcessPaginatedList(PaginatedList paginatedList, List<WalletTransaction> walletTransactions)
+        {
+            if (paginatedList is { ItemsPerPage: > 0 })
+            {
+                walletTransactions = walletTransactions
+                    .Skip(paginatedList.Skip)
+                    .Take(paginatedList.ItemsPerPage)
+                    .ToList();
+            }
+
+            return walletTransactions;
         }
     }
 }

@@ -9,6 +9,14 @@ namespace Common.Entities
     public class SuggestionSubmission
     {
         /// <summary>
+        /// Gets or sets the identifier.
+        /// </summary>
+        /// <value>
+        /// The identifier.
+        /// </value>
+        public Guid? Id { get; set; }
+
+        /// <summary>
         /// Gets or sets the user identifier.
         /// </summary>
         /// <value>
@@ -54,12 +62,16 @@ namespace Common.Entities
             {
                 IssueId = IssueId,
                 Title = Title,
-                Description = Description
+                Description = Description,
+                CreatorUserId = UserId
             };
+
+            if (Id != null)
+            {
+                suggestion.Id = (Guid)Id;
+            }
 
             return suggestion;
         }
-
-        
     }
 }

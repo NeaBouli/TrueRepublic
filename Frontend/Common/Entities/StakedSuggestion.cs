@@ -42,6 +42,7 @@ namespace Common.Entities
         /// <value>
         /// The valid till.
         /// </value>
+        [NotMapped]
         public DateTime ValidTill => CreateDate.AddDays(ExpirationDays);
 
         /// <summary>
@@ -50,8 +51,10 @@ namespace Common.Entities
         /// <value>
         ///   <c>true</c> if this instance is expired; otherwise, <c>false</c>.
         /// </value>
-        [NotMapped]
-        public bool IsExpired => ValidTill < DateTime.Now;
+        public bool IsExpired()
+        {
+            return ValidTill < DateTime.Now;
+        }
 
         /// <summary>
         /// Gets or sets the identifier.
@@ -106,9 +109,9 @@ namespace Common.Entities
         public Guid SuggestionId { get; set; }
 
         /// <summary>
-        /// The expiration days
+        /// The expiration
         /// </summary>
-        [NotMapped]
-        public int ExpirationDays { get; }
+        [Required]
+        public int ExpirationDays { get; set; }
     }
 }

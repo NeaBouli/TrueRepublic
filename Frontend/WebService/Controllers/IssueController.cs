@@ -177,8 +177,9 @@ namespace WebService.Controllers
         /// Updates the specified issue.
         /// </summary>
         /// <param name="issueSubmission">The issue.</param>
-        /// <param name="userId">The user identifier.</param>
-        /// <returns>http status ok if everything went well</returns>
+        /// <returns>
+        /// http status ok if everything went well
+        /// </returns>
         [HttpPut]
         public IActionResult Update([FromBody] IssueSubmission issueSubmission)
         {

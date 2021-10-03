@@ -189,48 +189,5 @@ namespace Common.Entities
                 string.Equals(tag, tagFromList, StringComparison.OrdinalIgnoreCase) || 
                 string.Equals($"#{tag}", tagFromList, StringComparison.OrdinalIgnoreCase));
         }
-
-        /// <summary>
-        /// Gets the top suggestions.
-        /// </summary>
-        /// <param name="limit">The limit.</param>
-        /// <returns>The top suggestions from the list</returns>
-        private List<Suggestion> GetTopSuggestions(int limit)
-        {
-            if (limit >= Suggestions.Count)
-            {
-                return Suggestions;
-            }
-
-            return Suggestions.OrderByDescending(s => s.StakeCount).ThenBy(t => t.CreateDate).Take(limit).ToList();
-        }
-
-        /// <summary>
-        /// Gets the top suggestions percentage.
-        /// </summary>
-        /// <param name="percentage">The percentage.</param>
-        /// <param name="maxCount">The maximum count.</param>
-        /// <returns>
-        /// The top suggestions from the list
-        /// </returns>
-        /// <remarks>Example: green area has to be chosen that only 10% (x %) are in red limit to 12</remarks>
-        private List<Suggestion> GetTopSuggestionsPercentage(decimal percentage, int maxCount = 0)
-        {
-            if (percentage >= 100)
-            {
-                return Suggestions;
-            }
-
-            decimal count = Convert.ToDecimal(Suggestions.Count);
-
-            int limit = Convert.ToInt32(Math.Round(percentage / 100 * count));
-
-            if (maxCount > 0 && maxCount < limit)
-            {
-                limit = maxCount;
-            }
-
-            return Suggestions.OrderByDescending(s => s.StakeCount).ThenBy(t => t.CreateDate).Take(limit).ToList();
-        }
     }
 }
