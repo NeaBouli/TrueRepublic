@@ -62,7 +62,7 @@ namespace Common.Services
             SetTopStaked(issues);
 
             List<Issue> issuesProcessed = issues.OrderByDescending(i => i.GetTotalStakeCount())
-                .ThenByDescending(i => i.CreateDate).ToList();
+                .ThenBy(i => i.CreateDate).ToList();
 
             issuesProcessed = ProcessPaginatedList(paginatedList, issuesProcessed);
 

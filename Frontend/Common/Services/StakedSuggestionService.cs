@@ -32,6 +32,12 @@ namespace Common.Services
             _expirationDays = expirationDays;
         }
 
+        /// <summary>
+        /// Gets the staked suggestions for user.
+        /// </summary>
+        /// <param name="dbServiceContext">The database service context.</param>
+        /// <param name="userId">The user identifier.</param>
+        /// <returns>The staked suggestions for the user</returns>
         public List<StakedSuggestion> GetStakedSuggestionsForUser(DbServiceContext dbServiceContext, Guid userId)
         {
             RollBackInvalidStakedSuggestions(dbServiceContext);

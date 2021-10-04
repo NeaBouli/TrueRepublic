@@ -56,6 +56,7 @@ namespace Common.Entities
         /// The title.
         /// </value>
         [Required]
+        // TODO: unique
         public string Title { get; set; }
 
         /// <summary>

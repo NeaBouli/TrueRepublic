@@ -105,6 +105,8 @@ namespace Common.Services
             StakedSuggestion stakedSuggestion = dbServiceContext.StakedSuggestions
                 .FirstOrDefault(s => s.IssueId.ToString() == issue.Id.ToString());
 
+            // TODO: review
+
             if (stakedSuggestion != null)
             {
                 foreach (var suggestion in issue.Suggestions

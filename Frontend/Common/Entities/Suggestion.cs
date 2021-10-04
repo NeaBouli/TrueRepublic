@@ -56,6 +56,7 @@ namespace Common.Entities
         /// <value>
         /// The short description.
         /// </value>
+        // TODO: unique for the issue scope
         public string Title { get; set; }
 
         /// <summary>
@@ -134,7 +135,7 @@ namespace Common.Entities
         /// </returns>
         public bool CanEdit(Guid userId)
         {
-            if (userId.ToString() == CreatorUserId.ToString() && (!IsStaked))
+            if (userId.ToString() == CreatorUserId.ToString() && !IsStaked)
             {
                 return true;
             }
