@@ -55,6 +55,15 @@ namespace Common.Entities
         /// The suggestion identifier.
         /// </value>
         [Required]
+        public Guid IssueId { get; set; }
+
+        /// <summary>
+        /// Gets or sets the suggestion identifier.
+        /// </summary>
+        /// <value>
+        /// The suggestion identifier.
+        /// </value>
+        [Required]
         public Guid SuggestionId { get; set; }
 
         /// <summary>

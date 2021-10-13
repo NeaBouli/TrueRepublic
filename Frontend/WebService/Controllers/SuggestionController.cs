@@ -42,18 +42,25 @@ namespace WebService.Controllers
         /// <summary>
         /// Gets the by identifier.
         /// </summary>
+        /// <param name="userName">Name of the user.</param>
         /// <param name="id">The identifier.</param>
-        /// <returns>The issue if found</returns>
+        /// <returns>
+        /// The issue if found
+        /// </returns>
         [HttpGet("Issue/{id}")]
-        public IActionResult GetByIssueId(string id)
+        public IActionResult GetByIssueId([FromQuery] string userName, string id)
         {
             DbServiceContext dbServiceContext = DatabaseInitializationService.GetDbServiceContext();
 
             using (dbServiceContext)
             {
-                SuggestionService suggestionService = new SuggestionService(Convert.ToInt32(_configuration["TopStakedSuggestionsPercent"]));
+                string userId = UserService.GetUserId(dbServiceContext, userName);
 
-                List<Suggestion> suggestions = suggestionService.GetByIssueId(dbServiceContext, id);
+                SuggestionService suggestionService = new SuggestionService(
+                    Convert.ToInt32(_configuration["TopStakedSuggestionsPercent"]),
+                    Convert.ToInt32(_configuration["TopVotedSuggestionsPercent"]));
+
+                List<Suggestion> suggestions = suggestionService.GetByIssueId(dbServiceContext, id, userId);
 
                 if (suggestions == null)
                 {
@@ -67,18 +74,25 @@ namespace WebService.Controllers
         /// <summary>
         /// Gets the by identifier.
         /// </summary>
+        /// <param name="userName">Name of the user.</param>
         /// <param name="id">The identifier.</param>
-        /// <returns>The issue if found</returns>
+        /// <returns>
+        /// The issue if found
+        /// </returns>
         [HttpGet("Suggestion/{id}")]
-        public IActionResult GetBySuggestionId(string id)
+        public IActionResult GetBySuggestionId([FromQuery] string userName, string id)
         {
             DbServiceContext dbServiceContext = DatabaseInitializationService.GetDbServiceContext();
 
             using (dbServiceContext)
             {
-                SuggestionService suggestionService = new SuggestionService(Convert.ToInt32(_configuration["TopStakedSuggestionsPercent"]));
+                string userId = UserService.GetUserId(dbServiceContext, userName);
 
-                var suggestion = suggestionService.GetBySuggestionId(dbServiceContext, id);
+                SuggestionService suggestionService = new SuggestionService(
+                    Convert.ToInt32(_configuration["TopStakedSuggestionsPercent"]),
+                    Convert.ToInt32(_configuration["TopVotedSuggestionsPercent"]));
+
+                Suggestion suggestion = suggestionService.GetBySuggestionId(dbServiceContext, id, userId);
 
                 if (suggestion == null)
                 {

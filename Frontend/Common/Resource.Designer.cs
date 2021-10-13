@@ -133,6 +133,15 @@ namespace Common {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Suggestion with the same title already exists.
+        /// </summary>
+        internal static string ErrorSuggestionWithSameTitleAlreadyExists {
+            get {
+                return ResourceManager.GetString("ErrorSuggestionWithSameTitleAlreadyExists", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Tags are required.
         /// </summary>
         internal static string ErrorTagsAreRequired {

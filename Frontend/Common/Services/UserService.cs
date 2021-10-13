@@ -14,6 +14,19 @@ namespace Common.Services
     public class UserService
     {
         /// <summary>
+        /// Gets the name of the user by.
+        /// </summary>
+        /// <param name="dbServiceContext">The database service context.</param>
+        /// <param name="userName">Name of the user.</param>
+        /// <returns></returns>
+        public User GetUserByName(DbServiceContext dbServiceContext, string userName)
+        {
+            return dbServiceContext.User
+                .Include(u => u.Wallet)
+                .FirstOrDefault(u => u.UserName == userName);
+        }
+
+        /// <summary>
         /// Gets the user by identifier.
         /// </summary>
         /// <param name="dbServiceContext">The database service context.</param>
@@ -84,6 +97,31 @@ namespace Common.Services
             }
 
             return recordCount;
+        }
+
+        /// <summary>
+        /// Gets the user identifier.
+        /// </summary>
+        /// <param name="dbServiceContext">The database service context.</param>
+        /// <param name="userName">Name of the user.</param>
+        /// <returns>The user id as string if found otherwise an empty string</returns>
+        public static string GetUserId(DbServiceContext dbServiceContext, string userName)
+        {
+            string userId = string.Empty;
+
+            if (!string.IsNullOrEmpty(userName))
+            {
+                UserService userService = new UserService();
+
+                User user = userService.GetUserByName(dbServiceContext, userName);
+
+                if (user != null)
+                {
+                    userId = user.Id.ToString();
+                }
+            }
+
+            return userId;
         }
     }
 }

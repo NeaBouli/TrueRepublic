@@ -155,4 +155,7 @@
 	<data name="ErrorIssueNotFound" xml:space="preserve">
 		<value>Issue not found</value>
 	</data>
+	<data name="ErrorSuggestionWithSameTitleAlreadyExists" xml:space="preserve">
+		<value>Suggestion with the same title already exists</value>
+	</data>
 </root>

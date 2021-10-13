@@ -38,16 +38,15 @@ namespace Common.Services
         /// <summary>
         /// Gets all issues.
         /// </summary>
+        /// <param name="dbServiceContext">The database service context.</param>
+        /// <param name="paginatedList">The paginated list.</param>
+        /// <param name="userId">The user identifier.</param>
         /// <returns>
         /// Gets all issues
         /// </returns>
-        public List<Issue> GetAll(DbServiceContext dbServiceContext, PaginatedList paginatedList = null)
+        /// <exception cref="System.InvalidOperationException"></exception>
+        public List<Issue> GetAll(DbServiceContext dbServiceContext, PaginatedList paginatedList = null, string userId = null)
         {
-            if (_topStakedIssuesPercent == 0)
-            {
-                throw new InvalidOperationException(Resource.ErrorTopStakePercentNeedsToBeSet);
-            }
-
             List<Issue> issues = dbServiceContext.Issues
                 .Include(i => i.Suggestions)
                 .Where(i => i.DueDate == null || (DateTime)i.DueDate >= DateTime.Now)
@@ -56,10 +55,13 @@ namespace Common.Services
             foreach (Issue issue in issues)
             {
                 SuggestionService.UpdateStakes(dbServiceContext, issue.Suggestions);
-                SuggestionService.SetHasMyStake(dbServiceContext, issue);
+                SuggestionService.SetHasMyStake(dbServiceContext, issue, userId);
             }
 
-            SetTopStaked(issues);
+            if (_topStakedIssuesPercent > 0)
+            {
+                SetTopStaked(issues);
+            }
 
             List<Issue> issuesProcessed = issues.OrderByDescending(i => i.GetTotalStakeCount())
                 .ThenBy(i => i.CreateDate).ToList();
@@ -74,17 +76,19 @@ namespace Common.Services
         /// </summary>
         /// <param name="dbServiceContext">The database service context.</param>
         /// <param name="paginatedList">The paginated list.</param>
+        /// <param name="userId">The user identifier.</param>
         /// <returns>
         /// The top stacked issues depending on a percentage
         /// </returns>
-        public List<Issue> GetTopStaked(DbServiceContext dbServiceContext, PaginatedList paginatedList = null)
+        /// <exception cref="System.InvalidOperationException"></exception>
+        public List<Issue> GetTopStaked(DbServiceContext dbServiceContext, PaginatedList paginatedList = null, string userId = null)
         {
             if (_topStakedIssuesPercent == 0)
             {
                 throw new InvalidOperationException(Resource.ErrorTopStakePercentNeedsToBeSet);
             }
 
-            List<Issue> issues = GetAll(dbServiceContext);
+            List<Issue> issues = GetAll(dbServiceContext, null, userId);
 
             if (_topStakedIssuesPercent >= 100)
             {
@@ -108,12 +112,13 @@ namespace Common.Services
         /// <param name="dbServiceContext">The database service context.</param>
         /// <param name="tags">The tags.</param>
         /// <param name="paginatedList">The paginated list.</param>
+        /// <param name="userId">The user identifier.</param>
         /// <returns>
         /// All the issues that contain to at least one of the given tags
         /// </returns>
-        public List<Issue> GetByTags(DbServiceContext dbServiceContext, string tags, PaginatedList paginatedList = null)
+        public List<Issue> GetByTags(DbServiceContext dbServiceContext, string tags, PaginatedList paginatedList = null, string userId = null)
         {
-            List<Issue> issues = GetAll(dbServiceContext);
+            List<Issue> issues = GetAll(dbServiceContext, null, userId);
 
             return GetByTags(tags, issues, paginatedList);
         }
@@ -124,17 +129,19 @@ namespace Common.Services
         /// <param name="dbServiceContext">The database service context.</param>
         /// <param name="tags">The tags.</param>
         /// <param name="paginatedList">The paginated list.</param>
+        /// <param name="userId">The user identifier.</param>
         /// <returns>
         /// The top staked issues in percent by tags
         /// </returns>
-        public List<Issue> GetTopStakedByTags(DbServiceContext dbServiceContext, string tags, PaginatedList paginatedList = null)
+        /// <exception cref="System.InvalidOperationException"></exception>
+        public List<Issue> GetTopStakedByTags(DbServiceContext dbServiceContext, string tags, PaginatedList paginatedList = null, string userId = null)
         {
             if (_topStakedIssuesPercent == 0)
             {
                 throw new InvalidOperationException(Resource.ErrorTopStakePercentNeedsToBeSet);
             }
 
-            List<Issue> issues = GetTopStaked(dbServiceContext);
+            List<Issue> issues = GetTopStaked(dbServiceContext, null, userId);
 
             return GetByTags(tags, issues, paginatedList);
         }
@@ -144,8 +151,11 @@ namespace Common.Services
         /// </summary>
         /// <param name="dbServiceContext">The database service context.</param>
         /// <param name="id">The identifier.</param>
-        /// <returns>The issue by id or null if not found</returns>
-        public Issue GetById(DbServiceContext dbServiceContext, string id)
+        /// <param name="userId">The user identifier.</param>
+        /// <returns>
+        /// The issue by id or null if not found
+        /// </returns>
+        public Issue GetById(DbServiceContext dbServiceContext, string id, string userId = null)
         {
             Issue issue = dbServiceContext.Issues
                 .Include(i => i.Suggestions)
@@ -154,6 +164,7 @@ namespace Common.Services
             if (issue != null)
             {
                 SuggestionService.UpdateStakes(dbServiceContext, issue.Suggestions);
+                SuggestionService.SetHasMyStake(dbServiceContext, issue, userId);
             }
 
             return issue;
@@ -382,7 +393,7 @@ namespace Common.Services
         /// <param name="issues">The issues.</param>
         private void SetTopStaked(List<Issue> issues)
         {
-            int topStakedIssuesCount = (int)Math.Round(issues.Count * _topStakedIssuesPercent, 0);
+            int topStakedIssuesCount = (int)Math.Round(issues.Count * _topStakedIssuesPercent / 100, 0);
 
             List<Issue> topStakedIssues = issues
                 .OrderByDescending(i => i.GetTotalStakeCount())
@@ -391,7 +402,10 @@ namespace Common.Services
 
             foreach (Issue issue in topStakedIssues)
             {
-                issue.IsTopStaked = true;
+                if (issue.Suggestions.FirstOrDefault(s => s.IsStaked) != null)
+                {
+                    issue.IsTopStaked = true;
+                }
             }
         }
 

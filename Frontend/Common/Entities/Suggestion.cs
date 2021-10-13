@@ -16,6 +16,11 @@ namespace Common.Entities
         private bool _isTopStaked;
 
         /// <summary>
+        /// The is top voted
+        /// </summary>
+        private bool _isTopVoted;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="Suggestion"/> class.
         /// </summary>
         public Suggestion()
@@ -56,7 +61,6 @@ namespace Common.Entities
         /// <value>
         /// The short description.
         /// </value>
-        // TODO: unique for the issue scope
         public string Title { get; set; }
 
         /// <summary>
@@ -125,6 +129,56 @@ namespace Common.Entities
         /// </value>
         [NotMapped]
         public bool HasMyStake { get; set; }
+
+        /// <summary>
+        /// Gets or sets my vote.
+        /// </summary>
+        /// <value>
+        /// My vote.
+        /// </value>
+        [NotMapped, Range(-5, 5)]
+        public int? MyVote { get; set; }
+
+        /// <summary>
+        /// Gets a value indicating whether this instance has my vote.
+        /// </summary>
+        /// <value>
+        ///   <c>true</c> if this instance has my vote; otherwise, <c>false</c>.
+        /// </value>
+        [NotMapped]
+        public bool HasMyVote => MyVote != null;
+
+        /// <summary>
+        /// Gets or sets the vote count.
+        /// </summary>
+        /// <value>
+        /// The vote count.
+        /// </value>
+        [NotMapped]
+        public int VoteCount { get; set; }
+
+        /// <summary>
+        /// Gets a value indicating whether this instance is voted.
+        /// </summary>
+        /// <value>
+        ///   <c>true</c> if this instance is voted; otherwise, <c>false</c>.
+        /// </value>
+        [NotMapped]
+        public bool IsVoted => VoteCount > 0;
+
+        /// <summary>
+        /// Gets or sets a value indicating whether this instance is top voted.
+        /// </summary>
+        /// <value>
+        ///   <c>true</c> if this instance is top voted; otherwise, <c>false</c>.
+        /// </value>
+        [NotMapped]
+        public bool IsTopVoted
+        {
+            get => IsVoted && _isTopVoted;
+
+            set => _isTopVoted = value;
+        }
 
         /// <summary>
         /// Determines whether this instance can edit the specified user identifier.

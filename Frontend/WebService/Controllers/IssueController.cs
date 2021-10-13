@@ -43,11 +43,12 @@ namespace WebService.Controllers
         /// Gets all.
         /// </summary>
         /// <param name="paginatedList">The paginated list.</param>
+        /// <param name="userName">Name of the user.</param>
         /// <returns>
         /// All valid issues
         /// </returns>
         [HttpGet]
-        public IActionResult GetAll([FromQuery] PaginatedList paginatedList)
+        public IActionResult GetAll([FromQuery] PaginatedList paginatedList, [FromQuery] string userName)
         {
             DbServiceContext dbServiceContext = DatabaseInitializationService.GetDbServiceContext();
 
@@ -55,9 +56,11 @@ namespace WebService.Controllers
 
             using (dbServiceContext)
             {
+                string userId = UserService.GetUserId(dbServiceContext, userName);
+
                 IssueService issueService = new IssueService(topStakedIssuesPercent);
 
-                return Ok(issueService.GetAll(dbServiceContext, paginatedList));
+                return Ok(issueService.GetAll(dbServiceContext, paginatedList, userId));
             }
         }
 
@@ -65,12 +68,13 @@ namespace WebService.Controllers
         /// Gets the top staked.
         /// </summary>
         /// <param name="paginatedList">The paginated list.</param>
+        /// <param name="userName">Name of the user.</param>
         /// <returns>
         /// All valid issues
         /// </returns>
         [Route("GetTopStaked")]
         [HttpGet]
-        public IActionResult GetTopStaked([FromQuery] PaginatedList paginatedList)
+        public IActionResult GetTopStaked([FromQuery] PaginatedList paginatedList, [FromQuery] string userName)
         {
             DbServiceContext dbServiceContext = DatabaseInitializationService.GetDbServiceContext();
 
@@ -78,9 +82,11 @@ namespace WebService.Controllers
 
             using (dbServiceContext)
             {
+                string userId = UserService.GetUserId(dbServiceContext, userName);
+
                 IssueService issueService = new IssueService(topStakedIssuesPercent);
 
-                return Ok(issueService.GetTopStaked(dbServiceContext, paginatedList));
+                return Ok(issueService.GetTopStaked(dbServiceContext, paginatedList, userId));
             }
         }
 
@@ -88,19 +94,24 @@ namespace WebService.Controllers
         /// Gets the issues by tags.
         /// </summary>
         /// <param name="paginatedList">The paginated list.</param>
+        /// <param name="userName">Name of the user.</param>
         /// <param name="tags">The tags.</param>
-        /// <returns>All valid issues</returns>
+        /// <returns>
+        /// All valid issues
+        /// </returns>
         [Route("GetByTags/{tags}")]
         [HttpGet]
-        public IActionResult GetByTags([FromQuery] PaginatedList paginatedList, string tags)
+        public IActionResult GetByTags([FromQuery] PaginatedList paginatedList, [FromQuery] string userName, string tags)
         {
             DbServiceContext dbServiceContext = DatabaseInitializationService.GetDbServiceContext();
 
             using (dbServiceContext)
             {
+                string userId = UserService.GetUserId(dbServiceContext, userName);
+
                 IssueService issueService = new IssueService();
 
-                return Ok(issueService.GetByTags(dbServiceContext, tags, paginatedList));
+                return Ok(issueService.GetByTags(dbServiceContext, tags, paginatedList, userId));
             }
         }
 
@@ -109,12 +120,13 @@ namespace WebService.Controllers
         /// </summary>
         /// <param name="paginatedList">The paginated list.</param>
         /// <param name="tags">The tags.</param>
+        /// <param name="userName">Name of the user.</param>
         /// <returns>
         /// All valid issues
         /// </returns>
         [Route("GetTopStakedByTags/{tags}")]
         [HttpGet]
-        public IActionResult GetTopStakedByTags([FromQuery] PaginatedList paginatedList, string tags)
+        public IActionResult GetTopStakedByTags([FromQuery] PaginatedList paginatedList, [FromQuery] string userName, string tags)
         {
             DbServiceContext dbServiceContext = DatabaseInitializationService.GetDbServiceContext();
 
@@ -122,27 +134,34 @@ namespace WebService.Controllers
 
             using (dbServiceContext)
             {
+                string userId = UserService.GetUserId(dbServiceContext, userName);
+
                 IssueService issueService = new IssueService(topStakedIssuesPercent);
 
-                return Ok(issueService.GetTopStakedByTags(dbServiceContext, tags, paginatedList));
+                return Ok(issueService.GetTopStakedByTags(dbServiceContext, tags, paginatedList, userId));
             }
         }
 
         /// <summary>
         /// Gets the by identifier.
         /// </summary>
+        /// <param name="userName">Name of the user.</param>
         /// <param name="id">The identifier.</param>
-        /// <returns>The issue if found</returns>
+        /// <returns>
+        /// The issue if found
+        /// </returns>
         [HttpGet("{id}")]
-        public IActionResult GetById(string id)
+        public IActionResult GetById([FromQuery] string userName, string id)
         {
             DbServiceContext dbServiceContext = DatabaseInitializationService.GetDbServiceContext();
 
             using (dbServiceContext)
             {
+                string userId = UserService.GetUserId(dbServiceContext, userName);
+
                 IssueService issueService = new IssueService();
 
-                Issue issue = issueService.GetById(dbServiceContext, id);
+                Issue issue = issueService.GetById(dbServiceContext, id, userId);
 
                 if (issue == null)
                 {

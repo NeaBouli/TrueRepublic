@@ -15,21 +15,26 @@ namespace Common.Services
     {
         private readonly decimal _topStakedSuggestionsPercent;
 
+        private readonly decimal _topVotedSuggestionsPercent;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="SuggestionService"/> class.
         /// </summary>
         public SuggestionService()
         {
             _topStakedSuggestionsPercent = 0;
+            _topVotedSuggestionsPercent = 0;
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="SuggestionService"/> class.
+        /// Initializes a new instance of the <see cref="SuggestionService" /> class.
         /// </summary>
         /// <param name="topStakedSuggestionsPercent">The top staked suggestions percent.</param>
-        public SuggestionService(decimal topStakedSuggestionsPercent)
+        /// <param name="topVotedSuggestionsPercent">The top voted suggestions percent.</param>
+        public SuggestionService(decimal topStakedSuggestionsPercent, decimal topVotedSuggestionsPercent)
         {
             _topStakedSuggestionsPercent = topStakedSuggestionsPercent;
+            _topVotedSuggestionsPercent = topVotedSuggestionsPercent;
         }
 
         /// <summary>
@@ -37,9 +42,12 @@ namespace Common.Services
         /// </summary>
         /// <param name="dbServiceContext">The database service context.</param>
         /// <param name="id">The identifier.</param>
-        /// <returns>Gets the suggestions for the given id</returns>
+        /// <param name="userId">The user identifier.</param>
+        /// <returns>
+        /// Gets the suggestions for the given id
+        /// </returns>
         /// <exception cref="System.InvalidOperationException"></exception>
-        public List<Suggestion> GetByIssueId(DbServiceContext dbServiceContext, string id)
+        public List<Suggestion> GetByIssueId(DbServiceContext dbServiceContext, string id, string userId)
         {
             if (_topStakedSuggestionsPercent == 0)
             {
@@ -61,7 +69,13 @@ namespace Common.Services
 
             SetTopStaked(issue.Suggestions);
 
-            SetHasMyStake(dbServiceContext, issue);
+            SetHasMyStake(dbServiceContext, issue, userId);
+
+            UpdateVotes(dbServiceContext, issue.Suggestions);
+
+            SetTopVoted(issue.Suggestions);
+
+            SetMyVote(dbServiceContext, issue, userId);
 
             return issue.Suggestions.OrderByDescending(s => s.IsTopStaked).ThenBy(s => s.CreateDate).ToList();
         }
@@ -71,9 +85,10 @@ namespace Common.Services
         /// </summary>
         /// <param name="dbServiceContext">The database service context.</param>
         /// <param name="id">The identifier.</param>
+        /// <param name="userId">The user identifier.</param>
         /// <returns></returns>
         /// <exception cref="System.InvalidOperationException"></exception>
-        public Suggestion GetBySuggestionId(DbServiceContext dbServiceContext, string id)
+        public Suggestion GetBySuggestionId(DbServiceContext dbServiceContext, string id, string userId = null)
         {
             if (_topStakedSuggestionsPercent == 0)
             {
@@ -92,6 +107,20 @@ namespace Common.Services
 
             SetTopStaked(new List<Suggestion> { suggestion });
 
+            if (!string.IsNullOrEmpty(userId))
+            {
+                SetHasMyStake(dbServiceContext, suggestion, userId);
+            }
+
+            UpdateVotes(dbServiceContext, new List<Suggestion> { suggestion });
+
+            SetTopVoted(new List<Suggestion> { suggestion });
+
+            if (!string.IsNullOrEmpty(userId))
+            {
+                SetMyVote(dbServiceContext, suggestion, userId);
+            }
+
             return suggestion;
         }
 
@@ -100,12 +129,16 @@ namespace Common.Services
         /// </summary>
         /// <param name="dbServiceContext">The database service context.</param>
         /// <param name="issue">The issue.</param>
-        public static void SetHasMyStake(DbServiceContext dbServiceContext, Issue issue)
+        /// <param name="userId">The user identifier.</param>
+        public static void SetHasMyStake(DbServiceContext dbServiceContext, Issue issue, string userId)
         {
-            StakedSuggestion stakedSuggestion = dbServiceContext.StakedSuggestions
-                .FirstOrDefault(s => s.IssueId.ToString() == issue.Id.ToString());
+            if (string.IsNullOrEmpty(userId))
+            {
+                return;
+            }
 
-            // TODO: review
+            StakedSuggestion stakedSuggestion = dbServiceContext.StakedSuggestions
+                .FirstOrDefault(s => s.IssueId.ToString() == issue.Id.ToString() && s.UserId.ToString() == userId);
 
             if (stakedSuggestion != null)
             {
@@ -115,6 +148,28 @@ namespace Common.Services
                     suggestion.HasMyStake = true;
                     break;
                 }
+            }
+        }
+
+        /// <summary>
+        /// Sets the has my stake.
+        /// </summary>
+        /// <param name="dbServiceContext">The database service context.</param>
+        /// <param name="suggestion">The suggestion.</param>
+        /// <param name="userId">The user identifier.</param>
+        public static void SetHasMyStake(DbServiceContext dbServiceContext, Suggestion suggestion, string userId)
+        {
+            if (string.IsNullOrEmpty(userId))
+            {
+                return;
+            }
+
+            StakedSuggestion stakedSuggestion = dbServiceContext.StakedSuggestions
+                .FirstOrDefault(s => s.SuggestionId.ToString() == suggestion.Id.ToString() && s.UserId.ToString() == userId);
+
+            if (stakedSuggestion != null)
+            {
+                suggestion.HasMyStake = true;
             }
         }
 
@@ -136,6 +191,82 @@ namespace Common.Services
         }
 
         /// <summary>
+        /// Sets my vote.
+        /// </summary>
+        /// <param name="dbServiceContext">The database service context.</param>
+        /// <param name="issue">The issue.</param>
+        /// <param name="userId">The user identifier.</param>
+        public static void SetMyVote(DbServiceContext dbServiceContext, Issue issue, string userId)
+        {
+            if (string.IsNullOrEmpty(userId))
+            {
+                return;
+            }
+
+            List<Vote> votes = dbServiceContext.Votes
+                .Include(v => v.Suggestion)
+                .Where(v => v.UserId.ToString() == userId && v.IssueId.ToString() == issue.Id.ToString())
+                .ToList();
+
+            if (votes.Count == 0)
+            {
+                return;
+            }
+
+            foreach (Suggestion suggestion in issue.Suggestions)
+            {
+                Vote vote = votes.FirstOrDefault(v => v.SuggestionId.ToString() == suggestion.Id.ToString());
+
+                if (vote != null)
+                {
+                    suggestion.MyVote = vote.Value;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Sets my vote.
+        /// </summary>
+        /// <param name="dbServiceContext">The database service context.</param>
+        /// <param name="suggestion">The suggestion.</param>
+        /// <param name="userId">The user identifier.</param>
+        public static void SetMyVote(DbServiceContext dbServiceContext, Suggestion suggestion, string userId)
+        {
+            if (string.IsNullOrEmpty(userId))
+            {
+                return;
+            }
+
+            var vote = dbServiceContext.Votes
+                .Include(v => v.Suggestion)
+                .FirstOrDefault(v => v.UserId.ToString() == userId && v.SuggestionId.ToString() == suggestion.Id.ToString());
+
+            if (vote == null)
+            {
+                return;
+            }
+
+            suggestion.MyVote = vote.Value;
+        }
+
+        /// <summary>
+        /// Updates the votes.
+        /// </summary>
+        /// <param name="dbServiceContext">The database service context.</param>
+        /// <param name="suggestions">The suggestions.</param>
+        public static void UpdateVotes(DbServiceContext dbServiceContext, List<Suggestion> suggestions)
+        {
+            foreach (Suggestion suggestion in suggestions)
+            {
+                int count = dbServiceContext.Votes
+                    .Where(v => v.SuggestionId.ToString() == suggestion.Id.ToString())
+                    .ToList().Count;
+
+                suggestion.VoteCount = count;
+            }
+        }
+
+        /// <summary>
         /// Adds the specified database service context.
         /// </summary>
         /// <param name="dbServiceContext">The database service context.</param>
@@ -152,6 +283,17 @@ namespace Common.Services
             if (!valid)
             {
                 throw new InvalidOperationException(errorMessage);
+            }
+
+            string issueId = suggestionSubmission.IssueId.ToString();
+
+            bool suggestionWithSameTitleAlreadyExists = dbServiceContext.Suggestions
+                .FirstOrDefault(s => s.IssueId.ToString() == issueId &&
+                                     string.Equals(s.Title, suggestionSubmission.Title, StringComparison.OrdinalIgnoreCase)) != null;
+
+            if (suggestionWithSameTitleAlreadyExists)
+            {
+                throw new InvalidOperationException(Resource.ErrorSuggestionWithSameTitleAlreadyExists);
             }
 
             Guid userId = suggestionSubmission.UserId;
@@ -301,7 +443,7 @@ namespace Common.Services
         /// <param name="suggestions">The suggestions.</param>
         private void SetTopStaked(List<Suggestion> suggestions)
         {
-            int topStakedIssuesCount = (int)Math.Round(suggestions.Count * _topStakedSuggestionsPercent, 0);
+            int topStakedIssuesCount = (int)Math.Round(suggestions.Count * _topStakedSuggestionsPercent / 100, 0);
 
             List<Suggestion> topStakedSuggestions = suggestions
                 .OrderByDescending(i => i.StakeCount)
@@ -311,6 +453,25 @@ namespace Common.Services
             foreach (var suggestion in topStakedSuggestions)
             {
                 suggestion.IsTopStaked = true;
+            }
+        }
+
+        /// <summary>
+        /// Sets the top voted.
+        /// </summary>
+        /// <param name="suggestions">The suggestions.</param>
+        private void SetTopVoted(List<Suggestion> suggestions)
+        {
+            int topVotedCount = (int)Math.Round(suggestions.Count * _topStakedSuggestionsPercent / 100, 0);
+
+            List<Suggestion> topVotedSuggestions = suggestions
+                .OrderByDescending(i => i.VoteCount)
+                .Take(topVotedCount)
+                .ToList();
+
+            foreach (var suggestion in topVotedSuggestions)
+            {
+                suggestion.IsTopVoted = true;
             }
         }
 
