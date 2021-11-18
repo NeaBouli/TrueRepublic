@@ -13,7 +13,6 @@ namespace Common.Entities
     /// Implementation of the issue class
     /// </summary>
     /// <remarks>Record cannot be changed after it was created. Creator will not be tracked</remarks>
-    [Table("Issues")]
     public class Issue
     {
         /// <summary>Initializes a new instance of the <see cref="Issue" /> class.</summary>

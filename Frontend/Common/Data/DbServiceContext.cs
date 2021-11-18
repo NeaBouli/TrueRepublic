@@ -93,6 +93,7 @@ namespace Common.Data
         /// <value>
         /// The user.
         /// </value>
+        // TODO: change to users
         public DbSet<User> User { get; set; }
 
         /// <summary>

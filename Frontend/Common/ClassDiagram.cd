@@ -1,47 +1,47 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ClassDiagram MajorVersion="1" MinorVersion="1">
   <Class Name="Common.Entities.Issue">
-    <Position X="4" Y="1.25" Width="2.5" />
+    <Position X="4" Y="0.5" Width="2.5" />
     <TypeIdentifier>
-      <HashCode>AAQCAACAQAAgAGIAAAAEQAEAAAAAAEAAAAABAAAAAAA=</HashCode>
+      <HashCode>AAQCAAAAQAAgAGAAAAAE4AEAAAAAAEABAACBAAAAAAA=</HashCode>
       <FileName>Entities\Issue.cs</FileName>
     </TypeIdentifier>
     <ShowAsCollectionAssociation>
-      <Field Name="Suggestions" />
+      <Property Name="Suggestions" />
     </ShowAsCollectionAssociation>
   </Class>
   <Class Name="Common.Entities.Suggestion">
-    <Position X="7.75" Y="1.75" Width="1.5" />
+    <Position X="7.75" Y="1" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAACAAAAAAAgAEAAAAAAAAEAIAAAAAAAAAABABAAAAA=</HashCode>
+      <HashCode>AAACAAAAAEAggEAAAAAAoAEAIAAQAAEFEICBABAAAAA=</HashCode>
       <FileName>Entities\Suggestion.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="Common.Entities.User">
-    <Position X="4" Y="5.25" Width="2.5" />
+    <Position X="1" Y="5.25" Width="2.5" />
     <TypeIdentifier>
-      <HashCode>AAADAAAAAAAAAIAAAAAAAAEAACAAAIAAAQAAAAAAAAA=</HashCode>
+      <HashCode>ACADAAAAAAAAAIAAAAAAAAEAACAAAIAAAQAAAAAAAAA=</HashCode>
       <FileName>Entities\User.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="Common.Entities.StakedSuggestion">
-    <Position X="7.5" Y="5.25" Width="2.25" />
+    <Position X="4.25" Y="5" Width="2.25" />
     <TypeIdentifier>
-      <HashCode>AAACAAAIAAAAAAAAAAAAAAEAAAAAAAAAAAABAAAAggA=</HashCode>
+      <HashCode>AAACAAAIAAAAAAAAAAAAAAkAAAACAAAAEAABAAAAkgA=</HashCode>
       <FileName>Entities\StakedSuggestion.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="Common.Entities.Wallet">
     <Position X="10" Y="1.75" Width="2.75" />
     <TypeIdentifier>
-      <HashCode>AAACAAAAAAAAEAAAAAAAAAEACAAABBAAAAAAAAAAAAA=</HashCode>
+      <HashCode>AAACAAAAAAAAAAAAAAAAAAEACAAABBAAAAAAAAAAAAA=</HashCode>
       <FileName>Entities\Wallet.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="Common.Entities.WalletTransaction">
     <Position X="10.5" Y="5" Width="2.25" />
     <TypeIdentifier>
-      <HashCode>AAADAAAAAAAAAAAAACgAAAEAAAAAAAEAAAABAAAAAAA=</HashCode>
+      <HashCode>AAgDAAAAAAAAAAAAACgAAAEAAAAAAAEAAAABAAAAAAA=</HashCode>
       <FileName>Entities\WalletTransaction.cs</FileName>
     </TypeIdentifier>
   </Class>

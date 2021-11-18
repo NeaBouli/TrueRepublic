@@ -1,5 +1,8 @@
 ﻿namespace Common.Entities
 {
+    /// <summary>
+    /// Implementation of the paginated list
+    /// </summary>
     public class PaginatedList
     {
         /// <summary>

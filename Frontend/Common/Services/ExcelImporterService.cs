@@ -57,18 +57,30 @@ namespace Common.Services
             }
         }
 
+        /// <summary>
+        /// Imports the staked suggestions.
+        /// </summary>
+        /// <param name="dataTable">The data table.</param>
         private void ImportStakedSuggestions(DataTable dataTable)
         {
             StakedSuggestionService stakedSuggestionService = new StakedSuggestionService();
             OnTableImported(new NameCountEventArgs("StakedSuggestions", stakedSuggestionService.Import(dataTable)));
         }
 
+        /// <summary>
+        /// Imports the suggestions.
+        /// </summary>
+        /// <param name="dataTable">The data table.</param>
         private void ImportSuggestions(DataTable dataTable)
         {
             SuggestionService suggestionService = new SuggestionService();
             OnTableImported(new NameCountEventArgs("Suggestions", suggestionService.Import(dataTable)));
         }
 
+        /// <summary>
+        /// Imports the issues.
+        /// </summary>
+        /// <param name="dataTable">The data table.</param>
         private void ImportIssues(DataTable dataTable)
         {
             IssueService issueService = new IssueService();
@@ -122,7 +134,6 @@ namespace Common.Services
         protected virtual void OnTableImported(NameCountEventArgs e)
         {
             TableImported?.Invoke(this, e);
-
         }
     }
 }

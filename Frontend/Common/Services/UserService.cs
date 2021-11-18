@@ -18,7 +18,7 @@ namespace Common.Services
         /// </summary>
         /// <param name="dbServiceContext">The database service context.</param>
         /// <param name="userName">Name of the user.</param>
-        /// <returns></returns>
+        /// <returns>The user</returns>
         public User GetUserByName(DbServiceContext dbServiceContext, string userName)
         {
             return dbServiceContext.User
