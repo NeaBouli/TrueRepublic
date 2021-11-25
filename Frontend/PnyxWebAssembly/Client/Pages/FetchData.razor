@@ -3,7 +3,7 @@
 @using Microsoft.AspNetCore.Components.WebAssembly.Authentication
 @using PnyxWebAssembly.Shared
 @attribute [Authorize]
-@inject HttpClient Http
+@inject IHttpClientFactory _clientFactory
 
 <h1>Weather forecast</h1>
 
@@ -45,7 +45,9 @@ else
     {
         try
         {
-            forecasts = await Http.GetFromJsonAsync<WeatherForecast[]>("WeatherForecast");
+            HttpClient client = _clientFactory.CreateClient("PnyxWebAssembly.ServerAPI.Private");
+
+            forecasts = await client.GetFromJsonAsync<WeatherForecast[]>("WeatherForecast");
         }
         catch (AccessTokenNotAvailableException exception)
         {

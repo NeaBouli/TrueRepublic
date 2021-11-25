@@ -1,14 +1,69 @@
 ﻿@page "/issues"
-
-@using PnyxWebAssembly.Shared
-
-@inject HttpClient Http
+@using System.ComponentModel.Design
 
 <h1>Issues</h1>
 
-<p>Table will be displayed here...</p>
+<AuthorizeView>
+    <Authorized>
+        <p>Logged in as @UserName</p>
+  
+        @if (IssueItems == null)
+        {
+            <p><em>Loading...</em></p>
+        }
+        else
+        {
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>Tags</th>
+                    <th>Titel</th>
+                    <th>Staked</th>
+                    <th>Erstellt am</th>
+                </tr>
+                </thead>
+                <tbody>
+                @foreach (var issue in IssueItems)
+                {
+                    <tr>
+                        <td>@issue.Tags</td>
+                        <td>@issue.Title</td>
+                        <td>@issue.IsTopStaked</td>
+                        <td>@issue.CreateDate</td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        }
+    </Authorized>
+    <NotAuthorized>
+        <p>Not logged in</p>
 
-@code {
-
-
-}
+        @if (IssueItems == null)
+        {
+            <p><em>Loading...</em></p>
+        }
+        else
+        {
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Tags</th>
+                        <th>Titel</th>
+                        <th>Erstellt am</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var issue in IssueItems)
+                    {
+                        <tr>
+                            <td>@issue.Tags</td>
+                            <td>@issue.Title</td>
+                            <td>@issue.CreateDate</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+    </NotAuthorized>
+</AuthorizeView>
