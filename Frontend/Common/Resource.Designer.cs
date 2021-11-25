@@ -124,20 +124,20 @@ namespace Common {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Suggestion is already staked for user.
+        ///   Looks up a localized string similar to Proposal is already staked for user.
         /// </summary>
-        internal static string ErrorSuggestionAlreadyStakedForUser {
+        internal static string ErrorProposalAlreadyStakedForUser {
             get {
-                return ResourceManager.GetString("ErrorSuggestionAlreadyStakedForUser", resourceCulture);
+                return ResourceManager.GetString("ErrorProposalAlreadyStakedForUser", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Suggestion with the same title already exists.
+        ///   Looks up a localized string similar to Proposal with the same title already exists.
         /// </summary>
-        internal static string ErrorSuggestionWithSameTitleAlreadyExists {
+        internal static string ErrorProposalWithSameTitleAlreadyExists {
             get {
-                return ResourceManager.GetString("ErrorSuggestionWithSameTitleAlreadyExists", resourceCulture);
+                return ResourceManager.GetString("ErrorProposalWithSameTitleAlreadyExists", resourceCulture);
             }
         }
         

@@ -45,11 +45,11 @@ namespace Common.Services
                     case "Issues":
                         ImportIssues(dataTable);
                         break;
-                    case "Suggestions":
-                        ImportSuggestions(dataTable);
+                    case "Proposals":
+                        ImportProposals(dataTable);
                         break;
-                    case "StakedSuggestions":
-                        ImportStakedSuggestions(dataTable);
+                    case "StakedProposals":
+                        ImportStakedProposals(dataTable);
                         break;
                     default:
                         throw new NotImplementedException();
@@ -61,20 +61,20 @@ namespace Common.Services
         /// Imports the staked suggestions.
         /// </summary>
         /// <param name="dataTable">The data table.</param>
-        private void ImportStakedSuggestions(DataTable dataTable)
+        private void ImportStakedProposals(DataTable dataTable)
         {
-            StakedSuggestionService stakedSuggestionService = new StakedSuggestionService();
-            OnTableImported(new NameCountEventArgs("StakedSuggestions", stakedSuggestionService.Import(dataTable)));
+            StakedProposalService stakedSuggestionService = new StakedProposalService();
+            OnTableImported(new NameCountEventArgs("StakedProposals", stakedSuggestionService.Import(dataTable)));
         }
 
         /// <summary>
         /// Imports the suggestions.
         /// </summary>
         /// <param name="dataTable">The data table.</param>
-        private void ImportSuggestions(DataTable dataTable)
+        private void ImportProposals(DataTable dataTable)
         {
-            SuggestionService suggestionService = new SuggestionService();
-            OnTableImported(new NameCountEventArgs("Suggestions", suggestionService.Import(dataTable)));
+            ProposalService suggestionService = new ProposalService();
+            OnTableImported(new NameCountEventArgs("Proposals", suggestionService.Import(dataTable)));
         }
 
         /// <summary>

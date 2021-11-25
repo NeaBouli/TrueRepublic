@@ -9,32 +9,27 @@ using Microsoft.EntityFrameworkCore;
 namespace Common.Services
 {
     /// <summary>
-    /// Implementation of the suggestion service
+    /// Implementation of the Proposal service
     /// </summary>
-    public class SuggestionService
+    public class ProposalService
     {
-        private readonly decimal _topStakedSuggestionsPercent;
-
-        private readonly decimal _topVotedSuggestionsPercent;
+        private readonly decimal _topStakedProposalsPercent;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="SuggestionService"/> class.
+        /// Initializes a new instance of the <see cref="ProposalService"/> class.
         /// </summary>
-        public SuggestionService()
+        public ProposalService()
         {
-            _topStakedSuggestionsPercent = 0;
-            _topVotedSuggestionsPercent = 0;
+            _topStakedProposalsPercent = 0;
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="SuggestionService" /> class.
+        /// Initializes a new instance of the <see cref="ProposalService" /> class.
         /// </summary>
-        /// <param name="topStakedSuggestionsPercent">The top staked suggestions percent.</param>
-        /// <param name="topVotedSuggestionsPercent">The top voted suggestions percent.</param>
-        public SuggestionService(decimal topStakedSuggestionsPercent, decimal topVotedSuggestionsPercent)
+        /// <param name="topStakedProposalsPercent">The top staked proposals percent.</param>
+        public ProposalService(decimal topStakedProposalsPercent)
         {
-            _topStakedSuggestionsPercent = topStakedSuggestionsPercent;
-            _topVotedSuggestionsPercent = topVotedSuggestionsPercent;
+            _topStakedProposalsPercent = topStakedProposalsPercent;
         }
 
         /// <summary>
@@ -44,18 +39,18 @@ namespace Common.Services
         /// <param name="id">The identifier.</param>
         /// <param name="userId">The user identifier.</param>
         /// <returns>
-        /// Gets the suggestions for the given id
+        /// Gets the proposals for the given id
         /// </returns>
         /// <exception cref="System.InvalidOperationException"></exception>
-        public List<Suggestion> GetByIssueId(DbServiceContext dbServiceContext, string id, string userId)
+        public List<Proposal> GetByIssueId(DbServiceContext dbServiceContext, string id, string userId)
         {
-            if (_topStakedSuggestionsPercent == 0)
+            if (_topStakedProposalsPercent == 0)
             {
                 throw new InvalidOperationException(Resource.ErrorTopStakePercentNeedsToBeSet);
             }
 
             Issue issue = dbServiceContext.Issues
-                .Include(i => i.Suggestions)
+                .Include(i => i.Proposals)
                 .FirstOrDefault(i => i.Id.ToString() == id);
 
             if (issue == null)
@@ -63,65 +58,65 @@ namespace Common.Services
                 return null;
             }
 
-            issue.Suggestions ??= new List<Suggestion>();
+            issue.Proposals ??= new List<Proposal>();
 
-            UpdateStakes(dbServiceContext, issue.Suggestions);
+            UpdateStakes(dbServiceContext, issue.Proposals);
 
-            SetTopStaked(issue.Suggestions);
+            SetTopStaked(issue.Proposals);
 
             SetHasMyStake(dbServiceContext, issue, userId);
 
-            UpdateVotes(dbServiceContext, issue.Suggestions);
+            UpdateVotes(dbServiceContext, issue.Proposals);
 
-            SetTopVoted(issue.Suggestions);
+            SetTopVoted(issue.Proposals);
 
             SetMyVote(dbServiceContext, issue, userId);
 
-            return issue.Suggestions.OrderByDescending(s => s.IsTopStaked).ThenBy(s => s.CreateDate).ToList();
+            return issue.Proposals.OrderByDescending(s => s.IsTopStaked).ThenBy(s => s.CreateDate).ToList();
         }
 
         /// <summary>
-        /// Gets the by suggestion identifier.
+        /// Gets the by proposal identifier.
         /// </summary>
         /// <param name="dbServiceContext">The database service context.</param>
         /// <param name="id">The identifier.</param>
         /// <param name="userId">The user identifier.</param>
         /// <returns></returns>
         /// <exception cref="System.InvalidOperationException"></exception>
-        public Suggestion GetBySuggestionId(DbServiceContext dbServiceContext, string id, string userId = null)
+        public Proposal GetByProposalId(DbServiceContext dbServiceContext, string id, string userId = null)
         {
-            if (_topStakedSuggestionsPercent == 0)
+            if (_topStakedProposalsPercent == 0)
             {
                 throw new InvalidOperationException(Resource.ErrorTopStakePercentNeedsToBeSet);
             }
 
-            Suggestion suggestion = dbServiceContext.Suggestions
+            Proposal proposal = dbServiceContext.Proposals
                 .FirstOrDefault(s => s.Id.ToString() == id);
 
-            if (suggestion == null)
+            if (proposal == null)
             {
                 return null;
             }
 
-            UpdateStakes(dbServiceContext, new List<Suggestion> { suggestion });
+            UpdateStakes(dbServiceContext, new List<Proposal> { proposal });
 
-            SetTopStaked(new List<Suggestion> { suggestion });
-
-            if (!string.IsNullOrEmpty(userId))
-            {
-                SetHasMyStake(dbServiceContext, suggestion, userId);
-            }
-
-            UpdateVotes(dbServiceContext, new List<Suggestion> { suggestion });
-
-            SetTopVoted(new List<Suggestion> { suggestion });
+            SetTopStaked(new List<Proposal> { proposal });
 
             if (!string.IsNullOrEmpty(userId))
             {
-                SetMyVote(dbServiceContext, suggestion, userId);
+                SetHasMyStake(dbServiceContext, proposal, userId);
             }
 
-            return suggestion;
+            UpdateVotes(dbServiceContext, new List<Proposal> { proposal });
+
+            SetTopVoted(new List<Proposal> { proposal });
+
+            if (!string.IsNullOrEmpty(userId))
+            {
+                SetMyVote(dbServiceContext, proposal, userId);
+            }
+
+            return proposal;
         }
 
         /// <summary>
@@ -137,15 +132,15 @@ namespace Common.Services
                 return;
             }
 
-            StakedSuggestion stakedSuggestion = dbServiceContext.StakedSuggestions
+            StakedProposal stakedProposal = dbServiceContext.StakedProposals
                 .FirstOrDefault(s => s.IssueId.ToString() == issue.Id.ToString() && s.UserId.ToString() == userId);
 
-            if (stakedSuggestion != null)
+            if (stakedProposal != null)
             {
-                foreach (var suggestion in issue.Suggestions
-                    .Where(suggestion => suggestion.Id.ToString() == stakedSuggestion.SuggestionId.ToString()))
+                foreach (var proposal in issue.Proposals
+                    .Where(proposal => proposal.Id.ToString() == stakedProposal.ProposalId.ToString()))
                 {
-                    suggestion.HasMyStake = true;
+                    proposal.HasMyStake = true;
                     break;
                 }
             }
@@ -155,21 +150,21 @@ namespace Common.Services
         /// Sets the has my stake.
         /// </summary>
         /// <param name="dbServiceContext">The database service context.</param>
-        /// <param name="suggestion">The suggestion.</param>
+        /// <param name="proposal">The proposal.</param>
         /// <param name="userId">The user identifier.</param>
-        public static void SetHasMyStake(DbServiceContext dbServiceContext, Suggestion suggestion, string userId)
+        public static void SetHasMyStake(DbServiceContext dbServiceContext, Proposal proposal, string userId)
         {
             if (string.IsNullOrEmpty(userId))
             {
                 return;
             }
 
-            StakedSuggestion stakedSuggestion = dbServiceContext.StakedSuggestions
-                .FirstOrDefault(s => s.SuggestionId.ToString() == suggestion.Id.ToString() && s.UserId.ToString() == userId);
+            StakedProposal stakedProposal = dbServiceContext.StakedProposals
+                .FirstOrDefault(s => s.ProposalId.ToString() == proposal.Id.ToString() && s.UserId.ToString() == userId);
 
-            if (stakedSuggestion != null)
+            if (stakedProposal != null)
             {
-                suggestion.HasMyStake = true;
+                proposal.HasMyStake = true;
             }
         }
 
@@ -177,16 +172,16 @@ namespace Common.Services
         /// Updates the stakes.
         /// </summary>
         /// <param name="dbServiceContext">The database service context.</param>
-        /// <param name="suggestions">The suggestions.</param>
-        public static void UpdateStakes(DbServiceContext dbServiceContext, List<Suggestion> suggestions)
+        /// <param name="proposals">The proposals.</param>
+        public static void UpdateStakes(DbServiceContext dbServiceContext, List<Proposal> proposals)
         {
-            foreach (Suggestion suggestion in suggestions)
+            foreach (Proposal proposal in proposals)
             {
-                int count = dbServiceContext.StakedSuggestions
-                    .Where(s => s.SuggestionId.ToString() == suggestion.Id.ToString())
+                int count = dbServiceContext.StakedProposals
+                    .Where(s => s.ProposalId.ToString() == proposal.Id.ToString())
                     .ToList().Count;
 
-                suggestion.StakeCount = count;
+                proposal.StakeCount = count;
             }
         }
 
@@ -204,7 +199,7 @@ namespace Common.Services
             }
 
             List<Vote> votes = dbServiceContext.Votes
-                .Include(v => v.Suggestion)
+                .Include(v => v.Proposal)
                 .Where(v => v.UserId.ToString() == userId && v.IssueId.ToString() == issue.Id.ToString())
                 .ToList();
 
@@ -213,13 +208,13 @@ namespace Common.Services
                 return;
             }
 
-            foreach (Suggestion suggestion in issue.Suggestions)
+            foreach (Proposal proposal in issue.Proposals)
             {
-                Vote vote = votes.FirstOrDefault(v => v.SuggestionId.ToString() == suggestion.Id.ToString());
+                Vote vote = votes.FirstOrDefault(v => v.ProposalId.ToString() == proposal.Id.ToString());
 
                 if (vote != null)
                 {
-                    suggestion.MyVote = vote.Value;
+                    proposal.MyVote = vote.Value;
                 }
             }
         }
@@ -228,9 +223,9 @@ namespace Common.Services
         /// Sets my vote.
         /// </summary>
         /// <param name="dbServiceContext">The database service context.</param>
-        /// <param name="suggestion">The suggestion.</param>
+        /// <param name="proposal">The proposal.</param>
         /// <param name="userId">The user identifier.</param>
-        public static void SetMyVote(DbServiceContext dbServiceContext, Suggestion suggestion, string userId)
+        public static void SetMyVote(DbServiceContext dbServiceContext, Proposal proposal, string userId)
         {
             if (string.IsNullOrEmpty(userId))
             {
@@ -238,31 +233,31 @@ namespace Common.Services
             }
 
             var vote = dbServiceContext.Votes
-                .Include(v => v.Suggestion)
-                .FirstOrDefault(v => v.UserId.ToString() == userId && v.SuggestionId.ToString() == suggestion.Id.ToString());
+                .Include(v => v.Proposal)
+                .FirstOrDefault(v => v.UserId.ToString() == userId && v.ProposalId.ToString() == proposal.Id.ToString());
 
             if (vote == null)
             {
                 return;
             }
 
-            suggestion.MyVote = vote.Value;
+            proposal.MyVote = vote.Value;
         }
 
         /// <summary>
         /// Updates the votes.
         /// </summary>
         /// <param name="dbServiceContext">The database service context.</param>
-        /// <param name="suggestions">The suggestions.</param>
-        public static void UpdateVotes(DbServiceContext dbServiceContext, List<Suggestion> suggestions)
+        /// <param name="proposals">The proposals.</param>
+        public static void UpdateVotes(DbServiceContext dbServiceContext, List<Proposal> proposals)
         {
-            foreach (Suggestion suggestion in suggestions)
+            foreach (Proposal proposal in proposals)
             {
                 int count = dbServiceContext.Votes
-                    .Where(v => v.SuggestionId.ToString() == suggestion.Id.ToString())
+                    .Where(v => v.ProposalId.ToString() == proposal.Id.ToString())
                     .ToList().Count;
 
-                suggestion.VoteCount = count;
+                proposal.VoteCount = count;
             }
         }
 
@@ -270,36 +265,36 @@ namespace Common.Services
         /// Adds the specified database service context.
         /// </summary>
         /// <param name="dbServiceContext">The database service context.</param>
-        /// <param name="suggestionSubmission">The suggestion submission.</param>
+        /// <param name="proposalSubmission">The proposal submission.</param>
         /// <returns></returns>
         /// <exception cref="System.InvalidOperationException">
         /// </exception>
-        public Guid Add(DbServiceContext dbServiceContext, SuggestionSubmission suggestionSubmission)
+        public Guid Add(DbServiceContext dbServiceContext, ProposalSubmission proposalSubmission)
         {
-            Suggestion suggestion = suggestionSubmission.ToSuggestion();
+            Proposal proposal = proposalSubmission.ToProposal();
 
-            (bool valid, string errorMessage) = IsValid(suggestion);
+            (bool valid, string errorMessage) = IsValid(proposal);
 
             if (!valid)
             {
                 throw new InvalidOperationException(errorMessage);
             }
 
-            string issueId = suggestionSubmission.IssueId.ToString();
+            string issueId = proposalSubmission.IssueId.ToString();
 
-            bool suggestionWithSameTitleAlreadyExists = dbServiceContext.Suggestions
+            bool proposalWithSameTitleAlreadyExists = dbServiceContext.Proposals
                 .FirstOrDefault(s => s.IssueId.ToString() == issueId &&
-                                     string.Equals(s.Title, suggestionSubmission.Title, StringComparison.OrdinalIgnoreCase)) != null;
+                                     string.Equals(s.Title, proposalSubmission.Title, StringComparison.OrdinalIgnoreCase)) != null;
 
-            if (suggestionWithSameTitleAlreadyExists)
+            if (proposalWithSameTitleAlreadyExists)
             {
-                throw new InvalidOperationException(Resource.ErrorSuggestionWithSameTitleAlreadyExists);
+                throw new InvalidOperationException(Resource.ErrorProposalWithSameTitleAlreadyExists);
             }
 
-            Guid userId = suggestionSubmission.UserId;
+            Guid userId = proposalSubmission.UserId;
 
             TransactionTypeService transactionTypeService = new TransactionTypeService();
-            TransactionType transactionType = transactionTypeService.GetTransactionType(dbServiceContext, TransactionTypeNames.AddSuggestion);
+            TransactionType transactionType = transactionTypeService.GetTransactionType(dbServiceContext, TransactionTypeNames.AddProposal);
 
             UserService userService = new UserService();
             User user = userService.GetUserById(dbServiceContext, userId);
@@ -323,52 +318,52 @@ namespace Common.Services
                 Balance = transactionType.Fee,
                 CreateDate = DateTime.Now,
                 TransactionType = transactionType,
-                TransactionId = suggestion.Id
+                TransactionId = proposal.Id
             };
 
             wallet.TotalBalance += walletTransaction.Balance;
             dbServiceContext.WalletTransactions.Add(walletTransaction);
 
 
-            dbServiceContext.Suggestions.Add(suggestion);
+            dbServiceContext.Proposals.Add(proposal);
             dbServiceContext.SaveChanges();
 
-            return suggestion.Id;
+            return proposal.Id;
         }
 
         /// <summary>
         /// Updates the specified database service context.
         /// </summary>
         /// <param name="dbServiceContext">The database service context.</param>
-        /// <param name="suggestionSubmission">The suggestion submission.</param>
+        /// <param name="proposalSubmission">The proposal submission.</param>
         /// <exception cref="System.InvalidOperationException">
         /// </exception>
-        public void Update(DbServiceContext dbServiceContext, SuggestionSubmission suggestionSubmission)
+        public void Update(DbServiceContext dbServiceContext, ProposalSubmission proposalSubmission)
         {
-            Suggestion suggestionToUpdate = dbServiceContext.Suggestions
-                .FirstOrDefault(s => s.Id.ToString() == suggestionSubmission.Id.ToString());
+            Proposal proposalToUpdate = dbServiceContext.Proposals
+                .FirstOrDefault(s => s.Id.ToString() == proposalSubmission.Id.ToString());
 
-            if (suggestionToUpdate == null)
+            if (proposalToUpdate == null)
             {
                 throw new InvalidOperationException(Resource.ErrorIssueNotFound);
             }
 
-            if (!suggestionToUpdate.CanEdit(suggestionSubmission.UserId))
+            if (!proposalToUpdate.CanEdit(proposalSubmission.UserId))
             {
                 throw new InvalidOperationException(Resource.IssueCannotBeEditedAnymore);
             }
 
-            suggestionToUpdate.Description = suggestionSubmission.Description;
-            suggestionToUpdate.Title = suggestionSubmission.Title;
+            proposalToUpdate.Description = proposalSubmission.Description;
+            proposalToUpdate.Title = proposalSubmission.Title;
 
-            (bool valid, string errorMessage) = IsValid(suggestionSubmission.ToSuggestion());
+            (bool valid, string errorMessage) = IsValid(proposalSubmission.ToProposal());
 
             if (!valid)
             {
                 throw new InvalidOperationException(errorMessage);
             }
 
-            dbServiceContext.Suggestions.Update(suggestionToUpdate);
+            dbServiceContext.Proposals.Update(proposalToUpdate);
             dbServiceContext.SaveChanges();
         }
 
@@ -383,7 +378,7 @@ namespace Common.Services
 
             using (dbServiceContext)
             {
-                int count = dbServiceContext.Suggestions.Count();
+                int count = dbServiceContext.Proposals.Count();
 
                 if (count > 0)
                 {
@@ -394,7 +389,7 @@ namespace Common.Services
 
                 foreach (DataRow row in dataTable.Rows)
                 {
-                    Suggestion suggestion = new Suggestion
+                    Proposal proposal = new Proposal
                     {
                         ImportId = Convert.ToInt32(row["ID"].ToString()),
                         Description = row["Description"].ToString(),
@@ -407,23 +402,23 @@ namespace Common.Services
 
                     if (issueId != null)
                     {
-                        suggestion.IssueId = (Guid)issueId;
+                        proposal.IssueId = (Guid)issueId;
                     }
 
                     string userId = row["CreatorUserID"].ToString();
 
                     if (!string.IsNullOrEmpty(userId))
                     {
-                        User user = dbServiceContext.User
+                        User user = dbServiceContext.Users
                             .FirstOrDefault(u => u.ImportId == Convert.ToInt32(userId));
 
                         if (user != null)
                         {
-                            suggestion.CreatorUserId = user.Id;
+                            proposal.CreatorUserId = user.Id;
                         }
                     }
 
-                    dbServiceContext.Suggestions.Add(suggestion);
+                    dbServiceContext.Proposals.Add(proposal);
 
                     recordCount++;
                 }
@@ -440,71 +435,71 @@ namespace Common.Services
         /// <summary>
         /// Sets the top staked.
         /// </summary>
-        /// <param name="suggestions">The suggestions.</param>
-        private void SetTopStaked(List<Suggestion> suggestions)
+        /// <param name="proposals">The proposals.</param>
+        private void SetTopStaked(List<Proposal> proposals)
         {
-            int topStakedIssuesCount = (int)Math.Round(suggestions.Count * _topStakedSuggestionsPercent / 100, 0);
+            int topStakedIssuesCount = (int)Math.Round(proposals.Count * _topStakedProposalsPercent / 100, 0);
 
-            List<Suggestion> topStakedSuggestions = suggestions
+            List<Proposal> topStakedProposals = proposals
                 .OrderByDescending(i => i.StakeCount)
                 .Take(topStakedIssuesCount)
                 .ToList();
 
-            foreach (var suggestion in topStakedSuggestions)
+            foreach (var proposal in topStakedProposals)
             {
-                suggestion.IsTopStaked = true;
+                proposal.IsTopStaked = true;
             }
         }
 
         /// <summary>
         /// Sets the top voted.
         /// </summary>
-        /// <param name="suggestions">The suggestions.</param>
-        private void SetTopVoted(List<Suggestion> suggestions)
+        /// <param name="proposals">The proposals.</param>
+        private void SetTopVoted(List<Proposal> proposals)
         {
-            int topVotedCount = (int)Math.Round(suggestions.Count * _topStakedSuggestionsPercent / 100, 0);
+            int topVotedCount = (int)Math.Round(proposals.Count * _topStakedProposalsPercent / 100, 0);
 
-            List<Suggestion> topVotedSuggestions = suggestions
+            List<Proposal> topVotedProposals = proposals
                 .OrderByDescending(i => i.VoteCount)
                 .Take(topVotedCount)
                 .ToList();
 
-            foreach (var suggestion in topVotedSuggestions)
+            foreach (var proposal in topVotedProposals)
             {
-                suggestion.IsTopVoted = true;
+                proposal.IsTopVoted = true;
             }
         }
 
         /// <summary>
         /// Returns true if ... is valid.
         /// </summary>
-        /// <param name="suggestion">The suggestion.</param>
+        /// <param name="proposal">The proposal.</param>
         /// <returns>
         ///   <c>true</c> if this instance is valid; otherwise, <c>false</c>.
         /// </returns>
-        private (bool, string) IsValid(Suggestion suggestion)
+        private (bool, string) IsValid(Proposal proposal)
         {
             string errorMessage = string.Empty;
 
-            if (string.IsNullOrEmpty(suggestion.Title))
+            if (string.IsNullOrEmpty(proposal.Title))
             {
                 errorMessage = Resource.ErrorTitleIsRequired;
                 return (false, errorMessage);
             }
 
-            if (string.IsNullOrEmpty(suggestion.Description))
+            if (string.IsNullOrEmpty(proposal.Description))
             {
                 errorMessage = Resource.ErrorDescriptionIsRequired;
                 return (false, errorMessage);
             }
 
-            if (!string.IsNullOrEmpty(suggestion.Title) && suggestion.Title.Length < 5)
+            if (!string.IsNullOrEmpty(proposal.Title) && proposal.Title.Length < 5)
             {
                 errorMessage = Resource.ErrorTitleNotLongEnough;
                 return (false, errorMessage);
             }
 
-            if (!string.IsNullOrEmpty(suggestion.Description) && suggestion.Description.Length < 5)
+            if (!string.IsNullOrEmpty(proposal.Description) && proposal.Description.Length < 5)
             {
                 errorMessage = Resource.ErrorDescriptionNotLongEnough;
                 return (false, errorMessage);

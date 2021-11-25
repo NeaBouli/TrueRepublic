@@ -96,12 +96,12 @@ namespace Common.Entities
         public Guid CreatorUserId { get; set; }
 
         /// <summary>
-        /// Gets the suggestions.
+        /// Gets the Proposals.
         /// </summary>
         /// <value>
-        /// The suggestions.
+        /// The Proposals.
         /// </value>
-        public List<Suggestion> Suggestions { get; set; }
+        public List<Proposal> Proposals { get; set; }
 
         /// <summary>
         /// Gets or sets a value indicating whether this instance is top staked.
@@ -122,7 +122,7 @@ namespace Common.Entities
         public bool CanEdit(Guid userId)
         {
             if (userId.ToString() == CreatorUserId.ToString() &&
-                (Suggestions == null || Suggestions.Count == 0))
+                (Proposals == null || Proposals.Count == 0))
             {
                 return true;
             }
@@ -138,7 +138,7 @@ namespace Common.Entities
         /// </returns>
         public bool HasMyStake()
         {
-            return Suggestions.Any(suggestion => suggestion.HasMyStake);
+            return Proposals.Any(proposal => proposal.HasMyStake);
         }
 
         /// <summary>
@@ -147,7 +147,7 @@ namespace Common.Entities
         /// <returns>The total stake count for all assigned stakes</returns>
         public int GetTotalStakeCount()
         {
-            return Suggestions.Sum(suggestion => suggestion.StakeCount);
+            return Proposals.Sum(proposal => proposal.StakeCount);
         }
 
         /// <summary>

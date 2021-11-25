@@ -9,11 +9,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestConsole", "TestConsole\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebService", "WebService\WebService.csproj", "{A3F20325-9542-4381-B86C-C4E023A96D6E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PnyxWebAssembly.Server", "PnyxWebAssembly\Server\PnyxWebAssembly.Server.csproj", "{8A1BE56D-4A5B-485A-AAD4-9412C9282F93}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PnyxWebAssembly.Server", "PnyxWebAssembly\Server\PnyxWebAssembly.Server.csproj", "{8A1BE56D-4A5B-485A-AAD4-9412C9282F93}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PnyxWebAssembly.Client", "PnyxWebAssembly\Client\PnyxWebAssembly.Client.csproj", "{081EFBD0-AE59-4309-9909-BF7D348AA81B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PnyxWebAssembly.Client", "PnyxWebAssembly\Client\PnyxWebAssembly.Client.csproj", "{081EFBD0-AE59-4309-9909-BF7D348AA81B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PnyxWebAssembly.Shared", "PnyxWebAssembly\Shared\PnyxWebAssembly.Shared.csproj", "{D7770CF3-4A98-4259-8927-41FFEA6C4067}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PnyxWebAssembly.Shared", "PnyxWebAssembly\Shared\PnyxWebAssembly.Shared.csproj", "{D7770CF3-4A98-4259-8927-41FFEA6C4067}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

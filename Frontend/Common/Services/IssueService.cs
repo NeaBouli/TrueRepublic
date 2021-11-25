@@ -48,14 +48,14 @@ namespace Common.Services
         public List<Issue> GetAll(DbServiceContext dbServiceContext, PaginatedList paginatedList = null, string userId = null)
         {
             List<Issue> issues = dbServiceContext.Issues
-                .Include(i => i.Suggestions)
+                .Include(i => i.Proposals)
                 .Where(i => i.DueDate == null || (DateTime)i.DueDate >= DateTime.Now)
                 .ToList();
 
             foreach (Issue issue in issues)
             {
-                SuggestionService.UpdateStakes(dbServiceContext, issue.Suggestions);
-                SuggestionService.SetHasMyStake(dbServiceContext, issue, userId);
+                ProposalService.UpdateStakes(dbServiceContext, issue.Proposals);
+                ProposalService.SetHasMyStake(dbServiceContext, issue, userId);
             }
 
             if (_topStakedIssuesPercent > 0)
@@ -158,13 +158,13 @@ namespace Common.Services
         public Issue GetById(DbServiceContext dbServiceContext, string id, string userId = null)
         {
             Issue issue = dbServiceContext.Issues
-                .Include(i => i.Suggestions)
+                .Include(i => i.Proposals)
                 .FirstOrDefault(i => i.Id.ToString() == id);
 
             if (issue != null)
             {
-                SuggestionService.UpdateStakes(dbServiceContext, issue.Suggestions);
-                SuggestionService.SetHasMyStake(dbServiceContext, issue, userId);
+                ProposalService.UpdateStakes(dbServiceContext, issue.Proposals);
+                ProposalService.SetHasMyStake(dbServiceContext, issue, userId);
             }
 
             return issue;
@@ -223,7 +223,7 @@ namespace Common.Services
             wallet.TotalBalance += walletTransaction.Balance;
             dbServiceContext.WalletTransactions.Add(walletTransaction);
             
-            issue.Suggestions ??= new List<Suggestion>();
+            issue.Proposals ??= new List<Proposal>();
 
             dbServiceContext.Issues.Add(issue);
             dbServiceContext.SaveChanges();
@@ -311,7 +311,7 @@ namespace Common.Services
 
                     if (!string.IsNullOrEmpty(userId))
                     {
-                        User user = dbServiceContext.User
+                        User user = dbServiceContext.Users
                             .FirstOrDefault(u => u.ImportId == Convert.ToInt32(userId));
 
                         if (user != null)
@@ -380,7 +380,7 @@ namespace Common.Services
             {
                 foreach (Issue issue in issues)
                 {
-                    issue.Suggestions = new List<Suggestion>();
+                    issue.Proposals = new List<Proposal>();
                 }
             }
 
@@ -402,7 +402,7 @@ namespace Common.Services
 
             foreach (Issue issue in topStakedIssues)
             {
-                if (issue.Suggestions.FirstOrDefault(s => s.IsStaked) != null)
+                if (issue.Proposals.FirstOrDefault(s => s.IsStaked) != null)
                 {
                     issue.IsTopStaked = true;
                 }

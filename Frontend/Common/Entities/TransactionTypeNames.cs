@@ -16,18 +16,18 @@
         AddIssue,
 
         /// <summary>
-        /// The add suggestion
+        /// The add Proposal
         /// </summary>
-        AddSuggestion,
+        AddProposal,
 
         /// <summary>
-        /// The stake suggestion
+        /// The stake Proposal
         /// </summary>
-        StakeSuggestion,
+        StakeProposal,
 
         /// <summary>
-        /// The stake suggestion rollback
+        /// The stake Proposal rollback
         /// </summary>
-        StakeSuggestionRollback
+        StakeProposalRollback
     }
 }

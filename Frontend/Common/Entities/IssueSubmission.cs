@@ -72,7 +72,7 @@ namespace Common.Entities
         {
             Issue issue = new Issue
             {
-                Suggestions = new List<Suggestion>(),
+                Proposals = new List<Proposal>(),
                 DueDate = DueDate,
                 Description = Description,
                 Tags = Tags,

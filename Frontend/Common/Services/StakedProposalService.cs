@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Common.Services
 {
-    public class StakedSuggestionService
+    public class StakedProposalService
     {
         /// <summary>
         /// The expiration days
@@ -16,18 +16,18 @@ namespace Common.Services
         private readonly int _expirationDays;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="StakedSuggestionService"/> class.
+        /// Initializes a new instance of the <see cref="StakedProposalService"/> class.
         /// </summary>
-        public StakedSuggestionService()
+        public StakedProposalService()
         {
             _expirationDays = 0;
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="StakedSuggestionService" /> class.
+        /// Initializes a new instance of the <see cref="StakedProposalService" /> class.
         /// </summary>
         /// <param name="expirationDays">The expiration days.</param>
-        public StakedSuggestionService(int expirationDays)
+        public StakedProposalService(int expirationDays)
         {
             _expirationDays = expirationDays;
         }
@@ -38,13 +38,13 @@ namespace Common.Services
         /// <param name="dbServiceContext">The database service context.</param>
         /// <param name="userId">The user identifier.</param>
         /// <returns>The staked suggestions for the user</returns>
-        public List<StakedSuggestion> GetStakedSuggestionsForUser(DbServiceContext dbServiceContext, Guid userId)
+        public List<StakedProposal> GetStakedSuggestionsForUser(DbServiceContext dbServiceContext, Guid userId)
         {
             RollBackInvalidStakedSuggestions(dbServiceContext);
 
-            List<StakedSuggestion> stakedSuggestionsForUser = dbServiceContext.User
+            List<StakedProposal> stakedSuggestionsForUser = dbServiceContext.Users
                 .FirstOrDefault(u => u.Id.ToString() == userId.ToString())?
-                .StakedSuggestions ?? new List<StakedSuggestion>();
+                .StakedSuggestions ?? new List<StakedProposal>();
 
             return stakedSuggestionsForUser;
         }
@@ -63,7 +63,7 @@ namespace Common.Services
                 throw new InvalidOperationException(Resource.ErrorExpirationDaysNeedsToBeSet);
             }
 
-            List<StakedSuggestion> stakedSuggestionsForUser = GetStakedSuggestionsForUser(dbServiceContext, userId);
+            List<StakedProposal> stakedSuggestionsForUser = GetStakedSuggestionsForUser(dbServiceContext, userId);
 
             ThrowExceptionIfAlreadyStaked(suggestionId, stakedSuggestionsForUser);
 
@@ -72,7 +72,7 @@ namespace Common.Services
             RollbackOtherStakeForIssueIfAlreadyExisting(dbServiceContext, walletService, suggestionId, userId,
                 stakedSuggestionsForUser);
 
-            walletService.AddTransaction(dbServiceContext, userId, TransactionTypeNames.StakeSuggestion, suggestionId);
+            walletService.AddTransaction(dbServiceContext, userId, TransactionTypeNames.StakeProposal, suggestionId);
 
             AddStakedSuggestion(dbServiceContext, suggestionId, userId);
 
@@ -93,18 +93,18 @@ namespace Common.Services
                 throw new InvalidOperationException(Resource.ErrorExpirationDaysNeedsToBeSet);
             }
 
-            StakedSuggestion stakedSuggestion = new StakedSuggestion(_expirationDays);
-            Suggestion suggestion =
-                dbServiceContext.Suggestions.FirstOrDefault(s => s.Id.ToString() == suggestionId.ToString());
+            StakedProposal stakedSuggestion = new StakedProposal(_expirationDays);
+            Proposal suggestion =
+                dbServiceContext.Proposals.FirstOrDefault(s => s.Id.ToString() == suggestionId.ToString());
 
             if (suggestion != null)
             {
                 stakedSuggestion.IssueId = suggestion.IssueId;
-                stakedSuggestion.SuggestionId = suggestion.Id;
+                stakedSuggestion.ProposalId = suggestion.Id;
                 stakedSuggestion.UserId = userId;
             }
 
-            dbServiceContext.StakedSuggestions.Add(stakedSuggestion);
+            dbServiceContext.StakedProposals.Add(stakedSuggestion);
         }
 
         /// <summary>
@@ -117,20 +117,20 @@ namespace Common.Services
         /// <param name="stakedSuggestionsForUser">The staked suggestions for user.</param>
         private static void RollbackOtherStakeForIssueIfAlreadyExisting(DbServiceContext dbServiceContext,
             WalletService walletService, Guid suggestionId, Guid userId,
-            List<StakedSuggestion> stakedSuggestionsForUser)
+            List<StakedProposal> stakedSuggestionsForUser)
         {
             Guid? issueId = stakedSuggestionsForUser
-                .FirstOrDefault(s => s.SuggestionId.ToString() == suggestionId.ToString())?.IssueId;
+                .FirstOrDefault(s => s.ProposalId.ToString() == suggestionId.ToString())?.IssueId;
 
             if (issueId != null)
             {
-                StakedSuggestion existingStakedSuggestion = stakedSuggestionsForUser
+                StakedProposal existingStakedSuggestion = stakedSuggestionsForUser
                     .FirstOrDefault(s => s.IssueId.ToString() == issueId.ToString() &&
-                                         suggestionId.ToString() != s.SuggestionId.ToString());
+                                         suggestionId.ToString() != s.ProposalId.ToString());
 
                 if (existingStakedSuggestion != null)
                 {
-                    walletService.AddTransaction(dbServiceContext, userId, TransactionTypeNames.StakeSuggestionRollback,
+                    walletService.AddTransaction(dbServiceContext, userId, TransactionTypeNames.StakeProposalRollback,
                         suggestionId);
 
                     dbServiceContext.Remove(existingStakedSuggestion);
@@ -145,12 +145,12 @@ namespace Common.Services
         /// <param name="stakedSuggestionsForUser">The staked suggestions for user.</param>
         /// <exception cref="System.InvalidOperationException">ErrorSuggestionAlreadyStakedForUser</exception>
         private static void ThrowExceptionIfAlreadyStaked(Guid suggestionId,
-            List<StakedSuggestion> stakedSuggestionsForUser)
+            List<StakedProposal> stakedSuggestionsForUser)
         {
             if (stakedSuggestionsForUser.Any(stakedSuggestion =>
-                stakedSuggestion.SuggestionId.ToString() == suggestionId.ToString()))
+                stakedSuggestion.ProposalId.ToString() == suggestionId.ToString()))
             {
-                throw new InvalidOperationException(Resource.ErrorSuggestionAlreadyStakedForUser);
+                throw new InvalidOperationException(Resource.ErrorProposalAlreadyStakedForUser);
             }
         }
 
@@ -159,7 +159,7 @@ namespace Common.Services
         /// </summary>
         public void RollBackInvalidStakedSuggestions(DbServiceContext dbServiceContext)
         {
-            List<StakedSuggestion> invalidStakedSuggestions = dbServiceContext.StakedSuggestions
+            List<StakedProposal> invalidStakedSuggestions = dbServiceContext.StakedProposals
                 .Where(s => s.CreateDate.AddDays(s.ExpirationDays) < DateTime.Now).ToList();
 
             if (invalidStakedSuggestions.Count == 0)
@@ -169,9 +169,9 @@ namespace Common.Services
 
             WalletService walletService = new WalletService();
 
-            foreach (User user in dbServiceContext.User.Include(u => u.StakedSuggestions).ToList())
+            foreach (User user in dbServiceContext.Users.Include(u => u.StakedSuggestions).ToList())
             {
-                foreach (StakedSuggestion stakedSuggestion in invalidStakedSuggestions)
+                foreach (StakedProposal stakedSuggestion in invalidStakedSuggestions)
                 {
                     if (!user.StakedSuggestions.Contains(stakedSuggestion))
                     {
@@ -179,8 +179,8 @@ namespace Common.Services
                     }
 
                     Guid userId = user.Id;
-                    Guid suggestionId = stakedSuggestion.SuggestionId;
-                    walletService.AddTransaction(dbServiceContext, userId, TransactionTypeNames.StakeSuggestionRollback,
+                    Guid suggestionId = stakedSuggestion.ProposalId;
+                    walletService.AddTransaction(dbServiceContext, userId, TransactionTypeNames.StakeProposalRollback,
                         suggestionId);
                 }
             }
@@ -197,7 +197,7 @@ namespace Common.Services
 
             using (dbServiceContext)
             {
-                int count = dbServiceContext.StakedSuggestions.Count();
+                int count = dbServiceContext.StakedProposals.Count();
 
                 if (count > 0)
                 {
@@ -208,22 +208,22 @@ namespace Common.Services
 
                 foreach (DataRow row in dataTable.Rows)
                 {
-                    StakedSuggestion stakedSuggestion = new StakedSuggestion
+                    StakedProposal stakedProposal = new StakedProposal
                     {
                         ImportId = Convert.ToInt32(row["ID"].ToString())
                     };
 
-                    string suggestionId = row["SuggestionID"].ToString();
+                    string suggestionId = row["ProposalID"].ToString();
 
                     if (!string.IsNullOrEmpty(suggestionId))
                     {
-                        Suggestion suggestion = dbServiceContext.Suggestions
+                        Proposal suggestion = dbServiceContext.Proposals
                             .FirstOrDefault(s => s.ImportId == Convert.ToInt32(suggestionId));
 
                         if (suggestion != null)
                         {
-                            stakedSuggestion.SuggestionId = suggestion.Id;
-                            stakedSuggestion.IssueId = suggestion.IssueId;
+                            stakedProposal.ProposalId = suggestion.Id;
+                            stakedProposal.IssueId = suggestion.IssueId;
                         }
                     }
 
@@ -231,21 +231,21 @@ namespace Common.Services
 
                     if (!string.IsNullOrEmpty(userId))
                     {
-                        User user = dbServiceContext.User
+                        User user = dbServiceContext.Users
                             .FirstOrDefault(u => u.ImportId == Convert.ToInt32(userId));
 
                         if (user != null)
                         {
-                            stakedSuggestion.UserId = user.Id;
+                            stakedProposal.UserId = user.Id;
                         }
                     }
 
-                    stakedSuggestion.ExpirationDays = 30;
+                    stakedProposal.ExpirationDays = 30;
 
-                    if (stakedSuggestion.SuggestionId.ToString() != Guid.Empty.ToString() &&
-                        stakedSuggestion.UserId.ToString() != Guid.Empty.ToString())
+                    if (stakedProposal.ProposalId.ToString() != Guid.Empty.ToString() &&
+                        stakedProposal.UserId.ToString() != Guid.Empty.ToString())
                     {
-                        dbServiceContext.StakedSuggestions.Add(stakedSuggestion);
+                        dbServiceContext.StakedProposals.Add(stakedProposal);
                         recordCount++;
                     }
                 }

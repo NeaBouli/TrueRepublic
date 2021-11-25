@@ -7,14 +7,14 @@
       <FileName>Entities\Issue.cs</FileName>
     </TypeIdentifier>
     <ShowAsCollectionAssociation>
-      <Property Name="Suggestions" />
+      <Property Name="Proposals" />
     </ShowAsCollectionAssociation>
   </Class>
-  <Class Name="Common.Entities.Suggestion">
+  <Class Name="Common.Entities.Proposal">
     <Position X="7.75" Y="1" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAACAAAAAEAggEAAAAAAoAEAIAAQAAEFEICBABAAAAA=</HashCode>
-      <FileName>Entities\Suggestion.cs</FileName>
+      <FileName>Entities\Proposal.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="Common.Entities.User">

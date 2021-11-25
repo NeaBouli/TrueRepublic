@@ -21,7 +21,7 @@ namespace Common.Services
         /// <returns>The user</returns>
         public User GetUserByName(DbServiceContext dbServiceContext, string userName)
         {
-            return dbServiceContext.User
+            return dbServiceContext.Users
                 .Include(u => u.Wallet)
                 .FirstOrDefault(u => u.UserName == userName);
         }
@@ -36,7 +36,7 @@ namespace Common.Services
         /// </returns>
         public User GetUserById(DbServiceContext dbServiceContext, Guid id)
         {
-            return dbServiceContext.User
+            return dbServiceContext.Users
                 .Include(u => u.Wallet)
                 .FirstOrDefault(u => u.Id.ToString() == id.ToString());
         }
@@ -52,7 +52,7 @@ namespace Common.Services
         {
             using DbServiceContext dbServiceContext = DatabaseInitializationService.GetDbServiceContext();
             
-            if (dbServiceContext.User.ToList().Count > 0)
+            if (dbServiceContext.Users.ToList().Count > 0)
             {
                 return 0;
             }
@@ -65,7 +65,7 @@ namespace Common.Services
                 {
                     UserName = row["UserName"].ToString(),
                     ImportId = Convert.ToInt32(row["ID"].ToString()),
-                    StakedSuggestions = new List<StakedSuggestion>()
+                    StakedSuggestions = new List<StakedProposal>()
                 };
 
                 if (dataTable.Columns.Contains("UniqueExternalUserId"))
@@ -86,7 +86,7 @@ namespace Common.Services
                     user.UniqueExternalUserId = Guid.NewGuid();
                 }
 
-                dbServiceContext.User.Add(user);
+                dbServiceContext.Users.Add(user);
 
                 recordCount++;
             }

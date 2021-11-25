@@ -4,9 +4,9 @@ using System.ComponentModel.DataAnnotations;
 namespace Common.Entities
 {
     /// <summary>
-    /// Implementation of the suggestion submission
+    /// Implementation of the Proposal submission
     /// </summary>
-    public class SuggestionSubmission
+    public class ProposalSubmission
     {
         /// <summary>
         /// Gets or sets the identifier.
@@ -53,12 +53,12 @@ namespace Common.Entities
         public string Description { get; set; }
 
         /// <summary>
-        /// Converts to suggestion.
+        /// Converts to Proposal.
         /// </summary>
-        /// <returns>The suggestion</returns>
-        public Suggestion ToSuggestion()
+        /// <returns>The Proposal</returns>
+        public Proposal ToProposal()
         {
-            Suggestion suggestion = new Suggestion
+            Proposal proposal = new Proposal
             {
                 IssueId = IssueId,
                 Title = Title,
@@ -68,10 +68,10 @@ namespace Common.Entities
 
             if (Id != null)
             {
-                suggestion.Id = (Guid)Id;
+                proposal.Id = (Guid)Id;
             }
 
-            return suggestion;
+            return proposal;
         }
     }
 }

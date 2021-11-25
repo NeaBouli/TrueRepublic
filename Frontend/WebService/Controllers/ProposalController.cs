@@ -10,11 +10,11 @@ using Microsoft.Extensions.Logging;
 namespace WebService.Controllers
 {
     /// <summary>
-    /// Implementation of the suggestion controller
+    /// Implementation of the Proposal controller
     /// </summary>
     [ApiController]
-    [Route("Suggestions")]
-    public class SuggestionController : ControllerBase
+    [Route("Proposals")]
+    public class ProposalController : ControllerBase
     {
         /// <summary>
         /// The logger
@@ -27,11 +27,11 @@ namespace WebService.Controllers
         private readonly IConfiguration _configuration;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="SuggestionController"/> class.
+        /// Initializes a new instance of the <see cref="ProposalController"/> class.
         /// </summary>
         /// <param name="logger">The logger.</param>
         /// <param name="configuration">The configuration.</param>
-        public SuggestionController(ILogger<IssueController> logger, IConfiguration configuration)
+        public ProposalController(ILogger<IssueController> logger, IConfiguration configuration)
         {
             _logger = logger;
             _configuration = configuration;
@@ -56,18 +56,17 @@ namespace WebService.Controllers
             {
                 string userId = UserService.GetUserId(dbServiceContext, userName);
 
-                SuggestionService suggestionService = new SuggestionService(
-                    Convert.ToInt32(_configuration["TopStakedSuggestionsPercent"]),
-                    Convert.ToInt32(_configuration["TopVotedSuggestionsPercent"]));
+                ProposalService proposalService = new ProposalService(
+                    Convert.ToInt32(_configuration["TopStakedProposalsPercent"]));
 
-                List<Suggestion> suggestions = suggestionService.GetByIssueId(dbServiceContext, id, userId);
+                List<Proposal> proposals = proposalService.GetByIssueId(dbServiceContext, id, userId);
 
-                if (suggestions == null)
+                if (proposals == null)
                 {
                     return NotFound();
                 }
 
-                return Ok(suggestions);
+                return Ok(proposals);
             }
         }
 
@@ -79,8 +78,8 @@ namespace WebService.Controllers
         /// <returns>
         /// The issue if found
         /// </returns>
-        [HttpGet("Suggestion/{id}")]
-        public IActionResult GetBySuggestionId([FromQuery] string userName, string id)
+        [HttpGet("Proposal/{id}")]
+        public IActionResult GetByProposalId([FromQuery] string userName, string id)
         {
             DbServiceContext dbServiceContext = DatabaseInitializationService.GetDbServiceContext();
 
@@ -88,79 +87,78 @@ namespace WebService.Controllers
             {
                 string userId = UserService.GetUserId(dbServiceContext, userName);
 
-                SuggestionService suggestionService = new SuggestionService(
-                    Convert.ToInt32(_configuration["TopStakedSuggestionsPercent"]),
-                    Convert.ToInt32(_configuration["TopVotedSuggestionsPercent"]));
+                ProposalService proposalService = new ProposalService(
+                    Convert.ToInt32(_configuration["TopStakedProposalsPercent"]));
 
-                Suggestion suggestion = suggestionService.GetBySuggestionId(dbServiceContext, id, userId);
+                Proposal proposal = proposalService.GetByProposalId(dbServiceContext, id, userId);
 
-                if (suggestion == null)
+                if (proposal == null)
                 {
                     return NotFound();
                 }
 
-                return Ok(suggestion);
+                return Ok(proposal);
             }
         }
 
         /// <summary>
-        /// Adds the specified suggestion submission.
+        /// Adds the specified Proposal submission.
         /// </summary>
-        /// <param name="suggestionSubmission">The suggestion submission.</param>
-        /// <returns>The id of the created suggestion</returns>
+        /// <param name="proposalSubmission">The Proposal submission.</param>
+        /// <returns>The id of the created Proposal</returns>
         [HttpPost]
-        public IActionResult Add([FromBody] SuggestionSubmission suggestionSubmission)
+        public IActionResult Add([FromBody] ProposalSubmission proposalSubmission)
         {
             DbServiceContext dbServiceContext = DatabaseInitializationService.GetDbServiceContext();
 
             using (dbServiceContext)
             {
-                SuggestionService suggestionService = new SuggestionService();
+                ProposalService proposalService = new ProposalService();
 
-                Guid result = suggestionService.Add(dbServiceContext, suggestionSubmission);
+                Guid result = proposalService.Add(dbServiceContext, proposalSubmission);
 
                 return Ok(result);
             }
         }
 
         /// <summary>
-        /// Updates the specified suggestion submission.
+        /// Updates the specified Proposal submission.
         /// </summary>
-        /// <param name="suggestionSubmission">The suggestion submission.</param>
+        /// <param name="proposalSubmission">The Proposal submission.</param>
         /// <returns>The http status for the transaction</returns>
         [HttpPut]
-        public IActionResult Update([FromBody] SuggestionSubmission suggestionSubmission)
+        public IActionResult Update([FromBody] ProposalSubmission proposalSubmission)
         {
             DbServiceContext dbServiceContext = DatabaseInitializationService.GetDbServiceContext();
 
             using (dbServiceContext)
             {
-                SuggestionService suggestionService = new SuggestionService();
+                ProposalService proposalService = new ProposalService();
 
-                suggestionService.Update(dbServiceContext, suggestionSubmission);
+                proposalService.Update(dbServiceContext, proposalSubmission);
 
                 return Ok();
             }
         }
 
         /// <summary>
-        /// Stakes the suggestion.
+        /// Stakes the Proposal.
         /// </summary>
         /// <param name="userIdItemId">The user identifier item identifier.</param>
         /// <returns>
         /// The http status for the transaction
         /// </returns>
-        [HttpPut("StakeSuggestion")]
-        public IActionResult StakeSuggestion([FromBody] UserIdItemId userIdItemId)
+        [HttpPut("StakeProposal")]
+        public IActionResult StakeProposal([FromBody] UserIdItemId userIdItemId)
         {
             DbServiceContext dbServiceContext = DatabaseInitializationService.GetDbServiceContext();
 
             using (dbServiceContext)
             {
-                StakedSuggestionService stakedSuggestionService =
-                    new StakedSuggestionService(int.Parse(_configuration["SuggestionStakeLifetimeDays"]));
+                StakedProposalService stakedProposalService =
+                    new StakedProposalService(int.Parse(_configuration["ProposalStakeLifetimeDays"]));
 
-                stakedSuggestionService.Stake(dbServiceContext, userIdItemId.ItemId, userIdItemId.UserId);
+                stakedProposalService.Stake(dbServiceContext, userIdItemId.ItemId, userIdItemId.UserId);
 
                 return Ok();
             }

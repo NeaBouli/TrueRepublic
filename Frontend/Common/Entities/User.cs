@@ -79,7 +79,7 @@ namespace Common.Entities
         /// The staked suggestions.
         /// </value>
         /// <remarks>Only one suggestion can be staked per Issue</remarks>
-        public List<StakedSuggestion> StakedSuggestions { get; set; }
+        public List<StakedProposal> StakedSuggestions { get; set; }
 
         /// <summary>
         /// Gets or sets the votes.

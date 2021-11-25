@@ -4,22 +4,22 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Common.Entities
 {
-    [Table("StakedSuggestions")]
-    public class StakedSuggestion
+    [Table("StakedProposals")]
+    public class StakedProposal
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="StakedSuggestion"/> class.
+        /// Initializes a new instance of the <see cref="StakedProposal"/> class.
         /// </summary>
-        public StakedSuggestion()
+        public StakedProposal()
         {
             Id = Guid.NewGuid();
             CreateDate = DateTime.Now;
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="StakedSuggestion"/> class.
+        /// Initializes a new instance of the <see cref="StakedProposal"/> class.
         /// </summary>
-        public StakedSuggestion(int expirationDays)
+        public StakedProposal(int expirationDays)
         {
             ExpirationDays = expirationDays;
             Id = Guid.NewGuid();
@@ -92,21 +92,21 @@ namespace Common.Entities
         public Guid UserId { get; set; }
 
         /// <summary>
-        /// Gets or sets the suggestion.
+        /// Gets or sets the Proposal.
         /// </summary>
         /// <value>
-        /// The suggestion.
+        /// The Proposal.
         /// </value>
-        public Suggestion Suggestion { get; set; }
+        public Proposal Proposal { get; set; }
 
         /// <summary>
-        /// Gets or sets the suggestion fk.
+        /// Gets or sets the Proposal fk.
         /// </summary>
         /// <value>
-        /// The suggestion fk.
+        /// The Proposal fk.
         /// </value>
         [Required]
-        public Guid SuggestionId { get; set; }
+        public Guid ProposalId { get; set; }
 
         /// <summary>
         /// The expiration

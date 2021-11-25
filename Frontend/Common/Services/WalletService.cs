@@ -32,7 +32,7 @@ namespace Common.Services
         /// <returns>The total balance for the user -1 if not found</returns>
         public double GetTotalBalance(DbServiceContext dbServiceContext, string userId)
         {
-            Wallet wallet = dbServiceContext.User
+            Wallet wallet = dbServiceContext.Users
                 .Include(u => u.Wallet).FirstOrDefault(u => u.Id.ToString() == userId)?.Wallet;
 
             if (wallet == null)
@@ -133,7 +133,7 @@ namespace Common.Services
             {
                 int id = Convert.ToInt32(row["UserID"].ToString());
 
-                User user = dbServiceContext.User
+                User user = dbServiceContext.Users
                     .Include(u => u.Wallet)
                     .FirstOrDefault(u => u.ImportId == id);
 
@@ -190,7 +190,7 @@ namespace Common.Services
         /// <exception cref="System.InvalidOperationException">Will be thrown if not found</exception>
         private static Wallet GetWalletForUserId(DbServiceContext dbServiceContext, Guid userId)
         {
-            Wallet wallet = dbServiceContext.User
+            Wallet wallet = dbServiceContext.Users
                 .Include(u => u.Wallet)
                 .Include(u => u.Wallet.WalletTransactions)
                 .FirstOrDefault(u => u.Id.ToString() == userId.ToString())?.Wallet;

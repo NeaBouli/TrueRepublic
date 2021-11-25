@@ -7,8 +7,8 @@ namespace Common.Entities
     /// <summary>
     /// Implementation of the suggestion
     /// </summary>
-    [Table("Suggestions")]
-    public class Suggestion
+    [Table("Proposals")]
+    public class Proposal
     {
         /// <summary>
         /// The is top staked
@@ -21,9 +21,9 @@ namespace Common.Entities
         private bool _isTopVoted;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="Suggestion"/> class.
+        /// Initializes a new instance of the <see cref="Proposal"/> class.
         /// </summary>
-        public Suggestion()
+        public Proposal()
         {
             Id = Guid.NewGuid();
             CreateDate = DateTime.Now;

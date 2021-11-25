@@ -25,7 +25,7 @@ namespace Common.Services
         /// </returns>
         public List<WalletTransaction> GetWalletTransactionsForUser(DbServiceContext dbServiceContext, string userId, PaginatedList paginatedList, int limit = 0)
         {
-            User user = dbServiceContext.User
+            User user = dbServiceContext.Users
                 .Include(u => u.Wallet)
                 .Include(u => u.Wallet.WalletTransactions)
                 .FirstOrDefault(u => u.Id.ToString() == userId);
@@ -90,7 +90,7 @@ namespace Common.Services
                 {
                     int id = Convert.ToInt32(row["WalletID"].ToString());
 
-                    User user = dbServiceContext.User
+                    User user = dbServiceContext.Users
                         .Include(u => u.Wallet)
                         .Include(u => u.Wallet.WalletTransactions)
                         .FirstOrDefault(u => u.Wallet.ImportId == id);
@@ -115,9 +115,9 @@ namespace Common.Services
 
                             if (!string.IsNullOrEmpty(importId))
                             {
-                                if (transactionType.Name == TransactionTypeNames.StakeSuggestion.ToString())
+                                if (transactionType.Name == TransactionTypeNames.StakeProposal.ToString())
                                 {
-                                    Guid? transactionId = dbServiceContext.StakedSuggestions
+                                    Guid? transactionId = dbServiceContext.StakedProposals
                                         .FirstOrDefault(s => s.ImportId == Convert.ToInt32(importId))?.Id;
 
                                     walletTransaction.TransactionId = transactionId;

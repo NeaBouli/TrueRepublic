@@ -64,7 +64,7 @@ namespace Common.Entities
         /// The suggestion identifier.
         /// </value>
         [Required]
-        public Guid SuggestionId { get; set; }
+        public Guid ProposalId { get; set; }
 
         /// <summary>
         /// Gets or sets the suggestion.
@@ -72,7 +72,7 @@ namespace Common.Entities
         /// <value>
         /// The suggestion.
         /// </value>
-        public Suggestion Suggestion { get; set; }
+        public Proposal Proposal { get; set; }
 
         /// <summary>
         /// Gets or sets the value.

@@ -80,12 +80,12 @@ namespace Common.Data
         public DbSet<Issue> Issues { get; set; }
 
         /// <summary>
-        /// Gets or sets the suggestions.
+        /// Gets or sets the Proposals.
         /// </summary>
         /// <value>
-        /// The suggestions.
+        /// The Proposals.
         /// </value>
-        public DbSet<Suggestion> Suggestions { get; set; }
+        public DbSet<Proposal> Proposals { get; set; }
 
         /// <summary>
         /// Gets or sets the user.
@@ -93,16 +93,15 @@ namespace Common.Data
         /// <value>
         /// The user.
         /// </value>
-        // TODO: change to users
-        public DbSet<User> User { get; set; }
+        public DbSet<User> Users { get; set; }
 
         /// <summary>
-        /// Gets or sets the staked suggestions.
+        /// Gets or sets the staked Proposals.
         /// </summary>
         /// <value>
-        /// The staked suggestions.
+        /// The staked Proposals.
         /// </value>
-        public DbSet<StakedSuggestion> StakedSuggestions { get; set; }
+        public DbSet<StakedProposal> StakedProposals { get; set; }
 
         /// <summary>
         /// Gets or sets the wallets.
