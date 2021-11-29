@@ -4,6 +4,7 @@ using System.Net.Http.Json;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Common.Entities;
+using Common.GuiEntities;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 
@@ -17,7 +18,7 @@ namespace PnyxWebAssembly.Client.Pages
         [Inject]
         private AuthenticationStateProvider AuthenticationStateProvider { get; set; }
 
-        private List<Issue> IssueItems { get; set; }
+        private List<RenderIssue> IssueItems { get; set; }
 
         private string UserName { get; set; }
 
@@ -35,7 +36,17 @@ namespace PnyxWebAssembly.Client.Pages
 
             HttpClient client = ClientFactory.CreateClient("PnyxWebAssembly.ServerAPI.Public");
 
-            IssueItems = await client.GetFromJsonAsync<List<Issue>>("Issues");
+            List<Issue> issueItems = await client.GetFromJsonAsync<List<Issue>>("Issues");
+
+            IssueItems = new List<RenderIssue>();
+
+            if (issueItems != null)
+            {
+                foreach (var issueItem in issueItems)
+                {
+                    IssueItems.Add(new RenderIssue(issueItem));
+                }
+            }
         }
     }
 }

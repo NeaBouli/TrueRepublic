@@ -25,10 +25,10 @@
                 <tbody>
                 @foreach (var issue in IssueItems)
                 {
-                    <tr>
+                    <tr style="background-color: @issue.BackgroundColor">
                         <td>@issue.Tags</td>
                         <td>@issue.Title</td>
-                        <td>@issue.IsTopStaked</td>
+                        <td></td>
                         <td>@issue.CreateDate</td>
                     </tr>
                 }
@@ -56,7 +56,7 @@
                 <tbody>
                     @foreach (var issue in IssueItems)
                     {
-                        <tr>
+                        <tr style="background-color: @issue.BackgroundColor">
                             <td>@issue.Tags</td>
                             <td>@issue.Title</td>
                             <td>@issue.CreateDate</td>
