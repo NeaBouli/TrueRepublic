@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Threading.Tasks;
 using Common.Data;
 using Common.Entities;
 using Microsoft.EntityFrameworkCore;
@@ -266,6 +267,54 @@ namespace Common.Services
 
             dbServiceContext.Issues.Update(issueToUpdate);
             dbServiceContext.SaveChanges();
+        }
+
+        /// <summary>
+        /// Gets the tag autocomplete.
+        /// </summary>
+        /// <param name="dbServiceContext">The database service context.</param>
+        /// <param name="tag">The tag.</param>
+        /// <returns>The matching tags</returns>
+        public List<string> GetTagAutocomplete(DbServiceContext dbServiceContext, string tag)
+        {
+            if (string.IsNullOrEmpty(tag) ||
+                tag.StartsWith("#") && tag.Length < 4 ||
+                tag.Length < 3)
+            {
+                return new List<string>();
+            }
+
+            bool hasHashtag = tag.Contains("#");
+
+            string searchTag = tag;
+
+            if (!searchTag.StartsWith("#"))
+            {
+                searchTag = $"#{tag}";
+            }
+
+            List<Issue> issuesWithTag = dbServiceContext.Issues
+                .Where(i => i.Tags.Contains(searchTag))
+                .ToList();
+
+            List<string> foundTags = new List<string>();
+
+            foreach (Issue issue in issuesWithTag)
+            {
+                List<string> tags = issue.GetTags().ToList();
+
+                foreach (string tagFromIssue in tags)
+                {
+                    if (tagFromIssue.ToLowerInvariant().StartsWith(searchTag.ToLowerInvariant()))
+                    {
+                        foundTags.Add(!hasHashtag ? tagFromIssue.Substring(1): tagFromIssue);
+                    }
+                }
+            }
+
+            foundTags.Sort();
+
+            return foundTags;
         }
 
         /// <summary>

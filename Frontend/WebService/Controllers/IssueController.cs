@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Common.Data;
 using Common.Entities;
 using Common.Services;
@@ -211,6 +212,22 @@ namespace WebService.Controllers
                 issueService.Update(dbServiceContext, issueSubmission);
 
                 return Ok();
+            }
+        }
+
+        [Route("GetTagAutocomplete/{tag}")]
+        [HttpGet]
+        public IActionResult GetTagAutocomplete(string tag)
+        {
+            DbServiceContext dbServiceContext = DatabaseInitializationService.GetDbServiceContext();
+
+            using (dbServiceContext)
+            {
+                IssueService issueService = new IssueService();
+
+                List<string> tags = issueService.GetTagAutocomplete(dbServiceContext, tag);
+
+                return Ok(tags);
             }
         }
     }
