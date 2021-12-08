@@ -5,7 +5,7 @@ VisualStudioVersion = 16.0.31409.214
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Common", "Common\Common.csproj", "{F670C696-4349-4673-89C5-F50534CDD9F5}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestConsole", "TestConsole\TestConsole.csproj", "{EF70C047-B4B2-4683-938F-7AAB979108E6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ImportConsole", "TestConsole\ImportConsole.csproj", "{EF70C047-B4B2-4683-938F-7AAB979108E6}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebService", "WebService\WebService.csproj", "{A3F20325-9542-4381-B86C-C4E023A96D6E}"
 EndProject
@@ -14,6 +14,8 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PnyxWebAssembly.Client", "PnyxWebAssembly\Client\PnyxWebAssembly.Client.csproj", "{081EFBD0-AE59-4309-9909-BF7D348AA81B}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PnyxWebAssembly.Shared", "PnyxWebAssembly\Shared\PnyxWebAssembly.Shared.csproj", "{D7770CF3-4A98-4259-8927-41FFEA6C4067}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WahlomatImportConsole", "WahlomatImportConsole\WahlomatImportConsole.csproj", "{7DC87BC9-CC8C-4B3E-BEC0-758D774F4541}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -45,6 +47,10 @@ Global
 		{D7770CF3-4A98-4259-8927-41FFEA6C4067}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D7770CF3-4A98-4259-8927-41FFEA6C4067}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D7770CF3-4A98-4259-8927-41FFEA6C4067}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7DC87BC9-CC8C-4B3E-BEC0-758D774F4541}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7DC87BC9-CC8C-4B3E-BEC0-758D774F4541}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7DC87BC9-CC8C-4B3E-BEC0-758D774F4541}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7DC87BC9-CC8C-4B3E-BEC0-758D774F4541}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -7,7 +7,6 @@ namespace Common.Entities
     /// <summary>
     /// Implementation of the suggestion
     /// </summary>
-    [Table("Proposals")]
     public class Proposal
     {
         /// <summary>

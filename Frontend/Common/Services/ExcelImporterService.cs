@@ -51,6 +51,9 @@ namespace Common.Services
                     case "StakedProposals":
                         ImportStakedProposals(dataTable);
                         break;
+                    case "Images":
+                        ImportImages(dataTable);
+                        break;
                     default:
                         throw new NotImplementedException();
                 }
@@ -75,6 +78,16 @@ namespace Common.Services
         {
             ProposalService suggestionService = new ProposalService();
             OnTableImported(new NameCountEventArgs("Proposals", suggestionService.Import(dataTable)));
+        }
+
+        /// <summary>
+        /// Imports the images.
+        /// </summary>
+        /// <param name="dataTable">The data table.</param>
+        private void ImportImages(DataTable dataTable)
+        {
+            ImageInfoService imageInfoService = new ImageInfoService();
+            OnTableImported(new NameCountEventArgs("Images", imageInfoService.Import(dataTable)));
         }
 
         /// <summary>

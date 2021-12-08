@@ -1,4 +1,5 @@
-﻿using Common.Entities;
+﻿using System.Net.Mime;
+using Common.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace Common.Data
@@ -134,5 +135,13 @@ namespace Common.Data
         /// The votes.
         /// </value>
         public DbSet<Vote> Votes { get; set; }
+
+        /// <summary>
+        /// Gets or sets the image infos.
+        /// </summary>
+        /// <value>
+        /// The image infos.
+        /// </value>
+        public DbSet<ImageInfo> ImageInfos { get; set; }
     }
 }
