@@ -28,7 +28,7 @@ namespace Common.Services
             DbServiceContext dbServiceContext = DatabaseInitializationService.GetDbServiceContext();
 
             using DbServiceContext context = dbServiceContext;
-            int count = dbServiceContext.Wallets.Count();
+            int count = dbServiceContext.ImageInfos.Count();
 
             if (count > 0)
             {
