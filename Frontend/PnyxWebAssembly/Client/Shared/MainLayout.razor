@@ -1,18 +1,47 @@
-﻿@inherits LayoutComponentBase
+﻿@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
 
-<div class="page">
-    <div class="sidebar">
-        <NavMenu />
-    </div>
+@inject NavigationManager Navigation
+@inject SignOutSessionStateManager SignOutManager
 
-    <div class="main">
-        <div class="top-row px-4 auth">
-            <LoginDisplay />
-            <a href="https://docs.microsoft.com/aspnet/" target="_blank">About</a>
-        </div>
+@inherits LayoutComponentBase
 
-        <div class="content px-4">
-            @Body
-        </div>
-    </div>
-</div>
+<MudThemeProvider />
+
+<MudLayout>
+    <MudAppBar Elevation="1">
+        <MudText Typo="Typo.h5" Class="ml-3">PNYX</MudText>
+        <MudSpacer />
+        <AuthorizeView>
+            <Authorized>
+                <MudText Typo="Typo.caption" Class="ml-3"><a href="authentication/profile" style="color: white">@context.User.Identity?.Name</a></MudText>
+                <MudIconButton Icon="@Icons.Filled.Lock" Color="Color.Inherit" Edge="Edge.End" @onclick="BeginSignOut" Title="Logout"/>
+            </Authorized>
+            <NotAuthorized>
+                <MudIconButton Icon="@Icons.Filled.Add" Color="Color.Inherit" Edge="Edge.End" @onclick="BeginRegister" Title="Register"/>
+                <MudIconButton Icon="@Icons.Filled.LockOpen" Color="Color.Inherit" Edge="Edge.End" @onclick="BeginSignIn" Title="Login" />
+            </NotAuthorized>
+        </AuthorizeView>
+    </MudAppBar>
+    <MudMainContent>
+        @Body
+    </MudMainContent>
+</MudLayout>
+
+@code
+{
+    private async Task BeginSignOut(MouseEventArgs args)
+    {
+        await SignOutManager.SetSignOutState();
+        Navigation.NavigateTo("authentication/logout");
+    }
+
+    private void BeginSignIn(MouseEventArgs arg)
+    {
+        Navigation.NavigateTo("authentication/login");
+    }
+
+    private void BeginRegister(MouseEventArgs arg)
+    {
+        Navigation.NavigateTo("authentication/register");
+    }
+}

@@ -2,8 +2,8 @@ using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using System;
-using System.Net.Http;
 using System.Threading.Tasks;
+using MudBlazor.Services;
 
 namespace PnyxWebAssembly.Client
 {
@@ -34,6 +34,8 @@ namespace PnyxWebAssembly.Client
             // builder.Services.AddScoped(sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient("PnyxWebAssembly.ServerAPI.Public"));
 
             builder.Services.AddApiAuthorization();
+
+            builder.Services.AddMudServices();
 
             await builder.Build().RunAsync();
         }
