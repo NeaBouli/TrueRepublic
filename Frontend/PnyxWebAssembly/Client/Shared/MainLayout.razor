@@ -1,7 +1,7 @@
 ﻿@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
 
-@inject NavigationManager Navigation
-@inject SignOutSessionStateManager SignOutManager
+@inject NavigationManager _navigation
+@inject SignOutSessionStateManager _signOutManager
 
 @inherits LayoutComponentBase
 
@@ -13,6 +13,7 @@
         <MudSpacer />
         <AuthorizeView>
             <Authorized>
+                @* ReSharper disable once Html.PathError *@
                 <MudText Typo="Typo.caption" Class="ml-3"><a href="authentication/profile" style="color: white">@context.User.Identity?.Name</a></MudText>
                 <MudIconButton Icon="@Icons.Filled.Lock" Color="Color.Inherit" Edge="Edge.End" @onclick="BeginSignOut" Title="Logout"/>
             </Authorized>
@@ -31,17 +32,17 @@
 {
     private async Task BeginSignOut(MouseEventArgs args)
     {
-        await SignOutManager.SetSignOutState();
-        Navigation.NavigateTo("authentication/logout");
+        await _signOutManager.SetSignOutState();
+        _navigation.NavigateTo("authentication/logout");
     }
 
     private void BeginSignIn(MouseEventArgs arg)
     {
-        Navigation.NavigateTo("authentication/login");
+        _navigation.NavigateTo("authentication/login");
     }
 
     private void BeginRegister(MouseEventArgs arg)
     {
-        Navigation.NavigateTo("authentication/register");
+        _navigation.NavigateTo("authentication/register");
     }
 }

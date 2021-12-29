@@ -1,5 +1,5 @@
 ﻿@page "/"
-@inject IJSRuntime JsRuntime
+@inject IJSRuntime _jsRuntime
 
 <MudPaper Height=@Height Width="100%">
     <MudContainer Fixed="true">
@@ -15,7 +15,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        var dimension = await JsRuntime.InvokeAsync<WindowDimension>("getWindowDimensions");
+        var dimension = await _jsRuntime.InvokeAsync<WindowDimension>("getWindowDimensions");
         Height = $@"{dimension.Height - 85}px";
         Width = $@"{dimension.Width}px";
     }
