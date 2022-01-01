@@ -52,6 +52,24 @@ namespace PnyxWebAssembly.Client.Shared
             }
         }
 
+        private string _userName;
+
+        /// <summary>
+        /// Gets or sets the name of the user.
+        /// </summary>
+        /// <value>
+        /// The name of the user.
+        /// </value>
+        public string UserName
+        {
+            get => _userName;
+            set
+            {
+                _userName = value;
+                InvokeAsync(StateHasChanged);
+            }
+        }
+
         /// <summary>
         /// Begins the sign out.
         /// </summary>
@@ -75,14 +93,6 @@ namespace PnyxWebAssembly.Client.Shared
         private void BeginRegister()
         {
             NavigationManager.NavigateTo("authentication/register");
-        }
-
-        /// <summary>
-        /// Shows the account details.
-        /// </summary>
-        private void ShowAccountDetails()
-        {
-            NavigationManager.NavigateTo("accountdetails");
         }
     }
 }

@@ -42,6 +42,21 @@ namespace Common.Services
         }
 
         /// <summary>
+        /// Gets the user by external identifier.
+        /// </summary>
+        /// <param name="dbServiceContext">The database service context.</param>
+        /// <param name="id">The identifier.</param>
+        /// <returns>
+        /// The user if found otherwise null
+        /// </returns>
+        public User GetUserByExternalId(DbServiceContext dbServiceContext, Guid id)
+        {
+            return dbServiceContext.Users
+                .Include(u => u.Wallet)
+                .FirstOrDefault(u => u.UniqueExternalUserId.ToString() == id.ToString());
+        }
+
+        /// <summary>
         /// Imports the specified data table.
         /// </summary>
         /// <param name="dataTable">The data table.</param>

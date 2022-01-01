@@ -1,9 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
+using System.Net.Http;
+using System.Net.Http.Json;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using Common.Entities;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.JSInterop;
@@ -36,6 +40,9 @@ namespace PnyxWebAssembly.Client.Pages
         [Inject]
         private AuthenticationStateProvider AuthenticationStateProvider { get; set; }
 
+        [Inject]
+        private IHttpClientFactory ClientFactory { get; set; }
+
         [CascadingParameter]
         public MainLayout Layout { get; set; }
 
@@ -61,8 +68,22 @@ namespace PnyxWebAssembly.Client.Pages
         /// <value>
         /// The name of the user.
         /// </value>
+        public string UserEMail { get; set; }
+
+        /// <summary>
+        /// Gets or sets the name of the user.
+        /// </summary>
+        /// <value>
+        /// The name of the user.
+        /// </value>
         public string UserName { get; set; }
 
+        /// <summary>
+        /// Gets or sets the external user identifier.
+        /// </summary>
+        /// <value>
+        /// The external user identifier.
+        /// </value>
         public Guid ExternalUserId { get; set; }
 
         /// <summary>
@@ -84,7 +105,7 @@ namespace PnyxWebAssembly.Client.Pages
             AuthenticationState authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
             ClaimsPrincipal user = authState.User;
 
-            UserName = user?.Identity?.Name;
+            UserEMail = user?.Identity?.Name;
 
             if (user != null)
             {
@@ -96,10 +117,22 @@ namespace PnyxWebAssembly.Client.Pages
                 }
             }
             
-            if (!string.IsNullOrEmpty(UserName))
+            if (!string.IsNullOrEmpty(UserEMail))
             {
-                // TODO: call get total balance service here
-                Layout.TotalBalance++;
+                using HttpClient client = ClientFactory.CreateClient("PnyxWebAssembly.ServerAPI.Private");
+
+                User userFromService = await client.GetFromJsonAsync<User>($"User/{ExternalUserId}");
+
+                if (userFromService == null)
+                {
+                    return;
+                }
+
+                double totalBalance = userFromService.Wallet.TotalBalance;
+
+                UserName = userFromService.UserName;
+                Layout.UserName = userFromService.UserName;
+                Layout.TotalBalance = int.Parse(Math.Round(totalBalance, 0).ToString(CultureInfo.InvariantCulture));
             }
         }
 

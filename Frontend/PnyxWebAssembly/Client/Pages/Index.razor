@@ -4,10 +4,11 @@
     <MudContainer Fixed="true">
         <MudText Typo="Typo.h5">Hello, world!</MudText>
         <MudText>Welcome to your new app.</MudText>
-        @if (!string.IsNullOrEmpty(UserName))
+        @if (!string.IsNullOrEmpty(UserEMail))
         {
             <MudText>&nbsp;</MudText>
             <MudText>@UserName</MudText>
+            <MudText>@UserEMail</MudText>
             <MudText>@ExternalUserId</MudText>
         }
     </MudContainer>
