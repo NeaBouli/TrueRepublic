@@ -6,7 +6,9 @@
         <MudText>Welcome to your new app.</MudText>
         @if (!string.IsNullOrEmpty(UserName))
         {
+            <MudText>&nbsp;</MudText>
             <MudText>@UserName</MudText>
+            <MudText>@ExternalUserId</MudText>
         }
     </MudContainer>
 </MudPaper>

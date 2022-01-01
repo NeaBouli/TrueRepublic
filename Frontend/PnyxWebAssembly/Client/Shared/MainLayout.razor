@@ -11,7 +11,7 @@
                 <Authorized>
                     @* ReSharper disable once Html.PathError *@
                     <MudText Typo="Typo.caption" Class="ml-3"><a href="authentication/profile" style="color: white">@context.User.Identity?.Name</a></MudText>
-                    <MudBadge Content=@TotalBalance Color="Color.Error" Overlap="true" Class="mx-5 my-4">
+                    <MudBadge Content=@TotalBalance Color="Color.Error" Overlap="true" Class="mx-5 my-4" Origin="Origin.TopRight">
                         <MudIconButton Icon="@Icons.Filled.MonetizationOn" Color="Color.Inherit" Edge="Edge.End" @onclick="ShowAccountDetails" Title="Account Details" />
                     </MudBadge>
                     <MudIconButton Icon="@Icons.Filled.Logout" Color="Color.Inherit" Edge="Edge.End" @onclick="BeginSignOut" Title="Logout" />

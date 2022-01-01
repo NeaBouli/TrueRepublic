@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
@@ -60,6 +63,8 @@ namespace PnyxWebAssembly.Client.Pages
         /// </value>
         public string UserName { get; set; }
 
+        public Guid ExternalUserId { get; set; }
+
         /// <summary>
         /// Method invoked when the component is ready to start, having received its
         /// initial parameters from its parent in the render tree.
@@ -81,6 +86,16 @@ namespace PnyxWebAssembly.Client.Pages
 
             UserName = user?.Identity?.Name;
 
+            if (user != null)
+            {
+                List<Claim> claims = user.Claims.ToList();
+
+                if (claims.Count >= 3)
+                {
+                    ExternalUserId = Guid.Parse(claims[2].Value);
+                }
+            }
+            
             if (!string.IsNullOrEmpty(UserName))
             {
                 // TODO: call get total balance service here
