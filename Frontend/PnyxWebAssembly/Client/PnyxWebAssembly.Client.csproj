@@ -18,4 +18,10 @@
     <ProjectReference Include="..\Shared\PnyxWebAssembly.Shared.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Update="wwwroot\js\browser-resize.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
 </Project>

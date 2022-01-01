@@ -34,9 +34,12 @@ namespace PnyxWebAssembly.Client.Pages
                 UserName = "Unknown";
             }
 
-            HttpClient client = ClientFactory.CreateClient("PnyxWebAssembly.ServerAPI.Public");
+            List<Issue> issueItems;
 
-            List<Issue> issueItems = await client.GetFromJsonAsync<List<Issue>>("Issues");
+            using (HttpClient client = ClientFactory.CreateClient("PnyxWebAssembly.ServerAPI.Public"))
+            {
+                issueItems = await client.GetFromJsonAsync<List<Issue>>("Issues");
+            }
 
             IssueItems = new List<RenderIssue>();
 

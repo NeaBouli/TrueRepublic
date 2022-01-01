@@ -1,28 +1,12 @@
 ﻿@page "/"
-@inject IJSRuntime _jsRuntime
 
 <MudPaper Height=@Height Width="100%">
     <MudContainer Fixed="true">
         <MudText Typo="Typo.h5">Hello, world!</MudText>
         <MudText>Welcome to your new app.</MudText>
+        @if (!string.IsNullOrEmpty(UserName))
+        {
+            <MudText>@UserName</MudText>
+        }
     </MudContainer>
 </MudPaper>
-
-@code
-{
-    public string Height { get; set; }
-    public string Width { get; set; }
-
-    protected override async Task OnInitializedAsync()
-    {
-        var dimension = await _jsRuntime.InvokeAsync<WindowDimension>("getWindowDimensions");
-        Height = $@"{dimension.Height - 85}px";
-        Width = $@"{dimension.Width}px";
-    }
-
-    public class WindowDimension
-    {
-        public int Width { get; set; }
-        public int Height { get; set; }
-    }
-}
