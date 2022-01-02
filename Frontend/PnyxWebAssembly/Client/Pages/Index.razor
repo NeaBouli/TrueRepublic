@@ -4,6 +4,13 @@
     <MudContainer Fixed="true">
         <MudText Typo="Typo.h5">Hello, world!</MudText>
         <MudText>Welcome to your new app.</MudText>
+
+        @if (ShowAddUserWizard)
+        {
+            <MudText>&nbsp;</MudText>
+            <UserAddWizard ExternalUserId="@ExternalUserId" />
+        }
+
         @if (!string.IsNullOrEmpty(UserEMail))
         {
             <MudText>&nbsp;</MudText>

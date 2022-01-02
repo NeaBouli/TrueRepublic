@@ -146,7 +146,16 @@ namespace PnyxWebAssembly.Client.Pages
     
                 using HttpClient client = ClientFactory.CreateClient("PnyxWebAssembly.ServerAPI.Private");
 
-                User userFromService = await client.GetFromJsonAsync<User>($"User/ByExternalId/{ExternalUserId}");
+                User userFromService;
+
+                try
+                {
+                    userFromService = await client.GetFromJsonAsync<User>($"User/ByExternalId/{ExternalUserId}");
+                }
+                catch (HttpRequestException)
+                {
+                    userFromService = null;
+                }
 
                 if (userFromService == null)
                 {

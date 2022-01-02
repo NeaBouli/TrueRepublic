@@ -1,3 +1,35 @@
-﻿<h3>UserAddWizard</h3>
+﻿@using System.ComponentModel.Design
+<div style="max-width: 640px;">
+    <MudText>&nbsp;</MudText>
+    <MudText>There is currently no user existing for you. Please select a user name.</MudText>
+    <MudText>&nbsp;</MudText>
+    <MudCard>
+        <MudCardContent>
+            <MudForm @ref="_form" @bind-IsValid="@_success" @bind-Errors="@_errors">
+                <MudTextField T="string" Label="Username" Validation="@(new Func<string, IEnumerable<string>>(ValidateUserName))"
+                              @bind-Value="@UserName" />
+            </MudForm>
+        </MudCardContent>
+        <MudCardActions>
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@(() => _form.Validate())" Class="ml-auto">Register</MudButton>
+        </MudCardActions>
+    </MudCard>
+
+    @if (_errors.Length > 0)
+    {
+        <MudText>&nbsp;</MudText>
+        <MudPaper>
+            @foreach (string error in _errors)
+            {
+                <MudText Color="@Color.Error">@error</MudText>
+            }
+        </MudPaper>
+    }
+    else
+    {
+        CreateUserIfNotAlreadyExisting();
+    }
+
+</div>
 
 

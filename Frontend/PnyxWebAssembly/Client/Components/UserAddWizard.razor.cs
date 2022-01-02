@@ -1,7 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Json;
 using Common.Entities;
+using Microsoft.AspNetCore.Components;
+using MudBlazor;
 
 namespace PnyxWebAssembly.Client.Components
 {
@@ -12,21 +15,54 @@ namespace PnyxWebAssembly.Client.Components
     public partial class UserAddWizard
     {
         /// <summary>
+        /// Gets or sets the external user identifier.
+        /// </summary>
+        /// <value>
+        /// The external user identifier.
+        /// </value>
+        [Parameter]
+        public Guid ExternalUserId { get; set; }
+
+        /// <summary>
+        /// Gets or sets the username.
+        /// </summary>
+        /// <value>
+        /// The username.
+        /// </value>
+        public string UserName { get; set; }
+
+        /// <summary>
         /// Gets or sets the client factory.
         /// </summary>
         /// <value>
         /// The client factory.
         /// </value>
-        public IHttpClientFactory ClientFactory { get; set; }
+        [Inject]
+        private IHttpClientFactory ClientFactory { get; set; }
+
+        /// <summary>
+        /// The success
+        /// </summary>
+        private bool _success;
+
+        /// <summary>
+        /// The errors
+        /// </summary>
+        private string[] _errors = { };
+
+        /// <summary>
+        /// The form
+        /// </summary>
+        private MudForm _form;
 
         /// <summary>
         /// Validates the name of the user.
         /// </summary>
         /// <param name="userName">Name of the user.</param>
         /// <returns></returns>
-        private async IAsyncEnumerable<string> ValidateUserNameAsync(string userName)
+        private IEnumerable<string> ValidateUserName(string userName)
         {
-            if (string.IsNullOrWhiteSpace(userName))
+            if (string.IsNullOrEmpty(userName))
             {
                 yield return "Username is required";
                 yield break;
@@ -56,15 +92,47 @@ namespace PnyxWebAssembly.Client.Components
                     yield break;
                 }
             }
+        }
+
+        /// <summary>
+        /// Checks the user name already existing.
+        /// </summary>
+        private async void CreateUserIfNotAlreadyExisting()
+        {
+            if (string.IsNullOrEmpty(UserName))
+            {
+                return;
+            }
 
             using HttpClient client = ClientFactory.CreateClient("PnyxWebAssembly.ServerAPI.Private");
 
-            User userFromService = await client.GetFromJsonAsync<User>($"User/ByName/{userName}");
+            User userFromService;
+
+            try
+            {
+                userFromService = await client.GetFromJsonAsync<User>($"User/ByName/{UserName}");
+            }
+            catch (HttpRequestException)
+            {
+                userFromService = null;
+            }
 
             if (userFromService != null)
             {
-                yield return "A user with the same name already exists. Please select a different name";
+                _errors = new[] {$"User \"{UserName}\" is already existing. Please select a different name"};
+                await InvokeAsync(StateHasChanged);
+                return;
             }
+
+            // TODO: create user with wallet + genesis
+
+            _success = true;
+
+            // TODO: inform the user to login again via dialog
+
+            // TODO: logout
+
+            await InvokeAsync(StateHasChanged);
         }
     }
 }

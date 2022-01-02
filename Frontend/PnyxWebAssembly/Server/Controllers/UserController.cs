@@ -46,6 +46,11 @@ namespace PnyxWebAssembly.Server.Controllers
             {
                 User user = userService.GetUserByExternalId(dbServiceContext, Guid.Parse(externalUserId));
 
+                if (user == null)
+                {
+                    return NotFound();
+                }
+
                 return Ok(user);
             }
         }
@@ -65,6 +70,11 @@ namespace PnyxWebAssembly.Server.Controllers
             using (dbServiceContext)
             {
                 User user = userService.GetUserByName(dbServiceContext, userName);
+
+                if (user == null)
+                {
+                    return NotFound();
+                }
 
                 return Ok(user);
             }
