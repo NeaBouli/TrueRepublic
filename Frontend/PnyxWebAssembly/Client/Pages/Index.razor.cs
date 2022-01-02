@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Net.Http;
@@ -11,6 +10,7 @@ using Common.Entities;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.JSInterop;
+using PnyxWebAssembly.Client.Components;
 using PnyxWebAssembly.Client.Services;
 using PnyxWebAssembly.Client.Shared;
 
@@ -40,11 +40,32 @@ namespace PnyxWebAssembly.Client.Pages
         [Inject]
         private AuthenticationStateProvider AuthenticationStateProvider { get; set; }
 
+        /// <summary>
+        /// Gets or sets the client factory.
+        /// </summary>
+        /// <value>
+        /// The client factory.
+        /// </value>
         [Inject]
         private IHttpClientFactory ClientFactory { get; set; }
 
+        /// <summary>
+        /// Gets or sets the main layout.
+        /// </summary>
+        /// <value>
+        /// The main layout.
+        /// </value>
         [CascadingParameter]
-        public MainLayout Layout { get; set; }
+        public MainLayout MainLayout { get; set; }
+
+        /// <summary>
+        /// Gets or sets the user add wizard.
+        /// </summary>
+        /// <value>
+        /// The user add wizard.
+        /// </value>
+        [CascadingParameter]
+        public UserAddWizard UserAddWizard { get; set; }
 
         /// <summary>
         /// Gets or sets the height.
@@ -87,12 +108,66 @@ namespace PnyxWebAssembly.Client.Pages
         public Guid ExternalUserId { get; set; }
 
         /// <summary>
+        /// Gets or sets a value indicating whether [show add user wizard].
+        /// </summary>
+        /// <value>
+        ///   <c>true</c> if [show add user wizard]; otherwise, <c>false</c>.
+        /// </value>
+        public bool ShowAddUserWizard { get; set; }
+
+        /// <summary>
         /// Method invoked when the component is ready to start, having received its
         /// initial parameters from its parent in the render tree.
         /// Override this method if you will perform an asynchronous operation and
         /// want the component to refresh when that operation is completed.
         /// </summary>
         protected override async Task OnInitializedAsync()
+        {
+            await ManageWindowResizing();
+
+            ShowAddUserWizard = false;
+            UserCacheService.User = null;
+            MainLayout.UserName = string.Empty;
+            MainLayout.TotalBalance = -1;
+
+            AuthenticationState authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+            ClaimsPrincipal user = authState.User;
+
+            UserEMail = user?.Identity?.Name;
+
+            if (user != null && !string.IsNullOrEmpty(UserEMail))
+            {
+                List<Claim> claims = user.Claims.ToList();
+
+                if (claims.Count >= 3)
+                {
+                    ExternalUserId = Guid.Parse(claims[2].Value);
+                }
+    
+                using HttpClient client = ClientFactory.CreateClient("PnyxWebAssembly.ServerAPI.Private");
+
+                User userFromService = await client.GetFromJsonAsync<User>($"User/ByExternalId/{ExternalUserId}");
+
+                if (userFromService == null)
+                {
+                    ShowAddUserWizard = true;
+                    return;
+                }
+
+                double totalBalance = userFromService.Wallet.TotalBalance;
+
+                UserCacheService.User = userFromService;
+
+                UserName = userFromService.UserName;
+                MainLayout.UserName = userFromService.UserName;
+                MainLayout.TotalBalance = int.Parse(Math.Round(totalBalance, 0).ToString(CultureInfo.InvariantCulture));
+            }
+        }
+
+        /// <summary>
+        /// Manages the window resizing.
+        /// </summary>
+        private async Task ManageWindowResizing()
         {
             BrowserResizeService.JsRuntime = JsRuntime;
 
@@ -101,39 +176,6 @@ namespace PnyxWebAssembly.Client.Pages
             await JsRuntime.InvokeAsync<object>("browserResize.registerResizeCallback");
 
             await GetDimensions();
-
-            AuthenticationState authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-            ClaimsPrincipal user = authState.User;
-
-            UserEMail = user?.Identity?.Name;
-
-            if (user != null)
-            {
-                List<Claim> claims = user.Claims.ToList();
-
-                if (claims.Count >= 3)
-                {
-                    ExternalUserId = Guid.Parse(claims[2].Value);
-                }
-            }
-            
-            if (!string.IsNullOrEmpty(UserEMail))
-            {
-                using HttpClient client = ClientFactory.CreateClient("PnyxWebAssembly.ServerAPI.Private");
-
-                User userFromService = await client.GetFromJsonAsync<User>($"User/{ExternalUserId}");
-
-                if (userFromService == null)
-                {
-                    return;
-                }
-
-                double totalBalance = userFromService.Wallet.TotalBalance;
-
-                UserName = userFromService.UserName;
-                Layout.UserName = userFromService.UserName;
-                Layout.TotalBalance = int.Parse(Math.Round(totalBalance, 0).ToString(CultureInfo.InvariantCulture));
-            }
         }
 
         /// <summary>

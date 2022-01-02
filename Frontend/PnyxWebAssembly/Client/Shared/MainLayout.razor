@@ -10,8 +10,14 @@
             <AuthorizeView>
                 <Authorized>
                     @* ReSharper disable once Html.PathError *@
-                    <MudText Typo="Typo.caption" Class="ml-3"><a href="authentication/profile" style="color: white">@UserName</a></MudText>
-                    <MudText Typo="Typo.button" Class="ml-3"><a href="accountdetails" style="color: white">@TotalBalance PNYX</a></MudText>
+                    @if (!string.IsNullOrEmpty(UserName))
+                    {
+                        <MudText Typo="Typo.caption" Class="ml-3"><a href="authentication/profile" style="color: white">@UserName</a></MudText>
+                    }
+                    @if (TotalBalance >= 0)
+                    {
+                        <MudText Typo="Typo.button" Class="ml-3"><a href="accountdetails" style="color: white">@TotalBalance PNYX</a></MudText>
+                    }
                     <MudIconButton Icon="@Icons.Filled.Logout" Color="Color.Inherit" Edge="Edge.End" @onclick="BeginSignOut" Title="Logout" />
                 </Authorized>
                 <NotAuthorized>

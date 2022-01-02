@@ -15,7 +15,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PnyxWebAssembly.Client", "P
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PnyxWebAssembly.Shared", "PnyxWebAssembly\Shared\PnyxWebAssembly.Shared.csproj", "{D7770CF3-4A98-4259-8927-41FFEA6C4067}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WahlomatImportConsole", "WahlomatImportConsole\WahlomatImportConsole.csproj", "{7DC87BC9-CC8C-4B3E-BEC0-758D774F4541}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WahlomatImportConsole", "WahlomatImportConsole\WahlomatImportConsole.csproj", "{7DC87BC9-CC8C-4B3E-BEC0-758D774F4541}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

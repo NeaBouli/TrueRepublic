@@ -35,7 +35,7 @@ namespace PnyxWebAssembly.Server.Controllers
         /// </summary>
         /// <param name="externalUserId">The external user identifier.</param>
         /// <returns>The user if found otherwise null</returns>
-        [HttpGet("{externalUserId}")]
+        [HttpGet("ByExternalId/{externalUserId}")]
         public IActionResult GetUserByExternalId(string externalUserId)
         {
             DbServiceContext dbServiceContext = DatabaseInitializationService.GetDbServiceContext();
@@ -45,6 +45,26 @@ namespace PnyxWebAssembly.Server.Controllers
             using (dbServiceContext)
             {
                 User user = userService.GetUserByExternalId(dbServiceContext, Guid.Parse(externalUserId));
+
+                return Ok(user);
+            }
+        }
+
+        /// <summary>
+        /// Gets the user by user identifier.
+        /// </summary>
+        /// <param name="userName">Name of the user.</param>
+        /// <returns></returns>
+        [HttpGet("ByName/{userName}")]
+        public IActionResult GetUserByUserId(string userName)
+        {
+            DbServiceContext dbServiceContext = DatabaseInitializationService.GetDbServiceContext();
+
+            UserService userService = new UserService();
+
+            using (dbServiceContext)
+            {
+                User user = userService.GetUserByName(dbServiceContext, userName);
 
                 return Ok(user);
             }
