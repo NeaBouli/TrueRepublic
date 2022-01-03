@@ -15,7 +15,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Common\Common.csproj" />
-    <ProjectReference Include="..\Shared\PnyxWebAssembly.Shared.csproj" />
   </ItemGroup>
 
   <ItemGroup>

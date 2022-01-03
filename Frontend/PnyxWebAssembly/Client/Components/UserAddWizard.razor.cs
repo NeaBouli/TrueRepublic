@@ -66,7 +66,7 @@ namespace PnyxWebAssembly.Client.Components
         /// Validates the name of the user.
         /// </summary>
         /// <param name="userName">Name of the user.</param>
-        /// <returns></returns>
+        /// <returns>The user name</returns>
         private IEnumerable<string> ValidateUserName(string userName)
         {
             if (string.IsNullOrEmpty(userName))

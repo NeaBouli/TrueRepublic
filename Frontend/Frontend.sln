@@ -13,8 +13,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PnyxWebAssembly.Server", "P
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PnyxWebAssembly.Client", "PnyxWebAssembly\Client\PnyxWebAssembly.Client.csproj", "{081EFBD0-AE59-4309-9909-BF7D348AA81B}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PnyxWebAssembly.Shared", "PnyxWebAssembly\Shared\PnyxWebAssembly.Shared.csproj", "{D7770CF3-4A98-4259-8927-41FFEA6C4067}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WahlomatImportConsole", "WahlomatImportConsole\WahlomatImportConsole.csproj", "{7DC87BC9-CC8C-4B3E-BEC0-758D774F4541}"
 EndProject
 Global
@@ -43,10 +41,6 @@ Global
 		{081EFBD0-AE59-4309-9909-BF7D348AA81B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{081EFBD0-AE59-4309-9909-BF7D348AA81B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{081EFBD0-AE59-4309-9909-BF7D348AA81B}.Release|Any CPU.Build.0 = Release|Any CPU
-		{D7770CF3-4A98-4259-8927-41FFEA6C4067}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D7770CF3-4A98-4259-8927-41FFEA6C4067}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D7770CF3-4A98-4259-8927-41FFEA6C4067}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D7770CF3-4A98-4259-8927-41FFEA6C4067}.Release|Any CPU.Build.0 = Release|Any CPU
 		{7DC87BC9-CC8C-4B3E-BEC0-758D774F4541}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{7DC87BC9-CC8C-4B3E-BEC0-758D774F4541}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7DC87BC9-CC8C-4B3E-BEC0-758D774F4541}.Release|Any CPU.ActiveCfg = Release|Any CPU
