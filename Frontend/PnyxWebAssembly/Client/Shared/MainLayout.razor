@@ -14,16 +14,16 @@
                     {
                         if (!string.IsNullOrEmpty(AvatarImage))
                         {
-                            <MudAvatar Image=@AvatarImage Title=@UserName Style="cursor: pointer" @onclick="GotoProfile" />
+                            <MudAvatar Image=@AvatarImage Size="Size.Medium" Title=@UserName Style="cursor: pointer" @onclick="GotoProfile" />
                         }
                         else
                         {
-                            <MudAvatar Color="Color.Secondary" @onclick="GotoProfile" Title=@UserName Style="cursor: pointer">@AvatarName</MudAvatar>
+                            <MudAvatar Color="Color.Secondary" Size="Size.Medium" @onclick="GotoProfile" Title=@UserName Style="cursor: pointer">@AvatarName</MudAvatar>
                         }
                     }
                     @if (TotalBalance >= 0)
                     {
-                        <MudText Typo="Typo.button" Class="ml-3"><a href="accountdetails" style="color: white">@TotalBalance PNYX</a></MudText>
+                        <MudText Typo="Typo.button" Class="ml-3"><a href="accountdetails" style="color: white" Title="Total Balance">@TotalBalance PNYX</a></MudText>
                     }
                     <MudIconButton Icon="@Icons.Filled.Logout" Color="Color.Inherit" Edge="Edge.End" @onclick="BeginSignOut" Title="Logout" />
                 </Authorized>
