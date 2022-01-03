@@ -12,7 +12,14 @@
                     @* ReSharper disable once Html.PathError *@
                     @if (!string.IsNullOrEmpty(UserName))
                     {
-                        <MudText Typo="Typo.caption" Class="ml-3"><a href="authentication/profile" style="color: white">@UserName</a></MudText>
+                        if (!string.IsNullOrEmpty(AvatarImage))
+                        {
+                            <MudAvatar Image=@AvatarImage Title=@UserName Style="cursor: pointer" @onclick="GotoProfile" />
+                        }
+                        else
+                        {
+                            <MudAvatar Color="Color.Secondary" @onclick="GotoProfile" Title=@UserName Style="cursor: pointer">@AvatarName</MudAvatar>
+                        }
                     }
                     @if (TotalBalance >= 0)
                     {
@@ -21,7 +28,7 @@
                     <MudIconButton Icon="@Icons.Filled.Logout" Color="Color.Inherit" Edge="Edge.End" @onclick="BeginSignOut" Title="Logout" />
                 </Authorized>
                 <NotAuthorized>
-                    <MudIconButton Icon="@Icons.Filled.Add" Color="Color.Inherit" Edge="Edge.End" @onclick="BeginRegister" Title="Register" />
+                    <MudIconButton Icon="@Icons.Filled.AddCircleOutline" Color="Color.Inherit" Edge="Edge.End" @onclick="BeginRegister" Title="Register" />
                     <MudIconButton Icon="@Icons.Filled.Login" Color="Color.Inherit" Edge="Edge.End" @onclick="BeginSignIn" Title="Login" />
                 </NotAuthorized>
             </AuthorizeView>

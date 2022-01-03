@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.IO;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
 
@@ -71,6 +72,34 @@ namespace PnyxWebAssembly.Client.Shared
         }
 
         /// <summary>
+        /// Gets the avatar image.
+        /// </summary>
+        /// <value>
+        /// The avatar image.
+        /// </value>
+        public string AvatarImage
+        {
+            get
+            {
+                // TODO: let's fake something
+                if (!string.IsNullOrEmpty(_userName) && _userName == "Andreas")
+                {
+                    return "images/andreas.jpg";
+                }
+
+                return string.Empty;
+            }
+        }
+
+        /// <summary>
+        /// Gets the name of the avatar.
+        /// </summary>
+        /// <value>
+        /// The name of the avatar.
+        /// </value>
+        public string AvatarName => string.IsNullOrEmpty(_userName) ? string.Empty : _userName.ToUpperInvariant().Substring(0, 1);
+
+        /// <summary>
         /// Begins the sign out.
         /// </summary>
         private async Task BeginSignOut()
@@ -93,6 +122,14 @@ namespace PnyxWebAssembly.Client.Shared
         private void BeginRegister()
         {
             NavigationManager.NavigateTo("authentication/register");
+        }
+
+        /// <summary>
+        /// Goto the profile.
+        /// </summary>
+        private void GotoProfile()
+        {
+            NavigationManager.NavigateTo("authentication/profile");
         }
     }
 }
