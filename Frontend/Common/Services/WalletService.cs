@@ -75,10 +75,9 @@ namespace Common.Services
         /// <param name="userId">The user identifier.</param>
         /// <param name="transactionTypeName">Name of the transaction type.</param>
         /// <param name="transactionId">The transaction identifier.</param>
-        /// <exception cref="System.InvalidOperationException">
-        /// Wallet for user {userId} not found
-        /// </exception>
-        public void AddTransaction(DbServiceContext dbServiceContext, Guid userId, TransactionTypeNames transactionTypeName, Guid? transactionId)
+        /// <param name="balance">The balance.</param>
+        /// <exception cref="System.InvalidOperationException">Wallet for user {userId} not found</exception>
+        public void AddTransaction(DbServiceContext dbServiceContext, Guid userId, TransactionTypeNames transactionTypeName, Guid? transactionId, double balance = 0)
         {
             if (!HasEnoughFundingForTransaction(dbServiceContext, userId, transactionTypeName))
             {
@@ -95,15 +94,22 @@ namespace Common.Services
             TransactionTypeService transactionTypeService = new TransactionTypeService();
             TransactionType transactionType = transactionTypeService.GetTransactionType(dbServiceContext, transactionTypeName);
 
+            double fee = transactionType.Fee;
+
+            if (balance != 0)
+            {
+                fee += balance;
+            }
+
             WalletTransaction walletTransaction = new WalletTransaction
             {
-                Balance = transactionType.Fee,
+                Balance = fee,
                 TransactionId = transactionId,
                 TransactionType = transactionType,
                 WalletId = wallet.Id
             };
 
-            wallet.TotalBalance += transactionType.Fee;
+            wallet.TotalBalance += fee;
 
             dbServiceContext.WalletTransactions.Add(walletTransaction);
         }

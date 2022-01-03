@@ -2,7 +2,7 @@
 using Common.Services;
 using Microsoft.Extensions.Configuration;
 
-namespace TestConsole
+namespace ImportConsole
 {
     /// <summary>
     /// Implementation of the program

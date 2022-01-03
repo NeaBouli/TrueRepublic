@@ -52,9 +52,11 @@ namespace WebService.Controllers
         {
             DbServiceContext dbServiceContext = DatabaseInitializationService.GetDbServiceContext();
 
+            UserService userService = new UserService();
+
             using (dbServiceContext)
             {
-                string userId = UserService.GetUserId(dbServiceContext, userName);
+                string userId = userService.GetUserId(dbServiceContext, userName);
 
                 ProposalService proposalService = new ProposalService(
                     Convert.ToInt32(_configuration["TopStakedProposalsPercent"]));
@@ -83,9 +85,11 @@ namespace WebService.Controllers
         {
             DbServiceContext dbServiceContext = DatabaseInitializationService.GetDbServiceContext();
 
+            UserService userService = new UserService();
+
             using (dbServiceContext)
             {
-                string userId = UserService.GetUserId(dbServiceContext, userName);
+                string userId = userService.GetUserId(dbServiceContext, userName);
 
                 ProposalService proposalService = new ProposalService(
                     Convert.ToInt32(_configuration["TopStakedProposalsPercent"]));

@@ -8,7 +8,7 @@
         @if (ShowAddUserWizard)
         {
             <MudText>&nbsp;</MudText>
-            <UserAddWizard ExternalUserId="@ExternalUserId" />
+            <UserAddWizard ExternalUserId="@ExternalUserId" OnSuccess="OnSuccess" />
         }
 
         @if (!string.IsNullOrEmpty(UserEMail))

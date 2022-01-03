@@ -15,15 +15,14 @@ namespace PnyxWebAssembly.Server.Controllers
         /// <summary>
         /// The logger
         /// </summary>
-        private readonly ILogger<IssueController> _logger;
-
+        private readonly ILogger<UserController> _logger;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="IssueController"/> class.
         /// </summary>
         /// <param name="logger">The logger.</param>
         /// <param name="configuration">The configuration.</param>
-        public UserController(ILogger<IssueController> logger, IConfiguration configuration)
+        public UserController(ILogger<UserController> logger, IConfiguration configuration)
         {
             _logger = logger;
 
@@ -38,6 +37,8 @@ namespace PnyxWebAssembly.Server.Controllers
         [HttpGet("ByExternalId/{externalUserId}")]
         public IActionResult GetUserByExternalId(string externalUserId)
         {
+            _logger.LogDebug($"Get user by externalUserId {externalUserId}");
+
             DbServiceContext dbServiceContext = DatabaseInitializationService.GetDbServiceContext();
 
             UserService userService = new UserService();
@@ -63,6 +64,8 @@ namespace PnyxWebAssembly.Server.Controllers
         [HttpGet("ByName/{userName}")]
         public IActionResult GetUserByUserId(string userName)
         {
+            _logger.LogDebug($"Get user by name {userName}");
+
             DbServiceContext dbServiceContext = DatabaseInitializationService.GetDbServiceContext();
 
             UserService userService = new UserService();
@@ -77,6 +80,28 @@ namespace PnyxWebAssembly.Server.Controllers
                 }
 
                 return Ok(user);
+            }
+        }
+
+        /// <summary>
+        /// Creates the specified user.
+        /// </summary>
+        /// <param name="user">The user.</param>
+        /// <returns>Ok if user creation was successful</returns>
+        [HttpPost]
+        public IActionResult Create([FromBody] User user)
+        {
+            _logger.LogDebug($"Creating user {user.UserName}");
+
+            DbServiceContext dbServiceContext = DatabaseInitializationService.GetDbServiceContext();
+
+            using (dbServiceContext)
+            {
+                UserService userService = new UserService();
+
+                userService.CreateUser(dbServiceContext, user, 100D);
+
+                return Ok();
             }
         }
     }

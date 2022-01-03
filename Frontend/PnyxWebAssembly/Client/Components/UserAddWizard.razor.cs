@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Json;
+using System.Threading.Tasks;
 using Common.Entities;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
@@ -31,6 +33,9 @@ namespace PnyxWebAssembly.Client.Components
         /// </value>
         public string UserName { get; set; }
 
+        [Parameter]
+        public EventCallback OnSuccess { get; set; }
+
         /// <summary>
         /// Gets or sets the client factory.
         /// </summary>
@@ -39,6 +44,8 @@ namespace PnyxWebAssembly.Client.Components
         /// </value>
         [Inject]
         private IHttpClientFactory ClientFactory { get; set; }
+
+        private bool _isRunning;
 
         /// <summary>
         /// The success
@@ -99,11 +106,30 @@ namespace PnyxWebAssembly.Client.Components
         /// </summary>
         private async void CreateUserIfNotAlreadyExisting()
         {
-            if (string.IsNullOrEmpty(UserName))
+            if (ValidateUserName(UserName).Any())
             {
                 return;
             }
 
+            if (_isRunning)
+            {
+                return;
+            }
+
+            _isRunning = true;
+
+            try
+            {
+                await CreateUserIfNotAlreadyExistingSave();
+            }
+            finally
+            {
+                _isRunning = false;
+            }
+        }
+
+        private async Task CreateUserIfNotAlreadyExistingSave()
+        {
             using HttpClient client = ClientFactory.CreateClient("PnyxWebAssembly.ServerAPI.Private");
 
             User userFromService;
@@ -124,15 +150,22 @@ namespace PnyxWebAssembly.Client.Components
                 return;
             }
 
-            // TODO: create user with wallet + genesis
+            User user = new User
+            {
+                UserName = UserName,
+                UniqueExternalUserId = ExternalUserId
+            };
 
-            _success = true;
+            using var response = await client.PostAsJsonAsync("User", user);
 
-            // TODO: inform the user to login again via dialog
+            if (response.IsSuccessStatusCode)
+            {
+                _success = true;
 
-            // TODO: logout
+                await InvokeAsync(StateHasChanged);
 
-            await InvokeAsync(StateHasChanged);
+                await OnSuccess.InvokeAsync();
+            }
         }
     }
 }

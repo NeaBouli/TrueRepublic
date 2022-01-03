@@ -125,6 +125,14 @@ namespace PnyxWebAssembly.Client.Pages
         {
             await ManageWindowResizing();
 
+            await UpdateUserInfo();
+        }
+
+        /// <summary>
+        /// Updates the user information.
+        /// </summary>
+        private async Task UpdateUserInfo()
+        {
             ShowAddUserWizard = false;
             UserCacheService.User = null;
             MainLayout.UserName = string.Empty;
@@ -143,7 +151,7 @@ namespace PnyxWebAssembly.Client.Pages
                 {
                     ExternalUserId = Guid.Parse(claims[2].Value);
                 }
-    
+
                 using HttpClient client = ClientFactory.CreateClient("PnyxWebAssembly.ServerAPI.Private");
 
                 User userFromService;
@@ -207,6 +215,16 @@ namespace PnyxWebAssembly.Client.Pages
 
             Height = $@"{height - 85}px";
             Width = $@"{width}px";
+        }
+
+        /// <summary>
+        /// Called when [success].
+        /// </summary>
+        private async Task OnSuccess()
+        {
+            await UpdateUserInfo();
+
+            await InvokeAsync(StateHasChanged);
         }
 
         /// <summary>

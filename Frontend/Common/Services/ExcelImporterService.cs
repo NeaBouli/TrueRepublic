@@ -22,7 +22,6 @@ namespace Common.Services
         /// <exception cref="System.NotImplementedException">Will be thrown if unknown sheet is there</exception>
         public void ImportExcelFile(string fullPathToExcelFile)
         {
-            // TODO: walk pages
             ExcelDataContext.FullPathToXlsFile = fullPathToExcelFile;
             ExcelDataContext excelDataContext = ExcelDataContext.GetInstance();
 

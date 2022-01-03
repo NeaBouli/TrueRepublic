@@ -57,6 +57,62 @@ namespace Common.Services
         }
 
         /// <summary>
+        /// Gets the user identifier.
+        /// </summary>
+        /// <param name="dbServiceContext">The database service context.</param>
+        /// <param name="userName">Name of the user.</param>
+        /// <returns>The user id as string if found otherwise an empty string</returns>
+        public string GetUserId(DbServiceContext dbServiceContext, string userName)
+        {
+            string userId = string.Empty;
+
+            if (!string.IsNullOrEmpty(userName))
+            {
+                User user = GetUserByName(dbServiceContext, userName);
+
+                if (user != null)
+                {
+                    userId = user.Id.ToString();
+                }
+            }
+
+            return userId;
+        }
+
+        /// <summary>
+        /// Creates the user.
+        /// </summary>
+        /// <param name="dbServiceContext">The database service context.</param>
+        /// <param name="user">The user.</param>
+        /// <param name="genesisFunding">The genesis funding.</param>
+        public void CreateUser(DbServiceContext dbServiceContext, User user, double genesisFunding = 0)
+        {
+            Wallet wallet = new Wallet
+            {
+                TotalBalance = 0
+            };
+
+            user.WalletId = wallet.Id;
+
+            dbServiceContext.Wallets.Add(wallet);
+
+            dbServiceContext.Users.Add(user);
+
+            dbServiceContext.SaveChanges();
+
+            if (genesisFunding == 0)
+            {
+                return;
+            }
+
+            WalletService walletService = new WalletService();
+
+            walletService.AddTransaction(dbServiceContext, user.Id, TransactionTypeNames.Genesis, null, genesisFunding);
+
+            dbServiceContext.SaveChanges();
+        }
+
+        /// <summary>
         /// Imports the specified data table.
         /// </summary>
         /// <param name="dataTable">The data table.</param>
@@ -114,29 +170,6 @@ namespace Common.Services
             return recordCount;
         }
 
-        /// <summary>
-        /// Gets the user identifier.
-        /// </summary>
-        /// <param name="dbServiceContext">The database service context.</param>
-        /// <param name="userName">Name of the user.</param>
-        /// <returns>The user id as string if found otherwise an empty string</returns>
-        public static string GetUserId(DbServiceContext dbServiceContext, string userName)
-        {
-            string userId = string.Empty;
 
-            if (!string.IsNullOrEmpty(userName))
-            {
-                UserService userService = new UserService();
-
-                User user = userService.GetUserByName(dbServiceContext, userName);
-
-                if (user != null)
-                {
-                    userId = user.Id.ToString();
-                }
-            }
-
-            return userId;
-        }
     }
 }

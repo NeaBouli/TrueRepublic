@@ -54,9 +54,11 @@ namespace PnyxWebAssembly.Server.Controllers
 
             decimal topStakedIssuesPercent = Convert.ToDecimal(_configuration["TopStakedIssuesPercent"]);
 
+            UserService userService = new UserService();
+
             using (dbServiceContext)
             {
-                string userId = UserService.GetUserId(dbServiceContext, userName);
+                string userId = userService.GetUserId(dbServiceContext, userName);
 
                 IssueService issueService = new IssueService(topStakedIssuesPercent);
 

@@ -55,9 +55,11 @@ namespace WebService.Controllers
 
             decimal topStakedIssuesPercent = Convert.ToDecimal(_configuration["TopStakedIssuesPercent"]);
 
+            UserService userService = new UserService();
+
             using (dbServiceContext)
             {
-                string userId = UserService.GetUserId(dbServiceContext, userName);
+                string userId = userService.GetUserId(dbServiceContext, userName);
 
                 IssueService issueService = new IssueService(topStakedIssuesPercent);
 
@@ -81,9 +83,11 @@ namespace WebService.Controllers
 
             decimal topStakedIssuesPercent = Convert.ToDecimal(_configuration["TopStakedIssuesPercent"]);
 
+            UserService userService = new UserService();
+
             using (dbServiceContext)
             {
-                string userId = UserService.GetUserId(dbServiceContext, userName);
+                string userId = userService.GetUserId(dbServiceContext, userName);
 
                 IssueService issueService = new IssueService(topStakedIssuesPercent);
 
@@ -106,9 +110,11 @@ namespace WebService.Controllers
         {
             DbServiceContext dbServiceContext = DatabaseInitializationService.GetDbServiceContext();
 
+            UserService userService = new UserService();
+
             using (dbServiceContext)
             {
-                string userId = UserService.GetUserId(dbServiceContext, userName);
+                string userId = userService.GetUserId(dbServiceContext, userName);
 
                 IssueService issueService = new IssueService();
 
@@ -133,9 +139,11 @@ namespace WebService.Controllers
 
             decimal topStakedIssuesPercent = Convert.ToDecimal(_configuration["TopStakedIssuesPercent"]);
 
+            UserService userService = new UserService();
+
             using (dbServiceContext)
             {
-                string userId = UserService.GetUserId(dbServiceContext, userName);
+                string userId = userService.GetUserId(dbServiceContext, userName);
 
                 IssueService issueService = new IssueService(topStakedIssuesPercent);
 
@@ -156,9 +164,11 @@ namespace WebService.Controllers
         {
             DbServiceContext dbServiceContext = DatabaseInitializationService.GetDbServiceContext();
 
+            UserService userService = new UserService();
+
             using (dbServiceContext)
             {
-                string userId = UserService.GetUserId(dbServiceContext, userName);
+                string userId = userService.GetUserId(dbServiceContext, userName);
 
                 IssueService issueService = new IssueService();
 
