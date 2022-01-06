@@ -18,11 +18,6 @@ namespace PnyxWebAssembly.Client.Components
         private Issue _issue = null;
 
         /// <summary>
-        /// The user name
-        /// </summary>
-        private string _userName = "";
-
-        /// <summary>
         /// Gets or sets the client factory.
         /// </summary>
         /// <value>
@@ -61,6 +56,8 @@ namespace PnyxWebAssembly.Client.Components
 
                 FixPropertiesForCardDisplay();
 
+                UpdateAvatarInfos();
+
                 UpdateImageInfos();
             }
         }
@@ -72,21 +69,15 @@ namespace PnyxWebAssembly.Client.Components
         /// The name of the user.
         /// </value>
         [Parameter]
-        public string UserName
-        {
-            get => _userName;
-            set
-            {
-                _userName = value;
+        public string UserName { get; set; } = "";
 
-                if (string.IsNullOrEmpty(_userName))
-                {
-                    return;
-                }
-
-                UpdateAvatarInfos();
-            }
-        }
+        /// <summary>
+        /// Gets or sets the name of the creator user.
+        /// </summary>
+        /// <value>
+        /// The name of the creator user.
+        /// </value>
+        public string CreatorUserName { get; set; } = "Unknown";
 
         /// <summary>
         /// Gets or sets a value indicating whether this instance has avatar image.
@@ -125,11 +116,19 @@ namespace PnyxWebAssembly.Client.Components
         /// </summary>
         private async void UpdateAvatarInfos()
         {
-            AvatarImage = UserName.Substring(0, 1).ToUpperInvariant();
+            UserCacheService.ClientFactory = ClientFactory;
+            User user = await UserCacheService.GetUserById(Issue.CreatorUserId);
+
+            if (user != null)
+            {
+                CreatorUserName = user.UserName;
+            }
+
+            AvatarImage = CreatorUserName.Substring(0, 1).ToUpperInvariant();
 
             AvatarImageCacheService.ClientFactory = ClientFactory;
-            HasAvatarImage = await AvatarImageCacheService.HasAvatarImage(UserName);
-            AvatarImage = await AvatarImageCacheService.GetAvatarImageBase64(UserName);
+            HasAvatarImage = await AvatarImageCacheService.HasAvatarImage(CreatorUserName);
+            AvatarImage = await AvatarImageCacheService.GetAvatarImageBase64(CreatorUserName);
 
             await InvokeAsync(StateHasChanged);
         }

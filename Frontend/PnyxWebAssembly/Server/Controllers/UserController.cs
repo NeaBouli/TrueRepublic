@@ -60,6 +60,34 @@ namespace PnyxWebAssembly.Server.Controllers
         }
 
         /// <summary>
+        /// Gets the user by identifier.
+        /// </summary>
+        /// <param name="userId">The user identifier.</param>
+        /// <returns>The user by id</returns>
+        [Authorize]
+        [HttpGet("ById/{userId}")]
+        public IActionResult GetUserById(string userId)
+        {
+            _logger.LogDebug($"Get user by id {userId}");
+
+            DbServiceContext dbServiceContext = DatabaseInitializationService.GetDbServiceContext();
+
+            UserService userService = new UserService();
+
+            using (dbServiceContext)
+            {
+                User user = userService.GetUserById(dbServiceContext, Guid.Parse(userId));
+
+                if (user == null)
+                {
+                    return NotFound();
+                }
+
+                return Ok(user);
+            }
+        }
+
+        /// <summary>
         /// Gets the user by user identifier.
         /// </summary>
         /// <param name="userName">Name of the user.</param>

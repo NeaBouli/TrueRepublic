@@ -1,14 +1,14 @@
-﻿<div style="width: 300px; margin: 20px">
+﻿<div style="width: 300px; height: 400px; margin: 20px">
     <MudCard>
         <MudCardHeader>
             <CardHeaderAvatar>
                 @if (HasAvatarImage)
                 {
-                    <MudAvatar Image=@AvatarImage Title=@UserName />
+                    <MudAvatar Image=@AvatarImage Title=@CreatorUserName />
                 }
                 else
                 {
-                    <MudAvatar Color="Color.Secondary" Size="Size.Medium" Title=@UserName>@AvatarName</MudAvatar>
+                    <MudAvatar Color="Color.Secondary" Size="Size.Medium" Title=@CreatorUserName>@AvatarName</MudAvatar>
                 }
             </CardHeaderAvatar>
             <CardHeaderContent>
