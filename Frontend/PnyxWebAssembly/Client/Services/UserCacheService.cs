@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Collections.Concurrent;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
@@ -20,12 +20,12 @@ namespace PnyxWebAssembly.Client.Services
         /// <summary>
         /// The users by identifier
         /// </summary>
-        private static readonly Dictionary<string, User> UsersById = new();
+        private static readonly ConcurrentDictionary<string, User> UsersById = new();
 
         /// <summary>
         /// The users by name
         /// </summary>
-        private static readonly Dictionary<string, User> UsersByName = new();
+        private static readonly ConcurrentDictionary<string, User> UsersByName = new();
 
         /// <summary>
         /// Gets or sets the client factory.
@@ -42,6 +42,17 @@ namespace PnyxWebAssembly.Client.Services
         /// <returns>The user for the given id</returns>
         public static async Task<User> GetUserById(Guid id)
         {
+            if (!IsAuthenticated)
+            {
+                User user = new User
+                {
+                    UserName = "Unknown: Login for details",
+                    Id = Guid.Empty
+                };
+
+                return user;
+            }
+
             if (!UsersById.ContainsKey(id.ToString()))
             {
                 using HttpClient client = ClientFactory.CreateClient("PnyxWebAssembly.ServerAPI.Private");
@@ -50,11 +61,11 @@ namespace PnyxWebAssembly.Client.Services
 
                 if (user != null)
                 {
-                    UsersById.Add(user.Id.ToString(), user);
+                    UsersById.TryAdd(id.ToString(), user);
 
                     if (!UsersByName.ContainsKey(user.UserName))
                     {
-                        UsersByName.Add(user.UserName, user);
+                        UsersByName.TryAdd(user.UserName, user);
                     }
                 }
 
@@ -71,6 +82,17 @@ namespace PnyxWebAssembly.Client.Services
         /// <returns>The user for the given name</returns>
         public static async Task<User> GetUserByName(string userName)
         {
+            if (!IsAuthenticated)
+            {
+                User user = new User
+                {
+                    UserName = "Unknown: Login for details",
+                    Id = Guid.Empty
+                };
+
+                return user;
+            }
+
             if (!UsersByName.ContainsKey(userName))
             {
                 using HttpClient client = ClientFactory.CreateClient("PnyxWebAssembly.ServerAPI.Private");
@@ -79,11 +101,11 @@ namespace PnyxWebAssembly.Client.Services
 
                 if (user != null)
                 {
-                    UsersByName.Add(userName, user);
+                    UsersByName.TryAdd(userName, user);
 
                     if (!UsersById.ContainsKey(user.Id.ToString()))
                     {
-                        UsersById.Add(user.Id.ToString(), user);
+                        UsersById.TryAdd(user.Id.ToString(), user);
                     }
                 }
                 
@@ -113,12 +135,12 @@ namespace PnyxWebAssembly.Client.Services
 
                 if (!UsersById.ContainsKey(_user.Id.ToString()))
                 {
-                    UsersById.Add(_user.Id.ToString(), _user);
+                    UsersById.TryAdd(_user.Id.ToString(), _user);
                 }
 
                 if (!UsersByName.ContainsKey(_user.UserName))
                 {
-                    UsersByName.Add(_user.UserName, _user);
+                    UsersByName.TryAdd(_user.UserName, _user);
                 }
             }
         }

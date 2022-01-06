@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Collections.Concurrent;
 using System.IO;
 using System.Net;
 using System.Net.Http;
@@ -24,12 +24,12 @@ namespace PnyxWebAssembly.Client.Services
         /// <summary>
         /// The hashtags file name dictionary
         /// </summary>
-        private static readonly Dictionary<string, string> HashtagsFileNameDictionary = new();
+        private static readonly ConcurrentDictionary<string, string> HashtagsFileNameDictionary = new();
 
         /// <summary>
         /// The file dictionary
         /// </summary>
-        private static readonly Dictionary<string, string> FileDictionary = new();
+        private static readonly ConcurrentDictionary<string, string> FileDictionary = new();
 
         /// <summary>
         /// Gets the image for hashtags.
@@ -49,7 +49,7 @@ namespace PnyxWebAssembly.Client.Services
             else
             {
                 imageName = await GetImageNameForHashtagsFromService(client, hashtags);
-                HashtagsFileNameDictionary.Add(hashtags, imageName);
+                HashtagsFileNameDictionary.TryAdd(hashtags, imageName);
             }
 
             string base64;
@@ -61,7 +61,7 @@ namespace PnyxWebAssembly.Client.Services
             else
             {
                 base64 = await GetImageFromService(client, imageName);
-                FileDictionary.Add(imageName, base64);
+                FileDictionary.TryAdd(imageName, base64);
             }
 
             return base64;

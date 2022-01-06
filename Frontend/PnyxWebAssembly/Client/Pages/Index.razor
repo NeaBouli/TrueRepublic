@@ -1,27 +1,40 @@
 ﻿@page "/"
 
-<MudPaper Height=@Height Width="100%">
-    <MudContainer Fixed="true">
-        <MudText Typo="Typo.h5">Hello, world!</MudText>
-        <MudText>Welcome to your new app.</MudText>
-
+<AuthorizeView>
+    <Authorized>
         @if (ShowAddUserWizard)
         {
-            <MudText>&nbsp;</MudText>
-            <UserAddWizard ExternalUserId="@ExternalUserId" OnSuccess="OnSuccess" />
-        }
+            <MudContainer Fixed="true">
 
-        @if (!string.IsNullOrEmpty(UserEMail))
-        {
-            <MudText>&nbsp;</MudText>
-            <MudText>@UserName</MudText>
-            <MudText>@UserEMail</MudText>
-            <MudText>@ExternalUserId</MudText>
+                <MudText>&nbsp;</MudText>
+                <UserAddWizard ExternalUserId="@ExternalUserId" OnSuccess="OnSuccess"/>
+
+                @*@if (!string.IsNullOrEmpty(UserEMail))
+                {
+                    <MudText>&nbsp;</MudText>
+                    <MudText>@UserName</MudText>
+                    <MudText>@UserEMail</MudText>
+                    <MudText>@ExternalUserId</MudText>
+                }*@
+            </MudContainer>
         }
-    </MudContainer>
-    <MudText>&nbsp;</MudText>
-    @if (Issue != null)
-    {
-        <IssueCard UserName="@UserName" Issue="@Issue" />
-    }
-</MudPaper>
+        else
+        {
+            @if (Issues is {Count: > 0 })
+            {
+                <MudGrid Spacing="2" Justify="Justify.Center">
+                    @foreach (var issue in Issues)
+                    {
+                        <MudItem lg="3">
+                            <IssueCard UserName="@UserName" Issue="@issue"/>
+                        </MudItem>
+                    }
+                </MudGrid>
+            }
+        }
+    </Authorized>
+    <NotAuthorized>
+        <MudText>&nbsp;</MudText>
+        <MudText Typo="Typo.h5">Login to see some Issues...</MudText>
+    </NotAuthorized>
+</AuthorizeView>

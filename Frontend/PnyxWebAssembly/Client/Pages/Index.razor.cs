@@ -115,7 +115,7 @@ namespace PnyxWebAssembly.Client.Pages
         /// <value>
         /// The issue.
         /// </value>
-        public Issue Issue { get; set; }
+        public List<Issue> Issues { get; set; }
 
         /// <summary>
         /// Gets or sets the external user identifier.
@@ -209,11 +209,11 @@ namespace PnyxWebAssembly.Client.Pages
                 string avatarImage = await AvatarImageCacheService.GetAvatarImageBase64(userFromService.UserName);
                 MainLayout.AvatarImage = avatarImage;
 
-                List<Issue> issues = await client.GetFromJsonAsync<List<Issue>>($"Issues?ItemsPerPage=1&Page=1&userName={UserName}");
+                List<Issue> issues = await client.GetFromJsonAsync<List<Issue>>($"Issues?ItemsPerPage=8&Page=1&userName={UserName}");
 
                 if (issues != null)
                 {
-                    Issue = issues.FirstOrDefault();
+                    Issues = issues;
                 }
             }
         }

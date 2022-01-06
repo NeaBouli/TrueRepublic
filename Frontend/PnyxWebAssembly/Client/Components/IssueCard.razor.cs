@@ -124,7 +124,7 @@ namespace PnyxWebAssembly.Client.Components
                 CreatorUserName = user.UserName;
             }
 
-            AvatarImage = CreatorUserName.Substring(0, 1).ToUpperInvariant();
+            AvatarName = CreatorUserName.Substring(0, 1).ToUpperInvariant();
 
             AvatarImageCacheService.ClientFactory = ClientFactory;
             HasAvatarImage = await AvatarImageCacheService.HasAvatarImage(CreatorUserName);
