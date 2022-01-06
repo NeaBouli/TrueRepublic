@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Text;
 using Common.Data;
 using Common.Entities;
 using Common.Services;
@@ -50,6 +53,8 @@ namespace PnyxWebAssembly.Server.Controllers
         [HttpGet]
         public IActionResult GetAll([FromQuery] PaginatedList paginatedList, [FromQuery] string userName)
         {
+            _logger.LogDebug(string.IsNullOrEmpty(userName) ? $"Get all issues for user {userName}" : "Get all issues");
+
             DbServiceContext dbServiceContext = DatabaseInitializationService.GetDbServiceContext();
 
             decimal topStakedIssuesPercent = Convert.ToDecimal(_configuration["TopStakedIssuesPercent"]);
@@ -58,12 +63,60 @@ namespace PnyxWebAssembly.Server.Controllers
 
             using (dbServiceContext)
             {
-                string userId = userService.GetUserId(dbServiceContext, userName);
+                string userId = null;
+
+                if (!string.IsNullOrEmpty(userName))
+                {
+                    userId = userService.GetUserId(dbServiceContext, userName);
+                }
 
                 IssueService issueService = new IssueService(topStakedIssuesPercent);
 
-                return Ok(issueService.GetAll(dbServiceContext, paginatedList, userId));
+                List<Issue> issues = issueService.GetAll(dbServiceContext, paginatedList, userId);
+
+                if (issues.Count == 0)
+                {
+                    return NotFound();
+                }
+
+                return Ok(issues);
             }
+        }
+
+        /// <summary>
+        /// Gets the image for hashtags.
+        /// </summary>
+        /// <param name="hashtags">The hashtags.</param>
+        /// <returns>The matching image for the given hashtags</returns>
+        [HttpGet("ImageNameForHashtags/{hashtags}")]
+        public IActionResult GetImageNameForHashtags(string hashtags)
+        {
+            byte[] data = Convert.FromBase64String(hashtags);
+            string hashtagsDecoded = Encoding.UTF8.GetString(data);
+
+            using DbServiceContext dbServiceContext = DatabaseInitializationService.GetDbServiceContext();
+            
+            ImageInfoService imageInfoService = new ImageInfoService();
+
+            string image = imageInfoService.GetImageForHashtags(dbServiceContext, hashtagsDecoded);
+
+            return Ok(image);
+        }
+
+        /// <summary>
+        /// Gets the image.
+        /// </summary>
+        /// <param name="imageName">Name of the image.</param>
+        /// <returns>The image for the given image name</returns>
+        [HttpGet("Image/{imageName}")]
+        public IActionResult GetImage(string imageName)
+        {
+            if (!System.IO.File.Exists(@$"Images\Cards\{imageName}"))
+            {
+                return NotFound();
+            }
+
+            return Ok(System.IO.File.Open(@$"Images\Cards\{imageName}", FileMode.Open));
         }
     }
 }

@@ -1,0 +1,38 @@
+﻿<div style="width: 300px; margin: 20px">
+    <MudCard>
+        <MudCardHeader>
+            <CardHeaderAvatar>
+                @if (HasAvatarImage)
+                {
+                    <MudAvatar Image=@AvatarImage Title=@UserName />
+                }
+                else
+                {
+                    <MudAvatar Color="Color.Secondary" Size="Size.Medium" Title=@UserName>@AvatarName</MudAvatar>
+                }
+            </CardHeaderAvatar>
+            <CardHeaderContent>
+                <MudText Typo="Typo.body1">@Issue.Title</MudText>
+                <MudText Typo="Typo.caption">@Issue.Tags</MudText>
+            </CardHeaderContent>
+            <CardHeaderActions>
+                @if (Issue.HasMyStake())
+                {
+                    <MudIconButton Icon="@Icons.Filled.Star" Color="Color.Tertiary" Title="Staked by me" />
+                }
+                else
+                {
+                    <MudIconButton Icon="@Icons.Filled.StarOutline" Color="Color.Tertiary" Title="Not staked by me"/>
+                }
+            </CardHeaderActions>
+        </MudCardHeader>
+        <MudCardMedia Image=@IssueImage Height="200" />
+        <MudCardContent>
+            <MudText Typo="Typo.body2">@Issue.Description</MudText>
+        </MudCardContent>
+        <MudCardActions>
+            <MudSpacer></MudSpacer>
+            <MudIconButton Icon="@Icons.Material.Filled.MoreVert" Color="Color.Default" @onclick="GotoIssueDetails" Style="cursor: pointer"/>
+        </MudCardActions>
+    </MudCard>
+</div>

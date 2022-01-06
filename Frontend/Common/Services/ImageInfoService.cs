@@ -1,4 +1,4 @@
-﻿using System;
+﻿using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using Common.Data;
@@ -11,9 +11,52 @@ namespace Common.Services
     /// </summary>
     public class ImageInfoService
     {
+        /// <summary>
+        /// Gets the image for hashtags.
+        /// </summary>
+        /// <param name="dbServiceContext">The database service context.</param>
+        /// <param name="hashtags">The hashtags.</param>
+        /// <returns>The image for the hashtags</returns>
         public string GetImageForHashtags(DbServiceContext dbServiceContext, string hashtags)
         {
-            throw new NotImplementedException();
+            IEnumerable<string> tags = Issue.GetTags(hashtags);
+
+            List<string> hashTagsList = new List<string>();
+
+            foreach (string tag in tags)
+            {
+                hashTagsList.Add(tag.StartsWith("#") ? tag : $"#{tag}");
+            }
+
+            Dictionary<string, int> imageNamesCountDictionary = new Dictionary<string, int>();
+
+            foreach (string hashTag in hashTagsList)
+            {
+                List<ImageInfo> images = 
+                    dbServiceContext.ImageInfos.Where(i => i.Hashtags.Contains(hashTag)).ToList();
+
+                foreach (ImageInfo image in images)
+                {
+                    if (!imageNamesCountDictionary.ContainsKey(image.Filename))
+                    {
+                        imageNamesCountDictionary.Add(image.Filename, 0);
+                    }
+                    else
+                    {
+                        imageNamesCountDictionary[image.Filename]++;
+                    }
+                }
+            }
+
+            string fileName = imageNamesCountDictionary
+                .FirstOrDefault(i => i.Value == imageNamesCountDictionary.Values.Max()).Key;
+
+            if (string.IsNullOrEmpty(fileName))
+            {
+                fileName = "verträge.jpg";
+            }
+
+            return fileName;
         }
 
         /// <summary>

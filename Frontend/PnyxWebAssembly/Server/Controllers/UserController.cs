@@ -3,6 +3,7 @@ using System.IO;
 using Common.Data;
 using Common.Entities;
 using Common.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
@@ -35,6 +36,7 @@ namespace PnyxWebAssembly.Server.Controllers
         /// </summary>
         /// <param name="externalUserId">The external user identifier.</param>
         /// <returns>The user if found otherwise null</returns>
+        [Authorize]
         [HttpGet("ByExternalId/{externalUserId}")]
         public IActionResult GetUserByExternalId(string externalUserId)
         {
@@ -61,7 +63,8 @@ namespace PnyxWebAssembly.Server.Controllers
         /// Gets the user by user identifier.
         /// </summary>
         /// <param name="userName">Name of the user.</param>
-        /// <returns></returns>
+        /// <returns>The user by the given name</returns>
+        [Authorize]
         [HttpGet("ByName/{userName}")]
         public IActionResult GetUserByUserId(string userName)
         {
@@ -89,6 +92,7 @@ namespace PnyxWebAssembly.Server.Controllers
         /// </summary>
         /// <param name="user">The user.</param>
         /// <returns>Ok if user creation was successful</returns>
+        [Authorize]
         [HttpPost]
         public IActionResult Create([FromBody] User user)
         {

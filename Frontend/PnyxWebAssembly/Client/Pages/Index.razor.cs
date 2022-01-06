@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -70,6 +69,15 @@ namespace PnyxWebAssembly.Client.Pages
         public UserAddWizard UserAddWizard { get; set; }
 
         /// <summary>
+        /// Gets or sets the issue card.
+        /// </summary>
+        /// <value>
+        /// The issue card.
+        /// </value>
+        [CascadingParameter]
+        public IssueCard IssueCard { get; set; }
+
+        /// <summary>
         /// Gets or sets the height.
         /// </summary>
         /// <value>
@@ -102,6 +110,14 @@ namespace PnyxWebAssembly.Client.Pages
         public string UserName { get; set; }
 
         /// <summary>
+        /// Gets or sets the issue.
+        /// </summary>
+        /// <value>
+        /// The issue.
+        /// </value>
+        public Issue Issue { get; set; }
+
+        /// <summary>
         /// Gets or sets the external user identifier.
         /// </summary>
         /// <value>
@@ -125,6 +141,8 @@ namespace PnyxWebAssembly.Client.Pages
         /// </summary>
         protected override async Task OnInitializedAsync()
         {
+            AvatarImageCacheService.ClientFactory = ClientFactory;
+
             await ManageWindowResizing();
 
             await UpdateUserInfo();
@@ -188,9 +206,15 @@ namespace PnyxWebAssembly.Client.Pages
                 MainLayout.UserName = userFromService.UserName;
                 MainLayout.TotalBalance = int.Parse(Math.Round(totalBalance, 0).ToString(CultureInfo.InvariantCulture));
 
-                AvatarImageCacheService.ClientFactory = ClientFactory;
                 string avatarImage = await AvatarImageCacheService.GetAvatarImageBase64(userFromService.UserName);
                 MainLayout.AvatarImage = avatarImage;
+
+                List<Issue> issues = await client.GetFromJsonAsync<List<Issue>>("Issues?ItemsPerPage=1&Page=1");
+
+                if (issues != null)
+                {
+                    Issue = issues.FirstOrDefault();
+                }
             }
         }
 
