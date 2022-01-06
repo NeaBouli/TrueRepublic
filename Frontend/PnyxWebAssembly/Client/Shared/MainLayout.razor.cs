@@ -1,5 +1,4 @@
-﻿using System.IO;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
 
@@ -54,6 +53,7 @@ namespace PnyxWebAssembly.Client.Shared
         }
 
         private string _userName;
+        private string _avatarImage;
 
         /// <summary>
         /// Gets or sets the name of the user.
@@ -79,15 +79,11 @@ namespace PnyxWebAssembly.Client.Shared
         /// </value>
         public string AvatarImage
         {
-            get
+            get => _avatarImage;
+            set
             {
-                // TODO: let's fake something
-                if (!string.IsNullOrEmpty(_userName) && _userName == "Andreas")
-                {
-                    return "images/andreas.jpg";
-                }
-
-                return string.Empty;
+                _avatarImage = value;
+                InvokeAsync(StateHasChanged);
             }
         }
 

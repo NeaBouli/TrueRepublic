@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Security.Claims;
@@ -160,9 +162,16 @@ namespace PnyxWebAssembly.Client.Pages
                 {
                     userFromService = await client.GetFromJsonAsync<User>($"User/ByExternalId/{ExternalUserId}");
                 }
-                catch (HttpRequestException)
+                catch (HttpRequestException ex)
                 {
-                    userFromService = null;
+                    if (ex.StatusCode == HttpStatusCode.NotFound)
+                    {
+                        userFromService = null;
+                    }
+                    else
+                    {
+                        throw;
+                    }
                 }
 
                 if (userFromService == null)
@@ -178,6 +187,10 @@ namespace PnyxWebAssembly.Client.Pages
                 UserName = userFromService.UserName;
                 MainLayout.UserName = userFromService.UserName;
                 MainLayout.TotalBalance = int.Parse(Math.Round(totalBalance, 0).ToString(CultureInfo.InvariantCulture));
+
+                AvatarImageCacheService.ClientFactory = ClientFactory;
+                string avatarImage = await AvatarImageCacheService.GetAvatarImageBase64(userFromService.UserName);
+                MainLayout.AvatarImage = avatarImage;
             }
         }
 

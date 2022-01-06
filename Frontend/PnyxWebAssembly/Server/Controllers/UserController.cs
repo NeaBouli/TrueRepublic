@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using Common.Data;
 using Common.Entities;
 using Common.Services;
@@ -103,6 +104,55 @@ namespace PnyxWebAssembly.Server.Controllers
 
                 return Ok();
             }
+        }
+
+        /// <summary>
+        /// Gets the avatar.
+        /// </summary>
+        /// <param name="userName">Name of the user.</param>
+        /// <returns>The avatar image stream</returns>
+        [HttpGet("Avatar/{userName}")]
+        public IActionResult GetAvatar(string userName)
+        {
+            if (!System.IO.File.Exists(@$"Images\Avatars\{userName}.jpg") &&
+                !System.IO.File.Exists(@$"Images\Avatars\{userName}.png"))
+            {
+                return NotFound();
+            }
+
+            string imageName = $"{userName}.jpg";
+
+            if (!System.IO.File.Exists(@$"Images\Avatars\{imageName}"))
+            {
+                imageName = $"{userName}.png";
+            }
+
+            return Ok(System.IO.File.Open(@$"Images\Avatars\{imageName}", FileMode.Open));
+        }
+
+        /// <summary>
+        /// Gets the type of the avatar content.
+        /// </summary>
+        /// <param name="userName">Name of the user.</param>
+        /// <returns>The avatar image type</returns>
+        [HttpGet("AvatarContentType/{userName}")]
+        public IActionResult GetAvatarContentType(string userName)
+        {
+            if (!System.IO.File.Exists(@$"Images\Avatars\{userName}.jpg") &&
+                !System.IO.File.Exists(@$"Images\Avatars\{userName}.png"))
+            {
+                return NotFound();
+            }
+
+            string imageName = $"{userName}.jpg";
+            string imageType = "jpeg";
+
+            if (!System.IO.File.Exists(@$"Images\Avatars\{imageName}"))
+            {
+                imageType = "png";
+            }
+
+            return Ok(imageType);
         }
     }
 }

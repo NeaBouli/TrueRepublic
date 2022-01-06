@@ -45,10 +45,13 @@ namespace PnyxWebAssembly.Client.Components
         [Inject]
         private IHttpClientFactory ClientFactory { get; set; }
 
+        /// <summary>
+        /// Semaphore to prevent multiple clicking
+        /// </summary>
         private bool _isRunning;
 
         /// <summary>
-        /// The success
+        /// The success flag
         /// </summary>
         private bool _success;
 
@@ -128,6 +131,9 @@ namespace PnyxWebAssembly.Client.Components
             }
         }
 
+        /// <summary>
+        /// Creates the user if not already existing save.
+        /// </summary>
         private async Task CreateUserIfNotAlreadyExistingSave()
         {
             using HttpClient client = ClientFactory.CreateClient("PnyxWebAssembly.ServerAPI.Private");

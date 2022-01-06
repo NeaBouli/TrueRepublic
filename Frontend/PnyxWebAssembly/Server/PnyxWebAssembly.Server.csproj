@@ -22,4 +22,9 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="5.0.11" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Images\Avatars\" />
+    <Folder Include="Images\Cards\" />
+  </ItemGroup>
+
 </Project>
