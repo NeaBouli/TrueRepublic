@@ -209,7 +209,7 @@ namespace PnyxWebAssembly.Client.Pages
                 string avatarImage = await AvatarImageCacheService.GetAvatarImageBase64(userFromService.UserName);
                 MainLayout.AvatarImage = avatarImage;
 
-                List<Issue> issues = await client.GetFromJsonAsync<List<Issue>>($"Issues?ItemsPerPage=8&Page=1&userName={UserName}");
+                List<Issue> issues = await client.GetFromJsonAsync<List<Issue>>($"Issues?ItemsPerPage=16&Page=1&userName={UserName}");
 
                 if (issues != null)
                 {

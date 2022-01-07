@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Collections.Concurrent;
+using System.Diagnostics;
 using System.IO;
 using System.Net;
 using System.Net.Http;
 using System.Text;
+using System.Text.Encodings.Web;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace PnyxWebAssembly.Client.Services
@@ -38,6 +41,9 @@ namespace PnyxWebAssembly.Client.Services
         /// <returns>The image for the hashtags as base 64 decoded string</returns>
         public static async Task<string> GetImageForHashtags(string hashtags)
         {
+            hashtags = hashtags.Replace(Environment.NewLine, string.Empty);
+            hashtags = hashtags.Replace("\n", string.Empty);
+
             string imageName;
 
             using HttpClient client = ClientFactory.CreateClient("PnyxWebAssembly.ServerAPI.Public");
@@ -48,6 +54,7 @@ namespace PnyxWebAssembly.Client.Services
             }
             else
             {
+                Thread.Sleep(100);
                 imageName = await GetImageNameForHashtagsFromService(client, hashtags);
                 HashtagsFileNameDictionary.TryAdd(hashtags, imageName);
             }
@@ -78,7 +85,7 @@ namespace PnyxWebAssembly.Client.Services
             string base64;
             string contentType = Path.GetExtension(imageName).Replace(".", string.Empty);
 
-            Stream imageStream;
+            Stream imageStream = null;
 
             try
             {
@@ -88,6 +95,8 @@ namespace PnyxWebAssembly.Client.Services
             {
                 if (ex.StatusCode == HttpStatusCode.NotFound)
                 {
+                    imageStream?.Close();
+
                     imageStream = null;
                 }
                 else
@@ -99,6 +108,8 @@ namespace PnyxWebAssembly.Client.Services
             if (imageStream != null)
             {
                 byte[] byteArray = StreamToByteArray(imageStream);
+
+                imageStream.Close();
 
                 base64 = $"data:image/{contentType};base64, {Convert.ToBase64String(byteArray)}";
             }
@@ -118,7 +129,7 @@ namespace PnyxWebAssembly.Client.Services
         /// <returns>The image name for hte given hashtags</returns>
         private static async Task<string> GetImageNameForHashtagsFromService(HttpClient client, string hashtags)
         {
-            string hashtagsEncoded = Convert.ToBase64String(Encoding.UTF8.GetBytes(hashtags));
+            string hashtagsEncoded = UrlEncoder.Default.Encode(hashtags);
 
             string imageName;
             try

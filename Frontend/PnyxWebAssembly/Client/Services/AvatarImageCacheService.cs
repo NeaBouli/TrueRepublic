@@ -53,7 +53,7 @@ namespace PnyxWebAssembly.Client.Services
 
             using HttpClient client = ClientFactory.CreateClient("PnyxWebAssembly.ServerAPI.Public");
 
-            Stream imageStream;
+            Stream imageStream = null;
 
             try
             {
@@ -63,6 +63,8 @@ namespace PnyxWebAssembly.Client.Services
             {
                 if (ex.StatusCode == HttpStatusCode.NotFound)
                 {
+                    imageStream?.Close();
+
                     imageStream = null;
                 }
                 else
@@ -92,6 +94,8 @@ namespace PnyxWebAssembly.Client.Services
             if (imageStream != null && !string.IsNullOrEmpty(contentType))
             {
                 byte[] byteArray = StreamToByteArray(imageStream);
+
+                imageStream.Close();
 
                 string base64 = $"data:image/{contentType};base64, {Convert.ToBase64String(byteArray)}";
 

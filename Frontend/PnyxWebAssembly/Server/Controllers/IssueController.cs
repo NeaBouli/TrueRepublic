@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using System.Threading;
 using Common.Data;
 using Common.Entities;
 using Common.Services;
@@ -91,14 +92,11 @@ namespace PnyxWebAssembly.Server.Controllers
         [HttpGet("ImageNameForHashtags/{hashtags}")]
         public IActionResult GetImageNameForHashtags(string hashtags)
         {
-            byte[] data = Convert.FromBase64String(hashtags);
-            string hashtagsDecoded = Encoding.UTF8.GetString(data);
-
             using DbServiceContext dbServiceContext = DatabaseInitializationService.GetDbServiceContext();
             
             ImageInfoService imageInfoService = new ImageInfoService();
 
-            string image = imageInfoService.GetImageForHashtags(dbServiceContext, hashtagsDecoded);
+            string image = imageInfoService.GetImageForHashtags(dbServiceContext, hashtags);
 
             return Ok(image);
         }
@@ -116,7 +114,26 @@ namespace PnyxWebAssembly.Server.Controllers
                 return NotFound();
             }
 
-            return Ok(System.IO.File.Open(@$"Images\Cards\{imageName}", FileMode.Open));
+            FileStream stream;
+
+            try
+            {
+                stream = System.IO.File.Open(@$"Images\Cards\{imageName}", FileMode.Open);
+            }
+            catch (IOException ex)
+            {
+                if (ex.Message.Contains("because it is being used by another process"))
+                {
+                    Thread.Sleep(500);
+                    stream = System.IO.File.Open(@$"Images\Cards\{imageName}", FileMode.Open);
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return Ok(stream);
         }
     }
 }
