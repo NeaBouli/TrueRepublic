@@ -1,12 +1,9 @@
 ﻿using System;
 using System.Collections.Concurrent;
-using System.Diagnostics;
 using System.IO;
 using System.Net;
 using System.Net.Http;
-using System.Text;
 using System.Text.Encodings.Web;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace PnyxWebAssembly.Client.Services
@@ -54,8 +51,8 @@ namespace PnyxWebAssembly.Client.Services
             }
             else
             {
-                Thread.Sleep(100);
                 imageName = await GetImageNameForHashtagsFromService(client, hashtags);
+
                 HashtagsFileNameDictionary.TryAdd(hashtags, imageName);
             }
 
