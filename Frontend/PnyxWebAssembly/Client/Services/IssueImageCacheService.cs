@@ -2,11 +2,11 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
-using Common.Entities;
 
 namespace PnyxWebAssembly.Client.Services
 {
@@ -26,12 +26,12 @@ namespace PnyxWebAssembly.Client.Services
         /// <summary>
         /// The hashtags file name dictionary
         /// </summary>
-        private static readonly ConcurrentDictionary<string, string> HashtagsFileNameDictionary = new();
+        public static readonly Dictionary<string, string> HashtagsFileNameDictionary = new();
 
         /// <summary>
         /// The file dictionary
         /// </summary>
-        private static readonly ConcurrentDictionary<string, string> FileDictionary = new();
+        public static readonly Dictionary<string, string> FileDictionary = new();
 
         /// <summary>
         /// Gets the image for hashtags.
@@ -44,41 +44,89 @@ namespace PnyxWebAssembly.Client.Services
             hashtags = hashtags.Replace("\n", string.Empty);
             hashtags = hashtags.ToLowerInvariant();
 
-            string imageName = null;
+            string image = null;
 
             using HttpClient client = ClientFactory.CreateClient("PnyxWebAssembly.ServerAPI.Public");
 
-            List<string> hashtagsList = new List<string>(Issue.GetTags(hashtags));
+            string[] hashtagsList = hashtags.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+
+            Dictionary<string, int> imageNamesCountDictionary = new Dictionary<string, int>();
 
             foreach (string hashtag in hashtagsList)
             {
-                if (HashtagsFileNameDictionary.ContainsKey(hashtag))
+                lock (HashtagsFileNameDictionary)
                 {
-                    imageName = HashtagsFileNameDictionary[hashtag];
-                    break;
+                    if (HashtagsFileNameDictionary.ContainsKey(hashtag))
+                    {
+                        string imageName = HashtagsFileNameDictionary[hashtag];
+
+                        if (!imageNamesCountDictionary.ContainsKey(imageName))
+                        {
+                            imageNamesCountDictionary.Add(imageName, 0);
+                        }
+                        else
+                        {
+                            imageNamesCountDictionary[imageName]++;
+                        }
+                    }
                 }
             }
 
-            if (string.IsNullOrEmpty(imageName))
+            if (imageNamesCountDictionary.Count > 0)
             {
-                imageName = await GetImageNameForHashtagsFromService(client, hashtags);
+                image = imageNamesCountDictionary
+                    .FirstOrDefault(i => i.Value == imageNamesCountDictionary.Values.Max()).Key;
+            }
 
+            if (string.IsNullOrEmpty(image))
+            {
                 foreach (string hashtag in hashtagsList)
                 {
-                    HashtagsFileNameDictionary.TryAdd(hashtag, imageName);
+                    string imageName = await GetImageNameForHashtagFromService(client, hashtag);
+
+                    if (!imageNamesCountDictionary.ContainsKey(imageName))
+                    {
+                        imageNamesCountDictionary.Add(imageName, 0);
+                        lock (HashtagsFileNameDictionary)
+                        {
+                            HashtagsFileNameDictionary.TryAdd(hashtag, image);
+                        }
+                    }
+                    else
+                    {
+                        imageNamesCountDictionary[imageName]++;
+                    }
                 }
             }
 
-            string base64;
-
-            if (FileDictionary.ContainsKey(imageName))
+            if (imageNamesCountDictionary.Count > 0)
             {
-                base64 = FileDictionary[imageName];
+                image = imageNamesCountDictionary
+                    .FirstOrDefault(i => i.Value == imageNamesCountDictionary.Values.Max()).Key;
             }
-            else
+
+            if (string.IsNullOrEmpty(image))
             {
-                base64 = await GetImageFromService(client, imageName);
-                FileDictionary.TryAdd(imageName, base64);
+                image = "verträge.jpg";
+            }
+
+            string base64 = null;
+
+            lock (FileDictionary)
+            {
+                if (FileDictionary.ContainsKey(image))
+                {
+                    base64 = FileDictionary[image];
+                }
+            }
+
+            if (string.IsNullOrEmpty(base64))
+            {
+                base64 = await GetImageFromService(client, image);
+                lock (FileDictionary)
+                {
+                    FileDictionary.TryAdd(image, base64);
+                }
             }
 
             return base64;
@@ -135,16 +183,18 @@ namespace PnyxWebAssembly.Client.Services
         /// Gets the image name for hashtags from service.
         /// </summary>
         /// <param name="client">The client.</param>
-        /// <param name="hashtags">The hashtags.</param>
-        /// <returns>The image name for hte given hashtags</returns>
-        private static async Task<string> GetImageNameForHashtagsFromService(HttpClient client, string hashtags)
+        /// <param name="hashtag">The hashtag.</param>
+        /// <returns>
+        /// The image name for hte given hashtags
+        /// </returns>
+        private static async Task<string> GetImageNameForHashtagFromService(HttpClient client, string hashtag)
         {
-            string hashtagsEncoded = UrlEncoder.Default.Encode(hashtags);
+            string hashtagEncoded = UrlEncoder.Default.Encode(hashtag);
 
             string imageName;
             try
             {
-                imageName = await client.GetStringAsync($"Issues/ImageNameForHashtags/{hashtagsEncoded}");
+                imageName = await client.GetStringAsync($"Issues/ImageNameForHashtag/{hashtagEncoded}");
             }
             catch (HttpRequestException ex)
             {

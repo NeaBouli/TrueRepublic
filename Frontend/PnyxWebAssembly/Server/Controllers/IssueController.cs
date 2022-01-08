@@ -85,16 +85,20 @@ namespace PnyxWebAssembly.Server.Controllers
         /// <summary>
         /// Gets the image for hashtags.
         /// </summary>
-        /// <param name="hashtags">The hashtags.</param>
-        /// <returns>The matching image for the given hashtags</returns>
-        [HttpGet("ImageNameForHashtags/{hashtags}")]
-        public IActionResult GetImageNameForHashtags(string hashtags)
+        /// <param name="hashtag">The hashtag.</param>
+        /// <returns>
+        /// The matching image for the given hashtags
+        /// </returns>
+        [HttpGet("ImageNameForHashtag/{hashtag}")]
+        public IActionResult GetImageNameForHashtag(string hashtag)
         {
+            _logger.LogDebug($"Get image name for {hashtag}");
+
             using DbServiceContext dbServiceContext = DatabaseInitializationService.GetDbServiceContext();
             
             ImageInfoService imageInfoService = new ImageInfoService();
 
-            string image = imageInfoService.GetImageForHashtags(dbServiceContext, hashtags);
+            string image = imageInfoService.GetImageForHashtag(dbServiceContext, hashtag);
 
             return Ok(image);
         }
@@ -107,6 +111,8 @@ namespace PnyxWebAssembly.Server.Controllers
         [HttpGet("Image/{imageName}")]
         public IActionResult GetImage(string imageName)
         {
+            _logger.LogDebug($"Get image {imageName}");
+
             if (!System.IO.File.Exists(@$"Images\Cards\{imageName}"))
             {
                 return NotFound();

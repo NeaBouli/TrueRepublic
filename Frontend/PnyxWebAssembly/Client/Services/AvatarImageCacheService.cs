@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Net.Http;
@@ -23,7 +23,7 @@ namespace PnyxWebAssembly.Client.Services
         /// <summary>
         /// The avatar image cache dictionary
         /// </summary>
-        private static readonly ConcurrentDictionary<string, string> AvatarImageCacheDictionary = new();
+        private static readonly Dictionary<string, string> AvatarImageCacheDictionary = new();
 
         /// <summary>
         /// Determines whether [has avatar image] [the specified user name].
@@ -46,9 +46,12 @@ namespace PnyxWebAssembly.Client.Services
         /// <returns></returns>
         public static async Task<string> GetAvatarImageBase64(string userName)
         {
-            if (AvatarImageCacheDictionary.ContainsKey(userName))
+            lock (AvatarImageCacheDictionary)
             {
-                return AvatarImageCacheDictionary[userName];
+                if (AvatarImageCacheDictionary.ContainsKey(userName))
+                {
+                    return AvatarImageCacheDictionary[userName];
+                }
             }
 
             using HttpClient client = ClientFactory.CreateClient("PnyxWebAssembly.ServerAPI.Public");
@@ -99,7 +102,10 @@ namespace PnyxWebAssembly.Client.Services
 
                 string base64 = $"data:image/{contentType};base64, {Convert.ToBase64String(byteArray)}";
 
-                AvatarImageCacheDictionary.TryAdd(userName, base64);
+                lock (AvatarImageCacheDictionary)
+                {
+                    AvatarImageCacheDictionary.TryAdd(userName, base64);
+                }
 
                 return base64;
             }

@@ -59,6 +59,8 @@ namespace PnyxWebAssembly.Client.Components
                 UpdateAvatarInfos();
 
                 UpdateImageInfos();
+
+                InvokeAsync(StateHasChanged);
             }
         }
 

@@ -7,7 +7,7 @@
             <MudContainer Fixed="true">
 
                 <MudText>&nbsp;</MudText>
-                <UserAddWizard ExternalUserId="@ExternalUserId" OnSuccess="OnSuccess"/>
+                <UserAddWizard ExternalUserId="@ExternalUserId" OnSuccess="OnSuccess" />
 
                 @*@if (!string.IsNullOrEmpty(UserEMail))
                 {
@@ -20,13 +20,15 @@
         }
         else
         {
-            @if (Issues is {Count: > 0 })
+            <MudText Typo="Typo.caption">Files in Dictionary: @Count</MudText>
+
+            @if (Issues is { Count: > 0 })
             {
                 <MudGrid Spacing="2" Justify="Justify.Center">
                     @foreach (var issue in Issues)
                     {
                         <MudItem lg="3">
-                            <IssueCard UserName="@UserName" Issue="@issue"/>
+                            <IssueCard UserName="@UserName" Issue="@issue" />
                         </MudItem>
                     }
                 </MudGrid>

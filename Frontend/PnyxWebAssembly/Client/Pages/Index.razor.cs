@@ -23,6 +23,8 @@ namespace PnyxWebAssembly.Client.Pages
     /// <seealso cref="Microsoft.AspNetCore.Components.ComponentBase" />
     public partial class Index : IDisposable
     {
+        private int _count;
+
         /// <summary>
         /// Gets or sets the js runtime.
         /// </summary>
@@ -92,6 +94,22 @@ namespace PnyxWebAssembly.Client.Pages
         /// The width.
         /// </value>
         public string Width { get; set; }
+
+        /// <summary>
+        /// Gets or sets the count.
+        /// </summary>
+        /// <value>
+        /// The count.
+        /// </value>
+        public int Count
+        {
+            get => _count;
+            set
+            {
+                _count = value;
+                InvokeAsync(StateHasChanged);
+            }
+        }
 
         /// <summary>
         /// Gets or sets the name of the user.
@@ -216,6 +234,13 @@ namespace PnyxWebAssembly.Client.Pages
                 {
                     Issues = issues;
                 }
+
+                lock (IssueImageCacheService.FileDictionary)
+                {
+                    Count = IssueImageCacheService.FileDictionary.Count;
+                }
+                
+                await InvokeAsync(StateHasChanged);
             }
         }
 

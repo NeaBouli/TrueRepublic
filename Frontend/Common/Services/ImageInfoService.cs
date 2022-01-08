@@ -15,36 +15,29 @@ namespace Common.Services
         /// Gets the image for hashtags.
         /// </summary>
         /// <param name="dbServiceContext">The database service context.</param>
-        /// <param name="hashtags">The hashtags.</param>
+        /// <param name="hashtag">The hashtags.</param>
         /// <returns>The image for the hashtags</returns>
-        public string GetImageForHashtags(DbServiceContext dbServiceContext, string hashtags)
+        public string GetImageForHashtag(DbServiceContext dbServiceContext, string hashtag)
         {
-            IEnumerable<string> tags = Issue.GetTags(hashtags);
-
-            List<string> hashTagsList = new List<string>();
-
-            foreach (string tag in tags)
+            if (!hashtag.StartsWith("#"))
             {
-                hashTagsList.Add(tag.StartsWith("#") ? tag : $"#{tag}");
+                hashtag = $"#{hashtag}";
             }
 
             Dictionary<string, int> imageNamesCountDictionary = new Dictionary<string, int>();
 
-            foreach (string hashTag in hashTagsList)
-            {
-                List<ImageInfo> images = 
-                    dbServiceContext.ImageInfos.Where(i => i.Hashtags.Contains(hashTag)).ToList();
+            List<ImageInfo> images =
+                dbServiceContext.ImageInfos.Where(i => i.Hashtags.Contains(hashtag)).ToList();
 
-                foreach (ImageInfo image in images)
+            foreach (ImageInfo image in images)
+            {
+                if (!imageNamesCountDictionary.ContainsKey(image.Filename))
                 {
-                    if (!imageNamesCountDictionary.ContainsKey(image.Filename))
-                    {
-                        imageNamesCountDictionary.Add(image.Filename, 0);
-                    }
-                    else
-                    {
-                        imageNamesCountDictionary[image.Filename]++;
-                    }
+                    imageNamesCountDictionary.Add(image.Filename, 0);
+                }
+                else
+                {
+                    imageNamesCountDictionary[image.Filename]++;
                 }
             }
 
