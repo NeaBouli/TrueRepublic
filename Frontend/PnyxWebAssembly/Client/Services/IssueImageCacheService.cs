@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Net.Http;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
+using Common.Entities;
 
 namespace PnyxWebAssembly.Client.Services
 {
@@ -40,20 +42,31 @@ namespace PnyxWebAssembly.Client.Services
         {
             hashtags = hashtags.Replace(Environment.NewLine, string.Empty);
             hashtags = hashtags.Replace("\n", string.Empty);
+            hashtags = hashtags.ToLowerInvariant();
 
-            string imageName;
+            string imageName = null;
 
             using HttpClient client = ClientFactory.CreateClient("PnyxWebAssembly.ServerAPI.Public");
 
-            if (HashtagsFileNameDictionary.ContainsKey(hashtags))
+            List<string> hashtagsList = new List<string>(Issue.GetTags(hashtags));
+
+            foreach (string hashtag in hashtagsList)
             {
-                imageName = HashtagsFileNameDictionary[hashtags];
+                if (HashtagsFileNameDictionary.ContainsKey(hashtag))
+                {
+                    imageName = HashtagsFileNameDictionary[hashtag];
+                    break;
+                }
             }
-            else
+
+            if (string.IsNullOrEmpty(imageName))
             {
                 imageName = await GetImageNameForHashtagsFromService(client, hashtags);
 
-                HashtagsFileNameDictionary.TryAdd(hashtags, imageName);
+                foreach (string hashtag in hashtagsList)
+                {
+                    HashtagsFileNameDictionary.TryAdd(hashtag, imageName);
+                }
             }
 
             string base64;

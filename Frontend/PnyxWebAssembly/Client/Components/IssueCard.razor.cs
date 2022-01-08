@@ -112,6 +112,30 @@ namespace PnyxWebAssembly.Client.Components
         public string IssueImage { get; set; }
 
         /// <summary>
+        /// Gets or sets the title.
+        /// </summary>
+        /// <value>
+        /// The title.
+        /// </value>
+        public string Title { get; set; }
+
+        /// <summary>
+        /// Gets or sets the tags.
+        /// </summary>
+        /// <value>
+        /// The tags.
+        /// </value>
+        public string Tags { get; set; }
+
+        /// <summary>
+        /// Gets or sets the description.
+        /// </summary>
+        /// <value>
+        /// The description.
+        /// </value>
+        public string Description { get; set; }
+
+        /// <summary>
         /// Updates the avatar infos.
         /// </summary>
         private async void UpdateAvatarInfos()
@@ -149,23 +173,52 @@ namespace PnyxWebAssembly.Client.Components
         /// </summary>
         private void FixPropertiesForCardDisplay()
         {
-            if (!string.IsNullOrEmpty(_issue.Title) && _issue.Title.Length > 1)
-            {
-                _issue.Title = $"{_issue.Title.Substring(0, 1).ToUpperInvariant()}{_issue.Title.Substring(1)}";
-            }
+            int length = 100;
 
-            if (!string.IsNullOrEmpty(_issue.Description) && _issue.Description.Length > 200)
+            Title = _issue.Title;
+
+            if (!string.IsNullOrEmpty(Title) && Title.Length > 1)
             {
-                string description = _issue.Description.Substring(0, 200);
-                int lastIndex = description.LastIndexOf(" ", StringComparison.Ordinal);
-                if (lastIndex > 0)
+                Title = $"{Title.Substring(0, 1).ToUpperInvariant()}{Title.Substring(1)}";
+
+                if (Title.Length > length)
                 {
-                    description = description.Substring(0, lastIndex);
-                    description = $"{description}...";
+                    Title = CutText(Title, length);
                 }
-
-                _issue.Description = description;
             }
+
+            Tags = _issue.Tags;
+
+            if (!string.IsNullOrEmpty(Tags))
+            {
+                if (Tags.Length > length)
+                {
+                    Tags = CutText(Tags, length);
+                }
+            }
+
+            Description = _issue.Description;
+
+            if (!string.IsNullOrEmpty(Description))
+            {
+                if (Description.Length > length)
+                {
+                    Description = CutText(Description, length);
+                }
+            }
+        }
+
+        private string CutText(string text, int length)
+        {
+            text = text.Substring(0, length);
+            int lastIndex = text.LastIndexOf(" ", StringComparison.Ordinal);
+            if (lastIndex > 0)
+            {
+                text = text.Substring(0, lastIndex);
+                text = $"{text}...";
+            }
+
+            return text;
         }
 
         /// <summary>

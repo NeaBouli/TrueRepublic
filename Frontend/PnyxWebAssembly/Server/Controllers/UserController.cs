@@ -159,7 +159,7 @@ namespace PnyxWebAssembly.Server.Controllers
                 imageName = $"{userName}.png";
             }
 
-            return Ok(System.IO.File.Open(@$"Images\Avatars\{imageName}", FileMode.Open));
+            return Ok(System.IO.File.Open(@$"Images\Avatars\{imageName}", FileMode.Open, FileAccess.Read, FileShare.Read));
         }
 
         /// <summary>

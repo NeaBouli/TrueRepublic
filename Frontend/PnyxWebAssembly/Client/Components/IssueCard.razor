@@ -1,4 +1,4 @@
-﻿    <MudCard Style="height: 510px; width: 310px">
+﻿    <MudCard Style="height: 470px; width: 310px">
         <MudCardHeader>
             <CardHeaderAvatar>
                 @if (HasAvatarImage)
@@ -11,23 +11,21 @@
                 }
             </CardHeaderAvatar>
             <CardHeaderContent>
-                <MudText Typo="Typo.body1">@Issue.Title</MudText>
-                <MudText Typo="Typo.caption">@Issue.Tags</MudText>
+                <div style="height: 90px">
+                    <MudText Typo="Typo.body2">@Title</MudText>
+                    <MudText Typo="Typo.caption">@Tags</MudText>
+                </div>
             </CardHeaderContent>
             <CardHeaderActions>
                 @if (Issue.HasMyStake())
                 {
                     <MudIconButton Icon="@Icons.Filled.Star" Color="Color.Tertiary" Title="Staked by me" />
                 }
-                else
-                {
-                    <MudIconButton Icon="@Icons.Filled.StarOutline" Color="Color.Tertiary" Title="Not staked by me"/>
-                }
             </CardHeaderActions>
         </MudCardHeader>
         <MudCardMedia Image=@IssueImage Height="200" />
         <MudCardContent>
-            <MudText Typo="Typo.body2">@Issue.Description</MudText>
+            <MudText Typo="Typo.body2">@Description</MudText>
         </MudCardContent>
         <MudCardActions>
             <MudSpacer></MudSpacer>
