@@ -1,4 +1,5 @@
 ﻿@page "/"
+@using PnyxWebAssembly.Client.Services
 
 <AuthorizeView>
     <Authorized>
@@ -20,7 +21,17 @@
         }
         else
         {
-            <MudText Typo="Typo.caption">Files in Dictionary: @Count</MudText>
+            @*<MudText Typo="Typo.caption" @onclick="UpdateCounter">Click for CacheInfo</MudText><br />
+            @foreach (var keyValuePair in IssueImageCacheService.FileDictionary)
+            {
+                <MudText Typo="Typo.caption">@keyValuePair.Key</MudText><br />
+            }
+            <MudText>&nbsp;</MudText><br />
+            @foreach (var keyValuePair in IssueImageCacheService.HashtagsFileNameDictionary)
+            {
+                <MudText Typo="Typo.caption">@keyValuePair.Key: @keyValuePair.Value</MudText><br />
+            }
+            <MudText>&nbsp;</MudText><br />*@
 
             @if (Issues is { Count: > 0 })
             {

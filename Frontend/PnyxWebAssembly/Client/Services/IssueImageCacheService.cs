@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -48,7 +49,14 @@ namespace PnyxWebAssembly.Client.Services
 
             using HttpClient client = ClientFactory.CreateClient("PnyxWebAssembly.ServerAPI.Public");
 
-            string[] hashtagsList = hashtags.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+            string[] hashtagsListRaw = hashtags.Split(new []{' ', '#'}, StringSplitOptions.RemoveEmptyEntries);
+
+            List<string> hashtagsList = new List<string>();
+
+            foreach (string hashtag in hashtagsListRaw)
+            {
+                hashtagsList.Add(!hashtag.StartsWith("#") ? $"#{hashtag}" : hashtag);
+            }
 
             Dictionary<string, int> imageNamesCountDictionary = new Dictionary<string, int>();
 
@@ -58,6 +66,8 @@ namespace PnyxWebAssembly.Client.Services
                 {
                     if (HashtagsFileNameDictionary.ContainsKey(hashtag))
                     {
+                        Debug.WriteLine($"Get hashtag {hashtag} from HashtagsFileNameDictionary");
+
                         string imageName = HashtagsFileNameDictionary[hashtag];
 
                         if (!imageNamesCountDictionary.ContainsKey(imageName))
@@ -89,7 +99,9 @@ namespace PnyxWebAssembly.Client.Services
                         imageNamesCountDictionary.Add(imageName, 0);
                         lock (HashtagsFileNameDictionary)
                         {
-                            HashtagsFileNameDictionary.TryAdd(hashtag, image);
+                            Debug.WriteLine($"TryAdd {hashtag} {imageName}");
+                            HashtagsFileNameDictionary.TryAdd(hashtag, imageName);
+                            Debug.WriteLine($"HashtagsFileNameDictionary.Count: {HashtagsFileNameDictionary.Count}");
                         }
                     }
                     else

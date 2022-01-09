@@ -297,5 +297,10 @@ namespace PnyxWebAssembly.Client.Pages
         {
             BrowserResizeService.OnResize -= BrowserHasResized;
         }
+
+        private void UpdateCounter()
+        {
+            Count = IssueImageCacheService.FileDictionary.Count;
+        }
     }
 }
