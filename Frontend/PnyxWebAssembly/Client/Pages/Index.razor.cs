@@ -265,7 +265,7 @@ namespace PnyxWebAssembly.Client.Pages
         {
             await GetDimensions();
 
-            StateHasChanged();
+            await InvokeAsync(StateHasChanged);
         }
 
         /// <summary>
@@ -296,11 +296,6 @@ namespace PnyxWebAssembly.Client.Pages
         public void Dispose()
         {
             BrowserResizeService.OnResize -= BrowserHasResized;
-        }
-
-        private void UpdateCounter()
-        {
-            Count = IssueImageCacheService.FileDictionary.Count;
         }
     }
 }

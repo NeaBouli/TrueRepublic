@@ -60,6 +60,7 @@ namespace Common.Entities
         /// <value>
         /// The short description.
         /// </value>
+        [Required]
         public string Title { get; set; }
 
         /// <summary>
@@ -68,6 +69,7 @@ namespace Common.Entities
         /// <value>
         /// The description.
         /// </value>
+        [Required]
         public string Description { get; set; }
 
         /// <summary>
