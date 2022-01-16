@@ -19,7 +19,7 @@
             <CardHeaderActions>
                 @if (Issue.HasMyStake())
                 {
-                    <MudIconButton Icon="@Icons.Filled.Star" Color="Color.Tertiary" Title="Staked by me" />
+                    <MudIcon Icon="@Icons.Filled.Star" Color="Color.Tertiary" Title="Staked by me" Style="height: 90px"/>
                 }
             </CardHeaderActions>
         </MudCardHeader>
@@ -29,6 +29,6 @@
         </MudCardContent>
         <MudCardActions>
             <MudSpacer></MudSpacer>
-            <MudIconButton Icon="@Icons.Material.Filled.MoreVert" Color="Color.Default" @onclick="GotoIssueDetails" Style="cursor: pointer"/>
+            <MudIconButton Icon="@Icons.Material.Filled.MoreVert" Color="Color.Default" @onclick="GotoIssueDetails" Style="cursor: pointer" />
         </MudCardActions>
     </MudCard>

@@ -39,6 +39,13 @@ namespace PnyxWebAssembly.Server.Controllers
             _configuration = configuration;
 
             DatabaseInitializationService.DbConnectString = configuration["DBConnectString"];
+            string dockerEnvironmentConnectString = Environment.GetEnvironmentVariable("DBCONNECTSTRING_PNYX");
+
+            if (!string.IsNullOrEmpty(dockerEnvironmentConnectString))
+            {
+                DatabaseInitializationService.DbConnectString = dockerEnvironmentConnectString;
+                _logger.LogInformation($"Reading DB Connect string from Docker: {dockerEnvironmentConnectString}");
+            }
         }
 
         /// <summary>
@@ -52,7 +59,7 @@ namespace PnyxWebAssembly.Server.Controllers
         [HttpGet]
         public IActionResult GetAll([FromQuery] PaginatedList paginatedList, [FromQuery] string userName)
         {
-            _logger.LogDebug(string.IsNullOrEmpty(userName) ? $"Get all issues for user {userName}" : "Get all issues");
+            _logger.LogInformation(string.IsNullOrEmpty(userName) ? $"Get all issues for user {userName}" : "Get all issues");
 
             DbServiceContext dbServiceContext = DatabaseInitializationService.GetDbServiceContext();
 
@@ -92,7 +99,7 @@ namespace PnyxWebAssembly.Server.Controllers
         [HttpGet("ImageNameForHashtag/{hashtag}")]
         public IActionResult GetImageNameForHashtag(string hashtag)
         {
-            _logger.LogDebug($"Get image name for {hashtag}");
+            _logger.LogInformation($"Get image name for {hashtag}");
 
             using DbServiceContext dbServiceContext = DatabaseInitializationService.GetDbServiceContext();
             
@@ -111,7 +118,7 @@ namespace PnyxWebAssembly.Server.Controllers
         [HttpGet("Image/{imageName}")]
         public IActionResult GetImage(string imageName)
         {
-            _logger.LogDebug($"Get image {imageName}");
+            _logger.LogInformation($"Get image {imageName}");
 
             if (!System.IO.File.Exists(@$"Images\Cards\{imageName}"))
             {

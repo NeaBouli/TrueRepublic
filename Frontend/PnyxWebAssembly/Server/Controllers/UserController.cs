@@ -29,6 +29,13 @@ namespace PnyxWebAssembly.Server.Controllers
             _logger = logger;
 
             DatabaseInitializationService.DbConnectString = configuration["DBConnectString"];
+            string dockerEnvironmentConnectString = Environment.GetEnvironmentVariable("DBCONNECTSTRING_PNYX");
+
+            if (!string.IsNullOrEmpty(dockerEnvironmentConnectString))
+            {
+                DatabaseInitializationService.DbConnectString = dockerEnvironmentConnectString;
+                _logger.LogInformation($"Reading DB Connect string from Docker: {dockerEnvironmentConnectString}");
+            }
         }
 
         /// <summary>
@@ -40,7 +47,7 @@ namespace PnyxWebAssembly.Server.Controllers
         [HttpGet("ByExternalId/{externalUserId}")]
         public IActionResult GetUserByExternalId(string externalUserId)
         {
-            _logger.LogDebug($"Get user by externalUserId {externalUserId}");
+            _logger.LogInformation($"Get user by externalUserId {externalUserId}");
 
             DbServiceContext dbServiceContext = DatabaseInitializationService.GetDbServiceContext();
 
@@ -68,7 +75,7 @@ namespace PnyxWebAssembly.Server.Controllers
         [HttpGet("ById/{userId}")]
         public IActionResult GetUserById(string userId)
         {
-            _logger.LogDebug($"Get user by id {userId}");
+            _logger.LogInformation($"Get user by id {userId}");
 
             DbServiceContext dbServiceContext = DatabaseInitializationService.GetDbServiceContext();
 
@@ -96,7 +103,7 @@ namespace PnyxWebAssembly.Server.Controllers
         [HttpGet("ByName/{userName}")]
         public IActionResult GetUserByUserId(string userName)
         {
-            _logger.LogDebug($"Get user by name {userName}");
+            _logger.LogInformation($"Get user by name {userName}");
 
             DbServiceContext dbServiceContext = DatabaseInitializationService.GetDbServiceContext();
 
@@ -124,7 +131,7 @@ namespace PnyxWebAssembly.Server.Controllers
         [HttpPost]
         public IActionResult Create([FromBody] User user)
         {
-            _logger.LogDebug($"Creating user {user.UserName}");
+            _logger.LogInformation($"Creating user {user.UserName}");
 
             DbServiceContext dbServiceContext = DatabaseInitializationService.GetDbServiceContext();
 

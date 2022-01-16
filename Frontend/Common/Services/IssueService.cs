@@ -428,7 +428,16 @@ namespace Common.Services
             {
                 foreach (Issue issue in issues)
                 {
-                    issue.Proposals = new List<Proposal>();
+                    if (!issue.HasMyStake())
+                    {
+                        issue.Proposals = new List<Proposal>();
+                    }
+                    else
+                    {
+                        Proposal proposal = issue.Proposals.FirstOrDefault(p => p.HasMyStake);
+
+                        issue.Proposals = proposal != null ? new List<Proposal> { proposal } : new List<Proposal>();
+                    }
                 }
             }
 

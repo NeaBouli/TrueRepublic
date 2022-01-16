@@ -1,0 +1,6 @@
+FROM mcr.microsoft.com/mssql/server:2019-latest
+
+COPY import/ /var/opt/mssql/backup/
+
+CMD /opt/mssql-tools/bin/sqlcmd -U 'sa' -P 'Start#123' -Q"RESTORE DATABASE PnyxAuthenticationDB FROM DISK='/var/opt/mssql/backup/PnyxAuthenticationDB.bak';" & /opt/mssql/bin/sqlservr
+CMD /opt/mssql-tools/bin/sqlcmd -U 'sa' -P 'Start#123' -Q"RESTORE DATABASE PnyxDb FROM DISK='/var/opt/mssql/backup/PnyxDb.bak';" & /opt/mssql/bin/sqlservr

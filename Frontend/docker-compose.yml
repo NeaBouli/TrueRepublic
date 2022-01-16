@@ -1,0 +1,39 @@
+version: '3.4'
+
+services:
+  db:
+    image: "mcr.microsoft.com/mssql/server"
+    container_name: 'PnyxDb'
+    environment:
+        SA_PASSWORD: "Start#123"
+        ACCEPT_EULA: "Y"
+        ENV MSSQL_PID: "Express"
+    volumes:
+        - "C:/Users/andre/OneDrive/Dokumente/pnyx/Frontend/Database/import:/var/opt/mssql/backup"
+
+  pnyxwebassembly.server:
+    container_name: 'PnyxWebAssembly.Server'
+    image: ${DOCKER_REGISTRY-}pnyxwebassemblyserver
+    build:
+      context: .
+      dockerfile: PnyxWebAssembly/Server/Dockerfile
+    environment:
+        DBCONNECTSTRING_PNYX: "Server=db;Database=PnyxDB;User=sa;Password=Start#123;"
+        DBCONNECTSTRING_AUTH: "Server=db;Database=PnyxAuthenticationDB;User=sa;Password=Start#123;"
+    ports:
+        - 8080:80
+        - 8443:443
+
+  webservice:
+    container_name: 'WebService'
+    image: ${DOCKER_REGISTRY-}webservice
+    build:
+      context: .
+      dockerfile: WebService/Dockerfile
+    environment:
+        DBCONNECTSTRING_PNYX: "Server=db;Database=PnyxDB;User=sa;Password=Start#123;"
+        ASPNETCORE_ENVIRONMENT: "Development"
+        ASPNETCORE_URLS: "https://+:444;http://+:81"
+    ports:
+        - 8081:81
+        - 8444:444

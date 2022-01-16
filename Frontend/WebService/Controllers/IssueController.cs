@@ -38,6 +38,14 @@ namespace WebService.Controllers
             _configuration = configuration;
 
             DatabaseInitializationService.DbConnectString = configuration["DBConnectString"];
+
+            string dockerEnvironmentConnectString = Environment.GetEnvironmentVariable("DBCONNECTSTRING_PNYX");
+
+            if (!string.IsNullOrEmpty(dockerEnvironmentConnectString))
+            {
+                DatabaseInitializationService.DbConnectString = dockerEnvironmentConnectString;
+                _logger.LogInformation($"Reading DB Connect string from Docker: {dockerEnvironmentConnectString}");
+            }
         }
 
         /// <summary>
