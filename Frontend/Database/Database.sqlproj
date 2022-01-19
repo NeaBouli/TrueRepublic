@@ -60,6 +60,7 @@
     <Folder Include="dbo\Tables\" />
     <Folder Include="create" />
     <Folder Include="import" />
+    <Folder Include="data" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="dbo\Tables\WalletTransactions.sql" />

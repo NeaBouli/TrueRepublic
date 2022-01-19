@@ -9,7 +9,9 @@ services:
         ACCEPT_EULA: "Y"
         ENV MSSQL_PID: "Express"
     volumes:
-        - "C:/Users/andre/OneDrive/Dokumente/pnyx/Frontend/Database/import:/var/opt/mssql/backup"
+        - "./Database/import:/var/opt/mssql/backup"
+    ports:
+        - 1433:1433
 
   pnyxwebassembly.server:
     container_name: 'PnyxWebAssembly.Server'
