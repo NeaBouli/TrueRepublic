@@ -20,6 +20,11 @@ namespace PnyxWebAssembly.Server.Controllers
         private readonly ILogger<UserController> _logger;
 
         /// <summary>
+        /// The is docker
+        /// </summary>
+        private bool _isDocker;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="IssueController"/> class.
         /// </summary>
         /// <param name="logger">The logger.</param>
@@ -28,14 +33,7 @@ namespace PnyxWebAssembly.Server.Controllers
         {
             _logger = logger;
 
-            DatabaseInitializationService.DbConnectString = configuration["DBConnectString"];
-            string dockerEnvironmentConnectString = Environment.GetEnvironmentVariable("DBCONNECTSTRING_PNYX");
-
-            if (!string.IsNullOrEmpty(dockerEnvironmentConnectString))
-            {
-                DatabaseInitializationService.DbConnectString = dockerEnvironmentConnectString;
-                _logger.LogInformation($"Reading DB Connect string from Docker: {dockerEnvironmentConnectString}");
-            }
+            InitServer(configuration);
         }
 
         /// <summary>
@@ -153,22 +151,16 @@ namespace PnyxWebAssembly.Server.Controllers
         [HttpGet("Avatar/{userName}")]
         public IActionResult GetAvatar(string userName)
         {
-            if (!System.IO.File.Exists(@$"Images\Avatars\{userName}.jpg") &&
-                !System.IO.File.Exists(@$"Images\Avatars\{userName}.png"))
+            string path = GetPath(userName);
+
+            if (!System.IO.File.Exists(path))
             {
                 return NotFound();
             }
 
-            string imageName = $"{userName}.jpg";
-
-            if (!System.IO.File.Exists(@$"Images\Avatars\{imageName}"))
-            {
-                imageName = $"{userName}.png";
-            }
-
             _logger.LogInformation($"Get avatar for {userName}");
 
-            return Ok(System.IO.File.Open(@$"Images\Avatars\{imageName}", FileMode.Open, FileAccess.Read, FileShare.Read));
+            return Ok(System.IO.File.Open(path, FileMode.Open, FileAccess.Read, FileShare.Read));
         }
 
         /// <summary>
@@ -179,23 +171,83 @@ namespace PnyxWebAssembly.Server.Controllers
         [HttpGet("AvatarContentType/{userName}")]
         public IActionResult GetAvatarContentType(string userName)
         {
-            if (!System.IO.File.Exists(@$"Images\Avatars\{userName}.jpg") &&
-                !System.IO.File.Exists(@$"Images\Avatars\{userName}.png"))
+            string path = GetPath(userName);
+
+            if (!System.IO.File.Exists(path))
             {
                 return NotFound();
             }
 
-            string imageName = $"{userName}.jpg";
-            string imageType = "jpeg";
-
-            if (!System.IO.File.Exists(@$"Images\Avatars\{imageName}"))
-            {
-                imageType = "png";
-            }
+            string imageType = Path.GetExtension(path).Replace(".", string.Empty);
 
             _logger.LogInformation($"Get avatar content type for {userName}: {imageType}");
 
             return Ok(imageType);
+        }
+
+        /// <summary>
+        /// Gets the path.
+        /// </summary>
+        /// <param name="userName">Name of the user.</param>
+        /// <returns>The path to the avatar image file</returns>
+        private string GetPath(string userName)
+        {
+            string imageName = $"{userName}.jpg";
+
+            imageName = imageName.Replace("ä", "ae");
+            imageName = imageName.Replace("ö", "oe");
+            imageName = imageName.Replace("ü", "ue");
+            imageName = imageName.Replace("ß", "ss");
+
+            imageName = imageName.Replace("Ä", "Ae");
+            imageName = imageName.Replace("Ö", "Oe");
+            imageName = imageName.Replace("Ü", "Ue");
+
+            string path = @$"Images\Avatars\{imageName}";
+
+            if (_isDocker)
+            {
+                path = path.Replace("\\", "/");
+            }
+
+            if (!System.IO.File.Exists(path))
+            {
+                path = Path.ChangeExtension(path, "png");
+            }
+
+            return path;
+        }
+
+        /// <summary>
+        /// Initializes the server.
+        /// </summary>
+        /// <param name="configuration">The configuration.</param>
+        private void InitServer(IConfiguration configuration)
+        {
+            string dockerEnvironmentConnectString = Environment.GetEnvironmentVariable("DBCONNECTSTRING_PNYX");
+
+            if (!string.IsNullOrEmpty(dockerEnvironmentConnectString))
+            {
+                _isDocker = true;
+
+                if (string.IsNullOrEmpty(DatabaseInitializationService.DbConnectString) ||
+                    DatabaseInitializationService.DbConnectString != dockerEnvironmentConnectString)
+                {
+                    DatabaseInitializationService.DbConnectString = dockerEnvironmentConnectString;
+                    _logger.LogInformation($"Reading DB Connect string from Docker: {dockerEnvironmentConnectString}");
+                }
+            }
+            else
+            {
+                string configurationConnectString = configuration["DBConnectString"];
+
+                if (string.IsNullOrEmpty(DatabaseInitializationService.DbConnectString) ||
+                    DatabaseInitializationService.DbConnectString != configurationConnectString)
+                {
+                    DatabaseInitializationService.DbConnectString = configurationConnectString;
+                    _logger.LogInformation($"Reading DB Connect string from appsettings: {configurationConnectString}");
+                }
+            }
         }
     }
 }

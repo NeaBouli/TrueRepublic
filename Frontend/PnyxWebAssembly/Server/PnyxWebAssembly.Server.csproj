@@ -28,7 +28,6 @@
 
   <ItemGroup>
     <Folder Include="Images\Avatars\" />
-    <Folder Include="Images\Cards\" />
   </ItemGroup>
 
   <ItemGroup>
@@ -53,7 +52,7 @@
     <None Update="Images\Cards\bussi.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Images\Cards\büro.jpg">
+    <None Update="Images\Cards\buero.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Images\Cards\cam.jpg">
@@ -116,7 +115,7 @@
     <None Update="Images\Cards\lgbtq.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Images\Cards\militär.jpg">
+    <None Update="Images\Cards\militaer.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Images\Cards\money.jpg">
@@ -164,7 +163,7 @@
     <None Update="Images\Cards\umwelt.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Images\Cards\verträge.jpg">
+    <None Update="Images\Cards\vertraege.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Images\Cards\welding.jpg">

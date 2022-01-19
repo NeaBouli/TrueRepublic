@@ -30,6 +30,11 @@ namespace PnyxWebAssembly.Server.Controllers
         private readonly IConfiguration _configuration;
 
         /// <summary>
+        /// The is docker
+        /// </summary>
+        private bool _isDocker;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="IssueController"/> class.
         /// </summary>
         /// <param name="logger">The logger.</param>
@@ -39,14 +44,7 @@ namespace PnyxWebAssembly.Server.Controllers
             _logger = logger;
             _configuration = configuration;
 
-            DatabaseInitializationService.DbConnectString = configuration["DBConnectString"];
-            string dockerEnvironmentConnectString = Environment.GetEnvironmentVariable("DBCONNECTSTRING_PNYX");
-
-            if (!string.IsNullOrEmpty(dockerEnvironmentConnectString))
-            {
-                DatabaseInitializationService.DbConnectString = dockerEnvironmentConnectString;
-                _logger.LogInformation($"Reading DB Connect string from Docker: {dockerEnvironmentConnectString}");
-            }
+            InitServer(configuration);
         }
 
         /// <summary>
@@ -147,55 +145,58 @@ namespace PnyxWebAssembly.Server.Controllers
         [HttpGet("Image/{imageName}")]
         public IActionResult GetImage(string imageName)
         {
-            if (!System.IO.File.Exists(@$"Images\Cards\{imageName}"))
+            imageName = imageName.Replace("ä", "ae");
+            imageName = imageName.Replace("ö", "oe");
+            imageName = imageName.Replace("ü", "ue");
+            imageName = imageName.Replace("ß", "ss");
+
+            string path = @$"Images\Cards\{imageName}";
+
+            if (_isDocker)
+            {
+                path = path.Replace("\\", "/");
+            }
+
+            if (!System.IO.File.Exists(path))
             {
                 return NotFound();
             }
 
             _logger.LogInformation($"Returning image {imageName}");
 
-            return Ok(System.IO.File.Open(@$"Images\Cards\{imageName}", FileMode.Open, FileAccess.Read, FileShare.Read));
-        }
-
-        /*
-        /// <summary>
-        /// Gets the image for hashtags.
-        /// </summary>
-        /// <param name="hashtag">The hashtag.</param>
-        /// <returns>
-        /// The matching image for the given hashtags
-        /// </returns>
-        [HttpGet("ImageNameForHashtag/{hashtag}")]
-        public IActionResult GetImageNameForHashtag(string hashtag)
-        {
-            _logger.LogInformation($"Get image name for {hashtag}");
-
-            using DbServiceContext dbServiceContext = DatabaseInitializationService.GetDbServiceContext();
-            
-            ImageInfoService imageInfoService = new ImageInfoService();
-
-            string image = imageInfoService.GetImageForHashtag(dbServiceContext, hashtag);
-
-            return Ok(image);
+            return Ok(System.IO.File.Open(path, FileMode.Open, FileAccess.Read, FileShare.Read));
         }
 
         /// <summary>
-        /// Gets the image.
+        /// Initializes the server.
         /// </summary>
-        /// <param name="imageName">Name of the image.</param>
-        /// <returns>The image for the given image name</returns>
-        [HttpGet("Image/{imageName}")]
-        public IActionResult GetImage(string imageName)
+        /// <param name="configuration">The configuration.</param>
+        private void InitServer(IConfiguration configuration)
         {
-            _logger.LogInformation($"Get image {imageName}");
+            string dockerEnvironmentConnectString = Environment.GetEnvironmentVariable("DBCONNECTSTRING_PNYX");
 
-            if (!System.IO.File.Exists(@$"Images\Cards\{imageName}"))
+            if (!string.IsNullOrEmpty(dockerEnvironmentConnectString))
             {
-                return NotFound();
-            }
+                _isDocker = true;
 
-            return Ok(System.IO.File.Open(@$"Images\Cards\{imageName}", FileMode.Open, FileAccess.Read, FileShare.Read));
+                if (string.IsNullOrEmpty(DatabaseInitializationService.DbConnectString) ||
+                    DatabaseInitializationService.DbConnectString != dockerEnvironmentConnectString)
+                {
+                    DatabaseInitializationService.DbConnectString = dockerEnvironmentConnectString;
+                    _logger.LogInformation($"Reading DB Connect string from Docker: {dockerEnvironmentConnectString}");
+                }
+            }
+            else
+            {
+                string configurationConnectString = configuration["DBConnectString"];
+
+                if (string.IsNullOrEmpty(DatabaseInitializationService.DbConnectString) ||
+                    DatabaseInitializationService.DbConnectString != configurationConnectString)
+                {
+                    DatabaseInitializationService.DbConnectString = configurationConnectString;
+                    _logger.LogInformation($"Reading DB Connect string from appsettings: {configurationConnectString}");
+                }
+            }
         }
-        */
     }
 }
