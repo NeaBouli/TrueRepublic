@@ -47,8 +47,6 @@ namespace PnyxWebAssembly.Server.Controllers
         [HttpGet("ByExternalId/{externalUserId}")]
         public IActionResult GetUserByExternalId(string externalUserId)
         {
-            _logger.LogInformation($"Get user by externalUserId {externalUserId}");
-
             DbServiceContext dbServiceContext = DatabaseInitializationService.GetDbServiceContext();
 
             UserService userService = new UserService();
@@ -61,6 +59,8 @@ namespace PnyxWebAssembly.Server.Controllers
                 {
                     return NotFound();
                 }
+
+                _logger.LogInformation($"Get user by externalUserId {externalUserId}: {user}");
 
                 return Ok(user);
             }
@@ -75,8 +75,6 @@ namespace PnyxWebAssembly.Server.Controllers
         [HttpGet("ById/{userId}")]
         public IActionResult GetUserById(string userId)
         {
-            _logger.LogInformation($"Get user by id {userId}");
-
             DbServiceContext dbServiceContext = DatabaseInitializationService.GetDbServiceContext();
 
             UserService userService = new UserService();
@@ -89,6 +87,8 @@ namespace PnyxWebAssembly.Server.Controllers
                 {
                     return NotFound();
                 }
+
+                _logger.LogInformation($"Get user by id {userId}: {user}");
 
                 return Ok(user);
             }
@@ -103,8 +103,6 @@ namespace PnyxWebAssembly.Server.Controllers
         [HttpGet("ByName/{userName}")]
         public IActionResult GetUserByUserId(string userName)
         {
-            _logger.LogInformation($"Get user by name {userName}");
-
             DbServiceContext dbServiceContext = DatabaseInitializationService.GetDbServiceContext();
 
             UserService userService = new UserService();
@@ -117,6 +115,8 @@ namespace PnyxWebAssembly.Server.Controllers
                 {
                     return NotFound();
                 }
+
+                _logger.LogInformation($"Get user by name {userName}");
 
                 return Ok(user);
             }
@@ -131,8 +131,6 @@ namespace PnyxWebAssembly.Server.Controllers
         [HttpPost]
         public IActionResult Create([FromBody] User user)
         {
-            _logger.LogInformation($"Creating user {user.UserName}");
-
             DbServiceContext dbServiceContext = DatabaseInitializationService.GetDbServiceContext();
 
             using (dbServiceContext)
@@ -140,6 +138,8 @@ namespace PnyxWebAssembly.Server.Controllers
                 UserService userService = new UserService();
 
                 userService.CreateUser(dbServiceContext, user, 100D);
+                
+                _logger.LogInformation($"Created user {user.UserName}");
 
                 return Ok();
             }
@@ -166,6 +166,8 @@ namespace PnyxWebAssembly.Server.Controllers
                 imageName = $"{userName}.png";
             }
 
+            _logger.LogInformation($"Get avatar for {userName}");
+
             return Ok(System.IO.File.Open(@$"Images\Avatars\{imageName}", FileMode.Open, FileAccess.Read, FileShare.Read));
         }
 
@@ -190,6 +192,8 @@ namespace PnyxWebAssembly.Server.Controllers
             {
                 imageType = "png";
             }
+
+            _logger.LogInformation($"Get avatar content type for {userName}: {imageType}");
 
             return Ok(imageType);
         }

@@ -142,8 +142,8 @@ namespace PnyxWebAssembly.Client.Components
         /// </summary>
         private async void UpdateAvatarInfos()
         {
-            UserCacheService.ClientFactory = ClientFactory;
-            User user = await UserCacheService.GetUserById(Issue.CreatorUserId);
+            UserService.ClientFactory = ClientFactory;
+            User user = await UserService.GetUserById(Issue.CreatorUserId);
 
             if (user != null)
             {
@@ -152,9 +152,10 @@ namespace PnyxWebAssembly.Client.Components
 
             AvatarName = CreatorUserName.Substring(0, 1).ToUpperInvariant();
 
-            AvatarImageCacheService.ClientFactory = ClientFactory;
-            HasAvatarImage = await AvatarImageCacheService.HasAvatarImage(CreatorUserName);
-            AvatarImage = await AvatarImageCacheService.GetAvatarImageBase64(CreatorUserName);
+            AvatarImageService.ClientFactory = ClientFactory;
+            AvatarImage = await AvatarImageService.GetAvatarImageBase64(CreatorUserName);
+
+            HasAvatarImage = !string.IsNullOrEmpty(AvatarImage);
 
             await InvokeAsync(StateHasChanged);
         }
@@ -164,8 +165,8 @@ namespace PnyxWebAssembly.Client.Components
         /// </summary>
         private async void UpdateImageInfos()
         {
-            IssueImageCacheService.ClientFactory = ClientFactory;
-            IssueImage = await IssueImageCacheService.GetImageForHashtags(Issue.Tags);
+            IssueImageService.ClientFactory = ClientFactory;
+            IssueImage = await IssueImageService.GetImageFromService(Issue.Id);
 
             await InvokeAsync(StateHasChanged);
         }

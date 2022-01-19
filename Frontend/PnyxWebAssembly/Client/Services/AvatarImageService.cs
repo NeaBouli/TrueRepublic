@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Net.Http;
@@ -10,7 +9,7 @@ namespace PnyxWebAssembly.Client.Services
     /// <summary>
     /// Implementation of the avatar image cache service
     /// </summary>
-    public static class AvatarImageCacheService
+    public static class AvatarImageService
     {
         /// <summary>
         /// Gets or sets the client factory.
@@ -21,38 +20,13 @@ namespace PnyxWebAssembly.Client.Services
         public static IHttpClientFactory ClientFactory { get; set; }
 
         /// <summary>
-        /// The avatar image cache dictionary
-        /// </summary>
-        private static readonly Dictionary<string, string> AvatarImageCacheDictionary = new();
-
-        /// <summary>
-        /// Determines whether [has avatar image] [the specified user name].
-        /// </summary>
-        /// <param name="userName">Name of the user.</param>
-        /// <returns>
-        ///   <c>true</c> if [has avatar image] [the specified user name]; otherwise, <c>false</c>.
-        /// </returns>
-        public static async Task<bool> HasAvatarImage(string userName)
-        {
-            var avatarImage = await GetAvatarImageBase64(userName);
-
-            return !string.IsNullOrEmpty(avatarImage);
-        }
-
-        /// <summary>
         /// Gets the avatar image base64.
         /// </summary>
         /// <param name="userName">Name of the user.</param>
         /// <returns></returns>
         public static async Task<string> GetAvatarImageBase64(string userName)
         {
-            lock (AvatarImageCacheDictionary)
-            {
-                if (AvatarImageCacheDictionary.ContainsKey(userName))
-                {
-                    return AvatarImageCacheDictionary[userName];
-                }
-            }
+            // TODO: implement cache as described here: https://docs.microsoft.com/de-de/aspnet/core/blazor/state-management?view=aspnetcore-6.0&pivots=webassembly#browser-storage-wasm
 
             using HttpClient client = ClientFactory.CreateClient("PnyxWebAssembly.ServerAPI.Public");
 
@@ -101,11 +75,6 @@ namespace PnyxWebAssembly.Client.Services
                 imageStream.Close();
 
                 string base64 = $"data:image/{contentType};base64, {Convert.ToBase64String(byteArray)}";
-
-                lock (AvatarImageCacheDictionary)
-                {
-                    AvatarImageCacheDictionary.TryAdd(userName, base64);
-                }
 
                 return base64;
             }

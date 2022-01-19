@@ -14,3 +14,5 @@ bin
 obj
 obj
 bin
+/Frontend/Database/Database.jfm
+/Frontend/Database/Database.dbmdl

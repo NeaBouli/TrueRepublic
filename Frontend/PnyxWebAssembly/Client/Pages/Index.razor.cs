@@ -159,7 +159,7 @@ namespace PnyxWebAssembly.Client.Pages
         /// </summary>
         protected override async Task OnInitializedAsync()
         {
-            AvatarImageCacheService.ClientFactory = ClientFactory;
+            AvatarImageService.ClientFactory = ClientFactory;
 
             await ManageWindowResizing();
 
@@ -172,7 +172,7 @@ namespace PnyxWebAssembly.Client.Pages
         private async Task UpdateUserInfo()
         {
             ShowAddUserWizard = false;
-            UserCacheService.User = null;
+            UserService.User = null;
             MainLayout.UserName = string.Empty;
             MainLayout.TotalBalance = -1;
 
@@ -218,13 +218,13 @@ namespace PnyxWebAssembly.Client.Pages
 
                 double totalBalance = userFromService.Wallet.TotalBalance;
 
-                UserCacheService.User = userFromService;
+                UserService.User = userFromService;
 
                 UserName = userFromService.UserName;
                 MainLayout.UserName = userFromService.UserName;
                 MainLayout.TotalBalance = int.Parse(Math.Round(totalBalance, 0).ToString(CultureInfo.InvariantCulture));
 
-                string avatarImage = await AvatarImageCacheService.GetAvatarImageBase64(userFromService.UserName);
+                string avatarImage = await AvatarImageService.GetAvatarImageBase64(userFromService.UserName);
                 MainLayout.AvatarImage = avatarImage;
 
                 List<Issue> issues = await client.GetFromJsonAsync<List<Issue>>($"Issues?userName={UserName}");
@@ -235,11 +235,6 @@ namespace PnyxWebAssembly.Client.Pages
                     Issues = issues;
                 }
 
-                lock (IssueImageCacheService.FileDictionary)
-                {
-                    Count = IssueImageCacheService.FileDictionary.Count;
-                }
-                
                 await InvokeAsync(StateHasChanged);
             }
         }

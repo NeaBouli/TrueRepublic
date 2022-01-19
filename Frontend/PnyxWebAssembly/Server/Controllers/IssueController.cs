@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using Common.Data;
 using Common.Entities;
 using Common.Services;
@@ -90,6 +91,74 @@ namespace PnyxWebAssembly.Server.Controllers
         }
 
         /// <summary>
+        /// Gets the image for issue.
+        /// </summary>
+        /// <param name="issueId">The issue identifier.</param>
+        /// <returns>The image stream for the issue</returns>
+        [HttpGet("ImageNameForIssue/{issueId}")]
+        public IActionResult GetImageNameForIssue(string issueId)
+        {
+            using DbServiceContext dbServiceContext = DatabaseInitializationService.GetDbServiceContext();
+
+            IssueService issueService = new IssueService();
+            Issue issue = issueService.GetById(dbServiceContext, issueId);
+
+            if (issue == null)
+            {
+                return NotFound();
+            }
+
+            Dictionary<string, int> imageNamesCountDictionary = new Dictionary<string, int>();
+
+            ImageInfoService imageInfoService = new ImageInfoService();
+
+            foreach (string hashtag in issue.GetTags())
+            {
+                string imageName = imageInfoService.GetImageForHashtag(dbServiceContext, hashtag);
+
+                if (!imageNamesCountDictionary.ContainsKey(imageName))
+                {
+                    imageNamesCountDictionary.Add(imageName, 0);
+                }
+                else
+                {
+                    imageNamesCountDictionary[imageName]++;
+                }
+            }
+
+            string image = "verträge.jpg";
+
+            if (imageNamesCountDictionary.Count > 0)
+            {
+                image = imageNamesCountDictionary
+                    .FirstOrDefault(i => i.Value == imageNamesCountDictionary.Values.Max()).Key;
+            }
+
+            _logger.LogInformation($"Image found for issueId {issueId}: {image}");
+
+            return Ok(image);
+        }
+
+        /// <summary>
+        /// Gets the image.
+        /// </summary>
+        /// <param name="imageName">Name of the image.</param>
+        /// <returns>The image for the given image name</returns>
+        [HttpGet("Image/{imageName}")]
+        public IActionResult GetImage(string imageName)
+        {
+            if (!System.IO.File.Exists(@$"Images\Cards\{imageName}"))
+            {
+                return NotFound();
+            }
+
+            _logger.LogInformation($"Returning image {imageName}");
+
+            return Ok(System.IO.File.Open(@$"Images\Cards\{imageName}", FileMode.Open, FileAccess.Read, FileShare.Read));
+        }
+
+        /*
+        /// <summary>
         /// Gets the image for hashtags.
         /// </summary>
         /// <param name="hashtag">The hashtag.</param>
@@ -127,5 +196,6 @@ namespace PnyxWebAssembly.Server.Controllers
 
             return Ok(System.IO.File.Open(@$"Images\Cards\{imageName}", FileMode.Open, FileAccess.Read, FileShare.Read));
         }
+        */
     }
 }
