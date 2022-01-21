@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Data;
+using System.Linq;
 using Common.Data;
 using Common.Entities;
 
@@ -14,6 +15,19 @@ namespace Common.Services
         /// Occurs when [table imported].
         /// </summary>
         public event EventHandler<NameCountEventArgs> TableImported;
+
+        /// <summary>
+        /// Determines whether [is database empty].
+        /// </summary>
+        /// <returns>
+        ///   <c>true</c> if [is database empty]; otherwise, <c>false</c>.
+        /// </returns>
+        public bool IsDbEmpty()
+        {
+            using DbServiceContext dbServiceContext = DatabaseInitializationService.GetDbServiceContext();
+
+            return dbServiceContext.Users.ToList().Count == 0;
+        }
 
         /// <summary>
         /// Imports the excel file.

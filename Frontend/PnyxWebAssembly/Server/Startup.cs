@@ -1,4 +1,8 @@
 using System;
+using System.IO;
+using System.Linq;
+using Common.Data;
+using Common.Services;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -24,17 +28,33 @@ namespace PnyxWebAssembly.Server
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
-            string connectString = Configuration.GetConnectionString("DefaultConnection");
+            string authConnectString = Configuration.GetConnectionString("DefaultConnection");
 
-            string dockerEnvironmentConnectString = Environment.GetEnvironmentVariable("DBCONNECTSTRING_AUTH");
+            string authDockerConnectString = Environment.GetEnvironmentVariable("DBCONNECTSTRING_AUTH");
 
-            if (!string.IsNullOrEmpty(dockerEnvironmentConnectString))
+            if (!string.IsNullOrEmpty(authDockerConnectString))
             {
-                connectString = dockerEnvironmentConnectString;
+                authConnectString = authDockerConnectString;
             }
 
             services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlServer(connectString));
+                options.UseSqlServer(authConnectString));
+
+            string pnyxConnectString = Configuration["DBConnectString"];
+
+            string pnyxDockerConnectString = Environment.GetEnvironmentVariable("DBCONNECTSTRING_PNYX");
+
+            if (!string.IsNullOrEmpty(pnyxDockerConnectString))
+            {
+                pnyxConnectString = pnyxDockerConnectString;
+                DatabaseInitializationService.IsDocker = true;
+            }
+
+            DatabaseInitializationService.DbConnectString = pnyxConnectString;
+            DbServiceContext.ConnectString = pnyxConnectString;
+
+            services.AddDbContext<DbServiceContext>(options =>
+                options.UseSqlServer(pnyxConnectString));
 
             services.AddDatabaseDeveloperPageExceptionFilter();
 
@@ -52,7 +72,7 @@ namespace PnyxWebAssembly.Server
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ApplicationDbContext applicationDbContext, DbServiceContext dbServiceContext)
         {
             if (env.IsDevelopment())
             {
@@ -65,6 +85,30 @@ namespace PnyxWebAssembly.Server
                 app.UseExceptionHandler("/Error");
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
+            }
+
+            applicationDbContext.Database.Migrate();
+
+            dbServiceContext.Database.EnsureCreated();
+
+            ExcelImporterService excelImporterService = new ExcelImporterService();
+            if (excelImporterService.IsDbEmpty())
+            {
+                string excelImportFile = "TestData.xlsx";
+
+                if (DatabaseInitializationService.IsDocker)
+                {
+                    if (Directory.Exists("/app/bin/Debug"))
+                    {
+                        excelImportFile = "/app/bin/Debug/net5.0/TestData.xlsx";
+                    }
+                    else
+                    {
+                        excelImportFile = "/app/bin/Release/net5.0/TestData.xlsx";
+                    }
+                }
+
+                excelImporterService.ImportExcelFile(excelImportFile);
             }
 
             app.UseHttpsRedirection();

@@ -1,5 +1,4 @@
-﻿using System.Net.Mime;
-using Common.Entities;
+﻿using Common.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace Common.Data

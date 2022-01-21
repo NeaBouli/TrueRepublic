@@ -5,7 +5,6 @@ using Common.Entities;
 using Common.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
 namespace PnyxWebAssembly.Server.Controllers
@@ -20,20 +19,12 @@ namespace PnyxWebAssembly.Server.Controllers
         private readonly ILogger<UserController> _logger;
 
         /// <summary>
-        /// The is docker
-        /// </summary>
-        private bool _isDocker;
-
-        /// <summary>
         /// Initializes a new instance of the <see cref="IssueController"/> class.
         /// </summary>
         /// <param name="logger">The logger.</param>
-        /// <param name="configuration">The configuration.</param>
-        public UserController(ILogger<UserController> logger, IConfiguration configuration)
+        public UserController(ILogger<UserController> logger)
         {
             _logger = logger;
-
-            InitServer(configuration);
         }
 
         /// <summary>
@@ -205,7 +196,7 @@ namespace PnyxWebAssembly.Server.Controllers
 
             string path = @$"Images\Avatars\{imageName}";
 
-            if (_isDocker)
+            if (DatabaseInitializationService.IsDocker)
             {
                 path = path.Replace("\\", "/");
             }
@@ -216,38 +207,6 @@ namespace PnyxWebAssembly.Server.Controllers
             }
 
             return path;
-        }
-
-        /// <summary>
-        /// Initializes the server.
-        /// </summary>
-        /// <param name="configuration">The configuration.</param>
-        private void InitServer(IConfiguration configuration)
-        {
-            string dockerEnvironmentConnectString = Environment.GetEnvironmentVariable("DBCONNECTSTRING_PNYX");
-
-            if (!string.IsNullOrEmpty(dockerEnvironmentConnectString))
-            {
-                _isDocker = true;
-
-                if (string.IsNullOrEmpty(DatabaseInitializationService.DbConnectString) ||
-                    DatabaseInitializationService.DbConnectString != dockerEnvironmentConnectString)
-                {
-                    DatabaseInitializationService.DbConnectString = dockerEnvironmentConnectString;
-                    _logger.LogInformation($"Reading DB Connect string from Docker: {dockerEnvironmentConnectString}");
-                }
-            }
-            else
-            {
-                string configurationConnectString = configuration["DBConnectString"];
-
-                if (string.IsNullOrEmpty(DatabaseInitializationService.DbConnectString) ||
-                    DatabaseInitializationService.DbConnectString != configurationConnectString)
-                {
-                    DatabaseInitializationService.DbConnectString = configurationConnectString;
-                    _logger.LogInformation($"Reading DB Connect string from appsettings: {configurationConnectString}");
-                }
-            }
         }
     }
 }

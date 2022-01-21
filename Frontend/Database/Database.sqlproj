@@ -59,7 +59,6 @@
     <Folder Include="dbo\" />
     <Folder Include="dbo\Tables\" />
     <Folder Include="create" />
-    <Folder Include="import" />
     <Folder Include="data" />
   </ItemGroup>
   <ItemGroup>
@@ -72,10 +71,5 @@
     <Build Include="dbo\Tables\Proposals.sql" />
     <Build Include="dbo\Tables\Issues.sql" />
     <Build Include="dbo\Tables\ImageInfos.sql" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="import\PnyxDb.bak" />
-    <None Include="import\PnyxAuthenticationDB.bak" />
-    <None Include="import\restore.sh" />
   </ItemGroup>
 </Project>

@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
@@ -28,6 +28,12 @@
 
   <ItemGroup>
     <Folder Include="Images\Avatars\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\..\TestConsole\TestData.xlsx" Link="TestData.xlsx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
   <ItemGroup>

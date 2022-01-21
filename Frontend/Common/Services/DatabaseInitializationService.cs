@@ -17,6 +17,14 @@ namespace Common.Services
         public static string DbConnectString { get; set; }
 
         /// <summary>
+        /// Gets or sets a value indicating whether this instance is docker.
+        /// </summary>
+        /// <value>
+        ///   <c>true</c> if this instance is docker; otherwise, <c>false</c>.
+        /// </value>
+        public static bool IsDocker { get; set; }
+
+        /// <summary>
         /// Creates the database if not existing.
         /// </summary>
         /// <exception cref="System.InvalidOperationException">Will be thrown if the connect string is empty</exception>
