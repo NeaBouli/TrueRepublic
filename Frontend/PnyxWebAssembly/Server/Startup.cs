@@ -98,13 +98,9 @@ namespace PnyxWebAssembly.Server
 
                 if (DatabaseInitializationService.IsDocker)
                 {
-                    if (Directory.Exists("/app/bin/Debug"))
+                    if (File.Exists("/app/bin/Debug/net5.0/TestData.xlsx"))
                     {
                         excelImportFile = "/app/bin/Debug/net5.0/TestData.xlsx";
-                    }
-                    else
-                    {
-                        excelImportFile = "/app/bin/Release/net5.0/TestData.xlsx";
                     }
                 }
 
