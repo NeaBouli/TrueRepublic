@@ -13,20 +13,26 @@ services:
 
   pnyxwebassembly.server:
     container_name: 'PnyxWebAssembly.Server'
-    image: ${DOCKER_REGISTRY-}pnyxwebassemblyserver
+    image: pnyxdocker/pnyxwebassemblyserver
     build:
       context: .
       dockerfile: PnyxWebAssembly/Server/Dockerfile
     environment:
         DBCONNECTSTRING_PNYX: "Server=db;Database=PnyxDB;User=sa;Password=Start#123;"
         DBCONNECTSTRING_AUTH: "Server=db;Database=PnyxAuthenticationDB;User=sa;Password=Start#123;"
+        ASPNETCORE_ENVIRONMENT: "Development"
+        ASPNETCORE_URLS: "https://+:444;http://+:81"
+        ASPNETCORE_Kestrel__Certificates__Default__Password: "Start#123"
+        ASPNETCORE_Kestrel__Certificates__Default__Path: "/https/aspnetapp.pfx"
     ports:
         - 8080:80
         - 8443:443
+    volumes:
+      - ~/.aspnet/https:/https:ro
 
   webservice:
     container_name: 'WebService'
-    image: ${DOCKER_REGISTRY-}webservice
+    image: pnyxdocker/webservice
     build:
       context: .
       dockerfile: WebService/Dockerfile
@@ -34,6 +40,10 @@ services:
         DBCONNECTSTRING_PNYX: "Server=db;Database=PnyxDB;User=sa;Password=Start#123;"
         ASPNETCORE_ENVIRONMENT: "Development"
         ASPNETCORE_URLS: "https://+:444;http://+:81"
+        ASPNETCORE_Kestrel__Certificates__Default__Password: "Start#123"
+        ASPNETCORE_Kestrel__Certificates__Default__Path: "/https/aspnetapp.pfx"
     ports:
         - 8081:81
         - 8444:444
+    volumes:
+      - ~/.aspnet/https:/https:ro
