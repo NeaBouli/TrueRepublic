@@ -4,6 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Threading.Tasks;
 using MudBlazor.Services;
+using PnyxWebAssembly.Client.Services;
 
 namespace PnyxWebAssembly.Client
 {
@@ -24,14 +25,9 @@ namespace PnyxWebAssembly.Client
             builder.Services.AddHttpClient("PnyxWebAssembly.ServerAPI.Private", client => client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress))
                 .AddHttpMessageHandler<BaseAddressAuthorizationMessageHandler>();
 
-            // TODO: might be removed later
-            // Supply HttpClient instances that include access tokens when making requests to the server project
-            // builder.Services.AddScoped(sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient("PnyxWebAssembly.ServerAPI.Private"));
-
             builder.Services.AddHttpClient("PnyxWebAssembly.ServerAPI.Public", client => client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress));
 
-            // TODO: might be removed later
-            // builder.Services.AddScoped(sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient("PnyxWebAssembly.ServerAPI.Public"));
+            builder.Services.AddSingleton<ImageCacheService>();
 
             builder.Services.AddApiAuthorization();
 

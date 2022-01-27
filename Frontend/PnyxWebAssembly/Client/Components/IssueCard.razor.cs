@@ -36,6 +36,15 @@ namespace PnyxWebAssembly.Client.Components
         private NavigationManager NavigationManager { get; set; }
 
         /// <summary>
+        /// Gets or sets the image cache service.
+        /// </summary>
+        /// <value>
+        /// The image cache service.
+        /// </value>
+        [Inject]
+        private ImageCacheService ImageCacheService { get; set; }
+
+        /// <summary>
         /// Gets or sets the issue.
         /// </summary>
         /// <value>
@@ -150,10 +159,23 @@ namespace PnyxWebAssembly.Client.Components
                 CreatorUserName = user.UserName;
             }
 
+            if (string.IsNullOrEmpty(CreatorUserName))
+            {
+                CreatorUserName = @"Unbekannt";
+            }
+
             AvatarName = CreatorUserName.Substring(0, 1).ToUpperInvariant();
 
-            AvatarImageService.ClientFactory = ClientFactory;
-            AvatarImage = await AvatarImageService.GetAvatarImageBase64(CreatorUserName);
+            if (!ImageCacheService.HasImage(CreatorUserName))
+            {
+                AvatarImageService.ClientFactory = ClientFactory;
+                AvatarImage = await AvatarImageService.GetAvatarImageBase64(CreatorUserName);
+                ImageCacheService.Add(CreatorUserName, AvatarImage);
+            }
+            else
+            {
+                AvatarImage = ImageCacheService.Get(CreatorUserName);
+            }
 
             HasAvatarImage = !string.IsNullOrEmpty(AvatarImage);
 
@@ -166,6 +188,7 @@ namespace PnyxWebAssembly.Client.Components
         private async void UpdateImageInfos()
         {
             IssueImageService.ClientFactory = ClientFactory;
+            IssueImageService.ImageCacheService = ImageCacheService;
             IssueImage = await IssueImageService.GetImageFromService(Issue.Id);
 
             await InvokeAsync(StateHasChanged);

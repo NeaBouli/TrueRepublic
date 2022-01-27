@@ -10,7 +10,6 @@ using System.Threading.Tasks;
 using Common.Entities;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
-using Microsoft.JSInterop;
 using PnyxWebAssembly.Client.Components;
 using PnyxWebAssembly.Client.Services;
 using PnyxWebAssembly.Client.Shared;
@@ -21,19 +20,8 @@ namespace PnyxWebAssembly.Client.Pages
     /// Implementation of the index code behind class
     /// </summary>
     /// <seealso cref="Microsoft.AspNetCore.Components.ComponentBase" />
-    public partial class Index : IDisposable
+    public partial class Index
     {
-        private int _count;
-
-        /// <summary>
-        /// Gets or sets the js runtime.
-        /// </summary>
-        /// <value>
-        /// The js runtime.
-        /// </value>
-        [Inject] 
-        private IJSRuntime JsRuntime { get; set; }
-
         /// <summary>
         /// Gets or sets the authentication state provider.
         /// </summary>
@@ -51,6 +39,15 @@ namespace PnyxWebAssembly.Client.Pages
         /// </value>
         [Inject]
         private IHttpClientFactory ClientFactory { get; set; }
+
+        /// <summary>
+        /// Gets or sets the image cache service.
+        /// </summary>
+        /// <value>
+        /// The image cache service.
+        /// </value>
+        [Inject]
+        private ImageCacheService ImageCacheService { get; set; }
 
         /// <summary>
         /// Gets or sets the main layout.
@@ -78,38 +75,6 @@ namespace PnyxWebAssembly.Client.Pages
         /// </value>
         [CascadingParameter]
         public IssueCard IssueCard { get; set; }
-
-        /// <summary>
-        /// Gets or sets the height.
-        /// </summary>
-        /// <value>
-        /// The height.
-        /// </value>
-        public string Height { get; set; }
-
-        /// <summary>
-        /// Gets or sets the width.
-        /// </summary>
-        /// <value>
-        /// The width.
-        /// </value>
-        public string Width { get; set; }
-
-        /// <summary>
-        /// Gets or sets the count.
-        /// </summary>
-        /// <value>
-        /// The count.
-        /// </value>
-        public int Count
-        {
-            get => _count;
-            set
-            {
-                _count = value;
-                InvokeAsync(StateHasChanged);
-            }
-        }
 
         /// <summary>
         /// Gets or sets the name of the user.
@@ -161,7 +126,7 @@ namespace PnyxWebAssembly.Client.Pages
         {
             AvatarImageService.ClientFactory = ClientFactory;
 
-            await ManageWindowResizing();
+            // await ManageWindowResizing();
 
             await UpdateUserInfo();
         }
@@ -224,11 +189,21 @@ namespace PnyxWebAssembly.Client.Pages
                 MainLayout.UserName = userFromService.UserName;
                 MainLayout.TotalBalance = int.Parse(Math.Round(totalBalance, 0).ToString(CultureInfo.InvariantCulture));
 
-                string avatarImage = await AvatarImageService.GetAvatarImageBase64(userFromService.UserName);
+                string avatarImage;
+
+                if (!ImageCacheService.HasImage(userFromService.UserName))
+                {
+                    avatarImage = await AvatarImageService.GetAvatarImageBase64(userFromService.UserName);
+                    ImageCacheService.Add(userFromService.UserName, avatarImage);
+                }
+                else
+                {
+                    avatarImage = ImageCacheService.Get(userFromService.UserName);
+                }
+
                 MainLayout.AvatarImage = avatarImage;
 
                 List<Issue> issues = await client.GetFromJsonAsync<List<Issue>>($"Issues?userName={UserName}");
-                // List<Issue> issues = await client.GetFromJsonAsync<List<Issue>>($"Issues?ItemsPerPage=16&Page=1&userName={UserName}");
 
                 if (issues != null)
                 {
@@ -238,43 +213,7 @@ namespace PnyxWebAssembly.Client.Pages
                 await InvokeAsync(StateHasChanged);
             }
         }
-
-        /// <summary>
-        /// Manages the window resizing.
-        /// </summary>
-        private async Task ManageWindowResizing()
-        {
-            BrowserResizeService.JsRuntime = JsRuntime;
-
-            BrowserResizeService.OnResize += BrowserHasResized;
-
-            await JsRuntime.InvokeAsync<object>("browserResize.registerResizeCallback");
-
-            await GetDimensions();
-        }
-
-        /// <summary>
-        /// Browsers the has resized.
-        /// </summary>
-        private async Task BrowserHasResized()
-        {
-            await GetDimensions();
-
-            await InvokeAsync(StateHasChanged);
-        }
-
-        /// <summary>
-        /// Gets the dimensions.
-        /// </summary>
-        private async Task GetDimensions()
-        {
-            int height = await BrowserResizeService.GetInnerHeight();
-            int width = await BrowserResizeService.GetInnerWidth();
-
-            Height = $@"{height - 85}px";
-            Width = $@"{width}px";
-        }
-
+        
         /// <summary>
         /// Called when [success].
         /// </summary>
@@ -283,14 +222,6 @@ namespace PnyxWebAssembly.Client.Pages
             await UpdateUserInfo();
 
             await InvokeAsync(StateHasChanged);
-        }
-
-        /// <summary>
-        /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
-        /// </summary>
-        public void Dispose()
-        {
-            BrowserResizeService.OnResize -= BrowserHasResized;
         }
     }
 }

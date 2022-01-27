@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 using System.Net;
 using System.Net.Http;
@@ -20,6 +21,14 @@ namespace PnyxWebAssembly.Client.Services
         public static IHttpClientFactory ClientFactory { get; set; }
 
         /// <summary>
+        /// Gets or sets the image cache service.
+        /// </summary>
+        /// <value>
+        /// The image cache service.
+        /// </value>
+        public static  ImageCacheService ImageCacheService { get; set; }
+
+        /// <summary>
         /// Gets the image from service.
         /// </summary>
         /// <param name="issueId">Name of the image.</param>
@@ -33,15 +42,28 @@ namespace PnyxWebAssembly.Client.Services
             
             Stream imageStream = null;
 
-            // TODO: implement cache as described here: https://docs.microsoft.com/de-de/aspnet/core/blazor/state-management?view=aspnetcore-6.0&pivots=webassembly#browser-storage-wasm
+            string imageName = null;
 
             using HttpClient client = ClientFactory.CreateClient("PnyxWebAssembly.ServerAPI.Public");
 
             try
             {
-                string imageName = await client.GetStringAsync($"Issues/ImageNameForIssue/{issueId}");
-                contentType = Path.GetExtension(imageName).Replace(".", string.Empty);
-                imageStream = await client.GetStreamAsync($"Issues/Image/{imageName}");
+                imageName = await client.GetStringAsync($"Issues/ImageNameForIssue/{issueId}");
+
+                if (!ImageCacheService.HasImage(imageName))
+                {
+                    contentType = Path.GetExtension(imageName).Replace(".", string.Empty);
+                    imageStream = await client.GetStreamAsync($"Issues/Image/{imageName}");
+                }
+                else
+                {
+                    string imageData = ImageCacheService.Get(imageName);
+
+                    if (!string.IsNullOrEmpty(imageData))
+                    {
+                        return imageData;
+                    }
+                }
             }
             catch (HttpRequestException ex)
             {
@@ -57,6 +79,8 @@ namespace PnyxWebAssembly.Client.Services
                 }
             }
 
+            // DO something magic here
+
             if (!string.IsNullOrEmpty(contentType) && imageStream != null)
             {
                 byte[] byteArray = StreamToByteArray(imageStream);
@@ -64,6 +88,11 @@ namespace PnyxWebAssembly.Client.Services
                 imageStream.Close();
 
                 base64 = $"data:image/{contentType};base64, {Convert.ToBase64String(byteArray)}";
+
+                if (!string.IsNullOrEmpty(imageName) && !ImageCacheService.HasImage(imageName))
+                {
+                    ImageCacheService.Add(imageName, base64);
+                }
             }
             else
             {
