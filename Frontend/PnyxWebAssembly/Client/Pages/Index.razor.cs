@@ -128,7 +128,6 @@ namespace PnyxWebAssembly.Client.Pages
         protected override async Task OnInitializedAsync()
         {
             AvatarImageService.ClientFactory = ClientFactory;
-            UserService.UserCacheService = UserCacheService;
 
             // await ManageWindowResizing();
 

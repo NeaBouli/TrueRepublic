@@ -9,7 +9,7 @@ namespace PnyxWebAssembly.Client.Services
     /// <summary>
     /// Implementation of the user cache service
     /// </summary>
-    public static class UserService
+    public class UserService
     {
         /// <summary>
         /// Gets or sets the client factory.
@@ -17,7 +17,7 @@ namespace PnyxWebAssembly.Client.Services
         /// <value>
         /// The client factory.
         /// </value>
-        public static IHttpClientFactory ClientFactory { get; set; }
+        public IHttpClientFactory ClientFactory { get; set; }
 
         /// <summary>
         /// Gets or sets the user cache service.
@@ -25,14 +25,14 @@ namespace PnyxWebAssembly.Client.Services
         /// <value>
         /// The user cache service.
         /// </value>
-        public static UserCacheService UserCacheService { get; set; }
+        public UserCacheService UserCacheService { get; set; }
 
         /// <summary>
         /// Gets the user by identifier.
         /// </summary>
         /// <param name="id">The identifier.</param>
         /// <returns>The user for the given id</returns>
-        public static async Task<User> GetUserById(Guid id)
+        public async Task<User> GetUserById(Guid id)
         {
             User user;
 

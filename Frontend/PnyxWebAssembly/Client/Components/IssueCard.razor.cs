@@ -45,6 +45,15 @@ namespace PnyxWebAssembly.Client.Components
         private ImageCacheService ImageCacheService { get; set; }
 
         /// <summary>
+        /// Gets or sets the user service.
+        /// </summary>
+        /// <value>
+        /// The user service.
+        /// </value>
+        [Inject]
+        private UserService UserService { get; set; }
+
+        /// <summary>
         /// Gets or sets the user cache service.
         /// </summary>
         /// <value>
@@ -160,8 +169,9 @@ namespace PnyxWebAssembly.Client.Components
         /// </summary>
         private async void UpdateAvatarInfos()
         {
-            UserService.ClientFactory = ClientFactory;
-            UserService.UserCacheService = UserCacheService;
+            UserService.UserCacheService ??= UserCacheService;
+            UserService.ClientFactory ??= ClientFactory;
+
             User user = await UserService.GetUserById(Issue.CreatorUserId);
 
             if (user != null)

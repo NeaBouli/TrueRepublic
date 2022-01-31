@@ -10,7 +10,7 @@ namespace PnyxWebAssembly.Client.Services
     /// <summary>
     /// Implementation of the issue image cache service
     /// </summary>
-    public static class IssueImageService
+    public class IssueImageService
     {
         /// <summary>
         /// Gets or sets the client factory.

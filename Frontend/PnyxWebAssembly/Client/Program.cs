@@ -27,9 +27,13 @@ namespace PnyxWebAssembly.Client
 
             builder.Services.AddHttpClient("PnyxWebAssembly.ServerAPI.Public", client => client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress));
 
+            builder.Services.AddSingleton<IssueImageService>();
+
             builder.Services.AddSingleton<ImageCacheService>();
 
             builder.Services.AddSingleton<UserCacheService>();
+
+            builder.Services.AddSingleton<UserService>();
 
             builder.Services.AddApiAuthorization();
 
