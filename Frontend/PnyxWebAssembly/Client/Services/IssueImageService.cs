@@ -1,9 +1,9 @@
 ﻿using System;
-using System.Diagnostics;
 using System.IO;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
+using Common.Services;
 
 namespace PnyxWebAssembly.Client.Services
 {
@@ -37,18 +37,15 @@ namespace PnyxWebAssembly.Client.Services
         /// </returns>
         public static async Task<string> GetImageFromService(Guid issueId)
         {
-            string base64;
             string contentType = null;
-            
+
             Stream imageStream = null;
-
-            string imageName = null;
-
-            using HttpClient client = ClientFactory.CreateClient("PnyxWebAssembly.ServerAPI.Public");
 
             try
             {
-                imageName = await client.GetStringAsync($"Issues/ImageNameForIssue/{issueId}");
+                using HttpClient client = ClientFactory.CreateClient("PnyxWebAssembly.ServerAPI.Public");
+
+                string imageName = await client.GetStringAsync($"Issues/ImageNameForIssue/{issueId}");
 
                 if (!ImageCacheService.HasImage(imageName))
                 {
@@ -61,62 +58,39 @@ namespace PnyxWebAssembly.Client.Services
 
                     if (!string.IsNullOrEmpty(imageData))
                     {
+                        await LogService.LogToServer(client, $"Getting image {imageName} from cache");
+
                         return imageData;
                     }
+                }
+
+                if (!string.IsNullOrEmpty(contentType))
+                {
+                    byte[] byteArray = ImageInfoService.StreamToByteArray(imageStream);
+
+                    imageStream.Close();
+
+                    string base64 = $"data:image/{contentType};base64, {Convert.ToBase64String(byteArray)}";
+
+                    if (!string.IsNullOrEmpty(imageName) && !ImageCacheService.HasImage(imageName))
+                    {
+                        ImageCacheService.Add(imageName, base64);
+                    }
+
+                    return base64;
                 }
             }
             catch (HttpRequestException ex)
             {
                 if (ex.StatusCode == HttpStatusCode.NotFound)
                 {
-                    imageStream?.Close();
-
-                    imageStream = null;
+                    return string.Empty;
                 }
-                else
-                {
-                    throw;
-                }
+
+                throw;
             }
 
-            // DO something magic here
-
-            if (!string.IsNullOrEmpty(contentType) && imageStream != null)
-            {
-                byte[] byteArray = StreamToByteArray(imageStream);
-
-                imageStream.Close();
-
-                base64 = $"data:image/{contentType};base64, {Convert.ToBase64String(byteArray)}";
-
-                if (!string.IsNullOrEmpty(imageName) && !ImageCacheService.HasImage(imageName))
-                {
-                    ImageCacheService.Add(imageName, base64);
-                }
-            }
-            else
-            {
-                base64 = string.Empty;
-            }
-
-            return base64;
-        }
-
-        /// <summary>
-        /// Converts a stream to a byte array
-        /// </summary>
-        /// <param name="input">The input.</param>
-        /// <returns>A byte array for the given stream</returns>
-        private static byte[] StreamToByteArray(Stream input)
-        {
-            byte[] buffer = new byte[16 * 1024];
-            using MemoryStream ms = new MemoryStream();
-            int read;
-            while ((read = input.Read(buffer, 0, buffer.Length)) > 0)
-            {
-                ms.Write(buffer, 0, read);
-            }
-            return ms.ToArray();
+            return string.Empty;
         }
     }
 }

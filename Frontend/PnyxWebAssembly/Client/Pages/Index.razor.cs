@@ -49,6 +49,9 @@ namespace PnyxWebAssembly.Client.Pages
         [Inject]
         private ImageCacheService ImageCacheService { get; set; }
 
+        [Inject]
+        private UserCacheService UserCacheService { get; set; }
+
         /// <summary>
         /// Gets or sets the main layout.
         /// </summary>
@@ -125,6 +128,7 @@ namespace PnyxWebAssembly.Client.Pages
         protected override async Task OnInitializedAsync()
         {
             AvatarImageService.ClientFactory = ClientFactory;
+            UserService.UserCacheService = UserCacheService;
 
             // await ManageWindowResizing();
 

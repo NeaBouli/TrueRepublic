@@ -20,6 +20,14 @@ namespace PnyxWebAssembly.Client.Services
         public static IHttpClientFactory ClientFactory { get; set; }
 
         /// <summary>
+        /// Gets or sets the user cache service.
+        /// </summary>
+        /// <value>
+        /// The user cache service.
+        /// </value>
+        public static UserCacheService UserCacheService { get; set; }
+
+        /// <summary>
         /// Gets the user by identifier.
         /// </summary>
         /// <param name="id">The identifier.</param>
@@ -41,7 +49,21 @@ namespace PnyxWebAssembly.Client.Services
 
             using HttpClient client = ClientFactory.CreateClient("PnyxWebAssembly.ServerAPI.Private");
 
+            if (UserCacheService.HasUser(id.ToString()))
+            {
+                user = UserCacheService.Get(id.ToString());
+
+                await LogService.LogToServer(client, $"User {user.Id} ({user.UserName}) taken from user cache");
+
+                return user;
+            }
+
             user = await client.GetFromJsonAsync<User>($"User/ById/{id}");
+
+            if (user != null && !UserCacheService.HasUser(user.Id.ToString()))
+            {
+                UserCacheService.Add(id.ToString(), user);
+            }
 
             return user;
         }

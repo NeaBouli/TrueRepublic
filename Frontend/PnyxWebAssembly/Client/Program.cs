@@ -29,6 +29,8 @@ namespace PnyxWebAssembly.Client
 
             builder.Services.AddSingleton<ImageCacheService>();
 
+            builder.Services.AddSingleton<UserCacheService>();
+
             builder.Services.AddApiAuthorization();
 
             builder.Services.AddMudServices();

@@ -17,6 +17,14 @@ namespace Common.Services
         public static string DbConnectString { get; set; }
 
         /// <summary>
+        /// Gets or sets the database authentication connect string.
+        /// </summary>
+        /// <value>
+        /// The database authentication connect string.
+        /// </value>
+        public static string DbAuthConnectString { get; set; }
+
+        /// <summary>
         /// Gets or sets a value indicating whether this instance is docker.
         /// </summary>
         /// <value>

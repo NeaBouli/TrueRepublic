@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Data;
+using System.IO;
 using System.Linq;
 using Common.Data;
 using Common.Entities;
@@ -50,6 +51,23 @@ namespace Common.Services
             }
 
             return fileName;
+        }
+
+        /// <summary>
+        /// Converts a stream to a byte array
+        /// </summary>
+        /// <param name="input">The input.</param>
+        /// <returns>A byte array for the given stream</returns>
+        public static byte[] StreamToByteArray(Stream input)
+        {
+            byte[] buffer = new byte[16 * 1024];
+            using MemoryStream ms = new MemoryStream();
+            int read;
+            while ((read = input.Read(buffer, 0, buffer.Length)) > 0)
+            {
+                ms.Write(buffer, 0, read);
+            }
+            return ms.ToArray();
         }
 
         /// <summary>

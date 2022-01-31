@@ -1,6 +1,5 @@
 using System;
 using System.IO;
-using System.Linq;
 using Common.Data;
 using Common.Services;
 using Microsoft.AspNetCore.Authentication;
@@ -10,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using PnyxWebAssembly.Server.Data;
 using PnyxWebAssembly.Server.Models;
 
@@ -36,6 +36,8 @@ namespace PnyxWebAssembly.Server
             {
                 authConnectString = authDockerConnectString;
             }
+
+            DatabaseInitializationService.DbAuthConnectString = authConnectString;
 
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(authConnectString));
@@ -72,7 +74,12 @@ namespace PnyxWebAssembly.Server
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ApplicationDbContext applicationDbContext, DbServiceContext dbServiceContext)
+        public void Configure(
+            IApplicationBuilder app, 
+            IWebHostEnvironment env, 
+            ApplicationDbContext applicationDbContext, 
+            DbServiceContext dbServiceContext,
+            ILogger<Startup> logger)
         {
             if (env.IsDevelopment())
             {
@@ -87,25 +94,9 @@ namespace PnyxWebAssembly.Server
                 app.UseHsts();
             }
 
-            applicationDbContext.Database.Migrate();
+            InitDatabase(applicationDbContext, dbServiceContext, logger);
 
-            dbServiceContext.Database.EnsureCreated();
-
-            ExcelImporterService excelImporterService = new ExcelImporterService();
-            if (excelImporterService.IsDbEmpty())
-            {
-                string excelImportFile = "TestData.xlsx";
-
-                if (DatabaseInitializationService.IsDocker)
-                {
-                    if (File.Exists("/app/bin/Debug/net5.0/TestData.xlsx"))
-                    {
-                        excelImportFile = "/app/bin/Debug/net5.0/TestData.xlsx";
-                    }
-                }
-
-                excelImporterService.ImportExcelFile(excelImportFile);
-            }
+            ImportExcelFile(logger);
 
             app.UseHttpsRedirection();
             app.UseBlazorFrameworkFiles();
@@ -123,6 +114,82 @@ namespace PnyxWebAssembly.Server
                 endpoints.MapControllers();
                 endpoints.MapFallbackToFile("index.html");
             });
+        }
+
+        /// <summary>
+        /// Initializes the database.
+        /// </summary>
+        /// <param name="applicationDbContext">The application database context.</param>
+        /// <param name="dbServiceContext">The database service context.</param>
+        /// <param name="logger">The logger.</param>
+        private void InitDatabase(ApplicationDbContext applicationDbContext, DbServiceContext dbServiceContext, ILogger<Startup> logger)
+        {
+            string sourceInfo = DatabaseInitializationService.IsDocker
+                ? "container environment variable DBCONNECTSTRING_AUTH"
+                : "appsettings.json";
+
+            try
+            {
+                logger.LogInformation(
+                    $"Trying to connect to PnyxAuthenticationDB as configured in {sourceInfo}: " +
+                    $"{DatabaseInitializationService.DbAuthConnectString}");
+
+                applicationDbContext.Database.Migrate();
+
+                sourceInfo = DatabaseInitializationService.IsDocker
+                    ? "container environment variable DBCONNECTSTRING_PNYX"
+                    : "appsettings.json";
+
+                logger.LogInformation(
+                    $"Trying to connect to PnyxAuthenticationDB as configured in {sourceInfo}: " +
+                    $"{DatabaseInitializationService.DbConnectString}");
+
+                dbServiceContext.Database.EnsureCreated();
+            }
+            catch (Exception)
+            {
+                sourceInfo = DatabaseInitializationService.IsDocker
+                    ? "container environment variables"
+                    : "appsettings.json";
+
+                logger.LogError($"Error could not find database that was defined in {sourceInfo}");
+
+                if (DatabaseInitializationService.IsDocker)
+                {
+                    logger.LogError("Make sure that 'docker-compose up is used from compose file found here: " +
+                                    "https://github.com/NeaBouli/pnyx/blob/development/Frontend/docker-compose.yml");
+                }
+
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Imports the excel file.
+        /// </summary>
+        private static void ImportExcelFile(ILogger<Startup> logger)
+        {
+            logger.LogInformation("Trying to import excel file with initial data TestData.xls...");
+
+            ExcelImporterService excelImporterService = new ExcelImporterService();
+            if (excelImporterService.IsDbEmpty())
+            {
+                string excelImportFile = "TestData.xlsx";
+
+                if (DatabaseInitializationService.IsDocker)
+                {
+                    if (File.Exists("/app/bin/Debug/net5.0/TestData.xlsx"))
+                    {
+                        excelImportFile = "/app/bin/Debug/net5.0/TestData.xlsx";
+                    }
+                }
+
+                logger.LogInformation(!excelImportFile.Contains("/")
+                    ? "TestData.xls expected in root application directory"
+                    : $"TestData.xls expected in {excelImportFile}");
+
+                excelImporterService.ImportExcelFile(excelImportFile);
+            }
         }
     }
 }
