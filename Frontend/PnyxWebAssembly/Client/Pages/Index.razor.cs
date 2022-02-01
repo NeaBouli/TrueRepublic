@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using Common.Entities;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.JSInterop;
 using PnyxWebAssembly.Client.Components;
 using PnyxWebAssembly.Client.Services;
 using PnyxWebAssembly.Client.Shared;
@@ -22,6 +23,15 @@ namespace PnyxWebAssembly.Client.Pages
     /// <seealso cref="Microsoft.AspNetCore.Components.ComponentBase" />
     public partial class Index
     {
+        /// <summary>
+        /// Gets or sets the js runtime.
+        /// </summary>
+        /// <value>
+        /// The js runtime.
+        /// </value>
+        [Inject]
+        private IJSRuntime JsRuntime { get; set; }
+
         /// <summary>
         /// Gets or sets the authentication state provider.
         /// </summary>
@@ -48,9 +58,6 @@ namespace PnyxWebAssembly.Client.Pages
         /// </value>
         [Inject]
         private ImageCacheService ImageCacheService { get; set; }
-
-        [Inject]
-        private UserCacheService UserCacheService { get; set; }
 
         /// <summary>
         /// Gets or sets the main layout.
@@ -96,6 +103,22 @@ namespace PnyxWebAssembly.Client.Pages
         public string UserName { get; set; }
 
         /// <summary>
+        /// Gets or sets the height.
+        /// </summary>
+        /// <value>
+        /// The height.
+        /// </value>
+        public int Height { get; set; }
+
+        /// <summary>
+        /// Gets or sets the width.
+        /// </summary>
+        /// <value>
+        /// The width.
+        /// </value>
+        public int Width { get; set; }
+
+        /// <summary>
         /// Gets or sets the issue.
         /// </summary>
         /// <value>
@@ -129,7 +152,7 @@ namespace PnyxWebAssembly.Client.Pages
         {
             AvatarImageService.ClientFactory = ClientFactory;
 
-            // await ManageWindowResizing();
+            await ManageWindowResizing();
 
             await UpdateUserInfo();
         }
@@ -216,7 +239,38 @@ namespace PnyxWebAssembly.Client.Pages
                 await InvokeAsync(StateHasChanged);
             }
         }
-        
+
+        /// <summary>
+        /// Manages the window resizing.
+        /// </summary>
+        private async Task ManageWindowResizing()
+        {
+            BrowserResizeService.JsRuntime = JsRuntime;
+
+            BrowserResizeService.OnResize += BrowserHasResized;
+
+            await JsRuntime.InvokeAsync<object>("browserResize.registerResizeCallback");
+
+            await GetDimensions();
+        }
+
+        /// <summary>
+        /// Browsers the has resized.
+        /// </summary>
+        private async Task BrowserHasResized()
+        {
+            await GetDimensions();
+        }
+
+        /// <summary>
+        /// Gets the dimensions.
+        /// </summary>
+        private async Task GetDimensions()
+        {
+            Height = await BrowserResizeService.GetInnerHeight() - 85;
+            Width = await BrowserResizeService.GetInnerWidth();
+        }
+
         /// <summary>
         /// Called when [success].
         /// </summary>
