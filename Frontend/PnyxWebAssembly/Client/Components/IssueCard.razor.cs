@@ -204,11 +204,6 @@ namespace PnyxWebAssembly.Client.Components
             }
 
             HasAvatarImage = !string.IsNullOrEmpty(AvatarImage);
-
-            if (HasAvatarImage)
-            {
-                await InvokeAsync(StateHasChanged);
-            }
         }
 
         /// <summary>

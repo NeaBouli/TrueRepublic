@@ -51,7 +51,15 @@ namespace PnyxWebAssembly.Server.Controllers
         [HttpGet]
         public IActionResult GetAll([FromQuery] PaginatedList paginatedList, [FromQuery] string userName)
         {
-            _logger.LogInformation(string.IsNullOrEmpty(userName) ? $"Get all issues for user {userName}" : "Get all issues");
+            if (paginatedList.ItemsPerPage > 0)
+            {
+                _logger.LogInformation(string.IsNullOrEmpty(userName) ? $"Get all issues for user {userName} page {paginatedList.Page} skip {paginatedList.Skip}" : 
+                    $"Get all issues page {paginatedList.Page} skip {paginatedList.Skip}");
+            }
+            else
+            {
+                _logger.LogInformation(string.IsNullOrEmpty(userName) ? $"Get all issues for user {userName}" : "Get all issues");
+            }
 
             DbServiceContext dbServiceContext = DatabaseInitializationService.GetDbServiceContext();
 

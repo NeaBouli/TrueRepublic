@@ -199,11 +199,22 @@ namespace PnyxWebAssembly.Client.Pages
 
                 using HttpClient client = ClientFactory.CreateClient("PnyxWebAssembly.ServerAPI.Private");
 
+                await LogService.LogToServer(client, $"Login {UserEMail} {ExternalUserId}");
+
                 User userFromService;
 
                 try
                 {
-                    userFromService = await client.GetFromJsonAsync<User>($"User/ByExternalId/{ExternalUserId}");
+                    // TODO: remove later - external user id is to request for
+                    // this is just for presentation issues for docker
+                    if (UserEMail != "andreasschurz@andreasschurz.de")
+                    {
+                        userFromService = await client.GetFromJsonAsync<User>($"User/ByExternalId/{ExternalUserId}");
+                    }
+                    else
+                    {
+                        userFromService = await client.GetFromJsonAsync<User>($"User/ByName/Andreas");
+                    }
                 }
                 catch (HttpRequestException ex)
                 {
