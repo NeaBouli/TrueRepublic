@@ -88,6 +88,14 @@ namespace PnyxWebAssembly.Client.Shared
         }
 
         /// <summary>
+        /// Gets the version.
+        /// </summary>
+        /// <value>
+        /// The version.
+        /// </value>
+        public string Version => typeof(MainLayout).Assembly.GetName().Version?.ToString();
+
+        /// <summary>
         /// Gets the name of the avatar.
         /// </summary>
         /// <value>
