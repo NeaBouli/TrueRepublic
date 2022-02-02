@@ -183,16 +183,12 @@ namespace PnyxWebAssembly.Server.Controllers
         /// <returns>The path to the avatar image file</returns>
         private string GetPath(string userName)
         {
-            string imageName = $"{userName}.jpg";
+            string imageName = $"{userName}.jpg".ToLowerInvariant();
 
             imageName = imageName.Replace("ä", "ae");
             imageName = imageName.Replace("ö", "oe");
             imageName = imageName.Replace("ü", "ue");
             imageName = imageName.Replace("ß", "ss");
-
-            imageName = imageName.Replace("Ä", "Ae");
-            imageName = imageName.Replace("Ö", "Oe");
-            imageName = imageName.Replace("Ü", "Ue");
 
             string path = @$"Images\Avatars\{imageName}";
 
@@ -205,6 +201,10 @@ namespace PnyxWebAssembly.Server.Controllers
             {
                 path = Path.ChangeExtension(path, "png");
             }
+
+            _logger.LogInformation(!System.IO.File.Exists(path)
+                ? $"Image {imageName} not found as avatar for user {userName}"
+                : $"Image {path} found as avatar for user {userName}");
 
             return path;
         }
