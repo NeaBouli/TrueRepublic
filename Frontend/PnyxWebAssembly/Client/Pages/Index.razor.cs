@@ -1,4 +1,11 @@
-﻿using System;
+﻿using Common.Entities;
+using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.JSInterop;
+using PnyxWebAssembly.Client.Components;
+using PnyxWebAssembly.Client.Services;
+using PnyxWebAssembly.Client.Shared;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -7,13 +14,6 @@ using System.Net.Http;
 using System.Net.Http.Json;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using Common.Entities;
-using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Authorization;
-using Microsoft.JSInterop;
-using PnyxWebAssembly.Client.Components;
-using PnyxWebAssembly.Client.Services;
-using PnyxWebAssembly.Client.Shared;
 
 namespace PnyxWebAssembly.Client.Pages
 {
@@ -117,6 +117,14 @@ namespace PnyxWebAssembly.Client.Pages
         /// The width.
         /// </value>
         public int Width { get; set; }
+
+        /// <summary>
+        /// Gets or sets the cards per row.
+        /// </summary>
+        /// <value>
+        /// The cards per row.
+        /// </value>
+        public int CardsPerRow { get; set; }
 
         /// <summary>
         /// Gets or sets the issue.
@@ -269,6 +277,21 @@ namespace PnyxWebAssembly.Client.Pages
         {
             Height = await BrowserResizeService.GetInnerHeight() - 85;
             Width = await BrowserResizeService.GetInnerWidth();
+
+            double cardsPerRow = Math.Floor(Width / 330D);
+
+            if (cardsPerRow > 4)
+            {
+                cardsPerRow = 4;
+            }
+
+            CardsPerRow = Convert.ToInt32(cardsPerRow);
+
+#if (DEBUG)
+            using HttpClient client = ClientFactory.CreateClient("PnyxWebAssembly.ServerAPI.Public");
+
+            await LogService.LogToServer(client, $"Width {Width} Height {Height} Cards {CardsPerRow}");
+#endif
         }
 
         /// <summary>

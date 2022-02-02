@@ -4,6 +4,9 @@ using Common.Entities;
 
 namespace PnyxWebAssembly.Client.Services
 {
+    /// <summary>
+    /// Implementation of the log service
+    /// </summary>
     public static class LogService
     {
         /// <summary>

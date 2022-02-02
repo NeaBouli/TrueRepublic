@@ -100,6 +100,9 @@ namespace PnyxWebAssembly.Client.Components
         [Parameter]
         public string UserName { get; set; } = "";
 
+        [Parameter]
+        public int Width { get; set; } = 310;
+
         /// <summary>
         /// Gets or sets the name of the creator user.
         /// </summary>
