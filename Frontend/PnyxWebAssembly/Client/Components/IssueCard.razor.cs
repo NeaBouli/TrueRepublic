@@ -103,9 +103,6 @@ namespace PnyxWebAssembly.Client.Components
         [Parameter]
         public string UserName { get; set; } = "";
 
-        [Parameter]
-        public int Width { get; set; } = 310;
-
         /// <summary>
         /// Gets or sets the name of the creator user.
         /// </summary>
@@ -145,6 +142,29 @@ namespace PnyxWebAssembly.Client.Components
         /// The issue image.
         /// </value>
         public string IssueImage { get; set; }
+
+        public bool IsNew => DateTime.Now.Subtract(_issue.CreateDate).TotalDays <= 5;
+
+        public string CreatedInfo => $"Created on: {_issue.CreateDate.ToShortDateString()}";
+
+        /// <summary>
+        /// Gets the stake information.
+        /// </summary>
+        /// <value>
+        /// The stake information.
+        /// </value>
+        public string StakeInfo
+        {
+            get
+            {
+                if (_issue.GetTotalStakeCount() == 1)
+                {
+                    return "1 stake";
+                }
+
+                return $"{_issue.GetTotalStakeCount()} stakes";
+            }
+        }
 
         /// <summary>
         /// Gets or sets the title.
