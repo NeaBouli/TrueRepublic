@@ -127,6 +127,14 @@ namespace PnyxWebAssembly.Client.Pages
         public int CardsPerRow { get; set; }
 
         /// <summary>
+        /// Gets or sets the page.
+        /// </summary>
+        /// <value>
+        /// The page.
+        /// </value>
+        public int Page { get; set; } = 1;
+
+        /// <summary>
         /// Gets or sets the issue.
         /// </summary>
         /// <value>
@@ -237,14 +245,41 @@ namespace PnyxWebAssembly.Client.Pages
 
                 MainLayout.AvatarImage = avatarImage;
 
-                List<Issue> issues = await client.GetFromJsonAsync<List<Issue>>($"Issues?userName={UserName}");
+                if (CardsPerRow == 0)
+                {
+                    CardsPerRow = 4;
+                }
+
+                Issues ??= new List<Issue>();
+
+                await AddIssues(client);
+            }
+        }
+
+        /// <summary>
+        /// Adds the issues.
+        /// </summary>
+        /// <param name="client">The client.</param>
+        private async Task AddIssues(HttpClient client)
+        {
+            int itemsPerPage = 4;
+
+            try
+            {
+                List<Issue> issues = await client.GetFromJsonAsync<List<Issue>>(
+                    $"Issues?UserName={UserName}&Page={Page}&ItemsPerPage={itemsPerPage}");
 
                 if (issues != null)
                 {
-                    Issues = issues;
+                    Issues.AddRange(issues);
                 }
-
-                await InvokeAsync(StateHasChanged);
+            }
+            catch (HttpRequestException ex)
+            {
+                if (ex.StatusCode != HttpStatusCode.NotFound)
+                {
+                    throw;
+                }
             }
         }
 
@@ -286,12 +321,6 @@ namespace PnyxWebAssembly.Client.Pages
             }
 
             CardsPerRow = Convert.ToInt32(cardsPerRow);
-
-#if (DEBUG)
-            using HttpClient client = ClientFactory.CreateClient("PnyxWebAssembly.ServerAPI.Public");
-
-            await LogService.LogToServer(client, $"Width {Width} Height {Height} Cards {CardsPerRow}");
-#endif
         }
 
         /// <summary>
@@ -302,6 +331,15 @@ namespace PnyxWebAssembly.Client.Pages
             await UpdateUserInfo();
 
             await InvokeAsync(StateHasChanged);
+        }
+
+        private async Task UpdateIssues()
+        {
+            Page++;
+
+            using HttpClient client = ClientFactory.CreateClient("PnyxWebAssembly.ServerAPI.Public");
+
+            await AddIssues(client);
         }
     }
 }

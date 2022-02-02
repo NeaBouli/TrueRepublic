@@ -74,6 +74,11 @@ namespace PnyxWebAssembly.Client.Components
             get => _issue;
             set
             {
+                if (_issue != null)
+                {
+                    return;
+                }
+
                 _issue = value;
 
                 if (_issue == null)
@@ -86,8 +91,6 @@ namespace PnyxWebAssembly.Client.Components
                 UpdateAvatarInfos();
 
                 UpdateImageInfos();
-
-                InvokeAsync(StateHasChanged);
             }
         }
 
@@ -201,8 +204,6 @@ namespace PnyxWebAssembly.Client.Components
             }
 
             HasAvatarImage = !string.IsNullOrEmpty(AvatarImage);
-
-            await InvokeAsync(StateHasChanged);
         }
 
         /// <summary>

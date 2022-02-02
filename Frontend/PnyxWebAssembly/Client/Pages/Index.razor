@@ -22,19 +22,24 @@
         {
             @if (Issues is { Count: > 0 })
             {
-                <MudGrid Spacing="2" Justify="Justify.Center">
-                    @foreach (var issue in Issues)
-                    {
-                        <MudItem lg="3">
-                            <IssueCard UserName="@UserName" Issue="@issue" />
-                        </MudItem>
-                    }
-                </MudGrid>
+                <InfiniteScroll ObserverTargetId="observerTarget" ObservableTargetReached="(e) => UpdateIssues()">
+                    <MudGrid Spacing="2" Justify="Justify.Center">
+                        @foreach (var issue in Issues)
+                        {
+                            <MudItem lg="3">
+                                <IssueCard UserName="@UserName" Issue="@issue" />
+                            </MudItem>
+                        }
+
+                    <li class="list-group-item" id="observerTarget"></li>
+
+                    </MudGrid>
+                </InfiniteScroll>
             }
         }
         <MudFab Color="Color.Primary" Icon="@Icons.Material.Filled.Add" Size="Size.Large" IconSize="Size.Large" Title="Add issue" 
-                Style="position: fixed; right:70px; bottom:30px;"/>
-    </Authorized>
+                Style="position: fixed; right:70px; bottom:30px;" />
+        </Authorized>
     <NotAuthorized>
         <MudText>&nbsp;</MudText>
         <MudText Typo="Typo.h5">Login to see some Issues...</MudText>
