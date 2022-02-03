@@ -143,8 +143,20 @@ namespace PnyxWebAssembly.Client.Components
         /// </value>
         public string IssueImage { get; set; }
 
+        /// <summary>
+        /// Gets a value indicating whether this instance is new.
+        /// </summary>
+        /// <value>
+        ///   <c>true</c> if this instance is new; otherwise, <c>false</c>.
+        /// </value>
         public bool IsNew => DateTime.Now.Subtract(_issue.CreateDate).TotalDays <= 5;
 
+        /// <summary>
+        /// Gets the created information.
+        /// </summary>
+        /// <value>
+        /// The created information.
+        /// </value>
         public string CreatedInfo => $"Created on: {_issue.CreateDate.ToShortDateString()}";
 
         /// <summary>
@@ -153,18 +165,15 @@ namespace PnyxWebAssembly.Client.Components
         /// <value>
         /// The stake information.
         /// </value>
-        public string StakeInfo
-        {
-            get
-            {
-                if (_issue.GetTotalStakeCount() == 1)
-                {
-                    return "1 stake";
-                }
+        public string StakeInfo => _issue.TotalStakeCount == 1 ? "1 stake" : $"{_issue.TotalStakeCount} stakes";
 
-                return $"{_issue.GetTotalStakeCount()} stakes";
-            }
-        }
+        /// <summary>
+        /// Gets the vote information.
+        /// </summary>
+        /// <value>
+        /// The vote information.
+        /// </value>
+        public string VoteInfo => _issue.TotalVoteCount == 1 ? "1 voting" : $"{_issue.TotalVoteCount} votes";
 
         /// <summary>
         /// Gets or sets the title.

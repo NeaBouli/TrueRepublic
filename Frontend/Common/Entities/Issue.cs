@@ -131,24 +131,31 @@ namespace Common.Entities
         }
 
         /// <summary>
-        /// Determines whether [has my stake].
+        /// Gets or sets a value indicating whether this instance has my stake.
         /// </summary>
-        /// <returns>
-        ///   <c>true</c> if [has my stake]; otherwise, <c>false</c>.
-        /// </returns>
-        public bool HasMyStake()
-        {
-            return Proposals.Any(proposal => proposal.HasMyStake);
-        }
+        /// <value>
+        ///   <c>true</c> if this instance has my stake; otherwise, <c>false</c>.
+        /// </value>
+        [NotMapped]
+        public bool HasMyStake { get; set; }
 
         /// <summary>
-        /// Gets the total stake count.
+        /// Gets or sets the total stake count.
         /// </summary>
-        /// <returns>The total stake count for all assigned stakes</returns>
-        public int GetTotalStakeCount()
-        {
-            return Proposals.Sum(proposal => proposal.StakeCount);
-        }
+        /// <value>
+        /// The total stake count.
+        /// </value>
+        [NotMapped]
+        public int TotalStakeCount { get; set; }
+
+        /// <summary>
+        /// Gets or sets the total vote count.
+        /// </summary>
+        /// <value>
+        /// The total vote count.
+        /// </value>
+        [NotMapped]
+        public int TotalVoteCount { get; set; }
 
         /// <summary>
         /// Gets the tags.

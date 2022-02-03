@@ -1,13 +1,14 @@
-﻿<MudCard Style="height: 470px; width: 310px;">
+﻿@using System.ComponentModel.Design
+<MudCard Style="height: 470px; width: 310px;">
     <MudCardHeader>
         <CardHeaderAvatar>
             @if (HasAvatarImage)
             {
-            <MudAvatar Image=@AvatarImage Title=@CreatorUserName />
+                <MudAvatar Image=@AvatarImage Title=@CreatorUserName />
             }
             else
             {
-            <MudAvatar Color="Color.Secondary" Size="Size.Medium" Title=@CreatorUserName>@AvatarName</MudAvatar>
+                <MudAvatar Color="Color.Secondary" Size="Size.Medium" Title=@CreatorUserName>@AvatarName</MudAvatar>
             }
         </CardHeaderAvatar>
         <CardHeaderContent>
@@ -17,15 +18,45 @@
             </div>
         </CardHeaderContent>
         <CardHeaderActions>
-            @if (Issue.HasMyStake())
+            @if (Issue.HasMyStake)
             {
-            <MudIcon Icon="@Icons.Filled.Star" Color="Color.Tertiary" Title="Staked by me" Style="height: 90px" />
+                <MudIcon Icon="@Icons.Filled.Star" Color="Color.Tertiary" Title="Staked by me" Style="height: 90px" />
             }
         </CardHeaderActions>
     </MudCardHeader>
     <RichMudCardMedia Image=@IssueImage Height="200">
-        <MudChip Size="Size.Small" Color="Color.Warning" Style="top: 10px; left: 10px; opacity: 1; color: black" Title="@CreatedInfo">new</MudChip>
-        <MudChip Size="Size.Small" Icon="@Icons.Filled.Star" Color="Color.Tertiary" Style="top: 10px; left: 185px; opacity: 1; color: white " Title="@StakeInfo">@Issue.GetTotalStakeCount()</MudChip>
+        <table width="100%" style="margin: 10px; padding-top: 10px">
+            <tr>
+                @if (IsNew)
+                {
+                    <td>
+                        <MudChip Size="Size.Small" Color="Color.Warning" Style="opacity: 1; color: black" Title="@CreatedInfo">
+                            new
+                        </MudChip>
+                    </td>
+                }
+                else
+                {
+                    <td style="width: 25%">&nbsp;</td>
+                }
+
+                <td style="width: 50%">&nbsp;</td>
+                <td>
+                    <MudChip Size="Size.Small" Icon="@Icons.Filled.Star" Color="Color.Tertiary" Style="opacity: 1; color: white" Title="@StakeInfo">
+                        @Issue.TotalStakeCount
+                    </MudChip>
+                </td>
+            </tr>
+            <tr>
+                <td>&nbsp;</td>
+                <td style="width: 50%">&nbsp;</td>
+                <td>
+                    <MudChip Size="Size.Small" Icon="@Icons.Filled.Check" Color="Color.Primary" Style="opacity: 1; color: white" Title="@VoteInfo">
+                        @Issue.TotalVoteCount
+                    </MudChip>
+                </td>
+            </tr>
+        </table>
     </RichMudCardMedia>
     <MudCardContent>
         <MudText Typo="Typo.body2">@Description</MudText>

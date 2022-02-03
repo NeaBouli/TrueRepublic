@@ -56,6 +56,12 @@ namespace Common.Services
             {
                 ProposalService.UpdateStakes(dbServiceContext, issue.Proposals);
                 ProposalService.SetHasMyStake(dbServiceContext, issue, userId);
+
+                issue.HasMyStake = issue.Proposals.Any(proposal => proposal.HasMyStake);
+                issue.TotalStakeCount = issue.Proposals.Sum(proposal => proposal.StakeCount);
+                issue.TotalVoteCount = dbServiceContext.Votes
+                    .Where(vote => vote.IssueId.ToString() == issue.Id.ToString())
+                    .ToList().Count;
             }
 
             if (_topStakedIssuesPercent > 0)
@@ -63,7 +69,7 @@ namespace Common.Services
                 SetTopStaked(issues);
             }
 
-            List<Issue> issuesProcessed = issues.OrderByDescending(i => i.GetTotalStakeCount())
+            List<Issue> issuesProcessed = issues.OrderByDescending(i => i.TotalStakeCount)
                 .ThenBy(i => i.CreateDate).ToList();
 
             issuesProcessed = ProcessPaginatedList(paginatedList, issuesProcessed);
@@ -428,16 +434,7 @@ namespace Common.Services
             {
                 foreach (Issue issue in issues)
                 {
-                    if (!issue.HasMyStake())
-                    {
-                        issue.Proposals = new List<Proposal>();
-                    }
-                    else
-                    {
-                        Proposal proposal = issue.Proposals.FirstOrDefault(p => p.HasMyStake);
-
-                        issue.Proposals = proposal != null ? new List<Proposal> { proposal } : new List<Proposal>();
-                    }
+                    issue.Proposals = new List<Proposal>();
                 }
             }
 
@@ -453,7 +450,7 @@ namespace Common.Services
             int topStakedIssuesCount = (int)Math.Round(issues.Count * _topStakedIssuesPercent / 100, 0);
 
             List<Issue> topStakedIssues = issues
-                .OrderByDescending(i => i.GetTotalStakeCount())
+                .OrderByDescending(i => i.TotalStakeCount)
                 .Take(topStakedIssuesCount)
                 .ToList();
 

@@ -1,4 +1,6 @@
-﻿@inject IJSRuntime JSRuntime
+﻿@* Infinite Scroll component supplied by https://github.com/SveNord/Sve-Blazor-InfiniteScroll *@
+
+@inject IJSRuntime JSRuntime
 
 @ChildContent
 
@@ -19,7 +21,7 @@
         if (firstRender)
         {
             objectRef = DotNetObjectReference.Create(this);
-            var initResult = await JSRuntime.InvokeAsync<dynamic>("Observer.Initialize", objectRef, ObserverTargetId);
+            await JSRuntime.InvokeAsync<dynamic>("Observer.Initialize", objectRef, ObserverTargetId);
         }
     }
 
