@@ -74,22 +74,22 @@ namespace PnyxWebAssembly.Client.Components
         {
             if (string.IsNullOrEmpty(userName))
             {
-                yield return "Username is required";
+                yield return "Ein Benutzername muss angegeben werden";
                 yield break;
             }
 
             if (userName.Length < 5)
             {
-                yield return "Username must at least be 5 characters long";
+                yield return "Der Benutzername muss mindestens 5 Zeichen lang sein";
             }
             else if (userName.Length > 15)
             {
-                yield return "Username can be maximum 15 characters long";
+                yield return "Der Benutzername kann maximal 15 Zeichen lang sein";
             }
 
             if (userName.Contains(" "))
             {
-                yield return "Username must not contain whitespaces";
+                yield return "Der Benutzername darf keine Leerzeichen enthalten";
             }
 
             string invalidChars = "?&^$#@!()+-,:;<>’\'-_*";
@@ -98,7 +98,7 @@ namespace PnyxWebAssembly.Client.Components
             {
                 if (userName.Contains(c.ToString()))
                 {
-                    yield return $"Username must not contain the following characters \"{invalidChars}\" - Found: \"{c}\"";
+                    yield return $"Der Benutzername darf die folgenden Zeichen nicht enthalten \"{invalidChars}\" - Gefunden: \"{c}\"";
                     yield break;
                 }
             }
@@ -151,7 +151,7 @@ namespace PnyxWebAssembly.Client.Components
 
             if (userFromService != null)
             {
-                _errors = new[] {$"User \"{UserName}\" is already existing. Please select a different name"};
+                _errors = new[] {$"Der Benutzer \"{UserName}\" existiert bereits. Bitte wählen Sie einen anderen Namen"};
                 await InvokeAsync(StateHasChanged);
                 return;
             }

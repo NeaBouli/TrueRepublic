@@ -18,11 +18,6 @@ namespace WebService.Controllers
     public class IssueController : ControllerBase
     {
         /// <summary>
-        /// The logger
-        /// </summary>
-        private readonly ILogger<IssueController> _logger;
-
-        /// <summary>
         /// The configuration
         /// </summary>
         private readonly IConfiguration _configuration;
@@ -34,7 +29,6 @@ namespace WebService.Controllers
         /// <param name="configuration">The configuration.</param>
         public IssueController(ILogger<IssueController> logger, IConfiguration configuration)
         {
-            _logger = logger;
             _configuration = configuration;
 
             DatabaseInitializationService.DbConnectString = configuration["DBConnectString"];
@@ -44,7 +38,7 @@ namespace WebService.Controllers
             if (!string.IsNullOrEmpty(dockerEnvironmentConnectString))
             {
                 DatabaseInitializationService.DbConnectString = dockerEnvironmentConnectString;
-                _logger.LogInformation($"Reading DB Connect string from Docker: {dockerEnvironmentConnectString}");
+                logger.LogInformation($"Reading DB Connect string from Docker: {dockerEnvironmentConnectString}");
             }
         }
 

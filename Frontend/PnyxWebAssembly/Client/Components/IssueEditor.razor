@@ -1,0 +1,19 @@
+﻿<MudGrid Justify="Justify.Center">
+
+        <MudItem xs="6">
+            <MudAutocomplete T="string" Label="Hashtags" @bind-Value="HashtagValue" SearchFunc="@SearchHashtags"
+                             ResetValueOnEmptyText="true"
+                             CoerceText="true" CoerceValue="true"
+                             AdornmentIcon="@Icons.Material.Filled.Search" AdornmentColor="Color.Primary" />
+        </MudItem>
+        <MudItem xs="6">
+            <MudIconButton Icon="@Icons.Material.Filled.AddCircle" Color="Color.Primary" aria-label="add hashtag" OnClick="@AddHashtagClick"></MudIconButton>
+        </MudItem>
+        <MudItem xs="12">
+            @foreach (string hashtag in Issue.GetTags())
+            {
+                <MudChip Color="Color.Primary" OnClose="OnMudChipClose">hashtag</MudChip>
+            }
+        </MudItem>
+
+</MudGrid>

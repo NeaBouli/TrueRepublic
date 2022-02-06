@@ -60,6 +60,15 @@ namespace PnyxWebAssembly.Client.Pages
         private ImageCacheService ImageCacheService { get; set; }
 
         /// <summary>
+        /// Gets or sets the navigation manager.
+        /// </summary>
+        /// <value>
+        /// The navigation manager.
+        /// </value>
+        [Inject]
+        private NavigationManager NavigationManager { get; set; }
+
+        /// <summary>
         /// Gets or sets the main layout.
         /// </summary>
         /// <value>
@@ -209,6 +218,7 @@ namespace PnyxWebAssembly.Client.Pages
                     // this is just for presentation issues for docker
                     if (UserEMail != "andreasschurz@andreasschurz.de")
                     {
+                        // TODO: has to be requested by an user service
                         userFromService = await client.GetFromJsonAsync<User>($"User/ByExternalId/{ExternalUserId}");
                     }
                     else
@@ -277,6 +287,7 @@ namespace PnyxWebAssembly.Client.Pages
 
             try
             {
+                // TODO: this has to be loaded by an issue service
                 List<Issue> issues = await client.GetFromJsonAsync<List<Issue>>(
                     $"Issues?UserName={UserName}&Page={Page}&ItemsPerPage={itemsPerPage}");
 
@@ -344,6 +355,9 @@ namespace PnyxWebAssembly.Client.Pages
             await InvokeAsync(StateHasChanged);
         }
 
+        /// <summary>
+        /// Updates the issues.
+        /// </summary>
         private async Task UpdateIssues()
         {
             Page++;
@@ -351,6 +365,14 @@ namespace PnyxWebAssembly.Client.Pages
             using HttpClient client = ClientFactory.CreateClient("PnyxWebAssembly.ServerAPI.Public");
 
             await AddIssues(client);
+        }
+
+        /// <summary>
+        /// Adds the issue.
+        /// </summary>
+        private void AddIssue()
+        {
+            NavigationManager.NavigateTo("issue/add");
         }
     }
 }

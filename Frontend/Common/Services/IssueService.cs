@@ -288,9 +288,7 @@ namespace Common.Services
             {
                 return new List<string>();
             }
-
-            bool hasHashtag = tag.Contains("#");
-
+            
             string searchTag = tag;
 
             if (!searchTag.StartsWith("#"))
@@ -312,7 +310,10 @@ namespace Common.Services
                 {
                     if (tagFromIssue.ToLowerInvariant().StartsWith(searchTag.ToLowerInvariant()))
                     {
-                        foundTags.Add(!hasHashtag ? tagFromIssue.Substring(1): tagFromIssue);
+                        if (!foundTags.Contains(tagFromIssue))
+                        {
+                            foundTags.Add(tagFromIssue);
+                        }
                     }
                 }
             }

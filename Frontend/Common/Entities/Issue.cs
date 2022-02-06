@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
+using System.Text;
 
 namespace Common.Entities
 {
@@ -195,6 +196,53 @@ namespace Common.Entities
             return tags.Any(tagFromList => 
                 string.Equals(tag, tagFromList, StringComparison.OrdinalIgnoreCase) || 
                 string.Equals($"#{tag}", tagFromList, StringComparison.OrdinalIgnoreCase));
+        }
+
+        /// <summary>
+        /// Adds the tag.
+        /// </summary>
+        /// <param name="tag">The tag.</param>
+        public void AddTag(string tag)
+        {
+            if (Tags.Contains(tag, StringComparison.OrdinalIgnoreCase))
+            {
+                return;
+            }
+
+            Tags = !tag.StartsWith("#") ? $"{Tags} #{tag}" : $"{Tags} {tag}";
+        }
+
+        /// <summary>
+        /// Removes the tag.
+        /// </summary>
+        /// <param name="tag">The tag.</param>
+        public void RemoveTag(string tag)
+        {
+            if (!tag.StartsWith("#"))
+            {
+                tag = $"#{tag}";
+            }
+
+            bool isFirst = true;
+            StringBuilder tagStringBuilder = new StringBuilder();
+
+            foreach (string tagItem in GetTags())
+            {
+                if (string.Equals(tagItem, tag, StringComparison.OrdinalIgnoreCase))
+                {
+                    continue;
+                }
+
+                if (!isFirst)
+                {
+                    tagStringBuilder.Append(" ");
+                }
+
+                tagStringBuilder.Append(tagItem);
+                isFirst = false;
+            }
+
+            Tags = tagStringBuilder.ToString();
         }
     }
 }

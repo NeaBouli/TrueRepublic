@@ -1,0 +1,17 @@
+﻿@page "/issue/{action}"
+
+<AuthorizeView>
+    <Authorized>
+        <IssueEditor Action=@Action />
+    </Authorized>
+    <NotAuthorized>
+        @if (Action.Equals("add", StringComparison.CurrentCultureIgnoreCase))
+        {
+            <LoginInfo />
+        }
+        else
+        {
+            <IssueEditor Action=@Action/>
+        }
+    </NotAuthorized>
+</AuthorizeView>

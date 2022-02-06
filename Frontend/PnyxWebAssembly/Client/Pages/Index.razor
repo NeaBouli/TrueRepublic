@@ -31,14 +31,14 @@
                             </MudItem>
                         }
 
-                    <li class="list-group-item" id="observerTarget"></li>
+                    <li class="list-group-item" id="observerTarget" style="color: white"></li>
 
                     </MudGrid>
                 </InfiniteScroll>
             }
         }
-        <MudFab Color="Color.Primary" Icon="@Icons.Material.Filled.Add" Size="Size.Large" IconSize="Size.Large" Title="Add issue" 
-                Style="position: fixed; right:70px; bottom:30px;" />
+        <MudFab Color="Color.Primary" Icon="@Icons.Material.Filled.Add" Size="Size.Large" IconSize="Size.Large" Title="Issue hinzufügen" 
+                Style="position: fixed; right:70px; bottom:30px;" OnClick="AddIssue"/>
         </Authorized>
     <NotAuthorized>
         <MudText>&nbsp;</MudText>

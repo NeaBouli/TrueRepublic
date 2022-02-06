@@ -109,7 +109,7 @@ namespace PnyxWebAssembly.Client.Components
         /// <value>
         /// The name of the creator user.
         /// </value>
-        public string CreatorUserName { get; set; } = "Unknown";
+        private string CreatorUserName { get; set; } = "Unknown";
 
         /// <summary>
         /// Gets or sets a value indicating whether this instance has avatar image.
@@ -117,7 +117,7 @@ namespace PnyxWebAssembly.Client.Components
         /// <value>
         ///   <c>true</c> if this instance has avatar image; otherwise, <c>false</c>.
         /// </value>
-        public bool HasAvatarImage { get; set; }
+        private bool HasAvatarImage { get; set; }
 
         /// <summary>
         /// Gets or sets the avatar image.
@@ -125,7 +125,7 @@ namespace PnyxWebAssembly.Client.Components
         /// <value>
         /// The avatar image.
         /// </value>
-        public string AvatarImage { get; set; }
+        private string AvatarImage { get; set; }
 
         /// <summary>
         /// Gets or sets the name of the avatar.
@@ -141,7 +141,7 @@ namespace PnyxWebAssembly.Client.Components
         /// <value>
         /// The issue image.
         /// </value>
-        public string IssueImage { get; set; }
+        private string IssueImage { get; set; }
 
         /// <summary>
         /// Gets a value indicating whether this instance is new.
@@ -149,7 +149,7 @@ namespace PnyxWebAssembly.Client.Components
         /// <value>
         ///   <c>true</c> if this instance is new; otherwise, <c>false</c>.
         /// </value>
-        public bool IsNew => DateTime.Now.Subtract(_issue.CreateDate).TotalDays <= 5;
+        private bool IsNew => DateTime.Now.Subtract(_issue.CreateDate).TotalDays <= 5;
 
         /// <summary>
         /// Gets the created information.
@@ -157,7 +157,7 @@ namespace PnyxWebAssembly.Client.Components
         /// <value>
         /// The created information.
         /// </value>
-        public string CreatedInfo => $"Created on: {_issue.CreateDate.ToShortDateString()}";
+        private string CreatedInfo => $"Created on: {_issue.CreateDate.ToShortDateString()}";
 
         /// <summary>
         /// Gets the stake information.
@@ -165,7 +165,7 @@ namespace PnyxWebAssembly.Client.Components
         /// <value>
         /// The stake information.
         /// </value>
-        public string StakeInfo => _issue.TotalStakeCount == 1 ? "1 stake" : $"{_issue.TotalStakeCount} stakes";
+        private string StakeInfo => _issue.TotalStakeCount == 1 ? "1 stake" : $"{_issue.TotalStakeCount} stakes";
 
         /// <summary>
         /// Gets the vote information.
@@ -173,7 +173,7 @@ namespace PnyxWebAssembly.Client.Components
         /// <value>
         /// The vote information.
         /// </value>
-        public string VoteInfo => _issue.TotalVoteCount == 1 ? "1 voting" : $"{_issue.TotalVoteCount} votes";
+        private string VoteInfo => _issue.TotalVoteCount == 1 ? "1 voting" : $"{_issue.TotalVoteCount} votes";
 
         /// <summary>
         /// Gets or sets the title.
@@ -181,7 +181,7 @@ namespace PnyxWebAssembly.Client.Components
         /// <value>
         /// The title.
         /// </value>
-        public string Title { get; set; }
+        private string Title { get; set; }
 
         /// <summary>
         /// Gets or sets the tags.
@@ -189,7 +189,7 @@ namespace PnyxWebAssembly.Client.Components
         /// <value>
         /// The tags.
         /// </value>
-        public string Tags { get; set; }
+        private string Tags { get; set; }
 
         /// <summary>
         /// Gets or sets the description.
@@ -197,7 +197,7 @@ namespace PnyxWebAssembly.Client.Components
         /// <value>
         /// The description.
         /// </value>
-        public string Description { get; set; }
+        private string Description { get; set; }
 
         /// <summary>
         /// Updates the avatar infos.
@@ -287,7 +287,13 @@ namespace PnyxWebAssembly.Client.Components
             }
         }
 
-        private string CutText(string text, int length)
+        /// <summary>
+        /// Cuts the text.
+        /// </summary>
+        /// <param name="text">The text.</param>
+        /// <param name="length">The length.</param>
+        /// <returns></returns>
+        private static string CutText(string text, int length)
         {
             text = text.Substring(0, length);
             int lastIndex = text.LastIndexOf(" ", StringComparison.Ordinal);

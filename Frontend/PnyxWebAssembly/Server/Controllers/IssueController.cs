@@ -167,5 +167,21 @@ namespace PnyxWebAssembly.Server.Controllers
 
             return Ok(System.IO.File.Open(path, FileMode.Open, FileAccess.Read, FileShare.Read));
         }
+
+        [Route("GetTagAutocomplete/{tag}")]
+        [HttpGet]
+        public IActionResult GetTagAutocomplete(string tag)
+        {
+            DbServiceContext dbServiceContext = DatabaseInitializationService.GetDbServiceContext();
+
+            using (dbServiceContext)
+            {
+                IssueService issueService = new IssueService();
+
+                List<string> tags = issueService.GetTagAutocomplete(dbServiceContext, tag);
+
+                return Ok(tags);
+            }
+        }
     }
 }
