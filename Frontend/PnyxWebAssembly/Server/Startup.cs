@@ -206,9 +206,9 @@ namespace PnyxWebAssembly.Server
                 }
                 else if (DatabaseInitializationService.Platform == Platform.Mac)
                 {
-                    if (File.Exists("/bin/Debug/net5.0/TestData.xlsx"))
+                    if (File.Exists("bin/Debug/net5.0/TestData.xlsx"))
                     {
-                        excelImportFile = "/bin/Debug/net5.0/TestData.xlsx";
+                        excelImportFile = "bin/Debug/net5.0/TestData.xlsx";
                     }
                 }
 
