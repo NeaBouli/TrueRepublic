@@ -42,8 +42,6 @@ namespace PnyxWebAssembly.Server
 
             DatabaseInitializationService.Platform = Platform.Windows;
 
-            DatabaseInitializationService.DbAuthConnectString = authConnectString;
-
             string pnyxConnectString = Configuration["DBConnectString"];
 
             string pnyxDockerConnectString = Environment.GetEnvironmentVariable("DBCONNECTSTRING_PNYX");
@@ -63,7 +61,7 @@ namespace PnyxWebAssembly.Server
                 }
             }
 
-
+            DatabaseInitializationService.DbAuthConnectString = authConnectString;
             DatabaseInitializationService.DbConnectString = pnyxConnectString;
             DbServiceContext.ConnectString = pnyxConnectString;
 
