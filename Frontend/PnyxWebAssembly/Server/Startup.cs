@@ -200,7 +200,7 @@ namespace PnyxWebAssembly.Server
             {
                 string excelImportFile = "TestData.xlsx";
 
-                if (DatabaseInitializationService.Platform == Platform.Docker)
+                if (DatabaseInitializationService.Platform != Platform.Windows)
                 {
                     if (File.Exists("/app/bin/Debug/net5.0/TestData.xlsx"))
                     {
