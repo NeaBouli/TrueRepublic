@@ -63,6 +63,7 @@ namespace PnyxWebAssembly.Server
                 }
             }
 
+
             DatabaseInitializationService.DbConnectString = pnyxConnectString;
             DbServiceContext.ConnectString = pnyxConnectString;
 
