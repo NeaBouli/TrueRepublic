@@ -109,10 +109,7 @@ namespace PnyxWebAssembly.Server
 
             InitDatabase(applicationDbContext, dbServiceContext, logger);
 
-            if (DatabaseInitializationService.Platform != Platform.Mac)
-            {
-                ImportExcelFile(logger);
-            }
+            ImportExcelFile(logger);
 
             app.UseHttpsRedirection();
             app.UseBlazorFrameworkFiles();
@@ -200,11 +197,18 @@ namespace PnyxWebAssembly.Server
             {
                 string excelImportFile = "TestData.xlsx";
 
-                if (DatabaseInitializationService.Platform != Platform.Windows)
+                if (DatabaseInitializationService.Platform == Platform.Docker)
                 {
                     if (File.Exists("/app/bin/Debug/net5.0/TestData.xlsx"))
                     {
                         excelImportFile = "/app/bin/Debug/net5.0/TestData.xlsx";
+                    }
+                }
+                else if (DatabaseInitializationService.Platform == Platform.Mac)
+                {
+                    if (File.Exists("/bin/Debug/net5.0/TestData.xlsx"))
+                    {
+                        excelImportFile = "/bin/Debug/net5.0/TestData.xlsx";
                     }
                 }
 
