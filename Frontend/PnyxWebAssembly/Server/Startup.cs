@@ -44,9 +44,6 @@ namespace PnyxWebAssembly.Server
 
             DatabaseInitializationService.DbAuthConnectString = authConnectString;
 
-            services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlServer(authConnectString));
-
             string pnyxConnectString = Configuration["DBConnectString"];
 
             string pnyxDockerConnectString = Environment.GetEnvironmentVariable("DBCONNECTSTRING_PNYX");
@@ -68,6 +65,9 @@ namespace PnyxWebAssembly.Server
 
             DatabaseInitializationService.DbConnectString = pnyxConnectString;
             DbServiceContext.ConnectString = pnyxConnectString;
+
+            services.AddDbContext<ApplicationDbContext>(options =>
+                options.UseSqlServer(authConnectString));
 
             services.AddDbContext<DbServiceContext>(options =>
                 options.UseSqlServer(pnyxConnectString));
@@ -138,6 +138,8 @@ namespace PnyxWebAssembly.Server
         /// <param name="logger">The logger.</param>
         private void InitDatabase(ApplicationDbContext applicationDbContext, DbServiceContext dbServiceContext, ILogger<Startup> logger)
         {
+            logger.LogInformation($"Init database. Platform is {DatabaseInitializationService.Platform}");
+
             string sourceInfo = DatabaseInitializationService.Platform == Platform.Docker
                 ? "container environment variable DBCONNECTSTRING_AUTH"
                 : "appsettings.json";
