@@ -109,7 +109,10 @@ namespace PnyxWebAssembly.Server
 
             InitDatabase(applicationDbContext, dbServiceContext, logger);
 
-            ImportExcelFile(logger);
+            if (DatabaseInitializationService.Platform != Platform.Mac)
+            {
+                ImportExcelFile(logger);
+            }
 
             app.UseHttpsRedirection();
             app.UseBlazorFrameworkFiles();
