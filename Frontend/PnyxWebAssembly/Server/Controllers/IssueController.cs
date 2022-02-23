@@ -153,7 +153,7 @@ namespace PnyxWebAssembly.Server.Controllers
 
             string path = @$"Images\Cards\{imageName}";
 
-            if (DatabaseInitializationService.IsDocker)
+            if (DatabaseInitializationService.Platform != Platform.Windows)
             {
                 path = path.Replace("\\", "/");
             }

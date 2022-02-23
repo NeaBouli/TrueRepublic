@@ -1,6 +1,9 @@
 using System;
 using System.IO;
+using System.Runtime.InteropServices;
+using System.Threading;
 using Common.Data;
+using Common.Entities;
 using Common.Services;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Builder;
@@ -37,6 +40,8 @@ namespace PnyxWebAssembly.Server
                 authConnectString = authDockerConnectString;
             }
 
+            DatabaseInitializationService.Platform = Platform.Windows;
+
             DatabaseInitializationService.DbAuthConnectString = authConnectString;
 
             services.AddDbContext<ApplicationDbContext>(options =>
@@ -49,7 +54,16 @@ namespace PnyxWebAssembly.Server
             if (!string.IsNullOrEmpty(pnyxDockerConnectString))
             {
                 pnyxConnectString = pnyxDockerConnectString;
-                DatabaseInitializationService.IsDocker = true;
+                DatabaseInitializationService.Platform = Platform.Docker;
+            }
+            else
+            {
+                if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+                {
+                    DatabaseInitializationService.Platform = Platform.Mac;
+                    authConnectString = Configuration.GetConnectionString("DefaultConnectionMac");
+                    pnyxConnectString = Configuration["DBConnectStringMac"];
+                }
             }
 
             DatabaseInitializationService.DbConnectString = pnyxConnectString;
@@ -124,7 +138,7 @@ namespace PnyxWebAssembly.Server
         /// <param name="logger">The logger.</param>
         private void InitDatabase(ApplicationDbContext applicationDbContext, DbServiceContext dbServiceContext, ILogger<Startup> logger)
         {
-            string sourceInfo = DatabaseInitializationService.IsDocker
+            string sourceInfo = DatabaseInitializationService.Platform == Platform.Docker
                 ? "container environment variable DBCONNECTSTRING_AUTH"
                 : "appsettings.json";
 
@@ -134,9 +148,15 @@ namespace PnyxWebAssembly.Server
                     $"Trying to connect to PnyxAuthenticationDB as configured in {sourceInfo}: " +
                     $"{DatabaseInitializationService.DbAuthConnectString}");
 
+                if (DatabaseInitializationService.Platform == Platform.Docker)
+                {
+                    logger.LogInformation("Waiting 10 Seconds for docker DB to come up");
+                    Thread.Sleep(10000);
+                }
+
                 applicationDbContext.Database.Migrate();
 
-                sourceInfo = DatabaseInitializationService.IsDocker
+                sourceInfo = DatabaseInitializationService.Platform == Platform.Docker
                     ? "container environment variable DBCONNECTSTRING_PNYX"
                     : "appsettings.json";
 
@@ -148,13 +168,13 @@ namespace PnyxWebAssembly.Server
             }
             catch (Exception)
             {
-                sourceInfo = DatabaseInitializationService.IsDocker
+                sourceInfo = DatabaseInitializationService.Platform == Platform.Docker
                     ? "container environment variables"
                     : "appsettings.json";
 
                 logger.LogError($"Error could not find database that was defined in {sourceInfo}");
 
-                if (DatabaseInitializationService.IsDocker)
+                if (DatabaseInitializationService.Platform == Platform.Docker)
                 {
                     logger.LogError("Make sure that 'docker-compose up is used from compose file found here: " +
                                     "https://github.com/NeaBouli/pnyx/blob/development/Frontend/docker-compose.yml");
@@ -176,7 +196,7 @@ namespace PnyxWebAssembly.Server
             {
                 string excelImportFile = "TestData.xlsx";
 
-                if (DatabaseInitializationService.IsDocker)
+                if (DatabaseInitializationService.Platform == Platform.Docker)
                 {
                     if (File.Exists("/app/bin/Debug/net5.0/TestData.xlsx"))
                     {

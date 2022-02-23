@@ -1,5 +1,6 @@
 ﻿using System;
 using Common.Data;
+using Common.Entities;
 
 namespace Common.Services
 {
@@ -30,7 +31,7 @@ namespace Common.Services
         /// <value>
         ///   <c>true</c> if this instance is docker; otherwise, <c>false</c>.
         /// </value>
-        public static bool IsDocker { get; set; }
+        public static Platform Platform { get; set; }
 
         /// <summary>
         /// Creates the database if not existing.
