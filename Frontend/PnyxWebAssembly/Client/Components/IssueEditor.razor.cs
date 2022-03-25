@@ -4,7 +4,6 @@ using System.Linq;
 using System.Net.Http;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using System.Web;
 using Common.Entities;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
@@ -42,6 +41,12 @@ namespace PnyxWebAssembly.Client.Components
         [Inject]
         private IHttpClientFactory ClientFactory { get; set; }
 
+        /// <summary>
+        /// Gets or sets the action.
+        /// </summary>
+        /// <value>
+        /// The action.
+        /// </value>
         [Parameter]
         public string Action { get; set; }
 
@@ -63,10 +68,28 @@ namespace PnyxWebAssembly.Client.Components
 
         private MudForm Form { get; set; }
 
-        private bool ShowHashtagPopover { get; set; }
+        /// <summary>
+        /// Gets or sets a value indicating whether [show hashtag chips].
+        /// </summary>
+        /// <value>
+        ///   <c>true</c> if [show hashtag chips]; otherwise, <c>false</c>.
+        /// </value>
+        private bool ShowHashtagChips { get; set; }
 
+        /// <summary>
+        /// Gets or sets the hashtag value.
+        /// </summary>
+        /// <value>
+        /// The hashtag value.
+        /// </value>
         private string HashtagValue { get; set; }
 
+        /// <summary>
+        /// Method invoked when the component is ready to start, having received its
+        /// initial parameters from its parent in the render tree.
+        /// Override this method if you will perform an asynchronous operation and
+        /// want the component to refresh when that operation is completed.
+        /// </summary>
         protected override async Task OnInitializedAsync()
         {
             Issue = new Issue
@@ -135,16 +158,19 @@ namespace PnyxWebAssembly.Client.Components
             }
         }
 
+        /// <summary>
+        /// Adds the hashtag click.
+        /// </summary>
         private void AddHashtagClick()
         {
-            ShowHashtagPopover = false;
+            ShowHashtagChips = false;
 
             if (string.IsNullOrEmpty(HashtagValue))
             {
                 return;
             }
 
-            ShowHashtagPopover = true;
+            ShowHashtagChips = true;
 
             if (!HashtagValue.StartsWith("#"))
             {
@@ -171,6 +197,8 @@ namespace PnyxWebAssembly.Client.Components
             HashtagValue = string.Empty;
         }
 
+        /// <summary>Called when [mud chip close].</summary>
+        /// <param name="chip">The chip.</param>
         private void OnMudChipClose(MudChip chip)
         {
             Issue.RemoveTag(chip.Text);

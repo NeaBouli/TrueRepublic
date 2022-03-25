@@ -10,7 +10,7 @@
                                      AdornmentIcon="@Icons.Material.Filled.Search" AdornmentColor="Color.Primary"/>
                 </MudItem>
                 <MudItem xs="7">
-                    @if (ShowHashtagPopover)
+                    @if (ShowHashtagChips)
                     {
                         @foreach (string hashtag in Issue.GetTags())
                         {

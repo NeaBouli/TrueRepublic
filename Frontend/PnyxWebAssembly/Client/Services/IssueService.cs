@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -10,6 +9,9 @@ using Common.Entities;
 
 namespace PnyxWebAssembly.Client.Services
 {
+    /// <summary>
+    /// Implementation of the issue service
+    /// </summary>
     public class IssueService
     {
         /// <summary>
@@ -22,12 +24,12 @@ namespace PnyxWebAssembly.Client.Services
 
         public void AddIssue(Issue issue)
         {
-            throw new NoNullAllowedException();
+            throw new NotImplementedException();
         }
 
         public Issue GetIssue(string issueId)
         {
-            throw new NoNullAllowedException();
+            throw new NotImplementedException();
         }
 
         /// <summary>
@@ -51,7 +53,8 @@ namespace PnyxWebAssembly.Client.Services
             using HttpClient client = ClientFactory.CreateClient("PnyxWebAssembly.ServerAPI.Private");
 
 
-            List<string> hashtags = await client.GetFromJsonAsync<List<string>>($"Issues/GetTagAutocomplete/{WebUtility.UrlEncode(value)}");
+            List<string> hashtags = await client.GetFromJsonAsync<List<string>>(
+                $"Issues/GetTagAutocomplete/{WebUtility.UrlEncode(value)}");
 
             if (hashtags == null || !hashtags.Any())
             {
