@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using System.Web;
 using Common.Entities;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
@@ -44,7 +45,13 @@ namespace PnyxWebAssembly.Client.Components
         [Parameter]
         public string Action { get; set; }
 
-        public IssueService IssueService { get; set; }
+        private MudForm MudForm { get; set; }
+
+        private bool Success { get; set; }
+
+        private string[] Errors { get; set; } = { };
+
+        private IssueService IssueService { get; set; }
 
         private Issue Issue { get; set; }
 
@@ -73,9 +80,9 @@ namespace PnyxWebAssembly.Client.Components
             AuthenticationState authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
             ClaimsPrincipal user = authState.User;
 
-            string userEMail = user?.Identity?.Name;
+            string userEMail = user.Identity?.Name;
 
-            if (user != null && !string.IsNullOrEmpty(userEMail))
+            if (!string.IsNullOrEmpty(userEMail))
             {
                 List<Claim> claims = user.Claims.ToList();
 
@@ -130,19 +137,50 @@ namespace PnyxWebAssembly.Client.Components
 
         private void AddHashtagClick()
         {
+            ShowHashtagPopover = false;
+
+            if (string.IsNullOrEmpty(HashtagValue))
+            {
+                return;
+            }
+
             ShowHashtagPopover = true;
+
+            if (!HashtagValue.StartsWith("#"))
+            {
+                HashtagValue = HashtagValue[..1].ToUpper() + HashtagValue[1..];
+                HashtagValue = $"#{HashtagValue}";
+            }
+            else
+            {
+                HashtagValue = HashtagValue[..2].ToUpper() + HashtagValue[2..];
+            }
+
+            // TODO: get hashtags and add hashtag
+            List<string> hashtags = Issue.GetTags().ToList();
+
+            if (hashtags.Contains(HashtagValue, StringComparer.OrdinalIgnoreCase))
+            {
+                HashtagValue = string.Empty;
+                ErrorMessage = "Hashtag with the same name already added";
+                return;
+            }
+
+            Issue.AddTag(HashtagValue);
+
+            HashtagValue = string.Empty;
         }
 
         private void OnMudChipClose(MudChip chip)
         {
-            throw new NotImplementedException();
+            Issue.RemoveTag(chip.Text);
         }
 
-        private void CloseHashtagPopover()
-        {
-            ShowHashtagPopover = false;
-        }
-
+        /// <summary>
+        /// Search for hashtags
+        /// </summary>
+        /// <param name="value">The value to search for</param>
+        /// <returns>An enumeration of all found hashtags</returns>
         private Task<IEnumerable<string>> SearchHashtags(string value)
         {
             return IssueService.GetHashtags(value);

@@ -1,19 +1,35 @@
 ﻿<MudGrid Justify="Justify.Center">
-
-        <MudItem xs="6">
-            <MudAutocomplete T="string" Label="Hashtags" @bind-Value="HashtagValue" SearchFunc="@SearchHashtags"
-                             ResetValueOnEmptyText="true"
-                             CoerceText="true" CoerceValue="true"
-                             AdornmentIcon="@Icons.Material.Filled.Search" AdornmentColor="Color.Primary" />
-        </MudItem>
-        <MudItem xs="6">
-            <MudIconButton Icon="@Icons.Material.Filled.AddCircle" Color="Color.Primary" aria-label="add hashtag" OnClick="@AddHashtagClick"></MudIconButton>
-        </MudItem>
-        <MudItem xs="12">
-            @foreach (string hashtag in Issue.GetTags())
-            {
-                <MudChip Color="Color.Primary" OnClose="OnMudChipClose">hashtag</MudChip>
-            }
-        </MudItem>
-
+<MudItem xs="10">
+    <MudPaper>
+        <MudForm @ref="MudForm" @bind-IsValid="@Success" @bind-Errors="@Errors">
+            <MudGrid Style="margin: 10px">
+                <MudItem xs="6">
+                    <MudAutocomplete T="string" Label="Hashtag" @bind-Value="HashtagValue" SearchFunc="@SearchHashtags"
+                                     ResetValueOnEmptyText="true"
+                                     CoerceText="true" CoerceValue="true"
+                                     AdornmentIcon="@Icons.Material.Filled.Search" AdornmentColor="Color.Primary"/>
+                </MudItem>
+                <MudItem xs="7">
+                    @if (ShowHashtagPopover)
+                    {
+                        @foreach (string hashtag in Issue.GetTags())
+                        {
+                            <MudChip Color="Color.Primary" OnClose="OnMudChipClose" Text="@hashtag">@hashtag</MudChip>
+                        }
+                    }
+                </MudItem>
+                <MudItem xs="3">
+                    @if (!string.IsNullOrEmpty(HashtagValue))
+                    {
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary" DisableElevation="true" OnClick="@(AddHashtagClick)">Add Hashtag</MudButton>
+                    }
+                    else
+                    {
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="true">Add Hashtag</MudButton>
+                    }
+                </MudItem>
+            </MudGrid>
+        </MudForm>
+    </MudPaper>
+</MudItem>
 </MudGrid>

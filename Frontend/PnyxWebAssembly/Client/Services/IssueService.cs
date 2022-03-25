@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Json;
@@ -49,9 +50,13 @@ namespace PnyxWebAssembly.Client.Services
 
             using HttpClient client = ClientFactory.CreateClient("PnyxWebAssembly.ServerAPI.Private");
 
-            value = WebUtility.UrlEncode(value);
 
-            IEnumerable<string> hashtags = await client.GetFromJsonAsync<IEnumerable<string>>($"Issues/GetTagAutocomplete/{value}");
+            List<string> hashtags = await client.GetFromJsonAsync<List<string>>($"Issues/GetTagAutocomplete/{WebUtility.UrlEncode(value)}");
+
+            if (hashtags == null || !hashtags.Any())
+            {
+                return new List<string> { value };
+            }
 
             return hashtags;
         }
