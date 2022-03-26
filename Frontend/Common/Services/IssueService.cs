@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Text;
+using System.Web;
 using Common.Data;
 using Common.Entities;
 using Microsoft.EntityFrameworkCore;
@@ -308,18 +310,19 @@ namespace Common.Services
 
                 foreach (string tagFromIssue in tags)
                 {
-                    if (tagFromIssue.ToLowerInvariant().StartsWith(searchTag.ToLowerInvariant()))
+                    if (tagFromIssue.StartsWith(searchTag, StringComparison.OrdinalIgnoreCase))
                     {
-                        if (!foundTags.Contains(tagFromIssue))
+                        if (!foundTags.Contains(tagFromIssue, StringComparer.OrdinalIgnoreCase))
                         {
-                            foundTags.Add(tagFromIssue);
+                            string tagToAdd = tagFromIssue[..2].ToUpper() + tagFromIssue[2..];
+                            foundTags.Add(tagToAdd);
                         }
                     }
                 }
             }
 
-            foundTags.Sort();
-
+            foundTags.Sort(); 
+            
             return foundTags;
         }
 
@@ -375,6 +378,28 @@ namespace Common.Services
                         }
                     }
 
+                    if (!string.IsNullOrEmpty(issue.Tags))
+                    {
+                        string[] tags = issue.Tags.Split('#',
+                            StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+
+                        StringBuilder tagBuilder = new StringBuilder();
+
+                        foreach (string tag in tags)
+                        {
+                            string tagToAdd = tag[..1].ToUpper() + tag[1..];
+
+                            if (tagBuilder.ToString().Length > 0)
+                            {
+                                tagBuilder.Append(" ");
+                            }
+
+                            tagBuilder.Append($"#{tagToAdd}");
+                        }
+
+                        issue.Tags = tagBuilder.ToString();
+                    }
+                    
                     dbServiceContext.Issues.Add(issue);
 
                     recordCount++;
@@ -520,6 +545,75 @@ namespace Common.Services
             }
 
             return (true, errorMessage);
+        }
+
+        /// <summary>
+        /// Gets the image from hashtags.
+        /// </summary>
+        /// <param name="dbServiceContext">The database service context.</param>
+        /// <param name="issue">The issue.</param>
+        /// <returns>The image from the hashtags</returns>
+        public static string GetImageFromHashtags(DbServiceContext dbServiceContext, Issue issue)
+        {
+            IEnumerable<string> hashtags = issue.GetTags();
+
+            string image = GetImageFromHashtags(dbServiceContext, hashtags);
+
+            return image;
+        }
+
+        /// <summary>
+        /// Gets the image from hashtags.
+        /// </summary>
+        /// <param name="dbServiceContext">The database service context.</param>
+        /// <param name="hashtags">The hashtags.</param>
+        /// <returns>The image for the given hashtags</returns>
+        public static string GetImageFromHashtags(DbServiceContext dbServiceContext, string hashtags)
+        {
+            hashtags = HttpUtility.UrlDecode(hashtags);
+
+            List<string> tags = hashtags.Split(' ', StringSplitOptions.RemoveEmptyEntries).ToList();
+
+            string image = GetImageFromHashtags(dbServiceContext, tags);
+
+            return image;
+        }
+
+        /// <summary>
+        /// Gets the image from hashtags.
+        /// </summary>
+        /// <param name="dbServiceContext">The database service context.</param>
+        /// <param name="hashtags">The hashtags.</param>
+        /// <returns>The image for the given hashtags</returns>
+        private static string GetImageFromHashtags(DbServiceContext dbServiceContext, IEnumerable<string> hashtags)
+        {
+            Dictionary<string, int> imageNamesCountDictionary = new Dictionary<string, int>();
+
+            ImageInfoService imageInfoService = new ImageInfoService();
+
+            foreach (string hashtag in hashtags)
+            {
+                string imageName = imageInfoService.GetImageForHashtag(dbServiceContext, hashtag);
+
+                if (!imageNamesCountDictionary.ContainsKey(imageName))
+                {
+                    imageNamesCountDictionary.Add(imageName, 0);
+                }
+                else
+                {
+                    imageNamesCountDictionary[imageName]++;
+                }
+            }
+
+            string image = "verträge.jpg";
+
+            if (imageNamesCountDictionary.Count > 0)
+            {
+                image = imageNamesCountDictionary
+                    .FirstOrDefault(i => i.Value == imageNamesCountDictionary.Values.Max()).Key;
+            }
+
+            return image;
         }
     }
 }

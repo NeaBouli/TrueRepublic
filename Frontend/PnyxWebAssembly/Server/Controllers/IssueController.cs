@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using Common.Data;
 using Common.Entities;
 using Common.Services;
@@ -107,33 +106,35 @@ namespace PnyxWebAssembly.Server.Controllers
                 return NotFound();
             }
 
-            Dictionary<string, int> imageNamesCountDictionary = new Dictionary<string, int>();
-
-            ImageInfoService imageInfoService = new ImageInfoService();
-
-            foreach (string hashtag in issue.GetTags())
+            if (!string.IsNullOrEmpty(issue.ImageName))
             {
-                string imageName = imageInfoService.GetImageForHashtag(dbServiceContext, hashtag);
-
-                if (!imageNamesCountDictionary.ContainsKey(imageName))
-                {
-                    imageNamesCountDictionary.Add(imageName, 0);
-                }
-                else
-                {
-                    imageNamesCountDictionary[imageName]++;
-                }
+                return Ok(issue.ImageName);
             }
 
-            string image = "verträge.jpg";
+            string image = IssueService.GetImageFromHashtags(dbServiceContext, issue);
 
-            if (imageNamesCountDictionary.Count > 0)
-            {
-                image = imageNamesCountDictionary
-                    .FirstOrDefault(i => i.Value == imageNamesCountDictionary.Values.Max()).Key;
-            }
+            issue.ImageName = image;
+
+            dbServiceContext.SaveChanges();
 
             _logger.LogInformation($"Image found for issueId {issueId}: {image}");
+
+            return Ok(image);
+        }
+
+        /// <summary>
+        /// Gets the image name for hashtags.
+        /// </summary>
+        /// <param name="hashtags">The hashtags.</param>
+        /// <returns>The image stream for the hashtags</returns>
+        [HttpGet("ImageNameForHashtags/{hashtags}")]
+        public IActionResult GetImageNameForHashtags(string hashtags)
+        {
+            using DbServiceContext dbServiceContext = DatabaseInitializationService.GetDbServiceContext();
+
+            string image = IssueService.GetImageFromHashtags(dbServiceContext, hashtags);
+
+            _logger.LogInformation($"Image found for hashtags {hashtags}: {image}");
 
             return Ok(image);
         }

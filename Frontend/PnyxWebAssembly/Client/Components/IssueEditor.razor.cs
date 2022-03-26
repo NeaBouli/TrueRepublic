@@ -7,11 +7,16 @@ using System.Threading.Tasks;
 using Common.Entities;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.AspNetCore.Components.Web;
 using MudBlazor;
 using PnyxWebAssembly.Client.Services;
 
 namespace PnyxWebAssembly.Client.Components
 {
+    /// <summary>
+    /// Implementation of the issue editor
+    /// </summary>
+    /// <seealso cref="Microsoft.AspNetCore.Components.ComponentBase" />
     public partial class IssueEditor
     {
         /// <summary>
@@ -59,6 +64,8 @@ namespace PnyxWebAssembly.Client.Components
         private IssueService IssueService { get; set; }
 
         private Issue Issue { get; set; }
+
+        private string IssueImage { get; set; }
 
         private EditMode EditMode { get; set; }
 
@@ -153,7 +160,7 @@ namespace PnyxWebAssembly.Client.Components
                     client = ClientFactory.CreateClient("PnyxWebAssembly.ServerAPI.Public");
                     EditMode = EditMode.ReadOnly;
                 }
-                
+
                 // TODO: load issue with all proposals
             }
         }
@@ -161,7 +168,7 @@ namespace PnyxWebAssembly.Client.Components
         /// <summary>
         /// Adds the hashtag click.
         /// </summary>
-        private void AddHashtagClick()
+        private async Task AddHashtagClick()
         {
             ShowHashtagChips = false;
 
@@ -182,7 +189,6 @@ namespace PnyxWebAssembly.Client.Components
                 HashtagValue = HashtagValue[..2].ToUpper() + HashtagValue[2..];
             }
 
-            // TODO: get hashtags and add hashtag
             List<string> hashtags = Issue.GetTags().ToList();
 
             if (hashtags.Contains(HashtagValue, StringComparer.OrdinalIgnoreCase))
@@ -194,14 +200,38 @@ namespace PnyxWebAssembly.Client.Components
 
             Issue.AddTag(HashtagValue);
 
+            await SetImageForHashtags();
+
             HashtagValue = string.Empty;
+        }
+
+        private async Task SetImageForHashtags()
+        {
+            KeyValuePair<string, string>? result = await IssueImageService.GetImageFromServiceForHashtags(Issue.Tags);
+
+            if (result != null)
+            {
+                Issue.ImageName = ((KeyValuePair<string, string>) result).Key;
+                IssueImage = ((KeyValuePair<string, string>) result).Value;
+            }
         }
 
         /// <summary>Called when [mud chip close].</summary>
         /// <param name="chip">The chip.</param>
-        private void OnMudChipClose(MudChip chip)
+        private async Task OnMudChipClose(MudChip chip)
         {
             Issue.RemoveTag(chip.Text);
+
+            if (Issue.Tags.Length == 0)
+            {
+                ShowHashtagChips = false;
+                Issue.ImageName = string.Empty;
+                IssueImage = string.Empty;
+            }
+            else
+            {
+                await SetImageForHashtags();
+            }
         }
 
         /// <summary>
@@ -212,6 +242,11 @@ namespace PnyxWebAssembly.Client.Components
         private Task<IEnumerable<string>> SearchHashtags(string value)
         {
             return IssueService.GetHashtags(value);
+        }
+
+        private void EditImageClick()
+        {
+            throw new NotImplementedException();
         }
     }
 }

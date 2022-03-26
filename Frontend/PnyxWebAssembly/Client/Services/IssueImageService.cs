@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
+using System.Web;
 using Common.Services;
 
 namespace PnyxWebAssembly.Client.Services
@@ -37,6 +39,8 @@ namespace PnyxWebAssembly.Client.Services
         /// </returns>
         public static async Task<string> GetImageFromService(Guid issueId)
         {
+            // TODO: share code - eliminate duplication
+
             string contentType = null;
 
             Stream imageStream = null;
@@ -91,6 +95,64 @@ namespace PnyxWebAssembly.Client.Services
             }
 
             return string.Empty;
+        }
+
+        public static async Task<KeyValuePair<string, string>?> GetImageFromServiceForHashtags(string hashtags)
+        {
+            string contentType = null;
+
+            Stream imageStream = null;
+
+            try
+            {
+                using HttpClient client = ClientFactory.CreateClient("PnyxWebAssembly.ServerAPI.Public");
+
+                string imageName = await client.GetStringAsync($"Issues/ImageNameForHashtags/{HttpUtility.UrlEncode(hashtags)}");
+
+                if (!ImageCacheService.HasImage(imageName))
+                {
+                    contentType = Path.GetExtension(imageName).Replace(".", string.Empty);
+                    imageStream = await client.GetStreamAsync($"Issues/Image/{imageName}");
+                }
+                else
+                {
+                    string imageData = ImageCacheService.Get(imageName);
+
+                    if (!string.IsNullOrEmpty(imageData))
+                    {
+                        await LogService.LogToServer(client, $"Getting image {imageName} from cache");
+
+                        return new KeyValuePair<string, string>(imageName, imageData);
+                    }
+                }
+
+                if (!string.IsNullOrEmpty(contentType))
+                {
+                    byte[] byteArray = ImageInfoService.StreamToByteArray(imageStream);
+
+                    imageStream.Close();
+
+                    string base64 = $"data:image/{contentType};base64, {Convert.ToBase64String(byteArray)}";
+
+                    if (!string.IsNullOrEmpty(imageName) && !ImageCacheService.HasImage(imageName))
+                    {
+                        ImageCacheService.Add(imageName, base64);
+                    }
+
+                    return new KeyValuePair<string, string>(imageName, base64);
+                }
+            }
+            catch (HttpRequestException ex)
+            {
+                if (ex.StatusCode == HttpStatusCode.NotFound)
+                {
+                    return null;
+                }
+
+                throw;
+            }
+
+            return null;
         }
     }
 }

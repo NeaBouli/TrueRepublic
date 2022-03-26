@@ -50,6 +50,14 @@ namespace Common.Entities
         public string Tags { get; set; }
 
         /// <summary>
+        /// Gets or sets the name of the image.
+        /// </summary>
+        /// <value>
+        /// The name of the image.
+        /// </value>
+        public string ImageName { get; set; }
+
+        /// <summary>
         /// Gets or sets the title.
         /// </summary>
         /// <value>

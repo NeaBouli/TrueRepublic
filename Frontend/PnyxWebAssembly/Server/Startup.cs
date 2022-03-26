@@ -199,17 +199,26 @@ namespace PnyxWebAssembly.Server
 
                 if (DatabaseInitializationService.Platform == Platform.Docker)
                 {
-                    if (File.Exists("/app/bin/Debug/net5.0/TestData.xlsx"))
+                    if (File.Exists("/app/bin/Debug/net6.0/TestData.xlsx"))
                     {
-                        excelImportFile = "/app/bin/Debug/net5.0/TestData.xlsx";
+                        excelImportFile = "/app/bin/Debug/net6.0/TestData.xlsx";
                     }
                 }
                 else if (DatabaseInitializationService.Platform == Platform.Mac)
                 {
-                    if (File.Exists("bin/Debug/net5.0/TestData.xlsx"))
+                    if (File.Exists("bin/Debug/net6.0/TestData.xlsx"))
                     {
-                        excelImportFile = "bin/Debug/net5.0/TestData.xlsx";
+                        excelImportFile = "bin/Debug/net6.0/TestData.xlsx";
                     }
+                }
+                else
+                {
+#if (DEBUG)
+                    if (File.Exists("bin/Debug/net6.0/TestData.xlsx"))
+                    {
+                        excelImportFile = "bin/Debug/net6.0/TestData.xlsx";
+                    }
+#endif
                 }
 
                 logger.LogInformation(!excelImportFile.Contains("/")

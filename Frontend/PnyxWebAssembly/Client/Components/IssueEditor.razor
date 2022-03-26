@@ -7,7 +7,10 @@
                     <MudAutocomplete T="string" Label="Hashtag" @bind-Value="HashtagValue" SearchFunc="@SearchHashtags"
                                      ResetValueOnEmptyText="true"
                                      CoerceText="true" CoerceValue="true"
-                                     AdornmentIcon="@Icons.Material.Filled.Search" AdornmentColor="Color.Primary"/>
+                                     AdornmentIcon="@Icons.Material.Filled.Search" AdornmentColor="Color.Primary"
+                                     AutoFocus="true"
+                                     KeyPressPreventDefault="true"
+                                     MinCharacters="3" />
                 </MudItem>
                 <MudItem xs="7">
                     @if (ShowHashtagChips)
@@ -21,11 +24,27 @@
                 <MudItem xs="3">
                     @if (!string.IsNullOrEmpty(HashtagValue))
                     {
-                        <MudButton Variant="Variant.Filled" Color="Color.Primary" DisableElevation="true" OnClick="@(AddHashtagClick)">Add Hashtag</MudButton>
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary" DisableElevation="true" FullWidth="true" OnClick="@(AddHashtagClick)">Add Hashtag</MudButton>
                     }
                     else
                     {
-                        <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="true">Add Hashtag</MudButton>
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary" FullWidth="true" Disabled="true">Add Hashtag</MudButton>
+                    }
+                </MudItem>
+                <MudItem xs="7">
+                    @if (!string.IsNullOrEmpty(Issue.ImageName))
+                    {
+                        <MudImage Height="180" Src="@IssueImage" Class="rounded-lg"/>
+                    }
+                </MudItem>
+                <MudItem xs="3">
+                    @if (ShowHashtagChips)
+                    {
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary" FullWidth="true" DisableElevation="true" OnClick="@(EditImageClick)">Choose Image</MudButton>
+                    }
+                    else
+                    {
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary" FullWidth="true" Disabled="true">Choose Image</MudButton>
                     }
                 </MudItem>
             </MudGrid>
