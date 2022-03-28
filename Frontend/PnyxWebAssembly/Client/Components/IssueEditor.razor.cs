@@ -170,6 +170,14 @@ namespace PnyxWebAssembly.Client.Components
         /// </summary>
         private async Task AddHashtagClick()
         {
+            await AddHashtag();
+        }
+
+        /// <summary>
+        /// Adds the hashtag.
+        /// </summary>
+        private async Task AddHashtag()
+        {
             ShowHashtagChips = false;
 
             if (string.IsNullOrEmpty(HashtagValue))
@@ -247,6 +255,43 @@ namespace PnyxWebAssembly.Client.Components
         private void EditImageClick()
         {
             throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Raises the <see cref="E:KeyUp" /> event.
+        /// </summary>
+        /// <param name="e">The <see cref="KeyboardEventArgs"/> instance containing the event data.</param>
+        private async Task OnKeyUp(KeyboardEventArgs e)
+        {
+            if (e.Code == "Enter" && !string.IsNullOrEmpty(HashtagValue))
+            {
+                await AddHashtag();
+                e.Code = string.Empty;
+                e.Key = string.Empty;
+                return;
+            }
+
+            if (e.Code == "Backspace")
+            {
+                return;
+            }
+            
+            if (!e.AltKey && !e.CtrlKey && !e.MetaKey && !e.Repeat)
+            {
+                if (!e.ShiftKey)
+                {
+                    HashtagValue += e.Key;
+                }
+                else
+                {
+                    HashtagValue += e.Key.ToUpper();
+                }
+            }
+        }
+
+        private async Task OnValueChanged(string arg)
+        {
+            await AddHashtag();
         }
     }
 }

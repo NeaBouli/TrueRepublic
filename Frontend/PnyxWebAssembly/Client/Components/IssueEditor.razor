@@ -4,13 +4,15 @@
         <MudForm @ref="MudForm" @bind-IsValid="@Success" @bind-Errors="@Errors">
             <MudGrid Style="margin: 10px">
                 <MudItem xs="6">
-                    <MudAutocomplete T="string" Label="Hashtag" @bind-Value="HashtagValue" SearchFunc="@SearchHashtags"
+                    <MudAdvancedAutocomplete T="string" Label="Hashtag" @bind-Value="HashtagValue" SearchFunc="@SearchHashtags"
                                      ResetValueOnEmptyText="true"
                                      CoerceText="true" CoerceValue="true"
-                                     AdornmentIcon="@Icons.Material.Filled.Search" AdornmentColor="Color.Primary"
+                                     AdornmentIcon="@Icons.Material.Filled.Search"
+                                     AdornmentColor="Color.Primary"
                                      AutoFocus="true"
                                      KeyPressPreventDefault="true"
-                                     MinCharacters="3" />
+                                     MinCharacters="3" 
+                                     OnValueChanged="@(OnValueChanged)"/>
                 </MudItem>
                 <MudItem xs="7">
                     @if (ShowHashtagChips)
