@@ -2,6 +2,7 @@
     [Id]            UNIQUEIDENTIFIER NOT NULL,
     [ImportId]      INT              NULL,
     [Tags]          NVARCHAR (MAX)   NOT NULL,
+    [ImageName]     NVARCHAR (MAX)   NULL,
     [Title]         NVARCHAR (MAX)   NOT NULL,
     [Description]   NVARCHAR (MAX)   NOT NULL,
     [DueDate]       DATETIME2 (7)    NULL,
@@ -9,4 +10,6 @@
     [CreatorUserId] UNIQUEIDENTIFIER NOT NULL,
     CONSTRAINT [PK_Issues] PRIMARY KEY CLUSTERED ([Id] ASC)
 );
+
+
 

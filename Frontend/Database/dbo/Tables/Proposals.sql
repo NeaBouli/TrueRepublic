@@ -2,13 +2,15 @@
     [Id]            UNIQUEIDENTIFIER NOT NULL,
     [IssueId]       UNIQUEIDENTIFIER NOT NULL,
     [ImportId]      INT              NULL,
-    [Title]         NVARCHAR (MAX)   NULL,
-    [Description]   NVARCHAR (MAX)   NULL,
+    [Title]         NVARCHAR (MAX)   NOT NULL,
+    [Description]   NVARCHAR (MAX)   NOT NULL,
     [CreateDate]    DATETIME2 (7)    NOT NULL,
     [CreatorUserId] UNIQUEIDENTIFIER NOT NULL,
     CONSTRAINT [PK_Proposals] PRIMARY KEY CLUSTERED ([Id] ASC),
     CONSTRAINT [FK_Proposals_Issues_IssueId] FOREIGN KEY ([IssueId]) REFERENCES [dbo].[Issues] ([Id]) ON DELETE CASCADE
 );
+
+
 
 
 GO
