@@ -1,6 +1,6 @@
 ﻿@* Infinite Scroll component supplied by https://github.com/SveNord/Sve-Blazor-InfiniteScroll *@
 
-@inject IJSRuntime JSRuntime
+@inject IJSRuntime _jsRuntime
 
 @ChildContent
 
@@ -14,14 +14,14 @@
     [Parameter]
     public EventCallback<bool> ObservableTargetReached { get; set; }
 
-    private DotNetObjectReference<InfiniteScroll> objectRef;
+    private DotNetObjectReference<InfiniteScroll> _objectRef;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
-            objectRef = DotNetObjectReference.Create(this);
-            await JSRuntime.InvokeAsync<dynamic>("Observer.Initialize", objectRef, ObserverTargetId);
+            _objectRef = DotNetObjectReference.Create(this);
+            await _jsRuntime.InvokeAsync<dynamic>("Observer.Initialize", _objectRef, ObserverTargetId);
         }
     }
 

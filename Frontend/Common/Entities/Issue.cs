@@ -64,7 +64,7 @@ namespace Common.Entities
         /// The title.
         /// </value>
         [Required]
-        // TODO: unique
+        // TODO: unique - make sure in issue creator form
         public string Title { get; set; }
 
         /// <summary>
