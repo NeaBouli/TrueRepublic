@@ -31,7 +31,7 @@ namespace PnyxWebAssembly.Client.Components
             {
                 ImageItems.Add(new ImageItem
                 {
-                    Id = i
+                    Id = i + 1
                 });
             }
         }
