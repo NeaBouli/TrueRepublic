@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
+using System.Reflection.Metadata;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Common.Entities;
@@ -45,6 +46,9 @@ namespace PnyxWebAssembly.Client.Components
         /// </value>
         [Inject]
         private IHttpClientFactory ClientFactory { get; set; }
+
+        [Inject]
+        private IDialogService DialogService { get; set; }
 
         /// <summary>
         /// Gets or sets the action.
@@ -252,9 +256,17 @@ namespace PnyxWebAssembly.Client.Components
             return IssueService.GetHashtags(value);
         }
 
-        private void EditImageClick()
+        private async Task EditImageClick()
         {
-            throw new NotImplementedException();
+            // TODO: show dialog with tab for pixabay and upload
+
+            // TODO: integrate google vision api via key as environment var
+
+            DialogParameters parameters = new DialogParameters { ["hashtags"] = Issue.GetTags() };
+
+            var dialogReference = DialogService.Show<ImageSelector>("Edit Image", parameters);
+
+            var result = await dialogReference.Result;
         }
 
         /// <summary>
