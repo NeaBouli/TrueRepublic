@@ -1,0 +1,22 @@
+﻿@page "/testpage"
+
+@inject IDialogService _dialogService
+
+<MudButton @onclick="OpenDialog" Variant="Variant.Filled" Color="Color.Primary" Style="margin: 20px">
+    Edit Image
+</MudButton>
+
+@code {
+    private void OpenDialog()
+    {
+        DialogParameters parameters = new DialogParameters { ["hashtags"] = "Test" };
+        var options = new DialogOptions
+        {
+            MaxWidth = MaxWidth.Large, 
+            FullWidth = true,
+            Position = DialogPosition.TopCenter
+        };
+
+        _dialogService.Show<ImageSelector>("Edit Image", parameters, options);
+    }
+}

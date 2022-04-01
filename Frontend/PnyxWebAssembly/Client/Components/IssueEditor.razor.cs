@@ -8,7 +8,6 @@ using System.Threading.Tasks;
 using Common.Entities;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
-using Microsoft.AspNetCore.Components.Web;
 using MudBlazor;
 using PnyxWebAssembly.Client.Services;
 
@@ -256,49 +255,24 @@ namespace PnyxWebAssembly.Client.Components
             return IssueService.GetHashtags(value);
         }
 
-        private async Task EditImageClick()
+        private void EditImageClick()
         {
             // TODO: show dialog with tab for pixabay and upload
 
             // TODO: integrate google vision api via key as environment var
 
-            DialogParameters parameters = new DialogParameters { ["hashtags"] = Issue.GetTags() };
+            DialogParameters parameters = new DialogParameters { ["hashtags"] = Issue.Tags };
 
-            var dialogReference = DialogService.Show<ImageSelector>("Edit Image", parameters);
-
-            var result = await dialogReference.Result;
-        }
-
-        /// <summary>
-        /// Raises the <see cref="E:KeyUp" /> event.
-        /// </summary>
-        /// <param name="e">The <see cref="KeyboardEventArgs"/> instance containing the event data.</param>
-        private async Task OnKeyUp(KeyboardEventArgs e)
-        {
-            if (e.Code == "Enter" && !string.IsNullOrEmpty(HashtagValue))
+            var options = new DialogOptions
             {
-                await AddHashtag();
-                e.Code = string.Empty;
-                e.Key = string.Empty;
-                return;
-            }
+                MaxWidth = MaxWidth.Large,
+                FullWidth = true,
+                Position = DialogPosition.TopCenter,
+                CloseButton = true,
+                DisableBackdropClick = true
+            };
 
-            if (e.Code == "Backspace")
-            {
-                return;
-            }
-            
-            if (!e.AltKey && !e.CtrlKey && !e.MetaKey && !e.Repeat)
-            {
-                if (!e.ShiftKey)
-                {
-                    HashtagValue += e.Key;
-                }
-                else
-                {
-                    HashtagValue += e.Key.ToUpper();
-                }
-            }
+            DialogService.Show<ImageSelector>("Edit Image", parameters, options);
         }
 
         private async Task OnValueChanged(string arg)

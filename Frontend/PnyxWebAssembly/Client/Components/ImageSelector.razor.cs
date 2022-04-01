@@ -11,6 +11,8 @@ namespace PnyxWebAssembly.Client.Components
         [Parameter] 
         public string Hashtags { get; set; }
 
+        private int SelectedPaper { get; set; }
+
         private void Submit() => MudDialog.Close(DialogResult.Ok(true));
 
         private void Cancel() => MudDialog.Cancel();

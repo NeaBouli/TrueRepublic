@@ -2,11 +2,30 @@
     <DialogContent>
         <MudTabs Elevation="2" Rounded="true" ApplyEffectsToContainer="true" PanelClass="pa-6">
             <MudTabPanel Text="Browse">
-                <MudText>@Hashtags</MudText>
-                <MudText>Browse</MudText>
+                <MudContainer Style="margin-bottom: 20px">
+                    <MudText>@Hashtags</MudText>
+                </MudContainer>
+                <MudContainer Style="max-height: 480px; overflow-y: scroll">
+                    <MudRadioGroup @bind-SelectedOption="SelectedPaper">
+                    <MudGrid>
+                        @for (int i = 0; i < 96; i++)
+                        {
+                            <MudItem xs="2">
+                                <MudPaper Class="d-flex align-center justify-center mud-width-full py-8"
+                                          Style="background-color: lightgray">
+                                    @* ReSharper disable once AccessToModifiedClosure *@
+                                    <MudRadio Option="i" Color="Color.Default" Size="Size.Large">&nbsp;</MudRadio>
+                                </MudPaper>
+                            </MudItem>
+                        }
+                    </MudGrid>
+                    </MudRadioGroup>
+                </MudContainer>
             </MudTabPanel>
             <MudTabPanel Text="Upload">
-                <MudText>Upload</MudText>
+                <MudContainer Style="margin-bottom: 20px">
+                    <MudText>Upload</MudText>
+                </MudContainer>
             </MudTabPanel>
         </MudTabs>
     </DialogContent>

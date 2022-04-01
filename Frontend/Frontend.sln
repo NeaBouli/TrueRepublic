@@ -19,6 +19,8 @@ Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-co
 EndProject
 Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "Database", "Database\Database.sqlproj", "{3F567816-0FA4-4E10-8B0D-FD7B223692EC}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MudBlazor", "..\..\MudBlazor\src\MudBlazor\MudBlazor.csproj", "{C4140176-D632-479E-BC05-C1B7F6D5A869}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -59,6 +61,10 @@ Global
 		{3F567816-0FA4-4E10-8B0D-FD7B223692EC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3F567816-0FA4-4E10-8B0D-FD7B223692EC}.Release|Any CPU.Build.0 = Release|Any CPU
 		{3F567816-0FA4-4E10-8B0D-FD7B223692EC}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{C4140176-D632-479E-BC05-C1B7F6D5A869}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C4140176-D632-479E-BC05-C1B7F6D5A869}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C4140176-D632-479E-BC05-C1B7F6D5A869}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C4140176-D632-479E-BC05-C1B7F6D5A869}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
