@@ -8,13 +8,14 @@
                 <MudContainer Style="max-height: 480px; overflow-y: scroll">
                     <MudRadioGroup @bind-SelectedOption="SelectedPaper">
                     <MudGrid>
-                        @for (int i = 0; i < 96; i++)
+                        @foreach(ImageItem imageItem in ImageItems)
                         {
                             <MudItem xs="2">
                                 <MudPaper Class="d-flex align-center justify-center mud-width-full py-8"
-                                          Style="background-color: lightgray">
-                                    @* ReSharper disable once AccessToModifiedClosure *@
-                                    <MudRadio Option="i" Color="Color.Default" Size="Size.Large">&nbsp;</MudRadio>
+                                          Style="background-color: lightgray; min-height: 120px">
+                                    <MudRadio Option="@imageItem.Id" Color="Color.Default" Size="Size.Medium" Style="margin-left: 50%; margin-top: -75px">
+                                        @imageItem.Id
+                                    </MudRadio>
                                 </MudPaper>
                             </MudItem>
                         }
