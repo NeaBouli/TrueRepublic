@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using Microsoft.AspNetCore.Components;
-using Microsoft.Extensions.Options;
+using Microsoft.AspNetCore.Components.Web;
 using MudBlazor;
 
 namespace PnyxWebAssembly.Client.Components
@@ -18,15 +18,39 @@ namespace PnyxWebAssembly.Client.Components
         [Inject]
         private ISnackbar Snackbar { get; set; }
 
-        [Parameter] 
-        public string Hashtags { get; set; }
+        [Parameter]
+        public IEnumerable<string> Hashtags { get; set; }
 
-        private int SelectedPaper { get; set; }
+        public string SearchText { get; set; }
 
-        public List<ImageItem> ImageItems { get; } = new List<ImageItem>();
+        public List<ImageItem> ImageItems { get; } = new();
 
-        public ImageSelector()
+        private int _selectedPaper;
+
+        private MudForm _form;
+
+        private string[] _errors = { };
+
+        private void Submit()
         {
+            MudDialog.Close(DialogResult.Ok(_selectedPaper));
+        }
+
+        private void Cancel() => MudDialog.Cancel();
+
+        private void OnSearchClick()
+        {
+            InvokeSearch();
+        }
+
+        private void InvokeSearch()
+        {
+            ImageItems.Clear();
+
+            Snackbar.Clear();
+            Snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopCenter;
+            Snackbar.Add($"Searching: {SearchText}");
+
             for (int i = 0; i < 96; i++)
             {
                 ImageItems.Add(new ImageItem
@@ -36,15 +60,43 @@ namespace PnyxWebAssembly.Client.Components
             }
         }
 
-        private void Submit()
+        private void OnSelectedChipChanged(MudChip mudChip)
         {
-            MudDialog.Close(DialogResult.Ok(true));
+            _form.ResetValidation();
 
-            Snackbar.Clear();
-            Snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopCenter;
-            Snackbar.Add($"Selected Item: {SelectedPaper}");
+            if (mudChip == null)
+            {
+                ImageItems.Clear();
+                SearchText = string.Empty;
+                return;
+            }
+
+            SearchText = mudChip.Text.Replace("#", string.Empty);
+
+            InvokeSearch();
         }
 
-        private void Cancel() => MudDialog.Cancel();
+        private void OnSearchKeyUp(KeyboardEventArgs e)
+        {
+            if (e.Code == "Enter" && 
+                !string.IsNullOrEmpty(SearchText) &&
+                SearchText.Length >= 3)
+            {
+                _form.ResetValidation();
+                InvokeSearch();
+            }
+        }
+
+        private IEnumerable<string> ValidateSearch(string searchText)
+        {
+            if (string.IsNullOrWhiteSpace(searchText))
+            {
+                yield return "Ein Suchtext muss angegeben werden";
+                yield break;
+            }
+
+            if (searchText.Length < 3)
+                yield return "Der Suchtext muss mindestens 3 Zeichen lang sein";
+        }
     }
 }

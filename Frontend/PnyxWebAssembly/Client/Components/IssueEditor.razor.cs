@@ -49,6 +49,9 @@ namespace PnyxWebAssembly.Client.Components
         [Inject]
         private IDialogService DialogService { get; set; }
 
+        [Inject]
+        private ISnackbar Snackbar { get; set; }
+
         /// <summary>
         /// Gets or sets the action.
         /// </summary>
@@ -58,7 +61,7 @@ namespace PnyxWebAssembly.Client.Components
         [Parameter]
         public string Action { get; set; }
 
-        private MudForm MudForm { get; set; }
+        private MudForm _form;
 
         private bool Success { get; set; }
 
@@ -75,8 +78,6 @@ namespace PnyxWebAssembly.Client.Components
         private User User { get; set; }
 
         private string ErrorMessage { get; set; }
-
-        private MudForm Form { get; set; }
 
         /// <summary>
         /// Gets or sets a value indicating whether [show hashtag chips].
@@ -255,24 +256,22 @@ namespace PnyxWebAssembly.Client.Components
             return IssueService.GetHashtags(value);
         }
 
-        private void EditImageClick()
+        private async Task EditImageClick()
         {
-            // TODO: show dialog with tab for pixabay and upload
-
-            // TODO: integrate google vision api via key as environment var
-
-            DialogParameters parameters = new DialogParameters { ["hashtags"] = Issue.Tags };
-
+            DialogParameters parameters = new DialogParameters { ["hashtags"] = Issue.GetTags() };
             var options = new DialogOptions
             {
                 MaxWidth = MaxWidth.Large,
                 FullWidth = true,
-                Position = DialogPosition.TopCenter,
-                CloseButton = true,
-                DisableBackdropClick = true
+                Position = DialogPosition.TopCenter
             };
 
-            DialogService.Show<ImageSelector>("Edit Image", parameters, options);
+            IDialogReference dialog = DialogService.Show<ImageSelector>("Edit Image", parameters, options);
+            DialogResult result = await dialog.Result;
+
+            Snackbar.Clear();
+            Snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopCenter;
+            Snackbar.Add($"Selected Item: {result.Data}");
         }
 
         private async Task OnValueChanged(string arg)

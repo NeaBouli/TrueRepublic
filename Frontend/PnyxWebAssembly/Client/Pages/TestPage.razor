@@ -1,15 +1,16 @@
 ﻿@page "/testpage"
 
 @inject IDialogService _dialogService
+@inject ISnackbar _snackbar
 
 <MudButton @onclick="OpenDialog" Variant="Variant.Filled" Color="Color.Primary" Style="margin: 20px">
     Edit Image
 </MudButton>
 
 @code {
-    private void OpenDialog()
+    private async Task OpenDialog()
     {
-        DialogParameters parameters = new DialogParameters { ["hashtags"] = "Test" };
+        DialogParameters parameters = new DialogParameters { ["hashtags"] = new List<string> {"#Familie", " #Militär" }};
         var options = new DialogOptions
         {
             MaxWidth = MaxWidth.Large, 
@@ -17,6 +18,11 @@
             Position = DialogPosition.TopCenter
         };
 
-        _dialogService.Show<ImageSelector>("Edit Image", parameters, options);
+        IDialogReference dialog =  _dialogService.Show<ImageSelector>("Edit Image", parameters, options);
+        DialogResult result = await dialog.Result;
+
+        _snackbar.Clear();
+        _snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopCenter;
+        _snackbar.Add($"Selected Item: {result.Data}");
     }
 }
