@@ -73,6 +73,16 @@ namespace PnyxWebAssembly.Client.Components
         private MudForm Form { get; set; }
 
         private string[] Errors { get; set; } = { };
+        
+        public ICollection<object> SelectedValues { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether [keep search text].
+        /// </summary>
+        /// <value>
+        ///   <c>true</c> if [keep search text]; otherwise, <c>false</c>.
+        /// </value>
+        private bool KeepSearchText { get; set; }
 
         /// <summary>
         /// Submits this instance.
@@ -113,21 +123,8 @@ namespace PnyxWebAssembly.Client.Components
 
             if (!searchTextHasChip)
             {
-                List<HashtagSelected> newHashtagsSelected = new List<HashtagSelected>();
-
-                foreach (HashtagSelected hashtagSelected in Hashtags)
-                {
-                    hashtagSelected.Selected = false;
-
-                    newHashtagsSelected.Add(hashtagSelected);
-                }
-
-                //string hashtagValue = SearchText[..1].ToUpper() + SearchText[1..];
-                //hashtagValue = $"#{hashtagValue}";
-
-                //newHashtagsSelected.Add(new HashtagSelected(hashtagValue, true));
-
-                Hashtags = newHashtagsSelected;
+                SelectedValues = null;
+                KeepSearchText = true;
             }
 
             ImageItems.Clear();
@@ -159,7 +156,17 @@ namespace PnyxWebAssembly.Client.Components
             if (mudChip == null)
             {
                 ImageItems.Clear();
-                SearchText = string.Empty;
+
+                if (!KeepSearchText)
+                {
+                    SearchText = string.Empty;
+                }
+                else
+                {
+                    InvokeSearch();
+                    KeepSearchText = false;
+                }
+
                 return;
             }
 

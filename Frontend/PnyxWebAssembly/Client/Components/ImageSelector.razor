@@ -7,7 +7,7 @@
                     <MudContainer Style="margin-bottom: 20px">
                         <MudGrid>
                             <MudItem xs="6">
-                                <MudChipSet Filter="true" SelectedChipChanged="@(OnSelectedChipChanged)">
+                                <MudChipSet Filter="true" SelectedChipChanged="@(OnSelectedChipChanged)" @bind-SelectedValues="SelectedValues">
                                     @foreach (HashtagSelected hashtag in Hashtags)
                                     {
                                         <MudChip Color="Color.Primary" Text="@hashtag.Hashtag" Default="@hashtag.Selected">@hashtag.Hashtag</MudChip>
