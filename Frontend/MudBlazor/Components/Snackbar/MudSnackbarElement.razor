@@ -1,0 +1,39 @@
+﻿@*
+    Copyright (c) Alessandro Ghidini. All rights reserved.
+    Changes and improvements Copyright (c) The MudBlazor Team.
+*@
+
+@namespace MudBlazor
+@inherits MudComponentBase
+
+@Css
+<div @attributes="UserAttributes" class="@SnackbarClass" style="@AnimationStyle" @onclick="@SnackbarClicked">
+    @if (!HideIcon)
+    {
+        <div class="mud-snackbar-icon">
+            <MudIcon Icon="@Icon" />
+        </div>
+    }
+
+    <div class="mud-snackbar-content-message">
+        @((MarkupString)Message)
+    </div>
+
+    @if (ShowCloseIcon || ShowActionButton)
+    {
+        <div class="mud-snackbar-content-action">
+
+            @if (ShowActionButton)
+            {
+                <MudButton Variant="@ActionVariant" Color="@ActionColor" OnClick="ActionClicked" DisableElevation>@Action</MudButton>
+            }
+
+            @if (ShowCloseIcon)
+            {
+                <MudIconButton Icon="@CloseIcon" Size="Size.Small" Class="ms-2" OnClick="CloseIconClicked" />
+            }
+
+        </div>
+    }
+
+</div>

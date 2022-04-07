@@ -1,0 +1,43 @@
+﻿@namespace MudBlazor
+@inherits MudComponentBase
+
+<div tabindex="0" @attributes="UserAttributes" class="@Classname" @onclick="OnClickHandler" @onclick:stopPropagation="true" style="@Style">
+    @if (!string.IsNullOrWhiteSpace(Avatar))
+    {
+        <div class="mud-list-item-avatar">
+            <MudAvatar Class="@AvatarClass">
+                <MudIcon Icon="@Avatar" Color="@IconColor" Size="@IconSize" />
+            </MudAvatar>
+        </div>
+    }
+    else if (!string.IsNullOrWhiteSpace(Icon))
+    {
+        <div class="mud-list-item-icon">
+            <MudIcon Icon="@Icon" Color="@IconColor" Size="@IconSize" />
+        </div>
+    }
+    <div class="mud-list-item-text @(Inset? "mud-list-item-text-inset" : "")">
+        <MudText Typo="@_textTypo">
+            @if (ChildContent != null)
+            {
+                @ChildContent
+            }
+            else
+            {
+                @Text
+            }
+        </MudText>
+    </div>
+    @if (NestedList != null)
+    {
+        <MudIcon Icon="@($"{(_expanded ? ExpandLessIcon : ExpandMoreIcon)}")" Size="@IconSize" Color="@AdornmentColor" />
+    }
+</div>
+@if (NestedList != null)
+{
+    <MudCollapse Expanded="@Expanded">
+        <MudList Clickable="@MudList.Clickable" DisablePadding="true" Class="mud-nested-list" Disabled="@Disabled">
+            @NestedList
+        </MudList>
+    </MudCollapse>
+}

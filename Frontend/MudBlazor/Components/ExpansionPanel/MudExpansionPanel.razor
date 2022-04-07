@@ -1,0 +1,26 @@
+﻿@namespace MudBlazor
+@inherits MudComponentBase
+
+<div @attributes="UserAttributes" class="@Classname" style="@Style">
+    <div class="mud-expand-panel-header" @onclick="ToggleExpansion">
+        <div class="mud-expand-panel-text">
+            @if (TitleContent != null)
+            {
+                @TitleContent
+            }
+            else
+            {
+                @Text
+            }
+        </div>
+        @if (!HideIcon)
+        {
+            <MudIcon Icon="@Icon" class="@(IsExpanded? "mud-expand-panel-icon mud-transform" : "mud-expand-panel-icon")" />
+        }
+    </div>
+    <MudCollapse Expanded="@_collapseIsExpanded" MaxHeight="@MaxHeight">
+        <div class="@PanelContentClassname">
+            @ChildContent
+        </div>
+    </MudCollapse>
+</div>

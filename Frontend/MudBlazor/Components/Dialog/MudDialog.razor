@@ -1,0 +1,22 @@
+﻿@namespace MudBlazor
+
+@inherits MudComponentBase
+
+@*this makes dialog inlineable, it will only render inside a MudDialogInstance*@
+@if (!IsInline)
+{
+    <MudFocusTrap DefaultFocus="DefaultFocus">
+
+        <div @attributes="UserAttributes" class="@ContentClass" style="@ContentStyle">
+            @DialogContent
+        </div>
+
+        @if (DialogActions != null)
+        {
+            <div class="@ActionClass">
+                @DialogActions
+            </div>
+        }
+
+    </MudFocusTrap>
+}

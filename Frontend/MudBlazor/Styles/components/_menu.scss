@@ -1,0 +1,21 @@
+﻿.mud-menu {
+    display: inline-flex;
+    align-self: center;
+    position: relative;
+
+    & * {
+        cursor: pointer;
+    }
+
+    & > div.mud-disabled {
+        cursor: default;
+
+        & * {
+            cursor: default;
+        }
+    }
+
+    & > div.mud-menu-activator {
+        display: contents;
+    }
+}
