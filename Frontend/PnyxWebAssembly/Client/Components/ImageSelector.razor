@@ -1,15 +1,16 @@
-﻿<MudDialog>
+﻿@using PnyxWebAssembly.Client.Entities
+<MudDialog>
     <DialogContent>
         <MudTabs Elevation="2" Rounded="true" ApplyEffectsToContainer="true" PanelClass="pa-6">
             <MudTabPanel Text="Browse">
-                <MudForm @ref="_form" @bind-Errors="@_errors">
+                <MudForm @ref="Form" @bind-Errors="@Errors">
                     <MudContainer Style="margin-bottom: 20px">
                         <MudGrid>
                             <MudItem xs="6">
                                 <MudChipSet Filter="true" SelectedChipChanged="@(OnSelectedChipChanged)">
-                                    @foreach (string hashtag in Hashtags)
+                                    @foreach (HashtagSelected hashtag in Hashtags)
                                     {
-                                        <MudChip Color="Color.Primary" Text="@hashtag">@hashtag</MudChip>
+                                        <MudChip Color="Color.Primary" Text="@hashtag.Hashtag" Default="@hashtag.Selected">@hashtag.Hashtag</MudChip>
                                     }
                                 </MudChipSet>
                             </MudItem>
@@ -30,13 +31,13 @@
                     else
                     {
                         <MudContainer Style="max-height: 480px; overflow-y: scroll">
-                            <MudRadioGroup @bind-SelectedOption="_selectedPaper">
+                            <MudRadioGroup @bind-SelectedOption="SelectedPaper">
                                 <MudGrid>
                                     @foreach (ImageItem imageItem in ImageItems)
                                     {
-                                        <MudItem xs="2">
-                                            <MudPaper Class="d-flex align-center justify-center mud-width-full py-8"
-                                                      Style="background-color: lightgray; min-height: 120px">
+                                        <MudItem xs="2" Style="min-height: 170px; min-width: 170px">
+                                            <MudPaper Class="d-flex"
+                                                      Style="background-color: lightgray; min-height: 150px; min-width: 150px">
                                                 <MudRadio Option="@imageItem.Id" Color="Color.Default" Size="Size.Medium" Style="margin-left: 50%; margin-top: -75px">
                                                     @imageItem.Id
                                                 </MudRadio>

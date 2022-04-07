@@ -9,6 +9,7 @@ using Common.Entities;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using MudBlazor;
+using PnyxWebAssembly.Client.Entities;
 using PnyxWebAssembly.Client.Services;
 
 namespace PnyxWebAssembly.Client.Components
@@ -60,8 +61,6 @@ namespace PnyxWebAssembly.Client.Components
         /// </value>
         [Parameter]
         public string Action { get; set; }
-
-        private MudForm _form;
 
         private bool Success { get; set; }
 
@@ -258,7 +257,17 @@ namespace PnyxWebAssembly.Client.Components
 
         private async Task EditImageClick()
         {
-            DialogParameters parameters = new DialogParameters { ["hashtags"] = Issue.GetTags() };
+            List<string> hashtags = Issue.GetTags().ToList();
+
+            List<HashtagSelected> hashtagsSelected = new List<HashtagSelected>();
+
+            for (var i = 0; i < hashtags.Count; i++)
+            {
+                hashtagsSelected.Add(new HashtagSelected(hashtags[i], i == 0));
+            }
+
+            DialogParameters parameters = new DialogParameters { ["hashtags"] = hashtagsSelected };
+
             var options = new DialogOptions
             {
                 MaxWidth = MaxWidth.Large,

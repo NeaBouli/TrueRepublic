@@ -1,4 +1,5 @@
 ﻿@page "/testpage"
+@using PnyxWebAssembly.Client.Entities
 
 @inject IDialogService _dialogService
 @inject ISnackbar _snackbar
@@ -10,7 +11,12 @@
 @code {
     private async Task OpenDialog()
     {
-        DialogParameters parameters = new DialogParameters { ["hashtags"] = new List<string> {"#Familie", " #Militär" }};
+        DialogParameters parameters = new DialogParameters { ["hashtags"] = new List<HashtagSelected>
+        {
+            new("#Familie", true),
+            new("#Militär", false)
+        }};
+
         var options = new DialogOptions
         {
             MaxWidth = MaxWidth.Large, 

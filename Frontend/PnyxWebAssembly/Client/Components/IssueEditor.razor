@@ -1,7 +1,7 @@
 ﻿<MudGrid Justify="Justify.Center">
 <MudItem xs="10">
     <MudPaper>
-        <MudForm @ref="_form" @bind-IsValid="@Success" @bind-Errors="@Errors">
+        <MudForm @bind-IsValid="@Success" @bind-Errors="@Errors">
             <MudGrid Style="margin: 10px">
                 <MudItem xs="6">
                     <MudAdvancedAutocomplete T="string" Label="Hashtag" @bind-Value="HashtagValue" SearchFunc="@SearchHashtags"
