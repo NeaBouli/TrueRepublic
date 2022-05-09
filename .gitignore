@@ -12,9 +12,6 @@
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
 
-# User specific caches
-.vs/
-
 # Build results
 [Dd]ebug/
 [Dd]ebugPublic/
@@ -337,3 +334,4 @@ packages/
 testresult.xml
 /Temp/
 /TestResults/
+.vs
