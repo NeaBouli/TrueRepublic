@@ -21,7 +21,7 @@ Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "Database", "Database\Databa
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MudBlazor", "MudBlazor\MudBlazor.csproj", "{CE3D2D69-685C-41BD-A511-3B1D6F964723}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PixabaySharp", "..\PixabaySharp\PixabaySharp.csproj", "{48561575-234E-4C4C-807C-3DAE39BFF771}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PixabaySharp", "PixabaySharp\PixabaySharp.csproj", "{A2A6AF42-052E-4552-87B4-E47C945A0679}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -67,10 +67,10 @@ Global
 		{CE3D2D69-685C-41BD-A511-3B1D6F964723}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CE3D2D69-685C-41BD-A511-3B1D6F964723}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CE3D2D69-685C-41BD-A511-3B1D6F964723}.Release|Any CPU.Build.0 = Release|Any CPU
-		{48561575-234E-4C4C-807C-3DAE39BFF771}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{48561575-234E-4C4C-807C-3DAE39BFF771}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{48561575-234E-4C4C-807C-3DAE39BFF771}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{48561575-234E-4C4C-807C-3DAE39BFF771}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A2A6AF42-052E-4552-87B4-E47C945A0679}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A2A6AF42-052E-4552-87B4-E47C945A0679}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A2A6AF42-052E-4552-87B4-E47C945A0679}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A2A6AF42-052E-4552-87B4-E47C945A0679}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
