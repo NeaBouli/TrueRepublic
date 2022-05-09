@@ -1,0 +1,19 @@
+﻿<MudDialog>
+    <DialogContent>
+        <MudText>@InfoText</MudText>
+        <MudForm @ref="Form" @bind-Errors="@Errors">
+            <MudTextField Label="@Label" Variant="Variant.Text"
+                          @bind-Value="Input"
+                          Validation="@(new Func<string, IEnumerable<string>>(ValidateInput))"
+                          Required="true"
+                          RequiredError="Ein API-Key muss angegeben werden"
+                          AutoFocus="true">
+
+            </MudTextField>
+        </MudForm>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">Cancel</MudButton>
+        <MudButton Color="Color.Primary" OnClick="Submit">Ok</MudButton>
+    </DialogActions>
+</MudDialog>

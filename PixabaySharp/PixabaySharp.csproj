@@ -1,0 +1,32 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+	<Authors>Thomas Pentenrieder</Authors>
+	<Company>medienstudio.net</Company>
+	<Description>An unofficial .NET API wrapper for Pixabay.com</Description>
+	<PackageProjectUrl>https://github.com/ThomasPe/PixabaySharp</PackageProjectUrl>
+	<PackageLicenseUrl>https://github.com/ThomasPe/PixabaySharp/blob/master/LICENSE</PackageLicenseUrl>
+	<Copyright>© Thomas Pentenrieder | 2017</Copyright>
+	<RepositoryUrl>https://github.com/ThomasPe/PixabaySharp</RepositoryUrl>
+	<RepositoryType>GitHub</RepositoryType>
+	<PackageTags>pixabay images stock free</PackageTags>
+	  <PackageReleaseNotes>
+		  1.1.0 Added video support, Itellisense
+		  1.0.1 Method-naming update
+		  1.0.0 Initial release, supporting image queries
+	  </PackageReleaseNotes>
+	<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+	<NeutralLanguage>en</NeutralLanguage>
+	<Version>1.1.0</Version>
+	<AssemblyVersion>1.1.0.0</AssemblyVersion>
+	<FileVersion>1.1.0.0</FileVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+  </ItemGroup>
+
+</Project>

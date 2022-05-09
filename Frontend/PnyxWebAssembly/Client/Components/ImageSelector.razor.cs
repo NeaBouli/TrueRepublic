@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor;
@@ -21,6 +22,9 @@ namespace PnyxWebAssembly.Client.Components
         /// </value>
         [CascadingParameter] 
         private MudDialogInstance MudDialog { get; set; }
+
+        [Inject]
+        private IDialogService DialogService { get; set; }
 
         /// <summary>
         /// Gets or sets the snackbar.
@@ -108,7 +112,7 @@ namespace PnyxWebAssembly.Client.Components
         /// <summary>
         /// Invokes the search.
         /// </summary>
-        private void InvokeSearch()
+        private async void InvokeSearch()
         {
             bool searchTextHasChip = false;
 
@@ -133,6 +137,55 @@ namespace PnyxWebAssembly.Client.Components
             Snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopCenter;
             Snackbar.Add($"Searching: {SearchText}");
 
+            // TODO: check temp folder for pixabay api key file
+            // TODO: ask user in dialog for pixabay api key if not found
+            // TODO: use temp folder for docker as volume to retain the pixabay api key
+
+            string tempFolder = Path.GetTempPath();
+
+            string fullPathToPixabayApiKeyFile = Path.Combine(tempFolder, "PixabayApiKey.txt");
+
+            if (!File.Exists(fullPathToPixabayApiKeyFile))
+            {
+                DialogParameters parameters = new DialogParameters
+                {
+                    ["infotext"] = "Der Pixabay API-Key ist für diesen Test erforderlich und muss einmal eingegeben werden",
+                    ["label"] = "Pixabay API-Key"
+                };
+
+                var options = new DialogOptions
+                {
+                    Position = DialogPosition.Center
+                };
+
+                IDialogReference dialog = DialogService.Show<ApiKeyDialog>("Pixabay API-Key", parameters, options);
+                DialogResult result = await dialog.Result;
+
+                if (result.Cancelled)
+                {
+                    MudDialog.Cancel();
+                    return;
+                }
+
+                string apiKey = result.Data.ToString();
+
+                // TODO: check api key - if it is wrong display dialog again and inform user that the api key is invalid
+
+                // TODO: save api key to temp file if the api key is correct
+            }
+
+            // TODO: load api key
+
+            // TODO: do query
+
+            // TODO: check api key - if it is wrong display dialog again and inform user that the api key is invalid
+
+            // TODO: save api key to temp file if the api key is correct
+
+            // TODO: link results to image items
+
+            // TODO: display error message if no image was found
+
             for (int i = 0; i < 96; i++)
             {
                 ImageItems.Add(new ImageItem
@@ -142,7 +195,7 @@ namespace PnyxWebAssembly.Client.Components
             }
 
             // TODO: another MudBlazor error - MudChipSet is not re-rendered but must be - because it is changed!
-            InvokeAsync(StateHasChanged);
+            await InvokeAsync(StateHasChanged);
         }
 
         /// <summary>
@@ -204,7 +257,9 @@ namespace PnyxWebAssembly.Client.Components
             }
 
             if (searchText.Length < 3)
+            {
                 yield return "Der Suchtext muss mindestens 3 Zeichen lang sein";
+            }
         }
     }
 }
