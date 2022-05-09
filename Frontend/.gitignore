@@ -334,3 +334,4 @@ packages/
 testresult.xml
 /Temp/
 /TestResults/
+.vs
