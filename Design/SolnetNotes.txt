@@ -1,0 +1,68 @@
+Wallet (Definition, from https://docs.solana.com/wallet-guide):
+
+»A crypto wallet is a device or application that stores a collection of keys and can be used to send, receive, and track ownership of cryptocurrencies. Wallets can take many forms. A wallet might be a directory or file in your computer's file system, a piece of paper, or a specialized device called a hardware wallet. There are also various smartphone apps and computer programs that provide a user-friendly way to create and manage wallets.
+
+A keypair is a securely generated private key and its cryptographically-derived public key. A private key and its corresponding public key are together known as a keypair. A wallet contains a collection of one or more keypairs and provides some means to interact with them.
+
+The public key (commonly shortened to pubkey) is known as the wallet's receiving address or simply its address. The wallet address may be shared and displayed freely. When another party is going to send some amount of cryptocurrency to a wallet, they need to know the wallet's receiving address. Depending on a blockchain's implementation, the address can also be used to view certain information about a wallet, such as viewing the balance, but has no ability to change anything about the wallet or withdraw any tokens.
+
+The private key is required to digitally sign any transactions to send cryptocurrencies to another address or to make any changes to the wallet. The private key must never be shared. If someone gains access to the private key to a wallet, they can withdraw all the tokens it contains. If the private key for a wallet is lost, any tokens that have been sent to that wallet's address are permanently lost.
+
+Different wallet solutions offer different approaches to keypair security, interacting with the keypair, and signing transactions to use/spend the tokens. Some are easier to use than others. Some store and back up private keys more securely. Solana supports multiple types of wallets so you can choose the right balance of security and convenience.«
+
+Solnet.Wallet.Wallet.GetAccount(int index): »Gets the account at the passed index using the ed25519 bip32 derivation path.«
+
+Solnet.Wallet.Ed25519Bip32: »An implementation of Ed25519 based BIP32 key generation.«
+
+»Accounts: Storing State between Transactions« (https://docs.solana.com/developing/programming-model/accounts): »A Solana client uses an address to look up an account. The address is a 256-bit public key.«
+
+Lexikon: https://docs.solana.com/terminology
+
+»«: »«
+- »«
+»Account«:
+- »A record in the Solana ledger that either holds data or is an executable program.«
+- »A Solana account may hold funds called lamports.«
+- »It is addressable by a key, often referred to as a public key or pubkey.«
+- »The key may be one of:«
+    an ed25519 public key
+    a program-derived account address (32byte value forced off the ed25519 curve)
+    a hash of an ed25519 public key with a 32 character string
+	
+»Hierarchical Deterministic (HD) Wallet« (https://river.com/learn/terms/h/hd-wallet/):
+- »A Hierarchical Deterministic (HD) wallet is the term used to describe a wallet which uses a seed to derive public and private keys.«
+
+BPF: Berkeley Packet Filter
+BIP: Bitcoin Improvement Proposal
+
+BIP 32 (https://river.com/learn/terms/b/bip-32/)
+»BIP 32 is the Bitcoin Improvement Proposal which introduced the standard of Hierarchical Deterministic (HD) wallets and extended keys to Bitcoin.«
+
+Solana Development:
+https://solana.com/news/getting-started-with-solana-development
+https://github.com/solana-labs/solana-program-library/tree/master/examples/rust
+
+https://github.com/bmresearch/Solnet/pull/362 (»Add BPF Loader Program«)
+
+»Starting at the top left of the diagram (Program) you can see the first development workflow that allows you to to create and deploy custom Rust, C and C++ programs directly to the blockchain. Once these programs are deployed, anyone who knows how to communicate with them, can use them. You can communicate with these programs by writing dApps with any of the available client SDKs (or the CLI), all of which use the JSON RPC API under the hood.«
+
+»The second development workflow is the dApp side starting on the bottom left (Client) where you can write dApps that communicate with deployed programs. Your apps can submit transactions with instructions to these programs via a client SDK to create a wide variety of applications such as wallets, DEXs and more. These two pieces work together to create a network of dApps and programs that can communicate with each other to update the state and query the blockchain.«
+
+Ledger Hardware Wallet:
+
+Development (https://developers.ledger.com/docs/nano-app/introduction/):
+
+BOLOS: »Blockchain Open Ledger Operating System« (https://developers.ledger.com/docs/nano-app/bolos-introduction/)
+
+Solnet:
+private const string DerivationPath = "m/44'/501'/x'/0'";
+»By default, sollet will use m/44'/501'/0'/0' as the derivation path for the main wallet. To use an alternative path, try restoring an existing wallet.« (https://www.sollet.io/)
+
+Idea:
+Request transaction key from Ledger
+https://developers.ledger.com/
+https://developers.ledger.com/docs/nano-app/start-here/
+https://developers.ledger.com/docs/nano-app/introduction/
+https://developers.ledger.com/docs/nano-app/bolos-introduction/
+https://developers.ledger.com/docs/nano-app/publish-introduction/
+https://developers.ledger.com/docs/coin/general-process/
