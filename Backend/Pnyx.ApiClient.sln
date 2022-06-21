@@ -5,13 +5,14 @@ VisualStudioVersion = 17.1.32328.378
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ClientTestUI", "ClientTestUI\ClientTestUI.csproj", "{08F4D495-2B9C-49F8-9047-5C7BBF6E7986}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PackageBuilder", "PackageBuilder\PackageBuilder.csproj", "{703204E7-AF0F-439F-95A1-8E2455BC39CB}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Pnyx.ApiClient.Interfaces", "Pnyx.ApiClient.Interfaces.Solana\Pnyx.ApiClient.Interfaces.csproj", "{211424D8-EB35-4E51-B3B8-EE47C1AADC72}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Pnyx.ApiClient.Solana", "Pnyx.ApiClient.Solana\Pnyx.ApiClient.Solana.csproj", "{ADCF1C78-2184-486F-B541-F4A79DDCB3B6}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Projektmappenelemente", "Projektmappenelemente", "{ACDEE2D7-B3DD-4A6E-93F0-90F1BF469156}"
+	ProjectSection(SolutionItems) = preProject
+		Pnyx.ApiClient.UnitTests.Solana\Pnyx.ApiClient.UnitTests.Solana.csproj = Pnyx.ApiClient.UnitTests.Solana\Pnyx.ApiClient.UnitTests.Solana.csproj
+	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Pnyx.ApiClient.Solana.UnitTests", "Pnyx.ApiClient.Solana.UnitTests\Pnyx.ApiClient.Solana.UnitTests.csproj", "{6EEF9A1A-1917-4DBC-AB4D-96C7FC6A369B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pnyx.ApiClient.Core", "Pnyx.ApiClient.Core\Pnyx.ApiClient.Core.csproj", "{AA63E22E-3CC1-4006-9EAF-65137857F0F7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -23,22 +24,14 @@ Global
 		{08F4D495-2B9C-49F8-9047-5C7BBF6E7986}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{08F4D495-2B9C-49F8-9047-5C7BBF6E7986}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{08F4D495-2B9C-49F8-9047-5C7BBF6E7986}.Release|Any CPU.Build.0 = Release|Any CPU
-		{703204E7-AF0F-439F-95A1-8E2455BC39CB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{703204E7-AF0F-439F-95A1-8E2455BC39CB}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{703204E7-AF0F-439F-95A1-8E2455BC39CB}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{703204E7-AF0F-439F-95A1-8E2455BC39CB}.Release|Any CPU.Build.0 = Release|Any CPU
 		{211424D8-EB35-4E51-B3B8-EE47C1AADC72}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{211424D8-EB35-4E51-B3B8-EE47C1AADC72}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{211424D8-EB35-4E51-B3B8-EE47C1AADC72}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{211424D8-EB35-4E51-B3B8-EE47C1AADC72}.Release|Any CPU.Build.0 = Release|Any CPU
-		{ADCF1C78-2184-486F-B541-F4A79DDCB3B6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{ADCF1C78-2184-486F-B541-F4A79DDCB3B6}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{ADCF1C78-2184-486F-B541-F4A79DDCB3B6}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{ADCF1C78-2184-486F-B541-F4A79DDCB3B6}.Release|Any CPU.Build.0 = Release|Any CPU
-		{6EEF9A1A-1917-4DBC-AB4D-96C7FC6A369B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{6EEF9A1A-1917-4DBC-AB4D-96C7FC6A369B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{6EEF9A1A-1917-4DBC-AB4D-96C7FC6A369B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{6EEF9A1A-1917-4DBC-AB4D-96C7FC6A369B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AA63E22E-3CC1-4006-9EAF-65137857F0F7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AA63E22E-3CC1-4006-9EAF-65137857F0F7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AA63E22E-3CC1-4006-9EAF-65137857F0F7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AA63E22E-3CC1-4006-9EAF-65137857F0F7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
