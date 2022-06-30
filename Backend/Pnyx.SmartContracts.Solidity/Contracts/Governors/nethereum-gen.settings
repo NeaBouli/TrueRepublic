@@ -3,5 +3,5 @@
     "namespace": "Governors.Contracts",
     "lang": 0,
     "autoCodeGen": true,
-    "projectPath": "../"
+    "projectPath": "."
 }
