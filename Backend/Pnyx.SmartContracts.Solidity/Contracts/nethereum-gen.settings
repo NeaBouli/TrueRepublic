@@ -1,7 +1,0 @@
-{
-    "projectName": "MyPnyxContract",
-    "namespace": "Pnyx.SmartContracts.Solidity.Contracts",
-    "lang": 0,
-    "autoCodeGen": true,
-    "projectPath": "../"
-}
