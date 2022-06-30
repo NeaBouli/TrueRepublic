@@ -5,7 +5,7 @@
     <authors> </authors>
     <description />
   </meta>
-  <counters models="46">
+  <counters models="47">
     <entity-names>
       <counter>
         <item-type stereotype="struct" type-id="class" type="Class" />
@@ -23,7 +23,7 @@
     <entity-ids>
       <counter>
         <item-type type-id="group" type="Group" />
-        <value>96</value>
+        <value>103</value>
       </counter>
       <counter>
         <item-type type-id="class" type="Class" />
@@ -79,6 +79,14 @@
         <type>SoftwareIdeasModeler.Core.Diagrams.UmlDiagrams.UmlUseCaseDiagram</type>
         <value>1</value>
       </counter>
+      <counter>
+        <type>SoftwareIdeasModeler.Core.Diagrams.Other.DmnDiagram</type>
+        <value>1</value>
+      </counter>
+      <counter>
+        <type>SoftwareIdeasModeler.Core.Diagrams.Bpmn.BpmnCollaborationDiagram</type>
+        <value>1</value>
+      </counter>
     </diagrams>
     <fields>
       <counter>
@@ -119,407 +127,407 @@
       <type-set file="UmlTypes.xml" />
     </type-sets>
     <custom-types>
-      <type id="Dictionary&lt;string, string&gt;" tid="" name="Dictionary&lt;string, string&gt;" description="" />
-      <type id="TokenListItem" tid="" name="TokenListItem" description="" />
-      <type id="Pbkdf2Params" tid="" name="Pbkdf2Params" description="" />
-      <type id="PnyxAccount?" tid="" name="PnyxAccount?" description="" />
-      <type id="Task&lt;RequestResult&lt;TransactionMetaSlotInfo&gt;&gt;" tid="" name="Task&lt;RequestResult&lt;TransactionMetaSlotInfo&gt;&gt;" description="" />
-      <type id="RequestResult&lt;BlockCommitment&gt;" tid="" name="RequestResult&lt;BlockCommitment&gt;" description="" />
-      <type id="Class:e4166bb9e3644869b194aaa7f6abda88" tid="" name="SpeechAct" description="" class-ref="e4166bb9e3644869b194aaa7f6abda88" />
-      <type id="Task&lt;RequestResult&lt;ulong&gt;&gt;" tid="" name="Task&lt;RequestResult&lt;ulong&gt;&gt;" description="" />
-      <type id="Action&lt;string, Exception&gt;" tid="" name="Action&lt;string, Exception&gt;" description="" />
-      <type id="TokenData" tid="Class:8b2638f8606c4ecbb79feaf03e839baa" name="TokenData" description="" class-ref="8b2638f8606c4ecbb79feaf03e839baa" />
-      <type id="Span&lt;byte&gt;" tid="" name="Span&lt;byte&gt;" description="" />
-      <type id="Action&lt;ResponseValue&lt;AccountInfo&gt;, Exception&gt;" tid="" name="Action&lt;ResponseValue&lt;AccountInfo&gt;, Exception&gt;" description="" />
-      <type id="POOnyxA" tid="" name="POOnyxA" description="" />
-      <type id="Action&lt;ResponseValue&lt;ulong&gt;, Exception&gt;" tid="" name="Action&lt;ResponseValue&lt;ulong&gt;, Exception&gt;" description="" />
-      <type id="BitArray" tid="" name="BitArray" description="" />
-      <type id="Account" tid="" name="Account" description="" />
-      <type id="Task&lt;RequestResult&lt;ResponseValue&lt;List&lt;LargeAccount&gt;&gt;&gt;&gt;" tid="" name="Task&lt;RequestResult&lt;ResponseValue&lt;List&lt;LargeAccount&gt;&gt;&gt;&gt;" description="" />
-      <type id="Task&lt;RequestResult&lt;ResponseValue&lt;List&lt;LargeTokenAccount&gt;&gt;&gt;&gt;" tid="" name="Task&lt;RequestResult&lt;ResponseValue&lt;List&lt;LargeTokenAccount&gt;&gt;&gt;&gt;" description="" />
-      <type id="IRateLimiter" tid="" name="IRateLimiter" description="" />
-      <type id="Encoding" tid="" name="Encoding" description="" />
-      <type id="WebSocketCloseStatus" tid="" name="WebSocketCloseStatus" description="" />
-      <type id="Dictionary&lt;string, DecodeMethodType&gt;" tid="" name="Dictionary&lt;string, DecodeMethodType&gt;" description="" />
-      <type id="Task&lt;RequestResult&lt;List&lt;AccountKeyPair&gt;&gt;&gt;" tid="" name="Task&lt;RequestResult&lt;List&lt;AccountKeyPair&gt;&gt;&gt;" description="" />
-      <type id="ContextObj" tid="" name="ContextObj" description="" />
-      <type id="Task&lt;List&lt;RecordBase&gt;&gt;" tid="" name="Task&lt;List&lt;RecordBase&gt;&gt;" description="" />
-      <type id="IList&lt;Account&gt;" tid="" name="IList&lt;Account&gt;" description="" />
-      <type id="KeyStore&lt;ScryptParams&gt;" tid="" name="KeyStore&lt;ScryptParams&gt;" description="" />
-      <type id="POOnyxAcc" tid="" name="POOnyxAcc" description="" />
-      <type id="IStreamingRpcClient" tid="" name="IStreamingRpcClient" description="" />
-      <type id="Task&lt;RequestResult&lt;NodeIdentity&gt;&gt;" tid="" name="Task&lt;RequestResult&lt;NodeIdentity&gt;&gt;" description="" />
-      <type id="RequestResult&lt;List&lt;PerformanceSample&gt;&gt;" tid="" name="RequestResult&lt;List&lt;PerformanceSample&gt;&gt;" description="" />
-      <type id="Action&lt;ResponseValue&lt;List&lt;AccountInfo&gt;&gt;, Exception&gt;" tid="" name="Action&lt;ResponseValue&lt;List&lt;AccountInfo&gt;&gt;, Exception&gt;" description="" />
-      <type id="ushort" tid="" name="ushort" description="" />
-      <type id="RequestResult&lt;JsonRpcBatchResponse&gt;" tid="" name="RequestResult&lt;JsonRpcBatchResponse&gt;" description="" />
-      <type id="ProgramError&lt;TEnum&gt;" tid="" name="ProgramError&lt;TEnum&gt;" description="" />
-      <type id="IRandom" tid="" name="IRandom" description="" />
-      <type id="int" tid="" name="int" description="" />
-      <type id="RequestResult&lt;VoteAccounts&gt;" tid="" name="RequestResult&lt;VoteAccounts&gt;" description="" />
-      <type id="TokenMintResolver" tid="" name="TokenMintResolver" description="" />
-      <type id="Task&lt;RequestResult&lt;JsonRpcBatchResponse&gt;&gt;" tid="" name="Task&lt;RequestResult&lt;JsonRpcBatchResponse&gt;&gt;" description="" />
-      <type id="Message" tid="" name="Message" description="" />
-      <type id="Task&lt;RequestResult&lt;List&lt;SignatureStatusInfo&gt;&gt;&gt;" tid="" name="Task&lt;RequestResult&lt;List&lt;SignatureStatusInfo&gt;&gt;&gt;" description="" />
-      <type id="SolanaRpcBatchComposer" tid="" name="SolanaRpcBatchComposer" description="" />
-      <type id="POnyxAccount" tid="" name="POnyxAccount" description="" />
-      <type id="RequestResult&lt;ResponseValue&lt;TokenMintInfo&gt;&gt;" tid="" name="RequestResult&lt;ResponseValue&lt;TokenMintInfo&gt;&gt;" description="" />
-      <type id="ulong" tid="" name="ulong" description="" />
-      <type id="int[]" tid="" name="int[]" description="" />
-      <type id="ulong?" tid="" name="ulong?" description="" />
-      <type id="ITokenMintResolver" tid="" name="ITokenMintResolver" description="" />
-      <type id="Task&lt;RequestResult&lt;ResponseValue&lt;Supply&gt;&gt;&gt;" tid="" name="Task&lt;RequestResult&lt;ResponseValue&lt;Supply&gt;&gt;&gt;" description="" />
-      <type id="TransactionInstruction" tid="" name="TransactionInstruction" description="" />
-      <type id="IList&lt;AccountMeta&gt;" tid="" name="IList&lt;AccountMeta&gt;" description="" />
-      <type id="TransactionHeaderInfo" tid="" name="TransactionHeaderInfo" description="" />
-      <type id="Func&lt;byte[], PublicKey, byte[]&gt;" tid="" name="Func&lt;byte[], PublicKey, byte[]&gt;" description="" />
-      <type id="TokenListDoc" tid="" name="TokenListDoc" description="" />
-      <type id="TransactionError" tid="" name="TransactionError" description="" />
-      <type id="Action&lt;SubscriptionState, ResponseValue&lt;LogInfo&gt;&gt;" tid="" name="Action&lt;SubscriptionState, ResponseValue&lt;LogInfo&gt;&gt;" description="" />
-      <type id="ReverseTokenNameRecord" tid="Class:aa89f25a853f4ed9a68189ca67da6601" name="ReverseTokenNameRecord" description="" class-ref="aa89f25a853f4ed9a68189ca67da6601" />
-      <type id="TransactionInfo" tid="" name="TransactionInfo" description="" />
-      <type id="DecodedInstruction" tid="" name="DecodedInstruction" description="" />
-      <type id="List&lt;string&gt;" tid="" name="List&lt;string&gt;" description="" />
-      <type id="RequestResult&lt;Dictionary&lt;string, List&lt;ulong&gt;&gt;&gt;" tid="" name="RequestResult&lt;Dictionary&lt;string, List&lt;ulong&gt;&gt;&gt;" description="" />
-      <type id="RequestResult&lt;ResponseValue&lt;TokenAccountInfo&gt;&gt;" tid="" name="RequestResult&lt;ResponseValue&lt;TokenAccountInfo&gt;&gt;" description="" />
-      <type id="Ed25519Bip32" tid="" name="Ed25519Bip32" description="" />
-      <type id="StreamingContext" tid="" name="StreamingContext" description="" />
-      <type id="PnyxA" tid="" name="PnyxA" description="" />
-      <type id="ErrorContent" tid="" name="ErrorContent" description="" />
-      <type id="PnyxC" tid="" name="PnyxC" description="" />
-      <type id="Action&lt;List&lt;SignatureStatusInfo&gt;, Exception&gt;" tid="" name="Action&lt;List&lt;SignatureStatusInfo&gt;, Exception&gt;" description="" />
-      <type id="ScryptParams" tid="" name="ScryptParams" description="" />
-      <type id="IRandomBytesGenerator" tid="" name="IRandomBytesGenerator" description="" />
-      <type id="Task&lt;RequestResult&lt;ResponseValue&lt;BlockProductionInfo&gt;&gt;&gt;" tid="" name="Task&lt;RequestResult&lt;ResponseValue&lt;BlockProductionInfo&gt;&gt;&gt;" description="" />
-      <type id="SolanaStreamingRpcClient" tid="" name="SolanaStreamingRpcClient" description="" />
-      <type id="SerializationInfo" tid="" name="SerializationInfo" description="" />
-      <type id="Action&lt;SubscriptionState, ResponseValue&lt;AccountInfo&gt;&gt;" tid="" name="Action&lt;SubscriptionState, ResponseValue&lt;AccountInfo&gt;&gt;" description="" />
-      <type id="Base58Encoder" tid="" name="Base58Encoder" description="" />
-      <type id="POO" tid="" name="POO" description="" />
-      <type id="Task&lt;RequestResult&lt;ResponseValue&lt;List&lt;AccountInfo&gt;&gt;&gt;&gt;" tid="" name="Task&lt;RequestResult&lt;ResponseValue&lt;List&lt;AccountInfo&gt;&gt;&gt;&gt;" description="" />
-      <type id="DecodeMethodType" tid="" name="DecodeMethodType" description="" />
-      <type id="char" tid="" name="char" description="" />
-      <type id="Dictionary&lt;long, ulong&gt;" tid="" name="Dictionary&lt;long, ulong&gt;" description="" />
-      <type id="AccountKeysList" tid="" name="AccountKeysList" description="" />
-      <type id="List&lt;TokenAccount&gt;" tid="" name="List&lt;TokenAccount&gt;" description="" />
-      <type id="MessageBuilder" tid="Class:f7f318bb1dd4477181935008552303d9" name="MessageBuilder" description="" class-ref="f7f318bb1dd4477181935008552303d9" />
-      <type id="InstructionErrorType" tid="" name="InstructionErrorType" description="" />
-      <type id="WordList" tid="" name="WordList" description="" />
-      <type id="RequestResult&lt;StakeActivationInfo&gt;" tid="" name="RequestResult&lt;StakeActivationInfo&gt;" description="" />
-      <type id="Dictionary&lt;string, PublicKey&gt;" tid="" name="Dictionary&lt;string, PublicKey&gt;" description="" />
-      <type id="AccountMeta" tid="" name="AccountMeta" description="" />
-      <type id="AuthorityType" tid="" name="AuthorityType" description="" />
-      <type id="decimal" tid="" name="decimal" description="" />
-      <type id="POOnyx" tid="" name="POOnyx" description="" />
-      <type id="Commitment" tid="" name="Commitment" description="" />
-      <type id="bool?" tid="" name="bool?" description="" />
-      <type id="Action&lt;ResponseValue&lt;List&lt;TokenAccount&gt;&gt;, Exception&gt;" tid="" name="Action&lt;ResponseValue&lt;List&lt;TokenAccount&gt;&gt;, Exception&gt;" description="" />
-      <type id="T" tid="" name="T" description="" />
-      <type id="Task&lt;RequestResult&lt;ResponseValue&lt;TokenBalance&gt;&gt;&gt;" tid="" name="Task&lt;RequestResult&lt;ResponseValue&lt;TokenBalance&gt;&gt;&gt;" description="" />
-      <type id="FeeRateGovernor" tid="" name="FeeRateGovernor" description="" />
-      <type id="P" tid="" name="P" description="" />
-      <type id="byte" tid="" name="byte" description="" />
-      <type id="Queue&lt;DateTime&gt;" tid="" name="Queue&lt;DateTime&gt;" description="" />
-      <type id="RequestResult&lt;EpochInfo&gt;" tid="" name="RequestResult&lt;EpochInfo&gt;" description="" />
-      <type id="CryptoInfo&lt;TKdfParams&gt;" tid="" name="CryptoInfo&lt;TKdfParams&gt;" description="" />
-      <type id="RewardInfo[]" tid="" name="RewardInfo[]" description="" />
-      <type id="POOny" tid="" name="POOny" description="" />
-      <type id="FeeCalculator" tid="" name="FeeCalculator" description="" />
-      <type id="Task&lt;RequestResult&lt;T&gt;&gt;" tid="" name="Task&lt;RequestResult&lt;T&gt;&gt;" description="" />
-      <type id="TransactionMeta" tid="" name="TransactionMeta" description="" />
-      <type id="PnyxAccount" tid="" name="PnyxAccount" description="" />
-      <type id="HttpStatusCode" tid="" name="HttpStatusCode" description="" />
-      <type id="CurveCalculator" tid="" name="CurveCalculator" description="" />
-      <type id="long?" tid="" name="long?" description="" />
-      <type id="RequestResult&lt;ResponseValue&lt;FeesInfo&gt;&gt;" tid="" name="RequestResult&lt;ResponseValue&lt;FeesInfo&gt;&gt;" description="" />
-      <type id="IReadOnlyList&lt;int&gt;" tid="" name="IReadOnlyList&lt;int&gt;" description="" />
-      <type id="NonceAccount" tid="Class:ce27408d90db48b0a5cbcbd2415d4760" name="NonceAccount" description="" class-ref="ce27408d90db48b0a5cbcbd2415d4760" />
-      <type id="HttpResponseMessage" tid="" name="HttpResponseMessage" description="" />
-      <type id="IWordlistSource" tid="" name="IWordlistSource" description="" />
-      <type id="Task&lt;RequestResult&lt;ResponseValue&lt;FeeRateGovernorInfo&gt;&gt;&gt;" tid="" name="Task&lt;RequestResult&lt;ResponseValue&lt;FeeRateGovernorInfo&gt;&gt;&gt;" description="" />
-      <type id="Transaction" tid="" name="Transaction" description="" />
-      <type id="InnerInstruction[]" tid="" name="InnerInstruction[]" description="" />
-      <type id="IEnumerable&lt;PublicKey&gt;" tid="" name="IEnumerable&lt;PublicKey&gt;" description="" />
-      <type id="Task&lt;RequestResult&lt;ResponseValue&lt;ulong&gt;&gt;&gt;" tid="" name="Task&lt;RequestResult&lt;ResponseValue&lt;ulong&gt;&gt;&gt;" description="" />
-      <type id="Dictionary&lt;Values, string&gt;" tid="" name="Dictionary&lt;Values, string&gt;" description="" />
-      <type id="ReadOnlyMemory&lt;byte&gt;" tid="" name="ReadOnlyMemory&lt;byte&gt;" description="" />
-      <type id="RequestResult&lt;NodeIdentity&gt;" tid="" name="RequestResult&lt;NodeIdentity&gt;" description="" />
-      <type id="List&lt;DecodedInstruction&gt;" tid="" name="List&lt;DecodedInstruction&gt;" description="" />
-      <type id="SemaphoreSlim" tid="" name="SemaphoreSlim" description="" />
-      <type id="Dictionary&lt;string, WordList&gt;" tid="" name="Dictionary&lt;string, WordList&gt;" description="" />
-      <type id="SubscriptionStatus" tid="" name="SubscriptionStatus" description="" />
-      <type id="JsonDocument" tid="" name="JsonDocument" description="" />
-      <type id="HttpClient" tid="" name="HttpClient" description="" />
-      <type id="Action&lt;SubscriptionState, ResponseValue&lt;ErrorResult&gt;&gt;" tid="" name="Action&lt;SubscriptionState, ResponseValue&lt;ErrorResult&gt;&gt;" description="" />
-      <type id="KeyStoreCrypto" tid="" name="KeyStoreCrypto" description="" />
-      <type id="RequestResult&lt;ResponseValue&lt;ulong&gt;&gt;" tid="" name="RequestResult&lt;ResponseValue&lt;ulong&gt;&gt;" description="" />
-      <type id="Action&lt;SubscriptionState, T&gt;" tid="" name="Action&lt;SubscriptionState, T&gt;" description="" />
-      <type id="Wallet" tid="" name="Wallet" description="" />
-      <type id="Action&lt;SubscriptionState, ResponseValue&lt;AccountKeyPair&gt;&gt;" tid="" name="Action&lt;SubscriptionState, ResponseValue&lt;AccountKeyPair&gt;&gt;" description="" />
-      <type id="IConnectionStatistics" tid="" name="IConnectionStatistics" description="" />
-      <type id="RequestResult&lt;ResponseValue&lt;List&lt;AccountInfo&gt;&gt;&gt;" tid="" name="RequestResult&lt;ResponseValue&lt;List&lt;AccountInfo&gt;&gt;&gt;" description="" />
-      <type id="Action&lt;List&lt;AccountKeyPair&gt;, Exception&gt;" tid="" name="Action&lt;List&lt;AccountKeyPair&gt;, Exception&gt;" description="" />
-      <type id="Task&lt;RequestResult&lt;VoteAccounts&gt;&gt;" tid="" name="Task&lt;RequestResult&lt;VoteAccounts&gt;&gt;" description="" />
-      <type id="RequestResult&lt;string&gt;" tid="" name="RequestResult&lt;string&gt;" description="" />
-      <type id="RequestResult&lt;InflationGovernor&gt;" tid="" name="RequestResult&lt;InflationGovernor&gt;" description="" />
-      <type id="Task&lt;RequestResult&lt;List&lt;ClusterNode&gt;&gt;&gt;" tid="" name="Task&lt;RequestResult&lt;List&lt;ClusterNode&gt;&gt;&gt;" description="" />
-      <type id="KeyStoreScryptService" tid="" name="KeyStoreScryptService" description="" />
-      <type id="List&lt;PublicKey&gt;" tid="" name="List&lt;PublicKey&gt;" description="" />
-      <type id="TokenAccount" tid="Class:0bb35bb0471e450ebaf81b889ced2921" name="TokenAccount" description="" class-ref="0bb35bb0471e450ebaf81b889ced2921" />
-      <type id="PnyxAcco" tid="" name="PnyxAcco" description="" />
-      <type id="List&lt;SignaturePubKeyPair&gt;" tid="" name="List&lt;SignaturePubKeyPair&gt;" description="" />
-      <type id="Pny" tid="" name="Pny" description="" />
-      <type id="Task&lt;RequestResult&lt;ResponseValue&lt;BlockHash&gt;&gt;&gt;" tid="" name="Task&lt;RequestResult&lt;ResponseValue&lt;BlockHash&gt;&gt;&gt;" description="" />
-      <type id="Task&lt;RequestResult&lt;Dictionary&lt;string, List&lt;ulong&gt;&gt;&gt;&gt;" tid="" name="Task&lt;RequestResult&lt;Dictionary&lt;string, List&lt;ulong&gt;&gt;&gt;&gt;" description="" />
-      <type id="TokenSwapAccount" tid="Class:31bc3e2fe4d34566b723b3b0ba5fc31d" name="TokenSwapAccount" description="" class-ref="31bc3e2fe4d34566b723b3b0ba5fc31d" />
-      <type id="Task&lt;RequestResult&lt;List&lt;InflationReward&gt;&gt;&gt;" tid="" name="Task&lt;RequestResult&lt;List&lt;InflationReward&gt;&gt;&gt;" description="" />
-      <type id="TokenBalanceInfo[]" tid="" name="TokenBalanceInfo[]" description="" />
-      <type id="SimulationLogs" tid="" name="SimulationLogs" description="" />
-      <type id="Task&lt;RequestResult&lt;ResponseValue&lt;List&lt;TokenAccount&gt;&gt;&gt;&gt;" tid="" name="Task&lt;RequestResult&lt;ResponseValue&lt;List&lt;TokenAccount&gt;&gt;&gt;&gt;" description="" />
-      <type id="IList&lt;string&gt;" tid="" name="IList&lt;string&gt;" description="" />
-      <type id="RequestResult&lt;BlockInfo&gt;" tid="" name="RequestResult&lt;BlockInfo&gt;" description="" />
-      <type id="ParsedTokenAccountData" tid="" name="ParsedTokenAccountData" description="" />
-      <type id="RateLimiter" tid="" name="RateLimiter" description="" />
-      <type id="Task" tid="" name="Task" description="" />
-      <type id="TokenWalletBalance[]" tid="" name="TokenWalletBalance[]" description="" />
-      <type id="PrivateKey" tid="" name="PrivateKey" description="" />
-      <type id="CancellationToken" tid="" name="CancellationToken" description="" />
-      <type id="TokenAccountData" tid="" name="TokenAccountData" description="" />
-      <type id="ValueTask&lt;ValueWebSocketReceiveResult&gt;" tid="" name="ValueTask&lt;ValueWebSocketReceiveResult&gt;" description="" />
-      <type id="long" tid="" name="long" description="" />
-      <type id="Task&lt;RequestResult&lt;StakeActivationInfo&gt;&gt;" tid="" name="Task&lt;RequestResult&lt;StakeActivationInfo&gt;&gt;" description="" />
-      <type id="IEnumerable&lt;AccountMeta&gt;" tid="" name="IEnumerable&lt;AccountMeta&gt;" description="" />
-      <type id="Task&lt;TokenMintResolver&gt;" tid="" name="Task&lt;TokenMintResolver&gt;" description="" />
-      <type id="IEnumerator" tid="" name="IEnumerator" description="" />
       <type id="Memory&lt;byte&gt;" tid="" name="Memory&lt;byte&gt;" description="" />
-      <type id="RpcBatchReqRespItem" tid="" name="RpcBatchReqRespItem" description="" />
-      <type id="Pnyx" tid="" name="Pnyx" description="" />
-      <type id="Language" tid="" name="Language" description="" />
-      <type id="Task&lt;RequestResult&lt;EpochScheduleInfo&gt;&gt;" tid="" name="Task&lt;RequestResult&lt;EpochScheduleInfo&gt;&gt;" description="" />
-      <type id="ParsedTokenMintData" tid="" name="ParsedTokenMintData" description="" />
-      <type id="Action&lt;SubscriptionState, SlotInfo&gt;" tid="" name="Action&lt;SubscriptionState, SlotInfo&gt;" description="" />
-      <type id="Task&lt;RequestResult&lt;ResponseValue&lt;bool&gt;&gt;&gt;" tid="" name="Task&lt;RequestResult&lt;ResponseValue&lt;bool&gt;&gt;&gt;" description="" />
-      <type id="bool" tid="" name="bool" description="" />
-      <type id="SolanaWallet" tid="" name="SolanaWallet" description="" />
-      <type id="RequestResult&lt;ResponseValue&lt;BlockProductionInfo&gt;&gt;" tid="" name="RequestResult&lt;ResponseValue&lt;BlockProductionInfo&gt;&gt;" description="" />
-      <type id="Task&lt;RequestResult&lt;InflationRate&gt;&gt;" tid="" name="Task&lt;RequestResult&lt;InflationRate&gt;&gt;" description="" />
-      <type id="SwapCurve" tid="" name="SwapCurve" description="" />
-      <type id="IEnumerator&lt;TokenWalletAccount&gt;" tid="" name="IEnumerator&lt;TokenWalletAccount&gt;" description="" />
-      <type id="Uri" tid="" name="Uri" description="" />
-      <type id="KdfType" tid="" name="KdfType" description="" />
-      <type id="TokenBalance" tid="" name="TokenBalance" description="" />
-      <type id="ICollection&lt;byte[]&gt;" tid="" name="ICollection&lt;byte[]&gt;" description="" />
-      <type id="Task&lt;WordList&gt;" tid="" name="Task&lt;WordList&gt;" description="" />
-      <type id="CipherParams" tid="" name="CipherParams" description="" />
-      <type id="List&lt;RpcBatchReqRespItem&gt;" tid="" name="List&lt;RpcBatchReqRespItem&gt;" description="" />
-      <type id="Timer" tid="" name="Timer" description="" />
-      <type id="ClientWebSocket" tid="" name="ClientWebSocket" description="" />
-      <type id="WebSocketMessageType" tid="" name="WebSocketMessageType" description="" />
-      <type id="IEnumerable&lt;TokenWalletAccount&gt;" tid="" name="IEnumerable&lt;TokenWalletAccount&gt;" description="" />
-      <type id="Cluster" tid="" name="Cluster" description="" />
-      <type id="Action&lt;SubscriptionState, int&gt;" tid="" name="Action&lt;SubscriptionState, int&gt;" description="" />
-      <type id="Action&lt;SubscriptionState, ResponseValue&lt;TokenAccountInfo&gt;&gt;" tid="" name="Action&lt;SubscriptionState, ResponseValue&lt;TokenAccountInfo&gt;&gt;" description="" />
-      <type id="Type" tid="" name="Type" description="" />
-      <type id="TaskCompletionSource&lt;T&gt;" tid="" name="TaskCompletionSource&lt;T&gt;" description="" />
-      <type id="IRequestResult" tid="" name="IRequestResult" description="" />
-      <type id="Func&lt;TransactionBuilder, byte[]&gt;" tid="" name="Func&lt;TransactionBuilder, byte[]&gt;" description="" />
-      <type id="JsonSerializerOptions" tid="" name="JsonSerializerOptions" description="" />
-      <type id="TransactionMetaInfo[]" tid="" name="TransactionMetaInfo[]" description="" />
-      <type id="RewardType" tid="" name="RewardType" description="" />
-      <type id="TransactionDetailsFilterType" tid="" name="TransactionDetailsFilterType" description="" />
-      <type id="Utf8JsonReader" tid="" name="Utf8JsonReader" description="" />
-      <type id="Task&lt;RequestResult&lt;InflationGovernor&gt;&gt;" tid="" name="Task&lt;RequestResult&lt;InflationGovernor&gt;&gt;" description="" />
-      <type id="PnyxAx" tid="" name="PnyxAx" description="" />
-      <type id="string" tid="" name="string" description="" />
-      <type id="Task&lt;T&gt;" tid="" name="Task&lt;T&gt;" description="" />
-      <type id="Task&lt;RequestResult&lt;ResponseValue&lt;FeeCalculatorInfo&gt;&gt;&gt;" tid="" name="Task&lt;RequestResult&lt;ResponseValue&lt;FeeCalculatorInfo&gt;&gt;&gt;" description="" />
-      <type id="byte[]" tid="" name="byte[]" description="" />
-      <type id="TokenWallet" tid="" name="TokenWallet" description="" />
-      <type id="Dictionary&lt;int, SubscriptionState&gt;" tid="" name="Dictionary&lt;int, SubscriptionState&gt;" description="" />
-      <type id="Task&lt;RequestResult&lt;ResponseValue&lt;TokenMintInfo&gt;&gt;&gt;" tid="" name="Task&lt;RequestResult&lt;ResponseValue&lt;TokenMintInfo&gt;&gt;&gt;" description="" />
-      <type id="Dictionary&lt;string, object&gt;" tid="" name="Dictionary&lt;string, object&gt;" description="" />
-      <type id="TokenWalletFilterList" tid="" name="TokenWalletFilterList" description="" />
-      <type id="StakeAuthorize" tid="" name="StakeAuthorize" description="" />
-      <type id="Task&lt;TokenWallet&gt;" tid="" name="Task&lt;TokenWallet&gt;" description="" />
-      <type id="IWebSocket" tid="" name="IWebSocket" description="" />
-      <type id="RequestResult&lt;ResponseValue&lt;FeeRateGovernorInfo&gt;&gt;" tid="" name="RequestResult&lt;ResponseValue&lt;FeeRateGovernorInfo&gt;&gt;" description="" />
-      <type id="IdGenerator" tid="" name="IdGenerator" description="" />
-      <type id="TransactionMetaInfo" tid="" name="TransactionMetaInfo" description="" />
-      <type id="Delegation" tid="" name="Delegation" description="" />
-      <type id="NameRecord" tid="Class:48d2e76431e54ffdb227b710704ab58f" name="NameRecord" description="" class-ref="48d2e76431e54ffdb227b710704ab58f" />
-      <type id="NonceInformation" tid="" name="NonceInformation" description="" />
-      <type id="RequestResult&lt;List&lt;InflationReward&gt;&gt;" tid="" name="RequestResult&lt;List&lt;InflationReward&gt;&gt;" description="" />
-      <type id="ITokenWalletRpcProxy" tid="" name="ITokenWalletRpcProxy" description="" />
-      <type id="Task&lt;RequestResult&lt;List&lt;PerformanceSample&gt;&gt;&gt;" tid="" name="Task&lt;RequestResult&lt;List&lt;PerformanceSample&gt;&gt;&gt;" description="" />
-      <type id="TKdfParams" tid="" name="TKdfParams" description="" />
-      <type id="AccountFilterType?" tid="" name="AccountFilterType?" description="" />
-      <type id="IList&lt;object&gt;" tid="" name="IList&lt;object&gt;" description="" />
-      <type id="POOnyxAcco" tid="" name="POOnyxAcco" description="" />
-      <type id="ErrorData" tid="" name="ErrorData" description="" />
-      <type id="Task&lt;RequestResult&lt;ResponseValue&lt;List&lt;SignatureStatusInfo&gt;&gt;&gt;&gt;" tid="" name="Task&lt;RequestResult&lt;ResponseValue&lt;List&lt;SignatureStatusInfo&gt;&gt;&gt;&gt;" description="" />
-      <type id="TokenWalletAccount" tid="" name="TokenWalletAccount" description="" />
-      <type id="PnyxAS" tid="" name="PnyxAS" description="" />
-      <type id="TokenQuantity" tid="" name="TokenQuantity" description="" />
-      <type id="List&lt;AccountMeta&gt;" tid="" name="List&lt;AccountMeta&gt;" description="" />
-      <type id="Task&lt;RequestResult&lt;BlockInfo&gt;&gt;" tid="" name="Task&lt;RequestResult&lt;BlockInfo&gt;&gt;" description="" />
-      <type id="uint?" tid="" name="uint?" description="" />
-      <type id="TokenAccountInfoDetails" tid="" name="TokenAccountInfoDetails" description="" />
-      <type id="PnyxAccou" tid="" name="PnyxAccou" description="" />
-      <type id="RequestResult&lt;ResponseValue&lt;List&lt;SignatureStatusInfo&gt;&gt;&gt;" tid="" name="RequestResult&lt;ResponseValue&lt;List&lt;SignatureStatusInfo&gt;&gt;&gt;" description="" />
-      <type id="AccountInfo[]" tid="" name="AccountInfo[]" description="" />
-      <type id="RequestResult&lt;ResponseValue&lt;bool&gt;&gt;" tid="" name="RequestResult&lt;ResponseValue&lt;bool&gt;&gt;" description="" />
-      <type id="IRpcClient" tid="" name="IRpcClient" description="" />
-      <type id="Action&lt;TransactionMetaSlotInfo, Exception&gt;" tid="" name="Action&lt;TransactionMetaSlotInfo, Exception&gt;" description="" />
-      <type id="Action&lt;ResponseValue&lt;List&lt;LargeTokenAccount&gt;&gt;, Exception&gt;" tid="" name="Action&lt;ResponseValue&lt;List&lt;LargeTokenAccount&gt;&gt;, Exception&gt;" description="" />
-      <type id="Mnemonic" tid="" name="Mnemonic" description="" />
-      <type id="KeyValue" tid="" name="KeyValue" description="" />
-      <type id="TokenMint" tid="Class:8ca6714972f74db2bceffa0343440077" name="TokenMint" description="" class-ref="8ca6714972f74db2bceffa0343440077" />
-      <type id="KeyStorePbkdf2Service" tid="" name="KeyStorePbkdf2Service" description="" />
-      <type id="TransactionContentInfo" tid="" name="TransactionContentInfo" description="" />
-      <type id="ulong[]" tid="" name="ulong[]" description="" />
-      <type id="RequestResult&lt;TransactionMetaSlotInfo&gt;" tid="" name="RequestResult&lt;TransactionMetaSlotInfo&gt;" description="" />
-      <type id="TokenAccountInfo" tid="" name="TokenAccountInfo" description="" />
-      <type id="KeyStore" tid="" name="KeyStore" description="" />
-      <type id="RequestResult&lt;ResponseValue&lt;List&lt;LargeTokenAccount&gt;&gt;&gt;" tid="" name="RequestResult&lt;ResponseValue&lt;List&lt;LargeTokenAccount&gt;&gt;&gt;" description="" />
-      <type id="decimal?" tid="" name="decimal?" description="" />
-      <type id="POOnyxAccount" tid="" name="POOnyxAccount" description="" />
-      <type id="IList&lt;TokenListItem&gt;" tid="" name="IList&lt;TokenListItem&gt;" description="" />
-      <type id="PnyxAcc" tid="" name="PnyxAcc" description="" />
-      <type id="TokenNameRecord" tid="Class:0222a45f5ed34712a896e24572d25ce9" name="TokenNameRecord" description="" class-ref="0222a45f5ed34712a896e24572d25ce9" />
-      <type id="StringBuilder" tid="" name="StringBuilder" description="" />
-      <type id="PnyxAccoun" tid="" name="PnyxAccoun" description="" />
-      <type id="Task&lt;RequestResult&lt;string&gt;&gt;" tid="" name="Task&lt;RequestResult&lt;string&gt;&gt;" description="" />
-      <type id="Int64" tid="" name="Int64" description="" />
-      <type id="PO" tid="" name="PO" description="" />
-      <type id="EventHandler&lt;SubscriptionEvent&gt;" tid="" name="EventHandler&lt;SubscriptionEvent&gt;" description="" />
-      <type id="SeedMode" tid="" name="SeedMode" description="" />
-      <type id="List&lt;object&gt;" tid="" name="List&lt;object&gt;" description="" />
-      <type id="Dictionary&lt;uint, ProgramError&lt;TEnum&gt;&gt;" tid="" name="Dictionary&lt;uint, ProgramError&lt;TEnum&gt;&gt;" description="" />
-      <type id="Task&lt;RequestResult&lt;NodeVersion&gt;&gt;" tid="" name="Task&lt;RequestResult&lt;NodeVersion&gt;&gt;" description="" />
-      <type id="InstructionInfo[]" tid="" name="InstructionInfo[]" description="" />
-      <type id="List&lt;bool&gt;" tid="" name="List&lt;bool&gt;" description="" />
-      <type id="InstructionError" tid="" name="InstructionError" description="" />
-      <type id="Class:7ee8ccfd7d184715bd769299067ef518" tid="" name="IllocutionaryClaim" description="" class-ref="7ee8ccfd7d184715bd769299067ef518" />
-      <type id="ConnectionStats" tid="" name="ConnectionStats" description="" />
-      <type id="RequestResult&lt;List&lt;string&gt;&gt;" tid="" name="RequestResult&lt;List&lt;string&gt;&gt;" description="" />
-      <type id="double" tid="" name="double" description="" />
-      <type id="IList&lt;TokenDef&gt;" tid="" name="IList&lt;TokenDef&gt;" description="" />
-      <type id="IEnumerable&lt;byte[]&gt;" tid="" name="IEnumerable&lt;byte[]&gt;" description="" />
-      <type id="ILogger" tid="" name="ILogger" description="" />
-      <type id="TokenMintData" tid="" name="TokenMintData" description="" />
-      <type id="JsonRpcBatchResponse" tid="" name="JsonRpcBatchResponse" description="" />
-      <type id="Task&lt;RequestResult&lt;ResponseValue&lt;LatestBlockHash&gt;&gt;&gt;" tid="" name="Task&lt;RequestResult&lt;ResponseValue&lt;LatestBlockHash&gt;&gt;&gt;" description="" />
-      <type id="Task&lt;SubscriptionState&gt;" tid="" name="Task&lt;SubscriptionState&gt;" description="" />
-      <type id="RequestResult&lt;T&gt;" tid="" name="RequestResult&lt;T&gt;" description="" />
-      <type id="string[]" tid="" name="string[]" description="" />
-      <type id="MessageHeader" tid="" name="MessageHeader" description="" />
-      <type id="EventHandler&lt;WebSocketState&gt;" tid="" name="EventHandler&lt;WebSocketState&gt;" description="" />
-      <type id="Task&lt;RequestResult&lt;List&lt;string&gt;&gt;&gt;" tid="" name="Task&lt;RequestResult&lt;List&lt;string&gt;&gt;&gt;" description="" />
-      <type id="List&lt;TransactionInstruction&gt;" tid="" name="List&lt;TransactionInstruction&gt;" description="" />
-      <type id="MultiSignatureAccount" tid="Class:ec92dc2bdf49410084b97c94290b9892" name="MultiSignatureAccount" description="" class-ref="ec92dc2bdf49410084b97c94290b9892" />
-      <type id="RequestResult&lt;ResponseValue&lt;List&lt;TokenAccount&gt;&gt;&gt;" tid="" name="RequestResult&lt;ResponseValue&lt;List&lt;TokenAccount&gt;&gt;&gt;" description="" />
-      <type id="Lockup" tid="" name="Lockup" description="" />
-      <type id="AccountState" tid="" name="AccountState" description="" />
-      <type id="Dictionary&lt;string, TokenDef&gt;" tid="" name="Dictionary&lt;string, TokenDef&gt;" description="" />
-      <type id="POOnyxAccou" tid="" name="POOnyxAccou" description="" />
-      <type id="SecretKeyStoreService" tid="" name="SecretKeyStoreService" description="" />
-      <type id="RequestResult&lt;NodeVersion&gt;" tid="" name="RequestResult&lt;NodeVersion&gt;" description="" />
-      <type id="IReadOnlyDictionary&lt;string, TokenDef&gt;" tid="" name="IReadOnlyDictionary&lt;string, TokenDef&gt;" description="" />
-      <type id="Task&lt;RequestResult&lt;ResponseValue&lt;TokenAccountInfo&gt;&gt;&gt;" tid="" name="Task&lt;RequestResult&lt;ResponseValue&lt;TokenAccountInfo&gt;&gt;&gt;" description="" />
-      <type id="PublicKey" tid="" name="PublicKey" description="" />
-      <type id="Task&lt;bool&gt;" tid="" name="Task&lt;bool&gt;" description="" />
-      <type id="JsonRpcRequest" tid="" name="JsonRpcRequest" description="" />
-      <type id="object" tid="" name="object" description="" />
-      <type id="List&lt;TokenDef&gt;" tid="" name="List&lt;TokenDef&gt;" description="" />
-      <type id="Action&lt;SubscriptionState&lt;T&gt;, T&gt;" tid="" name="Action&lt;SubscriptionState&lt;T&gt;, T&gt;" description="" />
-      <type id="SwapVersion" tid="" name="SwapVersion" description="" />
-      <type id="IReadOnlyList&lt;byte&gt;" tid="" name="IReadOnlyList&lt;byte&gt;" description="" />
-      <type id="IList&lt;PublicKey&gt;" tid="" name="IList&lt;PublicKey&gt;" description="" />
-      <type id="Task&lt;JsonRpcBatchResponse&gt;" tid="" name="Task&lt;JsonRpcBatchResponse&gt;" description="" />
-      <type id="int?" tid="" name="int?" description="" />
-      <type id="RequestResult&lt;List&lt;AccountKeyPair&gt;&gt;" tid="" name="RequestResult&lt;List&lt;AccountKeyPair&gt;&gt;" description="" />
-      <type id="ReverseNameRecord" tid="Class:a3ad2331c201411fa9e906b0f0939f77" name="ReverseNameRecord" description="" class-ref="a3ad2331c201411fa9e906b0f0939f77" />
-      <type id="BatchAutoExecuteMode" tid="" name="BatchAutoExecuteMode" description="" />
-      <type id="ValueTask" tid="" name="ValueTask" description="" />
-      <type id="RequestResult&lt;ResponseValue&lt;TokenBalance&gt;&gt;" tid="" name="RequestResult&lt;ResponseValue&lt;TokenBalance&gt;&gt;" description="" />
-      <type id="Authorized" tid="" name="Authorized" description="" />
-      <type id="JsonRpcErrorResponse" tid="" name="JsonRpcErrorResponse" description="" />
-      <type id="Fees" tid="" name="Fees" description="" />
-      <type id="RequestResult&lt;ResponseValue&lt;Supply&gt;&gt;" tid="" name="RequestResult&lt;ResponseValue&lt;Supply&gt;&gt;" description="" />
-      <type id="Task&lt;RequestResult&lt;EpochInfo&gt;&gt;" tid="" name="Task&lt;RequestResult&lt;EpochInfo&gt;&gt;" description="" />
-      <type id="DataEncoder" tid="" name="DataEncoder" description="" />
+      <type id="Task&lt;RequestResult&lt;StakeActivationInfo&gt;&gt;" tid="" name="Task&lt;RequestResult&lt;StakeActivationInfo&gt;&gt;" description="" />
+      <type id="RequestResult&lt;Dictionary&lt;string, List&lt;ulong&gt;&gt;&gt;" tid="" name="RequestResult&lt;Dictionary&lt;string, List&lt;ulong&gt;&gt;&gt;" description="" />
+      <type id="Task&lt;RequestResult&lt;ResponseValue&lt;TokenBalance&gt;&gt;&gt;" tid="" name="Task&lt;RequestResult&lt;ResponseValue&lt;TokenBalance&gt;&gt;&gt;" description="" />
+      <type id="TokenListItem" tid="" name="TokenListItem" description="" />
       <type id="TokenWalletBalance" tid="Class:76df0db46ffc4f5c9c893d1e4af41f16" name="TokenWalletBalance" description="" class-ref="76df0db46ffc4f5c9c893d1e4af41f16" />
-      <type id="IReadOnlyList&lt;string&gt;" tid="" name="IReadOnlyList&lt;string&gt;" description="" />
-      <type id="WebSocketState" tid="" name="WebSocketState" description="" />
-      <type id="InstructionInfo" tid="" name="InstructionInfo" description="" />
-      <type id="Wallet.Wallet" tid="" name="Wallet.Wallet" description="" />
-      <type id="RequestResult&lt;List&lt;SignatureStatusInfo&gt;&gt;" tid="" name="RequestResult&lt;List&lt;SignatureStatusInfo&gt;&gt;" description="" />
-      <type id="RecordType" tid="" name="RecordType" description="" />
-      <type id="TokenDef" tid="" name="TokenDef" description="" />
-      <type id="Action&lt;JsonRpcBatchResponseItem, Exception&gt;" tid="" name="Action&lt;JsonRpcBatchResponseItem, Exception&gt;" description="" />
-      <type id="SecureRandom" tid="" name="SecureRandom" description="" />
-      <type id="Task&lt;RequestResult&lt;ResponseValue&lt;FeesInfo&gt;&gt;&gt;" tid="" name="Task&lt;RequestResult&lt;ResponseValue&lt;FeesInfo&gt;&gt;&gt;" description="" />
-      <type id="Predicate&lt;TokenWalletAccount&gt;" tid="" name="Predicate&lt;TokenWalletAccount&gt;" description="" />
-      <type id="ReadOnlySpan&lt;byte&gt;" tid="" name="ReadOnlySpan&lt;byte&gt;" description="" />
-      <type id="RequestResult&lt;ResponseValue&lt;LatestBlockHash&gt;&gt;" tid="" name="RequestResult&lt;ResponseValue&lt;LatestBlockHash&gt;&gt;" description="" />
-      <type id="Task&lt;RequestResult&lt;BlockCommitment&gt;&gt;" tid="" name="Task&lt;RequestResult&lt;BlockCommitment&gt;&gt;" description="" />
-      <type id="KeyStore&lt;T&gt;" tid="" name="KeyStore&lt;T&gt;" description="" />
-      <type id="IList&lt;MemCmp&gt;" tid="" name="IList&lt;MemCmp&gt;" description="" />
-      <type id="BinaryEncoding" tid="" name="BinaryEncoding" description="" />
-      <type id="Pn" tid="" name="Pn" description="" />
-      <type id="RequestResult&lt;ResponseValue&lt;List&lt;LargeAccount&gt;&gt;&gt;" tid="" name="RequestResult&lt;ResponseValue&lt;List&lt;LargeAccount&gt;&gt;&gt;" description="" />
-      <type id="IUser" tid="" name="IUser" description="" />
-      <type id="RequestResult&lt;ResponseValue&lt;AccountInfo&gt;&gt;" tid="" name="RequestResult&lt;ResponseValue&lt;AccountInfo&gt;&gt;" description="" />
-      <type id="WebSocketCloseStatus?" tid="" name="WebSocketCloseStatus?" description="" />
-      <type id="ElapsedEventArgs" tid="" name="ElapsedEventArgs" description="" />
-      <type id="Task&lt;RequestResult&lt;ResponseValue&lt;AccountInfo&gt;&gt;&gt;" tid="" name="Task&lt;RequestResult&lt;ResponseValue&lt;AccountInfo&gt;&gt;&gt;" description="" />
-      <type id="Action&lt;T, Exception&gt;" tid="" name="Action&lt;T, Exception&gt;" description="" />
+      <type id="KeyStoreScryptService" tid="" name="KeyStoreScryptService" description="" />
+      <type id="PublicKey" tid="" name="PublicKey" description="" />
       <type id="TokenMintInfoDetails" tid="" name="TokenMintInfoDetails" description="" />
-      <type id="CurveType" tid="" name="CurveType" description="" />
-      <type id="SlotRange" tid="" name="SlotRange" description="" />
-      <type id="POOnyxAccoun" tid="" name="POOnyxAccoun" description="" />
-      <type id="uint" tid="" name="uint" description="" />
-      <type id="SubscriptionChannel" tid="" name="SubscriptionChannel" description="" />
-      <type id="Task&lt;RequestResult&lt;ResponseValue&lt;SimulationLogs&gt;&gt;&gt;" tid="" name="Task&lt;RequestResult&lt;ResponseValue&lt;SimulationLogs&gt;&gt;&gt;" description="" />
+      <type id="BinaryEncoding" tid="" name="BinaryEncoding" description="" />
+      <type id="Task&lt;RequestResult&lt;InflationRate&gt;&gt;" tid="" name="Task&lt;RequestResult&lt;InflationRate&gt;&gt;" description="" />
+      <type id="StreamingContext" tid="" name="StreamingContext" description="" />
+      <type id="IStreamingRpcClient" tid="" name="IStreamingRpcClient" description="" />
+      <type id="Dictionary&lt;string, string&gt;" tid="" name="Dictionary&lt;string, string&gt;" description="" />
+      <type id="StringBuilder" tid="" name="StringBuilder" description="" />
+      <type id="int" tid="" name="int" description="" />
+      <type id="Task&lt;RequestResult&lt;TransactionMetaSlotInfo&gt;&gt;" tid="" name="Task&lt;RequestResult&lt;TransactionMetaSlotInfo&gt;&gt;" description="" />
+      <type id="Predicate&lt;TokenWalletAccount&gt;" tid="" name="Predicate&lt;TokenWalletAccount&gt;" description="" />
+      <type id="Action&lt;TransactionMetaSlotInfo, Exception&gt;" tid="" name="Action&lt;TransactionMetaSlotInfo, Exception&gt;" description="" />
+      <type id="byte[]" tid="" name="byte[]" description="" />
+      <type id="Fees" tid="" name="Fees" description="" />
+      <type id="Authorized" tid="" name="Authorized" description="" />
+      <type id="Task&lt;RequestResult&lt;JsonRpcBatchResponse&gt;&gt;" tid="" name="Task&lt;RequestResult&lt;JsonRpcBatchResponse&gt;&gt;" description="" />
+      <type id="RequestResult&lt;ResponseValue&lt;bool&gt;&gt;" tid="" name="RequestResult&lt;ResponseValue&lt;bool&gt;&gt;" description="" />
+      <type id="InnerInstruction[]" tid="" name="InnerInstruction[]" description="" />
+      <type id="TokenSwapAccount" tid="Class:31bc3e2fe4d34566b723b3b0ba5fc31d" name="TokenSwapAccount" description="" class-ref="31bc3e2fe4d34566b723b3b0ba5fc31d" />
+      <type id="NonceInformation" tid="" name="NonceInformation" description="" />
+      <type id="byte" tid="" name="byte" description="" />
+      <type id="RequestResult&lt;ResponseValue&lt;List&lt;LargeAccount&gt;&gt;&gt;" tid="" name="RequestResult&lt;ResponseValue&lt;List&lt;LargeAccount&gt;&gt;&gt;" description="" />
+      <type id="InstructionErrorType" tid="" name="InstructionErrorType" description="" />
+      <type id="IEnumerable&lt;PublicKey&gt;" tid="" name="IEnumerable&lt;PublicKey&gt;" description="" />
+      <type id="IReadOnlyList&lt;int&gt;" tid="" name="IReadOnlyList&lt;int&gt;" description="" />
+      <type id="Account" tid="" name="Account" description="" />
+      <type id="Transaction" tid="" name="Transaction" description="" />
+      <type id="JsonSerializerOptions" tid="" name="JsonSerializerOptions" description="" />
+      <type id="RateLimiter" tid="" name="RateLimiter" description="" />
+      <type id="RequestResult&lt;ResponseValue&lt;FeeCalculatorInfo&gt;&gt;" tid="" name="RequestResult&lt;ResponseValue&lt;FeeCalculatorInfo&gt;&gt;" description="" />
+      <type id="ReverseTwitterRecord" tid="Class:f2cf97a8e4e543caac5609b02ce565f5" name="ReverseTwitterRecord" description="" class-ref="f2cf97a8e4e543caac5609b02ce565f5" />
+      <type id="Task&lt;RequestResult&lt;List&lt;InflationReward&gt;&gt;&gt;" tid="" name="Task&lt;RequestResult&lt;List&lt;InflationReward&gt;&gt;&gt;" description="" />
+      <type id="SecretKeyStoreService" tid="" name="SecretKeyStoreService" description="" />
+      <type id="Action&lt;string, Exception&gt;" tid="" name="Action&lt;string, Exception&gt;" description="" />
+      <type id="HttpResponseMessage" tid="" name="HttpResponseMessage" description="" />
+      <type id="AccountInfo[]" tid="" name="AccountInfo[]" description="" />
+      <type id="TokenMintData" tid="" name="TokenMintData" description="" />
+      <type id="MessageHeader" tid="" name="MessageHeader" description="" />
+      <type id="PnyxAS" tid="" name="PnyxAS" description="" />
+      <type id="POnyxAccount" tid="" name="POnyxAccount" description="" />
+      <type id="Action&lt;ResponseValue&lt;List&lt;TokenAccount&gt;&gt;, Exception&gt;" tid="" name="Action&lt;ResponseValue&lt;List&lt;TokenAccount&gt;&gt;, Exception&gt;" description="" />
+      <type id="Ed25519Bip32" tid="" name="Ed25519Bip32" description="" />
+      <type id="Action&lt;SubscriptionState&lt;T&gt;, T&gt;" tid="" name="Action&lt;SubscriptionState&lt;T&gt;, T&gt;" description="" />
+      <type id="long" tid="" name="long" description="" />
+      <type id="MessageBuilder" tid="Class:f7f318bb1dd4477181935008552303d9" name="MessageBuilder" description="" class-ref="f7f318bb1dd4477181935008552303d9" />
+      <type id="List&lt;SignaturePubKeyPair&gt;" tid="" name="List&lt;SignaturePubKeyPair&gt;" description="" />
+      <type id="RecordType" tid="" name="RecordType" description="" />
+      <type id="Task&lt;RequestResult&lt;List&lt;PerformanceSample&gt;&gt;&gt;" tid="" name="Task&lt;RequestResult&lt;List&lt;PerformanceSample&gt;&gt;&gt;" description="" />
+      <type id="RequestResult&lt;ResponseValue&lt;FeeRateGovernorInfo&gt;&gt;" tid="" name="RequestResult&lt;ResponseValue&lt;FeeRateGovernorInfo&gt;&gt;" description="" />
+      <type id="Action&lt;SubscriptionState, ResponseValue&lt;TokenAccountInfo&gt;&gt;" tid="" name="Action&lt;SubscriptionState, ResponseValue&lt;TokenAccountInfo&gt;&gt;" description="" />
+      <type id="TransactionError" tid="" name="TransactionError" description="" />
+      <type id="TokenData" tid="Class:8b2638f8606c4ecbb79feaf03e839baa" name="TokenData" description="" class-ref="8b2638f8606c4ecbb79feaf03e839baa" />
+      <type id="BatchAutoExecuteMode" tid="" name="BatchAutoExecuteMode" description="" />
+      <type id="Dictionary&lt;string, WordList&gt;" tid="" name="Dictionary&lt;string, WordList&gt;" description="" />
+      <type id="IList&lt;Account&gt;" tid="" name="IList&lt;Account&gt;" description="" />
+      <type id="List&lt;TokenAccount&gt;" tid="" name="List&lt;TokenAccount&gt;" description="" />
+      <type id="Task&lt;List&lt;RecordBase&gt;&gt;" tid="" name="Task&lt;List&lt;RecordBase&gt;&gt;" description="" />
+      <type id="int?" tid="" name="int?" description="" />
+      <type id="List&lt;PublicKey&gt;" tid="" name="List&lt;PublicKey&gt;" description="" />
+      <type id="ulong?" tid="" name="ulong?" description="" />
+      <type id="IList&lt;TokenDef&gt;" tid="" name="IList&lt;TokenDef&gt;" description="" />
+      <type id="SwapCurve" tid="" name="SwapCurve" description="" />
+      <type id="WebSocketState" tid="" name="WebSocketState" description="" />
+      <type id="WebSocketCloseStatus" tid="" name="WebSocketCloseStatus" description="" />
+      <type id="LogsSubscriptionType" tid="" name="LogsSubscriptionType" description="" />
+      <type id="Action&lt;SubscriptionState, ResponseValue&lt;ErrorResult&gt;&gt;" tid="" name="Action&lt;SubscriptionState, ResponseValue&lt;ErrorResult&gt;&gt;" description="" />
+      <type id="long?" tid="" name="long?" description="" />
+      <type id="SolanaRpcBatchComposer" tid="" name="SolanaRpcBatchComposer" description="" />
       <type id="RequestResult&lt;ResponseValue&lt;BlockHash&gt;&gt;" tid="" name="RequestResult&lt;ResponseValue&lt;BlockHash&gt;&gt;" description="" />
-      <type id="TransactionBuilder" tid="" name="TransactionBuilder" description="" />
-      <type id="RecordHeader" tid="" name="RecordHeader" description="" />
-      <type id="POOnyxAc" tid="" name="POOnyxAc" description="" />
-      <type id="RequestResult&lt;InflationRate&gt;" tid="" name="RequestResult&lt;InflationRate&gt;" description="" />
-      <type id="AccountInfo" tid="" name="AccountInfo" description="" />
-      <type id="TransactionErrorType" tid="" name="TransactionErrorType" description="" />
+      <type id="EventHandler&lt;SubscriptionEvent&gt;" tid="" name="EventHandler&lt;SubscriptionEvent&gt;" description="" />
+      <type id="Action&lt;ResponseValue&lt;List&lt;AccountInfo&gt;&gt;, Exception&gt;" tid="" name="Action&lt;ResponseValue&lt;List&lt;AccountInfo&gt;&gt;, Exception&gt;" description="" />
+      <type id="RequestResult&lt;BlockCommitment&gt;" tid="" name="RequestResult&lt;BlockCommitment&gt;" description="" />
+      <type id="IEnumerable&lt;AccountMeta&gt;" tid="" name="IEnumerable&lt;AccountMeta&gt;" description="" />
+      <type id="Base58Encoder" tid="" name="Base58Encoder" description="" />
+      <type id="RequestResult&lt;List&lt;AccountKeyPair&gt;&gt;" tid="" name="RequestResult&lt;List&lt;AccountKeyPair&gt;&gt;" description="" />
+      <type id="Action&lt;ResponseValue&lt;AccountInfo&gt;, Exception&gt;" tid="" name="Action&lt;ResponseValue&lt;AccountInfo&gt;, Exception&gt;" description="" />
+      <type id="IRateLimiter" tid="" name="IRateLimiter" description="" />
+      <type id="Pn" tid="" name="Pn" description="" />
+      <type id="RequestResult&lt;JsonRpcBatchResponse&gt;" tid="" name="RequestResult&lt;JsonRpcBatchResponse&gt;" description="" />
+      <type id="Dictionary&lt;uint, ProgramError&lt;TEnum&gt;&gt;" tid="" name="Dictionary&lt;uint, ProgramError&lt;TEnum&gt;&gt;" description="" />
+      <type id="ElapsedEventArgs" tid="" name="ElapsedEventArgs" description="" />
+      <type id="RequestResult&lt;BlockInfo&gt;" tid="" name="RequestResult&lt;BlockInfo&gt;" description="" />
+      <type id="IList&lt;PublicKey&gt;" tid="" name="IList&lt;PublicKey&gt;" description="" />
+      <type id="JsonRpcRequest" tid="" name="JsonRpcRequest" description="" />
+      <type id="Int64" tid="" name="Int64" description="" />
+      <type id="RequestResult&lt;ulong&gt;" tid="" name="RequestResult&lt;ulong&gt;" description="" />
       <type id="SubscriptionState" tid="" name="SubscriptionState" description="" />
       <type id="IEnumerable&lt;int&gt;" tid="" name="IEnumerable&lt;int&gt;" description="" />
-      <type id="LogsSubscriptionType" tid="" name="LogsSubscriptionType" description="" />
-      <type id="WordCount" tid="" name="WordCount" description="" />
-      <type id="ImmutableList&lt;object&gt;" tid="" name="ImmutableList&lt;object&gt;" description="" />
-      <type id="Task&lt;RequestResult&lt;List&lt;ulong&gt;&gt;&gt;" tid="" name="Task&lt;RequestResult&lt;List&lt;ulong&gt;&gt;&gt;" description="" />
-      <type id="RequestResult&lt;ResponseValue&lt;FeeCalculatorInfo&gt;&gt;" tid="" name="RequestResult&lt;ResponseValue&lt;FeeCalculatorInfo&gt;&gt;" description="" />
-      <type id="Utf8JsonWriter" tid="" name="Utf8JsonWriter" description="" />
-      <type id="POOn" tid="" name="POOn" description="" />
-      <type id="RequestResult&lt;List&lt;ulong&gt;&gt;" tid="" name="RequestResult&lt;List&lt;ulong&gt;&gt;" description="" />
-      <type id="ReverseTwitterRecord" tid="Class:f2cf97a8e4e543caac5609b02ce565f5" name="ReverseTwitterRecord" description="" class-ref="f2cf97a8e4e543caac5609b02ce565f5" />
-      <type id="JsonRpcBatchRequest" tid="" name="JsonRpcBatchRequest" description="" />
-      <type id="RequestResult&lt;List&lt;ClusterNode&gt;&gt;" tid="" name="RequestResult&lt;List&lt;ClusterNode&gt;&gt;" description="" />
-      <type id="PnyxAc" tid="" name="PnyxAc" description="" />
-      <type id="RequestResult&lt;ulong&gt;" tid="" name="RequestResult&lt;ulong&gt;" description="" />
-      <type id="Action&lt;ResponseValue&lt;TokenAccountInfo&gt;, Exception&gt;" tid="" name="Action&lt;ResponseValue&lt;TokenAccountInfo&gt;, Exception&gt;" description="" />
       <type id="VoteAccount[]" tid="" name="VoteAccount[]" description="" />
-      <type id="Class:819f94652b324d5cbfba432a5105920d" tid="" name="PropositionalContent" description="" class-ref="819f94652b324d5cbfba432a5105920d" />
-      <type id="float" tid="" name="float" description="" />
-      <type id="Dictionary&lt;string, List&lt;int&gt;&gt;" tid="" name="Dictionary&lt;string, List&lt;int&gt;&gt;" description="" />
-      <type id="IList&lt;CompiledInstruction&gt;" tid="" name="IList&lt;CompiledInstruction&gt;" description="" />
-      <type id="IList&lt;TokenWalletAccount&gt;" tid="" name="IList&lt;TokenWalletAccount&gt;" description="" />
-      <type id="RequestResult&lt;ResponseValue&lt;SimulationLogs&gt;&gt;" tid="" name="RequestResult&lt;ResponseValue&lt;SimulationLogs&gt;&gt;" description="" />
+      <type id="SlotRange" tid="" name="SlotRange" description="" />
+      <type id="Action&lt;SubscriptionState, ResponseValue&lt;LogInfo&gt;&gt;" tid="" name="Action&lt;SubscriptionState, ResponseValue&lt;LogInfo&gt;&gt;" description="" />
+      <type id="RewardInfo[]" tid="" name="RewardInfo[]" description="" />
+      <type id="RequestResult&lt;ResponseValue&lt;AccountInfo&gt;&gt;" tid="" name="RequestResult&lt;ResponseValue&lt;AccountInfo&gt;&gt;" description="" />
+      <type id="SolanaWallet" tid="" name="SolanaWallet" description="" />
+      <type id="FeeCalculator" tid="" name="FeeCalculator" description="" />
+      <type id="decimal?" tid="" name="decimal?" description="" />
+      <type id="Pnyx" tid="" name="Pnyx" description="" />
+      <type id="Action&lt;List&lt;SignatureStatusInfo&gt;, Exception&gt;" tid="" name="Action&lt;List&lt;SignatureStatusInfo&gt;, Exception&gt;" description="" />
+      <type id="TokenListDoc" tid="" name="TokenListDoc" description="" />
+      <type id="ValueTask&lt;ValueWebSocketReceiveResult&gt;" tid="" name="ValueTask&lt;ValueWebSocketReceiveResult&gt;" description="" />
+      <type id="Action&lt;List&lt;AccountKeyPair&gt;, Exception&gt;" tid="" name="Action&lt;List&lt;AccountKeyPair&gt;, Exception&gt;" description="" />
+      <type id="IReadOnlyDictionary&lt;string, TokenDef&gt;" tid="" name="IReadOnlyDictionary&lt;string, TokenDef&gt;" description="" />
+      <type id="PnyxA" tid="" name="PnyxA" description="" />
+      <type id="Action&lt;T, Exception&gt;" tid="" name="Action&lt;T, Exception&gt;" description="" />
+      <type id="TransactionHeaderInfo" tid="" name="TransactionHeaderInfo" description="" />
+      <type id="IEnumerator" tid="" name="IEnumerator" description="" />
+      <type id="PnyxC" tid="" name="PnyxC" description="" />
+      <type id="ImmutableList&lt;object&gt;" tid="" name="ImmutableList&lt;object&gt;" description="" />
+      <type id="SeedMode" tid="" name="SeedMode" description="" />
+      <type id="TokenMint" tid="Class:8ca6714972f74db2bceffa0343440077" name="TokenMint" description="" class-ref="8ca6714972f74db2bceffa0343440077" />
+      <type id="Language" tid="" name="Language" description="" />
+      <type id="Task&lt;T&gt;" tid="" name="Task&lt;T&gt;" description="" />
+      <type id="TokenAccountData" tid="" name="TokenAccountData" description="" />
+      <type id="Class:e4166bb9e3644869b194aaa7f6abda88" tid="" name="SpeechAct" description="" class-ref="e4166bb9e3644869b194aaa7f6abda88" />
+      <type id="ReadOnlySpan&lt;byte&gt;" tid="" name="ReadOnlySpan&lt;byte&gt;" description="" />
+      <type id="double" tid="" name="double" description="" />
+      <type id="AccountKeysList" tid="" name="AccountKeysList" description="" />
+      <type id="Wallet.Wallet" tid="" name="Wallet.Wallet" description="" />
+      <type id="SimulationLogs" tid="" name="SimulationLogs" description="" />
+      <type id="Uri" tid="" name="Uri" description="" />
+      <type id="List&lt;string&gt;" tid="" name="List&lt;string&gt;" description="" />
+      <type id="CancellationToken" tid="" name="CancellationToken" description="" />
+      <type id="KeyStorePbkdf2Service" tid="" name="KeyStorePbkdf2Service" description="" />
+      <type id="Task&lt;WordList&gt;" tid="" name="Task&lt;WordList&gt;" description="" />
+      <type id="Task&lt;RequestResult&lt;ResponseValue&lt;BlockHash&gt;&gt;&gt;" tid="" name="Task&lt;RequestResult&lt;ResponseValue&lt;BlockHash&gt;&gt;&gt;" description="" />
+      <type id="SerializationInfo" tid="" name="SerializationInfo" description="" />
+      <type id="Task&lt;SubscriptionState&gt;" tid="" name="Task&lt;SubscriptionState&gt;" description="" />
+      <type id="POOnyxAccoun" tid="" name="POOnyxAccoun" description="" />
+      <type id="PnyxAc" tid="" name="PnyxAc" description="" />
+      <type id="Task&lt;RequestResult&lt;ResponseValue&lt;FeeRateGovernorInfo&gt;&gt;&gt;" tid="" name="Task&lt;RequestResult&lt;ResponseValue&lt;FeeRateGovernorInfo&gt;&gt;&gt;" description="" />
+      <type id="Task&lt;RequestResult&lt;ResponseValue&lt;TokenMintInfo&gt;&gt;&gt;" tid="" name="Task&lt;RequestResult&lt;ResponseValue&lt;TokenMintInfo&gt;&gt;&gt;" description="" />
+      <type id="T" tid="" name="T" description="" />
+      <type id="ushort" tid="" name="ushort" description="" />
+      <type id="HttpClient" tid="" name="HttpClient" description="" />
+      <type id="P" tid="" name="P" description="" />
+      <type id="object" tid="" name="object" description="" />
+      <type id="ContextObj" tid="" name="ContextObj" description="" />
+      <type id="ParsedTokenAccountData" tid="" name="ParsedTokenAccountData" description="" />
+      <type id="KeyStoreCrypto" tid="" name="KeyStoreCrypto" description="" />
+      <type id="AccountFilterType?" tid="" name="AccountFilterType?" description="" />
+      <type id="CipherParams" tid="" name="CipherParams" description="" />
+      <type id="ProgramError&lt;TEnum&gt;" tid="" name="ProgramError&lt;TEnum&gt;" description="" />
+      <type id="Timer" tid="" name="Timer" description="" />
       <type id="KeyStore&lt;Pbkdf2Params&gt;" tid="" name="KeyStore&lt;Pbkdf2Params&gt;" description="" />
-      <type id="IEnumerable&lt;string&gt;" tid="" name="IEnumerable&lt;string&gt;" description="" />
+      <type id="RecordHeader" tid="" name="RecordHeader" description="" />
+      <type id="Task&lt;RequestResult&lt;string&gt;&gt;" tid="" name="Task&lt;RequestResult&lt;string&gt;&gt;" description="" />
+      <type id="Dictionary&lt;string, List&lt;int&gt;&gt;" tid="" name="Dictionary&lt;string, List&lt;int&gt;&gt;" description="" />
+      <type id="PnyxAccou" tid="" name="PnyxAccou" description="" />
+      <type id="bool?" tid="" name="bool?" description="" />
+      <type id="AccountState" tid="" name="AccountState" description="" />
+      <type id="Task&lt;RequestResult&lt;ResponseValue&lt;BlockProductionInfo&gt;&gt;&gt;" tid="" name="Task&lt;RequestResult&lt;ResponseValue&lt;BlockProductionInfo&gt;&gt;&gt;" description="" />
+      <type id="IList&lt;string&gt;" tid="" name="IList&lt;string&gt;" description="" />
+      <type id="List&lt;DecodedInstruction&gt;" tid="" name="List&lt;DecodedInstruction&gt;" description="" />
+      <type id="TokenBalance" tid="" name="TokenBalance" description="" />
+      <type id="IRandom" tid="" name="IRandom" description="" />
+      <type id="DataEncoder" tid="" name="DataEncoder" description="" />
+      <type id="IList&lt;TokenListItem&gt;" tid="" name="IList&lt;TokenListItem&gt;" description="" />
+      <type id="KeyValue" tid="" name="KeyValue" description="" />
+      <type id="Action&lt;SubscriptionState, T&gt;" tid="" name="Action&lt;SubscriptionState, T&gt;" description="" />
+      <type id="Action&lt;SubscriptionState, SlotInfo&gt;" tid="" name="Action&lt;SubscriptionState, SlotInfo&gt;" description="" />
+      <type id="SubscriptionChannel" tid="" name="SubscriptionChannel" description="" />
+      <type id="Class:819f94652b324d5cbfba432a5105920d" tid="" name="PropositionalContent" description="" class-ref="819f94652b324d5cbfba432a5105920d" />
+      <type id="Task&lt;RequestResult&lt;ResponseValue&lt;LatestBlockHash&gt;&gt;&gt;" tid="" name="Task&lt;RequestResult&lt;ResponseValue&lt;LatestBlockHash&gt;&gt;&gt;" description="" />
+      <type id="JsonDocument" tid="" name="JsonDocument" description="" />
+      <type id="Task&lt;RequestResult&lt;BlockInfo&gt;&gt;" tid="" name="Task&lt;RequestResult&lt;BlockInfo&gt;&gt;" description="" />
+      <type id="TransactionDetailsFilterType" tid="" name="TransactionDetailsFilterType" description="" />
+      <type id="KeyStore" tid="" name="KeyStore" description="" />
+      <type id="TokenAccountInfo" tid="" name="TokenAccountInfo" description="" />
+      <type id="POOnyxAccount" tid="" name="POOnyxAccount" description="" />
+      <type id="Dictionary&lt;long, ulong&gt;" tid="" name="Dictionary&lt;long, ulong&gt;" description="" />
+      <type id="TokenWalletFilterList" tid="" name="TokenWalletFilterList" description="" />
+      <type id="IUser" tid="" name="IUser" description="" />
+      <type id="CryptoInfo&lt;TKdfParams&gt;" tid="" name="CryptoInfo&lt;TKdfParams&gt;" description="" />
+      <type id="RequestResult&lt;InflationRate&gt;" tid="" name="RequestResult&lt;InflationRate&gt;" description="" />
+      <type id="List&lt;object&gt;" tid="" name="List&lt;object&gt;" description="" />
+      <type id="IList&lt;object&gt;" tid="" name="IList&lt;object&gt;" description="" />
+      <type id="int[]" tid="" name="int[]" description="" />
+      <type id="CurveType" tid="" name="CurveType" description="" />
+      <type id="Message" tid="" name="Message" description="" />
+      <type id="IEnumerable&lt;byte[]&gt;" tid="" name="IEnumerable&lt;byte[]&gt;" description="" />
+      <type id="RequestResult&lt;ResponseValue&lt;ulong&gt;&gt;" tid="" name="RequestResult&lt;ResponseValue&lt;ulong&gt;&gt;" description="" />
+      <type id="SubscriptionStatus" tid="" name="SubscriptionStatus" description="" />
+      <type id="DecodedInstruction" tid="" name="DecodedInstruction" description="" />
+      <type id="RequestResult&lt;string&gt;" tid="" name="RequestResult&lt;string&gt;" description="" />
+      <type id="decimal" tid="" name="decimal" description="" />
+      <type id="Task&lt;RequestResult&lt;ResponseValue&lt;SimulationLogs&gt;&gt;&gt;" tid="" name="Task&lt;RequestResult&lt;ResponseValue&lt;SimulationLogs&gt;&gt;&gt;" description="" />
+      <type id="POOnyxAccou" tid="" name="POOnyxAccou" description="" />
+      <type id="Func&lt;TransactionBuilder, byte[]&gt;" tid="" name="Func&lt;TransactionBuilder, byte[]&gt;" description="" />
+      <type id="Utf8JsonWriter" tid="" name="Utf8JsonWriter" description="" />
+      <type id="RequestResult&lt;VoteAccounts&gt;" tid="" name="RequestResult&lt;VoteAccounts&gt;" description="" />
+      <type id="KdfType" tid="" name="KdfType" description="" />
+      <type id="WebSocketCloseStatus?" tid="" name="WebSocketCloseStatus?" description="" />
+      <type id="Action&lt;ResponseValue&lt;List&lt;LargeTokenAccount&gt;&gt;, Exception&gt;" tid="" name="Action&lt;ResponseValue&lt;List&lt;LargeTokenAccount&gt;&gt;, Exception&gt;" description="" />
+      <type id="Delegation" tid="" name="Delegation" description="" />
+      <type id="CurveCalculator" tid="" name="CurveCalculator" description="" />
+      <type id="ScryptParams" tid="" name="ScryptParams" description="" />
+      <type id="RequestResult&lt;List&lt;string&gt;&gt;" tid="" name="RequestResult&lt;List&lt;string&gt;&gt;" description="" />
+      <type id="uint?" tid="" name="uint?" description="" />
+      <type id="bool" tid="" name="bool" description="" />
+      <type id="RequestResult&lt;ResponseValue&lt;List&lt;TokenAccount&gt;&gt;&gt;" tid="" name="RequestResult&lt;ResponseValue&lt;List&lt;TokenAccount&gt;&gt;&gt;" description="" />
+      <type id="IWebSocket" tid="" name="IWebSocket" description="" />
+      <type id="Action&lt;JsonRpcBatchResponseItem, Exception&gt;" tid="" name="Action&lt;JsonRpcBatchResponseItem, Exception&gt;" description="" />
+      <type id="List&lt;RpcBatchReqRespItem&gt;" tid="" name="List&lt;RpcBatchReqRespItem&gt;" description="" />
+      <type id="Task&lt;RequestResult&lt;ResponseValue&lt;List&lt;AccountInfo&gt;&gt;&gt;&gt;" tid="" name="Task&lt;RequestResult&lt;ResponseValue&lt;List&lt;AccountInfo&gt;&gt;&gt;&gt;" description="" />
+      <type id="Action&lt;ResponseValue&lt;TokenAccountInfo&gt;, Exception&gt;" tid="" name="Action&lt;ResponseValue&lt;TokenAccountInfo&gt;, Exception&gt;" description="" />
+      <type id="Task&lt;RequestResult&lt;ResponseValue&lt;AccountInfo&gt;&gt;&gt;" tid="" name="Task&lt;RequestResult&lt;ResponseValue&lt;AccountInfo&gt;&gt;&gt;" description="" />
+      <type id="TransactionInfo" tid="" name="TransactionInfo" description="" />
+      <type id="ITokenWalletRpcProxy" tid="" name="ITokenWalletRpcProxy" description="" />
+      <type id="string" tid="" name="string" description="" />
+      <type id="Task&lt;RequestResult&lt;Dictionary&lt;string, List&lt;ulong&gt;&gt;&gt;&gt;" tid="" name="Task&lt;RequestResult&lt;Dictionary&lt;string, List&lt;ulong&gt;&gt;&gt;&gt;" description="" />
+      <type id="Action&lt;SubscriptionState, ResponseValue&lt;AccountInfo&gt;&gt;" tid="" name="Action&lt;SubscriptionState, ResponseValue&lt;AccountInfo&gt;&gt;" description="" />
+      <type id="JsonRpcBatchResponse" tid="" name="JsonRpcBatchResponse" description="" />
+      <type id="Dictionary&lt;int, SubscriptionState&gt;" tid="" name="Dictionary&lt;int, SubscriptionState&gt;" description="" />
+      <type id="POOnyxA" tid="" name="POOnyxA" description="" />
+      <type id="Dictionary&lt;string, object&gt;" tid="" name="Dictionary&lt;string, object&gt;" description="" />
+      <type id="Task&lt;RequestResult&lt;ResponseValue&lt;List&lt;TokenAccount&gt;&gt;&gt;&gt;" tid="" name="Task&lt;RequestResult&lt;ResponseValue&lt;List&lt;TokenAccount&gt;&gt;&gt;&gt;" description="" />
+      <type id="IList&lt;CompiledInstruction&gt;" tid="" name="IList&lt;CompiledInstruction&gt;" description="" />
+      <type id="Task&lt;RequestResult&lt;ResponseValue&lt;bool&gt;&gt;&gt;" tid="" name="Task&lt;RequestResult&lt;ResponseValue&lt;bool&gt;&gt;&gt;" description="" />
+      <type id="RpcBatchReqRespItem" tid="" name="RpcBatchReqRespItem" description="" />
+      <type id="Task&lt;RequestResult&lt;InflationGovernor&gt;&gt;" tid="" name="Task&lt;RequestResult&lt;InflationGovernor&gt;&gt;" description="" />
+      <type id="Task&lt;RequestResult&lt;ulong&gt;&gt;" tid="" name="Task&lt;RequestResult&lt;ulong&gt;&gt;" description="" />
+      <type id="Dictionary&lt;string, PublicKey&gt;" tid="" name="Dictionary&lt;string, PublicKey&gt;" description="" />
+      <type id="PO" tid="" name="PO" description="" />
+      <type id="SemaphoreSlim" tid="" name="SemaphoreSlim" description="" />
+      <type id="ValueTask" tid="" name="ValueTask" description="" />
+      <type id="Task&lt;RequestResult&lt;List&lt;ulong&gt;&gt;&gt;" tid="" name="Task&lt;RequestResult&lt;List&lt;ulong&gt;&gt;&gt;" description="" />
+      <type id="TokenWalletAccount" tid="" name="TokenWalletAccount" description="" />
+      <type id="NonceAccount" tid="Class:ce27408d90db48b0a5cbcbd2415d4760" name="NonceAccount" description="" class-ref="ce27408d90db48b0a5cbcbd2415d4760" />
+      <type id="RequestResult&lt;ResponseValue&lt;List&lt;LargeTokenAccount&gt;&gt;&gt;" tid="" name="RequestResult&lt;ResponseValue&lt;List&lt;LargeTokenAccount&gt;&gt;&gt;" description="" />
+      <type id="Mnemonic" tid="" name="Mnemonic" description="" />
+      <type id="RequestResult&lt;ResponseValue&lt;List&lt;SignatureStatusInfo&gt;&gt;&gt;" tid="" name="RequestResult&lt;ResponseValue&lt;List&lt;SignatureStatusInfo&gt;&gt;&gt;" description="" />
+      <type id="RequestResult&lt;ResponseValue&lt;BlockProductionInfo&gt;&gt;" tid="" name="RequestResult&lt;ResponseValue&lt;BlockProductionInfo&gt;&gt;" description="" />
+      <type id="InstructionError" tid="" name="InstructionError" description="" />
+      <type id="IWordlistSource" tid="" name="IWordlistSource" description="" />
+      <type id="HttpStatusCode" tid="" name="HttpStatusCode" description="" />
+      <type id="Task&lt;RequestResult&lt;List&lt;AccountKeyPair&gt;&gt;&gt;" tid="" name="Task&lt;RequestResult&lt;List&lt;AccountKeyPair&gt;&gt;&gt;" description="" />
+      <type id="SwapVersion" tid="" name="SwapVersion" description="" />
+      <type id="RequestResult&lt;ResponseValue&lt;FeesInfo&gt;&gt;" tid="" name="RequestResult&lt;ResponseValue&lt;FeesInfo&gt;&gt;" description="" />
+      <type id="Task&lt;RequestResult&lt;NodeIdentity&gt;&gt;" tid="" name="Task&lt;RequestResult&lt;NodeIdentity&gt;&gt;" description="" />
+      <type id="Task&lt;RequestResult&lt;ResponseValue&lt;FeesInfo&gt;&gt;&gt;" tid="" name="Task&lt;RequestResult&lt;ResponseValue&lt;FeesInfo&gt;&gt;&gt;" description="" />
       <type id="T2" tid="" name="T2" description="" />
+      <type id="Task&lt;RequestResult&lt;ResponseValue&lt;FeeCalculatorInfo&gt;&gt;&gt;" tid="" name="Task&lt;RequestResult&lt;ResponseValue&lt;FeeCalculatorInfo&gt;&gt;&gt;" description="" />
+      <type id="Task&lt;TokenMintResolver&gt;" tid="" name="Task&lt;TokenMintResolver&gt;" description="" />
+      <type id="PnyxAccount" tid="" name="PnyxAccount" description="" />
+      <type id="TokenWalletBalance[]" tid="" name="TokenWalletBalance[]" description="" />
+      <type id="RequestResult&lt;ResponseValue&lt;TokenAccountInfo&gt;&gt;" tid="" name="RequestResult&lt;ResponseValue&lt;TokenAccountInfo&gt;&gt;" description="" />
+      <type id="PnyxAccoun" tid="" name="PnyxAccoun" description="" />
+      <type id="ILogger" tid="" name="ILogger" description="" />
+      <type id="ParsedTokenMintData" tid="" name="ParsedTokenMintData" description="" />
+      <type id="IEnumerable&lt;string&gt;" tid="" name="IEnumerable&lt;string&gt;" description="" />
+      <type id="string[]" tid="" name="string[]" description="" />
+      <type id="TokenAccountInfoDetails" tid="" name="TokenAccountInfoDetails" description="" />
+      <type id="Type" tid="" name="Type" description="" />
+      <type id="TransactionErrorType" tid="" name="TransactionErrorType" description="" />
+      <type id="ReadOnlyMemory&lt;byte&gt;" tid="" name="ReadOnlyMemory&lt;byte&gt;" description="" />
+      <type id="RequestResult&lt;StakeActivationInfo&gt;" tid="" name="RequestResult&lt;StakeActivationInfo&gt;" description="" />
+      <type id="TransactionContentInfo" tid="" name="TransactionContentInfo" description="" />
+      <type id="IList&lt;AccountMeta&gt;" tid="" name="IList&lt;AccountMeta&gt;" description="" />
+      <type id="IReadOnlyList&lt;byte&gt;" tid="" name="IReadOnlyList&lt;byte&gt;" description="" />
+      <type id="Dictionary&lt;string, TokenDef&gt;" tid="" name="Dictionary&lt;string, TokenDef&gt;" description="" />
+      <type id="RequestResult&lt;ResponseValue&lt;LatestBlockHash&gt;&gt;" tid="" name="RequestResult&lt;ResponseValue&lt;LatestBlockHash&gt;&gt;" description="" />
+      <type id="SolanaStreamingRpcClient" tid="" name="SolanaStreamingRpcClient" description="" />
+      <type id="RequestResult&lt;List&lt;ClusterNode&gt;&gt;" tid="" name="RequestResult&lt;List&lt;ClusterNode&gt;&gt;" description="" />
+      <type id="Commitment" tid="" name="Commitment" description="" />
+      <type id="RequestResult&lt;ResponseValue&lt;SimulationLogs&gt;&gt;" tid="" name="RequestResult&lt;ResponseValue&lt;SimulationLogs&gt;&gt;" description="" />
+      <type id="List&lt;AccountMeta&gt;" tid="" name="List&lt;AccountMeta&gt;" description="" />
+      <type id="Pny" tid="" name="Pny" description="" />
+      <type id="RequestResult&lt;List&lt;ulong&gt;&gt;" tid="" name="RequestResult&lt;List&lt;ulong&gt;&gt;" description="" />
+      <type id="IdGenerator" tid="" name="IdGenerator" description="" />
+      <type id="Func&lt;byte[], PublicKey, byte[]&gt;" tid="" name="Func&lt;byte[], PublicKey, byte[]&gt;" description="" />
+      <type id="uint" tid="" name="uint" description="" />
+      <type id="BitArray" tid="" name="BitArray" description="" />
+      <type id="ulong" tid="" name="ulong" description="" />
+      <type id="WordCount" tid="" name="WordCount" description="" />
+      <type id="Task&lt;RequestResult&lt;ResponseValue&lt;TokenAccountInfo&gt;&gt;&gt;" tid="" name="Task&lt;RequestResult&lt;ResponseValue&lt;TokenAccountInfo&gt;&gt;&gt;" description="" />
+      <type id="TransactionMetaInfo[]" tid="" name="TransactionMetaInfo[]" description="" />
+      <type id="POOnyxAcco" tid="" name="POOnyxAcco" description="" />
+      <type id="WordList" tid="" name="WordList" description="" />
+      <type id="TransactionInstruction" tid="" name="TransactionInstruction" description="" />
+      <type id="Lockup" tid="" name="Lockup" description="" />
+      <type id="Task&lt;RequestResult&lt;BlockCommitment&gt;&gt;" tid="" name="Task&lt;RequestResult&lt;BlockCommitment&gt;&gt;" description="" />
+      <type id="Utf8JsonReader" tid="" name="Utf8JsonReader" description="" />
+      <type id="WebSocketMessageType" tid="" name="WebSocketMessageType" description="" />
+      <type id="Task&lt;RequestResult&lt;ResponseValue&lt;List&lt;SignatureStatusInfo&gt;&gt;&gt;&gt;" tid="" name="Task&lt;RequestResult&lt;ResponseValue&lt;List&lt;SignatureStatusInfo&gt;&gt;&gt;&gt;" description="" />
+      <type id="Wallet" tid="" name="Wallet" description="" />
+      <type id="Task&lt;RequestResult&lt;ResponseValue&lt;List&lt;LargeTokenAccount&gt;&gt;&gt;&gt;" tid="" name="Task&lt;RequestResult&lt;ResponseValue&lt;List&lt;LargeTokenAccount&gt;&gt;&gt;&gt;" description="" />
+      <type id="POOn" tid="" name="POOn" description="" />
+      <type id="DecodeMethodType" tid="" name="DecodeMethodType" description="" />
+      <type id="TokenBalanceInfo[]" tid="" name="TokenBalanceInfo[]" description="" />
+      <type id="SecureRandom" tid="" name="SecureRandom" description="" />
+      <type id="List&lt;TokenDef&gt;" tid="" name="List&lt;TokenDef&gt;" description="" />
+      <type id="TransactionMeta" tid="" name="TransactionMeta" description="" />
+      <type id="TokenQuantity" tid="" name="TokenQuantity" description="" />
+      <type id="ReverseTokenNameRecord" tid="Class:aa89f25a853f4ed9a68189ca67da6601" name="ReverseTokenNameRecord" description="" class-ref="aa89f25a853f4ed9a68189ca67da6601" />
+      <type id="Task&lt;RequestResult&lt;EpochInfo&gt;&gt;" tid="" name="Task&lt;RequestResult&lt;EpochInfo&gt;&gt;" description="" />
+      <type id="IEnumerator&lt;TokenWalletAccount&gt;" tid="" name="IEnumerator&lt;TokenWalletAccount&gt;" description="" />
+      <type id="RequestResult&lt;NodeIdentity&gt;" tid="" name="RequestResult&lt;NodeIdentity&gt;" description="" />
+      <type id="Pbkdf2Params" tid="" name="Pbkdf2Params" description="" />
+      <type id="NameRecord" tid="Class:48d2e76431e54ffdb227b710704ab58f" name="NameRecord" description="" class-ref="48d2e76431e54ffdb227b710704ab58f" />
+      <type id="RequestResult&lt;List&lt;SignatureStatusInfo&gt;&gt;" tid="" name="RequestResult&lt;List&lt;SignatureStatusInfo&gt;&gt;" description="" />
+      <type id="POOnyxAcc" tid="" name="POOnyxAcc" description="" />
+      <type id="PnyxAcco" tid="" name="PnyxAcco" description="" />
+      <type id="POOnyx" tid="" name="POOnyx" description="" />
+      <type id="List&lt;bool&gt;" tid="" name="List&lt;bool&gt;" description="" />
+      <type id="IConnectionStatistics" tid="" name="IConnectionStatistics" description="" />
+      <type id="ErrorContent" tid="" name="ErrorContent" description="" />
+      <type id="JsonRpcErrorResponse" tid="" name="JsonRpcErrorResponse" description="" />
+      <type id="IRequestResult" tid="" name="IRequestResult" description="" />
+      <type id="RequestResult&lt;ResponseValue&lt;TokenBalance&gt;&gt;" tid="" name="RequestResult&lt;ResponseValue&lt;TokenBalance&gt;&gt;" description="" />
+      <type id="TaskCompletionSource&lt;T&gt;" tid="" name="TaskCompletionSource&lt;T&gt;" description="" />
+      <type id="Dictionary&lt;Values, string&gt;" tid="" name="Dictionary&lt;Values, string&gt;" description="" />
+      <type id="Task" tid="" name="Task" description="" />
+      <type id="RequestResult&lt;List&lt;PerformanceSample&gt;&gt;" tid="" name="RequestResult&lt;List&lt;PerformanceSample&gt;&gt;" description="" />
+      <type id="MultiSignatureAccount" tid="Class:ec92dc2bdf49410084b97c94290b9892" name="MultiSignatureAccount" description="" class-ref="ec92dc2bdf49410084b97c94290b9892" />
+      <type id="ICollection&lt;byte[]&gt;" tid="" name="ICollection&lt;byte[]&gt;" description="" />
+      <type id="JsonRpcBatchRequest" tid="" name="JsonRpcBatchRequest" description="" />
+      <type id="InstructionInfo[]" tid="" name="InstructionInfo[]" description="" />
+      <type id="Task&lt;JsonRpcBatchResponse&gt;" tid="" name="Task&lt;JsonRpcBatchResponse&gt;" description="" />
+      <type id="IRpcClient" tid="" name="IRpcClient" description="" />
+      <type id="Task&lt;RequestResult&lt;ResponseValue&lt;Supply&gt;&gt;&gt;" tid="" name="Task&lt;RequestResult&lt;ResponseValue&lt;Supply&gt;&gt;&gt;" description="" />
+      <type id="TransactionBuilder" tid="" name="TransactionBuilder" description="" />
+      <type id="IList&lt;MemCmp&gt;" tid="" name="IList&lt;MemCmp&gt;" description="" />
+      <type id="TokenWallet" tid="" name="TokenWallet" description="" />
+      <type id="Action&lt;ResponseValue&lt;ulong&gt;, Exception&gt;" tid="" name="Action&lt;ResponseValue&lt;ulong&gt;, Exception&gt;" description="" />
+      <type id="EventHandler&lt;WebSocketState&gt;" tid="" name="EventHandler&lt;WebSocketState&gt;" description="" />
+      <type id="RequestResult&lt;ResponseValue&lt;TokenMintInfo&gt;&gt;" tid="" name="RequestResult&lt;ResponseValue&lt;TokenMintInfo&gt;&gt;" description="" />
+      <type id="Task&lt;bool&gt;" tid="" name="Task&lt;bool&gt;" description="" />
+      <type id="RequestResult&lt;NodeVersion&gt;" tid="" name="RequestResult&lt;NodeVersion&gt;" description="" />
+      <type id="PrivateKey" tid="" name="PrivateKey" description="" />
+      <type id="TokenMintResolver" tid="" name="TokenMintResolver" description="" />
+      <type id="RequestResult&lt;List&lt;InflationReward&gt;&gt;" tid="" name="RequestResult&lt;List&lt;InflationReward&gt;&gt;" description="" />
+      <type id="Task&lt;RequestResult&lt;List&lt;ClusterNode&gt;&gt;&gt;" tid="" name="Task&lt;RequestResult&lt;List&lt;ClusterNode&gt;&gt;&gt;" description="" />
+      <type id="PnyxAx" tid="" name="PnyxAx" description="" />
+      <type id="Encoding" tid="" name="Encoding" description="" />
+      <type id="IList&lt;TokenWalletAccount&gt;" tid="" name="IList&lt;TokenWalletAccount&gt;" description="" />
+      <type id="TransactionMetaInfo" tid="" name="TransactionMetaInfo" description="" />
+      <type id="IEnumerable&lt;TokenWalletAccount&gt;" tid="" name="IEnumerable&lt;TokenWalletAccount&gt;" description="" />
+      <type id="KeyStore&lt;ScryptParams&gt;" tid="" name="KeyStore&lt;ScryptParams&gt;" description="" />
+      <type id="TokenNameRecord" tid="Class:0222a45f5ed34712a896e24572d25ce9" name="TokenNameRecord" description="" class-ref="0222a45f5ed34712a896e24572d25ce9" />
+      <type id="AccountMeta" tid="" name="AccountMeta" description="" />
+      <type id="Task&lt;RequestResult&lt;List&lt;SignatureStatusInfo&gt;&gt;&gt;" tid="" name="Task&lt;RequestResult&lt;List&lt;SignatureStatusInfo&gt;&gt;&gt;" description="" />
+      <type id="Task&lt;RequestResult&lt;ResponseValue&lt;List&lt;LargeAccount&gt;&gt;&gt;&gt;" tid="" name="Task&lt;RequestResult&lt;ResponseValue&lt;List&lt;LargeAccount&gt;&gt;&gt;&gt;" description="" />
+      <type id="RewardType" tid="" name="RewardType" description="" />
+      <type id="ulong[]" tid="" name="ulong[]" description="" />
+      <type id="Task&lt;RequestResult&lt;VoteAccounts&gt;&gt;" tid="" name="Task&lt;RequestResult&lt;VoteAccounts&gt;&gt;" description="" />
+      <type id="ReverseNameRecord" tid="Class:a3ad2331c201411fa9e906b0f0939f77" name="ReverseNameRecord" description="" class-ref="a3ad2331c201411fa9e906b0f0939f77" />
+      <type id="Span&lt;byte&gt;" tid="" name="Span&lt;byte&gt;" description="" />
+      <type id="Task&lt;TokenWallet&gt;" tid="" name="Task&lt;TokenWallet&gt;" description="" />
+      <type id="Class:7ee8ccfd7d184715bd769299067ef518" tid="" name="IllocutionaryClaim" description="" class-ref="7ee8ccfd7d184715bd769299067ef518" />
+      <type id="Task&lt;RequestResult&lt;ResponseValue&lt;ulong&gt;&gt;&gt;" tid="" name="Task&lt;RequestResult&lt;ResponseValue&lt;ulong&gt;&gt;&gt;" description="" />
+      <type id="char" tid="" name="char" description="" />
+      <type id="List&lt;TransactionInstruction&gt;" tid="" name="List&lt;TransactionInstruction&gt;" description="" />
+      <type id="ConnectionStats" tid="" name="ConnectionStats" description="" />
+      <type id="PnyxAccount?" tid="" name="PnyxAccount?" description="" />
+      <type id="PnyxAcc" tid="" name="PnyxAcc" description="" />
+      <type id="POOnyxAc" tid="" name="POOnyxAc" description="" />
+      <type id="IReadOnlyList&lt;string&gt;" tid="" name="IReadOnlyList&lt;string&gt;" description="" />
+      <type id="Task&lt;RequestResult&lt;NodeVersion&gt;&gt;" tid="" name="Task&lt;RequestResult&lt;NodeVersion&gt;&gt;" description="" />
+      <type id="RequestResult&lt;ResponseValue&lt;Supply&gt;&gt;" tid="" name="RequestResult&lt;ResponseValue&lt;Supply&gt;&gt;" description="" />
+      <type id="TokenAccount" tid="Class:0bb35bb0471e450ebaf81b889ced2921" name="TokenAccount" description="" class-ref="0bb35bb0471e450ebaf81b889ced2921" />
+      <type id="Task&lt;RequestResult&lt;List&lt;string&gt;&gt;&gt;" tid="" name="Task&lt;RequestResult&lt;List&lt;string&gt;&gt;&gt;" description="" />
+      <type id="RequestResult&lt;ResponseValue&lt;List&lt;AccountInfo&gt;&gt;&gt;" tid="" name="RequestResult&lt;ResponseValue&lt;List&lt;AccountInfo&gt;&gt;&gt;" description="" />
+      <type id="Task&lt;RequestResult&lt;T&gt;&gt;" tid="" name="Task&lt;RequestResult&lt;T&gt;&gt;" description="" />
+      <type id="float" tid="" name="float" description="" />
+      <type id="IRandomBytesGenerator" tid="" name="IRandomBytesGenerator" description="" />
+      <type id="Action&lt;SubscriptionState, int&gt;" tid="" name="Action&lt;SubscriptionState, int&gt;" description="" />
+      <type id="POOny" tid="" name="POOny" description="" />
+      <type id="Cluster" tid="" name="Cluster" description="" />
+      <type id="TokenDef" tid="" name="TokenDef" description="" />
+      <type id="Task&lt;RequestResult&lt;EpochScheduleInfo&gt;&gt;" tid="" name="Task&lt;RequestResult&lt;EpochScheduleInfo&gt;&gt;" description="" />
+      <type id="StakeAuthorize" tid="" name="StakeAuthorize" description="" />
+      <type id="POO" tid="" name="POO" description="" />
+      <type id="RequestResult&lt;EpochInfo&gt;" tid="" name="RequestResult&lt;EpochInfo&gt;" description="" />
+      <type id="RequestResult&lt;TransactionMetaSlotInfo&gt;" tid="" name="RequestResult&lt;TransactionMetaSlotInfo&gt;" description="" />
+      <type id="AuthorityType" tid="" name="AuthorityType" description="" />
+      <type id="Dictionary&lt;string, DecodeMethodType&gt;" tid="" name="Dictionary&lt;string, DecodeMethodType&gt;" description="" />
+      <type id="TKdfParams" tid="" name="TKdfParams" description="" />
+      <type id="Action&lt;SubscriptionState, ResponseValue&lt;AccountKeyPair&gt;&gt;" tid="" name="Action&lt;SubscriptionState, ResponseValue&lt;AccountKeyPair&gt;&gt;" description="" />
+      <type id="ITokenMintResolver" tid="" name="ITokenMintResolver" description="" />
+      <type id="ClientWebSocket" tid="" name="ClientWebSocket" description="" />
+      <type id="KeyStore&lt;T&gt;" tid="" name="KeyStore&lt;T&gt;" description="" />
+      <type id="RequestResult&lt;T&gt;" tid="" name="RequestResult&lt;T&gt;" description="" />
+      <type id="ErrorData" tid="" name="ErrorData" description="" />
+      <type id="Queue&lt;DateTime&gt;" tid="" name="Queue&lt;DateTime&gt;" description="" />
       <type id="RequestResult&lt;EpochScheduleInfo&gt;" tid="" name="RequestResult&lt;EpochScheduleInfo&gt;" description="" />
+      <type id="AccountInfo" tid="" name="AccountInfo" description="" />
+      <type id="InstructionInfo" tid="" name="InstructionInfo" description="" />
+      <type id="RequestResult&lt;InflationGovernor&gt;" tid="" name="RequestResult&lt;InflationGovernor&gt;" description="" />
+      <type id="FeeRateGovernor" tid="" name="FeeRateGovernor" description="" />
     </custom-types>
   </types>
   <items>
     <item id="d48135f3b8f34a01a723d04f234a1901" cid="PROP870" type="property" name="keywords" style-class="" owner="819f94652b324d5cbfba432a5105920d" creation-date="05/26/2022 18:50:50" visibility="public">
-      <style style-name="Default" shadow-type="smooth" shadow-offset="2,2" shadow-visible="true" shadow-color="#3A555555" shadow-radius="8" wrap-name-text="true" wrap-other-text="true" padding="2" margin="1" glow-color="#FFFFFFFF" accuracy="0.9">
+      <style style-name="Custom Style" shadow-type="smooth" shadow-offset="2,2" shadow-visible="true" shadow-color="#3A555555" shadow-radius="8" wrap-name-text="true" wrap-other-text="true" padding="2" margin="1" glow-color="#FFFFFFFF" accuracy="0.9">
         <text-style type="name" use-defaults="false" color="#FF555555" font="Segoe UI;11.25;B" horizontal-alignment="center" vertical-alignment="center" shadow="false" />
         <text-style type="part-header" use-defaults="false" color="#FF1E1E1E" font="Verdana;9;I" horizontal-alignment="center" vertical-alignment="center" shadow="false" />
         <text-style type="text" use-defaults="false" color="#FF555555" font="Segoe UI;9.75;" horizontal-alignment="left" vertical-alignment="center" shadow="false" />
@@ -546,34 +554,7 @@
       <property />
     </item>
     <item id="9da5c505d31c479696baea2656190312" cid="PROP861" type="property" name="created" style-class="" owner="1df73dd31ba24b47be572d90aaf1ef32" creation-date="05/26/2022 18:33:42" visibility="public">
-      <style style-name="Default" shadow-type="smooth" shadow-offset="2,2" shadow-visible="true" shadow-color="#3A555555" shadow-radius="8" wrap-name-text="true" wrap-other-text="true" padding="2" margin="1" glow-color="#FFFFFFFF" accuracy="0.9">
-        <text-style type="name" use-defaults="false" color="#FF555555" font="Segoe UI;11.25;B" horizontal-alignment="center" vertical-alignment="center" shadow="false" />
-        <text-style type="part-header" use-defaults="false" color="#FF1E1E1E" font="Verdana;9;I" horizontal-alignment="center" vertical-alignment="center" shadow="false" />
-        <text-style type="text" use-defaults="false" color="#FF555555" font="Segoe UI;9.75;" horizontal-alignment="left" vertical-alignment="center" shadow="false" />
-        <text-style type="tagged-value" use-defaults="false" color="#FF555555" font="Segoe UI;9.75;" horizontal-alignment="center" vertical-alignment="center" shadow="false" />
-        <text-style type="stereotype" use-defaults="false" color="#FF555555" font="Segoe UI;9;I" horizontal-alignment="center" vertical-alignment="center" shadow="false" />
-        <background type="solid" colors="#FFF2F2F2,#FFF2F2F2" />
-        <border color="#FF555555" width="2" dash-style="Solid" />
-        <label-connector color="#80000000" width="1" dash-style="Dash" />
-        <alternate-styles>
-          <alternate-style style-name="Alternate" shadow-type="smooth" shadow-offset="2,2" shadow-visible="true" shadow-color="#322A2A2A" shadow-radius="8" wrap-name-text="true" wrap-other-text="true" padding="2" margin="1" glow-color="#FFFFFFFF" accuracy="0.9">
-            <text-style type="name" use-defaults="false" color="#FFE9E9E9" font="Segoe UI;11.25;B" horizontal-alignment="center" vertical-alignment="center" shadow="false" />
-            <text-style type="part-header" use-defaults="false" color="#FF1E1E1E" font="Verdana;9;I" horizontal-alignment="center" vertical-alignment="center" shadow="false" />
-            <text-style type="text" use-defaults="false" color="#FFE9E9E9" font="Segoe UI;9.75;" horizontal-alignment="left" vertical-alignment="center" shadow="false" />
-            <text-style type="tagged-value" use-defaults="false" color="#FFE9E9E9" font="Segoe UI;9.75;" horizontal-alignment="center" vertical-alignment="center" shadow="false" />
-            <text-style type="stereotype" use-defaults="false" color="#FFE9E9E9" font="Segoe UI;9;I" horizontal-alignment="center" vertical-alignment="center" shadow="false" />
-            <background type="solid" colors="#FF203D85,#FF203D85" />
-            <border color="#FF203D85" width="2" dash-style="Solid" />
-            <label-connector color="#80000000" width="1" dash-style="Dash" />
-          </alternate-style>
-        </alternate-styles>
-      </style>
-      <feature />
-      <structural-feature type="DateTime" type-id="Uml.DateTime" />
-      <property />
-    </item>
-    <item id="9d0a60c9951246e0bc9aa5b9870a964e" cid="PROP864" type="property" name="due_date" style-class="" owner="1df73dd31ba24b47be572d90aaf1ef32" creation-date="05/26/2022 18:35:30" visibility="public">
-      <style style-name="Default" shadow-type="smooth" shadow-offset="2,2" shadow-visible="true" shadow-color="#3A555555" shadow-radius="8" wrap-name-text="true" wrap-other-text="true" padding="2" margin="1" glow-color="#FFFFFFFF" accuracy="0.9">
+      <style style-name="Custom Style" shadow-type="smooth" shadow-offset="2,2" shadow-visible="true" shadow-color="#3A555555" shadow-radius="8" wrap-name-text="true" wrap-other-text="true" padding="2" margin="1" glow-color="#FFFFFFFF" accuracy="0.9">
         <text-style type="name" use-defaults="false" color="#FF555555" font="Segoe UI;11.25;B" horizontal-alignment="center" vertical-alignment="center" shadow="false" />
         <text-style type="part-header" use-defaults="false" color="#FF1E1E1E" font="Verdana;9;I" horizontal-alignment="center" vertical-alignment="center" shadow="false" />
         <text-style type="text" use-defaults="false" color="#FF555555" font="Segoe UI;9.75;" horizontal-alignment="left" vertical-alignment="center" shadow="false" />
@@ -600,7 +581,34 @@
       <property />
     </item>
     <item id="f4557af1b76a40b1ab1a37feb6592549" cid="PROP862" type="property" name="closed" style-class="" owner="1df73dd31ba24b47be572d90aaf1ef32" creation-date="05/26/2022 18:34:18" visibility="public">
-      <style style-name="Default" shadow-type="smooth" shadow-offset="2,2" shadow-visible="true" shadow-color="#3A555555" shadow-radius="8" wrap-name-text="true" wrap-other-text="true" padding="2" margin="1" glow-color="#FFFFFFFF" accuracy="0.9">
+      <style style-name="Custom Style" shadow-type="smooth" shadow-offset="2,2" shadow-visible="true" shadow-color="#3A555555" shadow-radius="8" wrap-name-text="true" wrap-other-text="true" padding="2" margin="1" glow-color="#FFFFFFFF" accuracy="0.9">
+        <text-style type="name" use-defaults="false" color="#FF555555" font="Segoe UI;11.25;B" horizontal-alignment="center" vertical-alignment="center" shadow="false" />
+        <text-style type="part-header" use-defaults="false" color="#FF1E1E1E" font="Verdana;9;I" horizontal-alignment="center" vertical-alignment="center" shadow="false" />
+        <text-style type="text" use-defaults="false" color="#FF555555" font="Segoe UI;9.75;" horizontal-alignment="left" vertical-alignment="center" shadow="false" />
+        <text-style type="tagged-value" use-defaults="false" color="#FF555555" font="Segoe UI;9.75;" horizontal-alignment="center" vertical-alignment="center" shadow="false" />
+        <text-style type="stereotype" use-defaults="false" color="#FF555555" font="Segoe UI;9;I" horizontal-alignment="center" vertical-alignment="center" shadow="false" />
+        <background type="solid" colors="#FFF2F2F2,#FFF2F2F2" />
+        <border color="#FF555555" width="2" dash-style="Solid" />
+        <label-connector color="#80000000" width="1" dash-style="Dash" />
+        <alternate-styles>
+          <alternate-style style-name="Alternate" shadow-type="smooth" shadow-offset="2,2" shadow-visible="true" shadow-color="#322A2A2A" shadow-radius="8" wrap-name-text="true" wrap-other-text="true" padding="2" margin="1" glow-color="#FFFFFFFF" accuracy="0.9">
+            <text-style type="name" use-defaults="false" color="#FFE9E9E9" font="Segoe UI;11.25;B" horizontal-alignment="center" vertical-alignment="center" shadow="false" />
+            <text-style type="part-header" use-defaults="false" color="#FF1E1E1E" font="Verdana;9;I" horizontal-alignment="center" vertical-alignment="center" shadow="false" />
+            <text-style type="text" use-defaults="false" color="#FFE9E9E9" font="Segoe UI;9.75;" horizontal-alignment="left" vertical-alignment="center" shadow="false" />
+            <text-style type="tagged-value" use-defaults="false" color="#FFE9E9E9" font="Segoe UI;9.75;" horizontal-alignment="center" vertical-alignment="center" shadow="false" />
+            <text-style type="stereotype" use-defaults="false" color="#FFE9E9E9" font="Segoe UI;9;I" horizontal-alignment="center" vertical-alignment="center" shadow="false" />
+            <background type="solid" colors="#FF203D85,#FF203D85" />
+            <border color="#FF203D85" width="2" dash-style="Solid" />
+            <label-connector color="#80000000" width="1" dash-style="Dash" />
+          </alternate-style>
+        </alternate-styles>
+      </style>
+      <feature />
+      <structural-feature type="DateTime" type-id="Uml.DateTime" />
+      <property />
+    </item>
+    <item id="9d0a60c9951246e0bc9aa5b9870a964e" cid="PROP864" type="property" name="due_date" style-class="" owner="1df73dd31ba24b47be572d90aaf1ef32" creation-date="05/26/2022 18:35:30" visibility="public">
+      <style style-name="Custom Style" shadow-type="smooth" shadow-offset="2,2" shadow-visible="true" shadow-color="#3A555555" shadow-radius="8" wrap-name-text="true" wrap-other-text="true" padding="2" margin="1" glow-color="#FFFFFFFF" accuracy="0.9">
         <text-style type="name" use-defaults="false" color="#FF555555" font="Segoe UI;11.25;B" horizontal-alignment="center" vertical-alignment="center" shadow="false" />
         <text-style type="part-header" use-defaults="false" color="#FF1E1E1E" font="Verdana;9;I" horizontal-alignment="center" vertical-alignment="center" shadow="false" />
         <text-style type="text" use-defaults="false" color="#FF555555" font="Segoe UI;9.75;" horizontal-alignment="left" vertical-alignment="center" shadow="false" />
@@ -627,7 +635,7 @@
       <property />
     </item>
     <item id="a7e76d3777274c638a286377fac89a3e" cid="PROP865" type="property" name="is_open " style-class="" owner="1df73dd31ba24b47be572d90aaf1ef32" creation-date="05/26/2022 18:41:39" visibility="public">
-      <style style-name="Default" shadow-type="smooth" shadow-offset="2,2" shadow-visible="true" shadow-color="#3A555555" shadow-radius="8" wrap-name-text="true" wrap-other-text="true" padding="2" margin="1" glow-color="#FFFFFFFF" accuracy="0.9">
+      <style style-name="Custom Style" shadow-type="smooth" shadow-offset="2,2" shadow-visible="true" shadow-color="#3A555555" shadow-radius="8" wrap-name-text="true" wrap-other-text="true" padding="2" margin="1" glow-color="#FFFFFFFF" accuracy="0.9">
         <text-style type="name" use-defaults="false" color="#FF555555" font="Segoe UI;11.25;B" horizontal-alignment="center" vertical-alignment="center" shadow="false" />
         <text-style type="part-header" use-defaults="false" color="#FF1E1E1E" font="Verdana;9;I" horizontal-alignment="center" vertical-alignment="center" shadow="false" />
         <text-style type="text" use-defaults="false" color="#FF555555" font="Segoe UI;9.75;" horizontal-alignment="left" vertical-alignment="center" shadow="false" />
@@ -654,7 +662,7 @@
       <property />
     </item>
     <item id="ff290f77467b4f788e1a11680b0b010f" cid="PROP863" type="property" name="ID" style-class="" owner="1df73dd31ba24b47be572d90aaf1ef32" creation-date="05/26/2022 18:34:41" visibility="public">
-      <style style-name="Default" shadow-type="smooth" shadow-offset="2,2" shadow-visible="true" shadow-color="#3A555555" shadow-radius="8" wrap-name-text="true" wrap-other-text="true" padding="2" margin="1" glow-color="#FFFFFFFF" accuracy="0.9">
+      <style style-name="Custom Style" shadow-type="smooth" shadow-offset="2,2" shadow-visible="true" shadow-color="#3A555555" shadow-radius="8" wrap-name-text="true" wrap-other-text="true" padding="2" margin="1" glow-color="#FFFFFFFF" accuracy="0.9">
         <text-style type="name" use-defaults="false" color="#FF555555" font="Segoe UI;11.25;B" horizontal-alignment="center" vertical-alignment="center" shadow="false" />
         <text-style type="part-header" use-defaults="false" color="#FF1E1E1E" font="Verdana;9;I" horizontal-alignment="center" vertical-alignment="center" shadow="false" />
         <text-style type="text" use-defaults="false" color="#FF555555" font="Segoe UI;9.75;" horizontal-alignment="left" vertical-alignment="center" shadow="false" />
@@ -681,7 +689,7 @@
       <property is-id="true" />
     </item>
     <item id="a09150c3aa3b4a8aa8aaae1461774e1c" cid="PROP866" type="property" name="staking_accounts" style-class="" owner="1df73dd31ba24b47be572d90aaf1ef32" creation-date="05/26/2022 18:42:20" visibility="private">
-      <style style-name="Default" shadow-type="smooth" shadow-offset="2,2" shadow-visible="true" shadow-color="#3A555555" shadow-radius="8" wrap-name-text="true" wrap-other-text="true" padding="2" margin="1" glow-color="#FFFFFFFF" accuracy="0.9">
+      <style style-name="Custom Style" shadow-type="smooth" shadow-offset="2,2" shadow-visible="true" shadow-color="#3A555555" shadow-radius="8" wrap-name-text="true" wrap-other-text="true" padding="2" margin="1" glow-color="#FFFFFFFF" accuracy="0.9">
         <text-style type="name" use-defaults="false" color="#FF555555" font="Segoe UI;11.25;B" horizontal-alignment="center" vertical-alignment="center" shadow="false" />
         <text-style type="part-header" use-defaults="false" color="#FF1E1E1E" font="Verdana;9;I" horizontal-alignment="center" vertical-alignment="center" shadow="false" />
         <text-style type="text" use-defaults="false" color="#FF555555" font="Segoe UI;9.75;" horizontal-alignment="left" vertical-alignment="center" shadow="false" />
@@ -712,7 +720,7 @@
       </property>
     </item>
     <item id="74fa1af3f8f24f92b205ff8a89c48b13" cid="PROP860" type="property" name="stake_count" style-class="" owner="1df73dd31ba24b47be572d90aaf1ef32" creation-date="05/26/2022 18:33:01" visibility="public">
-      <style style-name="Default" shadow-type="smooth" shadow-offset="2,2" shadow-visible="true" shadow-color="#3A555555" shadow-radius="8" wrap-name-text="true" wrap-other-text="true" padding="2" margin="1" glow-color="#FFFFFFFF" accuracy="0.9">
+      <style style-name="Custom Style" shadow-type="smooth" shadow-offset="2,2" shadow-visible="true" shadow-color="#3A555555" shadow-radius="8" wrap-name-text="true" wrap-other-text="true" padding="2" margin="1" glow-color="#FFFFFFFF" accuracy="0.9">
         <text-style type="name" use-defaults="false" color="#FF555555" font="Segoe UI;11.25;B" horizontal-alignment="center" vertical-alignment="center" shadow="false" />
         <text-style type="part-header" use-defaults="false" color="#FF1E1E1E" font="Verdana;9;I" horizontal-alignment="center" vertical-alignment="center" shadow="false" />
         <text-style type="text" use-defaults="false" color="#FF555555" font="Segoe UI;9.75;" horizontal-alignment="left" vertical-alignment="center" shadow="false" />
@@ -740,13 +748,13 @@
     </item>
     <item id="16a0e500252f4918a6222726f60a32f4" cid="REL002" type="relationship" name="" style-class="" creator="CDoZfQE0eoPT0twKUywpA2xDS6OCf3hTXb0lwUh8Ss/FZu5b" creation-date="04/15/2022 13:48:00" visibility="package">
       <relation from="129ff9b2e07a4d6d8558ba8bb6b24905" to="be8580284b3a477484132cd9f7f2157e" derived="false">
-        <start-role id="umlar-21f106c2-6e80-42fb-a8c4-c711295a620f" name="" navigability="" association-type="aggregation" visibility="private" />
-        <end-role id="umlar-056de78a-5aaa-4a30-aa3d-535fafd1e09e" name="" navigability="" association-type="association" visibility="private" />
+        <start-role id="umlar-00e1e0a2-d5a6-47e8-b78b-31b755df075f" name="" navigability="" association-type="aggregation" visibility="private" />
+        <end-role id="umlar-209e1486-c612-4735-8c3b-41ee2b8816fe" name="" navigability="" association-type="association" visibility="private" />
       </relation>
     </item>
   </items>
   <models>
-    <model id="pe76185c46e20437788f9f63b0296bd49_701805995" name="Topics Model" namespace="" order-index="1">
+    <model id="pe76185c46e20437788f9f63b0296bd49_701805995" name="Topics Model" namespace="" order-index="1" expanded="true">
       <meta>
         <authors>
           <author> </author>
@@ -776,39 +784,39 @@
           <version />
         </meta>
         <abstract-items>
-          <item id="7749a36c0209495bb4a12cc59d8f85d4" cid="UC001" type="use-case" name="CreateTopic" style-class="" change-tracking-state="added" creation-date="05/26/2022 19:25:01">
+          <item id="7749a36c0209495bb4a12cc59d8f85d4" cid="UC001" type="use-case" name="CreateTopic" style-class="" change-tracking-state="added" creation-date="05/26/2022 19:25:01" visibility="undefined">
             <use-case>
               <stakeholders />
             </use-case>
           </item>
-          <item id="390f689cd83f4081a5a59a8ae3cf4408" cid="UC002" type="use-case" name="AddStake" style-class="" change-tracking-state="added" creation-date="05/26/2022 19:25:28">
+          <item id="390f689cd83f4081a5a59a8ae3cf4408" cid="UC002" type="use-case" name="AddStake" style-class="" change-tracking-state="added" creation-date="05/26/2022 19:25:28" visibility="undefined">
             <use-case>
               <stakeholders />
             </use-case>
           </item>
-          <item id="063ec97328ad4b7eab646e107dffbc48" cid="UC006" type="use-case" name="DeleteTopic" style-class="" change-tracking-state="added" creation-date="05/26/2022 19:26:19">
+          <item id="063ec97328ad4b7eab646e107dffbc48" cid="UC006" type="use-case" name="DeleteTopic" style-class="" change-tracking-state="added" creation-date="05/26/2022 19:26:19" visibility="undefined">
             <use-case>
               <stakeholders />
             </use-case>
           </item>
-          <item id="9efc19fe56cc4da3bd7f5013c10b03f5" cid="AC001" type="actor" name="PnyxAdmin" style-class="" change-tracking-state="added" creation-date="05/26/2022 19:24:25" />
-          <item id="0790361ddadb46f7b43990926ce1094d" cid="UC005" type="use-case" name="UpdateTopic" style-class="" change-tracking-state="added" creation-date="05/26/2022 19:25:53">
+          <item id="9efc19fe56cc4da3bd7f5013c10b03f5" cid="AC001" type="actor" name="PnyxAdmin" style-class="" change-tracking-state="added" creation-date="05/26/2022 19:24:25" visibility="undefined" />
+          <item id="0790361ddadb46f7b43990926ce1094d" cid="UC005" type="use-case" name="UpdateTopic" style-class="" change-tracking-state="added" creation-date="05/26/2022 19:25:53" visibility="undefined">
             <use-case>
               <stakeholders />
             </use-case>
           </item>
-          <item id="0c740a68b2434fd982183aba47c00eba" cid="UC004" type="use-case" name="CloseTopic" style-class="" change-tracking-state="added" creation-date="05/26/2022 19:25:43">
+          <item id="0c740a68b2434fd982183aba47c00eba" cid="UC004" type="use-case" name="CloseTopic" style-class="" change-tracking-state="added" creation-date="05/26/2022 19:25:43" visibility="undefined">
             <use-case>
               <stakeholders />
             </use-case>
           </item>
-          <item id="07319cd174c9420994bb4844d0bbc094" cid="AC002" type="actor" name="PnyxUser" style-class="" change-tracking-state="added" creation-date="05/26/2022 19:24:36" />
-          <item id="8d4ae1512521469ca93ccd00ffa4810b" cid="UC007" type="use-case" name="OpenTopic" style-class="" change-tracking-state="added" creation-date="05/26/2022 19:26:51">
+          <item id="07319cd174c9420994bb4844d0bbc094" cid="AC002" type="actor" name="PnyxUser" style-class="" change-tracking-state="added" creation-date="05/26/2022 19:24:36" visibility="undefined" />
+          <item id="8d4ae1512521469ca93ccd00ffa4810b" cid="UC007" type="use-case" name="OpenTopic" style-class="" change-tracking-state="added" creation-date="05/26/2022 19:26:51" visibility="undefined">
             <use-case>
               <stakeholders />
             </use-case>
           </item>
-          <item id="0f773f91c71e492b858bffe49902626e" cid="UC003" type="use-case" name="RemoveStake" style-class="" change-tracking-state="added" creation-date="05/26/2022 19:25:34">
+          <item id="0f773f91c71e492b858bffe49902626e" cid="UC003" type="use-case" name="RemoveStake" style-class="" change-tracking-state="added" creation-date="05/26/2022 19:25:34" visibility="undefined">
             <use-case>
               <stakeholders />
             </use-case>
@@ -870,21 +878,21 @@
           <version />
         </meta>
         <abstract-items>
-          <item id="79ca31e2df8141cda8377f29365b975a" cid="PROP871" type="property" name="propositional_content" style-class="" owner="e4166bb9e3644869b194aaa7f6abda88" creation-date="05/26/2022 19:01:10" visibility="public">
-            <feature />
-            <structural-feature type="PropositionalContent" type-id="Class:819f94652b324d5cbfba432a5105920d" />
-            <property>
-              <source-codes>
-                <source-code language="" uid="scs-31adc40e-64e2-4ea1-969b-c9fba0e594a3" />
-              </source-codes>
-            </property>
-          </item>
           <item id="fe242a2395fe4906a99891aa124843b1" cid="PROP869" type="property" name="speech_acts" style-class="" owner="1df73dd31ba24b47be572d90aaf1ef32" creation-date="05/26/2022 18:46:42" visibility="public">
             <feature />
             <structural-feature multiplicity="1..*" type="SpeechAct" type-id="Class:e4166bb9e3644869b194aaa7f6abda88" />
             <property>
               <source-codes>
                 <source-code language="" uid="scs-5a301549-cad2-41fe-9ddc-65b7731668e0" />
+              </source-codes>
+            </property>
+          </item>
+          <item id="79ca31e2df8141cda8377f29365b975a" cid="PROP871" type="property" name="propositional_content" style-class="" owner="e4166bb9e3644869b194aaa7f6abda88" creation-date="05/26/2022 19:01:10" visibility="public">
+            <feature />
+            <structural-feature type="PropositionalContent" type-id="Class:819f94652b324d5cbfba432a5105920d" />
+            <property>
+              <source-codes>
+                <source-code language="" uid="scs-31adc40e-64e2-4ea1-969b-c9fba0e594a3" />
               </source-codes>
             </property>
           </item>
@@ -905,6 +913,14 @@
               <owned-item ref="a09150c3aa3b4a8aa8aaae1461774e1c" />
               <owned-item ref="8419e8de59694432a53851f9835cc614" />
               <owned-item ref="e0bf84259b4f4f1e88913c056096628d" />
+              <owned-item ref="fe242a2395fe4906a99891aa124843b1" />
+              <owned-item ref="9da5c505d31c479696baea2656190312" />
+              <owned-item ref="f4557af1b76a40b1ab1a37feb6592549" />
+              <owned-item ref="9d0a60c9951246e0bc9aa5b9870a964e" />
+              <owned-item ref="a7e76d3777274c638a286377fac89a3e" />
+              <owned-item ref="ff290f77467b4f788e1a11680b0b010f" />
+              <owned-item ref="a09150c3aa3b4a8aa8aaae1461774e1c" />
+              <owned-item ref="74fa1af3f8f24f92b205ff8a89c48b13" />
               <owned-item ref="fe242a2395fe4906a99891aa124843b1" />
             </owned-items>
             <attributes>
@@ -985,6 +1001,8 @@
             <owned-items>
               <owned-item ref="79ca31e2df8141cda8377f29365b975a" />
               <owned-item ref="2f28cdad2c814e3f8636a35d3ff63dff" />
+              <owned-item ref="79ca31e2df8141cda8377f29365b975a" />
+              <owned-item ref="2f28cdad2c814e3f8636a35d3ff63dff" />
             </owned-items>
             <attributes>
               <attribute id="a9bfbdc1afca141a5a8f83eefc2aa3584704" cid="PROP871" name="propositional_content" creation-date="05/26/2022 19:01:10" property-ref="79ca31e2df8141cda8377f29365b975a" />
@@ -1003,7 +1021,7 @@
               </source-codes>
             </property>
           </item>
-          <item id="7ee8ccfd7d184715bd769299067ef518" cid="C286" type="class" name="IllocutionaryClaim" style-class="" change-tracking-state="added" creation-date="05/26/2022 19:00:40">
+          <item id="7ee8ccfd7d184715bd769299067ef518" cid="C286" type="class" name="IllocutionaryClaim" style-class="" change-tracking-state="added" creation-date="05/26/2022 19:00:40" visibility="undefined">
             <stereotypes>
               <stereotype name="struct" />
             </stereotypes>
@@ -1028,6 +1046,7 @@
               <stereotype id="819f94652b324d5cbfba432a5105920d_struct_c" type="struct" ref="" />
             </stereotype-instances>
             <owned-items>
+              <owned-item ref="d48135f3b8f34a01a723d04f234a1901" />
               <owned-item ref="d48135f3b8f34a01a723d04f234a1901" />
             </owned-items>
             <attributes>
@@ -1060,6 +1079,58 @@
             <class />
           </item>
         </layer>
+      </diagram>
+    </model>
+    <model id="pd2e97f13a8d44a41b5a87263b90317af_850239447" name="Akkreditierung" namespace="" order-index="2">
+      <meta>
+        <authors>
+          <author> </author>
+        </authors>
+        <description />
+        <creation-date>05/27/2022 08:23:48</creation-date>
+        <change-date>01/01/0001 00:00:00</change-date>
+        <revision-count>0</revision-count>
+        <version />
+      </meta>
+      <abstract-items />
+      <sub-models />
+      <diagram type="dmn" id="p477bef8168ca4ce6afa40e6c048df671_241550260" name="SmartContract" order-index="1" uid="" show-id="false" show-name="true" show-parent-name="false" name-style="local-auto-parents" show-stereotypes="true" show-tagged-values="false" show-template-parameters="true" show-fields="true" show-field-tags="true" show-empty-compartments="true" show-special-indicators="false" show-rules="true" show-attributes="true" show-attribute-visibility="true" show-operations="true" show-operation-parameters="true" show-operation-visibility="true" show-visibility-sign="true" show-nullability="true" show-sequence-number="false" show-extension-points="false" show-relationship-texts="true" show-data="true" show-description="false" show-field-description="false" auto-routed-paths="false" default-line-style="default">
+        <style>
+          <background-color index="1" color="#FFFFFFFF" />
+          <background-color index="2" color="#FFFFFFFF" />
+          <background-type type="solid" />
+        </style>
+        <meta>
+          <authors>
+            <author> </author>
+          </authors>
+          <description />
+          <creation-date>05/27/2022 08:28:53</creation-date>
+          <change-date>05/27/2022 08:28:53</change-date>
+          <revision-count>0</revision-count>
+          <version />
+        </meta>
+        <abstract-items />
+        <layer id="5fafa7ea901b42e0813cc0c10fb5dd98" name="Default" visible="true" enabled="true" locked="false" />
+      </diagram>
+      <diagram type="bpmn-collaboration" id="pd7b917a54093434195f46704bddcb1fa_723672022" name="Zero-Knowledge-Akkreditierung" order-index="2" overview-order-index="0" uid="" show-id="false" show-name="true" show-parent-name="false" name-style="local-auto-parents" show-stereotypes="true" show-tagged-values="false" show-template-parameters="true" show-fields="true" show-field-tags="true" show-empty-compartments="true" show-special-indicators="false" show-rules="true" show-attributes="true" show-attribute-visibility="true" show-operations="true" show-operation-parameters="true" show-operation-visibility="true" show-visibility-sign="true" show-nullability="true" show-sequence-number="false" show-extension-points="false" show-relationship-texts="true" show-data="true" show-description="false" show-field-description="false" auto-routed-paths="false" default-line-style="default">
+        <style>
+          <background-color index="1" color="#FFFFFFFF" />
+          <background-color index="2" color="#FFFFFFFF" />
+          <background-type type="solid" />
+        </style>
+        <meta>
+          <authors>
+            <author> </author>
+          </authors>
+          <description />
+          <creation-date>05/27/2022 08:35:25</creation-date>
+          <change-date>05/27/2022 08:35:25</change-date>
+          <revision-count>0</revision-count>
+          <version />
+        </meta>
+        <abstract-items />
+        <layer id="0b67970e9fdb4d8cb94a21e69ecc826e" name="Default" visible="true" enabled="true" locked="false" />
       </diagram>
     </model>
   </models>
