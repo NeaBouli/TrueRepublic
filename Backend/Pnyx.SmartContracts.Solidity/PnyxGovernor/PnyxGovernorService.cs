@@ -10,33 +10,33 @@ using Nethereum.Contracts.CQS;
 using Nethereum.Contracts.ContractHandlers;
 using Nethereum.Contracts;
 using System.Threading;
-using Pnyx.SmartContracts.Solidity.Contracts.SimpleGovernor.ContractDefinition;
+using Pnyx.SmartContracts.Solidity.Contracts.PnyxGovernor.ContractDefinition;
 
-namespace Pnyx.SmartContracts.Solidity.Contracts.SimpleGovernor
+namespace Pnyx.SmartContracts.Solidity.Contracts.PnyxGovernor
 {
-    public partial class SimpleGovernorService
+    public partial class PnyxGovernorService
     {
-        public static Task<TransactionReceipt> DeployContractAndWaitForReceiptAsync(Nethereum.Web3.Web3 web3, SimpleGovernorDeployment simpleGovernorDeployment, CancellationTokenSource cancellationTokenSource = null)
+        public static Task<TransactionReceipt> DeployContractAndWaitForReceiptAsync(Nethereum.Web3.Web3 web3, PnyxGovernorDeployment pnyxGovernorDeployment, CancellationTokenSource cancellationTokenSource = null)
         {
-            return web3.Eth.GetContractDeploymentHandler<SimpleGovernorDeployment>().SendRequestAndWaitForReceiptAsync(simpleGovernorDeployment, cancellationTokenSource);
+            return web3.Eth.GetContractDeploymentHandler<PnyxGovernorDeployment>().SendRequestAndWaitForReceiptAsync(pnyxGovernorDeployment, cancellationTokenSource);
         }
 
-        public static Task<string> DeployContractAsync(Nethereum.Web3.Web3 web3, SimpleGovernorDeployment simpleGovernorDeployment)
+        public static Task<string> DeployContractAsync(Nethereum.Web3.Web3 web3, PnyxGovernorDeployment pnyxGovernorDeployment)
         {
-            return web3.Eth.GetContractDeploymentHandler<SimpleGovernorDeployment>().SendRequestAsync(simpleGovernorDeployment);
+            return web3.Eth.GetContractDeploymentHandler<PnyxGovernorDeployment>().SendRequestAsync(pnyxGovernorDeployment);
         }
 
-        public static async Task<SimpleGovernorService> DeployContractAndGetServiceAsync(Nethereum.Web3.Web3 web3, SimpleGovernorDeployment simpleGovernorDeployment, CancellationTokenSource cancellationTokenSource = null)
+        public static async Task<PnyxGovernorService> DeployContractAndGetServiceAsync(Nethereum.Web3.Web3 web3, PnyxGovernorDeployment pnyxGovernorDeployment, CancellationTokenSource cancellationTokenSource = null)
         {
-            var receipt = await DeployContractAndWaitForReceiptAsync(web3, simpleGovernorDeployment, cancellationTokenSource);
-            return new SimpleGovernorService(web3, receipt.ContractAddress);
+            var receipt = await DeployContractAndWaitForReceiptAsync(web3, pnyxGovernorDeployment, cancellationTokenSource);
+            return new PnyxGovernorService(web3, receipt.ContractAddress);
         }
 
         protected Nethereum.Web3.Web3 Web3{ get; }
 
         public ContractHandler ContractHandler { get; }
 
-        public SimpleGovernorService(Nethereum.Web3.Web3 web3, string contractAddress)
+        public PnyxGovernorService(Nethereum.Web3.Web3 web3, string contractAddress)
         {
             Web3 = web3;
             ContractHandler = web3.Eth.GetContractHandler(contractAddress);
@@ -457,6 +457,20 @@ namespace Pnyx.SmartContracts.Solidity.Contracts.SimpleGovernor
             return ContractHandler.QueryAsync<ProposalDeadlineFunction, BigInteger>(proposalDeadlineFunction, blockParameter);
         }
 
+        public Task<BigInteger> ProposalEtaQueryAsync(ProposalEtaFunction proposalEtaFunction, BlockParameter blockParameter = null)
+        {
+            return ContractHandler.QueryAsync<ProposalEtaFunction, BigInteger>(proposalEtaFunction, blockParameter);
+        }
+
+        
+        public Task<BigInteger> ProposalEtaQueryAsync(BigInteger proposalId, BlockParameter blockParameter = null)
+        {
+            var proposalEtaFunction = new ProposalEtaFunction();
+                proposalEtaFunction.ProposalId = proposalId;
+            
+            return ContractHandler.QueryAsync<ProposalEtaFunction, BigInteger>(proposalEtaFunction, blockParameter);
+        }
+
         public Task<BigInteger> ProposalSnapshotQueryAsync(ProposalSnapshotFunction proposalSnapshotFunction, BlockParameter blockParameter = null)
         {
             return ContractHandler.QueryAsync<ProposalSnapshotFunction, BigInteger>(proposalSnapshotFunction, blockParameter);
@@ -480,6 +494,19 @@ namespace Pnyx.SmartContracts.Solidity.Contracts.SimpleGovernor
         public Task<BigInteger> ProposalThresholdQueryAsync(BlockParameter blockParameter = null)
         {
             return ContractHandler.QueryAsync<ProposalThresholdFunction, BigInteger>(null, blockParameter);
+        }
+
+        public Task<ProposalVotesOutputDTO> ProposalVotesQueryAsync(ProposalVotesFunction proposalVotesFunction, BlockParameter blockParameter = null)
+        {
+            return ContractHandler.QueryDeserializingToObjectAsync<ProposalVotesFunction, ProposalVotesOutputDTO>(proposalVotesFunction, blockParameter);
+        }
+
+        public Task<ProposalVotesOutputDTO> ProposalVotesQueryAsync(BigInteger proposalId, BlockParameter blockParameter = null)
+        {
+            var proposalVotesFunction = new ProposalVotesFunction();
+                proposalVotesFunction.ProposalId = proposalId;
+            
+            return ContractHandler.QueryDeserializingToObjectAsync<ProposalVotesFunction, ProposalVotesOutputDTO>(proposalVotesFunction, blockParameter);
         }
 
         public Task<string> ProposeRequestAsync(ProposeFunction proposeFunction)
@@ -514,6 +541,38 @@ namespace Pnyx.SmartContracts.Solidity.Contracts.SimpleGovernor
              return ContractHandler.SendRequestAndWaitForReceiptAsync(proposeFunction, cancellationToken);
         }
 
+        public Task<string> QueueRequestAsync(QueueFunction queueFunction)
+        {
+             return ContractHandler.SendRequestAsync(queueFunction);
+        }
+
+        public Task<TransactionReceipt> QueueRequestAndWaitForReceiptAsync(QueueFunction queueFunction, CancellationTokenSource cancellationToken = null)
+        {
+             return ContractHandler.SendRequestAndWaitForReceiptAsync(queueFunction, cancellationToken);
+        }
+
+        public Task<string> QueueRequestAsync(List<string> targets, List<BigInteger> values, List<byte[]> calldatas, byte[] descriptionHash)
+        {
+            var queueFunction = new QueueFunction();
+                queueFunction.Targets = targets;
+                queueFunction.Values = values;
+                queueFunction.Calldatas = calldatas;
+                queueFunction.DescriptionHash = descriptionHash;
+            
+             return ContractHandler.SendRequestAsync(queueFunction);
+        }
+
+        public Task<TransactionReceipt> QueueRequestAndWaitForReceiptAsync(List<string> targets, List<BigInteger> values, List<byte[]> calldatas, byte[] descriptionHash, CancellationTokenSource cancellationToken = null)
+        {
+            var queueFunction = new QueueFunction();
+                queueFunction.Targets = targets;
+                queueFunction.Values = values;
+                queueFunction.Calldatas = calldatas;
+                queueFunction.DescriptionHash = descriptionHash;
+            
+             return ContractHandler.SendRequestAndWaitForReceiptAsync(queueFunction, cancellationToken);
+        }
+
         public Task<BigInteger> QuorumQueryAsync(QuorumFunction quorumFunction, BlockParameter blockParameter = null)
         {
             return ContractHandler.QueryAsync<QuorumFunction, BigInteger>(quorumFunction, blockParameter);
@@ -526,6 +585,28 @@ namespace Pnyx.SmartContracts.Solidity.Contracts.SimpleGovernor
                 quorumFunction.BlockNumber = blockNumber;
             
             return ContractHandler.QueryAsync<QuorumFunction, BigInteger>(quorumFunction, blockParameter);
+        }
+
+        public Task<BigInteger> QuorumDenominatorQueryAsync(QuorumDenominatorFunction quorumDenominatorFunction, BlockParameter blockParameter = null)
+        {
+            return ContractHandler.QueryAsync<QuorumDenominatorFunction, BigInteger>(quorumDenominatorFunction, blockParameter);
+        }
+
+        
+        public Task<BigInteger> QuorumDenominatorQueryAsync(BlockParameter blockParameter = null)
+        {
+            return ContractHandler.QueryAsync<QuorumDenominatorFunction, BigInteger>(null, blockParameter);
+        }
+
+        public Task<BigInteger> QuorumNumeratorQueryAsync(QuorumNumeratorFunction quorumNumeratorFunction, BlockParameter blockParameter = null)
+        {
+            return ContractHandler.QueryAsync<QuorumNumeratorFunction, BigInteger>(quorumNumeratorFunction, blockParameter);
+        }
+
+        
+        public Task<BigInteger> QuorumNumeratorQueryAsync(BlockParameter blockParameter = null)
+        {
+            return ContractHandler.QueryAsync<QuorumNumeratorFunction, BigInteger>(null, blockParameter);
         }
 
         public Task<string> RelayRequestAsync(RelayFunction relayFunction)
@@ -558,6 +639,84 @@ namespace Pnyx.SmartContracts.Solidity.Contracts.SimpleGovernor
              return ContractHandler.SendRequestAndWaitForReceiptAsync(relayFunction, cancellationToken);
         }
 
+        public Task<string> SetProposalThresholdRequestAsync(SetProposalThresholdFunction setProposalThresholdFunction)
+        {
+             return ContractHandler.SendRequestAsync(setProposalThresholdFunction);
+        }
+
+        public Task<TransactionReceipt> SetProposalThresholdRequestAndWaitForReceiptAsync(SetProposalThresholdFunction setProposalThresholdFunction, CancellationTokenSource cancellationToken = null)
+        {
+             return ContractHandler.SendRequestAndWaitForReceiptAsync(setProposalThresholdFunction, cancellationToken);
+        }
+
+        public Task<string> SetProposalThresholdRequestAsync(BigInteger newProposalThreshold)
+        {
+            var setProposalThresholdFunction = new SetProposalThresholdFunction();
+                setProposalThresholdFunction.NewProposalThreshold = newProposalThreshold;
+            
+             return ContractHandler.SendRequestAsync(setProposalThresholdFunction);
+        }
+
+        public Task<TransactionReceipt> SetProposalThresholdRequestAndWaitForReceiptAsync(BigInteger newProposalThreshold, CancellationTokenSource cancellationToken = null)
+        {
+            var setProposalThresholdFunction = new SetProposalThresholdFunction();
+                setProposalThresholdFunction.NewProposalThreshold = newProposalThreshold;
+            
+             return ContractHandler.SendRequestAndWaitForReceiptAsync(setProposalThresholdFunction, cancellationToken);
+        }
+
+        public Task<string> SetVotingDelayRequestAsync(SetVotingDelayFunction setVotingDelayFunction)
+        {
+             return ContractHandler.SendRequestAsync(setVotingDelayFunction);
+        }
+
+        public Task<TransactionReceipt> SetVotingDelayRequestAndWaitForReceiptAsync(SetVotingDelayFunction setVotingDelayFunction, CancellationTokenSource cancellationToken = null)
+        {
+             return ContractHandler.SendRequestAndWaitForReceiptAsync(setVotingDelayFunction, cancellationToken);
+        }
+
+        public Task<string> SetVotingDelayRequestAsync(BigInteger newVotingDelay)
+        {
+            var setVotingDelayFunction = new SetVotingDelayFunction();
+                setVotingDelayFunction.NewVotingDelay = newVotingDelay;
+            
+             return ContractHandler.SendRequestAsync(setVotingDelayFunction);
+        }
+
+        public Task<TransactionReceipt> SetVotingDelayRequestAndWaitForReceiptAsync(BigInteger newVotingDelay, CancellationTokenSource cancellationToken = null)
+        {
+            var setVotingDelayFunction = new SetVotingDelayFunction();
+                setVotingDelayFunction.NewVotingDelay = newVotingDelay;
+            
+             return ContractHandler.SendRequestAndWaitForReceiptAsync(setVotingDelayFunction, cancellationToken);
+        }
+
+        public Task<string> SetVotingPeriodRequestAsync(SetVotingPeriodFunction setVotingPeriodFunction)
+        {
+             return ContractHandler.SendRequestAsync(setVotingPeriodFunction);
+        }
+
+        public Task<TransactionReceipt> SetVotingPeriodRequestAndWaitForReceiptAsync(SetVotingPeriodFunction setVotingPeriodFunction, CancellationTokenSource cancellationToken = null)
+        {
+             return ContractHandler.SendRequestAndWaitForReceiptAsync(setVotingPeriodFunction, cancellationToken);
+        }
+
+        public Task<string> SetVotingPeriodRequestAsync(BigInteger newVotingPeriod)
+        {
+            var setVotingPeriodFunction = new SetVotingPeriodFunction();
+                setVotingPeriodFunction.NewVotingPeriod = newVotingPeriod;
+            
+             return ContractHandler.SendRequestAsync(setVotingPeriodFunction);
+        }
+
+        public Task<TransactionReceipt> SetVotingPeriodRequestAndWaitForReceiptAsync(BigInteger newVotingPeriod, CancellationTokenSource cancellationToken = null)
+        {
+            var setVotingPeriodFunction = new SetVotingPeriodFunction();
+                setVotingPeriodFunction.NewVotingPeriod = newVotingPeriod;
+            
+             return ContractHandler.SendRequestAndWaitForReceiptAsync(setVotingPeriodFunction, cancellationToken);
+        }
+
         public Task<byte> StateQueryAsync(StateFunction stateFunction, BlockParameter blockParameter = null)
         {
             return ContractHandler.QueryAsync<StateFunction, byte>(stateFunction, blockParameter);
@@ -584,6 +743,80 @@ namespace Pnyx.SmartContracts.Solidity.Contracts.SimpleGovernor
                 supportsInterfaceFunction.InterfaceId = interfaceId;
             
             return ContractHandler.QueryAsync<SupportsInterfaceFunction, bool>(supportsInterfaceFunction, blockParameter);
+        }
+
+        public Task<string> TimelockQueryAsync(TimelockFunction timelockFunction, BlockParameter blockParameter = null)
+        {
+            return ContractHandler.QueryAsync<TimelockFunction, string>(timelockFunction, blockParameter);
+        }
+
+        
+        public Task<string> TimelockQueryAsync(BlockParameter blockParameter = null)
+        {
+            return ContractHandler.QueryAsync<TimelockFunction, string>(null, blockParameter);
+        }
+
+        public Task<string> TokenQueryAsync(TokenFunction tokenFunction, BlockParameter blockParameter = null)
+        {
+            return ContractHandler.QueryAsync<TokenFunction, string>(tokenFunction, blockParameter);
+        }
+
+        
+        public Task<string> TokenQueryAsync(BlockParameter blockParameter = null)
+        {
+            return ContractHandler.QueryAsync<TokenFunction, string>(null, blockParameter);
+        }
+
+        public Task<string> UpdateQuorumNumeratorRequestAsync(UpdateQuorumNumeratorFunction updateQuorumNumeratorFunction)
+        {
+             return ContractHandler.SendRequestAsync(updateQuorumNumeratorFunction);
+        }
+
+        public Task<TransactionReceipt> UpdateQuorumNumeratorRequestAndWaitForReceiptAsync(UpdateQuorumNumeratorFunction updateQuorumNumeratorFunction, CancellationTokenSource cancellationToken = null)
+        {
+             return ContractHandler.SendRequestAndWaitForReceiptAsync(updateQuorumNumeratorFunction, cancellationToken);
+        }
+
+        public Task<string> UpdateQuorumNumeratorRequestAsync(BigInteger newQuorumNumerator)
+        {
+            var updateQuorumNumeratorFunction = new UpdateQuorumNumeratorFunction();
+                updateQuorumNumeratorFunction.NewQuorumNumerator = newQuorumNumerator;
+            
+             return ContractHandler.SendRequestAsync(updateQuorumNumeratorFunction);
+        }
+
+        public Task<TransactionReceipt> UpdateQuorumNumeratorRequestAndWaitForReceiptAsync(BigInteger newQuorumNumerator, CancellationTokenSource cancellationToken = null)
+        {
+            var updateQuorumNumeratorFunction = new UpdateQuorumNumeratorFunction();
+                updateQuorumNumeratorFunction.NewQuorumNumerator = newQuorumNumerator;
+            
+             return ContractHandler.SendRequestAndWaitForReceiptAsync(updateQuorumNumeratorFunction, cancellationToken);
+        }
+
+        public Task<string> UpdateTimelockRequestAsync(UpdateTimelockFunction updateTimelockFunction)
+        {
+             return ContractHandler.SendRequestAsync(updateTimelockFunction);
+        }
+
+        public Task<TransactionReceipt> UpdateTimelockRequestAndWaitForReceiptAsync(UpdateTimelockFunction updateTimelockFunction, CancellationTokenSource cancellationToken = null)
+        {
+             return ContractHandler.SendRequestAndWaitForReceiptAsync(updateTimelockFunction, cancellationToken);
+        }
+
+        public Task<string> UpdateTimelockRequestAsync(string newTimelock)
+        {
+            var updateTimelockFunction = new UpdateTimelockFunction();
+                updateTimelockFunction.NewTimelock = newTimelock;
+            
+             return ContractHandler.SendRequestAsync(updateTimelockFunction);
+        }
+
+        public Task<TransactionReceipt> UpdateTimelockRequestAndWaitForReceiptAsync(string newTimelock, CancellationTokenSource cancellationToken = null)
+        {
+            var updateTimelockFunction = new UpdateTimelockFunction();
+                updateTimelockFunction.NewTimelock = newTimelock;
+            
+             return ContractHandler.SendRequestAndWaitForReceiptAsync(updateTimelockFunction, cancellationToken);
         }
 
         public Task<string> VersionQueryAsync(VersionFunction versionFunction, BlockParameter blockParameter = null)

@@ -6,7 +6,23 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include = "Nethereum.Web3" Version="4.*" />
+        <PackageReference Include="Nethereum.Web3" Version="4.*" />
+        <PackageReference Include="System.Configuration.ConfigurationManager" Version="6.0.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Compile Update="Pnyx.SmartContracts.Solidity.Contracts.Designer.cs">
+        <DesignTimeSharedInput>True</DesignTimeSharedInput>
+        <AutoGen>True</AutoGen>
+        <DependentUpon>Pnyx.SmartContracts.Solidity.Contracts.settings</DependentUpon>
+      </Compile>
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Update="Pnyx.SmartContracts.Solidity.Contracts.settings">
+        <Generator>SettingsSingleFileGenerator</Generator>
+        <LastGenOutput>Pnyx.SmartContracts.Solidity.Contracts.Designer.cs</LastGenOutput>
+      </None>
     </ItemGroup>
     
 </Project>

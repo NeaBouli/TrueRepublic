@@ -16,6 +16,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Pnyx.ApiClient.Core", "Pnyx
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Pnyx.SmartContracts.Solidity.Contracts", "Pnyx.SmartContracts.Solidity\Pnyx.SmartContracts.Solidity.Contracts.csproj", "{AF209515-9688-4670-A90A-28AF61FB6D96}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Pnyx.SmartContracts.Solidity.Contracts.UnitTest", "Pnyx.SmartContracts.Solidity.Contracts.UnitTest\Pnyx.SmartContracts.Solidity.Contracts.UnitTest.csproj", "{885C5600-4267-4B6C-969E-FF5B79A13599}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pnyx.SmartContracts.Solana.Rust.Contracts", "Pnyx.SmartContracts.Solana.Rust.Contracts\Pnyx.SmartContracts.Solana.Rust.Contracts.csproj", "{14F28C45-4A50-424C-A59B-394003C466CA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -38,6 +42,14 @@ Global
 		{AF209515-9688-4670-A90A-28AF61FB6D96}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AF209515-9688-4670-A90A-28AF61FB6D96}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AF209515-9688-4670-A90A-28AF61FB6D96}.Release|Any CPU.Build.0 = Release|Any CPU
+		{885C5600-4267-4B6C-969E-FF5B79A13599}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{885C5600-4267-4B6C-969E-FF5B79A13599}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{885C5600-4267-4B6C-969E-FF5B79A13599}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{885C5600-4267-4B6C-969E-FF5B79A13599}.Release|Any CPU.Build.0 = Release|Any CPU
+		{14F28C45-4A50-424C-A59B-394003C466CA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{14F28C45-4A50-424C-A59B-394003C466CA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{14F28C45-4A50-424C-A59B-394003C466CA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{14F28C45-4A50-424C-A59B-394003C466CA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
