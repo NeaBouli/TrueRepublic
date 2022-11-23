@@ -3,7 +3,7 @@
   <Profiles />
   <Settings>
     <Setting Name="ContractBinaryRoot" Type="System.String" Scope="Application">
-      <Value Profile="(Default)">D:\Entwicklung\GITREP\Blockchain\pnyx\Backend\Pnyx.SmartContracts.Solidity\bin\Contracts</Value>
+      <Value Profile="(Default)">C:\GITREP\bc\pnyx\Backend\Pnyx.SmartContracts.Solidity\bin\Contracts</Value>
     </Setting>
   </Settings>
 </SettingsFile>
