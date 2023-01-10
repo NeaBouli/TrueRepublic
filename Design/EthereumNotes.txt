@@ -1,0 +1,71 @@
+{
+  "config": {
+    "chainId": 211165,
+    "homesteadBlock": 0,
+    "eip150Block": 0,
+    "eip150Hash": "0x0000000000000000000000000000000000000000000000000000000000000000",
+    "eip155Block": 0,
+    "eip158Block": 0,
+    "byzantiumBlock": 0,
+    "constantinopleBlock": 0,
+    "petersburgBlock": 0,
+    "istanbulBlock": 0,
+    "ethash": {}
+  },
+  "nonce": "0x0",
+  "timestamp": "0x5e4a53b2",
+  "extraData": "0x0000000000000000000000000000000000000000000000000000000000000000",
+  "gasLimit": "0x8000000",
+  "difficulty": "0x400",
+  "mixHash": "0x0000000000000000000000000000000000000000000000000000000000000000",
+  "coinbase": "0x0000000000000000000000000000000000000000",
+  "alloc": {
+    "0000000000000000000000000000000000000088": {
+      "balance": "0x200000000000000000000000000000000000000000000000000000000000000"
+    }
+  },
+  "number": "0x0",
+  "gasUsed": "0x0",
+  "parentHash": "0x0000000000000000000000000000000000000000000000000000000000000000"
+}
+
+https://medium.com/swlh/how-to-set-up-a-private-ethereum-blockchain-c0e74260492c
+
+https://geth.ethereum.org/docs/interface/command-line-options
+
+----------
+
+F:\eth-local\
+F:\eth-local\data
+
+..........
+
+(1) — Configure the Genesis file
+
+geth --http --http.port "8085" --datadir "F:/eth-local/data/TestChain" init "F:/eth-local/genesis.json"
+
+..........
+
+(2) — Create a Private Network
+
+geth --http --http.port "8085" --datadir "F:/eth-local/data/TestChain" --networkid 4554 --nodiscover
+
+..........
+
+(3) — Create Accounts
+
+Doesn't work: geth attach F:\eth-local\data\TestChain\geth.ipc
+Doesn't work: geth attach ipc:\\.\data\TestChain\geth.ipc
+
+Works: geth attach ipc:\\.\pipe\geth.ipc
+personal.newAccount()
+
+account: "0xd15aa3a345826362f9711da6ac1a16bc73b87d86"
+pwd: ibnroschd
+
+eth.getBalance("0xd15aa3a345826362f9711da6ac1a16bc73b87d86")
+
+miner.start()
+miner.stop()
+
+..........
