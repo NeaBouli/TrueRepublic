@@ -20,7 +20,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Pnyx.SmartContracts.Solidit
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Pnyx.SmartContracts.Solana.Rust.Contracts", "Pnyx.SmartContracts.Solana.Rust.Contracts\Pnyx.SmartContracts.Solana.Rust.Contracts.csproj", "{14F28C45-4A50-424C-A59B-394003C466CA}"
 EndProject
+<<<<<<< HEAD
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pnyx.ApiClient.Tools", "Pnyx.ApiClient.Tools\Pnyx.ApiClient.Tools.csproj", "{A11E92E6-F51B-4470-8FD7-8684CF7741B4}"
+=======
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pnyx.SmartContracts.Bitcoin.Contracts", "Pnyx.SmartContracts.Bitcoin.Contracts\Pnyx.SmartContracts.Bitcoin.Contracts.csproj", "{15474CB9-0E25-4F01-9975-4F3C9187F886}"
+>>>>>>> 9c068e737232508c290aa898cca5e019d2de2f21
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -52,10 +56,17 @@ Global
 		{14F28C45-4A50-424C-A59B-394003C466CA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{14F28C45-4A50-424C-A59B-394003C466CA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{14F28C45-4A50-424C-A59B-394003C466CA}.Release|Any CPU.Build.0 = Release|Any CPU
+<<<<<<< HEAD
 		{A11E92E6-F51B-4470-8FD7-8684CF7741B4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{A11E92E6-F51B-4470-8FD7-8684CF7741B4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A11E92E6-F51B-4470-8FD7-8684CF7741B4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A11E92E6-F51B-4470-8FD7-8684CF7741B4}.Release|Any CPU.Build.0 = Release|Any CPU
+=======
+		{15474CB9-0E25-4F01-9975-4F3C9187F886}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{15474CB9-0E25-4F01-9975-4F3C9187F886}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{15474CB9-0E25-4F01-9975-4F3C9187F886}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{15474CB9-0E25-4F01-9975-4F3C9187F886}.Release|Any CPU.Build.0 = Release|Any CPU
+>>>>>>> 9c068e737232508c290aa898cca5e019d2de2f21
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
