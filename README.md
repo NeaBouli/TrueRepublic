@@ -1,11 +1,61 @@
-﻿# pnyx <watch the development branch>
-# pnyx is a blockchain-based coin for direct democracy.
-# the internal project name was changed to ‘TrueRepublic’
-# backend with Cosmos sdk not started yet, client software the development branch
-purpous:
-The proxy-party is controlled by its members via an app and offers them direct political participation in a secure manner. The voting process is transparent and all activities are secured by blockchain-technology. At the same time, data protection is ensured, because all activities are stored without reference to underlying identity. Representatives are required to follow the results of the pre-vote. There is no overarching party program in which initiatives have to fit consistently. Therefore subsidiarity is maximized and each proposal stands for itself. The voters do not choose the proxy party primarily because of their current programmatic goals, but for the fact that their opinion and voice have weight in the party.The proxy-party rewards the work of its members through mechanisms that are anchored in the blockchain network. The rewarding and inciting of participation is achieved through an internal currency (PNYX). This currency is tradable on an exchange and the party uses a large portion of its income to buy it back from the users. As a consequence, a large part of the party's assets are managed transparently on the blockchain. The leitmotifs of the proxy-party are: security, transparency, dataprotection, equality, openness, subsidiarity, rewarded participation and simplicity.
+# TrueRepublic Project   
 
-more:
-https://www.dropbox.com/s/1z33cn1r7r89mzv/Skizze_Schwarmtool_eng.pdf?dl=0
+## Overview  
 
-The Pnyx (/nɪks, pəˈnɪks/; Ancient Greek: Πνύξ [pnýks]; Greek: Πνύκα, Pnyka) is a hill in central Athens where from 508 BC (reforms of Kleisthenes) to 330 BC the Athenians were hosting their popular assemblies, thus making the hill one of the earliest and most important sites in the creation of democracy.
+TrueRepublic is dedicated to enhance organizational decision-making processes by increasing member participation while safeguarding individual privacy. 
+
+## Concept  
+
+TrueRepublic organizes participants into **domains**, the primary structure where topics and suggestions are collected and evaluated. Key features include:  
+
+- **Privacy and Transparency:** Individual privacy is protected while group opinions are shared securely.  
+- **Fee and Reward Economy:** Simple economic principles incentivize participation, enhance content quality, prevent spam, and eliminate the need for moderation.  
+- **Proxy Parties:** [https://pmonien.medium.com/] TrueRepublic aims to enable political proxy parties directly controlled by their participants.  
+
+### Further Information  
+- **Clip:** [<URL>]  
+- **Whitepaper:** [https://www.dropbox.com/s/nvdythg6rh42zwc/WhitePaper_TR_eng.pdf?dl=0]  
+- **Contact:** [t.me/truerepublic](t.me/truerepublic)  
+
+---
+
+## Implementation  
+
+The project builds on the **Cosmos SDK** and uses **Tendermint** as its foundation.  
+
+### Architecture  
+
+1. **Base Layer (Tendermint for Consensus):**  
+   - Tendermint's Byzantine Fault Tolerance (BFT) ensures network-wide consensus on blockchain state, maintaining consistency across nodes.  
+
+2. **Application Layer (Custom Logic):**  
+   - Custom modules in Cosmos SDK handle transactional and non-transactional data.  
+   - Each node integrates an external SQL database for data needed for domain activities (non-transactional data). This reduces storage requirements as the state history does not need to be archived. Synchronization is achieved through Cosmos SDK's event system, ensuring identical data operations across nodes.  
+
+3. **Inter-Node Communication:**  
+   - Nodes communicate using gRPC or other protocols supported by Cosmos SDK, ensuring efficient data synchronization and processing.  
+
+### Challenges  
+- Ensuring robust synchronization and data consistency across nodes.  
+- Addressing scalability and performance concerns as the system expands.  
+
+---
+
+## How You Can Support TrueRepublic  
+
+### 1. **Join the Development Team**  
+Developers can apply to join by emailing **[<email address>]** with:  
+- A brief description of their programming background.  
+- Interest in the project.  
+
+Selected contributors will be listed with their BTC addresses to receive direct funding.  
+
+### 2. **Form a Local Group**  
+Organize local groups to raise funds for developers through crowdfunding initiatives.  
+
+### 3. **Donate to Developers**  
+Directly donate to developers listed in this repository to support ongoing work. 
+
+## List of active developers (individual developers will follow soon):
+Team (btc multi. sig): bc1qyamf3twgcqckuqrvmwgwnhzupgshxs37eejdgl0ntcqve98qnvhqe6cjl9
+
