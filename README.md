@@ -44,7 +44,7 @@ The project builds on the **Cosmos SDK** and uses **Tendermint** as its foundati
 ## How You Can Support TrueRepublic  
 
 ### 1. **Join the Development Team**  
-Developers can apply to join by emailing **[<email address>]** with:  
+Developers can apply to join by emailing **[p.cypher@protonmail.com]** with:  
 - A brief description of their programming background.  
 - Interest in the project.  
 
