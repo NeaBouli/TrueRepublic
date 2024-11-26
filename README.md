@@ -30,14 +30,10 @@ The project builds on the **Cosmos SDK** and uses **Tendermint** as its foundati
 
 2. **Application Layer (Custom Logic):**  
    - Custom modules in Cosmos SDK handle transactional and non-transactional data.  
-   - Each node integrates an external SQL database for data needed for domain activities (non-transactional data). This reduces storage requirements as the state history does not need to be archived. Synchronization is achieved through Cosmos SDK's event system, ensuring identical data operations across nodes.  
+   - Each node integrates an external SQL database for non-transactional data. This reduces storage requirements as the state history for this data does not need to be archived. Synchronization is achieved through Cosmos SDK's event system, ensuring identical data operations across nodes.  
 
 3. **Inter-Node Communication:**  
    - Nodes communicate using gRPC or other protocols supported by Cosmos SDK, ensuring efficient data synchronization and processing.  
-
-### Challenges  
-- Ensuring robust synchronization and data consistency across nodes.  
-- Addressing scalability and performance concerns as the system expands.  
 
 ---
 
@@ -56,6 +52,6 @@ Organize local groups to raise funds for developers through crowdfunding initiat
 ### 3. **Donate to Developers**  
 Directly donate to developers listed in this repository to support ongoing work. 
 
-## List of active developers (individual developers will follow soon):
+### List of active developers:
 Team (btc multi. sig): bc1qyamf3twgcqckuqrvmwgwnhzupgshxs37eejdgl0ntcqve98qnvhqe6cjl9
 
