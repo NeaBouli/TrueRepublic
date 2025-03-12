@@ -56,7 +56,7 @@ Directly donate to developers listed in this repository to support ongoing work.
 Team (btc multi. sig): bc1qyamf3twgcqckuqrvmwgwnhzupgshxs37eejdgl0ntcqve98qnvhqe6cjl9
 
 ==============================================================================
-
+Update/ 03/11/25
 
 # TrueRepublic
 Decentralized Democracy Tool based on Cosmos SDK
