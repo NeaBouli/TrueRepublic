@@ -7,60 +7,67 @@ import (
     "github.com/cosmos/cosmos-sdk/x/auth"
     "github.com/tendermint/tendermint/libs/log"
     tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
-    abci "github.com/tendermint/tendermint/abci/types"
-    "io"
+    "github.com/tendermint/tendermint/abci/types"
     "github.com/cosmos/cosmos-sdk/baseapp"
     sdk "github.com/cosmos/cosmos-sdk/types"
+    "github.com/cosmos/cosmos-sdk/store"
     "truerepublic/x/truedemocracy"
 )
 
 var ModuleBasics = module.NewBasicManager(
     auth.AppModuleBasic{},
-    truedemocracy.AppModuleBasic{},
 )
 
 type TrueRepublicApp struct {
     *baseapp.BaseApp
-    mm *module.Manager
+    keeper truedemocracy.Keeper
 }
 
-func NewTrueRepublicApp(logger log.Logger, db dbm.DB, traceStore io.Writer) *TrueRepublicApp {
-    app := &TrueRepublicApp{
-        BaseApp: baseapp.NewBaseApp("TrueRepublic", logger, db, nil),
+func NewTrueRepublicApp(logger log.Logger) *TrueRepublicApp {
+    db := store.NewCommitMultiStore(nil) // In-memory store für Tests
+    baseApp := baseapp.NewBaseApp("TrueRepublic", logger, db, nil)
+    nodes := []*truedemocracy.Node{{Address: "node1", PubKey: "pubkey1"}}
+    keeper := truedemocracy.NewKeeper(baseApp.CommitMultiStore().GetKVStoreKey(), nodes)
+    return &TrueRepublicApp{
+        BaseApp: baseApp,
+        keeper:  keeper,
     }
-    app.SetCommitMultiStoreTracer(traceStore)
-    app.SetAppVersion("v0.1-alpha")
-
-    app.mm = module.NewManager(
-        auth.NewAppModule(app),
-        truedemocracy.NewAppModule(app),
-    )
-
-    app.MountKVStores(ModuleBasics)
-    app.SetInitChainer(app.InitChainer)
-    app.SetBeginBlocker(app.BeginBlocker)
-    app.SetEndBlocker(app.EndBlocker)
-
-    return app
 }
 
-func (app *TrueRepublicApp) InitChainer(ctx sdk.Context, req tmproto.RequestInitChain) tmproto.ResponseInitChain {
-    var genesisState truedemocracy.GenesisState
-    genesisState = truedemocracy.DefaultGenesisState()
-    app.mm.InitGenesis(ctx, genesisState)
-    return tmproto.ResponseInitChain{}
+func (app *TrueRepublicApp) InitChain(req types.RequestInitChain) types.ResponseInitChain {
+    return types.ResponseInitChain{}
 }
 
-func (app *TrueRepublicApp) BeginBlocker(ctx sdk.Context, req abci.RequestBeginBlock) abci.ResponseBeginBlock {
-    return app.mm.BeginBlock(ctx, req)
+func (app *TrueRepublicApp) BeginBlock(req types.RequestBeginBlock) types.ResponseBeginBlock {
+    return types.ResponseBeginBlock{}
 }
 
-func (app *TrueRepublicApp) EndBlocker(ctx sdk.Context, req abci.RequestEndBlock) abci.ResponseEndBlock {
-    return app.mm.EndBlock(ctx, req)
+func (app *TrueRepublicApp) EndBlock(req types.RequestEndBlock) types.ResponseEndBlock {
+    return types.ResponseEndBlock{}
+}
+
+func (app *TrueRepublicApp) DeliverTx(req types.RequestDeliverTx) types.ResponseDeliverTx {
+    return types.ResponseDeliverTx{Code: 0}
+}
+
+func (app *TrueRepublicApp) CheckTx(req types.RequestCheckTx) types.ResponseCheckTx {
+    return types.ResponseCheckTx{Code: 0}
 }
 
 func main() {
     logger := log.NewTMLogger(log.NewSyncWriter(os.Stdout))
-    app := NewTrueRepublicApp(logger, dbm.NewMemDB(), nil)
-    server.StartCmd(app, "0.0.0.0:26657")
+    app := NewTrueRepublicApp(logger)
+    server := server.NewServer(app, "TrueRepublic", "home")
+    ctx := sdk.NewContext(app.CommitMultiStore(), tmproto.Header{}, false, logger)
+
+    // Beispiel: Domain erstellen
+    admin, _ := sdk.AccAddressFromBech32("cosmos1adminaddress")
+    initialCoins := sdk.NewCoins(sdk.NewInt64Coin("pnyx", 1000))
+    app.keeper.CreateDomain(ctx, "testdomain", admin, initialCoins)
+
+    if err := server.Start(); err != nil {
+        logger.Error("Failed to start server", "error", err)
+        os.Exit(1)
+    }
+    defer server.Stop()
 }

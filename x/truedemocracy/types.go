@@ -1,69 +1,42 @@
 package truedemocracy
 
-import (
-    sdk "github.com/cosmos/cosmos-sdk/types"
-)
-
-const ModuleName = "truedemocracy"
+import sdk "github.com/cosmos/cosmos-sdk/types"
 
 type Domain struct {
-    Name          string         `json:"name"`
-    Admin         sdk.AccAddress `json:"admin"`
-    Members       []string       `json:"members"`
-    Treasury      sdk.Coins      `json:"treasury"`
-    Issues        []Issue        `json:"issues"`
-    Options       DomainOptions  `json:"options"`
-    PermissionReg []string       `json:"permission_reg"`
+    Name          string
+    Admin         sdk.AccAddress
+    Members       []string
+    Treasury      sdk.Coins
+    Issues        []Issue
+    Options       DomainOptions
+    PermissionReg []string
 }
 
 type DomainOptions struct {
-    AdminElectable   bool `json:"admin_electable"`
-    AnyoneCanJoin    bool `json:"anyone_can_join"`
-    OnlyAdminIssues  bool `json:"only_admin_issues"`
-    CoinBurnRequired bool `json:"coin_burn_required"`
+    AdminElectable   bool
+    AnyoneCanJoin    bool
+    OnlyAdminIssues  bool
+    CoinBurnRequired bool
 }
 
 type Issue struct {
-    Name        string       `json:"name"`
-    Stones      int          `json:"stones"`
-    Suggestions []Suggestion `json:"suggestions"`
+    Name        string
+    Suggestions []Suggestion
+    Stones      int
 }
 
 type Suggestion struct {
-    Name       string   `json:"name"`
-    Creator    string   `json:"creator"`
-    Stones     int      `json:"stones"`
-    Ratings    []Rating `json:"ratings"`
-    Color      string   `json:"color"`
-    DwellTime  int64    `json:"dwell_time"`
+    Name    string
+    Ratings []Rating
+    Stones  int
 }
 
 type Rating struct {
-    Voter string `json:"voter"`
-    Value int    `json:"value"`
+    Voter string
+    Value int
 }
 
-type DexPool struct {
-    PnyxReserve  sdk.Int `json:"pnyx_reserve"`
-    AssetReserve sdk.Int `json:"asset_reserve"`
-    AssetType    string  `json:"asset_type"`
-}
-
-type GenesisState struct {
-    Domains []Domain `json:"domains"`
-}
-
-func DefaultGenesisState() GenesisState {
-    return GenesisState{
-        Domains: []Domain{
-            {
-                Name:          "TestParty",
-                Admin:         sdk.AccAddress("admin1"),
-                Members:       []string{"user1", "user2", "user3"},
-                Treasury:      sdk.NewCoins(sdk.NewInt64Coin("pnyx", 500000)),
-                Options:       DomainOptions{AdminElectable: true, AnyoneCanJoin: false},
-                PermissionReg: []string{},
-            },
-        },
-    }
+type Node struct {
+    Address string
+    PubKey  string
 }
