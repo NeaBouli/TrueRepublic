@@ -81,7 +81,7 @@ Directly donate to developers listed below to support ongoing work.
 - Example: "Flat Tax" wins for "Steuerreform" with Score 15 and 17 Stones.
 
 ### Contributors
-- NeaBluli GioMario.
+- NeaBouli GioMario.
 
 ### Repository
 - URL: [https://github.com/NeaBouli/TrueRepublic](https://github.com/NeaBouli/TrueRepublic)
