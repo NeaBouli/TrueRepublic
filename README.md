@@ -13,7 +13,7 @@ TrueRepublic organizes participants into **domains**, the primary structure wher
 - **Proxy Parties:** [https://pmonien.medium.com/] TrueRepublic aims to enable political proxy parties directly controlled by their participants.
 
 ### Further Information
-- **Whitepaper:** [https://www.dropbox.com/s/nvdythg6rh42zwc/WhitePaper_TR_eng.pdf?dl=0]
+- **Whitepaper:** [WhitePaper_TR_eng Kopie 2.pdf](./docs/WhitePaper_TR_eng%20Kopie%202.pdf)
 - **Contact:** [t.me/truerepublic](t.me/truerepublic)
 
 ---
