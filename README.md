@@ -118,3 +118,16 @@ See `docs/INSTALL.md` for detailed instructions.
 Contributions to improve test coverage and documentation are welcome! Please submit pull requests or reach out via [t.me/truerepublic](t.me/truerepublic).
 
 ---
+
+## TrueRepublic - CI/CD, Security & Bug Bounty Updates
+
+TrueRepublic is now equipped with a fully automated CI/CD pipeline, robust security measures, and community-driven governance. For detailed information, see [SECURITY.md](SECURITY.md).
+
+### Key Features
+- **CI/CD Pipelines**: Automated testing and deployment for Blockchain, Smart Contracts, Web Wallet, and Mobile Wallet using GitHub Actions.
+- **Security**: Smart Contract audits, dependency scans, API monitoring with Prometheus & Grafana, and DDoS protection via Cloudflare.
+- **Backup & Recovery**: Daily backups for Blockchain and API, with automated recovery systems.
+- **Bug Bounty**: A program to encourage responsible vulnerability reporting, hosted with Next.js and integrated with GitHub Issues.
+- **Governance**: On-chain voting with PNYX stakes via smart contracts.
+
+See [SECURITY.md](SECURITY.md) for implementation details and setup instructions.
