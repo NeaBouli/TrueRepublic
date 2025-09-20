@@ -13,36 +13,36 @@ The token **PNYX** enables governance, treasury mechanisms and a decentralized D
 
 ---
 
-## 📂 Repository structure & status
+## 📂 Repository Structure & Status
 
 ```text
 TrueRepublic/
  ├── blockchain/        ✅  Cosmos SDK chain (modules: truedemocracy, dex, treasury)
  ├── contracts/         ✅  CosmWasm smart contracts (governance)
- ├── web-wallet/        ✅  React web wallet (Kepl / Keplr integration)
+ ├── web-wallet/        ✅  React web wallet (Keplr integration)
  ├── mobile-wallet/     🔵  React Native mobile wallet (basic version; features pending)
- ├── docs/              ✅  White Paper (MD + PDF), API, DEX, INSTALL
- ├── scripts/           🔵  DevOps & deployment scripts (planned)
+ ├── docs/              ✅  White Papers, API, DEX, Install guides
+ ├── scripts/           🔵  DevOps & deployment (planned)
  ├── tests/             🔴  Unit & E2E tests largely missing
  └── .github/
      ├── ISSUE_TEMPLATE ✅  available
      └── workflows/     🔵  CI/CD workflows added (security scans pending)
-📑 Documentation (quick links)
-Structured White Paper (Markdown): docs/WhitePaper_TR.md
+📑 Documentation
+Structured White Paper (Markdown)
 
-TrueRepublic Native White Paper (PDF): docs/WhitePaper_TR_eng.pdf
+TrueRepublic Native White Paper (PDF)
 
-Security Policy: SECURITY.md
+Security Policy
 
-CI/CD Security Guide: TrueRepublic_CI_CD_Security.pdf
+CI/CD Security Guide
 
-API & DEX docs (skeletons):
+API & DEX Docs:
 
-docs/API.md 🔵
+API.md 🔵
 
-docs/DEX.md 🔵
+DEX.md 🔵
 
-🛠️ Build & development (commands)
+🛠️ Build & Development
 Blockchain (Cosmos SDK)
 bash
 Code kopieren
@@ -57,42 +57,33 @@ cd contracts
 cargo fmt --all -- --check
 cargo clippy --all-targets -- -D warnings
 cargo test --all
-Web wallet (React)
+Web Wallet (React)
 bash
 Code kopieren
 cd web-wallet
 npm ci
 npm test
 npm run build
-Mobile wallet (React Native)
+Mobile Wallet (React Native)
 bash
 Code kopieren
 cd mobile-wallet
 npm ci
 npm test
-✅ Current status (short)
-✅ White Paper (Markdown + PDF) added
+🚀 Improvements & To-dos
+Blockchain: add more unit tests per module (happy & error paths)
 
-✅ README cleaned and standardized (this file)
+Contracts: modularization, strict clippy enforcement
 
-🔵 CI/CD workflows prepared but not all enabled / security scans pending
+Wallets: more mock & E2E tests (Jest, Detox)
 
-🔴 Tests & automated security scanning still required across stack
+CI/CD: add security scans (Trivy/Grype), SBOM generation
 
-🚀 Immediate next priorities (recommended)
-Add minimal unit tests for each blockchain module (truedemocracy, dex, treasury) — 1 happy / 1 error path each.
+Docs: complete API/DEX documentation
 
-Enable CI workflows (Go / Rust / Web / Mobile) and add SAST / dependency scanning (Trivy / Grype).
+📌 Current Status
+✅ Repo now has White Papers (Markdown + PDF) and structured README
 
-Create placeholder files so folder structure is visible on GitHub (.keep) for scripts/ and tests/.
+🔵 CI/CD workflows prepared, integration pending
 
-Add CONTRIBUTING.md and a short developer onboarding guide (docs/INSTALL.md) explaining how to bring up a local devnet.
-
-🧭 If you want — next immediate actions I will perform for you:
-Create and push .keep placeholders for scripts/ and tests/.
-
-Add a minimal CONTRIBUTING.md and docs/INSTALL.md skeleton.
-
-Prepare 3 minimal unit test stubs (Go) for the blockchain modules as EOF patches you can apply.
-
-Tell me which of those three you want next and I'll produce the exact shell-blocks (paste-ready) — I'll do them one at a time so you can confirm after each push.
+🔴 Tests & security checks still missing
