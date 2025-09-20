@@ -8,8 +8,9 @@
 ---
 
 ## 🌍 Vision
+
 TrueRepublic is a platform for **direct democracy** and **digital self-determination**.  
-The token **PNYX** enables governance, treasury mechanisms and a decentralized DEX.
+The token **PNYX** enables governance, treasury mechanisms and a decentralized DEX.  
 
 ---
 
@@ -36,7 +37,7 @@ Security Policy
 
 CI/CD Security Guide
 
-API & DEX Docs:
+API & DEX docs (skeletons):
 
 API.md 🔵
 
@@ -82,8 +83,8 @@ CI/CD: add security scans (Trivy/Grype), SBOM generation
 Docs: complete API/DEX documentation
 
 📌 Current Status
-✅ Repo now has White Papers (Markdown + PDF) and structured README
+✅ White Papers (Markdown + PDF) and structured README in place
 
-🔵 CI/CD workflows prepared, integration pending
+🔵 CI/CD workflows prepared but not all enabled
 
 🔴 Tests & security checks still missing
