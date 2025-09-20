@@ -8,33 +8,34 @@
 ---
 
 ## 🌍 Vision
-TrueRepublic ist die Plattform für **direkte Demokratie** und **digitale Selbstbestimmung**.  
-Der Token **PNYX** ermöglicht Governance, Treasury-Mechanismen und einen dezentralen DEX.  
+TrueRepublic is a platform for **direct democracy** and **digital self-determination**.  
+The token **PNYX** enables governance, treasury mechanisms and a decentralized DEX.  
 
 ---
 
-## 📂 Ordnerstruktur & Status
+## 📂 Repository Structure & Status
 
 TrueRepublic/
-├── blockchain/ ✅ Cosmos SDK Chain (Module: truedemocracy, dex, treasury)
-├── contracts/ ✅ CosmWasm Smart Contracts (Governance)
-├── web-wallet/ ✅ React Web Wallet (Keplr-Integration)
-├── mobile-wallet/ 🔵 React Native Mobile Wallet (Basis vorhanden, Features offen)
+├── blockchain/ ✅ Cosmos SDK Chain (modules: truedemocracy, dex, treasury)
+├── contracts/ ✅ CosmWasm Smart Contracts (governance)
+├── web-wallet/ ✅ React Web Wallet (Keplr integration)
+├── mobile-wallet/ 🔵 React Native Mobile Wallet (basic version, features pending)
 ├── docs/ ✅ White Paper, API, DEX, Install
-├── scripts/ 🔵 DevOps & Deployment (geplant)
-├── tests/ 🔴 Unit- & E2E-Tests fehlen weitgehend
+├── scripts/ 🔵 DevOps & deployment (planned)
+├── tests/ 🔴 Unit & E2E tests largely missing
 └── .github/
-├── ISSUE_TEMPLATE ✅ vorhanden
-└── workflows/ 🔵 CI/CD ergänzt, Security-Scans noch offen
+├── ISSUE_TEMPLATE ✅ available
+└── workflows/ 🔵 CI/CD added, security scans pending
 
 yaml
 Code kopieren
 
 ---
 
-## 📑 Dokumentation
+## 📑 Documentation
 
-- [White Paper (Markdown)](docs/WhitePaper_TR.md)  
+- [Structured White Paper (Markdown)](docs/WhitePaper_TR.md)  
+- [TrueRepublic Native White Paper (PDF)](docs/WhitePaper_TR_eng.pdf)  
 - [Security Policy](SECURITY.md)  
 - [CI/CD Security Guide](TrueRepublic_CI_CD_Security.pdf)  
 - API & DEX Docs:  
@@ -43,7 +44,7 @@ Code kopieren
 
 ---
 
-## 🛠️ Build & Entwicklung
+## 🛠️ Build & Development
 
 ### Blockchain
 ```bash
@@ -71,21 +72,21 @@ Code kopieren
 cd mobile-wallet
 npm ci
 npm test
-🚀 Verbesserungen & To-dos
-Blockchain: mehr Unit-Tests in jedem Modul (happy & error paths)
+🚀 Improvements & To-dos
+Blockchain: add more unit tests per module (happy & error paths)
 
-Contracts: Modularisierung, Clippy strikt enforced
+Contracts: modularization, strict clippy enforcement
 
-Wallets: mehr Mock- & E2E-Tests (Jest, Detox)
+Wallets: more mock & E2E tests (Jest, Detox)
 
-CI/CD: Security-Scans (Trivy/Grype), SBOM-Generierung
+CI/CD: add security scans (Trivy/Grype), SBOM generation
 
-Docs: API/DEX-Dokumentation vervollständigen
+Docs: complete API/DEX documentation
 
-📌 Status-Quo
-✅ Repo ist jetzt mit White Paper & strukturierter README ausgestattet
+📌 Current Status
+✅ Repo now has White Paper (Markdown + PDF) and structured README
 
-🔵 CI/CD Workflows vorbereitet, müssen ins Repo integriert werden
+🔵 CI/CD workflows prepared, integration pending
 
-🔴 Tests & Security Checks fehlen größtenteils
+🔴 Tests & security checks still missing
 
