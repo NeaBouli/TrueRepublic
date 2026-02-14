@@ -1,8 +1,10 @@
 package truedemocracy
 
 import (
+	"context"
 	"encoding/json"
 
+	"cosmossdk.io/math"
 	gwruntime "github.com/grpc-ecosystem/grpc-gateway/runtime"
 	"github.com/spf13/cobra"
 
@@ -12,11 +14,15 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
 	abci "github.com/cometbft/cometbft/abci/types"
+	cryptoproto "github.com/cometbft/cometbft/proto/tendermint/crypto"
+
+	rewards "truerepublic/treasury/keeper"
 )
 
 var (
-	_ module.AppModuleBasic = AppModuleBasic{}
-	_ module.AppModule      = AppModule{}
+	_ module.AppModuleBasic  = AppModuleBasic{}
+	_ module.AppModule       = AppModule{}
+	_ module.HasABCIEndBlock = AppModule{}
 )
 
 // AppModuleBasic
@@ -72,10 +78,75 @@ func (am AppModule) InitGenesis(ctx sdk.Context, cdc codec.JSONCodec, data json.
 	if err := json.Unmarshal(data, &genesisState); err != nil {
 		return nil
 	}
+
+	// Create domains.
 	for _, domain := range genesisState.Domains {
 		am.keeper.CreateDomain(ctx, domain.Name, domain.Admin, domain.Treasury)
 	}
-	return nil
+
+	// Register genesis validators and build initial validator set.
+	var updates []abci.ValidatorUpdate
+	for _, gv := range genesisState.Validators {
+		stake := sdk.NewCoins(sdk.NewInt64Coin("pnyx", gv.Stake))
+		if err := am.keeper.RegisterValidator(ctx, gv.OperatorAddr, gv.PubKey, stake, gv.Domain); err != nil {
+			continue
+		}
+		power := gv.Stake / rewards.StakeMin
+		pk := cryptoproto.PublicKey{
+			Sum: &cryptoproto.PublicKey_Ed25519{Ed25519: gv.PubKey},
+		}
+		updates = append(updates, abci.ValidatorUpdate{PubKey: pk, Power: power})
+	}
+
+	// Initialize PoD reward tracking state.
+	store := ctx.KVStore(am.keeper.StoreKey)
+	timeBz := am.cdc.MustMarshalLengthPrefixed(ctx.BlockTime().Unix())
+	store.Set([]byte("pod:last-reward-time"), timeBz)
+	zeroInt := math.ZeroInt()
+	releaseBz := am.cdc.MustMarshalLengthPrefixed(&zeroInt)
+	store.Set([]byte("pod:total-release"), releaseBz)
+
+	return updates
+}
+
+// EndBlock implements module.HasABCIEndBlock. It distributes staking rewards,
+// enforces domain membership and minimum stake, and returns CometBFT
+// validator set updates.
+func (am AppModule) EndBlock(goCtx context.Context) ([]abci.ValidatorUpdate, error) {
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	// 1. Distribute staking rewards if the interval has elapsed.
+	if err := am.keeper.DistributeStakingRewards(ctx); err != nil {
+		return nil, err
+	}
+
+	// 2. Enforce domain membership — remove validators no longer in any domain.
+	var toRemove []string
+	am.keeper.IterateValidators(ctx, func(v Validator) bool {
+		if !am.keeper.EnforceDomainMembership(ctx, v.OperatorAddr) {
+			toRemove = append(toRemove, v.OperatorAddr)
+		}
+		return false
+	})
+	for _, addr := range toRemove {
+		am.keeper.RemoveValidator(ctx, addr)
+	}
+
+	// 3. Enforce minimum stake.
+	var underStaked []string
+	am.keeper.IterateValidators(ctx, func(v Validator) bool {
+		if v.Stake.AmountOf("pnyx").LT(math.NewInt(rewards.StakeMin)) {
+			underStaked = append(underStaked, v.OperatorAddr)
+		}
+		return false
+	})
+	for _, addr := range underStaked {
+		am.keeper.RemoveValidator(ctx, addr)
+	}
+
+	// 4. Build and return validator updates.
+	updates := am.keeper.BuildValidatorUpdates(ctx)
+	return updates, nil
 }
 
 func (am AppModule) ExportGenesis(ctx sdk.Context, cdc codec.JSONCodec) json.RawMessage {

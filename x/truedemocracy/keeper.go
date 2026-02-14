@@ -20,6 +20,18 @@ func NewKeeper(cdc *codec.LegacyAmino, storeKey storetypes.StoreKey, nodes []*No
     return Keeper{StoreKey: storeKey, nodes: nodes, cdc: cdc}
 }
 
+// GetDomain loads a domain from the KV store by name.
+func (k Keeper) GetDomain(ctx sdk.Context, name string) (Domain, bool) {
+    store := ctx.KVStore(k.StoreKey)
+    bz := store.Get([]byte("domain:" + name))
+    if bz == nil {
+        return Domain{}, false
+    }
+    var domain Domain
+    k.cdc.MustUnmarshalLengthPrefixed(bz, &domain)
+    return domain, true
+}
+
 func (k Keeper) CreateDomain(ctx sdk.Context, name string, admin sdk.AccAddress, initialCoins sdk.Coins) {
     store := ctx.KVStore(k.StoreKey)
     domain := Domain{

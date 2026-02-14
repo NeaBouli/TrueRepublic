@@ -15,6 +15,8 @@ type Node struct {
     Cache     map[string]interface{}
     Mu        sync.Mutex
     Stake     sdk.Coins
+    PubKey    []byte // validator ed25519 public key (32 bytes)
+    Operator  string // validator operator address
 }
 
 func BuildTree() []*Node {
