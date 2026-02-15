@@ -219,5 +219,6 @@ func (k Keeper) payStoneReward(domain *Domain) sdk.Coins {
 	}
 	reward := sdk.NewCoins(sdk.NewCoin("pnyx", rewardAmt))
 	domain.Treasury = domain.Treasury.Sub(reward...)
+	domain.TotalPayouts += rewardAmt.Int64()
 	return reward
 }

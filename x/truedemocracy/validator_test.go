@@ -313,6 +313,203 @@ func TestBuildValidatorUpdates(t *testing.T) {
 	})
 }
 
+// ---------- PoD Transfer Limit (WP §7) ----------
+
+// helper: register a validator with given stake in a domain.
+func registerVal(t *testing.T, k Keeper, ctx sdk.Context, domainName, operAddr, seed string, stakeAmt int64) {
+	t.Helper()
+	domain, _ := k.GetDomain(ctx, domainName)
+	domain.Members = append(domain.Members, operAddr)
+	st := ctx.KVStore(k.StoreKey)
+	bz := k.cdc.MustMarshalLengthPrefixed(&domain)
+	st.Set([]byte("domain:"+domainName), bz)
+
+	pk := testPubKey(seed)
+	stake := sdk.NewCoins(sdk.NewInt64Coin("pnyx", stakeAmt))
+	if err := k.RegisterValidator(ctx, operAddr, pk, stake, domainName); err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestTransferLimitEnforcement(t *testing.T) {
+	k, ctx := setupKeeper(t)
+	k.CreateDomain(ctx, "LimitDomain", sdk.AccAddress("admin1"), sdk.NewCoins(sdk.NewInt64Coin("pnyx", 5_000_000)))
+
+	registerVal(t, k, ctx, "LimitDomain", "val1", "val1-lim", 200_000)
+
+	// Set domain payouts to 1,000,000 → 10% limit = 100,000.
+	domain, _ := k.GetDomain(ctx, "LimitDomain")
+	domain.TotalPayouts = 1_000_000
+	st := ctx.KVStore(k.StoreKey)
+	bz := k.cdc.MustMarshalLengthPrefixed(&domain)
+	st.Set([]byte("domain:LimitDomain"), bz)
+
+	// Try to withdraw 150,000 → exceeds 10% limit (100,000). Should fail.
+	err := k.WithdrawStake(ctx, "val1", 150_000)
+	if err == nil {
+		t.Fatal("expected error — withdraw exceeds 10% of domain payouts")
+	}
+}
+
+func TestTransferWithinLimit(t *testing.T) {
+	k, ctx := setupKeeper(t)
+	k.CreateDomain(ctx, "OkDomain", sdk.AccAddress("admin1"), sdk.NewCoins(sdk.NewInt64Coin("pnyx", 5_000_000)))
+
+	registerVal(t, k, ctx, "OkDomain", "val1", "val1-ok", 200_000)
+
+	// Set domain payouts to 2,000,000 → 10% limit = 200,000.
+	domain, _ := k.GetDomain(ctx, "OkDomain")
+	domain.TotalPayouts = 2_000_000
+	st := ctx.KVStore(k.StoreKey)
+	bz := k.cdc.MustMarshalLengthPrefixed(&domain)
+	st.Set([]byte("domain:OkDomain"), bz)
+
+	// Withdraw 100,000 → within limit. Should succeed.
+	err := k.WithdrawStake(ctx, "val1", 100_000)
+	if err != nil {
+		t.Fatalf("withdrawal within limit should succeed: %v", err)
+	}
+
+	// Verify TransferredStake was incremented.
+	domain, _ = k.GetDomain(ctx, "OkDomain")
+	if domain.TransferredStake != 100_000 {
+		t.Errorf("TransferredStake = %d, want 100000", domain.TransferredStake)
+	}
+
+	// Verify validator stake was reduced.
+	val, found := k.GetValidator(ctx, "val1")
+	if !found {
+		t.Fatal("validator should still exist")
+	}
+	if val.Stake.AmountOf("pnyx").Int64() != 100_000 {
+		t.Errorf("validator stake = %d, want 100000", val.Stake.AmountOf("pnyx").Int64())
+	}
+}
+
+func TestPayoutIncreasesLimit(t *testing.T) {
+	k, ctx := setupKeeper(t)
+	k.CreateDomain(ctx, "GrowDomain", sdk.AccAddress("admin1"), sdk.NewCoins(sdk.NewInt64Coin("pnyx", 5_000_000)))
+
+	registerVal(t, k, ctx, "GrowDomain", "val1", "val1-grow", 300_000)
+
+	// Initial payouts = 1,000,000 → limit = 100,000.
+	domain, _ := k.GetDomain(ctx, "GrowDomain")
+	domain.TotalPayouts = 1_000_000
+	st := ctx.KVStore(k.StoreKey)
+	bz := k.cdc.MustMarshalLengthPrefixed(&domain)
+	st.Set([]byte("domain:GrowDomain"), bz)
+
+	// Withdraw 100,000 → exactly at limit, should succeed.
+	err := k.WithdrawStake(ctx, "val1", 100_000)
+	if err != nil {
+		t.Fatalf("withdraw at limit should succeed: %v", err)
+	}
+
+	// Now another 1,000 should fail (limit exhausted).
+	err = k.WithdrawStake(ctx, "val1", 1_000)
+	if err == nil {
+		t.Fatal("expected error — limit exhausted")
+	}
+
+	// Increase payouts → limit increases.
+	domain, _ = k.GetDomain(ctx, "GrowDomain")
+	domain.TotalPayouts = 3_000_000 // new limit = 300,000; already transferred 100,000 → 200,000 left
+	bz = k.cdc.MustMarshalLengthPrefixed(&domain)
+	st.Set([]byte("domain:GrowDomain"), bz)
+
+	// Now withdraw 100,000 more — should succeed (200,000 remaining capacity).
+	err = k.WithdrawStake(ctx, "val1", 100_000)
+	if err != nil {
+		t.Fatalf("after payout increase, withdraw should succeed: %v", err)
+	}
+}
+
+func TestMultipleValidators(t *testing.T) {
+	k, ctx := setupKeeper(t)
+	k.CreateDomain(ctx, "MultiDomain", sdk.AccAddress("admin1"), sdk.NewCoins(sdk.NewInt64Coin("pnyx", 5_000_000)))
+
+	registerVal(t, k, ctx, "MultiDomain", "val1", "val1-multi", 200_000)
+	registerVal(t, k, ctx, "MultiDomain", "val2", "val2-multi", 200_000)
+
+	// Set payouts = 2,000,000 → 10% limit = 200,000 total across all validators.
+	domain, _ := k.GetDomain(ctx, "MultiDomain")
+	domain.TotalPayouts = 2_000_000
+	st := ctx.KVStore(k.StoreKey)
+	bz := k.cdc.MustMarshalLengthPrefixed(&domain)
+	st.Set([]byte("domain:MultiDomain"), bz)
+
+	// val1 withdraws 100,000 → success (100,000 of 200,000 used).
+	err := k.WithdrawStake(ctx, "val1", 100_000)
+	if err != nil {
+		t.Fatalf("val1 withdraw should succeed: %v", err)
+	}
+
+	// val2 withdraws 100,000 → success (200,000 of 200,000 used).
+	err = k.WithdrawStake(ctx, "val2", 100_000)
+	if err != nil {
+		t.Fatalf("val2 withdraw should succeed: %v", err)
+	}
+
+	// val1 tries another 1,000 → fail (limit exhausted).
+	err = k.WithdrawStake(ctx, "val1", 1_000)
+	if err == nil {
+		t.Fatal("expected error — domain transfer limit exhausted")
+	}
+}
+
+func TestWithdrawBelowMinRemovesValidator(t *testing.T) {
+	k, ctx := setupKeeper(t)
+	k.CreateDomain(ctx, "RemDomain", sdk.AccAddress("admin1"), sdk.NewCoins(sdk.NewInt64Coin("pnyx", 5_000_000)))
+
+	registerVal(t, k, ctx, "RemDomain", "val1", "val1-rem", 150_000)
+
+	// Set payouts high enough that limit is not an issue.
+	domain, _ := k.GetDomain(ctx, "RemDomain")
+	domain.TotalPayouts = 10_000_000 // limit = 1,000,000
+	st := ctx.KVStore(k.StoreKey)
+	bz := k.cdc.MustMarshalLengthPrefixed(&domain)
+	st.Set([]byte("domain:RemDomain"), bz)
+
+	// Withdraw 60,000 → remaining 90,000 < StakeMin (100,000) → validator removed.
+	err := k.WithdrawStake(ctx, "val1", 60_000)
+	if err != nil {
+		t.Fatalf("withdraw should succeed: %v", err)
+	}
+	_, found := k.GetValidator(ctx, "val1")
+	if found {
+		t.Error("validator should be removed when stake drops below minimum")
+	}
+}
+
+func TestWithdrawNoPayoutsBlocked(t *testing.T) {
+	k, ctx := setupKeeper(t)
+	k.CreateDomain(ctx, "NoPay", sdk.AccAddress("admin1"), sdk.NewCoins(sdk.NewInt64Coin("pnyx", 5_000_000)))
+
+	registerVal(t, k, ctx, "NoPay", "val1", "val1-nopay", 100_000)
+
+	// TotalPayouts = 0 → no transfers allowed.
+	err := k.WithdrawStake(ctx, "val1", 50_000)
+	if err == nil {
+		t.Fatal("expected error — no payouts, transfers blocked")
+	}
+}
+
+func TestPayoutTrackingFromStoneReward(t *testing.T) {
+	k, ctx := setupKeeper(t)
+	setupDomainWithIssues(t, k, ctx)
+
+	// Place a stone → triggers VoteToEarn reward → should update TotalPayouts.
+	_, err := k.PlaceStoneOnIssue(ctx, "StonesDomain", "Climate", "alice")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	domain, _ := k.GetDomain(ctx, "StonesDomain")
+	if domain.TotalPayouts <= 0 {
+		t.Error("TotalPayouts should be positive after stone reward")
+	}
+}
+
 func TestPowerScalesWithStake(t *testing.T) {
 	k, ctx := setupKeeper(t)
 	k.CreateDomain(ctx, "Big", sdk.AccAddress("admin1"), sdk.NewCoins(sdk.NewInt64Coin("pnyx", 500_000)))

@@ -69,8 +69,8 @@ func (k Keeper) RegisterValidator(ctx sdk.Context, operatorAddr string, pubKeyBy
 		MissedBlocks: 0,
 	}
 
-	bz := k.cdc.MustMarshalLengthPrefixed(&val)
-	store.Set(validatorKey(operatorAddr), bz)
+	valBz := k.cdc.MustMarshalLengthPrefixed(&val)
+	store.Set(validatorKey(operatorAddr), valBz)
 	store.Set(valPubKeyKey(pubKeyBytes), []byte(operatorAddr))
 
 	return nil
@@ -103,6 +103,55 @@ func (k Keeper) GetValidatorByPubKey(ctx sdk.Context, pubKeyBytes []byte) (Valid
 		return Validator{}, false
 	}
 	return k.GetValidator(ctx, string(addrBz))
+}
+
+// WithdrawStake allows a validator to withdraw some or all of their staked
+// PNYX. The withdrawal is subject to the PoD transfer limit (WP §7):
+// cumulative withdrawals across all domain validators cannot exceed 10% of
+// the domain's total historical payouts.
+func (k Keeper) WithdrawStake(ctx sdk.Context, operatorAddr string, amount int64) error {
+	val, found := k.GetValidator(ctx, operatorAddr)
+	if !found {
+		return errorsmod.Wrap(sdkerrors.ErrUnknownRequest, "validator not found")
+	}
+
+	stakeAmt := val.Stake.AmountOf("pnyx").Int64()
+	if amount > stakeAmt {
+		return errorsmod.Wrapf(sdkerrors.ErrInsufficientFunds,
+			"withdraw %d exceeds current stake %d", amount, stakeAmt)
+	}
+
+	// Check transfer limit against the validator's primary domain.
+	if len(val.Domains) == 0 {
+		return errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "validator has no domains")
+	}
+	domainName := val.Domains[0]
+
+	if err := k.ValidateStakeTransfer(ctx, domainName, operatorAddr, amount); err != nil {
+		return err
+	}
+
+	// Update domain's cumulative transferred stake.
+	domain, found := k.GetDomain(ctx, domainName)
+	if !found {
+		return errorsmod.Wrapf(sdkerrors.ErrUnknownRequest, "domain %s not found", domainName)
+	}
+	domain.TransferredStake += amount
+	store := ctx.KVStore(k.StoreKey)
+	bz := k.cdc.MustMarshalLengthPrefixed(&domain)
+	store.Set([]byte("domain:"+domainName), bz)
+
+	// Reduce validator stake.
+	newStake := stakeAmt - amount
+	if newStake < rewards.StakeMin {
+		// Stake drops below minimum — remove the validator entirely.
+		return k.RemoveValidator(ctx, operatorAddr)
+	}
+
+	val.Stake = sdk.NewCoins(sdk.NewInt64Coin("pnyx", newStake))
+	val.Power = newStake / rewards.StakeMin
+	k.SetValidator(ctx, val)
+	return nil
 }
 
 // RemoveValidator deletes a validator and its reverse index.

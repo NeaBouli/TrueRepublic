@@ -289,6 +289,46 @@ func (k Keeper) CleanupInactiveIssues(ctx sdk.Context, domainName string) error 
 	return nil
 }
 
+// --- PoD Transfer Limit (WP §7) ---
+
+// TrackPayout increments a domain's cumulative TotalPayouts. This is used to
+// calculate the 10% stake transfer limit for validators.
+func (k Keeper) TrackPayout(ctx sdk.Context, domainName string, amount int64) error {
+	domain, found := k.GetDomain(ctx, domainName)
+	if !found {
+		return errorsmod.Wrapf(sdkerrors.ErrUnknownRequest, "domain %s not found", domainName)
+	}
+	domain.TotalPayouts += amount
+	store := ctx.KVStore(k.StoreKey)
+	bz := k.cdc.MustMarshalLengthPrefixed(&domain)
+	store.Set([]byte("domain:"+domainName), bz)
+	return nil
+}
+
+// ValidateStakeTransfer checks whether a validator can withdraw the given
+// amount of stake from the domain without exceeding the 10% transfer limit
+// (WP §7). The limit is: cumulative transferred stake ≤ 10% of domain's
+// total payouts. If domain has zero payouts, transfers are blocked.
+func (k Keeper) ValidateStakeTransfer(ctx sdk.Context, domainName, operatorAddr string, amount int64) error {
+	domain, found := k.GetDomain(ctx, domainName)
+	if !found {
+		return errorsmod.Wrapf(sdkerrors.ErrUnknownRequest, "domain %s not found", domainName)
+	}
+
+	if domain.TotalPayouts == 0 {
+		return errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "no payouts yet — stake transfers not allowed")
+	}
+
+	transferLimit := domain.TotalPayouts * StakeTransferLimitBps / 10000
+	newTotal := domain.TransferredStake + amount
+	if newTotal > transferLimit {
+		return errorsmod.Wrapf(sdkerrors.ErrInvalidRequest,
+			"transfer %d would exceed 10%% of domain payouts (limit %d, already transferred %d)",
+			amount, transferLimit, domain.TransferredStake)
+	}
+	return nil
+}
+
 // ProcessGovernance runs admin election and inactivity cleanup for all domains.
 // Called from EndBlock.
 func (k Keeper) ProcessGovernance(ctx sdk.Context) {

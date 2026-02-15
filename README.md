@@ -36,13 +36,13 @@ TrueRepublic/
 │   │   ├── lifecycle_test.go        22 lifecycle / zone tests
 │   │   ├── governance_test.go      27 governance / election / exclusion tests
 │   │   ├── anonymity_test.go       15 anonymity / permission register tests
-│   │   ├── validator_test.go       18 validator / PoD tests
+│   │   ├── validator_test.go       26 validator / PoD / transfer limit tests
 │   │   └── slashing_test.go        6 slashing tests
 │   └── dex/                    ✅  DEX module (AMM constant-product swap)
 │       ├── keeper.go               CreatePool, Swap (x*y=k), AddLiquidity, RemoveLiquidity
 │       ├── module.go               SDK module wiring, InitGenesis
-│       ├── types.go                Pool type, swap fee constant (0.3%)
-│       └── keeper_test.go          20 DEX unit tests
+│       ├── types.go                Pool type, swap fee (0.3%), burn rate (1%)
+│       └── keeper_test.go          24 DEX unit tests (incl. burn)
 ├── treasury/
 │   └── keeper/
 │       ├── rewards.go          ✅  Whitepaper tokenomics equations 1-5
@@ -87,6 +87,8 @@ TrueRepublic/
 | Member Exclusion (2/3 vote) | ✅ | `x/truedemocracy/governance.go` |
 | Inactivity Cleanup (360 days) | ✅ | `x/truedemocracy/governance.go` |
 | External Links (issues/suggestions) | ✅ | `x/truedemocracy/types.go` |
+| DEX 1% PNYX Burn (WP §5) | ✅ | `x/dex/keeper.go` |
+| PoD Transfer Limit (10%, WP §7) | ✅ | `x/truedemocracy/validator.go` |
 
 ---
 
@@ -103,16 +105,17 @@ go test ./... -race -cover
 ## Current Status
 
 - ✅ Core blockchain compiles and runs (Cosmos SDK v0.50.13)
-- ✅ 171 unit tests passing across 3 modules
+- ✅ 182 unit tests passing across 3 modules
 - ✅ Whitepaper tokenomics fully implemented
 - ✅ Proof of Domain consensus with validator management
-- ✅ DEX with AMM swap, liquidity pools, 0.3% fees
+- ✅ DEX with AMM swap, liquidity pools, 0.3% fees, 1% PNYX burn
 - ✅ Anonymous voting with domain key pairs and permission register (WP §4)
 - ✅ Stones voting with VoteToEarn rewards and list sorting (WP §3.1)
 - ✅ Suggestion lifecycle with green/yellow/red zones and auto-delete (WP §3.1.2)
 - ✅ Fast delete by 2/3 majority vote
 - ✅ Member ranking, admin election, and member exclusion by 2/3 vote (WP §3.6)
 - ✅ Inactivity cleanup (360-day timeout) and external links
+- ✅ PoD transfer limit: stake withdrawals capped at 10% of domain payouts (WP §7)
 - 🔵 CLI transaction commands and gRPC services not yet wired
 - 🔵 Wallets and contracts are skeleton placeholders
 - 🔵 CI/CD workflows prepared but not all enabled

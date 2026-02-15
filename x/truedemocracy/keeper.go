@@ -177,6 +177,7 @@ func (k Keeper) RateProposal(ctx sdk.Context, domainName, issueName, suggestionN
     rewardAmt := rewards.CalcReward(domain.Treasury.AmountOf("pnyx"))
     reward := sdk.NewCoins(sdk.NewCoin("pnyx", rewardAmt))
     domain.Treasury = domain.Treasury.Sub(reward...)
+    domain.TotalPayouts += rewardAmt.Int64()
 
     bz = k.cdc.MustMarshalLengthPrefixed(&domain)
     store.Set([]byte("domain:"+domainName), bz)

@@ -27,18 +27,21 @@ const (
 
 // Governance parameters (whitepaper §3, §3.6).
 const (
-	InactivityTimeoutSecs int64 = 31_104_000 // 360 days
-	ExcludeMajorityBps    int64 = 6667       // 2/3 ≈ 66.67% in basis points
+	InactivityTimeoutSecs  int64 = 31_104_000 // 360 days
+	ExcludeMajorityBps     int64 = 6667       // 2/3 ≈ 66.67% in basis points
+	StakeTransferLimitBps  int64 = 1000       // 10% of domain total payouts (WP §7)
 )
 
 type Domain struct {
-    Name          string         `json:"name"`
-    Admin         sdk.AccAddress `json:"admin"`
-    Members       []string       `json:"members"`
-    Treasury      sdk.Coins      `json:"treasury"`
-    Issues        []Issue        `json:"issues"`
-    Options       DomainOptions  `json:"options"`
-    PermissionReg []string       `json:"permission_reg"`
+    Name           string         `json:"name"`
+    Admin          sdk.AccAddress `json:"admin"`
+    Members        []string       `json:"members"`
+    Treasury       sdk.Coins      `json:"treasury"`
+    Issues         []Issue        `json:"issues"`
+    Options        DomainOptions  `json:"options"`
+    PermissionReg  []string       `json:"permission_reg"`
+    TotalPayouts      int64          `json:"total_payouts"`       // cumulative PNYX paid out (rewards, etc.)
+    TransferredStake  int64          `json:"transferred_stake"`   // cumulative PNYX withdrawn by validators
 }
 
 type DomainOptions struct {
