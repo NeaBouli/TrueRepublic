@@ -1,7 +1,7 @@
 use cosmwasm_std::{
-    entry_point, to_binary, Binary, Deps, DepsMut, Env, MessageInfo, Response, StdResult, Uint128,
+    entry_point, to_json_binary, Binary, Deps, DepsMut, Env, MessageInfo, Response, StdResult,
+    Uint128,
 };
-use cosmwasm_storage::{singleton, singleton_read};
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 
@@ -15,6 +15,19 @@ pub struct State {
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
 pub struct InstantiateMsg {}
 
+fn save_state(storage: &mut dyn cosmwasm_std::Storage, state: &State) -> StdResult<()> {
+    let data = cosmwasm_std::to_json_vec(state)?;
+    storage.set(STATE_KEY, &data);
+    Ok(())
+}
+
+fn load_state(storage: &dyn cosmwasm_std::Storage) -> StdResult<State> {
+    let data = storage
+        .get(STATE_KEY)
+        .ok_or_else(|| cosmwasm_std::StdError::not_found("state"))?;
+    cosmwasm_std::from_json(data)
+}
+
 #[entry_point]
 pub fn instantiate(
     deps: DepsMut,
@@ -25,7 +38,7 @@ pub fn instantiate(
     let state = State {
         balance: Uint128::zero(),
     };
-    singleton(deps.storage, STATE_KEY).save(&state)?;
+    save_state(deps.storage, &state)?;
     Ok(Response::default())
 }
 
@@ -42,11 +55,11 @@ pub fn execute(
     _info: MessageInfo,
     msg: ExecuteMsg,
 ) -> StdResult<Response> {
-    let mut state: State = singleton(deps.storage, STATE_KEY).load()?;
+    let mut state = load_state(deps.storage)?;
     match msg {
         ExecuteMsg::Deposit { amount } => {
             state.balance = state.balance.checked_add(amount)?;
-            singleton(deps.storage, STATE_KEY).save(&state)?;
+            save_state(deps.storage, &state)?;
             Ok(Response::new().add_attribute("action", "deposit"))
         }
         ExecuteMsg::Withdraw {
@@ -57,7 +70,7 @@ pub fn execute(
                 return Err(cosmwasm_std::StdError::generic_err("Insufficient funds"));
             }
             state.balance = state.balance.checked_sub(amount)?;
-            singleton(deps.storage, STATE_KEY).save(&state)?;
+            save_state(deps.storage, &state)?;
             Ok(Response::new().add_attribute("action", "withdraw"))
         }
     }
@@ -70,8 +83,8 @@ pub enum QueryMsg {
 
 #[entry_point]
 pub fn query(deps: Deps, _env: Env, msg: QueryMsg) -> StdResult<Binary> {
-    let state: State = singleton_read(deps.storage, STATE_KEY).load()?;
+    let state = load_state(deps.storage)?;
     match msg {
-        QueryMsg::GetBalance {} => to_binary(&state.balance),
+        QueryMsg::GetBalance {} => to_json_binary(&state.balance),
     }
 }

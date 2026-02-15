@@ -8,7 +8,6 @@ crate-type = ["cdylib", "rlib"]
 
 [dependencies]
 cosmwasm-std = "1.5"
-cosmwasm-storage = "1.5"
 serde = { version = "1", default-features = false, features = ["derive"] }
 schemars = "0.8"
 

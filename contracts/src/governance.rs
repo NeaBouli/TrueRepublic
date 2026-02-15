@@ -1,7 +1,6 @@
 use cosmwasm_std::{
-    entry_point, to_binary, Binary, Deps, DepsMut, Env, MessageInfo, Response, StdResult,
+    entry_point, to_json_binary, Binary, Deps, DepsMut, Env, MessageInfo, Response, StdResult,
 };
-use cosmwasm_storage::{singleton, singleton_read};
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 
@@ -32,6 +31,19 @@ pub struct KeyPair {
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
 pub struct InstantiateMsg {}
 
+fn save_state(storage: &mut dyn cosmwasm_std::Storage, state: &State) -> StdResult<()> {
+    let data = cosmwasm_std::to_json_vec(state)?;
+    storage.set(STATE_KEY, &data);
+    Ok(())
+}
+
+fn load_state(storage: &dyn cosmwasm_std::Storage) -> StdResult<State> {
+    let data = storage
+        .get(STATE_KEY)
+        .ok_or_else(|| cosmwasm_std::StdError::not_found("state"))?;
+    cosmwasm_std::from_json(data)
+}
+
 #[entry_point]
 pub fn instantiate(
     deps: DepsMut,
@@ -47,7 +59,7 @@ pub fn instantiate(
             public_key: "pk_placeholder".to_string(),
         }],
     };
-    singleton(deps.storage, STATE_KEY).save(&state)?;
+    save_state(deps.storage, &state)?;
     Ok(Response::default())
 }
 
@@ -71,7 +83,7 @@ pub fn execute(
     info: MessageInfo,
     msg: ExecuteMsg,
 ) -> StdResult<Response> {
-    let mut state: State = singleton(deps.storage, STATE_KEY).load()?;
+    let mut state = load_state(deps.storage)?;
     match msg {
         ExecuteMsg::SubmitProposal { title, description } => {
             state.proposals.push(Proposal {
@@ -82,7 +94,7 @@ pub fn execute(
                 executed: false,
             });
             state.next_id += 1;
-            singleton(deps.storage, STATE_KEY).save(&state)?;
+            save_state(deps.storage, &state)?;
             Ok(Response::new().add_attribute("action", "submit_proposal"))
         }
         ExecuteMsg::Vote {
@@ -90,15 +102,16 @@ pub fn execute(
             vote,
             public_key,
         } => {
-            if vote < -5 || vote > 5 {
+            if !(-5..=5).contains(&vote) {
                 return Err(cosmwasm_std::StdError::generic_err(
                     "Vote must be between -5 and 5",
                 ));
             }
+            let sender = info.sender.as_str();
             let key_exists = state
                 .key_pairs
                 .iter()
-                .any(|kp| kp.owner == info.sender.to_string() && kp.public_key == public_key);
+                .any(|kp| kp.owner == sender && kp.public_key == public_key);
             if !key_exists {
                 return Err(cosmwasm_std::StdError::generic_err("Invalid key pair"));
             }
@@ -108,7 +121,7 @@ pub fn execute(
                 .find(|p| p.id == proposal_id)
                 .ok_or(cosmwasm_std::StdError::generic_err("Proposal not found"))?;
             proposal.votes.push(vote);
-            singleton(deps.storage, STATE_KEY).save(&state)?;
+            save_state(deps.storage, &state)?;
             Ok(Response::new().add_attribute("action", "vote"))
         }
     }
@@ -121,8 +134,8 @@ pub enum QueryMsg {
 
 #[entry_point]
 pub fn query(deps: Deps, _env: Env, msg: QueryMsg) -> StdResult<Binary> {
-    let state: State = singleton_read(deps.storage, STATE_KEY).load()?;
+    let state = load_state(deps.storage)?;
     match msg {
-        QueryMsg::GetProposals {} => to_binary(&state.proposals),
+        QueryMsg::GetProposals {} => to_json_binary(&state.proposals),
     }
 }
