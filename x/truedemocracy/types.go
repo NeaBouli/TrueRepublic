@@ -25,6 +25,12 @@ const (
 	DeleteMajorityBps           int64 = 6667  // 2/3 ≈ 66.67% in basis points
 )
 
+// Governance parameters (whitepaper §3, §3.6).
+const (
+	InactivityTimeoutSecs int64 = 31_104_000 // 360 days
+	ExcludeMajorityBps    int64 = 6667       // 2/3 ≈ 66.67% in basis points
+)
+
 type Domain struct {
     Name          string         `json:"name"`
     Admin         sdk.AccAddress `json:"admin"`
@@ -45,10 +51,12 @@ type DomainOptions struct {
 }
 
 type Issue struct {
-    Name         string       `json:"name"`
-    Stones       int          `json:"stones"`
-    Suggestions  []Suggestion `json:"suggestions"`
-    CreationDate int64        `json:"creation_date"` // unix timestamp
+    Name           string       `json:"name"`
+    Stones         int          `json:"stones"`
+    Suggestions    []Suggestion `json:"suggestions"`
+    CreationDate   int64        `json:"creation_date"`    // unix timestamp
+    LastActivityAt int64        `json:"last_activity_at"` // updated on any interaction
+    ExternalLink   string       `json:"external_link"`    // optional URL to forum/discussion
 }
 
 type Suggestion struct {
@@ -59,6 +67,7 @@ type Suggestion struct {
     Color           string   `json:"color"`
     DwellTime       int64    `json:"dwell_time"`
     CreationDate    int64    `json:"creation_date"`     // unix timestamp
+    ExternalLink    string   `json:"external_link"`     // optional URL to details/arguments
     EnteredYellowAt int64    `json:"entered_yellow_at"` // when suggestion entered yellow zone
     EnteredRedAt    int64    `json:"entered_red_at"`    // when suggestion entered red zone
     DeleteVotes     int      `json:"delete_votes"`      // fast-delete vote counter

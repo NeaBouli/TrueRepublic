@@ -26,6 +26,7 @@ TrueRepublic/
 │   │   ├── anonymity.go            Permission register, anonymous voting (WP §4)
 │   │   ├── stones.go               Stone voting, VoteToEarn, list sorting (WP §3.1)
 │   │   ├── lifecycle.go            Suggestion zones, auto-delete, fast delete (WP §3.1.2)
+│   │   ├── governance.go           Member stones, admin election, exclusion (WP §3.6)
 │   │   ├── validator.go            Proof of Domain validator lifecycle
 │   │   ├── slashing.go             Double-sign & downtime penalties
 │   │   ├── module.go               SDK module wiring, InitGenesis, EndBlock
@@ -33,6 +34,7 @@ TrueRepublic/
 │   │   ├── tree.go                 Hierarchical node tree for vote propagation
 │   │   ├── stones_test.go           20 stones / VoteToEarn tests
 │   │   ├── lifecycle_test.go        22 lifecycle / zone tests
+│   │   ├── governance_test.go      27 governance / election / exclusion tests
 │   │   ├── anonymity_test.go       15 anonymity / permission register tests
 │   │   ├── validator_test.go       18 validator / PoD tests
 │   │   └── slashing_test.go        6 slashing tests
@@ -80,6 +82,11 @@ TrueRepublic/
 | Green/Yellow/Red Zones | ✅ | `x/truedemocracy/lifecycle.go` |
 | Auto-Delete (red expiry) | ✅ | `x/truedemocracy/lifecycle.go` |
 | Fast Delete (2/3 majority) | ✅ | `x/truedemocracy/lifecycle.go` |
+| Member Ranking (stones) | ✅ | `x/truedemocracy/governance.go` |
+| Admin Election (WP §3.6) | ✅ | `x/truedemocracy/governance.go` |
+| Member Exclusion (2/3 vote) | ✅ | `x/truedemocracy/governance.go` |
+| Inactivity Cleanup (360 days) | ✅ | `x/truedemocracy/governance.go` |
+| External Links (issues/suggestions) | ✅ | `x/truedemocracy/types.go` |
 
 ---
 
@@ -96,7 +103,7 @@ go test ./... -race -cover
 ## Current Status
 
 - ✅ Core blockchain compiles and runs (Cosmos SDK v0.50.13)
-- ✅ 144 unit tests passing across 3 modules
+- ✅ 171 unit tests passing across 3 modules
 - ✅ Whitepaper tokenomics fully implemented
 - ✅ Proof of Domain consensus with validator management
 - ✅ DEX with AMM swap, liquidity pools, 0.3% fees
@@ -104,6 +111,8 @@ go test ./... -race -cover
 - ✅ Stones voting with VoteToEarn rewards and list sorting (WP §3.1)
 - ✅ Suggestion lifecycle with green/yellow/red zones and auto-delete (WP §3.1.2)
 - ✅ Fast delete by 2/3 majority vote
+- ✅ Member ranking, admin election, and member exclusion by 2/3 vote (WP §3.6)
+- ✅ Inactivity cleanup (360-day timeout) and external links
 - 🔵 CLI transaction commands and gRPC services not yet wired
 - 🔵 Wallets and contracts are skeleton placeholders
 - 🔵 CI/CD workflows prepared but not all enabled

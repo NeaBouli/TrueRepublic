@@ -64,8 +64,9 @@ func (k Keeper) PlaceStoneOnIssue(ctx sdk.Context, domainName, issueName, member
 		}
 	}
 
-	// Increment target issue.
+	// Increment target issue and update activity.
 	domain.Issues[targetIdx].Stones++
+	domain.Issues[targetIdx].LastActivityAt = ctx.BlockTime().Unix()
 	store.Set(key, []byte(issueName))
 
 	// VoteToEarn reward (eq.2).
@@ -117,8 +118,9 @@ func (k Keeper) PlaceStoneOnSuggestion(ctx sdk.Context, domainName, issueName, s
 		}
 	}
 
-	// Increment target suggestion.
+	// Increment target suggestion and update issue activity.
 	domain.Issues[issueIdx].Suggestions[targetIdx].Stones++
+	domain.Issues[issueIdx].LastActivityAt = ctx.BlockTime().Unix()
 	store.Set(key, []byte(suggestionName))
 
 	// VoteToEarn reward (eq.2).

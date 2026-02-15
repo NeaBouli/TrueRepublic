@@ -50,7 +50,7 @@ func (k Keeper) CreateDomain(ctx sdk.Context, name string, admin sdk.AccAddress,
     store.Set([]byte("domain:"+name), bz)
 }
 
-func (k Keeper) SubmitProposal(ctx sdk.Context, domainName, issueName, suggestionName, creator string, fee sdk.Coins) error {
+func (k Keeper) SubmitProposal(ctx sdk.Context, domainName, issueName, suggestionName, creator string, fee sdk.Coins, externalLink string) error {
     store := ctx.KVStore(k.StoreKey)
     domainBz := store.Get([]byte("domain:" + domainName))
     if domainBz == nil {
@@ -71,6 +71,8 @@ func (k Keeper) SubmitProposal(ctx sdk.Context, domainName, issueName, suggestio
     }
     domain.Treasury = domain.Treasury.Add(fee...)
 
+    now := ctx.BlockTime().Unix()
+
     found := false
     for i, issue := range domain.Issues {
         if issue.Name == issueName {
@@ -81,18 +83,21 @@ func (k Keeper) SubmitProposal(ctx sdk.Context, domainName, issueName, suggestio
                 Stones:       0,
                 Color:        "",
                 DwellTime:    0,
-                CreationDate: ctx.BlockTime().Unix(),
+                CreationDate: now,
+                ExternalLink: externalLink,
             })
+            domain.Issues[i].LastActivityAt = now
             found = true
             break
         }
     }
     if !found {
         domain.Issues = append(domain.Issues, Issue{
-            Name:         issueName,
-            Suggestions:  []Suggestion{{Name: suggestionName, Creator: creator, Ratings: []Rating{}, Stones: 0, Color: "", DwellTime: 0, CreationDate: ctx.BlockTime().Unix()}},
-            Stones:       0,
-            CreationDate: ctx.BlockTime().Unix(),
+            Name:           issueName,
+            Suggestions:    []Suggestion{{Name: suggestionName, Creator: creator, Ratings: []Rating{}, Stones: 0, Color: "", DwellTime: 0, CreationDate: now, ExternalLink: externalLink}},
+            Stones:         0,
+            CreationDate:   now,
+            LastActivityAt: now,
         })
     }
 
@@ -142,6 +147,7 @@ func (k Keeper) RateProposal(ctx sdk.Context, domainName, issueName, suggestionN
         return sdk.Coins{}, nil, errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "domain key has already voted on this suggestion")
     }
 
+    now := ctx.BlockTime().Unix()
     foundIssue := false
     foundSuggestion := false
     for i, issue := range domain.Issues {
@@ -153,6 +159,7 @@ func (k Keeper) RateProposal(ctx sdk.Context, domainName, issueName, suggestionN
                         DomainPubKeyHex: domainPubKeyHex,
                         Value:           rating,
                     })
+                    domain.Issues[i].LastActivityAt = now
                     foundSuggestion = true
                     break
                 }
