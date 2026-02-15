@@ -6,8 +6,15 @@ module.exports = function override(config) {
         crypto: require.resolve("crypto-browserify"),
         stream: require.resolve("stream-browserify"),
         buffer: require.resolve("buffer/"),
+        vm: false,
         path: false,
+        os: false,
         fs: false,
+        http: false,
+        https: false,
+        zlib: false,
+        url: false,
+        assert: false,
     };
     config.plugins = [
         ...config.plugins,
