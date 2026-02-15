@@ -1,65 +1,89 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, Button, TextInput, StyleSheet } from "react-native";
+import { View, Text, Button, TextInput, StyleSheet, Alert } from "react-native";
+import { DirectSecp256k1HdWallet } from "@cosmjs/proto-signing";
 import { SigningStargateClient } from "@cosmjs/stargate";
 
 const RPC_ENDPOINT = "https://rpc.truerepublic.network";
 
 export default function WalletScreen() {
     const [wallet, setWallet] = useState(null);
-    const [balance, setBalance] = useState("Loading...");
+    const [address, setAddress] = useState(null);
+    const [balance, setBalance] = useState("—");
     const [recipient, setRecipient] = useState("");
     const [amount, setAmount] = useState("");
+    const [mnemonic, setMnemonic] = useState("");
 
     const connectWallet = async () => {
         try {
-            await window.keplr.enable("truerepublic-1");
-            const offlineSigner = window.keplr.getOfflineSigner("truerepublic-1");
-            const accounts = await offlineSigner.getAccounts();
-            setWallet(accounts[0].address);
+            const signer = await DirectSecp256k1HdWallet.fromMnemonic(mnemonic, { prefix: "truerepublic" });
+            const accounts = await signer.getAccounts();
+            setWallet(signer);
+            setAddress(accounts[0].address);
             updateBalance(accounts[0].address);
         } catch (error) {
-            setBalance("Error: " + error.message);
+            Alert.alert("Error", error.message);
         }
     };
 
-    const updateBalance = async (address) => {
-        const client = await SigningStargateClient.connect(RPC_ENDPOINT);
-        const balance = await client.getBalance(address, "pnyx");
-        setBalance(`${balance.amount} PNYX`);
+    const updateBalance = async (addr) => {
+        try {
+            const client = await SigningStargateClient.connect(RPC_ENDPOINT);
+            const bal = await client.getBalance(addr, "pnyx");
+            setBalance(`${bal.amount} PNYX`);
+        } catch (error) {
+            setBalance("Error fetching balance");
+        }
     };
 
     const sendPNYX = async () => {
-        if (!wallet || !recipient || !amount) return alert("Please fill all fields.");
-        const client = await SigningStargateClient.connectWithSigner(RPC_ENDPOINT, window.keplr.getOfflineSigner("truerepublic-1"));
-        const result = await client.sendTokens(wallet, recipient, [{ denom: "pnyx", amount }], "auto");
-        alert("Transaction successful: " + result.transactionHash);
-        updateBalance(wallet);
+        if (!wallet || !recipient || !amount) return Alert.alert("Error", "Please fill all fields.");
+        try {
+            const client = await SigningStargateClient.connectWithSigner(RPC_ENDPOINT, wallet);
+            const result = await client.sendTokens(address, recipient, [{ denom: "pnyx", amount }], "auto");
+            Alert.alert("Success", "TX: " + result.transactionHash);
+            updateBalance(address);
+        } catch (error) {
+            Alert.alert("Error", error.message);
+        }
     };
 
     useEffect(() => {
-        if (wallet) {
-            const interval = setInterval(() => updateBalance(wallet), 5000);
+        if (address) {
+            const interval = setInterval(() => updateBalance(address), 5000);
             return () => clearInterval(interval);
         }
-    }, [wallet]);
+    }, [address]);
 
     return (
         <View style={styles.container}>
             <Text style={styles.title}>Wallet</Text>
-            <Button title="Connect Wallet" onPress={connectWallet} />
-            {wallet && (
+            {!address ? (
                 <>
-                    <Text>Address: {wallet}</Text>
-                    <Text>Balance: {balance}</Text>
+                    <TextInput
+                        style={styles.input}
+                        placeholder="Enter mnemonic phrase"
+                        placeholderTextColor="#9CA3AF"
+                        value={mnemonic}
+                        onChangeText={setMnemonic}
+                        multiline
+                    />
+                    <Button title="Connect Wallet" onPress={connectWallet} />
+                </>
+            ) : (
+                <>
+                    <Text style={styles.label}>Address: {address}</Text>
+                    <Text style={styles.label}>Balance: {balance}</Text>
                     <TextInput
                         style={styles.input}
                         placeholder="Recipient Address"
+                        placeholderTextColor="#9CA3AF"
                         value={recipient}
                         onChangeText={setRecipient}
                     />
                     <TextInput
                         style={styles.input}
                         placeholder="Amount (PNYX)"
+                        placeholderTextColor="#9CA3AF"
                         value={amount}
                         onChangeText={setAmount}
                         keyboardType="numeric"
@@ -72,7 +96,8 @@ export default function WalletScreen() {
 }
 
 const styles = StyleSheet.create({
-    container: { flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: "#1F2937" },
-    title: { fontSize: 20, fontWeight: "bold", marginBottom: 10, color: "#fff" },
-    input: { borderWidth: 1, padding: 10, width: "80%", marginBottom: 10, backgroundColor: "#374151", color: "#fff" },
+    container: { flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: "#1F2937", padding: 20 },
+    title: { fontSize: 24, fontWeight: "bold", marginBottom: 20, color: "#fff" },
+    label: { fontSize: 14, color: "#D1D5DB", marginBottom: 8 },
+    input: { borderWidth: 1, borderColor: "#4B5563", padding: 12, width: "90%", marginBottom: 12, backgroundColor: "#374151", color: "#fff", borderRadius: 8 },
 });

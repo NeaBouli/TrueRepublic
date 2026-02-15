@@ -48,12 +48,12 @@ TrueRepublic/
 │       ├── rewards.go          ✅  Whitepaper tokenomics equations 1-5
 │       └── rewards_test.go         31 tokenomics tests
 ├── ui/                         🔵  C++ desktop UI (prototype)
-├── contracts/                  🔵  CosmWasm smart contracts (skeletons)
+├── contracts/                  ✅  CosmWasm smart contracts (governance + treasury)
 ├── docs/                       ✅  Whitepaper (PDF + Markdown), install guide
-├── web-wallet/                 🔵  React web wallet (skeleton)
-├── mobile-wallet/              🔵  React Native wallet (skeleton)
+├── web-wallet/                 ✅  React web wallet (Keplr + ABCI queries)
+├── mobile-wallet/              ✅  React Native wallet (Expo + bottom tabs)
 ├── SECURITY.md                 ✅  Security policy
-└── .github/                    🔵  CI/CD workflows
+└── .github/                    ✅  CI/CD workflows (Go, Rust, React, RN)
 ```
 
 ---
@@ -89,15 +89,32 @@ TrueRepublic/
 | External Links (issues/suggestions) | ✅ | `x/truedemocracy/types.go` |
 | DEX 1% PNYX Burn (WP §5) | ✅ | `x/dex/keeper.go` |
 | PoD Transfer Limit (10%, WP §7) | ✅ | `x/truedemocracy/validator.go` |
+| CLI Transaction Commands (14) | ✅ | `x/truedemocracy/cli.go` |
+| CLI Query Commands (4+2) | ✅ | `x/truedemocracy/querier.go`, `x/dex/querier.go` |
+| DEX CLI Commands (4) | ✅ | `x/dex/cli.go` |
+| CosmWasm Contracts | ✅ | `contracts/src/governance.rs`, `contracts/src/treasury.rs` |
+| Web Wallet (React + Keplr) | ✅ | `web-wallet/` |
+| Mobile Wallet (Expo + RN) | ✅ | `mobile-wallet/` |
+| CI/CD Workflows | ✅ | `.github/workflows/` |
 
 ---
 
 ## Build & Test
 
 ```bash
+# Go blockchain
 go mod tidy
 go build ./...
 go test ./... -race -cover
+
+# Rust contracts
+cd contracts && cargo build
+
+# Web wallet
+cd web-wallet && npm install && npm run build
+
+# Mobile wallet
+cd mobile-wallet && npm install
 ```
 
 ---
@@ -116,6 +133,8 @@ go test ./... -race -cover
 - ✅ Member ranking, admin election, and member exclusion by 2/3 vote (WP §3.6)
 - ✅ Inactivity cleanup (360-day timeout) and external links
 - ✅ PoD transfer limit: stake withdrawals capped at 10% of domain payouts (WP §7)
-- 🔵 CLI transaction commands and gRPC services not yet wired
-- 🔵 Wallets and contracts are skeleton placeholders
-- 🔵 CI/CD workflows prepared but not all enabled
+- ✅ CLI: 14 tx commands + 6 query commands for truedemocracy, 4 tx + 2 query for DEX
+- ✅ CosmWasm governance and treasury contracts (Rust, cosmwasm-std 1.5)
+- ✅ Web wallet: React 18, Keplr integration, ABCI queries
+- ✅ Mobile wallet: Expo/React Native, bottom-tab navigation
+- ✅ CI/CD: GitHub Actions for Go, Rust, React, React Native

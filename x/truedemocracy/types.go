@@ -122,6 +122,21 @@ func RegisterCodec(cdc *codec.LegacyAmino) {
     cdc.RegisterConcrete(GenesisState{}, "truedemocracy/GenesisState", nil)
     cdc.RegisterConcrete(Validator{}, "truedemocracy/Validator", nil)
     cdc.RegisterConcrete(GenesisValidator{}, "truedemocracy/GenesisValidator", nil)
+
+    // Message types for CLI transactions.
+    cdc.RegisterConcrete(MsgCreateDomain{}, "truedemocracy/MsgCreateDomain", nil)
+    cdc.RegisterConcrete(MsgSubmitProposal{}, "truedemocracy/MsgSubmitProposal", nil)
+    cdc.RegisterConcrete(MsgRegisterValidator{}, "truedemocracy/MsgRegisterValidator", nil)
+    cdc.RegisterConcrete(MsgWithdrawStake{}, "truedemocracy/MsgWithdrawStake", nil)
+    cdc.RegisterConcrete(MsgRemoveValidator{}, "truedemocracy/MsgRemoveValidator", nil)
+    cdc.RegisterConcrete(MsgUnjail{}, "truedemocracy/MsgUnjail", nil)
+    cdc.RegisterConcrete(MsgJoinPermissionRegister{}, "truedemocracy/MsgJoinPermissionRegister", nil)
+    cdc.RegisterConcrete(MsgPurgePermissionRegister{}, "truedemocracy/MsgPurgePermissionRegister", nil)
+    cdc.RegisterConcrete(MsgPlaceStoneOnIssue{}, "truedemocracy/MsgPlaceStoneOnIssue", nil)
+    cdc.RegisterConcrete(MsgPlaceStoneOnSuggestion{}, "truedemocracy/MsgPlaceStoneOnSuggestion", nil)
+    cdc.RegisterConcrete(MsgPlaceStoneOnMember{}, "truedemocracy/MsgPlaceStoneOnMember", nil)
+    cdc.RegisterConcrete(MsgVoteToExclude{}, "truedemocracy/MsgVoteToExclude", nil)
+    cdc.RegisterConcrete(MsgVoteToDelete{}, "truedemocracy/MsgVoteToDelete", nil)
 }
 
 func DefaultGenesisState() GenesisState {

@@ -30,6 +30,12 @@ type GenesisState struct {
 func RegisterCodec(cdc *codec.LegacyAmino) {
 	cdc.RegisterConcrete(Pool{}, "dex/Pool", nil)
 	cdc.RegisterConcrete(GenesisState{}, "dex/GenesisState", nil)
+
+	// Message types for CLI transactions.
+	cdc.RegisterConcrete(MsgCreatePool{}, "dex/MsgCreatePool", nil)
+	cdc.RegisterConcrete(MsgSwap{}, "dex/MsgSwap", nil)
+	cdc.RegisterConcrete(MsgAddLiquidity{}, "dex/MsgAddLiquidity", nil)
+	cdc.RegisterConcrete(MsgRemoveLiquidity{}, "dex/MsgRemoveLiquidity", nil)
 }
 
 func DefaultGenesisState() GenesisState {

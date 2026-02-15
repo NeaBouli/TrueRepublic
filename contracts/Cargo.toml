@@ -1,0 +1,16 @@
+[package]
+name = "truerepublic-contracts"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+cosmwasm-std = "1.5"
+cosmwasm-storage = "1.5"
+serde = { version = "1", default-features = false, features = ["derive"] }
+schemars = "0.8"
+
+[dev-dependencies]
+cosmwasm-vm = "1.5"

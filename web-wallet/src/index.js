@@ -1,12 +1,13 @@
 import React from "react";
-import ReactDOM from "react-dom";
+import { createRoot } from "react-dom/client";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import App from "./App";
 import Wallet from "./pages/Wallet";
 import Governance from "./pages/Governance";
 import Dex from "./pages/Dex";
 
-ReactDOM.render(
+const root = createRoot(document.getElementById("root"));
+root.render(
     <Router>
         <Routes>
             <Route path="/" element={<App />} />
@@ -14,6 +15,5 @@ ReactDOM.render(
             <Route path="/governance" element={<Governance />} />
             <Route path="/dex" element={<Dex />} />
         </Routes>
-    </Router>,
-    document.getElementById("root")
+    </Router>
 );

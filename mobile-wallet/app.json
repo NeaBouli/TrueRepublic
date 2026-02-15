@@ -1,0 +1,17 @@
+{
+  "expo": {
+    "name": "TrueRepublic Wallet",
+    "slug": "truerepublic-wallet",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "platforms": ["ios", "android"],
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#1F2937"
+      }
+    }
+  }
+}

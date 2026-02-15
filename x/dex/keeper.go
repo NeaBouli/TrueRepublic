@@ -211,6 +211,33 @@ func resolveAssetDenom(denomA, denomB string) (string, error) {
 	}
 }
 
+// IteratePools iterates over all pools in the store.
+func (k Keeper) IteratePools(ctx sdk.Context, cb func(Pool) bool) {
+	store := ctx.KVStore(k.StoreKey)
+	prefix := []byte("pool:")
+	iter := store.Iterator(prefix, prefixEnd(prefix))
+	defer iter.Close()
+	for ; iter.Valid(); iter.Next() {
+		var pool Pool
+		k.cdc.MustUnmarshalLengthPrefixed(iter.Value(), &pool)
+		if cb(pool) {
+			break
+		}
+	}
+}
+
+func prefixEnd(prefix []byte) []byte {
+	end := make([]byte, len(prefix))
+	copy(end, prefix)
+	for i := len(end) - 1; i >= 0; i-- {
+		end[i]++
+		if end[i] != 0 {
+			return end
+		}
+	}
+	return nil
+}
+
 // intSqrt computes the integer square root of n using Newton's method.
 func intSqrt(n math.Int) math.Int {
 	if !n.IsPositive() {
