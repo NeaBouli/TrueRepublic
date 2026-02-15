@@ -18,6 +18,13 @@ const (
 	RewardInterval          int64 = 3600 // distribute rewards every hour (seconds)
 )
 
+// Suggestion lifecycle parameters (whitepaper §3.1.2).
+const (
+	DefaultApprovalThresholdBps int64 = 500   // 5% in basis points
+	DefaultDwellTimeSecs        int64 = 86400 // 1 day
+	DeleteMajorityBps           int64 = 6667  // 2/3 ≈ 66.67% in basis points
+)
+
 type Domain struct {
     Name          string         `json:"name"`
     Admin         sdk.AccAddress `json:"admin"`
@@ -29,10 +36,12 @@ type Domain struct {
 }
 
 type DomainOptions struct {
-    AdminElectable   bool `json:"admin_electable"`
-    AnyoneCanJoin    bool `json:"anyone_can_join"`
-    OnlyAdminIssues  bool `json:"only_admin_issues"`
-    CoinBurnRequired bool `json:"coin_burn_required"`
+    AdminElectable    bool  `json:"admin_electable"`
+    AnyoneCanJoin     bool  `json:"anyone_can_join"`
+    OnlyAdminIssues   bool  `json:"only_admin_issues"`
+    CoinBurnRequired  bool  `json:"coin_burn_required"`
+    ApprovalThreshold int64 `json:"approval_threshold"` // basis points; 0 = use default (500 = 5%)
+    DefaultDwellTime  int64 `json:"default_dwell_time"` // seconds; 0 = use default (86400 = 1 day)
 }
 
 type Issue struct {
@@ -43,13 +52,16 @@ type Issue struct {
 }
 
 type Suggestion struct {
-    Name         string   `json:"name"`
-    Creator      string   `json:"creator"`
-    Stones       int      `json:"stones"`
-    Ratings      []Rating `json:"ratings"`
-    Color        string   `json:"color"`
-    DwellTime    int64    `json:"dwell_time"`
-    CreationDate int64    `json:"creation_date"` // unix timestamp
+    Name            string   `json:"name"`
+    Creator         string   `json:"creator"`
+    Stones          int      `json:"stones"`
+    Ratings         []Rating `json:"ratings"`
+    Color           string   `json:"color"`
+    DwellTime       int64    `json:"dwell_time"`
+    CreationDate    int64    `json:"creation_date"`     // unix timestamp
+    EnteredYellowAt int64    `json:"entered_yellow_at"` // when suggestion entered yellow zone
+    EnteredRedAt    int64    `json:"entered_red_at"`    // when suggestion entered red zone
+    DeleteVotes     int      `json:"delete_votes"`      // fast-delete vote counter
 }
 
 type Rating struct {
