@@ -1,4 +1,6 @@
-use cosmwasm_std::{entry_point, Binary, Deps, DepsMut, Env, MessageInfo, Response, StdResult, to_binary, Uint128};
+use cosmwasm_std::{
+    entry_point, to_binary, Binary, Deps, DepsMut, Env, MessageInfo, Response, StdResult, Uint128,
+};
 use cosmwasm_storage::{singleton, singleton_read};
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
@@ -14,8 +16,15 @@ pub struct State {
 pub struct InstantiateMsg {}
 
 #[entry_point]
-pub fn instantiate(deps: DepsMut, _env: Env, _info: MessageInfo, _msg: InstantiateMsg) -> StdResult<Response> {
-    let state = State { balance: Uint128::zero() };
+pub fn instantiate(
+    deps: DepsMut,
+    _env: Env,
+    _info: MessageInfo,
+    _msg: InstantiateMsg,
+) -> StdResult<Response> {
+    let state = State {
+        balance: Uint128::zero(),
+    };
     singleton(deps.storage, STATE_KEY).save(&state)?;
     Ok(Response::default())
 }
@@ -27,7 +36,12 @@ pub enum ExecuteMsg {
 }
 
 #[entry_point]
-pub fn execute(deps: DepsMut, _env: Env, _info: MessageInfo, msg: ExecuteMsg) -> StdResult<Response> {
+pub fn execute(
+    deps: DepsMut,
+    _env: Env,
+    _info: MessageInfo,
+    msg: ExecuteMsg,
+) -> StdResult<Response> {
     let mut state: State = singleton(deps.storage, STATE_KEY).load()?;
     match msg {
         ExecuteMsg::Deposit { amount } => {
@@ -35,7 +49,10 @@ pub fn execute(deps: DepsMut, _env: Env, _info: MessageInfo, msg: ExecuteMsg) ->
             singleton(deps.storage, STATE_KEY).save(&state)?;
             Ok(Response::new().add_attribute("action", "deposit"))
         }
-        ExecuteMsg::Withdraw { amount, recipient: _ } => {
+        ExecuteMsg::Withdraw {
+            amount,
+            recipient: _,
+        } => {
             if state.balance < amount {
                 return Err(cosmwasm_std::StdError::generic_err("Insufficient funds"));
             }

@@ -1,4 +1,6 @@
-use cosmwasm_std::{entry_point, Binary, Deps, DepsMut, Env, MessageInfo, Response, StdResult, to_binary};
+use cosmwasm_std::{
+    entry_point, to_binary, Binary, Deps, DepsMut, Env, MessageInfo, Response, StdResult,
+};
 use cosmwasm_storage::{singleton, singleton_read};
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
@@ -31,7 +33,12 @@ pub struct KeyPair {
 pub struct InstantiateMsg {}
 
 #[entry_point]
-pub fn instantiate(deps: DepsMut, _env: Env, info: MessageInfo, _msg: InstantiateMsg) -> StdResult<Response> {
+pub fn instantiate(
+    deps: DepsMut,
+    _env: Env,
+    info: MessageInfo,
+    _msg: InstantiateMsg,
+) -> StdResult<Response> {
     let state = State {
         proposals: vec![],
         next_id: 1,
@@ -46,12 +53,24 @@ pub fn instantiate(deps: DepsMut, _env: Env, info: MessageInfo, _msg: Instantiat
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
 pub enum ExecuteMsg {
-    SubmitProposal { title: String, description: String },
-    Vote { proposal_id: u64, vote: i8, public_key: String },
+    SubmitProposal {
+        title: String,
+        description: String,
+    },
+    Vote {
+        proposal_id: u64,
+        vote: i8,
+        public_key: String,
+    },
 }
 
 #[entry_point]
-pub fn execute(deps: DepsMut, _env: Env, info: MessageInfo, msg: ExecuteMsg) -> StdResult<Response> {
+pub fn execute(
+    deps: DepsMut,
+    _env: Env,
+    info: MessageInfo,
+    msg: ExecuteMsg,
+) -> StdResult<Response> {
     let mut state: State = singleton(deps.storage, STATE_KEY).load()?;
     match msg {
         ExecuteMsg::SubmitProposal { title, description } => {
@@ -66,17 +85,27 @@ pub fn execute(deps: DepsMut, _env: Env, info: MessageInfo, msg: ExecuteMsg) -> 
             singleton(deps.storage, STATE_KEY).save(&state)?;
             Ok(Response::new().add_attribute("action", "submit_proposal"))
         }
-        ExecuteMsg::Vote { proposal_id, vote, public_key } => {
+        ExecuteMsg::Vote {
+            proposal_id,
+            vote,
+            public_key,
+        } => {
             if vote < -5 || vote > 5 {
-                return Err(cosmwasm_std::StdError::generic_err("Vote must be between -5 and 5"));
+                return Err(cosmwasm_std::StdError::generic_err(
+                    "Vote must be between -5 and 5",
+                ));
             }
-            let key_exists = state.key_pairs.iter().any(|kp| {
-                kp.owner == info.sender.to_string() && kp.public_key == public_key
-            });
+            let key_exists = state
+                .key_pairs
+                .iter()
+                .any(|kp| kp.owner == info.sender.to_string() && kp.public_key == public_key);
             if !key_exists {
                 return Err(cosmwasm_std::StdError::generic_err("Invalid key pair"));
             }
-            let proposal = state.proposals.iter_mut().find(|p| p.id == proposal_id)
+            let proposal = state
+                .proposals
+                .iter_mut()
+                .find(|p| p.id == proposal_id)
                 .ok_or(cosmwasm_std::StdError::generic_err("Proposal not found"))?;
             proposal.votes.push(vote);
             singleton(deps.storage, STATE_KEY).save(&state)?;
