@@ -24,11 +24,13 @@ TrueRepublic/
 │   ├── truedemocracy/          ✅  Governance module (domains, voting, PoD consensus)
 │   │   ├── keeper.go               Domain CRUD, proposals, anonymous ratings (eq.2, eq.3)
 │   │   ├── anonymity.go            Permission register, anonymous voting (WP §4)
+│   │   ├── stones.go               Stone voting, VoteToEarn, list sorting (WP §3.1)
 │   │   ├── validator.go            Proof of Domain validator lifecycle
 │   │   ├── slashing.go             Double-sign & downtime penalties
 │   │   ├── module.go               SDK module wiring, InitGenesis, EndBlock
 │   │   ├── types.go                Domain, Validator, Issue, Rating, VoteCommitment
 │   │   ├── tree.go                 Hierarchical node tree for vote propagation
+│   │   ├── stones_test.go           20 stones / VoteToEarn tests
 │   │   ├── anonymity_test.go       15 anonymity / permission register tests
 │   │   ├── validator_test.go       18 validator / PoD tests
 │   │   └── slashing_test.go        6 slashing tests
@@ -69,6 +71,9 @@ TrueRepublic/
 | Anonymous Voting (WP §4) | ✅ | `x/truedemocracy/anonymity.go` |
 | Permission Register & Purge | ✅ | `x/truedemocracy/anonymity.go` |
 | Domain Key Pairs (unlinkable) | ✅ | `x/truedemocracy/keeper.go` |
+| Stones Voting (WP §3.1) | ✅ | `x/truedemocracy/stones.go` |
+| VoteToEarn Rewards | ✅ | `x/truedemocracy/stones.go` |
+| List Sorting (stones + date) | ✅ | `x/truedemocracy/stones.go` |
 
 ---
 
@@ -85,11 +90,12 @@ go test ./... -race -cover
 ## Current Status
 
 - ✅ Core blockchain compiles and runs (Cosmos SDK v0.50.13)
-- ✅ 90 unit tests passing across 3 modules
+- ✅ 107 unit tests passing across 3 modules
 - ✅ Whitepaper tokenomics fully implemented
 - ✅ Proof of Domain consensus with validator management
 - ✅ DEX with AMM swap, liquidity pools, 0.3% fees
 - ✅ Anonymous voting with domain key pairs and permission register (WP §4)
+- ✅ Stones voting with VoteToEarn rewards and list sorting (WP §3.1)
 - 🔵 CLI transaction commands and gRPC services not yet wired
 - 🔵 Wallets and contracts are skeleton placeholders
 - 🔵 CI/CD workflows prepared but not all enabled

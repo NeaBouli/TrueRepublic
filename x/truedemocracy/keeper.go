@@ -75,12 +75,13 @@ func (k Keeper) SubmitProposal(ctx sdk.Context, domainName, issueName, suggestio
     for i, issue := range domain.Issues {
         if issue.Name == issueName {
             domain.Issues[i].Suggestions = append(domain.Issues[i].Suggestions, Suggestion{
-                Name:      suggestionName,
-                Creator:   creator,
-                Ratings:   []Rating{},
-                Stones:    0,
-                Color:     "",
-                DwellTime: 0,
+                Name:         suggestionName,
+                Creator:      creator,
+                Ratings:      []Rating{},
+                Stones:       0,
+                Color:        "",
+                DwellTime:    0,
+                CreationDate: ctx.BlockTime().Unix(),
             })
             found = true
             break
@@ -88,9 +89,10 @@ func (k Keeper) SubmitProposal(ctx sdk.Context, domainName, issueName, suggestio
     }
     if !found {
         domain.Issues = append(domain.Issues, Issue{
-            Name:        issueName,
-            Suggestions: []Suggestion{{Name: suggestionName, Creator: creator, Ratings: []Rating{}, Stones: 0, Color: "", DwellTime: 0}},
-            Stones:      0,
+            Name:         issueName,
+            Suggestions:  []Suggestion{{Name: suggestionName, Creator: creator, Ratings: []Rating{}, Stones: 0, Color: "", DwellTime: 0, CreationDate: ctx.BlockTime().Unix()}},
+            Stones:       0,
+            CreationDate: ctx.BlockTime().Unix(),
         })
     }
 

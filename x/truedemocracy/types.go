@@ -36,18 +36,20 @@ type DomainOptions struct {
 }
 
 type Issue struct {
-    Name        string       `json:"name"`
-    Stones      int          `json:"stones"`
-    Suggestions []Suggestion `json:"suggestions"`
+    Name         string       `json:"name"`
+    Stones       int          `json:"stones"`
+    Suggestions  []Suggestion `json:"suggestions"`
+    CreationDate int64        `json:"creation_date"` // unix timestamp
 }
 
 type Suggestion struct {
-    Name       string   `json:"name"`
-    Creator    string   `json:"creator"`
-    Stones     int      `json:"stones"`
-    Ratings    []Rating `json:"ratings"`
-    Color      string   `json:"color"`
-    DwellTime  int64    `json:"dwell_time"`
+    Name         string   `json:"name"`
+    Creator      string   `json:"creator"`
+    Stones       int      `json:"stones"`
+    Ratings      []Rating `json:"ratings"`
+    Color        string   `json:"color"`
+    DwellTime    int64    `json:"dwell_time"`
+    CreationDate int64    `json:"creation_date"` // unix timestamp
 }
 
 type Rating struct {
