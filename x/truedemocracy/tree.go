@@ -38,16 +38,16 @@ func BuildTree() []*Node {
     return nodes
 }
 
-func (n *Node) PropagateAsync(ctx sdk.Context, k Keeper, domainName, issueName, suggestionName, voter string, rating int, privKey *ed25519.PrivKey) {
+func (n *Node) PropagateAsync(ctx sdk.Context, k Keeper, domainName, issueName, suggestionName string, rating int, domainPrivKey *ed25519.PrivKey) {
     go func() {
         n.Mu.Lock()
-        reward, cache, _ := k.RateProposal(ctx, domainName, issueName, suggestionName, voter, rating, privKey)
+        reward, cache, _ := k.RateProposal(ctx, domainName, issueName, suggestionName, rating, domainPrivKey)
         n.Cache["reward"] = reward
         n.Cache["avg_rating"] = cache["avg_rating"]
         n.Cache["stones"] = cache["stones"]
         n.Cache["treasury"] = cache["treasury"]
         if n.Parent != nil {
-            n.Parent.PropagateAsync(ctx, k, domainName, issueName, suggestionName, voter, rating, privKey)
+            n.Parent.PropagateAsync(ctx, k, domainName, issueName, suggestionName, rating, domainPrivKey)
         }
         n.Mu.Unlock()
     }()

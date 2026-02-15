@@ -51,8 +51,14 @@ type Suggestion struct {
 }
 
 type Rating struct {
-    Voter string `json:"voter"`
-    Value int    `json:"value"`
+    DomainPubKeyHex string `json:"domain_pub_key_hex"` // anonymous domain key (hex), unlinkable to avatar
+    Value           int    `json:"value"`
+}
+
+// VoteCommitment records a domain-key-signed vote without revealing voter identity.
+type VoteCommitment struct {
+    DomainPubKey string `json:"domain_pub_key"` // hex-encoded domain ed25519 pubkey
+    Signature    string `json:"signature"`       // hex-encoded signature over vote payload
 }
 
 // Validator represents an active Proof of Domain validator node.
@@ -86,6 +92,7 @@ func RegisterCodec(cdc *codec.LegacyAmino) {
     cdc.RegisterConcrete(Issue{}, "truedemocracy/Issue", nil)
     cdc.RegisterConcrete(Suggestion{}, "truedemocracy/Suggestion", nil)
     cdc.RegisterConcrete(Rating{}, "truedemocracy/Rating", nil)
+    cdc.RegisterConcrete(VoteCommitment{}, "truedemocracy/VoteCommitment", nil)
     cdc.RegisterConcrete(GenesisState{}, "truedemocracy/GenesisState", nil)
     cdc.RegisterConcrete(Validator{}, "truedemocracy/Validator", nil)
     cdc.RegisterConcrete(GenesisValidator{}, "truedemocracy/GenesisValidator", nil)

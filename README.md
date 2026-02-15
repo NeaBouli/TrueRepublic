@@ -22,12 +22,14 @@ TrueRepublic/
 ├── go.mod / go.sum             ✅  Go module (SDK v0.50.13, CometBFT v0.38.17)
 ├── x/
 │   ├── truedemocracy/          ✅  Governance module (domains, voting, PoD consensus)
-│   │   ├── keeper.go               Domain CRUD, proposals, ratings (eq.2, eq.3)
+│   │   ├── keeper.go               Domain CRUD, proposals, anonymous ratings (eq.2, eq.3)
+│   │   ├── anonymity.go            Permission register, anonymous voting (WP §4)
 │   │   ├── validator.go            Proof of Domain validator lifecycle
 │   │   ├── slashing.go             Double-sign & downtime penalties
 │   │   ├── module.go               SDK module wiring, InitGenesis, EndBlock
-│   │   ├── types.go                Domain, Validator, Issue, Suggestion types
+│   │   ├── types.go                Domain, Validator, Issue, Rating, VoteCommitment
 │   │   ├── tree.go                 Hierarchical node tree for vote propagation
+│   │   ├── anonymity_test.go       15 anonymity / permission register tests
 │   │   ├── validator_test.go       18 validator / PoD tests
 │   │   └── slashing_test.go        6 slashing tests
 │   └── dex/                    ✅  DEX module (AMM constant-product swap)
@@ -64,6 +66,9 @@ TrueRepublic/
 | Domain Interest | ✅ | `treasury/keeper/rewards.go` (eq.4) |
 | Release Decay | ✅ | `treasury/keeper/rewards.go` |
 | Treasury Drainage | ✅ | `treasury/keeper/rewards.go` (eq.2) |
+| Anonymous Voting (WP §4) | ✅ | `x/truedemocracy/anonymity.go` |
+| Permission Register & Purge | ✅ | `x/truedemocracy/anonymity.go` |
+| Domain Key Pairs (unlinkable) | ✅ | `x/truedemocracy/keeper.go` |
 
 ---
 
@@ -80,10 +85,11 @@ go test ./... -race -cover
 ## Current Status
 
 - ✅ Core blockchain compiles and runs (Cosmos SDK v0.50.13)
-- ✅ 75 unit tests passing across 3 modules
+- ✅ 90 unit tests passing across 3 modules
 - ✅ Whitepaper tokenomics fully implemented
 - ✅ Proof of Domain consensus with validator management
 - ✅ DEX with AMM swap, liquidity pools, 0.3% fees
+- ✅ Anonymous voting with domain key pairs and permission register (WP §4)
 - 🔵 CLI transaction commands and gRPC services not yet wired
 - 🔵 Wallets and contracts are skeleton placeholders
 - 🔵 CI/CD workflows prepared but not all enabled

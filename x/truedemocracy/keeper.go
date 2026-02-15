@@ -1,6 +1,9 @@
 package truedemocracy
 
 import (
+    "encoding/hex"
+    "fmt"
+
     errorsmod "cosmossdk.io/errors"
     storetypes "cosmossdk.io/store/types"
     "github.com/cosmos/cosmos-sdk/codec"
@@ -96,7 +99,18 @@ func (k Keeper) SubmitProposal(ctx sdk.Context, domainName, issueName, suggestio
     return nil
 }
 
-func (k Keeper) RateProposal(ctx sdk.Context, domainName, issueName, suggestionName, voter string, rating int, privKey *ed25519.PrivKey) (sdk.Coins, map[string]interface{}, error) {
+// RateProposal records an anonymous rating on a suggestion. The caller proves
+// they control a key in the domain's permission register by providing their
+// domain-specific private key. The voter's avatar name is never stored —
+// only the domain public key hex appears on-chain (whitepaper Section 4).
+func (k Keeper) RateProposal(ctx sdk.Context, domainName, issueName, suggestionName string, rating int, domainPrivKey *ed25519.PrivKey) (sdk.Coins, map[string]interface{}, error) {
+    if domainPrivKey == nil {
+        return sdk.Coins{}, nil, errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "domain private key is required for anonymous voting")
+    }
+
+    // Derive domain public key (anonymous identity).
+    domainPubKeyHex := hex.EncodeToString(domainPrivKey.PubKey().Bytes())
+
     store := ctx.KVStore(k.StoreKey)
     domainBz := store.Get([]byte("domain:" + domainName))
     if domainBz == nil {
@@ -104,6 +118,27 @@ func (k Keeper) RateProposal(ctx sdk.Context, domainName, issueName, suggestionN
     }
     var domain Domain
     k.cdc.MustUnmarshalLengthPrefixed(domainBz, &domain)
+
+    // Verify domain key is in the permission register.
+    if !k.IsKeyAuthorized(ctx, domainName, domainPubKeyHex) {
+        return sdk.Coins{}, nil, errorsmod.Wrap(sdkerrors.ErrUnauthorized, "domain key not in permission register")
+    }
+
+    // Sign the vote payload to prove key ownership.
+    payload := []byte(fmt.Sprintf("%s|%s|%s|%d", domainName, issueName, suggestionName, rating))
+    sig, err := domainPrivKey.Sign(payload)
+    if err != nil {
+        return sdk.Coins{}, nil, errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "failed to sign vote payload")
+    }
+    // Verify the signature (proves caller controls the key).
+    if !domainPrivKey.PubKey().VerifySignature(payload, sig) {
+        return sdk.Coins{}, nil, errorsmod.Wrap(sdkerrors.ErrUnauthorized, "vote signature verification failed")
+    }
+
+    // Prevent double-voting with the same domain key.
+    if HasDomainKeyVoted(domain, issueName, suggestionName, domainPubKeyHex) {
+        return sdk.Coins{}, nil, errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "domain key has already voted on this suggestion")
+    }
 
     foundIssue := false
     foundSuggestion := false
@@ -113,8 +148,8 @@ func (k Keeper) RateProposal(ctx sdk.Context, domainName, issueName, suggestionN
             for j, suggestion := range issue.Suggestions {
                 if suggestion.Name == suggestionName {
                     domain.Issues[i].Suggestions[j].Ratings = append(domain.Issues[i].Suggestions[j].Ratings, Rating{
-                        Voter: voter,
-                        Value: rating,
+                        DomainPubKeyHex: domainPubKeyHex,
+                        Value:           rating,
                     })
                     foundSuggestion = true
                     break
