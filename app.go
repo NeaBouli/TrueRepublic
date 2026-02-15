@@ -11,11 +11,13 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
 
+	"truerepublic/x/dex"
 	"truerepublic/x/truedemocracy"
 )
 
 var ModuleBasics = module.NewBasicManager(
 	truedemocracy.AppModuleBasic{},
+	dex.AppModuleBasic{},
 )
 
 type TrueRepublicApp struct {
@@ -29,8 +31,9 @@ func NewTrueRepublicApp(logger log.Logger, db dbm.DB) *TrueRepublicApp {
 	cdc := codec.NewLegacyAmino()
 	sdk.RegisterLegacyAminoCodec(cdc)
 	truedemocracy.RegisterCodec(cdc)
+	dex.RegisterCodec(cdc)
 
-	keys := storetypes.NewKVStoreKeys(truedemocracy.ModuleName)
+	keys := storetypes.NewKVStoreKeys(truedemocracy.ModuleName, dex.ModuleName)
 
 	app := &TrueRepublicApp{
 		BaseApp: baseapp.NewBaseApp("TrueRepublic", logger, db, nil),
@@ -39,9 +42,11 @@ func NewTrueRepublicApp(logger log.Logger, db dbm.DB) *TrueRepublicApp {
 	}
 
 	tdKeeper := truedemocracy.NewKeeper(cdc, keys[truedemocracy.ModuleName], truedemocracy.BuildTree())
+	dexKeeper := dex.NewKeeper(cdc, keys[dex.ModuleName])
 
 	app.mm = module.NewManager(
 		truedemocracy.NewAppModule(cdc, tdKeeper),
+		dex.NewAppModule(cdc, dexKeeper),
 	)
 
 	app.MountKVStores(keys)

@@ -7,84 +7,83 @@
 
 ---
 
-## 🌍 Vision
+## Vision
 
-TrueRepublic is a platform for **direct democracy** and **digital self-determination**.  
-The token **PNYX** enables governance, treasury mechanisms and a decentralized DEX.  
+TrueRepublic is a platform for **direct democracy** and **digital self-determination**.
+The token **PNYX** enables governance, treasury mechanisms and a decentralized DEX.
 
 ---
 
-## 📂 Repository Structure & Status
+## Repository Structure & Status
 
 ```text
 TrueRepublic/
- ├── blockchain/        ✅  Cosmos SDK chain (modules: truedemocracy, dex, treasury)
- ├── contracts/         ✅  CosmWasm smart contracts (governance)
- ├── web-wallet/        ✅  React web wallet (Keplr integration)
- ├── mobile-wallet/     🔵  React Native mobile wallet (basic version; features pending)
- ├── docs/              ✅  White Papers, API, DEX, Install guides
- ├── scripts/           🔵  DevOps & deployment (planned)
- ├── tests/             🔴  Unit & E2E tests largely missing
- └── .github/
-     ├── ISSUE_TEMPLATE ✅  available
-     └── workflows/     🔵  CI/CD workflows added (security scans pending)
-📑 Documentation
-Structured White Paper (Markdown)
+├── app.go                      ✅  Cosmos SDK application entry point
+├── go.mod / go.sum             ✅  Go module (SDK v0.50.13, CometBFT v0.38.17)
+├── x/
+│   ├── truedemocracy/          ✅  Governance module (domains, voting, PoD consensus)
+│   │   ├── keeper.go               Domain CRUD, proposals, ratings (eq.2, eq.3)
+│   │   ├── validator.go            Proof of Domain validator lifecycle
+│   │   ├── slashing.go             Double-sign & downtime penalties
+│   │   ├── module.go               SDK module wiring, InitGenesis, EndBlock
+│   │   ├── types.go                Domain, Validator, Issue, Suggestion types
+│   │   ├── tree.go                 Hierarchical node tree for vote propagation
+│   │   ├── validator_test.go       18 validator / PoD tests
+│   │   └── slashing_test.go        6 slashing tests
+│   └── dex/                    ✅  DEX module (AMM constant-product swap)
+│       ├── keeper.go               CreatePool, Swap (x*y=k), AddLiquidity, RemoveLiquidity
+│       ├── module.go               SDK module wiring, InitGenesis
+│       ├── types.go                Pool type, swap fee constant (0.3%)
+│       └── keeper_test.go          20 DEX unit tests
+├── treasury/
+│   └── keeper/
+│       ├── rewards.go          ✅  Whitepaper tokenomics equations 1-5
+│       └── rewards_test.go         31 tokenomics tests
+├── ui/                         🔵  C++ desktop UI (prototype)
+├── contracts/                  🔵  CosmWasm smart contracts (skeletons)
+├── docs/                       ✅  Whitepaper (PDF + Markdown), install guide
+├── web-wallet/                 🔵  React web wallet (skeleton)
+├── mobile-wallet/              🔵  React Native wallet (skeleton)
+├── SECURITY.md                 ✅  Security policy
+└── .github/                    🔵  CI/CD workflows
+```
 
-TrueRepublic Native White Paper (PDF)
+---
 
-Security Policy
+## Implemented Features
 
-CI/CD Security Guide
+| Feature | Status | Location |
+|---------|--------|----------|
+| Domains & Governance | ✅ | `x/truedemocracy/keeper.go` |
+| Systemic Consensing (-5..+5) | ✅ | `x/truedemocracy/keeper.go` |
+| Proof of Domain (PoD) | ✅ | `x/truedemocracy/validator.go` |
+| Validator Slashing | ✅ | `x/truedemocracy/slashing.go` |
+| Tokenomics (eq.1-5) | ✅ | `treasury/keeper/rewards.go` |
+| DEX / AMM (x*y=k) | ✅ | `x/dex/keeper.go` |
+| Node Staking Rewards | ✅ | `treasury/keeper/rewards.go` (eq.5) |
+| Domain Interest | ✅ | `treasury/keeper/rewards.go` (eq.4) |
+| Release Decay | ✅ | `treasury/keeper/rewards.go` |
+| Treasury Drainage | ✅ | `treasury/keeper/rewards.go` (eq.2) |
 
-API & DEX docs (skeletons):
+---
 
-API.md 🔵
+## Build & Test
 
-DEX.md 🔵
-
-🛠️ Build & Development
-Blockchain (Cosmos SDK)
-bash
-Code kopieren
-cd blockchain
+```bash
 go mod tidy
 go build ./...
 go test ./... -race -cover
-Contracts (CosmWasm)
-bash
-Code kopieren
-cd contracts
-cargo fmt --all -- --check
-cargo clippy --all-targets -- -D warnings
-cargo test --all
-Web Wallet (React)
-bash
-Code kopieren
-cd web-wallet
-npm ci
-npm test
-npm run build
-Mobile Wallet (React Native)
-bash
-Code kopieren
-cd mobile-wallet
-npm ci
-npm test
-🚀 Improvements & To-dos
-Blockchain: add more unit tests per module (happy & error paths)
+```
 
-Contracts: modularization, strict clippy enforcement
+---
 
-Wallets: more mock & E2E tests (Jest, Detox)
+## Current Status
 
-CI/CD: add security scans (Trivy/Grype), SBOM generation
-
-Docs: complete API/DEX documentation
-
-📌 Current Status
-✅ White Papers (Markdown + PDF) and structured README in place
-
-🔵 CI/CD workflows prepared but not all enabled
-
-🔴 Tests & security checks still missing
+- ✅ Core blockchain compiles and runs (Cosmos SDK v0.50.13)
+- ✅ 75 unit tests passing across 3 modules
+- ✅ Whitepaper tokenomics fully implemented
+- ✅ Proof of Domain consensus with validator management
+- ✅ DEX with AMM swap, liquidity pools, 0.3% fees
+- 🔵 CLI transaction commands and gRPC services not yet wired
+- 🔵 Wallets and contracts are skeleton placeholders
+- 🔵 CI/CD workflows prepared but not all enabled

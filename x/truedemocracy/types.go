@@ -1,7 +1,6 @@
 package truedemocracy
 
 import (
-    "cosmossdk.io/math"
     "github.com/cosmos/cosmos-sdk/codec"
     "github.com/cosmos/cosmos-sdk/crypto/keys/ed25519"
     sdk "github.com/cosmos/cosmos-sdk/types"
@@ -56,12 +55,6 @@ type Rating struct {
     Value int    `json:"value"`
 }
 
-type DexPool struct {
-    PnyxReserve  math.Int `json:"pnyx_reserve"`
-    AssetReserve math.Int `json:"asset_reserve"`
-    AssetType    string   `json:"asset_type"`
-}
-
 // Validator represents an active Proof of Domain validator node.
 type Validator struct {
     OperatorAddr string    `json:"operator_addr"`
@@ -93,7 +86,6 @@ func RegisterCodec(cdc *codec.LegacyAmino) {
     cdc.RegisterConcrete(Issue{}, "truedemocracy/Issue", nil)
     cdc.RegisterConcrete(Suggestion{}, "truedemocracy/Suggestion", nil)
     cdc.RegisterConcrete(Rating{}, "truedemocracy/Rating", nil)
-    cdc.RegisterConcrete(DexPool{}, "truedemocracy/DexPool", nil)
     cdc.RegisterConcrete(GenesisState{}, "truedemocracy/GenesisState", nil)
     cdc.RegisterConcrete(Validator{}, "truedemocracy/Validator", nil)
     cdc.RegisterConcrete(GenesisValidator{}, "truedemocracy/GenesisValidator", nil)
