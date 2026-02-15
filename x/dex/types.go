@@ -10,6 +10,9 @@ const ModuleName = "dex"
 // SwapFeeBps is the swap fee in basis points (0.3%).
 const SwapFeeBps int64 = 30
 
+// BurnBps is the PNYX burn rate on swaps TO PNYX in basis points (1%).
+const BurnBps int64 = 100
+
 // Pool represents an AMM liquidity pool pairing PNYX with another asset.
 // The constant-product invariant x * y = k governs pricing.
 type Pool struct {
@@ -17,6 +20,7 @@ type Pool struct {
 	AssetReserve math.Int `json:"asset_reserve"`
 	AssetDenom   string   `json:"asset_denom"`
 	TotalShares  math.Int `json:"total_shares"`
+	TotalBurned  math.Int `json:"total_burned"` // cumulative PNYX burned on swaps
 }
 
 type GenesisState struct {
@@ -36,6 +40,7 @@ func DefaultGenesisState() GenesisState {
 				AssetReserve: math.NewInt(1_000_000),
 				AssetDenom:   "atom",
 				TotalShares:  math.NewInt(1_000_000), // sqrt(1M * 1M) = 1M
+			TotalBurned:  math.ZeroInt(),
 			},
 		},
 	}

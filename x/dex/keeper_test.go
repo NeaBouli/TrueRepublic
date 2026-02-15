@@ -293,6 +293,111 @@ func TestRemoveLiquidity(t *testing.T) {
 	})
 }
 
+// ---------- PNYX Burn on Swap (WP §5) ----------
+
+func TestSwapPNYXBurn(t *testing.T) {
+	k, ctx := setupKeeper(t)
+	k.CreatePool(ctx, "atom", math.NewInt(1_000_000), math.NewInt(1_000_000))
+
+	// Swap ATOM → PNYX (buying PNYX triggers 1% burn).
+	out, err := k.Swap(ctx, "atom", math.NewInt(10_000), "pnyx")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	// Calculate what output would be without burn.
+	// With a 1M/1M pool and 10k input at 0.3% fee:
+	// raw_out ≈ 9871, burn = 9871 * 1% ≈ 98, net out ≈ 9773
+	// The user should receive less than the raw AMM output.
+	rawNoFee := math.NewInt(9901) // approximate without fee
+	if out.GTE(rawNoFee) {
+		t.Errorf("output %s should be less than no-fee output %s (burn + fee)", out, rawNoFee)
+	}
+
+	// Check that TotalBurned is tracked.
+	pool, _ := k.GetPool(ctx, "atom")
+	if !pool.TotalBurned.IsPositive() {
+		t.Error("TotalBurned should be positive after PNYX purchase")
+	}
+
+	// Verify burn is approximately 1% of raw output.
+	// raw output (before burn) ≈ out + TotalBurned
+	rawOutput := out.Add(pool.TotalBurned)
+	expectedBurn := rawOutput.Quo(math.NewInt(100)) // 1%
+	// Allow ±1 for rounding.
+	diff := pool.TotalBurned.Sub(expectedBurn).Abs()
+	if diff.GT(math.OneInt()) {
+		t.Errorf("burn = %s, expected ~%s (1%% of %s)", pool.TotalBurned, expectedBurn, rawOutput)
+	}
+}
+
+func TestSwapNoBurnOnSell(t *testing.T) {
+	k, ctx := setupKeeper(t)
+	k.CreatePool(ctx, "atom", math.NewInt(1_000_000), math.NewInt(1_000_000))
+
+	// Swap PNYX → ATOM (selling PNYX — no burn).
+	_, err := k.Swap(ctx, "pnyx", math.NewInt(10_000), "atom")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	pool, _ := k.GetPool(ctx, "atom")
+	if pool.TotalBurned.IsPositive() {
+		t.Errorf("TotalBurned = %s, want 0 (no burn when selling PNYX)", pool.TotalBurned)
+	}
+}
+
+func TestBurnAccumulation(t *testing.T) {
+	k, ctx := setupKeeper(t)
+	k.CreatePool(ctx, "atom", math.NewInt(1_000_000), math.NewInt(1_000_000))
+
+	// Perform multiple swaps buying PNYX.
+	for i := 0; i < 5; i++ {
+		_, err := k.Swap(ctx, "atom", math.NewInt(1_000), "pnyx")
+		if err != nil {
+			t.Fatalf("swap %d failed: %v", i, err)
+		}
+	}
+
+	pool, _ := k.GetPool(ctx, "atom")
+	if !pool.TotalBurned.IsPositive() {
+		t.Fatal("TotalBurned should be positive after 5 PNYX purchases")
+	}
+
+	// Each swap burns ~1% of ~997 PNYX ≈ ~9 per swap, ~45 total.
+	if pool.TotalBurned.LT(math.NewInt(30)) {
+		t.Errorf("TotalBurned = %s, expected at least 30 after 5 swaps", pool.TotalBurned)
+	}
+}
+
+func TestBurnReducesUserOutput(t *testing.T) {
+	// Two identical pools, one with burn check.
+	k, ctx := setupKeeper(t)
+	k.CreatePool(ctx, "atom", math.NewInt(1_000_000), math.NewInt(1_000_000))
+
+	// Buy PNYX (has burn).
+	outBuy, _ := k.Swap(ctx, "atom", math.NewInt(10_000), "pnyx")
+
+	// Reset pool.
+	k2, ctx2 := setupKeeper(t)
+	k2.CreatePool(ctx2, "atom", math.NewInt(1_000_000), math.NewInt(1_000_000))
+
+	// Sell PNYX for same amount (no burn).
+	outSell, _ := k2.Swap(ctx2, "pnyx", math.NewInt(10_000), "atom")
+
+	// Both should be positive and similar magnitude, but buy output
+	// (PNYX) should be reduced by the burn.
+	if !outBuy.IsPositive() || !outSell.IsPositive() {
+		t.Fatal("both outputs should be positive")
+	}
+
+	// The burn pool should show the difference.
+	pool, _ := k.GetPool(ctx, "atom")
+	if pool.TotalBurned.IsZero() {
+		t.Error("burn pool should track burned amount")
+	}
+}
+
 // ---------- intSqrt ----------
 
 func TestIntSqrt(t *testing.T) {

@@ -60,6 +60,7 @@ func (k Keeper) CreatePool(ctx sdk.Context, assetDenom string, pnyxAmt, assetAmt
 		AssetReserve: assetAmt,
 		AssetDenom:   assetDenom,
 		TotalShares:  shares,
+		TotalBurned:  math.ZeroInt(),
 	}
 	k.SetPool(ctx, pool)
 	return nil
@@ -111,13 +112,24 @@ func (k Keeper) Swap(ctx sdk.Context, inputDenom string, inputAmt math.Int, outp
 		return math.Int{}, errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "swap would drain the pool")
 	}
 
+	// Apply 1% PNYX burn when buying PNYX (WP §5).
+	burnAmt := math.ZeroInt()
+	if outputDenom == pnyxDenom {
+		burnAmt = outputAmt.Mul(math.NewInt(BurnBps)).Quo(math.NewInt(10000))
+		if burnAmt.IsPositive() {
+			outputAmt = outputAmt.Sub(burnAmt)
+			pool.TotalBurned = pool.TotalBurned.Add(burnAmt)
+		}
+	}
+
 	// Update reserves.
 	if inputDenom == pnyxDenom {
 		pool.PnyxReserve = pool.PnyxReserve.Add(inputAmt)
 		pool.AssetReserve = pool.AssetReserve.Sub(outputAmt)
 	} else {
 		pool.AssetReserve = pool.AssetReserve.Add(inputAmt)
-		pool.PnyxReserve = pool.PnyxReserve.Sub(outputAmt)
+		// Subtract output + burn from PNYX reserve (burn removes from circulation).
+		pool.PnyxReserve = pool.PnyxReserve.Sub(outputAmt).Sub(burnAmt)
 	}
 
 	k.SetPool(ctx, pool)
