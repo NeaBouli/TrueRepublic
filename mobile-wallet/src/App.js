@@ -14,6 +14,7 @@ export default function App() {
                 screenOptions={{
                     headerStyle: { backgroundColor: "#1F2937" },
                     headerTintColor: "#fff",
+                    headerTitle: "TrueRepublic",
                     tabBarStyle: { backgroundColor: "#1F2937", borderTopColor: "#374151" },
                     tabBarActiveTintColor: "#3B82F6",
                     tabBarInactiveTintColor: "#9CA3AF",

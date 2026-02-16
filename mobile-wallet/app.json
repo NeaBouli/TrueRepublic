@@ -4,6 +4,10 @@
     "slug": "truerepublic-wallet",
     "version": "0.1.0",
     "orientation": "portrait",
+    "icon": "./assets/logo.svg",
+    "splash": {
+      "backgroundColor": "#1F2937"
+    },
     "platforms": ["ios", "android"],
     "ios": {
       "supportsTablet": true
