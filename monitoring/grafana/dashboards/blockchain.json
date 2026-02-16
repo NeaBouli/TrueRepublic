@@ -1,0 +1,92 @@
+{
+  "dashboard": {
+    "id": null,
+    "uid": "truerepublic-blockchain",
+    "title": "TrueRepublic Blockchain",
+    "tags": ["truerepublic", "cosmos", "blockchain"],
+    "timezone": "browser",
+    "refresh": "10s",
+    "time": {
+      "from": "now-1h",
+      "to": "now"
+    },
+    "panels": [
+      {
+        "id": 1,
+        "title": "Block Height",
+        "type": "stat",
+        "gridPos": { "h": 4, "w": 6, "x": 0, "y": 0 },
+        "targets": [
+          { "expr": "cometbft_consensus_height", "legendFormat": "Height" }
+        ],
+        "fieldConfig": {
+          "defaults": { "unit": "none", "thresholds": { "mode": "absolute", "steps": [{ "color": "green", "value": null }] } }
+        }
+      },
+      {
+        "id": 2,
+        "title": "Connected Peers",
+        "type": "gauge",
+        "gridPos": { "h": 4, "w": 6, "x": 6, "y": 0 },
+        "targets": [
+          { "expr": "cometbft_p2p_peers", "legendFormat": "Peers" }
+        ],
+        "fieldConfig": {
+          "defaults": { "min": 0, "max": 50, "thresholds": { "mode": "absolute", "steps": [{ "color": "red", "value": 0 }, { "color": "yellow", "value": 2 }, { "color": "green", "value": 5 }] } }
+        }
+      },
+      {
+        "id": 3,
+        "title": "Mempool Size",
+        "type": "stat",
+        "gridPos": { "h": 4, "w": 6, "x": 12, "y": 0 },
+        "targets": [
+          { "expr": "cometbft_mempool_size", "legendFormat": "Txs" }
+        ],
+        "fieldConfig": {
+          "defaults": { "unit": "none", "thresholds": { "mode": "absolute", "steps": [{ "color": "green", "value": null }, { "color": "yellow", "value": 100 }, { "color": "red", "value": 500 }] } }
+        }
+      },
+      {
+        "id": 4,
+        "title": "Missing Validators",
+        "type": "stat",
+        "gridPos": { "h": 4, "w": 6, "x": 18, "y": 0 },
+        "targets": [
+          { "expr": "cometbft_consensus_missing_validators", "legendFormat": "Missing" }
+        ],
+        "fieldConfig": {
+          "defaults": { "unit": "none", "thresholds": { "mode": "absolute", "steps": [{ "color": "green", "value": null }, { "color": "red", "value": 1 }] } }
+        }
+      },
+      {
+        "id": 5,
+        "title": "Consensus Rounds",
+        "type": "timeseries",
+        "gridPos": { "h": 8, "w": 12, "x": 0, "y": 4 },
+        "targets": [
+          { "expr": "cometbft_consensus_rounds", "legendFormat": "Rounds" }
+        ]
+      },
+      {
+        "id": 6,
+        "title": "Transactions per Block",
+        "type": "timeseries",
+        "gridPos": { "h": 8, "w": 12, "x": 12, "y": 4 },
+        "targets": [
+          { "expr": "cometbft_consensus_num_txs", "legendFormat": "Txs/Block" }
+        ]
+      },
+      {
+        "id": 7,
+        "title": "Block Interval (seconds)",
+        "type": "timeseries",
+        "gridPos": { "h": 8, "w": 24, "x": 0, "y": 12 },
+        "targets": [
+          { "expr": "rate(cometbft_consensus_block_interval_seconds_sum[5m]) / rate(cometbft_consensus_block_interval_seconds_count[5m])", "legendFormat": "Avg Block Time" }
+        ]
+      }
+    ]
+  },
+  "overwrite": true
+}

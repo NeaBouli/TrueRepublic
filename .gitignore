@@ -1,2 +1,48 @@
+# OS
 .DS_Store
+Thumbs.db
+
+# Go
+/build/
+*.exe
+*.test
+*.out
+vendor/
+
+# Rust
 contracts/target/
+
+# Node.js
+node_modules/
+web-wallet/build/
+mobile-wallet/.expo/
+npm-debug.log*
+yarn-error.log*
+
+# Environment and secrets
+.env
+.env.local
+.env.*.local
+*.pem
+*.key
+
+# Logs
+*.log
+
+# Coverage
+coverage/
+*.coverprofile
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Build artifacts
+dist/
+*.wasm
+
+# Chain data (never commit)
+.truerepublic/

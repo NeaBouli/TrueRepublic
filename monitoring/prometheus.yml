@@ -1,0 +1,16 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+scrape_configs:
+  # CometBFT node metrics (port 26660 when prometheus=true in config.toml)
+  - job_name: 'truerepublic-node'
+    static_configs:
+      - targets: ['truerepublic-node:26660']
+        labels:
+          chain_id: 'truerepublic-1'
+
+  # Prometheus self-monitoring
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
