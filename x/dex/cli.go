@@ -7,12 +7,10 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"cosmossdk.io/math"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/client/tx"
 	"github.com/cosmos/cosmos-sdk/codec"
-	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
 // GetTxCmd returns the transaction commands for the dex module.
@@ -178,13 +176,12 @@ func CmdQueryPool() *cobra.Command {
 			if err != nil {
 				return err
 			}
-			route := fmt.Sprintf("custom/%s/%s/%s", ModuleName, QueryPool, args[0])
-			bz, _, err := clientCtx.QueryWithData(route, nil)
+			queryClient := NewQueryClient(clientCtx)
+			resp, err := queryClient.Pool(cmd.Context(), &QueryPoolRequest{AssetDenom: args[0]})
 			if err != nil {
 				return err
 			}
-			fmt.Println(string(bz))
-			return nil
+			return clientCtx.PrintObjectLegacy(json.RawMessage(resp.Result))
 		},
 	}
 	flags.AddQueryFlagsToCmd(cmd)
@@ -201,22 +198,14 @@ func CmdQueryPools() *cobra.Command {
 			if err != nil {
 				return err
 			}
-			route := fmt.Sprintf("custom/%s/%s", ModuleName, QueryPools)
-			bz, _, err := clientCtx.QueryWithData(route, nil)
+			queryClient := NewQueryClient(clientCtx)
+			resp, err := queryClient.Pools(cmd.Context(), &QueryPoolsRequest{})
 			if err != nil {
 				return err
 			}
-			fmt.Println(string(bz))
-			return nil
+			return clientCtx.PrintObjectLegacy(json.RawMessage(resp.Result))
 		},
 	}
 	flags.AddQueryFlagsToCmd(cmd)
 	return cmd
 }
-
-// suppress unused import warnings
-var (
-	_ = json.Marshal
-	_ = math.Int{}
-	_ = sdk.AccAddress{}
-)

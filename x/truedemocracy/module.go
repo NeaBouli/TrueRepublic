@@ -35,7 +35,23 @@ func (AppModuleBasic) RegisterLegacyAminoCodec(cdc *codec.LegacyAmino) {
 	RegisterCodec(cdc)
 }
 
-func (AppModuleBasic) RegisterInterfaces(registry codectypes.InterfaceRegistry) {}
+func (AppModuleBasic) RegisterInterfaces(registry codectypes.InterfaceRegistry) {
+	registry.RegisterImplementations((*sdk.Msg)(nil),
+		&MsgCreateDomain{},
+		&MsgSubmitProposal{},
+		&MsgRegisterValidator{},
+		&MsgWithdrawStake{},
+		&MsgRemoveValidator{},
+		&MsgUnjail{},
+		&MsgJoinPermissionRegister{},
+		&MsgPurgePermissionRegister{},
+		&MsgPlaceStoneOnIssue{},
+		&MsgPlaceStoneOnSuggestion{},
+		&MsgPlaceStoneOnMember{},
+		&MsgVoteToExclude{},
+		&MsgVoteToDelete{},
+	)
+}
 
 func (AppModuleBasic) DefaultGenesis(cdc codec.JSONCodec) json.RawMessage {
 	genesis := DefaultGenesisState()
@@ -69,7 +85,10 @@ func (AppModule) IsAppModule()        {}
 
 func (am AppModule) RegisterInvariants(ir sdk.InvariantRegistry) {}
 
-func (am AppModule) RegisterServices(cfg module.Configurator) {}
+func (am AppModule) RegisterServices(cfg module.Configurator) {
+	RegisterMsgServer(cfg.MsgServer(), NewMsgServer(am.keeper))
+	RegisterQueryServer(cfg.QueryServer(), am.keeper)
+}
 
 func (am AppModule) ConsensusVersion() uint64 { return 1 }
 

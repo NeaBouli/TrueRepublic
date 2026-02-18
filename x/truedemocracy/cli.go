@@ -9,6 +9,7 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
+	"github.com/cosmos/cosmos-sdk/client/tx"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
@@ -82,7 +83,7 @@ func CmdCreateDomain() *cobra.Command {
 			if err := msg.ValidateBasic(); err != nil {
 				return err
 			}
-			return printMsg(clientCtx, &msg)
+			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), &msg)
 		},
 	}
 	flags.AddTxFlagsToCmd(cmd)
@@ -119,7 +120,7 @@ func CmdSubmitProposal() *cobra.Command {
 			if err := msg.ValidateBasic(); err != nil {
 				return err
 			}
-			return printMsg(clientCtx, &msg)
+			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), &msg)
 		},
 	}
 	flags.AddTxFlagsToCmd(cmd)
@@ -150,7 +151,7 @@ func CmdRegisterValidator() *cobra.Command {
 			if err := msg.ValidateBasic(); err != nil {
 				return err
 			}
-			return printMsg(clientCtx, &msg)
+			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), &msg)
 		},
 	}
 	flags.AddTxFlagsToCmd(cmd)
@@ -179,7 +180,7 @@ func CmdWithdrawStake() *cobra.Command {
 			if err := msg.ValidateBasic(); err != nil {
 				return err
 			}
-			return printMsg(clientCtx, &msg)
+			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), &msg)
 		},
 	}
 	flags.AddTxFlagsToCmd(cmd)
@@ -203,7 +204,7 @@ func CmdRemoveValidator() *cobra.Command {
 			if err := msg.ValidateBasic(); err != nil {
 				return err
 			}
-			return printMsg(clientCtx, &msg)
+			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), &msg)
 		},
 	}
 	flags.AddTxFlagsToCmd(cmd)
@@ -227,7 +228,7 @@ func CmdUnjail() *cobra.Command {
 			if err := msg.ValidateBasic(); err != nil {
 				return err
 			}
-			return printMsg(clientCtx, &msg)
+			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), &msg)
 		},
 	}
 	flags.AddTxFlagsToCmd(cmd)
@@ -253,7 +254,7 @@ func CmdJoinPermissionRegister() *cobra.Command {
 			if err := msg.ValidateBasic(); err != nil {
 				return err
 			}
-			return printMsg(clientCtx, &msg)
+			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), &msg)
 		},
 	}
 	flags.AddTxFlagsToCmd(cmd)
@@ -277,7 +278,7 @@ func CmdPurgePermissionRegister() *cobra.Command {
 			if err := msg.ValidateBasic(); err != nil {
 				return err
 			}
-			return printMsg(clientCtx, &msg)
+			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), &msg)
 		},
 	}
 	flags.AddTxFlagsToCmd(cmd)
@@ -303,7 +304,7 @@ func CmdPlaceStoneOnIssue() *cobra.Command {
 			if err := msg.ValidateBasic(); err != nil {
 				return err
 			}
-			return printMsg(clientCtx, &msg)
+			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), &msg)
 		},
 	}
 	flags.AddTxFlagsToCmd(cmd)
@@ -330,7 +331,7 @@ func CmdPlaceStoneOnSuggestion() *cobra.Command {
 			if err := msg.ValidateBasic(); err != nil {
 				return err
 			}
-			return printMsg(clientCtx, &msg)
+			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), &msg)
 		},
 	}
 	flags.AddTxFlagsToCmd(cmd)
@@ -356,7 +357,7 @@ func CmdPlaceStoneOnMember() *cobra.Command {
 			if err := msg.ValidateBasic(); err != nil {
 				return err
 			}
-			return printMsg(clientCtx, &msg)
+			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), &msg)
 		},
 	}
 	flags.AddTxFlagsToCmd(cmd)
@@ -382,7 +383,7 @@ func CmdVoteToExclude() *cobra.Command {
 			if err := msg.ValidateBasic(); err != nil {
 				return err
 			}
-			return printMsg(clientCtx, &msg)
+			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), &msg)
 		},
 	}
 	flags.AddTxFlagsToCmd(cmd)
@@ -409,7 +410,7 @@ func CmdVoteToDelete() *cobra.Command {
 			if err := msg.ValidateBasic(); err != nil {
 				return err
 			}
-			return printMsg(clientCtx, &msg)
+			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), &msg)
 		},
 	}
 	flags.AddTxFlagsToCmd(cmd)
@@ -428,16 +429,12 @@ func CmdQueryDomain(cdc *codec.LegacyAmino) *cobra.Command {
 			if err != nil {
 				return err
 			}
-			route := fmt.Sprintf("custom/%s/%s/%s", ModuleName, QueryDomain, args[0])
-			bz, _, err := clientCtx.QueryWithData(route, nil)
+			queryClient := NewQueryClient(clientCtx)
+			resp, err := queryClient.Domain(cmd.Context(), &QueryDomainRequest{Name: args[0]})
 			if err != nil {
 				return err
 			}
-			var domain Domain
-			if err := cdc.UnmarshalJSON(bz, &domain); err != nil {
-				return err
-			}
-			return clientCtx.PrintObjectLegacy(domain)
+			return clientCtx.PrintObjectLegacy(json.RawMessage(resp.Result))
 		},
 	}
 	flags.AddQueryFlagsToCmd(cmd)
@@ -454,16 +451,12 @@ func CmdQueryDomains(cdc *codec.LegacyAmino) *cobra.Command {
 			if err != nil {
 				return err
 			}
-			route := fmt.Sprintf("custom/%s/%s", ModuleName, QueryDomains)
-			bz, _, err := clientCtx.QueryWithData(route, nil)
+			queryClient := NewQueryClient(clientCtx)
+			resp, err := queryClient.Domains(cmd.Context(), &QueryDomainsRequest{})
 			if err != nil {
 				return err
 			}
-			var domains []Domain
-			if err := json.Unmarshal(bz, &domains); err != nil {
-				return err
-			}
-			return clientCtx.PrintObjectLegacy(domains)
+			return clientCtx.PrintObjectLegacy(json.RawMessage(resp.Result))
 		},
 	}
 	flags.AddQueryFlagsToCmd(cmd)
@@ -480,16 +473,12 @@ func CmdQueryValidator(cdc *codec.LegacyAmino) *cobra.Command {
 			if err != nil {
 				return err
 			}
-			route := fmt.Sprintf("custom/%s/%s/%s", ModuleName, QueryValidator, args[0])
-			bz, _, err := clientCtx.QueryWithData(route, nil)
+			queryClient := NewQueryClient(clientCtx)
+			resp, err := queryClient.Validator(cmd.Context(), &QueryValidatorRequest{OperatorAddr: args[0]})
 			if err != nil {
 				return err
 			}
-			var val Validator
-			if err := cdc.UnmarshalJSON(bz, &val); err != nil {
-				return err
-			}
-			return clientCtx.PrintObjectLegacy(val)
+			return clientCtx.PrintObjectLegacy(json.RawMessage(resp.Result))
 		},
 	}
 	flags.AddQueryFlagsToCmd(cmd)
@@ -506,27 +495,15 @@ func CmdQueryValidators(cdc *codec.LegacyAmino) *cobra.Command {
 			if err != nil {
 				return err
 			}
-			route := fmt.Sprintf("custom/%s/%s", ModuleName, QueryValidators)
-			bz, _, err := clientCtx.QueryWithData(route, nil)
+			queryClient := NewQueryClient(clientCtx)
+			resp, err := queryClient.Validators(cmd.Context(), &QueryValidatorsRequest{})
 			if err != nil {
 				return err
 			}
-			var vals []Validator
-			if err := json.Unmarshal(bz, &vals); err != nil {
-				return err
-			}
-			return clientCtx.PrintObjectLegacy(vals)
+			return clientCtx.PrintObjectLegacy(json.RawMessage(resp.Result))
 		},
 	}
 	flags.AddQueryFlagsToCmd(cmd)
 	return cmd
 }
 
-// printMsg marshals the message as amino JSON and prints it.
-func printMsg(clientCtx client.Context, msg sdk.Msg) error {
-	bz, err := json.MarshalIndent(msg, "", "  ")
-	if err != nil {
-		return err
-	}
-	return clientCtx.PrintBytes(bz)
-}

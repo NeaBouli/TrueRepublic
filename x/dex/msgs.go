@@ -10,10 +10,10 @@ import (
 // --- MsgCreatePool ---
 
 type MsgCreatePool struct {
-	Sender     sdk.AccAddress `json:"sender"`
-	AssetDenom string         `json:"asset_denom"`
-	PnyxAmt    int64          `json:"pnyx_amt"`
-	AssetAmt   int64          `json:"asset_amt"`
+	Sender     sdk.AccAddress `protobuf:"bytes,1,opt,name=sender,proto3,casttype=github.com/cosmos/cosmos-sdk/types.AccAddress" json:"sender"`
+	AssetDenom string         `protobuf:"bytes,2,opt,name=asset_denom,json=assetDenom,proto3" json:"asset_denom"`
+	PnyxAmt    int64          `protobuf:"varint,3,opt,name=pnyx_amt,json=pnyxAmt,proto3" json:"pnyx_amt"`
+	AssetAmt   int64          `protobuf:"varint,4,opt,name=asset_amt,json=assetAmt,proto3" json:"asset_amt"`
 }
 
 func (m *MsgCreatePool) ProtoMessage()               {}
@@ -35,10 +35,10 @@ func (m MsgCreatePool) ValidateBasic() error {
 // --- MsgSwap ---
 
 type MsgSwap struct {
-	Sender      sdk.AccAddress `json:"sender"`
-	InputDenom  string         `json:"input_denom"`
-	InputAmt    int64          `json:"input_amt"`
-	OutputDenom string         `json:"output_denom"`
+	Sender      sdk.AccAddress `protobuf:"bytes,1,opt,name=sender,proto3,casttype=github.com/cosmos/cosmos-sdk/types.AccAddress" json:"sender"`
+	InputDenom  string         `protobuf:"bytes,2,opt,name=input_denom,json=inputDenom,proto3" json:"input_denom"`
+	InputAmt    int64          `protobuf:"varint,3,opt,name=input_amt,json=inputAmt,proto3" json:"input_amt"`
+	OutputDenom string         `protobuf:"bytes,4,opt,name=output_denom,json=outputDenom,proto3" json:"output_denom"`
 }
 
 func (m *MsgSwap) ProtoMessage()               {}
@@ -60,10 +60,10 @@ func (m MsgSwap) ValidateBasic() error {
 // --- MsgAddLiquidity ---
 
 type MsgAddLiquidity struct {
-	Sender     sdk.AccAddress `json:"sender"`
-	AssetDenom string         `json:"asset_denom"`
-	PnyxAmt    int64          `json:"pnyx_amt"`
-	AssetAmt   int64          `json:"asset_amt"`
+	Sender     sdk.AccAddress `protobuf:"bytes,1,opt,name=sender,proto3,casttype=github.com/cosmos/cosmos-sdk/types.AccAddress" json:"sender"`
+	AssetDenom string         `protobuf:"bytes,2,opt,name=asset_denom,json=assetDenom,proto3" json:"asset_denom"`
+	PnyxAmt    int64          `protobuf:"varint,3,opt,name=pnyx_amt,json=pnyxAmt,proto3" json:"pnyx_amt"`
+	AssetAmt   int64          `protobuf:"varint,4,opt,name=asset_amt,json=assetAmt,proto3" json:"asset_amt"`
 }
 
 func (m *MsgAddLiquidity) ProtoMessage()               {}
@@ -85,9 +85,9 @@ func (m MsgAddLiquidity) ValidateBasic() error {
 // --- MsgRemoveLiquidity ---
 
 type MsgRemoveLiquidity struct {
-	Sender     sdk.AccAddress `json:"sender"`
-	AssetDenom string         `json:"asset_denom"`
-	Shares     int64          `json:"shares"`
+	Sender     sdk.AccAddress `protobuf:"bytes,1,opt,name=sender,proto3,casttype=github.com/cosmos/cosmos-sdk/types.AccAddress" json:"sender"`
+	AssetDenom string         `protobuf:"bytes,2,opt,name=asset_denom,json=assetDenom,proto3" json:"asset_denom"`
+	Shares     int64          `protobuf:"varint,3,opt,name=shares,proto3" json:"shares"`
 }
 
 func (m *MsgRemoveLiquidity) ProtoMessage()               {}

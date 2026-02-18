@@ -13,9 +13,9 @@ import (
 // --- MsgCreateDomain ---
 
 type MsgCreateDomain struct {
-	Name         string         `json:"name"`
-	Admin        sdk.AccAddress `json:"admin"`
-	InitialCoins sdk.Coins      `json:"initial_coins"`
+	Name         string         `protobuf:"bytes,1,opt,name=name,proto3" json:"name"`
+	Admin        sdk.AccAddress `protobuf:"bytes,2,opt,name=admin,proto3,casttype=github.com/cosmos/cosmos-sdk/types.AccAddress" json:"admin"`
+	InitialCoins sdk.Coins      `protobuf:"bytes,3,rep,name=initial_coins,json=initialCoins,proto3,castrepeated=github.com/cosmos/cosmos-sdk/types.Coins" json:"initial_coins"`
 }
 
 func (m *MsgCreateDomain) ProtoMessage()             {}
@@ -37,13 +37,13 @@ func (m MsgCreateDomain) ValidateBasic() error {
 // --- MsgSubmitProposal ---
 
 type MsgSubmitProposal struct {
-	Sender         sdk.AccAddress `json:"sender"`
-	DomainName     string         `json:"domain_name"`
-	IssueName      string         `json:"issue_name"`
-	SuggestionName string         `json:"suggestion_name"`
-	Creator        string         `json:"creator"`
-	Fee            sdk.Coins      `json:"fee"`
-	ExternalLink   string         `json:"external_link"`
+	Sender         sdk.AccAddress `protobuf:"bytes,1,opt,name=sender,proto3,casttype=github.com/cosmos/cosmos-sdk/types.AccAddress" json:"sender"`
+	DomainName     string         `protobuf:"bytes,2,opt,name=domain_name,json=domainName,proto3" json:"domain_name"`
+	IssueName      string         `protobuf:"bytes,3,opt,name=issue_name,json=issueName,proto3" json:"issue_name"`
+	SuggestionName string         `protobuf:"bytes,4,opt,name=suggestion_name,json=suggestionName,proto3" json:"suggestion_name"`
+	Creator        string         `protobuf:"bytes,5,opt,name=creator,proto3" json:"creator"`
+	Fee            sdk.Coins      `protobuf:"bytes,6,rep,name=fee,proto3,castrepeated=github.com/cosmos/cosmos-sdk/types.Coins" json:"fee"`
+	ExternalLink   string         `protobuf:"bytes,7,opt,name=external_link,json=externalLink,proto3" json:"external_link"`
 }
 
 func (m *MsgSubmitProposal) ProtoMessage()             {}
@@ -62,11 +62,11 @@ func (m MsgSubmitProposal) ValidateBasic() error {
 // --- MsgRegisterValidator ---
 
 type MsgRegisterValidator struct {
-	Sender       sdk.AccAddress `json:"sender"`
-	OperatorAddr string         `json:"operator_addr"`
-	PubKey       string         `json:"pub_key"` // hex-encoded 32 bytes
-	Stake        sdk.Coins      `json:"stake"`
-	DomainName   string         `json:"domain_name"`
+	Sender       sdk.AccAddress `protobuf:"bytes,1,opt,name=sender,proto3,casttype=github.com/cosmos/cosmos-sdk/types.AccAddress" json:"sender"`
+	OperatorAddr string         `protobuf:"bytes,2,opt,name=operator_addr,json=operatorAddr,proto3" json:"operator_addr"`
+	PubKey       string         `protobuf:"bytes,3,opt,name=pub_key,json=pubKey,proto3" json:"pub_key"` // hex-encoded 32 bytes
+	Stake        sdk.Coins      `protobuf:"bytes,4,rep,name=stake,proto3,castrepeated=github.com/cosmos/cosmos-sdk/types.Coins" json:"stake"`
+	DomainName   string         `protobuf:"bytes,5,opt,name=domain_name,json=domainName,proto3" json:"domain_name"`
 }
 
 func (m *MsgRegisterValidator) ProtoMessage()             {}
@@ -85,9 +85,9 @@ func (m MsgRegisterValidator) ValidateBasic() error {
 // --- MsgWithdrawStake ---
 
 type MsgWithdrawStake struct {
-	Sender       sdk.AccAddress `json:"sender"`
-	OperatorAddr string         `json:"operator_addr"`
-	Amount       int64          `json:"amount"`
+	Sender       sdk.AccAddress `protobuf:"bytes,1,opt,name=sender,proto3,casttype=github.com/cosmos/cosmos-sdk/types.AccAddress" json:"sender"`
+	OperatorAddr string         `protobuf:"bytes,2,opt,name=operator_addr,json=operatorAddr,proto3" json:"operator_addr"`
+	Amount       int64          `protobuf:"varint,3,opt,name=amount,proto3" json:"amount"`
 }
 
 func (m *MsgWithdrawStake) ProtoMessage()             {}
@@ -109,8 +109,8 @@ func (m MsgWithdrawStake) ValidateBasic() error {
 // --- MsgRemoveValidator ---
 
 type MsgRemoveValidator struct {
-	Sender       sdk.AccAddress `json:"sender"`
-	OperatorAddr string         `json:"operator_addr"`
+	Sender       sdk.AccAddress `protobuf:"bytes,1,opt,name=sender,proto3,casttype=github.com/cosmos/cosmos-sdk/types.AccAddress" json:"sender"`
+	OperatorAddr string         `protobuf:"bytes,2,opt,name=operator_addr,json=operatorAddr,proto3" json:"operator_addr"`
 }
 
 func (m *MsgRemoveValidator) ProtoMessage()             {}
@@ -129,8 +129,8 @@ func (m MsgRemoveValidator) ValidateBasic() error {
 // --- MsgUnjail ---
 
 type MsgUnjail struct {
-	Sender       sdk.AccAddress `json:"sender"`
-	OperatorAddr string         `json:"operator_addr"`
+	Sender       sdk.AccAddress `protobuf:"bytes,1,opt,name=sender,proto3,casttype=github.com/cosmos/cosmos-sdk/types.AccAddress" json:"sender"`
+	OperatorAddr string         `protobuf:"bytes,2,opt,name=operator_addr,json=operatorAddr,proto3" json:"operator_addr"`
 }
 
 func (m *MsgUnjail) ProtoMessage()             {}
@@ -149,10 +149,10 @@ func (m MsgUnjail) ValidateBasic() error {
 // --- MsgJoinPermissionRegister ---
 
 type MsgJoinPermissionRegister struct {
-	Sender       sdk.AccAddress `json:"sender"`
-	DomainName   string         `json:"domain_name"`
-	MemberAddr   string         `json:"member_addr"`
-	DomainPubKey string         `json:"domain_pub_key"` // hex-encoded
+	Sender       sdk.AccAddress `protobuf:"bytes,1,opt,name=sender,proto3,casttype=github.com/cosmos/cosmos-sdk/types.AccAddress" json:"sender"`
+	DomainName   string         `protobuf:"bytes,2,opt,name=domain_name,json=domainName,proto3" json:"domain_name"`
+	MemberAddr   string         `protobuf:"bytes,3,opt,name=member_addr,json=memberAddr,proto3" json:"member_addr"`
+	DomainPubKey string         `protobuf:"bytes,4,opt,name=domain_pub_key,json=domainPubKey,proto3" json:"domain_pub_key"` // hex-encoded
 }
 
 func (m *MsgJoinPermissionRegister) ProtoMessage()             {}
@@ -171,8 +171,8 @@ func (m MsgJoinPermissionRegister) ValidateBasic() error {
 // --- MsgPurgePermissionRegister ---
 
 type MsgPurgePermissionRegister struct {
-	Caller     sdk.AccAddress `json:"caller"`
-	DomainName string         `json:"domain_name"`
+	Caller     sdk.AccAddress `protobuf:"bytes,1,opt,name=caller,proto3,casttype=github.com/cosmos/cosmos-sdk/types.AccAddress" json:"caller"`
+	DomainName string         `protobuf:"bytes,2,opt,name=domain_name,json=domainName,proto3" json:"domain_name"`
 }
 
 func (m *MsgPurgePermissionRegister) ProtoMessage()             {}
@@ -191,10 +191,10 @@ func (m MsgPurgePermissionRegister) ValidateBasic() error {
 // --- MsgPlaceStoneOnIssue ---
 
 type MsgPlaceStoneOnIssue struct {
-	Sender     sdk.AccAddress `json:"sender"`
-	DomainName string         `json:"domain_name"`
-	IssueName  string         `json:"issue_name"`
-	MemberAddr string         `json:"member_addr"`
+	Sender     sdk.AccAddress `protobuf:"bytes,1,opt,name=sender,proto3,casttype=github.com/cosmos/cosmos-sdk/types.AccAddress" json:"sender"`
+	DomainName string         `protobuf:"bytes,2,opt,name=domain_name,json=domainName,proto3" json:"domain_name"`
+	IssueName  string         `protobuf:"bytes,3,opt,name=issue_name,json=issueName,proto3" json:"issue_name"`
+	MemberAddr string         `protobuf:"bytes,4,opt,name=member_addr,json=memberAddr,proto3" json:"member_addr"`
 }
 
 func (m *MsgPlaceStoneOnIssue) ProtoMessage()             {}
@@ -213,11 +213,11 @@ func (m MsgPlaceStoneOnIssue) ValidateBasic() error {
 // --- MsgPlaceStoneOnSuggestion ---
 
 type MsgPlaceStoneOnSuggestion struct {
-	Sender         sdk.AccAddress `json:"sender"`
-	DomainName     string         `json:"domain_name"`
-	IssueName      string         `json:"issue_name"`
-	SuggestionName string         `json:"suggestion_name"`
-	MemberAddr     string         `json:"member_addr"`
+	Sender         sdk.AccAddress `protobuf:"bytes,1,opt,name=sender,proto3,casttype=github.com/cosmos/cosmos-sdk/types.AccAddress" json:"sender"`
+	DomainName     string         `protobuf:"bytes,2,opt,name=domain_name,json=domainName,proto3" json:"domain_name"`
+	IssueName      string         `protobuf:"bytes,3,opt,name=issue_name,json=issueName,proto3" json:"issue_name"`
+	SuggestionName string         `protobuf:"bytes,4,opt,name=suggestion_name,json=suggestionName,proto3" json:"suggestion_name"`
+	MemberAddr     string         `protobuf:"bytes,5,opt,name=member_addr,json=memberAddr,proto3" json:"member_addr"`
 }
 
 func (m *MsgPlaceStoneOnSuggestion) ProtoMessage()             {}
@@ -236,10 +236,10 @@ func (m MsgPlaceStoneOnSuggestion) ValidateBasic() error {
 // --- MsgPlaceStoneOnMember ---
 
 type MsgPlaceStoneOnMember struct {
-	Sender       sdk.AccAddress `json:"sender"`
-	DomainName   string         `json:"domain_name"`
-	TargetMember string         `json:"target_member"`
-	VoterAddr    string         `json:"voter_addr"`
+	Sender       sdk.AccAddress `protobuf:"bytes,1,opt,name=sender,proto3,casttype=github.com/cosmos/cosmos-sdk/types.AccAddress" json:"sender"`
+	DomainName   string         `protobuf:"bytes,2,opt,name=domain_name,json=domainName,proto3" json:"domain_name"`
+	TargetMember string         `protobuf:"bytes,3,opt,name=target_member,json=targetMember,proto3" json:"target_member"`
+	VoterAddr    string         `protobuf:"bytes,4,opt,name=voter_addr,json=voterAddr,proto3" json:"voter_addr"`
 }
 
 func (m *MsgPlaceStoneOnMember) ProtoMessage()             {}
@@ -258,10 +258,10 @@ func (m MsgPlaceStoneOnMember) ValidateBasic() error {
 // --- MsgVoteToExclude ---
 
 type MsgVoteToExclude struct {
-	Sender       sdk.AccAddress `json:"sender"`
-	DomainName   string         `json:"domain_name"`
-	TargetMember string         `json:"target_member"`
-	VoterAddr    string         `json:"voter_addr"`
+	Sender       sdk.AccAddress `protobuf:"bytes,1,opt,name=sender,proto3,casttype=github.com/cosmos/cosmos-sdk/types.AccAddress" json:"sender"`
+	DomainName   string         `protobuf:"bytes,2,opt,name=domain_name,json=domainName,proto3" json:"domain_name"`
+	TargetMember string         `protobuf:"bytes,3,opt,name=target_member,json=targetMember,proto3" json:"target_member"`
+	VoterAddr    string         `protobuf:"bytes,4,opt,name=voter_addr,json=voterAddr,proto3" json:"voter_addr"`
 }
 
 func (m *MsgVoteToExclude) ProtoMessage()             {}
@@ -280,11 +280,11 @@ func (m MsgVoteToExclude) ValidateBasic() error {
 // --- MsgVoteToDelete ---
 
 type MsgVoteToDelete struct {
-	Sender         sdk.AccAddress `json:"sender"`
-	DomainName     string         `json:"domain_name"`
-	IssueName      string         `json:"issue_name"`
-	SuggestionName string         `json:"suggestion_name"`
-	MemberAddr     string         `json:"member_addr"`
+	Sender         sdk.AccAddress `protobuf:"bytes,1,opt,name=sender,proto3,casttype=github.com/cosmos/cosmos-sdk/types.AccAddress" json:"sender"`
+	DomainName     string         `protobuf:"bytes,2,opt,name=domain_name,json=domainName,proto3" json:"domain_name"`
+	IssueName      string         `protobuf:"bytes,3,opt,name=issue_name,json=issueName,proto3" json:"issue_name"`
+	SuggestionName string         `protobuf:"bytes,4,opt,name=suggestion_name,json=suggestionName,proto3" json:"suggestion_name"`
+	MemberAddr     string         `protobuf:"bytes,5,opt,name=member_addr,json=memberAddr,proto3" json:"member_addr"`
 }
 
 func (m *MsgVoteToDelete) ProtoMessage()             {}
