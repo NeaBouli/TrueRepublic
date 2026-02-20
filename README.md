@@ -11,55 +11,96 @@
   <a href="https://github.com/NeaBouli/TrueRepublic/actions/workflows/react-native-ci.yml"><img src="https://github.com/NeaBouli/TrueRepublic/actions/workflows/react-native-ci.yml/badge.svg" alt="Mobile CI"/></a>
 </p>
 
----
-
-## Vision
-
-TrueRepublic is a platform for **direct democracy** and **digital self-determination**.
-The token **PNYX** enables governance, treasury mechanisms and a decentralized DEX.
+<p align="center">
+  <strong>Direct democracy on the blockchain. Built with Cosmos SDK.</strong>
+</p>
 
 ---
 
-## Repository Structure & Status
+## What is TrueRepublic?
+
+TrueRepublic is a platform for **direct democracy** and **digital self-determination**. Instead of electing representatives, participants make decisions directly through community-governed **Domains** using **Systemic Consensing** (rating -5 to +5) and **Stones Voting**.
+
+The native token **PNYX** -- named after the hill in Athens where citizens gathered to vote -- powers governance, treasury mechanisms, staking, and a built-in DEX.
+
+---
+
+## Documentation
+
+| Guide | Audience | Description |
+|-------|----------|-------------|
+| **[Getting Started](docs/getting-started/README.md)** | Everyone | Choose your path: user, operator, validator, or developer |
+| **[Installation](INSTALLATION.md)** | Everyone | Quick install guide (Docker / native / web wallet) |
+| **[User Manual](docs/user-manual/README.md)** | End Users | Wallet, governance, voting, DEX trading |
+| **[Node Operators](docs/node-operators/README.md)** | Operators | Setup, configuration, monitoring, backup |
+| **[Validator Guide](docs/validators/README.md)** | Validators | PoD consensus, staking, slashing, operations |
+| **[Developer Docs](docs/developers/README.md)** | Developers | Architecture, API reference, CosmJS, smart contracts |
+| **[FAQ](docs/FAQ.md)** | Everyone | Frequently asked questions |
+| **[Glossary](docs/GLOSSARY.md)** | Everyone | Term definitions |
+| **[Whitepaper](docs/WhitePaper_TR_eng.pdf)** | Everyone | Full whitepaper (PDF) |
+
+---
+
+## Quick Start
+
+```bash
+# Clone
+git clone https://github.com/NeaBouli/TrueRepublic.git
+cd TrueRepublic
+
+# Option A: Docker (full stack)
+cp .env.example .env && make docker-build && make docker-up
+
+# Option B: Build from source
+make build && ./build/truerepublicd start
+
+# Option C: Web wallet only
+cd web-wallet && npm install && npm start
+```
+
+See [INSTALLATION.md](INSTALLATION.md) for detailed instructions.
+
+---
+
+## Key Features
+
+| Feature | Description | Docs |
+|---------|-------------|------|
+| **Domains** | Community-governed spaces for specific topics | [Governance Tutorial](docs/user-manual/governance-tutorial.md) |
+| **Systemic Consensing** | Rate proposals -5 to +5 instead of Yes/No | [SC Explained](docs/user-manual/systemic-consensing-explained.md) |
+| **Stones Voting** | Highlight importance, elect admins, earn rewards | [Stones Guide](docs/user-manual/stones-voting-guide.md) |
+| **Anonymous Voting** | Domain key pairs for unlinkable ratings (WP S4) | [Architecture](docs/developers/architecture/module-reference.md) |
+| **Proof of Domain** | Validators must be active domain members | [Validator Guide](docs/validators/README.md) |
+| **DEX (AMM)** | Token swaps with 0.3% fee + 1% PNYX burn | [DEX Guide](docs/user-manual/dex-trading-guide.md) |
+| **VoteToEarn** | Earn PNYX rewards for active participation | [Stones Guide](docs/user-manual/stones-voting-guide.md) |
+| **Suggestion Lifecycle** | Green/yellow/red zones with auto-delete | [Governance](docs/user-manual/governance-tutorial.md) |
+
+---
+
+## Repository Structure
 
 ```text
 TrueRepublic/
-├── app.go                      ✅  Cosmos SDK application entry point
-├── go.mod / go.sum             ✅  Go module (SDK v0.50.13, CometBFT v0.38.17)
+├── app.go                      Cosmos SDK application entry point
+├── go.mod / go.sum             Go module (SDK v0.50.13, CometBFT v0.38.17)
+├── Makefile                    Build targets (build, test, lint, docker)
+├── INSTALLATION.md             Quick install guide
 ├── x/
-│   ├── truedemocracy/          ✅  Governance module (domains, voting, PoD consensus)
-│   │   ├── keeper.go               Domain CRUD, proposals, anonymous ratings (eq.2, eq.3)
-│   │   ├── anonymity.go            Permission register, anonymous voting (WP §4)
-│   │   ├── stones.go               Stone voting, VoteToEarn, list sorting (WP §3.1)
-│   │   ├── lifecycle.go            Suggestion zones, auto-delete, fast delete (WP §3.1.2)
-│   │   ├── governance.go           Member stones, admin election, exclusion (WP §3.6)
-│   │   ├── validator.go            Proof of Domain validator lifecycle
-│   │   ├── slashing.go             Double-sign & downtime penalties
-│   │   ├── module.go               SDK module wiring, InitGenesis, EndBlock
-│   │   ├── types.go                Domain, Validator, Issue, Rating, VoteCommitment
-│   │   ├── tree.go                 Hierarchical node tree for vote propagation
-│   │   ├── stones_test.go           20 stones / VoteToEarn tests
-│   │   ├── lifecycle_test.go        22 lifecycle / zone tests
-│   │   ├── governance_test.go      27 governance / election / exclusion tests
-│   │   ├── anonymity_test.go       15 anonymity / permission register tests
-│   │   ├── validator_test.go       26 validator / PoD / transfer limit tests
-│   │   └── slashing_test.go        6 slashing tests
-│   └── dex/                    ✅  DEX module (AMM constant-product swap)
-│       ├── keeper.go               CreatePool, Swap (x*y=k), AddLiquidity, RemoveLiquidity
-│       ├── module.go               SDK module wiring, InitGenesis
-│       ├── types.go                Pool type, swap fee (0.3%), burn rate (1%)
-│       └── keeper_test.go          24 DEX unit tests (incl. burn)
-├── treasury/
-│   └── keeper/
-│       ├── rewards.go          ✅  Whitepaper tokenomics equations 1-5
-│       └── rewards_test.go         31 tokenomics tests
-├── ui/                         🔵  C++ desktop UI (prototype)
-├── contracts/                  ✅  CosmWasm smart contracts (governance + treasury)
-├── docs/                       ✅  Whitepaper (PDF + Markdown), install guide
-├── web-wallet/                 ✅  React web wallet (Keplr + ABCI queries)
-├── mobile-wallet/              ✅  React Native wallet (Expo + bottom tabs)
-├── SECURITY.md                 ✅  Security policy
-└── .github/                    ✅  CI/CD workflows (Go, Rust, React, RN)
+│   ├── truedemocracy/          Governance module (13 msg types, 116 tests)
+│   └── dex/                    DEX module (4 msg types, 24 tests)
+├── treasury/keeper/            Tokenomics equations 1-5 (31 tests)
+├── contracts/                  CosmWasm smart contracts (Rust)
+├── web-wallet/                 React 18 + Tailwind + Keplr + CosmJS
+├── mobile-wallet/              React Native + Expo
+├── docs/
+│   ├── getting-started/        Quick start guides
+│   ├── user-manual/            End-user documentation (7 guides)
+│   ├── node-operators/         Node setup, config, operations (9 guides)
+│   ├── validators/             Validator guide with PoD
+│   ├── developers/             Architecture, API, integration (8 guides)
+│   ├── FAQ.md                  Frequently asked questions
+│   └── GLOSSARY.md             Term definitions (60+ terms)
+└── .github/                    CI/CD workflows (Go, Rust, React, RN)
 ```
 
 ---
@@ -74,31 +115,21 @@ TrueRepublic/
 | Validator Slashing | ✅ | `x/truedemocracy/slashing.go` |
 | Tokenomics (eq.1-5) | ✅ | `treasury/keeper/rewards.go` |
 | DEX / AMM (x*y=k) | ✅ | `x/dex/keeper.go` |
-| Node Staking Rewards | ✅ | `treasury/keeper/rewards.go` (eq.5) |
-| Domain Interest | ✅ | `treasury/keeper/rewards.go` (eq.4) |
+| Node Staking Rewards (10% APY) | ✅ | `treasury/keeper/rewards.go` (eq.5) |
+| Domain Interest (25% APY) | ✅ | `treasury/keeper/rewards.go` (eq.4) |
 | Release Decay | ✅ | `treasury/keeper/rewards.go` |
-| Treasury Drainage | ✅ | `treasury/keeper/rewards.go` (eq.2) |
-| Anonymous Voting (WP §4) | ✅ | `x/truedemocracy/anonymity.go` |
-| Permission Register & Purge | ✅ | `x/truedemocracy/anonymity.go` |
-| Domain Key Pairs (unlinkable) | ✅ | `x/truedemocracy/keeper.go` |
-| Stones Voting (WP §3.1) | ✅ | `x/truedemocracy/stones.go` |
+| Anonymous Voting (WP S4) | ✅ | `x/truedemocracy/anonymity.go` |
+| Stones Voting (WP S3.1) | ✅ | `x/truedemocracy/stones.go` |
 | VoteToEarn Rewards | ✅ | `x/truedemocracy/stones.go` |
-| List Sorting (stones + date) | ✅ | `x/truedemocracy/stones.go` |
-| Suggestion Lifecycle (WP §3.1.2) | ✅ | `x/truedemocracy/lifecycle.go` |
+| Suggestion Lifecycle (WP S3.1.2) | ✅ | `x/truedemocracy/lifecycle.go` |
 | Green/Yellow/Red Zones | ✅ | `x/truedemocracy/lifecycle.go` |
-| Auto-Delete (red expiry) | ✅ | `x/truedemocracy/lifecycle.go` |
-| Fast Delete (2/3 majority) | ✅ | `x/truedemocracy/lifecycle.go` |
-| Member Ranking (stones) | ✅ | `x/truedemocracy/governance.go` |
-| Admin Election (WP §3.6) | ✅ | `x/truedemocracy/governance.go` |
+| Auto-Delete & Fast Delete (2/3) | ✅ | `x/truedemocracy/lifecycle.go` |
+| Admin Election (WP S3.6) | ✅ | `x/truedemocracy/governance.go` |
 | Member Exclusion (2/3 vote) | ✅ | `x/truedemocracy/governance.go` |
-| Inactivity Cleanup (360 days) | ✅ | `x/truedemocracy/governance.go` |
-| External Links (issues/suggestions) | ✅ | `x/truedemocracy/types.go` |
-| DEX 1% PNYX Burn (WP §5) | ✅ | `x/dex/keeper.go` |
-| PoD Transfer Limit (10%, WP §7) | ✅ | `x/truedemocracy/validator.go` |
-| CLI Transaction Commands (14) | ✅ | `x/truedemocracy/cli.go` |
-| CLI Query Commands (4+2) | ✅ | `x/truedemocracy/querier.go`, `x/dex/querier.go` |
-| DEX CLI Commands (4) | ✅ | `x/dex/cli.go` |
-| CosmWasm Contracts | ✅ | `contracts/src/governance.rs`, `contracts/src/treasury.rs` |
+| PoD Transfer Limit (10%, WP S7) | ✅ | `x/truedemocracy/validator.go` |
+| CLI Commands (14 tx + 6 query) | ✅ | `x/truedemocracy/cli.go` |
+| DEX CLI (4 tx + 2 query) | ✅ | `x/dex/cli.go` |
+| CosmWasm Contracts | ✅ | `contracts/src/` |
 | Web Wallet (React + Keplr) | ✅ | `web-wallet/` |
 | Mobile Wallet (Expo + RN) | ✅ | `mobile-wallet/` |
 | CI/CD Workflows | ✅ | `.github/workflows/` |
@@ -108,12 +139,12 @@ TrueRepublic/
 ## Build & Test
 
 ```bash
-# Go blockchain
+# Blockchain
 go mod tidy
 go build ./...
-go test ./... -race -cover
+go test ./... -race -cover    # 182 tests
 
-# Rust contracts
+# Smart contracts
 cd contracts && cargo build
 
 # Web wallet
@@ -125,22 +156,61 @@ cd mobile-wallet && npm install
 
 ---
 
+## Tech Stack
+
+| Layer | Technology | Version |
+|-------|-----------|---------|
+| Consensus | CometBFT | v0.38.17 |
+| Application | Cosmos SDK | v0.50.13 |
+| Language | Go | 1.23.5 |
+| Smart Contracts | CosmWasm (Rust) | cosmwasm-std 1.5 |
+| Web Frontend | React + Tailwind CSS | 18.2 / 3.4 |
+| Mobile | React Native + Expo | 0.74 / 51.0 |
+| Wallet | Keplr + CosmJS | 0.32-0.38 |
+
+---
+
 ## Current Status
 
-- ✅ Core blockchain compiles and runs (Cosmos SDK v0.50.13)
-- ✅ 182 unit tests passing across 3 modules
-- ✅ Whitepaper tokenomics fully implemented
-- ✅ Proof of Domain consensus with validator management
-- ✅ DEX with AMM swap, liquidity pools, 0.3% fees, 1% PNYX burn
-- ✅ Anonymous voting with domain key pairs and permission register (WP §4)
-- ✅ Stones voting with VoteToEarn rewards and list sorting (WP §3.1)
-- ✅ Suggestion lifecycle with green/yellow/red zones and auto-delete (WP §3.1.2)
-- ✅ Fast delete by 2/3 majority vote
-- ✅ Member ranking, admin election, and member exclusion by 2/3 vote (WP §3.6)
-- ✅ Inactivity cleanup (360-day timeout) and external links
-- ✅ PoD transfer limit: stake withdrawals capped at 10% of domain payouts (WP §7)
-- ✅ CLI: 14 tx commands + 6 query commands for truedemocracy, 4 tx + 2 query for DEX
-- ✅ CosmWasm governance and treasury contracts (Rust, cosmwasm-std 1.5)
-- ✅ Web wallet: React 18, Keplr integration, ABCI queries
-- ✅ Mobile wallet: Expo/React Native, bottom-tab navigation
-- ✅ CI/CD: GitHub Actions for Go, Rust, React, React Native
+**Version: v0.1-alpha**
+
+- ✅ 182 unit tests passing across 3 modules (2,705 lines of test code)
+- ✅ Core blockchain compiles and runs
+- ✅ Whitepaper tokenomics fully implemented (equations 1-5)
+- ✅ Complete governance system (domains, proposals, voting, lifecycle)
+- ✅ DEX with AMM, liquidity pools, swap fees, PNYX burn
+- ✅ Web wallet with 3-column governance UI
+- ✅ Mobile wallet with bottom-tab navigation
+- ✅ Comprehensive documentation (30+ guides)
+
+### Roadmap
+
+- **v0.2 (Q2 2025):** Full UI integration, ZKP for anonymity
+- **v0.3 (Q3 2025):** Network scalability tests (175+ nodes), multi-asset DEX
+- **v1.0 (Q4 2025):** Mainnet launch with full IBC support
+
+---
+
+## Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Write tests for new functionality
+4. Ensure all tests pass: `make test`
+5. Submit a pull request
+
+See [Developer Docs](docs/developers/README.md) for architecture details.
+
+## Community
+
+- Telegram: [t.me/truerepublic](https://t.me/truerepublic)
+- Issues: [github.com/NeaBouli/TrueRepublic/issues](https://github.com/NeaBouli/TrueRepublic/issues)
+- Email: p.cypher@protonmail.com
+
+## Contributors
+
+- NeaBouli
+
+## Donations
+
+Team (BTC multi-sig): `bc1qyamf3twgcqckuqrvmwgwnhzupgshxs37eejdgl0ntcqve98qnvhqe6cjl9`
