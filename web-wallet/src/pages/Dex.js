@@ -1,111 +1,152 @@
 import React, { useState, useEffect } from "react";
-import { SigningStargateClient } from "@cosmjs/stargate";
-
-const RPC_ENDPOINT = "https://rpc.truerepublic.network";
-const CHAIN_ID = "truerepublic-1";
+import Header from "../components/Header";
+import useWallet from "../hooks/useWallet";
+import { fetchPools, swapTokens } from "../services/api";
 
 function Dex() {
-    const [wallet, setWallet] = useState(null);
-    const [amount, setAmount] = useState("");
-    const [fromAsset, setFromAsset] = useState("pnyx");
-    const [toAsset, setToAsset] = useState("atom");
-    const [pools, setPools] = useState([]);
+  const wallet = useWallet();
+  const [amount, setAmount] = useState("");
+  const [fromAsset, setFromAsset] = useState("pnyx");
+  const [toAsset, setToAsset] = useState("atom");
+  const [pools, setPools] = useState([]);
+  const [swapping, setSwapping] = useState(false);
 
-    const connectWallet = async () => {
-        if (!window.keplr) return alert("Keplr Wallet not installed!");
-        await window.keplr.enable(CHAIN_ID);
-        const offlineSigner = window.keplr.getOfflineSigner(CHAIN_ID);
-        const accounts = await offlineSigner.getAccounts();
-        setWallet(accounts[0].address);
-    };
+  const loadPools = async () => {
+    try {
+      const data = await fetchPools();
+      setPools(data || []);
+    } catch (err) {
+      console.error("Failed to fetch pools:", err);
+    }
+  };
 
-    const fetchPools = async () => {
-        try {
-            const client = await SigningStargateClient.connect(RPC_ENDPOINT);
-            const result = await client.queryAbci("custom/dex/pools", new Uint8Array());
-            const decoded = new TextDecoder().decode(result.value);
-            setPools(JSON.parse(decoded));
-        } catch (err) {
-            console.error("Failed to fetch pools:", err);
-        }
-    };
+  useEffect(() => {
+    loadPools();
+  }, []);
 
-    const swapTokens = async () => {
-        if (!wallet || !amount) return alert("Please fill all fields.");
-        if (fromAsset === toAsset) return alert("From and To assets must be different.");
-        const offlineSigner = window.keplr.getOfflineSigner(CHAIN_ID);
-        const client = await SigningStargateClient.connectWithSigner(RPC_ENDPOINT, offlineSigner);
-        const msg = {
-            typeUrl: "/dex.MsgSwap",
-            value: {
-                sender: wallet,
-                input_denom: fromAsset,
-                input_amt: Number(amount),
-                output_denom: toAsset,
-            },
-        };
-        const result = await client.signAndBroadcast(wallet, [msg], "auto");
-        alert("Swap successful: " + result.transactionHash);
-        fetchPools();
-    };
+  const handleSwap = async () => {
+    if (!amount) return alert("Please enter an amount.");
+    if (fromAsset === toAsset) return alert("From and To assets must differ.");
+    setSwapping(true);
+    try {
+      const result = await swapTokens(wallet.address, fromAsset, amount, toAsset);
+      alert("Swap successful: " + result.transactionHash);
+      setAmount("");
+      loadPools();
+      wallet.refreshBalance();
+    } catch (err) {
+      alert("Error: " + err.message);
+    } finally {
+      setSwapping(false);
+    }
+  };
 
-    useEffect(() => {
-        fetchPools();
-    }, []);
+  return (
+    <div className="min-h-screen bg-dark-900 text-dark-50">
+      <header className="border-b border-dark-700 bg-dark-850">
+        <Header
+          address={wallet.address}
+          onConnect={wallet.connect}
+          onDisconnect={wallet.disconnect}
+          loading={wallet.loading}
+        />
+      </header>
 
-    return (
-        <div className="p-6 max-w-md mx-auto bg-gray-800 rounded-lg">
-            <h2 className="text-2xl font-semibold mb-4">DEX</h2>
-            <button onClick={connectWallet} className="px-4 py-2 bg-blue-500 rounded hover:bg-blue-600">Connect Wallet</button>
-            {wallet && <p className="mt-2 text-sm text-gray-400">Connected: {wallet}</p>}
+      <div className="max-w-lg mx-auto p-6 mt-8">
+        <h2 className="text-2xl font-semibold mb-6">DEX</h2>
 
-            {pools.length > 0 && (
-                <div className="mt-4">
-                    <h3 className="text-xl mb-2">Pools</h3>
-                    <ul className="space-y-1">
-                        {pools.map((p, i) => (
-                            <li key={i} className="text-sm text-gray-300">
-                                PNYX/{p.asset_denom}: {p.pnyx_reserve} / {p.asset_reserve} (burned: {p.total_burned})
-                            </li>
-                        ))}
-                    </ul>
+        {/* Pools */}
+        {pools.length > 0 && (
+          <div className="bg-dark-800 border border-dark-700 rounded-xl p-5 mb-6">
+            <h3 className="text-sm font-semibold text-dark-400 uppercase tracking-wider mb-3">
+              Liquidity Pools
+            </h3>
+            <div className="space-y-2">
+              {pools.map((p, i) => (
+                <div
+                  key={i}
+                  className="flex justify-between items-center text-sm py-2 border-b border-dark-700 last:border-0"
+                >
+                  <span className="text-dark-200 font-medium">
+                    PNYX / {p.asset_denom?.toUpperCase()}
+                  </span>
+                  <div className="text-right text-dark-400 text-xs">
+                    <div>
+                      {p.pnyx_reserve} / {p.asset_reserve}
+                    </div>
+                    <div>Burned: {p.total_burned}</div>
+                  </div>
                 </div>
-            )}
+              ))}
+            </div>
+          </div>
+        )}
 
-            {wallet && (
-                <div className="mt-6">
-                    <h3 className="text-xl mb-2">Swap</h3>
-                    <label className="text-sm text-gray-400">From</label>
-                    <select
-                        value={fromAsset}
-                        onChange={(e) => setFromAsset(e.target.value)}
-                        className="w-full p-2 mt-1 mb-2 bg-gray-700 rounded"
-                    >
-                        <option value="pnyx">PNYX</option>
-                        <option value="atom">ATOM</option>
-                    </select>
-                    <label className="text-sm text-gray-400">To</label>
-                    <select
-                        value={toAsset}
-                        onChange={(e) => setToAsset(e.target.value)}
-                        className="w-full p-2 mt-1 mb-2 bg-gray-700 rounded"
-                    >
-                        <option value="atom">ATOM</option>
-                        <option value="pnyx">PNYX</option>
-                    </select>
-                    <input
-                        type="number"
-                        placeholder="Amount"
-                        value={amount}
-                        onChange={(e) => setAmount(e.target.value)}
-                        className="w-full p-2 mt-2 bg-gray-700 rounded"
-                    />
-                    <p className="text-xs text-gray-500 mt-1">Fee: 0.3% swap fee. 1% burn on PNYX output.</p>
-                    <button onClick={swapTokens} className="w-full mt-4 px-4 py-2 bg-blue-500 rounded hover:bg-blue-600">Swap</button>
-                </div>
-            )}
-        </div>
-    );
+        {/* Swap form */}
+        {wallet.connected ? (
+          <div className="bg-dark-800 border border-dark-700 rounded-xl p-5">
+            <h3 className="text-lg font-medium mb-4">Swap Tokens</h3>
+            <div className="space-y-3">
+              <div>
+                <label className="block text-xs font-medium text-dark-400 mb-1">
+                  From
+                </label>
+                <select
+                  value={fromAsset}
+                  onChange={(e) => setFromAsset(e.target.value)}
+                  className="w-full px-3 py-2 text-sm bg-dark-700 border border-dark-600 rounded-lg text-dark-200 focus:outline-none focus:border-republic-500"
+                >
+                  <option value="pnyx">PNYX</option>
+                  <option value="atom">ATOM</option>
+                </select>
+              </div>
+              <div className="text-center text-dark-500">&#8595;</div>
+              <div>
+                <label className="block text-xs font-medium text-dark-400 mb-1">
+                  To
+                </label>
+                <select
+                  value={toAsset}
+                  onChange={(e) => setToAsset(e.target.value)}
+                  className="w-full px-3 py-2 text-sm bg-dark-700 border border-dark-600 rounded-lg text-dark-200 focus:outline-none focus:border-republic-500"
+                >
+                  <option value="atom">ATOM</option>
+                  <option value="pnyx">PNYX</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-xs font-medium text-dark-400 mb-1">
+                  Amount
+                </label>
+                <input
+                  type="number"
+                  placeholder="0"
+                  value={amount}
+                  onChange={(e) => setAmount(e.target.value)}
+                  className="w-full px-3 py-2 text-sm bg-dark-700 border border-dark-600 rounded-lg text-dark-200 placeholder-dark-500 focus:outline-none focus:border-republic-500"
+                />
+              </div>
+              <p className="text-xs text-dark-500">
+                Fee: 0.3% swap fee. 1% burn on PNYX output.
+              </p>
+              <button
+                onClick={handleSwap}
+                disabled={swapping || !amount}
+                className="w-full px-4 py-2.5 text-sm font-medium bg-republic-600 text-white rounded-lg hover:bg-republic-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {swapping ? "Swapping..." : "Swap"}
+              </button>
+            </div>
+          </div>
+        ) : (
+          <div className="bg-dark-800 border border-dark-700 rounded-xl p-8 text-center">
+            <div className="text-4xl mb-3">&#128260;</div>
+            <p className="text-dark-300">Connect your wallet to swap tokens</p>
+          </div>
+        )}
+      </div>
+    </div>
+  );
 }
 
 export default Dex;
