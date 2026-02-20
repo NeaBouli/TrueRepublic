@@ -25,7 +25,31 @@ The native token **PNYX** -- named after the hill in Athens where citizens gathe
 
 ---
 
-## Documentation
+## 📚 Documentation
+
+### [📖 Complete Wiki](https://github.com/NeaBouli/TrueRepublic/wiki)
+
+**For Developers:**
+- [Architecture Overview](https://github.com/NeaBouli/TrueRepublic/wiki/develop-Architecture-Overview)
+- [Code Structure](https://github.com/NeaBouli/TrueRepublic/wiki/develop-Code-Structure)
+- [Module Deep-Dive](https://github.com/NeaBouli/TrueRepublic/wiki/develop-Module-Deep-Dive)
+
+**For Users:**
+- [System Overview](https://github.com/NeaBouli/TrueRepublic/wiki/users-System-Overview)
+- [Installation Wizards](https://github.com/NeaBouli/TrueRepublic/wiki/users-Installation-Wizards)
+- [User Manuals](https://github.com/NeaBouli/TrueRepublic/wiki/users-User-Manuals)
+- [How It Works](https://github.com/NeaBouli/TrueRepublic/wiki/users-How-It-Works)
+
+**For Node Operators:**
+- [Node Setup](https://github.com/NeaBouli/TrueRepublic/wiki/operations-Node-Setup)
+- [Validator Guide](https://github.com/NeaBouli/TrueRepublic/wiki/operations-Validator-Guide)
+- [Monitoring](https://github.com/NeaBouli/TrueRepublic/wiki/operations-Monitoring)
+
+**For Security:**
+- [Security Architecture](https://github.com/NeaBouli/TrueRepublic/wiki/security-Security-Architecture)
+- [Best Practices](https://github.com/NeaBouli/TrueRepublic/wiki/security-Best-Practices)
+
+### Additional Docs
 
 | Guide | Audience | Description |
 |-------|----------|-------------|
