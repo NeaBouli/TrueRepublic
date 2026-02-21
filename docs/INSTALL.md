@@ -66,7 +66,7 @@ The project builds on the **Cosmos SDK** (v0.50.13) and uses **Tendermint** (v0.
 ### Additional Project Details
 - **Modules:** `truedemocracy` (governance), `dex` (decentralized exchange), `ibc` (inter-blockchain communication), `treasury` (fund management).
 - **Smart Contracts:** Governance (systemic consensing) and Treasury (deposit/withdraw) implemented in Rust with CosmWasm.
-- **DEX:** Multi-asset support (PNYX, BTC, ATOM) using an AMM model (`x * y = k`).
+- **DEX:** PNYX/ATOM AMM pool (`x * y = k`) with 0.3% swap fee and 1% PNYX burn. Additional pairs (BTC, ETH, LUSD) planned via IBC in v0.3.
 - **IBC:** Basic cross-chain functionality with potential for Cosmos Hub, Osmosis, and Juno integration.
 - **Anonymity:** Prepared for Zero-Knowledge Proofs (ZKP) and key pair-based voting in governance.
 
@@ -103,7 +103,7 @@ Directly donate to developers listed below to support ongoing work.
 - **PNYX Token:** 21M supply with PayToPut, RateToEarn, VoteToEarn mechanics implemented in treasury.
 - **Proof of Stake + Proof of Domain (PoD):** Combined staking mechanism with domain-specific staking.
 - **Systemic Consensing:** Rating system (-5 to +5) for decision-making in both keeper and smart contracts.
-- **DEX:** Multi-asset swaps (PNYX, BTC, ATOM) implemented.
+- **DEX:** PNYX/ATOM swaps implemented. Multi-asset expansion (BTC, ETH, LUSD) planned for v0.3 via IBC.
 - **Anonymity:** Key pair-based voting in governance smart contract, ZKP-ready.
 - **Wallets:** Web (React) and Mobile (React Native) with Keplr integration, real-time balance updates.
 
