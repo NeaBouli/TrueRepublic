@@ -14,7 +14,7 @@ TrueRepublic includes CosmWasm smart contracts for governance and treasury opera
 | Technology | Version |
 |-----------|---------|
 | Rust | 1.75+ |
-| cosmwasm-std | 1.5 |
+| cosmwasm-std | 3 |
 | Target | wasm32-unknown-unknown |
 
 ## Building Contracts
