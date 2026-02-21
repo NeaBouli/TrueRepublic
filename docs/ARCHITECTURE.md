@@ -83,7 +83,7 @@ Tokenomics equations from the whitepaper.
 **Constants:**
 - `CDom = 2`, `CPut = 15`, `CEarn = 1000`
 - `StakeMin = 100,000 PNYX`
-- `SupplyMax = 22,000,000 PNYX`
+- `SupplyMax = 21,000,000 PNYX`
 - `ApyDom = 0.25` (25%), `ApyNode = 0.10` (10%)
 
 **Release decay:** `(1 - totalReleased / SupplyMax)` — inflation decreases as supply approaches max.

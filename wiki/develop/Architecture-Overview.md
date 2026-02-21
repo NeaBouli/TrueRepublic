@@ -231,7 +231,7 @@ treasury/keeper/
 └── rewards_test.go   ← 31 equation validation tests
 ```
 
-**Constants:** CDom=2, CPut=15, CEarn=1000, StakeMin=100,000, SupplyMax=22,000,000, ApyDom=25%, ApyNode=10%
+**Constants:** CDom=2, CPut=15, CEarn=1000, StakeMin=100,000, SupplyMax=21,000,000, ApyDom=25%, ApyNode=10%
 
 ---
 

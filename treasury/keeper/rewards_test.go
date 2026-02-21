@@ -21,7 +21,7 @@ func TestCalcReward(t *testing.T) {
 		{"below minimum", 999, 0},
 		{"zero treasury", 0, 0},
 		{"negative treasury", -1, 0},
-		{"large treasury", 22_000_000, 22_000},
+		{"large treasury", 21_000_000, 21_000},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -94,9 +94,9 @@ func TestCalcNodeReward(t *testing.T) {
 		// Full year, zero release: 100000 * 0.1 * 1.0 * 1.0 = 10000
 		{"full year, no release", 100_000, 0, oneYear, 10_000},
 
-		// Full year, 1M released: 100000 * 0.1 * 1.0 * (1 - 1M/22M)
-		// = 10000 * 21/22 = 9545.45... → 9545
-		{"full year, 1M released", 100_000, 1_000_000, oneYear, 9545},
+		// Full year, 1M released: 100000 * 0.1 * 1.0 * (1 - 1M/21M)
+		// = 10000 * 20/21 = 9523.80... → 9523
+		{"full year, 1M released", 100_000, 1_000_000, oneYear, 9523},
 
 		// One day, zero release: 100000 * 0.1 * (86400/31557600) * 1.0
 		// = 10000 * 0.002737... = 27.37... → 27
@@ -140,9 +140,9 @@ func TestCalcDomainInterest(t *testing.T) {
 		// Same but payout < interest → capped at payout
 		{"full year, capped by payout", 500_000, 50_000, 0, oneYear, 50_000},
 
-		// Full year, 1M released: 500000 * 0.25 * 1.0 * (21/22)
-		// = 125000 * 21/22 = 119318.18... → 119318
-		{"full year, 1M released", 500_000, 200_000, 1_000_000, oneYear, 119_318},
+		// Full year, 1M released: 500000 * 0.25 * 1.0 * (20/21)
+		// = 125000 * 20/21 = 119047.61... → 119047
+		{"full year, 1M released", 500_000, 200_000, 1_000_000, oneYear, 119_047},
 
 		// All coins released: decay = 0
 		{"all released", 500_000, 200_000, SupplyMax, oneYear, 0},

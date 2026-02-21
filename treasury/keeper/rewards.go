@@ -8,7 +8,7 @@ const (
 	CPut      int64 = 15         // Factor for put price (caps user count in price formula)
 	CEarn     int64 = 1000       // Factor for rewards (voting, stoning)
 	StakeMin  int64 = 100_000    // Required node stake in PNYX
-	SupplyMax int64 = 22_000_000 // Fixed maximum PNYX supply
+	SupplyMax int64 = 21_000_000 // Fixed maximum PNYX supply
 
 	SecondsPerYear int64 = 31_557_600 // 365.25 * 24 * 60 * 60
 )

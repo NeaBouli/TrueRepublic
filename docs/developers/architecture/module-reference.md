@@ -201,7 +201,7 @@ Removes liquidity by burning LP shares.
 | eq.4 | `CalcDomainInterest(...)` | `treasure * 0.25 * T * decay` |
 | eq.5 | `CalcNodeReward(...)` | `stake * 0.10 * T * decay` |
 
-Where `decay = 1 - totalReleased / 22,000,000`
+Where `decay = 1 - totalReleased / 21,000,000`
 
 ### Constants
 
@@ -211,7 +211,7 @@ Where `decay = 1 - totalReleased / 22,000,000`
 | `CPut` | 15 | Put price cap |
 | `CEarn` | 1000 | Reward divisor |
 | `StakeMin` | 100,000 | Minimum validator stake |
-| `SupplyMax` | 22,000,000 | Maximum PNYX supply |
+| `SupplyMax` | 21,000,000 | Maximum PNYX supply |
 | `ApyDom` | 0.25 | 25% domain interest APY |
 | `ApyNode` | 0.10 | 10% staking reward APY |
 | `SecondsPerYear` | 31,557,600 | 365.25 days |

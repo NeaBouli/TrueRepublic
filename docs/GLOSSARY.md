@@ -45,7 +45,7 @@
 | **Node** | A computer running the TrueRepublic blockchain software |
 | **PayToPut** | Fee charged when submitting proposals (prevents spam) |
 | **Permission Register** | List of domain public keys used for anonymous voting |
-| **PNYX** | The native token of TrueRepublic (max supply: 22,000,000) |
+| **PNYX** | The native token of TrueRepublic (max supply: 21,000,000) |
 | **PoD** | Proof of Domain -- consensus requiring validators to be domain members |
 | **Pool** | A liquidity pool on the DEX containing two tokens |
 | **Pruning** | Removing old blockchain state to save storage |
@@ -61,7 +61,7 @@
 | **StakeMin** | Minimum validator stake: 100,000 PNYX |
 | **Stone** | A vote token placed on issues, suggestions, or members |
 | **Suggestion** | A proposed solution to an issue within a domain |
-| **SupplyMax** | Maximum total PNYX supply: 22,000,000 |
+| **SupplyMax** | Maximum total PNYX supply: 21,000,000 |
 | **Swap Fee** | DEX trading fee of 0.3% per swap |
 | **Systemic Consensing** | Decision-making by measuring resistance (-5 to +5) instead of Yes/No |
 | **Transfer Limit** | Validator withdrawal cap at 10% of domain total payouts |

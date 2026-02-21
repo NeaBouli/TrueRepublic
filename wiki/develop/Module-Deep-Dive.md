@@ -507,7 +507,7 @@ asset_out = asset_reserve * shares / total_shares
 | `CPut` | 15 | PayToPut price cap |
 | `CEarn` | 1000 | Reward divisor |
 | `StakeMin` | 100,000 | Minimum validator stake (PNYX) |
-| `SupplyMax` | 22,000,000 | Maximum PNYX supply |
+| `SupplyMax` | 21,000,000 | Maximum PNYX supply |
 | `ApyDom` | 0.25 | Domain interest: 25% APY |
 | `ApyNode` | 0.10 | Staking reward: 10% APY |
 | `SecondsPerYear` | 31,557,600 | 365.25 days |
@@ -523,7 +523,7 @@ asset_out = asset_reserve * shares / total_shares
 | 4 | `CalcDomainInterest(treasure, T, released)` | `treasure * ApyDom * T * (1 - released/SupplyMax)` | Domain treasury interest |
 | 5 | `CalcNodeReward(stake, T, released)` | `stake * ApyNode * T * (1 - released/SupplyMax)` | Validator staking reward |
 
-**Release decay:** `factor = 1 - totalReleased / 22,000,000`
+**Release decay:** `factor = 1 - totalReleased / 21,000,000`
 
 As more PNYX enters circulation, rewards decrease proportionally, preventing runaway inflation.
 

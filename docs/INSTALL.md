@@ -100,7 +100,7 @@ Directly donate to developers listed below to support ongoing work.
 ### Features
 - **TRChain:** Built with Cosmos SDK and Tendermint.
 - **Domains:** Include Member-, Issue-, Suggestion-Lists, Treasury-Wallet, and Proof of Domain staking.
-- **PNYX Token:** 22M supply with PayToPut, RateToEarn, VoteToEarn mechanics implemented in treasury.
+- **PNYX Token:** 21M supply with PayToPut, RateToEarn, VoteToEarn mechanics implemented in treasury.
 - **Proof of Stake + Proof of Domain (PoD):** Combined staking mechanism with domain-specific staking.
 - **Systemic Consensing:** Rating system (-5 to +5) for decision-making in both keeper and smart contracts.
 - **DEX:** PNYX/ATOM swaps implemented. Multi-asset expansion (BTC, ETH, LUSD) planned for v0.3 via IBC.

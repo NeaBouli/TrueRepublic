@@ -66,10 +66,10 @@ This prevents validators from extracting more value than the domain generates.
 
 - **APY:** 10% (`ApyNode = 0.10`)
 - **Distribution:** Every `RewardInterval` (3600 seconds / 1 hour)
-- **Release decay:** Rewards decrease as total supply approaches 22M PNYX
+- **Release decay:** Rewards decrease as total supply approaches 21M PNYX
 
 ```
-reward = stake * ApyNode * timeInYears * (1 - totalReleased / 22000000)
+reward = stake * ApyNode * timeInYears * (1 - totalReleased / 21000000)
 ```
 
 ### Domain Interest (eq.4)

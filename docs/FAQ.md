@@ -25,7 +25,7 @@ TrueRepublic's consensus mechanism that requires validators to be **active membe
 ## Tokens & Economics
 
 ### What is the total supply of PNYX?
-Maximum supply is **22,000,000 PNYX**. New PNYX is minted through staking rewards and domain interest, subject to release decay as supply approaches the cap.
+Maximum supply is **21,000,000 PNYX**. New PNYX is minted through staking rewards and domain interest, subject to release decay as supply approaches the cap.
 
 ### How do I get PNYX?
 - **Testnet:** From the faucet
