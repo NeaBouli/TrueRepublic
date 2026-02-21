@@ -54,7 +54,7 @@ make build
 │ Cosmos SDK Application Layer             │
 │ truedemocracy │ dex │ treasury modules   │
 ├──────────────────────────────────────────┤
-│ CometBFT Consensus (v0.38.17)            │
+│ CometBFT Consensus (v0.38.21)            │
 │ P2P (26656) │ Metrics (26660)            │
 └──────────────────────────────────────────┘
 ```

@@ -47,7 +47,7 @@ APPLICATION LAYER (Cosmos SDK v0.50.13)
 ├── CosmWasm ← Smart contracts (governance.rs, treasury.rs)
 └── Standard modules (auth, bank, staking, etc.)
     ↓
-CONSENSUS LAYER (CometBFT v0.38.17)
+CONSENSUS LAYER (CometBFT v0.38.21)
 ├── Byzantine Fault Tolerance (instant finality)
 ├── P2P Networking (port 26656)
 ├── Block Production (~5s blocks)
@@ -83,7 +83,7 @@ STORAGE LAYER
 | **Standard Modules** | auth, bank, staking, gov, distribution |
 | **Codec** | Amino (legacy) + Protobuf (modern) |
 
-### Consensus: CometBFT v0.38.17
+### Consensus: CometBFT v0.38.21
 
 | Aspect | Detail |
 |--------|--------|
@@ -92,7 +92,7 @@ STORAGE LAYER
 | **Finality** | Instant (no reorgs, no confirmations needed) |
 | **Fault Tolerance** | Tolerates < 1/3 Byzantine validators |
 
-### Smart Contracts: Rust + CosmWasm v1.5
+### Smart Contracts: Rust + CosmWasm v3
 
 | Aspect | Detail |
 |--------|--------|

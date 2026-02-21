@@ -49,12 +49,12 @@ TrueRepublic organizes participants into **domains**, the primary structure wher
 
 ## Implementation
 
-The project builds on the **Cosmos SDK** (v0.50.13) and uses **Tendermint** (v0.35.9) as its foundation.
+The project builds on the **Cosmos SDK** (v0.50.13) and uses **CometBFT** (v0.38.21) as its consensus engine.
 
 ### Architecture
 
-1. **Base Layer (Tendermint for Consensus):**
-   - Tendermint's Byzantine Fault Tolerance (BFT) ensures network-wide consensus on blockchain state, maintaining consistency across nodes.
+1. **Base Layer (CometBFT for Consensus):**
+   - CometBFT's Byzantine Fault Tolerance (BFT) ensures network-wide consensus on blockchain state, maintaining consistency across nodes.
 2. **Application Layer (Custom Logic):**
    - Custom modules in Cosmos SDK handle transactional data (e.g., domains, issues, suggestions) and economic logic (e.g., PNYX tokenomics).
    - Implemented in Go, with additional Rust-based CosmWasm smart contracts for governance and treasury.
@@ -95,12 +95,12 @@ Directly donate to developers listed below to support ongoing work.
 
 ### Version: v0.1-alpha
 - **Implemented:** 100% of core functionality (TRChain, Domains, Systemic Consensing, Tokenomics, Nodes, DEX, Wallets, Anonymity, PoD).
-- **Latest Commit:** Full project rebuilt and pushed on March 18, 2025, with updated dependencies (`cosmos-sdk v0.50.13`, `tendermint v0.35.9`).
+- **Latest Commit:** Full project rebuilt and pushed on March 18, 2025, with updated dependencies (`cosmos-sdk v0.50.13`, `cometbft v0.38.21`).
 
 ### Features
 - **TRChain:** Built with Cosmos SDK and Tendermint.
 - **Domains:** Include Member-, Issue-, Suggestion-Lists, Treasury-Wallet, and Proof of Domain staking.
-- **PNYX Token:** 21M supply with PayToPut, RateToEarn, VoteToEarn mechanics implemented in treasury.
+- **PNYX Token:** 22M supply with PayToPut, RateToEarn, VoteToEarn mechanics implemented in treasury.
 - **Proof of Stake + Proof of Domain (PoD):** Combined staking mechanism with domain-specific staking.
 - **Systemic Consensing:** Rating system (-5 to +5) for decision-making in both keeper and smart contracts.
 - **DEX:** PNYX/ATOM swaps implemented. Multi-asset expansion (BTC, ETH, LUSD) planned for v0.3 via IBC.

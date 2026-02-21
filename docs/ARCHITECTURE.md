@@ -14,7 +14,7 @@
 │  Application Layer (Cosmos SDK v0.50.13)         │
 │  truedemocracy  │  dex  │  treasury              │
 ├─────────────────────────────────────────────────┤
-│  Consensus Layer (CometBFT v0.38.17)             │
+│  Consensus Layer (CometBFT v0.38.21)             │
 │  Proof of Domain (PoD) validator selection       │
 └─────────────────────────────────────────────────┘
 ```
@@ -95,7 +95,7 @@ Tokenomics equations from the whitepaper.
 | `governance.rs` | On-chain proposals with systemic consensing (-5 to +5), domain key pair validation |
 | `treasury.rs` | Deposit/withdraw treasury operations with balance tracking |
 
-Built with cosmwasm-std 1.5, compiled to WASM target.
+Built with cosmwasm-std 3, compiled to WASM target.
 
 ## Chain Configuration
 

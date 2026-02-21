@@ -56,10 +56,10 @@ Welcome to the TrueRepublic technical documentation wiki.
 
 | Layer | Technology | Version |
 |-------|-----------|---------|
-| Consensus | CometBFT | v0.38.17 |
+| Consensus | CometBFT | v0.38.21 |
 | Application | Cosmos SDK | v0.50.13 |
 | Language | Go | 1.23.5 |
-| Smart Contracts | CosmWasm (Rust) | cosmwasm-std 1.5 |
+| Smart Contracts | CosmWasm (Rust) | cosmwasm-std 3 |
 | Web Frontend | React + Tailwind CSS | 18.2 / 3.4 |
 | Mobile | React Native + Expo | 0.74 / 51.0 |
 | Wallet | Keplr + CosmJS | 0.32-0.38 |

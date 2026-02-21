@@ -123,7 +123,7 @@ Validator stake withdrawals are capped at **10% of the domain's total payouts**.
 ## Development
 
 ### What is the tech stack?
-Go 1.23 (blockchain), Cosmos SDK v0.50.13, CometBFT v0.38.17, React 18 (web), Expo/React Native (mobile), Rust/CosmWasm (smart contracts).
+Go 1.23 (blockchain), Cosmos SDK v0.50.13, CometBFT v0.38.21, React 18 (web), Expo/React Native (mobile), Rust/CosmWasm 3 (smart contracts).
 
 ### How do I contribute?
 Fork the repo, create a branch, write tests, and submit a PR. See [Developer Docs](developers/README.md).

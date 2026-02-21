@@ -533,7 +533,7 @@ As more PNYX enters circulation, rewards decrease proportionally, preventing run
 
 **Path:** `contracts/src/`
 **Language:** Rust
-**Framework:** cosmwasm-std 1.5
+**Framework:** cosmwasm-std 3.x
 
 ### governance.rs
 

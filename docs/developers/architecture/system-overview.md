@@ -15,7 +15,7 @@
 │  Application Layer (Cosmos SDK v0.50.13)             │
 │  truedemocracy  │  dex  │  treasury                  │
 ├─────────────────────────────────────────────────────┤
-│  Consensus Layer (CometBFT v0.38.17)                 │
+│  Consensus Layer (CometBFT v0.38.21)                 │
 │  Proof of Domain (PoD) validator selection           │
 ├─────────────────────────────────────────────────────┤
 │  Storage Layer                                       │

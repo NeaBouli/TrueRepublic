@@ -25,10 +25,10 @@ Technical documentation for developers building on or contributing to TrueRepubl
 
 | Layer | Technology | Version |
 |-------|-----------|---------|
-| Consensus | CometBFT | v0.38.17 |
+| Consensus | CometBFT | v0.38.21 |
 | Application | Cosmos SDK | v0.50.13 |
 | Language | Go | 1.23.5 |
-| Smart Contracts | CosmWasm | cosmwasm-std 1.5 |
+| Smart Contracts | CosmWasm | cosmwasm-std 3 |
 | Web Frontend | React | 18.2 |
 | Mobile | React Native / Expo | 0.74 / 51.0 |
 | Blockchain Client | CosmJS | 0.32-0.38 |
