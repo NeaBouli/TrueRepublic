@@ -7,9 +7,9 @@ edition = "2021"
 crate-type = ["cdylib", "rlib"]
 
 [dependencies]
-cosmwasm-std = "2"
+cosmwasm-std = "3"
 serde = { version = "1", default-features = false, features = ["derive"] }
 schemars = "0.8"
 
 [dev-dependencies]
-cosmwasm-vm = "2"
+cosmwasm-vm = "3"

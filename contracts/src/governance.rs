@@ -40,7 +40,7 @@ fn save_state(storage: &mut dyn cosmwasm_std::Storage, state: &State) -> StdResu
 fn load_state(storage: &dyn cosmwasm_std::Storage) -> StdResult<State> {
     let data = storage
         .get(STATE_KEY)
-        .ok_or_else(|| cosmwasm_std::StdError::not_found("state"))?;
+        .ok_or_else(|| cosmwasm_std::StdError::msg("state not found"))?;
     cosmwasm_std::from_json(data)
 }
 
@@ -103,9 +103,7 @@ pub fn execute(
             public_key,
         } => {
             if !(-5..=5).contains(&vote) {
-                return Err(cosmwasm_std::StdError::generic_err(
-                    "Vote must be between -5 and 5",
-                ));
+                return Err(cosmwasm_std::StdError::msg("Vote must be between -5 and 5"));
             }
             let sender = info.sender.as_str();
             let key_exists = state
@@ -113,13 +111,13 @@ pub fn execute(
                 .iter()
                 .any(|kp| kp.owner == sender && kp.public_key == public_key);
             if !key_exists {
-                return Err(cosmwasm_std::StdError::generic_err("Invalid key pair"));
+                return Err(cosmwasm_std::StdError::msg("Invalid key pair"));
             }
             let proposal = state
                 .proposals
                 .iter_mut()
                 .find(|p| p.id == proposal_id)
-                .ok_or(cosmwasm_std::StdError::generic_err("Proposal not found"))?;
+                .ok_or(cosmwasm_std::StdError::msg("Proposal not found"))?;
             proposal.votes.push(vote);
             save_state(deps.storage, &state)?;
             Ok(Response::new().add_attribute("action", "vote"))

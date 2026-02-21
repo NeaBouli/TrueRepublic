@@ -24,7 +24,7 @@ fn save_state(storage: &mut dyn cosmwasm_std::Storage, state: &State) -> StdResu
 fn load_state(storage: &dyn cosmwasm_std::Storage) -> StdResult<State> {
     let data = storage
         .get(STATE_KEY)
-        .ok_or_else(|| cosmwasm_std::StdError::not_found("state"))?;
+        .ok_or_else(|| cosmwasm_std::StdError::msg("state not found"))?;
     cosmwasm_std::from_json(data)
 }
 
@@ -67,7 +67,7 @@ pub fn execute(
             recipient: _,
         } => {
             if state.balance < amount {
-                return Err(cosmwasm_std::StdError::generic_err("Insufficient funds"));
+                return Err(cosmwasm_std::StdError::msg("Insufficient funds"));
             }
             state.balance = state.balance.checked_sub(amount)?;
             save_state(deps.storage, &state)?;
