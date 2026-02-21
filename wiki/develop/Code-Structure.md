@@ -126,6 +126,7 @@ TrueRepublic/
 │   ├── API.md
 │   ├── DEPLOYMENT.md
 │   ├── VALIDATOR_GUIDE.md
+│   ├── WhitePaper_TR_eng.md
 │   └── WhitePaper_TR_eng.pdf
 │
 └── .github/

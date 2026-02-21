@@ -61,7 +61,7 @@ The native token **PNYX** -- named after the hill in Athens where citizens gathe
 | **[Developer Docs](docs/developers/README.md)** | Developers | Architecture, API reference, CosmJS, smart contracts |
 | **[FAQ](docs/FAQ.md)** | Everyone | Frequently asked questions |
 | **[Glossary](docs/GLOSSARY.md)** | Everyone | Term definitions |
-| **[Whitepaper](docs/WhitePaper_TR_eng.pdf)** | Everyone | Full whitepaper (PDF) |
+| **[Whitepaper](docs/WhitePaper_TR_eng.md)** | Everyone | Full whitepaper |
 
 ---
 
