@@ -146,7 +146,7 @@ Stones affect ranking in lists.
 
 **Distribution:**
 - Node rewards: 10% APY
-- Domain interest: 2.5% APY
+- Domain treasury interest: 25% APY (apydom = 0.25, per whitepaper)
 - VoteToEarn: Active participation rewards
 
 **Deflationary:**
