@@ -154,11 +154,11 @@ STORAGE LAYER
 
 **Reasoning:** Simpler than zero-knowledge proofs, no complex cryptographic overhead, domain key is unlinkable to master key, sufficient privacy for governance voting. ZKP can be added later.
 
-### 6. Why Telegram-Inspired 3-Column Layout?
+### 6. Why a 3-Column Layout?
 
 **Decision:** Left (domains) / Center (proposals) / Right (details + actions)
 
-**Reasoning:** Familiar to users (Telegram Web), proven UX pattern, maps naturally to governance flow (browse domains -> view proposals -> take action), responsive (collapses on mobile).
+**Reasoning:** UI design patterns inspired by Telegram's open-source web client (3-panel messaging layout). This is design inspiration only -- TrueRepublic has no code dependencies on Telegram and shares no source code with it. The pattern maps naturally to governance flow (browse domains -> view proposals -> take action) and is responsive (collapses on mobile).
 
 ### 7. Why Flat Module Files over Subdirectories?
 
