@@ -1,8 +1,16 @@
 <p align="center">
-  <img src="assets/logo-dark.svg" alt="TrueRepublic Logo" width="400"/>
+  <img src="assets/logo.png" alt="TrueRepublic Logo" width="200"/>
 </p>
 
 <h1 align="center">TrueRepublic / PNYX</h1>
+
+<p align="center">
+  <img src="assets/pnx_logo.png" alt="PNYX Coin" width="100"/>
+</p>
+
+<p align="center">
+  <strong>Blockchain governance that captures nuance, prevents whales, and rewards participation</strong>
+</p>
 
 <p align="center">
   <a href="https://github.com/NeaBouli/TrueRepublic/actions/workflows/go-ci.yml"><img src="https://github.com/NeaBouli/TrueRepublic/actions/workflows/go-ci.yml/badge.svg" alt="Go CI"/></a>
@@ -12,7 +20,10 @@
 </p>
 
 <p align="center">
-  <strong>Direct democracy on the blockchain. Built with Cosmos SDK.</strong>
+  <a href="https://neabouli.github.io/TrueRepublic/">Website</a> &bull;
+  <a href="https://github.com/NeaBouli/TrueRepublic/wiki">Wiki</a> &bull;
+  <a href="docs/WhitePaper_TR_eng.md">Whitepaper</a> &bull;
+  <a href="https://t.me/truerepublic">Telegram</a>
 </p>
 
 ---

@@ -1,4 +1,12 @@
-# TrueRepublic/PNYX Technical Wiki
+<p align="center">
+  <img src="https://raw.githubusercontent.com/NeaBouli/TrueRepublic/main/assets/logo.png" alt="TrueRepublic Logo" width="200"/>
+</p>
+
+<h2 align="center">TrueRepublic/PNYX Technical Wiki</h2>
+
+<p align="center">
+  <img src="https://raw.githubusercontent.com/NeaBouli/TrueRepublic/main/assets/pnx_logo.png" alt="PNYX Coin" width="100"/>
+</p>
 
 Welcome to the TrueRepublic technical documentation wiki.
 

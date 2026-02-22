@@ -1,8 +1,16 @@
-# TrueRepublic (draft)
+<p align="center">
+  <img src="../assets/logo.png" alt="TrueRepublic" width="200"/>
+</p>
 
-**Domains, Tokenomics, Dex, Chain and Nodes**
+<h1 align="center">TrueRepublic (draft)</h1>
 
-p.cypher@protonmail.com
+<p align="center">
+  <img src="../assets/pnx_logo.png" alt="PNYX" width="100"/>
+</p>
+
+<p align="center"><strong>Domains, Tokenomics, Dex, Chain and Nodes</strong></p>
+
+<p align="center">p.cypher@protonmail.com</p>
 
 ---
 
