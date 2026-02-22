@@ -94,7 +94,7 @@ See `docs/VALIDATOR_GUIDE.md` for detailed instructions.
 | Service | Port | Description |
 |---------|------|-------------|
 | Node P2P | 26656 | Peer-to-peer networking |
-| Node RPC | 26657 | Tendermint RPC |
+| Node RPC | 26657 | CometBFT RPC |
 | Node LCD | 1317 | REST API |
 | Node gRPC | 9090 | gRPC endpoint |
 | Node Metrics | 26660 | Prometheus metrics |

@@ -125,7 +125,7 @@ Stones affect ranking in lists.
 
 **How it works:**
 - Constant Product AMM (x*y=k)
-- Liquidity pools (PNYX/ATOM, PNYX/USDC, etc.)
+- Liquidity pools (PNYX/ATOM; BTC, ETH, LUSD planned via IBC)
 - 0.3% fee to liquidity providers
 - 1% PNYX burn (deflationary)
 

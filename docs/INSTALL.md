@@ -98,7 +98,7 @@ Directly donate to developers listed below to support ongoing work.
 - **Latest Commit:** Full project rebuilt and pushed on March 18, 2025, with updated dependencies (`cosmos-sdk v0.50.13`, `cometbft v0.38.21`).
 
 ### Features
-- **TRChain:** Built with Cosmos SDK and Tendermint.
+- **TRChain:** Built with Cosmos SDK and CometBFT.
 - **Domains:** Include Member-, Issue-, Suggestion-Lists, Treasury-Wallet, and Proof of Domain staking.
 - **PNYX Token:** 21M supply with PayToPut, RateToEarn, VoteToEarn mechanics implemented in treasury.
 - **Proof of Stake + Proof of Domain (PoD):** Combined staking mechanism with domain-specific staking.
