@@ -9,8 +9,8 @@
 
 | Repo | Branch | HEAD | Path |
 |------|--------|------|------|
-| **Main** | `main` | `7f01a42` (feat: v0.2.0 — feature-complete governance) | `/Users/gio/TrueRepublic/` |
-| **Wiki** | `master` | `5273304` (docs: fill Known Bugs stub) | `/Users/gio/TrueRepublic/wiki-github/` |
+| **Main** | `main` | `19c2f24` (docs: update GitHub Pages stats) | `/Users/gio/TrueRepublic/` |
+| **Wiki** | `master` | `eed3558` (docs: update wiki for v0.2.0) | `/Users/gio/TrueRepublic/wiki-github/` |
 
 - Working tree: **clean**, up-to-date with `origin/main`
 - `wiki-github/` is untracked in the main repo (it is a separate git clone of the GitHub Wiki repo -- this is expected and correct)
