@@ -207,12 +207,13 @@ cd mobile-wallet && npm install
 
 ## Current Status
 
-**Version: v0.1-alpha**
+**Version: v0.1.8-alpha**
 
-- ✅ 182 unit tests passing across 3 modules (2,705 lines of test code)
+- ✅ 197 unit tests passing across 3 modules (~2,950 lines of test code)
 - ✅ Core blockchain compiles and runs
 - ✅ Whitepaper tokenomics fully implemented (equations 1-5)
 - ✅ Complete governance system (domains, proposals, voting, lifecycle)
+- ✅ Person election voting modes (Simple/Absolute Majority, Abstention)
 - ✅ DEX with AMM, liquidity pools, swap fees, PNYX burn
 - ✅ Web wallet with 3-column governance UI
 - ✅ Mobile wallet with bottom-tab navigation
@@ -220,9 +221,9 @@ cd mobile-wallet && npm install
 
 ### Roadmap
 
-- **v0.2 (Q2 2025):** Full UI integration, ZKP for anonymity
-- **v0.3 (Q3 2025):** Network scalability tests (175+ nodes), multi-asset DEX
-- **v1.0 (Q4 2025):** Mainnet launch with full IBC support
+- **v0.2 (Q3 2026):** Full UI integration, ZKP for anonymity
+- **v0.3 (Q4 2026):** Network scalability tests (175+ nodes), multi-asset DEX
+- **v1.0 (Q1 2027):** Mainnet launch with full IBC support
 
 ---
 
