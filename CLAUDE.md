@@ -2,21 +2,21 @@
 
 ## Current Status
 
-**Version:** v0.2.0 (Feature Complete Governance) -- tagged 24.02.2026
+**Version:** v0.2.1 (Documentation Sync) -- tagged 24.02.2026
 **Phase:** Pre-production, testnet-ready. ~95% whitepaper feature coverage (excluding ZKP/IBC). Zero P0 issues remain.
 
 ### Repository State
 
 | Repo | Branch | HEAD | Path |
 |------|--------|------|------|
-| **Main** | `main` | `19c2f24` (docs: update GitHub Pages stats) | `/Users/gio/TrueRepublic/` |
+| **Main** | `main` | `bc7d175` (docs: update CLAUDE.md HEAD refs) | `/Users/gio/TrueRepublic/` |
 | **Wiki** | `master` | `eed3558` (docs: update wiki for v0.2.0) | `/Users/gio/TrueRepublic/wiki-github/` |
 
 - Working tree: **clean**, up-to-date with `origin/main`
 - `wiki-github/` is untracked in the main repo (it is a separate git clone of the GitHub Wiki repo -- this is expected and correct)
 - Remote: `https://github.com/NeaBouli/TrueRepublic`
 
-### Releases (9 total)
+### Releases (10 total)
 
 | Tag | Title | Date |
 |-----|-------|------|
@@ -28,7 +28,8 @@
 | v0.1.6 | Maintenance & Verification | 22.02.2026 |
 | v0.1.7 | Pre-Production Baseline | 22.02.2026 |
 | v0.1.8 | Person Election Voting Modes | 24.02.2026 |
-| v0.2.0 | Feature Complete Governance (Latest) | 24.02.2026 |
+| v0.2.0 | Feature Complete Governance | 24.02.2026 |
+| v0.2.1 | Documentation Sync (Latest) | 24.02.2026 |
 
 ### Live Deployments
 
