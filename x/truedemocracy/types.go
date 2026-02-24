@@ -32,6 +32,23 @@ const (
 	StakeTransferLimitBps  int64 = 1000       // 10% of domain total payouts (WP §7)
 )
 
+// VotingMode determines how a winner is decided in person elections (WP §3.7).
+type VotingMode int32
+
+const (
+	VotingModeSimpleMajority    VotingMode = 0 // >50% of votes cast (excl. abstentions)
+	VotingModeAbsoluteMajority  VotingMode = 1 // >50% of all eligible members
+	VotingModeSystemicConsensing VotingMode = 2 // -5 to +5 rating scale (WP §3.2)
+)
+
+// VoteChoice represents a member's vote in a person election (WP §3.7).
+type VoteChoice int32
+
+const (
+	VoteChoiceApprove VoteChoice = 0 // place stone / vote for candidate
+	VoteChoiceAbstain VoteChoice = 1 // explicit abstention
+)
+
 type Domain struct {
     Name           string         `json:"name"`
     Admin          sdk.AccAddress `json:"admin"`
@@ -45,12 +62,14 @@ type Domain struct {
 }
 
 type DomainOptions struct {
-    AdminElectable    bool  `json:"admin_electable"`
-    AnyoneCanJoin     bool  `json:"anyone_can_join"`
-    OnlyAdminIssues   bool  `json:"only_admin_issues"`
-    CoinBurnRequired  bool  `json:"coin_burn_required"`
-    ApprovalThreshold int64 `json:"approval_threshold"` // basis points; 0 = use default (500 = 5%)
-    DefaultDwellTime  int64 `json:"default_dwell_time"` // seconds; 0 = use default (86400 = 1 day)
+    AdminElectable    bool       `json:"admin_electable"`
+    AnyoneCanJoin     bool       `json:"anyone_can_join"`
+    OnlyAdminIssues   bool       `json:"only_admin_issues"`
+    CoinBurnRequired  bool       `json:"coin_burn_required"`
+    ApprovalThreshold int64      `json:"approval_threshold"`  // basis points; 0 = use default (500 = 5%)
+    DefaultDwellTime  int64      `json:"default_dwell_time"`  // seconds; 0 = use default (86400 = 1 day)
+    VotingMode        VotingMode `json:"voting_mode"`         // person election mode (WP §3.7); 0 = simple majority
+    AbstentionAllowed bool       `json:"abstention_allowed"`  // allow explicit abstention in elections (WP §3.7); default true
 }
 
 type Issue struct {

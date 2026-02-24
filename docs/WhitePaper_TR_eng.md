@@ -30,6 +30,7 @@
      - 3.4.2 [Coin supply and release](#342-coin-supply-and-release)
    - 3.5 [Properties of the domain](#35-properties-of-the-domain)
    - 3.6 [Domain options](#36-domain-options)
+   - 3.7 [Voting modes for person elections](#37-voting-modes-for-person-elections)
 4. [Anonymity & Onboarding](#4-anonymity--onboarding)
 5. [Dex](#5-dex)
 6. [TRChain](#6-trchain)
@@ -254,6 +255,38 @@ The total number of PNYX is fixed with 21 million coins. The majority of coins w
   - No (default)
   - Yes
   - *Note:* If this option is enabled, the user must burn a defined amount of tokens before he can be added to the member list. This option is primarily intended for the governance domain, where changes in the protocol are voted on.
+
+### 3.7 Voting modes for person elections
+
+For person elections (e.g. "Election of the Board Chairman", see §3.1.1), domains can configure a voting mode that determines how a winner is decided. This extends the existing stone-based ranking with formal majority requirements.
+
+**Simple Majority** (default)
+
+The candidate with more than 50% of the **votes cast** (excluding abstentions) wins. This is suitable for standard elections in smaller domains where participation is typically high.
+
+> `votes_candidate / (total_votes - abstentions) > 0.5`
+
+*Example:* 100 members, 80 voted, 10 abstentions. Candidate A receives 36 votes: 36/70 = 51.4% — elected.
+
+**Absolute Majority**
+
+The candidate with more than 50% of **all eligible members** wins. Abstentions and non-participation effectively count as "No". This mode is intended for critical decisions such as admin elections or protocol changes.
+
+> `votes_candidate / total_members > 0.5`
+
+*Example:* 100 members. Candidate A receives 48 votes: 48/100 = 48% — not elected. At least 51 votes are required.
+
+**Systemic Consensing**
+
+The existing -5 to +5 rating scale (see §3.2) can also be applied to person elections. The candidate with the highest total score wins. This mode minimizes group resistance and is recommended for elections where consensus matters more than majority.
+
+**Abstention**
+
+Members can explicitly abstain from a vote. This is configurable per domain (default: allowed).
+
+- In Simple Majority mode: abstentions count towards quorum but are excluded from the majority calculation.
+- In Absolute Majority mode: abstentions effectively count as "No" since the denominator is the total number of members.
+- Not voted (implicit): the member has not participated at all — does not count towards quorum.
 
 ---
 
