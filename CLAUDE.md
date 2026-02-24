@@ -2,21 +2,21 @@
 
 ## Current Status
 
-**Version:** v0.1.8 (Person Election Voting Modes) -- tagged 24.02.2026
-**Phase:** Pre-production, testnet-ready. The v0.1.x audit, documentation, and branding cycle is complete. Zero P0 issues remain.
+**Version:** v0.2.0 (Feature Complete Governance) -- tagged 24.02.2026
+**Phase:** Pre-production, testnet-ready. ~95% whitepaper feature coverage (excluding ZKP/IBC). Zero P0 issues remain.
 
 ### Repository State
 
 | Repo | Branch | HEAD | Path |
 |------|--------|------|------|
-| **Main** | `main` | `29779ad` (docs: update GitHub Pages stats) | `/Users/gio/TrueRepublic/` |
+| **Main** | `main` | `7f01a42` (feat: v0.2.0 — feature-complete governance) | `/Users/gio/TrueRepublic/` |
 | **Wiki** | `master` | `5273304` (docs: fill Known Bugs stub) | `/Users/gio/TrueRepublic/wiki-github/` |
 
 - Working tree: **clean**, up-to-date with `origin/main`
 - `wiki-github/` is untracked in the main repo (it is a separate git clone of the GitHub Wiki repo -- this is expected and correct)
 - Remote: `https://github.com/NeaBouli/TrueRepublic`
 
-### Releases (8 total)
+### Releases (9 total)
 
 | Tag | Title | Date |
 |-----|-------|------|
@@ -27,7 +27,8 @@
 | v0.1.5 | Logo integration | 22.02.2026 |
 | v0.1.6 | Maintenance & Verification | 22.02.2026 |
 | v0.1.7 | Pre-Production Baseline | 22.02.2026 |
-| v0.1.8 | Person Election Voting Modes (Latest) | 24.02.2026 |
+| v0.1.8 | Person Election Voting Modes | 24.02.2026 |
+| v0.2.0 | Feature Complete Governance (Latest) | 24.02.2026 |
 
 ### Live Deployments
 
@@ -37,14 +38,14 @@
 
 ### Key Metrics
 
-- 197 unit tests across 3 modules (~2,950 lines of test code)
-- 17 transaction types (13 governance + 4 DEX)
+- 225 unit tests across 3 modules (~3,800 lines of test code)
+- 19 transaction types (15 governance + 4 DEX)
 - 6 query endpoints (4 governance + 2 DEX)
-- 5 tokenomics equations fully implemented
-- ~10,000 lines of source code (Go + JS + Rust)
+- 5 tokenomics equations fully implemented + domain interest in EndBlock
+- ~10,800 lines of source code (Go + JS + Rust)
 - 30+ wiki pages, 39 docs files
 
-### Completed Work (v0.1.1 -- v0.1.8)
+### Completed Work (v0.1.1 -- v0.2.0)
 
 1. **v0.1.1 -- Security:** 5 CVEs patched (curve25519-dalek RUSTSEC-2024-0344, CometBFT GO-2026-4361, jose2go GO-2025-4123, crypto/tls GO-2026-4337, Go 1.24.13)
 2. **v0.1.2 -- Supply Fix:** Critical 22M to 21M correction in source code and all documentation; GitHub Pages deployed
@@ -54,6 +55,11 @@
 6. **v0.1.6 -- Verification:** Frontend independence confirmed (no Telegram FOSS code); project integrity verified
 7. **v0.1.7 -- Baseline:** Pre-production baseline release marking end of audit cycle
 8. **v0.1.8 -- Elections:** Person election voting modes (WP §3.7): Simple Majority, Absolute Majority, Systemic Consensing, Abstention; `VotingMode`/`VoteChoice` types, `CastElectionVote`/`TallyElection` logic, 15 new tests (197 total)
+9. **v0.2.0 -- Feature Complete Governance:** 4 milestones delivering ~95% whitepaper coverage:
+   - **Systemic Consensing Score** (WP §3.2): `scoring.go` with `ComputeSuggestionScore`, `RankSuggestionsByScore`, `FindConsensusWinner`; 15 tests verifying whitepaper table
+   - **MsgRateProposal**: on-chain anonymous rating with ed25519 domain key signature verification; `RateProposalWithSignature` keeper, msg_server handler, gRPC handler, CLI command
+   - **MsgCastElectionVote**: on-chain person election voting (approve/abstain); msg_server handler, gRPC handler, CLI command
+   - **Domain Interest EndBlock** (eq.4): `DistributeDomainInterest()` runs every RewardInterval, credits active domain treasuries with interest capped by payouts, decays with release; 5 tests
 
 ---
 
@@ -75,7 +81,7 @@
 
 Two custom Cosmos SDK modules plus a treasury package:
 
-1. **x/truedemocracy** (~6,500 lines, 23 files) -- Governance: domains, proposals, systemic consensing (-5 to +5), stones voting, suggestion lifecycle (green/yellow/red zones), validator PoD, slashing, anonymous voting, admin elections, member exclusion, person election voting modes (simple/absolute majority, abstention)
+1. **x/truedemocracy** (~7,300 lines, 25 files) -- Governance: domains, proposals, systemic consensing scoring (-5 to +5), stones voting, suggestion lifecycle (green/yellow/red zones), validator PoD, slashing, anonymous voting (domain key signatures), admin elections, member exclusion, person election voting modes (simple/absolute majority, abstention), domain interest payout (eq.4)
 2. **x/dex** (1,637 lines, 9 files) -- AMM DEX: constant-product (x*y=k), PNYX/ATOM pool, 0.3% swap fee, 1% PNYX burn
 3. **treasury/keeper** (371 lines, 2 files) -- Tokenomics equations 1-5: domain cost, rewards, put price, domain interest (25% APY), node staking (10% APY), release decay
 
@@ -124,25 +130,29 @@ TrueRepublic/
 ├── SECURITY.md                     Security documentation
 ├── CLAUDE.md                       THIS FILE -- project handover context
 │
-├── x/truedemocracy/                GOVERNANCE MODULE (23 files, ~6,500 lines)
-│   ├── keeper.go                   Domain CRUD, proposal submission, fee validation
-│   ├── msg_server.go               Message handlers (13 tx types)
+├── x/truedemocracy/                GOVERNANCE MODULE (25 files, ~7,300 lines)
+│   ├── keeper.go                   Domain CRUD, proposal submission, fee validation,
+│   │                               RateProposalWithSignature (anonymous rating)
+│   ├── msg_server.go               Message handlers (15 tx types)
 │   ├── query_server.go             gRPC query handlers (4 query types)
-│   ├── cli.go                      Cobra CLI commands (14 tx + 4 query)
-│   ├── module.go                   Module registration, codecs
-│   ├── msgs.go                     Message type definitions
+│   ├── cli.go                      Cobra CLI commands (16 tx + 4 query)
+│   ├── module.go                   Module registration, codecs, EndBlock hooks
+│   ├── msgs.go                     Message type definitions (15 types)
 │   ├── types.go                    Domain, DomainOptions, VotingMode, VoteChoice structs
+│   ├── scoring.go                  Systemic Consensing: ComputeSuggestionScore,
+│   │                               RankSuggestionsByScore, FindConsensusWinner (WP §3.2)
 │   ├── governance.go               Admin election, member exclusion
 │   ├── election.go                 Person election voting: CastElectionVote, TallyElection (WP §3.7)
-│   ├── validator.go                PoD consensus, registration, transfer limit (10%)
+│   ├── validator.go                PoD consensus, registration, transfer limit (10%),
+│   │                               DistributeDomainInterest (eq.4)
 │   ├── slashing.go                 5% double-sign, 1% downtime penalties
 │   ├── stones.go                   Stones voting + VoteToEarn rewards
 │   ├── lifecycle.go                Suggestion lifecycle (green/yellow/red, auto-delete)
 │   ├── anonymity.go                Domain key pairs for anonymous voting (WP S4)
 │   ├── tree.go                     Tree data structures
 │   ├── querier.go                  Legacy query interface
-│   ├── *_test.go (8 files)         131 tests: governance, validator, stones, lifecycle,
-│   │                               anonymity, slashing, elections
+│   ├── *_test.go (9 files)         170 tests: governance, validator, stones, lifecycle,
+│   │                               anonymity, slashing, elections, scoring, domain interest
 │
 ├── x/dex/                          DEX MODULE (9 files, 1,637 lines)
 │   ├── keeper.go                   AMM pool operations (x*y=k)
@@ -254,21 +264,20 @@ The roadmap dates in `README.md` (lines 221-226) and `wiki-github/status-Roadmap
 
 ### GitHub Pages Stats Section
 
-`docs/index.html` shows "261 test coverage" in the stats section and "v0.1.1" as the release badge. These should be updated to reflect 197 tests and v0.1.8 if the page is refreshed.
+`docs/index.html` shows 197 tests and v0.1.8 in the stats section. These should be updated to reflect 225 tests and v0.2.0.
 
 ### Roadmap Features Not Yet Implemented
 
 Per the roadmap, the following are planned but not built:
 
-**v0.2 scope:**
+**v0.3 scope:**
 - Zero-Knowledge Proofs (ZKP) replacing domain key pairs for anonymous voting
 - Full UI integration (enhanced web/mobile UX)
 - WebSocket subscriptions for real-time updates
-
-**v0.3 scope:**
 - Multi-asset DEX pools via IBC (BTC, ETH, LUSD)
 - IBC channel setup (Cosmos Hub, Osmosis, Juno)
 - Network scalability tests (175+ validator nodes)
+- CosmWasm contract integration
 
 **v1.0 scope:**
 - Professional security audits (smart contracts + Go modules)
@@ -286,7 +295,7 @@ The README references Apache 2.0, but the presence of an actual `LICENSE` file i
 
 ### Zero P0 Issues
 
-As of v0.1.8, there are no known critical (P0) issues. All previously identified P0 issues were resolved:
+As of v0.2.0, there are no known critical (P0) issues. All previously identified P0 issues were resolved:
 - 22M supply bug (fixed v0.1.2)
 - Tendermint naming in INSTALL/DEPLOYMENT (fixed v0.1.4)
 - PNYX/USDC in System-Overview (fixed v0.1.4)
@@ -295,7 +304,7 @@ As of v0.1.8, there are no known critical (P0) issues. All previously identified
 
 1. **Go version discrepancy:** `go.mod` says `go 1.23.5` but CI runs `1.24.13`. This is intentional (minimum vs CI target) but one wiki stub previously mentioned "1.24+" which was corrected.
 2. **No explicit linting configs:** No `.eslintrc`, `.prettierrc`, or `golangci-lint.yml` exist. Go uses `go vet` + optional staticcheck. Rust enforces `cargo fmt` + `clippy` in CI. JavaScript has no enforced linting.
-3. **Test count in docs/index.html:** The GitHub Pages site shows "261" in the test stat, which does not match the actual 197 tests. This is a cosmetic issue on the landing page.
+3. **Test count in docs/index.html:** The GitHub Pages site shows 197 tests and v0.1.8, which should be updated to 225 tests and v0.2.0.
 4. **No protobuf generation:** The Makefile has a `proto-gen` stub target but no actual protobuf schema files or generation pipeline. Messages are defined as Go structs directly.
 5. **Web wallet polyfills:** The web wallet requires Node.js polyfills for `@cosmjs/crypto` (webpack 5 removed them). This is handled by `react-app-rewired` with `config-overrides.js`.
 
@@ -304,7 +313,7 @@ As of v0.1.8, there are no known critical (P0) issues. All previously identified
 ## Explicit Non-Goals
 
 1. **No Telegram FOSS code:** The frontend is 100% custom. The "Telegram-inspired" label refers only to the 3-column layout design pattern. This was explicitly verified and confirmed in v0.1.6. Do not introduce Telegram dependencies.
-2. **No multi-asset DEX in v0.1.x:** Only PNYX/ATOM is supported. BTC, ETH, LUSD pools require IBC and are planned for v0.3.
+2. **No multi-asset DEX in v0.2.x:** Only PNYX/ATOM is supported. BTC, ETH, LUSD pools require IBC and are planned for v0.3.
 3. **No protobuf/gRPC schema files:** The project uses direct Go struct definitions for messages, not `.proto` files. This is a deliberate simplification for the alpha phase.
 4. **No i18n/localization:** Documentation and UI are English-only (with a German whitepaper variant).
 5. **No mainnet deployment:** The project is testnet-ready only. Mainnet launch is planned for v1.0.
@@ -377,9 +386,10 @@ As of v0.1.8, there are no known critical (P0) issues. All previously identified
 
 ## Next Immediate Step
 
-There are no blocked or in-progress tasks. The project is at v0.1.8. Possible next actions, in priority order:
+There are no blocked or in-progress tasks. The project is at v0.2.0 with ~95% whitepaper feature coverage. Possible next actions, in priority order:
 
-1. **Add CLI/message for election voting** -- Wire `CastElectionVote`/`TallyElection` to a new `MsgCastElectionVote` and CLI command
-2. **Begin v0.2 development** -- ZKP for anonymous voting, UI integration, WebSocket subscriptions
+1. **Update docs/index.html** -- Reflect 225 tests, v0.2.0
+2. **Update wiki** -- status-Current-Status.md, status-Known-Bugs.md (P2 election CLI wiring is now resolved)
+3. **Begin v0.3 development** -- ZKP for anonymous voting, CosmWasm integration, IBC/multi-asset DEX, UI integration
 
 Await core dev instruction on which direction to proceed.
