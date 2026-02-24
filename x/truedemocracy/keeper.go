@@ -189,3 +189,80 @@ func (k Keeper) RateProposal(ctx sdk.Context, domainName, issueName, suggestionN
     }
     return reward, cache, nil
 }
+
+// RateProposalWithSignature records a rating using a pre-computed signature.
+// This is the message-handler variant: the client signs the payload offline
+// and submits pubkey + signature (private key never leaves the client).
+func (k Keeper) RateProposalWithSignature(ctx sdk.Context, domainName, issueName, suggestionName string, rating int, domainPubKeyHex, signatureHex string) (sdk.Coins, error) {
+    if rating < -5 || rating > 5 {
+        return sdk.Coins{}, errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "rating must be between -5 and +5")
+    }
+
+    // Decode and verify the public key.
+    pubKeyBytes, err := hex.DecodeString(domainPubKeyHex)
+    if err != nil || len(pubKeyBytes) != ed25519.PubKeySize {
+        return sdk.Coins{}, errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "invalid domain public key hex")
+    }
+    pubKey := &ed25519.PubKey{Key: pubKeyBytes}
+
+    // Decode and verify the signature.
+    sigBytes, err := hex.DecodeString(signatureHex)
+    if err != nil {
+        return sdk.Coins{}, errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "invalid signature hex")
+    }
+    payload := []byte(fmt.Sprintf("%s|%s|%s|%d", domainName, issueName, suggestionName, rating))
+    if !pubKey.VerifySignature(payload, sigBytes) {
+        return sdk.Coins{}, errorsmod.Wrap(sdkerrors.ErrUnauthorized, "signature verification failed")
+    }
+
+    // Verify key is in permission register.
+    if !k.IsKeyAuthorized(ctx, domainName, domainPubKeyHex) {
+        return sdk.Coins{}, errorsmod.Wrap(sdkerrors.ErrUnauthorized, "domain key not in permission register")
+    }
+
+    store := ctx.KVStore(k.StoreKey)
+    domainBz := store.Get([]byte("domain:" + domainName))
+    if domainBz == nil {
+        return sdk.Coins{}, errorsmod.Wrap(sdkerrors.ErrUnknownRequest, "domain not found")
+    }
+    var domain Domain
+    k.cdc.MustUnmarshalLengthPrefixed(domainBz, &domain)
+
+    // Prevent double-voting.
+    if HasDomainKeyVoted(domain, issueName, suggestionName, domainPubKeyHex) {
+        return sdk.Coins{}, errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "domain key has already voted on this suggestion")
+    }
+
+    // Find and rate the suggestion.
+    now := ctx.BlockTime().Unix()
+    found := false
+    for i, issue := range domain.Issues {
+        if issue.Name == issueName {
+            for j, suggestion := range issue.Suggestions {
+                if suggestion.Name == suggestionName {
+                    domain.Issues[i].Suggestions[j].Ratings = append(domain.Issues[i].Suggestions[j].Ratings, Rating{
+                        DomainPubKeyHex: domainPubKeyHex,
+                        Value:           rating,
+                    })
+                    domain.Issues[i].LastActivityAt = now
+                    found = true
+                    break
+                }
+            }
+            break
+        }
+    }
+    if !found {
+        return sdk.Coins{}, errorsmod.Wrap(sdkerrors.ErrUnknownRequest, "issue or suggestion not found")
+    }
+
+    // RateToEarn reward (eq.2).
+    rewardAmt := rewards.CalcReward(domain.Treasury.AmountOf("pnyx"))
+    reward := sdk.NewCoins(sdk.NewCoin("pnyx", rewardAmt))
+    domain.Treasury = domain.Treasury.Sub(reward...)
+    domain.TotalPayouts += rewardAmt.Int64()
+
+    bz := k.cdc.MustMarshalLengthPrefixed(&domain)
+    store.Set([]byte("domain:"+domainName), bz)
+    return reward, nil
+}

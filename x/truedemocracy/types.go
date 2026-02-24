@@ -156,6 +156,8 @@ func RegisterCodec(cdc *codec.LegacyAmino) {
     cdc.RegisterConcrete(MsgPlaceStoneOnMember{}, "truedemocracy/MsgPlaceStoneOnMember", nil)
     cdc.RegisterConcrete(MsgVoteToExclude{}, "truedemocracy/MsgVoteToExclude", nil)
     cdc.RegisterConcrete(MsgVoteToDelete{}, "truedemocracy/MsgVoteToDelete", nil)
+    cdc.RegisterConcrete(MsgRateProposal{}, "truedemocracy/MsgRateProposal", nil)
+    cdc.RegisterConcrete(MsgCastElectionVote{}, "truedemocracy/MsgCastElectionVote", nil)
 }
 
 func DefaultGenesisState() GenesisState {

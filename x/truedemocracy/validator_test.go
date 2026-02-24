@@ -529,3 +529,162 @@ func TestPowerScalesWithStake(t *testing.T) {
 		t.Errorf("power = %d, want 3 for 300k stake", val.Power)
 	}
 }
+
+// ---------- Domain Interest (eq.4) ----------
+
+func TestDistributeDomainInterest(t *testing.T) {
+	k, ctx := setupKeeper(t)
+	k.CreateDomain(ctx, "Active", sdk.AccAddress("admin1"), sdk.NewCoins(sdk.NewInt64Coin("pnyx", 500_000)))
+
+	// Set up domain with payouts so it qualifies for interest.
+	domain, _ := k.GetDomain(ctx, "Active")
+	domain.TotalPayouts = 100_000 // active domain
+	st := ctx.KVStore(k.StoreKey)
+	bz := k.cdc.MustMarshalLengthPrefixed(&domain)
+	st.Set([]byte("domain:Active"), bz)
+
+	// Initialize tracking state (mimics InitGenesis).
+	initTime := ctx.BlockTime().Unix()
+	st.Set([]byte("dom:last-interest-time"), k.cdc.MustMarshalLengthPrefixed(initTime))
+	zeroInt := math.ZeroInt()
+	st.Set([]byte("pod:total-release"), k.cdc.MustMarshalLengthPrefixed(&zeroInt))
+
+	t.Run("no interest before interval", func(t *testing.T) {
+		ctx2 := ctx.WithBlockTime(ctx.BlockTime().Add(30 * time.Minute))
+		if err := k.DistributeDomainInterest(ctx2); err != nil {
+			t.Fatal(err)
+		}
+		domain, _ := k.GetDomain(ctx2, "Active")
+		if !domain.Treasury.AmountOf("pnyx").Equal(math.NewInt(500_000)) {
+			t.Errorf("treasury changed before interval: %s", domain.Treasury)
+		}
+	})
+
+	t.Run("interest after interval", func(t *testing.T) {
+		ctx2 := ctx.WithBlockTime(ctx.BlockTime().Add(time.Duration(RewardInterval) * time.Second))
+		if err := k.DistributeDomainInterest(ctx2); err != nil {
+			t.Fatal(err)
+		}
+		domain, _ := k.GetDomain(ctx2, "Active")
+		treasuryAmt := domain.Treasury.AmountOf("pnyx")
+
+		// Expected: CalcDomainInterest(500000, 100000, 0, 3600)
+		expected := rewards.CalcDomainInterest(
+			math.NewInt(500_000), math.NewInt(100_000), math.ZeroInt(), RewardInterval,
+		)
+		wantTreasury := math.NewInt(500_000).Add(expected)
+		if !treasuryAmt.Equal(wantTreasury) {
+			t.Errorf("treasury = %s, want %s (interest = %s)", treasuryAmt, wantTreasury, expected)
+		}
+	})
+}
+
+func TestDomainInterestZeroPayouts(t *testing.T) {
+	k, ctx := setupKeeper(t)
+	k.CreateDomain(ctx, "Idle", sdk.AccAddress("admin1"), sdk.NewCoins(sdk.NewInt64Coin("pnyx", 500_000)))
+
+	// Domain with zero payouts — should earn no interest.
+	st := ctx.KVStore(k.StoreKey)
+	initTime := ctx.BlockTime().Unix()
+	st.Set([]byte("dom:last-interest-time"), k.cdc.MustMarshalLengthPrefixed(initTime))
+	zeroInt := math.ZeroInt()
+	st.Set([]byte("pod:total-release"), k.cdc.MustMarshalLengthPrefixed(&zeroInt))
+
+	ctx2 := ctx.WithBlockTime(ctx.BlockTime().Add(time.Duration(RewardInterval) * time.Second))
+	if err := k.DistributeDomainInterest(ctx2); err != nil {
+		t.Fatal(err)
+	}
+	domain, _ := k.GetDomain(ctx2, "Idle")
+	if !domain.Treasury.AmountOf("pnyx").Equal(math.NewInt(500_000)) {
+		t.Errorf("idle domain treasury should not change: got %s", domain.Treasury)
+	}
+}
+
+func TestDomainInterestCappedByPayout(t *testing.T) {
+	k, ctx := setupKeeper(t)
+	// Large treasury, small payouts → interest capped by payout.
+	k.CreateDomain(ctx, "Big", sdk.AccAddress("admin1"), sdk.NewCoins(sdk.NewInt64Coin("pnyx", 10_000_000)))
+
+	domain, _ := k.GetDomain(ctx, "Big")
+	domain.TotalPayouts = 1 // tiny payout → caps interest at 1
+	st := ctx.KVStore(k.StoreKey)
+	bz := k.cdc.MustMarshalLengthPrefixed(&domain)
+	st.Set([]byte("domain:Big"), bz)
+
+	initTime := ctx.BlockTime().Unix()
+	st.Set([]byte("dom:last-interest-time"), k.cdc.MustMarshalLengthPrefixed(initTime))
+	zeroInt := math.ZeroInt()
+	st.Set([]byte("pod:total-release"), k.cdc.MustMarshalLengthPrefixed(&zeroInt))
+
+	ctx2 := ctx.WithBlockTime(ctx.BlockTime().Add(time.Duration(RewardInterval) * time.Second))
+	if err := k.DistributeDomainInterest(ctx2); err != nil {
+		t.Fatal(err)
+	}
+	domain, _ = k.GetDomain(ctx2, "Big")
+	interest := domain.Treasury.AmountOf("pnyx").Sub(math.NewInt(10_000_000))
+
+	// The raw interest on 10M at 25% for 1 hour is large, but it must be capped at payout=1.
+	if interest.GT(math.NewInt(1)) {
+		t.Errorf("interest %s exceeds payout cap of 1", interest)
+	}
+}
+
+func TestDomainInterestDecaysWithRelease(t *testing.T) {
+	k, ctx := setupKeeper(t)
+	k.CreateDomain(ctx, "Decay", sdk.AccAddress("admin1"), sdk.NewCoins(sdk.NewInt64Coin("pnyx", 500_000)))
+
+	domain, _ := k.GetDomain(ctx, "Decay")
+	domain.TotalPayouts = 1_000_000 // high cap so it doesn't constrain
+	st := ctx.KVStore(k.StoreKey)
+	bz := k.cdc.MustMarshalLengthPrefixed(&domain)
+	st.Set([]byte("domain:Decay"), bz)
+
+	initTime := ctx.BlockTime().Unix()
+	st.Set([]byte("dom:last-interest-time"), k.cdc.MustMarshalLengthPrefixed(initTime))
+
+	// Set total release to 50% of supply → decay = 0.5.
+	halfSupply := math.NewInt(rewards.SupplyMax / 2)
+	st.Set([]byte("pod:total-release"), k.cdc.MustMarshalLengthPrefixed(&halfSupply))
+
+	ctx2 := ctx.WithBlockTime(ctx.BlockTime().Add(time.Duration(RewardInterval) * time.Second))
+	if err := k.DistributeDomainInterest(ctx2); err != nil {
+		t.Fatal(err)
+	}
+	domain, _ = k.GetDomain(ctx2, "Decay")
+	interestWithDecay := domain.Treasury.AmountOf("pnyx").Sub(math.NewInt(500_000))
+
+	// Compare with zero-release interest.
+	interestNoDecay := rewards.CalcDomainInterest(
+		math.NewInt(500_000), math.NewInt(1_000_000), math.ZeroInt(), RewardInterval,
+	)
+
+	if !interestWithDecay.LT(interestNoDecay) {
+		t.Errorf("interest with 50%% release (%s) should be less than with 0%% (%s)",
+			interestWithDecay, interestNoDecay)
+	}
+}
+
+func TestDomainInterestFirstCallInitializes(t *testing.T) {
+	k, ctx := setupKeeper(t)
+	k.CreateDomain(ctx, "Fresh", sdk.AccAddress("admin1"), sdk.NewCoins(sdk.NewInt64Coin("pnyx", 500_000)))
+
+	// Don't set dom:last-interest-time — first call should initialize it.
+	st := ctx.KVStore(k.StoreKey)
+	zeroInt := math.ZeroInt()
+	st.Set([]byte("pod:total-release"), k.cdc.MustMarshalLengthPrefixed(&zeroInt))
+
+	if err := k.DistributeDomainInterest(ctx); err != nil {
+		t.Fatal(err)
+	}
+
+	// Should have initialized the timer without changing treasury.
+	domain, _ := k.GetDomain(ctx, "Fresh")
+	if !domain.Treasury.AmountOf("pnyx").Equal(math.NewInt(500_000)) {
+		t.Errorf("first call should not pay interest: %s", domain.Treasury)
+	}
+
+	// Timer should now be set.
+	if bz := st.Get([]byte("dom:last-interest-time")); bz == nil {
+		t.Error("dom:last-interest-time should be initialized after first call")
+	}
+}

@@ -50,6 +50,8 @@ func (AppModuleBasic) RegisterInterfaces(registry codectypes.InterfaceRegistry) 
 		&MsgPlaceStoneOnMember{},
 		&MsgVoteToExclude{},
 		&MsgVoteToDelete{},
+		&MsgRateProposal{},
+		&MsgCastElectionVote{},
 	)
 }
 
@@ -121,6 +123,7 @@ func (am AppModule) InitGenesis(ctx sdk.Context, cdc codec.JSONCodec, data json.
 	store := ctx.KVStore(am.keeper.StoreKey)
 	timeBz := am.cdc.MustMarshalLengthPrefixed(ctx.BlockTime().Unix())
 	store.Set([]byte("pod:last-reward-time"), timeBz)
+	store.Set([]byte("dom:last-interest-time"), timeBz)
 	zeroInt := math.ZeroInt()
 	releaseBz := am.cdc.MustMarshalLengthPrefixed(&zeroInt)
 	store.Set([]byte("pod:total-release"), releaseBz)
@@ -128,14 +131,19 @@ func (am AppModule) InitGenesis(ctx sdk.Context, cdc codec.JSONCodec, data json.
 	return updates
 }
 
-// EndBlock implements module.HasABCIEndBlock. It distributes staking rewards,
-// enforces domain membership and minimum stake, and returns CometBFT
-// validator set updates.
+// EndBlock implements module.HasABCIEndBlock. It distributes staking rewards
+// and domain interest, enforces domain membership and minimum stake, and
+// returns CometBFT validator set updates.
 func (am AppModule) EndBlock(goCtx context.Context) ([]abci.ValidatorUpdate, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
 	// 1. Distribute staking rewards if the interval has elapsed.
 	if err := am.keeper.DistributeStakingRewards(ctx); err != nil {
+		return nil, err
+	}
+
+	// 1b. Distribute domain interest (eq.4) alongside staking rewards.
+	if err := am.keeper.DistributeDomainInterest(ctx); err != nil {
 		return nil, err
 	}
 

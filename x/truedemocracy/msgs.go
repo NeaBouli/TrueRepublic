@@ -299,3 +299,64 @@ func (m MsgVoteToDelete) ValidateBasic() error {
 	}
 	return nil
 }
+
+// --- MsgRateProposal ---
+
+type MsgRateProposal struct {
+	Sender         sdk.AccAddress `protobuf:"bytes,1,opt,name=sender,proto3,casttype=github.com/cosmos/cosmos-sdk/types.AccAddress" json:"sender"`
+	DomainName     string         `protobuf:"bytes,2,opt,name=domain_name,json=domainName,proto3" json:"domain_name"`
+	IssueName      string         `protobuf:"bytes,3,opt,name=issue_name,json=issueName,proto3" json:"issue_name"`
+	SuggestionName string         `protobuf:"bytes,4,opt,name=suggestion_name,json=suggestionName,proto3" json:"suggestion_name"`
+	Rating         int32          `protobuf:"varint,5,opt,name=rating,proto3" json:"rating"`
+	DomainPubKey   string         `protobuf:"bytes,6,opt,name=domain_pub_key,json=domainPubKey,proto3" json:"domain_pub_key"`     // hex-encoded ed25519 pubkey
+	Signature      string         `protobuf:"bytes,7,opt,name=signature,proto3" json:"signature"`                                   // hex-encoded signature
+}
+
+func (m *MsgRateProposal) ProtoMessage()             {}
+func (m *MsgRateProposal) Reset()                    { *m = MsgRateProposal{} }
+func (m *MsgRateProposal) String() string            { b, _ := json.Marshal(m); return string(b) }
+func (m MsgRateProposal) Route() string              { return ModuleName }
+func (m MsgRateProposal) Type() string               { return "rate_proposal" }
+func (m MsgRateProposal) GetSigners() []sdk.AccAddress { return []sdk.AccAddress{m.Sender} }
+func (m MsgRateProposal) ValidateBasic() error {
+	if m.DomainName == "" || m.IssueName == "" || m.SuggestionName == "" {
+		return sdkerrors.ErrInvalidRequest.Wrap("domain_name, issue_name, and suggestion_name are required")
+	}
+	if m.Rating < -5 || m.Rating > 5 {
+		return sdkerrors.ErrInvalidRequest.Wrap("rating must be between -5 and +5")
+	}
+	if m.DomainPubKey == "" || m.Signature == "" {
+		return sdkerrors.ErrInvalidRequest.Wrap("domain_pub_key and signature are required")
+	}
+	return nil
+}
+
+// --- MsgCastElectionVote ---
+
+type MsgCastElectionVote struct {
+	Sender        sdk.AccAddress `protobuf:"bytes,1,opt,name=sender,proto3,casttype=github.com/cosmos/cosmos-sdk/types.AccAddress" json:"sender"`
+	DomainName    string         `protobuf:"bytes,2,opt,name=domain_name,json=domainName,proto3" json:"domain_name"`
+	IssueName     string         `protobuf:"bytes,3,opt,name=issue_name,json=issueName,proto3" json:"issue_name"`
+	CandidateName string         `protobuf:"bytes,4,opt,name=candidate_name,json=candidateName,proto3" json:"candidate_name"` // empty for abstain
+	VoterAddr     string         `protobuf:"bytes,5,opt,name=voter_addr,json=voterAddr,proto3" json:"voter_addr"`
+	Choice        int32          `protobuf:"varint,6,opt,name=choice,proto3" json:"choice"` // 0=approve, 1=abstain
+}
+
+func (m *MsgCastElectionVote) ProtoMessage()             {}
+func (m *MsgCastElectionVote) Reset()                    { *m = MsgCastElectionVote{} }
+func (m *MsgCastElectionVote) String() string            { b, _ := json.Marshal(m); return string(b) }
+func (m MsgCastElectionVote) Route() string              { return ModuleName }
+func (m MsgCastElectionVote) Type() string               { return "cast_election_vote" }
+func (m MsgCastElectionVote) GetSigners() []sdk.AccAddress { return []sdk.AccAddress{m.Sender} }
+func (m MsgCastElectionVote) ValidateBasic() error {
+	if m.DomainName == "" || m.IssueName == "" || m.VoterAddr == "" {
+		return sdkerrors.ErrInvalidRequest.Wrap("domain_name, issue_name, and voter_addr are required")
+	}
+	if m.Choice != 0 && m.Choice != 1 {
+		return sdkerrors.ErrInvalidRequest.Wrap("choice must be 0 (approve) or 1 (abstain)")
+	}
+	if m.Choice == 0 && m.CandidateName == "" {
+		return sdkerrors.ErrInvalidRequest.Wrap("candidate_name required for approve vote")
+	}
+	return nil
+}

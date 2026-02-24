@@ -285,6 +285,59 @@ func (k Keeper) DistributeStakingRewards(ctx sdk.Context) error {
 	return nil
 }
 
+// DistributeDomainInterest credits domain treasuries with interest (eq.4)
+// from the token release mechanism. This runs every RewardInterval alongside
+// node staking rewards. Only active domains (with payouts in this interval)
+// receive interest, capped by their payout amount.
+func (k Keeper) DistributeDomainInterest(ctx sdk.Context) error {
+	store := ctx.KVStore(k.StoreKey)
+	blockTime := ctx.BlockTime().Unix()
+
+	// Load last domain interest time.
+	var lastInterestTime int64
+	if bz := store.Get([]byte("dom:last-interest-time")); bz != nil {
+		k.cdc.MustUnmarshalLengthPrefixed(bz, &lastInterestTime)
+	} else {
+		bz := k.cdc.MustMarshalLengthPrefixed(blockTime)
+		store.Set([]byte("dom:last-interest-time"), bz)
+		return nil
+	}
+
+	elapsed := blockTime - lastInterestTime
+	if elapsed < RewardInterval {
+		return nil
+	}
+
+	// Load total coins released.
+	var totalRelease math.Int
+	if bz := store.Get([]byte("pod:total-release")); bz != nil {
+		k.cdc.MustUnmarshalLengthPrefixed(bz, &totalRelease)
+	} else {
+		totalRelease = math.ZeroInt()
+	}
+
+	k.IterateDomains(ctx, func(domain Domain) bool {
+		treasure := domain.Treasury.AmountOf("pnyx")
+		if !treasure.IsPositive() {
+			return false
+		}
+
+		// Payout during this interval = domain's TotalPayouts (cumulative).
+		// eq.4 caps interest at payout amount to reward only active domains.
+		payout := math.NewInt(domain.TotalPayouts)
+		interest := rewards.CalcDomainInterest(treasure, payout, totalRelease, elapsed)
+		if interest.IsPositive() {
+			domain.Treasury = domain.Treasury.Add(sdk.NewCoin("pnyx", interest))
+			bz := k.cdc.MustMarshalLengthPrefixed(&domain)
+			store.Set([]byte("domain:"+domain.Name), bz)
+		}
+		return false
+	})
+
+	store.Set([]byte("dom:last-interest-time"), k.cdc.MustMarshalLengthPrefixed(blockTime))
+	return nil
+}
+
 // BuildValidatorUpdates constructs the CometBFT ValidatorUpdate slice for
 // the current validator set. Jailed validators are reported with Power 0.
 func (k Keeper) BuildValidatorUpdates(ctx sdk.Context) []abci.ValidatorUpdate {

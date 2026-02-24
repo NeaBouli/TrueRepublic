@@ -37,6 +37,8 @@ func GetTxCmd() *cobra.Command {
 		CmdPlaceStoneOnMember(),
 		CmdVoteToExclude(),
 		CmdVoteToDelete(),
+		CmdRateProposal(),
+		CmdCastElectionVote(),
 	)
 	return txCmd
 }
@@ -406,6 +408,71 @@ func CmdVoteToDelete() *cobra.Command {
 				IssueName:      args[1],
 				SuggestionName: args[2],
 				MemberAddr:     clientCtx.GetFromAddress().String(),
+			}
+			if err := msg.ValidateBasic(); err != nil {
+				return err
+			}
+			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), &msg)
+		},
+	}
+	flags.AddTxFlagsToCmd(cmd)
+	return cmd
+}
+
+func CmdRateProposal() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "rate-proposal [domain] [issue] [suggestion] [rating] [domain-pubkey-hex] [signature-hex]",
+		Short: "Rate a suggestion (-5 to +5) using anonymous domain key",
+		Args:  cobra.ExactArgs(6),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			clientCtx, err := client.GetClientTxContext(cmd)
+			if err != nil {
+				return err
+			}
+			rating, err := strconv.ParseInt(args[3], 10, 32)
+			if err != nil {
+				return fmt.Errorf("invalid rating: %w", err)
+			}
+			msg := MsgRateProposal{
+				Sender:         clientCtx.GetFromAddress(),
+				DomainName:     args[0],
+				IssueName:      args[1],
+				SuggestionName: args[2],
+				Rating:         int32(rating),
+				DomainPubKey:   args[4],
+				Signature:      args[5],
+			}
+			if err := msg.ValidateBasic(); err != nil {
+				return err
+			}
+			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), &msg)
+		},
+	}
+	flags.AddTxFlagsToCmd(cmd)
+	return cmd
+}
+
+func CmdCastElectionVote() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "cast-election-vote [domain] [issue] [candidate] [choice: 0=approve|1=abstain]",
+		Short: "Cast a vote in a person election",
+		Args:  cobra.ExactArgs(4),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			clientCtx, err := client.GetClientTxContext(cmd)
+			if err != nil {
+				return err
+			}
+			choice, err := strconv.ParseInt(args[3], 10, 32)
+			if err != nil {
+				return fmt.Errorf("invalid choice: %w", err)
+			}
+			msg := MsgCastElectionVote{
+				Sender:        clientCtx.GetFromAddress(),
+				DomainName:    args[0],
+				IssueName:     args[1],
+				CandidateName: args[2],
+				VoterAddr:     clientCtx.GetFromAddress().String(),
+				Choice:        int32(choice),
 			}
 			if err := msg.ValidateBasic(); err != nil {
 				return err

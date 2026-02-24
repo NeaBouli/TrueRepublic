@@ -96,6 +96,18 @@ func (*MsgVoteToDeleteResponse) ProtoMessage()             {}
 func (*MsgVoteToDeleteResponse) Reset()                    {}
 func (*MsgVoteToDeleteResponse) String() string            { return "MsgVoteToDeleteResponse" }
 
+type MsgRateProposalResponse struct{}
+
+func (*MsgRateProposalResponse) ProtoMessage()             {}
+func (*MsgRateProposalResponse) Reset()                    {}
+func (*MsgRateProposalResponse) String() string            { return "MsgRateProposalResponse" }
+
+type MsgCastElectionVoteResponse struct{}
+
+func (*MsgCastElectionVoteResponse) ProtoMessage()         {}
+func (*MsgCastElectionVoteResponse) Reset()                {}
+func (*MsgCastElectionVoteResponse) String() string        { return "MsgCastElectionVoteResponse" }
+
 // ---------------------------------------------------------------------------
 // Register response types with gogoproto
 // ---------------------------------------------------------------------------
@@ -115,6 +127,8 @@ func init() {
 	gogoproto.RegisterType((*MsgPlaceStoneOnMember)(nil), "truedemocracy.MsgPlaceStoneOnMember")
 	gogoproto.RegisterType((*MsgVoteToExclude)(nil), "truedemocracy.MsgVoteToExclude")
 	gogoproto.RegisterType((*MsgVoteToDelete)(nil), "truedemocracy.MsgVoteToDelete")
+	gogoproto.RegisterType((*MsgRateProposal)(nil), "truedemocracy.MsgRateProposal")
+	gogoproto.RegisterType((*MsgCastElectionVote)(nil), "truedemocracy.MsgCastElectionVote")
 
 	// Register response types.
 	gogoproto.RegisterType((*MsgCreateDomainResponse)(nil), "truedemocracy.MsgCreateDomainResponse")
@@ -130,6 +144,8 @@ func init() {
 	gogoproto.RegisterType((*MsgPlaceStoneOnMemberResponse)(nil), "truedemocracy.MsgPlaceStoneOnMemberResponse")
 	gogoproto.RegisterType((*MsgVoteToExcludeResponse)(nil), "truedemocracy.MsgVoteToExcludeResponse")
 	gogoproto.RegisterType((*MsgVoteToDeleteResponse)(nil), "truedemocracy.MsgVoteToDeleteResponse")
+	gogoproto.RegisterType((*MsgRateProposalResponse)(nil), "truedemocracy.MsgRateProposalResponse")
+	gogoproto.RegisterType((*MsgCastElectionVoteResponse)(nil), "truedemocracy.MsgCastElectionVoteResponse")
 }
 
 // ---------------------------------------------------------------------------
@@ -161,6 +177,8 @@ type MsgServer interface {
 	PlaceStoneOnMember(context.Context, *MsgPlaceStoneOnMember) (*MsgPlaceStoneOnMemberResponse, error)
 	VoteToExclude(context.Context, *MsgVoteToExclude) (*MsgVoteToExcludeResponse, error)
 	VoteToDelete(context.Context, *MsgVoteToDelete) (*MsgVoteToDeleteResponse, error)
+	RateProposal(context.Context, *MsgRateProposal) (*MsgRateProposalResponse, error)
+	CastElectionVote(context.Context, *MsgCastElectionVote) (*MsgCastElectionVoteResponse, error)
 }
 
 var _ MsgServer = msgServer{}
@@ -398,6 +416,46 @@ func (m msgServer) VoteToDelete(goCtx context.Context, msg *MsgVoteToDelete) (*M
 	))
 
 	return &MsgVoteToDeleteResponse{}, nil
+}
+
+func (m msgServer) RateProposal(goCtx context.Context, msg *MsgRateProposal) (*MsgRateProposalResponse, error) {
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	reward, err := m.Keeper.RateProposalWithSignature(ctx, msg.DomainName, msg.IssueName, msg.SuggestionName, int(msg.Rating), msg.DomainPubKey, msg.Signature)
+	if err != nil {
+		return nil, err
+	}
+
+	ctx.EventManager().EmitEvent(sdk.NewEvent(
+		"rate_proposal",
+		sdk.NewAttribute("domain", msg.DomainName),
+		sdk.NewAttribute("issue", msg.IssueName),
+		sdk.NewAttribute("suggestion", msg.SuggestionName),
+		sdk.NewAttribute("rating", fmt.Sprintf("%d", msg.Rating)),
+		sdk.NewAttribute("reward", reward.String()),
+	))
+
+	return &MsgRateProposalResponse{}, nil
+}
+
+func (m msgServer) CastElectionVote(goCtx context.Context, msg *MsgCastElectionVote) (*MsgCastElectionVoteResponse, error) {
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	err := m.Keeper.CastElectionVote(ctx, msg.DomainName, msg.IssueName, msg.CandidateName, msg.VoterAddr, VoteChoice(msg.Choice))
+	if err != nil {
+		return nil, err
+	}
+
+	ctx.EventManager().EmitEvent(sdk.NewEvent(
+		"cast_election_vote",
+		sdk.NewAttribute("domain", msg.DomainName),
+		sdk.NewAttribute("issue", msg.IssueName),
+		sdk.NewAttribute("candidate", msg.CandidateName),
+		sdk.NewAttribute("voter", msg.VoterAddr),
+		sdk.NewAttribute("choice", fmt.Sprintf("%d", msg.Choice)),
+	))
+
+	return &MsgCastElectionVoteResponse{}, nil
 }
 
 // ---------------------------------------------------------------------------
@@ -638,6 +696,42 @@ func _Msg_VoteToDelete_Handler(srv interface{}, ctx context.Context, dec func(in
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Msg_RateProposal_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgRateProposal)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServer).RateProposal(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/truedemocracy.Msg/RateProposal",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServer).RateProposal(ctx, req.(*MsgRateProposal))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Msg_CastElectionVote_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgCastElectionVote)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServer).CastElectionVote(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/truedemocracy.Msg/CastElectionVote",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServer).CastElectionVote(ctx, req.(*MsgCastElectionVote))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // ---------------------------------------------------------------------------
 // gRPC service registration
 // ---------------------------------------------------------------------------
@@ -703,6 +797,14 @@ var _Msg_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "VoteToDelete",
 			Handler:    _Msg_VoteToDelete_Handler,
+		},
+		{
+			MethodName: "RateProposal",
+			Handler:    _Msg_RateProposal_Handler,
+		},
+		{
+			MethodName: "CastElectionVote",
+			Handler:    _Msg_CastElectionVote_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
