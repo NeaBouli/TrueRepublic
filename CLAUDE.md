@@ -9,8 +9,8 @@
 
 | Repo | Branch | HEAD | Path |
 |------|--------|------|------|
-| **Main** | `main` | `cdbd7b6` (feat: add voting modes for person elections) | `/Users/gio/TrueRepublic/` |
-| **Wiki** | `master` | `43735fe` (Add logos to wiki home) | `/Users/gio/TrueRepublic/wiki-github/` |
+| **Main** | `main` | `29779ad` (docs: update GitHub Pages stats) | `/Users/gio/TrueRepublic/` |
+| **Wiki** | `master` | `5273304` (docs: fill Known Bugs stub) | `/Users/gio/TrueRepublic/wiki-github/` |
 
 - Working tree: **clean**, up-to-date with `origin/main`
 - `wiki-github/` is untracked in the main repo (it is a separate git clone of the GitHub Wiki repo -- this is expected and correct)
@@ -239,9 +239,9 @@ TrueRepublic/
 
 ## Open TODOs
 
-### Remaining Wiki Stub
+### Wiki Stubs
 
-- **`wiki-github/status-Known-Bugs.md`** (20 lines) -- intentionally kept as a stub ("Coming Soon"). It is the only stub remaining out of 30 wiki pages. All other stubs were filled in v0.1.4.
+All 30 wiki pages are now complete. The last stub (`status-Known-Bugs.md`) was filled in v0.1.8 with 0 P0, 1 P2 (election CLI wiring), 4 P3 bugs, and 7 resolved entries.
 
 ### Roadmap Dates Are Stale
 
@@ -379,10 +379,7 @@ As of v0.1.8, there are no known critical (P0) issues. All previously identified
 
 There are no blocked or in-progress tasks. The project is at v0.1.8. Possible next actions, in priority order:
 
-1. **Update stale roadmap dates** -- Change Q2/Q3/Q4 2025 to realistic 2026 dates in README.md, wiki Roadmap, and Current-Status pages
-2. **Fill the last wiki stub** -- `status-Known-Bugs.md` is the only remaining placeholder
-3. **Fix GitHub Pages stats** -- Update test count and release version in `docs/index.html`
-4. **Add CLI/message for election voting** -- Wire `CastElectionVote`/`TallyElection` to a new `MsgCastElectionVote` and CLI command
-5. **Begin v0.2 development** -- ZKP for anonymous voting, UI integration, WebSocket subscriptions
+1. **Add CLI/message for election voting** -- Wire `CastElectionVote`/`TallyElection` to a new `MsgCastElectionVote` and CLI command
+2. **Begin v0.2 development** -- ZKP for anonymous voting, UI integration, WebSocket subscriptions
 
 Await core dev instruction on which direction to proceed.
