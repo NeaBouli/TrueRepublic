@@ -2,21 +2,21 @@
 
 ## Current Status
 
-**Version:** v0.2.3 (Documentation Sync) -- tagged 25.02.2026
+**Version:** v0.2.4 (Documentation Sync) -- tagged 25.02.2026
 **Phase:** Pre-production, testnet-ready. ~95% whitepaper feature coverage (excluding ZKP/IBC). Zero P0 issues remain.
 
 ### Repository State
 
 | Repo | Branch | HEAD | Path |
 |------|--------|------|------|
-| **Main** | `main` | `79120fe` (docs: update GitHub Pages release badge to v0.2.2) | `/Users/gio/TrueRepublic/` |
+| **Main** | `main` | `cd7face` (docs: update GitHub Pages release badge to v0.2.3) | `/Users/gio/TrueRepublic/` |
 | **Wiki** | `master` | `b6b5c43` (docs: update roadmap for v0.2.1 complete, v0.3.0 planned) | `/Users/gio/TrueRepublic/wiki-github/` |
 
 - Working tree: **clean**, up-to-date with `origin/main`
 - `wiki-github/` is untracked in the main repo (it is a separate git clone of the GitHub Wiki repo -- this is expected and correct)
 - Remote: `https://github.com/NeaBouli/TrueRepublic`
 
-### Releases (12 total)
+### Releases (13 total)
 
 | Tag | Title | Date |
 |-----|-------|------|
@@ -31,7 +31,8 @@
 | v0.2.0 | Feature Complete Governance | 24.02.2026 |
 | v0.2.1 | Documentation Sync | 24.02.2026 |
 | v0.2.2 | v0.3.0 Roadmap & Documentation | 24.02.2026 |
-| v0.2.3 | Documentation Sync (Latest) | 25.02.2026 |
+| v0.2.3 | Documentation Sync | 25.02.2026 |
+| v0.2.4 | Documentation Sync (Latest) | 25.02.2026 |
 
 ### Live Deployments
 
