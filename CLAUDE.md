@@ -250,39 +250,26 @@ TrueRepublic/
 
 ## Open TODOs
 
-### Wiki Stubs
+### Wiki & Docs
 
-All 30 wiki pages are now complete. The last stub (`status-Known-Bugs.md`) was filled in v0.1.8 with 0 P0, 1 P2 (election CLI wiring), 4 P3 bugs, and 7 resolved entries.
+- All 30 wiki pages complete (zero stubs)
+- Roadmap dates updated to 2026/2027
+- GitHub Pages shows 225 tests, v0.2.0
+- Full v0.3.0 roadmap spec at `docs/V0.3.0_ROADMAP.md`
 
-### Roadmap Dates Are Stale
+### v0.3.0 Scope (Q3 2026) — See `docs/V0.3.0_ROADMAP.md`
 
-The roadmap dates in `README.md` (lines 221-226) and `wiki-github/status-Roadmap.md` reference Q2/Q3/Q4 **2025**, which is now past. If the core dev wants to update these to 2026 dates, the following files need editing:
-- `README.md` (lines 223-225)
-- `wiki-github/status-Roadmap.md`
-- `wiki/status/Roadmap.md` (local wiki mirror)
-- `wiki-github/status-Current-Status.md` (references dates)
-- `docs/index.html` (if roadmap is mentioned)
+**P0:** ZKP for anonymity (replace ed25519 domain keys with ZK-SNARK membership proofs)
+**P1:** CosmWasm integration (wire x/wasm, contract-to-keeper bindings)
+**P1:** Multi-asset DEX via IBC (BTC, ETH, LUSD pools)
+**P2:** UI integration (web/mobile frontends for v0.2.0 features)
+**P2:** Developer tooling (linting, Vite migration, proto files)
 
-### GitHub Pages Stats Section
+### v1.0 Scope (Q1 2027)
 
-`docs/index.html` shows 197 tests and v0.1.8 in the stats section. These should be updated to reflect 225 tests and v0.2.0.
-
-### Roadmap Features Not Yet Implemented
-
-Per the roadmap, the following are planned but not built:
-
-**v0.3 scope:**
-- Zero-Knowledge Proofs (ZKP) replacing domain key pairs for anonymous voting
-- Full UI integration (enhanced web/mobile UX)
-- WebSocket subscriptions for real-time updates
-- Multi-asset DEX pools via IBC (BTC, ETH, LUSD)
-- IBC channel setup (Cosmos Hub, Osmosis, Juno)
-- Network scalability tests (175+ validator nodes)
-- CosmWasm contract integration
-
-**v1.0 scope:**
-- Professional security audits (smart contracts + Go modules)
+- Professional security audit (smart contracts + Go modules)
 - Proxy party functionality
+- Network scalability tests (175+ validator nodes)
 - Genesis ceremony and validator onboarding
 - Production deployment with monitoring/alerting
 
@@ -387,10 +374,8 @@ As of v0.2.0, there are no known critical (P0) issues. All previously identified
 
 ## Next Immediate Step
 
-There are no blocked or in-progress tasks. The project is at v0.2.0 with ~95% whitepaper feature coverage. Possible next actions, in priority order:
+There are no blocked or in-progress tasks. The project is at v0.2.1 with ~95% whitepaper feature coverage. All documentation is synchronized.
 
-1. **Update docs/index.html** -- Reflect 225 tests, v0.2.0
-2. **Update wiki** -- status-Current-Status.md, status-Known-Bugs.md (P2 election CLI wiring is now resolved)
-3. **Begin v0.3 development** -- ZKP for anonymous voting, CosmWasm integration, IBC/multi-asset DEX, UI integration
+**Next action:** Begin v0.3.0 development per `docs/V0.3.0_ROADMAP.md`. Recommended start: ZKP anonymity layer (P0, highest priority).
 
 Await core dev instruction on which direction to proceed.
