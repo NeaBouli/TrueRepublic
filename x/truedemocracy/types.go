@@ -118,6 +118,26 @@ type Validator struct {
     MissedBlocks int64     `json:"missed_blocks"`
 }
 
+// BigPurgeSchedule tracks automated purge timing for a domain (WP S4).
+// After each purge, all members must re-register fresh domain keys.
+type BigPurgeSchedule struct {
+	DomainName       string `json:"domain_name"`
+	NextPurgeTime    int64  `json:"next_purge_time"`    // unix timestamp
+	PurgeInterval    int64  `json:"purge_interval"`     // seconds, default 7776000 (90 days)
+	AnnouncementLead int64  `json:"announcement_lead"`  // seconds, default 604800 (7 days)
+}
+
+// OnboardingRequest tracks a pending domain key registration (WP S4).
+// Step 1: member submits request with new domain key.
+// Step 2: admin approves, key is added to permission register.
+type OnboardingRequest struct {
+	DomainName      string `json:"domain_name"`
+	RequesterAddr   string `json:"requester_addr"`
+	DomainPubKeyHex string `json:"domain_pub_key_hex"`
+	RequestedAt     int64  `json:"requested_at"` // unix timestamp
+	Status          string `json:"status"`       // "pending", "approved", "rejected"
+}
+
 // GenesisValidator is the genesis-file representation of a validator.
 type GenesisValidator struct {
     OperatorAddr string `json:"operator_addr"`
@@ -139,6 +159,8 @@ func RegisterCodec(cdc *codec.LegacyAmino) {
     cdc.RegisterConcrete(Rating{}, "truedemocracy/Rating", nil)
     cdc.RegisterConcrete(VoteCommitment{}, "truedemocracy/VoteCommitment", nil)
     cdc.RegisterConcrete(GenesisState{}, "truedemocracy/GenesisState", nil)
+    cdc.RegisterConcrete(BigPurgeSchedule{}, "truedemocracy/BigPurgeSchedule", nil)
+    cdc.RegisterConcrete(OnboardingRequest{}, "truedemocracy/OnboardingRequest", nil)
     cdc.RegisterConcrete(Validator{}, "truedemocracy/Validator", nil)
     cdc.RegisterConcrete(GenesisValidator{}, "truedemocracy/GenesisValidator", nil)
 

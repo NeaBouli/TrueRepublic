@@ -105,3 +105,70 @@ func HasDomainKeyVoted(domain Domain, issueName, suggestionName, domainPubKeyHex
 	}
 	return false
 }
+
+// ---------- Big Purge Schedule ----------
+
+// Default Big Purge parameters (WP S4).
+const (
+	DefaultPurgeInterval    int64 = 7_776_000 // 90 days in seconds
+	DefaultAnnouncementLead int64 = 604_800   // 7 days in seconds
+)
+
+// GetBigPurgeSchedule retrieves the automated purge schedule for a domain.
+func (k Keeper) GetBigPurgeSchedule(ctx sdk.Context, domainName string) (BigPurgeSchedule, bool) {
+	store := ctx.KVStore(k.StoreKey)
+	bz := store.Get([]byte("purge-schedule:" + domainName))
+	if bz == nil {
+		return BigPurgeSchedule{}, false
+	}
+	var schedule BigPurgeSchedule
+	k.cdc.MustUnmarshalLengthPrefixed(bz, &schedule)
+	return schedule, true
+}
+
+// SetBigPurgeSchedule stores the purge schedule for a domain.
+func (k Keeper) SetBigPurgeSchedule(ctx sdk.Context, schedule BigPurgeSchedule) {
+	store := ctx.KVStore(k.StoreKey)
+	bz := k.cdc.MustMarshalLengthPrefixed(&schedule)
+	store.Set([]byte("purge-schedule:"+schedule.DomainName), bz)
+}
+
+// InitializeBigPurgeSchedule sets up the default purge schedule for a new domain.
+// Default: 90-day purge interval, 7-day announcement lead.
+func (k Keeper) InitializeBigPurgeSchedule(ctx sdk.Context, domainName string) {
+	now := ctx.BlockTime().Unix()
+	schedule := BigPurgeSchedule{
+		DomainName:       domainName,
+		NextPurgeTime:    now + DefaultPurgeInterval,
+		PurgeInterval:    DefaultPurgeInterval,
+		AnnouncementLead: DefaultAnnouncementLead,
+	}
+	k.SetBigPurgeSchedule(ctx, schedule)
+}
+
+// ---------- Onboarding Request ----------
+
+// GetOnboardingRequest retrieves a pending domain key registration request.
+func (k Keeper) GetOnboardingRequest(ctx sdk.Context, domainName, requesterAddr string) (OnboardingRequest, bool) {
+	store := ctx.KVStore(k.StoreKey)
+	bz := store.Get([]byte("onboarding:" + domainName + ":" + requesterAddr))
+	if bz == nil {
+		return OnboardingRequest{}, false
+	}
+	var request OnboardingRequest
+	k.cdc.MustUnmarshalLengthPrefixed(bz, &request)
+	return request, true
+}
+
+// SetOnboardingRequest stores a domain key registration request.
+func (k Keeper) SetOnboardingRequest(ctx sdk.Context, request OnboardingRequest) {
+	store := ctx.KVStore(k.StoreKey)
+	bz := k.cdc.MustMarshalLengthPrefixed(&request)
+	store.Set([]byte("onboarding:"+request.DomainName+":"+request.RequesterAddr), bz)
+}
+
+// DeleteOnboardingRequest removes a completed or rejected onboarding request.
+func (k Keeper) DeleteOnboardingRequest(ctx sdk.Context, domainName, requesterAddr string) {
+	store := ctx.KVStore(k.StoreKey)
+	store.Delete([]byte("onboarding:" + domainName + ":" + requesterAddr))
+}

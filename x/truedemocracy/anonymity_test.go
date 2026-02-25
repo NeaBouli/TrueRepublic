@@ -330,3 +330,157 @@ func TestExcludedMemberCannotReregister(t *testing.T) {
 		t.Fatal("expected error — charlie was removed from the domain and cannot re-register")
 	}
 }
+
+// ---------- Big Purge Schedule ----------
+
+func TestBigPurgeScheduleStorage(t *testing.T) {
+	k, ctx := setupKeeper(t)
+
+	t.Run("does not exist initially", func(t *testing.T) {
+		_, exists := k.GetBigPurgeSchedule(ctx, "NoDomain")
+		if exists {
+			t.Fatal("expected no schedule for unknown domain")
+		}
+	})
+
+	t.Run("set and retrieve", func(t *testing.T) {
+		schedule := BigPurgeSchedule{
+			DomainName:       "TestDomain",
+			NextPurgeTime:    ctx.BlockTime().Unix() + 7_776_000,
+			PurgeInterval:    7_776_000,
+			AnnouncementLead: 604_800,
+		}
+		k.SetBigPurgeSchedule(ctx, schedule)
+
+		got, exists := k.GetBigPurgeSchedule(ctx, "TestDomain")
+		if !exists {
+			t.Fatal("expected schedule to exist")
+		}
+		if got.PurgeInterval != 7_776_000 {
+			t.Errorf("PurgeInterval = %d, want 7776000", got.PurgeInterval)
+		}
+		if got.AnnouncementLead != 604_800 {
+			t.Errorf("AnnouncementLead = %d, want 604800", got.AnnouncementLead)
+		}
+	})
+}
+
+func TestInitializeBigPurgeSchedule(t *testing.T) {
+	k, ctx := setupKeeper(t)
+
+	k.InitializeBigPurgeSchedule(ctx, "Fresh")
+
+	schedule, exists := k.GetBigPurgeSchedule(ctx, "Fresh")
+	if !exists {
+		t.Fatal("expected schedule after initialization")
+	}
+	now := ctx.BlockTime().Unix()
+	if schedule.NextPurgeTime != now+DefaultPurgeInterval {
+		t.Errorf("NextPurgeTime = %d, want %d", schedule.NextPurgeTime, now+DefaultPurgeInterval)
+	}
+	if schedule.PurgeInterval != DefaultPurgeInterval {
+		t.Errorf("PurgeInterval = %d, want %d", schedule.PurgeInterval, DefaultPurgeInterval)
+	}
+	if schedule.AnnouncementLead != DefaultAnnouncementLead {
+		t.Errorf("AnnouncementLead = %d, want %d", schedule.AnnouncementLead, DefaultAnnouncementLead)
+	}
+}
+
+func TestBigPurgeScheduleUpdateInterval(t *testing.T) {
+	k, ctx := setupKeeper(t)
+
+	k.InitializeBigPurgeSchedule(ctx, "Updatable")
+
+	// Update interval to 30 days.
+	schedule, _ := k.GetBigPurgeSchedule(ctx, "Updatable")
+	schedule.PurgeInterval = 2_592_000
+	schedule.NextPurgeTime = ctx.BlockTime().Unix() + 2_592_000
+	k.SetBigPurgeSchedule(ctx, schedule)
+
+	got, _ := k.GetBigPurgeSchedule(ctx, "Updatable")
+	if got.PurgeInterval != 2_592_000 {
+		t.Errorf("PurgeInterval = %d, want 2592000", got.PurgeInterval)
+	}
+}
+
+func TestCreateDomainInitializesPurgeSchedule(t *testing.T) {
+	k, ctx := setupKeeper(t)
+
+	k.CreateDomain(ctx, "AutoPurge", sdk.AccAddress("admin1"), sdk.NewCoins(sdk.NewInt64Coin("pnyx", 100_000)))
+
+	schedule, exists := k.GetBigPurgeSchedule(ctx, "AutoPurge")
+	if !exists {
+		t.Fatal("expected purge schedule after domain creation")
+	}
+	if schedule.DomainName != "AutoPurge" {
+		t.Errorf("DomainName = %s, want AutoPurge", schedule.DomainName)
+	}
+	if schedule.PurgeInterval != DefaultPurgeInterval {
+		t.Errorf("PurgeInterval = %d, want %d", schedule.PurgeInterval, DefaultPurgeInterval)
+	}
+}
+
+// ---------- Onboarding Request ----------
+
+func TestOnboardingRequestStorage(t *testing.T) {
+	k, ctx := setupKeeper(t)
+
+	t.Run("does not exist initially", func(t *testing.T) {
+		_, exists := k.GetOnboardingRequest(ctx, "TestDomain", "alice")
+		if exists {
+			t.Fatal("expected no request initially")
+		}
+	})
+
+	t.Run("set and retrieve", func(t *testing.T) {
+		request := OnboardingRequest{
+			DomainName:      "TestDomain",
+			RequesterAddr:   "alice",
+			DomainPubKeyHex: "abcdef1234567890",
+			RequestedAt:     ctx.BlockTime().Unix(),
+			Status:          "pending",
+		}
+		k.SetOnboardingRequest(ctx, request)
+
+		got, exists := k.GetOnboardingRequest(ctx, "TestDomain", "alice")
+		if !exists {
+			t.Fatal("expected request to exist")
+		}
+		if got.Status != "pending" {
+			t.Errorf("Status = %s, want pending", got.Status)
+		}
+		if got.DomainPubKeyHex != "abcdef1234567890" {
+			t.Errorf("DomainPubKeyHex = %s, want abcdef1234567890", got.DomainPubKeyHex)
+		}
+	})
+}
+
+func TestOnboardingRequestLifecycle(t *testing.T) {
+	k, ctx := setupKeeper(t)
+
+	// Create pending request.
+	request := OnboardingRequest{
+		DomainName:      "TestDomain",
+		RequesterAddr:   "bob",
+		DomainPubKeyHex: "1234567890abcdef",
+		RequestedAt:     ctx.BlockTime().Unix(),
+		Status:          "pending",
+	}
+	k.SetOnboardingRequest(ctx, request)
+
+	// Update status to approved.
+	request.Status = "approved"
+	k.SetOnboardingRequest(ctx, request)
+
+	got, _ := k.GetOnboardingRequest(ctx, "TestDomain", "bob")
+	if got.Status != "approved" {
+		t.Errorf("Status = %s, want approved", got.Status)
+	}
+
+	// Delete completed request.
+	k.DeleteOnboardingRequest(ctx, "TestDomain", "bob")
+	_, exists := k.GetOnboardingRequest(ctx, "TestDomain", "bob")
+	if exists {
+		t.Fatal("expected request to be deleted")
+	}
+}

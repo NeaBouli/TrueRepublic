@@ -48,6 +48,9 @@ func (k Keeper) CreateDomain(ctx sdk.Context, name string, admin sdk.AccAddress,
     }
     bz := k.cdc.MustMarshalLengthPrefixed(&domain)
     store.Set([]byte("domain:"+name), bz)
+
+    // Initialize automated Big Purge schedule (WP S4).
+    k.InitializeBigPurgeSchedule(ctx, name)
 }
 
 func (k Keeper) SubmitProposal(ctx sdk.Context, domainName, issueName, suggestionName, creator string, fee sdk.Coins, externalLink string) error {
