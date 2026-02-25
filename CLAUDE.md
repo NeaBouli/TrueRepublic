@@ -9,7 +9,7 @@
 
 | Repo | Branch | HEAD | Path |
 |------|--------|------|------|
-| **Main** | `main` | `9b882e2` (docs: create v0.4.0 Optional Indexer Stack specification) | `/Users/gio/TrueRepublic/` |
+| **Main** | `main` | `e2a7c87` (feat(v0.3.0): implement dual-key cryptography & signature verification) | `/Users/gio/TrueRepublic/` |
 | **Wiki** | `master` | `21eef69` (docs: add v0.4.0 Optional Indexer Stack roadmap) | `/Users/gio/TrueRepublic/wiki-github/` |
 
 - Working tree: **clean**, up-to-date with `origin/main`
@@ -44,7 +44,7 @@
 
 ### Key Metrics
 
-- 235 unit tests across 3 modules (~4,000 lines of test code)
+- 251 unit tests across 3 modules (~4,500 lines of test code)
 - 19 transaction types (15 governance + 4 DEX)
 - 6 query endpoints (4 governance + 2 DEX)
 - 5 tokenomics equations fully implemented + domain interest in EndBlock
@@ -157,8 +157,9 @@ TrueRepublic/
 │   ├── anonymity.go                Domain key pairs for anonymous voting (WP S4)
 │   ├── tree.go                     Tree data structures
 │   ├── querier.go                  Legacy query interface
-│   ├── *_test.go (9 files)         170 tests: governance, validator, stones, lifecycle,
-│   │                               anonymity, slashing, elections, scoring, domain interest
+│   ├── *_test.go (11 files)        186 tests: governance, validator, stones, lifecycle,
+│   │                               anonymity, slashing, elections, scoring, domain interest,
+│   │                               crypto (dual-key onboarding)
 │
 ├── x/dex/                          DEX MODULE (9 files, 1,637 lines)
 │   ├── keeper.go                   AMM pool operations (x*y=k)
