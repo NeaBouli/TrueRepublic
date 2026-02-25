@@ -9,7 +9,7 @@
 
 | Repo | Branch | HEAD | Path |
 |------|--------|------|------|
-| **Main** | `main` | `e2a7c87` (feat(v0.3.0): implement dual-key cryptography & signature verification) | `/Users/gio/TrueRepublic/` |
+| **Main** | `main` | `0fb002a` (feat(v0.3.0): implement Big Purge EndBlock execution) | `/Users/gio/TrueRepublic/` |
 | **Wiki** | `master` | `21eef69` (docs: add v0.4.0 Optional Indexer Stack roadmap) | `/Users/gio/TrueRepublic/wiki-github/` |
 
 - Working tree: **clean**, up-to-date with `origin/main`
@@ -44,7 +44,7 @@
 
 ### Key Metrics
 
-- 251 unit tests across 3 modules (~4,500 lines of test code)
+- 259 unit tests across 3 modules (~4,800 lines of test code)
 - 19 transaction types (15 governance + 4 DEX)
 - 6 query endpoints (4 governance + 2 DEX)
 - 5 tokenomics equations fully implemented + domain interest in EndBlock
@@ -155,11 +155,12 @@ TrueRepublic/
 │   ├── stones.go                   Stones voting + VoteToEarn rewards
 │   ├── lifecycle.go                Suggestion lifecycle (green/yellow/red, auto-delete)
 │   ├── anonymity.go                Domain key pairs for anonymous voting (WP S4)
+│   ├── big_purge.go                EndBlock Big Purge execution, announcement tracking (WP S4)
 │   ├── tree.go                     Tree data structures
 │   ├── querier.go                  Legacy query interface
-│   ├── *_test.go (11 files)        186 tests: governance, validator, stones, lifecycle,
+│   ├── *_test.go (12 files)        194 tests: governance, validator, stones, lifecycle,
 │   │                               anonymity, slashing, elections, scoring, domain interest,
-│   │                               crypto (dual-key onboarding)
+│   │                               crypto (dual-key onboarding), big purge EndBlock
 │
 ├── x/dex/                          DEX MODULE (9 files, 1,637 lines)
 │   ├── keeper.go                   AMM pool operations (x*y=k)
