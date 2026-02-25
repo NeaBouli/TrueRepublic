@@ -2,8 +2,8 @@
 
 ## Current Status
 
-**Version:** v0.2.5 (Documentation Sync) -- tagged 25.02.2026
-**Phase:** Pre-production, testnet-ready. ~95% whitepaper feature coverage (excluding ZKP/IBC). Zero P0 issues remain.
+**Version:** v0.3.0-dev (Anonymity Layer Foundation) -- tagged 25.02.2026
+**Phase:** v0.3.0 development. ~95% whitepaper feature coverage (excluding ZKP/IBC). Zero P0 issues remain.
 
 ### Repository State
 
@@ -16,7 +16,7 @@
 - `wiki-github/` is untracked in the main repo (it is a separate git clone of the GitHub Wiki repo -- this is expected and correct)
 - Remote: `https://github.com/NeaBouli/TrueRepublic`
 
-### Releases (14 total)
+### Releases (15 total)
 
 | Tag | Title | Date |
 |-----|-------|------|
@@ -33,7 +33,8 @@
 | v0.2.2 | v0.3.0 Roadmap & Documentation | 24.02.2026 |
 | v0.2.3 | Documentation Sync | 25.02.2026 |
 | v0.2.4 | Documentation Sync | 25.02.2026 |
-| v0.2.5 | Documentation Sync (Latest) | 25.02.2026 |
+| v0.2.5 | Documentation Sync | 25.02.2026 |
+| v0.3.0-dev | Anonymity Layer Foundation (Latest) | 25.02.2026 |
 
 ### Live Deployments
 
