@@ -9,7 +9,7 @@
 
 | Repo | Branch | HEAD | Path |
 |------|--------|------|------|
-| **Main** | `main` | `2e674d0` (docs: add v0.4.0 Optional Indexer Stack to roadmap) | `/Users/gio/TrueRepublic/` |
+| **Main** | `main` | `9b882e2` (docs: create v0.4.0 Optional Indexer Stack specification) | `/Users/gio/TrueRepublic/` |
 | **Wiki** | `master` | `21eef69` (docs: add v0.4.0 Optional Indexer Stack roadmap) | `/Users/gio/TrueRepublic/wiki-github/` |
 
 - Working tree: **clean**, up-to-date with `origin/main`
