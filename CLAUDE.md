@@ -9,7 +9,7 @@
 
 | Repo | Branch | HEAD | Path |
 |------|--------|------|------|
-| **Main** | `main` | `8c15c39` (feat(v0.3.0): anonymity data structures — Big Purge schedule & onboarding) | `/Users/gio/TrueRepublic/` |
+| **Main** | `main` | `9913ab9` (docs: update GitHub Pages stats — 235 tests, v0.3.0-dev) | `/Users/gio/TrueRepublic/` |
 | **Wiki** | `master` | `b6b5c43` (docs: update roadmap for v0.2.1 complete, v0.3.0 planned) | `/Users/gio/TrueRepublic/wiki-github/` |
 
 - Working tree: **clean**, up-to-date with `origin/main`
