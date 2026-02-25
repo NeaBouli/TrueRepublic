@@ -9,8 +9,8 @@
 
 | Repo | Branch | HEAD | Path |
 |------|--------|------|------|
-| **Main** | `main` | `9913ab9` (docs: update GitHub Pages stats — 235 tests, v0.3.0-dev) | `/Users/gio/TrueRepublic/` |
-| **Wiki** | `master` | `b6b5c43` (docs: update roadmap for v0.2.1 complete, v0.3.0 planned) | `/Users/gio/TrueRepublic/wiki-github/` |
+| **Main** | `main` | `2e674d0` (docs: add v0.4.0 Optional Indexer Stack to roadmap) | `/Users/gio/TrueRepublic/` |
+| **Wiki** | `master` | `21eef69` (docs: add v0.4.0 Optional Indexer Stack roadmap) | `/Users/gio/TrueRepublic/wiki-github/` |
 
 - Working tree: **clean**, up-to-date with `origin/main`
 - `wiki-github/` is untracked in the main repo (it is a separate git clone of the GitHub Wiki repo -- this is expected and correct)
