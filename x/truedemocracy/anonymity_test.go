@@ -484,3 +484,109 @@ func TestOnboardingRequestLifecycle(t *testing.T) {
 		t.Fatal("expected request to be deleted")
 	}
 }
+
+// ---------- Onboarding Approve/Reject ----------
+
+func TestOnboardingApprovalFlow(t *testing.T) {
+	k, ctx := setupKeeper(t)
+	setupDomainWithIssue(t, k, ctx)
+
+	// Create a domain key for alice (she's a member via setupDomainWithIssue).
+	aliceDomainKey := domainKey("alice-onboard-key")
+	domainPubKeyHex := hex.EncodeToString(aliceDomainKey.PubKey().Bytes())
+
+	// Create onboarding request.
+	request := OnboardingRequest{
+		DomainName:      "AnonDomain",
+		RequesterAddr:   "alice",
+		DomainPubKeyHex: domainPubKeyHex,
+		RequestedAt:     ctx.BlockTime().Unix(),
+		Status:          "pending",
+	}
+	k.SetOnboardingRequest(ctx, request)
+
+	// Admin approves.
+	err := k.ApproveOnboardingRequest(ctx, "AnonDomain", "alice", sdk.AccAddress("admin1"))
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	// Key is now in permission register.
+	if !k.IsKeyAuthorized(ctx, "AnonDomain", domainPubKeyHex) {
+		t.Error("domain key should be authorized after approval")
+	}
+
+	// Request status updated.
+	updated, exists := k.GetOnboardingRequest(ctx, "AnonDomain", "alice")
+	if !exists {
+		t.Fatal("request should still exist")
+	}
+	if updated.Status != "approved" {
+		t.Errorf("status = %s, want approved", updated.Status)
+	}
+}
+
+func TestOnboardingRejectionFlow(t *testing.T) {
+	k, ctx := setupKeeper(t)
+	setupDomainWithIssue(t, k, ctx)
+
+	aliceDomainKey := domainKey("alice-reject-key")
+	domainPubKeyHex := hex.EncodeToString(aliceDomainKey.PubKey().Bytes())
+
+	request := OnboardingRequest{
+		DomainName:      "AnonDomain",
+		RequesterAddr:   "alice",
+		DomainPubKeyHex: domainPubKeyHex,
+		RequestedAt:     ctx.BlockTime().Unix(),
+		Status:          "pending",
+	}
+	k.SetOnboardingRequest(ctx, request)
+
+	// Admin rejects.
+	err := k.RejectOnboardingRequest(ctx, "AnonDomain", "alice", sdk.AccAddress("admin1"))
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	updated, _ := k.GetOnboardingRequest(ctx, "AnonDomain", "alice")
+	if updated.Status != "rejected" {
+		t.Errorf("status = %s, want rejected", updated.Status)
+	}
+
+	// Key should NOT be in permission register.
+	if k.IsKeyAuthorized(ctx, "AnonDomain", domainPubKeyHex) {
+		t.Error("domain key should not be authorized after rejection")
+	}
+}
+
+func TestOnboardingNonAdminRejected(t *testing.T) {
+	k, ctx := setupKeeper(t)
+	setupDomainWithIssue(t, k, ctx)
+
+	request := OnboardingRequest{
+		DomainName:      "AnonDomain",
+		RequesterAddr:   "alice",
+		DomainPubKeyHex: "abcdef",
+		RequestedAt:     ctx.BlockTime().Unix(),
+		Status:          "pending",
+	}
+	k.SetOnboardingRequest(ctx, request)
+
+	// Non-admin tries to approve — should fail.
+	err := k.ApproveOnboardingRequest(ctx, "AnonDomain", "alice", sdk.AccAddress("not-admin"))
+	if err == nil {
+		t.Fatal("expected error for non-admin approval")
+	}
+
+	// Non-admin tries to reject — should fail.
+	err = k.RejectOnboardingRequest(ctx, "AnonDomain", "alice", sdk.AccAddress("not-admin"))
+	if err == nil {
+		t.Fatal("expected error for non-admin rejection")
+	}
+
+	// Request still pending.
+	req, _ := k.GetOnboardingRequest(ctx, "AnonDomain", "alice")
+	if req.Status != "pending" {
+		t.Errorf("status = %s, want pending (unchanged)", req.Status)
+	}
+}

@@ -172,3 +172,65 @@ func (k Keeper) DeleteOnboardingRequest(ctx sdk.Context, domainName, requesterAd
 	store := ctx.KVStore(k.StoreKey)
 	store.Delete([]byte("onboarding:" + domainName + ":" + requesterAddr))
 }
+
+// ApproveOnboardingRequest validates a pending request and adds the domain
+// key to the permission register. Only the domain admin can approve (WP S4).
+func (k Keeper) ApproveOnboardingRequest(ctx sdk.Context, domainName, requesterAddr string, adminAddr sdk.AccAddress) error {
+	request, exists := k.GetOnboardingRequest(ctx, domainName, requesterAddr)
+	if !exists {
+		return errorsmod.Wrap(sdkerrors.ErrUnknownRequest, "onboarding request not found")
+	}
+	if request.Status != "pending" {
+		return errorsmod.Wrapf(sdkerrors.ErrInvalidRequest, "request is not pending: %s", request.Status)
+	}
+
+	// Verify caller is domain admin.
+	domain, found := k.GetDomain(ctx, domainName)
+	if !found {
+		return errorsmod.Wrapf(sdkerrors.ErrUnknownRequest, "domain %s not found", domainName)
+	}
+	if !adminAddr.Equals(domain.Admin) {
+		return errorsmod.Wrap(sdkerrors.ErrUnauthorized, "only domain admin can approve onboarding")
+	}
+
+	// Decode domain pub key from hex.
+	domainPubKeyBytes, err := hex.DecodeString(request.DomainPubKeyHex)
+	if err != nil {
+		return errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "invalid domain public key hex in request")
+	}
+
+	// JoinPermissionRegister validates key length, membership, and duplicates.
+	if err := k.JoinPermissionRegister(ctx, domainName, requesterAddr, domainPubKeyBytes); err != nil {
+		return err
+	}
+
+	// Update request status.
+	request.Status = "approved"
+	k.SetOnboardingRequest(ctx, request)
+	return nil
+}
+
+// RejectOnboardingRequest rejects a pending onboarding request.
+// Only the domain admin can reject (WP S4).
+func (k Keeper) RejectOnboardingRequest(ctx sdk.Context, domainName, requesterAddr string, adminAddr sdk.AccAddress) error {
+	request, exists := k.GetOnboardingRequest(ctx, domainName, requesterAddr)
+	if !exists {
+		return errorsmod.Wrap(sdkerrors.ErrUnknownRequest, "onboarding request not found")
+	}
+	if request.Status != "pending" {
+		return errorsmod.Wrapf(sdkerrors.ErrInvalidRequest, "request is not pending: %s", request.Status)
+	}
+
+	// Verify caller is domain admin.
+	domain, found := k.GetDomain(ctx, domainName)
+	if !found {
+		return errorsmod.Wrapf(sdkerrors.ErrUnknownRequest, "domain %s not found", domainName)
+	}
+	if !adminAddr.Equals(domain.Admin) {
+		return errorsmod.Wrap(sdkerrors.ErrUnauthorized, "only domain admin can reject onboarding")
+	}
+
+	request.Status = "rejected"
+	k.SetOnboardingRequest(ctx, request)
+	return nil
+}
