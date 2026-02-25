@@ -9,7 +9,7 @@
 
 | Repo | Branch | HEAD | Path |
 |------|--------|------|------|
-| **Main** | `main` | `9c4edc3` (docs: update GitHub Pages release badge to v0.2.4) | `/Users/gio/TrueRepublic/` |
+| **Main** | `main` | `8c15c39` (feat(v0.3.0): anonymity data structures — Big Purge schedule & onboarding) | `/Users/gio/TrueRepublic/` |
 | **Wiki** | `master` | `b6b5c43` (docs: update roadmap for v0.2.1 complete, v0.3.0 planned) | `/Users/gio/TrueRepublic/wiki-github/` |
 
 - Working tree: **clean**, up-to-date with `origin/main`
@@ -43,7 +43,7 @@
 
 ### Key Metrics
 
-- 225 unit tests across 3 modules (~3,800 lines of test code)
+- 235 unit tests across 3 modules (~4,000 lines of test code)
 - 19 transaction types (15 governance + 4 DEX)
 - 6 query endpoints (4 governance + 2 DEX)
 - 5 tokenomics equations fully implemented + domain interest in EndBlock
