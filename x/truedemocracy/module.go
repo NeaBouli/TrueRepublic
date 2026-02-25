@@ -177,7 +177,10 @@ func (am AppModule) EndBlock(goCtx context.Context) ([]abci.ValidatorUpdate, err
 	// 5. Governance: admin election and inactivity cleanup.
 	am.keeper.ProcessGovernance(ctx)
 
-	// 6. Build and return validator updates.
+	// 6. Check and execute Big Purges (WP S4: periodic permission register cleanup).
+	am.keeper.CheckAndExecuteBigPurges(ctx)
+
+	// 7. Build and return validator updates.
 	updates := am.keeper.BuildValidatorUpdates(ctx)
 	return updates, nil
 }
