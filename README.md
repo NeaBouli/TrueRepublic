@@ -221,9 +221,11 @@ cd mobile-wallet && npm install
 
 ### Roadmap
 
-- **v0.2 (Feb 2026):** Systemic Consensing scoring, MsgRateProposal, MsgCastElectionVote, Domain Interest EndBlock
-- **v0.3 (Q3 2026):** ZKP for anonymity, CosmWasm integration, multi-asset DEX via IBC, UI integration
-- **v1.0 (Q1 2027):** External security audit, mainnet launch, genesis ceremony
+- **v0.2.x (Feb 2026):** Governance core — Systemic Consensing, Tokenomics, Elections
+- **v0.3.0 (Q1 2026):** Security & Anonymity — ZKP, CosmWasm, UI integration
+- **v0.4.0 (Q2 2026):** Optional Indexer Stack — SQL analytics, Read-Only API, Explorer
+- **v0.5.0 (Q3 2026):** DEX Expansion — BTC/ETH/LUSD via IBC
+- **v1.0.0 (Q4 2026):** Production Release — External audit, mainnet launch
 
 ---
 

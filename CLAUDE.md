@@ -270,11 +270,29 @@ TrueRepublic/
 **P2:** UI integration (web/mobile frontends for v0.2.0 features)
 **P2:** Developer tooling (linting, Vite migration, proto files)
 
-### v1.0 Scope (Q1 2027)
+### v0.4.0 Scope (Q2 2026) — Optional Indexer Stack
 
-- Professional security audit (smart contracts + Go modules)
-- Proxy party functionality
-- Network scalability tests (175+ validator nodes)
+**Full Specification:** `docs/V0.4.0_OPTIONAL_INDEXER_STACK.md` (to be created)
+**Critical:** Entire stack is OPTIONAL — zero consensus impact, fail-safe architecture.
+
+- **Phase 1 (P0):** Snapshot Indexer — separate Go service, Postgres, event consumption via RPC, idempotent upserts (+15-20 tests)
+- **Phase 2 (P1):** Full-History Mode — history tables, rebuild/backfill CLI, deterministic replay (+10-15 tests)
+- **Phase 3 (P0):** Read-Only API — REST endpoints, OpenAPI spec, rate limiting, read-only DB user (+8-10 tests)
+- **Phase 4 (P1):** Minimal Explorer — Next.js dashboard, domain/proposal browser, NO wallet (+5 tests)
+- **Phase 5 (P2):** Wallet Actions — requires external security review first, Keplr/Leap, TX signing (+20 tests)
+
+Security: 10-point threat model required, DB/API down → chain unaffected, read-only by default.
+
+### v0.5.0 Scope (Q3 2026) — DEX Expansion
+
+- BTC/ETH/LUSD pools via IBC
+- Cross-chain swaps
+- Liquidity analytics dashboard
+
+### v1.0.0 Scope (Q4 2026) — Production
+
+- External security audit (full scope)
+- Mainnet launch preparation
 - Genesis ceremony and validator onboarding
 - Production deployment with monitoring/alerting
 
