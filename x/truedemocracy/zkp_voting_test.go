@@ -146,3 +146,209 @@ func setupDomainWithZKPIdentity(t *testing.T, k Keeper, ctx sdk.Context, domainN
 	}
 	return secrets
 }
+
+// generateZKPRating generates a Groth16 proof and nullifier for rating a suggestion.
+// Returns proofHex and nullifierHashHex ready for RateProposalWithZKP.
+func generateZKPRating(t *testing.T, k Keeper, ctx sdk.Context, domainName string, secrets [][]byte, memberIndex int, issueName, suggestionName string) (string, string) {
+	t.Helper()
+	keys := getTestZKPKeys(t)
+
+	// Rebuild tree from domain's commitments.
+	domain, _ := k.GetDomain(ctx, domainName)
+	commitments := make([][]byte, len(domain.IdentityCommits))
+	for i, h := range domain.IdentityCommits {
+		b, _ := hex.DecodeString(h)
+		commitments[i] = b
+	}
+	tree := NewMerkleTree(MerkleTreeDepth)
+	if err := tree.BuildFromLeaves(commitments); err != nil {
+		t.Fatalf("BuildFromLeaves failed: %v", err)
+	}
+
+	siblings, pathIndices, err := tree.GenerateProof(memberIndex)
+	if err != nil {
+		t.Fatalf("GenerateProof failed: %v", err)
+	}
+
+	extNullifier, err := ComputeExternalNullifier(domainName + "|" + issueName + "|" + suggestionName)
+	if err != nil {
+		t.Fatalf("ComputeExternalNullifier failed: %v", err)
+	}
+
+	proofBytes, nullifierHash, err := GenerateMembershipProof(
+		keys,
+		secrets[memberIndex],
+		tree.Root,
+		siblings,
+		pathIndices,
+		extNullifier,
+	)
+	if err != nil {
+		t.Fatalf("GenerateMembershipProof failed: %v", err)
+	}
+
+	return hex.EncodeToString(proofBytes), hex.EncodeToString(nullifierHash)
+}
+
+// addProposal creates an issue with a suggestion in the domain.
+func addProposal(t *testing.T, k Keeper, ctx sdk.Context, domainName, issueName, suggestionName string) {
+	t.Helper()
+	admin := sdk.AccAddress("admin1")
+	fee := sdk.NewCoins(sdk.NewInt64Coin("pnyx", 10_000_000))
+	if err := k.SubmitProposal(ctx, domainName, issueName, suggestionName, admin.String(), fee, ""); err != nil {
+		t.Fatalf("SubmitProposal failed: %v", err)
+	}
+}
+
+// ---------- RateProposalWithZKP Keeper Tests ----------
+
+func TestRateProposalWithZKP(t *testing.T) {
+	k, ctx := setupKeeper(t)
+	secrets := setupDomainWithZKPIdentity(t, k, ctx, "ZKPDomain", 3)
+	addProposal(t, k, ctx, "ZKPDomain", "Climate", "GreenDeal")
+
+	proofHex, nullifierHex := generateZKPRating(t, k, ctx, "ZKPDomain", secrets, 1, "Climate", "GreenDeal")
+
+	reward, err := k.RateProposalWithZKP(ctx, "ZKPDomain", "Climate", "GreenDeal", 3, proofHex, nullifierHex)
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if reward.IsZero() {
+		t.Fatal("expected non-zero reward")
+	}
+
+	// Verify rating stored.
+	domain, _ := k.GetDomain(ctx, "ZKPDomain")
+	ratings := domain.Issues[0].Suggestions[0].Ratings
+	if len(ratings) != 1 {
+		t.Fatalf("expected 1 rating, got %d", len(ratings))
+	}
+	if ratings[0].Value != 3 {
+		t.Fatalf("expected rating value 3, got %d", ratings[0].Value)
+	}
+	if ratings[0].NullifierHex != nullifierHex {
+		t.Fatal("rating should store nullifier hex")
+	}
+	if ratings[0].DomainPubKeyHex != "" {
+		t.Fatal("ZKP rating should have empty DomainPubKeyHex")
+	}
+}
+
+func TestRateProposalWithZKPDoubleVoteBlocked(t *testing.T) {
+	k, ctx := setupKeeper(t)
+	secrets := setupDomainWithZKPIdentity(t, k, ctx, "ZKPDomain", 3)
+	addProposal(t, k, ctx, "ZKPDomain", "Climate", "GreenDeal")
+
+	proofHex, nullifierHex := generateZKPRating(t, k, ctx, "ZKPDomain", secrets, 0, "Climate", "GreenDeal")
+
+	// First vote succeeds.
+	_, err := k.RateProposalWithZKP(ctx, "ZKPDomain", "Climate", "GreenDeal", 5, proofHex, nullifierHex)
+	if err != nil {
+		t.Fatalf("first vote should succeed: %v", err)
+	}
+
+	// Second vote with same nullifier rejected.
+	_, err = k.RateProposalWithZKP(ctx, "ZKPDomain", "Climate", "GreenDeal", -3, proofHex, nullifierHex)
+	if err == nil {
+		t.Fatal("expected error for double vote")
+	}
+}
+
+func TestRateProposalWithZKPDifferentSuggestions(t *testing.T) {
+	k, ctx := setupKeeper(t)
+	secrets := setupDomainWithZKPIdentity(t, k, ctx, "ZKPDomain", 3)
+	addProposal(t, k, ctx, "ZKPDomain", "Climate", "GreenDeal")
+	addProposal(t, k, ctx, "ZKPDomain", "Climate", "BlueDeal")
+
+	// Same member rates two different suggestions — different nullifiers.
+	proof1, null1 := generateZKPRating(t, k, ctx, "ZKPDomain", secrets, 0, "Climate", "GreenDeal")
+	proof2, null2 := generateZKPRating(t, k, ctx, "ZKPDomain", secrets, 0, "Climate", "BlueDeal")
+
+	if null1 == null2 {
+		t.Fatal("different suggestions should produce different nullifiers")
+	}
+
+	_, err := k.RateProposalWithZKP(ctx, "ZKPDomain", "Climate", "GreenDeal", 5, proof1, null1)
+	if err != nil {
+		t.Fatalf("first suggestion rating failed: %v", err)
+	}
+
+	_, err = k.RateProposalWithZKP(ctx, "ZKPDomain", "Climate", "BlueDeal", -2, proof2, null2)
+	if err != nil {
+		t.Fatalf("second suggestion rating failed: %v", err)
+	}
+}
+
+func TestRateProposalWithZKPWrongProof(t *testing.T) {
+	k, ctx := setupKeeper(t)
+	secrets := setupDomainWithZKPIdentity(t, k, ctx, "ZKPDomain", 3)
+	addProposal(t, k, ctx, "ZKPDomain", "Climate", "GreenDeal")
+
+	_, nullifierHex := generateZKPRating(t, k, ctx, "ZKPDomain", secrets, 0, "Climate", "GreenDeal")
+
+	// Use garbage proof bytes.
+	badProofHex := hex.EncodeToString(make([]byte, 256))
+
+	_, err := k.RateProposalWithZKP(ctx, "ZKPDomain", "Climate", "GreenDeal", 3, badProofHex, nullifierHex)
+	if err == nil {
+		t.Fatal("expected error for wrong proof")
+	}
+}
+
+func TestRateProposalWithZKPEmptyMerkleRoot(t *testing.T) {
+	k, ctx := setupKeeper(t)
+	admin := sdk.AccAddress("admin1")
+	k.CreateDomain(ctx, "EmptyDomain", admin, sdk.NewCoins(sdk.NewInt64Coin("pnyx", 500_000)))
+
+	_, err := k.RateProposalWithZKP(ctx, "EmptyDomain", "Issue", "Sugg", 3, "aabb", "aabb")
+	if err == nil {
+		t.Fatal("expected error for domain with no identity commitments")
+	}
+}
+
+func TestRateProposalWithZKPInvalidRating(t *testing.T) {
+	k, ctx := setupKeeper(t)
+
+	_, err := k.RateProposalWithZKP(ctx, "D", "I", "S", 6, "aa", "bb")
+	if err == nil {
+		t.Fatal("expected error for rating > 5")
+	}
+	_, err = k.RateProposalWithZKP(ctx, "D", "I", "S", -6, "aa", "bb")
+	if err == nil {
+		t.Fatal("expected error for rating < -5")
+	}
+}
+
+func TestRateProposalWithZKPUnknownDomain(t *testing.T) {
+	k, ctx := setupKeeper(t)
+
+	_, err := k.RateProposalWithZKP(ctx, "NoDomain", "I", "S", 3, "aa", "bb")
+	if err == nil {
+		t.Fatal("expected error for unknown domain")
+	}
+}
+
+func TestRateProposalWithZKPRewardsDistributed(t *testing.T) {
+	k, ctx := setupKeeper(t)
+	secrets := setupDomainWithZKPIdentity(t, k, ctx, "ZKPDomain", 3)
+	addProposal(t, k, ctx, "ZKPDomain", "Climate", "GreenDeal")
+
+	domainBefore, _ := k.GetDomain(ctx, "ZKPDomain")
+	treasuryBefore := domainBefore.Treasury.AmountOf("pnyx").Int64()
+
+	proofHex, nullifierHex := generateZKPRating(t, k, ctx, "ZKPDomain", secrets, 2, "Climate", "GreenDeal")
+	reward, err := k.RateProposalWithZKP(ctx, "ZKPDomain", "Climate", "GreenDeal", 4, proofHex, nullifierHex)
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	domainAfter, _ := k.GetDomain(ctx, "ZKPDomain")
+	treasuryAfter := domainAfter.Treasury.AmountOf("pnyx").Int64()
+
+	if treasuryAfter >= treasuryBefore {
+		t.Fatal("treasury should decrease after reward payout")
+	}
+	if reward.AmountOf("pnyx").Int64() != treasuryBefore-treasuryAfter {
+		t.Fatal("reward amount should match treasury decrease")
+	}
+}

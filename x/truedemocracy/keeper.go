@@ -295,3 +295,103 @@ func (k Keeper) RateProposalWithSignature(ctx sdk.Context, domainName, issueName
     store.Set([]byte("domain:"+domainName), bz)
     return reward, nil
 }
+
+// RateProposalWithZKP records a rating using a Groth16 ZKP membership proof.
+// The voter proves membership in the domain's identity commitment set without
+// revealing which commitment is theirs. A deterministic nullifier prevents
+// double-voting while preserving full anonymity (WP S4 ZKP extension).
+func (k Keeper) RateProposalWithZKP(ctx sdk.Context, domainName, issueName, suggestionName string, rating int, proofHex, nullifierHashHex string) (sdk.Coins, error) {
+    if rating < -5 || rating > 5 {
+        return sdk.Coins{}, errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "rating must be between -5 and +5")
+    }
+
+    // Get domain and verify identity commitments exist.
+    domain, found := k.GetDomain(ctx, domainName)
+    if !found {
+        return sdk.Coins{}, errorsmod.Wrapf(sdkerrors.ErrUnknownRequest, "domain %s not found", domainName)
+    }
+    if domain.MerkleRoot == "" {
+        return sdk.Coins{}, errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "no identity commitments registered in domain")
+    }
+
+    // Decode Merkle root from domain state.
+    merkleRootBytes, err := hex.DecodeString(domain.MerkleRoot)
+    if err != nil {
+        return sdk.Coins{}, errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "invalid Merkle root in domain state")
+    }
+
+    // Decode and validate nullifier hash.
+    nullifierBytes, err := hex.DecodeString(nullifierHashHex)
+    if err != nil || len(nullifierBytes) != 32 {
+        return sdk.Coins{}, errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "nullifier hash must be 32 bytes hex-encoded (64 hex chars)")
+    }
+
+    // Compute external nullifier from voting context.
+    externalNullifier, err := ComputeExternalNullifier(domainName + "|" + issueName + "|" + suggestionName)
+    if err != nil {
+        return sdk.Coins{}, errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "failed to compute external nullifier")
+    }
+
+    // Decode proof.
+    proofBytes, err := hex.DecodeString(proofHex)
+    if err != nil {
+        return sdk.Coins{}, errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "invalid proof hex encoding")
+    }
+
+    // Get or initialize the verifying key.
+    vkBytes, err := k.EnsureVerifyingKey(ctx)
+    if err != nil {
+        return sdk.Coins{}, errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "failed to initialize verifying key: "+err.Error())
+    }
+    vk, err := DeserializeVerifyingKey(vkBytes)
+    if err != nil {
+        return sdk.Coins{}, errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "failed to deserialize verifying key")
+    }
+
+    // Verify the Groth16 membership proof.
+    if err := VerifyMembershipProof(vk, proofBytes, merkleRootBytes, nullifierBytes, externalNullifier); err != nil {
+        return sdk.Coins{}, errorsmod.Wrap(sdkerrors.ErrUnauthorized, "ZKP membership proof verification failed: "+err.Error())
+    }
+
+    // Check nullifier has not been used (prevents double-voting).
+    if k.IsNullifierUsed(ctx, domainName, nullifierHashHex) {
+        return sdk.Coins{}, errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "nullifier already used (double-vote prevented)")
+    }
+
+    // Find and rate the suggestion.
+    now := ctx.BlockTime().Unix()
+    suggestionFound := false
+    for i, issue := range domain.Issues {
+        if issue.Name == issueName {
+            for j, suggestion := range issue.Suggestions {
+                if suggestion.Name == suggestionName {
+                    domain.Issues[i].Suggestions[j].Ratings = append(domain.Issues[i].Suggestions[j].Ratings, Rating{
+                        NullifierHex: nullifierHashHex,
+                        Value:        rating,
+                    })
+                    domain.Issues[i].LastActivityAt = now
+                    suggestionFound = true
+                    break
+                }
+            }
+            break
+        }
+    }
+    if !suggestionFound {
+        return sdk.Coins{}, errorsmod.Wrap(sdkerrors.ErrUnknownRequest, "issue or suggestion not found")
+    }
+
+    // Mark nullifier as used.
+    k.SetNullifierUsed(ctx, domainName, nullifierHashHex, ctx.BlockHeight())
+
+    // RateToEarn reward (eq.2).
+    rewardAmt := rewards.CalcReward(domain.Treasury.AmountOf("pnyx"))
+    reward := sdk.NewCoins(sdk.NewCoin("pnyx", rewardAmt))
+    domain.Treasury = domain.Treasury.Sub(reward...)
+    domain.TotalPayouts += rewardAmt.Int64()
+
+    store := ctx.KVStore(k.StoreKey)
+    bz := k.cdc.MustMarshalLengthPrefixed(&domain)
+    store.Set([]byte("domain:"+domainName), bz)
+    return reward, nil
+}
