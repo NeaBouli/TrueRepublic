@@ -9,7 +9,7 @@
 
 | Repo | Branch | HEAD | Path |
 |------|--------|------|------|
-| **Main** | `main` | `72e84bc` (feat(v0.3.0): add MsgRateWithProof for ZKP anonymous voting) | `/Users/gio/TrueRepublic/` |
+| **Main** | `main` | `2b0cd35` (feat(v0.3.0): implement ExportGenesis and genesis verifying key) | `/Users/gio/TrueRepublic/` |
 | **Wiki** | `master` | `21eef69` (docs: add v0.4.0 Optional Indexer Stack roadmap) | `/Users/gio/TrueRepublic/wiki-github/` |
 
 - Working tree: **clean**, up-to-date with `origin/main`
@@ -44,9 +44,9 @@
 
 ### Key Metrics
 
-- 355 unit tests across 3 modules (~6,200 lines of test code)
+- 377 unit tests across 3 modules (~7,000 lines of test code)
 - 25 transaction types (21 governance + 4 DEX)
-- 6 query endpoints (4 governance + 2 DEX)
+- 10 query endpoints (7 governance + 1 gRPC nullifier + 2 DEX)
 - 5 tokenomics equations fully implemented + domain interest in EndBlock
 - ~13,100 lines of source code (Go + JS + Rust)
 - 30+ wiki pages, 39 docs files
@@ -140,8 +140,8 @@ TrueRepublic/
 │   ├── keeper.go                   Domain CRUD, proposal submission, fee validation,
 │   │                               RateProposalWithSignature (anonymous rating)
 │   ├── msg_server.go               Message handlers (21 tx types)
-│   ├── query_server.go             gRPC query handlers (4 query types)
-│   ├── cli.go                      Cobra CLI commands (22 tx + 4 query)
+│   ├── query_server.go             gRPC query handlers (7 query types)
+│   ├── cli.go                      Cobra CLI commands (22 tx + 7 query)
 │   ├── module.go                   Module registration, codecs, EndBlock hooks
 │   ├── msgs.go                     Message type definitions (21 types)
 │   ├── types.go                    Domain, DomainOptions, VotingMode, VoteChoice,
@@ -166,12 +166,14 @@ TrueRepublic/
 │   ├── crypto.go                   Ed25519 dual-key derivation (global + domain keys)
 │   ├── tree.go                     Tree data structures
 │   ├── querier.go                  Legacy query interface
-│   ├── *_test.go (15 files)        300 tests: governance, validator, stones, lifecycle,
+│   ├── *_test.go (17 files)        322 tests: governance, validator, stones, lifecycle,
 │   │                               anonymity, slashing, elections, scoring, domain interest,
 │   │                               crypto (dual-key onboarding), big purge EndBlock,
 │   │                               onboarding (two-step flow), Merkle tree, ZKP circuit,
 │   │                               identity commitments + nullifier store, ZKP voting
-│   │                               (MsgRateWithProof, E2E flow, Big Purge cycle)
+│   │                               (MsgRateWithProof, E2E flow, Big Purge cycle),
+│   │                               ZKP queries (nullifier, purge schedule, ZKP state),
+│   │                               Merkle root history, genesis round-trip
 │
 ├── x/dex/                          DEX MODULE (9 files, 1,637 lines)
 │   ├── keeper.go                   AMM pool operations (x*y=k)
