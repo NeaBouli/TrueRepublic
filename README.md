@@ -121,8 +121,8 @@ TrueRepublic/
 ├── Makefile                    Build targets (build, test, lint, docker)
 ├── INSTALLATION.md             Quick install guide
 ├── x/
-│   ├── truedemocracy/          Governance module (13 msg types, 116 tests)
-│   └── dex/                    DEX module (4 msg types, 24 tests)
+│   ├── truedemocracy/          Governance module (23 msg types, 367 tests)
+│   └── dex/                    DEX module (4 msg types, 39 tests)
 ├── treasury/keeper/            Tokenomics equations 1-5 (31 tests)
 ├── contracts/                  CosmWasm smart contracts (Rust)
 ├── web-wallet/                 React 18 + Tailwind + Keplr + CosmJS
@@ -154,6 +154,9 @@ TrueRepublic/
 | Domain Interest (25% APY) | ✅ | `treasury/keeper/rewards.go` (eq.4) |
 | Release Decay | ✅ | `treasury/keeper/rewards.go` |
 | Anonymous Voting (WP S4) | ✅ | `x/truedemocracy/anonymity.go` |
+| Zero-Knowledge Proofs (Groth16) | ✅ | `x/truedemocracy/zkp.go` |
+| CosmWasm Smart Contracts | ✅ | `x/truedemocracy/wasm_bindings.go` |
+| Domain-Bank Bridge | ✅ | `x/truedemocracy/treasury_bridge.go` |
 | Stones Voting (WP S3.1) | ✅ | `x/truedemocracy/stones.go` |
 | VoteToEarn Rewards | ✅ | `x/truedemocracy/stones.go` |
 | Suggestion Lifecycle (WP S3.1.2) | ✅ | `x/truedemocracy/lifecycle.go` |
@@ -162,7 +165,7 @@ TrueRepublic/
 | Admin Election (WP S3.6) | ✅ | `x/truedemocracy/governance.go` |
 | Member Exclusion (2/3 vote) | ✅ | `x/truedemocracy/governance.go` |
 | PoD Transfer Limit (10%, WP S7) | ✅ | `x/truedemocracy/validator.go` |
-| CLI Commands (14 tx + 6 query) | ✅ | `x/truedemocracy/cli.go` |
+| CLI Commands (24 tx + 7 query) | ✅ | `x/truedemocracy/cli.go` |
 | DEX CLI (4 tx + 2 query) | ✅ | `x/dex/cli.go` |
 | CosmWasm Contracts | ✅ | `contracts/src/` |
 | Web Wallet (React + Keplr) | ✅ | `web-wallet/` |
@@ -177,7 +180,7 @@ TrueRepublic/
 # Blockchain
 go mod tidy
 go build ./...
-go test ./... -race -cover    # 182 tests
+go test ./... -race -cover -count=1 -timeout=300s    # 437 tests
 
 # Smart contracts
 cd contracts && cargo build
@@ -197,7 +200,7 @@ cd mobile-wallet && npm install
 |-------|-----------|---------|
 | Consensus | CometBFT | v0.38.21 |
 | Application | Cosmos SDK | v0.50.13 |
-| Language | Go | 1.23.5 |
+| Language | Go | 1.24 |
 | Smart Contracts | CosmWasm (Rust) | cosmwasm-std 3 |
 | Web Frontend | React + Tailwind CSS | 18.2 / 3.4 |
 | Mobile | React Native + Expo | 0.74 / 51.0 |
@@ -207,13 +210,15 @@ cd mobile-wallet && npm install
 
 ## Current Status
 
-**Version: v0.1.8-alpha**
+**Version: v0.3.0-dev (Week 6/12)**
 
-- ✅ 197 unit tests passing across 3 modules (~2,950 lines of test code)
+- ✅ 437 unit tests passing across 3 modules (~8,100 lines of test code)
 - ✅ Core blockchain compiles and runs
 - ✅ Whitepaper tokenomics fully implemented (equations 1-5)
 - ✅ Complete governance system (domains, proposals, voting, lifecycle)
-- ✅ Person election voting modes (Simple/Absolute Majority, Abstention)
+- ✅ Zero-Knowledge Proofs (Groth16 ZK-SNARKs for anonymous voting)
+- ✅ CosmWasm smart contract integration (wasmd v0.53.0)
+- ✅ Domain-Bank Bridge (dual accounting, deposit/withdraw)
 - ✅ DEX with AMM, liquidity pools, swap fees, PNYX burn
 - ✅ Web wallet with 3-column governance UI
 - ✅ Mobile wallet with bottom-tab navigation
@@ -221,11 +226,12 @@ cd mobile-wallet && npm install
 
 ### Roadmap
 
-- **v0.2.x (Feb 2026):** Governance core — Systemic Consensing, Tokenomics, Elections
-- **v0.3.0 (Q1 2026):** Security & Anonymity — ZKP, CosmWasm, UI integration
-- **v0.4.0 (Q2 2026):** Optional Indexer Stack — SQL analytics, Read-Only API, Explorer
-- **v0.5.0 (Q3 2026):** DEX Expansion — BTC/ETH/LUSD via IBC
-- **v1.0.0 (Q4 2026):** Production Release — External audit, mainnet launch
+- ✅ **v0.1.x (Feb 2026):** Security fixes, documentation, elections
+- ✅ **v0.2.x (Feb 2026):** Governance core — Systemic Consensing, Tokenomics, Elections
+- 🔄 **v0.3.0 (Q1 2026):** ZKP Anonymity, CosmWasm, Bank Bridge (~50% complete)
+- 📋 **v0.4.0 (Q2 2026):** Optional Indexer Stack — SQL analytics, Read-Only API, Explorer
+- 📋 **v0.5.0 (Q3 2026):** DEX Expansion — BTC/ETH/LUSD via IBC
+- 🎯 **v1.0.0 (Q4 2026):** Production Release — External audit, mainnet launch
 
 ---
 

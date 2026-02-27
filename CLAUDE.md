@@ -2,15 +2,15 @@
 
 ## Current Status
 
-**Version:** v0.3.0-dev (Anonymity Layer Foundation) -- tagged 25.02.2026
-**Phase:** v0.3.0 development. ~95% whitepaper feature coverage (excluding ZKP/IBC). Zero P0 issues remain.
+**Version:** v0.3.0-dev (Week 6/12 complete) -- 28.02.2026
+**Phase:** v0.3.0 development (~50% complete). ZKP + CosmWasm + Bank Bridge done. Zero P0 issues.
 
 ### Repository State
 
 | Repo | Branch | HEAD | Path |
 |------|--------|------|------|
-| **Main** | `main` | `2b0cd35` (feat(v0.3.0): implement ExportGenesis and genesis verifying key) | `/Users/gio/TrueRepublic/` |
-| **Wiki** | `master` | `21eef69` (docs: add v0.4.0 Optional Indexer Stack roadmap) | `/Users/gio/TrueRepublic/wiki-github/` |
+| **Main** | `main` | `b930441` (feat(v0.3.0): implement Domain-Bank bridge with deposit/withdraw) | `/Users/gio/TrueRepublic/` |
+| **Wiki** | `master` | updated with Week 5-6 status | `/Users/gio/TrueRepublic/wiki-github/` |
 
 - Working tree: **clean**, up-to-date with `origin/main`
 - `wiki-github/` is untracked in the main repo (it is a separate git clone of the GitHub Wiki repo -- this is expected and correct)
@@ -44,11 +44,12 @@
 
 ### Key Metrics
 
-- 377 unit tests across 3 modules (~7,000 lines of test code)
-- 25 transaction types (21 governance + 4 DEX)
-- 10 query endpoints (7 governance + 1 gRPC nullifier + 2 DEX)
+- 437 unit tests across 3 modules (~8,100 lines of test code)
+- 27 transaction types (23 governance + 4 DEX)
+- 9 query endpoints (7 governance + 2 DEX)
 - 5 tokenomics equations fully implemented + domain interest in EndBlock
-- ~13,100 lines of source code (Go + JS + Rust)
+- CosmWasm: 7 custom queries, 5 custom messages for smart contracts
+- ~14,000 lines of source code (Go + JS + Rust)
 - 30+ wiki pages, 39 docs files
 
 ### Completed Work (v0.1.1 -- v0.2.0)
@@ -87,7 +88,7 @@
 
 Two custom Cosmos SDK modules plus a treasury package:
 
-1. **x/truedemocracy** (~11,300 lines, 36 files) -- Governance: domains, proposals, systemic consensing scoring (-5 to +5), stones voting, suggestion lifecycle (green/yellow/red zones), validator PoD, slashing, anonymous voting (domain key signatures + ZKP membership proofs), admin elections, member exclusion, person election voting modes (simple/absolute majority, abstention), domain interest payout (eq.4), two-step onboarding (add member + domain key registration), Big Purge EndBlock execution, ZKP anonymous voting (MiMC Merkle tree, Groth16 membership proofs, identity commitments, nullifier store, MsgRateWithProof)
+1. **x/truedemocracy** (~12,200 lines, 38 files) -- Governance: domains, proposals, systemic consensing scoring (-5 to +5), stones voting, suggestion lifecycle (green/yellow/red zones), validator PoD, slashing, anonymous voting (domain key signatures + ZKP membership proofs), admin elections, member exclusion, person election voting modes (simple/absolute majority, abstention), domain interest payout (eq.4), two-step onboarding (add member + domain key registration), Big Purge EndBlock execution, ZKP anonymous voting (MiMC Merkle tree, Groth16 membership proofs, identity commitments, nullifier store, MsgRateWithProof), CosmWasm custom bindings (7 queries + 5 messages), Domain-Bank bridge (deposit/withdraw with dual accounting)
 2. **x/dex** (1,637 lines, 9 files) -- AMM DEX: constant-product (x*y=k), PNYX/ATOM pool, 0.3% swap fee, 1% PNYX burn
 3. **treasury/keeper** (371 lines, 2 files) -- Tokenomics equations 1-5: domain cost, rewards, put price, domain interest (25% APY), node staking (10% APY), release decay
 
@@ -139,11 +140,11 @@ TrueRepublic/
 ├── x/truedemocracy/                GOVERNANCE MODULE (35 files, ~10,800 lines)
 │   ├── keeper.go                   Domain CRUD, proposal submission, fee validation,
 │   │                               RateProposalWithSignature (anonymous rating)
-│   ├── msg_server.go               Message handlers (21 tx types)
+│   ├── msg_server.go               Message handlers (23 tx types)
 │   ├── query_server.go             gRPC query handlers (7 query types)
-│   ├── cli.go                      Cobra CLI commands (22 tx + 7 query)
+│   ├── cli.go                      Cobra CLI commands (24 tx + 7 query)
 │   ├── module.go                   Module registration, codecs, EndBlock hooks
-│   ├── msgs.go                     Message type definitions (21 types)
+│   ├── msgs.go                     Message type definitions (23 types)
 │   ├── types.go                    Domain, DomainOptions, VotingMode, VoteChoice,
 │   │                               NullifierRecord structs
 │   ├── scoring.go                  Systemic Consensing: ComputeSuggestionScore,
@@ -166,14 +167,18 @@ TrueRepublic/
 │   ├── crypto.go                   Ed25519 dual-key derivation (global + domain keys)
 │   ├── tree.go                     Tree data structures
 │   ├── querier.go                  Legacy query interface
-│   ├── *_test.go (17 files)        322 tests: governance, validator, stones, lifecycle,
+│   ├── wasm_bindings.go            CosmWasm custom query/message bindings (7 queries, 5 msgs)
+│   ├── treasury_bridge.go          Domain-Bank bridge: DepositToDomain, WithdrawFromDomain
+│   ├── *_test.go (19 files)        367 tests: governance, validator, stones, lifecycle,
 │   │                               anonymity, slashing, elections, scoring, domain interest,
 │   │                               crypto (dual-key onboarding), big purge EndBlock,
 │   │                               onboarding (two-step flow), Merkle tree, ZKP circuit,
 │   │                               identity commitments + nullifier store, ZKP voting
 │   │                               (MsgRateWithProof, E2E flow, Big Purge cycle),
 │   │                               ZKP queries (nullifier, purge schedule, ZKP state),
-│   │                               Merkle root history, genesis round-trip
+│   │                               Merkle root history, genesis round-trip,
+│   │                               CosmWasm bindings (query + msg encoder),
+│   │                               treasury bridge (deposit, withdraw, round-trip)
 │
 ├── x/dex/                          DEX MODULE (9 files, 1,637 lines)
 │   ├── keeper.go                   AMM pool operations (x*y=k)
@@ -412,8 +417,13 @@ As of v0.2.0, there are no known critical (P0) issues. All previously identified
 
 ## Next Immediate Step
 
-There are no blocked or in-progress tasks. The project is at v0.2.1 with ~95% whitepaper feature coverage. All documentation is synchronized.
+v0.3.0 Weeks 1-6 are complete (ZKP + CosmWasm + Bank Bridge). 437 tests, all passing.
 
-**Next action:** Begin v0.3.0 development per `docs/V0.3.0_ROADMAP.md`. Recommended start: ZKP anonymity layer (P0, highest priority).
+**Completed v0.3.0 work:**
+- Weeks 1-4: ZKP Anonymity Layer (Groth16, Merkle trees, nullifiers, MsgRateWithProof)
+- Week 5: CosmWasm Integration (wasmd v0.53.0, custom bindings)
+- Week 6: Domain-Bank Bridge (dual accounting, deposit/withdraw)
+
+**Next action:** v0.3.0 Weeks 7-9 (IBC + Multi-Asset DEX) per `docs/V0.3.0_ROADMAP.md`.
 
 Await core dev instruction on which direction to proceed.
