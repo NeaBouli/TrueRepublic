@@ -9,7 +9,7 @@
 
 | Repo | Branch | HEAD | Path |
 |------|--------|------|------|
-| **Main** | `main` | `0fb002a` (feat(v0.3.0): implement Big Purge EndBlock execution) | `/Users/gio/TrueRepublic/` |
+| **Main** | `main` | `e556e06` (docs: update index.html test count to 259) | `/Users/gio/TrueRepublic/` |
 | **Wiki** | `master` | `21eef69` (docs: add v0.4.0 Optional Indexer Stack roadmap) | `/Users/gio/TrueRepublic/wiki-github/` |
 
 - Working tree: **clean**, up-to-date with `origin/main`
