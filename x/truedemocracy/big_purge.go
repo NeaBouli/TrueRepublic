@@ -67,9 +67,10 @@ func (k Keeper) executeBigPurge(ctx sdk.Context, domainName string) {
 
 	domain.PermissionReg = []string{}
 
-	// v0.3.0: also clear ZKP identity commitments and reset Merkle root.
+	// v0.3.0: also clear ZKP identity commitments, Merkle root, and root history.
 	domain.IdentityCommits = []string{}
 	domain.MerkleRoot = ""
+	domain.MerkleRootHistory = []string{}
 
 	store := ctx.KVStore(k.StoreKey)
 	bz := k.cdc.MustMarshalLengthPrefixed(&domain)

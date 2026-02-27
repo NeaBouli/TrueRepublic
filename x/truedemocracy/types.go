@@ -27,6 +27,10 @@ const (
 
 // Governance parameters (whitepaper §3, §3.6).
 const (
+	// MerkleRootHistorySize is the maximum number of recent Merkle roots retained.
+	// Proofs generated against any root in this window are accepted.
+	MerkleRootHistorySize = 10
+
 	InactivityTimeoutSecs  int64 = 31_104_000 // 360 days
 	ExcludeMajorityBps     int64 = 6667       // 2/3 ≈ 66.67% in basis points
 	StakeTransferLimitBps  int64 = 1000       // 10% of domain total payouts (WP §7)
@@ -61,7 +65,8 @@ type Domain struct {
     TransferredStake  int64          `json:"transferred_stake"`   // cumulative PNYX withdrawn by validators
     // v0.3.0 ZKP fields (backward compatible — zero values for existing domains).
     IdentityCommits []string       `json:"identity_commits"`    // MiMC commitments (hex)
-    MerkleRoot      string         `json:"merkle_root"`          // current Merkle root (hex)
+    MerkleRoot        string         `json:"merkle_root"`          // current Merkle root (hex)
+    MerkleRootHistory []string       `json:"merkle_root_history"`  // recent past Merkle roots
 }
 
 type DomainOptions struct {
@@ -144,11 +149,12 @@ type OnboardingRequest struct {
 
 // ZKPDomainState is a lightweight projection of domain ZKP fields for query responses.
 type ZKPDomainState struct {
-    DomainName      string `json:"domain_name"`
-    MerkleRoot      string `json:"merkle_root"`
-    CommitmentCount int    `json:"commitment_count"`
-    MemberCount     int    `json:"member_count"`
-    VKInitialized   bool   `json:"vk_initialized"`
+    DomainName        string   `json:"domain_name"`
+    MerkleRoot        string   `json:"merkle_root"`
+    MerkleRootHistory []string `json:"merkle_root_history"`
+    CommitmentCount   int      `json:"commitment_count"`
+    MemberCount       int      `json:"member_count"`
+    VKInitialized     bool     `json:"vk_initialized"`
 }
 
 // NullifierRecord tracks a used nullifier to prevent double-voting with ZKP.

@@ -300,7 +300,7 @@ func (k Keeper) RateProposalWithSignature(ctx sdk.Context, domainName, issueName
 // The voter proves membership in the domain's identity commitment set without
 // revealing which commitment is theirs. A deterministic nullifier prevents
 // double-voting while preserving full anonymity (WP S4 ZKP extension).
-func (k Keeper) RateProposalWithZKP(ctx sdk.Context, domainName, issueName, suggestionName string, rating int, proofHex, nullifierHashHex string) (sdk.Coins, error) {
+func (k Keeper) RateProposalWithZKP(ctx sdk.Context, domainName, issueName, suggestionName string, rating int, proofHex, nullifierHashHex, merkleRootHex string) (sdk.Coins, error) {
     if rating < -5 || rating > 5 {
         return sdk.Coins{}, errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "rating must be between -5 and +5")
     }
@@ -314,10 +314,17 @@ func (k Keeper) RateProposalWithZKP(ctx sdk.Context, domainName, issueName, sugg
         return sdk.Coins{}, errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "no identity commitments registered in domain")
     }
 
-    // Decode Merkle root from domain state.
-    merkleRootBytes, err := hex.DecodeString(domain.MerkleRoot)
+    // Determine which Merkle root to verify against.
+    effectiveRoot := domain.MerkleRoot
+    if merkleRootHex != "" {
+        if !isAcceptedMerkleRoot(domain, merkleRootHex) {
+            return sdk.Coins{}, errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "merkle root not recognized (not current and not in history window)")
+        }
+        effectiveRoot = merkleRootHex
+    }
+    merkleRootBytes, err := hex.DecodeString(effectiveRoot)
     if err != nil {
-        return sdk.Coins{}, errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "invalid Merkle root in domain state")
+        return sdk.Coins{}, errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "invalid Merkle root hex")
     }
 
     // Decode and validate nullifier hash.

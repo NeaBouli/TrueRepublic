@@ -342,6 +342,7 @@ type MsgRateWithProof struct {
 	Rating         int32          `protobuf:"varint,5,opt,name=rating,proto3" json:"rating"`
 	Proof          string         `protobuf:"bytes,6,opt,name=proof,proto3" json:"proof"`                                         // hex-encoded Groth16 proof
 	NullifierHash  string         `protobuf:"bytes,7,opt,name=nullifier_hash,json=nullifierHash,proto3" json:"nullifier_hash"`     // hex-encoded (64 chars)
+	MerkleRoot     string         `protobuf:"bytes,8,opt,name=merkle_root,json=merkleRoot,proto3" json:"merkle_root"`              // optional; empty = current root
 }
 
 func (m *MsgRateWithProof) ProtoMessage()             {}
@@ -368,6 +369,14 @@ func (m MsgRateWithProof) ValidateBasic() error {
 	}
 	if _, err := hex.DecodeString(m.NullifierHash); err != nil {
 		return sdkerrors.ErrInvalidRequest.Wrap("nullifier_hash must be valid hex")
+	}
+	if m.MerkleRoot != "" {
+		if len(m.MerkleRoot) != 64 {
+			return sdkerrors.ErrInvalidRequest.Wrap("merkle_root must be exactly 64 hex chars if provided")
+		}
+		if _, err := hex.DecodeString(m.MerkleRoot); err != nil {
+			return sdkerrors.ErrInvalidRequest.Wrap("merkle_root must be valid hex")
+		}
 	}
 	return nil
 }

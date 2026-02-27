@@ -623,9 +623,10 @@ func CmdRegisterIdentity() *cobra.Command {
 
 func CmdRateWithProof() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "rate-with-proof [domain] [issue] [suggestion] [rating] [proof-hex] [nullifier-hex]",
+		Use:   "rate-with-proof [domain] [issue] [suggestion] [rating] [proof-hex] [nullifier-hex] [merkle-root-hex]",
 		Short: "Rate a suggestion (-5 to +5) with a ZKP membership proof",
-		Args:  cobra.ExactArgs(6),
+		Long:  "Rate a suggestion using a Groth16 ZKP membership proof. The optional merkle-root-hex allows proving against a historical root.",
+		Args:  cobra.RangeArgs(6, 7),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
@@ -635,6 +636,10 @@ func CmdRateWithProof() *cobra.Command {
 			if err != nil {
 				return fmt.Errorf("invalid rating: %w", err)
 			}
+			merkleRoot := ""
+			if len(args) == 7 {
+				merkleRoot = args[6]
+			}
 			msg := MsgRateWithProof{
 				Sender:         clientCtx.GetFromAddress(),
 				DomainName:     args[0],
@@ -643,6 +648,7 @@ func CmdRateWithProof() *cobra.Command {
 				Rating:         int32(rating),
 				Proof:          args[4],
 				NullifierHash:  args[5],
+				MerkleRoot:     merkleRoot,
 			}
 			if err := msg.ValidateBasic(); err != nil {
 				return err

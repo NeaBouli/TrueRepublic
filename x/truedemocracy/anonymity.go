@@ -315,6 +315,14 @@ func (k Keeper) RegisterIdentityCommitment(ctx sdk.Context, domainName, memberAd
 	// Append commitment.
 	domain.IdentityCommits = append(domain.IdentityCommits, commitmentHex)
 
+	// Save current root to history before overwriting.
+	if domain.MerkleRoot != "" {
+		domain.MerkleRootHistory = append(domain.MerkleRootHistory, domain.MerkleRoot)
+		if len(domain.MerkleRootHistory) > MerkleRootHistorySize {
+			domain.MerkleRootHistory = domain.MerkleRootHistory[len(domain.MerkleRootHistory)-MerkleRootHistorySize:]
+		}
+	}
+
 	// Rebuild Merkle root.
 	root, err := k.computeMerkleRoot(domain.IdentityCommits)
 	if err != nil {
@@ -345,6 +353,20 @@ func (k Keeper) computeMerkleRoot(commitHexes []string) (string, error) {
 		return "", err
 	}
 	return tree.GetRoot(), nil
+}
+
+// isAcceptedMerkleRoot checks if the given root hex matches the domain's current
+// root or any root in the history window.
+func isAcceptedMerkleRoot(domain Domain, rootHex string) bool {
+	if domain.MerkleRoot == rootHex {
+		return true
+	}
+	for _, h := range domain.MerkleRootHistory {
+		if h == rootHex {
+			return true
+		}
+	}
+	return false
 }
 
 // ---------- Nullifier Store (v0.3.0) ----------

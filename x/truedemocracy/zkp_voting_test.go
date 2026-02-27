@@ -209,7 +209,7 @@ func TestRateProposalWithZKP(t *testing.T) {
 
 	proofHex, nullifierHex := generateZKPRating(t, k, ctx, "ZKPDomain", secrets, 1, "Climate", "GreenDeal")
 
-	reward, err := k.RateProposalWithZKP(ctx, "ZKPDomain", "Climate", "GreenDeal", 3, proofHex, nullifierHex)
+	reward, err := k.RateProposalWithZKP(ctx, "ZKPDomain", "Climate", "GreenDeal", 3, proofHex, nullifierHex, "")
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
@@ -242,13 +242,13 @@ func TestRateProposalWithZKPDoubleVoteBlocked(t *testing.T) {
 	proofHex, nullifierHex := generateZKPRating(t, k, ctx, "ZKPDomain", secrets, 0, "Climate", "GreenDeal")
 
 	// First vote succeeds.
-	_, err := k.RateProposalWithZKP(ctx, "ZKPDomain", "Climate", "GreenDeal", 5, proofHex, nullifierHex)
+	_, err := k.RateProposalWithZKP(ctx, "ZKPDomain", "Climate", "GreenDeal", 5, proofHex, nullifierHex, "")
 	if err != nil {
 		t.Fatalf("first vote should succeed: %v", err)
 	}
 
 	// Second vote with same nullifier rejected.
-	_, err = k.RateProposalWithZKP(ctx, "ZKPDomain", "Climate", "GreenDeal", -3, proofHex, nullifierHex)
+	_, err = k.RateProposalWithZKP(ctx, "ZKPDomain", "Climate", "GreenDeal", -3, proofHex, nullifierHex, "")
 	if err == nil {
 		t.Fatal("expected error for double vote")
 	}
@@ -268,12 +268,12 @@ func TestRateProposalWithZKPDifferentSuggestions(t *testing.T) {
 		t.Fatal("different suggestions should produce different nullifiers")
 	}
 
-	_, err := k.RateProposalWithZKP(ctx, "ZKPDomain", "Climate", "GreenDeal", 5, proof1, null1)
+	_, err := k.RateProposalWithZKP(ctx, "ZKPDomain", "Climate", "GreenDeal", 5, proof1, null1, "")
 	if err != nil {
 		t.Fatalf("first suggestion rating failed: %v", err)
 	}
 
-	_, err = k.RateProposalWithZKP(ctx, "ZKPDomain", "Climate", "BlueDeal", -2, proof2, null2)
+	_, err = k.RateProposalWithZKP(ctx, "ZKPDomain", "Climate", "BlueDeal", -2, proof2, null2, "")
 	if err != nil {
 		t.Fatalf("second suggestion rating failed: %v", err)
 	}
@@ -289,7 +289,7 @@ func TestRateProposalWithZKPWrongProof(t *testing.T) {
 	// Use garbage proof bytes.
 	badProofHex := hex.EncodeToString(make([]byte, 256))
 
-	_, err := k.RateProposalWithZKP(ctx, "ZKPDomain", "Climate", "GreenDeal", 3, badProofHex, nullifierHex)
+	_, err := k.RateProposalWithZKP(ctx, "ZKPDomain", "Climate", "GreenDeal", 3, badProofHex, nullifierHex, "")
 	if err == nil {
 		t.Fatal("expected error for wrong proof")
 	}
@@ -300,7 +300,7 @@ func TestRateProposalWithZKPEmptyMerkleRoot(t *testing.T) {
 	admin := sdk.AccAddress("admin1")
 	k.CreateDomain(ctx, "EmptyDomain", admin, sdk.NewCoins(sdk.NewInt64Coin("pnyx", 500_000)))
 
-	_, err := k.RateProposalWithZKP(ctx, "EmptyDomain", "Issue", "Sugg", 3, "aabb", "aabb")
+	_, err := k.RateProposalWithZKP(ctx, "EmptyDomain", "Issue", "Sugg", 3, "aabb", "aabb", "")
 	if err == nil {
 		t.Fatal("expected error for domain with no identity commitments")
 	}
@@ -309,11 +309,11 @@ func TestRateProposalWithZKPEmptyMerkleRoot(t *testing.T) {
 func TestRateProposalWithZKPInvalidRating(t *testing.T) {
 	k, ctx := setupKeeper(t)
 
-	_, err := k.RateProposalWithZKP(ctx, "D", "I", "S", 6, "aa", "bb")
+	_, err := k.RateProposalWithZKP(ctx, "D", "I", "S", 6, "aa", "bb", "")
 	if err == nil {
 		t.Fatal("expected error for rating > 5")
 	}
-	_, err = k.RateProposalWithZKP(ctx, "D", "I", "S", -6, "aa", "bb")
+	_, err = k.RateProposalWithZKP(ctx, "D", "I", "S", -6, "aa", "bb", "")
 	if err == nil {
 		t.Fatal("expected error for rating < -5")
 	}
@@ -322,7 +322,7 @@ func TestRateProposalWithZKPInvalidRating(t *testing.T) {
 func TestRateProposalWithZKPUnknownDomain(t *testing.T) {
 	k, ctx := setupKeeper(t)
 
-	_, err := k.RateProposalWithZKP(ctx, "NoDomain", "I", "S", 3, "aa", "bb")
+	_, err := k.RateProposalWithZKP(ctx, "NoDomain", "I", "S", 3, "aa", "bb", "")
 	if err == nil {
 		t.Fatal("expected error for unknown domain")
 	}
@@ -337,7 +337,7 @@ func TestRateProposalWithZKPRewardsDistributed(t *testing.T) {
 	treasuryBefore := domainBefore.Treasury.AmountOf("pnyx").Int64()
 
 	proofHex, nullifierHex := generateZKPRating(t, k, ctx, "ZKPDomain", secrets, 2, "Climate", "GreenDeal")
-	reward, err := k.RateProposalWithZKP(ctx, "ZKPDomain", "Climate", "GreenDeal", 4, proofHex, nullifierHex)
+	reward, err := k.RateProposalWithZKP(ctx, "ZKPDomain", "Climate", "GreenDeal", 4, proofHex, nullifierHex, "")
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
@@ -614,6 +614,200 @@ func TestE2EZKPRatingFlow(t *testing.T) {
 	}
 }
 
+// ---------- Merkle Root History Tests ----------
+
+func TestMerkleRootHistory(t *testing.T) {
+	k, ctx := setupKeeper(t)
+	admin := sdk.AccAddress("admin1")
+	k.CreateDomain(ctx, "HistDomain", admin, sdk.NewCoins(sdk.NewInt64Coin("pnyx", 500_000)))
+
+	memberAddr := sdk.AccAddress("memberA").String()
+	k.AddMember(ctx, "HistDomain", memberAddr, admin)
+
+	// Register 3 commitments — each should push the previous root into history.
+	var prevRoots []string
+	for i := 0; i < 3; i++ {
+		secret := big.NewInt(int64(i + 100)).Bytes()
+		commitment, err := ComputeCommitment(secret)
+		if err != nil {
+			t.Fatalf("ComputeCommitment failed: %v", err)
+		}
+		domain, _ := k.GetDomain(ctx, "HistDomain")
+		if domain.MerkleRoot != "" {
+			prevRoots = append(prevRoots, domain.MerkleRoot)
+		}
+		if err := k.RegisterIdentityCommitment(ctx, "HistDomain", memberAddr, hex.EncodeToString(commitment)); err != nil {
+			t.Fatalf("RegisterIdentityCommitment failed at %d: %v", i, err)
+		}
+	}
+
+	domain, _ := k.GetDomain(ctx, "HistDomain")
+	// After 3 registrations, history should contain the first 2 roots.
+	if len(domain.MerkleRootHistory) != 2 {
+		t.Fatalf("expected 2 roots in history, got %d", len(domain.MerkleRootHistory))
+	}
+	for i, expected := range prevRoots {
+		if domain.MerkleRootHistory[i] != expected {
+			t.Fatalf("history[%d] mismatch: expected %s, got %s", i, expected, domain.MerkleRootHistory[i])
+		}
+	}
+}
+
+func TestMerkleRootHistoryCap(t *testing.T) {
+	k, ctx := setupKeeper(t)
+	admin := sdk.AccAddress("admin1")
+	k.CreateDomain(ctx, "CapDomain", admin, sdk.NewCoins(sdk.NewInt64Coin("pnyx", 500_000)))
+
+	memberAddr := sdk.AccAddress("memberA").String()
+	k.AddMember(ctx, "CapDomain", memberAddr, admin)
+
+	// Register MerkleRootHistorySize + 5 commitments.
+	total := MerkleRootHistorySize + 5
+	for i := 0; i < total; i++ {
+		secret := big.NewInt(int64(i + 300)).Bytes()
+		commitment, err := ComputeCommitment(secret)
+		if err != nil {
+			t.Fatalf("ComputeCommitment failed: %v", err)
+		}
+		if err := k.RegisterIdentityCommitment(ctx, "CapDomain", memberAddr, hex.EncodeToString(commitment)); err != nil {
+			t.Fatalf("RegisterIdentityCommitment failed at %d: %v", i, err)
+		}
+	}
+
+	domain, _ := k.GetDomain(ctx, "CapDomain")
+	if len(domain.MerkleRootHistory) != MerkleRootHistorySize {
+		t.Fatalf("expected history capped at %d, got %d", MerkleRootHistorySize, len(domain.MerkleRootHistory))
+	}
+}
+
+func TestRateWithHistoricalRoot(t *testing.T) {
+	k, ctx := setupKeeper(t)
+	secrets := setupDomainWithZKPIdentity(t, k, ctx, "HistRateDomain", 3)
+	addProposal(t, k, ctx, "HistRateDomain", "Climate", "GreenDeal")
+
+	// Capture current root before adding more commitments.
+	domain, _ := k.GetDomain(ctx, "HistRateDomain")
+	rootBeforeNewCommit := domain.MerkleRoot
+
+	// Generate proof against the current root.
+	proofHex, nullifierHex := generateZKPRating(t, k, ctx, "HistRateDomain", secrets, 1, "Climate", "GreenDeal")
+
+	// Now register a NEW commitment — this changes the current root.
+	newMemberAddr := sdk.AccAddress("memberX").String()
+	k.AddMember(ctx, "HistRateDomain", newMemberAddr, sdk.AccAddress("admin1"))
+	newSecret := big.NewInt(999).Bytes()
+	newCommitment, _ := ComputeCommitment(newSecret)
+	if err := k.RegisterIdentityCommitment(ctx, "HistRateDomain", newMemberAddr, hex.EncodeToString(newCommitment)); err != nil {
+		t.Fatalf("RegisterIdentityCommitment failed: %v", err)
+	}
+
+	// Verify root has changed.
+	domain, _ = k.GetDomain(ctx, "HistRateDomain")
+	if domain.MerkleRoot == rootBeforeNewCommit {
+		t.Fatal("root should have changed after new commitment")
+	}
+
+	// Rate with the OLD root (now in history) — should succeed.
+	_, err := k.RateProposalWithZKP(ctx, "HistRateDomain", "Climate", "GreenDeal", 3, proofHex, nullifierHex, rootBeforeNewCommit)
+	if err != nil {
+		t.Fatalf("rating with historical root should succeed: %v", err)
+	}
+}
+
+func TestRateWithExpiredRoot(t *testing.T) {
+	k, ctx := setupKeeper(t)
+	secrets := setupDomainWithZKPIdentity(t, k, ctx, "ExpiredDomain", 2)
+	addProposal(t, k, ctx, "ExpiredDomain", "Climate", "GreenDeal")
+
+	// Capture current root.
+	domain, _ := k.GetDomain(ctx, "ExpiredDomain")
+	oldRoot := domain.MerkleRoot
+
+	// Generate proof against the current root.
+	proofHex, nullifierHex := generateZKPRating(t, k, ctx, "ExpiredDomain", secrets, 0, "Climate", "GreenDeal")
+
+	// Register MerkleRootHistorySize + 2 more commitments to push old root out of history.
+	memberAddr := sdk.AccAddress("memberA").String()
+	for i := 0; i < MerkleRootHistorySize+2; i++ {
+		secret := big.NewInt(int64(i + 700)).Bytes()
+		commitment, _ := ComputeCommitment(secret)
+		if err := k.RegisterIdentityCommitment(ctx, "ExpiredDomain", memberAddr, hex.EncodeToString(commitment)); err != nil {
+			t.Fatalf("RegisterIdentityCommitment failed at %d: %v", i, err)
+		}
+	}
+
+	// Verify old root is NOT in history anymore.
+	domain, _ = k.GetDomain(ctx, "ExpiredDomain")
+	if domain.MerkleRoot == oldRoot {
+		t.Fatal("root should have changed")
+	}
+	for _, h := range domain.MerkleRootHistory {
+		if h == oldRoot {
+			t.Fatal("old root should have been evicted from history")
+		}
+	}
+
+	// Rate with expired root — should fail.
+	_, err := k.RateProposalWithZKP(ctx, "ExpiredDomain", "Climate", "GreenDeal", 3, proofHex, nullifierHex, oldRoot)
+	if err == nil {
+		t.Fatal("expected error for expired root")
+	}
+}
+
+func TestRateWithEmptyMerkleRootUsesCurrentRoot(t *testing.T) {
+	k, ctx := setupKeeper(t)
+	secrets := setupDomainWithZKPIdentity(t, k, ctx, "EmptyRootDomain", 3)
+	addProposal(t, k, ctx, "EmptyRootDomain", "Climate", "GreenDeal")
+
+	proofHex, nullifierHex := generateZKPRating(t, k, ctx, "EmptyRootDomain", secrets, 0, "Climate", "GreenDeal")
+
+	// Empty merkleRootHex → uses current domain root (existing behavior).
+	_, err := k.RateProposalWithZKP(ctx, "EmptyRootDomain", "Climate", "GreenDeal", 4, proofHex, nullifierHex, "")
+	if err != nil {
+		t.Fatalf("rating with empty merkle root should use current root: %v", err)
+	}
+}
+
+func TestBigPurgeClearsRootHistory(t *testing.T) {
+	k, ctx := setupKeeper(t)
+	admin := sdk.AccAddress("admin1")
+	k.CreateDomain(ctx, "PurgeHistDomain", admin, sdk.NewCoins(sdk.NewInt64Coin("pnyx", 500_000)))
+
+	memberAddr := sdk.AccAddress("memberA").String()
+	k.AddMember(ctx, "PurgeHistDomain", memberAddr, admin)
+
+	// Register a few commitments to build up history.
+	for i := 0; i < 5; i++ {
+		secret := big.NewInt(int64(i + 400)).Bytes()
+		commitment, _ := ComputeCommitment(secret)
+		if err := k.RegisterIdentityCommitment(ctx, "PurgeHistDomain", memberAddr, hex.EncodeToString(commitment)); err != nil {
+			t.Fatalf("RegisterIdentityCommitment failed at %d: %v", i, err)
+		}
+	}
+
+	domain, _ := k.GetDomain(ctx, "PurgeHistDomain")
+	if len(domain.MerkleRootHistory) == 0 {
+		t.Fatal("history should be non-empty before purge")
+	}
+	if domain.MerkleRoot == "" {
+		t.Fatal("root should be non-empty before purge")
+	}
+
+	// Execute Big Purge.
+	k.executeBigPurge(ctx, "PurgeHistDomain")
+
+	domain, _ = k.GetDomain(ctx, "PurgeHistDomain")
+	if domain.MerkleRoot != "" {
+		t.Fatal("purge should clear Merkle root")
+	}
+	if len(domain.MerkleRootHistory) != 0 {
+		t.Fatalf("purge should clear root history, got %d entries", len(domain.MerkleRootHistory))
+	}
+	if len(domain.IdentityCommits) != 0 {
+		t.Fatal("purge should clear identity commitments")
+	}
+}
+
 func TestE2EBigPurgeClearsAndReallowsVoting(t *testing.T) {
 	k, ctx := setupKeeper(t)
 	secrets := setupDomainWithZKPIdentity(t, k, ctx, "PurgeDomain", 2)
@@ -621,7 +815,7 @@ func TestE2EBigPurgeClearsAndReallowsVoting(t *testing.T) {
 
 	// 1. Rate with ZKP — succeeds.
 	proof1, null1 := generateZKPRating(t, k, ctx, "PurgeDomain", secrets, 0, "Climate", "GreenDeal")
-	_, err := k.RateProposalWithZKP(ctx, "PurgeDomain", "Climate", "GreenDeal", 3, proof1, null1)
+	_, err := k.RateProposalWithZKP(ctx, "PurgeDomain", "Climate", "GreenDeal", 3, proof1, null1, "")
 	if err != nil {
 		t.Fatalf("first rating should succeed: %v", err)
 	}
@@ -658,7 +852,7 @@ func TestE2EBigPurgeClearsAndReallowsVoting(t *testing.T) {
 
 	// 4. Rate again with new proof — succeeds.
 	proof2, null2 := generateZKPRating(t, k, ctx, "PurgeDomain", newSecrets, 0, "Climate", "GreenDeal")
-	_, err = k.RateProposalWithZKP(ctx, "PurgeDomain", "Climate", "GreenDeal", -2, proof2, null2)
+	_, err = k.RateProposalWithZKP(ctx, "PurgeDomain", "Climate", "GreenDeal", -2, proof2, null2, "")
 	if err != nil {
 		t.Fatalf("rating after purge + re-register should succeed: %v", err)
 	}

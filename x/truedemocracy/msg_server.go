@@ -629,7 +629,7 @@ func (m msgServer) RegisterIdentity(goCtx context.Context, msg *MsgRegisterIdent
 func (m msgServer) RateWithProof(goCtx context.Context, msg *MsgRateWithProof) (*MsgRateWithProofResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	reward, err := m.Keeper.RateProposalWithZKP(ctx, msg.DomainName, msg.IssueName, msg.SuggestionName, int(msg.Rating), msg.Proof, msg.NullifierHash)
+	reward, err := m.Keeper.RateProposalWithZKP(ctx, msg.DomainName, msg.IssueName, msg.SuggestionName, int(msg.Rating), msg.Proof, msg.NullifierHash, msg.MerkleRoot)
 	if err != nil {
 		return nil, err
 	}

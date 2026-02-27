@@ -276,12 +276,17 @@ func (k Keeper) ZKPState(goCtx context.Context, req *QueryZKPStateRequest) (*Que
 		return nil, errorsmod.Wrapf(sdkerrors.ErrKeyNotFound, "domain %s not found", req.DomainName)
 	}
 	_, vkFound := k.GetVerifyingKey(ctx)
+	rootHistory := domain.MerkleRootHistory
+	if rootHistory == nil {
+		rootHistory = []string{}
+	}
 	state := ZKPDomainState{
-		DomainName:      domain.Name,
-		MerkleRoot:      domain.MerkleRoot,
-		CommitmentCount: len(domain.IdentityCommits),
-		MemberCount:     len(domain.Members),
-		VKInitialized:   vkFound,
+		DomainName:        domain.Name,
+		MerkleRoot:        domain.MerkleRoot,
+		MerkleRootHistory: rootHistory,
+		CommitmentCount:   len(domain.IdentityCommits),
+		MemberCount:       len(domain.Members),
+		VKInitialized:     vkFound,
 	}
 	bz, err := json.Marshal(state)
 	if err != nil {
