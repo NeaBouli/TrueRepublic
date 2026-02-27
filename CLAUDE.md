@@ -9,7 +9,7 @@
 
 | Repo | Branch | HEAD | Path |
 |------|--------|------|------|
-| **Main** | `main` | `b31eec6` (feat(v0.3.0): implement two-step onboarding messages) | `/Users/gio/TrueRepublic/` |
+| **Main** | `main` | `06a178e` (feat(v0.3.0): add identity commitment registration and nullifier store) | `/Users/gio/TrueRepublic/` |
 | **Wiki** | `master` | `21eef69` (docs: add v0.4.0 Optional Indexer Stack roadmap) | `/Users/gio/TrueRepublic/wiki-github/` |
 
 - Working tree: **clean**, up-to-date with `origin/main`
@@ -44,11 +44,11 @@
 
 ### Key Metrics
 
-- 283 unit tests across 3 modules (~5,200 lines of test code)
-- 23 transaction types (19 governance + 4 DEX)
+- 330 unit tests across 3 modules (~5,600 lines of test code)
+- 24 transaction types (20 governance + 4 DEX)
 - 6 query endpoints (4 governance + 2 DEX)
 - 5 tokenomics equations fully implemented + domain interest in EndBlock
-- ~10,800 lines of source code (Go + JS + Rust)
+- ~13,100 lines of source code (Go + JS + Rust)
 - 30+ wiki pages, 39 docs files
 
 ### Completed Work (v0.1.1 -- v0.2.0)
@@ -77,7 +77,7 @@
 |-------|--------|---------|-----------|
 | Consensus | CometBFT | v0.38.21 | BFT consensus with fast finality; Cosmos ecosystem standard |
 | Application Framework | Cosmos SDK | v0.50.13 | Module-based architecture, IBC support, mature tooling |
-| Language | Go | 1.23.5 (CI: 1.24.13) | Performance, concurrency, Cosmos SDK native language |
+| Language | Go | 1.24 (CI: 1.24.13) | Performance, concurrency, Cosmos SDK native language |
 | Smart Contracts | CosmWasm (Rust) | cosmwasm-std 3 | Deterministic WASM execution, memory-safe |
 | Web Frontend | React 18 + Tailwind 3.4 | 18.2 / 3.4.19 | Component-based UI, utility-first CSS |
 | Mobile | React Native + Expo | 0.74 / 51.0 | Cross-platform mobile from shared JS codebase |
@@ -87,7 +87,7 @@
 
 Two custom Cosmos SDK modules plus a treasury package:
 
-1. **x/truedemocracy** (~7,800 lines, 26 files) -- Governance: domains, proposals, systemic consensing scoring (-5 to +5), stones voting, suggestion lifecycle (green/yellow/red zones), validator PoD, slashing, anonymous voting (domain key signatures), admin elections, member exclusion, person election voting modes (simple/absolute majority, abstention), domain interest payout (eq.4), two-step onboarding (add member + domain key registration), Big Purge EndBlock execution
+1. **x/truedemocracy** (~10,800 lines, 35 files) -- Governance: domains, proposals, systemic consensing scoring (-5 to +5), stones voting, suggestion lifecycle (green/yellow/red zones), validator PoD, slashing, anonymous voting (domain key signatures), admin elections, member exclusion, person election voting modes (simple/absolute majority, abstention), domain interest payout (eq.4), two-step onboarding (add member + domain key registration), Big Purge EndBlock execution, ZKP foundation (MiMC Merkle tree, Groth16 membership proofs, identity commitments, nullifier store)
 2. **x/dex** (1,637 lines, 9 files) -- AMM DEX: constant-product (x*y=k), PNYX/ATOM pool, 0.3% swap fee, 1% PNYX burn
 3. **treasury/keeper** (371 lines, 2 files) -- Tokenomics equations 1-5: domain cost, rewards, put price, domain interest (25% APY), node staking (10% APY), release decay
 
@@ -136,15 +136,16 @@ TrueRepublic/
 ├── SECURITY.md                     Security documentation
 ├── CLAUDE.md                       THIS FILE -- project handover context
 │
-├── x/truedemocracy/                GOVERNANCE MODULE (25 files, ~7,300 lines)
+├── x/truedemocracy/                GOVERNANCE MODULE (35 files, ~10,800 lines)
 │   ├── keeper.go                   Domain CRUD, proposal submission, fee validation,
 │   │                               RateProposalWithSignature (anonymous rating)
-│   ├── msg_server.go               Message handlers (19 tx types)
+│   ├── msg_server.go               Message handlers (20 tx types)
 │   ├── query_server.go             gRPC query handlers (4 query types)
-│   ├── cli.go                      Cobra CLI commands (20 tx + 4 query)
+│   ├── cli.go                      Cobra CLI commands (21 tx + 4 query)
 │   ├── module.go                   Module registration, codecs, EndBlock hooks
-│   ├── msgs.go                     Message type definitions (19 types)
-│   ├── types.go                    Domain, DomainOptions, VotingMode, VoteChoice structs
+│   ├── msgs.go                     Message type definitions (20 types)
+│   ├── types.go                    Domain, DomainOptions, VotingMode, VoteChoice,
+│   │                               NullifierRecord structs
 │   ├── scoring.go                  Systemic Consensing: ComputeSuggestionScore,
 │   │                               RankSuggestionsByScore, FindConsensusWinner (WP §3.2)
 │   ├── governance.go               Admin election, member exclusion
@@ -154,14 +155,22 @@ TrueRepublic/
 │   ├── slashing.go                 5% double-sign, 1% downtime penalties
 │   ├── stones.go                   Stones voting + VoteToEarn rewards
 │   ├── lifecycle.go                Suggestion lifecycle (green/yellow/red, auto-delete)
-│   ├── anonymity.go                Domain key pairs for anonymous voting (WP S4)
-│   ├── big_purge.go                EndBlock Big Purge execution, announcement tracking (WP S4)
+│   ├── anonymity.go                Domain key pairs, identity commitment registration,
+│   │                               nullifier KV store for anonymous voting (WP S4)
+│   ├── big_purge.go                EndBlock Big Purge: permission reg + identity commits
+│   │                               + nullifiers cleanup, announcement tracking (WP S4)
+│   ├── merkle.go                   MiMC Merkle tree (depth 20, BN254), commitment/nullifier
+│   │                               computation, proof generation/verification
+│   ├── zkp.go                      Groth16 membership proof circuit (BN254/MiMC),
+│   │                               setup, prove, verify, serialization
+│   ├── crypto.go                   Ed25519 dual-key derivation (global + domain keys)
 │   ├── tree.go                     Tree data structures
 │   ├── querier.go                  Legacy query interface
-│   ├── *_test.go (13 files)        218 tests: governance, validator, stones, lifecycle,
+│   ├── *_test.go (14 files)        265 tests: governance, validator, stones, lifecycle,
 │   │                               anonymity, slashing, elections, scoring, domain interest,
 │   │                               crypto (dual-key onboarding), big purge EndBlock,
-│   │                               onboarding (two-step flow, msg server, approve/reject)
+│   │                               onboarding (two-step flow), Merkle tree, ZKP circuit,
+│   │                               identity commitment registration + nullifier store
 │
 ├── x/dex/                          DEX MODULE (9 files, 1,637 lines)
 │   ├── keeper.go                   AMM pool operations (x*y=k)
@@ -316,7 +325,7 @@ As of v0.2.0, there are no known critical (P0) issues. All previously identified
 
 ### Low-Priority Items
 
-1. **Go version discrepancy:** `go.mod` says `go 1.23.5` but CI runs `1.24.13`. This is intentional (minimum vs CI target) but one wiki stub previously mentioned "1.24+" which was corrected.
+1. **Go version:** `go.mod` says `go 1.24` (bumped from 1.23.5 in v0.3.0 Week 2 for gnark ZKP dependency). CI runs `1.24.13`.
 2. **No explicit linting configs:** No `.eslintrc`, `.prettierrc`, or `golangci-lint.yml` exist. Go uses `go vet` + optional staticcheck. Rust enforces `cargo fmt` + `clippy` in CI. JavaScript has no enforced linting.
 3. **Test count in docs/index.html:** The GitHub Pages site shows 197 tests and v0.1.8, which should be updated to 225 tests and v0.2.0.
 4. **No protobuf generation:** The Makefile has a `proto-gen` stub target but no actual protobuf schema files or generation pipeline. Messages are defined as Go structs directly.
