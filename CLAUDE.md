@@ -10,7 +10,7 @@
 | Repo | Branch | HEAD | Path |
 |------|--------|------|------|
 | **Main** | `main` | `b930441` (feat(v0.3.0): implement Domain-Bank bridge with deposit/withdraw) | `/Users/gio/TrueRepublic/` |
-| **Wiki** | `master` | updated with Week 5-6 status | `/Users/gio/TrueRepublic/wiki-github/` |
+| **Wiki** | `master` | `925d98b` (docs: update wiki for v0.3.0 Week 6 completion) | `/Users/gio/TrueRepublic/wiki-github/` |
 
 - Working tree: **clean**, up-to-date with `origin/main`
 - `wiki-github/` is untracked in the main repo (it is a separate git clone of the GitHub Wiki repo -- this is expected and correct)
