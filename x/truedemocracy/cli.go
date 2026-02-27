@@ -43,6 +43,7 @@ func GetTxCmd() *cobra.Command {
 		CmdOnboardToDomain(),
 		CmdApproveOnboarding(),
 		CmdRejectOnboarding(),
+		CmdRegisterIdentity(),
 	)
 	return txCmd
 }
@@ -579,6 +580,32 @@ func CmdRejectOnboarding() *cobra.Command {
 				Sender:        clientCtx.GetFromAddress(),
 				DomainName:    args[0],
 				RequesterAddr: args[1],
+			}
+			if err := msg.ValidateBasic(); err != nil {
+				return err
+			}
+			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), &msg)
+		},
+	}
+	flags.AddTxFlagsToCmd(cmd)
+	return cmd
+}
+
+func CmdRegisterIdentity() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "register-identity [domain] [commitment-hex]",
+		Short: "Register a ZKP identity commitment for anonymous voting",
+		Long:  "Register a MiMC commitment (64 hex chars) to the domain's identity set. The commitment is MiMC(identitySecret) computed client-side.",
+		Args:  cobra.ExactArgs(2),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			clientCtx, err := client.GetClientTxContext(cmd)
+			if err != nil {
+				return err
+			}
+			msg := MsgRegisterIdentity{
+				Sender:     clientCtx.GetFromAddress(),
+				DomainName: args[0],
+				Commitment: args[1],
 			}
 			if err := msg.ValidateBasic(); err != nil {
 				return err

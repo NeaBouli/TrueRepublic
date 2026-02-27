@@ -1,6 +1,7 @@
 package truedemocracy
 
 import (
+	"encoding/hex"
 	"encoding/json"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -416,6 +417,36 @@ func (m MsgRejectOnboarding) GetSigners() []sdk.AccAddress { return []sdk.AccAdd
 func (m MsgRejectOnboarding) ValidateBasic() error {
 	if m.DomainName == "" || m.RequesterAddr == "" {
 		return sdkerrors.ErrInvalidRequest.Wrap("domain_name and requester_addr are required")
+	}
+	return nil
+}
+
+// --- MsgRegisterIdentity ---
+
+type MsgRegisterIdentity struct {
+	Sender     sdk.AccAddress `protobuf:"bytes,1,opt,name=sender,proto3,casttype=github.com/cosmos/cosmos-sdk/types.AccAddress" json:"sender"`
+	DomainName string         `protobuf:"bytes,2,opt,name=domain_name,json=domainName,proto3" json:"domain_name"`
+	Commitment string         `protobuf:"bytes,3,opt,name=commitment,proto3" json:"commitment"` // hex-encoded MiMC commitment (64 hex chars)
+}
+
+func (m *MsgRegisterIdentity) ProtoMessage()             {}
+func (m *MsgRegisterIdentity) Reset()                    { *m = MsgRegisterIdentity{} }
+func (m *MsgRegisterIdentity) String() string            { b, _ := json.Marshal(m); return string(b) }
+func (m MsgRegisterIdentity) Route() string              { return ModuleName }
+func (m MsgRegisterIdentity) Type() string               { return "register_identity" }
+func (m MsgRegisterIdentity) GetSigners() []sdk.AccAddress { return []sdk.AccAddress{m.Sender} }
+func (m MsgRegisterIdentity) ValidateBasic() error {
+	if m.DomainName == "" {
+		return sdkerrors.ErrInvalidRequest.Wrap("domain_name is required")
+	}
+	if m.Commitment == "" {
+		return sdkerrors.ErrInvalidRequest.Wrap("commitment is required")
+	}
+	if len(m.Commitment) != 64 {
+		return sdkerrors.ErrInvalidRequest.Wrap("commitment must be 64 hex characters (32 bytes)")
+	}
+	if _, err := hex.DecodeString(m.Commitment); err != nil {
+		return sdkerrors.ErrInvalidRequest.Wrap("commitment must be valid hex")
 	}
 	return nil
 }

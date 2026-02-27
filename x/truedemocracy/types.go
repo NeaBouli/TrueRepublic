@@ -59,6 +59,9 @@ type Domain struct {
     PermissionReg  []string       `json:"permission_reg"`
     TotalPayouts      int64          `json:"total_payouts"`       // cumulative PNYX paid out (rewards, etc.)
     TransferredStake  int64          `json:"transferred_stake"`   // cumulative PNYX withdrawn by validators
+    // v0.3.0 ZKP fields (backward compatible — zero values for existing domains).
+    IdentityCommits []string       `json:"identity_commits"`    // MiMC commitments (hex)
+    MerkleRoot      string         `json:"merkle_root"`          // current Merkle root (hex)
 }
 
 type DomainOptions struct {
@@ -138,6 +141,14 @@ type OnboardingRequest struct {
 	Status          string `json:"status"`       // "pending", "approved", "rejected"
 }
 
+// NullifierRecord tracks a used nullifier to prevent double-voting with ZKP.
+// KV key: "nullifier:{domain}:{nullifierHex}"
+type NullifierRecord struct {
+	DomainName    string `json:"domain_name"`
+	NullifierHash string `json:"nullifier_hash"` // hex-encoded
+	UsedAtHeight  int64  `json:"used_at_height"` // block height when consumed
+}
+
 // GenesisValidator is the genesis-file representation of a validator.
 type GenesisValidator struct {
     OperatorAddr string `json:"operator_addr"`
@@ -161,6 +172,7 @@ func RegisterCodec(cdc *codec.LegacyAmino) {
     cdc.RegisterConcrete(GenesisState{}, "truedemocracy/GenesisState", nil)
     cdc.RegisterConcrete(BigPurgeSchedule{}, "truedemocracy/BigPurgeSchedule", nil)
     cdc.RegisterConcrete(OnboardingRequest{}, "truedemocracy/OnboardingRequest", nil)
+    cdc.RegisterConcrete(NullifierRecord{}, "truedemocracy/NullifierRecord", nil)
     cdc.RegisterConcrete(Validator{}, "truedemocracy/Validator", nil)
     cdc.RegisterConcrete(GenesisValidator{}, "truedemocracy/GenesisValidator", nil)
 
@@ -184,6 +196,7 @@ func RegisterCodec(cdc *codec.LegacyAmino) {
     cdc.RegisterConcrete(MsgOnboardToDomain{}, "truedemocracy/MsgOnboardToDomain", nil)
     cdc.RegisterConcrete(MsgApproveOnboarding{}, "truedemocracy/MsgApproveOnboarding", nil)
     cdc.RegisterConcrete(MsgRejectOnboarding{}, "truedemocracy/MsgRejectOnboarding", nil)
+    cdc.RegisterConcrete(MsgRegisterIdentity{}, "truedemocracy/MsgRegisterIdentity", nil)
 }
 
 func DefaultGenesisState() GenesisState {

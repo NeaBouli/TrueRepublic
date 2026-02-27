@@ -2,6 +2,7 @@ package truedemocracy
 
 import (
 	"encoding/hex"
+	"fmt"
 
 	errorsmod "cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -233,4 +234,114 @@ func (k Keeper) RejectOnboardingRequest(ctx sdk.Context, domainName, requesterAd
 	request.Status = "rejected"
 	k.SetOnboardingRequest(ctx, request)
 	return nil
+}
+
+// ---------- ZKP Identity Commitments (v0.3.0) ----------
+
+// RegisterIdentityCommitment adds a MiMC commitment to the domain's
+// identity commitment set and rebuilds the Merkle root.
+// The caller must be a domain member. The commitment is not linked
+// to the member's identity on-chain (WP S4 ZKP extension).
+func (k Keeper) RegisterIdentityCommitment(ctx sdk.Context, domainName, memberAddr, commitmentHex string) error {
+	domain, found := k.GetDomain(ctx, domainName)
+	if !found {
+		return errorsmod.Wrapf(sdkerrors.ErrUnknownRequest, "domain %s not found", domainName)
+	}
+
+	// Verify caller is a domain member.
+	isMember := false
+	for _, m := range domain.Members {
+		if m == memberAddr {
+			isMember = true
+			break
+		}
+	}
+	if !isMember {
+		return errorsmod.Wrap(sdkerrors.ErrUnauthorized, "only domain members can register identity commitments")
+	}
+
+	// Validate commitment hex (must be 64 hex chars = 32 bytes).
+	commitBytes, err := hex.DecodeString(commitmentHex)
+	if err != nil || len(commitBytes) != 32 {
+		return errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "commitment must be 32 bytes hex-encoded (64 hex chars)")
+	}
+
+	// Check for duplicate commitment.
+	for _, existing := range domain.IdentityCommits {
+		if existing == commitmentHex {
+			return errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "commitment already registered")
+		}
+	}
+
+	// Append commitment.
+	domain.IdentityCommits = append(domain.IdentityCommits, commitmentHex)
+
+	// Rebuild Merkle root.
+	root, err := k.computeMerkleRoot(domain.IdentityCommits)
+	if err != nil {
+		return errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "failed to compute Merkle root: "+err.Error())
+	}
+	domain.MerkleRoot = root
+
+	// Persist domain.
+	store := ctx.KVStore(k.StoreKey)
+	bz := k.cdc.MustMarshalLengthPrefixed(&domain)
+	store.Set([]byte("domain:"+domainName), bz)
+	return nil
+}
+
+// computeMerkleRoot builds a Merkle tree from hex-encoded commitments
+// and returns the root as a hex string.
+func (k Keeper) computeMerkleRoot(commitHexes []string) (string, error) {
+	tree := NewMerkleTree(MerkleTreeDepth)
+	leaves := make([][]byte, len(commitHexes))
+	for i, h := range commitHexes {
+		b, err := hex.DecodeString(h)
+		if err != nil {
+			return "", fmt.Errorf("invalid commitment hex at index %d: %w", i, err)
+		}
+		leaves[i] = b
+	}
+	if err := tree.BuildFromLeaves(leaves); err != nil {
+		return "", err
+	}
+	return tree.GetRoot(), nil
+}
+
+// ---------- Nullifier Store (v0.3.0) ----------
+
+// IsNullifierUsed checks whether a nullifier has already been consumed
+// in this domain (prevents ZKP double-voting).
+func (k Keeper) IsNullifierUsed(ctx sdk.Context, domainName, nullifierHex string) bool {
+	store := ctx.KVStore(k.StoreKey)
+	return store.Has([]byte("nullifier:" + domainName + ":" + nullifierHex))
+}
+
+// SetNullifierUsed records a nullifier as consumed.
+func (k Keeper) SetNullifierUsed(ctx sdk.Context, domainName, nullifierHex string, blockHeight int64) {
+	record := NullifierRecord{
+		DomainName:    domainName,
+		NullifierHash: nullifierHex,
+		UsedAtHeight:  blockHeight,
+	}
+	store := ctx.KVStore(k.StoreKey)
+	bz := k.cdc.MustMarshalLengthPrefixed(&record)
+	store.Set([]byte("nullifier:"+domainName+":"+nullifierHex), bz)
+}
+
+// PurgeNullifiers clears all nullifiers for a domain.
+// Called during Big Purge when identity commitments are also wiped.
+func (k Keeper) PurgeNullifiers(ctx sdk.Context, domainName string) {
+	store := ctx.KVStore(k.StoreKey)
+	prefix := []byte("nullifier:" + domainName + ":")
+	end := prefixEnd(prefix)
+	iter := store.Iterator(prefix, end)
+	defer iter.Close()
+	var keys [][]byte
+	for ; iter.Valid(); iter.Next() {
+		keys = append(keys, append([]byte{}, iter.Key()...))
+	}
+	for _, key := range keys {
+		store.Delete(key)
+	}
 }

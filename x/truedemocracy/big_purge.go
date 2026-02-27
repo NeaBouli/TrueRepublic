@@ -67,9 +67,16 @@ func (k Keeper) executeBigPurge(ctx sdk.Context, domainName string) {
 
 	domain.PermissionReg = []string{}
 
+	// v0.3.0: also clear ZKP identity commitments and reset Merkle root.
+	domain.IdentityCommits = []string{}
+	domain.MerkleRoot = ""
+
 	store := ctx.KVStore(k.StoreKey)
 	bz := k.cdc.MustMarshalLengthPrefixed(&domain)
 	store.Set([]byte("domain:"+domainName), bz)
+
+	// v0.3.0: clear all used nullifiers for this domain.
+	k.PurgeNullifiers(ctx, domainName)
 
 	ctx.EventManager().EmitEvent(sdk.NewEvent(
 		"big_purge_executed",

@@ -120,6 +120,12 @@ func (*MsgApproveOnboardingResponse) ProtoMessage()     {}
 func (*MsgApproveOnboardingResponse) Reset()            {}
 func (*MsgApproveOnboardingResponse) String() string    { return "MsgApproveOnboardingResponse" }
 
+type MsgRegisterIdentityResponse struct{}
+
+func (*MsgRegisterIdentityResponse) ProtoMessage()      {}
+func (*MsgRegisterIdentityResponse) Reset()              {}
+func (*MsgRegisterIdentityResponse) String() string      { return "MsgRegisterIdentityResponse" }
+
 type MsgRejectOnboardingResponse struct{}
 
 func (*MsgRejectOnboardingResponse) ProtoMessage()      {}
@@ -157,6 +163,7 @@ func init() {
 	gogoproto.RegisterType((*MsgOnboardToDomain)(nil), "truedemocracy.MsgOnboardToDomain")
 	gogoproto.RegisterType((*MsgApproveOnboarding)(nil), "truedemocracy.MsgApproveOnboarding")
 	gogoproto.RegisterType((*MsgRejectOnboarding)(nil), "truedemocracy.MsgRejectOnboarding")
+	gogoproto.RegisterType((*MsgRegisterIdentity)(nil), "truedemocracy.MsgRegisterIdentity")
 
 	// Register response types.
 	gogoproto.RegisterType((*MsgCreateDomainResponse)(nil), "truedemocracy.MsgCreateDomainResponse")
@@ -178,6 +185,7 @@ func init() {
 	gogoproto.RegisterType((*MsgOnboardToDomainResponse)(nil), "truedemocracy.MsgOnboardToDomainResponse")
 	gogoproto.RegisterType((*MsgApproveOnboardingResponse)(nil), "truedemocracy.MsgApproveOnboardingResponse")
 	gogoproto.RegisterType((*MsgRejectOnboardingResponse)(nil), "truedemocracy.MsgRejectOnboardingResponse")
+	gogoproto.RegisterType((*MsgRegisterIdentityResponse)(nil), "truedemocracy.MsgRegisterIdentityResponse")
 }
 
 // ---------------------------------------------------------------------------
@@ -215,6 +223,7 @@ type MsgServer interface {
 	OnboardToDomain(context.Context, *MsgOnboardToDomain) (*MsgOnboardToDomainResponse, error)
 	ApproveOnboarding(context.Context, *MsgApproveOnboarding) (*MsgApproveOnboardingResponse, error)
 	RejectOnboarding(context.Context, *MsgRejectOnboarding) (*MsgRejectOnboardingResponse, error)
+	RegisterIdentity(context.Context, *MsgRegisterIdentity) (*MsgRegisterIdentityResponse, error)
 }
 
 var _ MsgServer = msgServer{}
@@ -591,6 +600,23 @@ func (m msgServer) RejectOnboarding(goCtx context.Context, msg *MsgRejectOnboard
 	return &MsgRejectOnboardingResponse{}, nil
 }
 
+func (m msgServer) RegisterIdentity(goCtx context.Context, msg *MsgRegisterIdentity) (*MsgRegisterIdentityResponse, error) {
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	err := m.Keeper.RegisterIdentityCommitment(ctx, msg.DomainName, msg.Sender.String(), msg.Commitment)
+	if err != nil {
+		return nil, err
+	}
+
+	ctx.EventManager().EmitEvent(sdk.NewEvent(
+		"register_identity",
+		sdk.NewAttribute("domain", msg.DomainName),
+		sdk.NewAttribute("member", msg.Sender.String()),
+	))
+
+	return &MsgRegisterIdentityResponse{}, nil
+}
+
 // ---------------------------------------------------------------------------
 // gRPC method handlers
 // ---------------------------------------------------------------------------
@@ -947,6 +973,24 @@ func RegisterMsgServer(s gogogrpc.Server, srv MsgServer) {
 	s.RegisterService(&_Msg_serviceDesc, srv)
 }
 
+func _Msg_RegisterIdentity_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgRegisterIdentity)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServer).RegisterIdentity(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/truedemocracy.Msg/RegisterIdentity",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServer).RegisterIdentity(ctx, req.(*MsgRegisterIdentity))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 var _Msg_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "truedemocracy.Msg",
 	HandlerType: (*MsgServer)(nil),
@@ -1026,6 +1070,10 @@ var _Msg_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "RejectOnboarding",
 			Handler:    _Msg_RejectOnboarding_Handler,
+		},
+		{
+			MethodName: "RegisterIdentity",
+			Handler:    _Msg_RegisterIdentity_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
