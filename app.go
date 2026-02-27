@@ -11,43 +11,70 @@ import (
 	dbm "github.com/cosmos/cosmos-db"
 	"github.com/spf13/cobra"
 
+	wasm "github.com/CosmWasm/wasmd/x/wasm"
+	wasmkeeper "github.com/CosmWasm/wasmd/x/wasm/keeper"
+	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
+
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/codec"
+	sdkaddress "github.com/cosmos/cosmos-sdk/codec/address"
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
+	"github.com/cosmos/cosmos-sdk/runtime"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
 	signingtypes "github.com/cosmos/cosmos-sdk/types/tx/signing"
+	auth "github.com/cosmos/cosmos-sdk/x/auth"
+	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 	"github.com/cosmos/cosmos-sdk/x/auth/migrations/legacytx"
 	authtx "github.com/cosmos/cosmos-sdk/x/auth/tx"
+	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
+	bank "github.com/cosmos/cosmos-sdk/x/bank"
+	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
+	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	abci "github.com/cometbft/cometbft/abci/types"
 
 	"truerepublic/x/dex"
 	"truerepublic/x/truedemocracy"
 )
 
+// maccPerms defines module account permissions for the auth keeper.
+// Each entry maps a module account name to its allowed permissions.
+var maccPerms = map[string][]string{
+	authtypes.FeeCollectorName: nil,
+	wasmtypes.ModuleName:       {authtypes.Burner},
+}
+
 var ModuleBasics = module.NewBasicManager(
+	auth.AppModuleBasic{},
+	bank.AppModuleBasic{},
+	wasm.AppModuleBasic{},
 	truedemocracy.AppModuleBasic{},
 	dex.AppModuleBasic{},
 )
 
 type TrueRepublicApp struct {
 	*baseapp.BaseApp
-	mm        *module.Manager
-	cdc       *codec.LegacyAmino
-	appCodec  codec.Codec
-	keys      map[string]*storetypes.KVStoreKey
-	tdKeeper  truedemocracy.Keeper
-	dexKeeper dex.Keeper
-	tdModule  truedemocracy.AppModule
-	dexModule dex.AppModule
+	mm            *module.Manager
+	cdc           *codec.LegacyAmino
+	appCodec      codec.Codec
+	keys          map[string]*storetypes.KVStoreKey
+	accountKeeper authkeeper.AccountKeeper
+	bankKeeper    bankkeeper.BaseKeeper
+	wasmKeeper    wasmkeeper.Keeper
+	tdKeeper      truedemocracy.Keeper
+	dexKeeper     dex.Keeper
+	tdModule      truedemocracy.AppModule
+	dexModule     dex.AppModule
 }
 
-func NewTrueRepublicApp(logger log.Logger, db dbm.DB) *TrueRepublicApp {
+func NewTrueRepublicApp(logger log.Logger, db dbm.DB, homeDir string) *TrueRepublicApp {
 	cdc := codec.NewLegacyAmino()
 	sdk.RegisterLegacyAminoCodec(cdc)
 	legacytx.RegisterLegacyAminoCodec(cdc)
+	authtypes.RegisterLegacyAminoCodec(cdc)
+	banktypes.RegisterLegacyAminoCodec(cdc)
 	truedemocracy.RegisterCodec(cdc)
 	dex.RegisterCodec(cdc)
 
@@ -56,7 +83,13 @@ func NewTrueRepublicApp(logger log.Logger, db dbm.DB) *TrueRepublicApp {
 	appCodec := codec.NewProtoCodec(interfaceRegistry)
 
 	txCfg := authtx.NewTxConfig(appCodec, []signingtypes.SignMode{signingtypes.SignMode_SIGN_MODE_DIRECT})
-	keys := storetypes.NewKVStoreKeys(truedemocracy.ModuleName, dex.ModuleName)
+	keys := storetypes.NewKVStoreKeys(
+		authtypes.StoreKey,      // "acc"
+		banktypes.StoreKey,      // "bank"
+		wasmtypes.StoreKey,      // "wasm"
+		truedemocracy.ModuleName,
+		dex.ModuleName,
+	)
 
 	app := &TrueRepublicApp{
 		BaseApp:  baseapp.NewBaseApp("TrueRepublic", logger, db, txCfg.TxDecoder()),
@@ -69,16 +102,93 @@ func NewTrueRepublicApp(logger log.Logger, db dbm.DB) *TrueRepublicApp {
 	// message type URLs during RegisterService.
 	app.MsgServiceRouter().SetInterfaceRegistry(interfaceRegistry)
 
+	// Authority address for governance operations (standard pattern).
+	authority := authtypes.NewModuleAddress("gov").String()
+
+	// Account keeper — manages on-chain accounts (addresses, sequences, pub keys).
+	app.accountKeeper = authkeeper.NewAccountKeeper(
+		appCodec,
+		runtime.NewKVStoreService(keys[authtypes.StoreKey]),
+		authtypes.ProtoBaseAccount,
+		maccPerms,
+		sdkaddress.NewBech32Codec(sdk.GetConfig().GetBech32AccountAddrPrefix()),
+		sdk.GetConfig().GetBech32AccountAddrPrefix(),
+		authority,
+	)
+
+	// Bank keeper — manages coin balances (PNYX token transfers, minting).
+	// Domain.Treasury stays as internal accounting; x/bank handles user/contract balances.
+	blockedAddrs := make(map[string]bool)
+	for acc := range maccPerms {
+		blockedAddrs[authtypes.NewModuleAddress(acc).String()] = true
+	}
+	app.bankKeeper = bankkeeper.NewBaseKeeper(
+		appCodec,
+		runtime.NewKVStoreService(keys[banktypes.StoreKey]),
+		app.accountKeeper,
+		blockedAddrs,
+		authority,
+		logger,
+	)
+
+	// Governance module keepers (created before wasm so custom bindings can reference them).
 	tdKeeper := truedemocracy.NewKeeper(cdc, keys[truedemocracy.ModuleName], truedemocracy.BuildTree())
 	dexKeeper := dex.NewKeeper(cdc, keys[dex.ModuleName])
 	app.tdKeeper = tdKeeper
 	app.dexKeeper = dexKeeper
 
+	// CosmWasm keeper — executes WASM smart contracts.
+	// Staking, distribution, and IBC keepers are stubbed (integrated in future milestones).
+	// Custom query/message bindings let contracts read domain state and submit governance actions.
+	wasmConfig := wasmtypes.DefaultWasmConfig()
+	app.wasmKeeper = wasmkeeper.NewKeeper(
+		appCodec,
+		runtime.NewKVStoreService(keys[wasmtypes.StoreKey]),
+		app.accountKeeper,
+		app.bankKeeper,
+		StubStakingKeeper{},
+		StubDistributionKeeper{},
+		StubICS4Wrapper{},
+		StubChannelKeeper{},
+		StubPortKeeper{},
+		StubCapabilityKeeper{},
+		StubICS20TransferPortSource{},
+		app.MsgServiceRouter(),
+		app.GRPCQueryRouter(),
+		homeDir,
+		wasmConfig,
+		[]string{"iterator", "stargate", "cosmwasm_1_1", "cosmwasm_1_2", "cosmwasm_1_3", "cosmwasm_1_4", "cosmwasm_2_0"},
+		authority,
+		wasmkeeper.WithQueryPlugins(&wasmkeeper.QueryPlugins{
+			Custom: truedemocracy.CustomQueryHandler(tdKeeper),
+		}),
+		wasmkeeper.WithMessageEncoders(&wasmkeeper.MessageEncoders{
+			Custom: truedemocracy.CustomMessageEncoder(),
+		}),
+	)
+
 	app.tdModule = truedemocracy.NewAppModule(cdc, tdKeeper)
 	app.dexModule = dex.NewAppModule(cdc, dexKeeper)
 
-	app.mm = module.NewManager(app.tdModule, app.dexModule)
-	app.mm.SetOrderInitGenesis(truedemocracy.ModuleName, dex.ModuleName)
+	// Auth, bank, and wasm AppModules for genesis and gRPC service registration.
+	authModule := auth.NewAppModule(appCodec, app.accountKeeper, nil, nil)
+	bankModule := bank.NewAppModule(appCodec, app.bankKeeper, app.accountKeeper, nil)
+	wasmModule := wasm.NewAppModule(appCodec, &app.wasmKeeper, StubValidatorSetSource{}, app.accountKeeper, app.bankKeeper, app.MsgServiceRouter(), nil)
+
+	app.mm = module.NewManager(
+		authModule,
+		bankModule,
+		wasmModule,
+		app.tdModule,
+		app.dexModule,
+	)
+	app.mm.SetOrderInitGenesis(
+		authtypes.ModuleName,
+		banktypes.ModuleName,
+		wasmtypes.ModuleName,
+		truedemocracy.ModuleName,
+		dex.ModuleName,
+	)
 
 	// Register gRPC message handlers via module Configurator.
 	configurator := module.NewConfigurator(appCodec, app.MsgServiceRouter(), app.GRPCQueryRouter())
@@ -133,6 +243,20 @@ func (app *TrueRepublicApp) InitChainer(ctx sdk.Context, req *abci.RequestInitCh
 		return nil, err
 	}
 
+	// Initialize auth and bank with default params so account/balance
+	// infrastructure is ready before governance module genesis.
+	if err := app.accountKeeper.Params.Set(ctx, authtypes.DefaultParams()); err != nil {
+		return nil, err
+	}
+	if err := app.bankKeeper.SetParams(ctx, banktypes.DefaultParams()); err != nil {
+		return nil, err
+	}
+
+	// Initialize wasm params.
+	if err := app.wasmKeeper.SetParams(ctx, wasmtypes.DefaultParams()); err != nil {
+		return nil, err
+	}
+
 	var validatorUpdates []abci.ValidatorUpdate
 
 	if data, ok := genesisState[truedemocracy.ModuleName]; ok {
@@ -162,6 +286,8 @@ func makeAminoCodec() *codec.LegacyAmino {
 	cdc := codec.NewLegacyAmino()
 	sdk.RegisterLegacyAminoCodec(cdc)
 	legacytx.RegisterLegacyAminoCodec(cdc)
+	authtypes.RegisterLegacyAminoCodec(cdc)
+	banktypes.RegisterLegacyAminoCodec(cdc)
 	truedemocracy.RegisterCodec(cdc)
 	dex.RegisterCodec(cdc)
 	return cdc
@@ -229,9 +355,10 @@ func main() {
 		Use:   "start",
 		Short: "Start the TrueRepublic node",
 		RunE: func(cmd *cobra.Command, args []string) error {
+			homeDir := os.ExpandEnv("$HOME/.truerepublic")
 			logger := log.NewLogger(os.Stdout)
 			db := dbm.NewMemDB()
-			app := NewTrueRepublicApp(logger, db)
+			app := NewTrueRepublicApp(logger, db, homeDir)
 			_ = app
 			logger.Info("TrueRepublic v0.1-alpha started")
 			select {}
