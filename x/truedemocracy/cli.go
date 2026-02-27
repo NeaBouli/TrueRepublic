@@ -45,6 +45,8 @@ func GetTxCmd() *cobra.Command {
 		CmdRejectOnboarding(),
 		CmdRegisterIdentity(),
 		CmdRateWithProof(),
+		CmdDepositToDomain(),
+		CmdWithdrawFromDomain(),
 	)
 	return txCmd
 }
@@ -820,6 +822,69 @@ func CmdQueryZKPState(cdc *codec.LegacyAmino) *cobra.Command {
 		},
 	}
 	flags.AddQueryFlagsToCmd(cmd)
+	return cmd
+}
+
+// --- Treasury Bridge Commands ---
+
+func CmdDepositToDomain() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "deposit-to-domain [domain-name] [amount]",
+		Short: "Deposit PNYX from your wallet to a domain treasury",
+		Long:  "Transfer PNYX tokens from your x/bank account to a domain's internal treasury. Example: deposit-to-domain MyDomain 100pnyx",
+		Args:  cobra.ExactArgs(2),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			clientCtx, err := client.GetClientTxContext(cmd)
+			if err != nil {
+				return err
+			}
+			coin, err := sdk.ParseCoinNormalized(args[1])
+			if err != nil {
+				return err
+			}
+			msg := MsgDepositToDomain{
+				Sender:     clientCtx.GetFromAddress(),
+				DomainName: args[0],
+				Amount:     coin,
+			}
+			if err := msg.ValidateBasic(); err != nil {
+				return err
+			}
+			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), &msg)
+		},
+	}
+	flags.AddTxFlagsToCmd(cmd)
+	return cmd
+}
+
+func CmdWithdrawFromDomain() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "withdraw-from-domain [domain-name] [recipient] [amount]",
+		Short: "Withdraw PNYX from domain treasury to a recipient (admin only)",
+		Long:  "Transfer PNYX tokens from a domain's internal treasury to a recipient's x/bank account. Only the domain admin can execute this.",
+		Args:  cobra.ExactArgs(3),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			clientCtx, err := client.GetClientTxContext(cmd)
+			if err != nil {
+				return err
+			}
+			coin, err := sdk.ParseCoinNormalized(args[2])
+			if err != nil {
+				return err
+			}
+			msg := MsgWithdrawFromDomain{
+				Sender:     clientCtx.GetFromAddress(),
+				DomainName: args[0],
+				Recipient:  args[1],
+				Amount:     coin,
+			}
+			if err := msg.ValidateBasic(); err != nil {
+				return err
+			}
+			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), &msg)
+		},
+	}
+	flags.AddTxFlagsToCmd(cmd)
 	return cmd
 }
 

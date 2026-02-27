@@ -1,6 +1,7 @@
 package truedemocracy
 
 import (
+    "context"
     "encoding/hex"
     "fmt"
 
@@ -13,14 +14,21 @@ import (
     rewards "truerepublic/treasury/keeper"
 )
 
-type Keeper struct {
-    StoreKey storetypes.StoreKey
-    nodes    []*Node
-    cdc      *codec.LegacyAmino
+// BankKeeper defines the x/bank methods required for the treasury bridge.
+type BankKeeper interface {
+	SendCoinsFromAccountToModule(ctx context.Context, senderAddr sdk.AccAddress, recipientModule string, amt sdk.Coins) error
+	SendCoinsFromModuleToAccount(ctx context.Context, senderModule string, recipientAddr sdk.AccAddress, amt sdk.Coins) error
 }
 
-func NewKeeper(cdc *codec.LegacyAmino, storeKey storetypes.StoreKey, nodes []*Node) Keeper {
-    return Keeper{StoreKey: storeKey, nodes: nodes, cdc: cdc}
+type Keeper struct {
+    StoreKey   storetypes.StoreKey
+    nodes      []*Node
+    cdc        *codec.LegacyAmino
+    bankKeeper BankKeeper // nil until x/bank is wired (bridge functions check)
+}
+
+func NewKeeper(cdc *codec.LegacyAmino, storeKey storetypes.StoreKey, nodes []*Node, bankKeeper BankKeeper) Keeper {
+    return Keeper{StoreKey: storeKey, nodes: nodes, cdc: cdc, bankKeeper: bankKeeper}
 }
 
 // GetDomain loads a domain from the KV store by name.

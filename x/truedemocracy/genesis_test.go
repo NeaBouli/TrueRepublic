@@ -33,7 +33,7 @@ func setupModuleForGenesis(t *testing.T) (AppModule, Keeper, sdk.Context) {
 	RegisterCodec(cdc)
 
 	nodes := BuildTree()
-	keeper := NewKeeper(cdc, storeKey, nodes)
+	keeper := NewKeeper(cdc, storeKey, nodes, nil)
 	am := NewAppModule(cdc, keeper)
 
 	ctx := sdk.NewContext(ms, cmtproto.Header{

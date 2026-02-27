@@ -478,3 +478,141 @@ func TestWasmMsgEncoderUnknownType(t *testing.T) {
 		t.Fatal("expected error for unknown message type")
 	}
 }
+
+// --- Week 6: Domain↔Bank Bridge Wasm Bindings Tests ---
+
+func TestWasmQueryDomainTreasury(t *testing.T) {
+	k, ctx := setupKeeper(t)
+	k.CreateDomain(ctx, "TreasuryDomain", sdk.AccAddress("admin1"), sdk.NewCoins(sdk.NewInt64Coin("pnyx", 42000)))
+
+	handler := CustomQueryHandler(k)
+
+	t.Run("found", func(t *testing.T) {
+		reqBytes, _ := json.Marshal(WasmCustomQuery{
+			DomainTreasury: &WasmQueryDomainTreasury{DomainName: "TreasuryDomain"},
+		})
+		respBytes, err := handler(ctx, reqBytes)
+		if err != nil {
+			t.Fatalf("unexpected error: %v", err)
+		}
+		var resp WasmDomainTreasuryResponse
+		if err := json.Unmarshal(respBytes, &resp); err != nil {
+			t.Fatalf("unmarshal: %v", err)
+		}
+		if resp.DomainName != "TreasuryDomain" {
+			t.Errorf("domain_name = %q, want TreasuryDomain", resp.DomainName)
+		}
+		if resp.Amount != "42000pnyx" {
+			t.Errorf("amount = %q, want 42000pnyx", resp.Amount)
+		}
+	})
+
+	t.Run("not found", func(t *testing.T) {
+		reqBytes, _ := json.Marshal(WasmCustomQuery{
+			DomainTreasury: &WasmQueryDomainTreasury{DomainName: "Missing"},
+		})
+		_, err := handler(ctx, reqBytes)
+		if err == nil {
+			t.Fatal("expected error for missing domain")
+		}
+	})
+}
+
+func TestWasmMsgDepositToDomain(t *testing.T) {
+	encoder := CustomMessageEncoder()
+	sender := sdk.AccAddress("depositor1")
+
+	t.Run("valid amount", func(t *testing.T) {
+		msgBytes, _ := json.Marshal(WasmCustomMsg{
+			DepositToDomain: &WasmMsgDepositToDomain{
+				DomainName: "TestDomain",
+				Amount:     "500pnyx",
+			},
+		})
+		msgs, err := encoder(sender, msgBytes)
+		if err != nil {
+			t.Fatalf("unexpected error: %v", err)
+		}
+		if len(msgs) != 1 {
+			t.Fatalf("msgs len = %d, want 1", len(msgs))
+		}
+		m, ok := msgs[0].(*MsgDepositToDomain)
+		if !ok {
+			t.Fatalf("wrong msg type: %T", msgs[0])
+		}
+		if m.DomainName != "TestDomain" {
+			t.Errorf("domain = %q, want TestDomain", m.DomainName)
+		}
+		if m.Amount.Denom != "pnyx" || m.Amount.Amount.Int64() != 500 {
+			t.Errorf("amount = %s, want 500pnyx", m.Amount)
+		}
+		if !m.Sender.Equals(sender) {
+			t.Errorf("sender = %s, want %s", m.Sender, sender)
+		}
+	})
+
+	t.Run("invalid amount", func(t *testing.T) {
+		msgBytes, _ := json.Marshal(WasmCustomMsg{
+			DepositToDomain: &WasmMsgDepositToDomain{
+				DomainName: "TestDomain",
+				Amount:     "not-a-coin",
+			},
+		})
+		_, err := encoder(sender, msgBytes)
+		if err == nil {
+			t.Fatal("expected error for invalid amount")
+		}
+	})
+}
+
+func TestWasmMsgWithdrawFromDomain(t *testing.T) {
+	encoder := CustomMessageEncoder()
+	sender := sdk.AccAddress("admin1")
+
+	t.Run("valid amount", func(t *testing.T) {
+		msgBytes, _ := json.Marshal(WasmCustomMsg{
+			WithdrawFromDomain: &WasmMsgWithdrawFromDomain{
+				DomainName: "TestDomain",
+				Recipient:  "cosmos1recipient",
+				Amount:     "200pnyx",
+			},
+		})
+		msgs, err := encoder(sender, msgBytes)
+		if err != nil {
+			t.Fatalf("unexpected error: %v", err)
+		}
+		if len(msgs) != 1 {
+			t.Fatalf("msgs len = %d, want 1", len(msgs))
+		}
+		m, ok := msgs[0].(*MsgWithdrawFromDomain)
+		if !ok {
+			t.Fatalf("wrong msg type: %T", msgs[0])
+		}
+		if m.DomainName != "TestDomain" {
+			t.Errorf("domain = %q, want TestDomain", m.DomainName)
+		}
+		if m.Recipient != "cosmos1recipient" {
+			t.Errorf("recipient = %q, want cosmos1recipient", m.Recipient)
+		}
+		if m.Amount.Denom != "pnyx" || m.Amount.Amount.Int64() != 200 {
+			t.Errorf("amount = %s, want 200pnyx", m.Amount)
+		}
+		if !m.Sender.Equals(sender) {
+			t.Errorf("sender = %s, want %s", m.Sender, sender)
+		}
+	})
+
+	t.Run("invalid amount", func(t *testing.T) {
+		msgBytes, _ := json.Marshal(WasmCustomMsg{
+			WithdrawFromDomain: &WasmMsgWithdrawFromDomain{
+				DomainName: "TestDomain",
+				Recipient:  "cosmos1recipient",
+				Amount:     "bad-amount",
+			},
+		})
+		_, err := encoder(sender, msgBytes)
+		if err == nil {
+			t.Fatal("expected error for invalid amount")
+		}
+	})
+}

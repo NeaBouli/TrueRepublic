@@ -529,3 +529,61 @@ func (m MsgCastElectionVote) ValidateBasic() error {
 	}
 	return nil
 }
+
+// --- MsgDepositToDomain ---
+
+type MsgDepositToDomain struct {
+	Sender     sdk.AccAddress `protobuf:"bytes,1,opt,name=sender,proto3,casttype=github.com/cosmos/cosmos-sdk/types.AccAddress" json:"sender"`
+	DomainName string         `protobuf:"bytes,2,opt,name=domain_name,json=domainName,proto3" json:"domain_name"`
+	Amount     sdk.Coin       `protobuf:"bytes,3,opt,name=amount,proto3" json:"amount"`
+}
+
+func (m *MsgDepositToDomain) ProtoMessage()             {}
+func (m *MsgDepositToDomain) Reset()                    { *m = MsgDepositToDomain{} }
+func (m *MsgDepositToDomain) String() string            { b, _ := json.Marshal(m); return string(b) }
+func (m MsgDepositToDomain) Route() string              { return ModuleName }
+func (m MsgDepositToDomain) Type() string               { return "deposit_to_domain" }
+func (m MsgDepositToDomain) GetSigners() []sdk.AccAddress { return []sdk.AccAddress{m.Sender} }
+func (m MsgDepositToDomain) ValidateBasic() error {
+	if m.DomainName == "" {
+		return sdkerrors.ErrInvalidRequest.Wrap("domain_name is required")
+	}
+	if !m.Amount.IsPositive() {
+		return sdkerrors.ErrInvalidRequest.Wrap("amount must be positive")
+	}
+	if m.Amount.Denom != "pnyx" {
+		return sdkerrors.ErrInvalidRequest.Wrap("only pnyx deposits supported")
+	}
+	return nil
+}
+
+// --- MsgWithdrawFromDomain ---
+
+type MsgWithdrawFromDomain struct {
+	Sender     sdk.AccAddress `protobuf:"bytes,1,opt,name=sender,proto3,casttype=github.com/cosmos/cosmos-sdk/types.AccAddress" json:"sender"`
+	DomainName string         `protobuf:"bytes,2,opt,name=domain_name,json=domainName,proto3" json:"domain_name"`
+	Recipient  string         `protobuf:"bytes,3,opt,name=recipient,proto3" json:"recipient"` // bech32
+	Amount     sdk.Coin       `protobuf:"bytes,4,opt,name=amount,proto3" json:"amount"`
+}
+
+func (m *MsgWithdrawFromDomain) ProtoMessage()             {}
+func (m *MsgWithdrawFromDomain) Reset()                    { *m = MsgWithdrawFromDomain{} }
+func (m *MsgWithdrawFromDomain) String() string            { b, _ := json.Marshal(m); return string(b) }
+func (m MsgWithdrawFromDomain) Route() string              { return ModuleName }
+func (m MsgWithdrawFromDomain) Type() string               { return "withdraw_from_domain" }
+func (m MsgWithdrawFromDomain) GetSigners() []sdk.AccAddress { return []sdk.AccAddress{m.Sender} }
+func (m MsgWithdrawFromDomain) ValidateBasic() error {
+	if m.DomainName == "" {
+		return sdkerrors.ErrInvalidRequest.Wrap("domain_name is required")
+	}
+	if m.Recipient == "" {
+		return sdkerrors.ErrInvalidRequest.Wrap("recipient is required")
+	}
+	if !m.Amount.IsPositive() {
+		return sdkerrors.ErrInvalidRequest.Wrap("amount must be positive")
+	}
+	if m.Amount.Denom != "pnyx" {
+		return sdkerrors.ErrInvalidRequest.Wrap("only pnyx withdrawals supported")
+	}
+	return nil
+}

@@ -15,12 +15,13 @@ import (
 
 // WasmCustomQuery is the top-level query envelope sent by contracts.
 type WasmCustomQuery struct {
-	Domain        *WasmQueryDomain        `json:"domain,omitempty"`
-	DomainMembers *WasmQueryDomainMembers `json:"domain_members,omitempty"`
-	Issue         *WasmQueryIssue         `json:"issue,omitempty"`
-	Suggestion    *WasmQuerySuggestion    `json:"suggestion,omitempty"`
-	PurgeSchedule *WasmQueryPurgeSchedule `json:"purge_schedule,omitempty"`
-	Nullifier     *WasmQueryNullifier     `json:"nullifier,omitempty"`
+	Domain          *WasmQueryDomain          `json:"domain,omitempty"`
+	DomainMembers   *WasmQueryDomainMembers   `json:"domain_members,omitempty"`
+	Issue           *WasmQueryIssue           `json:"issue,omitempty"`
+	Suggestion      *WasmQuerySuggestion      `json:"suggestion,omitempty"`
+	PurgeSchedule   *WasmQueryPurgeSchedule   `json:"purge_schedule,omitempty"`
+	Nullifier       *WasmQueryNullifier       `json:"nullifier,omitempty"`
+	DomainTreasury  *WasmQueryDomainTreasury  `json:"domain_treasury,omitempty"`
 }
 
 type WasmQueryDomain struct {
@@ -49,6 +50,10 @@ type WasmQueryPurgeSchedule struct {
 type WasmQueryNullifier struct {
 	DomainName   string `json:"domain_name"`
 	NullifierHex string `json:"nullifier_hex"`
+}
+
+type WasmQueryDomainTreasury struct {
+	DomainName string `json:"domain_name"`
 }
 
 // --- Custom Query Response Types ---
@@ -118,6 +123,11 @@ type WasmNullifierResponse struct {
 	Used bool `json:"used"`
 }
 
+type WasmDomainTreasuryResponse struct {
+	DomainName string `json:"domain_name"`
+	Amount     string `json:"amount"` // e.g. "500000pnyx"
+}
+
 // --- Custom Query Handler ---
 
 // CustomQueryHandler returns a query handler function for CosmWasm contracts
@@ -143,6 +153,8 @@ func CustomQueryHandler(keeper Keeper) func(ctx sdk.Context, request json.RawMes
 			return handleQueryPurgeSchedule(ctx, keeper, query.PurgeSchedule)
 		case query.Nullifier != nil:
 			return handleQueryNullifier(ctx, keeper, query.Nullifier)
+		case query.DomainTreasury != nil:
+			return handleQueryDomainTreasury(ctx, keeper, query.DomainTreasury)
 		default:
 			return nil, fmt.Errorf("unknown truedemocracy query")
 		}
@@ -278,6 +290,19 @@ func handleQueryNullifier(ctx sdk.Context, keeper Keeper, req *WasmQueryNullifie
 	return json.Marshal(resp)
 }
 
+func handleQueryDomainTreasury(ctx sdk.Context, keeper Keeper, req *WasmQueryDomainTreasury) ([]byte, error) {
+	domain, found := keeper.GetDomain(ctx, req.DomainName)
+	if !found {
+		return nil, fmt.Errorf("domain not found: %s", req.DomainName)
+	}
+
+	resp := WasmDomainTreasuryResponse{
+		DomainName: domain.Name,
+		Amount:     domain.Treasury.String(),
+	}
+	return json.Marshal(resp)
+}
+
 // --- Custom Message Types ---
 
 // WasmCustomMsg is the top-level message envelope sent by contracts.
@@ -285,6 +310,8 @@ type WasmCustomMsg struct {
 	PlaceStoneOnIssue      *WasmMsgPlaceStoneOnIssue      `json:"place_stone_on_issue,omitempty"`
 	PlaceStoneOnSuggestion *WasmMsgPlaceStoneOnSuggestion `json:"place_stone_on_suggestion,omitempty"`
 	CastElectionVote       *WasmMsgCastElectionVote       `json:"cast_election_vote,omitempty"`
+	DepositToDomain        *WasmMsgDepositToDomain        `json:"deposit_to_domain,omitempty"`
+	WithdrawFromDomain     *WasmMsgWithdrawFromDomain     `json:"withdraw_from_domain,omitempty"`
 }
 
 type WasmMsgPlaceStoneOnIssue struct {
@@ -303,6 +330,17 @@ type WasmMsgCastElectionVote struct {
 	IssueName     string `json:"issue_name"`
 	CandidateName string `json:"candidate_name"`
 	Choice        int    `json:"choice"` // 0=Approve, 1=Abstain
+}
+
+type WasmMsgDepositToDomain struct {
+	DomainName string `json:"domain_name"`
+	Amount     string `json:"amount"` // e.g. "100pnyx"
+}
+
+type WasmMsgWithdrawFromDomain struct {
+	DomainName string `json:"domain_name"`
+	Recipient  string `json:"recipient"` // bech32
+	Amount     string `json:"amount"`    // e.g. "100pnyx"
 }
 
 // --- Custom Message Encoder ---
@@ -343,6 +381,31 @@ func CustomMessageEncoder() func(sender sdk.AccAddress, msg json.RawMessage) ([]
 				CandidateName: m.CandidateName,
 				VoterAddr:     sender.String(),
 				Choice:        int32(m.Choice),
+			}}, nil
+
+		case customMsg.DepositToDomain != nil:
+			m := customMsg.DepositToDomain
+			coin, err := sdk.ParseCoinNormalized(m.Amount)
+			if err != nil {
+				return nil, fmt.Errorf("invalid deposit amount: %w", err)
+			}
+			return []sdk.Msg{&MsgDepositToDomain{
+				Sender:     sender,
+				DomainName: m.DomainName,
+				Amount:     coin,
+			}}, nil
+
+		case customMsg.WithdrawFromDomain != nil:
+			m := customMsg.WithdrawFromDomain
+			coin, err := sdk.ParseCoinNormalized(m.Amount)
+			if err != nil {
+				return nil, fmt.Errorf("invalid withdraw amount: %w", err)
+			}
+			return []sdk.Msg{&MsgWithdrawFromDomain{
+				Sender:     sender,
+				DomainName: m.DomainName,
+				Recipient:  m.Recipient,
+				Amount:     coin,
 			}}, nil
 
 		default:

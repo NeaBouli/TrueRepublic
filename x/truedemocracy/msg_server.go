@@ -144,6 +144,18 @@ func (*MsgCastElectionVoteResponse) ProtoMessage()         {}
 func (*MsgCastElectionVoteResponse) Reset()                {}
 func (*MsgCastElectionVoteResponse) String() string        { return "MsgCastElectionVoteResponse" }
 
+type MsgDepositToDomainResponse struct{}
+
+func (*MsgDepositToDomainResponse) ProtoMessage()          {}
+func (*MsgDepositToDomainResponse) Reset()                 {}
+func (*MsgDepositToDomainResponse) String() string         { return "MsgDepositToDomainResponse" }
+
+type MsgWithdrawFromDomainResponse struct{}
+
+func (*MsgWithdrawFromDomainResponse) ProtoMessage()       {}
+func (*MsgWithdrawFromDomainResponse) Reset()              {}
+func (*MsgWithdrawFromDomainResponse) String() string      { return "MsgWithdrawFromDomainResponse" }
+
 // ---------------------------------------------------------------------------
 // Register response types with gogoproto
 // ---------------------------------------------------------------------------
@@ -171,6 +183,8 @@ func init() {
 	gogoproto.RegisterType((*MsgRejectOnboarding)(nil), "truedemocracy.MsgRejectOnboarding")
 	gogoproto.RegisterType((*MsgRegisterIdentity)(nil), "truedemocracy.MsgRegisterIdentity")
 	gogoproto.RegisterType((*MsgRateWithProof)(nil), "truedemocracy.MsgRateWithProof")
+	gogoproto.RegisterType((*MsgDepositToDomain)(nil), "truedemocracy.MsgDepositToDomain")
+	gogoproto.RegisterType((*MsgWithdrawFromDomain)(nil), "truedemocracy.MsgWithdrawFromDomain")
 
 	// Register response types.
 	gogoproto.RegisterType((*MsgCreateDomainResponse)(nil), "truedemocracy.MsgCreateDomainResponse")
@@ -194,6 +208,8 @@ func init() {
 	gogoproto.RegisterType((*MsgRejectOnboardingResponse)(nil), "truedemocracy.MsgRejectOnboardingResponse")
 	gogoproto.RegisterType((*MsgRegisterIdentityResponse)(nil), "truedemocracy.MsgRegisterIdentityResponse")
 	gogoproto.RegisterType((*MsgRateWithProofResponse)(nil), "truedemocracy.MsgRateWithProofResponse")
+	gogoproto.RegisterType((*MsgDepositToDomainResponse)(nil), "truedemocracy.MsgDepositToDomainResponse")
+	gogoproto.RegisterType((*MsgWithdrawFromDomainResponse)(nil), "truedemocracy.MsgWithdrawFromDomainResponse")
 }
 
 // ---------------------------------------------------------------------------
@@ -233,6 +249,8 @@ type MsgServer interface {
 	RejectOnboarding(context.Context, *MsgRejectOnboarding) (*MsgRejectOnboardingResponse, error)
 	RegisterIdentity(context.Context, *MsgRegisterIdentity) (*MsgRegisterIdentityResponse, error)
 	RateWithProof(context.Context, *MsgRateWithProof) (*MsgRateWithProofResponse, error)
+	DepositToDomain(context.Context, *MsgDepositToDomain) (*MsgDepositToDomainResponse, error)
+	WithdrawFromDomain(context.Context, *MsgWithdrawFromDomain) (*MsgWithdrawFromDomainResponse, error)
 }
 
 var _ MsgServer = msgServer{}
@@ -646,6 +664,48 @@ func (m msgServer) RateWithProof(goCtx context.Context, msg *MsgRateWithProof) (
 	return &MsgRateWithProofResponse{}, nil
 }
 
+func (m msgServer) DepositToDomain(goCtx context.Context, msg *MsgDepositToDomain) (*MsgDepositToDomainResponse, error) {
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	err := m.Keeper.DepositToDomain(ctx, msg.Sender, msg.DomainName, msg.Amount)
+	if err != nil {
+		return nil, err
+	}
+
+	ctx.EventManager().EmitEvent(sdk.NewEvent(
+		"deposit_to_domain",
+		sdk.NewAttribute("domain", msg.DomainName),
+		sdk.NewAttribute("depositor", msg.Sender.String()),
+		sdk.NewAttribute("amount", msg.Amount.String()),
+	))
+
+	return &MsgDepositToDomainResponse{}, nil
+}
+
+func (m msgServer) WithdrawFromDomain(goCtx context.Context, msg *MsgWithdrawFromDomain) (*MsgWithdrawFromDomainResponse, error) {
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	recipientAddr, err := sdk.AccAddressFromBech32(msg.Recipient)
+	if err != nil {
+		return nil, errorsmod.Wrap(sdkerrors.ErrInvalidAddress, "invalid recipient address")
+	}
+
+	err = m.Keeper.WithdrawFromDomain(ctx, msg.DomainName, recipientAddr, msg.Amount, msg.Sender)
+	if err != nil {
+		return nil, err
+	}
+
+	ctx.EventManager().EmitEvent(sdk.NewEvent(
+		"withdraw_from_domain",
+		sdk.NewAttribute("domain", msg.DomainName),
+		sdk.NewAttribute("recipient", msg.Recipient),
+		sdk.NewAttribute("amount", msg.Amount.String()),
+		sdk.NewAttribute("authorizer", msg.Sender.String()),
+	))
+
+	return &MsgWithdrawFromDomainResponse{}, nil
+}
+
 // ---------------------------------------------------------------------------
 // gRPC method handlers
 // ---------------------------------------------------------------------------
@@ -1038,6 +1098,42 @@ func _Msg_RateWithProof_Handler(srv interface{}, ctx context.Context, dec func(i
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Msg_DepositToDomain_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgDepositToDomain)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServer).DepositToDomain(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/truedemocracy.Msg/DepositToDomain",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServer).DepositToDomain(ctx, req.(*MsgDepositToDomain))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Msg_WithdrawFromDomain_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgWithdrawFromDomain)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServer).WithdrawFromDomain(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/truedemocracy.Msg/WithdrawFromDomain",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServer).WithdrawFromDomain(ctx, req.(*MsgWithdrawFromDomain))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 var _Msg_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "truedemocracy.Msg",
 	HandlerType: (*MsgServer)(nil),
@@ -1125,6 +1221,14 @@ var _Msg_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "RateWithProof",
 			Handler:    _Msg_RateWithProof_Handler,
+		},
+		{
+			MethodName: "DepositToDomain",
+			Handler:    _Msg_DepositToDomain_Handler,
+		},
+		{
+			MethodName: "WithdrawFromDomain",
+			Handler:    _Msg_WithdrawFromDomain_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

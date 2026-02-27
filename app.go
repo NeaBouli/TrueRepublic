@@ -44,6 +44,7 @@ import (
 var maccPerms = map[string][]string{
 	authtypes.FeeCollectorName: nil,
 	wasmtypes.ModuleName:       {authtypes.Burner},
+	truedemocracy.ModuleName:   nil, // treasury bridge module account
 }
 
 var ModuleBasics = module.NewBasicManager(
@@ -132,7 +133,7 @@ func NewTrueRepublicApp(logger log.Logger, db dbm.DB, homeDir string) *TrueRepub
 	)
 
 	// Governance module keepers (created before wasm so custom bindings can reference them).
-	tdKeeper := truedemocracy.NewKeeper(cdc, keys[truedemocracy.ModuleName], truedemocracy.BuildTree())
+	tdKeeper := truedemocracy.NewKeeper(cdc, keys[truedemocracy.ModuleName], truedemocracy.BuildTree(), app.bankKeeper)
 	dexKeeper := dex.NewKeeper(cdc, keys[dex.ModuleName])
 	app.tdKeeper = tdKeeper
 	app.dexKeeper = dexKeeper
