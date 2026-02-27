@@ -174,8 +174,9 @@ type GenesisValidator struct {
 }
 
 type GenesisState struct {
-    Domains    []Domain           `json:"domains"`
-    Validators []GenesisValidator `json:"validators"`
+    Domains         []Domain           `json:"domains"`
+    Validators      []GenesisValidator `json:"validators"`
+    VerifyingKeyHex string             `json:"verifying_key_hex,omitempty"`
 }
 
 func RegisterCodec(cdc *codec.LegacyAmino) {

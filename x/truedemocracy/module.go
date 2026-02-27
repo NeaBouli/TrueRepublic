@@ -2,6 +2,7 @@ package truedemocracy
 
 import (
 	"context"
+	"encoding/hex"
 	"encoding/json"
 
 	"cosmossdk.io/math"
@@ -106,9 +107,12 @@ func (am AppModule) InitGenesis(ctx sdk.Context, cdc codec.JSONCodec, data json.
 		return nil
 	}
 
-	// Create domains.
+	// Restore domains from genesis (full state, not just name/admin/treasury).
+	store := ctx.KVStore(am.keeper.StoreKey)
 	for _, domain := range genesisState.Domains {
-		am.keeper.CreateDomain(ctx, domain.Name, domain.Admin, domain.Treasury)
+		bz := am.cdc.MustMarshalLengthPrefixed(&domain)
+		store.Set([]byte("domain:"+domain.Name), bz)
+		am.keeper.InitializeBigPurgeSchedule(ctx, domain.Name)
 	}
 
 	// Register genesis validators and build initial validator set.
@@ -125,8 +129,17 @@ func (am AppModule) InitGenesis(ctx sdk.Context, cdc codec.JSONCodec, data json.
 		updates = append(updates, abci.ValidatorUpdate{PubKey: pk, Power: power})
 	}
 
+	// Load verifying key from genesis if present.
+	if genesisState.VerifyingKeyHex != "" {
+		vkBytes, err := hex.DecodeString(genesisState.VerifyingKeyHex)
+		if err == nil {
+			if _, err := DeserializeVerifyingKey(vkBytes); err == nil {
+				am.keeper.SetVerifyingKey(ctx, vkBytes)
+			}
+		}
+	}
+
 	// Initialize PoD reward tracking state.
-	store := ctx.KVStore(am.keeper.StoreKey)
 	timeBz := am.cdc.MustMarshalLengthPrefixed(ctx.BlockTime().Unix())
 	store.Set([]byte("pod:last-reward-time"), timeBz)
 	store.Set([]byte("dom:last-interest-time"), timeBz)
@@ -192,5 +205,43 @@ func (am AppModule) EndBlock(goCtx context.Context) ([]abci.ValidatorUpdate, err
 }
 
 func (am AppModule) ExportGenesis(ctx sdk.Context, cdc codec.JSONCodec) json.RawMessage {
-	return nil
+	var domains []Domain
+	am.keeper.IterateDomains(ctx, func(d Domain) bool {
+		domains = append(domains, d)
+		return false
+	})
+	if domains == nil {
+		domains = []Domain{}
+	}
+
+	var validators []GenesisValidator
+	am.keeper.IterateValidators(ctx, func(v Validator) bool {
+		domain := ""
+		if len(v.Domains) > 0 {
+			domain = v.Domains[0]
+		}
+		validators = append(validators, GenesisValidator{
+			OperatorAddr: v.OperatorAddr,
+			PubKey:       v.PubKey,
+			Stake:        v.Stake.AmountOf("pnyx").Int64(),
+			Domain:       domain,
+		})
+		return false
+	})
+	if validators == nil {
+		validators = []GenesisValidator{}
+	}
+
+	vkHex := ""
+	if vkBytes, found := am.keeper.GetVerifyingKey(ctx); found {
+		vkHex = hex.EncodeToString(vkBytes)
+	}
+
+	genesis := GenesisState{
+		Domains:         domains,
+		Validators:      validators,
+		VerifyingKeyHex: vkHex,
+	}
+	bz, _ := json.Marshal(genesis)
+	return bz
 }
