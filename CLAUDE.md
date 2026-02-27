@@ -9,7 +9,7 @@
 
 | Repo | Branch | HEAD | Path |
 |------|--------|------|------|
-| **Main** | `main` | `06a178e` (feat(v0.3.0): add identity commitment registration and nullifier store) | `/Users/gio/TrueRepublic/` |
+| **Main** | `main` | `72e84bc` (feat(v0.3.0): add MsgRateWithProof for ZKP anonymous voting) | `/Users/gio/TrueRepublic/` |
 | **Wiki** | `master` | `21eef69` (docs: add v0.4.0 Optional Indexer Stack roadmap) | `/Users/gio/TrueRepublic/wiki-github/` |
 
 - Working tree: **clean**, up-to-date with `origin/main`
@@ -44,8 +44,8 @@
 
 ### Key Metrics
 
-- 330 unit tests across 3 modules (~5,600 lines of test code)
-- 24 transaction types (20 governance + 4 DEX)
+- 355 unit tests across 3 modules (~6,200 lines of test code)
+- 25 transaction types (21 governance + 4 DEX)
 - 6 query endpoints (4 governance + 2 DEX)
 - 5 tokenomics equations fully implemented + domain interest in EndBlock
 - ~13,100 lines of source code (Go + JS + Rust)
@@ -87,7 +87,7 @@
 
 Two custom Cosmos SDK modules plus a treasury package:
 
-1. **x/truedemocracy** (~10,800 lines, 35 files) -- Governance: domains, proposals, systemic consensing scoring (-5 to +5), stones voting, suggestion lifecycle (green/yellow/red zones), validator PoD, slashing, anonymous voting (domain key signatures), admin elections, member exclusion, person election voting modes (simple/absolute majority, abstention), domain interest payout (eq.4), two-step onboarding (add member + domain key registration), Big Purge EndBlock execution, ZKP foundation (MiMC Merkle tree, Groth16 membership proofs, identity commitments, nullifier store)
+1. **x/truedemocracy** (~11,300 lines, 36 files) -- Governance: domains, proposals, systemic consensing scoring (-5 to +5), stones voting, suggestion lifecycle (green/yellow/red zones), validator PoD, slashing, anonymous voting (domain key signatures + ZKP membership proofs), admin elections, member exclusion, person election voting modes (simple/absolute majority, abstention), domain interest payout (eq.4), two-step onboarding (add member + domain key registration), Big Purge EndBlock execution, ZKP anonymous voting (MiMC Merkle tree, Groth16 membership proofs, identity commitments, nullifier store, MsgRateWithProof)
 2. **x/dex** (1,637 lines, 9 files) -- AMM DEX: constant-product (x*y=k), PNYX/ATOM pool, 0.3% swap fee, 1% PNYX burn
 3. **treasury/keeper** (371 lines, 2 files) -- Tokenomics equations 1-5: domain cost, rewards, put price, domain interest (25% APY), node staking (10% APY), release decay
 
@@ -139,11 +139,11 @@ TrueRepublic/
 ├── x/truedemocracy/                GOVERNANCE MODULE (35 files, ~10,800 lines)
 │   ├── keeper.go                   Domain CRUD, proposal submission, fee validation,
 │   │                               RateProposalWithSignature (anonymous rating)
-│   ├── msg_server.go               Message handlers (20 tx types)
+│   ├── msg_server.go               Message handlers (21 tx types)
 │   ├── query_server.go             gRPC query handlers (4 query types)
-│   ├── cli.go                      Cobra CLI commands (21 tx + 4 query)
+│   ├── cli.go                      Cobra CLI commands (22 tx + 4 query)
 │   ├── module.go                   Module registration, codecs, EndBlock hooks
-│   ├── msgs.go                     Message type definitions (20 types)
+│   ├── msgs.go                     Message type definitions (21 types)
 │   ├── types.go                    Domain, DomainOptions, VotingMode, VoteChoice,
 │   │                               NullifierRecord structs
 │   ├── scoring.go                  Systemic Consensing: ComputeSuggestionScore,
@@ -166,11 +166,12 @@ TrueRepublic/
 │   ├── crypto.go                   Ed25519 dual-key derivation (global + domain keys)
 │   ├── tree.go                     Tree data structures
 │   ├── querier.go                  Legacy query interface
-│   ├── *_test.go (14 files)        265 tests: governance, validator, stones, lifecycle,
+│   ├── *_test.go (15 files)        300 tests: governance, validator, stones, lifecycle,
 │   │                               anonymity, slashing, elections, scoring, domain interest,
 │   │                               crypto (dual-key onboarding), big purge EndBlock,
 │   │                               onboarding (two-step flow), Merkle tree, ZKP circuit,
-│   │                               identity commitment registration + nullifier store
+│   │                               identity commitments + nullifier store, ZKP voting
+│   │                               (MsgRateWithProof, E2E flow, Big Purge cycle)
 │
 ├── x/dex/                          DEX MODULE (9 files, 1,637 lines)
 │   ├── keeper.go                   AMM pool operations (x*y=k)
