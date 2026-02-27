@@ -102,6 +102,30 @@ func (*MsgRateProposalResponse) ProtoMessage()             {}
 func (*MsgRateProposalResponse) Reset()                    {}
 func (*MsgRateProposalResponse) String() string            { return "MsgRateProposalResponse" }
 
+type MsgAddMemberResponse struct{}
+
+func (*MsgAddMemberResponse) ProtoMessage()             {}
+func (*MsgAddMemberResponse) Reset()                    {}
+func (*MsgAddMemberResponse) String() string            { return "MsgAddMemberResponse" }
+
+type MsgOnboardToDomainResponse struct{}
+
+func (*MsgOnboardToDomainResponse) ProtoMessage()       {}
+func (*MsgOnboardToDomainResponse) Reset()              {}
+func (*MsgOnboardToDomainResponse) String() string      { return "MsgOnboardToDomainResponse" }
+
+type MsgApproveOnboardingResponse struct{}
+
+func (*MsgApproveOnboardingResponse) ProtoMessage()     {}
+func (*MsgApproveOnboardingResponse) Reset()            {}
+func (*MsgApproveOnboardingResponse) String() string    { return "MsgApproveOnboardingResponse" }
+
+type MsgRejectOnboardingResponse struct{}
+
+func (*MsgRejectOnboardingResponse) ProtoMessage()      {}
+func (*MsgRejectOnboardingResponse) Reset()             {}
+func (*MsgRejectOnboardingResponse) String() string     { return "MsgRejectOnboardingResponse" }
+
 type MsgCastElectionVoteResponse struct{}
 
 func (*MsgCastElectionVoteResponse) ProtoMessage()         {}
@@ -129,6 +153,10 @@ func init() {
 	gogoproto.RegisterType((*MsgVoteToDelete)(nil), "truedemocracy.MsgVoteToDelete")
 	gogoproto.RegisterType((*MsgRateProposal)(nil), "truedemocracy.MsgRateProposal")
 	gogoproto.RegisterType((*MsgCastElectionVote)(nil), "truedemocracy.MsgCastElectionVote")
+	gogoproto.RegisterType((*MsgAddMember)(nil), "truedemocracy.MsgAddMember")
+	gogoproto.RegisterType((*MsgOnboardToDomain)(nil), "truedemocracy.MsgOnboardToDomain")
+	gogoproto.RegisterType((*MsgApproveOnboarding)(nil), "truedemocracy.MsgApproveOnboarding")
+	gogoproto.RegisterType((*MsgRejectOnboarding)(nil), "truedemocracy.MsgRejectOnboarding")
 
 	// Register response types.
 	gogoproto.RegisterType((*MsgCreateDomainResponse)(nil), "truedemocracy.MsgCreateDomainResponse")
@@ -146,6 +174,10 @@ func init() {
 	gogoproto.RegisterType((*MsgVoteToDeleteResponse)(nil), "truedemocracy.MsgVoteToDeleteResponse")
 	gogoproto.RegisterType((*MsgRateProposalResponse)(nil), "truedemocracy.MsgRateProposalResponse")
 	gogoproto.RegisterType((*MsgCastElectionVoteResponse)(nil), "truedemocracy.MsgCastElectionVoteResponse")
+	gogoproto.RegisterType((*MsgAddMemberResponse)(nil), "truedemocracy.MsgAddMemberResponse")
+	gogoproto.RegisterType((*MsgOnboardToDomainResponse)(nil), "truedemocracy.MsgOnboardToDomainResponse")
+	gogoproto.RegisterType((*MsgApproveOnboardingResponse)(nil), "truedemocracy.MsgApproveOnboardingResponse")
+	gogoproto.RegisterType((*MsgRejectOnboardingResponse)(nil), "truedemocracy.MsgRejectOnboardingResponse")
 }
 
 // ---------------------------------------------------------------------------
@@ -179,6 +211,10 @@ type MsgServer interface {
 	VoteToDelete(context.Context, *MsgVoteToDelete) (*MsgVoteToDeleteResponse, error)
 	RateProposal(context.Context, *MsgRateProposal) (*MsgRateProposalResponse, error)
 	CastElectionVote(context.Context, *MsgCastElectionVote) (*MsgCastElectionVoteResponse, error)
+	AddMember(context.Context, *MsgAddMember) (*MsgAddMemberResponse, error)
+	OnboardToDomain(context.Context, *MsgOnboardToDomain) (*MsgOnboardToDomainResponse, error)
+	ApproveOnboarding(context.Context, *MsgApproveOnboarding) (*MsgApproveOnboardingResponse, error)
+	RejectOnboarding(context.Context, *MsgRejectOnboarding) (*MsgRejectOnboardingResponse, error)
 }
 
 var _ MsgServer = msgServer{}
@@ -458,6 +494,103 @@ func (m msgServer) CastElectionVote(goCtx context.Context, msg *MsgCastElectionV
 	return &MsgCastElectionVoteResponse{}, nil
 }
 
+func (m msgServer) AddMember(goCtx context.Context, msg *MsgAddMember) (*MsgAddMemberResponse, error) {
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	err := m.Keeper.AddMember(ctx, msg.DomainName, msg.NewMember, msg.Sender)
+	if err != nil {
+		return nil, err
+	}
+
+	ctx.EventManager().EmitEvent(sdk.NewEvent(
+		"add_member",
+		sdk.NewAttribute("domain", msg.DomainName),
+		sdk.NewAttribute("new_member", msg.NewMember),
+		sdk.NewAttribute("added_by", msg.Sender.String()),
+	))
+
+	return &MsgAddMemberResponse{}, nil
+}
+
+func (m msgServer) OnboardToDomain(goCtx context.Context, msg *MsgOnboardToDomain) (*MsgOnboardToDomainResponse, error) {
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	// Parse global public key.
+	globalPubKey, err := ParseEd25519PubKeyFromHex(msg.GlobalPubKeyHex)
+	if err != nil {
+		return nil, errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "invalid global public key: "+err.Error())
+	}
+
+	// Verify the onboarding signature (proves sender controls global key).
+	sigBytes, err := hex.DecodeString(msg.SignatureHex)
+	if err != nil {
+		return nil, errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "invalid signature hex")
+	}
+	if err := VerifyOnboardingSignature(msg.Sender.String(), msg.DomainName, msg.DomainPubKeyHex, globalPubKey, sigBytes); err != nil {
+		return nil, errorsmod.Wrap(sdkerrors.ErrUnauthorized, err.Error())
+	}
+
+	// Verify domain key != global key (anonymity requirement).
+	if err := VerifyKeysAreDifferent(msg.GlobalPubKeyHex, msg.DomainPubKeyHex); err != nil {
+		return nil, errorsmod.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
+	}
+
+	// Decode domain public key.
+	domainPubKeyBytes, err := hex.DecodeString(msg.DomainPubKeyHex)
+	if err != nil {
+		return nil, errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "invalid domain public key hex")
+	}
+
+	// JoinPermissionRegister validates membership, key length, and duplicates.
+	if err := m.Keeper.JoinPermissionRegister(ctx, msg.DomainName, msg.Sender.String(), domainPubKeyBytes); err != nil {
+		return nil, err
+	}
+
+	ctx.EventManager().EmitEvent(sdk.NewEvent(
+		"onboard_to_domain",
+		sdk.NewAttribute("domain", msg.DomainName),
+		sdk.NewAttribute("member", msg.Sender.String()),
+	))
+
+	return &MsgOnboardToDomainResponse{}, nil
+}
+
+func (m msgServer) ApproveOnboarding(goCtx context.Context, msg *MsgApproveOnboarding) (*MsgApproveOnboardingResponse, error) {
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	err := m.Keeper.ApproveOnboardingRequest(ctx, msg.DomainName, msg.RequesterAddr, msg.Sender)
+	if err != nil {
+		return nil, err
+	}
+
+	ctx.EventManager().EmitEvent(sdk.NewEvent(
+		"approve_onboarding",
+		sdk.NewAttribute("domain", msg.DomainName),
+		sdk.NewAttribute("requester", msg.RequesterAddr),
+		sdk.NewAttribute("admin", msg.Sender.String()),
+	))
+
+	return &MsgApproveOnboardingResponse{}, nil
+}
+
+func (m msgServer) RejectOnboarding(goCtx context.Context, msg *MsgRejectOnboarding) (*MsgRejectOnboardingResponse, error) {
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	err := m.Keeper.RejectOnboardingRequest(ctx, msg.DomainName, msg.RequesterAddr, msg.Sender)
+	if err != nil {
+		return nil, err
+	}
+
+	ctx.EventManager().EmitEvent(sdk.NewEvent(
+		"reject_onboarding",
+		sdk.NewAttribute("domain", msg.DomainName),
+		sdk.NewAttribute("requester", msg.RequesterAddr),
+		sdk.NewAttribute("admin", msg.Sender.String()),
+	))
+
+	return &MsgRejectOnboardingResponse{}, nil
+}
+
 // ---------------------------------------------------------------------------
 // gRPC method handlers
 // ---------------------------------------------------------------------------
@@ -732,6 +865,78 @@ func _Msg_CastElectionVote_Handler(srv interface{}, ctx context.Context, dec fun
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Msg_AddMember_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgAddMember)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServer).AddMember(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/truedemocracy.Msg/AddMember",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServer).AddMember(ctx, req.(*MsgAddMember))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Msg_OnboardToDomain_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgOnboardToDomain)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServer).OnboardToDomain(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/truedemocracy.Msg/OnboardToDomain",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServer).OnboardToDomain(ctx, req.(*MsgOnboardToDomain))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Msg_ApproveOnboarding_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgApproveOnboarding)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServer).ApproveOnboarding(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/truedemocracy.Msg/ApproveOnboarding",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServer).ApproveOnboarding(ctx, req.(*MsgApproveOnboarding))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Msg_RejectOnboarding_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgRejectOnboarding)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServer).RejectOnboarding(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/truedemocracy.Msg/RejectOnboarding",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServer).RejectOnboarding(ctx, req.(*MsgRejectOnboarding))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // ---------------------------------------------------------------------------
 // gRPC service registration
 // ---------------------------------------------------------------------------
@@ -805,6 +1010,22 @@ var _Msg_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "CastElectionVote",
 			Handler:    _Msg_CastElectionVote_Handler,
+		},
+		{
+			MethodName: "AddMember",
+			Handler:    _Msg_AddMember_Handler,
+		},
+		{
+			MethodName: "OnboardToDomain",
+			Handler:    _Msg_OnboardToDomain_Handler,
+		},
+		{
+			MethodName: "ApproveOnboarding",
+			Handler:    _Msg_ApproveOnboarding_Handler,
+		},
+		{
+			MethodName: "RejectOnboarding",
+			Handler:    _Msg_RejectOnboarding_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

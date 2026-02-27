@@ -39,6 +39,10 @@ func GetTxCmd() *cobra.Command {
 		CmdVoteToDelete(),
 		CmdRateProposal(),
 		CmdCastElectionVote(),
+		CmdAddMember(),
+		CmdOnboardToDomain(),
+		CmdApproveOnboarding(),
+		CmdRejectOnboarding(),
 	)
 	return txCmd
 }
@@ -473,6 +477,108 @@ func CmdCastElectionVote() *cobra.Command {
 				CandidateName: args[2],
 				VoterAddr:     clientCtx.GetFromAddress().String(),
 				Choice:        int32(choice),
+			}
+			if err := msg.ValidateBasic(); err != nil {
+				return err
+			}
+			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), &msg)
+		},
+	}
+	flags.AddTxFlagsToCmd(cmd)
+	return cmd
+}
+
+func CmdAddMember() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "add-member [domain] [new-member]",
+		Short: "Add a member to domain (admin only, step 1 of onboarding)",
+		Args:  cobra.ExactArgs(2),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			clientCtx, err := client.GetClientTxContext(cmd)
+			if err != nil {
+				return err
+			}
+			msg := MsgAddMember{
+				Sender:     clientCtx.GetFromAddress(),
+				DomainName: args[0],
+				NewMember:  args[1],
+			}
+			if err := msg.ValidateBasic(); err != nil {
+				return err
+			}
+			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), &msg)
+		},
+	}
+	flags.AddTxFlagsToCmd(cmd)
+	return cmd
+}
+
+func CmdOnboardToDomain() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "onboard-to-domain [domain] [domain-pubkey-hex] [global-pubkey-hex] [signature-hex]",
+		Short: "Onboard to domain with domain key (step 2, signature verified)",
+		Args:  cobra.ExactArgs(4),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			clientCtx, err := client.GetClientTxContext(cmd)
+			if err != nil {
+				return err
+			}
+			msg := MsgOnboardToDomain{
+				Sender:          clientCtx.GetFromAddress(),
+				DomainName:      args[0],
+				DomainPubKeyHex: args[1],
+				GlobalPubKeyHex: args[2],
+				SignatureHex:    args[3],
+			}
+			if err := msg.ValidateBasic(); err != nil {
+				return err
+			}
+			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), &msg)
+		},
+	}
+	flags.AddTxFlagsToCmd(cmd)
+	return cmd
+}
+
+func CmdApproveOnboarding() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "approve-onboarding [domain] [requester-addr]",
+		Short: "Approve a pending onboarding request (admin only)",
+		Args:  cobra.ExactArgs(2),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			clientCtx, err := client.GetClientTxContext(cmd)
+			if err != nil {
+				return err
+			}
+			msg := MsgApproveOnboarding{
+				Sender:        clientCtx.GetFromAddress(),
+				DomainName:    args[0],
+				RequesterAddr: args[1],
+			}
+			if err := msg.ValidateBasic(); err != nil {
+				return err
+			}
+			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), &msg)
+		},
+	}
+	flags.AddTxFlagsToCmd(cmd)
+	return cmd
+}
+
+func CmdRejectOnboarding() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "reject-onboarding [domain] [requester-addr]",
+		Short: "Reject a pending onboarding request (admin only)",
+		Args:  cobra.ExactArgs(2),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			clientCtx, err := client.GetClientTxContext(cmd)
+			if err != nil {
+				return err
+			}
+			msg := MsgRejectOnboarding{
+				Sender:        clientCtx.GetFromAddress(),
+				DomainName:    args[0],
+				RequesterAddr: args[1],
 			}
 			if err := msg.ValidateBasic(); err != nil {
 				return err

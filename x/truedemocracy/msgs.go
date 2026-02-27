@@ -331,6 +331,95 @@ func (m MsgRateProposal) ValidateBasic() error {
 	return nil
 }
 
+// --- MsgAddMember ---
+
+type MsgAddMember struct {
+	Sender     sdk.AccAddress `protobuf:"bytes,1,opt,name=sender,proto3,casttype=github.com/cosmos/cosmos-sdk/types.AccAddress" json:"sender"`
+	DomainName string         `protobuf:"bytes,2,opt,name=domain_name,json=domainName,proto3" json:"domain_name"`
+	NewMember  string         `protobuf:"bytes,3,opt,name=new_member,json=newMember,proto3" json:"new_member"`
+}
+
+func (m *MsgAddMember) ProtoMessage()             {}
+func (m *MsgAddMember) Reset()                    { *m = MsgAddMember{} }
+func (m *MsgAddMember) String() string            { b, _ := json.Marshal(m); return string(b) }
+func (m MsgAddMember) Route() string              { return ModuleName }
+func (m MsgAddMember) Type() string               { return "add_member" }
+func (m MsgAddMember) GetSigners() []sdk.AccAddress { return []sdk.AccAddress{m.Sender} }
+func (m MsgAddMember) ValidateBasic() error {
+	if m.DomainName == "" || m.NewMember == "" {
+		return sdkerrors.ErrInvalidRequest.Wrap("domain_name and new_member are required")
+	}
+	return nil
+}
+
+// --- MsgOnboardToDomain ---
+
+type MsgOnboardToDomain struct {
+	Sender          sdk.AccAddress `protobuf:"bytes,1,opt,name=sender,proto3,casttype=github.com/cosmos/cosmos-sdk/types.AccAddress" json:"sender"`
+	DomainName      string         `protobuf:"bytes,2,opt,name=domain_name,json=domainName,proto3" json:"domain_name"`
+	DomainPubKeyHex string         `protobuf:"bytes,3,opt,name=domain_pub_key_hex,json=domainPubKeyHex,proto3" json:"domain_pub_key_hex"`
+	GlobalPubKeyHex string         `protobuf:"bytes,4,opt,name=global_pub_key_hex,json=globalPubKeyHex,proto3" json:"global_pub_key_hex"`
+	SignatureHex    string         `protobuf:"bytes,5,opt,name=signature_hex,json=signatureHex,proto3" json:"signature_hex"`
+}
+
+func (m *MsgOnboardToDomain) ProtoMessage()             {}
+func (m *MsgOnboardToDomain) Reset()                    { *m = MsgOnboardToDomain{} }
+func (m *MsgOnboardToDomain) String() string            { b, _ := json.Marshal(m); return string(b) }
+func (m MsgOnboardToDomain) Route() string              { return ModuleName }
+func (m MsgOnboardToDomain) Type() string               { return "onboard_to_domain" }
+func (m MsgOnboardToDomain) GetSigners() []sdk.AccAddress { return []sdk.AccAddress{m.Sender} }
+func (m MsgOnboardToDomain) ValidateBasic() error {
+	if m.DomainName == "" {
+		return sdkerrors.ErrInvalidRequest.Wrap("domain_name is required")
+	}
+	if m.DomainPubKeyHex == "" || m.GlobalPubKeyHex == "" || m.SignatureHex == "" {
+		return sdkerrors.ErrInvalidRequest.Wrap("domain_pub_key_hex, global_pub_key_hex, and signature_hex are required")
+	}
+	return nil
+}
+
+// --- MsgApproveOnboarding ---
+
+type MsgApproveOnboarding struct {
+	Sender        sdk.AccAddress `protobuf:"bytes,1,opt,name=sender,proto3,casttype=github.com/cosmos/cosmos-sdk/types.AccAddress" json:"sender"`
+	DomainName    string         `protobuf:"bytes,2,opt,name=domain_name,json=domainName,proto3" json:"domain_name"`
+	RequesterAddr string         `protobuf:"bytes,3,opt,name=requester_addr,json=requesterAddr,proto3" json:"requester_addr"`
+}
+
+func (m *MsgApproveOnboarding) ProtoMessage()             {}
+func (m *MsgApproveOnboarding) Reset()                    { *m = MsgApproveOnboarding{} }
+func (m *MsgApproveOnboarding) String() string            { b, _ := json.Marshal(m); return string(b) }
+func (m MsgApproveOnboarding) Route() string              { return ModuleName }
+func (m MsgApproveOnboarding) Type() string               { return "approve_onboarding" }
+func (m MsgApproveOnboarding) GetSigners() []sdk.AccAddress { return []sdk.AccAddress{m.Sender} }
+func (m MsgApproveOnboarding) ValidateBasic() error {
+	if m.DomainName == "" || m.RequesterAddr == "" {
+		return sdkerrors.ErrInvalidRequest.Wrap("domain_name and requester_addr are required")
+	}
+	return nil
+}
+
+// --- MsgRejectOnboarding ---
+
+type MsgRejectOnboarding struct {
+	Sender        sdk.AccAddress `protobuf:"bytes,1,opt,name=sender,proto3,casttype=github.com/cosmos/cosmos-sdk/types.AccAddress" json:"sender"`
+	DomainName    string         `protobuf:"bytes,2,opt,name=domain_name,json=domainName,proto3" json:"domain_name"`
+	RequesterAddr string         `protobuf:"bytes,3,opt,name=requester_addr,json=requesterAddr,proto3" json:"requester_addr"`
+}
+
+func (m *MsgRejectOnboarding) ProtoMessage()             {}
+func (m *MsgRejectOnboarding) Reset()                    { *m = MsgRejectOnboarding{} }
+func (m *MsgRejectOnboarding) String() string            { b, _ := json.Marshal(m); return string(b) }
+func (m MsgRejectOnboarding) Route() string              { return ModuleName }
+func (m MsgRejectOnboarding) Type() string               { return "reject_onboarding" }
+func (m MsgRejectOnboarding) GetSigners() []sdk.AccAddress { return []sdk.AccAddress{m.Sender} }
+func (m MsgRejectOnboarding) ValidateBasic() error {
+	if m.DomainName == "" || m.RequesterAddr == "" {
+		return sdkerrors.ErrInvalidRequest.Wrap("domain_name and requester_addr are required")
+	}
+	return nil
+}
+
 // --- MsgCastElectionVote ---
 
 type MsgCastElectionVote struct {

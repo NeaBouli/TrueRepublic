@@ -52,6 +52,10 @@ func (AppModuleBasic) RegisterInterfaces(registry codectypes.InterfaceRegistry) 
 		&MsgVoteToDelete{},
 		&MsgRateProposal{},
 		&MsgCastElectionVote{},
+		&MsgAddMember{},
+		&MsgOnboardToDomain{},
+		&MsgApproveOnboarding{},
+		&MsgRejectOnboarding{},
 	)
 }
 

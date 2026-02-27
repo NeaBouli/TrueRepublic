@@ -53,6 +53,32 @@ func (k Keeper) CreateDomain(ctx sdk.Context, name string, admin sdk.AccAddress,
     k.InitializeBigPurgeSchedule(ctx, name)
 }
 
+// AddMember adds a new member to a domain. Only the domain admin can add
+// members. This is step 1 of the two-step onboarding flow (WP S4).
+func (k Keeper) AddMember(ctx sdk.Context, domainName, newMember string, caller sdk.AccAddress) error {
+	domain, found := k.GetDomain(ctx, domainName)
+	if !found {
+		return errorsmod.Wrapf(sdkerrors.ErrUnknownRequest, "domain %s not found", domainName)
+	}
+
+	if !caller.Equals(domain.Admin) {
+		return errorsmod.Wrap(sdkerrors.ErrUnauthorized, "only domain admin can add members")
+	}
+
+	for _, m := range domain.Members {
+		if m == newMember {
+			return errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "member already exists in domain")
+		}
+	}
+
+	domain.Members = append(domain.Members, newMember)
+
+	store := ctx.KVStore(k.StoreKey)
+	bz := k.cdc.MustMarshalLengthPrefixed(&domain)
+	store.Set([]byte("domain:"+domainName), bz)
+	return nil
+}
+
 func (k Keeper) SubmitProposal(ctx sdk.Context, domainName, issueName, suggestionName, creator string, fee sdk.Coins, externalLink string) error {
     store := ctx.KVStore(k.StoreKey)
     domainBz := store.Get([]byte("domain:" + domainName))
