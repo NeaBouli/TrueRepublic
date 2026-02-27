@@ -63,6 +63,9 @@ func GetQueryCmd(cdc *codec.LegacyAmino) *cobra.Command {
 		CmdQueryDomains(cdc),
 		CmdQueryValidator(cdc),
 		CmdQueryValidators(cdc),
+		CmdQueryNullifier(cdc),
+		CmdQueryPurgeSchedule(cdc),
+		CmdQueryZKPState(cdc),
 	)
 	return queryCmd
 }
@@ -731,6 +734,79 @@ func CmdQueryValidators(cdc *codec.LegacyAmino) *cobra.Command {
 			}
 			queryClient := NewQueryClient(clientCtx)
 			resp, err := queryClient.Validators(cmd.Context(), &QueryValidatorsRequest{})
+			if err != nil {
+				return err
+			}
+			return clientCtx.PrintObjectLegacy(json.RawMessage(resp.Result))
+		},
+	}
+	flags.AddQueryFlagsToCmd(cmd)
+	return cmd
+}
+
+func CmdQueryNullifier(cdc *codec.LegacyAmino) *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "nullifier [domain] [nullifier-hex]",
+		Short: "Check if a nullifier has been used in a domain",
+		Args:  cobra.ExactArgs(2),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			clientCtx, err := client.GetClientQueryContext(cmd)
+			if err != nil {
+				return err
+			}
+			queryClient := NewQueryClient(clientCtx)
+			resp, err := queryClient.Nullifier(cmd.Context(), &QueryNullifierRequest{
+				DomainName:    args[0],
+				NullifierHash: args[1],
+			})
+			if err != nil {
+				return err
+			}
+			return clientCtx.PrintObjectLegacy(json.RawMessage(resp.Result))
+		},
+	}
+	flags.AddQueryFlagsToCmd(cmd)
+	return cmd
+}
+
+func CmdQueryPurgeSchedule(cdc *codec.LegacyAmino) *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "purge-schedule [domain]",
+		Short: "Query the Big Purge schedule for a domain",
+		Args:  cobra.ExactArgs(1),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			clientCtx, err := client.GetClientQueryContext(cmd)
+			if err != nil {
+				return err
+			}
+			queryClient := NewQueryClient(clientCtx)
+			resp, err := queryClient.PurgeSchedule(cmd.Context(), &QueryPurgeScheduleRequest{
+				DomainName: args[0],
+			})
+			if err != nil {
+				return err
+			}
+			return clientCtx.PrintObjectLegacy(json.RawMessage(resp.Result))
+		},
+	}
+	flags.AddQueryFlagsToCmd(cmd)
+	return cmd
+}
+
+func CmdQueryZKPState(cdc *codec.LegacyAmino) *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "zkp-state [domain]",
+		Short: "Query lightweight ZKP state for a domain",
+		Args:  cobra.ExactArgs(1),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			clientCtx, err := client.GetClientQueryContext(cmd)
+			if err != nil {
+				return err
+			}
+			queryClient := NewQueryClient(clientCtx)
+			resp, err := queryClient.ZKPState(cmd.Context(), &QueryZKPStateRequest{
+				DomainName: args[0],
+			})
 			if err != nil {
 				return err
 			}

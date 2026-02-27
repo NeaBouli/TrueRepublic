@@ -142,6 +142,15 @@ type OnboardingRequest struct {
 	Status          string `json:"status"`       // "pending", "approved", "rejected"
 }
 
+// ZKPDomainState is a lightweight projection of domain ZKP fields for query responses.
+type ZKPDomainState struct {
+    DomainName      string `json:"domain_name"`
+    MerkleRoot      string `json:"merkle_root"`
+    CommitmentCount int    `json:"commitment_count"`
+    MemberCount     int    `json:"member_count"`
+    VKInitialized   bool   `json:"vk_initialized"`
+}
+
 // NullifierRecord tracks a used nullifier to prevent double-voting with ZKP.
 // KV key: "nullifier:{domain}:{nullifierHex}"
 type NullifierRecord struct {
