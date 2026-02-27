@@ -352,3 +352,321 @@ func TestRateProposalWithZKPRewardsDistributed(t *testing.T) {
 		t.Fatal("reward amount should match treasury decrease")
 	}
 }
+
+// ---------- MsgRateWithProof ValidateBasic Tests ----------
+
+func TestMsgRateWithProofValidateBasic(t *testing.T) {
+	validProof := hex.EncodeToString(make([]byte, 128))
+	validNullifier := hex.EncodeToString(make([]byte, 32))
+
+	t.Run("valid message", func(t *testing.T) {
+		msg := MsgRateWithProof{
+			Sender:         sdk.AccAddress("sender1"),
+			DomainName:     "TestDomain",
+			IssueName:      "Climate",
+			SuggestionName: "GreenDeal",
+			Rating:         3,
+			Proof:          validProof,
+			NullifierHash:  validNullifier,
+		}
+		if err := msg.ValidateBasic(); err != nil {
+			t.Fatalf("expected valid, got: %v", err)
+		}
+	})
+
+	t.Run("empty domain rejected", func(t *testing.T) {
+		msg := MsgRateWithProof{
+			Sender:         sdk.AccAddress("sender1"),
+			DomainName:     "",
+			IssueName:      "Climate",
+			SuggestionName: "GreenDeal",
+			Rating:         3,
+			Proof:          validProof,
+			NullifierHash:  validNullifier,
+		}
+		if err := msg.ValidateBasic(); err == nil {
+			t.Fatal("expected error for empty domain")
+		}
+	})
+
+	t.Run("empty proof rejected", func(t *testing.T) {
+		msg := MsgRateWithProof{
+			Sender:         sdk.AccAddress("sender1"),
+			DomainName:     "TestDomain",
+			IssueName:      "Climate",
+			SuggestionName: "GreenDeal",
+			Rating:         3,
+			Proof:          "",
+			NullifierHash:  validNullifier,
+		}
+		if err := msg.ValidateBasic(); err == nil {
+			t.Fatal("expected error for empty proof")
+		}
+	})
+
+	t.Run("invalid nullifier length rejected", func(t *testing.T) {
+		msg := MsgRateWithProof{
+			Sender:         sdk.AccAddress("sender1"),
+			DomainName:     "TestDomain",
+			IssueName:      "Climate",
+			SuggestionName: "GreenDeal",
+			Rating:         3,
+			Proof:          validProof,
+			NullifierHash:  "aabb", // only 4 hex chars, need 64
+		}
+		if err := msg.ValidateBasic(); err == nil {
+			t.Fatal("expected error for invalid nullifier length")
+		}
+	})
+
+	t.Run("invalid hex in proof rejected", func(t *testing.T) {
+		msg := MsgRateWithProof{
+			Sender:         sdk.AccAddress("sender1"),
+			DomainName:     "TestDomain",
+			IssueName:      "Climate",
+			SuggestionName: "GreenDeal",
+			Rating:         3,
+			Proof:          "not-valid-hex!!",
+			NullifierHash:  validNullifier,
+		}
+		if err := msg.ValidateBasic(); err == nil {
+			t.Fatal("expected error for invalid hex in proof")
+		}
+	})
+
+	t.Run("rating out of range rejected", func(t *testing.T) {
+		msg := MsgRateWithProof{
+			Sender:         sdk.AccAddress("sender1"),
+			DomainName:     "TestDomain",
+			IssueName:      "Climate",
+			SuggestionName: "GreenDeal",
+			Rating:         6,
+			Proof:          validProof,
+			NullifierHash:  validNullifier,
+		}
+		if err := msg.ValidateBasic(); err == nil {
+			t.Fatal("expected error for rating > 5")
+		}
+
+		msg.Rating = -6
+		if err := msg.ValidateBasic(); err == nil {
+			t.Fatal("expected error for rating < -5")
+		}
+	})
+}
+
+// ---------- MsgServer RateWithProof Tests ----------
+
+func TestMsgServerRateWithProof(t *testing.T) {
+	k, ctx := setupKeeper(t)
+	srv := NewMsgServer(k)
+
+	secrets := setupDomainWithZKPIdentity(t, k, ctx, "ZKPDomain", 3)
+	addProposal(t, k, ctx, "ZKPDomain", "Climate", "GreenDeal")
+
+	proofHex, nullifierHex := generateZKPRating(t, k, ctx, "ZKPDomain", secrets, 1, "Climate", "GreenDeal")
+
+	msg := &MsgRateWithProof{
+		Sender:         sdk.AccAddress("sender1"),
+		DomainName:     "ZKPDomain",
+		IssueName:      "Climate",
+		SuggestionName: "GreenDeal",
+		Rating:         4,
+		Proof:          proofHex,
+		NullifierHash:  nullifierHex,
+	}
+
+	_, err := srv.RateWithProof(ctx, msg)
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	// Verify rating stored.
+	domain, _ := k.GetDomain(ctx, "ZKPDomain")
+	ratings := domain.Issues[0].Suggestions[0].Ratings
+	if len(ratings) != 1 {
+		t.Fatalf("expected 1 rating, got %d", len(ratings))
+	}
+	if ratings[0].Value != 4 {
+		t.Fatalf("expected rating value 4, got %d", ratings[0].Value)
+	}
+}
+
+func TestMsgServerRateWithProofDoubleVote(t *testing.T) {
+	k, ctx := setupKeeper(t)
+	srv := NewMsgServer(k)
+
+	secrets := setupDomainWithZKPIdentity(t, k, ctx, "ZKPDomain", 3)
+	addProposal(t, k, ctx, "ZKPDomain", "Climate", "GreenDeal")
+
+	proofHex, nullifierHex := generateZKPRating(t, k, ctx, "ZKPDomain", secrets, 0, "Climate", "GreenDeal")
+
+	msg := &MsgRateWithProof{
+		Sender:         sdk.AccAddress("sender1"),
+		DomainName:     "ZKPDomain",
+		IssueName:      "Climate",
+		SuggestionName: "GreenDeal",
+		Rating:         3,
+		Proof:          proofHex,
+		NullifierHash:  nullifierHex,
+	}
+
+	// First vote succeeds.
+	_, err := srv.RateWithProof(ctx, msg)
+	if err != nil {
+		t.Fatalf("first vote should succeed: %v", err)
+	}
+
+	// Second vote with same nullifier rejected.
+	msg.Rating = -2
+	_, err = srv.RateWithProof(ctx, msg)
+	if err == nil {
+		t.Fatal("expected error for double vote")
+	}
+}
+
+// ---------- E2E Tests ----------
+
+func TestE2EZKPRatingFlow(t *testing.T) {
+	k, ctx := setupKeeper(t)
+	srv := NewMsgServer(k)
+
+	// 1. Create domain.
+	admin := sdk.AccAddress("admin1")
+	k.CreateDomain(ctx, "E2EDomain", admin, sdk.NewCoins(sdk.NewInt64Coin("pnyx", 500_000)))
+
+	// 2. Add member.
+	memberAddr := sdk.AccAddress("memberA").String()
+	k.AddMember(ctx, "E2EDomain", memberAddr, admin)
+
+	// 3. Register identity commitment.
+	secret := big.NewInt(777).Bytes()
+	commitment, err := ComputeCommitment(secret)
+	if err != nil {
+		t.Fatalf("ComputeCommitment failed: %v", err)
+	}
+	commitHex := hex.EncodeToString(commitment)
+
+	identityMsg := &MsgRegisterIdentity{
+		Sender:     sdk.AccAddress("memberA"),
+		DomainName: "E2EDomain",
+		Commitment: commitHex,
+	}
+	_, err = srv.RegisterIdentity(ctx, identityMsg)
+	if err != nil {
+		t.Fatalf("RegisterIdentity failed: %v", err)
+	}
+
+	// 4. Submit a proposal.
+	fee := sdk.NewCoins(sdk.NewInt64Coin("pnyx", 10_000_000))
+	if err := k.SubmitProposal(ctx, "E2EDomain", "Energy", "Solar", admin.String(), fee, ""); err != nil {
+		t.Fatalf("SubmitProposal failed: %v", err)
+	}
+
+	// 5. Generate ZKP proof.
+	keys := getTestZKPKeys(t)
+	domain, _ := k.GetDomain(ctx, "E2EDomain")
+	commitments := make([][]byte, len(domain.IdentityCommits))
+	for i, h := range domain.IdentityCommits {
+		b, _ := hex.DecodeString(h)
+		commitments[i] = b
+	}
+	tree := NewMerkleTree(MerkleTreeDepth)
+	if err := tree.BuildFromLeaves(commitments); err != nil {
+		t.Fatalf("BuildFromLeaves failed: %v", err)
+	}
+	siblings, pathIndices, err := tree.GenerateProof(0)
+	if err != nil {
+		t.Fatalf("GenerateProof failed: %v", err)
+	}
+	extNullifier, _ := ComputeExternalNullifier("E2EDomain|Energy|Solar")
+	proofBytes, nullifierHash, err := GenerateMembershipProof(keys, secret, tree.Root, siblings, pathIndices, extNullifier)
+	if err != nil {
+		t.Fatalf("GenerateMembershipProof failed: %v", err)
+	}
+
+	// 6. Submit MsgRateWithProof.
+	rateMsg := &MsgRateWithProof{
+		Sender:         sdk.AccAddress("memberA"),
+		DomainName:     "E2EDomain",
+		IssueName:      "Energy",
+		SuggestionName: "Solar",
+		Rating:         5,
+		Proof:          hex.EncodeToString(proofBytes),
+		NullifierHash:  hex.EncodeToString(nullifierHash),
+	}
+	_, err = srv.RateWithProof(ctx, rateMsg)
+	if err != nil {
+		t.Fatalf("RateWithProof failed: %v", err)
+	}
+
+	// 7. Verify rating stored + nullifier used.
+	domain, _ = k.GetDomain(ctx, "E2EDomain")
+	ratings := domain.Issues[0].Suggestions[0].Ratings
+	if len(ratings) != 1 {
+		t.Fatalf("expected 1 rating, got %d", len(ratings))
+	}
+	if ratings[0].Value != 5 {
+		t.Fatalf("expected rating 5, got %d", ratings[0].Value)
+	}
+	if !k.IsNullifierUsed(ctx, "E2EDomain", hex.EncodeToString(nullifierHash)) {
+		t.Fatal("nullifier should be marked as used")
+	}
+}
+
+func TestE2EBigPurgeClearsAndReallowsVoting(t *testing.T) {
+	k, ctx := setupKeeper(t)
+	secrets := setupDomainWithZKPIdentity(t, k, ctx, "PurgeDomain", 2)
+	addProposal(t, k, ctx, "PurgeDomain", "Climate", "GreenDeal")
+
+	// 1. Rate with ZKP — succeeds.
+	proof1, null1 := generateZKPRating(t, k, ctx, "PurgeDomain", secrets, 0, "Climate", "GreenDeal")
+	_, err := k.RateProposalWithZKP(ctx, "PurgeDomain", "Climate", "GreenDeal", 3, proof1, null1)
+	if err != nil {
+		t.Fatalf("first rating should succeed: %v", err)
+	}
+
+	// 2. Execute Big Purge — clears identities, nullifiers, Merkle root.
+	k.executeBigPurge(ctx, "PurgeDomain")
+
+	domain, _ := k.GetDomain(ctx, "PurgeDomain")
+	if len(domain.IdentityCommits) != 0 {
+		t.Fatal("purge should clear identity commitments")
+	}
+	if domain.MerkleRoot != "" {
+		t.Fatal("purge should clear Merkle root")
+	}
+	if k.IsNullifierUsed(ctx, "PurgeDomain", null1) {
+		t.Fatal("purge should clear nullifiers")
+	}
+
+	// 3. Re-register identity commitments (fresh secrets).
+	newSecrets := make([][]byte, 2)
+	for i := 0; i < 2; i++ {
+		memberAddr := sdk.AccAddress("member" + string(rune('A'+i))).String()
+		newSecret := big.NewInt(int64(i + 500)).Bytes()
+		commitment, err := ComputeCommitment(newSecret)
+		if err != nil {
+			t.Fatalf("ComputeCommitment failed: %v", err)
+		}
+		commitHex := hex.EncodeToString(commitment)
+		if err := k.RegisterIdentityCommitment(ctx, "PurgeDomain", memberAddr, commitHex); err != nil {
+			t.Fatalf("RegisterIdentityCommitment failed: %v", err)
+		}
+		newSecrets[i] = newSecret
+	}
+
+	// 4. Rate again with new proof — succeeds.
+	proof2, null2 := generateZKPRating(t, k, ctx, "PurgeDomain", newSecrets, 0, "Climate", "GreenDeal")
+	_, err = k.RateProposalWithZKP(ctx, "PurgeDomain", "Climate", "GreenDeal", -2, proof2, null2)
+	if err != nil {
+		t.Fatalf("rating after purge + re-register should succeed: %v", err)
+	}
+
+	// Verify: two ratings total (one before purge, one after).
+	domain, _ = k.GetDomain(ctx, "PurgeDomain")
+	ratings := domain.Issues[0].Suggestions[0].Ratings
+	if len(ratings) != 2 {
+		t.Fatalf("expected 2 ratings, got %d", len(ratings))
+	}
+}

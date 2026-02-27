@@ -198,6 +198,7 @@ func RegisterCodec(cdc *codec.LegacyAmino) {
     cdc.RegisterConcrete(MsgApproveOnboarding{}, "truedemocracy/MsgApproveOnboarding", nil)
     cdc.RegisterConcrete(MsgRejectOnboarding{}, "truedemocracy/MsgRejectOnboarding", nil)
     cdc.RegisterConcrete(MsgRegisterIdentity{}, "truedemocracy/MsgRegisterIdentity", nil)
+    cdc.RegisterConcrete(MsgRateWithProof{}, "truedemocracy/MsgRateWithProof", nil)
 }
 
 func DefaultGenesisState() GenesisState {

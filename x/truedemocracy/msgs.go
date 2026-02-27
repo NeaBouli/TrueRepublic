@@ -332,6 +332,46 @@ func (m MsgRateProposal) ValidateBasic() error {
 	return nil
 }
 
+// --- MsgRateWithProof ---
+
+type MsgRateWithProof struct {
+	Sender         sdk.AccAddress `protobuf:"bytes,1,opt,name=sender,proto3,casttype=github.com/cosmos/cosmos-sdk/types.AccAddress" json:"sender"`
+	DomainName     string         `protobuf:"bytes,2,opt,name=domain_name,json=domainName,proto3" json:"domain_name"`
+	IssueName      string         `protobuf:"bytes,3,opt,name=issue_name,json=issueName,proto3" json:"issue_name"`
+	SuggestionName string         `protobuf:"bytes,4,opt,name=suggestion_name,json=suggestionName,proto3" json:"suggestion_name"`
+	Rating         int32          `protobuf:"varint,5,opt,name=rating,proto3" json:"rating"`
+	Proof          string         `protobuf:"bytes,6,opt,name=proof,proto3" json:"proof"`                                         // hex-encoded Groth16 proof
+	NullifierHash  string         `protobuf:"bytes,7,opt,name=nullifier_hash,json=nullifierHash,proto3" json:"nullifier_hash"`     // hex-encoded (64 chars)
+}
+
+func (m *MsgRateWithProof) ProtoMessage()             {}
+func (m *MsgRateWithProof) Reset()                    { *m = MsgRateWithProof{} }
+func (m *MsgRateWithProof) String() string            { b, _ := json.Marshal(m); return string(b) }
+func (m MsgRateWithProof) Route() string              { return ModuleName }
+func (m MsgRateWithProof) Type() string               { return "rate_with_proof" }
+func (m MsgRateWithProof) GetSigners() []sdk.AccAddress { return []sdk.AccAddress{m.Sender} }
+func (m MsgRateWithProof) ValidateBasic() error {
+	if m.DomainName == "" || m.IssueName == "" || m.SuggestionName == "" {
+		return sdkerrors.ErrInvalidRequest.Wrap("domain_name, issue_name, and suggestion_name are required")
+	}
+	if m.Rating < -5 || m.Rating > 5 {
+		return sdkerrors.ErrInvalidRequest.Wrap("rating must be between -5 and +5")
+	}
+	if m.Proof == "" {
+		return sdkerrors.ErrInvalidRequest.Wrap("proof is required")
+	}
+	if _, err := hex.DecodeString(m.Proof); err != nil {
+		return sdkerrors.ErrInvalidRequest.Wrap("proof must be valid hex")
+	}
+	if len(m.NullifierHash) != 64 {
+		return sdkerrors.ErrInvalidRequest.Wrap("nullifier_hash must be exactly 64 hex chars")
+	}
+	if _, err := hex.DecodeString(m.NullifierHash); err != nil {
+		return sdkerrors.ErrInvalidRequest.Wrap("nullifier_hash must be valid hex")
+	}
+	return nil
+}
+
 // --- MsgAddMember ---
 
 type MsgAddMember struct {

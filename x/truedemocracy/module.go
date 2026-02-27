@@ -57,6 +57,7 @@ func (AppModuleBasic) RegisterInterfaces(registry codectypes.InterfaceRegistry) 
 		&MsgApproveOnboarding{},
 		&MsgRejectOnboarding{},
 		&MsgRegisterIdentity{},
+		&MsgRateWithProof{},
 	)
 }
 

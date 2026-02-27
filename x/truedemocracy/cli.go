@@ -44,6 +44,7 @@ func GetTxCmd() *cobra.Command {
 		CmdApproveOnboarding(),
 		CmdRejectOnboarding(),
 		CmdRegisterIdentity(),
+		CmdRateWithProof(),
 	)
 	return txCmd
 }
@@ -606,6 +607,39 @@ func CmdRegisterIdentity() *cobra.Command {
 				Sender:     clientCtx.GetFromAddress(),
 				DomainName: args[0],
 				Commitment: args[1],
+			}
+			if err := msg.ValidateBasic(); err != nil {
+				return err
+			}
+			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), &msg)
+		},
+	}
+	flags.AddTxFlagsToCmd(cmd)
+	return cmd
+}
+
+func CmdRateWithProof() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "rate-with-proof [domain] [issue] [suggestion] [rating] [proof-hex] [nullifier-hex]",
+		Short: "Rate a suggestion (-5 to +5) with a ZKP membership proof",
+		Args:  cobra.ExactArgs(6),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			clientCtx, err := client.GetClientTxContext(cmd)
+			if err != nil {
+				return err
+			}
+			rating, err := strconv.ParseInt(args[3], 10, 32)
+			if err != nil {
+				return fmt.Errorf("invalid rating: %w", err)
+			}
+			msg := MsgRateWithProof{
+				Sender:         clientCtx.GetFromAddress(),
+				DomainName:     args[0],
+				IssueName:      args[1],
+				SuggestionName: args[2],
+				Rating:         int32(rating),
+				Proof:          args[4],
+				NullifierHash:  args[5],
 			}
 			if err := msg.ValidateBasic(); err != nil {
 				return err

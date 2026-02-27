@@ -102,6 +102,12 @@ func (*MsgRateProposalResponse) ProtoMessage()             {}
 func (*MsgRateProposalResponse) Reset()                    {}
 func (*MsgRateProposalResponse) String() string            { return "MsgRateProposalResponse" }
 
+type MsgRateWithProofResponse struct{}
+
+func (*MsgRateWithProofResponse) ProtoMessage()        {}
+func (*MsgRateWithProofResponse) Reset()               {}
+func (*MsgRateWithProofResponse) String() string       { return "MsgRateWithProofResponse" }
+
 type MsgAddMemberResponse struct{}
 
 func (*MsgAddMemberResponse) ProtoMessage()             {}
@@ -164,6 +170,7 @@ func init() {
 	gogoproto.RegisterType((*MsgApproveOnboarding)(nil), "truedemocracy.MsgApproveOnboarding")
 	gogoproto.RegisterType((*MsgRejectOnboarding)(nil), "truedemocracy.MsgRejectOnboarding")
 	gogoproto.RegisterType((*MsgRegisterIdentity)(nil), "truedemocracy.MsgRegisterIdentity")
+	gogoproto.RegisterType((*MsgRateWithProof)(nil), "truedemocracy.MsgRateWithProof")
 
 	// Register response types.
 	gogoproto.RegisterType((*MsgCreateDomainResponse)(nil), "truedemocracy.MsgCreateDomainResponse")
@@ -186,6 +193,7 @@ func init() {
 	gogoproto.RegisterType((*MsgApproveOnboardingResponse)(nil), "truedemocracy.MsgApproveOnboardingResponse")
 	gogoproto.RegisterType((*MsgRejectOnboardingResponse)(nil), "truedemocracy.MsgRejectOnboardingResponse")
 	gogoproto.RegisterType((*MsgRegisterIdentityResponse)(nil), "truedemocracy.MsgRegisterIdentityResponse")
+	gogoproto.RegisterType((*MsgRateWithProofResponse)(nil), "truedemocracy.MsgRateWithProofResponse")
 }
 
 // ---------------------------------------------------------------------------
@@ -224,6 +232,7 @@ type MsgServer interface {
 	ApproveOnboarding(context.Context, *MsgApproveOnboarding) (*MsgApproveOnboardingResponse, error)
 	RejectOnboarding(context.Context, *MsgRejectOnboarding) (*MsgRejectOnboardingResponse, error)
 	RegisterIdentity(context.Context, *MsgRegisterIdentity) (*MsgRegisterIdentityResponse, error)
+	RateWithProof(context.Context, *MsgRateWithProof) (*MsgRateWithProofResponse, error)
 }
 
 var _ MsgServer = msgServer{}
@@ -617,6 +626,26 @@ func (m msgServer) RegisterIdentity(goCtx context.Context, msg *MsgRegisterIdent
 	return &MsgRegisterIdentityResponse{}, nil
 }
 
+func (m msgServer) RateWithProof(goCtx context.Context, msg *MsgRateWithProof) (*MsgRateWithProofResponse, error) {
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	reward, err := m.Keeper.RateProposalWithZKP(ctx, msg.DomainName, msg.IssueName, msg.SuggestionName, int(msg.Rating), msg.Proof, msg.NullifierHash)
+	if err != nil {
+		return nil, err
+	}
+
+	ctx.EventManager().EmitEvent(sdk.NewEvent(
+		"rate_with_proof",
+		sdk.NewAttribute("domain", msg.DomainName),
+		sdk.NewAttribute("issue", msg.IssueName),
+		sdk.NewAttribute("suggestion", msg.SuggestionName),
+		sdk.NewAttribute("rating", fmt.Sprintf("%d", msg.Rating)),
+		sdk.NewAttribute("reward", reward.String()),
+	))
+
+	return &MsgRateWithProofResponse{}, nil
+}
+
 // ---------------------------------------------------------------------------
 // gRPC method handlers
 // ---------------------------------------------------------------------------
@@ -991,6 +1020,24 @@ func _Msg_RegisterIdentity_Handler(srv interface{}, ctx context.Context, dec fun
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Msg_RateWithProof_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgRateWithProof)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServer).RateWithProof(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/truedemocracy.Msg/RateWithProof",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServer).RateWithProof(ctx, req.(*MsgRateWithProof))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 var _Msg_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "truedemocracy.Msg",
 	HandlerType: (*MsgServer)(nil),
@@ -1074,6 +1121,10 @@ var _Msg_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "RegisterIdentity",
 			Handler:    _Msg_RegisterIdentity_Handler,
+		},
+		{
+			MethodName: "RateWithProof",
+			Handler:    _Msg_RateWithProof_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
