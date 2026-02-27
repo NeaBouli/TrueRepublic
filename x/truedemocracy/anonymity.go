@@ -236,6 +236,45 @@ func (k Keeper) RejectOnboardingRequest(ctx sdk.Context, domainName, requesterAd
 	return nil
 }
 
+// ---------- ZKP Verifying Key Storage (v0.3.0) ----------
+
+// GetVerifyingKey retrieves the serialized Groth16 verifying key from the KV store.
+func (k Keeper) GetVerifyingKey(ctx sdk.Context) ([]byte, bool) {
+	store := ctx.KVStore(k.StoreKey)
+	bz := store.Get([]byte("zkp:verifying-key"))
+	if bz == nil {
+		return nil, false
+	}
+	return bz, true
+}
+
+// SetVerifyingKey stores the serialized Groth16 verifying key.
+func (k Keeper) SetVerifyingKey(ctx sdk.Context, vkBytes []byte) {
+	store := ctx.KVStore(k.StoreKey)
+	store.Set([]byte("zkp:verifying-key"), vkBytes)
+}
+
+// EnsureVerifyingKey returns the Groth16 verifying key, lazily initializing
+// it on first use. For v0.3.0-dev (single-node testnet). Multi-node
+// production requires a genesis-time VK or trusted setup ceremony.
+func (k Keeper) EnsureVerifyingKey(ctx sdk.Context) ([]byte, error) {
+	if vkBytes, found := k.GetVerifyingKey(ctx); found {
+		return vkBytes, nil
+	}
+
+	// First use — run circuit setup and store the VK.
+	keys, err := SetupMembershipCircuit()
+	if err != nil {
+		return nil, fmt.Errorf("ZKP circuit setup failed: %w", err)
+	}
+	vkBytes, err := SerializeVerifyingKey(keys.VerifyingKey)
+	if err != nil {
+		return nil, fmt.Errorf("verifying key serialization failed: %w", err)
+	}
+	k.SetVerifyingKey(ctx, vkBytes)
+	return vkBytes, nil
+}
+
 // ---------- ZKP Identity Commitments (v0.3.0) ----------
 
 // RegisterIdentityCommitment adds a MiMC commitment to the domain's

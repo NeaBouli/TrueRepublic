@@ -1,10 +1,12 @@
 package truedemocracy
 
 import (
+	"crypto/sha256"
 	"encoding/hex"
 	"fmt"
 	"math/big"
 
+	"github.com/consensys/gnark-crypto/ecc"
 	"github.com/consensys/gnark-crypto/ecc/bn254/fr"
 	"github.com/consensys/gnark-crypto/ecc/bn254/fr/mimc"
 )
@@ -217,6 +219,20 @@ func VerifyMerkleProof(root, leaf []byte, siblings [][]byte, pathIndices []int) 
 		currentHash = MiMCHash(left, right)
 	}
 	return new(big.Int).SetBytes(currentHash).Cmp(new(big.Int).SetBytes(root)) == 0
+}
+
+// ComputeExternalNullifier hashes a context string into a BN254 field element.
+// Used to derive deterministic nullifiers: nullifier = MiMC(secret, externalNullifier).
+// Both client and chain must compute the same value for proof verification.
+// The context is typically "domainName|issueName|suggestionName" for ratings.
+func ComputeExternalNullifier(context string) ([]byte, error) {
+	h := sha256.Sum256([]byte(context))
+	n := new(big.Int).SetBytes(h[:])
+	n.Mod(n, ecc.BN254.ScalarField())
+	b := make([]byte, 32)
+	nBytes := n.Bytes()
+	copy(b[32-len(nBytes):], nBytes)
+	return b, nil
 }
 
 // HexToFieldElement converts a hex string to a 32-byte big-endian

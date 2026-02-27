@@ -99,7 +99,8 @@ type Suggestion struct {
 }
 
 type Rating struct {
-    DomainPubKeyHex string `json:"domain_pub_key_hex"` // anonymous domain key (hex), unlinkable to avatar
+    DomainPubKeyHex string `json:"domain_pub_key_hex"` // legacy ed25519 domain key (hex), empty for ZKP
+    NullifierHex    string `json:"nullifier_hex"`       // ZKP nullifier (hex), empty for legacy
     Value           int    `json:"value"`
 }
 
