@@ -40,6 +40,18 @@ func (*MsgRemoveLiquidityResponse) ProtoMessage()  {}
 func (*MsgRemoveLiquidityResponse) Reset()         {}
 func (*MsgRemoveLiquidityResponse) String() string { return "MsgRemoveLiquidityResponse" }
 
+type MsgRegisterAssetResponse struct{}
+
+func (*MsgRegisterAssetResponse) ProtoMessage()  {}
+func (*MsgRegisterAssetResponse) Reset()         {}
+func (*MsgRegisterAssetResponse) String() string { return "MsgRegisterAssetResponse" }
+
+type MsgUpdateAssetStatusResponse struct{}
+
+func (*MsgUpdateAssetStatusResponse) ProtoMessage()  {}
+func (*MsgUpdateAssetStatusResponse) Reset()         {}
+func (*MsgUpdateAssetStatusResponse) String() string { return "MsgUpdateAssetStatusResponse" }
+
 // ---------------------------------------------------------------------------
 // Register all types with gogoproto
 // ---------------------------------------------------------------------------
@@ -51,11 +63,17 @@ func init() {
 	gogoproto.RegisterType((*MsgAddLiquidity)(nil), "dex.MsgAddLiquidity")
 	gogoproto.RegisterType((*MsgRemoveLiquidity)(nil), "dex.MsgRemoveLiquidity")
 
+	// Asset registry msg types.
+	gogoproto.RegisterType((*MsgRegisterAsset)(nil), "dex.MsgRegisterAsset")
+	gogoproto.RegisterType((*MsgUpdateAssetStatus)(nil), "dex.MsgUpdateAssetStatus")
+
 	// Response types.
 	gogoproto.RegisterType((*MsgCreatePoolResponse)(nil), "dex.MsgCreatePoolResponse")
 	gogoproto.RegisterType((*MsgSwapResponse)(nil), "dex.MsgSwapResponse")
 	gogoproto.RegisterType((*MsgAddLiquidityResponse)(nil), "dex.MsgAddLiquidityResponse")
 	gogoproto.RegisterType((*MsgRemoveLiquidityResponse)(nil), "dex.MsgRemoveLiquidityResponse")
+	gogoproto.RegisterType((*MsgRegisterAssetResponse)(nil), "dex.MsgRegisterAssetResponse")
+	gogoproto.RegisterType((*MsgUpdateAssetStatusResponse)(nil), "dex.MsgUpdateAssetStatusResponse")
 }
 
 // ---------------------------------------------------------------------------
@@ -68,6 +86,8 @@ type MsgServer interface {
 	Swap(context.Context, *MsgSwap) (*MsgSwapResponse, error)
 	AddLiquidity(context.Context, *MsgAddLiquidity) (*MsgAddLiquidityResponse, error)
 	RemoveLiquidity(context.Context, *MsgRemoveLiquidity) (*MsgRemoveLiquidityResponse, error)
+	RegisterAsset(context.Context, *MsgRegisterAsset) (*MsgRegisterAssetResponse, error)
+	UpdateAssetStatus(context.Context, *MsgUpdateAssetStatus) (*MsgUpdateAssetStatusResponse, error)
 }
 
 type msgServer struct {
@@ -157,6 +177,38 @@ func (m msgServer) RemoveLiquidity(goCtx context.Context, msg *MsgRemoveLiquidit
 	return &MsgRemoveLiquidityResponse{}, nil
 }
 
+func (m msgServer) RegisterAsset(goCtx context.Context, msg *MsgRegisterAsset) (*MsgRegisterAssetResponse, error) {
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	asset := RegisteredAsset{
+		IBCDenom:         msg.IBCDenom,
+		Symbol:           msg.Symbol,
+		Name:             msg.Name,
+		Decimals:         msg.Decimals,
+		OriginChain:      msg.OriginChain,
+		IBCChannel:       msg.IBCChannel,
+		TradingEnabled:   true,
+		RegisteredHeight: ctx.BlockHeight(),
+		RegisteredBy:     msg.Sender.String(),
+	}
+
+	if err := m.Keeper.RegisterAsset(ctx, asset); err != nil {
+		return nil, err
+	}
+
+	return &MsgRegisterAssetResponse{}, nil
+}
+
+func (m msgServer) UpdateAssetStatus(goCtx context.Context, msg *MsgUpdateAssetStatus) (*MsgUpdateAssetStatusResponse, error) {
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	if err := m.Keeper.UpdateAssetTradingStatus(ctx, msg.IBCDenom, msg.Enabled); err != nil {
+		return nil, err
+	}
+
+	return &MsgUpdateAssetStatusResponse{}, nil
+}
+
 // ---------------------------------------------------------------------------
 // gRPC method handlers
 // ---------------------------------------------------------------------------
@@ -221,6 +273,36 @@ func _Msg_RemoveLiquidity_Handler(srv interface{}, ctx context.Context, dec func
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Msg_RegisterAsset_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgRegisterAsset)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServer).RegisterAsset(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{Server: srv, FullMethod: "/dex.Msg/RegisterAsset"}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServer).RegisterAsset(ctx, req.(*MsgRegisterAsset))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Msg_UpdateAssetStatus_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgUpdateAssetStatus)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServer).UpdateAssetStatus(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{Server: srv, FullMethod: "/dex.Msg/UpdateAssetStatus"}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServer).UpdateAssetStatus(ctx, req.(*MsgUpdateAssetStatus))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // ---------------------------------------------------------------------------
 // gRPC service registration
 // ---------------------------------------------------------------------------
@@ -239,6 +321,8 @@ var _Msg_serviceDesc = grpc.ServiceDesc{
 		{MethodName: "Swap", Handler: _Msg_Swap_Handler},
 		{MethodName: "AddLiquidity", Handler: _Msg_AddLiquidity_Handler},
 		{MethodName: "RemoveLiquidity", Handler: _Msg_RemoveLiquidity_Handler},
+		{MethodName: "RegisterAsset", Handler: _Msg_RegisterAsset_Handler},
+		{MethodName: "UpdateAssetStatus", Handler: _Msg_UpdateAssetStatus_Handler},
 	},
 	Streams:  []grpc.StreamDesc{},
 	Metadata: "dex/tx.proto",

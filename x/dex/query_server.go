@@ -47,6 +47,54 @@ func (*QueryPoolsResponse) ProtoMessage()  {}
 func (*QueryPoolsResponse) Reset()         {}
 func (*QueryPoolsResponse) String() string { return "QueryPoolsResponse" }
 
+// --- Asset registry query types ---
+
+type QueryRegisteredAssetsRequest struct{}
+
+func (*QueryRegisteredAssetsRequest) ProtoMessage()  {}
+func (*QueryRegisteredAssetsRequest) Reset()         {}
+func (*QueryRegisteredAssetsRequest) String() string { return "QueryRegisteredAssetsRequest" }
+
+type QueryRegisteredAssetsResponse struct {
+	Result []byte `protobuf:"bytes,1,opt,name=result,proto3" json:"result"`
+}
+
+func (*QueryRegisteredAssetsResponse) ProtoMessage()  {}
+func (*QueryRegisteredAssetsResponse) Reset()         {}
+func (*QueryRegisteredAssetsResponse) String() string { return "QueryRegisteredAssetsResponse" }
+
+type QueryAssetByDenomRequest struct {
+	IBCDenom string `protobuf:"bytes,1,opt,name=ibc_denom,json=ibcDenom,proto3" json:"ibc_denom"`
+}
+
+func (*QueryAssetByDenomRequest) ProtoMessage()  {}
+func (*QueryAssetByDenomRequest) Reset()         {}
+func (*QueryAssetByDenomRequest) String() string { return "QueryAssetByDenomRequest" }
+
+type QueryAssetByDenomResponse struct {
+	Result []byte `protobuf:"bytes,1,opt,name=result,proto3" json:"result"`
+}
+
+func (*QueryAssetByDenomResponse) ProtoMessage()  {}
+func (*QueryAssetByDenomResponse) Reset()         {}
+func (*QueryAssetByDenomResponse) String() string { return "QueryAssetByDenomResponse" }
+
+type QueryAssetBySymbolRequest struct {
+	Symbol string `protobuf:"bytes,1,opt,name=symbol,proto3" json:"symbol"`
+}
+
+func (*QueryAssetBySymbolRequest) ProtoMessage()  {}
+func (*QueryAssetBySymbolRequest) Reset()         {}
+func (*QueryAssetBySymbolRequest) String() string { return "QueryAssetBySymbolRequest" }
+
+type QueryAssetBySymbolResponse struct {
+	Result []byte `protobuf:"bytes,1,opt,name=result,proto3" json:"result"`
+}
+
+func (*QueryAssetBySymbolResponse) ProtoMessage()  {}
+func (*QueryAssetBySymbolResponse) Reset()         {}
+func (*QueryAssetBySymbolResponse) String() string { return "QueryAssetBySymbolResponse" }
+
 // ---------------------------------------------------------------------------
 // Register query types with gogoproto
 // ---------------------------------------------------------------------------
@@ -56,6 +104,12 @@ func init() {
 	gogoproto.RegisterType((*QueryPoolResponse)(nil), "dex.QueryPoolResponse")
 	gogoproto.RegisterType((*QueryPoolsRequest)(nil), "dex.QueryPoolsRequest")
 	gogoproto.RegisterType((*QueryPoolsResponse)(nil), "dex.QueryPoolsResponse")
+	gogoproto.RegisterType((*QueryRegisteredAssetsRequest)(nil), "dex.QueryRegisteredAssetsRequest")
+	gogoproto.RegisterType((*QueryRegisteredAssetsResponse)(nil), "dex.QueryRegisteredAssetsResponse")
+	gogoproto.RegisterType((*QueryAssetByDenomRequest)(nil), "dex.QueryAssetByDenomRequest")
+	gogoproto.RegisterType((*QueryAssetByDenomResponse)(nil), "dex.QueryAssetByDenomResponse")
+	gogoproto.RegisterType((*QueryAssetBySymbolRequest)(nil), "dex.QueryAssetBySymbolRequest")
+	gogoproto.RegisterType((*QueryAssetBySymbolResponse)(nil), "dex.QueryAssetBySymbolResponse")
 }
 
 // ---------------------------------------------------------------------------
@@ -65,6 +119,9 @@ func init() {
 type QueryServer interface {
 	Pool(context.Context, *QueryPoolRequest) (*QueryPoolResponse, error)
 	Pools(context.Context, *QueryPoolsRequest) (*QueryPoolsResponse, error)
+	RegisteredAssets(context.Context, *QueryRegisteredAssetsRequest) (*QueryRegisteredAssetsResponse, error)
+	AssetByDenom(context.Context, *QueryAssetByDenomRequest) (*QueryAssetByDenomResponse, error)
+	AssetBySymbol(context.Context, *QueryAssetBySymbolRequest) (*QueryAssetBySymbolResponse, error)
 }
 
 var _ QueryServer = Keeper{}
@@ -106,6 +163,51 @@ func (k Keeper) Pools(goCtx context.Context, req *QueryPoolsRequest) (*QueryPool
 	return &QueryPoolsResponse{Result: bz}, nil
 }
 
+func (k Keeper) RegisteredAssets(goCtx context.Context, req *QueryRegisteredAssetsRequest) (*QueryRegisteredAssetsResponse, error) {
+	ctx := sdk.UnwrapSDKContext(goCtx)
+	assets := k.GetAllAssets(ctx)
+	if assets == nil {
+		assets = []RegisteredAsset{}
+	}
+	bz, err := json.Marshal(assets)
+	if err != nil {
+		return nil, err
+	}
+	return &QueryRegisteredAssetsResponse{Result: bz}, nil
+}
+
+func (k Keeper) AssetByDenom(goCtx context.Context, req *QueryAssetByDenomRequest) (*QueryAssetByDenomResponse, error) {
+	if req == nil || req.IBCDenom == "" {
+		return nil, errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "ibc_denom is required")
+	}
+	ctx := sdk.UnwrapSDKContext(goCtx)
+	asset, found := k.GetAssetByDenom(ctx, req.IBCDenom)
+	if !found {
+		return nil, errorsmod.Wrapf(sdkerrors.ErrKeyNotFound, "asset not found: %s", req.IBCDenom)
+	}
+	bz, err := json.Marshal(asset)
+	if err != nil {
+		return nil, err
+	}
+	return &QueryAssetByDenomResponse{Result: bz}, nil
+}
+
+func (k Keeper) AssetBySymbol(goCtx context.Context, req *QueryAssetBySymbolRequest) (*QueryAssetBySymbolResponse, error) {
+	if req == nil || req.Symbol == "" {
+		return nil, errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "symbol is required")
+	}
+	ctx := sdk.UnwrapSDKContext(goCtx)
+	asset, found := k.GetAssetBySymbol(ctx, req.Symbol)
+	if !found {
+		return nil, errorsmod.Wrapf(sdkerrors.ErrKeyNotFound, "asset not found: %s", req.Symbol)
+	}
+	bz, err := json.Marshal(asset)
+	if err != nil {
+		return nil, err
+	}
+	return &QueryAssetBySymbolResponse{Result: bz}, nil
+}
+
 // ---------------------------------------------------------------------------
 // gRPC method handlers
 // ---------------------------------------------------------------------------
@@ -144,6 +246,51 @@ func _Query_Pools_Handler(srv interface{}, ctx context.Context, dec func(interfa
 // gRPC service registration
 // ---------------------------------------------------------------------------
 
+func _Query_RegisteredAssets_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(QueryRegisteredAssetsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QueryServer).RegisteredAssets(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{Server: srv, FullMethod: "/dex.Query/RegisteredAssets"}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QueryServer).RegisteredAssets(ctx, req.(*QueryRegisteredAssetsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Query_AssetByDenom_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(QueryAssetByDenomRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QueryServer).AssetByDenom(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{Server: srv, FullMethod: "/dex.Query/AssetByDenom"}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QueryServer).AssetByDenom(ctx, req.(*QueryAssetByDenomRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Query_AssetBySymbol_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(QueryAssetBySymbolRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QueryServer).AssetBySymbol(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{Server: srv, FullMethod: "/dex.Query/AssetBySymbol"}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QueryServer).AssetBySymbol(ctx, req.(*QueryAssetBySymbolRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func RegisterQueryServer(s gogogrpc.Server, srv QueryServer) {
 	s.RegisterService(&_Query_serviceDesc, srv)
 }
@@ -154,6 +301,9 @@ var _Query_serviceDesc = grpc.ServiceDesc{
 	Methods: []grpc.MethodDesc{
 		{MethodName: "Pool", Handler: _Query_Pool_Handler},
 		{MethodName: "Pools", Handler: _Query_Pools_Handler},
+		{MethodName: "RegisteredAssets", Handler: _Query_RegisteredAssets_Handler},
+		{MethodName: "AssetByDenom", Handler: _Query_AssetByDenom_Handler},
+		{MethodName: "AssetBySymbol", Handler: _Query_AssetBySymbol_Handler},
 	},
 	Streams:  []grpc.StreamDesc{},
 	Metadata: "dex/query.proto",
@@ -183,6 +333,33 @@ func (c *queryClient) Pool(ctx context.Context, in *QueryPoolRequest) (*QueryPoo
 func (c *queryClient) Pools(ctx context.Context, in *QueryPoolsRequest) (*QueryPoolsResponse, error) {
 	out := new(QueryPoolsResponse)
 	err := c.cc.Invoke(ctx, "/dex.Query/Pools", in, out)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *queryClient) RegisteredAssets(ctx context.Context, in *QueryRegisteredAssetsRequest) (*QueryRegisteredAssetsResponse, error) {
+	out := new(QueryRegisteredAssetsResponse)
+	err := c.cc.Invoke(ctx, "/dex.Query/RegisteredAssets", in, out)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *queryClient) AssetByDenom(ctx context.Context, in *QueryAssetByDenomRequest) (*QueryAssetByDenomResponse, error) {
+	out := new(QueryAssetByDenomResponse)
+	err := c.cc.Invoke(ctx, "/dex.Query/AssetByDenom", in, out)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *queryClient) AssetBySymbol(ctx context.Context, in *QueryAssetBySymbolRequest) (*QueryAssetBySymbolResponse, error) {
+	out := new(QueryAssetBySymbolResponse)
+	err := c.cc.Invoke(ctx, "/dex.Query/AssetBySymbol", in, out)
 	if err != nil {
 		return nil, err
 	}

@@ -24,11 +24,13 @@ type Pool struct {
 }
 
 type GenesisState struct {
-	Pools []Pool `json:"pools"`
+	Pools            []Pool            `json:"pools"`
+	RegisteredAssets []RegisteredAsset `json:"registered_assets"`
 }
 
 func RegisterCodec(cdc *codec.LegacyAmino) {
 	cdc.RegisterConcrete(Pool{}, "dex/Pool", nil)
+	cdc.RegisterConcrete(RegisteredAsset{}, "dex/RegisteredAsset", nil)
 	cdc.RegisterConcrete(GenesisState{}, "dex/GenesisState", nil)
 
 	// Message types for CLI transactions.
@@ -36,6 +38,8 @@ func RegisterCodec(cdc *codec.LegacyAmino) {
 	cdc.RegisterConcrete(MsgSwap{}, "dex/MsgSwap", nil)
 	cdc.RegisterConcrete(MsgAddLiquidity{}, "dex/MsgAddLiquidity", nil)
 	cdc.RegisterConcrete(MsgRemoveLiquidity{}, "dex/MsgRemoveLiquidity", nil)
+	cdc.RegisterConcrete(MsgRegisterAsset{}, "dex/MsgRegisterAsset", nil)
+	cdc.RegisterConcrete(MsgUpdateAssetStatus{}, "dex/MsgUpdateAssetStatus", nil)
 }
 
 func DefaultGenesisState() GenesisState {
@@ -46,7 +50,17 @@ func DefaultGenesisState() GenesisState {
 				AssetReserve: math.NewInt(1_000_000),
 				AssetDenom:   "atom",
 				TotalShares:  math.NewInt(1_000_000), // sqrt(1M * 1M) = 1M
-			TotalBurned:  math.ZeroInt(),
+				TotalBurned:  math.ZeroInt(),
+			},
+		},
+		RegisteredAssets: []RegisteredAsset{
+			{
+				IBCDenom:       "pnyx",
+				Symbol:         "PNYX",
+				Name:           "TrueRepublic Native Token",
+				Decimals:       6,
+				OriginChain:    "truerepublic-1",
+				TradingEnabled: true,
 			},
 		},
 	}

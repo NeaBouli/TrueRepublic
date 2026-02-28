@@ -27,6 +27,8 @@ func GetTxCmd() *cobra.Command {
 		CmdSwap(),
 		CmdAddLiquidity(),
 		CmdRemoveLiquidity(),
+		CmdRegisterAsset(),
+		CmdUpdateAssetStatus(),
 	)
 	return txCmd
 }
@@ -43,6 +45,8 @@ func GetQueryCmd(cdc *codec.LegacyAmino) *cobra.Command {
 	queryCmd.AddCommand(
 		CmdQueryPool(),
 		CmdQueryPools(),
+		CmdQueryRegisteredAssets(),
+		CmdQueryAsset(),
 	)
 	return queryCmd
 }
@@ -204,6 +208,117 @@ func CmdQueryPools() *cobra.Command {
 				return err
 			}
 			return clientCtx.PrintObjectLegacy(json.RawMessage(resp.Result))
+		},
+	}
+	flags.AddQueryFlagsToCmd(cmd)
+	return cmd
+}
+
+// --- Asset registry tx commands ---
+
+func CmdRegisterAsset() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "register-asset [ibc-denom] [symbol] [name] [decimals] [origin-chain] [ibc-channel]",
+		Short: "Register a new IBC asset for DEX trading",
+		Args:  cobra.ExactArgs(6),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			clientCtx, err := client.GetClientTxContext(cmd)
+			if err != nil {
+				return err
+			}
+			decimals, err := strconv.ParseUint(args[3], 10, 32)
+			if err != nil {
+				return fmt.Errorf("invalid decimals: %w", err)
+			}
+			msg := MsgRegisterAsset{
+				Sender:      clientCtx.GetFromAddress(),
+				IBCDenom:    args[0],
+				Symbol:      args[1],
+				Name:        args[2],
+				Decimals:    uint32(decimals),
+				OriginChain: args[4],
+				IBCChannel:  args[5],
+			}
+			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), &msg)
+		},
+	}
+	flags.AddTxFlagsToCmd(cmd)
+	return cmd
+}
+
+func CmdUpdateAssetStatus() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "update-asset-status [ibc-denom] [enabled]",
+		Short: "Enable or disable trading for a registered asset",
+		Args:  cobra.ExactArgs(2),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			clientCtx, err := client.GetClientTxContext(cmd)
+			if err != nil {
+				return err
+			}
+			enabled, err := strconv.ParseBool(args[1])
+			if err != nil {
+				return fmt.Errorf("invalid enabled value (use true/false): %w", err)
+			}
+			msg := MsgUpdateAssetStatus{
+				Sender:   clientCtx.GetFromAddress(),
+				IBCDenom: args[0],
+				Enabled:  enabled,
+			}
+			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), &msg)
+		},
+	}
+	flags.AddTxFlagsToCmd(cmd)
+	return cmd
+}
+
+// --- Asset registry query commands ---
+
+func CmdQueryRegisteredAssets() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "registered-assets",
+		Short: "Query all registered trading assets",
+		Args:  cobra.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			clientCtx, err := client.GetClientQueryContext(cmd)
+			if err != nil {
+				return err
+			}
+			queryClient := NewQueryClient(clientCtx)
+			resp, err := queryClient.RegisteredAssets(cmd.Context(), &QueryRegisteredAssetsRequest{})
+			if err != nil {
+				return err
+			}
+			return clientCtx.PrintObjectLegacy(json.RawMessage(resp.Result))
+		},
+	}
+	flags.AddQueryFlagsToCmd(cmd)
+	return cmd
+}
+
+func CmdQueryAsset() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "asset [denom-or-symbol]",
+		Short: "Query a registered asset by IBC denom or symbol",
+		Args:  cobra.ExactArgs(1),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			clientCtx, err := client.GetClientQueryContext(cmd)
+			if err != nil {
+				return err
+			}
+			queryClient := NewQueryClient(clientCtx)
+
+			// Try by denom first, then by symbol.
+			resp, err := queryClient.AssetByDenom(cmd.Context(), &QueryAssetByDenomRequest{IBCDenom: args[0]})
+			if err == nil {
+				return clientCtx.PrintObjectLegacy(json.RawMessage(resp.Result))
+			}
+
+			respSym, err := queryClient.AssetBySymbol(cmd.Context(), &QueryAssetBySymbolRequest{Symbol: args[0]})
+			if err != nil {
+				return fmt.Errorf("asset not found by denom or symbol: %s", args[0])
+			}
+			return clientCtx.PrintObjectLegacy(json.RawMessage(respSym.Result))
 		},
 	}
 	flags.AddQueryFlagsToCmd(cmd)

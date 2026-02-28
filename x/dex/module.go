@@ -35,6 +35,8 @@ func (AppModuleBasic) RegisterInterfaces(registry codectypes.InterfaceRegistry) 
 		&MsgSwap{},
 		&MsgAddLiquidity{},
 		&MsgRemoveLiquidity{},
+		&MsgRegisterAsset{},
+		&MsgUpdateAssetStatus{},
 	)
 }
 
@@ -85,9 +87,22 @@ func (am AppModule) InitGenesis(ctx sdk.Context, cdc codec.JSONCodec, data json.
 	for _, pool := range genesisState.Pools {
 		am.keeper.CreatePool(ctx, pool.AssetDenom, pool.PnyxReserve, pool.AssetReserve)
 	}
+	for _, asset := range genesisState.RegisteredAssets {
+		am.keeper.RegisterAsset(ctx, asset)
+	}
 	return nil
 }
 
 func (am AppModule) ExportGenesis(ctx sdk.Context, cdc codec.JSONCodec) json.RawMessage {
-	return nil
+	var pools []Pool
+	am.keeper.IteratePools(ctx, func(p Pool) bool {
+		pools = append(pools, p)
+		return false
+	})
+	genesis := GenesisState{
+		Pools:            pools,
+		RegisteredAssets: am.keeper.GetAllAssets(ctx),
+	}
+	bz, _ := json.Marshal(genesis)
+	return bz
 }
