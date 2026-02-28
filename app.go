@@ -33,7 +33,21 @@ import (
 	bank "github.com/cosmos/cosmos-sdk/x/bank"
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
+	paramskeeper "github.com/cosmos/cosmos-sdk/x/params/keeper"
+	paramstypes "github.com/cosmos/cosmos-sdk/x/params/types"
 	abci "github.com/cometbft/cometbft/abci/types"
+
+	// IBC
+	capability "github.com/cosmos/ibc-go/modules/capability"
+	capabilitykeeper "github.com/cosmos/ibc-go/modules/capability/keeper"
+	capabilitytypes "github.com/cosmos/ibc-go/modules/capability/types"
+	ibc "github.com/cosmos/ibc-go/v8/modules/core"
+	ibckeeper "github.com/cosmos/ibc-go/v8/modules/core/keeper"
+	ibcexported "github.com/cosmos/ibc-go/v8/modules/core/exported"
+	porttypes "github.com/cosmos/ibc-go/v8/modules/core/05-port/types"
+	transfer "github.com/cosmos/ibc-go/v8/modules/apps/transfer"
+	transferkeeper "github.com/cosmos/ibc-go/v8/modules/apps/transfer/keeper"
+	transfertypes "github.com/cosmos/ibc-go/v8/modules/apps/transfer/types"
 
 	"truerepublic/x/dex"
 	"truerepublic/x/truedemocracy"
@@ -45,11 +59,15 @@ var maccPerms = map[string][]string{
 	authtypes.FeeCollectorName: nil,
 	wasmtypes.ModuleName:       {authtypes.Burner},
 	truedemocracy.ModuleName:   nil, // treasury bridge module account
+	transfertypes.ModuleName:   {authtypes.Minter, authtypes.Burner},
 }
 
 var ModuleBasics = module.NewBasicManager(
 	auth.AppModuleBasic{},
 	bank.AppModuleBasic{},
+	capability.AppModuleBasic{},
+	ibc.AppModuleBasic{},
+	transfer.AppModuleBasic{},
 	wasm.AppModuleBasic{},
 	truedemocracy.AppModuleBasic{},
 	dex.AppModuleBasic{},
@@ -61,8 +79,14 @@ type TrueRepublicApp struct {
 	cdc           *codec.LegacyAmino
 	appCodec      codec.Codec
 	keys          map[string]*storetypes.KVStoreKey
+	tkeys         map[string]*storetypes.TransientStoreKey
+	memKeys       map[string]*storetypes.MemoryStoreKey
+	paramsKeeper  paramskeeper.Keeper
 	accountKeeper authkeeper.AccountKeeper
 	bankKeeper    bankkeeper.BaseKeeper
+	capKeeper     *capabilitykeeper.Keeper
+	ibcKeeper     *ibckeeper.Keeper
+	transferKeeper transferkeeper.Keeper
 	wasmKeeper    wasmkeeper.Keeper
 	tdKeeper      truedemocracy.Keeper
 	dexKeeper     dex.Keeper
@@ -84,19 +108,29 @@ func NewTrueRepublicApp(logger log.Logger, db dbm.DB, homeDir string) *TrueRepub
 	appCodec := codec.NewProtoCodec(interfaceRegistry)
 
 	txCfg := authtx.NewTxConfig(appCodec, []signingtypes.SignMode{signingtypes.SignMode_SIGN_MODE_DIRECT})
+
+	// Store keys: KV, transient, and memory stores.
 	keys := storetypes.NewKVStoreKeys(
-		authtypes.StoreKey,      // "acc"
-		banktypes.StoreKey,      // "bank"
-		wasmtypes.StoreKey,      // "wasm"
+		authtypes.StoreKey,       // "acc"
+		banktypes.StoreKey,       // "bank"
+		paramstypes.StoreKey,     // "params"
+		capabilitytypes.StoreKey, // "capability"
+		ibcexported.StoreKey,     // "ibc"
+		transfertypes.StoreKey,   // "transfer"
+		wasmtypes.StoreKey,       // "wasm"
 		truedemocracy.ModuleName,
 		dex.ModuleName,
 	)
+	tkeys := storetypes.NewTransientStoreKeys(paramstypes.TStoreKey)
+	memKeys := storetypes.NewMemoryStoreKeys(capabilitytypes.MemStoreKey)
 
 	app := &TrueRepublicApp{
 		BaseApp:  baseapp.NewBaseApp("TrueRepublic", logger, db, txCfg.TxDecoder()),
 		cdc:      cdc,
 		appCodec: appCodec,
 		keys:     keys,
+		tkeys:    tkeys,
+		memKeys:  memKeys,
 	}
 
 	// Set interface registry on the message service router so it can resolve
@@ -106,7 +140,14 @@ func NewTrueRepublicApp(logger log.Logger, db dbm.DB, homeDir string) *TrueRepub
 	// Authority address for governance operations (standard pattern).
 	authority := authtypes.NewModuleAddress("gov").String()
 
-	// Account keeper — manages on-chain accounts (addresses, sequences, pub keys).
+	// --- Params keeper (legacy — required by IBC for parameter subspaces) ---
+	app.paramsKeeper = paramskeeper.NewKeeper(
+		appCodec, cdc, keys[paramstypes.StoreKey], tkeys[paramstypes.TStoreKey],
+	)
+	app.paramsKeeper.Subspace(ibcexported.ModuleName)
+	app.paramsKeeper.Subspace(transfertypes.ModuleName)
+
+	// --- Account keeper ---
 	app.accountKeeper = authkeeper.NewAccountKeeper(
 		appCodec,
 		runtime.NewKVStoreService(keys[authtypes.StoreKey]),
@@ -117,8 +158,7 @@ func NewTrueRepublicApp(logger log.Logger, db dbm.DB, homeDir string) *TrueRepub
 		authority,
 	)
 
-	// Bank keeper — manages coin balances (PNYX token transfers, minting).
-	// Domain.Treasury stays as internal accounting; x/bank handles user/contract balances.
+	// --- Bank keeper ---
 	blockedAddrs := make(map[string]bool)
 	for acc := range maccPerms {
 		blockedAddrs[authtypes.NewModuleAddress(acc).String()] = true
@@ -132,15 +172,55 @@ func NewTrueRepublicApp(logger log.Logger, db dbm.DB, homeDir string) *TrueRepub
 		logger,
 	)
 
-	// Governance module keepers (created before wasm so custom bindings can reference them).
+	// --- Capability keeper (IBC port/channel capability management) ---
+	app.capKeeper = capabilitykeeper.NewKeeper(
+		appCodec, keys[capabilitytypes.StoreKey], memKeys[capabilitytypes.MemStoreKey],
+	)
+	scopedIBCKeeper := app.capKeeper.ScopeToModule(ibcexported.ModuleName)
+	scopedTransferKeeper := app.capKeeper.ScopeToModule(transfertypes.ModuleName)
+	scopedWasmKeeper := app.capKeeper.ScopeToModule(wasmtypes.ModuleName)
+	app.capKeeper.Seal()
+
+	// --- IBC keeper (core IBC: clients, connections, channels) ---
+	ibcSubspace, _ := app.paramsKeeper.GetSubspace(ibcexported.ModuleName)
+	app.ibcKeeper = ibckeeper.NewKeeper(
+		appCodec,
+		keys[ibcexported.StoreKey],
+		ibcSubspace,
+		IBCStakingKeeper{},
+		IBCUpgradeKeeper{},
+		scopedIBCKeeper,
+		authority,
+	)
+
+	// --- Transfer keeper (ICS-20 token transfers) ---
+	transferSubspace, _ := app.paramsKeeper.GetSubspace(transfertypes.ModuleName)
+	app.transferKeeper = transferkeeper.NewKeeper(
+		appCodec,
+		keys[transfertypes.StoreKey],
+		transferSubspace,
+		app.ibcKeeper.ChannelKeeper,
+		app.ibcKeeper.ChannelKeeper,
+		app.ibcKeeper.PortKeeper,
+		app.accountKeeper,
+		app.bankKeeper,
+		scopedTransferKeeper,
+		authority,
+	)
+
+	// --- IBC Router (routes packets to IBC modules) ---
+	ibcRouter := porttypes.NewRouter()
+	transferIBCModule := transfer.NewIBCModule(app.transferKeeper)
+	ibcRouter.AddRoute(transfertypes.ModuleName, transferIBCModule)
+	app.ibcKeeper.SetRouter(ibcRouter)
+
+	// --- Governance module keepers ---
 	tdKeeper := truedemocracy.NewKeeper(cdc, keys[truedemocracy.ModuleName], truedemocracy.BuildTree(), app.bankKeeper)
 	dexKeeper := dex.NewKeeper(cdc, keys[dex.ModuleName])
 	app.tdKeeper = tdKeeper
 	app.dexKeeper = dexKeeper
 
-	// CosmWasm keeper — executes WASM smart contracts.
-	// Staking, distribution, and IBC keepers are stubbed (integrated in future milestones).
-	// Custom query/message bindings let contracts read domain state and submit governance actions.
+	// --- CosmWasm keeper (now using real IBC keepers instead of stubs) ---
 	wasmConfig := wasmtypes.DefaultWasmConfig()
 	app.wasmKeeper = wasmkeeper.NewKeeper(
 		appCodec,
@@ -149,11 +229,11 @@ func NewTrueRepublicApp(logger log.Logger, db dbm.DB, homeDir string) *TrueRepub
 		app.bankKeeper,
 		StubStakingKeeper{},
 		StubDistributionKeeper{},
-		StubICS4Wrapper{},
-		StubChannelKeeper{},
-		StubPortKeeper{},
-		StubCapabilityKeeper{},
-		StubICS20TransferPortSource{},
+		app.ibcKeeper.ChannelKeeper,
+		app.ibcKeeper.ChannelKeeper,
+		app.ibcKeeper.PortKeeper,
+		scopedWasmKeeper,
+		app.transferKeeper,
 		app.MsgServiceRouter(),
 		app.GRPCQueryRouter(),
 		homeDir,
@@ -171,21 +251,56 @@ func NewTrueRepublicApp(logger log.Logger, db dbm.DB, homeDir string) *TrueRepub
 	app.tdModule = truedemocracy.NewAppModule(cdc, tdKeeper)
 	app.dexModule = dex.NewAppModule(cdc, dexKeeper)
 
-	// Auth, bank, and wasm AppModules for genesis and gRPC service registration.
+	// --- Module manager ---
 	authModule := auth.NewAppModule(appCodec, app.accountKeeper, nil, nil)
 	bankModule := bank.NewAppModule(appCodec, app.bankKeeper, app.accountKeeper, nil)
+	capModule := capability.NewAppModule(appCodec, *app.capKeeper, false)
+	ibcModule := ibc.NewAppModule(app.ibcKeeper)
+	transferModule := transfer.NewAppModule(app.transferKeeper)
 	wasmModule := wasm.NewAppModule(appCodec, &app.wasmKeeper, StubValidatorSetSource{}, app.accountKeeper, app.bankKeeper, app.MsgServiceRouter(), nil)
 
 	app.mm = module.NewManager(
 		authModule,
 		bankModule,
+		capModule,
+		ibcModule,
+		transferModule,
 		wasmModule,
 		app.tdModule,
 		app.dexModule,
 	)
+
+	// Genesis order: capability first (port binding), then auth/bank, IBC, transfer, wasm, custom modules.
 	app.mm.SetOrderInitGenesis(
+		capabilitytypes.ModuleName,
 		authtypes.ModuleName,
 		banktypes.ModuleName,
+		ibcexported.ModuleName,
+		transfertypes.ModuleName,
+		wasmtypes.ModuleName,
+		truedemocracy.ModuleName,
+		dex.ModuleName,
+	)
+
+	// BeginBlock order: IBC client updates run first.
+	app.mm.SetOrderBeginBlockers(
+		capabilitytypes.ModuleName,
+		authtypes.ModuleName,
+		banktypes.ModuleName,
+		ibcexported.ModuleName,
+		transfertypes.ModuleName,
+		wasmtypes.ModuleName,
+		truedemocracy.ModuleName,
+		dex.ModuleName,
+	)
+
+	// EndBlock order: truedemocracy last (returns validator updates).
+	app.mm.SetOrderEndBlockers(
+		capabilitytypes.ModuleName,
+		authtypes.ModuleName,
+		banktypes.ModuleName,
+		ibcexported.ModuleName,
+		transfertypes.ModuleName,
 		wasmtypes.ModuleName,
 		truedemocracy.ModuleName,
 		dex.ModuleName,
@@ -196,9 +311,12 @@ func NewTrueRepublicApp(logger log.Logger, db dbm.DB, homeDir string) *TrueRepub
 	app.mm.RegisterServices(configurator)
 
 	app.SetInitChainer(app.InitChainer)
+	app.SetBeginBlocker(app.BeginBlocker)
 	app.SetEndBlocker(app.EndBlocker)
 
 	app.MountKVStores(keys)
+	app.MountTransientStores(tkeys)
+	app.MountMemoryStores(memKeys)
 
 	if err := app.LoadLatestVersion(); err != nil {
 		panic(err)
@@ -244,42 +362,27 @@ func (app *TrueRepublicApp) InitChainer(ctx sdk.Context, req *abci.RequestInitCh
 		return nil, err
 	}
 
-	// Initialize auth and bank with default params so account/balance
-	// infrastructure is ready before governance module genesis.
-	if err := app.accountKeeper.Params.Set(ctx, authtypes.DefaultParams()); err != nil {
-		return nil, err
-	}
-	if err := app.bankKeeper.SetParams(ctx, banktypes.DefaultParams()); err != nil {
-		return nil, err
-	}
-
-	// Initialize wasm params.
-	if err := app.wasmKeeper.SetParams(ctx, wasmtypes.DefaultParams()); err != nil {
-		return nil, err
-	}
-
-	var validatorUpdates []abci.ValidatorUpdate
-
-	if data, ok := genesisState[truedemocracy.ModuleName]; ok {
-		updates := app.tdModule.InitGenesis(ctx, app.appCodec, data)
-		if len(updates) > 0 {
-			validatorUpdates = updates
+	// Fill in default genesis for modules not present in the genesis state.
+	// This ensures IBC, capability, and transfer modules are properly
+	// initialized even with minimal genesis (e.g., tests).
+	defaults := ModuleBasics.DefaultGenesis(app.appCodec)
+	for name, data := range defaults {
+		if _, ok := genesisState[name]; !ok {
+			genesisState[name] = data
 		}
 	}
-	if data, ok := genesisState[dex.ModuleName]; ok {
-		app.dexModule.InitGenesis(ctx, app.appCodec, data)
-	}
 
-	return &abci.ResponseInitChain{Validators: validatorUpdates}, nil
+	return app.mm.InitGenesis(ctx, app.appCodec, genesisState)
+}
+
+// BeginBlocker runs begin-block logic (IBC client updates).
+func (app *TrueRepublicApp) BeginBlocker(ctx sdk.Context) (sdk.BeginBlock, error) {
+	return app.mm.BeginBlock(ctx)
 }
 
 // EndBlocker runs end-block logic (staking rewards, PoD enforcement, governance).
 func (app *TrueRepublicApp) EndBlocker(ctx sdk.Context) (sdk.EndBlock, error) {
-	updates, err := app.tdModule.EndBlock(ctx)
-	if err != nil {
-		return sdk.EndBlock{}, err
-	}
-	return sdk.EndBlock{ValidatorUpdates: updates}, nil
+	return app.mm.EndBlock(ctx)
 }
 
 // makeAminoCodec creates and configures the amino codec for CLI operations.

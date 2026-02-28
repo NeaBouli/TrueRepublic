@@ -2,8 +2,7 @@ package main
 
 // Stub keeper implementations for wasmd integration.
 // These stubs provide no-op/error responses for keepers not yet wired
-// (staking, distribution, IBC). Real implementations will be added when
-// those features are integrated (v0.3.0 Weeks 7-9 for IBC).
+// (staking, distribution). IBC keepers are now real (wired in app.go).
 
 import (
 	"context"
@@ -13,10 +12,6 @@ import (
 	distrtypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	abci "github.com/cometbft/cometbft/abci/types"
-	capabilitytypes "github.com/cosmos/ibc-go/modules/capability/types"
-	clienttypes "github.com/cosmos/ibc-go/v8/modules/core/02-client/types" //nolint:staticcheck
-	channeltypes "github.com/cosmos/ibc-go/v8/modules/core/04-channel/types"
-	ibcexported "github.com/cosmos/ibc-go/v8/modules/core/exported"
 )
 
 var errNotAvailable = errors.New("feature not available: requires module integration")
@@ -67,68 +62,6 @@ func (StubDistributionKeeper) DelegationTotalRewards(_ context.Context, _ *distr
 
 func (StubDistributionKeeper) DelegatorValidators(_ context.Context, _ *distrtypes.QueryDelegatorValidatorsRequest) (*distrtypes.QueryDelegatorValidatorsResponse, error) {
 	return &distrtypes.QueryDelegatorValidatorsResponse{}, nil
-}
-
-// --- IBC Stubs (no IBC until v0.3.0 Weeks 7-9) ---
-
-type StubChannelKeeper struct{}
-
-func (StubChannelKeeper) GetChannel(_ sdk.Context, _, _ string) (channeltypes.Channel, bool) {
-	return channeltypes.Channel{}, false
-}
-
-func (StubChannelKeeper) GetNextSequenceSend(_ sdk.Context, _, _ string) (uint64, bool) {
-	return 0, false
-}
-
-func (StubChannelKeeper) ChanCloseInit(_ sdk.Context, _, _ string, _ *capabilitytypes.Capability) error {
-	return errNotAvailable
-}
-
-func (StubChannelKeeper) GetAllChannels(_ sdk.Context) []channeltypes.IdentifiedChannel {
-	return nil
-}
-
-func (StubChannelKeeper) SetChannel(_ sdk.Context, _, _ string, _ channeltypes.Channel) {}
-
-func (StubChannelKeeper) GetAllChannelsWithPortPrefix(_ sdk.Context, _ string) []channeltypes.IdentifiedChannel {
-	return nil
-}
-
-type StubICS4Wrapper struct{}
-
-func (StubICS4Wrapper) SendPacket(_ sdk.Context, _ *capabilitytypes.Capability, _, _ string, _ clienttypes.Height, _ uint64, _ []byte) (uint64, error) {
-	return 0, errNotAvailable
-}
-
-func (StubICS4Wrapper) WriteAcknowledgement(_ sdk.Context, _ *capabilitytypes.Capability, _ ibcexported.PacketI, _ ibcexported.Acknowledgement) error {
-	return errNotAvailable
-}
-
-type StubPortKeeper struct{}
-
-func (StubPortKeeper) BindPort(_ sdk.Context, _ string) *capabilitytypes.Capability {
-	return &capabilitytypes.Capability{Index: 1}
-}
-
-type StubCapabilityKeeper struct{}
-
-func (StubCapabilityKeeper) GetCapability(_ sdk.Context, _ string) (*capabilitytypes.Capability, bool) {
-	return nil, false
-}
-
-func (StubCapabilityKeeper) ClaimCapability(_ sdk.Context, _ *capabilitytypes.Capability, _ string) error {
-	return nil
-}
-
-func (StubCapabilityKeeper) AuthenticateCapability(_ sdk.Context, _ *capabilitytypes.Capability, _ string) bool {
-	return false
-}
-
-type StubICS20TransferPortSource struct{}
-
-func (StubICS20TransferPortSource) GetPort(_ sdk.Context) string {
-	return "transfer"
 }
 
 // --- Validator Set Source Stub (used by wasm module genesis) ---
