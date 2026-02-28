@@ -182,7 +182,7 @@ TrueRepublic/
 # Blockchain
 go mod tidy
 go build ./...
-go test ./... -race -cover -count=1 -timeout=300s    # 446+ tests
+go test ./... -race -cover -count=1 -timeout=300s    # 452 tests
 
 # Smart contracts
 cd contracts && cargo build
@@ -215,7 +215,7 @@ cd mobile-wallet && npm install
 
 **Version: v0.3.0-dev (Week 7/12)**
 
-- ✅ 450+ unit tests across 4 packages (~8,500 lines of test code)
+- ✅ 452 unit tests across 4 packages (~8,500 lines of test code)
 - ✅ Core blockchain compiles and runs
 - ✅ Whitepaper tokenomics fully implemented (equations 1-5)
 - ✅ Complete governance system (domains, proposals, voting, lifecycle)
@@ -233,6 +233,12 @@ cd mobile-wallet && npm install
 - ✅ **v0.1.x (Feb 2026):** Security fixes, documentation, elections
 - ✅ **v0.2.x (Feb 2026):** Governance core — Systemic Consensing, Tokenomics, Elections
 - 🔄 **v0.3.0 (Q1 2026):** ZKP Anonymity, CosmWasm, Bank Bridge, IBC (~58% complete)
+  - ✅ Weeks 1-4: ZKP Anonymity Layer (Groth16, Merkle trees, nullifiers)
+  - ✅ Week 5: CosmWasm Integration (wasmd v0.53.0, custom bindings)
+  - ✅ Week 6: Domain-Bank Bridge (dual accounting, deposit/withdraw)
+  - ✅ Week 7: IBC Integration (ICS-20 transfer, relayer support)
+  - 📋 Weeks 8-9: Multi-Asset DEX (BTC/ETH/LUSD via IBC)
+  - 📋 Weeks 10-12: UI & Developer Tooling
 - 📋 **v0.4.0 (Q2 2026):** Optional Indexer Stack — SQL analytics, Read-Only API, Explorer
 - 📋 **v0.5.0 (Q3 2026):** DEX Expansion — BTC/ETH/LUSD via IBC
 - 🎯 **v1.0.0 (Q4 2026):** Production Release — External audit, mainnet launch

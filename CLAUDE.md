@@ -2,14 +2,14 @@
 
 ## Current Status
 
-**Version:** v0.3.0-dev (Week 6/12 complete) -- 28.02.2026
-**Phase:** v0.3.0 development (~50% complete). ZKP + CosmWasm + Bank Bridge done. Zero P0 issues.
+**Version:** v0.3.0-dev (Week 7/12 complete) -- 28.02.2026
+**Phase:** v0.3.0 development (~58% complete). ZKP + CosmWasm + Bank Bridge + IBC done. Zero P0 issues.
 
 ### Repository State
 
 | Repo | Branch | HEAD | Path |
 |------|--------|------|------|
-| **Main** | `main` | `b930441` (feat(v0.3.0): implement Domain-Bank bridge with deposit/withdraw) | `/Users/gio/TrueRepublic/` |
+| **Main** | `main` | `79497d0` (docs: add v0.3.0 Week 1-7 session summary report) | `/Users/gio/TrueRepublic/` |
 | **Wiki** | `master` | `925d98b` (docs: update wiki for v0.3.0 Week 6 completion) | `/Users/gio/TrueRepublic/wiki-github/` |
 
 - Working tree: **clean**, up-to-date with `origin/main`
@@ -44,11 +44,12 @@
 
 ### Key Metrics
 
-- 437 unit tests across 3 modules (~8,100 lines of test code)
+- 452 unit tests across 4 packages (~8,500 lines of test code)
 - 27 transaction types (23 governance + 4 DEX)
 - 9 query endpoints (7 governance + 2 DEX)
 - 5 tokenomics equations fully implemented + domain interest in EndBlock
 - CosmWasm: 7 custom queries, 5 custom messages for smart contracts
+- IBC: ICS-20 Transfer module (ibc-go v8.4.0), cross-chain PNYX transfers
 - ~14,000 lines of source code (Go + JS + Rust)
 - 30+ wiki pages, 39 docs files
 
@@ -67,6 +68,9 @@
    - **MsgRateProposal**: on-chain anonymous rating with ed25519 domain key signature verification; `RateProposalWithSignature` keeper, msg_server handler, gRPC handler, CLI command
    - **MsgCastElectionVote**: on-chain person election voting (approve/abstain); msg_server handler, gRPC handler, CLI command
    - **Domain Interest EndBlock** (eq.4): `DistributeDomainInterest()` runs every RewardInterval, credits active domain treasuries with interest capped by payouts, decays with release; 5 tests
+10. **v0.3.0 Week 7 -- IBC Integration:** 2 milestones delivering cross-chain PNYX transfers:
+    - **Milestone 7.1 -- IBC Transfer Module** (`19f774a`): ParamsKeeper, CapabilityKeeper, IBCKeeper, TransferKeeper wired in app.go; IBCStakingKeeper stub (3-week unbonding) + IBCUpgradeKeeper stub (7 no-op methods) in `ibc_stubs.go`; IBC Router with transfer route; BeginBlocker for IBC client updates; refactored InitChainer to use module manager with default genesis filling; wasm keeper updated with real IBC keepers (5 stubs removed from `wasm_stubs.go`); 9 tests
+    - **Milestone 7.2 -- Relayer Configuration** (`1f3935e`): `docs/IBC_RELAYER_SETUP.md` (~300 line Hermes guide); genesis default filling for IBC modules; transfer port binding at InitGenesis; 6 integration tests (denom trace, escrow, genesis, params, keys, port); README updated with IBC features
 
 ---
 
@@ -79,6 +83,7 @@
 | Consensus | CometBFT | v0.38.21 | BFT consensus with fast finality; Cosmos ecosystem standard |
 | Application Framework | Cosmos SDK | v0.50.13 | Module-based architecture, IBC support, mature tooling |
 | Language | Go | 1.24 (CI: 1.24.13) | Performance, concurrency, Cosmos SDK native language |
+| IBC | ibc-go | v8.4.0 | Cross-chain transfers via ICS-20 |
 | Smart Contracts | CosmWasm (Rust) | cosmwasm-std 3 | Deterministic WASM execution, memory-safe |
 | Web Frontend | React 18 + Tailwind 3.4 | 18.2 / 3.4.19 | Component-based UI, utility-first CSS |
 | Mobile | React Native + Expo | 0.74 / 51.0 | Cross-platform mobile from shared JS codebase |
@@ -89,6 +94,7 @@
 Two custom Cosmos SDK modules plus a treasury package:
 
 1. **x/truedemocracy** (~12,200 lines, 38 files) -- Governance: domains, proposals, systemic consensing scoring (-5 to +5), stones voting, suggestion lifecycle (green/yellow/red zones), validator PoD, slashing, anonymous voting (domain key signatures + ZKP membership proofs), admin elections, member exclusion, person election voting modes (simple/absolute majority, abstention), domain interest payout (eq.4), two-step onboarding (add member + domain key registration), Big Purge EndBlock execution, ZKP anonymous voting (MiMC Merkle tree, Groth16 membership proofs, identity commitments, nullifier store, MsgRateWithProof), CosmWasm custom bindings (7 queries + 5 messages), Domain-Bank bridge (deposit/withdraw with dual accounting)
+4. **IBC** (ibc-go v8.4.0) -- ICS-20 Transfer module for cross-chain PNYX transfers; ParamsKeeper, CapabilityKeeper, IBCKeeper, TransferKeeper; IBCStakingKeeper/IBCUpgradeKeeper stubs in `ibc_stubs.go`; IBC Router; BeginBlocker for client updates
 2. **x/dex** (1,637 lines, 9 files) -- AMM DEX: constant-product (x*y=k), PNYX/ATOM pool, 0.3% swap fee, 1% PNYX burn
 3. **treasury/keeper** (371 lines, 2 files) -- Tokenomics equations 1-5: domain cost, rewards, put price, domain interest (25% APY), node staking (10% APY), release decay
 
@@ -125,8 +131,10 @@ The consensus engine was rebranded from Tendermint to CometBFT. All documentatio
 
 ```
 TrueRepublic/
-├── app.go                          Cosmos SDK app entry point (245 lines)
-│                                   Wires truedemocracy + dex modules, ABCI handlers
+├── app.go                          Cosmos SDK app entry point (~350 lines)
+│                                   Wires truedemocracy + dex + IBC + CosmWasm modules, ABCI handlers
+├── ibc_stubs.go                    IBCStakingKeeper (2 methods) + IBCUpgradeKeeper (7 methods)
+├── ibc_test.go                     15 IBC tests (stubs, module config, integration)
 ├── go.mod / go.sum                 Go 1.23.5, toolchain go1.24.1
 ├── Makefile                        build, test, lint, docker-build, docker-up/down
 ├── Dockerfile                      Multi-stage: Go 1.23-alpine -> Alpine 3.19
@@ -228,6 +236,8 @@ TrueRepublic/
 │   ├── GLOSSARY.md                 60+ term definitions
 │   ├── INSTALL.md / DEPLOYMENT.md  Setup and deployment guides
 │   ├── ARCHITECTURE.md             System architecture overview
+│   ├── IBC_RELAYER_SETUP.md        Hermes relayer configuration guide (~300 lines)
+│   ├── SESSION_SUMMARY_2026-02-28.md  Session summary (Weeks 1-7)
 │   ├── VALIDATOR_GUIDE.md          Validator operations
 │   ├── getting-started/            Quick start guide
 │   ├── user-manual/                7 end-user guides (governance, DEX, voting, etc.)
@@ -335,7 +345,7 @@ As of v0.2.0, there are no known critical (P0) issues. All previously identified
 
 1. **Go version:** `go.mod` says `go 1.24` (bumped from 1.23.5 in v0.3.0 Week 2 for gnark ZKP dependency). CI runs `1.24.13`.
 2. **No explicit linting configs:** No `.eslintrc`, `.prettierrc`, or `golangci-lint.yml` exist. Go uses `go vet` + optional staticcheck. Rust enforces `cargo fmt` + `clippy` in CI. JavaScript has no enforced linting.
-3. **Test count in docs/index.html:** The GitHub Pages site shows 197 tests and v0.1.8, which should be updated to 225 tests and v0.2.0.
+3. **Test count in docs/index.html:** Updated to 452 tests, ~58% v0.3.0 complete (as of Week 7).
 4. **No protobuf generation:** The Makefile has a `proto-gen` stub target but no actual protobuf schema files or generation pipeline. Messages are defined as Go structs directly.
 5. **Web wallet polyfills:** The web wallet requires Node.js polyfills for `@cosmjs/crypto` (webpack 5 removed them). This is handled by `react-app-rewired` with `config-overrides.js`.
 
@@ -417,13 +427,14 @@ As of v0.2.0, there are no known critical (P0) issues. All previously identified
 
 ## Next Immediate Step
 
-v0.3.0 Weeks 1-6 are complete (ZKP + CosmWasm + Bank Bridge). 437 tests, all passing.
+v0.3.0 Weeks 1-7 are complete (ZKP + CosmWasm + Bank Bridge + IBC). 452 tests, all passing.
 
 **Completed v0.3.0 work:**
 - Weeks 1-4: ZKP Anonymity Layer (Groth16, Merkle trees, nullifiers, MsgRateWithProof)
 - Week 5: CosmWasm Integration (wasmd v0.53.0, custom bindings)
 - Week 6: Domain-Bank Bridge (dual accounting, deposit/withdraw)
+- Week 7: IBC Integration (ibc-go v8.4.0, ICS-20 transfer, Hermes relayer config)
 
-**Next action:** v0.3.0 Weeks 7-9 (IBC + Multi-Asset DEX) per `docs/V0.3.0_ROADMAP.md`.
+**Next action:** v0.3.0 Weeks 8-9 (Multi-Asset DEX) per `docs/V0.3.0_ROADMAP.md`.
 
 Await core dev instruction on which direction to proceed.
