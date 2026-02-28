@@ -109,6 +109,7 @@ See [INSTALLATION.md](INSTALLATION.md) for detailed instructions.
 | **DEX (AMM)** | Token swaps with 0.3% fee + 1% PNYX burn | [DEX Guide](docs/user-manual/dex-trading-guide.md) |
 | **VoteToEarn** | Earn PNYX rewards for active participation | [Stones Guide](docs/user-manual/stones-voting-guide.md) |
 | **Suggestion Lifecycle** | Green/yellow/red zones with auto-delete | [Governance](docs/user-manual/governance-tutorial.md) |
+| **IBC Transfers** | Cross-chain PNYX via ICS-20 (ibc-go v8) | [IBC Setup](docs/IBC_RELAYER_SETUP.md) |
 
 ---
 
@@ -157,6 +158,7 @@ TrueRepublic/
 | Zero-Knowledge Proofs (Groth16) | ✅ | `x/truedemocracy/zkp.go` |
 | CosmWasm Smart Contracts | ✅ | `x/truedemocracy/wasm_bindings.go` |
 | Domain-Bank Bridge | ✅ | `x/truedemocracy/treasury_bridge.go` |
+| IBC Transfer (ICS-20) | ✅ | `app.go` (ibc-go v8.4.0) |
 | Stones Voting (WP S3.1) | ✅ | `x/truedemocracy/stones.go` |
 | VoteToEarn Rewards | ✅ | `x/truedemocracy/stones.go` |
 | Suggestion Lifecycle (WP S3.1.2) | ✅ | `x/truedemocracy/lifecycle.go` |
@@ -180,7 +182,7 @@ TrueRepublic/
 # Blockchain
 go mod tidy
 go build ./...
-go test ./... -race -cover -count=1 -timeout=300s    # 437 tests
+go test ./... -race -cover -count=1 -timeout=300s    # 446+ tests
 
 # Smart contracts
 cd contracts && cargo build
@@ -201,6 +203,7 @@ cd mobile-wallet && npm install
 | Consensus | CometBFT | v0.38.21 |
 | Application | Cosmos SDK | v0.50.13 |
 | Language | Go | 1.24 |
+| IBC | ibc-go | v8.4.0 |
 | Smart Contracts | CosmWasm (Rust) | cosmwasm-std 3 |
 | Web Frontend | React + Tailwind CSS | 18.2 / 3.4 |
 | Mobile | React Native + Expo | 0.74 / 51.0 |
@@ -210,15 +213,16 @@ cd mobile-wallet && npm install
 
 ## Current Status
 
-**Version: v0.3.0-dev (Week 6/12)**
+**Version: v0.3.0-dev (Week 7/12)**
 
-- ✅ 437 unit tests passing across 3 modules (~8,100 lines of test code)
+- ✅ 450+ unit tests across 4 packages (~8,500 lines of test code)
 - ✅ Core blockchain compiles and runs
 - ✅ Whitepaper tokenomics fully implemented (equations 1-5)
 - ✅ Complete governance system (domains, proposals, voting, lifecycle)
 - ✅ Zero-Knowledge Proofs (Groth16 ZK-SNARKs for anonymous voting)
 - ✅ CosmWasm smart contract integration (wasmd v0.53.0)
 - ✅ Domain-Bank Bridge (dual accounting, deposit/withdraw)
+- ✅ IBC Transfer module (ibc-go v8.4.0, cross-chain PNYX transfers)
 - ✅ DEX with AMM, liquidity pools, swap fees, PNYX burn
 - ✅ Web wallet with 3-column governance UI
 - ✅ Mobile wallet with bottom-tab navigation
@@ -228,7 +232,7 @@ cd mobile-wallet && npm install
 
 - ✅ **v0.1.x (Feb 2026):** Security fixes, documentation, elections
 - ✅ **v0.2.x (Feb 2026):** Governance core — Systemic Consensing, Tokenomics, Elections
-- 🔄 **v0.3.0 (Q1 2026):** ZKP Anonymity, CosmWasm, Bank Bridge (~50% complete)
+- 🔄 **v0.3.0 (Q1 2026):** ZKP Anonymity, CosmWasm, Bank Bridge, IBC (~58% complete)
 - 📋 **v0.4.0 (Q2 2026):** Optional Indexer Stack — SQL analytics, Read-Only API, Explorer
 - 📋 **v0.5.0 (Q3 2026):** DEX Expansion — BTC/ETH/LUSD via IBC
 - 🎯 **v1.0.0 (Q4 2026):** Production Release — External audit, mainnet launch
