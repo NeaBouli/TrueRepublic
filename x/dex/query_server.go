@@ -139,6 +139,7 @@ func (k Keeper) Pool(goCtx context.Context, req *QueryPoolRequest) (*QueryPoolRe
 	if !found {
 		return nil, errorsmod.Wrapf(sdkerrors.ErrKeyNotFound, "pool for %s not found", req.AssetDenom)
 	}
+	pool.AssetSymbol = k.GetSymbolForDenom(ctx, pool.AssetDenom)
 	bz, err := json.Marshal(pool)
 	if err != nil {
 		return nil, err
@@ -150,6 +151,7 @@ func (k Keeper) Pools(goCtx context.Context, req *QueryPoolsRequest) (*QueryPool
 	ctx := sdk.UnwrapSDKContext(goCtx)
 	var pools []Pool
 	k.IteratePools(ctx, func(p Pool) bool {
+		p.AssetSymbol = k.GetSymbolForDenom(ctx, p.AssetDenom)
 		pools = append(pools, p)
 		return false
 	})

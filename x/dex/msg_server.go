@@ -116,6 +116,7 @@ func (m msgServer) CreatePool(goCtx context.Context, msg *MsgCreatePool) (*MsgCr
 	ctx.EventManager().EmitEvent(sdk.NewEvent(
 		"create_pool",
 		sdk.NewAttribute("asset_denom", msg.AssetDenom),
+		sdk.NewAttribute("asset_symbol", m.Keeper.GetSymbolForDenom(ctx, msg.AssetDenom)),
 		sdk.NewAttribute("pnyx_amount", fmt.Sprintf("%d", msg.PnyxAmt)),
 		sdk.NewAttribute("asset_amount", fmt.Sprintf("%d", msg.AssetAmt)),
 	))
@@ -134,8 +135,10 @@ func (m msgServer) Swap(goCtx context.Context, msg *MsgSwap) (*MsgSwapResponse, 
 	ctx.EventManager().EmitEvent(sdk.NewEvent(
 		"swap",
 		sdk.NewAttribute("input_denom", msg.InputDenom),
+		sdk.NewAttribute("input_symbol", m.Keeper.GetSymbolForDenom(ctx, msg.InputDenom)),
 		sdk.NewAttribute("input_amount", fmt.Sprintf("%d", msg.InputAmt)),
 		sdk.NewAttribute("output_denom", msg.OutputDenom),
+		sdk.NewAttribute("output_symbol", m.Keeper.GetSymbolForDenom(ctx, msg.OutputDenom)),
 		sdk.NewAttribute("output_amount", output.String()),
 	))
 

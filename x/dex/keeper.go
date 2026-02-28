@@ -49,6 +49,12 @@ func (k Keeper) CreatePool(ctx sdk.Context, assetDenom string, pnyxAmt, assetAmt
 	if !pnyxAmt.IsPositive() || !assetAmt.IsPositive() {
 		return errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "both reserve amounts must be positive")
 	}
+
+	// Validate asset is registered and trading enabled.
+	if err := k.validateAssetForTrading(ctx, assetDenom); err != nil {
+		return err
+	}
+
 	if _, exists := k.GetPool(ctx, assetDenom); exists {
 		return errorsmod.Wrapf(sdkerrors.ErrInvalidRequest, "pool for %s already exists", assetDenom)
 	}
@@ -82,6 +88,11 @@ func (k Keeper) Swap(ctx sdk.Context, inputDenom string, inputAmt math.Int, outp
 	// Determine which denom is the asset side.
 	assetDenom, err := resolveAssetDenom(inputDenom, outputDenom)
 	if err != nil {
+		return math.Int{}, err
+	}
+
+	// Validate asset trading status.
+	if err := k.validateAssetForTrading(ctx, assetDenom); err != nil {
 		return math.Int{}, err
 	}
 
@@ -234,6 +245,36 @@ func prefixEnd(prefix []byte) []byte {
 		if end[i] != 0 {
 			return end
 		}
+	}
+	return nil
+}
+
+// GetSymbolForDenom returns the human-readable symbol for a denom.
+// Returns "PNYX" for the native denom and falls back to the raw denom
+// if the asset is not registered.
+func (k Keeper) GetSymbolForDenom(ctx sdk.Context, denom string) string {
+	if denom == pnyxDenom {
+		return "PNYX"
+	}
+	asset, found := k.GetAssetByDenom(ctx, denom)
+	if !found {
+		return denom
+	}
+	return asset.Symbol
+}
+
+// validateAssetForTrading checks that a non-PNYX denom is registered and
+// has trading enabled.
+func (k Keeper) validateAssetForTrading(ctx sdk.Context, denom string) error {
+	if denom == pnyxDenom {
+		return nil
+	}
+	asset, found := k.GetAssetByDenom(ctx, denom)
+	if !found {
+		return errorsmod.Wrapf(sdkerrors.ErrInvalidRequest, "asset not registered: %s", denom)
+	}
+	if !asset.TradingEnabled {
+		return errorsmod.Wrapf(sdkerrors.ErrInvalidRequest, "trading disabled for %s", asset.Symbol)
 	}
 	return nil
 }

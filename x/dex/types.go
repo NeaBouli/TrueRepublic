@@ -20,7 +20,8 @@ type Pool struct {
 	AssetReserve math.Int `json:"asset_reserve"`
 	AssetDenom   string   `json:"asset_denom"`
 	TotalShares  math.Int `json:"total_shares"`
-	TotalBurned  math.Int `json:"total_burned"` // cumulative PNYX burned on swaps
+	TotalBurned  math.Int `json:"total_burned"`              // cumulative PNYX burned on swaps
+	AssetSymbol  string   `json:"asset_symbol,omitempty"` // display name from registry (populated in queries)
 }
 
 type GenesisState struct {
@@ -60,6 +61,14 @@ func DefaultGenesisState() GenesisState {
 				Name:           "TrueRepublic Native Token",
 				Decimals:       6,
 				OriginChain:    "truerepublic-1",
+				TradingEnabled: true,
+			},
+			{
+				IBCDenom:       "atom",
+				Symbol:         "ATOM",
+				Name:           "Cosmos Hub",
+				Decimals:       6,
+				OriginChain:    "cosmoshub-4",
 				TradingEnabled: true,
 			},
 		},

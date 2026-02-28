@@ -365,6 +365,9 @@ func TestCreatePoolWithIBCDenom(t *testing.T) {
 func TestSwapWithIBCDenom(t *testing.T) {
 	k, ctx := setupKeeper(t)
 
+	// Register asset before creating pool (required by asset validation).
+	k.RegisterAsset(ctx, RegisteredAsset{IBCDenom: "ibc/BTC", Symbol: "BTC", Decimals: 8, TradingEnabled: true})
+
 	k.CreatePool(ctx, "ibc/BTC", math.NewInt(1_000_000), math.NewInt(1_000_000))
 
 	// Swap PNYX for IBC BTC.

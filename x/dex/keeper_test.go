@@ -34,10 +34,20 @@ func setupKeeper(t *testing.T) (Keeper, sdk.Context) {
 	return keeper, ctx
 }
 
+// setupKeeperWithDefaults creates a keeper and registers common test assets
+// (atom, btc) so that pool creation and swap validation succeed.
+func setupKeeperWithDefaults(t *testing.T) (Keeper, sdk.Context) {
+	t.Helper()
+	k, ctx := setupKeeper(t)
+	k.RegisterAsset(ctx, RegisteredAsset{IBCDenom: "atom", Symbol: "ATOM", Decimals: 6, TradingEnabled: true})
+	k.RegisterAsset(ctx, RegisteredAsset{IBCDenom: "btc", Symbol: "BTC", Decimals: 8, TradingEnabled: true})
+	return k, ctx
+}
+
 // ---------- CreatePool ----------
 
 func TestCreatePool(t *testing.T) {
-	k, ctx := setupKeeper(t)
+	k, ctx := setupKeeperWithDefaults(t)
 
 	t.Run("happy path", func(t *testing.T) {
 		err := k.CreatePool(ctx, "atom", math.NewInt(1_000_000), math.NewInt(500_000))
@@ -82,7 +92,7 @@ func TestCreatePool(t *testing.T) {
 // ---------- Swap ----------
 
 func TestSwap(t *testing.T) {
-	k, ctx := setupKeeper(t)
+	k, ctx := setupKeeperWithDefaults(t)
 	k.CreatePool(ctx, "atom", math.NewInt(1_000_000), math.NewInt(1_000_000))
 
 	t.Run("PNYX to ATOM", func(t *testing.T) {
@@ -139,7 +149,7 @@ func TestSwap(t *testing.T) {
 }
 
 func TestSwapFeeDeduction(t *testing.T) {
-	k, ctx := setupKeeper(t)
+	k, ctx := setupKeeperWithDefaults(t)
 	// Equal reserves for simpler math.
 	k.CreatePool(ctx, "atom", math.NewInt(1_000_000), math.NewInt(1_000_000))
 
@@ -164,7 +174,7 @@ func TestSwapFeeDeduction(t *testing.T) {
 }
 
 func TestSwapFeeAccumulation(t *testing.T) {
-	k, ctx := setupKeeper(t)
+	k, ctx := setupKeeperWithDefaults(t)
 	k.CreatePool(ctx, "atom", math.NewInt(1_000_000), math.NewInt(1_000_000))
 
 	poolBefore, _ := k.GetPool(ctx, "atom")
@@ -188,7 +198,7 @@ func TestSwapFeeAccumulation(t *testing.T) {
 // ---------- AddLiquidity ----------
 
 func TestAddLiquidity(t *testing.T) {
-	k, ctx := setupKeeper(t)
+	k, ctx := setupKeeperWithDefaults(t)
 	k.CreatePool(ctx, "atom", math.NewInt(1_000_000), math.NewInt(1_000_000))
 
 	poolBefore, _ := k.GetPool(ctx, "atom")
@@ -241,7 +251,7 @@ func TestAddLiquidity(t *testing.T) {
 // ---------- RemoveLiquidity ----------
 
 func TestRemoveLiquidity(t *testing.T) {
-	k, ctx := setupKeeper(t)
+	k, ctx := setupKeeperWithDefaults(t)
 	k.CreatePool(ctx, "atom", math.NewInt(1_000_000), math.NewInt(500_000))
 
 	pool, _ := k.GetPool(ctx, "atom")
@@ -296,7 +306,7 @@ func TestRemoveLiquidity(t *testing.T) {
 // ---------- PNYX Burn on Swap (WP §5) ----------
 
 func TestSwapPNYXBurn(t *testing.T) {
-	k, ctx := setupKeeper(t)
+	k, ctx := setupKeeperWithDefaults(t)
 	k.CreatePool(ctx, "atom", math.NewInt(1_000_000), math.NewInt(1_000_000))
 
 	// Swap ATOM → PNYX (buying PNYX triggers 1% burn).
@@ -332,7 +342,7 @@ func TestSwapPNYXBurn(t *testing.T) {
 }
 
 func TestSwapNoBurnOnSell(t *testing.T) {
-	k, ctx := setupKeeper(t)
+	k, ctx := setupKeeperWithDefaults(t)
 	k.CreatePool(ctx, "atom", math.NewInt(1_000_000), math.NewInt(1_000_000))
 
 	// Swap PNYX → ATOM (selling PNYX — no burn).
@@ -348,7 +358,7 @@ func TestSwapNoBurnOnSell(t *testing.T) {
 }
 
 func TestBurnAccumulation(t *testing.T) {
-	k, ctx := setupKeeper(t)
+	k, ctx := setupKeeperWithDefaults(t)
 	k.CreatePool(ctx, "atom", math.NewInt(1_000_000), math.NewInt(1_000_000))
 
 	// Perform multiple swaps buying PNYX.
@@ -372,14 +382,14 @@ func TestBurnAccumulation(t *testing.T) {
 
 func TestBurnReducesUserOutput(t *testing.T) {
 	// Two identical pools, one with burn check.
-	k, ctx := setupKeeper(t)
+	k, ctx := setupKeeperWithDefaults(t)
 	k.CreatePool(ctx, "atom", math.NewInt(1_000_000), math.NewInt(1_000_000))
 
 	// Buy PNYX (has burn).
 	outBuy, _ := k.Swap(ctx, "atom", math.NewInt(10_000), "pnyx")
 
 	// Reset pool.
-	k2, ctx2 := setupKeeper(t)
+	k2, ctx2 := setupKeeperWithDefaults(t)
 	k2.CreatePool(ctx2, "atom", math.NewInt(1_000_000), math.NewInt(1_000_000))
 
 	// Sell PNYX for same amount (no burn).
