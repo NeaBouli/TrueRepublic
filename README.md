@@ -118,12 +118,12 @@ See [INSTALLATION.md](INSTALLATION.md) for detailed instructions.
 ```text
 TrueRepublic/
 ├── app.go                      Cosmos SDK application entry point
-├── go.mod / go.sum             Go module (SDK v0.50.13, CometBFT v0.38.21)
+├── go.mod / go.sum             Go module (SDK v0.50.14, CometBFT v0.38.21)
 ├── Makefile                    Build targets (build, test, lint, docker)
 ├── INSTALLATION.md             Quick install guide
 ├── x/
 │   ├── truedemocracy/          Governance module (23 msg types, 367 tests)
-│   └── dex/                    DEX module (4 msg types, 39 tests)
+│   └── dex/                    DEX module (6 msg types, 54 tests)
 ├── treasury/keeper/            Tokenomics equations 1-5 (31 tests)
 ├── contracts/                  CosmWasm smart contracts (Rust)
 ├── web-wallet/                 React 18 + Tailwind + Keplr + CosmJS
@@ -151,6 +151,7 @@ TrueRepublic/
 | Validator Slashing | ✅ | `x/truedemocracy/slashing.go` |
 | Tokenomics (eq.1-5) | ✅ | `treasury/keeper/rewards.go` |
 | DEX / AMM (x*y=k) | ✅ | `x/dex/keeper.go` |
+| Multi-Asset DEX (BTC/ETH/LUSD) | ✅ | `x/dex/keeper.go` (asset registry + trading validation) |
 | Node Staking Rewards (10% APY) | ✅ | `treasury/keeper/rewards.go` (eq.5) |
 | Domain Interest (25% APY) | ✅ | `treasury/keeper/rewards.go` (eq.4) |
 | Release Decay | ✅ | `treasury/keeper/rewards.go` |
@@ -168,7 +169,7 @@ TrueRepublic/
 | Member Exclusion (2/3 vote) | ✅ | `x/truedemocracy/governance.go` |
 | PoD Transfer Limit (10%, WP S7) | ✅ | `x/truedemocracy/validator.go` |
 | CLI Commands (24 tx + 7 query) | ✅ | `x/truedemocracy/cli.go` |
-| DEX CLI (4 tx + 2 query) | ✅ | `x/dex/cli.go` |
+| DEX CLI (6 tx + 4 query) | ✅ | `x/dex/cli.go` |
 | CosmWasm Contracts | ✅ | `contracts/src/` |
 | Web Wallet (React + Keplr) | ✅ | `web-wallet/` |
 | Mobile Wallet (Expo + RN) | ✅ | `mobile-wallet/` |
@@ -182,7 +183,7 @@ TrueRepublic/
 # Blockchain
 go mod tidy
 go build ./...
-go test ./... -race -cover -count=1 -timeout=300s    # 452 tests
+go test ./... -race -cover -count=1 -timeout=600s    # 481 tests
 
 # Smart contracts
 cd contracts && cargo build
@@ -201,7 +202,7 @@ cd mobile-wallet && npm install
 | Layer | Technology | Version |
 |-------|-----------|---------|
 | Consensus | CometBFT | v0.38.21 |
-| Application | Cosmos SDK | v0.50.13 |
+| Application | Cosmos SDK | v0.50.14 |
 | Language | Go | 1.24 |
 | IBC | ibc-go | v8.4.0 |
 | Smart Contracts | CosmWasm (Rust) | cosmwasm-std 3 |
@@ -213,16 +214,17 @@ cd mobile-wallet && npm install
 
 ## Current Status
 
-**Version: v0.3.0-dev (Week 7/12)**
+**Version: v0.3.0-dev (Week 8/12)**
 
-- ✅ 452 unit tests across 4 packages (~8,500 lines of test code)
+- ✅ 481 unit tests across 4 packages (~9,000 lines of test code)
 - ✅ Core blockchain compiles and runs
 - ✅ Whitepaper tokenomics fully implemented (equations 1-5)
 - ✅ Complete governance system (domains, proposals, voting, lifecycle)
 - ✅ Zero-Knowledge Proofs (Groth16 ZK-SNARKs for anonymous voting)
-- ✅ CosmWasm smart contract integration (wasmd v0.53.0)
+- ✅ CosmWasm smart contract integration (wasmd v0.53.3)
 - ✅ Domain-Bank Bridge (dual accounting, deposit/withdraw)
 - ✅ IBC Transfer module (ibc-go v8.4.0, cross-chain PNYX transfers)
+- ✅ Multi-Asset DEX: asset registry, trading validation, symbol resolution
 - ✅ DEX with AMM, liquidity pools, swap fees, PNYX burn
 - ✅ Web wallet with 3-column governance UI
 - ✅ Mobile wallet with bottom-tab navigation
@@ -232,12 +234,13 @@ cd mobile-wallet && npm install
 
 - ✅ **v0.1.x (Feb 2026):** Security fixes, documentation, elections
 - ✅ **v0.2.x (Feb 2026):** Governance core — Systemic Consensing, Tokenomics, Elections
-- 🔄 **v0.3.0 (Q1 2026):** ZKP Anonymity, CosmWasm, Bank Bridge, IBC (~58% complete)
+- 🔄 **v0.3.0 (Q1 2026):** ZKP Anonymity, CosmWasm, Bank Bridge, IBC, Multi-Asset DEX (~67% complete)
   - ✅ Weeks 1-4: ZKP Anonymity Layer (Groth16, Merkle trees, nullifiers)
-  - ✅ Week 5: CosmWasm Integration (wasmd v0.53.0, custom bindings)
+  - ✅ Week 5: CosmWasm Integration (wasmd v0.53.3, custom bindings)
   - ✅ Week 6: Domain-Bank Bridge (dual accounting, deposit/withdraw)
   - ✅ Week 7: IBC Integration (ICS-20 transfer, relayer support)
-  - 📋 Weeks 8-9: Multi-Asset DEX (BTC/ETH/LUSD via IBC)
+  - ✅ Week 8: Multi-Asset DEX (asset registry, trading validation, symbol resolution)
+  - 📋 Week 9: DEX Expansion (cross-chain swaps, liquidity analytics)
   - 📋 Weeks 10-12: UI & Developer Tooling
 - 📋 **v0.4.0 (Q2 2026):** Optional Indexer Stack — SQL analytics, Read-Only API, Explorer
 - 📋 **v0.5.0 (Q3 2026):** DEX Expansion — BTC/ETH/LUSD via IBC

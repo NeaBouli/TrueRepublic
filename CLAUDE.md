@@ -2,15 +2,15 @@
 
 ## Current Status
 
-**Version:** v0.3.0-dev (Week 7/12 complete) -- 28.02.2026
-**Phase:** v0.3.0 development (~58% complete). ZKP + CosmWasm + Bank Bridge + IBC done. Zero P0 issues.
+**Version:** v0.3.0-dev (Week 8/12 complete) -- 01.03.2026
+**Phase:** v0.3.0 development (~67% complete). ZKP + CosmWasm + Bank Bridge + IBC + Multi-Asset DEX done. Zero P0 issues.
 
 ### Repository State
 
 | Repo | Branch | HEAD | Path |
 |------|--------|------|------|
-| **Main** | `main` | `79497d0` (docs: add v0.3.0 Week 1-7 session summary report) | `/Users/gio/TrueRepublic/` |
-| **Wiki** | `master` | `925d98b` (docs: update wiki for v0.3.0 Week 6 completion) | `/Users/gio/TrueRepublic/wiki-github/` |
+| **Main** | `main` | `be004ff` (feat: Multi-Asset DEX Integration) | `/Users/gio/TrueRepublic/` |
+| **Wiki** | `master` | pending update | `/Users/gio/TrueRepublic/wiki-github/` |
 
 - Working tree: **clean**, up-to-date with `origin/main`
 - `wiki-github/` is untracked in the main repo (it is a separate git clone of the GitHub Wiki repo -- this is expected and correct)
@@ -44,9 +44,9 @@
 
 ### Key Metrics
 
-- 452 unit tests across 4 packages (~8,500 lines of test code)
-- 27 transaction types (23 governance + 4 DEX)
-- 9 query endpoints (7 governance + 2 DEX)
+- 481 unit tests across 4 packages (~9,000 lines of test code)
+- 29 transaction types (23 governance + 6 DEX)
+- 12 query endpoints (7 governance + 5 DEX)
 - 5 tokenomics equations fully implemented + domain interest in EndBlock
 - CosmWasm: 7 custom queries, 5 custom messages for smart contracts
 - IBC: ICS-20 Transfer module (ibc-go v8.4.0), cross-chain PNYX transfers
@@ -71,6 +71,10 @@
 10. **v0.3.0 Week 7 -- IBC Integration:** 2 milestones delivering cross-chain PNYX transfers:
     - **Milestone 7.1 -- IBC Transfer Module** (`19f774a`): ParamsKeeper, CapabilityKeeper, IBCKeeper, TransferKeeper wired in app.go; IBCStakingKeeper stub (3-week unbonding) + IBCUpgradeKeeper stub (7 no-op methods) in `ibc_stubs.go`; IBC Router with transfer route; BeginBlocker for IBC client updates; refactored InitChainer to use module manager with default genesis filling; wasm keeper updated with real IBC keepers (5 stubs removed from `wasm_stubs.go`); 9 tests
     - **Milestone 7.2 -- Relayer Configuration** (`1f3935e`): `docs/IBC_RELAYER_SETUP.md` (~300 line Hermes guide); genesis default filling for IBC modules; transfer port binding at InitGenesis; 6 integration tests (denom trace, escrow, genesis, params, keys, port); README updated with IBC features
+11. **v0.3.0 Week 8 -- Multi-Asset DEX:** 2 milestones + CI fix delivering multi-asset trading:
+    - **Milestone 8.1 -- Asset Registry System** (`63a5405`): RegisteredAsset type, RegisterAsset/DeregisterAsset/GetAssetByDenom/GetAssetBySymbol/GetAllAssets/UpdateAssetTradingStatus keeper methods, ValidateBasic, MsgRegisterAsset + MsgUpdateAssetStatus with gRPC handlers, 5 query endpoints, CLI commands (register-asset, update-asset-status, registered-assets, asset), DefaultGenesisState with PNYX + ATOM; 19 new tests
+    - **Milestone 8.2 -- DEX Integration** (`be004ff`): validateAssetForTrading in CreatePool + Swap, GetSymbolForDenom, Pool.AssetSymbol display field, CLI symbol resolution (resolveSymbolOrDenom), event enrichment (asset_symbol, input_symbol, output_symbol); 10 new tests
+    - **CI Fix** (`402420f`): Cosmos SDK v0.50.14, wasmd v0.53.3, xz v0.5.15; test timeout 600s
 
 ---
 
@@ -81,7 +85,7 @@
 | Layer | Choice | Version | Rationale |
 |-------|--------|---------|-----------|
 | Consensus | CometBFT | v0.38.21 | BFT consensus with fast finality; Cosmos ecosystem standard |
-| Application Framework | Cosmos SDK | v0.50.13 | Module-based architecture, IBC support, mature tooling |
+| Application Framework | Cosmos SDK | v0.50.14 | Module-based architecture, IBC support, mature tooling |
 | Language | Go | 1.24 (CI: 1.24.13) | Performance, concurrency, Cosmos SDK native language |
 | IBC | ibc-go | v8.4.0 | Cross-chain transfers via ICS-20 |
 | Smart Contracts | CosmWasm (Rust) | cosmwasm-std 3 | Deterministic WASM execution, memory-safe |
@@ -95,7 +99,7 @@ Two custom Cosmos SDK modules plus a treasury package:
 
 1. **x/truedemocracy** (~12,200 lines, 38 files) -- Governance: domains, proposals, systemic consensing scoring (-5 to +5), stones voting, suggestion lifecycle (green/yellow/red zones), validator PoD, slashing, anonymous voting (domain key signatures + ZKP membership proofs), admin elections, member exclusion, person election voting modes (simple/absolute majority, abstention), domain interest payout (eq.4), two-step onboarding (add member + domain key registration), Big Purge EndBlock execution, ZKP anonymous voting (MiMC Merkle tree, Groth16 membership proofs, identity commitments, nullifier store, MsgRateWithProof), CosmWasm custom bindings (7 queries + 5 messages), Domain-Bank bridge (deposit/withdraw with dual accounting)
 4. **IBC** (ibc-go v8.4.0) -- ICS-20 Transfer module for cross-chain PNYX transfers; ParamsKeeper, CapabilityKeeper, IBCKeeper, TransferKeeper; IBCStakingKeeper/IBCUpgradeKeeper stubs in `ibc_stubs.go`; IBC Router; BeginBlocker for client updates
-2. **x/dex** (1,637 lines, 9 files) -- AMM DEX: constant-product (x*y=k), PNYX/ATOM pool, 0.3% swap fee, 1% PNYX burn
+2. **x/dex** (~2,200 lines, 12 files) -- Multi-asset AMM DEX: constant-product (x*y=k), asset registry, trading validation, symbol resolution, 0.3% swap fee, 1% PNYX burn
 3. **treasury/keeper** (371 lines, 2 files) -- Tokenomics equations 1-5: domain cost, rewards, put price, domain interest (25% APY), node staking (10% APY), release decay
 
 ### Critical Constants (DO NOT change without core dev approval)
@@ -117,8 +121,9 @@ Verified in v0.1.6: Both frontends are entirely custom-built. The "Telegram-insp
 
 ### DEX Scope
 
-- **Current:** PNYX/ATOM trading pair only
-- **Planned (v0.3):** BTC, ETH, LUSD pools via IBC
+- **Current:** Multi-asset DEX with asset registry. PNYX + ATOM in default genesis. BTC/ETH/LUSD via RegisterAsset.
+- Asset validation: CreatePool + Swap require registered + trading-enabled assets
+- Symbol resolution: CLI resolves symbols (BTC) -> IBC denoms via chain query
 - The wiki `users-System-Overview.md` previously said "PNYX/USDC" -- corrected to "PNYX/ATOM; BTC, ETH, LUSD planned via IBC" in v0.1.4
 
 ### Naming: CometBFT (not Tendermint)
@@ -188,15 +193,20 @@ TrueRepublic/
 │   │                               CosmWasm bindings (query + msg encoder),
 │   │                               treasury bridge (deposit, withdraw, round-trip)
 │
-├── x/dex/                          DEX MODULE (9 files, 1,637 lines)
-│   ├── keeper.go                   AMM pool operations (x*y=k)
-│   ├── msg_server.go               CreatePool, Swap, AddLiquidity, RemoveLiquidity
-│   ├── query_server.go             Pool queries
-│   ├── cli.go                      DEX CLI (4 tx + 2 query)
+├── x/dex/                          DEX MODULE (12 files, ~2,200 lines)
+│   ├── keeper.go                   AMM pool ops (x*y=k), asset validation, symbol resolution
+│   ├── asset_registry.go           RegisterAsset, DeregisterAsset, GetAssetByDenom/Symbol
+│   ├── msg_server.go               6 msg handlers (CreatePool, Swap, AddLiquidity,
+│   │                               RemoveLiquidity, RegisterAsset, UpdateAssetStatus)
+│   ├── query_server.go             5 query handlers (Pool, Pools, RegisteredAssets,
+│   │                               AssetByDenom, AssetBySymbol)
+│   ├── cli.go                      DEX CLI (6 tx + 4 query) with symbol resolution
 │   ├── module.go                   DEX module setup
-│   ├── msgs.go / types.go          Message + type definitions
+│   ├── msgs.go / types.go          Message + type definitions (RegisteredAsset, Pool)
 │   ├── querier.go                  Legacy queries
-│   ├── keeper_test.go              24 tests
+│   ├── keeper_test.go              24 tests (pool, swap, liquidity, fees, burn)
+│   ├── asset_registry_test.go      14 tests (register, deregister, validation, genesis)
+│   ├── multi_asset_test.go         10 tests (trading validation, symbols, multi-pool)
 │
 ├── treasury/keeper/                TOKENOMICS (2 files, 371 lines)
 │   ├── rewards.go                  Equations 1-5: domain cost, rewards, put price,
@@ -427,14 +437,15 @@ As of v0.2.0, there are no known critical (P0) issues. All previously identified
 
 ## Next Immediate Step
 
-v0.3.0 Weeks 1-7 are complete (ZKP + CosmWasm + Bank Bridge + IBC). 452 tests, all passing.
+v0.3.0 Weeks 1-8 are complete (ZKP + CosmWasm + Bank Bridge + IBC + Multi-Asset DEX). 481 tests, all passing.
 
 **Completed v0.3.0 work:**
 - Weeks 1-4: ZKP Anonymity Layer (Groth16, Merkle trees, nullifiers, MsgRateWithProof)
-- Week 5: CosmWasm Integration (wasmd v0.53.0, custom bindings)
+- Week 5: CosmWasm Integration (wasmd v0.53.3, custom bindings)
 - Week 6: Domain-Bank Bridge (dual accounting, deposit/withdraw)
 - Week 7: IBC Integration (ibc-go v8.4.0, ICS-20 transfer, Hermes relayer config)
+- Week 8: Multi-Asset DEX (asset registry, trading validation, symbol resolution, CI fix)
 
-**Next action:** v0.3.0 Weeks 8-9 (Multi-Asset DEX) per `docs/V0.3.0_ROADMAP.md`.
+**Next action:** v0.3.0 Week 9 (DEX Expansion) or Weeks 10-12 (UI + Developer Tooling) per `docs/V0.3.0_ROADMAP.md`.
 
 Await core dev instruction on which direction to proceed.
