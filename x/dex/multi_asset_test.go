@@ -65,7 +65,7 @@ func TestSwapTradingDisabledFails(t *testing.T) {
 	k.UpdateAssetTradingStatus(ctx, "ibc/ETH", false)
 
 	// Swap should fail.
-	_, err := k.Swap(ctx, "pnyx", math.NewInt(1000), "ibc/ETH")
+	_, err := k.Swap(ctx, "pnyx", math.NewInt(1000), "ibc/ETH", math.ZeroInt())
 	if err == nil {
 		t.Fatal("expected error for swap on disabled asset")
 	}
@@ -74,7 +74,7 @@ func TestSwapTradingDisabledFails(t *testing.T) {
 	}
 
 	// Reverse direction should also fail.
-	_, err = k.Swap(ctx, "ibc/ETH", math.NewInt(1000), "pnyx")
+	_, err = k.Swap(ctx, "ibc/ETH", math.NewInt(1000), "pnyx", math.ZeroInt())
 	if err == nil {
 		t.Fatal("expected error for reverse swap on disabled asset")
 	}
@@ -91,7 +91,7 @@ func TestReEnableTradingAllowsSwap(t *testing.T) {
 	k.UpdateAssetTradingStatus(ctx, "ibc/LUSD", true)
 
 	// Swap should work again.
-	out, err := k.Swap(ctx, "pnyx", math.NewInt(1000), "ibc/LUSD")
+	out, err := k.Swap(ctx, "pnyx", math.NewInt(1000), "ibc/LUSD", math.ZeroInt())
 	if err != nil {
 		t.Fatalf("swap should succeed after re-enabling: %v", err)
 	}
@@ -176,7 +176,7 @@ func TestMultiAssetPoolCreation(t *testing.T) {
 
 	// Swap in each pool.
 	for _, p := range pools {
-		out, err := k.Swap(ctx, "pnyx", math.NewInt(p.swapAmt), p.denom)
+		out, err := k.Swap(ctx, "pnyx", math.NewInt(p.swapAmt), p.denom, math.ZeroInt())
 		if err != nil {
 			t.Fatalf("swap PNYX→%s: %v", p.denom, err)
 		}

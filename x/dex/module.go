@@ -37,6 +37,7 @@ func (AppModuleBasic) RegisterInterfaces(registry codectypes.InterfaceRegistry) 
 		&MsgRemoveLiquidity{},
 		&MsgRegisterAsset{},
 		&MsgUpdateAssetStatus{},
+		&MsgSwapExact{},
 	)
 }
 

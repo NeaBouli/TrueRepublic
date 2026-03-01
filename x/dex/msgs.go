@@ -163,3 +163,35 @@ func (m MsgUpdateAssetStatus) ValidateBasic() error {
 	}
 	return nil
 }
+
+// --- MsgSwapExact ---
+
+type MsgSwapExact struct {
+	Sender      sdk.AccAddress `protobuf:"bytes,1,opt,name=sender,proto3,casttype=github.com/cosmos/cosmos-sdk/types.AccAddress" json:"sender"`
+	InputDenom  string         `protobuf:"bytes,2,opt,name=input_denom,json=inputDenom,proto3" json:"input_denom"`
+	InputAmt    int64          `protobuf:"varint,3,opt,name=input_amt,json=inputAmt,proto3" json:"input_amt"`
+	OutputDenom string         `protobuf:"bytes,4,opt,name=output_denom,json=outputDenom,proto3" json:"output_denom"`
+	MinOutput   int64          `protobuf:"varint,5,opt,name=min_output,json=minOutput,proto3" json:"min_output"`
+}
+
+func (m *MsgSwapExact) ProtoMessage()               {}
+func (m *MsgSwapExact) Reset()                      { *m = MsgSwapExact{} }
+func (m *MsgSwapExact) String() string              { b, _ := json.Marshal(m); return string(b) }
+func (m MsgSwapExact) Route() string                { return ModuleName }
+func (m MsgSwapExact) Type() string                 { return "swap_exact" }
+func (m MsgSwapExact) GetSigners() []sdk.AccAddress { return []sdk.AccAddress{m.Sender} }
+func (m MsgSwapExact) ValidateBasic() error {
+	if m.InputDenom == "" || m.OutputDenom == "" {
+		return sdkerrors.ErrInvalidRequest.Wrap("input_denom and output_denom are required")
+	}
+	if m.InputDenom == m.OutputDenom {
+		return sdkerrors.ErrInvalidRequest.Wrap("input_denom and output_denom must differ")
+	}
+	if m.InputAmt <= 0 {
+		return sdkerrors.ErrInvalidRequest.Wrap("input_amt must be positive")
+	}
+	if m.MinOutput < 0 {
+		return sdkerrors.ErrInvalidRequest.Wrap("min_output cannot be negative")
+	}
+	return nil
+}

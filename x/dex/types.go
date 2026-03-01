@@ -41,6 +41,7 @@ func RegisterCodec(cdc *codec.LegacyAmino) {
 	cdc.RegisterConcrete(MsgRemoveLiquidity{}, "dex/MsgRemoveLiquidity", nil)
 	cdc.RegisterConcrete(MsgRegisterAsset{}, "dex/MsgRegisterAsset", nil)
 	cdc.RegisterConcrete(MsgUpdateAssetStatus{}, "dex/MsgUpdateAssetStatus", nil)
+	cdc.RegisterConcrete(MsgSwapExact{}, "dex/MsgSwapExact", nil)
 }
 
 func DefaultGenesisState() GenesisState {

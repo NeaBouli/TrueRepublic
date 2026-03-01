@@ -371,7 +371,7 @@ func TestSwapWithIBCDenom(t *testing.T) {
 	k.CreatePool(ctx, "ibc/BTC", math.NewInt(1_000_000), math.NewInt(1_000_000))
 
 	// Swap PNYX for IBC BTC.
-	out, err := k.Swap(ctx, "pnyx", math.NewInt(10_000), "ibc/BTC")
+	out, err := k.Swap(ctx, "pnyx", math.NewInt(10_000), "ibc/BTC", math.ZeroInt())
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
@@ -380,7 +380,7 @@ func TestSwapWithIBCDenom(t *testing.T) {
 	}
 
 	// Swap IBC BTC for PNYX.
-	out, err = k.Swap(ctx, "ibc/BTC", math.NewInt(5_000), "pnyx")
+	out, err = k.Swap(ctx, "ibc/BTC", math.NewInt(5_000), "pnyx", math.ZeroInt())
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}

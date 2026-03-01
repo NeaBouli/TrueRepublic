@@ -52,6 +52,12 @@ func (*MsgUpdateAssetStatusResponse) ProtoMessage()  {}
 func (*MsgUpdateAssetStatusResponse) Reset()         {}
 func (*MsgUpdateAssetStatusResponse) String() string { return "MsgUpdateAssetStatusResponse" }
 
+type MsgSwapExactResponse struct{}
+
+func (*MsgSwapExactResponse) ProtoMessage()  {}
+func (*MsgSwapExactResponse) Reset()         {}
+func (*MsgSwapExactResponse) String() string { return "MsgSwapExactResponse" }
+
 // ---------------------------------------------------------------------------
 // Register all types with gogoproto
 // ---------------------------------------------------------------------------
@@ -66,6 +72,7 @@ func init() {
 	// Asset registry msg types.
 	gogoproto.RegisterType((*MsgRegisterAsset)(nil), "dex.MsgRegisterAsset")
 	gogoproto.RegisterType((*MsgUpdateAssetStatus)(nil), "dex.MsgUpdateAssetStatus")
+	gogoproto.RegisterType((*MsgSwapExact)(nil), "dex.MsgSwapExact")
 
 	// Response types.
 	gogoproto.RegisterType((*MsgCreatePoolResponse)(nil), "dex.MsgCreatePoolResponse")
@@ -74,6 +81,7 @@ func init() {
 	gogoproto.RegisterType((*MsgRemoveLiquidityResponse)(nil), "dex.MsgRemoveLiquidityResponse")
 	gogoproto.RegisterType((*MsgRegisterAssetResponse)(nil), "dex.MsgRegisterAssetResponse")
 	gogoproto.RegisterType((*MsgUpdateAssetStatusResponse)(nil), "dex.MsgUpdateAssetStatusResponse")
+	gogoproto.RegisterType((*MsgSwapExactResponse)(nil), "dex.MsgSwapExactResponse")
 }
 
 // ---------------------------------------------------------------------------
@@ -88,6 +96,7 @@ type MsgServer interface {
 	RemoveLiquidity(context.Context, *MsgRemoveLiquidity) (*MsgRemoveLiquidityResponse, error)
 	RegisterAsset(context.Context, *MsgRegisterAsset) (*MsgRegisterAssetResponse, error)
 	UpdateAssetStatus(context.Context, *MsgUpdateAssetStatus) (*MsgUpdateAssetStatusResponse, error)
+	SwapExact(context.Context, *MsgSwapExact) (*MsgSwapExactResponse, error)
 }
 
 type msgServer struct {
@@ -127,7 +136,7 @@ func (m msgServer) CreatePool(goCtx context.Context, msg *MsgCreatePool) (*MsgCr
 func (m msgServer) Swap(goCtx context.Context, msg *MsgSwap) (*MsgSwapResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	output, err := m.Keeper.Swap(ctx, msg.InputDenom, math.NewInt(msg.InputAmt), msg.OutputDenom)
+	output, err := m.Keeper.Swap(ctx, msg.InputDenom, math.NewInt(msg.InputAmt), msg.OutputDenom, math.ZeroInt())
 	if err != nil {
 		return nil, err
 	}
@@ -210,6 +219,28 @@ func (m msgServer) UpdateAssetStatus(goCtx context.Context, msg *MsgUpdateAssetS
 	}
 
 	return &MsgUpdateAssetStatusResponse{}, nil
+}
+
+func (m msgServer) SwapExact(goCtx context.Context, msg *MsgSwapExact) (*MsgSwapExactResponse, error) {
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	output, err := m.Keeper.SwapExact(ctx, msg.InputDenom, math.NewInt(msg.InputAmt), msg.OutputDenom, math.NewInt(msg.MinOutput))
+	if err != nil {
+		return nil, err
+	}
+
+	ctx.EventManager().EmitEvent(sdk.NewEvent(
+		"swap_exact",
+		sdk.NewAttribute("input_denom", msg.InputDenom),
+		sdk.NewAttribute("input_symbol", m.Keeper.GetSymbolForDenom(ctx, msg.InputDenom)),
+		sdk.NewAttribute("input_amount", fmt.Sprintf("%d", msg.InputAmt)),
+		sdk.NewAttribute("output_denom", msg.OutputDenom),
+		sdk.NewAttribute("output_symbol", m.Keeper.GetSymbolForDenom(ctx, msg.OutputDenom)),
+		sdk.NewAttribute("output_amount", output.String()),
+		sdk.NewAttribute("min_output", fmt.Sprintf("%d", msg.MinOutput)),
+	))
+
+	return &MsgSwapExactResponse{}, nil
 }
 
 // ---------------------------------------------------------------------------
@@ -306,6 +337,21 @@ func _Msg_UpdateAssetStatus_Handler(srv interface{}, ctx context.Context, dec fu
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Msg_SwapExact_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgSwapExact)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServer).SwapExact(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{Server: srv, FullMethod: "/dex.Msg/SwapExact"}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServer).SwapExact(ctx, req.(*MsgSwapExact))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // ---------------------------------------------------------------------------
 // gRPC service registration
 // ---------------------------------------------------------------------------
@@ -326,6 +372,7 @@ var _Msg_serviceDesc = grpc.ServiceDesc{
 		{MethodName: "RemoveLiquidity", Handler: _Msg_RemoveLiquidity_Handler},
 		{MethodName: "RegisterAsset", Handler: _Msg_RegisterAsset_Handler},
 		{MethodName: "UpdateAssetStatus", Handler: _Msg_UpdateAssetStatus_Handler},
+		{MethodName: "SwapExact", Handler: _Msg_SwapExact_Handler},
 	},
 	Streams:  []grpc.StreamDesc{},
 	Metadata: "dex/tx.proto",

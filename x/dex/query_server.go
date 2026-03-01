@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 
+	"cosmossdk.io/math"
 	errorsmod "cosmossdk.io/errors"
 	gogoproto "github.com/cosmos/gogoproto/proto"
 	gogogrpc "github.com/cosmos/gogoproto/grpc"
@@ -95,6 +96,26 @@ func (*QueryAssetBySymbolResponse) ProtoMessage()  {}
 func (*QueryAssetBySymbolResponse) Reset()         {}
 func (*QueryAssetBySymbolResponse) String() string { return "QueryAssetBySymbolResponse" }
 
+// --- Estimate swap query types ---
+
+type QueryEstimateSwapRequest struct {
+	InputDenom  string `protobuf:"bytes,1,opt,name=input_denom,json=inputDenom,proto3" json:"input_denom"`
+	InputAmt    int64  `protobuf:"varint,2,opt,name=input_amt,json=inputAmt,proto3" json:"input_amt"`
+	OutputDenom string `protobuf:"bytes,3,opt,name=output_denom,json=outputDenom,proto3" json:"output_denom"`
+}
+
+func (*QueryEstimateSwapRequest) ProtoMessage()  {}
+func (*QueryEstimateSwapRequest) Reset()         {}
+func (*QueryEstimateSwapRequest) String() string { return "QueryEstimateSwapRequest" }
+
+type QueryEstimateSwapResponse struct {
+	Result []byte `protobuf:"bytes,1,opt,name=result,proto3" json:"result"`
+}
+
+func (*QueryEstimateSwapResponse) ProtoMessage()  {}
+func (*QueryEstimateSwapResponse) Reset()         {}
+func (*QueryEstimateSwapResponse) String() string { return "QueryEstimateSwapResponse" }
+
 // ---------------------------------------------------------------------------
 // Register query types with gogoproto
 // ---------------------------------------------------------------------------
@@ -110,6 +131,8 @@ func init() {
 	gogoproto.RegisterType((*QueryAssetByDenomResponse)(nil), "dex.QueryAssetByDenomResponse")
 	gogoproto.RegisterType((*QueryAssetBySymbolRequest)(nil), "dex.QueryAssetBySymbolRequest")
 	gogoproto.RegisterType((*QueryAssetBySymbolResponse)(nil), "dex.QueryAssetBySymbolResponse")
+	gogoproto.RegisterType((*QueryEstimateSwapRequest)(nil), "dex.QueryEstimateSwapRequest")
+	gogoproto.RegisterType((*QueryEstimateSwapResponse)(nil), "dex.QueryEstimateSwapResponse")
 }
 
 // ---------------------------------------------------------------------------
@@ -122,6 +145,7 @@ type QueryServer interface {
 	RegisteredAssets(context.Context, *QueryRegisteredAssetsRequest) (*QueryRegisteredAssetsResponse, error)
 	AssetByDenom(context.Context, *QueryAssetByDenomRequest) (*QueryAssetByDenomResponse, error)
 	AssetBySymbol(context.Context, *QueryAssetBySymbolRequest) (*QueryAssetBySymbolResponse, error)
+	EstimateSwap(context.Context, *QueryEstimateSwapRequest) (*QueryEstimateSwapResponse, error)
 }
 
 var _ QueryServer = Keeper{}
@@ -210,6 +234,45 @@ func (k Keeper) AssetBySymbol(goCtx context.Context, req *QueryAssetBySymbolRequ
 	return &QueryAssetBySymbolResponse{Result: bz}, nil
 }
 
+func (k Keeper) EstimateSwap(goCtx context.Context, req *QueryEstimateSwapRequest) (*QueryEstimateSwapResponse, error) {
+	if req == nil || req.InputDenom == "" || req.OutputDenom == "" {
+		return nil, errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "input_denom and output_denom are required")
+	}
+	if req.InputAmt <= 0 {
+		return nil, errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "input_amt must be positive")
+	}
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	expectedOutput, route, err := k.EstimateSwapOutput(ctx, req.InputDenom, math.NewInt(req.InputAmt), req.OutputDenom)
+	if err != nil {
+		return nil, err
+	}
+
+	// Build symbols for the route.
+	routeSymbols := make([]string, len(route))
+	for i, denom := range route {
+		routeSymbols[i] = k.GetSymbolForDenom(ctx, denom)
+	}
+
+	result := struct {
+		ExpectedOutput string   `json:"expected_output"`
+		Route          []string `json:"route"`
+		RouteSymbols   []string `json:"route_symbols"`
+		Hops           int      `json:"hops"`
+	}{
+		ExpectedOutput: expectedOutput.String(),
+		Route:          route,
+		RouteSymbols:   routeSymbols,
+		Hops:           len(route) - 1,
+	}
+
+	bz, err := json.Marshal(result)
+	if err != nil {
+		return nil, err
+	}
+	return &QueryEstimateSwapResponse{Result: bz}, nil
+}
+
 // ---------------------------------------------------------------------------
 // gRPC method handlers
 // ---------------------------------------------------------------------------
@@ -293,6 +356,21 @@ func _Query_AssetBySymbol_Handler(srv interface{}, ctx context.Context, dec func
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Query_EstimateSwap_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(QueryEstimateSwapRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QueryServer).EstimateSwap(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{Server: srv, FullMethod: "/dex.Query/EstimateSwap"}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QueryServer).EstimateSwap(ctx, req.(*QueryEstimateSwapRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func RegisterQueryServer(s gogogrpc.Server, srv QueryServer) {
 	s.RegisterService(&_Query_serviceDesc, srv)
 }
@@ -306,6 +384,7 @@ var _Query_serviceDesc = grpc.ServiceDesc{
 		{MethodName: "RegisteredAssets", Handler: _Query_RegisteredAssets_Handler},
 		{MethodName: "AssetByDenom", Handler: _Query_AssetByDenom_Handler},
 		{MethodName: "AssetBySymbol", Handler: _Query_AssetBySymbol_Handler},
+		{MethodName: "EstimateSwap", Handler: _Query_EstimateSwap_Handler},
 	},
 	Streams:  []grpc.StreamDesc{},
 	Metadata: "dex/query.proto",
@@ -362,6 +441,15 @@ func (c *queryClient) AssetByDenom(ctx context.Context, in *QueryAssetByDenomReq
 func (c *queryClient) AssetBySymbol(ctx context.Context, in *QueryAssetBySymbolRequest) (*QueryAssetBySymbolResponse, error) {
 	out := new(QueryAssetBySymbolResponse)
 	err := c.cc.Invoke(ctx, "/dex.Query/AssetBySymbol", in, out)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *queryClient) EstimateSwap(ctx context.Context, in *QueryEstimateSwapRequest) (*QueryEstimateSwapResponse, error) {
+	out := new(QueryEstimateSwapResponse)
+	err := c.cc.Invoke(ctx, "/dex.Query/EstimateSwap", in, out)
 	if err != nil {
 		return nil, err
 	}

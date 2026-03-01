@@ -72,6 +72,24 @@ func (k Keeper) CreatePool(ctx sdk.Context, assetDenom string, pnyxAmt, assetAmt
 	return nil
 }
 
+// computeSwapOutput calculates AMM output from reserves without side effects.
+// Returns (outputAmt, burnAmt). burnAmt is nonzero only when outputIsPnyx.
+func computeSwapOutput(inReserve, outReserve, inputAmt math.Int, outputIsPnyx bool) (math.Int, math.Int) {
+	feeMultiplier := math.NewInt(10000 - SwapFeeBps) // 9970
+	numerator := outReserve.Mul(inputAmt).Mul(feeMultiplier)
+	denominator := inReserve.Mul(math.NewInt(10000)).Add(inputAmt.Mul(feeMultiplier))
+	outputAmt := numerator.Quo(denominator)
+
+	burnAmt := math.ZeroInt()
+	if outputIsPnyx {
+		burnAmt = outputAmt.Mul(math.NewInt(BurnBps)).Quo(math.NewInt(10000))
+		if burnAmt.IsPositive() {
+			outputAmt = outputAmt.Sub(burnAmt)
+		}
+	}
+	return outputAmt, burnAmt
+}
+
 // Swap executes a constant-product AMM swap with a 0.3% fee.
 //
 // The output amount is:
@@ -79,8 +97,9 @@ func (k Keeper) CreatePool(ctx sdk.Context, assetDenom string, pnyxAmt, assetAmt
 //	out = (outReserve * in * (10000 - fee)) / (inReserve * 10000 + in * (10000 - fee))
 //
 // One of inputDenom/outputDenom must be "pnyx" and the other the pool's
-// asset denom.
-func (k Keeper) Swap(ctx sdk.Context, inputDenom string, inputAmt math.Int, outputDenom string) (math.Int, error) {
+// asset denom. If minOutput is positive, the swap fails when the output
+// would be less than minOutput (slippage protection).
+func (k Keeper) Swap(ctx sdk.Context, inputDenom string, inputAmt math.Int, outputDenom string, minOutput math.Int) (math.Int, error) {
 	if !inputAmt.IsPositive() {
 		return math.Int{}, errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "input amount must be positive")
 	}
@@ -110,27 +129,24 @@ func (k Keeper) Swap(ctx sdk.Context, inputDenom string, inputAmt math.Int, outp
 		outReserve = pool.PnyxReserve
 	}
 
-	// Constant-product formula with fee.
-	feeMultiplier := math.NewInt(10000 - SwapFeeBps) // 9970
-	numerator := outReserve.Mul(inputAmt).Mul(feeMultiplier)
-	denominator := inReserve.Mul(math.NewInt(10000)).Add(inputAmt.Mul(feeMultiplier))
-	outputAmt := numerator.Quo(denominator)
+	outputAmt, burnAmt := computeSwapOutput(inReserve, outReserve, inputAmt, outputDenom == pnyxDenom)
 
 	if !outputAmt.IsPositive() {
 		return math.Int{}, errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "output amount is zero")
 	}
-	if outputAmt.GTE(outReserve) {
+	if outputAmt.Add(burnAmt).GTE(outReserve) {
 		return math.Int{}, errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "swap would drain the pool")
 	}
 
-	// Apply 1% PNYX burn when buying PNYX (WP §5).
-	burnAmt := math.ZeroInt()
-	if outputDenom == pnyxDenom {
-		burnAmt = outputAmt.Mul(math.NewInt(BurnBps)).Quo(math.NewInt(10000))
-		if burnAmt.IsPositive() {
-			outputAmt = outputAmt.Sub(burnAmt)
-			pool.TotalBurned = pool.TotalBurned.Add(burnAmt)
-		}
+	// Slippage protection.
+	if minOutput.IsPositive() && outputAmt.LT(minOutput) {
+		return math.Int{}, errorsmod.Wrapf(sdkerrors.ErrInvalidRequest,
+			"slippage: output %s below minimum %s", outputAmt, minOutput)
+	}
+
+	// Track burn.
+	if burnAmt.IsPositive() {
+		pool.TotalBurned = pool.TotalBurned.Add(burnAmt)
 	}
 
 	// Update reserves.
@@ -145,6 +161,98 @@ func (k Keeper) Swap(ctx sdk.Context, inputDenom string, inputAmt math.Int, outp
 
 	k.SetPool(ctx, pool)
 	return outputAmt, nil
+}
+
+// SwapExact executes a swap with slippage protection, automatically routing
+// cross-asset swaps through the PNYX hub. If one side is PNYX, it delegates
+// to Swap(). If neither side is PNYX, it performs two atomic hops:
+// inputDenom -> PNYX -> outputDenom.
+func (k Keeper) SwapExact(ctx sdk.Context, inputDenom string, inputAmt math.Int, outputDenom string, minOutput math.Int) (math.Int, error) {
+	if inputDenom == outputDenom {
+		return math.Int{}, errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "input and output denoms must differ")
+	}
+
+	// Direct swap: one side is PNYX.
+	if inputDenom == pnyxDenom || outputDenom == pnyxDenom {
+		return k.Swap(ctx, inputDenom, inputAmt, outputDenom, minOutput)
+	}
+
+	// Cross-asset swap: route through PNYX hub (2 hops).
+	// Validate both assets.
+	if err := k.validateAssetForTrading(ctx, inputDenom); err != nil {
+		return math.Int{}, err
+	}
+	if err := k.validateAssetForTrading(ctx, outputDenom); err != nil {
+		return math.Int{}, err
+	}
+
+	// Hop 1: inputDenom -> PNYX (no minOutput on intermediate).
+	intermediateAmt, err := k.Swap(ctx, inputDenom, inputAmt, pnyxDenom, math.ZeroInt())
+	if err != nil {
+		return math.Int{}, errorsmod.Wrapf(err, "hop 1 (%s -> PNYX) failed", inputDenom)
+	}
+
+	// Hop 2: PNYX -> outputDenom (no minOutput on intermediate).
+	finalAmt, err := k.Swap(ctx, pnyxDenom, intermediateAmt, outputDenom, math.ZeroInt())
+	if err != nil {
+		return math.Int{}, errorsmod.Wrapf(err, "hop 2 (PNYX -> %s) failed", outputDenom)
+	}
+
+	// Check slippage on final output.
+	if minOutput.IsPositive() && finalAmt.LT(minOutput) {
+		return math.Int{}, errorsmod.Wrapf(sdkerrors.ErrInvalidRequest,
+			"slippage: output %s below minimum %s", finalAmt, minOutput)
+	}
+
+	return finalAmt, nil
+}
+
+// EstimateSwapOutput calculates the expected output for a swap without
+// executing it. Returns (expectedOutput, route, error) where route is the
+// list of denoms traversed (e.g., ["btc", "pnyx", "eth"] for cross-asset).
+func (k Keeper) EstimateSwapOutput(ctx sdk.Context, inputDenom string, inputAmt math.Int, outputDenom string) (math.Int, []string, error) {
+	if inputDenom == outputDenom {
+		return math.Int{}, nil, errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "input and output denoms must differ")
+	}
+
+	// Direct swap: one side is PNYX.
+	if inputDenom == pnyxDenom || outputDenom == pnyxDenom {
+		assetDenom, err := resolveAssetDenom(inputDenom, outputDenom)
+		if err != nil {
+			return math.Int{}, nil, err
+		}
+		pool, found := k.GetPool(ctx, assetDenom)
+		if !found {
+			return math.Int{}, nil, errorsmod.Wrapf(sdkerrors.ErrUnknownRequest, "no pool for %s", assetDenom)
+		}
+		var inReserve, outReserve math.Int
+		if inputDenom == pnyxDenom {
+			inReserve = pool.PnyxReserve
+			outReserve = pool.AssetReserve
+		} else {
+			inReserve = pool.AssetReserve
+			outReserve = pool.PnyxReserve
+		}
+		outputAmt, _ := computeSwapOutput(inReserve, outReserve, inputAmt, outputDenom == pnyxDenom)
+		return outputAmt, []string{inputDenom, outputDenom}, nil
+	}
+
+	// Cross-asset: route through PNYX hub.
+	// Hop 1: inputDenom -> PNYX.
+	pool1, found := k.GetPool(ctx, inputDenom)
+	if !found {
+		return math.Int{}, nil, errorsmod.Wrapf(sdkerrors.ErrUnknownRequest, "no pool for %s", inputDenom)
+	}
+	intermediateAmt, _ := computeSwapOutput(pool1.AssetReserve, pool1.PnyxReserve, inputAmt, true)
+
+	// Hop 2: PNYX -> outputDenom.
+	pool2, found := k.GetPool(ctx, outputDenom)
+	if !found {
+		return math.Int{}, nil, errorsmod.Wrapf(sdkerrors.ErrUnknownRequest, "no pool for %s", outputDenom)
+	}
+	finalAmt, _ := computeSwapOutput(pool2.PnyxReserve, pool2.AssetReserve, intermediateAmt, false)
+
+	return finalAmt, []string{inputDenom, pnyxDenom, outputDenom}, nil
 }
 
 // AddLiquidity deposits PNYX and the paired asset proportionally and mints

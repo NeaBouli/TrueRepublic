@@ -50,6 +50,7 @@ func GetTxCmd() *cobra.Command {
 	txCmd.AddCommand(
 		CmdCreatePool(),
 		CmdSwap(),
+		CmdSwapExact(),
 		CmdAddLiquidity(),
 		CmdRemoveLiquidity(),
 		CmdRegisterAsset(),
@@ -72,6 +73,7 @@ func GetQueryCmd(cdc *codec.LegacyAmino) *cobra.Command {
 		CmdQueryPools(),
 		CmdQueryRegisteredAssets(),
 		CmdQueryAsset(),
+		CmdEstimateSwap(),
 	)
 	return queryCmd
 }
@@ -131,6 +133,40 @@ func CmdSwap() *cobra.Command {
 				InputDenom:  inputDenom,
 				InputAmt:    amt,
 				OutputDenom: outputDenom,
+			}
+			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), &msg)
+		},
+	}
+	flags.AddTxFlagsToCmd(cmd)
+	return cmd
+}
+
+func CmdSwapExact() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "swap-exact [input-denom-or-symbol] [amount] [output-denom-or-symbol] [min-output]",
+		Short: "Swap with slippage protection; auto-routes cross-asset via PNYX hub",
+		Args:  cobra.ExactArgs(4),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			clientCtx, err := client.GetClientTxContext(cmd)
+			if err != nil {
+				return err
+			}
+			amt, err := strconv.ParseInt(args[1], 10, 64)
+			if err != nil {
+				return fmt.Errorf("invalid input amount: %w", err)
+			}
+			minOutput, err := strconv.ParseInt(args[3], 10, 64)
+			if err != nil {
+				return fmt.Errorf("invalid min-output: %w", err)
+			}
+			inputDenom := resolveSymbolOrDenom(cmd, clientCtx, args[0])
+			outputDenom := resolveSymbolOrDenom(cmd, clientCtx, args[2])
+			msg := MsgSwapExact{
+				Sender:      clientCtx.GetFromAddress(),
+				InputDenom:  inputDenom,
+				InputAmt:    amt,
+				OutputDenom: outputDenom,
+				MinOutput:   minOutput,
 			}
 			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), &msg)
 		},
@@ -316,6 +352,38 @@ func CmdQueryRegisteredAssets() *cobra.Command {
 			}
 			queryClient := NewQueryClient(clientCtx)
 			resp, err := queryClient.RegisteredAssets(cmd.Context(), &QueryRegisteredAssetsRequest{})
+			if err != nil {
+				return err
+			}
+			return clientCtx.PrintObjectLegacy(json.RawMessage(resp.Result))
+		},
+	}
+	flags.AddQueryFlagsToCmd(cmd)
+	return cmd
+}
+
+func CmdEstimateSwap() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "estimate-swap [input-denom-or-symbol] [amount] [output-denom-or-symbol]",
+		Short: "Estimate swap output and route (read-only, no tx)",
+		Args:  cobra.ExactArgs(3),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			clientCtx, err := client.GetClientQueryContext(cmd)
+			if err != nil {
+				return err
+			}
+			amt, err := strconv.ParseInt(args[1], 10, 64)
+			if err != nil {
+				return fmt.Errorf("invalid amount: %w", err)
+			}
+			inputDenom := resolveSymbolOrDenom(cmd, clientCtx, args[0])
+			outputDenom := resolveSymbolOrDenom(cmd, clientCtx, args[2])
+			queryClient := NewQueryClient(clientCtx)
+			resp, err := queryClient.EstimateSwap(cmd.Context(), &QueryEstimateSwapRequest{
+				InputDenom:  inputDenom,
+				InputAmt:    amt,
+				OutputDenom: outputDenom,
+			})
 			if err != nil {
 				return err
 			}
