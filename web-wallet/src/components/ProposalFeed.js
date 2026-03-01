@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import ZKPVotingPanel from "./zkp/ZKPVotingPanel";
 
 function SuggestionBar({ suggestion, maxStones }) {
   const percentage = maxStones > 0 ? (suggestion.stones / maxStones) * 100 : 0;
@@ -30,7 +31,7 @@ function SuggestionBar({ suggestion, maxStones }) {
   );
 }
 
-function IssueCard({ issue, domainName, onVote, connected }) {
+function IssueCard({ issue, domainName, onVote, connected, address }) {
   const [expanded, setExpanded] = useState(false);
   const [voteTarget, setVoteTarget] = useState("");
   const [stoneCount, setStoneCount] = useState("1");
@@ -102,6 +103,18 @@ function IssueCard({ issue, domainName, onVote, connected }) {
               </div>
             </div>
           )}
+
+          {connected && voteTarget && (
+            <div className="mt-3">
+              <ZKPVotingPanel
+                domainName={domainName}
+                issueName={issue.name}
+                suggestionName={voteTarget}
+                connected={connected}
+                address={address}
+              />
+            </div>
+          )}
         </div>
       )}
     </div>
@@ -113,6 +126,7 @@ export default function ProposalFeed({
   domainName,
   onVote,
   connected,
+  address,
 }) {
   if (!domainName) {
     return (
@@ -153,6 +167,7 @@ export default function ProposalFeed({
               domainName={domainName}
               onVote={onVote}
               connected={connected}
+              address={address}
             />
           ))}
         </div>

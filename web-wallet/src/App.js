@@ -79,6 +79,7 @@ function App() {
           domainName={selectedDomain}
           onVote={handleVote}
           connected={wallet.connected}
+          address={wallet.address}
         />
       }
       right={

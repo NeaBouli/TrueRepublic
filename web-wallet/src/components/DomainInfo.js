@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import MembershipStatus from "./zkp/MembershipStatus";
 
 function SubmitProposalForm({ domainName, onSubmit }) {
   const [issueName, setIssueName] = useState("");
@@ -94,6 +95,14 @@ export default function DomainInfo({ domain, domainName, connected, onSubmitProp
             <span className="text-dark-200 font-medium">{totalStones}</span>
           </div>
         </div>
+      </div>
+
+      {/* ZKP Membership */}
+      <div>
+        <h2 className="text-sm font-semibold text-dark-400 uppercase tracking-wider mb-3">
+          ZKP Membership
+        </h2>
+        <MembershipStatus domainName={domainName} />
       </div>
 
       {/* Submit proposal */}

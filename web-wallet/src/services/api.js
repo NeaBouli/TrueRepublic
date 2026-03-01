@@ -121,3 +121,55 @@ export async function swapTokens(sender, inputDenom, inputAmt, outputDenom) {
   };
   return client.signAndBroadcast(sender, [msg], "auto");
 }
+
+// ZKP Voting API
+export async function queryZKPState(domainName) {
+  return queryAbci(`custom/truedemocracy/zkp_state/${domainName}`);
+}
+
+export async function queryNullifier(domainName, nullifierHash) {
+  return queryAbci(`custom/truedemocracy/nullifier/${domainName}/${nullifierHash}`);
+}
+
+export async function queryPurgeSchedule(domainName) {
+  return queryAbci(`custom/truedemocracy/purge_schedule/${domainName}`);
+}
+
+export async function submitAnonymousVote(sender, domainName, issueName, suggestionName, rating, proof, nullifierHash, merkleRoot) {
+  const client = await getSigningClient();
+  const msg = {
+    typeUrl: "/truedemocracy.MsgRateWithProof",
+    value: {
+      sender,
+      domain_name: domainName,
+      issue_name: issueName,
+      suggestion_name: suggestionName,
+      rating: Number(rating),
+      proof_hex: proof,
+      nullifier_hash_hex: nullifierHash,
+      merkle_root_hex: merkleRoot || "",
+    },
+  };
+  return client.signAndBroadcast(sender, [msg], "auto");
+}
+
+// DEX Analytics API
+export async function queryPoolStats(assetDenom) {
+  return queryAbci(`custom/dex/pool_stats/${assetDenom}`);
+}
+
+export async function querySpotPrice(inputDenom, outputDenom) {
+  return queryAbci(`custom/dex/spot_price/${inputDenom}/${outputDenom}`);
+}
+
+export async function queryLiquidityDepth(inputDenom, outputDenom) {
+  return queryAbci(`custom/dex/liquidity_depth/${inputDenom}/${outputDenom}`);
+}
+
+export async function queryLPPosition(assetDenom, shares) {
+  return queryAbci(`custom/dex/lp_position/${assetDenom}/${shares}`);
+}
+
+export async function queryEstimateSwap(inputDenom, amount, outputDenom) {
+  return queryAbci(`custom/dex/estimate_swap/${inputDenom}/${amount}/${outputDenom}`);
+}
