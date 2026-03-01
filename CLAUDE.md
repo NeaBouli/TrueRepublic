@@ -10,7 +10,7 @@
 | Repo | Branch | HEAD | Path |
 |------|--------|------|------|
 | **Main** | `main` | `be004ff` (feat: Multi-Asset DEX Integration) | `/Users/gio/TrueRepublic/` |
-| **Wiki** | `master` | pending update | `/Users/gio/TrueRepublic/wiki-github/` |
+| **Wiki** | `master` | `04f9b69` (docs: update wiki for v0.3.0 Week 8 completion) | `/Users/gio/TrueRepublic/wiki-github/` |
 
 - Working tree: **clean**, up-to-date with `origin/main`
 - `wiki-github/` is untracked in the main repo (it is a separate git clone of the GitHub Wiki repo -- this is expected and correct)
