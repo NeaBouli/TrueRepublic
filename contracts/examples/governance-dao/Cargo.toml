@@ -1,0 +1,17 @@
+[package]
+name = "governance-dao"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+crate-type = ["rlib"]
+
+[dependencies]
+cosmwasm-std = { workspace = true }
+serde = { workspace = true }
+schemars = { workspace = true }
+thiserror = { workspace = true }
+truerepublic-bindings = { workspace = true }
+
+[dev-dependencies]
+truerepublic-testing-utils = { workspace = true }

@@ -1,15 +1,20 @@
-[package]
-name = "truerepublic-contracts"
-version = "0.1.0"
-edition = "2021"
+[workspace]
+resolver = "2"
+members = [
+    "core",
+    "packages/bindings",
+    "packages/testing-utils",
+    "examples/governance-dao",
+    "examples/dex-bot",
+    "examples/zkp-aggregator",
+    "examples/token-vesting",
+]
 
-[lib]
-crate-type = ["cdylib", "rlib"]
-
-[dependencies]
+[workspace.dependencies]
 cosmwasm-std = "3"
+cosmwasm-vm = "3"
 serde = { version = "1", default-features = false, features = ["derive"] }
 schemars = "0.8"
-
-[dev-dependencies]
-cosmwasm-vm = "3"
+thiserror = "2"
+truerepublic-bindings = { path = "packages/bindings" }
+truerepublic-testing-utils = { path = "packages/testing-utils" }
