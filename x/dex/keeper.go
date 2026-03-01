@@ -66,7 +66,9 @@ func (k Keeper) CreatePool(ctx sdk.Context, assetDenom string, pnyxAmt, assetAmt
 		AssetReserve: assetAmt,
 		AssetDenom:   assetDenom,
 		TotalShares:  shares,
-		TotalBurned:  math.ZeroInt(),
+		TotalBurned:     math.ZeroInt(),
+		SwapCount:       0,
+		TotalVolumePnyx: math.ZeroInt(),
 	}
 	k.SetPool(ctx, pool)
 	return nil
@@ -147,6 +149,15 @@ func (k Keeper) Swap(ctx sdk.Context, inputDenom string, inputAmt math.Int, outp
 	// Track burn.
 	if burnAmt.IsPositive() {
 		pool.TotalBurned = pool.TotalBurned.Add(burnAmt)
+	}
+
+	// Track analytics.
+	pool.SwapCount++
+	if inputDenom == pnyxDenom {
+		pool.TotalVolumePnyx = pool.TotalVolumePnyx.Add(inputAmt)
+	} else {
+		// Output is PNYX — track gross output (before burn).
+		pool.TotalVolumePnyx = pool.TotalVolumePnyx.Add(outputAmt.Add(burnAmt))
 	}
 
 	// Update reserves.
@@ -253,6 +264,155 @@ func (k Keeper) EstimateSwapOutput(ctx sdk.Context, inputDenom string, inputAmt 
 	finalAmt, _ := computeSwapOutput(pool2.PnyxReserve, pool2.AssetReserve, intermediateAmt, false)
 
 	return finalAmt, []string{inputDenom, pnyxDenom, outputDenom}, nil
+}
+
+// ---------------------------------------------------------------------------
+// Analytics methods (read-only)
+// ---------------------------------------------------------------------------
+
+// SpotPriceRefAmt is the reference input amount used to compute spot price.
+// The returned price is "output per SpotPriceRefAmt input units".
+const SpotPriceRefAmt int64 = 1_000_000
+
+// marginalPrice returns the instantaneous (marginal) price scaled to
+// SpotPriceRefAmt. This is the derivative dy/dx of the AMM at current
+// reserves, including the swap fee and (optionally) the PNYX burn.
+//
+//	price = outReserve * refAmt * (10000 - fee) / (inReserve * 10000)
+//
+// When outputIsPnyx, an additional (10000 - BurnBps) / 10000 factor is applied.
+func marginalPrice(inReserve, outReserve math.Int, outputIsPnyx bool) math.Int {
+	ref := math.NewInt(SpotPriceRefAmt)
+	fee := math.NewInt(10000 - SwapFeeBps) // 9970
+	base := math.NewInt(10000)
+
+	price := outReserve.Mul(ref).Mul(fee).Quo(inReserve.Mul(base))
+	if outputIsPnyx {
+		price = price.Mul(math.NewInt(10000 - BurnBps)).Quo(base)
+	}
+	return price
+}
+
+// ComputeSpotPrice returns the instantaneous (marginal) price between two
+// denoms, scaled to SpotPriceRefAmt. Divide by SpotPriceRefAmt for the
+// actual rate. Supports both direct (PNYX-paired) and cross-asset pricing.
+func (k Keeper) ComputeSpotPrice(ctx sdk.Context, inputDenom, outputDenom string) (math.Int, error) {
+	if inputDenom == outputDenom {
+		return math.Int{}, errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "input and output denoms must differ")
+	}
+
+	// Direct: one side is PNYX.
+	if inputDenom == pnyxDenom || outputDenom == pnyxDenom {
+		assetDenom, err := resolveAssetDenom(inputDenom, outputDenom)
+		if err != nil {
+			return math.Int{}, err
+		}
+		pool, found := k.GetPool(ctx, assetDenom)
+		if !found {
+			return math.Int{}, errorsmod.Wrapf(sdkerrors.ErrUnknownRequest, "no pool for %s", assetDenom)
+		}
+		var inReserve, outReserve math.Int
+		if inputDenom == pnyxDenom {
+			inReserve = pool.PnyxReserve
+			outReserve = pool.AssetReserve
+		} else {
+			inReserve = pool.AssetReserve
+			outReserve = pool.PnyxReserve
+		}
+		return marginalPrice(inReserve, outReserve, outputDenom == pnyxDenom), nil
+	}
+
+	// Cross-asset: route through PNYX hub.
+	// hop1: asset -> PNYX (with burn), hop2: PNYX -> asset (no burn).
+	pool1, found := k.GetPool(ctx, inputDenom)
+	if !found {
+		return math.Int{}, errorsmod.Wrapf(sdkerrors.ErrUnknownRequest, "no pool for %s", inputDenom)
+	}
+	hop1 := marginalPrice(pool1.AssetReserve, pool1.PnyxReserve, true)
+
+	pool2, found := k.GetPool(ctx, outputDenom)
+	if !found {
+		return math.Int{}, errorsmod.Wrapf(sdkerrors.ErrUnknownRequest, "no pool for %s", outputDenom)
+	}
+	hop2 := marginalPrice(pool2.PnyxReserve, pool2.AssetReserve, false)
+
+	// Combined: hop1 * hop2 / SpotPriceRefAmt.
+	combined := hop1.Mul(hop2).Quo(math.NewInt(SpotPriceRefAmt))
+	return combined, nil
+}
+
+// DepthLevel represents a single tier in a liquidity depth analysis.
+type DepthLevel struct {
+	InputAmount  math.Int `json:"input_amount"`
+	OutputAmount math.Int `json:"output_amount"`
+	PriceImpact  int64    `json:"price_impact_bps"` // basis points vs spot
+}
+
+// ComputeLiquidityDepth returns the slippage curve for a given swap direction,
+// showing output amounts and price impact at predefined input tiers.
+func (k Keeper) ComputeLiquidityDepth(ctx sdk.Context, inputDenom, outputDenom string) ([]DepthLevel, error) {
+	if inputDenom == outputDenom {
+		return nil, errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "input and output denoms must differ")
+	}
+
+	// Compute spot price for reference.
+	spotPrice, err := k.ComputeSpotPrice(ctx, inputDenom, outputDenom)
+	if err != nil {
+		return nil, err
+	}
+
+	tiers := []int64{100, 1_000, 10_000, 100_000, 1_000_000}
+	levels := make([]DepthLevel, 0, len(tiers))
+
+	for _, tier := range tiers {
+		tierAmt := math.NewInt(tier)
+		outputAmt, _, err := k.EstimateSwapOutput(ctx, inputDenom, tierAmt, outputDenom)
+		if err != nil {
+			// Pool too small for this tier — stop here.
+			break
+		}
+
+		// Price impact: compare effective price vs spot price.
+		// effectiveScaled = outputAmt * SpotPriceRefAmt / tier
+		// impact = (spotPrice - effectiveScaled) * 10000 / spotPrice
+		var impactBps int64
+		if spotPrice.IsPositive() && tier > 0 {
+			effectiveScaled := outputAmt.Mul(math.NewInt(SpotPriceRefAmt)).Quo(tierAmt)
+			if effectiveScaled.LT(spotPrice) {
+				diff := spotPrice.Sub(effectiveScaled)
+				impactBps = diff.Mul(math.NewInt(10000)).Quo(spotPrice).Int64()
+			}
+		}
+
+		levels = append(levels, DepthLevel{
+			InputAmount:  tierAmt,
+			OutputAmount: outputAmt,
+			PriceImpact:  impactBps,
+		})
+	}
+
+	return levels, nil
+}
+
+// ComputeLPPosition returns the underlying token values for a given number
+// of LP shares, plus the share percentage in basis points.
+func (k Keeper) ComputeLPPosition(ctx sdk.Context, assetDenom string, shares math.Int) (pnyxValue, assetValue math.Int, sharePercentBps int64, err error) {
+	pool, found := k.GetPool(ctx, assetDenom)
+	if !found {
+		return math.Int{}, math.Int{}, 0, errorsmod.Wrapf(sdkerrors.ErrUnknownRequest, "no pool for %s", assetDenom)
+	}
+	if !shares.IsPositive() {
+		return math.Int{}, math.Int{}, 0, errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "shares must be positive")
+	}
+	if shares.GT(pool.TotalShares) {
+		return math.Int{}, math.Int{}, 0, errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "shares exceed total supply")
+	}
+
+	pnyxValue = shares.Mul(pool.PnyxReserve).Quo(pool.TotalShares)
+	assetValue = shares.Mul(pool.AssetReserve).Quo(pool.TotalShares)
+	sharePercentBps = shares.Mul(math.NewInt(10000)).Quo(pool.TotalShares).Int64()
+
+	return pnyxValue, assetValue, sharePercentBps, nil
 }
 
 // AddLiquidity deposits PNYX and the paired asset proportionally and mints

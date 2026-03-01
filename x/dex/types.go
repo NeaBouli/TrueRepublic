@@ -20,8 +20,10 @@ type Pool struct {
 	AssetReserve math.Int `json:"asset_reserve"`
 	AssetDenom   string   `json:"asset_denom"`
 	TotalShares  math.Int `json:"total_shares"`
-	TotalBurned  math.Int `json:"total_burned"`              // cumulative PNYX burned on swaps
-	AssetSymbol  string   `json:"asset_symbol,omitempty"` // display name from registry (populated in queries)
+	TotalBurned     math.Int `json:"total_burned"`              // cumulative PNYX burned on swaps
+	AssetSymbol     string   `json:"asset_symbol,omitempty"` // display name from registry (populated in queries)
+	SwapCount       int64    `json:"swap_count"`                // cumulative swap count
+	TotalVolumePnyx math.Int `json:"total_volume_pnyx"`         // cumulative PNYX volume
 }
 
 type GenesisState struct {
@@ -52,7 +54,9 @@ func DefaultGenesisState() GenesisState {
 				AssetReserve: math.NewInt(1_000_000),
 				AssetDenom:   "atom",
 				TotalShares:  math.NewInt(1_000_000), // sqrt(1M * 1M) = 1M
-				TotalBurned:  math.ZeroInt(),
+				TotalBurned:     math.ZeroInt(),
+			SwapCount:       0,
+			TotalVolumePnyx: math.ZeroInt(),
 			},
 		},
 		RegisteredAssets: []RegisteredAsset{

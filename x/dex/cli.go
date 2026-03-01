@@ -74,6 +74,10 @@ func GetQueryCmd(cdc *codec.LegacyAmino) *cobra.Command {
 		CmdQueryRegisteredAssets(),
 		CmdQueryAsset(),
 		CmdEstimateSwap(),
+		CmdPoolStats(),
+		CmdSpotPrice(),
+		CmdLiquidityDepth(),
+		CmdLPPosition(),
 	)
 	return queryCmd
 }
@@ -417,6 +421,115 @@ func CmdQueryAsset() *cobra.Command {
 				return fmt.Errorf("asset not found by denom or symbol: %s", args[0])
 			}
 			return clientCtx.PrintObjectLegacy(json.RawMessage(respSym.Result))
+		},
+	}
+	flags.AddQueryFlagsToCmd(cmd)
+	return cmd
+}
+
+// --- Analytics query commands ---
+
+func CmdPoolStats() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "pool-stats [asset-denom-or-symbol]",
+		Short: "Query pool statistics (volume, fees, burn, spot price)",
+		Args:  cobra.ExactArgs(1),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			clientCtx, err := client.GetClientQueryContext(cmd)
+			if err != nil {
+				return err
+			}
+			assetDenom := resolveSymbolOrDenom(cmd, clientCtx, args[0])
+			queryClient := NewQueryClient(clientCtx)
+			resp, err := queryClient.PoolStats(cmd.Context(), &QueryPoolStatsRequest{AssetDenom: assetDenom})
+			if err != nil {
+				return err
+			}
+			return clientCtx.PrintObjectLegacy(json.RawMessage(resp.Result))
+		},
+	}
+	flags.AddQueryFlagsToCmd(cmd)
+	return cmd
+}
+
+func CmdSpotPrice() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "spot-price [input-denom-or-symbol] [output-denom-or-symbol]",
+		Short: "Query spot price between any two denoms",
+		Args:  cobra.ExactArgs(2),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			clientCtx, err := client.GetClientQueryContext(cmd)
+			if err != nil {
+				return err
+			}
+			inputDenom := resolveSymbolOrDenom(cmd, clientCtx, args[0])
+			outputDenom := resolveSymbolOrDenom(cmd, clientCtx, args[1])
+			queryClient := NewQueryClient(clientCtx)
+			resp, err := queryClient.SpotPrice(cmd.Context(), &QuerySpotPriceRequest{
+				InputDenom:  inputDenom,
+				OutputDenom: outputDenom,
+			})
+			if err != nil {
+				return err
+			}
+			return clientCtx.PrintObjectLegacy(json.RawMessage(resp.Result))
+		},
+	}
+	flags.AddQueryFlagsToCmd(cmd)
+	return cmd
+}
+
+func CmdLiquidityDepth() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "liquidity-depth [input-denom-or-symbol] [output-denom-or-symbol]",
+		Short: "Query slippage curve at predefined input tiers",
+		Args:  cobra.ExactArgs(2),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			clientCtx, err := client.GetClientQueryContext(cmd)
+			if err != nil {
+				return err
+			}
+			inputDenom := resolveSymbolOrDenom(cmd, clientCtx, args[0])
+			outputDenom := resolveSymbolOrDenom(cmd, clientCtx, args[1])
+			queryClient := NewQueryClient(clientCtx)
+			resp, err := queryClient.LiquidityDepth(cmd.Context(), &QueryLiquidityDepthRequest{
+				InputDenom:  inputDenom,
+				OutputDenom: outputDenom,
+			})
+			if err != nil {
+				return err
+			}
+			return clientCtx.PrintObjectLegacy(json.RawMessage(resp.Result))
+		},
+	}
+	flags.AddQueryFlagsToCmd(cmd)
+	return cmd
+}
+
+func CmdLPPosition() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "lp-position [asset-denom-or-symbol] [shares]",
+		Short: "Query underlying token values for LP shares",
+		Args:  cobra.ExactArgs(2),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			clientCtx, err := client.GetClientQueryContext(cmd)
+			if err != nil {
+				return err
+			}
+			shares, err := strconv.ParseInt(args[1], 10, 64)
+			if err != nil {
+				return fmt.Errorf("invalid shares: %w", err)
+			}
+			assetDenom := resolveSymbolOrDenom(cmd, clientCtx, args[0])
+			queryClient := NewQueryClient(clientCtx)
+			resp, err := queryClient.LPPosition(cmd.Context(), &QueryLPPositionRequest{
+				AssetDenom: assetDenom,
+				Shares:     shares,
+			})
+			if err != nil {
+				return err
+			}
+			return clientCtx.PrintObjectLegacy(json.RawMessage(resp.Result))
 		},
 	}
 	flags.AddQueryFlagsToCmd(cmd)

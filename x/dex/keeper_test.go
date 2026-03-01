@@ -683,3 +683,275 @@ func TestComputeSwapOutput(t *testing.T) {
 		t.Errorf("PNYX output %s should be less than non-PNYX output %s (1%% burn)", outPnyx, outAmt)
 	}
 }
+
+// ==========================================================================
+// Analytics tests (Milestone 9.2)
+// ==========================================================================
+
+// ---------- Volume tracking ----------
+
+func TestSwapVolumeTracking(t *testing.T) {
+	k, ctx := setupKeeperWithDefaults(t)
+	k.CreatePool(ctx, "atom", math.NewInt(1_000_000), math.NewInt(1_000_000))
+
+	// Swap PNYX -> atom.
+	k.Swap(ctx, "pnyx", math.NewInt(10_000), "atom", math.ZeroInt())
+	pool, _ := k.GetPool(ctx, "atom")
+
+	if pool.SwapCount != 1 {
+		t.Errorf("expected swap count 1, got %d", pool.SwapCount)
+	}
+	if !pool.TotalVolumePnyx.Equal(math.NewInt(10_000)) {
+		t.Errorf("expected volume 10000, got %s", pool.TotalVolumePnyx)
+	}
+}
+
+func TestSwapVolumeTrackingReverse(t *testing.T) {
+	k, ctx := setupKeeperWithDefaults(t)
+	k.CreatePool(ctx, "atom", math.NewInt(1_000_000), math.NewInt(1_000_000))
+
+	// Swap atom -> PNYX — volume should track gross PNYX output (before burn).
+	k.Swap(ctx, "atom", math.NewInt(10_000), "pnyx", math.ZeroInt())
+	pool, _ := k.GetPool(ctx, "atom")
+
+	if pool.SwapCount != 1 {
+		t.Errorf("expected swap count 1, got %d", pool.SwapCount)
+	}
+	if !pool.TotalVolumePnyx.IsPositive() {
+		t.Error("expected positive PNYX volume on reverse swap")
+	}
+	// Gross PNYX output = net output + burn. Volume should be > net output.
+	// We know the pool burned some PNYX, so volume > 0.
+}
+
+func TestSwapVolumeMultipleSwaps(t *testing.T) {
+	k, ctx := setupKeeperWithDefaults(t)
+	k.CreatePool(ctx, "atom", math.NewInt(1_000_000), math.NewInt(1_000_000))
+
+	k.Swap(ctx, "pnyx", math.NewInt(5_000), "atom", math.ZeroInt())
+	k.Swap(ctx, "pnyx", math.NewInt(3_000), "atom", math.ZeroInt())
+	k.Swap(ctx, "atom", math.NewInt(2_000), "pnyx", math.ZeroInt())
+
+	pool, _ := k.GetPool(ctx, "atom")
+	if pool.SwapCount != 3 {
+		t.Errorf("expected swap count 3, got %d", pool.SwapCount)
+	}
+	// Volume from first two: 5000 + 3000 = 8000, plus some from third (reverse).
+	if pool.TotalVolumePnyx.LT(math.NewInt(8_000)) {
+		t.Errorf("expected volume >= 8000, got %s", pool.TotalVolumePnyx)
+	}
+}
+
+// ---------- Spot price ----------
+
+func TestComputeSpotPriceEqual(t *testing.T) {
+	k, ctx := setupKeeperWithDefaults(t)
+	k.CreatePool(ctx, "atom", math.NewInt(1_000_000), math.NewInt(1_000_000))
+
+	price, err := k.ComputeSpotPrice(ctx, "pnyx", "atom")
+	if err != nil {
+		t.Fatal(err)
+	}
+	// Equal reserves, PNYX->atom (no burn): marginal price = 1M * 9970 / 10000 = 997000.
+	if !price.Equal(math.NewInt(997_000)) {
+		t.Errorf("expected spot price 997000 for equal pool, got %s", price)
+	}
+}
+
+func TestComputeSpotPriceImbalanced(t *testing.T) {
+	k, ctx := setupKeeperWithDefaults(t)
+	k.CreatePool(ctx, "atom", math.NewInt(2_000_000), math.NewInt(1_000_000))
+
+	// 2M PNYX / 1M ATOM: marginal price = 1M * 1M * 9970 / (2M * 10000) = 498500.
+	price, err := k.ComputeSpotPrice(ctx, "pnyx", "atom")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !price.Equal(math.NewInt(498_500)) {
+		t.Errorf("expected spot price 498500 for 2:1 pool, got %s", price)
+	}
+}
+
+func TestComputeSpotPriceCrossAsset(t *testing.T) {
+	k, ctx := setupKeeperWithDefaults(t)
+	k.RegisterAsset(ctx, RegisteredAsset{IBCDenom: "eth", Symbol: "ETH", Decimals: 18, TradingEnabled: true})
+	k.CreatePool(ctx, "atom", math.NewInt(1_000_000), math.NewInt(1_000_000))
+	k.CreatePool(ctx, "eth", math.NewInt(1_000_000), math.NewInt(1_000_000))
+
+	price, err := k.ComputeSpotPrice(ctx, "atom", "eth")
+	if err != nil {
+		t.Fatal(err)
+	}
+	// Cross-asset through PNYX hub: two 0.3% fees + 1% burn on hop 1 (atom->PNYX).
+	// Price should be positive but noticeably less than 1M (fees compound).
+	if !price.IsPositive() {
+		t.Error("expected positive cross-asset spot price")
+	}
+	if price.GT(math.NewInt(990_000)) {
+		t.Errorf("expected cross-asset price < 990000 (double fee), got %s", price)
+	}
+}
+
+func TestComputeSpotPriceSameDenom(t *testing.T) {
+	k, ctx := setupKeeperWithDefaults(t)
+	_, err := k.ComputeSpotPrice(ctx, "atom", "atom")
+	if err == nil {
+		t.Error("expected error for same denom spot price")
+	}
+}
+
+// ---------- Liquidity depth ----------
+
+func TestComputeLiquidityDepth(t *testing.T) {
+	k, ctx := setupKeeperWithDefaults(t)
+	k.CreatePool(ctx, "atom", math.NewInt(1_000_000), math.NewInt(1_000_000))
+
+	levels, err := k.ComputeLiquidityDepth(ctx, "pnyx", "atom")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(levels) != 5 {
+		t.Fatalf("expected 5 depth levels, got %d", len(levels))
+	}
+	// All levels should have non-negative impact.
+	for i, lv := range levels {
+		if lv.PriceImpact < 0 {
+			t.Errorf("level %d has negative impact %d", i, lv.PriceImpact)
+		}
+	}
+	// Larger tiers (index 2+) should show real impact growth (integer rounding
+	// noise can cause non-monotonic behavior at small tiers like 100/1000).
+	if levels[4].PriceImpact <= levels[2].PriceImpact {
+		t.Errorf("tier 1M impact %d should exceed tier 10k impact %d",
+			levels[4].PriceImpact, levels[2].PriceImpact)
+	}
+	// Last tier (1M in 1M pool = 100% of reserve) should have very large impact.
+	if levels[4].PriceImpact < 4000 {
+		t.Errorf("expected >4000 bps impact for 1M input in 1M pool, got %d bps", levels[4].PriceImpact)
+	}
+}
+
+func TestComputeLiquidityDepthSmallPool(t *testing.T) {
+	k, ctx := setupKeeperWithDefaults(t)
+	k.CreatePool(ctx, "atom", math.NewInt(1_000), math.NewInt(1_000))
+
+	levels, err := k.ComputeLiquidityDepth(ctx, "pnyx", "atom")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(levels) == 0 {
+		t.Fatal("expected at least one depth level")
+	}
+	// Small pool should show very high price impact at larger tiers.
+	last := levels[len(levels)-1]
+	if last.PriceImpact < 100 {
+		t.Errorf("expected significant impact in small pool, got %d bps", last.PriceImpact)
+	}
+}
+
+func TestComputeLiquidityDepthNonexistent(t *testing.T) {
+	k, ctx := setupKeeperWithDefaults(t)
+	_, err := k.ComputeLiquidityDepth(ctx, "pnyx", "atom")
+	if err == nil {
+		t.Error("expected error for nonexistent pool")
+	}
+}
+
+// ---------- LP position ----------
+
+func TestComputeLPPositionFull(t *testing.T) {
+	k, ctx := setupKeeperWithDefaults(t)
+	k.CreatePool(ctx, "atom", math.NewInt(1_000_000), math.NewInt(500_000))
+
+	pool, _ := k.GetPool(ctx, "atom")
+	pnyxVal, assetVal, bps, err := k.ComputeLPPosition(ctx, "atom", pool.TotalShares)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !pnyxVal.Equal(math.NewInt(1_000_000)) {
+		t.Errorf("expected pnyx value 1000000, got %s", pnyxVal)
+	}
+	if !assetVal.Equal(math.NewInt(500_000)) {
+		t.Errorf("expected asset value 500000, got %s", assetVal)
+	}
+	if bps != 10000 {
+		t.Errorf("expected 10000 bps (100%%), got %d", bps)
+	}
+}
+
+func TestComputeLPPositionPartial(t *testing.T) {
+	k, ctx := setupKeeperWithDefaults(t)
+	k.CreatePool(ctx, "atom", math.NewInt(1_000_000), math.NewInt(1_000_000))
+
+	pool, _ := k.GetPool(ctx, "atom")
+	tenPercent := pool.TotalShares.Quo(math.NewInt(10))
+	pnyxVal, assetVal, bps, err := k.ComputeLPPosition(ctx, "atom", tenPercent)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !pnyxVal.Equal(math.NewInt(100_000)) {
+		t.Errorf("expected pnyx value 100000, got %s", pnyxVal)
+	}
+	if !assetVal.Equal(math.NewInt(100_000)) {
+		t.Errorf("expected asset value 100000, got %s", assetVal)
+	}
+	if bps != 1000 {
+		t.Errorf("expected 1000 bps (10%%), got %d", bps)
+	}
+}
+
+func TestComputeLPPositionNoPool(t *testing.T) {
+	k, ctx := setupKeeperWithDefaults(t)
+	_, _, _, err := k.ComputeLPPosition(ctx, "atom", math.NewInt(100))
+	if err == nil {
+		t.Error("expected error for nonexistent pool")
+	}
+}
+
+// ---------- Integration tests ----------
+
+func TestPoolStatsAfterSwaps(t *testing.T) {
+	k, ctx := setupKeeperWithDefaults(t)
+	k.CreatePool(ctx, "atom", math.NewInt(1_000_000), math.NewInt(1_000_000))
+
+	// Perform several swaps.
+	k.Swap(ctx, "pnyx", math.NewInt(10_000), "atom", math.ZeroInt())
+	k.Swap(ctx, "atom", math.NewInt(5_000), "pnyx", math.ZeroInt())
+	k.Swap(ctx, "pnyx", math.NewInt(20_000), "atom", math.ZeroInt())
+
+	pool, _ := k.GetPool(ctx, "atom")
+	if pool.SwapCount != 3 {
+		t.Errorf("expected swap count 3, got %d", pool.SwapCount)
+	}
+	if !pool.TotalVolumePnyx.IsPositive() {
+		t.Error("expected positive total volume")
+	}
+	if !pool.TotalBurned.IsPositive() {
+		t.Error("expected positive total burned (from atom->pnyx swap)")
+	}
+
+	// Verify fees earned derivation.
+	feesEarned := pool.TotalVolumePnyx.Mul(math.NewInt(SwapFeeBps)).Quo(math.NewInt(10000))
+	if !feesEarned.IsPositive() {
+		t.Error("expected positive derived fees earned")
+	}
+}
+
+func TestCreatePoolInitializesAnalytics(t *testing.T) {
+	k, ctx := setupKeeperWithDefaults(t)
+	k.CreatePool(ctx, "atom", math.NewInt(500_000), math.NewInt(500_000))
+
+	pool, found := k.GetPool(ctx, "atom")
+	if !found {
+		t.Fatal("pool not found")
+	}
+	if pool.SwapCount != 0 {
+		t.Errorf("expected swap count 0 on new pool, got %d", pool.SwapCount)
+	}
+	if !pool.TotalVolumePnyx.IsZero() {
+		t.Errorf("expected zero volume on new pool, got %s", pool.TotalVolumePnyx)
+	}
+	if !pool.TotalBurned.IsZero() {
+		t.Errorf("expected zero burned on new pool, got %s", pool.TotalBurned)
+	}
+}
