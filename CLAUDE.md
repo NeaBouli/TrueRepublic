@@ -2,14 +2,14 @@
 
 ## Current Status
 
-**Version:** v0.3.0-dev (Week 8/12 complete) -- 01.03.2026
-**Phase:** v0.3.0 development (~67% complete). ZKP + CosmWasm + Bank Bridge + IBC + Multi-Asset DEX done. Zero P0 issues.
+**Version:** v0.3.0-dev (Week 11/12 complete) -- 01.03.2026
+**Phase:** v0.3.0 development (~96% complete). ZKP + CosmWasm + Bank Bridge + IBC + Multi-Asset DEX + Cross-Chain Liquidity + UI Components + Developer Tooling done. Zero P0 issues.
 
 ### Repository State
 
 | Repo | Branch | HEAD | Path |
 |------|--------|------|------|
-| **Main** | `main` | `be004ff` (feat: Multi-Asset DEX Integration) | `/Users/gio/TrueRepublic/` |
+| **Main** | `main` | `815e897` (feat: CosmWasm contract examples & developer tooling - Week 11) | `/Users/gio/TrueRepublic/` |
 | **Wiki** | `master` | `04f9b69` (docs: update wiki for v0.3.0 Week 8 completion) | `/Users/gio/TrueRepublic/wiki-github/` |
 
 - Working tree: **clean**, up-to-date with `origin/main`
@@ -44,7 +44,7 @@
 
 ### Key Metrics
 
-- 481 unit tests across 4 packages (~9,000 lines of test code)
+- 577 tests across 3 languages (533 Go + 26 Rust + 18 Frontend)
 - 29 transaction types (23 governance + 6 DEX)
 - 12 query endpoints (7 governance + 5 DEX)
 - 5 tokenomics equations fully implemented + domain interest in EndBlock
@@ -75,6 +75,9 @@
     - **Milestone 8.1 -- Asset Registry System** (`63a5405`): RegisteredAsset type, RegisterAsset/DeregisterAsset/GetAssetByDenom/GetAssetBySymbol/GetAllAssets/UpdateAssetTradingStatus keeper methods, ValidateBasic, MsgRegisterAsset + MsgUpdateAssetStatus with gRPC handlers, 5 query endpoints, CLI commands (register-asset, update-asset-status, registered-assets, asset), DefaultGenesisState with PNYX + ATOM; 19 new tests
     - **Milestone 8.2 -- DEX Integration** (`be004ff`): validateAssetForTrading in CreatePool + Swap, GetSymbolForDenom, Pool.AssetSymbol display field, CLI symbol resolution (resolveSymbolOrDenom), event enrichment (asset_symbol, input_symbol, output_symbol); 10 new tests
     - **CI Fix** (`402420f`): Cosmos SDK v0.50.14, wasmd v0.53.3, xz v0.5.15; test timeout 600s
+12. **v0.3.0 Week 9 -- Cross-Chain Liquidity** (`1f0fdda`, `fe1da0d`): Multi-hop swap routing, pool analytics (volume, fees, liquidity depth), slippage protection, SpotPrice queries, LP position tracking; 38 new tests (481->519)
+13. **v0.3.0 Week 10 -- UI Components** (`fac91f6`): 8 React components (3 ZKP + 5 DEX analytics), legacy querier extensions (+8 routes), 14 Go querier tests + 18 frontend component tests (519->551)
+14. **v0.3.0 Week 11 -- Developer Tooling** (`815e897`): Cargo workspace with 7 crates: packages/bindings (TrueRepublic custom query/msg types), packages/testing-utils (mock querier, AMM pool, fixtures), 4 example contracts (governance-dao, dex-bot, zkp-aggregator, token-vesting); CI updated with --workspace flags; 26 Rust tests (551->577)
 
 ---
 
@@ -213,11 +216,19 @@ TrueRepublic/
 │   │                               domain interest, node staking (with decay)
 │   ├── rewards_test.go             31 tests
 │
-├── contracts/                      COSMWASM SMART CONTRACTS (Rust)
-│   ├── src/lib.rs                  Module exports
-│   ├── src/governance.rs           Governance contract (systemic consensing)
-│   ├── src/treasury.rs             Treasury contract (balance management)
-│   ├── Cargo.toml                  cosmwasm-std 3, serde, schemars
+├── contracts/                      COSMWASM WORKSPACE (7 crates, 26 Rust tests)
+│   ├── Cargo.toml                  Workspace root (resolver = "2")
+│   ├── core/                       Governance + treasury contracts (from original src/)
+│   │   ├── src/lib.rs              Module exports
+│   │   ├── src/governance.rs       Governance contract (systemic consensing)
+│   │   └── src/treasury.rs         Treasury contract (balance management)
+│   ├── packages/bindings/          TrueRepublic custom query/msg types
+│   │   └── src/                    7 queries + 5 messages mirroring wasm_bindings.go
+│   ├── packages/testing-utils/     Mock querier, AMM pool, test fixtures (4 tests)
+│   ├── examples/governance-dao/    DAO proposal lifecycle (5 tests)
+│   ├── examples/dex-bot/           Limit orders, AMM simulation (6 tests)
+│   ├── examples/zkp-aggregator/    Anonymous vote aggregation (5 tests)
+│   └── examples/token-vesting/     Linear vesting with cliff (6 tests)
 │
 ├── web-wallet/                     WEB FRONTEND (13 files, 1,053 lines)
 │   ├── src/App.js                  Root component, domain/proposal state
@@ -299,16 +310,13 @@ TrueRepublic/
 
 - All 30 wiki pages complete (zero stubs)
 - Roadmap dates updated to 2026/2027
-- GitHub Pages shows 225 tests, v0.2.0
+- GitHub Pages shows 577 tests, 96% complete
 - Full v0.3.0 roadmap spec at `docs/V0.3.0_ROADMAP.md`
 
-### v0.3.0 Scope (Q3 2026) — See `docs/V0.3.0_ROADMAP.md`
+### v0.3.0 Remaining (Week 12)
 
-**P0:** ZKP for anonymity (replace ed25519 domain keys with ZK-SNARK membership proofs)
-**P1:** CosmWasm integration (wire x/wasm, contract-to-keeper bindings)
-**P1:** Multi-asset DEX via IBC (BTC, ETH, LUSD pools)
-**P2:** UI integration (web/mobile frontends for v0.2.0 features)
-**P2:** Developer tooling (linting, Vite migration, proto files)
+- Documentation & deployment guides (final week)
+- All P0/P1/P2 items from Weeks 1-11 complete
 
 ### v0.4.0 Scope (Q2 2026) — Optional Indexer Stack
 
@@ -355,7 +363,7 @@ As of v0.2.0, there are no known critical (P0) issues. All previously identified
 
 1. **Go version:** `go.mod` says `go 1.24` (bumped from 1.23.5 in v0.3.0 Week 2 for gnark ZKP dependency). CI runs `1.24.13`.
 2. **No explicit linting configs:** No `.eslintrc`, `.prettierrc`, or `golangci-lint.yml` exist. Go uses `go vet` + optional staticcheck. Rust enforces `cargo fmt` + `clippy` in CI. JavaScript has no enforced linting.
-3. **Test count in docs/index.html:** Updated to 452 tests, ~58% v0.3.0 complete (as of Week 7).
+3. **Test count in docs/index.html:** Updated to 577 tests, 96% v0.3.0 complete (as of Week 11).
 4. **No protobuf generation:** The Makefile has a `proto-gen` stub target but no actual protobuf schema files or generation pipeline. Messages are defined as Go structs directly.
 5. **Web wallet polyfills:** The web wallet requires Node.js polyfills for `@cosmjs/crypto` (webpack 5 removed them). This is handled by `react-app-rewired` with `config-overrides.js`.
 
@@ -437,7 +445,7 @@ As of v0.2.0, there are no known critical (P0) issues. All previously identified
 
 ## Next Immediate Step
 
-v0.3.0 Weeks 1-8 are complete (ZKP + CosmWasm + Bank Bridge + IBC + Multi-Asset DEX). 481 tests, all passing.
+v0.3.0 Weeks 1-11 are complete. 577 tests (533 Go + 26 Rust + 18 Frontend), all passing.
 
 **Completed v0.3.0 work:**
 - Weeks 1-4: ZKP Anonymity Layer (Groth16, Merkle trees, nullifiers, MsgRateWithProof)
@@ -445,7 +453,10 @@ v0.3.0 Weeks 1-8 are complete (ZKP + CosmWasm + Bank Bridge + IBC + Multi-Asset 
 - Week 6: Domain-Bank Bridge (dual accounting, deposit/withdraw)
 - Week 7: IBC Integration (ibc-go v8.4.0, ICS-20 transfer, Hermes relayer config)
 - Week 8: Multi-Asset DEX (asset registry, trading validation, symbol resolution, CI fix)
+- Week 9: Cross-Chain Liquidity (multi-hop swaps, pool analytics, slippage protection)
+- Week 10: UI Components (8 React components: 3 ZKP + 5 DEX analytics, 18 frontend tests)
+- Week 11: Developer Tooling (Cargo workspace with 7 crates, 4 example contracts, 26 Rust tests)
 
-**Next action:** v0.3.0 Week 9 (DEX Expansion) or Weeks 10-12 (UI + Developer Tooling) per `docs/V0.3.0_ROADMAP.md`.
+**Next action:** v0.3.0 Week 12 (Documentation & Deployment Guides) -- final week of v0.3.0.
 
-Await core dev instruction on which direction to proceed.
+Await core dev instruction on direction.

@@ -122,10 +122,14 @@ TrueRepublic/
 ├── Makefile                    Build targets (build, test, lint, docker)
 ├── INSTALLATION.md             Quick install guide
 ├── x/
-│   ├── truedemocracy/          Governance module (23 msg types, 367 tests)
-│   └── dex/                    DEX module (6 msg types, 54 tests)
+│   ├── truedemocracy/          Governance module (23 msg types, 419 tests)
+│   └── dex/                    DEX module (6 msg types, 68 tests)
 ├── treasury/keeper/            Tokenomics equations 1-5 (31 tests)
-├── contracts/                  CosmWasm smart contracts (Rust)
+├── contracts/                  CosmWasm workspace (7 crates, 26 tests)
+│   ├── core/                   Governance + treasury contracts
+│   ├── packages/bindings/      TrueRepublic custom query/msg types
+│   ├── packages/testing-utils/ Mock querier, AMM pool, fixtures
+│   └── examples/               governance-dao, dex-bot, zkp-aggregator, token-vesting
 ├── web-wallet/                 React 18 + Tailwind + Keplr + CosmJS
 ├── mobile-wallet/              React Native + Expo
 ├── docs/
@@ -170,7 +174,7 @@ TrueRepublic/
 | PoD Transfer Limit (10%, WP S7) | ✅ | `x/truedemocracy/validator.go` |
 | CLI Commands (24 tx + 7 query) | ✅ | `x/truedemocracy/cli.go` |
 | DEX CLI (6 tx + 4 query) | ✅ | `x/dex/cli.go` |
-| CosmWasm Contracts | ✅ | `contracts/src/` |
+| CosmWasm Contracts (7 crates) | ✅ | `contracts/` (workspace) |
 | Web Wallet (React + Keplr) | ✅ | `web-wallet/` |
 | Mobile Wallet (Expo + RN) | ✅ | `mobile-wallet/` |
 | CI/CD Workflows | ✅ | `.github/workflows/` |
@@ -183,10 +187,10 @@ TrueRepublic/
 # Blockchain
 go mod tidy
 go build ./...
-go test ./... -race -cover -count=1 -timeout=600s    # 481 tests
+go test ./... -race -cover -count=1 -timeout=600s    # 533 tests
 
 # Smart contracts
-cd contracts && cargo build
+cd contracts && cargo test --workspace       # 26 tests
 
 # Web wallet
 cd web-wallet && npm install && npm run build
@@ -214,9 +218,9 @@ cd mobile-wallet && npm install
 
 ## Current Status
 
-**Version: v0.3.0-dev (Week 8/12)**
+**Version: v0.3.0-dev (Week 11/12 complete, ~96%)**
 
-- ✅ 481 unit tests across 4 packages (~9,000 lines of test code)
+- ✅ 577 tests (533 Go + 26 Rust + 18 Frontend)
 - ✅ Core blockchain compiles and runs
 - ✅ Whitepaper tokenomics fully implemented (equations 1-5)
 - ✅ Complete governance system (domains, proposals, voting, lifecycle)
@@ -225,6 +229,9 @@ cd mobile-wallet && npm install
 - ✅ Domain-Bank Bridge (dual accounting, deposit/withdraw)
 - ✅ IBC Transfer module (ibc-go v8.4.0, cross-chain PNYX transfers)
 - ✅ Multi-Asset DEX: asset registry, trading validation, symbol resolution
+- ✅ Cross-Chain Liquidity: multi-hop swaps, pool analytics, slippage protection
+- ✅ UI Components: ZKP voting panel, DEX analytics (8 React components)
+- ✅ Developer Tooling: 4 CosmWasm example contracts, shared bindings, testing utils
 - ✅ DEX with AMM, liquidity pools, swap fees, PNYX burn
 - ✅ Web wallet with 3-column governance UI
 - ✅ Mobile wallet with bottom-tab navigation
@@ -234,14 +241,16 @@ cd mobile-wallet && npm install
 
 - ✅ **v0.1.x (Feb 2026):** Security fixes, documentation, elections
 - ✅ **v0.2.x (Feb 2026):** Governance core — Systemic Consensing, Tokenomics, Elections
-- 🔄 **v0.3.0 (Q1 2026):** ZKP Anonymity, CosmWasm, Bank Bridge, IBC, Multi-Asset DEX (~67% complete)
+- 🔄 **v0.3.0 (Q1 2026):** ZKP Anonymity, CosmWasm, IBC, Multi-Asset DEX (~96% complete)
   - ✅ Weeks 1-4: ZKP Anonymity Layer (Groth16, Merkle trees, nullifiers)
   - ✅ Week 5: CosmWasm Integration (wasmd v0.53.3, custom bindings)
   - ✅ Week 6: Domain-Bank Bridge (dual accounting, deposit/withdraw)
   - ✅ Week 7: IBC Integration (ICS-20 transfer, relayer support)
   - ✅ Week 8: Multi-Asset DEX (asset registry, trading validation, symbol resolution)
-  - 📋 Week 9: DEX Expansion (cross-chain swaps, liquidity analytics)
-  - 📋 Weeks 10-12: UI & Developer Tooling
+  - ✅ Week 9: Cross-Chain Liquidity (multi-hop swaps, analytics)
+  - ✅ Week 10: UI Components (ZKP voting, DEX analytics)
+  - ✅ Week 11: Developer Tooling (contract examples, testing utils)
+  - 📋 Week 12: Documentation & Deployment Guides
 - 📋 **v0.4.0 (Q2 2026):** Optional Indexer Stack — SQL analytics, Read-Only API, Explorer
 - 📋 **v0.5.0 (Q3 2026):** DEX Expansion — BTC/ETH/LUSD via IBC
 - 🎯 **v1.0.0 (Q4 2026):** Production Release — External audit, mainnet launch
