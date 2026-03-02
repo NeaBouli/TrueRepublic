@@ -7,6 +7,8 @@ import { SendForm } from '@/components/wallet/SendForm';
 import { DomainBrowser } from '@/components/governance/DomainBrowser';
 import { IssueList } from '@/components/governance/IssueList';
 import { SuggestionList } from '@/components/governance/SuggestionList';
+import { PoolList } from '@/components/dex/PoolList';
+import { SwapForm } from '@/components/dex/SwapForm';
 
 function App() {
   return (
@@ -21,6 +23,8 @@ function App() {
         <Route path="/governance" element={<DomainBrowser />} />
         <Route path="/governance/domain/:domainId" element={<IssueList />} />
         <Route path="/governance/domain/:domainId/issue/:issueId" element={<SuggestionList />} />
+        <Route path="/dex" element={<PoolList />} />
+        <Route path="/dex/swap" element={<SwapForm />} />
         <Route path="*" element={<Navigate to="/unlock" replace />} />
       </Routes>
     </BrowserRouter>

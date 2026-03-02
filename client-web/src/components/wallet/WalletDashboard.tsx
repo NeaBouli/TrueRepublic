@@ -86,11 +86,14 @@ export function WalletDashboard() {
                 <div className="text-sm font-medium text-gray-900">Governance</div>
                 <div className="text-xs text-primary-600 mt-1">Browse Now</div>
               </button>
-              <div className="bg-white rounded-xl p-6 text-center border-2 border-dashed border-gray-300">
-                <div className="text-gray-400 text-2xl mb-2">&#x1F4B1;</div>
-                <div className="text-sm font-medium text-gray-600">DEX</div>
-                <div className="text-xs text-gray-500 mt-1">Coming Soon</div>
-              </div>
+              <button
+                onClick={() => navigate('/dex')}
+                className="bg-white rounded-xl p-6 text-center border-2 border-primary-200 hover:border-primary-400 transition-colors"
+              >
+                <div className="text-4xl mb-2">&#x1F4B1;</div>
+                <div className="text-sm font-medium text-gray-900">DEX</div>
+                <div className="text-xs text-primary-600 mt-1">Trade Now</div>
+              </button>
             </div>
           </div>
         </div>
