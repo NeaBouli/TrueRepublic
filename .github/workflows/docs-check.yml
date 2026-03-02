@@ -1,0 +1,16 @@
+name: Docs Consistency Check
+
+on:
+  pull_request:
+    paths:
+      - 'README.md'
+      - 'docs/**'
+      - 'wiki-github/**'
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check Consistency
+        run: ./scripts/check-consistency.sh

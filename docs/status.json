@@ -1,0 +1,60 @@
+{
+  "version": "v0.3.0",
+  "release_status": "complete",
+  "release_date": "2026-03-02",
+  "tests": {
+    "total": 577,
+    "go": 533,
+    "rust": 26,
+    "frontend": 18
+  },
+  "modules": {
+    "root": 15,
+    "treasury": 31,
+    "dex": 54,
+    "truedemocracy": 419
+  },
+  "token": {
+    "symbol": "PNYX",
+    "max_supply": 21000000,
+    "decimals": 6
+  },
+  "tech": {
+    "go": "1.24",
+    "cosmos_sdk": "v0.50.14",
+    "cometbft": "v0.38.21",
+    "cosmwasm": "v0.53.3",
+    "ibc_go": "v8.4.0",
+    "rust": "1.75+"
+  },
+  "features": {
+    "zkp": {
+      "status": "architecture_ready",
+      "implementation": "planned_v0.4.0",
+      "proof_system": "groth16",
+      "note": "Circuit designed and tested. Client integration (gnark-wasm) in progress."
+    },
+    "cosmwasm": {
+      "status": "complete",
+      "version": "v0.53.3"
+    },
+    "ibc": {
+      "status": "complete",
+      "note": "Transfer module active, staking/upgrade stubbed"
+    },
+    "dex": {
+      "status": "complete",
+      "multi_asset": true
+    }
+  },
+  "limitations": {
+    "ibc_staking": "stubbed - PoD consensus instead",
+    "ibc_upgrade": "stubbed - not integrated",
+    "x_staking": "stubbed - PoD consensus instead",
+    "zkp_client": "in_development - v0.4.0"
+  },
+  "branding": {
+    "logo_main": "https://raw.githubusercontent.com/NeaBouli/TrueRepublic/main/assets/logo.png",
+    "logo_icon": "https://raw.githubusercontent.com/NeaBouli/TrueRepublic/main/assets/asset_icon_pnyx.png"
+  }
+}

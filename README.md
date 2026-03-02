@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="docs/assets/images/logo.png" alt="TrueRepublic Logo" width="200"/>
+  <img src="https://raw.githubusercontent.com/NeaBouli/TrueRepublic/main/assets/logo.png" alt="TrueRepublic Logo" width="300"/>
 </p>
 
 <h1 align="center">TrueRepublic</h1>
@@ -19,6 +19,7 @@
   <img src="https://img.shields.io/badge/tests-577%20passing-brightgreen" alt="Tests"/>
   <img src="https://img.shields.io/badge/version-v0.3.0-blue" alt="Version"/>
   <img src="https://img.shields.io/badge/Go-1.24-00ADD8?logo=go" alt="Go"/>
+  <img src="https://img.shields.io/badge/Cosmos%20SDK-v0.50.14-5C4EE5" alt="Cosmos SDK"/>
   <img src="https://img.shields.io/badge/Rust-1.75+-orange?logo=rust" alt="Rust"/>
 </p>
 
@@ -213,16 +214,20 @@ cd mobile-wallet && npm install
 
 ## Tech Stack
 
-| Layer | Technology | Version |
-|-------|-----------|---------|
-| Consensus | CometBFT | v0.38.21 |
-| Application | Cosmos SDK | v0.50.14 |
-| Language | Go | 1.24 |
-| IBC | ibc-go | v8.4.0 |
-| Smart Contracts | CosmWasm (Rust) | cosmwasm-std 3 |
-| Web Frontend | React + Tailwind CSS | 18.2 / 3.4 |
-| Mobile | React Native + Expo | 0.74 / 51.0 |
-| Wallet | Keplr + CosmJS | 0.32-0.38 |
+| Component | Version | Status |
+|-----------|---------|--------|
+| Cosmos SDK | v0.50.14 | Production |
+| CometBFT | v0.38.21 | Production |
+| CosmWasm | v0.53.3 | Production |
+| ibc-go | v8.4.0 | Transfer Active |
+| gnark (ZKP) | v0.9.x | Architecture Ready |
+| Go | 1.24 | Production |
+| Rust | 1.75+ | Contracts |
+| React | 18.2 | Web Wallet |
+| React Native + Expo | 0.74 / 51.0 | Mobile |
+| Keplr + CosmJS | 0.32-0.38 | Wallet |
+
+**Known Limitations:** IBC staking/upgrade stubbed (PoD used instead), ZKP client integration v0.4.0. See [LIMITATIONS.md](docs/LIMITATIONS.md).
 
 ---
 
@@ -261,8 +266,13 @@ cd mobile-wallet && npm install
   - ✅ Week 10: UI Components (ZKP voting, DEX analytics)
   - ✅ Week 11: Developer Tooling (contract examples, testing utils)
   - ✅ Week 12: Complete Documentation (API, deployment, architecture)
-- 📋 **v0.4.0 (Q2 2026):** Optional Indexer Stack — SQL analytics, Read-Only API, Explorer
-- 📋 **v0.5.0 (Q3 2026):** DEX Expansion — BTC/ETH/LUSD via IBC
+- 🔄 **v0.4.0 (Q2 2026): Web Client & ZKP Integration (Current)**
+  - 📋 Web Client (React + gnark-wasm)
+  - 📋 ZKP Client-Side Proof Generation
+  - 📋 Telegram Mini App
+  - 📋 Domain Admin Dashboard
+  - 📋 Node Operator Dashboard
+- 📋 **v0.5.0 (Q3 2026):** Native Apps (iOS/Android)
 - 🎯 **v1.0.0 (Q4 2026):** Production Release — External audit, mainnet launch
 
 > **v0.3.0 Milestone Achieved!** All 12 weeks of the roadmap completed.
