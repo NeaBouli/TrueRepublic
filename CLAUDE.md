@@ -9,14 +9,14 @@
 
 | Repo | Branch | HEAD | Path |
 |------|--------|------|------|
-| **Main** | `main` | `49d875e` (docs: Week 12 complete) | `/Users/gio/TrueRepublic/` |
-| **Wiki** | `master` | `b4728a6` (docs: update wiki for v0.3.0 Week 11 completion) | `/Users/gio/TrueRepublic/wiki-github/` |
+| **Main** | `main` | `500c251` (feat: logos & icons) | `/Users/gio/TrueRepublic/` |
+| **Wiki** | `master` | `09276ab` (docs: update wiki for v0.3.0 100% completion) | `/Users/gio/TrueRepublic/wiki-github/` |
 
 - Working tree: **clean**, up-to-date with `origin/main`
 - `wiki-github/` is untracked in the main repo (it is a separate git clone of the GitHub Wiki repo -- this is expected and correct)
 - Remote: `https://github.com/NeaBouli/TrueRepublic`
 
-### Releases (15 total)
+### Releases (16 total)
 
 | Tag | Title | Date |
 |-----|-------|------|
@@ -34,7 +34,8 @@
 | v0.2.3 | Documentation Sync | 25.02.2026 |
 | v0.2.4 | Documentation Sync | 25.02.2026 |
 | v0.2.5 | Documentation Sync | 25.02.2026 |
-| v0.3.0-dev | Anonymity Layer Foundation (Latest) | 25.02.2026 |
+| v0.3.0-dev | Anonymity Layer Foundation | 25.02.2026 |
+| v0.3.0 | ZKP Anonymity & Multi-Asset DEX (Latest) | 02.03.2026 |
 
 ### Live Deployments
 
@@ -79,6 +80,7 @@
 13. **v0.3.0 Week 10 -- UI Components** (`fac91f6`): 8 React components (3 ZKP + 5 DEX analytics), legacy querier extensions (+8 routes), 14 Go querier tests + 18 frontend component tests (519->551)
 14. **v0.3.0 Week 11 -- Developer Tooling** (`815e897`): Cargo workspace with 7 crates: packages/bindings (TrueRepublic custom query/msg types), packages/testing-utils (mock querier, AMM pool, fixtures), 4 example contracts (governance-dao, dex-bot, zkp-aggregator, token-vesting); CI updated with --workspace flags; 26 Rust tests (551->577)
 15. **v0.3.0 Week 12 -- Final Documentation** (`49d875e`): API_REFERENCE.md (complete API overview, all endpoints, CosmWasm bindings, error codes), DEPLOYMENT.md (production setup, systemd, security hardening, IBC relayer), ARCHITECTURE.md (module architecture, ZKP circuit, data flow, security), CONTRIBUTING.md (workflow, testing, code review), QUICKSTART.md (5-minute getting started); 5 new files, ~1,200 lines
+16. **Logo & Brand Integration** (`500c251`): Official TrueRepublic owl logo + PNYX token icon (1024x1024 each); placed in assets/, docs/assets/images/, web-wallet/public/, web-wallet/src/assets/; README header with centered logo + version badges; docs/index.html favicon + header + hero + footer; web-wallet PWA manifest + favicon; PoolStats PNYX icon; build verified (788 kB)
 
 ---
 
@@ -232,7 +234,10 @@ TrueRepublic/
 │   └── examples/token-vesting/     Linear vesting with cliff (6 tests)
 │
 ├── web-wallet/                     WEB FRONTEND (13 files, 1,053 lines)
+│   ├── public/                     logo.png, logo192.png, logo512.png, manifest.json
+│   │   └── assets/pnyx-icon.png    PNYX icon (public)
 │   ├── src/App.js                  Root component, domain/proposal state
+│   ├── src/assets/images/          pnyx-icon.png (React import)
 │   ├── src/components/             ProposalFeed, DomainInfo, DomainList, Header,
 │   │                               ThreeColumnLayout
 │   ├── src/pages/                  Dex, Wallet, Governance
@@ -251,6 +256,7 @@ TrueRepublic/
 ├── docs/                           DOCUMENTATION (39 files)
 │   ├── index.html                  GitHub Pages landing site (454 lines)
 │   ├── assets/                     logo.png, pnx_logo.png, pnx_ticker.png
+│   │   └── images/                 logo.png (owl), pnyx-icon.png (for GitHub Pages)
 │   ├── WhitePaper_TR_eng.md        English whitepaper (~430 lines, corrected 21M, §3.7 added)
 │   ├── WhitePaper_TR.md            German whitepaper
 │   ├── API.md                      REST/RPC/CLI reference
@@ -267,7 +273,9 @@ TrueRepublic/
 │   ├── developers/                 8 guides (architecture, API, integration, contracts)
 │   ├── validators/                 Validator guide with PoD
 │
-├── assets/                         PROJECT LOGOS
+├── assets/                         PROJECT LOGOS & BRAND ASSETS
+│   ├── asset_icon_logo.png         Official owl logo (809K, 1024x1024)
+│   ├── asset_icon_pnyx.png         PNYX token icon (1.6M, 1024x1024, transparent)
 │   ├── logo.png                    TrueRepublic logo (938K)
 │   ├── pnx_logo.png               PNYX coin logo (1.1M)
 │   ├── pnx_ticker.png             PNYX ticker icon (1.1M)
@@ -435,7 +443,7 @@ As of v0.2.0, there are no known critical (P0) issues. All previously identified
 ### Documentation
 
 - **GitHub Pages:** Static HTML in `docs/index.html`, deployed automatically from `/docs` on `main`
-- **Logos:** Available in both `assets/` (for README/wiki via raw.githubusercontent.com) and `docs/assets/` (for GitHub Pages)
+- **Logos:** Originals in `assets/` (for README/wiki), owl icons in `docs/assets/images/` (for GitHub Pages), PWA icons in `web-wallet/public/`
 - **Wiki links in Home.md:** Use relative paths without `.md` extension (e.g., `[Title](develop-API-Reference)`)
 - **README wiki links:** Use full GitHub URLs (e.g., `https://github.com/NeaBouli/TrueRepublic/wiki/develop-Architecture-Overview`)
 
@@ -455,6 +463,11 @@ v0.3.0 is COMPLETE. All 12 weeks finished. 577 tests (533 Go + 26 Rust + 18 Fron
 - Week 10: UI Components (8 React components: 3 ZKP + 5 DEX analytics, 18 frontend tests)
 - Week 11: Developer Tooling (Cargo workspace with 7 crates, 4 example contracts, 26 Rust tests)
 - Week 12: Final Documentation (API reference, deployment, architecture, contributing, quickstart)
+
+**Post-release updates:**
+- v0.3.0 GitHub Release published (02.03.2026)
+- Official brand assets integrated (owl logo + PNYX token icon)
+- Web wallet build verified (788 kB main bundle)
 
 **Next action:** v0.4.0 (Optional Indexer Stack) or v1.0.0 preparation.
 
