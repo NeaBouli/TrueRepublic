@@ -8,6 +8,7 @@ import {
   PaperAirplaneIcon,
   ArrowDownTrayIcon,
   Cog6ToothIcon,
+  ShieldCheckIcon,
 } from '@heroicons/react/24/outline';
 
 export function WalletDashboard() {
@@ -36,12 +37,21 @@ export function WalletDashboard() {
               />
               <h1 className="text-xl font-bold text-gray-900">TrueRepublic</h1>
             </div>
-            <button
-              onClick={() => navigate('/settings')}
-              className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-            >
-              <Cog6ToothIcon className="h-6 w-6 text-gray-600" />
-            </button>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => navigate('/identity')}
+                className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                title="Anonymous Identity"
+              >
+                <ShieldCheckIcon className="h-6 w-6 text-gray-600" />
+              </button>
+              <button
+                onClick={() => navigate('/settings')}
+                className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+              >
+                <Cog6ToothIcon className="h-6 w-6 text-gray-600" />
+              </button>
+            </div>
           </div>
         </div>
       </header>

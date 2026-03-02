@@ -9,6 +9,7 @@ import { IssueList } from '@/components/governance/IssueList';
 import { SuggestionList } from '@/components/governance/SuggestionList';
 import { PoolList } from '@/components/dex/PoolList';
 import { SwapForm } from '@/components/dex/SwapForm';
+import { IdentityManager } from '@/components/zkp/IdentityManager';
 
 function App() {
   return (
@@ -25,6 +26,7 @@ function App() {
         <Route path="/governance/domain/:domainId/issue/:issueId" element={<SuggestionList />} />
         <Route path="/dex" element={<PoolList />} />
         <Route path="/dex/swap" element={<SwapForm />} />
+        <Route path="/identity" element={<IdentityManager />} />
         <Route path="*" element={<Navigate to="/unlock" replace />} />
       </Routes>
     </BrowserRouter>

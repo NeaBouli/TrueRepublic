@@ -1,9 +1,15 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useGovernanceStore } from '@/stores/governanceStore';
 import { Card } from '@/components/common/Card';
+import { VotingPanel } from '@/components/zkp/VotingPanel';
 import type { Suggestion } from '@/types/governance';
-import { ArrowLeftIcon, StarIcon, UserIcon } from '@heroicons/react/24/outline';
+import {
+  ArrowLeftIcon,
+  StarIcon,
+  UserIcon,
+  XMarkIcon,
+} from '@heroicons/react/24/outline';
 import { formatAddress } from '@/utils/format';
 
 function getZoneBorderColor(zone: Suggestion['zone']): string {
@@ -32,7 +38,13 @@ function getZoneBadgeClass(zone: Suggestion['zone']): string {
   }
 }
 
-function SuggestionCard({ suggestion }: { suggestion: Suggestion }) {
+function SuggestionCard({
+  suggestion,
+  onVote,
+}: {
+  suggestion: Suggestion;
+  onVote: (suggestionId: string) => void;
+}) {
   return (
     <Card className={`border-l-4 ${getZoneBorderColor(suggestion.zone)}`}>
       <div className="mb-4">
@@ -80,15 +92,25 @@ function SuggestionCard({ suggestion }: { suggestion: Suggestion }) {
         </div>
       </div>
 
-      {/* Rating Stats */}
-      <div className="flex items-center gap-3 text-xs text-gray-500">
-        <span>{suggestion.ratingCount} ratings</span>
-        <span>&middot;</span>
-        <span
-          className={`px-2 py-0.5 rounded text-xs font-medium ${getZoneBadgeClass(suggestion.zone)}`}
+      {/* Rating Stats + Vote Button */}
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-3 text-xs text-gray-500">
+          <span>{suggestion.ratingCount} ratings</span>
+          <span>&middot;</span>
+          <span
+            className={`px-2 py-0.5 rounded text-xs font-medium ${getZoneBadgeClass(suggestion.zone)}`}
+          >
+            {suggestion.zone.charAt(0).toUpperCase() +
+              suggestion.zone.slice(1)}
+          </span>
+        </div>
+
+        <button
+          onClick={() => onVote(suggestion.suggestionId)}
+          className="px-4 py-2 bg-primary-600 text-white text-sm font-medium rounded-lg hover:bg-primary-700 transition-colors"
         >
-          {suggestion.zone.charAt(0).toUpperCase() + suggestion.zone.slice(1)}
-        </span>
+          Vote
+        </button>
       </div>
     </Card>
   );
@@ -102,12 +124,19 @@ export function SuggestionList() {
   }>();
   const { currentDomain, currentIssue, suggestions, selectIssue, isLoading } =
     useGovernanceStore();
+  const [selectedForVoting, setSelectedForVoting] = useState<string | null>(
+    null
+  );
 
   useEffect(() => {
     if (domainId && issueId) {
       selectIssue(domainId, issueId);
     }
   }, [domainId, issueId, selectIssue]);
+
+  const selectedSuggestion = selectedForVoting
+    ? suggestions.find((s) => s.suggestionId === selectedForVoting)
+    : null;
 
   if (isLoading && !currentIssue) {
     return (
@@ -169,11 +198,39 @@ export function SuggestionList() {
                 <SuggestionCard
                   key={suggestion.suggestionId}
                   suggestion={suggestion}
+                  onVote={setSelectedForVoting}
                 />
               ))}
           </div>
         </div>
       </main>
+
+      {/* Voting Modal */}
+      {selectedForVoting && selectedSuggestion && domainId && issueId && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between rounded-t-xl">
+              <h3 className="text-lg font-semibold">Anonymous Voting</h3>
+              <button
+                onClick={() => setSelectedForVoting(null)}
+                className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+              >
+                <XMarkIcon className="h-5 w-5 text-gray-600" />
+              </button>
+            </div>
+            <div className="p-6">
+              <VotingPanel
+                suggestion={selectedSuggestion}
+                domainId={domainId}
+                issueName={issueId}
+                onVoteSubmitted={() => {
+                  setSelectedForVoting(null);
+                }}
+              />
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
