@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { queryPoolStats } from "../../services/api";
+import pnyxIcon from "../../assets/images/pnyx-icon.png";
 
 export default function PoolStats({ assetDenom }) {
   const [stats, setStats] = useState(null);
@@ -51,7 +52,8 @@ export default function PoolStats({ assetDenom }) {
 
   return (
     <div className="bg-dark-800 border border-dark-700 rounded-xl p-4">
-      <h4 className="text-sm font-semibold text-dark-400 uppercase tracking-wider mb-3">
+      <h4 className="text-sm font-semibold text-dark-400 uppercase tracking-wider mb-3 flex items-center gap-2">
+        <img src={pnyxIcon} alt="PNYX" className="w-5 h-5 rounded-full" />
         {stats.asset_symbol || assetDenom} Pool Stats
       </h4>
       <div className="space-y-1.5">

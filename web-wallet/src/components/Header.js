@@ -19,7 +19,7 @@ export default function Header({ address, onConnect, onDisconnect, loading }) {
       {/* Logo + Nav */}
       <div className="flex items-center gap-6">
         <Link to="/" className="flex items-center gap-2">
-          <img src="/logo.svg" alt="TrueRepublic" className="h-8" />
+          <img src="/logo.png" alt="TrueRepublic" className="h-8" />
           <span className="text-lg font-bold text-dark-50 hidden sm:inline">
             TrueRepublic
           </span>

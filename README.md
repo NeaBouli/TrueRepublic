@@ -1,15 +1,25 @@
 <p align="center">
-  <img src="assets/logo.png" alt="TrueRepublic Logo" width="200"/>
+  <img src="docs/assets/images/logo.png" alt="TrueRepublic Logo" width="200"/>
 </p>
 
-<h1 align="center">TrueRepublic / PNYX</h1>
+<h1 align="center">TrueRepublic</h1>
 
 <p align="center">
-  <img src="assets/pnx_logo.png" alt="PNYX Coin" width="100"/>
+  <strong>A Cosmos SDK blockchain with Zero-Knowledge Proof anonymity, CosmWasm smart contracts, and Multi-Asset DEX</strong>
 </p>
 
 <p align="center">
-  <strong>Blockchain governance that captures nuance, prevents whales, and rewards participation</strong>
+  <a href="#key-features">Features</a> &bull;
+  <a href="#quick-start">Quick Start</a> &bull;
+  <a href="#-documentation">Documentation</a> &bull;
+  <a href="#current-status">Roadmap</a>
+</p>
+
+<p align="center">
+  <img src="https://img.shields.io/badge/tests-577%20passing-brightgreen" alt="Tests"/>
+  <img src="https://img.shields.io/badge/version-v0.3.0-blue" alt="Version"/>
+  <img src="https://img.shields.io/badge/Go-1.24-00ADD8?logo=go" alt="Go"/>
+  <img src="https://img.shields.io/badge/Rust-1.75+-orange?logo=rust" alt="Rust"/>
 </p>
 
 <p align="center">
