@@ -9,7 +9,7 @@
 
 | Repo | Branch | HEAD | Path |
 |------|--------|------|------|
-| **Main** | `main` | `b3739b3` (fix: resolve all documentation inconsistencies) | `/Users/gio/TrueRepublic/` |
+| **Main** | `main` | `a5decca` (CLAUDE.md update + v0.3.0 tag) | `/Users/gio/TrueRepublic/` |
 | **Wiki** | `master` | `496c5b7` (fix: sync wiki with v0.3.0 reality) | `/Users/gio/TrueRepublic/wiki-github/` |
 
 - Working tree: **clean**, up-to-date with `origin/main`
@@ -82,6 +82,7 @@
 15. **v0.3.0 Week 12 -- Final Documentation** (`49d875e`): API_REFERENCE.md (complete API overview, all endpoints, CosmWasm bindings, error codes), DEPLOYMENT.md (production setup, systemd, security hardening, IBC relayer), ARCHITECTURE.md (module architecture, ZKP circuit, data flow, security), CONTRIBUTING.md (workflow, testing, code review), QUICKSTART.md (5-minute getting started); 5 new files, ~1,200 lines
 16. **Logo & Brand Integration** (`500c251`): Official TrueRepublic owl logo + PNYX token icon (1024x1024 each); placed in assets/, docs/assets/images/, web-wallet/public/, web-wallet/src/assets/; README header with centered logo + version badges; docs/index.html favicon + header + hero + footer; web-wallet PWA manifest + favicon; PoolStats PNYX icon; build verified (788 kB)
 17. **Documentation Consistency Fix** (`b3739b3`): Published v0.3.0 release (was Draft), created docs/status.json (single source of truth), docs/LIMITATIONS.md (stubbed modules), scripts/check-consistency.sh (CI verification), .github/workflows/docs-check.yml; fixed README logo URLs (raw.githubusercontent.com), docs/index.html (all image URLs + roadmap section + ZKP "architecture ready"), wiki (Home.md, security-Test-Coverage.md, develop-Architecture-Overview.md, status-Feature-Matrix.md synced to v0.3.0 reality)
+18. **v0.3.0 Tag Update** (tag moved to `a5decca`): Moved v0.3.0 tag from `b9f24d4` to `a5decca` to include documentation consistency fixes, logo corrections, CI consistency checks, and LIMITATIONS.md; GitHub Release automatically updated; tag and HEAD aligned
 
 ---
 
@@ -474,6 +475,7 @@ v0.3.0 is COMPLETE. All 12 weeks finished. 577 tests (533 Go + 26 Rust + 18 Fron
 - Official brand assets integrated (owl logo + PNYX token icon)
 - Web wallet build verified (788 kB main bundle)
 - Documentation consistency fix: status.json, LIMITATIONS.md, consistency check CI, all wiki pages synced
+- v0.3.0 tag updated to `a5decca` (includes all doc fixes, tag and HEAD aligned)
 
 **Next action:** v0.4.0 (Optional Indexer Stack) or v1.0.0 preparation.
 
