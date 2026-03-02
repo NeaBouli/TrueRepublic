@@ -9,7 +9,7 @@
 
 | Repo | Branch | HEAD | Path |
 |------|--------|------|------|
-| **Main** | `main` | `8612056` (docs: CLAUDE.md logo update) | `/Users/gio/TrueRepublic/` |
+| **Main** | `main` | `dae4166` (docs: update HEAD) | `/Users/gio/TrueRepublic/` |
 | **Wiki** | `master` | `09276ab` (docs: update wiki for v0.3.0 100% completion) | `/Users/gio/TrueRepublic/wiki-github/` |
 
 - Working tree: **clean**, up-to-date with `origin/main`
