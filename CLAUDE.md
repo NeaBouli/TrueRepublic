@@ -2,15 +2,15 @@
 
 ## Current Status
 
-**Version:** v0.3.0-dev (Week 11/12 complete) -- 01.03.2026
-**Phase:** v0.3.0 development (~96% complete). ZKP + CosmWasm + Bank Bridge + IBC + Multi-Asset DEX + Cross-Chain Liquidity + UI Components + Developer Tooling done. Zero P0 issues.
+**Version:** v0.3.0 (100% complete) -- 02.03.2026
+**Phase:** v0.3.0 COMPLETE. All 12 weeks finished: ZKP + CosmWasm + Bank Bridge + IBC + Multi-Asset DEX + Cross-Chain Liquidity + UI Components + Developer Tooling + Documentation. Zero P0 issues.
 
 ### Repository State
 
 | Repo | Branch | HEAD | Path |
 |------|--------|------|------|
-| **Main** | `main` | `815e897` (feat: CosmWasm contract examples & developer tooling - Week 11) | `/Users/gio/TrueRepublic/` |
-| **Wiki** | `master` | `04f9b69` (docs: update wiki for v0.3.0 Week 8 completion) | `/Users/gio/TrueRepublic/wiki-github/` |
+| **Main** | `main` | `49d875e` (docs: Week 12 complete) | `/Users/gio/TrueRepublic/` |
+| **Wiki** | `master` | `b4728a6` (docs: update wiki for v0.3.0 Week 11 completion) | `/Users/gio/TrueRepublic/wiki-github/` |
 
 - Working tree: **clean**, up-to-date with `origin/main`
 - `wiki-github/` is untracked in the main repo (it is a separate git clone of the GitHub Wiki repo -- this is expected and correct)
@@ -78,6 +78,7 @@
 12. **v0.3.0 Week 9 -- Cross-Chain Liquidity** (`1f0fdda`, `fe1da0d`): Multi-hop swap routing, pool analytics (volume, fees, liquidity depth), slippage protection, SpotPrice queries, LP position tracking; 38 new tests (481->519)
 13. **v0.3.0 Week 10 -- UI Components** (`fac91f6`): 8 React components (3 ZKP + 5 DEX analytics), legacy querier extensions (+8 routes), 14 Go querier tests + 18 frontend component tests (519->551)
 14. **v0.3.0 Week 11 -- Developer Tooling** (`815e897`): Cargo workspace with 7 crates: packages/bindings (TrueRepublic custom query/msg types), packages/testing-utils (mock querier, AMM pool, fixtures), 4 example contracts (governance-dao, dex-bot, zkp-aggregator, token-vesting); CI updated with --workspace flags; 26 Rust tests (551->577)
+15. **v0.3.0 Week 12 -- Final Documentation** (`49d875e`): API_REFERENCE.md (complete API overview, all endpoints, CosmWasm bindings, error codes), DEPLOYMENT.md (production setup, systemd, security hardening, IBC relayer), ARCHITECTURE.md (module architecture, ZKP circuit, data flow, security), CONTRIBUTING.md (workflow, testing, code review), QUICKSTART.md (5-minute getting started); 5 new files, ~1,200 lines
 
 ---
 
@@ -310,13 +311,10 @@ TrueRepublic/
 
 - All 30 wiki pages complete (zero stubs)
 - Roadmap dates updated to 2026/2027
-- GitHub Pages shows 577 tests, 96% complete
+- GitHub Pages shows 577 tests, 100% complete
 - Full v0.3.0 roadmap spec at `docs/V0.3.0_ROADMAP.md`
 
-### v0.3.0 Remaining (Week 12)
-
-- Documentation & deployment guides (final week)
-- All P0/P1/P2 items from Weeks 1-11 complete
+### v0.3.0: COMPLETE (all 12 weeks finished)
 
 ### v0.4.0 Scope (Q2 2026) — Optional Indexer Stack
 
@@ -363,7 +361,7 @@ As of v0.2.0, there are no known critical (P0) issues. All previously identified
 
 1. **Go version:** `go.mod` says `go 1.24` (bumped from 1.23.5 in v0.3.0 Week 2 for gnark ZKP dependency). CI runs `1.24.13`.
 2. **No explicit linting configs:** No `.eslintrc`, `.prettierrc`, or `golangci-lint.yml` exist. Go uses `go vet` + optional staticcheck. Rust enforces `cargo fmt` + `clippy` in CI. JavaScript has no enforced linting.
-3. **Test count in docs/index.html:** Updated to 577 tests, 96% v0.3.0 complete (as of Week 11).
+3. **Test count in docs/index.html:** Updated to 577 tests, 100% v0.3.0 complete (as of Week 12).
 4. **No protobuf generation:** The Makefile has a `proto-gen` stub target but no actual protobuf schema files or generation pipeline. Messages are defined as Go structs directly.
 5. **Web wallet polyfills:** The web wallet requires Node.js polyfills for `@cosmjs/crypto` (webpack 5 removed them). This is handled by `react-app-rewired` with `config-overrides.js`.
 
@@ -445,9 +443,9 @@ As of v0.2.0, there are no known critical (P0) issues. All previously identified
 
 ## Next Immediate Step
 
-v0.3.0 Weeks 1-11 are complete. 577 tests (533 Go + 26 Rust + 18 Frontend), all passing.
+v0.3.0 is COMPLETE. All 12 weeks finished. 577 tests (533 Go + 26 Rust + 18 Frontend), all passing.
 
-**Completed v0.3.0 work:**
+**Completed v0.3.0 work (all 12 weeks):**
 - Weeks 1-4: ZKP Anonymity Layer (Groth16, Merkle trees, nullifiers, MsgRateWithProof)
 - Week 5: CosmWasm Integration (wasmd v0.53.3, custom bindings)
 - Week 6: Domain-Bank Bridge (dual accounting, deposit/withdraw)
@@ -456,7 +454,8 @@ v0.3.0 Weeks 1-11 are complete. 577 tests (533 Go + 26 Rust + 18 Frontend), all 
 - Week 9: Cross-Chain Liquidity (multi-hop swaps, pool analytics, slippage protection)
 - Week 10: UI Components (8 React components: 3 ZKP + 5 DEX analytics, 18 frontend tests)
 - Week 11: Developer Tooling (Cargo workspace with 7 crates, 4 example contracts, 26 Rust tests)
+- Week 12: Final Documentation (API reference, deployment, architecture, contributing, quickstart)
 
-**Next action:** v0.3.0 Week 12 (Documentation & Deployment Guides) -- final week of v0.3.0.
+**Next action:** v0.4.0 (Optional Indexer Stack) or v1.0.0 preparation.
 
 Await core dev instruction on direction.

@@ -218,7 +218,7 @@ cd mobile-wallet && npm install
 
 ## Current Status
 
-**Version: v0.3.0-dev (Week 11/12 complete, ~96%)**
+**Version: v0.3.0 (100% Complete)**
 
 - ✅ 577 tests (533 Go + 26 Rust + 18 Frontend)
 - ✅ Core blockchain compiles and runs
@@ -241,7 +241,7 @@ cd mobile-wallet && npm install
 
 - ✅ **v0.1.x (Feb 2026):** Security fixes, documentation, elections
 - ✅ **v0.2.x (Feb 2026):** Governance core — Systemic Consensing, Tokenomics, Elections
-- 🔄 **v0.3.0 (Q1 2026):** ZKP Anonymity, CosmWasm, IBC, Multi-Asset DEX (~96% complete)
+- ✅ **v0.3.0 (Q1 2026): ZKP Anonymity, CosmWasm, IBC, Multi-Asset DEX (100% COMPLETE)**
   - ✅ Weeks 1-4: ZKP Anonymity Layer (Groth16, Merkle trees, nullifiers)
   - ✅ Week 5: CosmWasm Integration (wasmd v0.53.3, custom bindings)
   - ✅ Week 6: Domain-Bank Bridge (dual accounting, deposit/withdraw)
@@ -250,12 +250,25 @@ cd mobile-wallet && npm install
   - ✅ Week 9: Cross-Chain Liquidity (multi-hop swaps, analytics)
   - ✅ Week 10: UI Components (ZKP voting, DEX analytics)
   - ✅ Week 11: Developer Tooling (contract examples, testing utils)
-  - 📋 Week 12: Documentation & Deployment Guides
+  - ✅ Week 12: Complete Documentation (API, deployment, architecture)
 - 📋 **v0.4.0 (Q2 2026):** Optional Indexer Stack — SQL analytics, Read-Only API, Explorer
 - 📋 **v0.5.0 (Q3 2026):** DEX Expansion — BTC/ETH/LUSD via IBC
 - 🎯 **v1.0.0 (Q4 2026):** Production Release — External audit, mainnet launch
 
+> **v0.3.0 Milestone Achieved!** All 12 weeks of the roadmap completed.
+> 577 tests (533 Go + 26 Rust + 18 Frontend), zero regressions.
+
 ---
+
+## Developer Documentation
+
+| Guide | Description |
+|-------|-------------|
+| [API Reference](docs/API_REFERENCE.md) | Complete API overview |
+| [Deployment Guide](docs/DEPLOYMENT.md) | Production setup |
+| [Architecture](docs/ARCHITECTURE.md) | System design |
+| [Quick Start](docs/QUICKSTART.md) | 5-minute setup |
+| [Contributing](CONTRIBUTING.md) | Development guide |
 
 ## Contributing
 
@@ -265,7 +278,7 @@ cd mobile-wallet && npm install
 4. Ensure all tests pass: `make test`
 5. Submit a pull request
 
-See [Developer Docs](docs/developers/README.md) for architecture details.
+See [CONTRIBUTING.md](CONTRIBUTING.md) for detailed guidelines.
 
 ## Community
 
