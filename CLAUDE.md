@@ -9,8 +9,8 @@
 
 | Repo | Branch | HEAD | Path |
 |------|--------|------|------|
-| **Main** | `main` | `dae4166` (docs: update HEAD) | `/Users/gio/TrueRepublic/` |
-| **Wiki** | `master` | `09276ab` (docs: update wiki for v0.3.0 100% completion) | `/Users/gio/TrueRepublic/wiki-github/` |
+| **Main** | `main` | `b3739b3` (fix: resolve all documentation inconsistencies) | `/Users/gio/TrueRepublic/` |
+| **Wiki** | `master` | `496c5b7` (fix: sync wiki with v0.3.0 reality) | `/Users/gio/TrueRepublic/wiki-github/` |
 
 - Working tree: **clean**, up-to-date with `origin/main`
 - `wiki-github/` is untracked in the main repo (it is a separate git clone of the GitHub Wiki repo -- this is expected and correct)
@@ -81,6 +81,7 @@
 14. **v0.3.0 Week 11 -- Developer Tooling** (`815e897`): Cargo workspace with 7 crates: packages/bindings (TrueRepublic custom query/msg types), packages/testing-utils (mock querier, AMM pool, fixtures), 4 example contracts (governance-dao, dex-bot, zkp-aggregator, token-vesting); CI updated with --workspace flags; 26 Rust tests (551->577)
 15. **v0.3.0 Week 12 -- Final Documentation** (`49d875e`): API_REFERENCE.md (complete API overview, all endpoints, CosmWasm bindings, error codes), DEPLOYMENT.md (production setup, systemd, security hardening, IBC relayer), ARCHITECTURE.md (module architecture, ZKP circuit, data flow, security), CONTRIBUTING.md (workflow, testing, code review), QUICKSTART.md (5-minute getting started); 5 new files, ~1,200 lines
 16. **Logo & Brand Integration** (`500c251`): Official TrueRepublic owl logo + PNYX token icon (1024x1024 each); placed in assets/, docs/assets/images/, web-wallet/public/, web-wallet/src/assets/; README header with centered logo + version badges; docs/index.html favicon + header + hero + footer; web-wallet PWA manifest + favicon; PoolStats PNYX icon; build verified (788 kB)
+17. **Documentation Consistency Fix** (`b3739b3`): Published v0.3.0 release (was Draft), created docs/status.json (single source of truth), docs/LIMITATIONS.md (stubbed modules), scripts/check-consistency.sh (CI verification), .github/workflows/docs-check.yml; fixed README logo URLs (raw.githubusercontent.com), docs/index.html (all image URLs + roadmap section + ZKP "architecture ready"), wiki (Home.md, security-Test-Coverage.md, develop-Architecture-Overview.md, status-Feature-Matrix.md synced to v0.3.0 reality)
 
 ---
 
@@ -253,8 +254,10 @@ TrueRepublic/
 │   ├── package.json                React Native 0.74, Expo 51, CosmJS
 │   ├── app.json                    Expo configuration
 │
-├── docs/                           DOCUMENTATION (39 files)
+├── docs/                           DOCUMENTATION (42 files)
 │   ├── index.html                  GitHub Pages landing site (454 lines)
+│   ├── status.json                 Single source of truth (version, tests, tech stack, features)
+│   ├── LIMITATIONS.md              Stubbed modules + ZKP client status documentation
 │   ├── assets/                     logo.png, pnx_logo.png, pnx_ticker.png
 │   │   └── images/                 logo.png (owl), pnyx-icon.png (for GitHub Pages)
 │   ├── WhitePaper_TR_eng.md        English whitepaper (~430 lines, corrected 21M, §3.7 added)
@@ -298,14 +301,16 @@ TrueRepublic/
 ├── monitoring/                     Prometheus + Grafana configs
 ├── nginx/                          Reverse proxy config (rate limiting, CORS)
 ├── scripts/                        Build and deployment scripts
+│   └── check-consistency.sh        Docs consistency checker (reads status.json, verifies README/wiki/index)
 ├── ui/                             UI design assets
 │
-├── .github/workflows/              CI/CD (5 workflows)
+├── .github/workflows/              CI/CD (6 workflows)
 │   ├── go-ci.yml                   Go build + vet + test (Go 1.24.13)
 │   ├── rust-ci.yml                 cargo fmt + clippy + build + test
 │   ├── react-ci.yml                npm install + build + test (Node 20)
 │   ├── react-native-ci.yml         npm ci + jest (Node 20)
 │   ├── security-scan.yml           Weekly: govulncheck, cargo audit, npm audit
+│   ├── docs-check.yml              PR check: runs check-consistency.sh on doc changes
 │
 ├── .gitignore                      OS, Go, Rust, Node, env, IDE, chain data exclusions
 └── LICENSE                         Apache 2.0
@@ -468,6 +473,7 @@ v0.3.0 is COMPLETE. All 12 weeks finished. 577 tests (533 Go + 26 Rust + 18 Fron
 - v0.3.0 GitHub Release published (02.03.2026)
 - Official brand assets integrated (owl logo + PNYX token icon)
 - Web wallet build verified (788 kB main bundle)
+- Documentation consistency fix: status.json, LIMITATIONS.md, consistency check CI, all wiki pages synced
 
 **Next action:** v0.4.0 (Optional Indexer Stack) or v1.0.0 preparation.
 
