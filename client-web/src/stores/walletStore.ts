@@ -1,8 +1,10 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import type { Wallet, Balance } from '@/types/wallet';
+import type { Transaction, SendParams, TransactionResult } from '@/types/transaction';
 import { WalletService } from '@/services/wallet';
 import { BlockchainService } from '@/services/blockchain';
+import { TransactionService } from '@/services/transaction';
 import { DEFAULT_CHAIN } from '@/config/chains';
 
 interface WalletStore {
@@ -10,6 +12,7 @@ interface WalletStore {
   currentWallet: Wallet | null;
   wallets: Wallet[];
   balances: Balance[];
+  transactions: Transaction[];
   isLocked: boolean;
   password: string | null;
   isLoading: boolean;
@@ -25,9 +28,12 @@ interface WalletStore {
   refreshBalance: () => Promise<void>;
   loadWallets: () => void;
   getWallet: (address: string, password: string) => Promise<Wallet>;
+  sendTokens: (params: SendParams) => Promise<TransactionResult>;
+  loadTransactions: () => Promise<void>;
 }
 
 const blockchainService = new BlockchainService(DEFAULT_CHAIN);
+const transactionService = new TransactionService(DEFAULT_CHAIN);
 
 export const useWalletStore = create<WalletStore>()(
   persist(
@@ -36,6 +42,7 @@ export const useWalletStore = create<WalletStore>()(
       currentWallet: null,
       wallets: [],
       balances: [],
+      transactions: [],
       isLocked: true,
       password: null,
       isLoading: false,
@@ -124,6 +131,7 @@ export const useWalletStore = create<WalletStore>()(
           password: null,
           currentWallet: null,
           balances: [],
+          transactions: [],
         });
       },
 
@@ -159,6 +167,42 @@ export const useWalletStore = create<WalletStore>()(
 
       getWallet: async (address: string, password: string) => {
         return WalletService.getWallet(address, password);
+      },
+
+      sendTokens: async (params: SendParams) => {
+        const { currentWallet, password } = get();
+        if (!currentWallet || !password) {
+          throw new Error('Wallet not unlocked');
+        }
+
+        set({ isLoading: true, error: null });
+
+        try {
+          const signingWallet = await WalletService.getWalletForSigning(
+            currentWallet.address,
+            password
+          );
+
+          const result = await transactionService.send(signingWallet, params);
+
+          if (!result.success) {
+            throw new Error(result.error || 'Transaction failed');
+          }
+
+          await get().refreshBalance();
+
+          set({ isLoading: false });
+          return result;
+        } catch (error: unknown) {
+          const message = error instanceof Error ? error.message : 'Transaction failed';
+          set({ error: message, isLoading: false });
+          throw error;
+        }
+      },
+
+      loadTransactions: async () => {
+        // Transaction history indexing is a v0.4.0 Phase 1 feature
+        set({ transactions: [] });
       },
     }),
     {

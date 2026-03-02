@@ -3,6 +3,7 @@ import { CreateWallet } from '@/components/auth/CreateWallet';
 import { ImportWallet } from '@/components/auth/ImportWallet';
 import { UnlockWallet } from '@/components/auth/UnlockWallet';
 import { WalletDashboard } from '@/components/wallet/WalletDashboard';
+import { SendForm } from '@/components/wallet/SendForm';
 
 function App() {
   return (
@@ -13,6 +14,7 @@ function App() {
         <Route path="/import" element={<ImportWallet />} />
         <Route path="/unlock" element={<UnlockWallet />} />
         <Route path="/wallet" element={<WalletDashboard />} />
+        <Route path="/send" element={<SendForm />} />
         <Route path="*" element={<Navigate to="/unlock" replace />} />
       </Routes>
     </BrowserRouter>

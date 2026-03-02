@@ -55,7 +55,10 @@ export function WalletDashboard() {
 
             {/* Quick Actions */}
             <div className="mt-6 space-y-3">
-              <Button className="w-full flex items-center justify-center gap-2">
+              <Button
+                onClick={() => navigate('/send')}
+                className="w-full flex items-center justify-center gap-2"
+              >
                 <PaperAirplaneIcon className="h-5 w-5" />
                 Send
               </Button>
