@@ -12,6 +12,7 @@ import { SwapForm } from '@/components/dex/SwapForm';
 import { IdentityManager } from '@/components/zkp/IdentityManager';
 import { InviteHandler } from '@/components/membership/InviteHandler';
 import { OnboardingFlow } from '@/components/membership/OnboardingFlow';
+import { CreateSuggestion } from '@/components/governance/CreateSuggestion';
 
 function App() {
   return (
@@ -26,6 +27,7 @@ function App() {
         <Route path="/governance" element={<DomainBrowser />} />
         <Route path="/governance/domain/:domainId" element={<IssueList />} />
         <Route path="/governance/domain/:domainId/issue/:issueId" element={<SuggestionList />} />
+        <Route path="/governance/domain/:domainId/issue/:issueId/create" element={<CreateSuggestion />} />
         <Route path="/dex" element={<PoolList />} />
         <Route path="/dex/swap" element={<SwapForm />} />
         <Route path="/identity" element={<IdentityManager />} />

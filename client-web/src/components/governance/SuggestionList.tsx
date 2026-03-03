@@ -3,9 +3,11 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { useGovernanceStore } from '@/stores/governanceStore';
 import { Card } from '@/components/common/Card';
 import { VotingPanel } from '@/components/zkp/VotingPanel';
+import { StonePlacement } from './StonePlacement';
 import type { Suggestion } from '@/types/governance';
 import {
   ArrowLeftIcon,
+  PlusIcon,
   StarIcon,
   UserIcon,
   XMarkIcon,
@@ -41,9 +43,11 @@ function getZoneBadgeClass(zone: Suggestion['zone']): string {
 function SuggestionCard({
   suggestion,
   onVote,
+  onStone,
 }: {
   suggestion: Suggestion;
   onVote: (suggestionId: string) => void;
+  onStone: (suggestionId: string) => void;
 }) {
   return (
     <Card className={`border-l-4 ${getZoneBorderColor(suggestion.zone)}`}>
@@ -105,12 +109,20 @@ function SuggestionCard({
           </span>
         </div>
 
-        <button
-          onClick={() => onVote(suggestion.suggestionId)}
-          className="px-4 py-2 bg-primary-600 text-white text-sm font-medium rounded-lg hover:bg-primary-700 transition-colors"
-        >
-          Vote
-        </button>
+        <div className="flex gap-2">
+          <button
+            onClick={() => onStone(suggestion.suggestionId)}
+            className="px-3 py-2 bg-gray-100 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-200 transition-colors"
+          >
+            Stones
+          </button>
+          <button
+            onClick={() => onVote(suggestion.suggestionId)}
+            className="px-4 py-2 bg-primary-600 text-white text-sm font-medium rounded-lg hover:bg-primary-700 transition-colors"
+          >
+            Vote
+          </button>
+        </div>
       </div>
     </Card>
   );
@@ -125,6 +137,9 @@ export function SuggestionList() {
   const { currentDomain, currentIssue, suggestions, selectIssue, isLoading } =
     useGovernanceStore();
   const [selectedForVoting, setSelectedForVoting] = useState<string | null>(
+    null
+  );
+  const [selectedForStones, setSelectedForStones] = useState<string | null>(
     null
   );
 
@@ -174,7 +189,20 @@ export function SuggestionList() {
 
       <main className="max-w-6xl mx-auto px-4 py-8">
         <div className="mb-6">
-          <h2 className="text-lg font-semibold mb-4">Suggestions</h2>
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-lg font-semibold">Suggestions</h2>
+            <button
+              onClick={() =>
+                navigate(
+                  `/governance/domain/${domainId}/issue/${issueId}/create`
+                )
+              }
+              className="flex items-center gap-2 px-4 py-2 bg-primary-600 text-white text-sm font-medium rounded-lg hover:bg-primary-700 transition-colors"
+            >
+              <PlusIcon className="h-5 w-5" />
+              Create Suggestion
+            </button>
+          </div>
 
           {isLoading && (
             <div className="text-center py-12 text-gray-500">
@@ -199,11 +227,54 @@ export function SuggestionList() {
                   key={suggestion.suggestionId}
                   suggestion={suggestion}
                   onVote={setSelectedForVoting}
+                  onStone={setSelectedForStones}
                 />
               ))}
           </div>
         </div>
       </main>
+
+      {/* Stone Placement Modal */}
+      {selectedForStones && domainId && issueId && (() => {
+        const stoneSuggestion = suggestions.find(
+          (s) => s.suggestionId === selectedForStones
+        );
+        if (!stoneSuggestion) return null;
+        return (
+          <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+            <div className="bg-white rounded-xl max-w-md w-full">
+              <div className="border-b border-gray-200 px-6 py-4 flex items-center justify-between rounded-t-xl">
+                <h3 className="text-lg font-semibold">Place Stone</h3>
+                <button
+                  onClick={() => setSelectedForStones(null)}
+                  className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                >
+                  <XMarkIcon className="h-5 w-5 text-gray-600" />
+                </button>
+              </div>
+              <div className="p-6">
+                <StonePlacement
+                  domainName={domainId}
+                  issueName={issueId}
+                  suggestionName={stoneSuggestion.suggestionId}
+                  currentStones={{
+                    green: stoneSuggestion.greenStones,
+                    yellow: stoneSuggestion.yellowStones,
+                    red: stoneSuggestion.redStones,
+                  }}
+                  zone={stoneSuggestion.zone}
+                  onPlaced={() => {
+                    setSelectedForStones(null);
+                    if (domainId && issueId) {
+                      selectIssue(domainId, issueId);
+                    }
+                  }}
+                />
+              </div>
+            </div>
+          </div>
+        );
+      })()}
 
       {/* Voting Modal */}
       {selectedForVoting && selectedSuggestion && domainId && issueId && (
