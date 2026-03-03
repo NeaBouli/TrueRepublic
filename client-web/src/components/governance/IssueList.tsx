@@ -1,7 +1,9 @@
 import { useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useGovernanceStore } from '@/stores/governanceStore';
+import { useMembershipStore } from '@/stores/membershipStore';
 import { Card } from '@/components/common/Card';
+import { MembershipBadge } from '@/components/membership/MembershipBadge';
 import {
   ArrowLeftIcon,
   ChatBubbleLeftRightIcon,
@@ -13,6 +15,7 @@ export function IssueList() {
   const { domainId } = useParams<{ domainId: string }>();
   const { currentDomain, issues, selectDomain, isLoading } =
     useGovernanceStore();
+  const { memberships } = useMembershipStore();
 
   useEffect(() => {
     if (domainId) {
@@ -46,10 +49,24 @@ export function IssueList() {
 
           {currentDomain && (
             <div>
-              <h1 className="text-2xl font-bold">{currentDomain.name}</h1>
-              <p className="text-gray-600">
-                {currentDomain.memberCount} members
-              </p>
+              <div className="flex items-center justify-between mb-2">
+                <h1 className="text-2xl font-bold">{currentDomain.name}</h1>
+                <MembershipBadge domainId={domainId!} />
+              </div>
+              <div className="flex items-center gap-4">
+                <p className="text-gray-600">
+                  {currentDomain.memberCount} members
+                </p>
+                {domainId &&
+                  !memberships[domainId]?.isMember && (
+                    <button
+                      onClick={() => navigate(`/onboard/${domainId}`)}
+                      className="text-sm text-primary-600 hover:text-primary-700 font-medium"
+                    >
+                      Join Domain
+                    </button>
+                  )}
+              </div>
             </div>
           )}
         </div>

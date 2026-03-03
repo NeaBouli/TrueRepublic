@@ -10,6 +10,8 @@ import { SuggestionList } from '@/components/governance/SuggestionList';
 import { PoolList } from '@/components/dex/PoolList';
 import { SwapForm } from '@/components/dex/SwapForm';
 import { IdentityManager } from '@/components/zkp/IdentityManager';
+import { InviteHandler } from '@/components/membership/InviteHandler';
+import { OnboardingFlow } from '@/components/membership/OnboardingFlow';
 
 function App() {
   return (
@@ -27,6 +29,8 @@ function App() {
         <Route path="/dex" element={<PoolList />} />
         <Route path="/dex/swap" element={<SwapForm />} />
         <Route path="/identity" element={<IdentityManager />} />
+        <Route path="/invite" element={<InviteHandler />} />
+        <Route path="/onboard/:domainId" element={<OnboardingFlow />} />
         <Route path="*" element={<Navigate to="/unlock" replace />} />
       </Routes>
     </BrowserRouter>
