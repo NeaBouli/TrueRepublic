@@ -6,6 +6,8 @@ import { formatPnyx } from '@/utils/format';
 import {
   ArrowsRightLeftIcon,
   ChartBarIcon,
+  WalletIcon,
+  PlusIcon,
 } from '@heroicons/react/24/outline';
 
 export function PoolList() {
@@ -28,6 +30,13 @@ export function PoolList() {
               </p>
             </div>
             <div className="flex items-center gap-3">
+              <button
+                onClick={() => navigate('/dex/positions')}
+                className="btn flex items-center gap-2 border border-gray-300 text-gray-700 hover:bg-gray-50"
+              >
+                <WalletIcon className="h-5 w-5" />
+                Your Positions
+              </button>
               <button
                 onClick={() => navigate('/dex/swap')}
                 className="btn btn-primary flex items-center gap-2"
@@ -113,6 +122,16 @@ export function PoolList() {
                       <span>Swaps</span>
                       <span>{pool.swap_count}</span>
                     </div>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        navigate(`/dex/pool/${pool.asset_denom}/add`);
+                      }}
+                      className="mt-3 w-full flex items-center justify-center gap-1.5 py-2 px-3 text-sm font-medium text-primary-700 bg-primary-50 hover:bg-primary-100 rounded-lg transition-colors"
+                    >
+                      <PlusIcon className="h-4 w-4" />
+                      Add Liquidity
+                    </button>
                   </div>
                 </Card>
               </button>

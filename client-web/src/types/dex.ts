@@ -84,3 +84,43 @@ export interface MultiHopSwapParams {
   outputDenom: string;
   minOutput?: string;
 }
+
+/**
+ * Params for MsgAddLiquidity (Go: add_liquidity).
+ * All pools are PNYX-paired: sender deposits pnyx_amt + asset_amt.
+ */
+export interface AddLiquidityParams {
+  asset_denom: string;
+  pnyx_amt: string;
+  asset_amt: string;
+}
+
+/**
+ * Params for MsgRemoveLiquidity (Go: remove_liquidity).
+ * Sender redeems LP shares for proportional pool assets.
+ */
+export interface RemoveLiquidityParams {
+  asset_denom: string;
+  shares: string;
+}
+
+/** Extended LP position detail for the management UI */
+export interface LPPositionDetail {
+  asset_denom: string;
+  shares: string;
+  share_of_pool_bps: number;
+  pnyx_value: string;
+  asset_value: string;
+  total_value_pnyx: string;
+}
+
+/** Pool analytics for the pool detail view */
+export interface PoolAnalytics {
+  asset_denom: string;
+  asset_symbol: string;
+  total_volume_pnyx: string;
+  total_fees_earned: string;
+  total_burned: string;
+  swap_count: number;
+  spot_price_per_million: string;
+}
