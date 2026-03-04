@@ -2,12 +2,15 @@ import { useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useGovernanceStore } from '@/stores/governanceStore';
 import { useMembershipStore } from '@/stores/membershipStore';
+import { useWalletStore } from '@/stores/walletStore';
+import { useAdminStore } from '@/stores/adminStore';
 import { Card } from '@/components/common/Card';
 import { MembershipBadge } from '@/components/membership/MembershipBadge';
 import {
   ArrowLeftIcon,
   ChatBubbleLeftRightIcon,
   ChevronRightIcon,
+  ShieldCheckIcon,
 } from '@heroicons/react/24/outline';
 
 export function IssueList() {
@@ -16,12 +19,20 @@ export function IssueList() {
   const { currentDomain, issues, selectDomain, isLoading } =
     useGovernanceStore();
   const { memberships } = useMembershipStore();
+  const { currentWallet } = useWalletStore();
+  const { isAdmin, checkAdmin } = useAdminStore();
 
   useEffect(() => {
     if (domainId) {
       selectDomain(domainId);
     }
   }, [domainId, selectDomain]);
+
+  useEffect(() => {
+    if (domainId && currentWallet) {
+      checkAdmin(domainId, currentWallet.address);
+    }
+  }, [domainId, currentWallet, checkAdmin]);
 
   const handleSelectIssue = (issueId: string) => {
     navigate(`/governance/domain/${domainId}/issue/${issueId}`);
@@ -51,7 +62,18 @@ export function IssueList() {
             <div>
               <div className="flex items-center justify-between mb-2">
                 <h1 className="text-2xl font-bold">{currentDomain.name}</h1>
-                <MembershipBadge domainId={domainId!} />
+                <div className="flex items-center gap-3">
+                  <MembershipBadge domainId={domainId!} />
+                  {domainId && isAdmin[domainId] && (
+                    <button
+                      onClick={() => navigate(`/admin/domain/${domainId}`)}
+                      className="flex items-center gap-1.5 px-3 py-1 bg-primary-600 text-white text-sm font-medium rounded-lg hover:bg-primary-700 transition-colors"
+                    >
+                      <ShieldCheckIcon className="h-4 w-4" />
+                      Admin
+                    </button>
+                  )}
+                </div>
               </div>
               <div className="flex items-center gap-4">
                 <p className="text-gray-600">
