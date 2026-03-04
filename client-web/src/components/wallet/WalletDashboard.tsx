@@ -9,6 +9,7 @@ import {
   ArrowDownTrayIcon,
   Cog6ToothIcon,
   ShieldCheckIcon,
+  GlobeAltIcon,
 } from '@heroicons/react/24/outline';
 
 export function WalletDashboard() {
@@ -44,6 +45,13 @@ export function WalletDashboard() {
                 title="Anonymous Identity"
               >
                 <ShieldCheckIcon className="h-6 w-6 text-gray-600" />
+              </button>
+              <button
+                onClick={() => navigate('/network')}
+                className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                title="Network Explorer"
+              >
+                <GlobeAltIcon className="h-6 w-6 text-gray-600" />
               </button>
               <button
                 onClick={() => navigate('/settings')}

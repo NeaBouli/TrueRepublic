@@ -17,6 +17,7 @@ import { InviteHandler } from '@/components/membership/InviteHandler';
 import { OnboardingFlow } from '@/components/membership/OnboardingFlow';
 import { CreateSuggestion } from '@/components/governance/CreateSuggestion';
 import { AdminDashboard } from '@/components/admin/AdminDashboard';
+import { NetworkExplorer } from '@/components/network/NetworkExplorer';
 
 function App() {
   return (
@@ -38,6 +39,7 @@ function App() {
         <Route path="/dex/pool/:assetDenom/add" element={<AddLiquidity />} />
         <Route path="/dex/pool/:assetDenom/remove" element={<RemoveLiquidity />} />
         <Route path="/admin/domain/:domainId" element={<AdminDashboard />} />
+        <Route path="/network" element={<NetworkExplorer />} />
         <Route path="/identity" element={<IdentityManager />} />
         <Route path="/invite" element={<InviteHandler />} />
         <Route path="/onboard/:domainId" element={<OnboardingFlow />} />
