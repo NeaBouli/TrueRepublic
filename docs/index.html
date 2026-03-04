@@ -246,10 +246,11 @@
         <div class="container">
             <img src="https://raw.githubusercontent.com/NeaBouli/TrueRepublic/main/assets/pnx_logo.png" alt="PNYX Coin" style="width: 120px; height: 120px; margin: 0 auto 2rem; display: block; border-radius: 50%;">
             <h1>Democracy, Reimagined</h1>
-            <p class="subtitle">Blockchain governance that captures nuance, prevents whales, and rewards participation</p>
-            <p class="tagline">Built on Cosmos SDK &bull; Powered by PNYX Token &bull; Open Source</p>
+            <p class="subtitle">Blockchain governance with full-featured web client for direct democracy</p>
+            <p class="tagline">Built on Cosmos SDK &bull; Powered by PNYX Token &bull; React Web Client &bull; Open Source</p>
             <div class="cta-buttons">
-                <a href="https://github.com/NeaBouli/TrueRepublic/wiki" class="btn btn-primary">Explore Documentation</a>
+                <a href="https://github.com/NeaBouli/TrueRepublic/tree/main/client-web" class="btn btn-primary">Launch Web Client</a>
+                <a href="https://github.com/NeaBouli/TrueRepublic/wiki" class="btn btn-secondary">Documentation</a>
                 <a href="https://github.com/NeaBouli/TrueRepublic" class="btn btn-secondary">View on GitHub</a>
             </div>
         </div>
@@ -272,7 +273,7 @@
                 <div class="feature-card">
                     <div class="feature-icon">&#x1F510;</div>
                     <h3>ZKP Anonymous Voting</h3>
-                    <p>Groth16 zero-knowledge proof architecture for anonymous voting. Circuit designed &amp; tested, MiMC Merkle trees for membership. Domain Key Pairs active now; gnark-wasm client integration in v0.4.0.</p>
+                    <p>Groth16 zero-knowledge proof architecture for anonymous voting. Circuit designed &amp; tested on-chain, MiMC Merkle trees for membership. Web client with identity management, mock proof generation, and nullifier-based double-vote prevention. Real gnark-wasm in v0.4.1.</p>
                 </div>
                 <div class="feature-card">
                     <div class="feature-icon">&#x1F4B0;</div>
@@ -287,7 +288,7 @@
                 <div class="feature-card">
                     <div class="feature-icon">&#x1F504;</div>
                     <h3>Integrated DEX</h3>
-                    <p>Multi-asset DEX with AMM, asset registry, and symbol resolution. Trade PNYX against BTC, ETH, LUSD, and more via IBC.</p>
+                    <p>Multi-asset DEX with AMM, asset registry, and symbol resolution. Full web client with swap interface, liquidity provision, LP position tracking, and real-time price estimation.</p>
                 </div>
                 <div class="feature-card">
                     <div class="feature-icon">&#x1F310;</div>
@@ -308,6 +309,11 @@
                     <div class="feature-icon">&#x1F6E0;&#xFE0F;</div>
                     <h3>Developer Tooling</h3>
                     <p>Complete toolkit for building on TrueRepublic: 4 CosmWasm contract examples, shared bindings, and testing utilities with 26 Rust tests.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">&#x1F4F1;</div>
+                    <h3>Web Client</h3>
+                    <p>Full-featured React web client with wallet management, governance browser, DEX trading, anonymous voting, admin dashboard, and network explorer. Built with TypeScript, Vite, CosmJS, and TailwindCSS.</p>
                 </div>
             </div>
         </div>
@@ -388,12 +394,12 @@
                     <div class="stat-label">Tests Passing</div>
                 </div>
                 <div class="stat">
-                    <div class="stat-number">100%</div>
-                    <div class="stat-label">v0.3.0 Complete</div>
+                    <div class="stat-number">20+</div>
+                    <div class="stat-label">Web Components</div>
                 </div>
                 <div class="stat">
-                    <div class="stat-number">12/12</div>
-                    <div class="stat-label">Weeks Complete</div>
+                    <div class="stat-number">v0.4.0</div>
+                    <div class="stat-label">Latest Release</div>
                 </div>
             </div>
         </div>
@@ -408,7 +414,10 @@
                 <span class="tech-badge">CosmWasm</span>
                 <span class="tech-badge">IBC (ibc-go v8)</span>
                 <span class="tech-badge">Groth16 ZKP</span>
-                <span class="tech-badge">React 18</span>
+                <span class="tech-badge">React 18 + TypeScript</span>
+                <span class="tech-badge">Vite 7.3</span>
+                <span class="tech-badge">CosmJS 0.32</span>
+                <span class="tech-badge">TailwindCSS 3.4</span>
                 <span class="tech-badge">Go 1.24</span>
                 <span class="tech-badge">Rust</span>
                 <span class="tech-badge">577 Tests</span>
@@ -428,12 +437,20 @@
                         <span style="display: inline-block; padding: 0.25rem 0.75rem; background: #28a745; color: white; border-radius: 12px; font-size: 0.85rem; margin-top: 0.5rem;">+352 tests</span>
                     </div>
                 </div>
+                <div style="display: flex; margin: 1.5rem 0; padding: 1.5rem; border-radius: 8px; background: #d4edda; border-left: 4px solid #28a745;">
+                    <span style="font-size: 2rem; margin-right: 1rem;">&#x2705;</span>
+                    <div>
+                        <h3 style="margin: 0 0 0.5rem;">v0.4.0 &mdash; Complete (March 2026)</h3>
+                        <p style="margin: 0; color: var(--text-light);">React Web Client: Wallet, Governance, DEX, ZKP Voting, Admin Dashboard, Network Explorer</p>
+                        <span style="display: inline-block; padding: 0.25rem 0.75rem; background: #28a745; color: white; border-radius: 12px; font-size: 0.85rem; margin-top: 0.5rem;">20+ components, 10 weeks</span>
+                    </div>
+                </div>
                 <div style="display: flex; margin: 1.5rem 0; padding: 1.5rem; border-radius: 8px; background: #fff3cd; border-left: 4px solid #ffc107;">
                     <span style="font-size: 2rem; margin-right: 1rem;">&#x1F504;</span>
                     <div>
-                        <h3 style="margin: 0 0 0.5rem;">v0.4.0 &mdash; In Progress</h3>
-                        <p style="margin: 0; color: var(--text-light);">Web Client, ZKP Integration (gnark-wasm), Dashboards</p>
-                        <span style="display: inline-block; padding: 0.25rem 0.75rem; background: #ffc107; color: #000; border-radius: 12px; font-size: 0.85rem; margin-top: 0.5rem;">Current Development</span>
+                        <h3 style="margin: 0 0 0.5rem;">v0.4.1 &mdash; Planned</h3>
+                        <p style="margin: 0; color: var(--text-light);">Real ZKP (gnark-wasm), Transaction History, IBC Transfers UI</p>
+                        <span style="display: inline-block; padding: 0.25rem 0.75rem; background: #ffc107; color: #000; border-radius: 12px; font-size: 0.85rem; margin-top: 0.5rem;">Next Up</span>
                     </div>
                 </div>
                 <div style="display: flex; margin: 1.5rem 0; padding: 1.5rem; border-radius: 8px; background: var(--bg-alt); border-left: 4px solid #6c757d;">
@@ -459,7 +476,7 @@
             <h2>Ready to Get Started?</h2>
             <p>Join the movement for true grassroots democracy</p>
             <div class="cta-buttons">
-                <a href="https://github.com/NeaBouli/TrueRepublic/wiki/users-Installation-Wizards" class="btn btn-primary">Install Wallet</a>
+                <a href="https://github.com/NeaBouli/TrueRepublic/tree/main/client-web" class="btn btn-primary">Launch Web Client</a>
                 <a href="https://github.com/NeaBouli/TrueRepublic/wiki/develop-Development-Setup" class="btn btn-secondary">Developer Docs</a>
                 <a href="https://youtu.be/oDpaXDB7Wk4" class="btn btn-secondary">Watch Podcast</a>
             </div>

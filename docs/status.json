@@ -1,12 +1,21 @@
 {
-  "version": "v0.3.0",
+  "version": "v0.4.0",
   "release_status": "complete",
-  "release_date": "2026-03-02",
+  "release_date": "2026-03-04",
   "tests": {
     "total": 577,
     "go": 533,
     "rust": 26,
     "frontend": 18
+  },
+  "web_client": {
+    "version": "v0.4.0",
+    "framework": "React 18.2 + TypeScript 5.9 + Vite 7.3",
+    "components": 20,
+    "routes": 22,
+    "stores": 7,
+    "services": 10,
+    "build_size_gzip": "693 kB"
   },
   "modules": {
     "root": 15,
@@ -25,14 +34,20 @@
     "cometbft": "v0.38.21",
     "cosmwasm": "v0.53.3",
     "ibc_go": "v8.4.0",
-    "rust": "1.75+"
+    "rust": "1.75+",
+    "react": "18.2",
+    "typescript": "5.9",
+    "vite": "7.3",
+    "cosmjs": "0.32.4",
+    "zustand": "4.5",
+    "tailwindcss": "3.4"
   },
   "features": {
     "zkp": {
       "status": "architecture_ready",
-      "implementation": "planned_v0.4.0",
+      "client": "mock_implementation",
       "proof_system": "groth16",
-      "note": "Circuit designed and tested. Client integration (gnark-wasm) in progress."
+      "note": "Circuit designed & tested on-chain. Web client uses SHA-256 mock (2s proof gen). Real gnark-wasm planned for v0.4.1."
     },
     "cosmwasm": {
       "status": "complete",
@@ -44,14 +59,30 @@
     },
     "dex": {
       "status": "complete",
-      "multi_asset": true
+      "multi_asset": true,
+      "web_client": true
+    },
+    "web_client": {
+      "status": "complete",
+      "features": [
+        "wallet_create_import_unlock",
+        "send_transactions",
+        "governance_browser",
+        "dex_swap_liquidity",
+        "zkp_anonymous_voting",
+        "domain_membership",
+        "admin_dashboard",
+        "network_explorer"
+      ]
     }
   },
   "limitations": {
     "ibc_staking": "stubbed - PoD consensus instead",
     "ibc_upgrade": "stubbed - not integrated",
     "x_staking": "stubbed - PoD consensus instead",
-    "zkp_client": "in_development - v0.4.0"
+    "zkp_client": "mock - SHA-256 placeholder, gnark-wasm in v0.4.1",
+    "tx_history": "not yet implemented in web client",
+    "ibc_transfers_ui": "query support only in web client"
   },
   "branding": {
     "logo_main": "https://raw.githubusercontent.com/NeaBouli/TrueRepublic/main/assets/logo.png",
