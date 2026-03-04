@@ -1,4 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { ErrorBoundary } from '@/components/common/ErrorBoundary';
+import { ToastContainer } from '@/components/common/Toast';
+import { MobileNav } from '@/components/common/MobileNav';
 import { CreateWallet } from '@/components/auth/CreateWallet';
 import { ImportWallet } from '@/components/auth/ImportWallet';
 import { UnlockWallet } from '@/components/auth/UnlockWallet';
@@ -21,7 +24,10 @@ import { NetworkExplorer } from '@/components/network/NetworkExplorer';
 
 function App() {
   return (
+    <ErrorBoundary>
     <BrowserRouter>
+      <ToastContainer />
+      <MobileNav />
       <Routes>
         <Route path="/" element={<Navigate to="/unlock" replace />} />
         <Route path="/create" element={<CreateWallet />} />
@@ -46,6 +52,7 @@ function App() {
         <Route path="*" element={<Navigate to="/unlock" replace />} />
       </Routes>
     </BrowserRouter>
+    </ErrorBoundary>
   );
 }
 

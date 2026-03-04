@@ -124,6 +124,26 @@ See [INSTALLATION.md](INSTALLATION.md) for detailed instructions.
 
 ---
 
+## Web Client (v0.4.0)
+
+React-based web client with full governance and DEX functionality:
+```bash
+cd client-web
+npm install
+npm run dev
+```
+
+- Wallet: Create/import, encrypted storage, send PNYX
+- Governance: Browse domains, vote anonymously, create suggestions
+- DEX: Swap tokens, provide liquidity, manage LP positions
+- Membership: Join domains, 2-step onboarding
+- Admin: Domain management, member verification
+- Explorer: Network stats, validators, blocks, IBC
+
+See [`client-web/README.md`](client-web/README.md) for details.
+
+---
+
 ## Repository Structure
 
 ```text
@@ -141,6 +161,7 @@ TrueRepublic/
 │   ├── packages/bindings/      TrueRepublic custom query/msg types
 │   ├── packages/testing-utils/ Mock querier, AMM pool, fixtures
 │   └── examples/               governance-dao, dex-bot, zkp-aggregator, token-vesting
+├── client-web/                 React 18 + TypeScript + Vite + CosmJS (v0.4.0)
 ├── web-wallet/                 React 18 + Tailwind + Keplr + CosmJS
 ├── mobile-wallet/              React Native + Expo
 ├── docs/
@@ -266,12 +287,14 @@ cd mobile-wallet && npm install
   - ✅ Week 10: UI Components (ZKP voting, DEX analytics)
   - ✅ Week 11: Developer Tooling (contract examples, testing utils)
   - ✅ Week 12: Complete Documentation (API, deployment, architecture)
-- 🔄 **v0.4.0 (Q2 2026): Web Client & ZKP Integration (Current)**
-  - 📋 Web Client (React + gnark-wasm)
-  - 📋 ZKP Client-Side Proof Generation
-  - 📋 Telegram Mini App
-  - 📋 Domain Admin Dashboard
-  - 📋 Node Operator Dashboard
+- ✅ **v0.4.0 (Q1 2026): Web Client (100% COMPLETE)**
+  - ✅ Wallet Foundation (create/import/encrypt/send)
+  - ✅ Governance UI (domains, issues, suggestions, stones)
+  - ✅ DEX Interface (swap, liquidity, LP positions)
+  - ✅ ZKP Anonymous Voting (mock, gnark-wasm ready)
+  - ✅ Domain Membership & Onboarding
+  - ✅ Admin Dashboard (member management, stats)
+  - ✅ Network Explorer (validators, blocks, IBC)
 - 📋 **v0.5.0 (Q3 2026):** Native Apps (iOS/Android)
 - 🎯 **v1.0.0 (Q4 2026):** Production Release — External audit, mainnet launch
 

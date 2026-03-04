@@ -1,73 +1,104 @@
-# React + TypeScript + Vite
+# TrueRepublic Web Client
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+React-based web client for the TrueRepublic/PNYX blockchain.
 
-Currently, two official plugins are available:
+## Quick Start
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
-
-## React Compiler
-
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm install
+npm run dev      # Development server (http://localhost:5173)
+npm run build    # Production build
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Tech Stack
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+- **React 18** + TypeScript 5.9
+- **Vite 7.3** (build tooling)
+- **CosmJS 0.32.4** (blockchain interaction)
+- **Zustand 4.5** (state management)
+- **TailwindCSS 3.4** (styling)
+- **React Router v6** (routing)
+- **Heroicons** (icons)
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+## Architecture
+
 ```
+src/
+├── components/
+│   ├── auth/           Wallet create/import/unlock
+│   ├── wallet/         Dashboard, balances, send
+│   ├── governance/     Domains, issues, suggestions, stones
+│   ├── dex/            Swap, liquidity, pools, positions
+│   ├── zkp/            Identity, anonymous voting
+│   ├── membership/     Invites, onboarding
+│   ├── admin/          Domain management dashboard
+│   ├── network/        Explorer, validators, blocks
+│   └── common/         Button, Card, Input, Toast, etc.
+├── services/           Blockchain query & tx services
+├── stores/             Zustand state stores
+├── types/              TypeScript type definitions
+├── config/             Chain configuration
+└── utils/              Formatting, clipboard helpers
+```
+
+## Key Components
+
+### Services
+- `WalletService`: Create/import wallets, encryption
+- `BlockchainService`: Balance queries, account info
+- `TransactionService`: Send transactions
+- `GovernanceService`: Domain/issue/suggestion queries
+- `GovernanceTxService`: Create suggestions, place stones
+- `DEXService`: Pool queries, swap estimates, LP positions
+- `DEXTxService`: Swap, add/remove liquidity transactions
+- `MembershipService`: Onboarding, domain membership
+- `AdminService`: Domain management, member verification
+- `NetworkService`: Chain statistics, validators, blocks
+
+### Stores (Zustand)
+- `walletStore`: Current wallet, balances, lock state
+- `governanceStore`: Domains, issues, suggestions
+- `dexStore`: Pools, assets, swap estimates
+- `identityStore`: Anonymous identity (persisted)
+- `membershipStore`: Domain memberships
+- `adminStore`: Admin status, members, stats
+- `networkStore`: Network info, validators, blocks
+
+## ZKP Implementation
+
+**v0.4.0**: Mock implementation with SHA-256
+- 2-second simulated proof generation
+- Identity commitment creation/export/import
+- Placeholder for real gnark-wasm
+
+**v0.4.1 (Planned)**: Real ZKP
+- gnark-wasm compilation from Go circuit
+- Groth16 proof generation
+- MiMC hashing (matching on-chain circuit)
+
+## Security
+
+- Wallet encryption: AES-GCM (256-bit)
+- Key derivation: PBKDF2 (100k iterations, SHA-256)
+- Mnemonic: BIP39 (24 words)
+- Derivation path: m/44'/118'/0'/0/0 (Cosmos)
+- Storage: localStorage (encrypted)
+
+## Chain Configuration
+
+Default chain config points to local node:
+- RPC: `http://localhost:26657`
+- REST: `http://localhost:1317`
+- Bech32: `true1...`
+- Denom: `pnyx` (6 decimals)
+
+## Build Output
+
+Production build (~3 MB):
+- Main bundle: ~2.9 MB (CosmJS + protobuf)
+- CSS: ~22 kB (TailwindCSS, purged)
+- Gzip: ~690 kB
+
+## License
+
+See main repository LICENSE.
