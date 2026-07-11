@@ -17,7 +17,7 @@ jobs:
 
       - uses: actions/setup-go@v5
         with:
-          go-version: '1.24.13'
+          go-version: '1.26.5'
 
       - name: Install govulncheck
         run: go install golang.org/x/vuln/cmd/govulncheck@latest
@@ -25,9 +25,8 @@ jobs:
       - name: Run govulncheck
         run: |
           CGO_ENABLED=1 govulncheck ./... 2>&1 | tee govulncheck.txt || true
-          # Fail only on vulnerabilities that have an available fix
-          # (skip N/A = no fix in current major, skip go1.25 = requires Go 1.25+)
-          FIXABLE=$(grep "Fixed in:" govulncheck.txt | grep -v "N/A" | grep -v "go1\.25" | grep -v "go1\.26" || true)
+          # Fail on every reachable vulnerability with an available fix.
+          FIXABLE=$(grep "Fixed in:" govulncheck.txt | grep -v "N/A" || true)
           if [ -n "$FIXABLE" ]; then
             echo "::error::Fixable vulnerabilities found:"
             echo "$FIXABLE"
@@ -64,7 +63,7 @@ jobs:
           node-version: '20'
 
       - name: Install dependencies
-        run: npm install
+        run: npm ci
 
       - name: Run npm audit
         run: npm audit --audit-level=high || true

@@ -1,7 +1,7 @@
 # ============================================================
 # Stage 1: Build the truerepublicd binary
 # ============================================================
-FROM golang:1.23-alpine AS builder
+FROM golang:1.26.5-alpine AS builder
 
 RUN apk add --no-cache make gcc musl-dev linux-headers git
 
