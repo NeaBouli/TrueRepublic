@@ -31,26 +31,29 @@ func (k Keeper) DepositToDomain(ctx sdk.Context, depositor sdk.AccAddress, domai
 		return errorsmod.Wrapf(sdkerrors.ErrInvalidRequest, "only upnyx deposits supported, got %s", amount.Denom)
 	}
 
+	cacheCtx, write := ctx.CacheContext()
+
 	// Transfer from user account to module account.
 	coins := sdk.NewCoins(amount)
-	if err := k.bankKeeper.SendCoinsFromAccountToModule(ctx, depositor, ModuleName, coins); err != nil {
+	if err := k.bankKeeper.SendCoinsFromAccountToModule(cacheCtx, depositor, ModuleName, coins); err != nil {
 		return errorsmod.Wrap(err, "bank transfer failed")
 	}
 
 	// Credit domain treasury.
 	domain.Treasury = domain.Treasury.Add(amount)
 
-	store := ctx.KVStore(k.StoreKey)
+	store := cacheCtx.KVStore(k.StoreKey)
 	bz := k.cdc.MustMarshalLengthPrefixed(&domain)
 	store.Set([]byte("domain:"+domainName), bz)
 
-	ctx.EventManager().EmitEvent(sdk.NewEvent(
+	cacheCtx.EventManager().EmitEvent(sdk.NewEvent(
 		"domain_deposit",
 		sdk.NewAttribute("domain", domainName),
 		sdk.NewAttribute("depositor", depositor.String()),
 		sdk.NewAttribute("amount", amount.String()),
 	))
 
+	write()
 	return nil
 }
 
@@ -87,22 +90,22 @@ func (k Keeper) WithdrawFromDomain(ctx sdk.Context, domainName string, recipient
 			domain.Treasury.AmountOf(PNYXDenom), amount.Amount)
 	}
 
-	// Debit domain treasury first.
+	cacheCtx, write := ctx.CacheContext()
+
+	// Debit domain treasury first in the transaction cache.
 	domain.Treasury = domain.Treasury.Sub(amount)
 
 	// Transfer from module account to recipient.
 	coins := sdk.NewCoins(amount)
-	if err := k.bankKeeper.SendCoinsFromModuleToAccount(ctx, ModuleName, recipient, coins); err != nil {
-		// Rollback treasury change on failure.
-		domain.Treasury = domain.Treasury.Add(amount)
+	if err := k.bankKeeper.SendCoinsFromModuleToAccount(cacheCtx, ModuleName, recipient, coins); err != nil {
 		return errorsmod.Wrap(err, "bank transfer failed")
 	}
 
-	store := ctx.KVStore(k.StoreKey)
+	store := cacheCtx.KVStore(k.StoreKey)
 	bz := k.cdc.MustMarshalLengthPrefixed(&domain)
 	store.Set([]byte("domain:"+domainName), bz)
 
-	ctx.EventManager().EmitEvent(sdk.NewEvent(
+	cacheCtx.EventManager().EmitEvent(sdk.NewEvent(
 		"domain_withdrawal",
 		sdk.NewAttribute("domain", domainName),
 		sdk.NewAttribute("recipient", recipient.String()),
@@ -110,5 +113,6 @@ func (k Keeper) WithdrawFromDomain(ctx sdk.Context, domainName string, recipient
 		sdk.NewAttribute("authorizer", authorizer.String()),
 	))
 
+	write()
 	return nil
 }

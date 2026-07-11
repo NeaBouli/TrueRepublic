@@ -32,7 +32,7 @@ func (m MsgCreateDomain) ValidateBasic() error {
 	if m.Admin.Empty() {
 		return sdkerrors.ErrInvalidAddress.Wrap("admin address is required")
 	}
-	return nil
+	return validatePNYXCoins(m.InitialCoins, "initial coins")
 }
 
 // --- MsgSubmitProposal ---
@@ -54,10 +54,16 @@ func (m MsgSubmitProposal) Route() string                { return ModuleName }
 func (m MsgSubmitProposal) Type() string                 { return "submit_proposal" }
 func (m MsgSubmitProposal) GetSigners() []sdk.AccAddress { return []sdk.AccAddress{m.Sender} }
 func (m MsgSubmitProposal) ValidateBasic() error {
+	if m.Sender.Empty() {
+		return sdkerrors.ErrInvalidAddress.Wrap("sender address is required")
+	}
 	if m.DomainName == "" || m.IssueName == "" || m.SuggestionName == "" {
 		return sdkerrors.ErrInvalidRequest.Wrap("domain, issue, and suggestion names are required")
 	}
-	return nil
+	if err := requireSignerClaim(m.Sender, m.Creator, "creator"); err != nil {
+		return err
+	}
+	return validatePNYXCoins(m.Fee, "proposal fee")
 }
 
 // --- MsgRegisterValidator ---
@@ -77,10 +83,16 @@ func (m MsgRegisterValidator) Route() string                { return ModuleName 
 func (m MsgRegisterValidator) Type() string                 { return "register_validator" }
 func (m MsgRegisterValidator) GetSigners() []sdk.AccAddress { return []sdk.AccAddress{m.Sender} }
 func (m MsgRegisterValidator) ValidateBasic() error {
+	if m.Sender.Empty() {
+		return sdkerrors.ErrInvalidAddress.Wrap("sender address is required")
+	}
 	if m.OperatorAddr == "" || m.PubKey == "" || m.DomainName == "" {
 		return sdkerrors.ErrInvalidRequest.Wrap("operator_addr, pub_key, and domain_name are required")
 	}
-	return nil
+	if err := requireSignerClaim(m.Sender, m.OperatorAddr, "operator address"); err != nil {
+		return err
+	}
+	return validatePNYXCoins(m.Stake, "validator stake")
 }
 
 // --- MsgWithdrawStake ---
@@ -98,13 +110,16 @@ func (m MsgWithdrawStake) Route() string                { return ModuleName }
 func (m MsgWithdrawStake) Type() string                 { return "withdraw_stake" }
 func (m MsgWithdrawStake) GetSigners() []sdk.AccAddress { return []sdk.AccAddress{m.Sender} }
 func (m MsgWithdrawStake) ValidateBasic() error {
+	if m.Sender.Empty() {
+		return sdkerrors.ErrInvalidAddress.Wrap("sender address is required")
+	}
 	if m.OperatorAddr == "" {
 		return sdkerrors.ErrInvalidRequest.Wrap("operator_addr is required")
 	}
 	if m.Amount <= 0 {
 		return sdkerrors.ErrInvalidRequest.Wrap("amount must be positive")
 	}
-	return nil
+	return requireSignerClaim(m.Sender, m.OperatorAddr, "operator address")
 }
 
 // --- MsgRemoveValidator ---
@@ -121,10 +136,13 @@ func (m MsgRemoveValidator) Route() string                { return ModuleName }
 func (m MsgRemoveValidator) Type() string                 { return "remove_validator" }
 func (m MsgRemoveValidator) GetSigners() []sdk.AccAddress { return []sdk.AccAddress{m.Sender} }
 func (m MsgRemoveValidator) ValidateBasic() error {
+	if m.Sender.Empty() {
+		return sdkerrors.ErrInvalidAddress.Wrap("sender address is required")
+	}
 	if m.OperatorAddr == "" {
 		return sdkerrors.ErrInvalidRequest.Wrap("operator_addr is required")
 	}
-	return nil
+	return requireSignerClaim(m.Sender, m.OperatorAddr, "operator address")
 }
 
 // --- MsgUnjail ---
@@ -141,10 +159,13 @@ func (m MsgUnjail) Route() string                { return ModuleName }
 func (m MsgUnjail) Type() string                 { return "unjail" }
 func (m MsgUnjail) GetSigners() []sdk.AccAddress { return []sdk.AccAddress{m.Sender} }
 func (m MsgUnjail) ValidateBasic() error {
+	if m.Sender.Empty() {
+		return sdkerrors.ErrInvalidAddress.Wrap("sender address is required")
+	}
 	if m.OperatorAddr == "" {
 		return sdkerrors.ErrInvalidRequest.Wrap("operator_addr is required")
 	}
-	return nil
+	return requireSignerClaim(m.Sender, m.OperatorAddr, "operator address")
 }
 
 // --- MsgJoinPermissionRegister ---
@@ -163,10 +184,13 @@ func (m MsgJoinPermissionRegister) Route() string                { return Module
 func (m MsgJoinPermissionRegister) Type() string                 { return "join_permission_register" }
 func (m MsgJoinPermissionRegister) GetSigners() []sdk.AccAddress { return []sdk.AccAddress{m.Sender} }
 func (m MsgJoinPermissionRegister) ValidateBasic() error {
+	if m.Sender.Empty() {
+		return sdkerrors.ErrInvalidAddress.Wrap("sender address is required")
+	}
 	if m.DomainName == "" || m.MemberAddr == "" || m.DomainPubKey == "" {
 		return sdkerrors.ErrInvalidRequest.Wrap("domain_name, member_addr, and domain_pub_key are required")
 	}
-	return nil
+	return requireSignerClaim(m.Sender, m.MemberAddr, "member address")
 }
 
 // --- MsgPurgePermissionRegister ---
@@ -205,10 +229,13 @@ func (m MsgPlaceStoneOnIssue) Route() string                { return ModuleName 
 func (m MsgPlaceStoneOnIssue) Type() string                 { return "place_stone_issue" }
 func (m MsgPlaceStoneOnIssue) GetSigners() []sdk.AccAddress { return []sdk.AccAddress{m.Sender} }
 func (m MsgPlaceStoneOnIssue) ValidateBasic() error {
+	if m.Sender.Empty() {
+		return sdkerrors.ErrInvalidAddress.Wrap("sender address is required")
+	}
 	if m.DomainName == "" || m.IssueName == "" || m.MemberAddr == "" {
 		return sdkerrors.ErrInvalidRequest.Wrap("domain_name, issue_name, and member_addr are required")
 	}
-	return nil
+	return requireSignerClaim(m.Sender, m.MemberAddr, "member address")
 }
 
 // --- MsgPlaceStoneOnSuggestion ---
@@ -228,10 +255,13 @@ func (m MsgPlaceStoneOnSuggestion) Route() string                { return Module
 func (m MsgPlaceStoneOnSuggestion) Type() string                 { return "place_stone_suggestion" }
 func (m MsgPlaceStoneOnSuggestion) GetSigners() []sdk.AccAddress { return []sdk.AccAddress{m.Sender} }
 func (m MsgPlaceStoneOnSuggestion) ValidateBasic() error {
+	if m.Sender.Empty() {
+		return sdkerrors.ErrInvalidAddress.Wrap("sender address is required")
+	}
 	if m.DomainName == "" || m.IssueName == "" || m.SuggestionName == "" || m.MemberAddr == "" {
 		return sdkerrors.ErrInvalidRequest.Wrap("domain_name, issue_name, suggestion_name, and member_addr are required")
 	}
-	return nil
+	return requireSignerClaim(m.Sender, m.MemberAddr, "member address")
 }
 
 // --- MsgPlaceStoneOnMember ---
@@ -250,10 +280,13 @@ func (m MsgPlaceStoneOnMember) Route() string                { return ModuleName
 func (m MsgPlaceStoneOnMember) Type() string                 { return "place_stone_member" }
 func (m MsgPlaceStoneOnMember) GetSigners() []sdk.AccAddress { return []sdk.AccAddress{m.Sender} }
 func (m MsgPlaceStoneOnMember) ValidateBasic() error {
+	if m.Sender.Empty() {
+		return sdkerrors.ErrInvalidAddress.Wrap("sender address is required")
+	}
 	if m.DomainName == "" || m.TargetMember == "" || m.VoterAddr == "" {
 		return sdkerrors.ErrInvalidRequest.Wrap("domain_name, target_member, and voter_addr are required")
 	}
-	return nil
+	return requireSignerClaim(m.Sender, m.VoterAddr, "voter address")
 }
 
 // --- MsgVoteToExclude ---
@@ -272,10 +305,13 @@ func (m MsgVoteToExclude) Route() string                { return ModuleName }
 func (m MsgVoteToExclude) Type() string                 { return "vote_exclude" }
 func (m MsgVoteToExclude) GetSigners() []sdk.AccAddress { return []sdk.AccAddress{m.Sender} }
 func (m MsgVoteToExclude) ValidateBasic() error {
+	if m.Sender.Empty() {
+		return sdkerrors.ErrInvalidAddress.Wrap("sender address is required")
+	}
 	if m.DomainName == "" || m.TargetMember == "" || m.VoterAddr == "" {
 		return sdkerrors.ErrInvalidRequest.Wrap("domain_name, target_member, and voter_addr are required")
 	}
-	return nil
+	return requireSignerClaim(m.Sender, m.VoterAddr, "voter address")
 }
 
 // --- MsgVoteToDelete ---
@@ -295,10 +331,13 @@ func (m MsgVoteToDelete) Route() string                { return ModuleName }
 func (m MsgVoteToDelete) Type() string                 { return "vote_delete" }
 func (m MsgVoteToDelete) GetSigners() []sdk.AccAddress { return []sdk.AccAddress{m.Sender} }
 func (m MsgVoteToDelete) ValidateBasic() error {
+	if m.Sender.Empty() {
+		return sdkerrors.ErrInvalidAddress.Wrap("sender address is required")
+	}
 	if m.DomainName == "" || m.IssueName == "" || m.SuggestionName == "" || m.MemberAddr == "" {
 		return sdkerrors.ErrInvalidRequest.Wrap("domain_name, issue_name, suggestion_name, and member_addr are required")
 	}
-	return nil
+	return requireSignerClaim(m.Sender, m.MemberAddr, "member address")
 }
 
 // --- MsgRateProposal ---
@@ -518,6 +557,9 @@ func (m MsgCastElectionVote) Route() string                { return ModuleName }
 func (m MsgCastElectionVote) Type() string                 { return "cast_election_vote" }
 func (m MsgCastElectionVote) GetSigners() []sdk.AccAddress { return []sdk.AccAddress{m.Sender} }
 func (m MsgCastElectionVote) ValidateBasic() error {
+	if m.Sender.Empty() {
+		return sdkerrors.ErrInvalidAddress.Wrap("sender address is required")
+	}
 	if m.DomainName == "" || m.IssueName == "" || m.VoterAddr == "" {
 		return sdkerrors.ErrInvalidRequest.Wrap("domain_name, issue_name, and voter_addr are required")
 	}
@@ -527,7 +569,7 @@ func (m MsgCastElectionVote) ValidateBasic() error {
 	if m.Choice == 0 && m.CandidateName == "" {
 		return sdkerrors.ErrInvalidRequest.Wrap("candidate_name required for approve vote")
 	}
-	return nil
+	return requireSignerClaim(m.Sender, m.VoterAddr, "voter address")
 }
 
 // --- MsgDepositToDomain ---

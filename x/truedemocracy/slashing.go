@@ -18,7 +18,11 @@ func (k Keeper) HandleDoubleSign(ctx sdk.Context, pubKeyBytes []byte) error {
 		return errorsmod.Wrap(sdkerrors.ErrUnknownRequest, "validator not found")
 	}
 
-	val = slashStake(val, SlashFractionDoubleSign)
+	var err error
+	val, err = k.slashValidatorStake(ctx, val, SlashFractionDoubleSign)
+	if err != nil {
+		return err
+	}
 	val.Jailed = true
 	val.JailedUntil = ctx.BlockTime().Unix() + DowntimeJailDuration*10
 
@@ -45,7 +49,11 @@ func (k Keeper) HandleDowntime(ctx sdk.Context, pubKeyBytes []byte) error {
 
 	threshold := SignedBlocksWindow - MinSignedPerWindow
 	if val.MissedBlocks > threshold {
-		val = slashStake(val, SlashFractionDowntime)
+		var err error
+		val, err = k.slashValidatorStake(ctx, val, SlashFractionDowntime)
+		if err != nil {
+			return err
+		}
 		val.Jailed = true
 		val.JailedUntil = ctx.BlockTime().Unix() + DowntimeJailDuration
 		val.MissedBlocks = 0
@@ -103,4 +111,27 @@ func slashStake(val Validator, pct int64) Validator {
 	}
 	val.Stake = sdk.NewCoins(sdk.NewCoin(PNYXDenom, remaining))
 	return val
+}
+
+// slashValidatorStake transfers the slashed claim from validator stake to
+// the validator's primary domain treasury. No bank movement is needed because
+// both claims are backed by the same module escrow account.
+func (k Keeper) slashValidatorStake(ctx sdk.Context, val Validator, pct int64) (Validator, error) {
+	if len(val.Domains) == 0 {
+		return Validator{}, errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "validator has no domain for slash proceeds")
+	}
+	domain, found := k.GetDomain(ctx, val.Domains[0])
+	if !found {
+		return Validator{}, errorsmod.Wrap(sdkerrors.ErrUnknownRequest, "validator domain not found for slash proceeds")
+	}
+
+	before := val.Stake.AmountOf(PNYXDenom)
+	val = slashStake(val, pct)
+	penalty := before.Sub(val.Stake.AmountOf(PNYXDenom))
+	if penalty.IsPositive() {
+		domain.Treasury = domain.Treasury.Add(sdk.NewCoin(PNYXDenom, penalty))
+		store := ctx.KVStore(k.StoreKey)
+		store.Set([]byte("domain:"+domain.Name), k.cdc.MustMarshalLengthPrefixed(&domain))
+	}
+	return val, nil
 }

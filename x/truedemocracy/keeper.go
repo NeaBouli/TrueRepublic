@@ -18,6 +18,7 @@ import (
 type BankKeeper interface {
 	SendCoinsFromAccountToModule(ctx context.Context, senderAddr sdk.AccAddress, recipientModule string, amt sdk.Coins) error
 	SendCoinsFromModuleToAccount(ctx context.Context, senderModule string, recipientAddr sdk.AccAddress, amt sdk.Coins) error
+	GetBalance(ctx context.Context, addr sdk.AccAddress, denom string) sdk.Coin
 }
 
 type Keeper struct {
@@ -105,6 +106,16 @@ func (k Keeper) SubmitProposal(ctx sdk.Context, domainName, issueName, suggestio
 	putPrice := rewards.CalcPutPrice(domain.Treasury.AmountOf(PNYXDenom), int64(len(domain.Members)))
 	if putPrice.IsPositive() && fee.AmountOf(PNYXDenom).LT(putPrice) {
 		return errorsmod.Wrap(sdkerrors.ErrInsufficientFunds, "Fee below put price (eq.3)")
+	}
+	for _, issue := range domain.Issues {
+		if issue.Name != issueName {
+			continue
+		}
+		for _, suggestion := range issue.Suggestions {
+			if suggestion.Name == suggestionName {
+				return errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "suggestion already exists")
+			}
+		}
 	}
 	domain.Treasury = domain.Treasury.Add(fee...)
 

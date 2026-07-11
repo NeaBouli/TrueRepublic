@@ -33,6 +33,9 @@ func (k Keeper) RegisterValidator(ctx sdk.Context, operatorAddr string, pubKeyBy
 	if pnyxAmt.LT(math.NewInt(rewards.StakeMin)) {
 		return errorsmod.Wrapf(sdkerrors.ErrInsufficientFunds, "stake %s below minimum %d", pnyxAmt, rewards.StakeMin)
 	}
+	if !pnyxAmt.IsInt64() {
+		return errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "stake exceeds supported range")
+	}
 
 	// Verify the operator is a member of the domain.
 	domain, found := k.GetDomain(ctx, domainName)
@@ -54,6 +57,9 @@ func (k Keeper) RegisterValidator(ctx sdk.Context, operatorAddr string, pubKeyBy
 	store := ctx.KVStore(k.StoreKey)
 	if store.Has(validatorKey(operatorAddr)) {
 		return errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "validator already registered")
+	}
+	if store.Has(valPubKeyKey(pubKeyBytes)) {
+		return errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "validator public key already registered")
 	}
 
 	power := pnyxAmt.Int64() / rewards.StakeMin
@@ -110,12 +116,19 @@ func (k Keeper) GetValidatorByPubKey(ctx sdk.Context, pubKeyBytes []byte) (Valid
 // cumulative withdrawals across all domain validators cannot exceed 10% of
 // the domain's total historical payouts.
 func (k Keeper) WithdrawStake(ctx sdk.Context, operatorAddr string, amount int64) error {
+	if amount <= 0 {
+		return errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "withdrawal amount must be positive")
+	}
 	val, found := k.GetValidator(ctx, operatorAddr)
 	if !found {
 		return errorsmod.Wrap(sdkerrors.ErrUnknownRequest, "validator not found")
 	}
 
-	stakeAmt := val.Stake.AmountOf(PNYXDenom).Int64()
+	stake := val.Stake.AmountOf(PNYXDenom)
+	if !stake.IsInt64() {
+		return errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "validator stake exceeds supported range")
+	}
+	stakeAmt := stake.Int64()
 	if amount > stakeAmt {
 		return errorsmod.Wrapf(sdkerrors.ErrInsufficientFunds,
 			"withdraw %d exceeds current stake %d", amount, stakeAmt)
@@ -131,7 +144,17 @@ func (k Keeper) WithdrawStake(ctx sdk.Context, operatorAddr string, amount int64
 		return err
 	}
 
-	// Update domain's cumulative transferred stake.
+	newStake := stakeAmt - amount
+	if newStake > 0 && newStake < rewards.StakeMin {
+		return errorsmod.Wrapf(
+			sdkerrors.ErrInvalidRequest,
+			"withdrawal would leave dust stake %d below minimum %d",
+			newStake,
+			rewards.StakeMin,
+		)
+	}
+
+	// Update domain accounting only after every withdrawal precondition passed.
 	domain, found := k.GetDomain(ctx, domainName)
 	if !found {
 		return errorsmod.Wrapf(sdkerrors.ErrUnknownRequest, "domain %s not found", domainName)
@@ -141,10 +164,7 @@ func (k Keeper) WithdrawStake(ctx sdk.Context, operatorAddr string, amount int64
 	bz := k.cdc.MustMarshalLengthPrefixed(&domain)
 	store.Set([]byte("domain:"+domainName), bz)
 
-	// Reduce validator stake.
-	newStake := stakeAmt - amount
-	if newStake < rewards.StakeMin {
-		// Stake drops below minimum — remove the validator entirely.
+	if newStake == 0 {
 		return k.RemoveValidator(ctx, operatorAddr)
 	}
 

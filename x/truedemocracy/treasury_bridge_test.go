@@ -6,14 +6,17 @@ import (
 	"testing"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 )
 
 // --- Mock BankKeeper ---
 
 // mockBankKeeper implements BankKeeper for testing treasury bridge operations.
 type mockBankKeeper struct {
-	accounts map[string]sdk.Coins // address → balances
-	modules  map[string]sdk.Coins // module name → balances
+	accounts            map[string]sdk.Coins // address → balances
+	modules             map[string]sdk.Coins // module name → balances
+	failAccountToModule bool
+	failModuleToAccount bool
 }
 
 func newMockBankKeeper() *mockBankKeeper {
@@ -32,6 +35,9 @@ func (m *mockBankKeeper) fundModule(moduleName string, coins sdk.Coins) {
 }
 
 func (m *mockBankKeeper) SendCoinsFromAccountToModule(_ context.Context, senderAddr sdk.AccAddress, recipientModule string, amt sdk.Coins) error {
+	if m.failAccountToModule {
+		return fmt.Errorf("injected account-to-module failure")
+	}
 	key := senderAddr.String()
 	bal := m.accounts[key]
 	for _, coin := range amt {
@@ -45,6 +51,9 @@ func (m *mockBankKeeper) SendCoinsFromAccountToModule(_ context.Context, senderA
 }
 
 func (m *mockBankKeeper) SendCoinsFromModuleToAccount(_ context.Context, senderModule string, recipientAddr sdk.AccAddress, amt sdk.Coins) error {
+	if m.failModuleToAccount {
+		return fmt.Errorf("injected module-to-account failure")
+	}
 	bal := m.modules[senderModule]
 	for _, coin := range amt {
 		if bal.AmountOf(coin.Denom).LT(coin.Amount) {
@@ -55,6 +64,13 @@ func (m *mockBankKeeper) SendCoinsFromModuleToAccount(_ context.Context, senderM
 	key := recipientAddr.String()
 	m.accounts[key] = m.accounts[key].Add(amt...)
 	return nil
+}
+
+func (m *mockBankKeeper) GetBalance(_ context.Context, addr sdk.AccAddress, denom string) sdk.Coin {
+	if addr.Equals(authtypes.NewModuleAddress(ModuleName)) {
+		return sdk.NewCoin(denom, m.modules[ModuleName].AmountOf(denom))
+	}
+	return sdk.NewCoin(denom, m.accounts[addr.String()].AmountOf(denom))
 }
 
 // setupKeeperWithBank creates a Keeper with a mock BankKeeper for bridge tests.
@@ -248,6 +264,41 @@ func TestDepositWithdrawRoundTrip(t *testing.T) {
 	domain, _ = k.GetDomain(ctx, "RoundTrip")
 	if domain.Treasury.AmountOf(PNYXDenom).Int64() != 300 {
 		t.Errorf("treasury after withdraw = %d, want 300 (500-200)", domain.Treasury.AmountOf(PNYXDenom).Int64())
+	}
+}
+
+func TestTreasuryBridgeTransferFailuresDoNotChangeClaims(t *testing.T) {
+	k, ctx, bk := setupKeeperWithBank(t)
+	admin := sdk.AccAddress("atomic-admin")
+	user := sdk.AccAddress("atomic-user")
+	initial := sdk.NewCoins(sdk.NewInt64Coin(PNYXDenom, 1_000))
+	k.CreateDomain(ctx, "Atomic", admin, initial)
+	bk.fundModule(ModuleName, initial)
+	bk.fundAccount(user, sdk.NewCoins(sdk.NewInt64Coin(PNYXDenom, 500)))
+
+	bk.failAccountToModule = true
+	if err := k.DepositToDomain(ctx, user, "Atomic", sdk.NewInt64Coin(PNYXDenom, 100)); err == nil {
+		t.Fatal("expected injected deposit failure")
+	}
+	domain, _ := k.GetDomain(ctx, "Atomic")
+	if got := domain.Treasury.AmountOf(PNYXDenom).Int64(); got != 1_000 {
+		t.Fatalf("failed deposit changed treasury: got %d", got)
+	}
+	if got := bk.accounts[user.String()].AmountOf(PNYXDenom).Int64(); got != 500 {
+		t.Fatalf("failed deposit changed account: got %d", got)
+	}
+
+	bk.failAccountToModule = false
+	bk.failModuleToAccount = true
+	if err := k.WithdrawFromDomain(ctx, "Atomic", user, sdk.NewInt64Coin(PNYXDenom, 100), admin); err == nil {
+		t.Fatal("expected injected withdrawal failure")
+	}
+	domain, _ = k.GetDomain(ctx, "Atomic")
+	if got := domain.Treasury.AmountOf(PNYXDenom).Int64(); got != 1_000 {
+		t.Fatalf("failed withdrawal changed treasury: got %d", got)
+	}
+	if got := bk.accounts[user.String()].AmountOf(PNYXDenom).Int64(); got != 500 {
+		t.Fatalf("failed withdrawal changed account: got %d", got)
 	}
 }
 

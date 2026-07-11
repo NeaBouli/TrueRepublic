@@ -459,10 +459,11 @@ func TestMsgRateWithProofValidateBasic(t *testing.T) {
 
 func TestMsgServerRateWithProof(t *testing.T) {
 	k, ctx := setupKeeper(t)
-	srv := NewMsgServer(k)
 
 	secrets := setupDomainWithZKPIdentity(t, k, ctx, "ZKPDomain", 3)
 	addProposal(t, k, ctx, "ZKPDomain", "Climate", "GreenDeal")
+	bank := backExistingEscrow(&k, ctx)
+	srv := NewMsgServer(k)
 
 	proofHex, nullifierHex := generateZKPRating(t, k, ctx, "ZKPDomain", secrets, 1, "Climate", "GreenDeal")
 
@@ -490,14 +491,21 @@ func TestMsgServerRateWithProof(t *testing.T) {
 	if ratings[0].Value != 4 {
 		t.Fatalf("expected rating value 4, got %d", ratings[0].Value)
 	}
+	if got := accountBalance(bank, msg.Sender); got != 0 {
+		t.Fatalf("unbound anonymous reward was paid to transaction sender: %d", got)
+	}
+	if err := k.ValidateEscrowParity(ctx); err != nil {
+		t.Fatalf("deferred anonymous reward broke escrow parity: %v", err)
+	}
 }
 
 func TestMsgServerRateWithProofDoubleVote(t *testing.T) {
 	k, ctx := setupKeeper(t)
-	srv := NewMsgServer(k)
 
 	secrets := setupDomainWithZKPIdentity(t, k, ctx, "ZKPDomain", 3)
 	addProposal(t, k, ctx, "ZKPDomain", "Climate", "GreenDeal")
+	backExistingEscrow(&k, ctx)
+	srv := NewMsgServer(k)
 
 	proofHex, nullifierHex := generateZKPRating(t, k, ctx, "ZKPDomain", secrets, 0, "Climate", "GreenDeal")
 
@@ -562,6 +570,8 @@ func TestE2EZKPRatingFlow(t *testing.T) {
 	if err := k.SubmitProposal(ctx, "E2EDomain", "Energy", "Solar", admin.String(), fee, ""); err != nil {
 		t.Fatalf("SubmitProposal failed: %v", err)
 	}
+	backExistingEscrow(&k, ctx)
+	srv = NewMsgServer(k)
 
 	// 5. Generate ZKP proof.
 	keys := getTestZKPKeys(t)
