@@ -72,8 +72,11 @@ Updated: 2026-07-11 23:02 EEST
   one EndBlock cache. Full local Go/Rust/client/docs gates pass. Its Dockerfile
   now maps Docker target architecture to the correct wasmvm library, verifies
   runtime linkage during image construction, and excludes 1.5+ GB of local
-  build artifacts/dependencies from the context. The actual image build and
-  refreshed GitHub gates remain before PR #17 readiness. See `PR17_AUDIT.md`.
+  build artifacts/dependencies from the context. The image build and
+  CLI startup are proven by both GitHub Docker jobs. PR #17 is mergeable; both
+  Go jobs, docs, DeepScan, the manual security matrix, and the prior full
+  CodeRabbit review are green with zero unresolved threads. The small final
+  CodeRabbit refresh is temporarily rate-limited. See `PR17_AUDIT.md`.
 
 ## Public-status warning
 

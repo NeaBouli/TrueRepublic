@@ -81,8 +81,13 @@ binary reaches Cobra without a panic.
 - Maintained client install/lint/6 tests/build/audit: PASS
 - Documentation consistency, workflow YAML, Dockerfile artifact mapping, and
   diff checks: PASS
-- Remaining publication gates: actual GitHub Docker build, refreshed CI,
-  security workflow, and automated review. Docker is unavailable locally.
+- Both GitHub Docker builds: PASS, including wasmvm selection/linkage and CLI
+  startup smoke check
+- Refreshed GitHub Go/race/coverage, docs, DeepScan, and manual security
+  workflow: PASS; zero unresolved review threads
+- CodeRabbit completed the full `c0018dc` review without threads. Its small
+  `b738d70` startup-fix refresh hit the temporary review-rate limit; the PR
+  remains draft/stacked while that independent refresh is retried.
 
 ## Explicitly out of scope
 

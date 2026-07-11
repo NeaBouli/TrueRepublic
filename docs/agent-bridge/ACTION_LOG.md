@@ -249,3 +249,9 @@
   directly and then a second time by the auth codec. Removed the duplicate,
   unified application/CLI codec construction, exposed the injected build
   version through Cobra, and added the 567th Go regression test.
+- Published `b738d70`. Both refreshed Docker builds now pass their linkage and
+  CLI-start smoke check; both Go jobs (including race/coverage), docs, DeepScan,
+  and the complete manually triggered security workflow are green.
+- Thread-aware GitHub inspection reports zero unresolved review threads. The
+  prior full CodeRabbit review completed without findings; the incremental
+  startup-fix refresh was acknowledged but temporarily rate-limited.

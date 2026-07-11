@@ -106,7 +106,7 @@ jobs now prove the corrected image builds.
 
 ---
 
-## 2026-07-11 23:02 EEST GH-13 canonical reward issuance → Local verification
+## 2026-07-11 23:02 EEST GH-13 canonical reward issuance → GitHub verification
 
 - **Branch:** `fix/GH-13-cap-issuance`
 - **Issue:** [GH-13](https://github.com/NeaBouli/TrueRepublic/issues/13)
@@ -120,16 +120,16 @@ jobs now prove the corrected image builds.
   removed a duplicate Amino registration that panicked every CLI/node startup
 - **Tests:** Go build/vet, 567 cases, race, and coverage → PASS; token 93.5%,
   governance 55.8%; Rust 26 tests/Clippy/audit, client lint/6 tests/build/audit,
-  documentation consistency, Dockerfile/YAML/diff checks → PASS. The actual
-  Docker image build and refreshed GitHub gates remain pending.
+  documentation consistency, Dockerfile/YAML/diff checks → PASS. Both GitHub
+  Docker builds, both Go jobs, DeepScan, docs, and the manual security workflow
+  → PASS; zero unresolved review threads.
 - **Risk:** High — canonical supply, mint/burn authority, reward inflation,
   validator power, and treasury claims
-- **Ready for:** force-push of the rebased branch, GitHub Docker build, and
-  refreshed GitHub review
+- **Ready for:** ordered stacked review after PRs #9, #15, and #16
 
 ### Codex review feedback
 
-Conditional PASS for the GH-13 scope after the two audit hardenings. DEX
+Conditional PASS for the GH-13 scope after the three audit hardenings. DEX
 custody/burn integration, custom-genesis reconciliation, runtime invariants,
 and anonymous recipient binding remain separately blocking.
 
