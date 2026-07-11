@@ -16,9 +16,10 @@
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/tests-577%20passing-brightgreen" alt="Tests"/>
-  <img src="https://img.shields.io/badge/version-v0.3.0-blue" alt="Version"/>
-  <img src="https://img.shields.io/badge/Go-1.24-00ADD8?logo=go" alt="Go"/>
+  <img src="https://img.shields.io/badge/tests-564%20recovery--verified-orange" alt="Recovery-verified tests"/>
+  <img src="https://img.shields.io/badge/version-v0.4.0-blue" alt="Version"/>
+  <img src="https://img.shields.io/badge/recovery-active-orange" alt="Recovery active"/>
+  <img src="https://img.shields.io/badge/Go-1.26.5-00ADD8?logo=go" alt="Go"/>
   <img src="https://img.shields.io/badge/Cosmos%20SDK-v0.50.14-5C4EE5" alt="Cosmos SDK"/>
   <img src="https://img.shields.io/badge/Rust-1.75+-orange?logo=rust" alt="Rust"/>
 </p>
@@ -38,6 +39,13 @@
 </p>
 
 ---
+
+> [!WARNING]
+> **Recovery audit active:** v0.4.0 functionality exists, but production-readiness
+> claims are being re-verified in [GitHub issue #4](https://github.com/NeaBouli/TrueRepublic/issues/4).
+> `client-web` is the maintained web client. `web-wallet` and `mobile-wallet`
+> are legacy clients with unresolved high/critical dependency advisories and
+> must not be used for real keys or production funds.
 
 ## What is TrueRepublic?
 
@@ -100,8 +108,8 @@ cp .env.example .env && make docker-build && make docker-up
 # Option B: Build from source
 make build && ./build/truerepublicd start
 
-# Option C: Web wallet only
-cd web-wallet && npm install && npm start
+# Option C: Maintained v0.4 web client
+cd client-web && npm ci && npm run dev
 ```
 
 See [INSTALLATION.md](INSTALLATION.md) for detailed instructions.
@@ -129,7 +137,7 @@ See [INSTALLATION.md](INSTALLATION.md) for detailed instructions.
 React-based web client with full governance and DEX functionality:
 ```bash
 cd client-web
-npm install
+npm ci
 npm run dev
 ```
 
@@ -207,8 +215,9 @@ TrueRepublic/
 | CLI Commands (24 tx + 7 query) | ✅ | `x/truedemocracy/cli.go` |
 | DEX CLI (6 tx + 4 query) | ✅ | `x/dex/cli.go` |
 | CosmWasm Contracts (7 crates) | ✅ | `contracts/` (workspace) |
-| Web Wallet (React + Keplr) | ✅ | `web-wallet/` |
-| Mobile Wallet (Expo + RN) | ✅ | `mobile-wallet/` |
+| Maintained Web Client | 🟡 Recovery verified | `client-web/` |
+| Legacy Web Wallet | 🔴 Deprecated / vulnerable dependencies | `web-wallet/` |
+| Legacy Mobile Wallet | 🔴 Deprecated / vulnerable dependencies | `mobile-wallet/` |
 | CI/CD Workflows | ✅ | `.github/workflows/` |
 
 ---
@@ -224,11 +233,8 @@ go test ./... -race -cover -count=1 -timeout=600s    # 533 tests
 # Smart contracts
 cd contracts && cargo test --workspace       # 26 tests
 
-# Web wallet
-cd web-wallet && npm install && npm run build
-
-# Mobile wallet
-cd mobile-wallet && npm install
+# Maintained web client
+cd client-web && npm ci && npm run lint && npm test -- --run && npm run build
 ```
 
 ---
@@ -242,11 +248,11 @@ cd mobile-wallet && npm install
 | CosmWasm | v0.53.3 | Production |
 | ibc-go | v8.4.0 | Transfer Active |
 | gnark (ZKP) | v0.9.x | Architecture Ready |
-| Go | 1.24 | Production |
+| Go | 1.26.5 | Recovery verified |
 | Rust | 1.75+ | Contracts |
-| React | 18.2 | Web Wallet |
-| React Native + Expo | 0.74 / 51.0 | Mobile |
-| Keplr + CosmJS | 0.32-0.38 | Wallet |
+| React | 18.2 | Maintained v0.4 client |
+| React Native + Expo | 0.74 / 51.0 | Legacy; security migration required |
+| Keplr + CosmJS | 0.39 | Maintained v0.4 client |
 
 **Known Limitations:** IBC staking/upgrade stubbed (PoD used instead), ZKP client integration v0.4.0. See [LIMITATIONS.md](docs/LIMITATIONS.md).
 
@@ -254,9 +260,13 @@ cd mobile-wallet && npm install
 
 ## Current Status
 
-**Version: v0.3.0 (100% Complete)**
+**Version: v0.4.0 — recovery audit active; not production-ready**
 
-- ✅ 577 tests (533 Go + 26 Rust + 18 Frontend)
+The checklist below records implemented surface area, not a production security
+approval. Current evidence, risks, and commands are maintained in
+[`BRIDGE.md`](BRIDGE.md) and [GitHub issue #4](https://github.com/NeaBouli/TrueRepublic/issues/4).
+
+- 🟡 564 tests recovery-verified locally (533 Go + 26 Rust + 5 maintained-client)
 - ✅ Core blockchain compiles and runs
 - ✅ Whitepaper tokenomics fully implemented (equations 1-5)
 - ✅ Complete governance system (domains, proposals, voting, lifecycle)
@@ -287,7 +297,7 @@ cd mobile-wallet && npm install
   - ✅ Week 10: UI Components (ZKP voting, DEX analytics)
   - ✅ Week 11: Developer Tooling (contract examples, testing utils)
   - ✅ Week 12: Complete Documentation (API, deployment, architecture)
-- ✅ **v0.4.0 (Q1 2026): Web Client (100% COMPLETE)**
+- 🟡 **v0.4.0 (Q1 2026): Web Client — recovery verification active**
   - ✅ Wallet Foundation (create/import/encrypt/send)
   - ✅ Governance UI (domains, issues, suggestions, stones)
   - ✅ DEX Interface (swap, liquidity, LP positions)
@@ -298,8 +308,8 @@ cd mobile-wallet && npm install
 - 📋 **v0.5.0 (Q3 2026):** Native Apps (iOS/Android)
 - 🎯 **v1.0.0 (Q4 2026):** Production Release — External audit, mainnet launch
 
-> **v0.3.0 Milestone Achieved!** All 12 weeks of the roadmap completed.
-> 577 tests (533 Go + 26 Rust + 18 Frontend), zero regressions.
+> Historical test count: 577. Recovery adds a new maintained-client test suite;
+> authoritative totals will be published after all monorepo checks pass in CI.
 
 ---
 

@@ -1,21 +1,33 @@
 {
   "version": "v0.4.0",
-  "release_status": "complete",
+  "release_status": "recovery_active",
   "release_date": "2026-03-04",
   "tests": {
-    "total": 577,
+    "status": "recovery_verified_locally",
+    "total": 564,
     "go": 533,
     "rust": 26,
-    "frontend": 18
+    "frontend": 5,
+    "historical_total": 577
   },
   "web_client": {
     "version": "v0.4.0",
-    "framework": "React 18.2 + TypeScript 5.9 + Vite 7.3",
+    "framework": "React 18.2 + TypeScript 5.9 + Vite 8.1",
     "components": 20,
     "routes": 22,
     "stores": 7,
     "services": 10,
-    "build_size_gzip": "693 kB"
+    "build_size_gzip": "309.06 kB"
+  },
+  "recovery": {
+    "status": "active",
+    "github_issue": 4,
+    "production_ready": false,
+    "canonical_web_client": "client-web",
+    "legacy_clients": {
+      "web-wallet": "deprecated_security_migration_required",
+      "mobile-wallet": "deprecated_security_migration_required"
+    }
   },
   "modules": {
     "root": 15,
@@ -29,7 +41,7 @@
     "decimals": 6
   },
   "tech": {
-    "go": "1.24",
+    "go": "1.26.5",
     "cosmos_sdk": "v0.50.14",
     "cometbft": "v0.38.21",
     "cosmwasm": "v0.53.3",
@@ -37,8 +49,8 @@
     "rust": "1.75+",
     "react": "18.2",
     "typescript": "5.9",
-    "vite": "7.3",
-    "cosmjs": "0.32.4",
+    "vite": "8.1.4",
+    "cosmjs": "0.39.0",
     "zustand": "4.5",
     "tailwindcss": "3.4"
   },
@@ -50,20 +62,20 @@
       "note": "Circuit designed & tested on-chain. Web client uses SHA-256 mock (2s proof gen). Real gnark-wasm planned for v0.4.1."
     },
     "cosmwasm": {
-      "status": "complete",
+      "status": "recovery_verified_locally",
       "version": "v0.53.3"
     },
     "ibc": {
-      "status": "complete",
+      "status": "implemented_unverified",
       "note": "Transfer module active, staking/upgrade stubbed"
     },
     "dex": {
-      "status": "complete",
+      "status": "recovery_audit_active",
       "multi_asset": true,
       "web_client": true
     },
     "web_client": {
-      "status": "complete",
+      "status": "recovery_verified_locally",
       "features": [
         "wallet_create_import_unlock",
         "send_transactions",
