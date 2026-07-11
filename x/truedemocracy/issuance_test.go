@@ -6,6 +6,7 @@ import (
 
 	"cosmossdk.io/math"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 
 	"truerepublic/token"
 	rewards "truerepublic/treasury/keeper"
@@ -16,6 +17,10 @@ func initializeRewardTimers(keeper Keeper, ctx sdk.Context) {
 	blockTime := ctx.BlockTime().Unix()
 	store.Set([]byte("pod:last-reward-time"), keeper.cdc.MustMarshalLengthPrefixed(blockTime))
 	store.Set([]byte("dom:last-interest-time"), keeper.cdc.MustMarshalLengthPrefixed(blockTime))
+	keeper.IterateDomains(ctx, func(domain Domain) bool {
+		store.Set(domainPayoutSnapshotKey(domain.Name), keeper.cdc.MustMarshalLengthPrefixed(domain.TotalPayouts))
+		return false
+	})
 }
 
 func TestEndBlockAggregateIssuanceStopsExactlyAtCap(t *testing.T) {
@@ -25,10 +30,10 @@ func TestEndBlockAggregateIssuanceStopsExactlyAtCap(t *testing.T) {
 
 	keeper, ctx := setupKeeper(t)
 	setupDomainWithValidator(t, keeper, ctx)
+	initializeRewardTimers(keeper, ctx)
 	domain, _ := keeper.GetDomain(ctx, "TestDomain")
 	domain.TotalPayouts = 100_000 * PNYXUnit
 	saveDomain(t, keeper, ctx, domain)
-	initializeRewardTimers(keeper, ctx)
 
 	bank := backExistingEscrow(&keeper, ctx)
 	currentSupply := bank.GetSupply(ctx, PNYXDenom).Amount
@@ -94,12 +99,14 @@ func TestStakingMintFailureRollsBackClaimsAndTimer(t *testing.T) {
 func TestEndBlockDomainMintFailureRollsBackRewardClaimsAndTimers(t *testing.T) {
 	keeper, ctx := setupKeeper(t)
 	setupDomainWithValidator(t, keeper, ctx)
+	initializeRewardTimers(keeper, ctx)
 	domain, _ := keeper.GetDomain(ctx, "TestDomain")
 	domain.TotalPayouts = 100_000 * PNYXUnit
 	saveDomain(t, keeper, ctx, domain)
-	initializeRewardTimers(keeper, ctx)
 	bank := backExistingEscrow(&keeper, ctx)
 	bank.failMintAt = 2
+	supplyBefore := bank.GetSupply(ctx, PNYXDenom).Amount
+	moduleBefore := bank.GetBalance(ctx, authtypes.NewModuleAddress(ModuleName), PNYXDenom).Amount
 	initialTime := ctx.BlockTime().Unix()
 
 	rewardCtx := ctx.WithBlockTime(ctx.BlockTime().Add(time.Duration(RewardInterval) * time.Second))
@@ -126,17 +133,30 @@ func TestEndBlockDomainMintFailureRollsBackRewardClaimsAndTimers(t *testing.T) {
 		}
 	}
 	if store.Has(domainPayoutSnapshotKey("TestDomain")) {
-		t.Fatal("failed reward phase committed domain payout snapshot")
+		var payoutSnapshot int64
+		keeper.cdc.MustUnmarshalLengthPrefixed(store.Get(domainPayoutSnapshotKey("TestDomain")), &payoutSnapshot)
+		if payoutSnapshot != 0 {
+			t.Fatalf("failed reward phase changed domain payout snapshot: %d", payoutSnapshot)
+		}
+	}
+	if supply := bank.GetSupply(ctx, PNYXDenom).Amount; !supply.Equal(supplyBefore) {
+		t.Fatalf("failed reward phase changed canonical supply: %s", supply)
+	}
+	if moduleBalance := bank.GetBalance(ctx, authtypes.NewModuleAddress(ModuleName), PNYXDenom).Amount; !moduleBalance.Equal(moduleBefore) {
+		t.Fatalf("failed reward phase changed module escrow: %s", moduleBalance)
+	}
+	if err := keeper.ValidateEscrowParity(ctx); err != nil {
+		t.Fatalf("failed reward phase broke escrow parity: %v", err)
 	}
 }
 
 func TestDomainInterestUsesOnlyNewIntervalPayouts(t *testing.T) {
 	keeper, ctx := setupKeeper(t)
 	keeper.CreateDomain(ctx, "Interval", sdk.AccAddress("admin"), sdk.NewCoins(sdk.NewInt64Coin(PNYXDenom, 500_000*PNYXUnit)))
+	initializeRewardTimers(keeper, ctx)
 	domain, _ := keeper.GetDomain(ctx, "Interval")
 	domain.TotalPayouts = 100_000 * PNYXUnit
 	saveDomain(t, keeper, ctx, domain)
-	initializeRewardTimers(keeper, ctx)
 	bank := backExistingEscrow(&keeper, ctx)
 
 	firstCtx := ctx.WithBlockTime(ctx.BlockTime().Add(time.Duration(RewardInterval) * time.Second))
@@ -162,6 +182,36 @@ func TestDomainInterestUsesOnlyNewIntervalPayouts(t *testing.T) {
 	}
 	if err := keeper.ValidateEscrowParity(secondCtx); err != nil {
 		t.Fatalf("interval issuance broke parity: %v", err)
+	}
+}
+
+func TestDomainInterestBackfillsMissingSnapshotWithoutHistoricalReward(t *testing.T) {
+	keeper, ctx := setupKeeper(t)
+	keeper.CreateDomain(ctx, "Restored", sdk.AccAddress("admin"), sdk.NewCoins(sdk.NewInt64Coin(PNYXDenom, 500_000*PNYXUnit)))
+	domain, _ := keeper.GetDomain(ctx, "Restored")
+	domain.TotalPayouts = 100_000 * PNYXUnit
+	saveDomain(t, keeper, ctx, domain)
+
+	store := ctx.KVStore(keeper.StoreKey)
+	store.Set([]byte("dom:last-interest-time"), keeper.cdc.MustMarshalLengthPrefixed(ctx.BlockTime().Unix()))
+	bank := backExistingEscrow(&keeper, ctx)
+	supplyBefore := bank.GetSupply(ctx, PNYXDenom).Amount
+
+	rewardCtx := ctx.WithBlockTime(ctx.BlockTime().Add(time.Duration(RewardInterval) * time.Second))
+	if err := keeper.DistributeDomainInterest(rewardCtx); err != nil {
+		t.Fatal(err)
+	}
+	after, _ := keeper.GetDomain(ctx, "Restored")
+	if !after.Treasury.Equal(domain.Treasury) {
+		t.Fatalf("historical payouts earned interest: before=%s after=%s", domain.Treasury, after.Treasury)
+	}
+	if supply := bank.GetSupply(ctx, PNYXDenom).Amount; !supply.Equal(supplyBefore) {
+		t.Fatalf("historical payout backfill changed supply: %s", supply)
+	}
+	var snapshot int64
+	keeper.cdc.MustUnmarshalLengthPrefixed(store.Get(domainPayoutSnapshotKey("Restored")), &snapshot)
+	if snapshot != domain.TotalPayouts {
+		t.Fatalf("snapshot = %d, want %d", snapshot, domain.TotalPayouts)
 	}
 }
 

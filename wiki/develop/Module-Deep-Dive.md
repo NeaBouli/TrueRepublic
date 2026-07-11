@@ -520,8 +520,8 @@ asset_out = asset_reserve * shares / total_shares
 | 1 | `CalcDomainCost(fee)` | `fee * CDom * CEarn` | Domain creation cost |
 | 2 | `CalcReward(treasure)` | `treasure / CEarn` | VoteToEarn reward |
 | 3 | `CalcPutPrice(treasure, n)` | `min(reward * CPut, reward * n)` | Proposal submission fee |
-| 4 | `CalcDomainInterest(treasure, T, released)` | `treasure * ApyDom * T * (1 - released/SupplyMax)` | Domain treasury interest |
-| 5 | `CalcNodeReward(stake, T, released)` | `stake * ApyNode * T * (1 - released/SupplyMax)` | Validator staking reward |
+| 4 | `CalcDomainInterest(treasure, payouts, canonicalBankSupply, T)` | `treasure * ApyDom * T * (1 - canonicalBankSupply/SupplyMax)`, capped by interval payouts | Domain treasury interest |
+| 5 | `CalcNodeReward(stake, canonicalBankSupply, T)` | `stake * ApyNode * T * (1 - canonicalBankSupply/SupplyMax)` | Validator staking reward |
 
 **Release decay:** `factor = 1 - canonicalBankSupply / 21,000,000`. New
 validator/domain rewards and validator slash burns pass through the shared

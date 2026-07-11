@@ -31,7 +31,7 @@ Updated: 2026-07-11 23:02 EEST
   vulnerabilities after upgrades.
 - GH-14 local v0.4 client: `npm ci`, lint, six regression tests, production build, and
   `npm audit` all PASS. Main bundle is 1.68 MB before gzip (performance warning).
-- Current GH-13 branch test count is 599: 567 Go, 26 Rust, and six
+- Current GH-13 branch test count is 601: 569 Go, 26 Rust, and six
   maintained-client tests. The prior 577 figure is retained only as historical.
 - GH-13 local Go 1.26.5: build, vet, normal tests, race tests, and coverage PASS.
   Coverage: root 10.2%, token 93.5%, treasury 97.0%, DEX 34.2%, governance 55.8%.
@@ -75,13 +75,15 @@ Updated: 2026-07-11 23:02 EEST
   build artifacts/dependencies from the context. The image build and
   CLI startup are proven by both GitHub Docker jobs. PR #17 is mergeable; both
   Go jobs, docs, DeepScan, the manual security matrix, and the prior full
-  CodeRabbit review are green with zero unresolved threads. The small final
-  CodeRabbit refresh is temporarily rate-limited. See `PR17_AUDIT.md`.
+  CodeRabbit review completed with five inline and two additional findings.
+  Rollback-aware mock-bank evidence, restored payout snapshot baselines,
+  container version smoke, and documentation corrections pass locally;
+  refreshed GitHub gates/threads remain. See `PR17_AUDIT.md`.
 
 ## Public-status warning
 
 `docs/status.json`, README, limitations, and the landing page now mark recovery
-as active and separate 599 verified tests from the historical 577 figure.
+as active and separate 601 verified tests from the historical 577 figure.
 `CLAUDE.md` still needs reconciliation.
 
 ## Blocking audit result

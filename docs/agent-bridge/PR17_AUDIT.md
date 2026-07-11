@@ -54,6 +54,22 @@ shared codec factory, auth owns the legacy transaction registration, and a
 regression test plus `truerepublicd --help`/`--version` smoke checks prove the
 binary reaches Cobra without a panic.
 
+### Major review remediation — rollback evidence used an in-memory bank mock
+
+The second-mint failure test originally proved governance KV rollback but its
+mock bank mutated Go maps outside `CacheContext`. Issuance supply and module
+balance deltas now live in the mounted KV store, so the regression test proves
+unchanged canonical supply, unchanged module escrow, claim/timer rollback, and
+escrow parity after the second mint fails.
+
+### Major review remediation — restored payout history lacked a baseline
+
+Genesis now stores each restored domain's current cumulative payouts as its
+interest snapshot. Pre-GH-13 state is lazily backfilled at the same baseline,
+including when the interest timer is first initialized, so historical payouts
+cannot earn a one-time interest windfall. New genesis and lazy-backfill tests
+cover both paths.
+
 ## Boundary and negative-path evidence
 
 - Aggregate minting stops exactly at the final cap unit.
@@ -72,7 +88,7 @@ binary reaches Cobra without a panic.
 
 - `go build ./...`: PASS
 - `go vet ./...`: PASS
-- `go test ./... -count=1`: PASS, 567 Go cases
+- `go test ./... -count=1`: PASS, 569 Go cases
 - `go test ./... -race -count=1`: PASS
 - `go test ./... -cover -count=1`: PASS; token 93.5%, governance 55.8%
 - `cargo test --workspace`: PASS, 26 Rust cases
@@ -85,9 +101,9 @@ binary reaches Cobra without a panic.
   startup smoke check
 - Refreshed GitHub Go/race/coverage, docs, DeepScan, and manual security
   workflow: PASS; zero unresolved review threads
-- CodeRabbit completed the full `c0018dc` review without threads. Its small
-  `b738d70` startup-fix refresh hit the temporary review-rate limit; the PR
-  remains draft/stacked while that independent refresh is retried.
+- CodeRabbit's final 33-file review completed. Five inline findings and two
+  outside-diff/nitpick findings were verified and remediated; refreshed GitHub
+  checks and thread resolution remain pending for this remediation commit.
 
 ## Explicitly out of scope
 

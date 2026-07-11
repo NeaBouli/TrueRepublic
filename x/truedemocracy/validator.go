@@ -339,6 +339,10 @@ func (k Keeper) DistributeDomainInterest(ctx sdk.Context) error {
 	} else {
 		bz := k.cdc.MustMarshalLengthPrefixed(blockTime)
 		store.Set([]byte("dom:last-interest-time"), bz)
+		k.IterateDomains(cacheCtx, func(domain Domain) bool {
+			store.Set(domainPayoutSnapshotKey(domain.Name), k.cdc.MustMarshalLengthPrefixed(domain.TotalPayouts))
+			return false
+		})
 		write()
 		return nil
 	}
@@ -361,8 +365,9 @@ func (k Keeper) DistributeDomainInterest(ctx sdk.Context) error {
 	totalRequested := math.ZeroInt()
 	k.IterateDomains(cacheCtx, func(domain Domain) bool {
 		treasure := domain.Treasury.AmountOf(PNYXDenom)
-		var previousPayouts int64
-		if bz := store.Get(domainPayoutSnapshotKey(domain.Name)); bz != nil {
+		snapshotKey := domainPayoutSnapshotKey(domain.Name)
+		previousPayouts := domain.TotalPayouts
+		if bz := store.Get(snapshotKey); bz != nil {
 			k.cdc.MustUnmarshalLengthPrefixed(bz, &previousPayouts)
 		}
 		intervalPayouts := domain.TotalPayouts - previousPayouts
@@ -374,7 +379,9 @@ func (k Keeper) DistributeDomainInterest(ctx sdk.Context) error {
 			allocations = append(allocations, allocation{domain: domain, requested: interest})
 			totalRequested = totalRequested.Add(interest)
 		}
-		store.Set(domainPayoutSnapshotKey(domain.Name), k.cdc.MustMarshalLengthPrefixed(domain.TotalPayouts))
+		// Missing snapshots belong to pre-GH-13 state. Baseline them lazily at
+		// the current cumulative payout so historical payouts are never rewarded.
+		store.Set(snapshotKey, k.cdc.MustMarshalLengthPrefixed(domain.TotalPayouts))
 		return false
 	})
 

@@ -16,9 +16,8 @@
   keep it stacked until PR #9 receives independent approval.
 - [x] GH-14: PR #16 is rebased, mergeable, locally/GitHub green, and has zero
   unresolved review threads; keep it stacked until its bases merge.
-- [x] GH-13: PR #17 is rebased, mergeable, locally/GitHub green, and has zero
-  unresolved review threads; keep it stacked until its bases merge and retry
-  the rate-limited final CodeRabbit refresh.
+- [ ] GH-13: final CodeRabbit findings are remediated locally; publish and
+  verify refreshed Docker/Go/security gates, then resolve every review thread.
 - [ ] GH-10: implement DEX bank custody, provider LP ownership, and real burns.
 - [ ] GH-12: validate genesis and add ledger conservation invariants.
 - [ ] GH-7: audit ZKP/nullifier/domain-key authentication and client-side mock boundaries.

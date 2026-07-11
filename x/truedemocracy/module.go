@@ -114,6 +114,10 @@ func (am AppModule) InitGenesis(ctx sdk.Context, cdc codec.JSONCodec, data json.
 	for _, domain := range genesisState.Domains {
 		bz := am.cdc.MustMarshalLengthPrefixed(&domain)
 		store.Set([]byte("domain:"+domain.Name), bz)
+		store.Set(
+			domainPayoutSnapshotKey(domain.Name),
+			am.cdc.MustMarshalLengthPrefixed(domain.TotalPayouts),
+		)
 		am.keeper.InitializeBigPurgeSchedule(ctx, domain.Name)
 	}
 

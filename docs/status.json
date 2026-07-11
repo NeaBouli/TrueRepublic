@@ -4,8 +4,8 @@
   "release_date": "2026-03-04",
   "tests": {
     "status": "recovery_verified_locally",
-    "total": 599,
-    "go": 567,
+    "total": 601,
+    "go": 569,
     "rust": 26,
     "frontend": 6,
     "historical_total": 577
@@ -34,7 +34,7 @@
     "token": 11,
     "treasury": 36,
     "dex": 100,
-    "truedemocracy": 403
+    "truedemocracy": 405
   },
   "token": {
     "symbol": "PNYX",

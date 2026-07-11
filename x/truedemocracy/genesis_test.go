@@ -203,6 +203,27 @@ func TestInitGenesisWithoutVK(t *testing.T) {
 	}
 }
 
+func TestInitGenesisBaselinesDomainPayoutSnapshots(t *testing.T) {
+	am, keeper, ctx := setupModuleForGenesis(t)
+	const payouts int64 = 42_000
+	genesisData := GenesisState{Domains: []Domain{{Name: "Restored", TotalPayouts: payouts}}}
+	bz, err := json.Marshal(genesisData)
+	if err != nil {
+		t.Fatal(err)
+	}
+	am.InitGenesis(ctx, nil, bz)
+
+	var snapshot int64
+	stored := ctx.KVStore(keeper.StoreKey).Get(domainPayoutSnapshotKey("Restored"))
+	if stored == nil {
+		t.Fatal("missing restored domain payout snapshot")
+	}
+	keeper.cdc.MustUnmarshalLengthPrefixed(stored, &snapshot)
+	if snapshot != payouts {
+		t.Fatalf("snapshot = %d, want %d", snapshot, payouts)
+	}
+}
+
 func TestGenesisRoundTrip(t *testing.T) {
 	// Create state in first module.
 	am1, k1, ctx1 := setupModuleForGenesis(t)

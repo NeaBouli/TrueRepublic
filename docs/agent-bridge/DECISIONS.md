@@ -8,10 +8,11 @@
 
 ## 2026-07-11 - PNYX maximum supply
 
-- Intended maximum supply is **21,000,000 whole PNYX**. Enforcement is pending
-  the ordered GH-7 remediation and end-to-end verification.
-- Public status defines six decimals; the intended base-unit cap is
-  `21,000,000,000,000 upnyx`, pending the same enforcement verification.
+- Maximum supply is **21,000,000 whole PNYX**. GH-11 enforces the
+  `21,000,000,000,000 upnyx` bank-genesis boundary and GH-13 enforces the same
+  canonical bank-supply cap for recovered runtime reward issuance.
+- DEX custody/burn integration and an independent runtime crisis invariant
+  remain pending in GH-10/GH-12; they do not create a second supply source.
 
 ## 2026-07-11 - Status publication
 

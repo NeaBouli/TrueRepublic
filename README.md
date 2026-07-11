@@ -16,7 +16,7 @@
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/tests-599%20recovery--verified-orange" alt="Recovery-verified tests"/>
+  <img src="https://img.shields.io/badge/tests-601%20recovery--verified-orange" alt="Recovery-verified tests"/>
   <img src="https://img.shields.io/badge/version-v0.4.0-blue" alt="Version"/>
   <img src="https://img.shields.io/badge/recovery-active-orange" alt="Recovery active"/>
   <img src="https://img.shields.io/badge/Go-1.26.5-00ADD8?logo=go" alt="Go"/>
@@ -194,8 +194,8 @@ TrueRepublic/
 | Proof of Domain (PoD) | ✅ | `x/truedemocracy/validator.go` |
 | Validator Slashing | ✅ | `x/truedemocracy/slashing.go` |
 | Tokenomics (eq.1-5) | ✅ | `treasury/keeper/rewards.go` |
-| DEX / AMM (x*y=k) | ✅ | `x/dex/keeper.go` |
-| Multi-Asset DEX (BTC/ETH/LUSD) | ✅ | `x/dex/keeper.go` (asset registry + trading validation) |
+| DEX / AMM (x*y=k) | 🟡 Recovery simulation | Arithmetic only; bank custody/settlement blocked by GH-10 |
+| Multi-Asset DEX (BTC/ETH/LUSD) | 🟡 Recovery-blocked | Registry/validation exist; authority and bank-backed LP ownership blocked by GH-10 |
 | Node Staking Rewards (10% APY) | ✅ | `treasury/keeper/rewards.go` (eq.5) |
 | Domain Interest (25% APY) | ✅ | `treasury/keeper/rewards.go` (eq.4) |
 | Release Decay | ✅ | `treasury/keeper/rewards.go` |
@@ -266,7 +266,7 @@ The checklist below records implemented surface area, not a production security
 approval. Current evidence, risks, and commands are maintained in
 [`BRIDGE.md`](BRIDGE.md) and [GitHub issue #4](https://github.com/NeaBouli/TrueRepublic/issues/4).
 
-- 🟡 599 tests recovery-verified locally (567 Go + 26 Rust + 6 maintained-client)
+- 🟡 601 tests recovery-verified locally (569 Go + 26 Rust + 6 maintained-client)
 - ✅ Core blockchain compiles and runs
 - 🟡 Tokenomics equations plus capped bank issuance implemented on recovery branches; genesis/runtime invariants pending
 - 🟡 Governance surface implemented; escrow/auth recovery is in stacked review
@@ -308,8 +308,8 @@ approval. Current evidence, risks, and commands are maintained in
 - 📋 **v0.5.0 (Q3 2026):** Native Apps (iOS/Android)
 - 🎯 **v1.0.0 (Q4 2026):** Production Release — External audit, mainnet launch
 
-> Historical test count: 577. The authoritative recovery-verified total is 599
-> (567 Go + 26 Rust + 6 maintained-client), reproduced locally on the current branch.
+> Historical test count: 577. The authoritative recovery-verified total is 601
+> (569 Go + 26 Rust + 6 maintained-client), reproduced locally on the current branch.
 
 ---
 

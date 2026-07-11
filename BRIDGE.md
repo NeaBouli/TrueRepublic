@@ -117,15 +117,19 @@ jobs now prove the corrected image builds.
   architecture-safe/reproducible wasmvm node image with a reduced build context
 - **Audit fixes:** rejected invalid canonical supply, closed the partial
   EndBlock commit boundary between staking issuance and domain issuance, and
-  removed a duplicate Amino registration that panicked every CLI/node startup
-- **Tests:** Go build/vet, 567 cases, race, and coverage → PASS; token 93.5%,
+  removed a duplicate Amino registration that panicked every CLI/node startup;
+  final review also made bank-mock issuance rollback-aware and baselined restored
+  domain payout snapshots
+- **Tests:** Go build/vet, 569 cases, race, and coverage → PASS; token 93.5%,
   governance 55.8%; Rust 26 tests/Clippy/audit, client lint/6 tests/build/audit,
   documentation consistency, Dockerfile/YAML/diff checks → PASS. Both GitHub
   Docker builds, both Go jobs, DeepScan, docs, and the manual security workflow
-  → PASS; zero unresolved review threads.
+  → PASS on the prior head; final review remediation is locally green and
+  awaiting refreshed GitHub gates.
 - **Risk:** High — canonical supply, mint/burn authority, reward inflation,
   validator power, and treasury claims
-- **Ready for:** ordered stacked review after PRs #9, #15, and #16
+- **Ready for:** refreshed review-remediation gates, then ordered stacked review
+  after PRs #9, #15, and #16
 
 ### Codex review feedback
 

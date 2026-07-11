@@ -255,3 +255,12 @@
 - Thread-aware GitHub inspection reports zero unresolved review threads. The
   prior full CodeRabbit review completed without findings; the incremental
   startup-fix refresh was acknowledged but temporarily rate-limited.
+- The accepted final 33-file review found five inline issues plus two additional
+  findings. Made mock-bank mint/burn deltas cache-backed and extended the
+  second-mint regression to prove supply/escrow rollback and parity.
+- Initialized restored-domain payout snapshots at genesis and lazily backfilled
+  pre-GH-13 state, preventing historical payout windfalls. Added genesis and
+  upgrade-compatible lazy-backfill regressions.
+- Added the container `--version` smoke, reconciled PNYX-cap decisions, DEX
+  status, equation signatures, and branch-head handover wording. Full local Go
+  build/vet, 569 cases, focused race, coverage, and docs consistency pass.

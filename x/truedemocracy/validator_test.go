@@ -563,6 +563,7 @@ func TestDistributeDomainInterest(t *testing.T) {
 	// Initialize tracking state (mimics InitGenesis).
 	initTime := ctx.BlockTime().Unix()
 	st.Set([]byte("dom:last-interest-time"), k.cdc.MustMarshalLengthPrefixed(initTime))
+	st.Set(domainPayoutSnapshotKey("Active"), k.cdc.MustMarshalLengthPrefixed(int64(0)))
 	bank := backExistingEscrow(&k, ctx)
 	initialSupply := bank.GetSupply(ctx, PNYXDenom).Amount
 
@@ -604,6 +605,7 @@ func TestDomainInterestZeroPayouts(t *testing.T) {
 	st := ctx.KVStore(k.StoreKey)
 	initTime := ctx.BlockTime().Unix()
 	st.Set([]byte("dom:last-interest-time"), k.cdc.MustMarshalLengthPrefixed(initTime))
+	st.Set(domainPayoutSnapshotKey("Big"), k.cdc.MustMarshalLengthPrefixed(int64(0)))
 	backExistingEscrow(&k, ctx)
 
 	ctx2 := ctx.WithBlockTime(ctx.BlockTime().Add(time.Duration(RewardInterval) * time.Second))
@@ -629,6 +631,7 @@ func TestDomainInterestCappedByPayout(t *testing.T) {
 
 	initTime := ctx.BlockTime().Unix()
 	st.Set([]byte("dom:last-interest-time"), k.cdc.MustMarshalLengthPrefixed(initTime))
+	st.Set(domainPayoutSnapshotKey("Decay"), k.cdc.MustMarshalLengthPrefixed(int64(0)))
 	backExistingEscrow(&k, ctx)
 
 	ctx2 := ctx.WithBlockTime(ctx.BlockTime().Add(time.Duration(RewardInterval) * time.Second))
@@ -701,5 +704,8 @@ func TestDomainInterestFirstCallInitializes(t *testing.T) {
 	// Timer should now be set.
 	if bz := st.Get([]byte("dom:last-interest-time")); bz == nil {
 		t.Error("dom:last-interest-time should be initialized after first call")
+	}
+	if bz := st.Get(domainPayoutSnapshotKey("Fresh")); bz == nil {
+		t.Error("domain payout snapshot should be initialized with the timer")
 	}
 }

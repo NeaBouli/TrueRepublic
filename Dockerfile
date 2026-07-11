@@ -41,7 +41,8 @@ RUN apt-get update \
 COPY --from=builder /usr/local/bin/truerepublicd /usr/local/bin/truerepublicd
 COPY --from=builder /usr/local/lib/libwasmvm.*.so /usr/lib/
 RUN ldconfig \
-    && truerepublicd --help >/dev/null
+    && truerepublicd --help >/dev/null \
+    && truerepublicd --version >/dev/null
 
 EXPOSE 26656 26657 1317 9090
 
