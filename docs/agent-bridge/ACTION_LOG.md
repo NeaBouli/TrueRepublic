@@ -70,3 +70,11 @@
 - Split the ledger recovery into GitHub issues #11 (canonical denom/cap), #14
   (treasury/stake escrow), #13 (cap-checked rewards), #10 (DEX custody/LP/burn),
   and #12 (genesis/runtime invariants).
+
+## 2026-07-11 13:10 EEST - PR #9 GitHub verification
+
+- Confirmed every current PR #9 check is green: Go, Rust, canonical client,
+  docs consistency, Go vulnerability gate, Rust audit, canonical npm audit,
+  and informational legacy npm audits.
+- Closed GH-5 and GH-6 after both local and GitHub acceptance criteria passed.
+- GH-7, GH-8, and ledger remediation tickets remain open.

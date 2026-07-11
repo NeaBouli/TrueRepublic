@@ -3,10 +3,10 @@
 ## P0 - security and reproducibility
 
 - [ ] GH-4: keep the recovery epic and acceptance criteria current.
-- [ ] GH-5: local Go 1.26.5 build/race/vet/govulncheck and Rust
-  tests/Clippy/audit are green; confirm GitHub security CI.
-- [ ] GH-6: local v0.4 client lint, tests, build, exact amount handling,
-  maintained wallet crypto, and npm audit are green; confirm GitHub CI.
+- [x] GH-5: Go/Rust toolchains, tests, static checks, vulnerability gates, and
+  GitHub security CI are green.
+- [x] GH-6: v0.4 client lint, tests, build, exact amount handling, maintained
+  wallet crypto, npm audit, and GitHub CI are green.
 - [x] GH-8: reproduce legacy web wallet and mobile wallet CI/security state.
 
 ## P1 - consensus and wallet audit
@@ -25,4 +25,4 @@
 - [ ] GH-8: reconcile useful changes from the preserved legacy checkout.
 - [ ] GH-8: align README, CLAUDE.md, status JSON, limitations, website, and test counts.
 - [ ] GH-8: add bridge/docs consistency to CI.
-- [ ] Draft PR #9 is open with atomic recovery commits; monitor and fix checks.
+- [x] Draft PR #9 is open with atomic recovery commits and all checks green.

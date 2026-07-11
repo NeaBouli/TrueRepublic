@@ -1,6 +1,6 @@
 # Project State
 
-Updated: 2026-07-11 12:30 EEST
+Updated: 2026-07-11 13:10 EEST
 
 ## Repository
 
@@ -34,6 +34,9 @@ Updated: 2026-07-11 12:30 EEST
   an active recovery warning and link to GH-4.
 - Canonical `client-web` now has dedicated GitHub install/lint/test/build/audit
   gates; legacy client audits remain informational during migration.
+- Draft PR #9 GitHub checks are all green: Go CI, Rust CI, Client Web CI,
+  documentation consistency, govulncheck, Rust audit, canonical npm audit, and
+  informational legacy npm audits.
 
 ## Public-status warning
 
