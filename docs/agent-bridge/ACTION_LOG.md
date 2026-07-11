@@ -78,3 +78,13 @@
   and informational legacy npm audits.
 - Closed GH-5 and GH-6 after both local and GitHub acceptance criteria passed.
 - GH-7, GH-8, and ledger remediation tickets remain open.
+
+## 2026-07-11 13:20 EEST - Preserved checkout reconciliation
+
+- Reviewed every modified/untracked category in the 150-commit-divergent legacy
+  checkout without changing it.
+- Found no code suitable for wholesale merge: its isolated tokenomics work is
+  superseded by GH-11, its C++/protobuf client targets the unsafe v0.1 protocol,
+  and its bridge findings are already captured in the canonical audit/tickets.
+- Kept the checkout intact pending final archive/hash comparison after recovery
+  PRs land; recorded the decision in GH-8.

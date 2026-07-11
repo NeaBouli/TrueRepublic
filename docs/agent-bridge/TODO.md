@@ -22,7 +22,8 @@
 
 ## P2 - delivery
 
-- [ ] GH-8: reconcile useful changes from the preserved legacy checkout.
+- [x] GH-8: review the preserved legacy checkout; no code is safe/useful for
+  wholesale merge, and the checkout remains preserved pending final archive.
 - [ ] GH-8: align README, CLAUDE.md, status JSON, limitations, website, and test counts.
 - [ ] GH-8: add bridge/docs consistency to CI.
 - [x] Draft PR #9 is open with atomic recovery commits and all checks green.
