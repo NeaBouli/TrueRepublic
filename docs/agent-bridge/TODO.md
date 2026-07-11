@@ -21,4 +21,4 @@
 - [ ] GH-8: reconcile useful changes from the preserved legacy checkout.
 - [ ] GH-8: align README, CLAUDE.md, status JSON, limitations, website, and test counts.
 - [ ] GH-8: add bridge/docs consistency to CI.
-- [ ] Commit atomic recovery blocks, push branch, open draft PR, and monitor checks.
+- [ ] Draft PR #9 is open with atomic recovery commits; monitor and fix checks.

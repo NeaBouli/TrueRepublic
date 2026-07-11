@@ -1,12 +1,13 @@
 # Project State
 
-Updated: 2026-07-11 12:15 EEST
+Updated: 2026-07-11 12:30 EEST
 
 ## Repository
 
 - GitHub: `NeaBouli/TrueRepublic`
 - Baseline: `origin/main` at `d8545cf`
 - Recovery branch: `fix/GH-4-recovery-foundation`
+- Draft PR: #9 (`fix/GH-4-recovery-foundation` -> `main`)
 - Recovery worktree: `/Users/gio/Desktop/repos/TrueRepublic-recovery`
 - Legacy local checkout: preserved at `/Users/gio/Desktop/repos/TrueRepublic`
 - GitHub epic: #4

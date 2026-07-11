@@ -51,3 +51,11 @@
   with 577 retained only as a historical total.
 - Replaced stale public Go, Vite, CosmJS, bundle-size, and feature-completeness
   fields with the versions and audit states reproduced during recovery.
+
+## 2026-07-11 12:30 EEST - First GitHub milestone
+
+- Committed the recovery foundation in three scoped commits: toolchains/security,
+  maintained client, and bridge/public status.
+- Pushed `fix/GH-4-recovery-foundation` without modifying the protected `main`
+  branch or the preserved legacy checkout.
+- Opened draft PR #9 against `main`; GitHub checks are pending.
