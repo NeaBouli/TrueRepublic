@@ -2,9 +2,13 @@
 
 ## Open
 
-- Token/ledger audit found six blocking failures: denomination/cap mismatch,
-  declared unbacked treasury/stake amounts, unbacked rewards, non-custodial DEX
-  accounting, and missing genesis reconciliation. See `CODEX_AUDIT.md` and GH-7.
+- Token/ledger audit still blocks production on runtime supply enforcement,
+  cap-backed rewards, DEX custody/authorization, and genesis reconciliation.
+  Canonical denomination and declared treasury/stake custody are remediated on
+  stacked branches but remain unmerged. See `CODEX_AUDIT.md` and GH-7.
+- Anonymous legacy rating signatures and Groth16 proofs do not bind a bank
+  reward recipient. Direct payout to the transaction sender is front-runnable;
+  production handlers therefore defer those rewards pending GH-13/GH-7.
 - `docs/status.json` says the ZKP web client is a SHA-256 mock; user-facing
   anonymity claims must clearly distinguish mock proof generation from real Groth16.
 - Rust stable CosmWasm 3.0.4 dev-tooling pulls unmaintained/unsound transitive
@@ -22,6 +26,8 @@
   happy-dom, React Router, Axios transitives, and protobufjs transitives.
 - Updated `crossbeam-epoch` and `rustls-webpki` to fixed Rust versions.
 - Go 1.26.5 `govulncheck`: no reachable finding with an available fix remains.
+- Domain/proposal/stake claims now require authenticated exact bank escrow;
+  injected transfer failures and duplicate/spoofed claims are regression-tested.
 
 ## Legacy client blockers
 
