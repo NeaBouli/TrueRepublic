@@ -5,6 +5,7 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
+	"truerepublic/token"
 	rewards "truerepublic/treasury/keeper"
 )
 
@@ -26,6 +27,7 @@ func backExistingEscrow(keeper *Keeper, ctx sdk.Context) *mockBankKeeper {
 	bank := newMockBankKeeper()
 	bank.fundModule(ModuleName, sdk.NewCoins(sdk.NewCoin(PNYXDenom, keeper.EscrowClaims(ctx))))
 	keeper.bankKeeper = bank
+	keeper.issuer = token.NewIssuanceService(bank, ModuleName)
 	return bank
 }
 

@@ -258,8 +258,8 @@ func TestDistributeStakingRewards(t *testing.T) {
 	st := ctx.KVStore(k.StoreKey)
 	initTime := ctx.BlockTime().Unix()
 	st.Set([]byte("pod:last-reward-time"), k.cdc.MustMarshalLengthPrefixed(initTime))
-	zeroInt := math.ZeroInt()
-	st.Set([]byte("pod:total-release"), k.cdc.MustMarshalLengthPrefixed(&zeroInt))
+	bank := backExistingEscrow(&k, ctx)
+	initialSupply := bank.GetSupply(ctx, PNYXDenom).Amount
 
 	t.Run("no reward before interval", func(t *testing.T) {
 		// Advance by less than RewardInterval.
@@ -282,8 +282,8 @@ func TestDistributeStakingRewards(t *testing.T) {
 		val, _ := k.GetValidator(ctx2, "oper1")
 		stakeAmt := val.Stake.AmountOf(PNYXDenom)
 
-		// Expected: CalcNodeReward(100000, 0, 3600)
-		expected := rewards.CalcNodeReward(math.NewInt(100_000*PNYXUnit), math.ZeroInt(), RewardInterval)
+		// Reward decay uses canonical bank supply at the interval boundary.
+		expected := rewards.CalcNodeReward(math.NewInt(100_000*PNYXUnit), initialSupply, RewardInterval)
 		wantStake := math.NewInt(100_000 * PNYXUnit).Add(expected)
 		if !stakeAmt.Equal(wantStake) {
 			t.Errorf("stake = %s, want %s (reward = %s)", stakeAmt, wantStake, expected)
@@ -563,8 +563,8 @@ func TestDistributeDomainInterest(t *testing.T) {
 	// Initialize tracking state (mimics InitGenesis).
 	initTime := ctx.BlockTime().Unix()
 	st.Set([]byte("dom:last-interest-time"), k.cdc.MustMarshalLengthPrefixed(initTime))
-	zeroInt := math.ZeroInt()
-	st.Set([]byte("pod:total-release"), k.cdc.MustMarshalLengthPrefixed(&zeroInt))
+	bank := backExistingEscrow(&k, ctx)
+	initialSupply := bank.GetSupply(ctx, PNYXDenom).Amount
 
 	t.Run("no interest before interval", func(t *testing.T) {
 		ctx2 := ctx.WithBlockTime(ctx.BlockTime().Add(30 * time.Minute))
@@ -585,9 +585,9 @@ func TestDistributeDomainInterest(t *testing.T) {
 		domain, _ := k.GetDomain(ctx2, "Active")
 		treasuryAmt := domain.Treasury.AmountOf(PNYXDenom)
 
-		// Expected: CalcDomainInterest(500000, 100000, 0, 3600)
+		// Expected decay is derived from canonical bank supply.
 		expected := rewards.CalcDomainInterest(
-			math.NewInt(500_000*PNYXUnit), math.NewInt(100_000*PNYXUnit), math.ZeroInt(), RewardInterval,
+			math.NewInt(500_000*PNYXUnit), math.NewInt(100_000*PNYXUnit), initialSupply, RewardInterval,
 		)
 		wantTreasury := math.NewInt(500_000 * PNYXUnit).Add(expected)
 		if !treasuryAmt.Equal(wantTreasury) {
@@ -604,8 +604,7 @@ func TestDomainInterestZeroPayouts(t *testing.T) {
 	st := ctx.KVStore(k.StoreKey)
 	initTime := ctx.BlockTime().Unix()
 	st.Set([]byte("dom:last-interest-time"), k.cdc.MustMarshalLengthPrefixed(initTime))
-	zeroInt := math.ZeroInt()
-	st.Set([]byte("pod:total-release"), k.cdc.MustMarshalLengthPrefixed(&zeroInt))
+	backExistingEscrow(&k, ctx)
 
 	ctx2 := ctx.WithBlockTime(ctx.BlockTime().Add(time.Duration(RewardInterval) * time.Second))
 	if err := k.DistributeDomainInterest(ctx2); err != nil {
@@ -630,8 +629,7 @@ func TestDomainInterestCappedByPayout(t *testing.T) {
 
 	initTime := ctx.BlockTime().Unix()
 	st.Set([]byte("dom:last-interest-time"), k.cdc.MustMarshalLengthPrefixed(initTime))
-	zeroInt := math.ZeroInt()
-	st.Set([]byte("pod:total-release"), k.cdc.MustMarshalLengthPrefixed(&zeroInt))
+	backExistingEscrow(&k, ctx)
 
 	ctx2 := ctx.WithBlockTime(ctx.BlockTime().Add(time.Duration(RewardInterval) * time.Second))
 	if err := k.DistributeDomainInterest(ctx2); err != nil {
@@ -659,9 +657,11 @@ func TestDomainInterestDecaysWithRelease(t *testing.T) {
 	initTime := ctx.BlockTime().Unix()
 	st.Set([]byte("dom:last-interest-time"), k.cdc.MustMarshalLengthPrefixed(initTime))
 
-	// Set total release to 50% of supply → decay = 0.5.
+	// Set canonical bank supply to 50% of cap → decay = 0.5.
 	halfSupply := math.NewInt(rewards.SupplyMax / 2)
-	st.Set([]byte("pod:total-release"), k.cdc.MustMarshalLengthPrefixed(&halfSupply))
+	bank := backExistingEscrow(&k, ctx)
+	currentSupply := bank.GetSupply(ctx, PNYXDenom).Amount
+	bank.fundAccount(sdk.AccAddress("supply-holder"), sdk.NewCoins(sdk.NewCoin(PNYXDenom, halfSupply.Sub(currentSupply))))
 
 	ctx2 := ctx.WithBlockTime(ctx.BlockTime().Add(time.Duration(RewardInterval) * time.Second))
 	if err := k.DistributeDomainInterest(ctx2); err != nil {
@@ -687,8 +687,6 @@ func TestDomainInterestFirstCallInitializes(t *testing.T) {
 
 	// Don't set dom:last-interest-time — first call should initialize it.
 	st := ctx.KVStore(k.StoreKey)
-	zeroInt := math.ZeroInt()
-	st.Set([]byte("pod:total-release"), k.cdc.MustMarshalLengthPrefixed(&zeroInt))
 
 	if err := k.DistributeDomainInterest(ctx); err != nil {
 		t.Fatal(err)

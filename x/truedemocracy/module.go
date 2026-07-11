@@ -145,10 +145,6 @@ func (am AppModule) InitGenesis(ctx sdk.Context, cdc codec.JSONCodec, data json.
 	timeBz := am.cdc.MustMarshalLengthPrefixed(ctx.BlockTime().Unix())
 	store.Set([]byte("pod:last-reward-time"), timeBz)
 	store.Set([]byte("dom:last-interest-time"), timeBz)
-	zeroInt := math.ZeroInt()
-	releaseBz := am.cdc.MustMarshalLengthPrefixed(&zeroInt)
-	store.Set([]byte("pod:total-release"), releaseBz)
-
 	return updates
 }
 

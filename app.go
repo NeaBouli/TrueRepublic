@@ -59,7 +59,7 @@ import (
 var maccPerms = map[string][]string{
 	authtypes.FeeCollectorName: nil,
 	wasmtypes.ModuleName:       {authtypes.Burner},
-	truedemocracy.ModuleName:   {authtypes.Burner}, // escrow and validator slash burns
+	truedemocracy.ModuleName:   {authtypes.Minter, authtypes.Burner}, // capped issuance, escrow, and slash burns
 	transfertypes.ModuleName:   {authtypes.Minter, authtypes.Burner},
 }
 
