@@ -188,3 +188,22 @@
   test/lint/build/audit, documentation consistency, and diff checks pass.
 - The added validator-tree regression brings the recovery-verified total to
   573: 541 Go cases, 26 Rust tests, and six maintained-client tests.
+
+## 2026-07-11 22:08 EEST - GH-14 bank-escrow audit remediation
+
+- Rebased `fix/GH-14-bank-escrow` onto the fully green PR #15 head so PR #16
+  remains an ordered, reviewable custody-only stack.
+- Audited bank escrow, cache-context atomicity, signer claims, treasury payouts,
+  validator stake settlement, slashing, CLI construction, and CosmWasm bindings.
+- Found and fixed a high-severity contract regression: three CosmWasm encoders
+  omitted the authenticated `Sender` required by hardened messages.
+- Found and fixed a high-severity custody flaw: slashed stake was credited to an
+  admin-withdrawable domain treasury. Penalties now burn exact module escrow.
+- Added the minimum `burner` module permission plus exact-burn, burn-failure
+  rollback, permission, missing-signer, and binding-validation regression tests.
+- Updated the token/ledger audit to mark the GH-11 bank-genesis cap and GH-14
+  custody slices remediated while retaining GH-13/GH-10/GH-12 blockers.
+- Go build, vet, race, coverage, focused governance tests, and 557 full Go cases
+  pass locally. Rust test/Clippy/audit, maintained-client install/lint/test/build/
+  audit, documentation consistency, and diff checks also pass. The branch total
+  is now 589 with 26 Rust and six maintained-client tests.

@@ -1,5 +1,5 @@
 # TrueRepublic — Token Supply and Ledger Audit
-> Scope: `treasury/keeper`, `x/truedemocracy`, `x/dex`, app wiring, genesis, and maintained-client denomination handling  ·  Date: 2026-07-11  ·  Result: 5 FAIL / 2 WARN / 5 PASS
+> Scope: `treasury/keeper`, `x/truedemocracy`, `x/dex`, app wiring, genesis, and maintained-client denomination handling  ·  Date: 2026-07-11  ·  Result: 4 FAIL / 2 WARN / 5 PASS
 
 ## Summary
 
@@ -12,30 +12,31 @@ until those findings are resolved.
 
 > Remediation update: GH-11 implements canonical denomination metadata and a
 > bank-genesis cap check; its local and GitHub gates pass. GH-14 now implements
-> authenticated bank escrow, atomic treasury/stake settlement, and parity tests
-> on its stacked branch. Anonymous rating rewards are deferred because their
+> authenticated bank escrow, atomic treasury/stake settlement, signer-safe
+> CosmWasm bindings, slash burns, and parity tests on its stacked branch.
+> Anonymous rating rewards are deferred because their
 > current proof/signature payloads do not bind a safe recipient. Issuance, DEX,
 > custom genesis, runtime invariants, and final review remain open.
 
 ## Findings by domain
 
-### Denomination and supply cap — PARTIAL / FAIL
+### Denomination and bank-genesis supply cap — PASS
 
 - **[PASS] Chain, maintained client, contracts, and operator docs use one 21M denomination model** — `token/denom.go`, `client-web/src/config/chains.ts`, `docs/node-operators/configuration/genesis-params.md`
   - What: `upnyx` is the canonical base denom, `pnyx`/PNYX is the six-decimal display unit, and the cap is 21,000,000,000,000 base units.
   - Evidence: GH-11 boundary tests, full local polyglot gates, and all stacked PR #15 checks pass.
   - Fix: Preserve the centralized token package and reject reintroduction of display-denom balances.
 
-- **[🔴 BLOCKING] SupplyMax affects decay only; bank supply is never capped** — `treasury/keeper/rewards.go:72`, `x/truedemocracy/validator.go:256`, `x/truedemocracy/module.go:144`
-  - What: `SupplyMax` is only a denominator in release-decay math. There is no invariant comparing total bank supply plus outstanding internal claims against the cap.
-  - Path: Genesis can allocate arbitrary bank balances, while internal validator/domain rewards continue until the separately stored `pod:total-release` reaches the constant. The real bank supply can already exceed 21M without stopping the reward path.
-  - Fix: Define a single supply source of truth from `x/bank`, validate genesis supply at or below the base-unit cap, and enforce remaining mint capacity atomically before every reward mint.
+- **[PASS] Bank genesis rejects supply above 21,000,000 PNYX** — `token/genesis.go`, `app.go`, `token/genesis_test.go`
+  - What: Pre-init validation sums canonical bank supply, rejects legacy display-denom balances, and enforces the 21,000,000,000,000 `upnyx` boundary.
+  - Evidence: Cap-minus-one, exact-cap, cap-plus-one, balance-fallback, and metadata regression tests pass locally and on stacked PR #15.
+  - Fix: GH-13 must reuse the same canonical cap for every runtime mint; GH-12 must add the runtime invariant.
 
 ### Governance, treasury, and staking accounting — PARTIAL / FAIL
 
 - **[PASS] Authenticated treasury and validator claims are backed by exact module escrow** — `x/truedemocracy/escrow.go`, `x/truedemocracy/msg_server.go`, `x/truedemocracy/treasury_bridge.go`, `x/truedemocracy/escrow_test.go`
   - What: Domain creation, proposal fees, validator registration, deposits, withdrawals, stake settlement, and signer claims now use exact `upnyx` bank transfers and cached atomic state transitions.
-  - Evidence: Tests reject zero-balance declarations, spoofed identities, duplicate credits/pubkeys, dust withdrawals, and injected transfer failures; parity is checked after creation, fees, stake, withdrawal, rewards, and slashing.
+  - Evidence: Tests reject zero-balance declarations, spoofed identities, duplicate credits/pubkeys, dust withdrawals, missing CosmWasm signers, and injected transfer/burn failures; parity is checked after creation, fees, stake, withdrawal, payouts, and slashing.
   - Fix: Preserve `CacheContext` boundaries and expand the same custody model to rewards, DEX, and genesis.
 
 - **[🔴 BLOCKING] Rewards create internal claims but neither mint nor cap bank coins** — `x/truedemocracy/validator.go:266`, `x/truedemocracy/validator.go:281`, `x/truedemocracy/validator.go:319`, `x/truedemocracy/validator.go:330`
@@ -95,11 +96,9 @@ until those findings are resolved.
 
 ### 🔴 BLOCKING
 
-1. Decide and migrate the canonical six-decimal base denom and 21M base-unit cap.
-2. Replace declared governance/staking values with authenticated bank escrow.
-3. Back all reward issuance with cap-checked bank minting and canonical supply.
-4. Rebuild DEX custody, bank settlement, burn, and per-provider LP ownership.
-5. Validate genesis and reconcile all custom ledgers to bank/module balances.
+1. Back all reward issuance with cap-checked bank minting and canonical supply.
+2. Rebuild DEX custody, bank settlement, burn, and per-provider LP ownership.
+3. Validate custom genesis and reconcile all internal ledgers to bank/module balances.
 
 Implementation tickets: #11 (denom/cap), #14 (treasury/stake escrow), #13
 (rewards), #10 (DEX custody), and #12 (genesis/invariants).

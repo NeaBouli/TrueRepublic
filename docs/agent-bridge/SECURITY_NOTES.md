@@ -28,6 +28,8 @@
 - Go 1.26.5 `govulncheck`: no reachable finding with an available fix remains.
 - Domain/proposal/stake claims now require authenticated exact bank escrow;
   injected transfer failures and duplicate/spoofed claims are regression-tested.
+- CosmWasm stone/election encoders preserve the authenticated contract sender;
+  validator slashing burns escrowed PNYX and cannot credit an admin withdrawal.
 
 ## Legacy client blockers
 

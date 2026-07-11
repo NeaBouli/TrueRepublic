@@ -6,6 +6,7 @@ Canonical coordination lives in [`docs/agent-bridge/`](docs/agent-bridge/README.
 - Work queue: [`TODO.md`](docs/agent-bridge/TODO.md)
 - Audit trail: [`ACTION_LOG.md`](docs/agent-bridge/ACTION_LOG.md)
 - GH-11 cap audit: [`PR15_AUDIT.md`](docs/agent-bridge/PR15_AUDIT.md)
+- GH-14 escrow audit: [`PR16_AUDIT.md`](docs/agent-bridge/PR16_AUDIT.md)
 - Decisions: [`DECISIONS.md`](docs/agent-bridge/DECISIONS.md)
 - Security: [`SECURITY_NOTES.md`](docs/agent-bridge/SECURITY_NOTES.md)
 
@@ -31,6 +32,30 @@ Conditional approval for the recovery-foundation scope. The seven ledger and
 token-economy blockers in `CODEX_AUDIT.md` remain explicitly out of scope and
 must stay non-production until the ordered implementation PRs land. Do not
 bypass the required independent GitHub approval.
+
+---
+
+## 2026-07-11 22:08 EEST GH-14 escrow audit → Local verification
+
+- **Branch:** `fix/GH-14-bank-escrow`
+- **Issue:** [GH-14](https://github.com/NeaBouli/TrueRepublic/issues/14)
+- **PR:** [#16](https://github.com/NeaBouli/TrueRepublic/pull/16)
+- **Changed:** bank-backed domain/stake claims, atomic transfers, authenticated
+  signer claims, signer-safe CosmWasm bindings, and real validator slash burns
+- **Audit fixes:** closed a contract-message signer regression and prevented
+  slashed PNYX from being recycled through admin-withdrawable domain treasury
+- **Tests:** Go build/vet/race/coverage and 557 Go cases → PASS; Rust 26
+  tests/Clippy/audit → PASS with six allowed transitive warnings; maintained
+  client lint/6 tests/build/audit and docs consistency → PASS
+- **Risk:** High — consensus-adjacent bank custody and validator accounting
+- **Ready for:** force-push of the rebased stacked branch and refreshed GitHub
+  CI/review
+
+### Codex review feedback
+
+The GH-14 custody boundary is locally coherent after remediation. Runtime
+issuance, DEX custody, and custom-genesis invariants remain isolated in GH-13,
+GH-10, and GH-12 and keep the repository non-production.
 
 ---
 
