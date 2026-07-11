@@ -167,3 +167,24 @@
   library-path resolution all pass.
 - `govulncheck` still reports only the four documented reachable findings with
   `Fixed in: N/A`; neither newly reported fixable dependency advisory remains.
+
+## 2026-07-11 21:09 EEST - Docker recovery and final GH-11 audit
+
+- Replaced the Alpine/musl node image path in PR #9 with a Debian/glibc builder
+  and runtime, copied the architecture-specific wasmvm shared library, and ran
+  `ldconfig` in the runtime image.
+- Verified both GitHub Docker builds and all other PR #9 gates pass; converted
+  PR #9 from draft to ready and requested the required independent review from
+  `xxlfan72` and `ijuedt`.
+- Audited every GH-11 denomination boundary and found a production validator
+  tree stake that had been renamed to `upnyx` without base-unit scaling.
+- Corrected the default stake from 0.1 PNYX to 100,000 PNYX and added a
+  regression test across all seven generated nodes.
+- Corrected Compose, node-init, environment, operator-documentation, and
+  maintained-client gas prices so the migration preserves economic values.
+- Normalized canonical bank metadata by removing conflicting legacy PNYX
+  metadata while preserving unrelated asset metadata; expanded tests.
+- Full Go build/race/vet, Rust test/Clippy/audit, maintained-client
+  test/lint/build/audit, documentation consistency, and diff checks pass.
+- The added validator-tree regression brings the recovery-verified total to
+  573: 541 Go cases, 26 Rust tests, and six maintained-client tests.

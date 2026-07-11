@@ -12,8 +12,8 @@
 ## P1 - consensus and wallet audit
 
 - [x] GH-7: audit PNYX 21M cap, denomination, and ledger conservation paths.
-- [ ] GH-11: stacked draft PR #15 is open with a green local implementation;
-  confirm GitHub checks and review.
+- [ ] GH-11: final denomination/cap audit fixes are verified and rebased onto
+  PR #9 head `acfc3d5`; confirm refreshed GitHub checks.
 - [ ] GH-14: back domain treasury and validator stake with bank escrow.
 - [ ] GH-13: issue all rewards through cap-checked bank minting.
 - [ ] GH-10: implement DEX bank custody, provider LP ownership, and real burns.
@@ -27,5 +27,5 @@
   wholesale merge, and the checkout remains preserved pending final archive.
 - [ ] GH-8: align README, CLAUDE.md, status JSON, limitations, website, and test counts.
 - [ ] GH-8: add bridge/docs consistency to CI.
-- [ ] PR #9: refreshed CI, including both Docker builds, passes; obtain the
-  required independent GitHub approval before merge.
+- [x] PR #9 is ready, mergeable, fully green, and awaiting the required
+  independent approval.

@@ -1,13 +1,13 @@
 # Project State
 
-Updated: 2026-07-11 21:25 EEST
+Updated: 2026-07-11 21:45 EEST
 
 ## Repository
 
 - GitHub: `NeaBouli/TrueRepublic`
 - Baseline: `origin/main` at `d8545cf`
 - Recovery branch: `fix/GH-4-recovery-foundation`
-- Ready PR: #9 (`fix/GH-4-recovery-foundation` -> `main`)
+- Ready PR: #9 (`fix/GH-4-recovery-foundation` -> `main`), head `acfc3d5`
 - Stacked implementation branch: `fix/GH-11-pnyx-cap`
 - Stacked draft PR: #15 (`fix/GH-11-pnyx-cap` -> `fix/GH-4-recovery-foundation`)
 - Stacked worktree: `/Users/gio/Desktop/repos/TrueRepublic-gh11`
@@ -23,10 +23,10 @@ Updated: 2026-07-11 21:25 EEST
 - v0.4 client: reproducible `npm ci`; npm audit reports zero vulnerabilities after upgrades.
 - v0.4 client: `npm ci`, lint, six regression tests, production build, and
   `npm audit` all PASS. Main bundle is 1.68 MB before gzip (performance warning).
-- Current GH-11 branch test count is 572: 540 Go, 26 Rust, and six
+- Current GH-11 branch test count is 573: 541 Go, 26 Rust, and six
   maintained-client tests. The prior 577 figure is retained only as historical.
 - Go 1.26.5: build, race tests, and vet PASS on GH-11.
-  Coverage: root 5.5%, token 88.0%, treasury 97.0%, DEX 34.2%, governance 53.5%.
+  Coverage: root 5.5%, token 88.5%, treasury 97.0%, DEX 34.2%, governance 53.5%.
 - Go vulnerability gate: no reachable finding with an available fix remains;
   four upstream `N/A` findings are tracked for import-path reduction.
 - Legacy `web-wallet`: build/test command reaches audit, but 68 advisories remain
@@ -45,15 +45,17 @@ Updated: 2026-07-11 21:25 EEST
 - Codex merge audit: conditional approval with 0 FAIL / 3 WARN / 7 PASS.
 - GitHub branch protection requires one approval; PR #9 currently has none and
   must not be merged through the administrator bypass.
-- CodeRabbit review remediation passes locally: checkout credentials are
+- CodeRabbit review remediation passes locally and on GitHub: checkout credentials are
   disabled, security workflow permissions are read-only, canonical client CI
   uses Node 22, current Go security releases are applied, and the full local
-  verification matrix remains green. Refreshed GitHub checks are pending push.
+  and GitHub verification matrices are green.
+- Final GH-11 audit found and fixed validator-stake and gas-price scaling gaps,
+  plus conflicting legacy metadata cleanup. See `PR15_AUDIT.md`.
 
 ## Public-status warning
 
 `docs/status.json`, README, limitations, and the landing page now mark recovery
-as active and separate 572 verified tests from the historical 577 figure.
+as active and separate 573 verified tests from the historical 577 figure.
 `CLAUDE.md` still needs reconciliation.
 
 ## Blocking audit result
@@ -65,5 +67,7 @@ repository remains simulation/recovery-only until `CODEX_AUDIT.md` blockers clos
 
 GH-11 now implements the canonical denomination metadata (`upnyx`, six decimal
 places, 21,000,000,000,000 base-unit cap) and pre-init bank-genesis cap checks.
+Its final audit corrections are locally verified and rebased onto PR #9 head
+`acfc3d5`; refreshed PR #15 GitHub checks are required before readiness.
 This remediation remains unmerged and does not close the separate custody,
 reward, DEX, or custom-genesis blockers.
