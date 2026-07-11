@@ -1,4 +1,4 @@
-# Known Limitations (v0.3.0)
+# Known Limitations (v0.4.0 recovery)
 
 ## Recovery status (2026-07-11)
 

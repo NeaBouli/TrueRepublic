@@ -1,13 +1,13 @@
 # Project State
 
-Updated: 2026-07-11 20:54 EEST
+Updated: 2026-07-11 21:25 EEST
 
 ## Repository
 
 - GitHub: `NeaBouli/TrueRepublic`
 - Baseline: `origin/main` at `d8545cf`
 - Recovery branch: `fix/GH-4-recovery-foundation`
-- Draft PR: #9 (`fix/GH-4-recovery-foundation` -> `main`)
+- Ready PR: #9 (`fix/GH-4-recovery-foundation` -> `main`)
 - Recovery worktree: `/Users/gio/Desktop/repos/TrueRepublic-recovery`
 - Legacy local checkout: preserved at `/Users/gio/Desktop/repos/TrueRepublic`
 - GitHub epic: #4
@@ -34,16 +34,18 @@ Updated: 2026-07-11 20:54 EEST
   an active recovery warning and link to GH-4.
 - Canonical `client-web` now has dedicated GitHub install/lint/test/build/audit
   gates; legacy client audits remain informational during migration.
-- Draft PR #9 GitHub checks are all green: Go CI, Rust CI, Client Web CI,
+- PR #9 GitHub checks are all green: Go CI, Rust CI, Client Web CI,
   documentation consistency, govulncheck, Rust audit, canonical npm audit, and
   informational legacy npm audits.
-- Codex merge audit: conditional approval with 0 FAIL / 4 WARN / 6 PASS;
-  refreshed CI must additionally prove the new Docker build job.
+- Both Debian/glibc Docker builds pass with the architecture-specific wasmvm
+  shared library; the module path is resolved dynamically from Go metadata.
+- Codex merge audit: conditional approval with 0 FAIL / 3 WARN / 7 PASS.
 - GitHub branch protection requires one approval; PR #9 currently has none and
   must not be merged through the administrator bypass.
-- The first added Docker gate correctly failed: Alpine/musl was incompatible
-  with wasmvm's default glibc shared object. A Debian/glibc linkage fix is
-  locally verified and awaits the refreshed GitHub Docker build.
+- CodeRabbit review remediation passes locally: checkout credentials are
+  disabled, security workflow permissions are read-only, canonical client CI
+  uses Node 22, current Go security releases are applied, and the full local
+  verification matrix remains green. Refreshed GitHub checks are pending push.
 
 ## Public-status warning
 

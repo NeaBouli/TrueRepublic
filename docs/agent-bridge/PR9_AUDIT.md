@@ -1,5 +1,5 @@
 # TrueRepublic PR #9 — Foundation Merge Audit
-> Scope: `origin/main...fix/GH-4-recovery-foundation` (35 files) · Date: 2026-07-11 · Result: 0 FAIL / 4 WARN / 6 PASS
+> Scope: `origin/main...fix/GH-4-recovery-foundation` · Date: 2026-07-11 · Result: 0 FAIL / 3 WARN / 7 PASS
 
 ## Summary
 
@@ -28,7 +28,8 @@ consensus findings remain blocking for production and are tracked separately in
   - Fix: Keep the project non-production, reduce affected import paths where feasible, and re-run govulncheck on every recovery PR.
 
 - **[PASS] Fixable Go and standard-library findings are removed** — `go.mod`, `go.sum`, `.github/workflows/security-scan.yml`
-  - What: Go 1.26.5 plus updated transitive dependencies clear the fixable gate.
+  - What: Go 1.26.5, `golang.org/x/crypto` v0.52.0, OpenTelemetry v1.43.0,
+    and the updated transitive graph clear the fixable gate.
   - Path: The exact CI filter finds no reachable `Fixed in` value other than `N/A`.
   - Fix: Retain the fail-closed fixable-vulnerability gate.
 
@@ -61,12 +62,12 @@ consensus findings remain blocking for production and are tracked separately in
   - Path: Initial download and parse cost can degrade lower-end/mobile clients.
   - Fix: Add route-level code splitting after correctness recovery.
 
-### CI and container reproducibility — WARN
+### CI and container reproducibility — PASS with follow-up warning
 
-- **[🟡 MEDIUM] Docker gate exposed incompatible musl/glibc linkage; fix pending CI** — `Dockerfile`, `.github/workflows/go-ci.yml`
+- **[PASS] Docker gate proves compatible glibc/wasmvm linkage** — `Dockerfile`, `.github/workflows/go-ci.yml`
   - What: The original Alpine image linked wasmvm's default glibc `.so` with musl and failed on unresolved `GLIBC_*` symbols.
-  - Path: Both GitHub Docker runs failed at the final Go link even though the host Go build passed.
-  - Fix: Switched builder/runtime to Debian Bookworm, copied `libwasmvm.$(uname -m).so` into the runtime, and retained the blocking Docker job. Merge only after its rerun passes.
+  - Path: Debian Bookworm now builds the CGO binary, copies the architecture-specific shared library, and registers it with `ldconfig`.
+  - Fix: Both push and pull-request Docker jobs pass; retain the blocking Docker gate.
 
 - **[🟡 MEDIUM] Official actions still target deprecated Node 20 runtimes** — `.github/workflows/*.yml`
   - What: checkout v4 and setup-go v5 are forced onto Node 24 by current runners.
@@ -94,8 +95,7 @@ None introduced by PR #9.
 
 1. Track the four reachable Go findings without upstream fixes.
 2. Track and remove the six transitive Rust tooling warnings when upstream permits.
-3. Require the Debian/glibc Docker build rerun to pass before merge.
-4. Land the Node-24 action-major update in the ordered GH-8 documentation/CI PR.
+3. Land the Node-24 action-major update in the ordered GH-8 documentation/CI PR.
 
 ### 🟢 LOW
 

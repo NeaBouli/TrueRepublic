@@ -297,7 +297,7 @@ approval. Current evidence, risks, and commands are maintained in
   - ✅ Week 10: UI Components (ZKP voting, DEX analytics)
   - ✅ Week 11: Developer Tooling (contract examples, testing utils)
   - ✅ Week 12: Complete Documentation (API, deployment, architecture)
-- 🟡 **v0.4.0 (Q1 2026): Web Client — recovery verification active**
+- 🟡 **v0.4.0 (recovery audit active since July 2026): Web Client**
   - ✅ Wallet Foundation (create/import/encrypt/send)
   - ✅ Governance UI (domains, issues, suggestions, stones)
   - ✅ DEX Interface (swap, liquidity, LP positions)
@@ -308,8 +308,8 @@ approval. Current evidence, risks, and commands are maintained in
 - 📋 **v0.5.0 (Q3 2026):** Native Apps (iOS/Android)
 - 🎯 **v1.0.0 (Q4 2026):** Production Release — External audit, mainnet launch
 
-> Historical test count: 577. Recovery adds a new maintained-client test suite;
-> authoritative totals will be published after all monorepo checks pass in CI.
+> Historical test count: 577. The authoritative recovery-verified total is 564
+> (533 Go + 26 Rust + 5 maintained-client), reproduced locally and in CI.
 
 ---
 

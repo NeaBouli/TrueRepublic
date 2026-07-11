@@ -8,9 +8,10 @@
 
 ## 2026-07-11 - PNYX maximum supply
 
-- Maximum supply is fixed at **21,000,000 whole PNYX**.
-- Public status defines six decimals; the expected base-unit cap is
-  `21,000,000,000,000 upnyx`, pending end-to-end code verification.
+- Intended maximum supply is **21,000,000 whole PNYX**. Enforcement is pending
+  the ordered GH-7 remediation and end-to-end verification.
+- Public status defines six decimals; the intended base-unit cap is
+  `21,000,000,000,000 upnyx`, pending the same enforcement verification.
 
 ## 2026-07-11 - Status publication
 

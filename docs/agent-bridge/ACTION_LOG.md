@@ -119,3 +119,26 @@
   `libwasmvm` shared object into `/usr/lib`, and ran `ldconfig`.
 - Local Go build, documentation, YAML, and diff checks pass. Docker verification
   remains delegated to GitHub because Docker is unavailable on this workstation.
+
+## 2026-07-11 21:25 EEST - PR #9 review remediation
+
+- Confirmed both Debian/glibc Docker jobs pass and refreshed the PR #9 audit,
+  bridge, queue, and handover state.
+- Read all unresolved GitHub review threads and grouped 12 findings into CI
+  token security, Node runtime compatibility, dependency security, Docker
+  maintainability, bridge state, and public status.
+- Disabled persisted checkout credentials in affected workflows and restricted
+  the Security Scan token to read-only repository contents.
+- Raised canonical `client-web` runtime/CI to Node 22 for CosmJS 0.39 while
+  retaining Node 20 only for the explicitly deprecated legacy clients.
+- Updated `golang.org/x/crypto` to v0.52.0 and the OpenTelemetry module family
+  to v1.43.0, then tidied Go module metadata.
+- Replaced the hard-coded wasmvm module-cache path with `go list -m` resolution.
+- Corrected the public warning card, limitation version, roadmap date, and
+  authoritative 564-test recovery total.
+- Re-ran the complete local acceptance matrix: Go build/vet/race/coverage,
+  Node-22 client install/lint/five tests/build/audit, 26 Rust tests plus
+  Clippy/audit, documentation consistency, diff checks, and dynamic wasmvm
+  library-path resolution all pass.
+- `govulncheck` still reports only the four documented reachable findings with
+  `Fixed in: N/A`; neither newly reported fixable dependency advisory remains.
