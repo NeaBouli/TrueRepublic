@@ -109,7 +109,7 @@ voting_power = stake / StakeMin = stake / 100,000
 Validators earn staking rewards at **10% APY**, subject to release decay:
 
 ```
-reward = stake * 0.10 * (time_in_years) * (1 - total_released / 21,000,000)
+reward = stake * 0.10 * (time_in_years) * (1 - canonical_bank_supply / 21,000,000)
 ```
 
 - Distributed every **3,600 seconds** (1 hour)

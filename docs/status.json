@@ -4,8 +4,8 @@
   "release_date": "2026-03-04",
   "tests": {
     "status": "recovery_verified_locally",
-    "total": 589,
-    "go": 557,
+    "total": 598,
+    "go": 566,
     "rust": 26,
     "frontend": 6,
     "historical_total": 577
@@ -30,10 +30,11 @@
     }
   },
   "modules": {
-    "root": 15,
-    "treasury": 31,
-    "dex": 54,
-    "truedemocracy": 419
+    "root": 16,
+    "token": 11,
+    "treasury": 36,
+    "dex": 100,
+    "truedemocracy": 403
   },
   "token": {
     "symbol": "PNYX",
@@ -75,7 +76,9 @@
     "dex": {
       "status": "recovery_audit_active",
       "multi_asset": true,
-      "web_client": true
+      "web_client": true,
+      "custody": "not_bank_backed",
+      "burn": "internal_accounting_only"
     },
     "web_client": {
       "status": "recovery_verified_locally",

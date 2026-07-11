@@ -2,13 +2,13 @@
 
 ## Open
 
-- Token/ledger audit still blocks production on runtime supply enforcement,
-  cap-backed rewards, DEX custody/authorization, and genesis reconciliation.
+- Token/ledger audit still blocks production on runtime crisis invariants, DEX
+  custody/authorization/burn integration, and genesis reconciliation.
   Canonical denomination and declared treasury/stake custody are remediated on
   stacked branches but remain unmerged. See `CODEX_AUDIT.md` and GH-7.
 - Anonymous legacy rating signatures and Groth16 proofs do not bind a bank
   reward recipient. Direct payout to the transaction sender is front-runnable;
-  production handlers therefore defer those rewards pending GH-13/GH-7.
+  production handlers therefore defer those rewards pending GH-7.
 - `docs/status.json` says the ZKP web client is a SHA-256 mock; user-facing
   anonymity claims must clearly distinguish mock proof generation from real Groth16.
 - Rust stable CosmWasm 3.0.4 dev-tooling pulls unmaintained/unsound transitive
@@ -30,6 +30,9 @@
   injected transfer failures and duplicate/spoofed claims are regression-tested.
 - CosmWasm stone/election encoders preserve the authenticated contract sender;
   validator slashing burns escrowed PNYX and cannot credit an admin withdrawal.
+- Validator/domain inflation and validator slash burns use one canonical,
+  cap-checked bank-supply service; both EndBlock inflation phases settle under
+  one cache and treasury-funded vote rewards remain supply-neutral.
 
 ## Legacy client blockers
 

@@ -523,7 +523,9 @@ asset_out = asset_reserve * shares / total_shares
 | 4 | `CalcDomainInterest(treasure, T, released)` | `treasure * ApyDom * T * (1 - released/SupplyMax)` | Domain treasury interest |
 | 5 | `CalcNodeReward(stake, T, released)` | `stake * ApyNode * T * (1 - released/SupplyMax)` | Validator staking reward |
 
-**Release decay:** `factor = 1 - totalReleased / 21,000,000`
+**Release decay:** `factor = 1 - canonicalBankSupply / 21,000,000`. New
+validator/domain rewards and validator slash burns pass through the shared
+issuance service; reward claims commit atomically with their capped bank mint.
 
 As more PNYX enters circulation, rewards decrease proportionally, preventing runaway inflation.
 

@@ -24,3 +24,15 @@
 - It must not be credited to an admin-withdrawable domain treasury because the
   whitepaper removes the penalty from circulation and the treasury path would
   allow validator/admin collusion to recover it.
+
+## 2026-07-11 - Canonical reward issuance
+
+- `x/bank` `upnyx` supply is the only release-decay and cap source of truth;
+  `pod:total-release` is retired from consensus logic.
+- `token.IssuanceService` is the governance module's only reward/slash supply
+  boundary. Minting is clipped to remaining capacity in a cached context.
+- Validator rewards have deterministic priority over domain interest when both
+  compete for final cap capacity; allocation within each category follows
+  deterministic store-key order.
+- Domain interest uses payouts since the prior interval snapshot, not the same
+  cumulative historical payouts repeatedly.

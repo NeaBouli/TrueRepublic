@@ -77,13 +77,12 @@ verification_key                         → VerificationKey
 - **Library:** gnark
 
 **EndBlock Processing Order:**
-1. Distribute staking rewards (every 3600 blocks)
-2. Distribute domain interest (eq.4)
-3. Enforce domain membership (evict validators without domains)
-4. Process suggestion lifecycles (zone transitions, auto-delete)
-5. Process governance (admin election, inactivity cleanup)
-6. Execute Big Purge if scheduled
-7. Return validator set updates
+1. Atomically distribute staking rewards and domain interest (every 3600 seconds)
+2. Enforce domain membership (evict validators without domains)
+3. Process suggestion lifecycles (zone transitions, auto-delete)
+4. Process governance (admin election, inactivity cleanup)
+5. Execute Big Purge if scheduled
+6. Return validator set updates
 
 ---
 
@@ -141,7 +140,10 @@ PNYX Burn: 1% on PNYX output (100 bps)
 - `StakeMin = 100,000 PNYX`
 - `SupplyMax = 21,000,000 PNYX`
 - `ApyDom = 0.25` (25%), `ApyNode = 0.10` (10%)
-- Release decay: `(1 - totalReleased / SupplyMax)`
+- Release decay: `(1 - canonicalBankSupply / SupplyMax)`
+- Inflation and validator slash burns use `token.IssuanceService`; aggregate
+  reward requests are clipped to remaining cap capacity and matching claims
+  commit in the same cached EndBlock reward phase.
 
 ---
 

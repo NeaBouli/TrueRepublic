@@ -1,21 +1,21 @@
 # TrueRepublic — Token Supply and Ledger Audit
-> Scope: `treasury/keeper`, `x/truedemocracy`, `x/dex`, app wiring, genesis, and maintained-client denomination handling  ·  Date: 2026-07-11  ·  Result: 4 FAIL / 2 WARN / 6 PASS
+> Scope: `treasury/keeper`, `x/truedemocracy`, `x/dex`, app wiring, genesis, and maintained-client denomination handling  ·  Date: 2026-07-11  ·  Result: 3 FAIL / 2 WARN / 7 PASS
 
 ## Summary
 
 The recovery branches now define one six-decimal `upnyx` base denomination,
-validate the 21,000,000 PNYX bank-genesis cap, and back governance treasury and
-validator stake claims with bank escrow. Reward issuance, DEX custody/burns,
+validate and enforce the 21,000,000 PNYX cap against canonical bank supply,
+back governance/stake claims with bank escrow, and mint validator/domain
+inflation through one capped issuance service. DEX custody/burn integration,
 custom genesis reconciliation, and runtime invariants remain blocking. This
 code must not handle real funds or be treated as a production token economy
 until those findings are resolved.
 
-> Remediation update: GH-11 implements canonical denomination metadata and a
-> bank-genesis cap check; its local and GitHub gates pass. GH-14 now implements
-> authenticated bank escrow, atomic treasury/stake settlement, signer-safe
-> CosmWasm bindings, slash burns, and parity tests on its stacked branch.
-> Anonymous rating rewards are deferred because their
-> current proof/signature payloads do not bind a safe recipient. Issuance, DEX,
+> Remediation update: GH-11 and GH-14 pass their local/GitHub gates. GH-13 now
+> routes validator/domain inflation and validator slash burns through canonical
+> bank supply, clips aggregate minting at the cap, and commits both EndBlock
+> inflation phases atomically. Anonymous rating rewards remain deferred because
+> current proof/signature payloads do not bind a safe recipient. DEX integration,
 > custom genesis, runtime invariants, and final review remain open.
 
 ## Findings by domain
@@ -27,22 +27,22 @@ until those findings are resolved.
   - Evidence: GH-11 boundary tests, full local polyglot gates, and all stacked PR #15 checks pass.
   - Fix: Preserve the centralized token package and reject reintroduction of display-denom balances.
 
-- **[PASS] Bank genesis rejects supply above 21,000,000 PNYX** — `token/genesis.go`, `app.go`, `token/genesis_test.go`
-  - What: Pre-init validation sums canonical bank supply, rejects legacy display-denom balances, and enforces the 21,000,000,000,000 `upnyx` boundary.
-  - Evidence: Cap-minus-one, exact-cap, cap-plus-one, balance-fallback, and metadata regression tests pass locally and on stacked PR #15.
-  - Fix: GH-13 must reuse the same canonical cap for every runtime mint; GH-12 must add the runtime invariant.
+- **[PASS] Genesis and every recovery reward mint use canonical capped bank supply** — `token/denom.go`, `token/issuance.go`, `app.go`, `x/truedemocracy/validator.go`
+  - What: Bank genesis rejects supply above 21,000,000 PNYX; the issuance service reads `x/bank` supply and mints at most the remaining base units into authorized module escrow.
+  - Evidence: Tests cover below/at/above-cap supply, aggregate final-unit allocation, invalid supply, bank failure, exact burn/remint behavior, and end-block treasury/stake parity.
+  - Fix: Route DEX burns through the same service in GH-10 and add the independent runtime invariant in GH-12.
 
-### Governance, treasury, and staking accounting — PARTIAL / FAIL
+### Governance, treasury, and staking accounting — PASS
 
 - **[PASS] Authenticated treasury and validator claims are backed by exact module escrow** — `x/truedemocracy/escrow.go`, `x/truedemocracy/msg_server.go`, `x/truedemocracy/treasury_bridge.go`, `x/truedemocracy/escrow_test.go`
   - What: Domain creation, proposal fees, validator registration, deposits, withdrawals, stake settlement, and signer claims now use exact `upnyx` bank transfers and cached atomic state transitions.
   - Evidence: Tests reject zero-balance declarations, spoofed identities, duplicate credits/pubkeys, dust withdrawals, missing CosmWasm signers, and injected transfer/burn failures; parity is checked after creation, fees, stake, withdrawal, payouts, and slashing.
-  - Fix: Preserve `CacheContext` boundaries and expand the same custody model to rewards, DEX, and genesis.
+  - Fix: Preserve `CacheContext` boundaries and expand the same custody model to DEX and genesis.
 
-- **[🔴 BLOCKING] Rewards create internal claims but neither mint nor cap bank coins** — `x/truedemocracy/validator.go:266`, `x/truedemocracy/validator.go:281`, `x/truedemocracy/validator.go:319`, `x/truedemocracy/validator.go:330`
-  - What: Validator rewards increase internal stake and domain interest increases internal treasury. No `MintCoins` or bank transfer backs either credit; domain interest is not added to `pod:total-release` at all.
-  - Path: After reward intervals, a domain can show a larger treasury than its module escrow. A later bank-backed withdrawal consumes existing depositor funds or fails because the module account lacks the claimed balance. Domain interest can grow without moving the release counter toward the cap.
-  - Fix: Route issuance through one minter-controlled module, check remaining cap, mint exact base units, and either escrow them for internal claims or pay them directly. Track all issuance and burns from bank supply, not a parallel counter.
+- **[PASS] Validator/domain inflation is bank-minted and vote rewards settle from escrow** — `token/issuance.go`, `x/truedemocracy/validator.go`, `x/truedemocracy/module.go`, `x/truedemocracy/issuance_test.go`
+  - What: Validator and active-domain rewards mint exact capped `upnyx` into module escrow before matching internal claims commit. Both inflation phases share an outer EndBlock cache; vote rewards transfer existing treasury escrow and unsafe anonymous recipients remain deferred.
+  - Evidence: Tests cover final-cap aggregation, first/second mint rollback, canonical decay, interval-only payouts, vote-transfer neutrality, slash burns, and escrow parity.
+  - Fix: Preserve the single issuance boundary; complete recipient-bound anonymous reward claims in GH-7.
 
 ### DEX custody and authorization — FAIL
 
@@ -58,10 +58,10 @@ until those findings are resolved.
 
 ### Genesis and invariants — FAIL
 
-- **[🔴 BLOCKING] Genesis accepts unbacked module ledgers and resets release tracking** — `x/truedemocracy/module.go:73`, `x/truedemocracy/module.go:106`, `x/truedemocracy/module.go:148`, `x/dex/module.go:50`, `x/dex/module.go:83`
-  - What: Both custom modules return success from `ValidateGenesis`, load declared treasuries/stakes/pools without reconciling bank balances, and initialize total release to zero regardless of genesis bank supply.
-  - Path: A genesis file can declare bank supply above 21M plus unrelated internal domain, stake, and DEX balances. Nodes accept it, then calculate maximum early-stage rewards from a zero release counter.
-  - Fix: Validate denomination, non-negative values, uniqueness, total bank supply, module escrow parity, pool reserves, LP share totals, and the 21M cap before chain start. Initialize release state from the canonical bank supply or remove the duplicate counter.
+- **[🔴 BLOCKING] Genesis accepts unbacked custom module ledgers** — `x/truedemocracy/module.go:73`, `x/truedemocracy/module.go:106`, `x/dex/module.go:50`, `x/dex/module.go:83`
+  - What: Both custom modules return success from `ValidateGenesis` and load declared treasuries, stakes, pools, and shares without reconciling corresponding module bank balances.
+  - Path: Bank genesis can respect the 21M cap while unrelated internal claims add unbacked treasury/stake/DEX purchasing power that nodes still accept.
+  - Fix: Validate denomination, non-negative values, uniqueness, module escrow parity, pool reserves, and LP share totals before chain start.
 
 ### Precision and deterministic math — PASS
 
@@ -73,7 +73,7 @@ until those findings are resolved.
 - **[PASS] Release decay clamps rewards at and above its configured maximum** — `treasury/keeper/rewards.go:75`
   - What: Negative decay is clamped to zero.
   - Path: A release value above the configured denominator does not produce a negative reward.
-  - Fix: Retain the clamp, but feed it canonical bank supply.
+  - Fix: Retain the clamp and canonical bank-supply input.
 
 - **[PASS] Maintained-client PNYX formatting no longer loses integer precision** — `client-web/src/utils/format.ts:4`
   - What: Display/base-unit conversion uses validated strings and `BigInt`.
@@ -96,12 +96,12 @@ until those findings are resolved.
 
 ### 🔴 BLOCKING
 
-1. Back all reward issuance with cap-checked bank minting and canonical supply.
-2. Rebuild DEX custody, bank settlement, burn, and per-provider LP ownership.
-3. Validate custom genesis and reconcile all internal ledgers to bank/module balances.
+1. Rebuild DEX custody, bank settlement, burn, and per-provider LP ownership.
+2. Validate custom genesis and reconcile all internal ledgers to bank/module balances.
 
-Implementation tickets: #11 (denom/cap), #14 (treasury/stake escrow), #13
-(rewards), #10 (DEX custody), and #12 (genesis/invariants).
+Implemented on stacked recovery branches: #11 (denom/cap), #14
+(treasury/stake escrow), and #13 (rewards). Remaining implementation tickets:
+#10 (DEX custody) and #12 (genesis/invariants).
 
 ### 🟠 HIGH
 

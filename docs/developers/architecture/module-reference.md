@@ -201,7 +201,9 @@ Removes liquidity by burning LP shares.
 | eq.4 | `CalcDomainInterest(...)` | `treasure * 0.25 * T * decay` |
 | eq.5 | `CalcNodeReward(...)` | `stake * 0.10 * T * decay` |
 
-Where `decay = 1 - totalReleased / 21,000,000`
+Where `decay = 1 - canonicalBankSupply / 21,000,000`. Validator and domain
+inflation is minted through the cap-checked `token.IssuanceService` into module
+escrow before matching claims commit.
 
 ### Constants
 

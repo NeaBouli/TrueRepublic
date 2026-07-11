@@ -14,9 +14,10 @@
 - [x] GH-7: audit PNYX 21M cap, denomination, and ledger conservation paths.
 - [x] GH-11: denomination/cap branch is locally and GitHub verified in PR #15;
   keep it stacked until PR #9 receives independent approval.
-- [ ] GH-14: escrow implementation and audit fixes pass the complete local
-  matrix; publish the rebased PR #16 head and confirm refreshed GitHub checks.
-- [ ] GH-13: issue all rewards through cap-checked bank minting.
+- [x] GH-14: PR #16 is rebased, mergeable, locally/GitHub green, and has zero
+  unresolved review threads; keep it stacked until its bases merge.
+- [ ] GH-13: issuance implementation, audit hardening, and the full local
+  polyglot matrix pass; republish PR #17 and complete Docker/CI review.
 - [ ] GH-10: implement DEX bank custody, provider LP ownership, and real burns.
 - [ ] GH-12: validate genesis and add ledger conservation invariants.
 - [ ] GH-7: audit ZKP/nullifier/domain-key authentication and client-side mock boundaries.
