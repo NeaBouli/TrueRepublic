@@ -15,6 +15,7 @@ import (
 	wasmkeeper "github.com/CosmWasm/wasmd/x/wasm/keeper"
 	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
 
+	abci "github.com/cometbft/cometbft/abci/types"
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
@@ -35,20 +36,20 @@ import (
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	paramskeeper "github.com/cosmos/cosmos-sdk/x/params/keeper"
 	paramstypes "github.com/cosmos/cosmos-sdk/x/params/types"
-	abci "github.com/cometbft/cometbft/abci/types"
 
 	// IBC
 	capability "github.com/cosmos/ibc-go/modules/capability"
 	capabilitykeeper "github.com/cosmos/ibc-go/modules/capability/keeper"
 	capabilitytypes "github.com/cosmos/ibc-go/modules/capability/types"
-	ibc "github.com/cosmos/ibc-go/v8/modules/core"
-	ibckeeper "github.com/cosmos/ibc-go/v8/modules/core/keeper"
-	ibcexported "github.com/cosmos/ibc-go/v8/modules/core/exported"
-	porttypes "github.com/cosmos/ibc-go/v8/modules/core/05-port/types"
 	transfer "github.com/cosmos/ibc-go/v8/modules/apps/transfer"
 	transferkeeper "github.com/cosmos/ibc-go/v8/modules/apps/transfer/keeper"
 	transfertypes "github.com/cosmos/ibc-go/v8/modules/apps/transfer/types"
+	ibc "github.com/cosmos/ibc-go/v8/modules/core"
+	porttypes "github.com/cosmos/ibc-go/v8/modules/core/05-port/types"
+	ibcexported "github.com/cosmos/ibc-go/v8/modules/core/exported"
+	ibckeeper "github.com/cosmos/ibc-go/v8/modules/core/keeper"
 
+	"truerepublic/token"
 	"truerepublic/x/dex"
 	"truerepublic/x/truedemocracy"
 )
@@ -75,23 +76,23 @@ var ModuleBasics = module.NewBasicManager(
 
 type TrueRepublicApp struct {
 	*baseapp.BaseApp
-	mm            *module.Manager
-	cdc           *codec.LegacyAmino
-	appCodec      codec.Codec
-	keys          map[string]*storetypes.KVStoreKey
-	tkeys         map[string]*storetypes.TransientStoreKey
-	memKeys       map[string]*storetypes.MemoryStoreKey
-	paramsKeeper  paramskeeper.Keeper
-	accountKeeper authkeeper.AccountKeeper
-	bankKeeper    bankkeeper.BaseKeeper
-	capKeeper     *capabilitykeeper.Keeper
-	ibcKeeper     *ibckeeper.Keeper
+	mm             *module.Manager
+	cdc            *codec.LegacyAmino
+	appCodec       codec.Codec
+	keys           map[string]*storetypes.KVStoreKey
+	tkeys          map[string]*storetypes.TransientStoreKey
+	memKeys        map[string]*storetypes.MemoryStoreKey
+	paramsKeeper   paramskeeper.Keeper
+	accountKeeper  authkeeper.AccountKeeper
+	bankKeeper     bankkeeper.BaseKeeper
+	capKeeper      *capabilitykeeper.Keeper
+	ibcKeeper      *ibckeeper.Keeper
 	transferKeeper transferkeeper.Keeper
-	wasmKeeper    wasmkeeper.Keeper
-	tdKeeper      truedemocracy.Keeper
-	dexKeeper     dex.Keeper
-	tdModule      truedemocracy.AppModule
-	dexModule     dex.AppModule
+	wasmKeeper     wasmkeeper.Keeper
+	tdKeeper       truedemocracy.Keeper
+	dexKeeper      dex.Keeper
+	tdModule       truedemocracy.AppModule
+	dexModule      dex.AppModule
 }
 
 func NewTrueRepublicApp(logger log.Logger, db dbm.DB, homeDir string) *TrueRepublicApp {
@@ -371,6 +372,17 @@ func (app *TrueRepublicApp) InitChainer(ctx sdk.Context, req *abci.RequestInitCh
 			genesisState[name] = data
 		}
 	}
+
+	bankGenesis := banktypes.GetGenesisStateFromAppState(app.appCodec, genesisState)
+	if err := token.ValidateGenesisSupply(*bankGenesis); err != nil {
+		return nil, err
+	}
+	token.EnsureMetadata(bankGenesis)
+	bankGenesisJSON, err := app.appCodec.MarshalJSON(bankGenesis)
+	if err != nil {
+		return nil, err
+	}
+	genesisState[banktypes.ModuleName] = bankGenesisJSON
 
 	return app.mm.InitGenesis(ctx, app.appCodec, genesisState)
 }

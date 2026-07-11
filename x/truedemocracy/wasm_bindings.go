@@ -15,13 +15,13 @@ import (
 
 // WasmCustomQuery is the top-level query envelope sent by contracts.
 type WasmCustomQuery struct {
-	Domain          *WasmQueryDomain          `json:"domain,omitempty"`
-	DomainMembers   *WasmQueryDomainMembers   `json:"domain_members,omitempty"`
-	Issue           *WasmQueryIssue           `json:"issue,omitempty"`
-	Suggestion      *WasmQuerySuggestion      `json:"suggestion,omitempty"`
-	PurgeSchedule   *WasmQueryPurgeSchedule   `json:"purge_schedule,omitempty"`
-	Nullifier       *WasmQueryNullifier       `json:"nullifier,omitempty"`
-	DomainTreasury  *WasmQueryDomainTreasury  `json:"domain_treasury,omitempty"`
+	Domain         *WasmQueryDomain         `json:"domain,omitempty"`
+	DomainMembers  *WasmQueryDomainMembers  `json:"domain_members,omitempty"`
+	Issue          *WasmQueryIssue          `json:"issue,omitempty"`
+	Suggestion     *WasmQuerySuggestion     `json:"suggestion,omitempty"`
+	PurgeSchedule  *WasmQueryPurgeSchedule  `json:"purge_schedule,omitempty"`
+	Nullifier      *WasmQueryNullifier      `json:"nullifier,omitempty"`
+	DomainTreasury *WasmQueryDomainTreasury `json:"domain_treasury,omitempty"`
 }
 
 type WasmQueryDomain struct {
@@ -59,22 +59,22 @@ type WasmQueryDomainTreasury struct {
 // --- Custom Query Response Types ---
 
 type WasmDomainResponse struct {
-	Name         string   `json:"name"`
-	Admin        string   `json:"admin"`
-	MemberCount  int      `json:"member_count"`
-	Treasury     string   `json:"treasury"`
-	IssueCount   int      `json:"issue_count"`
-	MerkleRoot   string   `json:"merkle_root,omitempty"`
-	TotalPayouts int64    `json:"total_payouts"`
+	Name         string                    `json:"name"`
+	Admin        string                    `json:"admin"`
+	MemberCount  int                       `json:"member_count"`
+	Treasury     string                    `json:"treasury"`
+	IssueCount   int                       `json:"issue_count"`
+	MerkleRoot   string                    `json:"merkle_root,omitempty"`
+	TotalPayouts int64                     `json:"total_payouts"`
 	Options      WasmDomainOptionsResponse `json:"options"`
 }
 
 type WasmDomainOptionsResponse struct {
-	AdminElectable   bool   `json:"admin_electable"`
-	AnyoneCanJoin    bool   `json:"anyone_can_join"`
-	OnlyAdminIssues  bool   `json:"only_admin_issues"`
-	CoinBurnRequired bool   `json:"coin_burn_required"`
-	VotingMode       int    `json:"voting_mode"`
+	AdminElectable   bool `json:"admin_electable"`
+	AnyoneCanJoin    bool `json:"anyone_can_join"`
+	OnlyAdminIssues  bool `json:"only_admin_issues"`
+	CoinBurnRequired bool `json:"coin_burn_required"`
+	VotingMode       int  `json:"voting_mode"`
 }
 
 type WasmDomainMembersResponse struct {
@@ -83,12 +83,12 @@ type WasmDomainMembersResponse struct {
 }
 
 type WasmIssueResponse struct {
-	Name           string                     `json:"name"`
-	Stones         int                        `json:"stones"`
-	SuggestionCount int                       `json:"suggestion_count"`
-	Suggestions    []WasmSuggestionBrief      `json:"suggestions"`
-	CreationDate   int64                      `json:"creation_date"`
-	ExternalLink   string                     `json:"external_link,omitempty"`
+	Name            string                `json:"name"`
+	Stones          int                   `json:"stones"`
+	SuggestionCount int                   `json:"suggestion_count"`
+	Suggestions     []WasmSuggestionBrief `json:"suggestions"`
+	CreationDate    int64                 `json:"creation_date"`
+	ExternalLink    string                `json:"external_link,omitempty"`
 }
 
 type WasmSuggestionBrief struct {
@@ -125,7 +125,7 @@ type WasmNullifierResponse struct {
 
 type WasmDomainTreasuryResponse struct {
 	DomainName string `json:"domain_name"`
-	Amount     string `json:"amount"` // e.g. "500000pnyx"
+	Amount     string `json:"amount"` // e.g. "500000upnyx"
 }
 
 // --- Custom Query Handler ---
@@ -334,13 +334,13 @@ type WasmMsgCastElectionVote struct {
 
 type WasmMsgDepositToDomain struct {
 	DomainName string `json:"domain_name"`
-	Amount     string `json:"amount"` // e.g. "100pnyx"
+	Amount     string `json:"amount"` // e.g. "100upnyx"
 }
 
 type WasmMsgWithdrawFromDomain struct {
 	DomainName string `json:"domain_name"`
 	Recipient  string `json:"recipient"` // bech32
-	Amount     string `json:"amount"`    // e.g. "100pnyx"
+	Amount     string `json:"amount"`    // e.g. "100upnyx"
 }
 
 // --- Custom Message Encoder ---

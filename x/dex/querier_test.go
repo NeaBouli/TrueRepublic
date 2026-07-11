@@ -5,8 +5,8 @@ import (
 	"testing"
 
 	"cosmossdk.io/math"
-	"github.com/cosmos/cosmos-sdk/codec"
 	abci "github.com/cometbft/cometbft/abci/types"
+	"github.com/cosmos/cosmos-sdk/codec"
 )
 
 // ---------- Pool Stats ----------
@@ -66,7 +66,7 @@ func TestQuerierSpotPrice(t *testing.T) {
 	RegisterCodec(cdc)
 	querier := NewQuerier(k, cdc)
 
-	bz, err := querier(ctx, []string{"spot_price", "pnyx", "atom"}, abci.RequestQuery{})
+	bz, err := querier(ctx, []string{"spot_price", pnyxDenom, "atom"}, abci.RequestQuery{})
 	if err != nil {
 		t.Fatalf("querier returned error: %v", err)
 	}
@@ -92,7 +92,7 @@ func TestQuerierSpotPrice(t *testing.T) {
 	if len(route) != 2 {
 		t.Errorf("route length = %d, want 2", len(route))
 	}
-	if route[0] != "pnyx" || route[1] != "atom" {
+	if route[0] != pnyxDenom || route[1] != "atom" {
 		t.Errorf("route = %v, want [pnyx atom]", route)
 	}
 
@@ -116,7 +116,7 @@ func TestQuerierLiquidityDepth(t *testing.T) {
 	RegisterCodec(cdc)
 	querier := NewQuerier(k, cdc)
 
-	bz, err := querier(ctx, []string{"liquidity_depth", "pnyx", "atom"}, abci.RequestQuery{})
+	bz, err := querier(ctx, []string{"liquidity_depth", pnyxDenom, "atom"}, abci.RequestQuery{})
 	if err != nil {
 		t.Fatalf("querier returned error: %v", err)
 	}
@@ -201,7 +201,7 @@ func TestQuerierEstimateSwap(t *testing.T) {
 	RegisterCodec(cdc)
 	querier := NewQuerier(k, cdc)
 
-	bz, err := querier(ctx, []string{"estimate_swap", "pnyx", "1000", "atom"}, abci.RequestQuery{})
+	bz, err := querier(ctx, []string{"estimate_swap", pnyxDenom, "1000", "atom"}, abci.RequestQuery{})
 	if err != nil {
 		t.Fatalf("querier returned error: %v", err)
 	}

@@ -14,7 +14,7 @@ func TestRegisterIdentityCommitment(t *testing.T) {
 	k, ctx := setupKeeper(t)
 
 	admin := sdk.AccAddress("admin1")
-	k.CreateDomain(ctx, "ZKPDomain", admin, sdk.NewCoins(sdk.NewInt64Coin("pnyx", 100_000)))
+	k.CreateDomain(ctx, "ZKPDomain", admin, sdk.NewCoins(sdk.NewInt64Coin(PNYXDenom, 100_000)))
 	k.AddMember(ctx, "ZKPDomain", "alice", admin)
 
 	// Compute a valid commitment.
@@ -43,7 +43,7 @@ func TestRegisterIdentityNonMemberRejected(t *testing.T) {
 	k, ctx := setupKeeper(t)
 
 	admin := sdk.AccAddress("admin1")
-	k.CreateDomain(ctx, "ZKPDomain", admin, sdk.NewCoins(sdk.NewInt64Coin("pnyx", 100_000)))
+	k.CreateDomain(ctx, "ZKPDomain", admin, sdk.NewCoins(sdk.NewInt64Coin(PNYXDenom, 100_000)))
 
 	secret := big.NewInt(42).Bytes()
 	commitment, _ := ComputeCommitment(secret)
@@ -59,7 +59,7 @@ func TestRegisterIdentityDuplicateRejected(t *testing.T) {
 	k, ctx := setupKeeper(t)
 
 	admin := sdk.AccAddress("admin1")
-	k.CreateDomain(ctx, "ZKPDomain", admin, sdk.NewCoins(sdk.NewInt64Coin("pnyx", 100_000)))
+	k.CreateDomain(ctx, "ZKPDomain", admin, sdk.NewCoins(sdk.NewInt64Coin(PNYXDenom, 100_000)))
 	k.AddMember(ctx, "ZKPDomain", "alice", admin)
 
 	secret := big.NewInt(42).Bytes()
@@ -77,7 +77,7 @@ func TestRegisterIdentityInvalidHex(t *testing.T) {
 	k, ctx := setupKeeper(t)
 
 	admin := sdk.AccAddress("admin1")
-	k.CreateDomain(ctx, "ZKPDomain", admin, sdk.NewCoins(sdk.NewInt64Coin("pnyx", 100_000)))
+	k.CreateDomain(ctx, "ZKPDomain", admin, sdk.NewCoins(sdk.NewInt64Coin(PNYXDenom, 100_000)))
 	k.AddMember(ctx, "ZKPDomain", "alice", admin)
 
 	err := k.RegisterIdentityCommitment(ctx, "ZKPDomain", "alice", "not-valid-hex!!!")
@@ -90,7 +90,7 @@ func TestRegisterIdentityWrongLength(t *testing.T) {
 	k, ctx := setupKeeper(t)
 
 	admin := sdk.AccAddress("admin1")
-	k.CreateDomain(ctx, "ZKPDomain", admin, sdk.NewCoins(sdk.NewInt64Coin("pnyx", 100_000)))
+	k.CreateDomain(ctx, "ZKPDomain", admin, sdk.NewCoins(sdk.NewInt64Coin(PNYXDenom, 100_000)))
 	k.AddMember(ctx, "ZKPDomain", "alice", admin)
 
 	err := k.RegisterIdentityCommitment(ctx, "ZKPDomain", "alice", "aabb") // too short
@@ -116,7 +116,7 @@ func TestMerkleRootUpdatesOnRegistration(t *testing.T) {
 	k, ctx := setupKeeper(t)
 
 	admin := sdk.AccAddress("admin1")
-	k.CreateDomain(ctx, "ZKPDomain", admin, sdk.NewCoins(sdk.NewInt64Coin("pnyx", 100_000)))
+	k.CreateDomain(ctx, "ZKPDomain", admin, sdk.NewCoins(sdk.NewInt64Coin(PNYXDenom, 100_000)))
 	k.AddMember(ctx, "ZKPDomain", "alice", admin)
 	k.AddMember(ctx, "ZKPDomain", "bob", admin)
 	k.AddMember(ctx, "ZKPDomain", "charlie", admin)
@@ -184,7 +184,7 @@ func TestBigPurgeClearsIdentityCommits(t *testing.T) {
 	k, ctx := setupKeeper(t)
 
 	admin := sdk.AccAddress("admin1")
-	k.CreateDomain(ctx, "PurgeDomain", admin, sdk.NewCoins(sdk.NewInt64Coin("pnyx", 100_000)))
+	k.CreateDomain(ctx, "PurgeDomain", admin, sdk.NewCoins(sdk.NewInt64Coin(PNYXDenom, 100_000)))
 	k.AddMember(ctx, "PurgeDomain", "alice", admin)
 
 	// Register a commitment.
@@ -218,7 +218,7 @@ func TestBigPurgeClearsNullifiers(t *testing.T) {
 	k, ctx := setupKeeper(t)
 
 	admin := sdk.AccAddress("admin1")
-	k.CreateDomain(ctx, "PurgeDomain", admin, sdk.NewCoins(sdk.NewInt64Coin("pnyx", 100_000)))
+	k.CreateDomain(ctx, "PurgeDomain", admin, sdk.NewCoins(sdk.NewInt64Coin(PNYXDenom, 100_000)))
 
 	// Store some nullifiers.
 	k.SetNullifierUsed(ctx, "PurgeDomain", "n1", 100)
@@ -303,7 +303,7 @@ func TestMsgServerRegisterIdentity(t *testing.T) {
 	srv := NewMsgServer(k)
 
 	admin := sdk.AccAddress("admin1")
-	k.CreateDomain(ctx, "ZKPDomain", admin, sdk.NewCoins(sdk.NewInt64Coin("pnyx", 100_000)))
+	k.CreateDomain(ctx, "ZKPDomain", admin, sdk.NewCoins(sdk.NewInt64Coin(PNYXDenom, 100_000)))
 	k.AddMember(ctx, "ZKPDomain", sdk.AccAddress("alice").String(), admin)
 
 	secret := big.NewInt(42).Bytes()

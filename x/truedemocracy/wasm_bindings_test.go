@@ -11,7 +11,7 @@ import (
 
 func TestWasmQueryDomain(t *testing.T) {
 	k, ctx := setupKeeper(t)
-	k.CreateDomain(ctx, "TestDomain", sdk.AccAddress("admin1"), sdk.NewCoins(sdk.NewInt64Coin("pnyx", 500)))
+	k.CreateDomain(ctx, "TestDomain", sdk.AccAddress("admin1"), sdk.NewCoins(sdk.NewInt64Coin(PNYXDenom, 500)))
 
 	handler := CustomQueryHandler(k)
 
@@ -51,7 +51,7 @@ func TestWasmQueryDomain(t *testing.T) {
 
 func TestWasmQueryDomainMembers(t *testing.T) {
 	k, ctx := setupKeeper(t)
-	k.CreateDomain(ctx, "MembersDomain", sdk.AccAddress("admin1"), sdk.NewCoins(sdk.NewInt64Coin("pnyx", 100)))
+	k.CreateDomain(ctx, "MembersDomain", sdk.AccAddress("admin1"), sdk.NewCoins(sdk.NewInt64Coin(PNYXDenom, 100)))
 
 	// Add extra members.
 	domain, _ := k.GetDomain(ctx, "MembersDomain")
@@ -91,7 +91,7 @@ func TestWasmQueryDomainMembers(t *testing.T) {
 
 func TestWasmQueryIssue(t *testing.T) {
 	k, ctx := setupKeeper(t)
-	k.CreateDomain(ctx, "IssueDomain", sdk.AccAddress("admin1"), sdk.NewCoins(sdk.NewInt64Coin("pnyx", 100)))
+	k.CreateDomain(ctx, "IssueDomain", sdk.AccAddress("admin1"), sdk.NewCoins(sdk.NewInt64Coin(PNYXDenom, 100)))
 
 	// Add issue with suggestions.
 	domain, _ := k.GetDomain(ctx, "IssueDomain")
@@ -163,7 +163,7 @@ func TestWasmQueryIssue(t *testing.T) {
 
 func TestWasmQuerySuggestion(t *testing.T) {
 	k, ctx := setupKeeper(t)
-	k.CreateDomain(ctx, "SugDomain", sdk.AccAddress("admin1"), sdk.NewCoins(sdk.NewInt64Coin("pnyx", 100)))
+	k.CreateDomain(ctx, "SugDomain", sdk.AccAddress("admin1"), sdk.NewCoins(sdk.NewInt64Coin(PNYXDenom, 100)))
 
 	domain, _ := k.GetDomain(ctx, "SugDomain")
 	domain.Issues = []Issue{
@@ -253,7 +253,7 @@ func TestWasmQuerySuggestion(t *testing.T) {
 
 func TestWasmQueryPurgeSchedule(t *testing.T) {
 	k, ctx := setupKeeper(t)
-	k.CreateDomain(ctx, "PurgeDomain", sdk.AccAddress("admin1"), sdk.NewCoins(sdk.NewInt64Coin("pnyx", 100)))
+	k.CreateDomain(ctx, "PurgeDomain", sdk.AccAddress("admin1"), sdk.NewCoins(sdk.NewInt64Coin(PNYXDenom, 100)))
 
 	handler := CustomQueryHandler(k)
 
@@ -293,7 +293,7 @@ func TestWasmQueryPurgeSchedule(t *testing.T) {
 
 func TestWasmQueryNullifier(t *testing.T) {
 	k, ctx := setupKeeper(t)
-	k.CreateDomain(ctx, "NullDomain", sdk.AccAddress("admin1"), sdk.NewCoins(sdk.NewInt64Coin("pnyx", 100)))
+	k.CreateDomain(ctx, "NullDomain", sdk.AccAddress("admin1"), sdk.NewCoins(sdk.NewInt64Coin(PNYXDenom, 100)))
 
 	// Mark one nullifier as used.
 	k.SetNullifierUsed(ctx, "NullDomain", "aabbccdd", 100)
@@ -483,7 +483,7 @@ func TestWasmMsgEncoderUnknownType(t *testing.T) {
 
 func TestWasmQueryDomainTreasury(t *testing.T) {
 	k, ctx := setupKeeper(t)
-	k.CreateDomain(ctx, "TreasuryDomain", sdk.AccAddress("admin1"), sdk.NewCoins(sdk.NewInt64Coin("pnyx", 42000)))
+	k.CreateDomain(ctx, "TreasuryDomain", sdk.AccAddress("admin1"), sdk.NewCoins(sdk.NewInt64Coin(PNYXDenom, 42000)))
 
 	handler := CustomQueryHandler(k)
 
@@ -502,8 +502,8 @@ func TestWasmQueryDomainTreasury(t *testing.T) {
 		if resp.DomainName != "TreasuryDomain" {
 			t.Errorf("domain_name = %q, want TreasuryDomain", resp.DomainName)
 		}
-		if resp.Amount != "42000pnyx" {
-			t.Errorf("amount = %q, want 42000pnyx", resp.Amount)
+		if resp.Amount != "42000upnyx" {
+			t.Errorf("amount = %q, want 42000upnyx", resp.Amount)
 		}
 	})
 
@@ -526,7 +526,7 @@ func TestWasmMsgDepositToDomain(t *testing.T) {
 		msgBytes, _ := json.Marshal(WasmCustomMsg{
 			DepositToDomain: &WasmMsgDepositToDomain{
 				DomainName: "TestDomain",
-				Amount:     "500pnyx",
+				Amount:     "500upnyx",
 			},
 		})
 		msgs, err := encoder(sender, msgBytes)
@@ -543,8 +543,8 @@ func TestWasmMsgDepositToDomain(t *testing.T) {
 		if m.DomainName != "TestDomain" {
 			t.Errorf("domain = %q, want TestDomain", m.DomainName)
 		}
-		if m.Amount.Denom != "pnyx" || m.Amount.Amount.Int64() != 500 {
-			t.Errorf("amount = %s, want 500pnyx", m.Amount)
+		if m.Amount.Denom != PNYXDenom || m.Amount.Amount.Int64() != 500 {
+			t.Errorf("amount = %s, want 500upnyx", m.Amount)
 		}
 		if !m.Sender.Equals(sender) {
 			t.Errorf("sender = %s, want %s", m.Sender, sender)
@@ -574,7 +574,7 @@ func TestWasmMsgWithdrawFromDomain(t *testing.T) {
 			WithdrawFromDomain: &WasmMsgWithdrawFromDomain{
 				DomainName: "TestDomain",
 				Recipient:  "cosmos1recipient",
-				Amount:     "200pnyx",
+				Amount:     "200upnyx",
 			},
 		})
 		msgs, err := encoder(sender, msgBytes)
@@ -594,8 +594,8 @@ func TestWasmMsgWithdrawFromDomain(t *testing.T) {
 		if m.Recipient != "cosmos1recipient" {
 			t.Errorf("recipient = %q, want cosmos1recipient", m.Recipient)
 		}
-		if m.Amount.Denom != "pnyx" || m.Amount.Amount.Int64() != 200 {
-			t.Errorf("amount = %s, want 200pnyx", m.Amount)
+		if m.Amount.Denom != PNYXDenom || m.Amount.Amount.Int64() != 200 {
+			t.Errorf("amount = %s, want 200upnyx", m.Amount)
 		}
 		if !m.Sender.Equals(sender) {
 			t.Errorf("sender = %s, want %s", m.Sender, sender)

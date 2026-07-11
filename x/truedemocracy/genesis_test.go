@@ -10,10 +10,10 @@ import (
 	"cosmossdk.io/store"
 	"cosmossdk.io/store/metrics"
 	storetypes "cosmossdk.io/store/types"
+	cmtproto "github.com/cometbft/cometbft/proto/tendermint/types"
 	dbm "github.com/cosmos/cosmos-db"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	cmtproto "github.com/cometbft/cometbft/proto/tendermint/types"
 )
 
 // setupModuleForGenesis creates a fresh AppModule, Keeper, and sdk.Context for genesis tests.
@@ -48,7 +48,7 @@ func TestExportGenesisNotNil(t *testing.T) {
 
 	// Create a domain so there is state to export.
 	admin := sdk.AccAddress("admin1")
-	k.CreateDomain(ctx, "TestDomain", admin, sdk.NewCoins(sdk.NewInt64Coin("pnyx", 500_000)))
+	k.CreateDomain(ctx, "TestDomain", admin, sdk.NewCoins(sdk.NewInt64Coin(PNYXDenom, 500_000*PNYXUnit)))
 
 	exported := am.ExportGenesis(ctx, nil)
 	if exported == nil {
@@ -60,8 +60,8 @@ func TestExportGenesisContainsDomains(t *testing.T) {
 	am, k, ctx := setupModuleForGenesis(t)
 
 	admin := sdk.AccAddress("admin1")
-	k.CreateDomain(ctx, "DomainA", admin, sdk.NewCoins(sdk.NewInt64Coin("pnyx", 100_000)))
-	k.CreateDomain(ctx, "DomainB", admin, sdk.NewCoins(sdk.NewInt64Coin("pnyx", 200_000)))
+	k.CreateDomain(ctx, "DomainA", admin, sdk.NewCoins(sdk.NewInt64Coin(PNYXDenom, 100_000*PNYXUnit)))
+	k.CreateDomain(ctx, "DomainB", admin, sdk.NewCoins(sdk.NewInt64Coin(PNYXDenom, 200_000*PNYXUnit)))
 
 	exported := am.ExportGenesis(ctx, nil)
 	var genesis GenesisState
@@ -86,11 +86,11 @@ func TestExportGenesisContainsValidators(t *testing.T) {
 	am, k, ctx := setupModuleForGenesis(t)
 
 	admin := sdk.AccAddress("admin1")
-	k.CreateDomain(ctx, "ValDomain", admin, sdk.NewCoins(sdk.NewInt64Coin("pnyx", 500_000)))
+	k.CreateDomain(ctx, "ValDomain", admin, sdk.NewCoins(sdk.NewInt64Coin(PNYXDenom, 500_000*PNYXUnit)))
 	k.AddMember(ctx, "ValDomain", "validator1", admin)
 
 	pubKey := testPubKey("genesis-val-1")
-	stake := sdk.NewCoins(sdk.NewInt64Coin("pnyx", 100_000))
+	stake := sdk.NewCoins(sdk.NewInt64Coin(PNYXDenom, 100_000*PNYXUnit))
 	if err := k.RegisterValidator(ctx, "validator1", pubKey, stake, "ValDomain"); err != nil {
 		t.Fatalf("RegisterValidator failed: %v", err)
 	}
@@ -107,7 +107,7 @@ func TestExportGenesisContainsValidators(t *testing.T) {
 	if genesis.Validators[0].OperatorAddr != "validator1" {
 		t.Fatalf("expected operator addr validator1, got %s", genesis.Validators[0].OperatorAddr)
 	}
-	if genesis.Validators[0].Stake != 100_000 {
+	if genesis.Validators[0].Stake != 100_000*PNYXUnit {
 		t.Fatalf("expected stake 100000, got %d", genesis.Validators[0].Stake)
 	}
 }
@@ -146,7 +146,7 @@ func TestExportGenesisNoVKWhenNotInitialized(t *testing.T) {
 
 	// Create a domain but do NOT use ZKP.
 	admin := sdk.AccAddress("admin1")
-	k.CreateDomain(ctx, "NoZKPDomain", admin, sdk.NewCoins(sdk.NewInt64Coin("pnyx", 500_000)))
+	k.CreateDomain(ctx, "NoZKPDomain", admin, sdk.NewCoins(sdk.NewInt64Coin(PNYXDenom, 500_000*PNYXUnit)))
 
 	exported := am.ExportGenesis(ctx, nil)
 	var genesis GenesisState
@@ -208,11 +208,11 @@ func TestGenesisRoundTrip(t *testing.T) {
 	am1, k1, ctx1 := setupModuleForGenesis(t)
 
 	admin := sdk.AccAddress("admin1")
-	k1.CreateDomain(ctx1, "RoundTripDomain", admin, sdk.NewCoins(sdk.NewInt64Coin("pnyx", 500_000)))
+	k1.CreateDomain(ctx1, "RoundTripDomain", admin, sdk.NewCoins(sdk.NewInt64Coin(PNYXDenom, 500_000*PNYXUnit)))
 	k1.AddMember(ctx1, "RoundTripDomain", "validator1", admin)
 
 	pubKey := testPubKey("roundtrip-val")
-	stake := sdk.NewCoins(sdk.NewInt64Coin("pnyx", 100_000))
+	stake := sdk.NewCoins(sdk.NewInt64Coin(PNYXDenom, 100_000*PNYXUnit))
 	k1.RegisterValidator(ctx1, "validator1", pubKey, stake, "RoundTripDomain")
 
 	// Initialize VK.
@@ -242,8 +242,8 @@ func TestGenesisRoundTrip(t *testing.T) {
 	if !found {
 		t.Fatal("validator should exist after round-trip")
 	}
-	if v.Stake.AmountOf("pnyx").Int64() != 100_000 {
-		t.Fatalf("expected stake 100000, got %d", v.Stake.AmountOf("pnyx").Int64())
+	if v.Stake.AmountOf(PNYXDenom).Int64() != 100_000*PNYXUnit {
+		t.Fatalf("expected stake 100000, got %d", v.Stake.AmountOf(PNYXDenom).Int64())
 	}
 
 	// Verify VK.

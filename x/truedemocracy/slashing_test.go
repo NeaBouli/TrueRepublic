@@ -27,8 +27,8 @@ func TestHandleDoubleSign(t *testing.T) {
 	}
 
 	// 5% of 100_000 = 5_000 slashed → 95_000 remaining.
-	want := math.NewInt(95_000)
-	got := val.Stake.AmountOf("pnyx")
+	want := math.NewInt(95_000 * PNYXUnit)
+	got := val.Stake.AmountOf(PNYXDenom)
 	if !got.Equal(want) {
 		t.Errorf("stake after slash = %s, want %s", got, want)
 	}
@@ -36,7 +36,7 @@ func TestHandleDoubleSign(t *testing.T) {
 
 func TestHandleDoubleSignBelowMinimum(t *testing.T) {
 	k, ctx := setupKeeper(t)
-	k.CreateDomain(ctx, "D", sdk.AccAddress("a"), sdk.NewCoins(sdk.NewInt64Coin("pnyx", 500_000)))
+	k.CreateDomain(ctx, "D", sdk.AccAddress("a"), sdk.NewCoins(sdk.NewInt64Coin(PNYXDenom, 500_000*PNYXUnit)))
 	domain, _ := k.GetDomain(ctx, "D")
 	domain.Members = append(domain.Members, "lowval")
 	st := ctx.KVStore(k.StoreKey)
@@ -45,7 +45,7 @@ func TestHandleDoubleSignBelowMinimum(t *testing.T) {
 
 	// Register with exactly minimum stake.
 	pk := testPubKey("lowval")
-	stake := sdk.NewCoins(sdk.NewInt64Coin("pnyx", 100_000))
+	stake := sdk.NewCoins(sdk.NewInt64Coin(PNYXDenom, 100_000*PNYXUnit))
 	k.RegisterValidator(ctx, "lowval", pk, stake, "D")
 
 	k.HandleDoubleSign(ctx, pk)
@@ -85,8 +85,8 @@ func TestHandleDowntime(t *testing.T) {
 		t.Error("should be jailed after exceeding threshold")
 	}
 	// 1% of 100_000 = 1_000 slashed → 99_000 remaining.
-	want := math.NewInt(99_000)
-	got := val.Stake.AmountOf("pnyx")
+	want := math.NewInt(99_000 * PNYXUnit)
+	got := val.Stake.AmountOf(PNYXDenom)
 	if !got.Equal(want) {
 		t.Errorf("stake after downtime slash = %s, want %s", got, want)
 	}
@@ -137,7 +137,7 @@ func TestUnjailFailsStakeBelowMin(t *testing.T) {
 	val, _ := k.GetValidator(ctx, "oper1")
 	val.Jailed = true
 	val.JailedUntil = ctx.BlockTime().Unix() - 1 // already expired
-	val.Stake = sdk.NewCoins(sdk.NewInt64Coin("pnyx", rewards.StakeMin-1))
+	val.Stake = sdk.NewCoins(sdk.NewInt64Coin(PNYXDenom, rewards.StakeMin-1))
 	val.Power = 0
 	k.SetValidator(ctx, val)
 

@@ -11,7 +11,7 @@ import (
 // setupDomainWithIssues creates a domain with members and multiple issues/suggestions for stone tests.
 func setupDomainWithIssues(t *testing.T, k Keeper, ctx sdk.Context) {
 	t.Helper()
-	k.CreateDomain(ctx, "StonesDomain", sdk.AccAddress("admin1"), sdk.NewCoins(sdk.NewInt64Coin("pnyx", 500_000)))
+	k.CreateDomain(ctx, "StonesDomain", sdk.AccAddress("admin1"), sdk.NewCoins(sdk.NewInt64Coin(PNYXDenom, 500_000)))
 
 	domain, _ := k.GetDomain(ctx, "StonesDomain")
 	domain.Members = append(domain.Members, "alice", "bob", "charlie")
@@ -53,7 +53,7 @@ func TestPlaceStoneOnIssue(t *testing.T) {
 		if err != nil {
 			t.Fatalf("unexpected error: %v", err)
 		}
-		if !reward.AmountOf("pnyx").IsPositive() {
+		if !reward.AmountOf(PNYXDenom).IsPositive() {
 			t.Error("reward should be positive")
 		}
 
@@ -115,7 +115,7 @@ func TestMoveStone(t *testing.T) {
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
-	if !reward.AmountOf("pnyx").IsPositive() {
+	if !reward.AmountOf(PNYXDenom).IsPositive() {
 		t.Error("moving stone should also earn reward")
 	}
 
@@ -152,7 +152,7 @@ func TestSortIssuesByStones(t *testing.T) {
 	issues := []Issue{
 		{Name: "A", Stones: 1, CreationDate: now + 10},
 		{Name: "B", Stones: 3, CreationDate: now + 20},
-		{Name: "C", Stones: 1, CreationDate: now},      // same stones as A, but older
+		{Name: "C", Stones: 1, CreationDate: now}, // same stones as A, but older
 		{Name: "D", Stones: 0, CreationDate: now + 5},
 	}
 
@@ -176,7 +176,7 @@ func TestSortSuggestionsByStones(t *testing.T) {
 	suggestions := []Suggestion{
 		{Name: "X", Stones: 0, CreationDate: now},
 		{Name: "Y", Stones: 2, CreationDate: now + 5},
-		{Name: "Z", Stones: 2, CreationDate: now},       // same stones as Y, but older
+		{Name: "Z", Stones: 2, CreationDate: now}, // same stones as Y, but older
 	}
 
 	sorted := SortSuggestionsByStones(suggestions)
@@ -196,7 +196,7 @@ func TestVoteToEarnReward(t *testing.T) {
 	setupDomainWithIssues(t, k, ctx)
 
 	domainBefore, _ := k.GetDomain(ctx, "StonesDomain")
-	treasuryBefore := domainBefore.Treasury.AmountOf("pnyx")
+	treasuryBefore := domainBefore.Treasury.AmountOf(PNYXDenom)
 
 	// Expected reward = treasury / 1000.
 	expectedReward := treasuryBefore.Quo(math.NewInt(1000))
@@ -205,12 +205,12 @@ func TestVoteToEarnReward(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if !reward.AmountOf("pnyx").Equal(expectedReward) {
-		t.Errorf("reward = %s, want %s", reward.AmountOf("pnyx"), expectedReward)
+	if !reward.AmountOf(PNYXDenom).Equal(expectedReward) {
+		t.Errorf("reward = %s, want %s", reward.AmountOf(PNYXDenom), expectedReward)
 	}
 
 	domainAfter, _ := k.GetDomain(ctx, "StonesDomain")
-	treasuryAfter := domainAfter.Treasury.AmountOf("pnyx")
+	treasuryAfter := domainAfter.Treasury.AmountOf(PNYXDenom)
 	wantTreasury := treasuryBefore.Sub(expectedReward)
 	if !treasuryAfter.Equal(wantTreasury) {
 		t.Errorf("treasury = %s, want %s", treasuryAfter, wantTreasury)
@@ -228,7 +228,7 @@ func TestPlaceStoneOnSuggestion(t *testing.T) {
 		if err != nil {
 			t.Fatalf("unexpected error: %v", err)
 		}
-		if !reward.AmountOf("pnyx").IsPositive() {
+		if !reward.AmountOf(PNYXDenom).IsPositive() {
 			t.Error("reward should be positive")
 		}
 

@@ -10,7 +10,7 @@ import (
 // setupGovernanceDomain creates a domain with 10 members for governance tests.
 func setupGovernanceDomain(t *testing.T, k Keeper, ctx sdk.Context) {
 	t.Helper()
-	k.CreateDomain(ctx, "GovDomain", sdk.AccAddress("admin1"), sdk.NewCoins(sdk.NewInt64Coin("pnyx", 1_000_000)))
+	k.CreateDomain(ctx, "GovDomain", sdk.AccAddress("admin1"), sdk.NewCoins(sdk.NewInt64Coin(PNYXDenom, 1_000_000)))
 
 	domain, _ := k.GetDomain(ctx, "GovDomain")
 	domain.Members = []string{"alice", "bob", "charlie", "dave", "eve", "frank", "grace", "heidi", "ivan", "judy"}
@@ -150,7 +150,7 @@ func TestElectAdmin(t *testing.T) {
 
 	t.Run("no stones means no change", func(t *testing.T) {
 		// Create a fresh domain with no stones.
-		k.CreateDomain(ctx, "EmptyDomain", sdk.AccAddress("origadmin"), sdk.NewCoins(sdk.NewInt64Coin("pnyx", 100)))
+		k.CreateDomain(ctx, "EmptyDomain", sdk.AccAddress("origadmin"), sdk.NewCoins(sdk.NewInt64Coin(PNYXDenom, 100)))
 		domain, _ := k.GetDomain(ctx, "EmptyDomain")
 		domain.Options.AdminElectable = true
 		domain.Members = []string{"a", "b", "c"}
@@ -167,7 +167,7 @@ func TestElectAdmin(t *testing.T) {
 	})
 
 	t.Run("not electable skips election", func(t *testing.T) {
-		k.CreateDomain(ctx, "FixedAdmin", sdk.AccAddress("boss"), sdk.NewCoins(sdk.NewInt64Coin("pnyx", 100)))
+		k.CreateDomain(ctx, "FixedAdmin", sdk.AccAddress("boss"), sdk.NewCoins(sdk.NewInt64Coin(PNYXDenom, 100)))
 		domain, _ := k.GetDomain(ctx, "FixedAdmin")
 		domain.Options.AdminElectable = false
 		domain.Members = []string{"boss", "worker"}
@@ -392,7 +392,7 @@ func TestActivityResetsInactivityTimer(t *testing.T) {
 
 func TestExternalLink(t *testing.T) {
 	k, ctx := setupKeeper(t)
-	k.CreateDomain(ctx, "LinkDomain", sdk.AccAddress("admin1"), sdk.NewCoins(sdk.NewInt64Coin("pnyx", 500_000)))
+	k.CreateDomain(ctx, "LinkDomain", sdk.AccAddress("admin1"), sdk.NewCoins(sdk.NewInt64Coin(PNYXDenom, 500_000)))
 
 	domain, _ := k.GetDomain(ctx, "LinkDomain")
 	domain.Members = append(domain.Members, "alice")
@@ -402,7 +402,7 @@ func TestExternalLink(t *testing.T) {
 
 	// Submit with external link.
 	err := k.SubmitProposal(ctx, "LinkDomain", "Policy", "Plan", "alice",
-		sdk.NewCoins(sdk.NewInt64Coin("pnyx", 1000)), "https://forum.example.com/policy")
+		sdk.NewCoins(sdk.NewInt64Coin(PNYXDenom, 1000)), "https://forum.example.com/policy")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -415,7 +415,7 @@ func TestExternalLink(t *testing.T) {
 
 func TestExternalLinkEmpty(t *testing.T) {
 	k, ctx := setupKeeper(t)
-	k.CreateDomain(ctx, "NoLinkDomain", sdk.AccAddress("admin1"), sdk.NewCoins(sdk.NewInt64Coin("pnyx", 500_000)))
+	k.CreateDomain(ctx, "NoLinkDomain", sdk.AccAddress("admin1"), sdk.NewCoins(sdk.NewInt64Coin(PNYXDenom, 500_000)))
 
 	domain, _ := k.GetDomain(ctx, "NoLinkDomain")
 	domain.Members = append(domain.Members, "alice")
@@ -425,7 +425,7 @@ func TestExternalLinkEmpty(t *testing.T) {
 
 	// Submit without external link.
 	err := k.SubmitProposal(ctx, "NoLinkDomain", "Policy", "Plan", "alice",
-		sdk.NewCoins(sdk.NewInt64Coin("pnyx", 1000)), "")
+		sdk.NewCoins(sdk.NewInt64Coin(PNYXDenom, 1000)), "")
 	if err != nil {
 		t.Fatal(err)
 	}

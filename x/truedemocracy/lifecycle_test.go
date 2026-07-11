@@ -11,7 +11,7 @@ import (
 // two suggestions, suitable for lifecycle zone testing.
 func setupLifecycleDomain(t *testing.T, k Keeper, ctx sdk.Context) {
 	t.Helper()
-	k.CreateDomain(ctx, "LifeDomain", sdk.AccAddress("admin1"), sdk.NewCoins(sdk.NewInt64Coin("pnyx", 1_000_000)))
+	k.CreateDomain(ctx, "LifeDomain", sdk.AccAddress("admin1"), sdk.NewCoins(sdk.NewInt64Coin(PNYXDenom, 1_000_000)))
 
 	domain, _ := k.GetDomain(ctx, "LifeDomain")
 	domain.Members = []string{"m1", "m2", "m3", "m4", "m5", "m6", "m7", "m8", "m9", "m10"}
@@ -406,7 +406,7 @@ func TestProcessAllLifecycles(t *testing.T) {
 	setupLifecycleDomain(t, k, ctx)
 
 	// Create a second domain.
-	k.CreateDomain(ctx, "Domain2", sdk.AccAddress("admin2"), sdk.NewCoins(sdk.NewInt64Coin("pnyx", 100_000)))
+	k.CreateDomain(ctx, "Domain2", sdk.AccAddress("admin2"), sdk.NewCoins(sdk.NewInt64Coin(PNYXDenom, 100_000)))
 	domain2, _ := k.GetDomain(ctx, "Domain2")
 	domain2.Members = []string{"m1", "m2", "m3"}
 	domain2.Issues = []Issue{

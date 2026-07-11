@@ -20,141 +20,143 @@ import (
 
 type MsgCreateDomainResponse struct{}
 
-func (*MsgCreateDomainResponse) ProtoMessage()             {}
-func (*MsgCreateDomainResponse) Reset()                    {}
-func (*MsgCreateDomainResponse) String() string            { return "MsgCreateDomainResponse" }
+func (*MsgCreateDomainResponse) ProtoMessage()  {}
+func (*MsgCreateDomainResponse) Reset()         {}
+func (*MsgCreateDomainResponse) String() string { return "MsgCreateDomainResponse" }
 
 type MsgSubmitProposalResponse struct{}
 
-func (*MsgSubmitProposalResponse) ProtoMessage()           {}
-func (*MsgSubmitProposalResponse) Reset()                  {}
-func (*MsgSubmitProposalResponse) String() string          { return "MsgSubmitProposalResponse" }
+func (*MsgSubmitProposalResponse) ProtoMessage()  {}
+func (*MsgSubmitProposalResponse) Reset()         {}
+func (*MsgSubmitProposalResponse) String() string { return "MsgSubmitProposalResponse" }
 
 type MsgRegisterValidatorResponse struct{}
 
-func (*MsgRegisterValidatorResponse) ProtoMessage()        {}
-func (*MsgRegisterValidatorResponse) Reset()               {}
-func (*MsgRegisterValidatorResponse) String() string       { return "MsgRegisterValidatorResponse" }
+func (*MsgRegisterValidatorResponse) ProtoMessage()  {}
+func (*MsgRegisterValidatorResponse) Reset()         {}
+func (*MsgRegisterValidatorResponse) String() string { return "MsgRegisterValidatorResponse" }
 
 type MsgWithdrawStakeResponse struct{}
 
-func (*MsgWithdrawStakeResponse) ProtoMessage()            {}
-func (*MsgWithdrawStakeResponse) Reset()                   {}
-func (*MsgWithdrawStakeResponse) String() string           { return "MsgWithdrawStakeResponse" }
+func (*MsgWithdrawStakeResponse) ProtoMessage()  {}
+func (*MsgWithdrawStakeResponse) Reset()         {}
+func (*MsgWithdrawStakeResponse) String() string { return "MsgWithdrawStakeResponse" }
 
 type MsgRemoveValidatorResponse struct{}
 
-func (*MsgRemoveValidatorResponse) ProtoMessage()          {}
-func (*MsgRemoveValidatorResponse) Reset()                 {}
-func (*MsgRemoveValidatorResponse) String() string         { return "MsgRemoveValidatorResponse" }
+func (*MsgRemoveValidatorResponse) ProtoMessage()  {}
+func (*MsgRemoveValidatorResponse) Reset()         {}
+func (*MsgRemoveValidatorResponse) String() string { return "MsgRemoveValidatorResponse" }
 
 type MsgUnjailResponse struct{}
 
-func (*MsgUnjailResponse) ProtoMessage()                   {}
-func (*MsgUnjailResponse) Reset()                          {}
-func (*MsgUnjailResponse) String() string                  { return "MsgUnjailResponse" }
+func (*MsgUnjailResponse) ProtoMessage()  {}
+func (*MsgUnjailResponse) Reset()         {}
+func (*MsgUnjailResponse) String() string { return "MsgUnjailResponse" }
 
 type MsgJoinPermissionRegisterResponse struct{}
 
-func (*MsgJoinPermissionRegisterResponse) ProtoMessage()   {}
-func (*MsgJoinPermissionRegisterResponse) Reset()          {}
-func (*MsgJoinPermissionRegisterResponse) String() string  { return "MsgJoinPermissionRegisterResponse" }
+func (*MsgJoinPermissionRegisterResponse) ProtoMessage()  {}
+func (*MsgJoinPermissionRegisterResponse) Reset()         {}
+func (*MsgJoinPermissionRegisterResponse) String() string { return "MsgJoinPermissionRegisterResponse" }
 
 type MsgPurgePermissionRegisterResponse struct{}
 
-func (*MsgPurgePermissionRegisterResponse) ProtoMessage()  {}
-func (*MsgPurgePermissionRegisterResponse) Reset()         {}
-func (*MsgPurgePermissionRegisterResponse) String() string { return "MsgPurgePermissionRegisterResponse" }
+func (*MsgPurgePermissionRegisterResponse) ProtoMessage() {}
+func (*MsgPurgePermissionRegisterResponse) Reset()        {}
+func (*MsgPurgePermissionRegisterResponse) String() string {
+	return "MsgPurgePermissionRegisterResponse"
+}
 
 type MsgPlaceStoneOnIssueResponse struct{}
 
-func (*MsgPlaceStoneOnIssueResponse) ProtoMessage()        {}
-func (*MsgPlaceStoneOnIssueResponse) Reset()               {}
-func (*MsgPlaceStoneOnIssueResponse) String() string       { return "MsgPlaceStoneOnIssueResponse" }
+func (*MsgPlaceStoneOnIssueResponse) ProtoMessage()  {}
+func (*MsgPlaceStoneOnIssueResponse) Reset()         {}
+func (*MsgPlaceStoneOnIssueResponse) String() string { return "MsgPlaceStoneOnIssueResponse" }
 
 type MsgPlaceStoneOnSuggestionResponse struct{}
 
-func (*MsgPlaceStoneOnSuggestionResponse) ProtoMessage()   {}
-func (*MsgPlaceStoneOnSuggestionResponse) Reset()          {}
-func (*MsgPlaceStoneOnSuggestionResponse) String() string  { return "MsgPlaceStoneOnSuggestionResponse" }
+func (*MsgPlaceStoneOnSuggestionResponse) ProtoMessage()  {}
+func (*MsgPlaceStoneOnSuggestionResponse) Reset()         {}
+func (*MsgPlaceStoneOnSuggestionResponse) String() string { return "MsgPlaceStoneOnSuggestionResponse" }
 
 type MsgPlaceStoneOnMemberResponse struct{}
 
-func (*MsgPlaceStoneOnMemberResponse) ProtoMessage()       {}
-func (*MsgPlaceStoneOnMemberResponse) Reset()              {}
-func (*MsgPlaceStoneOnMemberResponse) String() string      { return "MsgPlaceStoneOnMemberResponse" }
+func (*MsgPlaceStoneOnMemberResponse) ProtoMessage()  {}
+func (*MsgPlaceStoneOnMemberResponse) Reset()         {}
+func (*MsgPlaceStoneOnMemberResponse) String() string { return "MsgPlaceStoneOnMemberResponse" }
 
 type MsgVoteToExcludeResponse struct{}
 
-func (*MsgVoteToExcludeResponse) ProtoMessage()            {}
-func (*MsgVoteToExcludeResponse) Reset()                   {}
-func (*MsgVoteToExcludeResponse) String() string           { return "MsgVoteToExcludeResponse" }
+func (*MsgVoteToExcludeResponse) ProtoMessage()  {}
+func (*MsgVoteToExcludeResponse) Reset()         {}
+func (*MsgVoteToExcludeResponse) String() string { return "MsgVoteToExcludeResponse" }
 
 type MsgVoteToDeleteResponse struct{}
 
-func (*MsgVoteToDeleteResponse) ProtoMessage()             {}
-func (*MsgVoteToDeleteResponse) Reset()                    {}
-func (*MsgVoteToDeleteResponse) String() string            { return "MsgVoteToDeleteResponse" }
+func (*MsgVoteToDeleteResponse) ProtoMessage()  {}
+func (*MsgVoteToDeleteResponse) Reset()         {}
+func (*MsgVoteToDeleteResponse) String() string { return "MsgVoteToDeleteResponse" }
 
 type MsgRateProposalResponse struct{}
 
-func (*MsgRateProposalResponse) ProtoMessage()             {}
-func (*MsgRateProposalResponse) Reset()                    {}
-func (*MsgRateProposalResponse) String() string            { return "MsgRateProposalResponse" }
+func (*MsgRateProposalResponse) ProtoMessage()  {}
+func (*MsgRateProposalResponse) Reset()         {}
+func (*MsgRateProposalResponse) String() string { return "MsgRateProposalResponse" }
 
 type MsgRateWithProofResponse struct{}
 
-func (*MsgRateWithProofResponse) ProtoMessage()        {}
-func (*MsgRateWithProofResponse) Reset()               {}
-func (*MsgRateWithProofResponse) String() string       { return "MsgRateWithProofResponse" }
+func (*MsgRateWithProofResponse) ProtoMessage()  {}
+func (*MsgRateWithProofResponse) Reset()         {}
+func (*MsgRateWithProofResponse) String() string { return "MsgRateWithProofResponse" }
 
 type MsgAddMemberResponse struct{}
 
-func (*MsgAddMemberResponse) ProtoMessage()             {}
-func (*MsgAddMemberResponse) Reset()                    {}
-func (*MsgAddMemberResponse) String() string            { return "MsgAddMemberResponse" }
+func (*MsgAddMemberResponse) ProtoMessage()  {}
+func (*MsgAddMemberResponse) Reset()         {}
+func (*MsgAddMemberResponse) String() string { return "MsgAddMemberResponse" }
 
 type MsgOnboardToDomainResponse struct{}
 
-func (*MsgOnboardToDomainResponse) ProtoMessage()       {}
-func (*MsgOnboardToDomainResponse) Reset()              {}
-func (*MsgOnboardToDomainResponse) String() string      { return "MsgOnboardToDomainResponse" }
+func (*MsgOnboardToDomainResponse) ProtoMessage()  {}
+func (*MsgOnboardToDomainResponse) Reset()         {}
+func (*MsgOnboardToDomainResponse) String() string { return "MsgOnboardToDomainResponse" }
 
 type MsgApproveOnboardingResponse struct{}
 
-func (*MsgApproveOnboardingResponse) ProtoMessage()     {}
-func (*MsgApproveOnboardingResponse) Reset()            {}
-func (*MsgApproveOnboardingResponse) String() string    { return "MsgApproveOnboardingResponse" }
+func (*MsgApproveOnboardingResponse) ProtoMessage()  {}
+func (*MsgApproveOnboardingResponse) Reset()         {}
+func (*MsgApproveOnboardingResponse) String() string { return "MsgApproveOnboardingResponse" }
 
 type MsgRegisterIdentityResponse struct{}
 
-func (*MsgRegisterIdentityResponse) ProtoMessage()      {}
-func (*MsgRegisterIdentityResponse) Reset()              {}
-func (*MsgRegisterIdentityResponse) String() string      { return "MsgRegisterIdentityResponse" }
+func (*MsgRegisterIdentityResponse) ProtoMessage()  {}
+func (*MsgRegisterIdentityResponse) Reset()         {}
+func (*MsgRegisterIdentityResponse) String() string { return "MsgRegisterIdentityResponse" }
 
 type MsgRejectOnboardingResponse struct{}
 
-func (*MsgRejectOnboardingResponse) ProtoMessage()      {}
-func (*MsgRejectOnboardingResponse) Reset()             {}
-func (*MsgRejectOnboardingResponse) String() string     { return "MsgRejectOnboardingResponse" }
+func (*MsgRejectOnboardingResponse) ProtoMessage()  {}
+func (*MsgRejectOnboardingResponse) Reset()         {}
+func (*MsgRejectOnboardingResponse) String() string { return "MsgRejectOnboardingResponse" }
 
 type MsgCastElectionVoteResponse struct{}
 
-func (*MsgCastElectionVoteResponse) ProtoMessage()         {}
-func (*MsgCastElectionVoteResponse) Reset()                {}
-func (*MsgCastElectionVoteResponse) String() string        { return "MsgCastElectionVoteResponse" }
+func (*MsgCastElectionVoteResponse) ProtoMessage()  {}
+func (*MsgCastElectionVoteResponse) Reset()         {}
+func (*MsgCastElectionVoteResponse) String() string { return "MsgCastElectionVoteResponse" }
 
 type MsgDepositToDomainResponse struct{}
 
-func (*MsgDepositToDomainResponse) ProtoMessage()          {}
-func (*MsgDepositToDomainResponse) Reset()                 {}
-func (*MsgDepositToDomainResponse) String() string         { return "MsgDepositToDomainResponse" }
+func (*MsgDepositToDomainResponse) ProtoMessage()  {}
+func (*MsgDepositToDomainResponse) Reset()         {}
+func (*MsgDepositToDomainResponse) String() string { return "MsgDepositToDomainResponse" }
 
 type MsgWithdrawFromDomainResponse struct{}
 
-func (*MsgWithdrawFromDomainResponse) ProtoMessage()       {}
-func (*MsgWithdrawFromDomainResponse) Reset()              {}
-func (*MsgWithdrawFromDomainResponse) String() string      { return "MsgWithdrawFromDomainResponse" }
+func (*MsgWithdrawFromDomainResponse) ProtoMessage()  {}
+func (*MsgWithdrawFromDomainResponse) Reset()         {}
+func (*MsgWithdrawFromDomainResponse) String() string { return "MsgWithdrawFromDomainResponse" }
 
 // ---------------------------------------------------------------------------
 // Register response types with gogoproto

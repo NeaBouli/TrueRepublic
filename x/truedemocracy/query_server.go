@@ -5,8 +5,8 @@ import (
 	"encoding/json"
 
 	errorsmod "cosmossdk.io/errors"
-	gogoproto "github.com/cosmos/gogoproto/proto"
 	gogogrpc "github.com/cosmos/gogoproto/grpc"
+	gogoproto "github.com/cosmos/gogoproto/proto"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"

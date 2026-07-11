@@ -42,7 +42,7 @@ func TestQueryNullifierUsed(t *testing.T) {
 func TestQueryNullifierNotUsed(t *testing.T) {
 	k, ctx := setupKeeper(t)
 	admin := sdk.AccAddress("admin1")
-	k.CreateDomain(ctx, "TestDomain", admin, sdk.NewCoins(sdk.NewInt64Coin("pnyx", 100_000)))
+	k.CreateDomain(ctx, "TestDomain", admin, sdk.NewCoins(sdk.NewInt64Coin(PNYXDenom, 100_000)))
 
 	resp, err := k.Nullifier(ctx, &QueryNullifierRequest{
 		DomainName:    "TestDomain",
@@ -78,7 +78,7 @@ func TestQueryNullifierInvalidRequest(t *testing.T) {
 func TestQueryPurgeSchedule(t *testing.T) {
 	k, ctx := setupKeeper(t)
 	admin := sdk.AccAddress("admin1")
-	k.CreateDomain(ctx, "TestDomain", admin, sdk.NewCoins(sdk.NewInt64Coin("pnyx", 100_000)))
+	k.CreateDomain(ctx, "TestDomain", admin, sdk.NewCoins(sdk.NewInt64Coin(PNYXDenom, 100_000)))
 	k.InitializeBigPurgeSchedule(ctx, "TestDomain")
 
 	resp, err := k.PurgeSchedule(ctx, &QueryPurgeScheduleRequest{
@@ -119,7 +119,7 @@ func TestQueryPurgeScheduleMissingDomain(t *testing.T) {
 func TestQueryZKPState(t *testing.T) {
 	k, ctx := setupKeeper(t)
 	admin := sdk.AccAddress("admin1")
-	k.CreateDomain(ctx, "ZKPDomain", admin, sdk.NewCoins(sdk.NewInt64Coin("pnyx", 100_000)))
+	k.CreateDomain(ctx, "ZKPDomain", admin, sdk.NewCoins(sdk.NewInt64Coin(PNYXDenom, 100_000)))
 
 	// Add 3 members with identity commitments.
 	for i := 0; i < 3; i++ {
@@ -160,7 +160,7 @@ func TestQueryZKPState(t *testing.T) {
 func TestQueryZKPStateEmpty(t *testing.T) {
 	k, ctx := setupKeeper(t)
 	admin := sdk.AccAddress("admin1")
-	k.CreateDomain(ctx, "EmptyDomain", admin, sdk.NewCoins(sdk.NewInt64Coin("pnyx", 100_000)))
+	k.CreateDomain(ctx, "EmptyDomain", admin, sdk.NewCoins(sdk.NewInt64Coin(PNYXDenom, 100_000)))
 
 	resp, err := k.ZKPState(ctx, &QueryZKPStateRequest{
 		DomainName: "EmptyDomain",

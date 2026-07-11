@@ -27,8 +27,8 @@ func (k Keeper) DepositToDomain(ctx sdk.Context, depositor sdk.AccAddress, domai
 	if !amount.IsPositive() {
 		return errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "amount must be positive")
 	}
-	if amount.Denom != "pnyx" {
-		return errorsmod.Wrapf(sdkerrors.ErrInvalidRequest, "only pnyx deposits supported, got %s", amount.Denom)
+	if amount.Denom != PNYXDenom {
+		return errorsmod.Wrapf(sdkerrors.ErrInvalidRequest, "only upnyx deposits supported, got %s", amount.Denom)
 	}
 
 	// Transfer from user account to module account.
@@ -76,15 +76,15 @@ func (k Keeper) WithdrawFromDomain(ctx sdk.Context, domainName string, recipient
 	if !amount.IsPositive() {
 		return errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "amount must be positive")
 	}
-	if amount.Denom != "pnyx" {
-		return errorsmod.Wrapf(sdkerrors.ErrInvalidRequest, "only pnyx withdrawals supported, got %s", amount.Denom)
+	if amount.Denom != PNYXDenom {
+		return errorsmod.Wrapf(sdkerrors.ErrInvalidRequest, "only upnyx withdrawals supported, got %s", amount.Denom)
 	}
 
 	// Check sufficient treasury balance.
-	if domain.Treasury.AmountOf("pnyx").LT(amount.Amount) {
+	if domain.Treasury.AmountOf(PNYXDenom).LT(amount.Amount) {
 		return errorsmod.Wrapf(sdkerrors.ErrInsufficientFunds,
-			"domain treasury has %s pnyx, requested %s",
-			domain.Treasury.AmountOf("pnyx"), amount.Amount)
+			"domain treasury has %s upnyx, requested %s",
+			domain.Treasury.AmountOf(PNYXDenom), amount.Amount)
 	}
 
 	// Debit domain treasury first.

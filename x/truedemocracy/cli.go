@@ -831,7 +831,7 @@ func CmdDepositToDomain() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "deposit-to-domain [domain-name] [amount]",
 		Short: "Deposit PNYX from your wallet to a domain treasury",
-		Long:  "Transfer PNYX tokens from your x/bank account to a domain's internal treasury. Example: deposit-to-domain MyDomain 100pnyx",
+		Long:  "Transfer PNYX base units from your x/bank account to a domain's internal treasury. Example: deposit-to-domain MyDomain 1000000upnyx",
 		Args:  cobra.ExactArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx, err := client.GetClientTxContext(cmd)
@@ -887,4 +887,3 @@ func CmdWithdrawFromDomain() *cobra.Command {
 	flags.AddTxFlagsToCmd(cmd)
 	return cmd
 }
-
