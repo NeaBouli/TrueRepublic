@@ -8,6 +8,8 @@ Updated: 2026-07-11 21:25 EEST
 - Baseline: `origin/main` at `d8545cf`
 - Recovery branch: `fix/GH-4-recovery-foundation`
 - Ready PR: #9 (`fix/GH-4-recovery-foundation` -> `main`)
+- Stacked implementation branch: `fix/GH-11-pnyx-cap`
+- Stacked worktree: `/Users/gio/Desktop/repos/TrueRepublic-gh11`
 - Recovery worktree: `/Users/gio/Desktop/repos/TrueRepublic-recovery`
 - Legacy local checkout: preserved at `/Users/gio/Desktop/repos/TrueRepublic`
 - GitHub epic: #4
@@ -18,12 +20,12 @@ Updated: 2026-07-11 21:25 EEST
 - Rust workspace: 26 tests PASS; Clippy PASS.
 - Rust audit: fixable vulnerabilities removed; six transitive dev-tooling warnings remain.
 - v0.4 client: reproducible `npm ci`; npm audit reports zero vulnerabilities after upgrades.
-- v0.4 client: `npm ci`, lint, five regression tests, production build, and
+- v0.4 client: `npm ci`, lint, six regression tests, production build, and
   `npm audit` all PASS. Main bundle is 1.68 MB before gzip (performance warning).
-- Current recovery-verified test count is 564: 533 Go, 26 Rust, and five
+- Current GH-11 branch test count is 572: 540 Go, 26 Rust, and six
   maintained-client tests. The prior 577 figure is retained only as historical.
-- Go 1.26.5: build, race tests, and vet PASS after dependency/toolchain recovery.
-  Coverage: root 5.8%, treasury 97.0%, DEX 34.2%, governance 53.5%.
+- Go 1.26.5: build, race tests, and vet PASS on GH-11.
+  Coverage: root 5.5%, token 88.0%, treasury 97.0%, DEX 34.2%, governance 53.5%.
 - Go vulnerability gate: no reachable finding with an available fix remains;
   four upstream `N/A` findings are tracked for import-path reduction.
 - Legacy `web-wallet`: build/test command reaches audit, but 68 advisories remain
@@ -50,7 +52,7 @@ Updated: 2026-07-11 21:25 EEST
 ## Public-status warning
 
 `docs/status.json`, README, limitations, and the landing page now mark recovery
-as active and separate 564 verified tests from the historical 577 figure.
+as active and separate 572 verified tests from the historical 577 figure.
 `CLAUDE.md` still needs reconciliation.
 
 ## Blocking audit result
@@ -59,3 +61,8 @@ The first GH-7 token/ledger slice is FAIL: the 21M cap is not enforced against
 bank supply, six-decimal client semantics conflict with chain denominations,
 and treasury/stake/DEX/reward ledgers are not consistently bank-backed. The
 repository remains simulation/recovery-only until `CODEX_AUDIT.md` blockers close.
+
+GH-11 now implements the canonical denomination metadata (`upnyx`, six decimal
+places, 21,000,000,000,000 base-unit cap) and pre-init bank-genesis cap checks.
+This remediation remains unmerged and does not close the separate custody,
+reward, DEX, or custom-genesis blockers.

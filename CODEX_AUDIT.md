@@ -12,6 +12,11 @@ create unbacked withdrawal claims. This code must not handle real funds or be
 treated as a production token economy until the blocking ledger and genesis
 findings below are resolved.
 
+> Remediation update: GH-11 now implements the canonical `upnyx` metadata,
+> six-decimal base-unit conversion, and bank-genesis cap check on its stacked
+> branch. The audit result remains open until that branch passes GitHub review;
+> the custody, issuance, DEX, and custom-genesis findings are unaffected.
+
 ## Findings by domain
 
 ### Denomination and supply cap — FAIL

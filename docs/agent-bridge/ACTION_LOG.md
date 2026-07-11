@@ -71,6 +71,24 @@
   (treasury/stake escrow), #13 (cap-checked rewards), #10 (DEX custody/LP/burn),
   and #12 (genesis/runtime invariants).
 
+## 2026-07-11 12:55 EEST - GH-11 denomination and cap implementation
+
+- Created stacked worktree/branch `fix/GH-11-pnyx-cap` from the PR #9 head.
+- Added one canonical Go token package for `upnyx`, six decimals, 100,000 PNYX
+  minimum stake, and the 21,000,000 PNYX / 21,000,000,000,000 upnyx cap.
+- Added bank-genesis validation for cap boundaries and legacy display-denom
+  balances plus canonical bank metadata injection before module init.
+- Migrated Go modules, CosmWasm examples/testing helpers, maintained client, and
+  operational documentation to `upnyx` base-unit semantics; legacy client and
+  node-init metadata were aligned as well without changing their deprecated status.
+- Go build/race/vet passes with 540 tests; token package coverage is 88.0%.
+- Rust tests (26), Clippy, and cargo audit pass with the six already documented
+  transitive dev-tooling warnings.
+- Maintained client lint, six tests, build, and zero-advisory audit pass.
+- Legacy web wallet still builds with warnings and passes 18 tests; legacy
+  mobile still has no tests. Their known 68/51-advisory blockers are unchanged.
+- Documentation consistency and diff checks pass at 572 recovery-verified tests.
+
 ## 2026-07-11 13:10 EEST - PR #9 GitHub verification
 
 - Confirmed every current PR #9 check is green: Go, Rust, canonical client,
