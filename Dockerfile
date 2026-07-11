@@ -16,7 +16,7 @@ RUN CGO_ENABLED=1 go build \
     -ldflags="-s -w -X main.version=$(git describe --tags --always 2>/dev/null || echo dev)" \
     -o /usr/local/bin/truerepublicd \
     ./
-RUN cp "/go/pkg/mod/github.com/!cosm!wasm/wasmvm/v2@v2.2.2/internal/api/libwasmvm.$(uname -m).so" /usr/local/lib/
+RUN cp "$(go list -m -f '{{.Dir}}' github.com/CosmWasm/wasmvm/v2)/internal/api/libwasmvm.$(uname -m).so" /usr/local/lib/
 
 # ============================================================
 # Stage 2: Minimal runtime image
