@@ -9,6 +9,7 @@ Updated: 2026-07-11 21:25 EEST
 - Recovery branch: `fix/GH-4-recovery-foundation`
 - Ready PR: #9 (`fix/GH-4-recovery-foundation` -> `main`)
 - Stacked implementation branch: `fix/GH-11-pnyx-cap`
+- Stacked draft PR: #15 (`fix/GH-11-pnyx-cap` -> `fix/GH-4-recovery-foundation`)
 - Stacked worktree: `/Users/gio/Desktop/repos/TrueRepublic-gh11`
 - Recovery worktree: `/Users/gio/Desktop/repos/TrueRepublic-recovery`
 - Legacy local checkout: preserved at `/Users/gio/Desktop/repos/TrueRepublic`

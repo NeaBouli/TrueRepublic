@@ -97,6 +97,13 @@
 - Closed GH-5 and GH-6 after both local and GitHub acceptance criteria passed.
 - GH-7, GH-8, and ledger remediation tickets remain open.
 
+## 2026-07-11 13:15 EEST - GH-11 stacked publication
+
+- Rebased GH-11 onto the latest green PR #9 head.
+- Pushed `fix/GH-11-pnyx-cap` and opened stacked draft PR #15 against
+  `fix/GH-4-recovery-foundation` so its diff contains only the cap/denom block.
+- GitHub checks for PR #15 are pending; GH-11 remains open.
+
 ## 2026-07-11 13:20 EEST - Preserved checkout reconciliation
 
 - Reviewed every modified/untracked category in the 150-commit-divergent legacy

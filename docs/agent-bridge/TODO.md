@@ -12,8 +12,8 @@
 ## P1 - consensus and wallet audit
 
 - [x] GH-7: audit PNYX 21M cap, denomination, and ledger conservation paths.
-- [ ] GH-11: local canonical `upnyx`/21M cap implementation is green; publish
-  the stacked draft PR and confirm GitHub checks.
+- [ ] GH-11: stacked draft PR #15 is open with a green local implementation;
+  confirm GitHub checks and review.
 - [ ] GH-14: back domain treasury and validator stake with bank escrow.
 - [ ] GH-13: issue all rewards through cap-checked bank minting.
 - [ ] GH-10: implement DEX bank custody, provider LP ownership, and real burns.
