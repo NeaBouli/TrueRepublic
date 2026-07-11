@@ -7,5 +7,6 @@ describe('PNYX chain metadata', () => {
     expect(DEFAULT_CHAIN.coinMinimalDenom).toBe('upnyx');
     expect(DEFAULT_CHAIN.coinDecimals).toBe(6);
     expect(DEFAULT_CHAIN.gasPrice.endsWith('upnyx')).toBe(true);
+    expect(DEFAULT_CHAIN.gasPrice).toBe('25000upnyx');
   });
 });

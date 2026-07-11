@@ -2,9 +2,10 @@ package truedemocracy
 
 import (
 	"fmt"
+	"sync"
+
 	"github.com/cosmos/cosmos-sdk/crypto/keys/ed25519"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"sync"
 )
 
 type Node struct {
@@ -26,7 +27,7 @@ func BuildTree() []*Node {
 			ID:     fmt.Sprintf("Node%d", i),
 			Domain: "TestParty",
 			Cache:  make(map[string]interface{}),
-			Stake:  sdk.NewCoins(sdk.NewInt64Coin(PNYXDenom, 100000)),
+			Stake:  sdk.NewCoins(sdk.NewInt64Coin(PNYXDenom, 100_000*PNYXUnit)),
 		}
 	}
 	nodes[0].Children = []*Node{nodes[1], nodes[2]}

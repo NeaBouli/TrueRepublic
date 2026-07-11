@@ -9,7 +9,7 @@ export const TRUEREPUBLIC_MAINNET: ChainConfig = {
   coinDenom: 'PNYX',
   coinMinimalDenom: 'upnyx',
   coinDecimals: 6,
-  gasPrice: '0.025upnyx',
+  gasPrice: '25000upnyx',
 };
 
 export const TRUEREPUBLIC_TESTNET: ChainConfig = {
@@ -21,7 +21,7 @@ export const TRUEREPUBLIC_TESTNET: ChainConfig = {
   coinDenom: 'PNYX',
   coinMinimalDenom: 'upnyx',
   coinDecimals: 6,
-  gasPrice: '0.025upnyx',
+  gasPrice: '25000upnyx',
 };
 
 export const DEFAULT_CHAIN = TRUEREPUBLIC_MAINNET;

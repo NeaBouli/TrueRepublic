@@ -72,14 +72,39 @@ func TestCanonicalSupplyFallsBackToBalances(t *testing.T) {
 }
 
 func TestEnsureMetadata(t *testing.T) {
-	genesis := banktypes.GenesisState{Params: banktypes.DefaultParams()}
+	legacy := banktypes.Metadata{
+		Base:    DisplayDenom,
+		Display: DisplayDenom,
+		Name:    "legacy PNYX",
+		Symbol:  Symbol,
+		DenomUnits: []*banktypes.DenomUnit{
+			{Denom: DisplayDenom, Exponent: 0},
+		},
+	}
+	unrelated := banktypes.Metadata{
+		Base:    "uatom",
+		Display: "atom",
+		Name:    "Cosmos Hub Atom",
+		Symbol:  "ATOM",
+		DenomUnits: []*banktypes.DenomUnit{
+			{Denom: "uatom", Exponent: 0},
+			{Denom: "atom", Exponent: 6},
+		},
+	}
+	genesis := banktypes.GenesisState{
+		Params:        banktypes.DefaultParams(),
+		DenomMetadata: []banktypes.Metadata{legacy, unrelated, Metadata()},
+	}
 	EnsureMetadata(&genesis)
 	EnsureMetadata(&genesis)
 
-	if len(genesis.DenomMetadata) != 1 {
-		t.Fatalf("metadata count = %d, want 1", len(genesis.DenomMetadata))
+	if len(genesis.DenomMetadata) != 2 {
+		t.Fatalf("metadata count = %d, want 2", len(genesis.DenomMetadata))
 	}
-	metadata := genesis.DenomMetadata[0]
+	if genesis.DenomMetadata[0].Base != unrelated.Base {
+		t.Fatalf("unrelated metadata was not preserved: %+v", genesis.DenomMetadata[0])
+	}
+	metadata := genesis.DenomMetadata[1]
 	if metadata.Base != BaseDenom || metadata.Display != DisplayDenom || len(metadata.DenomUnits) != 2 {
 		t.Fatalf("unexpected metadata: %+v", metadata)
 	}

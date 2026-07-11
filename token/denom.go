@@ -76,13 +76,17 @@ func ValidateGenesisSupply(genesis banktypes.GenesisState) error {
 }
 
 func EnsureMetadata(genesis *banktypes.GenesisState) {
-	for i := range genesis.DenomMetadata {
-		if genesis.DenomMetadata[i].Base == BaseDenom {
-			genesis.DenomMetadata[i] = Metadata()
-			return
+	metadata := make([]banktypes.Metadata, 0, len(genesis.DenomMetadata)+1)
+	for _, existing := range genesis.DenomMetadata {
+		// A pre-migration metadata entry with pnyx as its base conflicts with
+		// pnyx becoming the canonical display denom. Drop it during genesis
+		// normalization and preserve metadata for unrelated assets.
+		if existing.Base == BaseDenom || existing.Base == DisplayDenom {
+			continue
 		}
+		metadata = append(metadata, existing)
 	}
-	genesis.DenomMetadata = append(genesis.DenomMetadata, Metadata())
+	genesis.DenomMetadata = append(metadata, Metadata())
 }
 
 func NewCoin(amount math.Int) sdk.Coin {

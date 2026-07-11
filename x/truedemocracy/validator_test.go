@@ -49,6 +49,20 @@ func testPubKey(seed string) []byte {
 	return ed25519.GenPrivKeyFromSecret([]byte(seed)).PubKey().Bytes()
 }
 
+func TestBuildTreeUsesCanonicalStakeUnits(t *testing.T) {
+	nodes := BuildTree()
+	if len(nodes) != 7 {
+		t.Fatalf("node count = %d, want 7", len(nodes))
+	}
+
+	want := math.NewInt(100_000 * PNYXUnit)
+	for _, node := range nodes {
+		if got := node.Stake.AmountOf(PNYXDenom); !got.Equal(want) {
+			t.Fatalf("%s stake = %s%s, want %s%s", node.ID, got, PNYXDenom, want, PNYXDenom)
+		}
+	}
+}
+
 // setupDomainWithValidator creates a domain and registers a validator in it.
 func setupDomainWithValidator(t *testing.T, k Keeper, ctx sdk.Context) (string, []byte) {
 	t.Helper()

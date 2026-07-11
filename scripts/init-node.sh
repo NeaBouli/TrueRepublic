@@ -24,7 +24,7 @@ $BINARY init "$MONIKER" --chain-id "$CHAIN_ID" --home "$CHAIN_HOME"
 
 # Set minimum gas price in app.toml
 if [ -f "${CHAIN_HOME}/config/app.toml" ]; then
-    sed -i.bak "s/minimum-gas-prices = \"\"/minimum-gas-prices = \"0.001${DENOM}\"/" \
+    sed -i.bak "s/minimum-gas-prices = \"\"/minimum-gas-prices = \"1000${DENOM}\"/" \
         "${CHAIN_HOME}/config/app.toml"
 fi
 
