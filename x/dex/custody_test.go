@@ -114,6 +114,23 @@ func (bank *storeBankKeeper) GetBalance(ctx context.Context, address sdk.AccAddr
 	return sdk.NewCoin(denom, bank.balance(sdkCtx, owner, denom))
 }
 
+func (bank *storeBankKeeper) GetAllBalances(ctx context.Context, address sdk.AccAddress) sdk.Coins {
+	sdkCtx := sdk.UnwrapSDKContext(ctx)
+	owner := accountOwner(address)
+	if address.Equals(authtypes.NewModuleAddress(ModuleName)) {
+		owner = moduleOwner(ModuleName)
+	}
+	prefix := []byte("balance:" + owner + ":")
+	iterator := sdkCtx.KVStore(bank.key).Iterator(prefix, prefixEnd(prefix))
+	defer iterator.Close()
+	balances := sdk.NewCoins()
+	for ; iterator.Valid(); iterator.Next() {
+		denom := string(iterator.Key()[len(prefix):])
+		balances = balances.Add(sdk.NewCoin(denom, readBankAmount(sdkCtx, bank.key, iterator.Key())))
+	}
+	return balances
+}
+
 func (bank *storeBankKeeper) GetSupply(ctx context.Context, denom string) sdk.Coin {
 	sdkCtx := sdk.UnwrapSDKContext(ctx)
 	return sdk.NewCoin(denom, readBankAmount(sdkCtx, bank.key, bankSupplyKey(denom)))
@@ -487,7 +504,11 @@ func TestRegistryRequiresChainAuthority(t *testing.T) {
 func TestCustodyInvariantsDetectDivergence(t *testing.T) {
 	keeper, ctx, bank, _ := setupCustodyKeeper(t)
 	provider := sdk.AccAddress("invariant-provider")
-	bank.fundAccount(ctx, provider, sdk.NewCoins(sdk.NewInt64Coin(pnyxDenom, 1_000_001), sdk.NewInt64Coin("atom", 1_000_001)))
+	bank.fundAccount(ctx, provider, sdk.NewCoins(
+		sdk.NewInt64Coin(pnyxDenom, 1_000_001),
+		sdk.NewInt64Coin("atom", 1_000_001),
+		sdk.NewInt64Coin("mystery", 1),
+	))
 	if err := keeper.CreatePoolWithCustody(ctx, provider, "atom", math.NewInt(1_000_000), math.NewInt(1_000_000)); err != nil {
 		t.Fatal(err)
 	}
@@ -503,7 +524,7 @@ func TestCustodyInvariantsDetectDivergence(t *testing.T) {
 		ctx,
 		provider,
 		ModuleName,
-		sdk.NewCoins(sdk.NewInt64Coin("atom", 1)),
+		sdk.NewCoins(sdk.NewInt64Coin("mystery", 1)),
 	); err != nil {
 		t.Fatal(err)
 	}

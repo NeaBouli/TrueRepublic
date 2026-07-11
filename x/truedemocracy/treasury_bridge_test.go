@@ -94,6 +94,20 @@ func (m *mockBankKeeper) GetSupply(ctx context.Context, denom string) sdk.Coin {
 	return sdk.NewCoin(denom, m.supply.AmountOf(denom).Add(m.storedDelta(ctx, "supply", "", denom)))
 }
 
+func (m *mockBankKeeper) GetAllBalances(ctx context.Context, addr sdk.AccAddress) sdk.Coins {
+	if addr.Equals(authtypes.NewModuleAddress(ModuleName)) {
+		balances := m.modules[ModuleName]
+		delta := m.storedDelta(ctx, "module", ModuleName, PNYXDenom)
+		if delta.IsPositive() {
+			balances = balances.Add(sdk.NewCoin(PNYXDenom, delta))
+		} else if delta.IsNegative() {
+			balances = balances.Sub(sdk.NewCoin(PNYXDenom, delta.Neg()))
+		}
+		return balances
+	}
+	return m.accounts[addr.String()]
+}
+
 func (m *mockBankKeeper) MintCoins(ctx context.Context, moduleName string, amounts sdk.Coins) error {
 	m.mintCalls++
 	if m.failMint || (m.failMintAt > 0 && m.mintCalls == m.failMintAt) {

@@ -33,6 +33,9 @@ import (
 	bank "github.com/cosmos/cosmos-sdk/x/bank"
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
+	crisis "github.com/cosmos/cosmos-sdk/x/crisis"
+	crisiskeeper "github.com/cosmos/cosmos-sdk/x/crisis/keeper"
+	crisistypes "github.com/cosmos/cosmos-sdk/x/crisis/types"
 	paramskeeper "github.com/cosmos/cosmos-sdk/x/params/keeper"
 	paramstypes "github.com/cosmos/cosmos-sdk/x/params/types"
 
@@ -68,7 +71,8 @@ var version = "dev"
 
 var ModuleBasics = module.NewBasicManager(
 	auth.AppModuleBasic{},
-	bank.AppModuleBasic{},
+	bankAppModuleBasic{},
+	crisis.AppModuleBasic{},
 	capability.AppModuleBasic{},
 	ibc.AppModuleBasic{},
 	transfer.AppModuleBasic{},
@@ -82,12 +86,14 @@ type TrueRepublicApp struct {
 	mm             *module.Manager
 	cdc            *codec.LegacyAmino
 	appCodec       codec.Codec
+	txConfig       client.TxConfig
 	keys           map[string]*storetypes.KVStoreKey
 	tkeys          map[string]*storetypes.TransientStoreKey
 	memKeys        map[string]*storetypes.MemoryStoreKey
 	paramsKeeper   paramskeeper.Keeper
 	accountKeeper  authkeeper.AccountKeeper
 	bankKeeper     bankkeeper.BaseKeeper
+	crisisKeeper   *crisiskeeper.Keeper
 	capKeeper      *capabilitykeeper.Keeper
 	ibcKeeper      *ibckeeper.Keeper
 	transferKeeper transferkeeper.Keeper
@@ -111,6 +117,7 @@ func NewTrueRepublicApp(logger log.Logger, db dbm.DB, homeDir string) *TrueRepub
 	keys := storetypes.NewKVStoreKeys(
 		authtypes.StoreKey,       // "acc"
 		banktypes.StoreKey,       // "bank"
+		crisistypes.StoreKey,     // "crisis"
 		paramstypes.StoreKey,     // "params"
 		capabilitytypes.StoreKey, // "capability"
 		ibcexported.StoreKey,     // "ibc"
@@ -126,6 +133,7 @@ func NewTrueRepublicApp(logger log.Logger, db dbm.DB, homeDir string) *TrueRepub
 		BaseApp:  baseapp.NewBaseApp("TrueRepublic", logger, db, txCfg.TxDecoder()),
 		cdc:      cdc,
 		appCodec: appCodec,
+		txConfig: txCfg,
 		keys:     keys,
 		tkeys:    tkeys,
 		memKeys:  memKeys,
@@ -146,12 +154,13 @@ func NewTrueRepublicApp(logger log.Logger, db dbm.DB, homeDir string) *TrueRepub
 	app.paramsKeeper.Subspace(transfertypes.ModuleName)
 
 	// --- Account keeper ---
+	accountAddressCodec := sdkaddress.NewBech32Codec(sdk.GetConfig().GetBech32AccountAddrPrefix())
 	app.accountKeeper = authkeeper.NewAccountKeeper(
 		appCodec,
 		runtime.NewKVStoreService(keys[authtypes.StoreKey]),
 		authtypes.ProtoBaseAccount,
 		maccPerms,
-		sdkaddress.NewBech32Codec(sdk.GetConfig().GetBech32AccountAddrPrefix()),
+		accountAddressCodec,
 		sdk.GetConfig().GetBech32AccountAddrPrefix(),
 		authority,
 	)
@@ -169,6 +178,15 @@ func NewTrueRepublicApp(logger log.Logger, db dbm.DB, homeDir string) *TrueRepub
 		authority,
 		logger,
 	)
+	app.crisisKeeper = crisiskeeper.NewKeeper(
+		appCodec,
+		runtime.NewKVStoreService(keys[crisistypes.StoreKey]),
+		1,
+		app.bankKeeper,
+		authtypes.FeeCollectorName,
+		authority,
+		accountAddressCodec,
+	)
 
 	// --- Capability keeper (IBC port/channel capability management) ---
 	app.capKeeper = capabilitykeeper.NewKeeper(
@@ -185,8 +203,8 @@ func NewTrueRepublicApp(logger log.Logger, db dbm.DB, homeDir string) *TrueRepub
 		appCodec,
 		keys[ibcexported.StoreKey],
 		ibcSubspace,
-		IBCStakingKeeper{},
-		IBCUpgradeKeeper{},
+		IBCStakingKeeper{initialized: true},
+		IBCUpgradeKeeper{initialized: true},
 		scopedIBCKeeper,
 		authority,
 	)
@@ -252,6 +270,7 @@ func NewTrueRepublicApp(logger log.Logger, db dbm.DB, homeDir string) *TrueRepub
 	// --- Module manager ---
 	authModule := auth.NewAppModule(appCodec, app.accountKeeper, nil, nil)
 	bankModule := bank.NewAppModule(appCodec, app.bankKeeper, app.accountKeeper, nil)
+	crisisModule := crisis.NewAppModule(app.crisisKeeper, false, nil)
 	capModule := capability.NewAppModule(appCodec, *app.capKeeper, false)
 	ibcModule := ibc.NewAppModule(app.ibcKeeper)
 	transferModule := transfer.NewAppModule(app.transferKeeper)
@@ -260,6 +279,7 @@ func NewTrueRepublicApp(logger log.Logger, db dbm.DB, homeDir string) *TrueRepub
 	app.mm = module.NewManager(
 		authModule,
 		bankModule,
+		crisisModule,
 		capModule,
 		ibcModule,
 		transferModule,
@@ -278,6 +298,7 @@ func NewTrueRepublicApp(logger log.Logger, db dbm.DB, homeDir string) *TrueRepub
 		wasmtypes.ModuleName,
 		truedemocracy.ModuleName,
 		dex.ModuleName,
+		crisistypes.ModuleName,
 	)
 
 	// BeginBlock order: IBC client updates run first.
@@ -291,8 +312,10 @@ func NewTrueRepublicApp(logger log.Logger, db dbm.DB, homeDir string) *TrueRepub
 		truedemocracy.ModuleName,
 		dex.ModuleName,
 	)
+	app.crisisKeeper.RegisterRoute("token", "supply-cap", token.SupplyCapInvariant(app.bankKeeper))
+	app.mm.RegisterInvariants(app.crisisKeeper)
 
-	// EndBlock order: truedemocracy last (returns validator updates).
+	// EndBlock order: custom state first, then crisis asserts every registered invariant.
 	app.mm.SetOrderEndBlockers(
 		capabilitytypes.ModuleName,
 		authtypes.ModuleName,
@@ -302,6 +325,7 @@ func NewTrueRepublicApp(logger log.Logger, db dbm.DB, homeDir string) *TrueRepub
 		wasmtypes.ModuleName,
 		truedemocracy.ModuleName,
 		dex.ModuleName,
+		crisistypes.ModuleName,
 	)
 
 	// Register gRPC message handlers via module Configurator.
@@ -380,6 +404,12 @@ func (app *TrueRepublicApp) InitChainer(ctx sdk.Context, req *abci.RequestInitCh
 		return nil, err
 	}
 	genesisState[banktypes.ModuleName] = bankGenesisJSON
+	if err := ModuleBasics.ValidateGenesis(app.appCodec, app.txConfig, genesisState); err != nil {
+		return nil, err
+	}
+	if err := validateLedgerGenesis(app.appCodec, genesisState); err != nil {
+		return nil, err
+	}
 
 	return app.mm.InitGenesis(ctx, app.appCodec, genesisState)
 }
@@ -403,6 +433,7 @@ func makeAminoCodec() *codec.LegacyAmino {
 	// concrete type registrations.
 	authtypes.RegisterLegacyAminoCodec(cdc)
 	banktypes.RegisterLegacyAminoCodec(cdc)
+	crisistypes.RegisterLegacyAminoCodec(cdc)
 	truedemocracy.RegisterCodec(cdc)
 	dex.RegisterCodec(cdc)
 	return cdc

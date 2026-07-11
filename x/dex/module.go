@@ -6,12 +6,13 @@ import (
 	gwruntime "github.com/grpc-ecosystem/grpc-gateway/runtime"
 	"github.com/spf13/cobra"
 
+	abci "github.com/cometbft/cometbft/abci/types"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
-	abci "github.com/cometbft/cometbft/abci/types"
+	"github.com/cosmos/cosmos-sdk/types/msgservice"
 )
 
 var (
@@ -39,6 +40,7 @@ func (AppModuleBasic) RegisterInterfaces(registry codectypes.InterfaceRegistry) 
 		&MsgUpdateAssetStatus{},
 		&MsgSwapExact{},
 	)
+	msgservice.RegisterMsgServiceDesc(registry, &_Msg_serviceDesc)
 }
 
 func (AppModuleBasic) DefaultGenesis(cdc codec.JSONCodec) json.RawMessage {
@@ -48,12 +50,16 @@ func (AppModuleBasic) DefaultGenesis(cdc codec.JSONCodec) json.RawMessage {
 }
 
 func (AppModuleBasic) ValidateGenesis(cdc codec.JSONCodec, config client.TxEncodingConfig, bz json.RawMessage) error {
-	return nil
+	var genesis GenesisState
+	if err := json.Unmarshal(bz, &genesis); err != nil {
+		return err
+	}
+	return ValidateGenesisState(genesis)
 }
 
 func (AppModuleBasic) RegisterGRPCGatewayRoutes(clientCtx client.Context, mux *gwruntime.ServeMux) {}
 
-func (AppModuleBasic) GetTxCmd() *cobra.Command   { return GetTxCmd() }
+func (AppModuleBasic) GetTxCmd() *cobra.Command    { return GetTxCmd() }
 func (AppModuleBasic) GetQueryCmd() *cobra.Command { return GetQueryCmd(codec.NewLegacyAmino()) }
 
 // AppModule
@@ -71,7 +77,20 @@ func NewAppModule(cdc *codec.LegacyAmino, keeper Keeper) AppModule {
 func (AppModule) IsOnePerModuleType() {}
 func (AppModule) IsAppModule()        {}
 
-func (am AppModule) RegisterInvariants(ir sdk.InvariantRegistry) {}
+func (am AppModule) RegisterInvariants(ir sdk.InvariantRegistry) {
+	ir.RegisterRoute(ModuleName, "reserve-custody", func(ctx sdk.Context) (string, bool) {
+		if err := am.keeper.ValidateReserveCustody(ctx); err != nil {
+			return err.Error(), true
+		}
+		return "DEX bank balances match pool reserve claims", false
+	})
+	ir.RegisterRoute(ModuleName, "lp-conservation", func(ctx sdk.Context) (string, bool) {
+		if err := am.keeper.ValidateLPConservation(ctx); err != nil {
+			return err.Error(), true
+		}
+		return "DEX provider LP shares match pool totals", false
+	})
+}
 
 func (am AppModule) RegisterServices(cfg module.Configurator) {
 	RegisterMsgServer(cfg.MsgServer(), NewMsgServer(am.keeper))
@@ -83,13 +102,25 @@ func (am AppModule) ConsensusVersion() uint64 { return 1 }
 func (am AppModule) InitGenesis(ctx sdk.Context, cdc codec.JSONCodec, data json.RawMessage) []abci.ValidatorUpdate {
 	var genesisState GenesisState
 	if err := json.Unmarshal(data, &genesisState); err != nil {
-		return nil
-	}
-	for _, pool := range genesisState.Pools {
-		am.keeper.CreatePool(ctx, pool.AssetDenom, pool.PnyxReserve, pool.AssetReserve)
+		panic(err)
 	}
 	for _, asset := range genesisState.RegisteredAssets {
-		am.keeper.RegisterAsset(ctx, asset)
+		if err := am.keeper.RegisterAsset(ctx, asset); err != nil {
+			panic(err)
+		}
+	}
+	for _, pool := range genesisState.Pools {
+		am.keeper.SetPool(ctx, pool)
+	}
+	for _, position := range genesisState.LPPositions {
+		provider, err := sdk.AccAddressFromBech32(position.Provider)
+		if err != nil {
+			panic(err)
+		}
+		am.keeper.setLPBalance(ctx, position.AssetDenom, provider, position.Shares)
+	}
+	if err := am.keeper.validateCustodyAndShares(ctx); err != nil {
+		panic(err)
 	}
 	return nil
 }
@@ -103,6 +134,7 @@ func (am AppModule) ExportGenesis(ctx sdk.Context, cdc codec.JSONCodec) json.Raw
 	genesis := GenesisState{
 		Pools:            pools,
 		RegisteredAssets: am.keeper.GetAllAssets(ctx),
+		LPPositions:      am.keeper.GetAllLPPositions(ctx),
 	}
 	bz, _ := json.Marshal(genesis)
 	return bz

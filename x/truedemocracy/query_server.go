@@ -131,6 +131,7 @@ func (*QueryZKPStateResponse) String() string { return "QueryZKPStateResponse" }
 // ---------------------------------------------------------------------------
 
 func init() {
+	registerQueryFileDescriptor()
 	gogoproto.RegisterType((*QueryDomainRequest)(nil), "truedemocracy.QueryDomainRequest")
 	gogoproto.RegisterType((*QueryDomainResponse)(nil), "truedemocracy.QueryDomainResponse")
 	gogoproto.RegisterType((*QueryDomainsRequest)(nil), "truedemocracy.QueryDomainsRequest")
@@ -425,7 +426,7 @@ var _Query_serviceDesc = grpc.ServiceDesc{
 		{MethodName: "ZKPState", Handler: _Query_ZKPState_Handler},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "truedemocracy/query.proto",
+	Metadata: queryDescriptorFile,
 }
 
 // ---------------------------------------------------------------------------

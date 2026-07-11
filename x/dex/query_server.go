@@ -4,10 +4,10 @@ import (
 	"context"
 	"encoding/json"
 
-	"cosmossdk.io/math"
 	errorsmod "cosmossdk.io/errors"
-	gogoproto "github.com/cosmos/gogoproto/proto"
+	"cosmossdk.io/math"
 	gogogrpc "github.com/cosmos/gogoproto/grpc"
+	gogoproto "github.com/cosmos/gogoproto/proto"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
@@ -190,6 +190,7 @@ func (*QueryLPPositionResponse) String() string { return "QueryLPPositionRespons
 // ---------------------------------------------------------------------------
 
 func init() {
+	registerQueryFileDescriptor()
 	gogoproto.RegisterType((*QueryPoolRequest)(nil), "dex.QueryPoolRequest")
 	gogoproto.RegisterType((*QueryPoolResponse)(nil), "dex.QueryPoolResponse")
 	gogoproto.RegisterType((*QueryPoolsRequest)(nil), "dex.QueryPoolsRequest")
@@ -683,7 +684,7 @@ var _Query_serviceDesc = grpc.ServiceDesc{
 		{MethodName: "LPPosition", Handler: _Query_LPPosition_Handler},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "dex/query.proto",
+	Metadata: queryDescriptorFile,
 }
 
 // ---------------------------------------------------------------------------

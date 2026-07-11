@@ -32,11 +32,20 @@ type Pool struct {
 type GenesisState struct {
 	Pools            []Pool            `json:"pools"`
 	RegisteredAssets []RegisteredAsset `json:"registered_assets"`
+	LPPositions      []LPPosition      `json:"lp_positions"`
+}
+
+// LPPosition is the exportable ownership record for one provider in one pool.
+type LPPosition struct {
+	AssetDenom string   `json:"asset_denom"`
+	Provider   string   `json:"provider"`
+	Shares     math.Int `json:"shares"`
 }
 
 func RegisterCodec(cdc *codec.LegacyAmino) {
 	cdc.RegisterConcrete(Pool{}, "dex/Pool", nil)
 	cdc.RegisterConcrete(RegisteredAsset{}, "dex/RegisteredAsset", nil)
+	cdc.RegisterConcrete(LPPosition{}, "dex/LPPosition", nil)
 	cdc.RegisterConcrete(GenesisState{}, "dex/GenesisState", nil)
 
 	// Message types for CLI transactions.
@@ -51,17 +60,7 @@ func RegisterCodec(cdc *codec.LegacyAmino) {
 
 func DefaultGenesisState() GenesisState {
 	return GenesisState{
-		Pools: []Pool{
-			{
-				PnyxReserve:     math.NewInt(1_000_000 * token.WholeTokenBaseUnits),
-				AssetReserve:    math.NewInt(1_000_000),
-				AssetDenom:      "atom",
-				TotalShares:     math.NewInt(1_000_000), // sqrt(1M * 1M) = 1M
-				TotalBurned:     math.ZeroInt(),
-				SwapCount:       0,
-				TotalVolumePnyx: math.ZeroInt(),
-			},
-		},
+		Pools: []Pool{},
 		RegisteredAssets: []RegisteredAsset{
 			{
 				IBCDenom:       pnyxDenom,
@@ -80,5 +79,6 @@ func DefaultGenesisState() GenesisState {
 				TradingEnabled: true,
 			},
 		},
+		LPPositions: []LPPosition{},
 	}
 }

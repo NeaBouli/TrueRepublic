@@ -224,28 +224,23 @@ func RegisterCodec(cdc *codec.LegacyAmino) {
 }
 
 func DefaultGenesisState() GenesisState {
-	// Deterministic key for the default test validator.
-	privKey := ed25519.GenPrivKeyFromSecret([]byte("test-validator-0"))
-	pubKey := privKey.PubKey().Bytes()
-
+	admin := sdk.AccAddress("bootstrap-admin")
+	pubKey := ed25519.GenPrivKeyFromSecret([]byte("truerepublic-bootstrap-validator")).PubKey().Bytes()
 	return GenesisState{
-		Domains: []Domain{
-			{
-				Name:          "TestParty",
-				Admin:         sdk.AccAddress("admin1"),
-				Members:       []string{"user1", "user2", "user3", "validator1"},
-				Treasury:      sdk.NewCoins(sdk.NewInt64Coin(PNYXDenom, 500_000*PNYXUnit)),
-				Options:       DomainOptions{AdminElectable: true, AnyoneCanJoin: false},
-				PermissionReg: []string{},
-			},
-		},
-		Validators: []GenesisValidator{
-			{
-				OperatorAddr: "validator1",
-				PubKey:       pubKey,
-				Stake:        100_000 * PNYXUnit,
-				Domain:       "TestParty",
-			},
-		},
+		Domains: []Domain{{
+			Name:          "Bootstrap",
+			Admin:         admin,
+			Members:       []string{admin.String()},
+			Treasury:      sdk.NewCoins(),
+			Issues:        []Issue{},
+			Options:       DomainOptions{AdminElectable: true},
+			PermissionReg: []string{},
+		}},
+		Validators: []GenesisValidator{{
+			OperatorAddr: admin.String(),
+			PubKey:       pubKey,
+			Stake:        100_000 * PNYXUnit,
+			Domain:       "Bootstrap",
+		}},
 	}
 }

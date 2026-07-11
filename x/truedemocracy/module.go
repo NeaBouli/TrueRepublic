@@ -16,6 +16,7 @@ import (
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
+	"github.com/cosmos/cosmos-sdk/types/msgservice"
 
 	rewards "truerepublic/treasury/keeper"
 )
@@ -62,6 +63,7 @@ func (AppModuleBasic) RegisterInterfaces(registry codectypes.InterfaceRegistry) 
 		&MsgDepositToDomain{},
 		&MsgWithdrawFromDomain{},
 	)
+	msgservice.RegisterMsgServiceDesc(registry, &_Msg_serviceDesc)
 }
 
 func (AppModuleBasic) DefaultGenesis(cdc codec.JSONCodec) json.RawMessage {
@@ -71,7 +73,11 @@ func (AppModuleBasic) DefaultGenesis(cdc codec.JSONCodec) json.RawMessage {
 }
 
 func (AppModuleBasic) ValidateGenesis(cdc codec.JSONCodec, config client.TxEncodingConfig, bz json.RawMessage) error {
-	return nil
+	var genesis GenesisState
+	if err := json.Unmarshal(bz, &genesis); err != nil {
+		return err
+	}
+	return ValidateGenesisState(genesis)
 }
 
 func (AppModuleBasic) RegisterGRPCGatewayRoutes(clientCtx client.Context, mux *gwruntime.ServeMux) {}
@@ -94,7 +100,14 @@ func NewAppModule(cdc *codec.LegacyAmino, keeper Keeper) AppModule {
 func (AppModule) IsOnePerModuleType() {}
 func (AppModule) IsAppModule()        {}
 
-func (am AppModule) RegisterInvariants(ir sdk.InvariantRegistry) {}
+func (am AppModule) RegisterInvariants(ir sdk.InvariantRegistry) {
+	ir.RegisterRoute(ModuleName, "escrow-parity", func(ctx sdk.Context) (string, bool) {
+		if err := am.keeper.ValidateEscrowParity(ctx); err != nil {
+			return err.Error(), true
+		}
+		return "truedemocracy escrow matches treasury and stake claims", false
+	})
+}
 
 func (am AppModule) RegisterServices(cfg module.Configurator) {
 	RegisterMsgServer(cfg.MsgServer(), NewMsgServer(am.keeper))
@@ -149,6 +162,9 @@ func (am AppModule) InitGenesis(ctx sdk.Context, cdc codec.JSONCodec, data json.
 	timeBz := am.cdc.MustMarshalLengthPrefixed(ctx.BlockTime().Unix())
 	store.Set([]byte("pod:last-reward-time"), timeBz)
 	store.Set([]byte("dom:last-interest-time"), timeBz)
+	for _, domain := range genesisState.Domains {
+		store.Set(domainPayoutSnapshotKey(domain.Name), am.cdc.MustMarshalLengthPrefixed(domain.TotalPayouts))
+	}
 	return updates
 }
 

@@ -137,3 +137,15 @@ func TestIssuanceServiceRejectsMissingBankAndInvalidSupply(t *testing.T) {
 		t.Fatal("expected negative canonical supply rejection")
 	}
 }
+
+func TestSupplyCapInvariantDetectsCanonicalOverflow(t *testing.T) {
+	bank := newIssuanceBank(MaxSupply())
+	invariant := SupplyCapInvariant(bank)
+	if message, broken := invariant(sdk.Context{}); broken {
+		t.Fatalf("cap boundary reported broken: %s", message)
+	}
+	bank.supply = MaxSupply().AddRaw(1)
+	if _, broken := invariant(sdk.Context{}); !broken {
+		t.Fatal("supply invariant missed canonical overflow")
+	}
+}

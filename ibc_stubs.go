@@ -16,7 +16,7 @@ import (
 // IBCStakingKeeper satisfies ibc-go's clienttypes.StakingKeeper interface.
 // IBC light-client verification needs historical validator sets and unbonding
 // period. We return a sensible default unbonding time and empty historical info.
-type IBCStakingKeeper struct{}
+type IBCStakingKeeper struct{ initialized bool }
 
 func (IBCStakingKeeper) GetHistoricalInfo(_ context.Context, _ int64) (stakingtypes.HistoricalInfo, error) {
 	return stakingtypes.HistoricalInfo{}, errNotAvailable
@@ -29,7 +29,7 @@ func (IBCStakingKeeper) UnbondingTime(_ context.Context) (time.Duration, error) 
 // IBCUpgradeKeeper satisfies ibc-go's clienttypes.UpgradeKeeper interface.
 // Without x/upgrade wired, all upgrade operations are no-ops. IBC client
 // upgrades are not supported until an upgrade module is added.
-type IBCUpgradeKeeper struct{}
+type IBCUpgradeKeeper struct{ initialized bool }
 
 func (IBCUpgradeKeeper) ClearIBCState(_ context.Context, _ int64) error {
 	return nil

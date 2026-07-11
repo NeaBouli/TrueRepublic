@@ -63,6 +63,7 @@ func (*MsgSwapExactResponse) String() string { return "MsgSwapExactResponse" }
 // ---------------------------------------------------------------------------
 
 func init() {
+	registerMsgFileDescriptor()
 	// Msg types.
 	gogoproto.RegisterType((*MsgCreatePool)(nil), "dex.MsgCreatePool")
 	gogoproto.RegisterType((*MsgSwap)(nil), "dex.MsgSwap")
@@ -364,5 +365,5 @@ var _Msg_serviceDesc = grpc.ServiceDesc{
 		{MethodName: "SwapExact", Handler: _Msg_SwapExact_Handler},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "dex/tx.proto",
+	Metadata: msgDescriptorFile,
 }

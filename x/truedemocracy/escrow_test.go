@@ -283,3 +283,11 @@ func TestEscrowMessagesRejectInvalidCoinSetsAndSignerClaims(t *testing.T) {
 		})
 	}
 }
+
+func TestEscrowParityRejectsUnexpectedDenomination(t *testing.T) {
+	keeper, ctx, bank := setupKeeperWithBank(t)
+	bank.fundModule(ModuleName, sdk.NewCoins(sdk.NewInt64Coin("unexpected", 1)))
+	if err := keeper.ValidateEscrowParity(ctx); err == nil {
+		t.Fatal("escrow parity accepted an unclaimed denomination")
+	}
+}

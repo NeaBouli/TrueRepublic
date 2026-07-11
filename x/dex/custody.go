@@ -75,10 +75,71 @@ func (k Keeper) LPShareTotal(ctx sdk.Context, assetDenom string) math.Int {
 	return total
 }
 
+func (k Keeper) GetAllLPPositions(ctx sdk.Context) []LPPosition {
+	store := ctx.KVStore(k.StoreKey)
+	prefix := []byte("lp:")
+	iterator := store.Iterator(prefix, prefixEnd(prefix))
+	defer iterator.Close()
+	positions := make([]LPPosition, 0)
+	for ; iterator.Valid(); iterator.Next() {
+		assetDenom, provider, ok := parseLPKey(iterator.Key())
+		if !ok {
+			panic("malformed LP ownership key")
+		}
+		var shares math.Int
+		k.cdc.MustUnmarshalLengthPrefixed(iterator.Value(), &shares)
+		positions = append(positions, LPPosition{AssetDenom: assetDenom, Provider: provider, Shares: shares})
+	}
+	return positions
+}
+
+func parseLPKey(key []byte) (assetDenom, provider string, ok bool) {
+	const prefixLength = len("lp:")
+	const encodedLengthSize = 4
+	if len(key) <= prefixLength+encodedLengthSize || string(key[:prefixLength]) != "lp:" {
+		return "", "", false
+	}
+	denomLength := int(binary.BigEndian.Uint32(key[prefixLength : prefixLength+encodedLengthSize]))
+	denomStart := prefixLength + encodedLengthSize
+	denomEnd := denomStart + denomLength
+	if denomLength <= 0 || denomEnd >= len(key) {
+		return "", "", false
+	}
+	return string(key[denomStart:denomEnd]), string(key[denomEnd:]), true
+}
+
 func (k Keeper) ValidateLPConservation(ctx sdk.Context) error {
+	store := ctx.KVStore(k.StoreKey)
+	prefix := []byte("lp:")
+	iterator := store.Iterator(prefix, prefixEnd(prefix))
+	defer iterator.Close()
+	totals := make(map[string]math.Int)
+	for ; iterator.Valid(); iterator.Next() {
+		assetDenom, provider, ok := parseLPKey(iterator.Key())
+		if !ok {
+			return errorsmod.Wrap(sdkerrors.ErrLogic, "malformed LP ownership key")
+		}
+		if _, err := sdk.AccAddressFromBech32(provider); err != nil {
+			return errorsmod.Wrapf(sdkerrors.ErrLogic, "invalid LP provider for %s", assetDenom)
+		}
+		var shares math.Int
+		k.cdc.MustUnmarshalLengthPrefixed(iterator.Value(), &shares)
+		if shares.IsNil() || !shares.IsPositive() {
+			return errorsmod.Wrapf(sdkerrors.ErrLogic, "non-positive LP shares for %s/%s", assetDenom, provider)
+		}
+		current, found := totals[assetDenom]
+		if !found {
+			current = math.ZeroInt()
+		}
+		totals[assetDenom] = current.Add(shares)
+	}
+
 	var invariantErr error
 	k.IteratePools(ctx, func(pool Pool) bool {
-		providerShares := k.LPShareTotal(ctx, pool.AssetDenom)
+		providerShares, found := totals[pool.AssetDenom]
+		if !found {
+			providerShares = math.ZeroInt()
+		}
 		if !providerShares.Equal(pool.TotalShares) {
 			invariantErr = errorsmod.Wrapf(
 				sdkerrors.ErrLogic,
@@ -89,8 +150,20 @@ func (k Keeper) ValidateLPConservation(ctx sdk.Context) error {
 			)
 			return true
 		}
+		delete(totals, pool.AssetDenom)
 		return false
 	})
+	if invariantErr != nil {
+		return invariantErr
+	}
+	orphans := make([]string, 0, len(totals))
+	for assetDenom := range totals {
+		orphans = append(orphans, assetDenom)
+	}
+	sort.Strings(orphans)
+	if len(orphans) > 0 {
+		return errorsmod.Wrapf(sdkerrors.ErrLogic, "LP shares reference missing pool %s", orphans[0])
+	}
 	return invariantErr
 }
 
@@ -113,32 +186,15 @@ func (k Keeper) ValidateReserveCustody(ctx sdk.Context) error {
 		return err
 	}
 	claims := k.ReserveClaims(ctx)
-	denoms := map[string]struct{}{pnyxDenom: {}}
-	k.IteratePools(ctx, func(pool Pool) bool {
-		denoms[pool.AssetDenom] = struct{}{}
-		return false
-	})
-	for _, asset := range k.GetAllAssets(ctx) {
-		denoms[asset.IBCDenom] = struct{}{}
-	}
 	moduleAddress := authtypes.NewModuleAddress(ModuleName)
-	orderedDenoms := make([]string, 0, len(denoms))
-	for denom := range denoms {
-		orderedDenoms = append(orderedDenoms, denom)
-	}
-	sort.Strings(orderedDenoms)
-	for _, denom := range orderedDenoms {
-		balance := k.bank.GetBalance(ctx, moduleAddress, denom)
-		claim := claims.AmountOf(denom)
-		if !balance.Amount.Equal(claim) {
-			return errorsmod.Wrapf(
-				sdkerrors.ErrLogic,
-				"DEX reserve mismatch for %s: bank=%s claims=%s",
-				denom,
-				balance.Amount,
-				claim,
-			)
-		}
+	balances := k.bank.GetAllBalances(ctx, moduleAddress)
+	if !balances.Equal(claims) {
+		return errorsmod.Wrapf(
+			sdkerrors.ErrLogic,
+			"DEX reserve mismatch: bank=%s claims=%s",
+			balances,
+			claims,
+		)
 	}
 	return nil
 }
