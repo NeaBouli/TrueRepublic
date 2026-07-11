@@ -88,3 +88,20 @@
   and its bridge findings are already captured in the canonical audit/tickets.
 - Kept the checkout intact pending final archive/hash comparison after recovery
   PRs land; recorded the decision in GH-8.
+
+## 2026-07-11 20:09 EEST - PR #9 merge audit
+
+- Re-inspected all 35 changed files and confirmed no Go consensus, ledger,
+  genesis, DEX, or ZKP runtime source is modified in the foundation PR.
+- Reproduced Go build, normal tests, race tests, vet, and the exact fixable
+  govulncheck gate on Go 1.26.5.
+- Reproduced 26 Rust tests, Clippy with warnings denied, and cargo audit; six
+  transitive warnings remain documented through upstream/dev-tooling paths.
+- Reproduced maintained-client `npm ci`, lint, five tests, production build,
+  and npm audit with zero vulnerabilities; confirmed neither compromised Axios
+  version is resolved.
+- Verified the `golang:1.26.5-alpine` image tag exists. Local Docker is not
+  installed, so added a GitHub Docker build job instead of claiming a build.
+- Found and corrected six whitespace-only diff errors.
+- Recorded the structured review in `PR9_AUDIT.md`. Merge remains conditional
+  on refreshed GitHub CI and one independent GitHub approval.

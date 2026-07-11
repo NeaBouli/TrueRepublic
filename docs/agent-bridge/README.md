@@ -21,4 +21,3 @@ context, evidence, decisions, risks, and the exact next action between sessions.
 - Never write secrets, private keys, tokens, credentials, or `.env` values here.
 - Public status (`docs/status.json`, landing page, README) may only claim results
   reproduced by the current branch or green GitHub CI.
-

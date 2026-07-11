@@ -26,4 +26,5 @@
   wholesale merge, and the checkout remains preserved pending final archive.
 - [ ] GH-8: align README, CLAUDE.md, status JSON, limitations, website, and test counts.
 - [ ] GH-8: add bridge/docs consistency to CI.
-- [x] Draft PR #9 is open with atomic recovery commits and all checks green.
+- [ ] PR #9: refreshed CI including Docker build must pass, then obtain the
+  required independent GitHub approval before merge.

@@ -22,4 +22,3 @@
 3. Every change has tests or an explicit NOT RUN reason.
 4. Every handover lists files, commands, real results, risks, and next action.
 5. Pull requests remain draft until all required checks pass.
-

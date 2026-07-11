@@ -6,11 +6,15 @@ on:
       - '**.go'
       - 'go.mod'
       - 'go.sum'
+      - 'Dockerfile'
+      - '.github/workflows/go-ci.yml'
   pull_request:
     paths:
       - '**.go'
       - 'go.mod'
       - 'go.sum'
+      - 'Dockerfile'
+      - '.github/workflows/go-ci.yml'
 
 jobs:
   build-and-test:
@@ -30,3 +34,11 @@ jobs:
 
       - name: Test
         run: CGO_ENABLED=1 go test ./... -race -cover -count=1 -timeout=600s
+
+  docker-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build node image
+        run: docker build --tag truerepublic:ci .

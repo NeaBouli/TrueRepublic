@@ -1,6 +1,6 @@
 # Project State
 
-Updated: 2026-07-11 13:10 EEST
+Updated: 2026-07-11 20:09 EEST
 
 ## Repository
 
@@ -37,6 +37,10 @@ Updated: 2026-07-11 13:10 EEST
 - Draft PR #9 GitHub checks are all green: Go CI, Rust CI, Client Web CI,
   documentation consistency, govulncheck, Rust audit, canonical npm audit, and
   informational legacy npm audits.
+- Codex merge audit: conditional approval with 0 FAIL / 4 WARN / 6 PASS;
+  refreshed CI must additionally prove the new Docker build job.
+- GitHub branch protection requires one approval; PR #9 currently has none and
+  must not be merged through the administrator bypass.
 
 ## Public-status warning
 

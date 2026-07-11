@@ -16,4 +16,3 @@
 
 - Public project status is evidence-based: no feature, test count, security
   state, or release completeness claim may exceed verified code and CI results.
-
