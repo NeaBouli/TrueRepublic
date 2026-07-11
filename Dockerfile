@@ -60,4 +60,4 @@ HEALTHCHECK --interval=15s --timeout=3s --start-period=20s --retries=5 \
   CMD wget -qO- http://127.0.0.1:26657/status >/dev/null || exit 1
 
 ENTRYPOINT ["docker-entrypoint.sh"]
-CMD ["start"]
+CMD ["start", "--rpc.laddr=tcp://0.0.0.0:26657", "--grpc.address=0.0.0.0:9090", "--api.enable=true", "--api.address=tcp://0.0.0.0:1317", "--minimum-gas-prices=0upnyx"]
