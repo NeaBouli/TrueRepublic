@@ -124,12 +124,11 @@ jobs now prove the corrected image builds.
   governance 55.8%; Rust 26 tests/Clippy/audit, client lint/6 tests/build/audit,
   documentation consistency, Dockerfile/YAML/diff checks → PASS. Both GitHub
   Docker builds, both Go jobs, DeepScan, docs, and the manual security workflow
-  → PASS on the prior head; final review remediation is locally green and
-  awaiting refreshed GitHub gates.
+  → PASS on the final remediation head; the complete security workflow also
+  passes and all five review threads are resolved.
 - **Risk:** High — canonical supply, mint/burn authority, reward inflation,
   validator power, and treasury claims
-- **Ready for:** refreshed review-remediation gates, then ordered stacked review
-  after PRs #9, #15, and #16
+- **Ready for:** ordered stacked review after PRs #9, #15, and #16
 
 ### Codex review feedback
 

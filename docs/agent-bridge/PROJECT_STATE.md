@@ -77,8 +77,10 @@ Updated: 2026-07-11 23:02 EEST
   Go jobs, docs, DeepScan, the manual security matrix, and the prior full
   CodeRabbit review completed with five inline and two additional findings.
   Rollback-aware mock-bank evidence, restored payout snapshot baselines,
-  container version smoke, and documentation corrections pass locally;
-  refreshed GitHub gates/threads remain. See `PR17_AUDIT.md`.
+  container version smoke, and documentation corrections pass locally and on
+  GitHub. Both Go/Docker jobs, docs, DeepScan, CodeRabbit, and the manual
+  security workflow are green; all five review threads are resolved. See
+  `PR17_AUDIT.md`.
 
 ## Public-status warning
 

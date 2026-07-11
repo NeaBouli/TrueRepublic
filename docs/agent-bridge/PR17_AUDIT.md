@@ -102,8 +102,9 @@ cover both paths.
 - Refreshed GitHub Go/race/coverage, docs, DeepScan, and manual security
   workflow: PASS; zero unresolved review threads
 - CodeRabbit's final 33-file review completed. Five inline findings and two
-  outside-diff/nitpick findings were verified and remediated; refreshed GitHub
-  checks and thread resolution remain pending for this remediation commit.
+  outside-diff/nitpick findings were verified and remediated. Both Go jobs,
+  both Docker builds, docs, DeepScan, CodeRabbit, and the complete manual
+  security workflow pass on `0e6cf38`; all five threads are resolved.
 
 ## Explicitly out of scope
 

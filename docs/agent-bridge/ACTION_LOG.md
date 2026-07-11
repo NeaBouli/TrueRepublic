@@ -264,3 +264,7 @@
 - Added the container `--version` smoke, reconciled PNYX-cap decisions, DEX
   status, equation signatures, and branch-head handover wording. Full local Go
   build/vet, 569 cases, focused race, coverage, and docs consistency pass.
+- Published `0e6cf38`, replied to every inline finding with implementation and
+  test evidence, and recorded the two non-inline fixes in the PR conversation.
+  Both Go jobs, both Docker builds, docs, DeepScan, CodeRabbit, and the manually
+  triggered security workflow pass; all five review threads are resolved.
