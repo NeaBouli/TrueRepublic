@@ -7,7 +7,7 @@ import { Button } from '@/components/common/Button';
 import { Input } from '@/components/common/Input';
 import { DEFAULT_CHAIN } from '@/config/chains';
 import { formatPnyx } from '@/utils/format';
-import type { Pool, LPPosition } from '@/types/dex';
+import type { LPPosition } from '@/types/dex';
 import {
   ArrowLeftIcon,
   InformationCircleIcon,
@@ -15,26 +15,18 @@ import {
   MinusIcon,
 } from '@heroicons/react/24/outline';
 
-interface PoolPosition {
-  pool: Pool;
-  shares: string;
-  position: LPPosition | null;
-}
-
 export function LPPositions() {
   const navigate = useNavigate();
   const { pools, loadPools, isLoading } = useDEXStore();
 
-  const [positions, setPositions] = useState<PoolPosition[]>([]);
+  const [positions, setPositions] = useState<
+    Record<string, LPPosition | null>
+  >({});
   const [sharesInput, setSharesInput] = useState<Record<string, string>>({});
 
   useEffect(() => {
     loadPools();
   }, [loadPools]);
-
-  useEffect(() => {
-    setPositions(pools.map((pool) => ({ pool, shares: '', position: null })));
-  }, [pools]);
 
   const handleCheckPosition = async (assetDenom: string) => {
     const shares = sharesInput[assetDenom];
@@ -43,13 +35,10 @@ export function LPPositions() {
     const dexService = new DEXService(DEFAULT_CHAIN);
     const position = await dexService.getLPPosition(assetDenom, shares);
 
-    setPositions((prev) =>
-      prev.map((p) =>
-        p.pool.asset_denom === assetDenom
-          ? { ...p, shares, position }
-          : p
-      )
-    );
+    setPositions((previous) => ({
+      ...previous,
+      [assetDenom]: position,
+    }));
   };
 
   return (
@@ -93,7 +82,7 @@ export function LPPositions() {
           </div>
         )}
 
-        {!isLoading && positions.length === 0 && (
+        {!isLoading && pools.length === 0 && (
           <Card>
             <div className="text-center py-12 text-gray-500">
               <p className="mb-4">No pools available</p>
@@ -103,7 +92,8 @@ export function LPPositions() {
         )}
 
         <div className="space-y-4">
-          {positions.map(({ pool, position }) => {
+          {pools.map((pool) => {
+            const position = positions[pool.asset_denom];
             const assetSymbol =
               pool.asset_symbol || pool.asset_denom.toUpperCase();
             const inputShares = sharesInput[pool.asset_denom] || '';

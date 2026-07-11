@@ -9,7 +9,6 @@ import {
   LightBulbIcon,
   BanknotesIcon,
   ShieldCheckIcon,
-  KeyIcon,
 } from '@heroicons/react/24/outline';
 
 export function DomainStatistics() {

@@ -26,9 +26,10 @@ export function RemoveLiquidity() {
   const pool = pools.find((p) => p.asset_denom === assetDenom);
 
   const [shares, setShares] = useState('');
-  const [positionPreview, setPositionPreview] = useState<LPPosition | null>(
-    null
-  );
+  const [positionResult, setPositionResult] = useState<{
+    key: string;
+    position: LPPosition | null;
+  } | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [txHash, setTxHash] = useState('');
   const [error, setError] = useState('');
@@ -41,20 +42,29 @@ export function RemoveLiquidity() {
 
   // Preview position value when shares change
   useEffect(() => {
-    if (!assetDenom || !shares) {
-      setPositionPreview(null);
-      return;
-    }
+    if (!assetDenom || !shares) return;
 
     const sharesNum = parseInt(shares, 10);
-    if (isNaN(sharesNum) || sharesNum <= 0) {
-      setPositionPreview(null);
-      return;
-    }
+    if (isNaN(sharesNum) || sharesNum <= 0) return;
 
+    let cancelled = false;
+    const requestKey = `${assetDenom}:${shares}`;
     const dexService = new DEXService(DEFAULT_CHAIN);
-    dexService.getLPPosition(assetDenom, shares).then(setPositionPreview);
+    void dexService.getLPPosition(assetDenom, shares).then((position) => {
+      if (!cancelled) {
+        setPositionResult({ key: requestKey, position });
+      }
+    });
+
+    return () => {
+      cancelled = true;
+    };
   }, [assetDenom, shares]);
+
+  const positionPreview =
+    positionResult?.key === `${assetDenom}:${shares}`
+      ? positionResult.position
+      : null;
 
   const handleRemoveLiquidity = async () => {
     if (!currentWallet || !password || !assetDenom || !shares) return;
