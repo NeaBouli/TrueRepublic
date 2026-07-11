@@ -2,6 +2,9 @@
 
 ## Open
 
+- Token/ledger audit found six blocking failures: denomination/cap mismatch,
+  declared unbacked treasury/stake amounts, unbacked rewards, non-custodial DEX
+  accounting, and missing genesis reconciliation. See `CODEX_AUDIT.md` and GH-7.
 - `docs/status.json` says the ZKP web client is a SHA-256 mock; user-facing
   anonymity claims must clearly distinguish mock proof generation from real Groth16.
 - Rust stable CosmWasm 3.0.4 dev-tooling pulls unmaintained/unsound transitive

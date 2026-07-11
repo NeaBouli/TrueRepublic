@@ -63,3 +63,7 @@
   Repointed it to canonical `client-web` with install, lint, test, build, and
   audit gates; added a blocking canonical-client audit to Security Scan while
   retaining non-blocking legacy audit visibility.
+- Audited the 21M PNYX cap, denomination flow, governance/staking treasury,
+  reward issuance, DEX custody, and custom genesis handling. Recorded six
+  blocking ledger/supply failures in `CODEX_AUDIT.md`; no production-funds claim
+  is acceptable until they are resolved.

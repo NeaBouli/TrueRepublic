@@ -40,3 +40,10 @@ Updated: 2026-07-11 12:30 EEST
 `docs/status.json`, README, limitations, and the landing page now mark recovery
 as active and separate 564 verified tests from the historical 577 figure.
 `CLAUDE.md` still needs reconciliation.
+
+## Blocking audit result
+
+The first GH-7 token/ledger slice is FAIL: the 21M cap is not enforced against
+bank supply, six-decimal client semantics conflict with chain denominations,
+and treasury/stake/DEX/reward ledgers are not consistently bank-backed. The
+repository remains simulation/recovery-only until `CODEX_AUDIT.md` blockers close.
