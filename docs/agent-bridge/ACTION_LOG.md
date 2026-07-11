@@ -67,3 +67,6 @@
   reward issuance, DEX custody, and custom genesis handling. Recorded six
   blocking ledger/supply failures in `CODEX_AUDIT.md`; no production-funds claim
   is acceptable until they are resolved.
+- Split the ledger recovery into GitHub issues #11 (canonical denom/cap), #14
+  (treasury/stake escrow), #13 (cap-checked rewards), #10 (DEX custody/LP/burn),
+  and #12 (genesis/runtime invariants).

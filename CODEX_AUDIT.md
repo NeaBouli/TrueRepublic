@@ -96,6 +96,9 @@ findings below are resolved.
 4. Rebuild DEX custody, bank settlement, burn, and per-provider LP ownership.
 5. Validate genesis and reconcile all custom ledgers to bank/module balances.
 
+Implementation tickets: #11 (denom/cap), #14 (treasury/stake escrow), #13
+(rewards), #10 (DEX custody), and #12 (genesis/invariants).
+
 ### 🟠 HIGH
 
 1. Restrict asset registry and trading-status changes to chain authority.

@@ -11,8 +11,12 @@
 
 ## P1 - consensus and wallet audit
 
-- [ ] GH-7: audit PNYX 21M cap and six-decimal base-unit conversion end to end.
-- [ ] GH-7: audit bank/treasury conservation, fee transfer, reward, burn, and replay rules.
+- [x] GH-7: audit PNYX 21M cap, denomination, and ledger conservation paths.
+- [ ] GH-11: canonicalize `upnyx` and enforce the 21M base-unit cap.
+- [ ] GH-14: back domain treasury and validator stake with bank escrow.
+- [ ] GH-13: issue all rewards through cap-checked bank minting.
+- [ ] GH-10: implement DEX bank custody, provider LP ownership, and real burns.
+- [ ] GH-12: validate genesis and add ledger conservation invariants.
 - [ ] GH-7: audit ZKP/nullifier/domain-key authentication and client-side mock boundaries.
 - [ ] GH-7: audit DEX rounding, slippage, pool accounting, and authorization.
 
