@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { useNetworkStore } from '@/stores/networkStore';
 import { Card } from '@/components/common/Card';
 import { formatAddress, formatPnyx } from '@/utils/format';
+import { DEFAULT_CHAIN } from '@/config/chains';
 import {
   ServerIcon,
   CheckCircleIcon,
@@ -38,7 +39,7 @@ export function ValidatorList() {
         {validators.map((validator) => {
           // Stake is sdk.Coins — find PNYX amount
           const pnyxStake = validator.stake?.find(
-            (c) => c.denom === 'pnyx' || c.denom === 'upnyx'
+            (coin) => coin.denom === DEFAULT_CHAIN.coinMinimalDenom
           );
           const stakeDisplay = pnyxStake
             ? formatPnyx(pnyxStake.amount)

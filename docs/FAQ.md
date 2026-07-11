@@ -51,14 +51,14 @@ A community-governed space focused on a specific topic. Domains have members, a 
 
 ### How do I create a Domain?
 ```bash
-truerepublicd tx truedemocracy create-domain [name] [initial-coins]pnyx \
+truerepublicd tx truedemocracy create-domain [name] [initial-coins]upnyx \
     --from mykey --chain-id truerepublic-1
 ```
 
 ### How do I submit a proposal?
 Via the web wallet (Governance page, right panel) or CLI:
 ```bash
-truerepublicd tx truedemocracy submit-proposal [domain] [issue] [suggestion] [fee]pnyx "" \
+truerepublicd tx truedemocracy submit-proposal [domain] [issue] [suggestion] [fee]upnyx "" \
     --from mykey --chain-id truerepublic-1
 ```
 

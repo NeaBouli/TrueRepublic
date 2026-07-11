@@ -140,7 +140,7 @@ pub fn execute(
                     continue;
                 }
                 // Find pool snapshot for the output denom
-                let asset_denom = if order.input_denom == "pnyx" {
+                let asset_denom = if order.input_denom == "upnyx" {
                     &order.output_denom
                 } else {
                     &order.input_denom
@@ -150,8 +150,8 @@ pub fn execute(
                     .iter()
                     .find(|s| s.asset_denom == *asset_denom);
                 if let Some(snap) = snapshot {
-                    let output_is_pnyx = order.output_denom == "pnyx";
-                    let (in_reserve, out_reserve) = if order.input_denom == "pnyx" {
+                    let output_is_pnyx = order.output_denom == "upnyx";
+                    let (in_reserve, out_reserve) = if order.input_denom == "upnyx" {
                         (snap.pnyx_reserve, snap.asset_reserve)
                     } else {
                         (snap.asset_reserve, snap.pnyx_reserve)
@@ -220,7 +220,7 @@ pub fn query(deps: Deps<TrueRepublicQuery>, _env: Env, msg: QueryMsg) -> StdResu
             output_denom,
         } => {
             let state = load_state(deps.storage)?;
-            let asset_denom = if input_denom == "pnyx" {
+            let asset_denom = if input_denom == "upnyx" {
                 &output_denom
             } else {
                 &input_denom
@@ -230,8 +230,8 @@ pub fn query(deps: Deps<TrueRepublicQuery>, _env: Env, msg: QueryMsg) -> StdResu
                 .iter()
                 .find(|s| s.asset_denom == *asset_denom)
                 .ok_or_else(|| cosmwasm_std::StdError::msg("not found: snapshot"))?;
-            let output_is_pnyx = output_denom == "pnyx";
-            let (in_reserve, out_reserve) = if input_denom == "pnyx" {
+            let output_is_pnyx = output_denom == "upnyx";
+            let (in_reserve, out_reserve) = if input_denom == "upnyx" {
                 (snap.pnyx_reserve, snap.asset_reserve)
             } else {
                 (snap.asset_reserve, snap.pnyx_reserve)
@@ -276,7 +276,7 @@ mod tests {
         .unwrap();
 
         let place_msg = ExecuteMsg::PlaceLimitOrder {
-            input_denom: "pnyx".to_string(),
+            input_denom: "upnyx".to_string(),
             input_amount: Uint128::new(1000),
             output_denom: "atom".to_string(),
             min_output: Uint128::new(900),
@@ -308,7 +308,7 @@ mod tests {
 
         // Place order
         let place_msg = ExecuteMsg::PlaceLimitOrder {
-            input_denom: "pnyx".to_string(),
+            input_denom: "upnyx".to_string(),
             input_amount: Uint128::new(1000),
             output_denom: "atom".to_string(),
             min_output: Uint128::new(900),

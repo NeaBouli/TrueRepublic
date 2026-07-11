@@ -157,7 +157,7 @@ curl localhost:26657/status | jq .result.sync_info.catching_up
 
 # 2. Sufficient balance
 truerepublicd query bank balances YOUR_ADDRESS
-# Should show 100,000+ pnyx
+# Should show 100,000+ upnyx
 
 # 3. Domain membership
 truerepublicd query truedemocracy domain YOUR_DOMAIN

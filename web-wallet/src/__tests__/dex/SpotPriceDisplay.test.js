@@ -23,7 +23,7 @@ describe("SpotPriceDisplay", () => {
       input_symbol: "PNYX",
       output_symbol: "ATOM",
       price_per_million: "997000",
-      route: ["pnyx", "atom"],
+      route: ["upnyx", "atom"],
     });
     render(<SpotPriceDisplay pools={pools} />);
     fireEvent.click(screen.getByText("Get Price"));

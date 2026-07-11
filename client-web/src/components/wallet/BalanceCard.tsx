@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { useWalletStore } from '@/stores/walletStore';
 import { Card } from '@/components/common/Card';
 import { formatPnyx } from '@/utils/format';
+import { DEFAULT_CHAIN } from '@/config/chains';
 import { ArrowPathIcon } from '@heroicons/react/24/outline';
 
 export function BalanceCard() {
@@ -14,8 +15,12 @@ export function BalanceCard() {
     return () => clearInterval(interval);
   }, [refreshBalance]);
 
-  const pnyxBalance = balances.find((b) => b.denom === 'pnyx');
-  const ibcBalances = balances.filter((b) => b.denom !== 'pnyx');
+  const pnyxBalance = balances.find(
+    (balance) => balance.denom === DEFAULT_CHAIN.coinMinimalDenom
+  );
+  const ibcBalances = balances.filter(
+    (balance) => balance.denom !== DEFAULT_CHAIN.coinMinimalDenom
+  );
 
   return (
     <Card>

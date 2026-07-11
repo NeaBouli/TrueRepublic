@@ -35,7 +35,7 @@ truerepublicd tx dex swap [input-denom] [input-amount] [output-denom] \
     --from mykey --chain-id truerepublic-1
 
 # Example: Swap 1000 PNYX for ATOM
-truerepublicd tx dex swap pnyx 1000 atom \
+truerepublicd tx dex swap upnyx 1000 atom \
     --from mykey --chain-id truerepublic-1
 ```
 
@@ -118,7 +118,7 @@ Liquidity providers (LPs) deposit both tokens into a pool and receive **LP share
 ### Creating a New Pool
 
 ```bash
-truerepublicd tx dex create-pool [asset-denom] [pnyx-amount] [asset-amount] \
+truerepublicd tx dex create-pool [asset-denom] [upnyx-amount] [asset-amount] \
     --from mykey --chain-id truerepublic-1
 
 # Example: Create PNYX/ATOM pool
@@ -131,7 +131,7 @@ Initial LP shares = sqrt(pnyx_amount * asset_amount)
 ### Adding Liquidity
 
 ```bash
-truerepublicd tx dex add-liquidity [asset-denom] [pnyx-amount] [asset-amount] \
+truerepublicd tx dex add-liquidity [asset-denom] [upnyx-amount] [asset-amount] \
     --from mykey --chain-id truerepublic-1
 ```
 

@@ -18,7 +18,7 @@ const TABS = [
 function Dex() {
   const wallet = useWallet();
   const [amount, setAmount] = useState("");
-  const [fromAsset, setFromAsset] = useState("pnyx");
+  const [fromAsset, setFromAsset] = useState("upnyx");
   const [toAsset, setToAsset] = useState("atom");
   const [pools, setPools] = useState([]);
   const [swapping, setSwapping] = useState(false);
@@ -133,7 +133,7 @@ function Dex() {
                       onChange={(e) => setFromAsset(e.target.value)}
                       className="w-full px-3 py-2 text-sm bg-dark-700 border border-dark-600 rounded-lg text-dark-200 focus:outline-none focus:border-republic-500"
                     >
-                      <option value="pnyx">PNYX</option>
+                      <option value="upnyx">PNYX</option>
                       <option value="atom">ATOM</option>
                     </select>
                   </div>
@@ -148,7 +148,7 @@ function Dex() {
                       className="w-full px-3 py-2 text-sm bg-dark-700 border border-dark-600 rounded-lg text-dark-200 focus:outline-none focus:border-republic-500"
                     >
                       <option value="atom">ATOM</option>
-                      <option value="pnyx">PNYX</option>
+                      <option value="upnyx">PNYX</option>
                     </select>
                   </div>
                   <div>
@@ -207,7 +207,7 @@ function Dex() {
             {selectedPool && <PoolStats assetDenom={selectedPool} />}
 
             <SpotPriceDisplay pools={pools} />
-            <LiquidityDepthChart inputDenom="pnyx" outputDenom={selectedPool || "atom"} />
+            <LiquidityDepthChart inputDenom="upnyx" outputDenom={selectedPool || "atom"} />
           </div>
         )}
 

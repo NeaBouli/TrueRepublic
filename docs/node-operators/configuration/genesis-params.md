@@ -6,9 +6,10 @@
 |-----------|-------|-------------|
 | Chain ID | `truerepublic-1` | Unique chain identifier |
 | Bech32 Prefix | `truerepublic` | Address prefix |
-| Token Denom | `pnyx` | Native token denomination |
-| Coin Decimals | 0 | PNYX is indivisible (whole units) |
-| Max Supply | 21,000,000 PNYX | Maximum token supply |
+| Base Denom | `upnyx` | Smallest native token unit |
+| Display Denom | `PNYX` | Human-readable token symbol |
+| Coin Decimals | 6 | 1 PNYX = 1,000,000 upnyx |
+| Max Supply | 21,000,000 PNYX | Exactly 21,000,000,000,000 upnyx |
 | BIP44 Coin Type | 118 | HD wallet derivation path |
 
 ## Consensus Parameters
@@ -38,8 +39,8 @@
 | CDom | 2 | Domain creation cost factor |
 | CPut | 15 | Put price cap |
 | CEarn | 1000 | Reward divisor |
-| StakeMin | 100,000 PNYX | Minimum validator stake |
-| SupplyMax | 21,000,000 PNYX | Maximum total supply |
+| StakeMin | 100,000 PNYX | 100,000,000,000 upnyx |
+| SupplyMax | 21,000,000 PNYX | 21,000,000,000,000 upnyx |
 | ApyDom | 0.25 (25%) | Domain treasury interest APY |
 | ApyNode | 0.10 (10%) | Validator staking reward APY |
 | Reward interval | 3600 seconds (1 hour) | Reward distribution frequency |

@@ -8,7 +8,7 @@ BINARY="${BINARY:-truerepublicd}"
 CHAIN_ID="${CHAIN_ID:-truerepublic-1}"
 MONIKER="${MONIKER:-truerepublic-node}"
 CHAIN_HOME="${CHAIN_HOME:-$HOME/.truerepublic}"
-DENOM="pnyx"
+DENOM="upnyx"
 GENESIS_AMOUNT="1000000000${DENOM}"
 STAKING_AMOUNT="100000${DENOM}"
 

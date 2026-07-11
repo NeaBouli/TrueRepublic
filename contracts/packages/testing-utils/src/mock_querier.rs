@@ -103,7 +103,7 @@ impl TrueRepublicMockQuerier {
                         SystemResult::Ok(ContractResult::Ok(
                             to_json_binary(&DomainTreasuryResponse {
                                 domain_name: domain_name.clone(),
-                                amount: "1000000pnyx".to_string(),
+                                amount: "1000000upnyx".to_string(),
                             })
                             .unwrap(),
                         ))

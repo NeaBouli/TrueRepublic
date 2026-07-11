@@ -2,8 +2,8 @@ import React, { useState } from "react";
 import { querySpotPrice } from "../../services/api";
 
 export default function SpotPriceDisplay({ pools }) {
-  const denoms = ["pnyx", ...(pools || []).map((p) => p.asset_denom)];
-  const [inputDenom, setInputDenom] = useState("pnyx");
+  const denoms = ["upnyx", ...(pools || []).map((p) => p.asset_denom)];
+  const [inputDenom, setInputDenom] = useState("upnyx");
   const [outputDenom, setOutputDenom] = useState(denoms[1] || "atom");
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(false);

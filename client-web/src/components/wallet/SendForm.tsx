@@ -5,6 +5,7 @@ import { Button } from '@/components/common/Button';
 import { Input } from '@/components/common/Input';
 import { Card } from '@/components/common/Card';
 import { formatPnyx, parsePnyx } from '@/utils/format';
+import { DEFAULT_CHAIN } from '@/config/chains';
 import { ArrowLeftIcon, CheckCircleIcon } from '@heroicons/react/24/outline';
 
 export function SendForm() {
@@ -17,7 +18,9 @@ export function SendForm() {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [txHash, setTxHash] = useState('');
 
-  const pnyxBalance = balances.find((b) => b.denom === 'pnyx');
+  const pnyxBalance = balances.find(
+    (balance) => balance.denom === DEFAULT_CHAIN.coinMinimalDenom
+  );
   const availableBalance = pnyxBalance?.amount || '0';
 
   const validateForm = (): boolean => {
@@ -49,7 +52,7 @@ export function SendForm() {
       const result = await sendTokens({
         to: recipient,
         amount: parsePnyx(amount),
-        denom: 'pnyx',
+        denom: DEFAULT_CHAIN.coinMinimalDenom,
         memo: memo || undefined,
       });
 

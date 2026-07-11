@@ -344,7 +344,7 @@ If valid:
 |-----------|-------|
 | Chain ID | `truerepublic-1` |
 | Bech32 prefix | `truerepublic` |
-| Token denom | `pnyx` |
+| Token denom | `upnyx` |
 | P2P port | 26656 |
 | RPC port | 26657 |
 | LCD/REST port | 1317 |

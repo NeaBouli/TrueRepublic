@@ -44,7 +44,7 @@ Complete guides for using TrueRepublic.
 
 **Getting Started:**
 1. Install Keplr -- [Installation Wizards](Installation-Wizards)
-2. Get PNYX -- [Installation Wizards](Installation-Wizards#step-2-get-pnyx-tokens)
+2. Get PNYX -- [Installation Wizards](Installation-Wizards#step-2-get-upnyx-tokens)
 3. Connect wallet -- [Web Wallet Guide](/docs/user-manual/web-wallet-guide.md)
 
 **First Actions:**

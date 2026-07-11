@@ -6,7 +6,7 @@ const RPC_ENDPOINT = "https://rpc.truerepublic.network";
 
 export default function DexScreen() {
     const [pools, setPools] = useState([]);
-    const [fromAsset, setFromAsset] = useState("pnyx");
+    const [fromAsset, setFromAsset] = useState("upnyx");
     const [toAsset, setToAsset] = useState("atom");
     const [amount, setAmount] = useState("");
 
@@ -49,9 +49,9 @@ export default function DexScreen() {
             <View style={styles.section}>
                 <Text style={styles.sectionTitle}>Swap</Text>
                 <Text style={styles.label}>From: {fromAsset.toUpperCase()}</Text>
-                <Button title={fromAsset === "pnyx" ? "Switch to ATOM" : "Switch to PNYX"} onPress={() => {
-                    setFromAsset(fromAsset === "pnyx" ? "atom" : "pnyx");
-                    setToAsset(fromAsset === "pnyx" ? "pnyx" : "atom");
+                <Button title={fromAsset === "upnyx" ? "Switch to ATOM" : "Switch to PNYX"} onPress={() => {
+                    setFromAsset(fromAsset === "upnyx" ? "atom" : "upnyx");
+                    setToAsset(fromAsset === "upnyx" ? "upnyx" : "atom");
                 }} />
                 <Text style={styles.label}>To: {toAsset.toUpperCase()}</Text>
                 <TextInput

@@ -147,11 +147,11 @@ truerepublicd tx dex register-asset \
   --from admin
 
 # Create pool
-truerepublicd tx dex create-pool pnyx ibc/BTC 1000000 10000 \
+truerepublicd tx dex create-pool upnyx ibc/BTC 1000000 10000 \
   --from alice
 
 # Swap (accepts symbol or denom)
-truerepublicd tx dex swap pool-0 pnyx 1000 500 \
+truerepublicd tx dex swap pool-0 upnyx 1000 500 \
   --from alice
 
 # Query pool
