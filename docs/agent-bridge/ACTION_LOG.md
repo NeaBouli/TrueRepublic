@@ -229,10 +229,10 @@
   regression proving claims, timers, and snapshots roll back together.
 - Added missing-bank, nil/negative supply, failed burn, and second-mint failure
   coverage. Canonical supply input is validated before cap calculations.
-- Go build, vet, 566 cases, race, and coverage pass. Current coverage is root
-  5.5%, token 93.5%, treasury 97.0%, DEX 34.2%, and governance 55.8%.
+- Go build, vet, 567 cases, race, and coverage pass. Current coverage is root
+  10.2%, token 93.5%, treasury 97.0%, DEX 34.2%, and governance 55.8%.
 - Updated the structured audit, public DEX limitations, canonical reward docs,
-  598-test status, bridge decisions, security notes, and PR #17 audit record.
+  599-test status, bridge decisions, security notes, and PR #17 audit record.
 - Hardened the node Dockerfile to derive `libwasmvm` from Docker's target
   architecture (`amd64`/`arm64`) instead of host `uname`, added runtime linkage
   validation and `libgcc-s1`, and injected the immutable GitHub commit as the
@@ -244,3 +244,8 @@
   no vulnerability and the same six allowed transitive dev-tooling warnings.
   Maintained-client and documentation gates pass; GitHub must execute the
   actual Docker build because this workstation has no Docker engine.
+- The first GitHub image execution proved wasmvm selection/linkage correct but
+  exposed an older application startup panic: `legacytx.StdTx` was registered
+  directly and then a second time by the auth codec. Removed the duplicate,
+  unified application/CLI codec construction, exposed the injected build
+  version through Cobra, and added the 567th Go regression test.

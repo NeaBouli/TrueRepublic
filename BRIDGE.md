@@ -115,9 +115,10 @@ jobs now prove the corrected image builds.
   domain inflation, supply-neutral treasury payouts, interval payout snapshots,
   centralized slash burns, atomic two-phase EndBlock reward settlement, and an
   architecture-safe/reproducible wasmvm node image with a reduced build context
-- **Audit fixes:** rejected invalid canonical supply and closed the partial
-  EndBlock commit boundary between staking issuance and domain issuance
-- **Tests:** Go build/vet, 566 cases, race, and coverage → PASS; token 93.5%,
+- **Audit fixes:** rejected invalid canonical supply, closed the partial
+  EndBlock commit boundary between staking issuance and domain issuance, and
+  removed a duplicate Amino registration that panicked every CLI/node startup
+- **Tests:** Go build/vet, 567 cases, race, and coverage → PASS; token 93.5%,
   governance 55.8%; Rust 26 tests/Clippy/audit, client lint/6 tests/build/audit,
   documentation consistency, Dockerfile/YAML/diff checks → PASS. The actual
   Docker image build and refreshed GitHub gates remain pending.

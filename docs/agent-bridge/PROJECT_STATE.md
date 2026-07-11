@@ -31,10 +31,10 @@ Updated: 2026-07-11 23:02 EEST
   vulnerabilities after upgrades.
 - GH-14 local v0.4 client: `npm ci`, lint, six regression tests, production build, and
   `npm audit` all PASS. Main bundle is 1.68 MB before gzip (performance warning).
-- Current GH-13 branch test count is 598: 566 Go, 26 Rust, and six
+- Current GH-13 branch test count is 599: 567 Go, 26 Rust, and six
   maintained-client tests. The prior 577 figure is retained only as historical.
 - GH-13 local Go 1.26.5: build, vet, normal tests, race tests, and coverage PASS.
-  Coverage: root 5.5%, token 93.5%, treasury 97.0%, DEX 34.2%, governance 55.8%.
+  Coverage: root 10.2%, token 93.5%, treasury 97.0%, DEX 34.2%, governance 55.8%.
 - Go vulnerability gate: no reachable finding with an available fix remains;
   four upstream `N/A` findings are tracked for import-path reduction.
 - Legacy `web-wallet`: build/test command reaches audit, but 68 advisories remain
@@ -78,7 +78,7 @@ Updated: 2026-07-11 23:02 EEST
 ## Public-status warning
 
 `docs/status.json`, README, limitations, and the landing page now mark recovery
-as active and separate 598 verified tests from the historical 577 figure.
+as active and separate 599 verified tests from the historical 577 figure.
 `CLAUDE.md` still needs reconciliation.
 
 ## Blocking audit result

@@ -119,6 +119,12 @@ func TestModuleBasicsIncludesIBC(t *testing.T) {
 	}
 }
 
+func TestMakeAminoCodecDoesNotDuplicateLegacyTypes(t *testing.T) {
+	if cdc := makeAminoCodec(); cdc == nil {
+		t.Fatal("expected configured legacy Amino codec")
+	}
+}
+
 func TestMaccPermsIncludesTransfer(t *testing.T) {
 	perms, ok := maccPerms["transfer"]
 	if !ok {

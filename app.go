@@ -28,7 +28,6 @@ import (
 	signingtypes "github.com/cosmos/cosmos-sdk/types/tx/signing"
 	auth "github.com/cosmos/cosmos-sdk/x/auth"
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
-	"github.com/cosmos/cosmos-sdk/x/auth/migrations/legacytx"
 	authtx "github.com/cosmos/cosmos-sdk/x/auth/tx"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	bank "github.com/cosmos/cosmos-sdk/x/bank"
@@ -63,6 +62,9 @@ var maccPerms = map[string][]string{
 	transfertypes.ModuleName:   {authtypes.Minter, authtypes.Burner},
 }
 
+// version is injected by release and container builds via -ldflags.
+var version = "dev"
+
 var ModuleBasics = module.NewBasicManager(
 	auth.AppModuleBasic{},
 	bank.AppModuleBasic{},
@@ -96,13 +98,7 @@ type TrueRepublicApp struct {
 }
 
 func NewTrueRepublicApp(logger log.Logger, db dbm.DB, homeDir string) *TrueRepublicApp {
-	cdc := codec.NewLegacyAmino()
-	sdk.RegisterLegacyAminoCodec(cdc)
-	legacytx.RegisterLegacyAminoCodec(cdc)
-	authtypes.RegisterLegacyAminoCodec(cdc)
-	banktypes.RegisterLegacyAminoCodec(cdc)
-	truedemocracy.RegisterCodec(cdc)
-	dex.RegisterCodec(cdc)
+	cdc := makeAminoCodec()
 
 	interfaceRegistry := codectypes.NewInterfaceRegistry()
 	ModuleBasics.RegisterInterfaces(interfaceRegistry)
@@ -401,7 +397,9 @@ func (app *TrueRepublicApp) EndBlocker(ctx sdk.Context) (sdk.EndBlock, error) {
 func makeAminoCodec() *codec.LegacyAmino {
 	cdc := codec.NewLegacyAmino()
 	sdk.RegisterLegacyAminoCodec(cdc)
-	legacytx.RegisterLegacyAminoCodec(cdc)
+	// auth registers legacytx.StdTx itself. Registering legacytx directly before
+	// auth panics during every CLI/node startup because Amino rejects duplicate
+	// concrete type registrations.
 	authtypes.RegisterLegacyAminoCodec(cdc)
 	banktypes.RegisterLegacyAminoCodec(cdc)
 	truedemocracy.RegisterCodec(cdc)
@@ -424,8 +422,9 @@ func main() {
 		WithTxConfig(txCfg)
 
 	rootCmd := &cobra.Command{
-		Use:   "truerepublicd",
-		Short: "TrueRepublic blockchain daemon and CLI",
+		Use:     "truerepublicd",
+		Short:   "TrueRepublic blockchain daemon and CLI",
+		Version: version,
 		PersistentPreRunE: func(cmd *cobra.Command, _ []string) error {
 			ctx, err := client.ReadPersistentCommandFlags(initClientCtx, cmd.Flags())
 			if err != nil {

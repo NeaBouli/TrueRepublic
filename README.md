@@ -16,7 +16,7 @@
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/tests-598%20recovery--verified-orange" alt="Recovery-verified tests"/>
+  <img src="https://img.shields.io/badge/tests-599%20recovery--verified-orange" alt="Recovery-verified tests"/>
   <img src="https://img.shields.io/badge/version-v0.4.0-blue" alt="Version"/>
   <img src="https://img.shields.io/badge/recovery-active-orange" alt="Recovery active"/>
   <img src="https://img.shields.io/badge/Go-1.26.5-00ADD8?logo=go" alt="Go"/>
@@ -266,7 +266,7 @@ The checklist below records implemented surface area, not a production security
 approval. Current evidence, risks, and commands are maintained in
 [`BRIDGE.md`](BRIDGE.md) and [GitHub issue #4](https://github.com/NeaBouli/TrueRepublic/issues/4).
 
-- 🟡 598 tests recovery-verified locally (566 Go + 26 Rust + 6 maintained-client)
+- 🟡 599 tests recovery-verified locally (567 Go + 26 Rust + 6 maintained-client)
 - ✅ Core blockchain compiles and runs
 - 🟡 Tokenomics equations plus capped bank issuance implemented on recovery branches; genesis/runtime invariants pending
 - 🟡 Governance surface implemented; escrow/auth recovery is in stacked review
@@ -308,8 +308,8 @@ approval. Current evidence, risks, and commands are maintained in
 - 📋 **v0.5.0 (Q3 2026):** Native Apps (iOS/Android)
 - 🎯 **v1.0.0 (Q4 2026):** Production Release — External audit, mainnet launch
 
-> Historical test count: 577. The authoritative recovery-verified total is 598
-> (566 Go + 26 Rust + 6 maintained-client), reproduced locally on the current branch.
+> Historical test count: 577. The authoritative recovery-verified total is 599
+> (567 Go + 26 Rust + 6 maintained-client), reproduced locally on the current branch.
 
 ---
 

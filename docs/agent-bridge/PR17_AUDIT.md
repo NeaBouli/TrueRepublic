@@ -45,6 +45,15 @@ domain claims, reward timers, and payout snapshots remain unchanged.
 The issuance service now rejects nil or negative supply values before cap math.
 Tests also cover missing bank wiring and failed mint/burn operations.
 
+### High — the node image built but every CLI/node invocation panicked
+
+The new container smoke check exposed duplicate registration of
+`legacytx.StdTx`: the app registered it directly and then registered it again
+through the auth module. Both the CLI and application constructor now use one
+shared codec factory, auth owns the legacy transaction registration, and a
+regression test plus `truerepublicd --help`/`--version` smoke checks prove the
+binary reaches Cobra without a panic.
+
 ## Boundary and negative-path evidence
 
 - Aggregate minting stops exactly at the final cap unit.
@@ -63,7 +72,7 @@ Tests also cover missing bank wiring and failed mint/burn operations.
 
 - `go build ./...`: PASS
 - `go vet ./...`: PASS
-- `go test ./... -count=1`: PASS, 566 Go cases
+- `go test ./... -count=1`: PASS, 567 Go cases
 - `go test ./... -race -count=1`: PASS
 - `go test ./... -cover -count=1`: PASS; token 93.5%, governance 55.8%
 - `cargo test --workspace`: PASS, 26 Rust cases
