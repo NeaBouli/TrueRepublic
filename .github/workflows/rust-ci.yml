@@ -1,12 +1,15 @@
 name: Rust CI
 
 on:
+  workflow_dispatch:
   push:
     paths:
       - 'contracts/**'
+      - '.github/workflows/rust-ci.yml'
   pull_request:
     paths:
       - 'contracts/**'
+      - '.github/workflows/rust-ci.yml'
 
 jobs:
   build-and-test:
@@ -15,7 +18,7 @@ jobs:
       run:
         working-directory: contracts
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - uses: dtolnay/rust-toolchain@stable
 
