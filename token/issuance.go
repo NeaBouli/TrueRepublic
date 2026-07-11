@@ -32,7 +32,11 @@ func (s IssuanceService) Supply(ctx context.Context) (math.Int, error) {
 	if s.bank == nil {
 		return math.Int{}, fmt.Errorf("issuance bank keeper is not available")
 	}
-	return s.bank.GetSupply(ctx, BaseDenom).Amount, nil
+	supply := s.bank.GetSupply(ctx, BaseDenom).Amount
+	if supply.IsNil() || supply.IsNegative() {
+		return math.Int{}, fmt.Errorf("canonical PNYX supply must be valid and non-negative")
+	}
+	return supply, nil
 }
 
 // MintUpToCap mints min(requested, remaining supply capacity) into the

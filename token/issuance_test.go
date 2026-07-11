@@ -20,7 +20,7 @@ func newIssuanceBank(supply math.Int) *issuanceBank {
 }
 
 func (bank *issuanceBank) GetSupply(context.Context, string) sdk.Coin {
-	return NewCoin(bank.supply)
+	return sdk.Coin{Denom: BaseDenom, Amount: bank.supply}
 }
 
 func (bank *issuanceBank) MintCoins(_ context.Context, moduleName string, amounts sdk.Coins) error {
@@ -108,11 +108,32 @@ func TestIssuanceServiceRejectsInvalidAndFailedOperations(t *testing.T) {
 	if _, err := service.MintUpToCap(context.Background(), math.OneInt()); err == nil {
 		t.Fatal("expected bank mint failure")
 	}
+	if err := service.Burn(context.Background(), math.OneInt()); err == nil {
+		t.Fatal("expected bank burn failure")
+	}
 	overCap := newIssuanceBank(MaxSupply().AddRaw(1))
 	if _, err := NewIssuanceService(overCap, "rewards").MintUpToCap(context.Background(), math.OneInt()); err == nil {
 		t.Fatal("expected over-cap canonical supply rejection")
 	}
 	if _, err := NewIssuanceService(overCap, "rewards").MintUpToCap(context.Background(), math.ZeroInt()); err == nil {
 		t.Fatal("expected over-cap rejection even without a new reward")
+	}
+}
+
+func TestIssuanceServiceRejectsMissingBankAndInvalidSupply(t *testing.T) {
+	missingBank := NewIssuanceService(nil, "rewards")
+	if _, err := missingBank.Supply(context.Background()); err == nil {
+		t.Fatal("expected missing bank rejection")
+	}
+	if _, err := missingBank.MintUpToCap(context.Background(), math.OneInt()); err == nil {
+		t.Fatal("expected mint without bank rejection")
+	}
+	if err := missingBank.Burn(context.Background(), math.OneInt()); err == nil {
+		t.Fatal("expected burn without bank rejection")
+	}
+
+	negativeSupply := newIssuanceBank(math.NewInt(-1))
+	if _, err := NewIssuanceService(negativeSupply, "rewards").Supply(context.Background()); err == nil {
+		t.Fatal("expected negative canonical supply rejection")
 	}
 }

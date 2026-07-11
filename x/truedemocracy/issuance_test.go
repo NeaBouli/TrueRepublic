@@ -91,6 +91,45 @@ func TestStakingMintFailureRollsBackClaimsAndTimer(t *testing.T) {
 	}
 }
 
+func TestEndBlockDomainMintFailureRollsBackRewardClaimsAndTimers(t *testing.T) {
+	keeper, ctx := setupKeeper(t)
+	setupDomainWithValidator(t, keeper, ctx)
+	domain, _ := keeper.GetDomain(ctx, "TestDomain")
+	domain.TotalPayouts = 100_000 * PNYXUnit
+	saveDomain(t, keeper, ctx, domain)
+	initializeRewardTimers(keeper, ctx)
+	bank := backExistingEscrow(&keeper, ctx)
+	bank.failMintAt = 2
+	initialTime := ctx.BlockTime().Unix()
+
+	rewardCtx := ctx.WithBlockTime(ctx.BlockTime().Add(time.Duration(RewardInterval) * time.Second))
+	module := NewAppModule(keeper.cdc, keeper)
+	if _, err := module.EndBlock(rewardCtx); err == nil {
+		t.Fatal("expected second issuance call to fail")
+	}
+
+	validator, _ := keeper.GetValidator(ctx, "oper1")
+	if got := validator.Stake.AmountOf(PNYXDenom); !got.Equal(math.NewInt(rewards.StakeMin)) {
+		t.Fatalf("failed reward phase changed validator claim: %s", got)
+	}
+	afterDomain, _ := keeper.GetDomain(ctx, "TestDomain")
+	if !afterDomain.Treasury.Equal(domain.Treasury) {
+		t.Fatalf("failed reward phase changed domain claim: %s", afterDomain.Treasury)
+	}
+
+	store := ctx.KVStore(keeper.StoreKey)
+	for _, key := range [][]byte{[]byte("pod:last-reward-time"), []byte("dom:last-interest-time")} {
+		var storedTime int64
+		keeper.cdc.MustUnmarshalLengthPrefixed(store.Get(key), &storedTime)
+		if storedTime != initialTime {
+			t.Fatalf("failed reward phase advanced %s to %d", key, storedTime)
+		}
+	}
+	if store.Has(domainPayoutSnapshotKey("TestDomain")) {
+		t.Fatal("failed reward phase committed domain payout snapshot")
+	}
+}
+
 func TestDomainInterestUsesOnlyNewIntervalPayouts(t *testing.T) {
 	keeper, ctx := setupKeeper(t)
 	keeper.CreateDomain(ctx, "Interval", sdk.AccAddress("admin"), sdk.NewCoins(sdk.NewInt64Coin(PNYXDenom, 500_000*PNYXUnit)))

@@ -21,6 +21,8 @@ type mockBankKeeper struct {
 	failAccountToModule bool
 	failModuleToAccount bool
 	failMint            bool
+	failMintAt          int
+	mintCalls           int
 	failBurn            bool
 	burned              sdk.Coins
 }
@@ -86,7 +88,8 @@ func (m *mockBankKeeper) GetSupply(_ context.Context, denom string) sdk.Coin {
 }
 
 func (m *mockBankKeeper) MintCoins(_ context.Context, moduleName string, amounts sdk.Coins) error {
-	if m.failMint {
+	m.mintCalls++
+	if m.failMint || (m.failMintAt > 0 && m.mintCalls == m.failMintAt) {
 		return fmt.Errorf("injected mint failure")
 	}
 	m.modules[moduleName] = m.modules[moduleName].Add(amounts...)
