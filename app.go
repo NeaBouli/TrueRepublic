@@ -3,13 +3,11 @@ package main
 import (
 	"context"
 	"encoding/json"
-	"os"
 	"strings"
 
 	"cosmossdk.io/log"
 	storetypes "cosmossdk.io/store/types"
 	dbm "github.com/cosmos/cosmos-db"
-	"github.com/spf13/cobra"
 
 	wasm "github.com/CosmWasm/wasmd/x/wasm"
 	wasmkeeper "github.com/CosmWasm/wasmd/x/wasm/keeper"
@@ -18,7 +16,6 @@ import (
 	abci "github.com/cometbft/cometbft/abci/types"
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/client"
-	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdkaddress "github.com/cosmos/cosmos-sdk/codec/address"
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
@@ -33,6 +30,9 @@ import (
 	bank "github.com/cosmos/cosmos-sdk/x/bank"
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
+	consensus "github.com/cosmos/cosmos-sdk/x/consensus"
+	consensusparamkeeper "github.com/cosmos/cosmos-sdk/x/consensus/keeper"
+	consensusparamtypes "github.com/cosmos/cosmos-sdk/x/consensus/types"
 	crisis "github.com/cosmos/cosmos-sdk/x/crisis"
 	crisiskeeper "github.com/cosmos/cosmos-sdk/x/crisis/keeper"
 	crisistypes "github.com/cosmos/cosmos-sdk/x/crisis/types"
@@ -73,6 +73,7 @@ var ModuleBasics = module.NewBasicManager(
 	auth.AppModuleBasic{},
 	bank.AppModuleBasic{},
 	crisis.AppModuleBasic{},
+	consensus.AppModuleBasic{},
 	capability.AppModuleBasic{},
 	ibc.AppModuleBasic{},
 	transfer.AppModuleBasic{},
@@ -83,28 +84,29 @@ var ModuleBasics = module.NewBasicManager(
 
 type TrueRepublicApp struct {
 	*baseapp.BaseApp
-	mm             *module.Manager
-	cdc            *codec.LegacyAmino
-	appCodec       codec.Codec
-	txConfig       client.TxConfig
-	keys           map[string]*storetypes.KVStoreKey
-	tkeys          map[string]*storetypes.TransientStoreKey
-	memKeys        map[string]*storetypes.MemoryStoreKey
-	paramsKeeper   paramskeeper.Keeper
-	accountKeeper  authkeeper.AccountKeeper
-	bankKeeper     bankkeeper.BaseKeeper
-	crisisKeeper   *crisiskeeper.Keeper
-	capKeeper      *capabilitykeeper.Keeper
-	ibcKeeper      *ibckeeper.Keeper
-	transferKeeper transferkeeper.Keeper
-	wasmKeeper     wasmkeeper.Keeper
-	tdKeeper       truedemocracy.Keeper
-	dexKeeper      dex.Keeper
-	tdModule       truedemocracy.AppModule
-	dexModule      dex.AppModule
+	mm              *module.Manager
+	cdc             *codec.LegacyAmino
+	appCodec        codec.Codec
+	txConfig        client.TxConfig
+	keys            map[string]*storetypes.KVStoreKey
+	tkeys           map[string]*storetypes.TransientStoreKey
+	memKeys         map[string]*storetypes.MemoryStoreKey
+	paramsKeeper    paramskeeper.Keeper
+	accountKeeper   authkeeper.AccountKeeper
+	bankKeeper      bankkeeper.BaseKeeper
+	crisisKeeper    *crisiskeeper.Keeper
+	consensusKeeper consensusparamkeeper.Keeper
+	capKeeper       *capabilitykeeper.Keeper
+	ibcKeeper       *ibckeeper.Keeper
+	transferKeeper  transferkeeper.Keeper
+	wasmKeeper      wasmkeeper.Keeper
+	tdKeeper        truedemocracy.Keeper
+	dexKeeper       dex.Keeper
+	tdModule        truedemocracy.AppModule
+	dexModule       dex.AppModule
 }
 
-func NewTrueRepublicApp(logger log.Logger, db dbm.DB, homeDir string) *TrueRepublicApp {
+func NewTrueRepublicApp(logger log.Logger, db dbm.DB, homeDir string, baseAppOptions ...func(*baseapp.BaseApp)) *TrueRepublicApp {
 	cdc := makeAminoCodec()
 
 	interfaceRegistry := codectypes.NewInterfaceRegistry()
@@ -115,9 +117,10 @@ func NewTrueRepublicApp(logger log.Logger, db dbm.DB, homeDir string) *TrueRepub
 
 	// Store keys: KV, transient, and memory stores.
 	keys := storetypes.NewKVStoreKeys(
-		authtypes.StoreKey,       // "acc"
-		banktypes.StoreKey,       // "bank"
-		crisistypes.StoreKey,     // "crisis"
+		authtypes.StoreKey,   // "acc"
+		banktypes.StoreKey,   // "bank"
+		crisistypes.StoreKey, // "crisis"
+		consensusparamtypes.StoreKey,
 		paramstypes.StoreKey,     // "params"
 		capabilitytypes.StoreKey, // "capability"
 		ibcexported.StoreKey,     // "ibc"
@@ -130,7 +133,7 @@ func NewTrueRepublicApp(logger log.Logger, db dbm.DB, homeDir string) *TrueRepub
 	memKeys := storetypes.NewMemoryStoreKeys(capabilitytypes.MemStoreKey)
 
 	app := &TrueRepublicApp{
-		BaseApp:  baseapp.NewBaseApp("TrueRepublic", logger, db, txCfg.TxDecoder()),
+		BaseApp:  baseapp.NewBaseApp("TrueRepublic", logger, db, txCfg.TxDecoder(), baseAppOptions...),
 		cdc:      cdc,
 		appCodec: appCodec,
 		txConfig: txCfg,
@@ -152,6 +155,13 @@ func NewTrueRepublicApp(logger log.Logger, db dbm.DB, homeDir string) *TrueRepub
 	)
 	app.paramsKeeper.Subspace(ibcexported.ModuleName)
 	app.paramsKeeper.Subspace(transfertypes.ModuleName)
+	app.consensusKeeper = consensusparamkeeper.NewKeeper(
+		appCodec,
+		runtime.NewKVStoreService(keys[consensusparamtypes.StoreKey]),
+		authority,
+		runtime.EventService{},
+	)
+	app.SetParamStore(app.consensusKeeper.ParamsStore)
 
 	// --- Account keeper ---
 	accountAddressCodec := sdkaddress.NewBech32Codec(sdk.GetConfig().GetBech32AccountAddrPrefix())
@@ -271,6 +281,7 @@ func NewTrueRepublicApp(logger log.Logger, db dbm.DB, homeDir string) *TrueRepub
 	authModule := auth.NewAppModule(appCodec, app.accountKeeper, nil, nil)
 	bankModule := bank.NewAppModule(appCodec, app.bankKeeper, app.accountKeeper, nil)
 	crisisModule := crisis.NewAppModule(app.crisisKeeper, false, nil)
+	consensusModule := consensus.NewAppModule(appCodec, app.consensusKeeper)
 	capModule := capability.NewAppModule(appCodec, *app.capKeeper, false)
 	ibcModule := ibc.NewAppModule(app.ibcKeeper)
 	transferModule := transfer.NewAppModule(app.transferKeeper)
@@ -280,6 +291,7 @@ func NewTrueRepublicApp(logger log.Logger, db dbm.DB, homeDir string) *TrueRepub
 		authModule,
 		bankModule,
 		crisisModule,
+		consensusModule,
 		capModule,
 		ibcModule,
 		transferModule,
@@ -293,6 +305,7 @@ func NewTrueRepublicApp(logger log.Logger, db dbm.DB, homeDir string) *TrueRepub
 		capabilitytypes.ModuleName,
 		authtypes.ModuleName,
 		banktypes.ModuleName,
+		consensusparamtypes.ModuleName,
 		ibcexported.ModuleName,
 		transfertypes.ModuleName,
 		wasmtypes.ModuleName,
@@ -413,6 +426,11 @@ func (app *TrueRepublicApp) InitChainer(ctx sdk.Context, req *abci.RequestInitCh
 	if err := validateLedgerGenesis(app.appCodec, genesisState); err != nil {
 		return nil, err
 	}
+	// The legacy x/params store backs IBC subspaces but has no module genesis
+	// writer in this PoD app. Persist a version marker so an otherwise empty
+	// IAVL store can be reopened at the committed root-store version.
+	paramsStore := ctx.KVStore(app.keys[paramstypes.StoreKey])
+	paramsStore.Set([]byte("truerepublic:params-store-version"), []byte{1})
 
 	return app.mm.InitGenesis(ctx, app.appCodec, genesisState)
 }
@@ -443,79 +461,5 @@ func makeAminoCodec() *codec.LegacyAmino {
 }
 
 func main() {
-	cdc := makeAminoCodec()
-
-	interfaceRegistry := codectypes.NewInterfaceRegistry()
-	ModuleBasics.RegisterInterfaces(interfaceRegistry)
-	appCodec := codec.NewProtoCodec(interfaceRegistry)
-
-	txCfg := authtx.NewTxConfig(appCodec, []signingtypes.SignMode{signingtypes.SignMode_SIGN_MODE_DIRECT})
-
-	initClientCtx := client.Context{}.
-		WithCodec(appCodec).
-		WithLegacyAmino(cdc).
-		WithTxConfig(txCfg)
-
-	rootCmd := &cobra.Command{
-		Use:     "truerepublicd",
-		Short:   "TrueRepublic blockchain daemon and CLI",
-		Version: version,
-		PersistentPreRunE: func(cmd *cobra.Command, _ []string) error {
-			ctx, err := client.ReadPersistentCommandFlags(initClientCtx, cmd.Flags())
-			if err != nil {
-				return err
-			}
-			return client.SetCmdClientContext(cmd, ctx)
-		},
-	}
-
-	rootCmd.PersistentFlags().String(flags.FlagChainID, "truerepublic-1", "Chain ID")
-	rootCmd.PersistentFlags().String(flags.FlagNode, "tcp://localhost:26657", "RPC endpoint")
-	rootCmd.PersistentFlags().String(flags.FlagKeyringBackend, "test", "Keyring backend")
-	rootCmd.PersistentFlags().String(flags.FlagHome, os.ExpandEnv("$HOME/.truerepublic"), "Home directory")
-	rootCmd.PersistentFlags().String(flags.FlagOutput, "text", "Output format (text|json)")
-
-	// Transaction commands.
-	txCmd := &cobra.Command{
-		Use:                        "tx",
-		Short:                      "Transaction commands",
-		DisableFlagParsing:         false,
-		SuggestionsMinimumDistance: 2,
-		RunE:                       client.ValidateCmd,
-	}
-	txCmd.AddCommand(truedemocracy.GetTxCmd())
-	txCmd.AddCommand(dex.GetTxCmd())
-	rootCmd.AddCommand(txCmd)
-
-	// Query commands.
-	queryCmd := &cobra.Command{
-		Use:                        "query",
-		Short:                      "Query commands",
-		Aliases:                    []string{"q"},
-		DisableFlagParsing:         false,
-		SuggestionsMinimumDistance: 2,
-		RunE:                       client.ValidateCmd,
-	}
-	queryCmd.AddCommand(truedemocracy.GetQueryCmd(cdc))
-	queryCmd.AddCommand(dex.GetQueryCmd(cdc))
-	rootCmd.AddCommand(queryCmd)
-
-	// Start command.
-	rootCmd.AddCommand(&cobra.Command{
-		Use:   "start",
-		Short: "Start the TrueRepublic node",
-		RunE: func(cmd *cobra.Command, args []string) error {
-			homeDir := os.ExpandEnv("$HOME/.truerepublic")
-			logger := log.NewLogger(os.Stdout)
-			db := dbm.NewMemDB()
-			app := NewTrueRepublicApp(logger, db, homeDir)
-			_ = app
-			logger.Info("TrueRepublic v0.1-alpha started")
-			select {}
-		},
-	})
-
-	if err := rootCmd.Execute(); err != nil {
-		os.Exit(1)
-	}
+	executeRootCommand(newRootCmd())
 }

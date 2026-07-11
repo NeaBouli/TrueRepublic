@@ -10,6 +10,7 @@ import (
 	abci "github.com/cometbft/cometbft/abci/types"
 	cryptoproto "github.com/cometbft/cometbft/proto/tendermint/crypto"
 	cmtproto "github.com/cometbft/cometbft/proto/tendermint/types"
+	cmttypes "github.com/cometbft/cometbft/types"
 	dbm "github.com/cosmos/cosmos-db"
 	"github.com/cosmos/cosmos-sdk/crypto/keys/ed25519"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -112,11 +113,13 @@ func initGenesisApp(app *TrueRepublicApp, state map[string]json.RawMessage) erro
 			Power:  1,
 		})
 	}
+	consensusParams := cmttypes.DefaultConsensusParams().ToProto()
 	_, err = app.InitChain(&abci.RequestInitChain{
-		ChainId:       "",
-		Time:          time.Date(2026, 7, 11, 0, 0, 0, 0, time.UTC),
-		AppStateBytes: bz,
-		Validators:    validators,
+		ChainId:         "",
+		Time:            time.Date(2026, 7, 11, 0, 0, 0, 0, time.UTC),
+		AppStateBytes:   bz,
+		Validators:      validators,
+		ConsensusParams: &consensusParams,
 	})
 	return err
 }
@@ -325,6 +328,47 @@ func TestFullAppGenesisExportImportPreservesSupplyAndCustody(t *testing.T) {
 		t.Fatalf("canonical supply changed across export/import: before=%s after=%s", supplyBefore, supplyAfter)
 	}
 	restored.crisisKeeper.AssertInvariants(restoredCtx)
+}
+
+func TestPersistentAppReopensAndContinuesAtNextHeight(t *testing.T) {
+	dbDir := t.TempDir()
+	db, err := dbm.NewDB("application", dbm.GoLevelDBBackend, dbDir)
+	if err != nil {
+		t.Fatal(err)
+	}
+	app := NewTrueRepublicApp(log.NewNopLogger(), db, t.TempDir())
+	if err := initGenesisApp(app, defaultGenesisForApp(app)); err != nil {
+		t.Fatal(err)
+	}
+	blockTime := time.Date(2026, 7, 11, 0, 0, 1, 0, time.UTC)
+	if _, err := app.FinalizeBlock(&abci.RequestFinalizeBlock{Height: 1, Time: blockTime}); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := app.Commit(); err != nil {
+		t.Fatal(err)
+	}
+	if err := app.Close(); err != nil {
+		t.Fatal(err)
+	}
+
+	reopenedDB, err := dbm.NewDB("application", dbm.GoLevelDBBackend, dbDir)
+	if err != nil {
+		t.Fatal(err)
+	}
+	reopened := NewTrueRepublicApp(log.NewNopLogger(), reopenedDB, t.TempDir())
+	t.Cleanup(func() { _ = reopened.Close() })
+	if got := reopened.LastBlockHeight(); got != 1 {
+		t.Fatalf("reopened height = %d, want 1", got)
+	}
+	if _, err := reopened.FinalizeBlock(&abci.RequestFinalizeBlock{Height: 2, Time: blockTime.Add(time.Second)}); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := reopened.Commit(); err != nil {
+		t.Fatal(err)
+	}
+	if got := reopened.LastBlockHeight(); got != 2 {
+		t.Fatalf("continued height = %d, want 2", got)
+	}
 }
 
 func requireInvariantPanic(t *testing.T, app *TrueRepublicApp, ctx sdk.Context) {
