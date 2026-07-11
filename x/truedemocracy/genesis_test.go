@@ -115,11 +115,8 @@ func TestExportGenesisContainsValidators(t *testing.T) {
 func TestExportGenesisContainsVK(t *testing.T) {
 	am, k, ctx := setupModuleForGenesis(t)
 
-	// Initialize the verifying key.
-	_, err := k.EnsureVerifyingKey(ctx)
-	if err != nil {
-		t.Fatalf("EnsureVerifyingKey failed: %v", err)
-	}
+	// Install the consensus-configured verifying key.
+	setTestVerifyingKey(t, k, ctx)
 
 	exported := am.ExportGenesis(ctx, nil)
 	var genesis GenesisState
@@ -162,10 +159,7 @@ func TestExportGenesisNoVKWhenNotInitialized(t *testing.T) {
 func TestInitGenesisWithVK(t *testing.T) {
 	// Setup first module instance and generate VK.
 	_, k1, ctx1 := setupModuleForGenesis(t)
-	vkBytes1, err := k1.EnsureVerifyingKey(ctx1)
-	if err != nil {
-		t.Fatalf("EnsureVerifyingKey failed: %v", err)
-	}
+	vkBytes1 := setTestVerifyingKey(t, k1, ctx1)
 	vkHex := hex.EncodeToString(vkBytes1)
 
 	// Create a new module instance and InitGenesis with VK.
@@ -237,10 +231,7 @@ func TestGenesisRoundTrip(t *testing.T) {
 	k1.RegisterValidator(ctx1, "validator1", pubKey, stake, "RoundTripDomain")
 
 	// Initialize VK.
-	_, err := k1.EnsureVerifyingKey(ctx1)
-	if err != nil {
-		t.Fatalf("EnsureVerifyingKey failed: %v", err)
-	}
+	setTestVerifyingKey(t, k1, ctx1)
 
 	// Export.
 	exported := am1.ExportGenesis(ctx1, nil)
@@ -277,7 +268,7 @@ func TestGenesisRoundTrip(t *testing.T) {
 	}
 
 	// Verify VK can be deserialized.
-	_, err = DeserializeVerifyingKey(vkBytes)
+	_, err := DeserializeVerifyingKey(vkBytes)
 	if err != nil {
 		t.Fatalf("DeserializeVerifyingKey failed after round-trip: %v", err)
 	}

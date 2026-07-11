@@ -5,6 +5,7 @@ import (
 	"math/big"
 	"testing"
 
+	"github.com/consensys/gnark-crypto/ecc"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
@@ -36,6 +37,22 @@ func TestRegisterIdentityCommitment(t *testing.T) {
 	}
 	if domain.MerkleRoot == "" {
 		t.Fatal("MerkleRoot should be set after registration")
+	}
+}
+
+func TestRegisterIdentityCommitmentRejectsNonCanonicalFieldElement(t *testing.T) {
+	k, ctx := setupKeeper(t)
+	admin := sdk.AccAddress("admin1")
+	k.CreateDomain(ctx, "ZKPDomain", admin, sdk.NewCoins(sdk.NewInt64Coin(PNYXDenom, 500_000)))
+	k.AddMember(ctx, "ZKPDomain", "alice", admin)
+
+	nonCanonical := hex.EncodeToString(ecc.BN254.ScalarField().FillBytes(make([]byte, 32)))
+	if err := k.RegisterIdentityCommitment(ctx, "ZKPDomain", "alice", nonCanonical); err == nil {
+		t.Fatal("field modulus is not a canonical BN254 field element")
+	}
+	domain, _ := k.GetDomain(ctx, "ZKPDomain")
+	if len(domain.IdentityCommits) != 0 {
+		t.Fatal("non-canonical commitment mutated identity set")
 	}
 }
 

@@ -254,25 +254,14 @@ func (k Keeper) SetVerifyingKey(ctx sdk.Context, vkBytes []byte) {
 	store.Set([]byte("zkp:verifying-key"), vkBytes)
 }
 
-// EnsureVerifyingKey returns the Groth16 verifying key, lazily initializing
-// it on first use. For v0.3.0-dev (single-node testnet). Multi-node
-// production requires a genesis-time VK or trusted setup ceremony.
+// EnsureVerifyingKey returns the consensus-configured Groth16 verifying key.
+// Setup must never run in transaction execution: Groth16 setup is randomized
+// and would let validators derive different consensus state.
 func (k Keeper) EnsureVerifyingKey(ctx sdk.Context) ([]byte, error) {
 	if vkBytes, found := k.GetVerifyingKey(ctx); found {
 		return vkBytes, nil
 	}
-
-	// First use — run circuit setup and store the VK.
-	keys, err := SetupMembershipCircuit()
-	if err != nil {
-		return nil, fmt.Errorf("ZKP circuit setup failed: %w", err)
-	}
-	vkBytes, err := SerializeVerifyingKey(keys.VerifyingKey)
-	if err != nil {
-		return nil, fmt.Errorf("verifying key serialization failed: %w", err)
-	}
-	k.SetVerifyingKey(ctx, vkBytes)
-	return vkBytes, nil
+	return nil, errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "ZKP verifying key is not configured in genesis")
 }
 
 // ---------- ZKP Identity Commitments (v0.3.0) ----------
@@ -299,11 +288,12 @@ func (k Keeper) RegisterIdentityCommitment(ctx sdk.Context, domainName, memberAd
 		return errorsmod.Wrap(sdkerrors.ErrUnauthorized, "only domain members can register identity commitments")
 	}
 
-	// Validate commitment hex (must be 64 hex chars = 32 bytes).
-	commitBytes, err := hex.DecodeString(commitmentHex)
-	if err != nil || len(commitBytes) != 32 {
+	// Validate canonical BN254 field encoding (exactly 32 bytes on-chain).
+	commitBytes, err := HexToFieldElement(commitmentHex)
+	if err != nil || len(commitmentHex) != 64 {
 		return errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "commitment must be 32 bytes hex-encoded (64 hex chars)")
 	}
+	commitmentHex = hex.EncodeToString(commitBytes)
 
 	// Check for duplicate commitment.
 	for _, existing := range domain.IdentityCommits {

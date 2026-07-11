@@ -22,6 +22,7 @@ type MembershipCircuit struct {
 	MerkleRoot        frontend.Variable `gnark:",public"`
 	NullifierHash     frontend.Variable `gnark:",public"`
 	ExternalNullifier frontend.Variable `gnark:",public"`
+	SignalHash        frontend.Variable `gnark:",public"`
 
 	// Private inputs (known only to prover).
 	IdentitySecret frontend.Variable
@@ -34,7 +35,8 @@ type MembershipCircuit struct {
 // 2. Merkle path from commitment to root
 // 3. nullifier = MiMC(identitySecret, externalNullifier)
 // 4. nullifier == NullifierHash
-// 5. All PathIndices are boolean
+// 5. SignalHash is a non-zero public input bound to the proof
+// 6. All PathIndices are boolean
 func (c *MembershipCircuit) Define(api frontend.API) error {
 	// 1. Compute commitment = MiMC(identitySecret).
 	commitHasher, err := mimc.NewMiMC(api)
@@ -73,6 +75,11 @@ func (c *MembershipCircuit) Define(api frontend.API) error {
 
 	// 4. Assert nullifier matches public input.
 	api.AssertIsEqual(nullifier, c.NullifierHash)
+
+	// 5. SignalHash is deliberately independent from the nullifier so a voter
+	// keeps one stable nullifier per suggestion while the proof is still bound
+	// to the exact rating being submitted.
+	api.AssertIsDifferent(c.SignalHash, 0)
 
 	return nil
 }
@@ -121,6 +128,20 @@ func GenerateMembershipProof(
 	pathIndices []int,
 	externalNullifier []byte,
 ) (proofBytes []byte, nullifierHash []byte, err error) {
+	return GenerateMembershipProofForSignal(keys, identitySecret, merkleRoot, siblings, pathIndices, externalNullifier, externalNullifier)
+}
+
+// GenerateMembershipProofForSignal creates a membership proof bound to a
+// distinct public signal (for ratings, the chain-scoped vote and value).
+func GenerateMembershipProofForSignal(
+	keys *ZKPKeys,
+	identitySecret []byte,
+	merkleRoot []byte,
+	siblings [][]byte,
+	pathIndices []int,
+	externalNullifier []byte,
+	signalHash []byte,
+) (proofBytes []byte, nullifierHash []byte, err error) {
 	if len(siblings) != MerkleTreeDepth || len(pathIndices) != MerkleTreeDepth {
 		return nil, nil, fmt.Errorf("siblings and pathIndices must have length %d", MerkleTreeDepth)
 	}
@@ -136,6 +157,7 @@ func GenerateMembershipProof(
 		MerkleRoot:        new(big.Int).SetBytes(merkleRoot),
 		NullifierHash:     new(big.Int).SetBytes(nullifierHash),
 		ExternalNullifier: new(big.Int).SetBytes(externalNullifier),
+		SignalHash:        new(big.Int).SetBytes(signalHash),
 		IdentitySecret:    new(big.Int).SetBytes(identitySecret),
 	}
 	for i := 0; i < MerkleTreeDepth; i++ {
@@ -170,6 +192,19 @@ func VerifyMembershipProof(
 	nullifierHash []byte,
 	externalNullifier []byte,
 ) error {
+	return VerifyMembershipProofForSignal(vk, proofBytes, merkleRoot, nullifierHash, externalNullifier, externalNullifier)
+}
+
+// VerifyMembershipProofForSignal verifies membership and the exact public
+// signal to which the proof was bound.
+func VerifyMembershipProofForSignal(
+	vk groth16.VerifyingKey,
+	proofBytes []byte,
+	merkleRoot []byte,
+	nullifierHash []byte,
+	externalNullifier []byte,
+	signalHash []byte,
+) error {
 	proof, err := DeserializeProof(proofBytes)
 	if err != nil {
 		return fmt.Errorf("proof deserialization failed: %w", err)
@@ -180,6 +215,7 @@ func VerifyMembershipProof(
 		MerkleRoot:        new(big.Int).SetBytes(merkleRoot),
 		NullifierHash:     new(big.Int).SetBytes(nullifierHash),
 		ExternalNullifier: new(big.Int).SetBytes(externalNullifier),
+		SignalHash:        new(big.Int).SetBytes(signalHash),
 	}
 	publicWitness, err := frontend.NewWitness(&publicAssignment, ecc.BN254.ScalarField(),
 		frontend.PublicOnly())

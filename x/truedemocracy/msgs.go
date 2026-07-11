@@ -359,6 +359,9 @@ func (m MsgRateProposal) Route() string                { return ModuleName }
 func (m MsgRateProposal) Type() string                 { return "rate_proposal" }
 func (m MsgRateProposal) GetSigners() []sdk.AccAddress { return []sdk.AccAddress{m.Sender} }
 func (m MsgRateProposal) ValidateBasic() error {
+	if m.Sender.Empty() {
+		return sdkerrors.ErrInvalidAddress.Wrap("sender address is required")
+	}
 	if m.DomainName == "" || m.IssueName == "" || m.SuggestionName == "" {
 		return sdkerrors.ErrInvalidRequest.Wrap("domain_name, issue_name, and suggestion_name are required")
 	}
@@ -391,6 +394,9 @@ func (m MsgRateWithProof) Route() string                { return ModuleName }
 func (m MsgRateWithProof) Type() string                 { return "rate_with_proof" }
 func (m MsgRateWithProof) GetSigners() []sdk.AccAddress { return []sdk.AccAddress{m.Sender} }
 func (m MsgRateWithProof) ValidateBasic() error {
+	if m.Sender.Empty() {
+		return sdkerrors.ErrInvalidAddress.Wrap("sender address is required")
+	}
 	if m.DomainName == "" || m.IssueName == "" || m.SuggestionName == "" {
 		return sdkerrors.ErrInvalidRequest.Wrap("domain_name, issue_name, and suggestion_name are required")
 	}

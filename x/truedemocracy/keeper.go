@@ -3,7 +3,6 @@ package truedemocracy
 import (
 	"context"
 	"encoding/hex"
-	"fmt"
 
 	errorsmod "cosmossdk.io/errors"
 	storetypes "cosmossdk.io/store/types"
@@ -190,7 +189,7 @@ func (k Keeper) RateProposal(ctx sdk.Context, domainName, issueName, suggestionN
 	}
 
 	// Sign the vote payload to prove key ownership.
-	payload := []byte(fmt.Sprintf("%s|%s|%s|%d", domainName, issueName, suggestionName, rating))
+	payload := encodeVoteContext(ctx.ChainID(), domainName, issueName, suggestionName, &rating)
 	sig, err := domainPrivKey.Sign(payload)
 	if err != nil {
 		return sdk.Coins{}, nil, errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "failed to sign vote payload")
@@ -268,7 +267,7 @@ func (k Keeper) RateProposalWithSignature(ctx sdk.Context, domainName, issueName
 	if err != nil {
 		return sdk.Coins{}, errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "invalid signature hex")
 	}
-	payload := []byte(fmt.Sprintf("%s|%s|%s|%d", domainName, issueName, suggestionName, rating))
+	payload := encodeVoteContext(ctx.ChainID(), domainName, issueName, suggestionName, &rating)
 	if !pubKey.VerifySignature(payload, sigBytes) {
 		return sdk.Coins{}, errorsmod.Wrap(sdkerrors.ErrUnauthorized, "signature verification failed")
 	}
@@ -351,22 +350,21 @@ func (k Keeper) RateProposalWithZKP(ctx sdk.Context, domainName, issueName, sugg
 		}
 		effectiveRoot = merkleRootHex
 	}
-	merkleRootBytes, err := hex.DecodeString(effectiveRoot)
+	merkleRootBytes, err := HexToFieldElement(effectiveRoot)
 	if err != nil {
-		return sdk.Coins{}, errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "invalid Merkle root hex")
+		return sdk.Coins{}, errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "invalid or non-canonical Merkle root")
 	}
 
 	// Decode and validate nullifier hash.
-	nullifierBytes, err := hex.DecodeString(nullifierHashHex)
-	if err != nil || len(nullifierBytes) != 32 {
+	nullifierBytes, err := HexToFieldElement(nullifierHashHex)
+	if err != nil || len(nullifierHashHex) != 64 {
 		return sdk.Coins{}, errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "nullifier hash must be 32 bytes hex-encoded (64 hex chars)")
 	}
+	nullifierHashHex = hex.EncodeToString(nullifierBytes)
 
 	// Compute external nullifier from voting context.
-	externalNullifier, err := ComputeExternalNullifier(domainName + "|" + issueName + "|" + suggestionName)
-	if err != nil {
-		return sdk.Coins{}, errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "failed to compute external nullifier")
-	}
+	externalNullifier := ComputeVoteNullifierScope(ctx.ChainID(), domainName, issueName, suggestionName)
+	signalHash := ComputeVoteSignal(ctx.ChainID(), domainName, issueName, suggestionName, rating)
 
 	// Decode proof.
 	proofBytes, err := hex.DecodeString(proofHex)
@@ -377,7 +375,7 @@ func (k Keeper) RateProposalWithZKP(ctx sdk.Context, domainName, issueName, sugg
 	// Get or initialize the verifying key.
 	vkBytes, err := k.EnsureVerifyingKey(ctx)
 	if err != nil {
-		return sdk.Coins{}, errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "failed to initialize verifying key: "+err.Error())
+		return sdk.Coins{}, errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "failed to load verifying key: "+err.Error())
 	}
 	vk, err := DeserializeVerifyingKey(vkBytes)
 	if err != nil {
@@ -385,7 +383,7 @@ func (k Keeper) RateProposalWithZKP(ctx sdk.Context, domainName, issueName, sugg
 	}
 
 	// Verify the Groth16 membership proof.
-	if err := VerifyMembershipProof(vk, proofBytes, merkleRootBytes, nullifierBytes, externalNullifier); err != nil {
+	if err := VerifyMembershipProofForSignal(vk, proofBytes, merkleRootBytes, nullifierBytes, externalNullifier, signalHash); err != nil {
 		return sdk.Coins{}, errorsmod.Wrap(sdkerrors.ErrUnauthorized, "ZKP membership proof verification failed: "+err.Error())
 	}
 

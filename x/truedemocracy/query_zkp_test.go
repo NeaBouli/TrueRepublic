@@ -16,7 +16,7 @@ func TestQueryNullifierUsed(t *testing.T) {
 	secrets := setupDomainWithZKPIdentity(t, k, ctx, "ZKPDomain", 3)
 	addProposal(t, k, ctx, "ZKPDomain", "Climate", "GreenDeal")
 
-	proofHex, nullifierHex := generateZKPRating(t, k, ctx, "ZKPDomain", secrets, 0, "Climate", "GreenDeal")
+	proofHex, nullifierHex := generateZKPRating(t, k, ctx, "ZKPDomain", secrets, 0, "Climate", "GreenDeal", 3)
 	_, err := k.RateProposalWithZKP(ctx, "ZKPDomain", "Climate", "GreenDeal", 3, proofHex, nullifierHex, "")
 	if err != nil {
 		t.Fatalf("rating failed: %v", err)
