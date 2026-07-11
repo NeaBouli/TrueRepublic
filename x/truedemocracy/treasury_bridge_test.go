@@ -17,6 +17,8 @@ type mockBankKeeper struct {
 	modules             map[string]sdk.Coins // module name → balances
 	failAccountToModule bool
 	failModuleToAccount bool
+	failBurn            bool
+	burned              sdk.Coins
 }
 
 func newMockBankKeeper() *mockBankKeeper {
@@ -63,6 +65,21 @@ func (m *mockBankKeeper) SendCoinsFromModuleToAccount(_ context.Context, senderM
 	m.modules[senderModule] = bal.Sub(amt...)
 	key := recipientAddr.String()
 	m.accounts[key] = m.accounts[key].Add(amt...)
+	return nil
+}
+
+func (m *mockBankKeeper) BurnCoins(_ context.Context, moduleName string, amt sdk.Coins) error {
+	if m.failBurn {
+		return fmt.Errorf("injected burn failure")
+	}
+	bal := m.modules[moduleName]
+	for _, coin := range amt {
+		if bal.AmountOf(coin.Denom).LT(coin.Amount) {
+			return fmt.Errorf("insufficient module funds to burn: %s < %s", bal.AmountOf(coin.Denom), coin.Amount)
+		}
+	}
+	m.modules[moduleName] = bal.Sub(amt...)
+	m.burned = m.burned.Add(amt...)
 	return nil
 }
 

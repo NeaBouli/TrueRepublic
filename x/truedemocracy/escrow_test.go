@@ -194,7 +194,7 @@ func TestEscrowPayoutFailureRollsBackCustomState(t *testing.T) {
 	}
 }
 
-func TestSlashReallocatesEscrowClaimToDomainTreasury(t *testing.T) {
+func TestSlashBurnsEscrowAndPreservesParity(t *testing.T) {
 	keeper, ctx, bank := setupKeeperWithBank(t)
 	admin := sdk.AccAddress("slash-admin")
 	initial := int64(500_000 * PNYXUnit)
@@ -214,11 +214,45 @@ func TestSlashReallocatesEscrowClaimToDomainTreasury(t *testing.T) {
 	validator, _ := keeper.GetValidator(ctx, admin.String())
 	penalty := stake - validator.Stake.AmountOf(PNYXDenom).Int64()
 	domain, _ := keeper.GetDomain(ctx, "Slash")
-	if got := domain.Treasury.AmountOf(PNYXDenom).Int64(); got != initial+penalty {
-		t.Fatalf("slash proceeds treasury = %d, want %d", got, initial+penalty)
+	if got := domain.Treasury.AmountOf(PNYXDenom).Int64(); got != initial {
+		t.Fatalf("slash changed domain treasury to %d, want %d", got, initial)
+	}
+	if got := bank.burned.AmountOf(PNYXDenom).Int64(); got != penalty {
+		t.Fatalf("burned amount = %d, want penalty %d", got, penalty)
 	}
 	if err := keeper.ValidateEscrowParity(ctx); err != nil {
 		t.Fatalf("slash broke escrow parity: %v", err)
+	}
+}
+
+func TestSlashBurnFailureDoesNotChangeValidatorClaim(t *testing.T) {
+	keeper, ctx, bank := setupKeeperWithBank(t)
+	admin := sdk.AccAddress("slash-failure-admin")
+	initial := int64(500_000 * PNYXUnit)
+	stake := rewards.StakeMin
+	bank.fundAccount(admin, sdk.NewCoins(sdk.NewInt64Coin(PNYXDenom, initial+stake)))
+	if err := keeper.CreateDomainWithEscrow(ctx, "SlashFailure", admin, sdk.NewCoins(sdk.NewInt64Coin(PNYXDenom, initial))); err != nil {
+		t.Fatal(err)
+	}
+	pubKey := testPubKey("slash-failure-validator")
+	if err := keeper.RegisterValidatorWithEscrow(ctx, admin, admin.String(), pubKey, sdk.NewCoins(sdk.NewInt64Coin(PNYXDenom, stake)), "SlashFailure"); err != nil {
+		t.Fatal(err)
+	}
+
+	moduleBefore := moduleBalance(bank)
+	bank.failBurn = true
+	if err := keeper.HandleDoubleSign(ctx, pubKey); err == nil {
+		t.Fatal("expected injected slash burn failure")
+	}
+	validator, found := keeper.GetValidator(ctx, admin.String())
+	if !found || validator.Stake.AmountOf(PNYXDenom).Int64() != stake || validator.Jailed {
+		t.Fatal("failed slash burn changed validator state")
+	}
+	if moduleBalance(bank) != moduleBefore || !bank.burned.Empty() {
+		t.Fatal("failed slash burn changed bank accounting")
+	}
+	if err := keeper.ValidateEscrowParity(ctx); err != nil {
+		t.Fatalf("failed slash burn broke escrow parity: %v", err)
 	}
 }
 
@@ -235,6 +269,8 @@ func TestEscrowMessagesRejectInvalidCoinSetsAndSignerClaims(t *testing.T) {
 		{"validator mixed denom", &MsgRegisterValidator{Sender: sender, OperatorAddr: sender.String(), PubKey: "00", DomainName: "D", Stake: sdk.NewCoins(sdk.NewInt64Coin(PNYXDenom, 1), sdk.NewInt64Coin("atom", 1))}},
 		{"validator spoof", &MsgRegisterValidator{Sender: sender, OperatorAddr: "other", PubKey: "00", DomainName: "D", Stake: validCoin}},
 		{"voter spoof", &MsgCastElectionVote{Sender: sender, DomainName: "D", IssueName: "I", CandidateName: "C", VoterAddr: "other", Choice: 0}},
+		{"deposit without sender", &MsgDepositToDomain{DomainName: "D", Amount: validCoin[0]}},
+		{"withdrawal without sender", &MsgWithdrawFromDomain{DomainName: "D", Recipient: sender.String(), Amount: validCoin[0]}},
 	}
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {

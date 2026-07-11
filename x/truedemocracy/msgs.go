@@ -587,6 +587,9 @@ func (m MsgDepositToDomain) Route() string                { return ModuleName }
 func (m MsgDepositToDomain) Type() string                 { return "deposit_to_domain" }
 func (m MsgDepositToDomain) GetSigners() []sdk.AccAddress { return []sdk.AccAddress{m.Sender} }
 func (m MsgDepositToDomain) ValidateBasic() error {
+	if m.Sender.Empty() {
+		return sdkerrors.ErrInvalidAddress.Wrap("sender address is required")
+	}
 	if m.DomainName == "" {
 		return sdkerrors.ErrInvalidRequest.Wrap("domain_name is required")
 	}
@@ -615,6 +618,9 @@ func (m MsgWithdrawFromDomain) Route() string                { return ModuleName
 func (m MsgWithdrawFromDomain) Type() string                 { return "withdraw_from_domain" }
 func (m MsgWithdrawFromDomain) GetSigners() []sdk.AccAddress { return []sdk.AccAddress{m.Sender} }
 func (m MsgWithdrawFromDomain) ValidateBasic() error {
+	if m.Sender.Empty() {
+		return sdkerrors.ErrInvalidAddress.Wrap("sender address is required")
+	}
 	if m.DomainName == "" {
 		return sdkerrors.ErrInvalidRequest.Wrap("domain_name is required")
 	}

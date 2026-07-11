@@ -359,6 +359,7 @@ func CustomMessageEncoder() func(sender sdk.AccAddress, msg json.RawMessage) ([]
 		case customMsg.PlaceStoneOnIssue != nil:
 			m := customMsg.PlaceStoneOnIssue
 			return []sdk.Msg{&MsgPlaceStoneOnIssue{
+				Sender:     sender,
 				DomainName: m.DomainName,
 				IssueName:  m.IssueName,
 				MemberAddr: sender.String(),
@@ -367,6 +368,7 @@ func CustomMessageEncoder() func(sender sdk.AccAddress, msg json.RawMessage) ([]
 		case customMsg.PlaceStoneOnSuggestion != nil:
 			m := customMsg.PlaceStoneOnSuggestion
 			return []sdk.Msg{&MsgPlaceStoneOnSuggestion{
+				Sender:         sender,
 				DomainName:     m.DomainName,
 				IssueName:      m.IssueName,
 				SuggestionName: m.SuggestionName,
@@ -376,6 +378,7 @@ func CustomMessageEncoder() func(sender sdk.AccAddress, msg json.RawMessage) ([]
 		case customMsg.CastElectionVote != nil:
 			m := customMsg.CastElectionVote
 			return []sdk.Msg{&MsgCastElectionVote{
+				Sender:        sender,
 				DomainName:    m.DomainName,
 				IssueName:     m.IssueName,
 				CandidateName: m.CandidateName,

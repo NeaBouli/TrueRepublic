@@ -139,6 +139,19 @@ func TestMaccPermsIncludesTransfer(t *testing.T) {
 	}
 }
 
+func TestMaccPermsIncludesTrueDemocracyBurner(t *testing.T) {
+	perms, ok := maccPerms["truedemocracy"]
+	if !ok {
+		t.Fatal("maccPerms missing truedemocracy module")
+	}
+	for _, permission := range perms {
+		if permission == "burner" {
+			return
+		}
+	}
+	t.Fatalf("truedemocracy perms should include burner, got %v", perms)
+}
+
 // --- IBC integration tests (Milestone 7.2) ---
 
 func TestIBCDefaultGenesis(t *testing.T) {

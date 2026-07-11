@@ -113,25 +113,23 @@ func slashStake(val Validator, pct int64) Validator {
 	return val
 }
 
-// slashValidatorStake transfers the slashed claim from validator stake to
-// the validator's primary domain treasury. No bank movement is needed because
-// both claims are backed by the same module escrow account.
+// slashValidatorStake removes the slashed claim from validator stake and burns
+// the same amount from module escrow. The whitepaper requires slashed PNYX to
+// leave circulation; crediting it to an admin-withdrawable domain treasury
+// would let a colluding validator recover the penalty.
 func (k Keeper) slashValidatorStake(ctx sdk.Context, val Validator, pct int64) (Validator, error) {
-	if len(val.Domains) == 0 {
-		return Validator{}, errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "validator has no domain for slash proceeds")
-	}
-	domain, found := k.GetDomain(ctx, val.Domains[0])
-	if !found {
-		return Validator{}, errorsmod.Wrap(sdkerrors.ErrUnknownRequest, "validator domain not found for slash proceeds")
+	if err := requireBankKeeper(k.bankKeeper); err != nil {
+		return Validator{}, err
 	}
 
 	before := val.Stake.AmountOf(PNYXDenom)
 	val = slashStake(val, pct)
 	penalty := before.Sub(val.Stake.AmountOf(PNYXDenom))
 	if penalty.IsPositive() {
-		domain.Treasury = domain.Treasury.Add(sdk.NewCoin(PNYXDenom, penalty))
-		store := ctx.KVStore(k.StoreKey)
-		store.Set([]byte("domain:"+domain.Name), k.cdc.MustMarshalLengthPrefixed(&domain))
+		coins := sdk.NewCoins(sdk.NewCoin(PNYXDenom, penalty))
+		if err := k.bankKeeper.BurnCoins(ctx, ModuleName, coins); err != nil {
+			return Validator{}, errorsmod.Wrap(err, "validator slash burn failed")
+		}
 	}
 	return val, nil
 }
