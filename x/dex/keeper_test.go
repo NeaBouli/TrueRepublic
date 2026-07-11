@@ -28,7 +28,7 @@ func setupKeeper(t *testing.T) (Keeper, sdk.Context) {
 	cdc := codec.NewLegacyAmino()
 	RegisterCodec(cdc)
 
-	keeper := NewKeeper(cdc, storeKey)
+	keeper := NewKeeper(cdc, storeKey, nil, "authority")
 	ctx := sdk.NewContext(ms, cmtproto.Header{}, false, log.NewNopLogger())
 
 	return keeper, ctx
@@ -221,22 +221,17 @@ func TestAddLiquidity(t *testing.T) {
 		}
 	})
 
-	t.Run("imbalanced deposit uses smaller ratio", func(t *testing.T) {
+	t.Run("imbalanced deposit is rejected", func(t *testing.T) {
 		pool, _ := k.GetPool(ctx, "atom")
-		totalBefore := pool.TotalShares
-
-		// Deposit disproportionate amounts — shares based on smaller ratio.
-		shares, err := k.AddLiquidity(ctx, "atom", math.NewInt(110_000), math.NewInt(55_000))
-		if err != nil {
-			t.Fatal(err)
+		_, err := k.AddLiquidity(ctx, "atom", math.NewInt(110_000), math.NewInt(55_000))
+		if err == nil {
+			t.Fatal("expected imbalanced deposit to fail")
 		}
-
-		// assetAmt/assetReserve = 55000/1100000 = 5%
-		// pnyxAmt/pnyxReserve = 110000/1100000 = 10%
-		// min = 5%, so shares = 5% of total.
-		expectedShares := totalBefore.Quo(math.NewInt(20)) // 5%
-		if !shares.Equal(expectedShares) {
-			t.Errorf("shares = %s, want %s (5%% of %s)", shares, expectedShares, totalBefore)
+		poolAfter, _ := k.GetPool(ctx, "atom")
+		if !poolAfter.PnyxReserve.Equal(pool.PnyxReserve) ||
+			!poolAfter.AssetReserve.Equal(pool.AssetReserve) ||
+			!poolAfter.TotalShares.Equal(pool.TotalShares) {
+			t.Fatal("failed imbalanced deposit changed pool state")
 		}
 	})
 
@@ -626,19 +621,20 @@ func TestEstimateSwapSameDenomFails(t *testing.T) {
 // ---------- MsgSwapExact ValidateBasic ----------
 
 func TestMsgSwapExactValidateBasic(t *testing.T) {
+	sender := sdk.AccAddress("swap-sender")
 	tests := []struct {
 		name    string
 		msg     MsgSwapExact
 		wantErr bool
 	}{
-		{"valid", MsgSwapExact{InputDenom: pnyxDenom, InputAmt: 100, OutputDenom: "atom", MinOutput: 0}, false},
-		{"valid with minOutput", MsgSwapExact{InputDenom: pnyxDenom, InputAmt: 100, OutputDenom: "atom", MinOutput: 50}, false},
-		{"empty input denom", MsgSwapExact{InputDenom: "", InputAmt: 100, OutputDenom: "atom"}, true},
-		{"empty output denom", MsgSwapExact{InputDenom: pnyxDenom, InputAmt: 100, OutputDenom: ""}, true},
-		{"same denom", MsgSwapExact{InputDenom: "atom", InputAmt: 100, OutputDenom: "atom"}, true},
-		{"zero amount", MsgSwapExact{InputDenom: pnyxDenom, InputAmt: 0, OutputDenom: "atom"}, true},
-		{"negative amount", MsgSwapExact{InputDenom: pnyxDenom, InputAmt: -1, OutputDenom: "atom"}, true},
-		{"negative minOutput", MsgSwapExact{InputDenom: pnyxDenom, InputAmt: 100, OutputDenom: "atom", MinOutput: -1}, true},
+		{"zero minOutput", MsgSwapExact{Sender: sender, InputDenom: pnyxDenom, InputAmt: 100, OutputDenom: "atom", MinOutput: 0}, true},
+		{"valid with minOutput", MsgSwapExact{Sender: sender, InputDenom: pnyxDenom, InputAmt: 100, OutputDenom: "atom", MinOutput: 50}, false},
+		{"empty input denom", MsgSwapExact{Sender: sender, InputDenom: "", InputAmt: 100, OutputDenom: "atom"}, true},
+		{"empty output denom", MsgSwapExact{Sender: sender, InputDenom: pnyxDenom, InputAmt: 100, OutputDenom: ""}, true},
+		{"same denom", MsgSwapExact{Sender: sender, InputDenom: "atom", InputAmt: 100, OutputDenom: "atom"}, true},
+		{"zero amount", MsgSwapExact{Sender: sender, InputDenom: pnyxDenom, InputAmt: 0, OutputDenom: "atom"}, true},
+		{"negative amount", MsgSwapExact{Sender: sender, InputDenom: pnyxDenom, InputAmt: -1, OutputDenom: "atom"}, true},
+		{"negative minOutput", MsgSwapExact{Sender: sender, InputDenom: pnyxDenom, InputAmt: 100, OutputDenom: "atom", MinOutput: -1}, true},
 	}
 
 	for _, tt := range tests {

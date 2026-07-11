@@ -164,6 +164,16 @@ func TestMaccPermsIncludesTrueDemocracyIssuer(t *testing.T) {
 	}
 }
 
+func TestMaccPermsIncludesDEXBurnerOnly(t *testing.T) {
+	perms, ok := maccPerms["dex"]
+	if !ok {
+		t.Fatal("maccPerms missing dex module")
+	}
+	if len(perms) != 1 || perms[0] != "burner" {
+		t.Fatalf("dex perms should contain only burner, got %v", perms)
+	}
+}
+
 // --- IBC integration tests (Milestone 7.2) ---
 
 func TestIBCDefaultGenesis(t *testing.T) {

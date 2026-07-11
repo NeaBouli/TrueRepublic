@@ -40,6 +40,9 @@ func (a RegisteredAsset) ValidateBasic() error {
 	if a.IBCDenom == "" {
 		return fmt.Errorf("ibc_denom cannot be empty")
 	}
+	if err := sdk.ValidateDenom(a.IBCDenom); err != nil {
+		return fmt.Errorf("invalid ibc_denom: %w", err)
+	}
 	if a.Symbol == "" {
 		return fmt.Errorf("symbol cannot be empty")
 	}

@@ -117,7 +117,7 @@ var _ MsgServer = msgServer{}
 func (m msgServer) CreatePool(goCtx context.Context, msg *MsgCreatePool) (*MsgCreatePoolResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	err := m.Keeper.CreatePool(ctx, msg.AssetDenom, math.NewInt(msg.PnyxAmt), math.NewInt(msg.AssetAmt))
+	err := m.Keeper.CreatePoolWithCustody(ctx, msg.Sender, msg.AssetDenom, math.NewInt(msg.PnyxAmt), math.NewInt(msg.AssetAmt))
 	if err != nil {
 		return nil, err
 	}
@@ -134,30 +134,13 @@ func (m msgServer) CreatePool(goCtx context.Context, msg *MsgCreatePool) (*MsgCr
 }
 
 func (m msgServer) Swap(goCtx context.Context, msg *MsgSwap) (*MsgSwapResponse, error) {
-	ctx := sdk.UnwrapSDKContext(goCtx)
-
-	output, err := m.Keeper.Swap(ctx, msg.InputDenom, math.NewInt(msg.InputAmt), msg.OutputDenom, math.ZeroInt())
-	if err != nil {
-		return nil, err
-	}
-
-	ctx.EventManager().EmitEvent(sdk.NewEvent(
-		"swap",
-		sdk.NewAttribute("input_denom", msg.InputDenom),
-		sdk.NewAttribute("input_symbol", m.Keeper.GetSymbolForDenom(ctx, msg.InputDenom)),
-		sdk.NewAttribute("input_amount", fmt.Sprintf("%d", msg.InputAmt)),
-		sdk.NewAttribute("output_denom", msg.OutputDenom),
-		sdk.NewAttribute("output_symbol", m.Keeper.GetSymbolForDenom(ctx, msg.OutputDenom)),
-		sdk.NewAttribute("output_amount", output.String()),
-	))
-
-	return &MsgSwapResponse{}, nil
+	return nil, fmt.Errorf("legacy swap without slippage protection is disabled; use MsgSwapExact")
 }
 
 func (m msgServer) AddLiquidity(goCtx context.Context, msg *MsgAddLiquidity) (*MsgAddLiquidityResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	shares, err := m.Keeper.AddLiquidity(ctx, msg.AssetDenom, math.NewInt(msg.PnyxAmt), math.NewInt(msg.AssetAmt))
+	shares, err := m.Keeper.AddLiquidityWithCustody(ctx, msg.Sender, msg.AssetDenom, math.NewInt(msg.PnyxAmt), math.NewInt(msg.AssetAmt))
 	if err != nil {
 		return nil, err
 	}
@@ -174,7 +157,7 @@ func (m msgServer) AddLiquidity(goCtx context.Context, msg *MsgAddLiquidity) (*M
 func (m msgServer) RemoveLiquidity(goCtx context.Context, msg *MsgRemoveLiquidity) (*MsgRemoveLiquidityResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	pnyxOut, assetOut, err := m.Keeper.RemoveLiquidity(ctx, msg.AssetDenom, math.NewInt(msg.Shares))
+	pnyxOut, assetOut, err := m.Keeper.RemoveLiquidityWithCustody(ctx, msg.Sender, msg.AssetDenom, math.NewInt(msg.Shares))
 	if err != nil {
 		return nil, err
 	}
@@ -191,6 +174,9 @@ func (m msgServer) RemoveLiquidity(goCtx context.Context, msg *MsgRemoveLiquidit
 
 func (m msgServer) RegisterAsset(goCtx context.Context, msg *MsgRegisterAsset) (*MsgRegisterAssetResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
+	if err := m.Keeper.RequireAuthority(msg.Sender); err != nil {
+		return nil, err
+	}
 
 	asset := RegisteredAsset{
 		IBCDenom:         msg.IBCDenom,
@@ -213,6 +199,9 @@ func (m msgServer) RegisterAsset(goCtx context.Context, msg *MsgRegisterAsset) (
 
 func (m msgServer) UpdateAssetStatus(goCtx context.Context, msg *MsgUpdateAssetStatus) (*MsgUpdateAssetStatusResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
+	if err := m.Keeper.RequireAuthority(msg.Sender); err != nil {
+		return nil, err
+	}
 
 	if err := m.Keeper.UpdateAssetTradingStatus(ctx, msg.IBCDenom, msg.Enabled); err != nil {
 		return nil, err
@@ -224,7 +213,7 @@ func (m msgServer) UpdateAssetStatus(goCtx context.Context, msg *MsgUpdateAssetS
 func (m msgServer) SwapExact(goCtx context.Context, msg *MsgSwapExact) (*MsgSwapExactResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	output, err := m.Keeper.SwapExact(ctx, msg.InputDenom, math.NewInt(msg.InputAmt), msg.OutputDenom, math.NewInt(msg.MinOutput))
+	output, err := m.Keeper.SwapExactWithCustody(ctx, msg.Sender, msg.InputDenom, math.NewInt(msg.InputAmt), msg.OutputDenom, math.NewInt(msg.MinOutput))
 	if err != nil {
 		return nil, err
 	}

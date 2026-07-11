@@ -119,26 +119,10 @@ func CmdCreatePool() *cobra.Command {
 func CmdSwap() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "swap [input-denom-or-symbol] [input-amt] [output-denom-or-symbol]",
-		Short: "Swap tokens via the AMM (accepts symbols like BTC, ETH)",
+		Short: "Deprecated: use swap-exact with explicit minimum output",
 		Args:  cobra.ExactArgs(3),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			clientCtx, err := client.GetClientTxContext(cmd)
-			if err != nil {
-				return err
-			}
-			amt, err := strconv.ParseInt(args[1], 10, 64)
-			if err != nil {
-				return fmt.Errorf("invalid input amount: %w", err)
-			}
-			inputDenom := resolveSymbolOrDenom(cmd, clientCtx, args[0])
-			outputDenom := resolveSymbolOrDenom(cmd, clientCtx, args[2])
-			msg := MsgSwap{
-				Sender:      clientCtx.GetFromAddress(),
-				InputDenom:  inputDenom,
-				InputAmt:    amt,
-				OutputDenom: outputDenom,
-			}
-			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), &msg)
+			return fmt.Errorf("legacy swap is disabled; use swap-exact with min-output")
 		},
 	}
 	flags.AddTxFlagsToCmd(cmd)
