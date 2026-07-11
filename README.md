@@ -308,8 +308,8 @@ approval. Current evidence, risks, and commands are maintained in
 - 📋 **v0.5.0 (Q3 2026):** Native Apps (iOS/Android)
 - 🎯 **v1.0.0 (Q4 2026):** Production Release — External audit, mainnet launch
 
-> Historical test count: 577. The authoritative recovery-verified total is 564
-> (533 Go + 26 Rust + 5 maintained-client), reproduced locally and in CI.
+> Historical test count: 577. The authoritative recovery-verified total is 589
+> (557 Go + 26 Rust + 6 maintained-client), reproduced locally and in CI.
 
 ---
 

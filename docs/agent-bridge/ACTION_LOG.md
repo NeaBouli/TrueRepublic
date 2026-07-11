@@ -207,3 +207,8 @@
   pass locally. Rust test/Clippy/audit, maintained-client install/lint/test/build/
   audit, documentation consistency, and diff checks also pass. The branch total
   is now 589 with 26 Rust and six maintained-client tests.
+- Published PR #16 head `d3ae4cf`; both Go/Race and Docker runs, Rust, client,
+  docs, DeepScan, and the manually triggered full CodeRabbit review completed.
+- Accepted CodeRabbit's slash-atomicity hardening and three stale documentation
+  findings. Rejected only its obsolete suggestion that refreshed PR #15 checks
+  were pending because live GitHub evidence shows them green at `e0ff339`.

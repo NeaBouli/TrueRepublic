@@ -18,13 +18,14 @@ func (k Keeper) HandleDoubleSign(ctx sdk.Context, pubKeyBytes []byte) error {
 		return errorsmod.Wrap(sdkerrors.ErrUnknownRequest, "validator not found")
 	}
 
+	cacheCtx, write := ctx.CacheContext()
 	var err error
-	val, err = k.slashValidatorStake(ctx, val, SlashFractionDoubleSign)
+	val, err = k.slashValidatorStake(cacheCtx, val, SlashFractionDoubleSign)
 	if err != nil {
 		return err
 	}
 	val.Jailed = true
-	val.JailedUntil = ctx.BlockTime().Unix() + DowntimeJailDuration*10
+	val.JailedUntil = cacheCtx.BlockTime().Unix() + DowntimeJailDuration*10
 
 	if val.Stake.AmountOf(PNYXDenom).LT(math.NewInt(rewards.StakeMin)) {
 		val.Power = 0
@@ -32,7 +33,8 @@ func (k Keeper) HandleDoubleSign(ctx sdk.Context, pubKeyBytes []byte) error {
 		val.Power = val.Stake.AmountOf(PNYXDenom).Int64() / rewards.StakeMin
 	}
 
-	k.SetValidator(ctx, val)
+	k.SetValidator(cacheCtx, val)
+	write()
 	return nil
 }
 
@@ -45,17 +47,18 @@ func (k Keeper) HandleDowntime(ctx sdk.Context, pubKeyBytes []byte) error {
 		return errorsmod.Wrap(sdkerrors.ErrUnknownRequest, "validator not found")
 	}
 
+	cacheCtx, write := ctx.CacheContext()
 	val.MissedBlocks++
 
 	threshold := SignedBlocksWindow - MinSignedPerWindow
 	if val.MissedBlocks > threshold {
 		var err error
-		val, err = k.slashValidatorStake(ctx, val, SlashFractionDowntime)
+		val, err = k.slashValidatorStake(cacheCtx, val, SlashFractionDowntime)
 		if err != nil {
 			return err
 		}
 		val.Jailed = true
-		val.JailedUntil = ctx.BlockTime().Unix() + DowntimeJailDuration
+		val.JailedUntil = cacheCtx.BlockTime().Unix() + DowntimeJailDuration
 		val.MissedBlocks = 0
 
 		if val.Stake.AmountOf(PNYXDenom).LT(math.NewInt(rewards.StakeMin)) {
@@ -65,7 +68,8 @@ func (k Keeper) HandleDowntime(ctx sdk.Context, pubKeyBytes []byte) error {
 		}
 	}
 
-	k.SetValidator(ctx, val)
+	k.SetValidator(cacheCtx, val)
+	write()
 	return nil
 }
 

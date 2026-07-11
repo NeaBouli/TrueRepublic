@@ -13,6 +13,8 @@ Result: PASS for the GH-14 custody scope; repository remains non-production
   exact canonical `upnyx` through the `truedemocracy` module account.
 - State and bank movement use cached SDK contexts where a fallible transfer can
   otherwise leave one side committed.
+- Validator slash burns and validator persistence share the same cached SDK
+  context, so future fallible steps cannot commit only one side.
 - Claimed creator, member, voter, and operator identities must equal the
   authenticated signer; the same rule applies to CLI and CosmWasm messages.
 - Module balance equals aggregate domain-treasury plus validator-stake claims in

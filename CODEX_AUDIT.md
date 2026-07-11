@@ -1,5 +1,5 @@
 # TrueRepublic — Token Supply and Ledger Audit
-> Scope: `treasury/keeper`, `x/truedemocracy`, `x/dex`, app wiring, genesis, and maintained-client denomination handling  ·  Date: 2026-07-11  ·  Result: 4 FAIL / 2 WARN / 5 PASS
+> Scope: `treasury/keeper`, `x/truedemocracy`, `x/dex`, app wiring, genesis, and maintained-client denomination handling  ·  Date: 2026-07-11  ·  Result: 4 FAIL / 2 WARN / 6 PASS
 
 ## Summary
 
