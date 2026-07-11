@@ -63,10 +63,10 @@ consensus findings remain blocking for production and are tracked separately in
 
 ### CI and container reproducibility — WARN
 
-- **[🟡 MEDIUM] Docker toolchain change lacked a build gate** — `Dockerfile`, `.github/workflows/go-ci.yml`
-  - What: PR #9 changed the builder to Go 1.26.5, but the original PR workflow did not build the image.
-  - Path: A musl/CGO or image-tag failure could merge despite green host builds.
-  - Fix: Added a `docker-build` job and Dockerfile/workflow path triggers; merge only after it passes on GitHub.
+- **[🟡 MEDIUM] Docker gate exposed incompatible musl/glibc linkage; fix pending CI** — `Dockerfile`, `.github/workflows/go-ci.yml`
+  - What: The original Alpine image linked wasmvm's default glibc `.so` with musl and failed on unresolved `GLIBC_*` symbols.
+  - Path: Both GitHub Docker runs failed at the final Go link even though the host Go build passed.
+  - Fix: Switched builder/runtime to Debian Bookworm, copied `libwasmvm.$(uname -m).so` into the runtime, and retained the blocking Docker job. Merge only after its rerun passes.
 
 - **[🟡 MEDIUM] Official actions still target deprecated Node 20 runtimes** — `.github/workflows/*.yml`
   - What: checkout v4 and setup-go v5 are forced onto Node 24 by current runners.
@@ -94,7 +94,7 @@ None introduced by PR #9.
 
 1. Track the four reachable Go findings without upstream fixes.
 2. Track and remove the six transitive Rust tooling warnings when upstream permits.
-3. Require the newly added Docker build job to pass before merge.
+3. Require the Debian/glibc Docker build rerun to pass before merge.
 4. Land the Node-24 action-major update in the ordered GH-8 documentation/CI PR.
 
 ### 🟢 LOW

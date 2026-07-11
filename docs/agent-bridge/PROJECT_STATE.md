@@ -1,6 +1,6 @@
 # Project State
 
-Updated: 2026-07-11 20:09 EEST
+Updated: 2026-07-11 20:54 EEST
 
 ## Repository
 
@@ -41,6 +41,9 @@ Updated: 2026-07-11 20:09 EEST
   refreshed CI must additionally prove the new Docker build job.
 - GitHub branch protection requires one approval; PR #9 currently has none and
   must not be merged through the administrator bypass.
+- The first added Docker gate correctly failed: Alpine/musl was incompatible
+  with wasmvm's default glibc shared object. A Debian/glibc linkage fix is
+  locally verified and awaits the refreshed GitHub Docker build.
 
 ## Public-status warning
 

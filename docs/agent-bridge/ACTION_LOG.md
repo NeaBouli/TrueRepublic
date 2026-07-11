@@ -105,3 +105,17 @@
 - Found and corrected six whitespace-only diff errors.
 - Recorded the structured review in `PR9_AUDIT.md`. Merge remains conditional
   on refreshed GitHub CI and one independent GitHub approval.
+
+## 2026-07-11 20:54 EEST - Docker glibc linkage fix
+
+- The newly added Docker gate reproduced the image failure on both push and PR
+  runs: Alpine/musl attempted to link wasmvm's default glibc shared library and
+  failed on unresolved `GLIBC_*` symbols.
+- Verified wasmvm v2.2.2's platform matrix: default Linux builds use the bundled
+  glibc `.so`; musl requires an explicit static `muslc` build tag/library.
+- Compared the later GH-21 container, whose Debian/glibc build and restart smoke
+  tests are green, and selected the same minimal linkage model for GH-4.
+- Switched builder/runtime to Bookworm, copied the architecture-specific
+  `libwasmvm` shared object into `/usr/lib`, and ran `ldconfig`.
+- Local Go build, documentation, YAML, and diff checks pass. Docker verification
+  remains delegated to GitHub because Docker is unavailable on this workstation.
