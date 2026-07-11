@@ -1,12 +1,31 @@
 {
   "version": "v0.4.0",
-  "release_status": "complete",
+  "release_status": "recovery_active_not_production_ready",
   "release_date": "2026-03-04",
   "tests": {
+    "status": "main_baseline",
     "total": 577,
     "go": 533,
     "rust": 26,
     "frontend": 18
+  },
+  "recovery": {
+    "status": "active",
+    "production_ready": false,
+    "tracking_issue": "https://github.com/NeaBouli/TrueRepublic/issues/4",
+    "final_stacked_pr": "https://github.com/NeaBouli/TrueRepublic/pull/24",
+    "verified_cases": 636,
+    "verified_case_breakdown": {
+      "go": 604,
+      "rust": 26,
+      "maintained_client": 6
+    },
+    "main_branch_note": "Preserved pre-recovery baseline; recovery implementation is not merged.",
+    "canonical_web_client": "client-web",
+    "legacy_clients": [
+      "web-wallet",
+      "mobile-wallet"
+    ]
   },
   "web_client": {
     "version": "v0.4.0",
@@ -26,7 +45,10 @@
   "token": {
     "symbol": "PNYX",
     "max_supply": 21000000,
-    "decimals": 6
+    "decimals": 6,
+    "base_denom": "upnyx",
+    "max_supply_base_units": 21000000000000,
+    "cap_recovery_status": "enforced_and_regression_tested_on_unmerged_recovery_stack"
   },
   "tech": {
     "go": "1.24",
@@ -44,26 +66,26 @@
   },
   "features": {
     "zkp": {
-      "status": "architecture_ready",
+      "status": "recovery_unmerged_external_review_required",
       "client": "mock_implementation",
       "proof_system": "groth16",
       "note": "Circuit designed & tested on-chain. Web client uses SHA-256 mock (2s proof gen). Real gnark-wasm planned for v0.4.1."
     },
     "cosmwasm": {
-      "status": "complete",
+      "status": "main_baseline_recovery_audit_active",
       "version": "v0.53.3"
     },
     "ibc": {
-      "status": "complete",
+      "status": "single_node_recovery_verified_multi_node_unverified",
       "note": "Transfer module active, staking/upgrade stubbed"
     },
     "dex": {
-      "status": "complete",
+      "status": "recovery_unmerged_not_production_ready",
       "multi_asset": true,
       "web_client": true
     },
     "web_client": {
-      "status": "complete",
+      "status": "maintained_client_recovery_verified_unmerged",
       "features": [
         "wallet_create_import_unlock",
         "send_transactions",

@@ -1,5 +1,14 @@
 # Known Limitations (v0.3.0)
 
+> **Recovery warning (2026-07-11):** The project is under an active recovery
+> audit and is not approved for production or real funds. The default `main`
+> branch is the preserved pre-recovery baseline. Recovery evidence, including
+> the enforced 21,000,000 PNYX cap, currently lives in the unmerged PR stack
+> tracked by [GH-4](https://github.com/NeaBouli/TrueRepublic/issues/4).
+> `web-wallet` and `mobile-wallet` are legacy clients with unresolved dependency
+> risk and must not be used with real keys. Use `client-web` only for recovery
+> testing until the stack and external reviews are complete.
+
 ## IBC Modules (Stubbed)
 
 ### IBC Staking

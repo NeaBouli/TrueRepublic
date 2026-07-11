@@ -16,8 +16,9 @@
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/tests-577%20passing-brightgreen" alt="Tests"/>
-  <img src="https://img.shields.io/badge/version-v0.3.0-blue" alt="Version"/>
+  <img src="https://img.shields.io/badge/status-recovery%20active-orange" alt="Recovery active"/>
+  <img src="https://img.shields.io/badge/main-577%20baseline%20tests-yellow" alt="Main baseline tests"/>
+  <img src="https://img.shields.io/badge/PNYX%20cap-21%2C000%2C000-blue" alt="PNYX maximum supply"/>
   <img src="https://img.shields.io/badge/Go-1.24-00ADD8?logo=go" alt="Go"/>
   <img src="https://img.shields.io/badge/Cosmos%20SDK-v0.50.14-5C4EE5" alt="Cosmos SDK"/>
   <img src="https://img.shields.io/badge/Rust-1.75+-orange?logo=rust" alt="Rust"/>
@@ -38,6 +39,20 @@
 </p>
 
 ---
+
+> [!WARNING]
+> **Recovery audit active — not production-ready.** The default `main` branch is
+> the preserved pre-recovery baseline. Security, token accounting, DEX custody,
+> ZKP binding, genesis invariants, and the persistent node lifecycle are being
+> recovered in the ordered draft-PR stack tracked by
+> [issue #4](https://github.com/NeaBouli/TrueRepublic/issues/4). Do not use the
+> current software, legacy wallets, real keys, or real funds in production.
+
+> **Current recovery evidence:** 636 verified cases on the final stacked branch,
+> including enforcement of the fixed **21,000,000 PNYX** maximum supply. The
+> implementation remains unmerged pending ordered review. See
+> [PR #24](https://github.com/NeaBouli/TrueRepublic/pull/24) and
+> [`BRIDGE.md`](BRIDGE.md).
 
 ## What is TrueRepublic?
 
@@ -100,8 +115,8 @@ cp .env.example .env && make docker-build && make docker-up
 # Option B: Build from source
 make build && ./build/truerepublicd start
 
-# Option C: Web wallet only
-cd web-wallet && npm install && npm start
+# Option C: Web wallet only (development baseline; never use real keys)
+cd web-wallet && npm ci && npm start
 ```
 
 See [INSTALLATION.md](INSTALLATION.md) for detailed instructions.
@@ -129,7 +144,7 @@ See [INSTALLATION.md](INSTALLATION.md) for detailed instructions.
 React-based web client with full governance and DEX functionality:
 ```bash
 cd client-web
-npm install
+npm ci
 npm run dev
 ```
 
@@ -177,7 +192,10 @@ TrueRepublic/
 
 ---
 
-## Implemented Features
+## Historical Feature Surface
+
+This inventory describes code present in the pre-recovery baseline. A checkmark
+does not imply production approval; current verification status is tracked below.
 
 | Feature | Status | Location |
 |---------|--------|----------|
@@ -224,11 +242,11 @@ go test ./... -race -cover -count=1 -timeout=600s    # 533 tests
 # Smart contracts
 cd contracts && cargo test --workspace       # 26 tests
 
-# Web wallet
-cd web-wallet && npm install && npm run build
+# Legacy web wallet (audit/build only; never use real keys)
+cd web-wallet && npm ci && npm run build
 
-# Mobile wallet
-cd mobile-wallet && npm install
+# Legacy mobile wallet (audit only; never use real keys)
+cd mobile-wallet && npm ci
 ```
 
 ---
@@ -237,12 +255,12 @@ cd mobile-wallet && npm install
 
 | Component | Version | Status |
 |-----------|---------|--------|
-| Cosmos SDK | v0.50.14 | Production |
-| CometBFT | v0.38.21 | Production |
-| CosmWasm | v0.53.3 | Production |
-| ibc-go | v8.4.0 | Transfer Active |
-| gnark (ZKP) | v0.9.x | Architecture Ready |
-| Go | 1.24 | Production |
+| Cosmos SDK | v0.50.14 | Baseline; recovery audit active |
+| CometBFT | v0.38.21 | Baseline; recovery audit active |
+| CosmWasm | v0.53.3 | Baseline; recovery audit active |
+| ibc-go | v8.4.0 | Single-node recovery verified; relayer unverified |
+| gnark (ZKP) | v0.9.x | Mock client; external review required |
+| Go | 1.24 | Baseline toolchain |
 | Rust | 1.75+ | Contracts |
 | React | 18.2 | Web Wallet |
 | React Native + Expo | 0.74 / 51.0 | Mobile |
@@ -254,52 +272,29 @@ cd mobile-wallet && npm install
 
 ## Current Status
 
-**Version: v0.3.0 (100% Complete)**
+**Recovery audit active — the project is not production-ready.**
 
-- ✅ 577 tests (533 Go + 26 Rust + 18 Frontend)
-- ✅ Core blockchain compiles and runs
-- ✅ Whitepaper tokenomics fully implemented (equations 1-5)
-- ✅ Complete governance system (domains, proposals, voting, lifecycle)
-- ✅ Zero-Knowledge Proofs (Groth16 ZK-SNARKs for anonymous voting)
-- ✅ CosmWasm smart contract integration (wasmd v0.53.3)
-- ✅ Domain-Bank Bridge (dual accounting, deposit/withdraw)
-- ✅ IBC Transfer module (ibc-go v8.4.0, cross-chain PNYX transfers)
-- ✅ Multi-Asset DEX: asset registry, trading validation, symbol resolution
-- ✅ Cross-Chain Liquidity: multi-hop swaps, pool analytics, slippage protection
-- ✅ UI Components: ZKP voting panel, DEX analytics (8 React components)
-- ✅ Developer Tooling: 4 CosmWasm example contracts, shared bindings, testing utils
-- ✅ DEX with AMM, liquidity pools, swap fees, PNYX burn
-- ✅ Web wallet with 3-column governance UI
-- ✅ Mobile wallet with bottom-tab navigation
-- ✅ Comprehensive documentation (30+ guides)
+- `main`: preserved pre-recovery baseline with 577 historical test cases.
+- Recovery stack: [#9](https://github.com/NeaBouli/TrueRepublic/pull/9) →
+  [#15](https://github.com/NeaBouli/TrueRepublic/pull/15) →
+  [#16](https://github.com/NeaBouli/TrueRepublic/pull/16) →
+  [#17](https://github.com/NeaBouli/TrueRepublic/pull/17) →
+  [#18](https://github.com/NeaBouli/TrueRepublic/pull/18) →
+  [#19](https://github.com/NeaBouli/TrueRepublic/pull/19) →
+  [#22](https://github.com/NeaBouli/TrueRepublic/pull/22) →
+  [#23](https://github.com/NeaBouli/TrueRepublic/pull/23) →
+  [#24](https://github.com/NeaBouli/TrueRepublic/pull/24).
+- Recovery evidence: 636 verified cases (604 Go, 26 Rust, 6 maintained-client).
+- Token invariant: fixed cap of **21,000,000 PNYX**
+  (`21,000,000,000,000 upnyx`) is enforced and regression-tested on the stack.
+- Remaining blockers: ordered review/merge, compatible real ZKP client prover,
+  external cryptographic/consensus/operations review, and multi-node IBC/upgrade work.
+- `client-web` is the maintained client. `web-wallet` and `mobile-wallet` are
+  legacy clients and must not be used with real keys or funds.
 
-### Roadmap
-
-- ✅ **v0.1.x (Feb 2026):** Security fixes, documentation, elections
-- ✅ **v0.2.x (Feb 2026):** Governance core — Systemic Consensing, Tokenomics, Elections
-- ✅ **v0.3.0 (Q1 2026): ZKP Anonymity, CosmWasm, IBC, Multi-Asset DEX (100% COMPLETE)**
-  - ✅ Weeks 1-4: ZKP Anonymity Layer (Groth16, Merkle trees, nullifiers)
-  - ✅ Week 5: CosmWasm Integration (wasmd v0.53.3, custom bindings)
-  - ✅ Week 6: Domain-Bank Bridge (dual accounting, deposit/withdraw)
-  - ✅ Week 7: IBC Integration (ICS-20 transfer, relayer support)
-  - ✅ Week 8: Multi-Asset DEX (asset registry, trading validation, symbol resolution)
-  - ✅ Week 9: Cross-Chain Liquidity (multi-hop swaps, analytics)
-  - ✅ Week 10: UI Components (ZKP voting, DEX analytics)
-  - ✅ Week 11: Developer Tooling (contract examples, testing utils)
-  - ✅ Week 12: Complete Documentation (API, deployment, architecture)
-- ✅ **v0.4.0 (Q1 2026): Web Client (100% COMPLETE)**
-  - ✅ Wallet Foundation (create/import/encrypt/send)
-  - ✅ Governance UI (domains, issues, suggestions, stones)
-  - ✅ DEX Interface (swap, liquidity, LP positions)
-  - ✅ ZKP Anonymous Voting (mock, gnark-wasm ready)
-  - ✅ Domain Membership & Onboarding
-  - ✅ Admin Dashboard (member management, stats)
-  - ✅ Network Explorer (validators, blocks, IBC)
-- 📋 **v0.5.0 (Q3 2026):** Native Apps (iOS/Android)
-- 🎯 **v1.0.0 (Q4 2026):** Production Release — External audit, mainnet launch
-
-> **v0.3.0 Milestone Achieved!** All 12 weeks of the roadmap completed.
-> 577 tests (533 Go + 26 Rust + 18 Frontend), zero regressions.
+Follow the live recovery record in
+[`BRIDGE.md`](BRIDGE.md) and
+[GitHub issue #4](https://github.com/NeaBouli/TrueRepublic/issues/4).
 
 ---
 
