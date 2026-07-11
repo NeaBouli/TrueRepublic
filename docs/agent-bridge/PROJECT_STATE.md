@@ -32,6 +32,8 @@ Updated: 2026-07-11 12:30 EEST
   3 critical); not approved for keys or funds.
 - Public README, status JSON, limitations, and GitHub Pages source now display
   an active recovery warning and link to GH-4.
+- Canonical `client-web` now has dedicated GitHub install/lint/test/build/audit
+  gates; legacy client audits remain informational during migration.
 
 ## Public-status warning
 

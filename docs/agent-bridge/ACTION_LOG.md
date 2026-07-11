@@ -59,3 +59,7 @@
 - Pushed `fix/GH-4-recovery-foundation` without modifying the protected `main`
   branch or the preserved legacy checkout.
 - Opened draft PR #9 against `main`; GitHub checks are pending.
+- PR inspection exposed that the React workflow covered only legacy `web-wallet`.
+  Repointed it to canonical `client-web` with install, lint, test, build, and
+  audit gates; added a blocking canonical-client audit to Security Scan while
+  retaining non-blocking legacy audit visibility.

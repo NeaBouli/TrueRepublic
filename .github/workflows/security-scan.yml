@@ -32,7 +32,7 @@ jobs:
             echo "$FIXABLE"
             exit 1
           fi
-          echo "Only known unfixable vulnerabilities remain (cosmos-sdk N/A, Go 1.25+ stdlib)"
+          echo "No reachable vulnerability with an available fix remains"
 
   rust-audit:
     runs-on: ubuntu-latest
@@ -50,7 +50,25 @@ jobs:
       - name: Run cargo audit
         run: cargo audit
 
-  node-audit-web:
+  node-audit-client:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: client-web
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run npm audit
+        run: npm audit --audit-level=high
+
+  node-audit-legacy-web:
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -68,7 +86,7 @@ jobs:
       - name: Run npm audit
         run: npm audit --audit-level=high || true
 
-  node-audit-mobile:
+  node-audit-legacy-mobile:
     runs-on: ubuntu-latest
     defaults:
       run:
