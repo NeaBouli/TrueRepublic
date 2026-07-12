@@ -36,7 +36,10 @@ fake daemon to assert the complete command and observable file boundary.
 - `go test ./... -count=1 -timeout=600s`: PASS, 650 Go cases
 - `go vet ./...`: PASS
 - Documentation consistency, JSON, shell syntax, and diff checks: PASS
-- GitHub Go/Docker/security gates: pending
+- GitHub Go race/coverage and Docker restart `29172845624`: PASS
+- GitHub Docs `29172845627`, DeepScan, and CodeRabbit: PASS
+- Manual Security Scan `29172846057`: PASS, all five jobs
+- GitHub mergeability: MERGEABLE; unresolved review threads: zero
 
 ## Explicitly out of scope
 

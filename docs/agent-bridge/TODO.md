@@ -35,7 +35,8 @@
   daemon init; remove mnemonic/account/gentx side effects and add regression
   coverage.
 - [x] GH-26: publish stacked draft PR #27 behind final PR #24.
-- [ ] GH-26: complete GitHub Go/Docker/security verification.
+- [x] GH-26: GitHub Go/Docker/Docs/static/security verification is green; PR
+  #27 is mergeable with zero unresolved review threads.
 - [x] GH-21: publish audited head `ec1ce17`; refreshed Docker restart, Go
   race/coverage, docs, static, and Security Scan gates are green.
 - [ ] GH-21: obtain independent multi-node, backup/restore, IBC/upgrade

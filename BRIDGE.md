@@ -19,7 +19,7 @@ Canonical coordination lives in [`docs/agent-bridge/`](docs/agent-bridge/README.
 
 GitHub recovery epic: [#4](https://github.com/NeaBouli/TrueRepublic/issues/4)
 
-## 2026-07-12 12:48 EEST GH-26 safe operator init → Locally verified
+## 2026-07-12 13:01 EEST GH-26 safe operator init → GitHub green
 
 - **Branch:** `fix/GH-26-pod-init-script`
 - **Issue:** [GH-26](https://github.com/NeaBouli/TrueRepublic/issues/26)
@@ -35,9 +35,11 @@ GitHub recovery epic: [#4](https://github.com/NeaBouli/TrueRepublic/issues/4)
 - **Tests:** focused wrapper regression, real compiled-daemon init/genesis
   assertions, full 650-case Go suite, vet, shell syntax, docs/JSON/diff → PASS
 - **Risk:** High — operator genesis, validator identity, token supply, key safety
-- **GitHub:** implementation/audit head `86ff1c8` published; refreshed gates
-  pending
-- **Ready for:** GitHub Go/Docker/security verification
+- **GitHub:** implementation/audit head `86ff1c8`; Go race/coverage and Docker
+  restart run `29172845624`, Docs `29172845627`, Security `29172846057`,
+  DeepScan, and CodeRabbit → PASS; zero unresolved review threads
+- **Ready for:** independent operations review and ordered stack merge; not
+  production
 
 ## 2026-07-12 12:35 EEST GH-12 review remediation → Stack green
 
