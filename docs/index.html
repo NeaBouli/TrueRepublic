@@ -175,6 +175,46 @@
             font-weight: 600;
             box-shadow: 0 2px 8px rgba(0,0,0,0.05);
         }
+        .rollout { padding: 5rem 0; background: #0d2748; color: white; }
+        .rollout .section-title { color: white; margin-bottom: 1rem; }
+        .rollout-intro {
+            max-width: 820px;
+            margin: 0 auto 3rem;
+            text-align: center;
+            color: rgba(255,255,255,0.78);
+            font-size: 1.08rem;
+        }
+        .rollout-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1rem;
+        }
+        .rollout-card {
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.16);
+            border-top: 4px solid var(--accent);
+            border-radius: 6px;
+            padding: 1.5rem;
+        }
+        .rollout-phase {
+            color: #ffd27a;
+            font-size: 0.78rem;
+            font-weight: 800;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+        }
+        .rollout-card h3 { margin: 0.4rem 0 0.9rem; font-size: 1.25rem; }
+        .rollout-card ul { margin: 0; padding-left: 1.15rem; }
+        .rollout-card li { margin: 0.45rem 0; color: rgba(255,255,255,0.78); }
+        .rollout-gate {
+            margin-top: 2rem;
+            padding: 1.5rem;
+            border: 1px solid rgba(255,210,122,0.5);
+            background: rgba(243,156,18,0.1);
+            border-radius: 6px;
+        }
+        .rollout-gate h3 { color: #ffd27a; margin-bottom: 0.75rem; }
+        .rollout-actions { margin-top: 2rem; text-align: center; }
         .cta-section {
             padding: 5rem 0;
             background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 100%);
@@ -235,6 +275,7 @@
                 <ul class="nav-links">
                     <li><a href="#features">Features</a></li>
                     <li><a href="#how-it-works">How It Works</a></li>
+                    <li><a href="#rollout">Road to Rollout</a></li>
                     <li><a href="https://github.com/NeaBouli/TrueRepublic/wiki">Wiki</a></li>
                     <li><a href="https://github.com/NeaBouli/TrueRepublic">GitHub</a></li>
                 </ul>
@@ -427,6 +468,96 @@
                 <span class="tech-badge">Go 1.26.5</span>
                 <span class="tech-badge">Rust</span>
                 <span class="tech-badge">684 recovery-verified tests</span>
+            </div>
+        </div>
+    </section>
+
+    <section id="rollout" class="rollout">
+        <div class="container">
+            <h2 class="section-title">Road to Rollout</h2>
+            <p class="rollout-intro">The recovered v0.4 foundation is ready for continued engineering, not for production. These are the remaining blocking workstreams before any public-network rollout.</p>
+            <div class="rollout-grid">
+                <article class="rollout-card">
+                    <div class="rollout-phase">Phase 1</div>
+                    <h3>Network &amp; Recovery</h3>
+                    <ul>
+                        <li>Multi-validator consensus and failure harness</li>
+                        <li>Partitions, restart, catch-up, and state sync</li>
+                        <li>Backup, restore, upgrade, and rollback drills</li>
+                        <li>Validator-key rotation and compromise response</li>
+                    </ul>
+                </article>
+                <article class="rollout-card">
+                    <div class="rollout-phase">Phase 2</div>
+                    <h3>ZKP &amp; Privacy</h3>
+                    <ul>
+                        <li>Compatible real Groth16 client prover</li>
+                        <li>Frozen circuit, inputs, encodings, and artifacts</li>
+                        <li>Reproducible ceremony and key provenance</li>
+                        <li>Private, front-running-safe reward binding</li>
+                        <li>Independent cryptographic and privacy review</li>
+                    </ul>
+                </article>
+                <article class="rollout-card">
+                    <div class="rollout-phase">Phase 3</div>
+                    <h3>IBC &amp; Protocol</h3>
+                    <ul>
+                        <li>Two-chain relayer, timeout, and recovery tests</li>
+                        <li>Upgrade behavior across persisted state</li>
+                        <li>Resolve or remove unsupported protocol stubs</li>
+                        <li>Publish the exact supported feature boundary</li>
+                    </ul>
+                </article>
+                <article class="rollout-card">
+                    <div class="rollout-phase">Phase 4</div>
+                    <h3>Canonical Client</h3>
+                    <ul>
+                        <li>Retire or migrate legacy web and mobile clients</li>
+                        <li>Transaction history and IBC transfer UX</li>
+                        <li>Real audited ZKP flow and wallet-key hardening</li>
+                        <li>Accessibility, browser, and performance budgets</li>
+                    </ul>
+                </article>
+                <article class="rollout-card">
+                    <div class="rollout-phase">Phase 5</div>
+                    <h3>Quality &amp; Security</h3>
+                    <ul>
+                        <li>Raise DEX, governance, and root critical coverage</li>
+                        <li>Client-to-chain end-to-end release tests</li>
+                        <li>Property, fuzz, invariant, replay, and race tests</li>
+                        <li>External review with zero open critical/high findings</li>
+                    </ul>
+                </article>
+                <article class="rollout-card">
+                    <div class="rollout-phase">Phase 6</div>
+                    <h3>Operations</h3>
+                    <ul>
+                        <li>Liveness, readiness, structured logs, and metrics</li>
+                        <li>Dashboards, alerts, objectives, and ownership</li>
+                        <li>Seed/sentry topology, RPC policy, and abuse protection</li>
+                        <li>Incident, halt, key, backup, and rollback runbooks</li>
+                        <li>Capacity, disk-growth, and sustained-load evidence</li>
+                    </ul>
+                </article>
+                <article class="rollout-card">
+                    <div class="rollout-phase">Phase 7</div>
+                    <h3>Release &amp; Staged Launch</h3>
+                    <ul>
+                        <li>Reproducible signed binaries and containers</li>
+                        <li>Checksums, SBOM, provenance, and release notes</li>
+                        <li>Frozen chain ID, genesis, validators, and allocations</li>
+                        <li>Private testnet, then public testnet or canary</li>
+                        <li>Release freeze and explicit go/no-go approval</li>
+                    </ul>
+                </article>
+            </div>
+            <div class="rollout-gate">
+                <h3>Rollout gate</h3>
+                <p>No public-network rollout until every phase has linked evidence, the tagged release CI is green, no critical/high finding remains, disaster recovery is repeatable, the real ZKP flow is audited, operations are observable, and signed release artifacts are reproducible.</p>
+            </div>
+            <div class="rollout-actions">
+                <a href="https://github.com/NeaBouli/TrueRepublic/blob/main/docs/ROLLOUT_ROADMAP.md" class="btn btn-primary">Full Rollout Checklist</a>
+                <a href="https://github.com/NeaBouli/TrueRepublic/issues/29" class="btn btn-secondary">Track GitHub Issue #29</a>
             </div>
         </div>
     </section>

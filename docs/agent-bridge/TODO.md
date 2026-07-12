@@ -3,6 +3,8 @@
 ## P0 - security and reproducibility
 
 - [ ] GH-4: keep the recovery epic and acceptance criteria current.
+- [ ] GH-29: complete the seven-phase production-readiness roadmap and attach
+  evidence for every rollout exit gate before any public-network launch.
 - [x] GH-5: Go/Rust toolchains, tests, static checks, vulnerability gates, and
   GitHub security CI are green.
 - [x] GH-6: v0.4 client lint, tests, build, exact amount handling, maintained
@@ -60,3 +62,5 @@
   Obsolete PR #25 remains isolated.
 - [x] PRs #9, #15, #16, #17, #18, #19, #22, #23, #24, and #27 are merged to
   `main`.
+- [ ] GH-29: keep the public Road to Rollout page, detailed checklist, GitHub
+  issue, and Bridge status synchronized as workstreams close.
