@@ -13,6 +13,8 @@ import (
 	"testing"
 	"time"
 
+	cmted25519 "github.com/cometbft/cometbft/crypto/ed25519"
+	cmttypes "github.com/cometbft/cometbft/types"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	crisistypes "github.com/cosmos/cosmos-sdk/x/crisis/types"
@@ -296,5 +298,32 @@ func TestBindGenesisValidatorKeyRejectsInvalidKeyWithoutMutation(t *testing.T) {
 	after, _ := os.ReadFile(path)
 	if !bytes.Equal(after, before) {
 		t.Fatal("invalid key mutated genesis")
+	}
+}
+
+func TestBindGenesisValidatorKeyRefusesExistingConsensusSet(t *testing.T) {
+	appState := ModuleBasics.DefaultGenesis(newGenesisTestApp(t).appCodec)
+	appStateJSON, err := json.Marshal(appState)
+	if err != nil {
+		t.Fatal(err)
+	}
+	existingKey := bytes.Repeat([]byte{0x11}, 32)
+	genesisDoc := &genutiltypes.AppGenesis{
+		ChainID: "existing-validator-chain", AppState: appStateJSON,
+		Consensus: &genutiltypes.ConsensusGenesis{Validators: []cmttypes.GenesisValidator{{
+			PubKey: cmted25519.PubKey(existingKey), Power: 1,
+		}}},
+	}
+	path := filepath.Join(t.TempDir(), "genesis.json")
+	if err := genesisDoc.SaveAs(path); err != nil {
+		t.Fatal(err)
+	}
+	before, _ := os.ReadFile(path)
+	if err := bindGenesisValidatorKey(path, bytes.Repeat([]byte{0x22}, 32)); err == nil {
+		t.Fatal("existing consensus validator set was replaced")
+	}
+	after, _ := os.ReadFile(path)
+	if !bytes.Equal(after, before) {
+		t.Fatal("rejected existing validator set mutated genesis")
 	}
 }

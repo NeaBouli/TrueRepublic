@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -246,6 +247,12 @@ func bindGenesisValidatorKey(genesisPath string, pubKey []byte) error {
 	if err := json.Unmarshal(genesis.AppState, &appState); err != nil {
 		return err
 	}
+	if genesis.Consensus == nil {
+		return errors.New("consensus genesis is missing")
+	}
+	if len(genesis.Consensus.Validators) != 0 {
+		return errors.New("refusing to replace an existing consensus validator set")
+	}
 	validatorUpdate := abci.ValidatorUpdate{
 		PubKey: cryptoproto.PublicKey{Sum: &cryptoproto.PublicKey_Ed25519{Ed25519: append([]byte(nil), pubKey...)}},
 		Power:  1,
@@ -256,14 +263,21 @@ func bindGenesisValidatorKey(genesisPath string, pubKey []byte) error {
 	if err := ensureConsensusGenesis(appCodec, appState, []abci.ValidatorUpdate{validatorUpdate}); err != nil {
 		return fmt.Errorf("build bank-backed PoD genesis: %w", err)
 	}
+	var democracyGenesis truedemocracy.GenesisState
+	if err := json.Unmarshal(appState[truedemocracy.ModuleName], &democracyGenesis); err != nil {
+		return err
+	}
+	if len(democracyGenesis.Validators) != 1 || !bytes.Equal(democracyGenesis.Validators[0].PubKey, pubKey) {
+		return errors.New("generated PoD validator does not match the node consensus key")
+	}
+	if err := validateLedgerGenesis(appCodec, appState); err != nil {
+		return fmt.Errorf("generated PoD genesis is not bank-backed: %w", err)
+	}
 	genesis.AppState, err = json.Marshal(appState)
 	if err != nil {
 		return err
 	}
 	consensusKey := cmted25519.PubKey(append([]byte(nil), pubKey...))
-	if genesis.Consensus == nil {
-		return errors.New("consensus genesis is missing")
-	}
 	genesis.Consensus.Validators = []cmttypes.GenesisValidator{{
 		Address: consensusKey.Address(),
 		PubKey:  consensusKey,
