@@ -348,9 +348,14 @@ func TestRegisteredRuntimeInvariantsHaltOnEveryLedgerDivergence(t *testing.T) {
 				t.Fatal(err)
 			}
 		}},
-		{"escrow parity", false, func(_ *testing.T, app *TrueRepublicApp, ctx sdk.Context) {
+		{"escrow parity", false, func(t *testing.T, app *TrueRepublicApp, ctx sdk.Context) {
 			admin := sdk.AccAddress("tamper-admin")
-			app.tdKeeper.CreateDomain(ctx, "tampered", admin, sdk.NewCoins(token.NewCoin(math.OneInt())))
+			treasury := sdk.NewCoins(token.NewCoin(math.OneInt()))
+			app.tdKeeper.CreateDomain(ctx, "tampered", admin, treasury)
+			domain, found := app.tdKeeper.GetDomain(ctx, "tampered")
+			if !found || !domain.Treasury.Equal(treasury) {
+				t.Fatal("failed to create escrow-parity divergence fixture")
+			}
 		}},
 		{"reserve custody", true, func(t *testing.T, app *TrueRepublicApp, ctx sdk.Context) {
 			pool, found := app.dexKeeper.GetPool(ctx, "atom")

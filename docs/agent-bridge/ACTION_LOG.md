@@ -321,3 +321,16 @@
 - GitHub Docs, DeepScan, Web, Mobile, Rust, Go build/vet/test, and both Docker
   builds pass. Manually dispatched Security Scan run `29158360390`; all five
   jobs pass. Requested CodeRabbit review; its independent result is pending.
+
+## 2026-07-12 12:18 EEST - GH-12 review remediation
+
+- Accepted both actionable PR #19 review findings. Because `CreateDomain` has
+  no error return, the escrow-divergence test now reads the domain back and
+  validates its treasury, so a failed fixture cannot masquerade as invariant
+  coverage.
+- Expanded the production-node limitation to require a real Ed25519 key bound
+  to a positive-power CometBFT validator, sufficient exact bank-backed stake,
+  and preservation of the 21,000,000 PNYX canonical supply cap.
+- Focused registered-invariant regression, full Go tests, vet, and build pass.
+  GitHub publication, thread resolution, and ordered stack propagation remain
+  in progress.

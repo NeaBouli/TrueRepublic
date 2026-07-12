@@ -50,8 +50,10 @@ and accepts only real Ed25519 public keys supplied by CometBFT genesis. The
 legacy `scripts/init-node.sh` still invokes `x/staking` gentx commands even
 though TrueRepublic uses PoD and does not wire `x/staking`.
 **Impact:** Do not use the legacy initialization script for production. A
-PoD-aware command must bind the node's real `priv_validator_key.json` public
-key to exactly bank-backed custom genesis before launch.
+PoD-aware command must bind the node's real Ed25519
+`priv_validator_key.json` public key to an actual positive-power CometBFT
+validator with sufficient, exact bank-backed custom stake before launch. The
+resulting canonical supply must remain within the 21,000,000 PNYX cap.
 
 ## ZKP Client
 
