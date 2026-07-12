@@ -97,7 +97,8 @@
       "status": "recovery_verified_local_and_github_merged",
       "bootstrap": "generated_cometbft_key_exact_bank_backed_pod_on_pr23",
       "persistence": "native_same_home_restart_and_export_verified_on_pr23",
-      "container": "non_root_debian_glibc_restart_green_on_pr23"
+      "container": "non_root_debian_glibc_restart_green_on_pr23",
+      "operator_init": "daemon_only_safe_wrapper_merged_on_pr27"
     },
     "web_client": {
       "status": "recovery_verified_locally",

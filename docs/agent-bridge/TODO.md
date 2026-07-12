@@ -36,7 +36,7 @@
   coverage.
 - [x] GH-26: rebase PR #27 onto the verified PR #24 merge.
 - [x] GH-26: GitHub Go/Docker/Docs/static/security verification is green; PR
-  #27 is mergeable with zero unresolved review threads.
+  #27 was merged to `main` with zero unresolved review threads.
 - [x] GH-21: publish audited head `ec1ce17`; refreshed Docker restart, Go
   race/coverage, docs, static, and Security Scan gates are green.
 - [ ] GH-21: obtain independent multi-node, backup/restore, IBC/upgrade
@@ -56,6 +56,7 @@
   duplicate-run regression.
 - [x] GH-8: publish audited head `3964f4a`; every updated GitHub Action and
   manual Security Scan `29171476126` passes.
-- [x] GH-8: refreshed docs/recovery CI passed and PR #24 is merged; PR #27 is
-  rebased for final verification. Obsolete PR #25 remains isolated.
-- [x] PRs #9, #15, #16, #17, #18, #19, #22, #23, and #24 are merged to `main`.
+- [x] GH-8: refreshed docs/recovery CI passed and PRs #24 and #27 are merged.
+  Obsolete PR #25 remains isolated.
+- [x] PRs #9, #15, #16, #17, #18, #19, #22, #23, #24, and #27 are merged to
+  `main`.

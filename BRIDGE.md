@@ -19,6 +19,29 @@ Canonical coordination lives in [`docs/agent-bridge/`](docs/agent-bridge/README.
 
 GitHub recovery epic: [#4](https://github.com/NeaBouli/TrueRepublic/issues/4)
 
+## 2026-07-13 00:37 EEST Recovery merge chain → Done
+
+- **Branch:** `main`
+- **Issues:** [GH-4](https://github.com/NeaBouli/TrueRepublic/issues/4),
+  [GH-26](https://github.com/NeaBouli/TrueRepublic/issues/26)
+- **Merged:** PRs #9, #15, #16, #17, #18, #19, #22, #23, #24, and #27;
+  canonical head `513716c`
+- **Changed:** completed the ordered recovery foundation, ZKP binding, node
+  lifecycle, docs/CI reconciliation, and safe daemon-only operator init path
+- **Tests:** PR #27 local Go race/coverage → PASS; GitHub Go/Docker run
+  `29190764808`, Docs/Pages run `29190763221`, Security run `29190764842`,
+  DeepScan, and CodeRabbit → PASS
+- **Risk:** High — this is a recovered engineering foundation, not a production
+  or public-network approval; documented crypto and operations blockers remain
+- **Next:** serve GitHub Pages from canonical `main:/docs` and continue GH-4
+  release-qualification work from the clean baseline
+
+### Codex review feedback
+
+Approved and merged. The ordered PR chain is complete on `main`; the 21M PNYX
+cap, 684-test source of truth, remaining blockers, and non-production boundary
+are synchronized in repository documentation.
+
 ## 2026-07-13 00:15 EEST GH-26 safe operator init → Review
 
 - **Branch:** `fix/GH-26-pod-init-script`
