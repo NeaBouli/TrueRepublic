@@ -274,12 +274,12 @@ approval. Current evidence, risks, and commands are maintained in
 - ✅ CosmWasm smart contract integration (wasmd v0.53.3)
 - 🟡 Domain-Bank escrow recovery implemented on stacked PR #16
 - ✅ IBC Transfer module (ibc-go v8.4.0, cross-chain PNYX transfers)
-- 🔴 Multi-Asset DEX arithmetic only; bank custody, LP ownership, and authority checks are not recovered
-- 🟡 DEX custody is locally verified on stacked PR #18; GH-12 genesis/runtime
-  conservation still blocks production liquidity
+- 🟡 Multi-Asset DEX bank custody, provider LP ownership, authority checks, and
+  canonical burns are locally verified on stacked PR #18
+- 🔴 GH-12 genesis/runtime conservation still blocks production liquidity
 - ✅ UI Components: ZKP voting panel, DEX analytics (8 React components)
 - ✅ Developer Tooling: 4 CosmWasm example contracts, shared bindings, testing utils
-- 🔴 DEX burn is internal accounting only, not a canonical bank burn
+- 🟡 DEX burns reduce canonical bank supply on stacked PR #18
 - ✅ Canonical v0.4 web client with 3-column governance UI
 - 🔴 Legacy mobile wallet is deprecated and security-blocked
 - ✅ Comprehensive documentation (30+ guides)
