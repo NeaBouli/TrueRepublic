@@ -21,7 +21,8 @@
   keep it stacked until its bases merge.
 - [x] GH-10: DEX bank custody, provider LP ownership, canonical burns, registry
   authority, and rollback evidence are locally green on stacked PR #18.
-- [ ] GH-12: validate genesis and add ledger conservation invariants.
+- [x] GH-12: exact custom genesis, non-empty custody round trip, and registered
+  supply/escrow/reserve/LP invariants are locally green on stacked PR #19.
 - [ ] GH-7: audit ZKP/nullifier/domain-key authentication and client-side mock boundaries.
 - [x] GH-7: DEX rounding, slippage, pool accounting, custody, and authorization
   audit completed in GH-10; GH-12 retains genesis/runtime invariants.

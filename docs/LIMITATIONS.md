@@ -42,6 +42,17 @@ approved for production or real funds during this audit.
 **Impact:** Contracts cannot query standard distribution
 **Code:** `wasm_stubs.go - WasmDistributionKeeper`
 
+## Production Node Bootstrap
+
+**Status:** Recovery-blocked by GH-21
+**Reason:** PR #19 removes the insecure hard-coded bootstrap validator secret
+and accepts only real Ed25519 public keys supplied by CometBFT genesis. The
+legacy `scripts/init-node.sh` still invokes `x/staking` gentx commands even
+though TrueRepublic uses PoD and does not wire `x/staking`.
+**Impact:** Do not use the legacy initialization script for production. A
+PoD-aware command must bind the node's real `priv_validator_key.json` public
+key to exactly bank-backed custom genesis before launch.
+
 ## ZKP Client
 
 **Status:** Architecture complete, client integration pending

@@ -293,3 +293,25 @@
   audit, canonical npm audit, and both informational legacy audits all pass.
 - Requested focused CodeRabbit review. The service reported its quota exhausted
   for 44 minutes, so substantive external review remains explicitly pending.
+
+## 2026-07-12 04:32 EEST - GH-12 genesis and runtime-invariant audit
+
+- Rebased GH-12's code commit onto final PR #18 and discarded three obsolete
+  documentation commits for evidence-based regeneration.
+- Preserved the CLI Amino panic fix, both issuance tests, cache-aware bank mocks,
+  and GH-10's collision-free LP keys while adapting global LP export/orphan
+  detection to the new length-prefixed format.
+- Reproduced and fixed the prototype's critical hard-coded validator secret.
+  Production defaults are empty; InitChain accepts actual CometBFT Ed25519
+  public keys and creates exact cap-checked module stake, or rejects startup.
+- Replaced silent InitGenesis skips with explicit failure and fail-closed JSON
+  export behavior.
+- Expanded full-app evidence from escrow-only to independent supply, escrow,
+  reserve, and LP invariant halts. Added non-empty bank/treasury/stake/pool/LP
+  export-import preservation plus over-cap, duplicate, negative, and unbacked
+  rejection tests.
+- Verified 615 Go cases, race, vet, build, coverage (root 66.1%, token 92.6%,
+  treasury 97.0%, DEX 45.3%, governance 56.6%), 26 Rust tests/audit, six
+  maintained-client tests/lint/build/audit, CLI smoke, and module integrity.
+- Recorded the residual GH-21 blocker: `scripts/init-node.sh` still invokes the
+  unavailable `x/staking` gentx flow and must not launch production nodes.

@@ -9,10 +9,39 @@ Canonical coordination lives in [`docs/agent-bridge/`](docs/agent-bridge/README.
 - GH-14 escrow audit: [`PR16_AUDIT.md`](docs/agent-bridge/PR16_AUDIT.md)
 - GH-13 issuance audit: [`PR17_AUDIT.md`](docs/agent-bridge/PR17_AUDIT.md)
 - GH-10 DEX custody audit: [`PR18_AUDIT.md`](docs/agent-bridge/PR18_AUDIT.md)
+- GH-12 genesis/invariant audit: [`PR19_AUDIT.md`](docs/agent-bridge/PR19_AUDIT.md)
 - Decisions: [`DECISIONS.md`](docs/agent-bridge/DECISIONS.md)
 - Security: [`SECURITY_NOTES.md`](docs/agent-bridge/SECURITY_NOTES.md)
 
 GitHub recovery epic: [#4](https://github.com/NeaBouli/TrueRepublic/issues/4)
+
+## 2026-07-12 04:32 EEST GH-12 genesis and invariants → Local verification
+
+- **Branch:** `fix/GH-12-genesis-invariants`
+- **Issue:** [GH-12](https://github.com/NeaBouli/TrueRepublic/issues/12)
+- **PR:** [#19](https://github.com/NeaBouli/TrueRepublic/pull/19) (stacked draft against GH-10)
+- **Changed:** pre-mutation custom-genesis validation and exact module-bank
+  reconciliation, provider LP export, non-empty round-trip preservation,
+  every-block supply/escrow/reserve/LP crisis invariants, and repaired custom
+  service/app startup wiring
+- **Audit fixes:** rebased onto final PR #18; adapted LP export/invariants to
+  collision-free keys; removed a publicly derivable bootstrap validator secret;
+  bootstraps only from real CometBFT Ed25519 public keys with exact stake; made
+  InitGenesis failures explicit; added four full-app divergence regressions
+- **Tests:** Go build/vet, 615 cases, race, and coverage → PASS (root 66.1%,
+  token 92.6%, treasury 97.0%, DEX 45.3%, governance 56.6%); Rust 26 tests/
+  audit and maintained client install/lint/6 tests/build/audit → PASS
+- **Risk:** Critical — InitChain, validator keys, canonical supply, module
+  escrow, DEX reserves, and consensus-halting invariants
+- **Ready for:** publication, refreshed GitHub CI/security, and independent
+  review
+
+### Codex review feedback
+
+Conditional PASS for the ledger/genesis scope. The old default bootstrap would
+have exposed a reproducible consensus private key; it is removed. GH-21 must
+replace the still-invalid legacy `x/staking` gentx script with a PoD-aware real
+validator-key flow before production node launch.
 
 ## 2026-07-12 03:34 EEST GH-10 DEX custody → Local verification
 

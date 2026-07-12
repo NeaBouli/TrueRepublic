@@ -2,6 +2,12 @@
 
 Guide to using TrueRepublic's built-in Decentralized Exchange (DEX) for swapping tokens and providing liquidity.
 
+> [!WARNING]
+> The bank-custody recovery is implemented on stacked PR #18 and exact
+> genesis/runtime conservation on PR #19. Neither branch is merged or approved
+> for production funds. Amounts are integer base units (`upnyx`, where 1 PNYX
+> = 1,000,000 upnyx).
+
 ## Overview
 
 The TrueRepublic DEX uses an **Automated Market Maker (AMM)** model based on the constant-product formula `x * y = k`. All pools are paired with PNYX as the base token.
