@@ -15,7 +15,7 @@ Canonical coordination lives in [`docs/agent-bridge/`](docs/agent-bridge/README.
 
 GitHub recovery epic: [#4](https://github.com/NeaBouli/TrueRepublic/issues/4)
 
-## 2026-07-12 04:32 EEST GH-12 genesis and invariants → Local verification
+## 2026-07-12 04:52 EEST GH-12 genesis and invariants → GitHub green
 
 - **Branch:** `fix/GH-12-genesis-invariants`
 - **Issue:** [GH-12](https://github.com/NeaBouli/TrueRepublic/issues/12)
@@ -33,8 +33,11 @@ GitHub recovery epic: [#4](https://github.com/NeaBouli/TrueRepublic/issues/4)
   audit and maintained client install/lint/6 tests/build/audit → PASS
 - **Risk:** Critical — InitChain, validator keys, canonical supply, module
   escrow, DEX reserves, and consensus-halting invariants
-- **Ready for:** publication, refreshed GitHub CI/security, and independent
-  review
+- **GitHub:** Docs, DeepScan, Web, Mobile, Rust, Go build/vet/test, and both
+  Docker builds pass; manual Security Scan run `29158360390` passes all five
+  jobs
+- **Ready for:** independent cryptographic/stacked review; CodeRabbit is
+  requested and still pending
 
 ### Codex review feedback
 

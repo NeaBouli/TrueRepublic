@@ -68,6 +68,9 @@ for valid names such as `atom` and `atom:staked`.
 - Maintained client offline install/lint/six tests/build/audit: PASS, zero
   vulnerabilities
 - `go mod verify`, docs/JSON/diff checks: PASS
+- GitHub Docs, DeepScan, Web, Mobile, Rust, Go build/vet/test, and both Docker
+  jobs: PASS
+- Manually dispatched Security Scan run `29158360390`: PASS, all five jobs
 
 Total recovery evidence: 647 tests (615 Go + 26 Rust + 6 maintained client).
 
@@ -75,7 +78,7 @@ Total recovery evidence: 647 tests (615 Go + 26 Rust + 6 maintained client).
 
 - GH-20: ZKP signal/verifying-key and recipient-binding audit
 - GH-21: production PoD node initialization, persistent lifecycle, and restart
-- Independent stacked review and final merge consolidation
+- Independent stacked review and final merge consolidation (CodeRabbit pending)
 
 The current `scripts/init-node.sh` still assumes unavailable `x/staking` gentx
 commands. Do not use it for production launch.

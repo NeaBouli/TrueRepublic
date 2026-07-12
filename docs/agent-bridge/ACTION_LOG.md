@@ -315,3 +315,9 @@
   maintained-client tests/lint/build/audit, CLI smoke, and module integrity.
 - Recorded the residual GH-21 blocker: `scripts/init-node.sh` still invokes the
   unavailable `x/staking` gentx flow and must not launch production nodes.
+- Published rebased PR #19 head `9d521ce`; synchronized Issue #12, recovery
+  epic #4, PR metadata, BRIDGE, audit, README, status JSON, and GitHub Pages
+  source.
+- GitHub Docs, DeepScan, Web, Mobile, Rust, Go build/vet/test, and both Docker
+  builds pass. Manually dispatched Security Scan run `29158360390`; all five
+  jobs pass. Requested CodeRabbit review; its independent result is pending.
