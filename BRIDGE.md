@@ -19,6 +19,29 @@ Canonical coordination lives in [`docs/agent-bridge/`](docs/agent-bridge/README.
 
 GitHub recovery epic: [#4](https://github.com/NeaBouli/TrueRepublic/issues/4)
 
+## 2026-07-13 02:50 EEST GH-29 Road to Rollout → Done
+
+- **Branch:** `main`
+- **Issue:** [GH-29](https://github.com/NeaBouli/TrueRepublic/issues/29)
+  remains open as the rollout execution tracker
+- **PR:** [#30](https://github.com/NeaBouli/TrueRepublic/pull/30), merged as
+  `162038f`
+- **Changed:** published the English seven-phase Road to Rollout board, the
+  full evidence checklist, rollout exit gates, staged-launch sequence, and
+  explicit non-production safety boundary
+- **Tests:** documentation consistency, diff/content/conflict checks, browser
+  DOM/console, desktop and 375px mobile rendering, Docs CI, Go/Rust security,
+  Node audits, DeepScan, and CodeRabbit → PASS
+- **Risk:** Low runtime risk; the roadmap does not grant production, mainnet,
+  real-funds, or real-key approval
+- **Next:** execute and continuously update the open GH-29 workstreams until
+  every rollout gate has linked evidence and an explicit go/no-go decision
+
+### Codex review feedback
+
+Approved and merged. The public GitHub page and issue tracker now expose the
+complete known path from the recovered foundation to a controlled rollout.
+
 ## 2026-07-13 02:35 EEST GH-29 Road to Rollout → Review
 
 - **Branch:** `docs/GH-29-rollout-roadmap`
