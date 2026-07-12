@@ -13,9 +13,13 @@ import (
 	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
 	"github.com/spf13/cobra"
 
+	abci "github.com/cometbft/cometbft/abci/types"
 	cmtcfg "github.com/cometbft/cometbft/config"
+	cmted25519 "github.com/cometbft/cometbft/crypto/ed25519"
 	"github.com/cometbft/cometbft/privval"
+	cryptoproto "github.com/cometbft/cometbft/proto/tendermint/crypto"
 	cmtproto "github.com/cometbft/cometbft/proto/tendermint/types"
+	cmttypes "github.com/cometbft/cometbft/types"
 	dbm "github.com/cosmos/cosmos-db"
 	"github.com/cosmos/gogoproto/grpc"
 
@@ -38,6 +42,7 @@ import (
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	crisis "github.com/cosmos/cosmos-sdk/x/crisis"
 	genutilcli "github.com/cosmos/cosmos-sdk/x/genutil/client/cli"
+	genutiltypes "github.com/cosmos/cosmos-sdk/x/genutil/types"
 
 	"truerepublic/token"
 	"truerepublic/x/dex"
@@ -138,7 +143,7 @@ func initAppConfig() (string, interface{}) {
 		Wasm wasmtypes.WasmConfig `mapstructure:"wasm"`
 	}
 	cfg := serverconfig.DefaultConfig()
-	cfg.MinGasPrices = "0" + token.BaseDenom
+	cfg.MinGasPrices = "1000" + token.BaseDenom
 	return serverconfig.DefaultConfigTemplate + wasmtypes.DefaultConfigTemplate(), appConfig{
 		Config: *cfg,
 		Wasm:   wasmtypes.DefaultWasmConfig(),
@@ -202,10 +207,15 @@ func newRootCmd() *cobra.Command {
 	return rootCmd
 }
 
-// initNodeCmd delegates file creation to the SDK and then replaces the
-// deterministic placeholder consensus key with this node's generated key.
+// initNodeCmd delegates file creation to the SDK, then builds both CometBFT
+// and exactly bank-backed PoD genesis from this node's generated public key.
 func initNodeCmd(basicManager module.BasicManager, home string) *cobra.Command {
 	cmd := genutilcli.InitCmd(basicManager, home)
+	defaultDenom := cmd.Flags().Lookup(genutilcli.FlagDefaultBondDenom)
+	if defaultDenom != nil {
+		defaultDenom.DefValue = token.BaseDenom
+		_ = defaultDenom.Value.Set(token.BaseDenom)
+	}
 	initRun := cmd.RunE
 	cmd.RunE = func(cmd *cobra.Command, args []string) error {
 		if err := initRun(cmd, args); err != nil {
@@ -225,39 +235,76 @@ func initNodeCmd(basicManager module.BasicManager, home string) *cobra.Command {
 }
 
 func bindGenesisValidatorKey(genesisPath string, pubKey []byte) error {
-	doc, err := os.ReadFile(genesisPath)
-	if err != nil {
-		return err
+	if len(pubKey) != cmted25519.PubKeySize {
+		return fmt.Errorf("generated validator public key must be %d bytes", cmted25519.PubKeySize)
 	}
-	var genesis map[string]json.RawMessage
-	if err := json.Unmarshal(doc, &genesis); err != nil {
+	genesis, err := genutiltypes.AppGenesisFromFile(genesisPath)
+	if err != nil {
 		return err
 	}
 	var appState map[string]json.RawMessage
-	if err := json.Unmarshal(genesis["app_state"], &appState); err != nil {
+	if err := json.Unmarshal(genesis.AppState, &appState); err != nil {
 		return err
 	}
-	var tdGenesis truedemocracy.GenesisState
-	if err := json.Unmarshal(appState[truedemocracy.ModuleName], &tdGenesis); err != nil {
-		return err
+	validatorUpdate := abci.ValidatorUpdate{
+		PubKey: cryptoproto.PublicKey{Sum: &cryptoproto.PublicKey_Ed25519{Ed25519: append([]byte(nil), pubKey...)}},
+		Power:  1,
 	}
-	if len(tdGenesis.Validators) != 1 {
-		return fmt.Errorf("expected one bootstrap validator, got %d", len(tdGenesis.Validators))
+	interfaceRegistry := codectypes.NewInterfaceRegistry()
+	ModuleBasics.RegisterInterfaces(interfaceRegistry)
+	appCodec := codec.NewProtoCodec(interfaceRegistry)
+	if err := ensureConsensusGenesis(appCodec, appState, []abci.ValidatorUpdate{validatorUpdate}); err != nil {
+		return fmt.Errorf("build bank-backed PoD genesis: %w", err)
 	}
-	tdGenesis.Validators[0].PubKey = append([]byte(nil), pubKey...)
-	appState[truedemocracy.ModuleName], err = json.Marshal(tdGenesis)
+	genesis.AppState, err = json.Marshal(appState)
 	if err != nil {
 		return err
 	}
-	genesis["app_state"], err = json.Marshal(appState)
-	if err != nil {
+	consensusKey := cmted25519.PubKey(append([]byte(nil), pubKey...))
+	if genesis.Consensus == nil {
+		return errors.New("consensus genesis is missing")
+	}
+	genesis.Consensus.Validators = []cmttypes.GenesisValidator{{
+		Address: consensusKey.Address(),
+		PubKey:  consensusKey,
+		Power:   1,
+		Name:    "truerepublic-bootstrap",
+	}}
+	if err := genesis.ValidateAndComplete(); err != nil {
 		return err
 	}
 	updated, err := json.MarshalIndent(genesis, "", "  ")
 	if err != nil {
 		return err
 	}
-	return os.WriteFile(genesisPath, updated, 0o600)
+	return atomicWriteFile(genesisPath, updated, 0o600)
+}
+
+func atomicWriteFile(path string, data []byte, mode os.FileMode) (err error) {
+	temp, err := os.CreateTemp(filepath.Dir(path), ".genesis-*.tmp")
+	if err != nil {
+		return err
+	}
+	tempPath := temp.Name()
+	defer func() {
+		_ = temp.Close()
+		if err != nil {
+			_ = os.Remove(tempPath)
+		}
+	}()
+	if err = temp.Chmod(mode); err != nil {
+		return err
+	}
+	if _, err = temp.Write(data); err != nil {
+		return err
+	}
+	if err = temp.Sync(); err != nil {
+		return err
+	}
+	if err = temp.Close(); err != nil {
+		return err
+	}
+	return os.Rename(tempPath, path)
 }
 
 func executeRootCommand(rootCmd *cobra.Command) {

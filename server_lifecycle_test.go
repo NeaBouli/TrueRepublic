@@ -13,6 +13,11 @@ import (
 	"testing"
 	"time"
 
+	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
+	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
+	crisistypes "github.com/cosmos/cosmos-sdk/x/crisis/types"
+	genutiltypes "github.com/cosmos/cosmos-sdk/x/genutil/types"
+
 	"truerepublic/token"
 	"truerepublic/x/truedemocracy"
 )
@@ -34,6 +39,13 @@ func TestRootUsesStandardCosmosServerCommands(t *testing.T) {
 			t.Fatalf("standard start flag %q is missing", flag)
 		}
 	}
+	initCmd, _, err := root.Find([]string{"init"})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if got := initCmd.Flags().Lookup("default-denom").DefValue; got != token.BaseDenom {
+		t.Fatalf("init default denom = %q, want %q", got, token.BaseDenom)
+	}
 }
 
 func TestNodeStartsStopsAndRestartsFromPersistentHome(t *testing.T) {
@@ -46,6 +58,21 @@ func TestNodeStartsStopsAndRestartsFromPersistentHome(t *testing.T) {
 	initCmd := exec.Command(binary, "init", "restart-node", "--chain-id", "truerepublic-restart-1", "--home", home)
 	if output, err := initCmd.CombinedOutput(); err != nil {
 		t.Fatalf("init node: %v\n%s", err, output)
+	}
+	initialized, err := genutiltypes.AppGenesisFromFile(filepath.Join(home, "config", "genesis.json"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	var initializedState map[string]json.RawMessage
+	if err := json.Unmarshal(initialized.AppState, &initializedState); err != nil {
+		t.Fatal(err)
+	}
+	var crisisGenesis crisistypes.GenesisState
+	if err := json.Unmarshal(initializedState[crisistypes.ModuleName], &crisisGenesis); err != nil {
+		t.Fatal(err)
+	}
+	if crisisGenesis.ConstantFee.Denom != token.BaseDenom {
+		t.Fatalf("crisis fee denom = %q, want %q", crisisGenesis.ConstantFee.Denom, token.BaseDenom)
 	}
 	keyCmd := exec.Command(binary, "keys", "add", "smoke", "--keyring-backend", "test", "--home", home, "--output", "json")
 	if output, err := keyCmd.CombinedOutput(); err != nil {
@@ -177,17 +204,17 @@ func waitForNodeHeight(t *testing.T, url string, minimum int64, cmd *exec.Cmd, l
 }
 
 func TestBindGenesisValidatorKeyUsesGeneratedNodeKey(t *testing.T) {
-	appState := ModuleBasics.DefaultGenesis(newGenesisTestApp(t).appCodec)
+	app := newGenesisTestApp(t)
+	appState := ModuleBasics.DefaultGenesis(app.appCodec)
 	appStateJSON, err := json.Marshal(appState)
 	if err != nil {
 		t.Fatal(err)
 	}
-	document, err := json.Marshal(map[string]json.RawMessage{"app_state": appStateJSON})
-	if err != nil {
-		t.Fatal(err)
-	}
 	path := filepath.Join(t.TempDir(), "genesis.json")
-	if err := os.WriteFile(path, document, 0o600); err != nil {
+	genesisDoc := &genutiltypes.AppGenesis{
+		ChainID: "test-bind-chain", AppState: appStateJSON, Consensus: &genutiltypes.ConsensusGenesis{},
+	}
+	if err := genesisDoc.SaveAs(path); err != nil {
 		t.Fatal(err)
 	}
 
@@ -213,5 +240,61 @@ func TestBindGenesisValidatorKeyUsesGeneratedNodeKey(t *testing.T) {
 	}
 	if got := tdGenesis.Validators[0].PubKey; !bytes.Equal(got, generatedPubKey) {
 		t.Fatalf("bootstrap pubkey = %x, want generated key %x", got, generatedPubKey)
+	}
+	if len(tdGenesis.Domains) != 1 || len(tdGenesis.Validators) != 1 {
+		t.Fatalf("unexpected PoD bootstrap state: %+v", tdGenesis)
+	}
+	bankGenesis := banktypes.GetGenesisStateFromAppState(app.appCodec, updatedState)
+	moduleAddress := authtypes.NewModuleAddress(truedemocracy.ModuleName).String()
+	wantStake := tdGenesis.Validators[0].Stake
+	var backedStake int64
+	for _, balance := range bankGenesis.Balances {
+		if balance.Address == moduleAddress {
+			backedStake = balance.Coins.AmountOf(token.BaseDenom).Int64()
+			break
+		}
+	}
+	if backedStake != wantStake {
+		t.Fatalf("module stake backing = %d, want %d", backedStake, wantStake)
+	}
+	if err := validateLedgerGenesis(app.appCodec, updatedState); err != nil {
+		t.Fatalf("generated genesis is not ledger-backed: %v", err)
+	}
+	cometGenesis, err := genutiltypes.AppGenesisFromFile(path)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(cometGenesis.Consensus.Validators) != 1 || !bytes.Equal(cometGenesis.Consensus.Validators[0].PubKey.Bytes(), generatedPubKey) {
+		t.Fatalf("CometBFT validator set does not use generated key: %+v", cometGenesis.Consensus.Validators)
+	}
+	info, err := os.Stat(path)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if info.Mode().Perm() != 0o600 {
+		t.Fatalf("genesis mode = %o, want 600", info.Mode().Perm())
+	}
+}
+
+func TestBindGenesisValidatorKeyRejectsInvalidKeyWithoutMutation(t *testing.T) {
+	appState := ModuleBasics.DefaultGenesis(newGenesisTestApp(t).appCodec)
+	appStateJSON, err := json.Marshal(appState)
+	if err != nil {
+		t.Fatal(err)
+	}
+	path := filepath.Join(t.TempDir(), "genesis.json")
+	genesisDoc := &genutiltypes.AppGenesis{
+		ChainID: "test-invalid-key-chain", AppState: appStateJSON, Consensus: &genutiltypes.ConsensusGenesis{},
+	}
+	if err := genesisDoc.SaveAs(path); err != nil {
+		t.Fatal(err)
+	}
+	before, _ := os.ReadFile(path)
+	if err := bindGenesisValidatorKey(path, []byte{1}); err == nil {
+		t.Fatal("invalid consensus key accepted")
+	}
+	after, _ := os.ReadFile(path)
+	if !bytes.Equal(after, before) {
+		t.Fatal("invalid key mutated genesis")
 	}
 }
