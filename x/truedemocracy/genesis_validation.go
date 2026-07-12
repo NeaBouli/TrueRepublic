@@ -57,12 +57,37 @@ func ValidateGenesisState(genesis GenesisState) error {
 		pubKeys[pubKey] = validator.OperatorAddr
 	}
 
-	if genesis.VerifyingKeyHex != "" {
+	usedNullifiers := make(map[string]struct{}, len(genesis.UsedNullifiers))
+	for _, record := range genesis.UsedNullifiers {
+		if _, exists := domains[record.DomainName]; !exists {
+			return fmt.Errorf("used nullifier references missing domain %q", record.DomainName)
+		}
+		if err := validateCanonicalFieldHex(record.NullifierHash, "used nullifier", true); err != nil {
+			return fmt.Errorf("domain %q: %w", record.DomainName, err)
+		}
+		if record.UsedAtHeight < 0 {
+			return fmt.Errorf("domain %q used nullifier height cannot be negative", record.DomainName)
+		}
+		key := record.DomainName + "\x00" + record.NullifierHash
+		if _, exists := usedNullifiers[key]; exists {
+			return fmt.Errorf("duplicate used nullifier for domain %q", record.DomainName)
+		}
+		usedNullifiers[key] = struct{}{}
+	}
+
+	if genesis.VerifyingKeyHex == "" {
+		if genesis.ZKPCircuitID != "" || genesis.VerifyingKeySHA256 != "" {
+			return fmt.Errorf("ZKP circuit id and verifying key fingerprint require verifying key bytes")
+		}
+	} else {
 		verifyingKey, err := hex.DecodeString(genesis.VerifyingKeyHex)
 		if err != nil {
 			return fmt.Errorf("invalid verifying key hex: %w", err)
 		}
-		if _, err := DeserializeVerifyingKey(verifyingKey); err != nil {
+		if genesis.VerifyingKeyHex != hex.EncodeToString(verifyingKey) {
+			return fmt.Errorf("verifying key hex must use canonical lowercase encoding")
+		}
+		if _, err := ValidateMembershipVerifyingKey(verifyingKey, genesis.ZKPCircuitID, genesis.VerifyingKeySHA256); err != nil {
 			return fmt.Errorf("invalid verifying key: %w", err)
 		}
 	}
@@ -122,6 +147,14 @@ func validateGenesisDomain(domain Domain) error {
 	if err := validateUniqueStrings(domain.Name, "permission entry", domain.PermissionReg); err != nil {
 		return err
 	}
+	for _, key := range domain.PermissionReg {
+		if err := validateCanonicalFieldHex(key, "permission entry", false); err != nil {
+			return fmt.Errorf("domain %q: %w", domain.Name, err)
+		}
+	}
+	if err := validateGenesisZKPState(domain); err != nil {
+		return err
+	}
 	issues := make(map[string]struct{}, len(domain.Issues))
 	for _, issue := range domain.Issues {
 		if issue.Name == "" || issue.Stones < 0 || issue.CreationDate < 0 || issue.LastActivityAt < 0 {
@@ -148,7 +181,86 @@ func validateGenesisDomain(domain Domain) error {
 				if rating.Value < -5 || rating.Value > 5 {
 					return fmt.Errorf("domain %q suggestion %q contains rating outside -5..5", domain.Name, suggestion.Name)
 				}
+				if rating.NullifierHex != "" {
+					if rating.DomainPubKeyHex != "" {
+						return fmt.Errorf("domain %q suggestion %q rating mixes ZKP and domain-key identity", domain.Name, suggestion.Name)
+					}
+					if err := validateCanonicalFieldHex(rating.NullifierHex, "rating nullifier", true); err != nil {
+						return fmt.Errorf("domain %q suggestion %q: %w", domain.Name, suggestion.Name, err)
+					}
+				} else if rating.DomainPubKeyHex != "" {
+					if err := validateCanonicalFieldHex(rating.DomainPubKeyHex, "rating domain public key", false); err != nil {
+						return fmt.Errorf("domain %q suggestion %q: %w", domain.Name, suggestion.Name, err)
+					}
+				}
 			}
+		}
+	}
+	return nil
+}
+
+func validateGenesisZKPState(domain Domain) error {
+	if len(domain.IdentityCommits) > 1<<MerkleTreeDepth {
+		return fmt.Errorf("domain %q has too many identity commitments", domain.Name)
+	}
+	seenCommitments := make(map[string]struct{}, len(domain.IdentityCommits))
+	leaves := make([][]byte, len(domain.IdentityCommits))
+	for i, commitment := range domain.IdentityCommits {
+		if err := validateCanonicalFieldHex(commitment, "identity commitment", true); err != nil {
+			return fmt.Errorf("domain %q: %w", domain.Name, err)
+		}
+		if _, exists := seenCommitments[commitment]; exists {
+			return fmt.Errorf("domain %q contains duplicate identity commitment %q", domain.Name, commitment)
+		}
+		seenCommitments[commitment] = struct{}{}
+		leaves[i], _ = hex.DecodeString(commitment)
+	}
+	if len(domain.IdentityCommits) == 0 {
+		if domain.MerkleRoot != "" || len(domain.MerkleRootHistory) != 0 {
+			return fmt.Errorf("domain %q has Merkle roots without identity commitments", domain.Name)
+		}
+		return nil
+	}
+	if err := validateCanonicalFieldHex(domain.MerkleRoot, "Merkle root", true); err != nil {
+		return fmt.Errorf("domain %q: %w", domain.Name, err)
+	}
+	tree := NewMerkleTree(MerkleTreeDepth)
+	if err := tree.BuildFromLeaves(leaves); err != nil {
+		return fmt.Errorf("domain %q identity tree: %w", domain.Name, err)
+	}
+	if domain.MerkleRoot != tree.GetRoot() {
+		return fmt.Errorf("domain %q Merkle root does not match identity commitments", domain.Name)
+	}
+	if len(domain.MerkleRootHistory) > MerkleRootHistorySize {
+		return fmt.Errorf("domain %q Merkle root history exceeds %d entries", domain.Name, MerkleRootHistorySize)
+	}
+	seenRoots := make(map[string]struct{}, len(domain.MerkleRootHistory))
+	for _, root := range domain.MerkleRootHistory {
+		if err := validateCanonicalFieldHex(root, "Merkle root history entry", true); err != nil {
+			return fmt.Errorf("domain %q: %w", domain.Name, err)
+		}
+		if _, exists := seenRoots[root]; exists {
+			return fmt.Errorf("domain %q contains duplicate Merkle root history entry %q", domain.Name, root)
+		}
+		seenRoots[root] = struct{}{}
+	}
+	return nil
+}
+
+func validateCanonicalFieldHex(value, field string, requireFieldElement bool) error {
+	if len(value) != 64 {
+		return fmt.Errorf("%s must be exactly 32 bytes", field)
+	}
+	decoded, err := hex.DecodeString(value)
+	if err != nil {
+		return fmt.Errorf("%s is invalid hex: %w", field, err)
+	}
+	if value != hex.EncodeToString(decoded) {
+		return fmt.Errorf("%s must use canonical lowercase hex", field)
+	}
+	if requireFieldElement {
+		if _, err := HexToFieldElement(value); err != nil {
+			return fmt.Errorf("%s is not a canonical BN254 field element: %w", field, err)
 		}
 	}
 	return nil

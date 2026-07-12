@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 
 	"cosmossdk.io/math"
+	storeprefix "cosmossdk.io/store/prefix"
 	gwruntime "github.com/grpc-ecosystem/grpc-gateway/runtime"
 	"github.com/spf13/cobra"
 
@@ -124,6 +125,9 @@ func (am AppModule) InitGenesis(ctx sdk.Context, cdc codec.JSONCodec, data json.
 	if err := json.Unmarshal(data, &genesisState); err != nil {
 		panic(err)
 	}
+	if err := ValidateGenesisState(genesisState); err != nil {
+		panic(err)
+	}
 
 	// Restore domains from genesis (full state, not just name/admin/treasury).
 	store := ctx.KVStore(am.keeper.StoreKey)
@@ -135,6 +139,9 @@ func (am AppModule) InitGenesis(ctx sdk.Context, cdc codec.JSONCodec, data json.
 			am.cdc.MustMarshalLengthPrefixed(domain.TotalPayouts),
 		)
 		am.keeper.InitializeBigPurgeSchedule(ctx, domain.Name)
+	}
+	for _, record := range genesisState.UsedNullifiers {
+		am.keeper.SetNullifierUsed(ctx, record.DomainName, record.NullifierHash, record.UsedAtHeight)
 	}
 
 	// Register genesis validators and build initial validator set.
@@ -157,7 +164,7 @@ func (am AppModule) InitGenesis(ctx sdk.Context, cdc codec.JSONCodec, data json.
 		if err != nil {
 			panic(err)
 		}
-		if _, err := DeserializeVerifyingKey(vkBytes); err != nil {
+		if _, err := ValidateMembershipVerifyingKey(vkBytes, genesisState.ZKPCircuitID, genesisState.VerifyingKeySHA256); err != nil {
 			panic(err)
 		}
 		am.keeper.SetVerifyingKey(ctx, vkBytes)
@@ -271,16 +278,32 @@ func (am AppModule) ExportGenesis(ctx sdk.Context, cdc codec.JSONCodec) json.Raw
 	if validators == nil {
 		validators = []GenesisValidator{}
 	}
+	usedNullifiers := make([]NullifierRecord, 0)
+	nullifierStore := storeprefix.NewStore(ctx.KVStore(am.keeper.StoreKey), []byte("nullifier:"))
+	iterator := nullifierStore.Iterator(nil, nil)
+	defer iterator.Close()
+	for ; iterator.Valid(); iterator.Next() {
+		var record NullifierRecord
+		am.keeper.cdc.MustUnmarshalLengthPrefixed(iterator.Value(), &record)
+		usedNullifiers = append(usedNullifiers, record)
+	}
 
 	vkHex := ""
+	vkFingerprint := ""
+	circuitID := ""
 	if vkBytes, found := am.keeper.GetVerifyingKey(ctx); found {
 		vkHex = hex.EncodeToString(vkBytes)
+		vkFingerprint = VerifyingKeyFingerprint(vkBytes)
+		circuitID = MembershipCircuitID
 	}
 
 	genesis := GenesisState{
-		Domains:         domains,
-		Validators:      validators,
-		VerifyingKeyHex: vkHex,
+		Domains:            domains,
+		Validators:         validators,
+		UsedNullifiers:     usedNullifiers,
+		ZKPCircuitID:       circuitID,
+		VerifyingKeyHex:    vkHex,
+		VerifyingKeySHA256: vkFingerprint,
 	}
 	bz, err := json.Marshal(genesis)
 	if err != nil {

@@ -6,8 +6,8 @@
  * 2. Loading proving key + verifying key artifacts
  * 3. WASM bridge for Groth16 prove/verify
  *
- * This provides the full interface with mock implementations
- * so the UI layer can be built and tested. Real WASM in v0.4.1.
+ * Mock identity helpers remain for UI development, but proof generation fails
+ * closed and no anonymous transaction can be submitted from this client.
  *
  * Go backend reference:
  * - Circuit: x/truedemocracy/zkp.go (MembershipCircuit)
@@ -41,26 +41,19 @@ export class ZKPService {
     onStatus?: (status: ProofGenerationStatus) => void
   ): Promise<void> {
     this.statusCallback = onStatus;
-
-    try {
-      this.updateStatus('loading_wasm', 10, 'Loading ZKP library...');
-
-      // TODO: Load actual gnark-wasm module
-      // const wasm = await import('./zkp_bg.wasm');
-      // await wasm.default();
-      await this.sleep(500);
-
-      this.wasmLoaded = true;
-      this.updateStatus('idle', 100, 'Ready');
-    } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : 'Unknown error';
-      this.updateStatus('error', 0, 'Failed to load ZKP library', message);
-      throw err;
-    }
+    const message =
+      'Anonymous voting is preview-only: a compatible real Groth16 prover is not installed.';
+    this.wasmLoaded = false;
+    this.updateStatus('error', 0, 'ZKP submission unavailable', message);
+    throw new Error(message);
   }
 
   get isReady(): boolean {
     return this.wasmLoaded;
+  }
+
+  get isSubmittable(): boolean {
+    return false;
   }
 
   /**
@@ -154,43 +147,11 @@ export class ZKPService {
    * Real implementation calls gnark-wasm with the proving key.
    */
   async generateProof(inputs: ProofInputs): Promise<GeneratedProof> {
-    if (!this.wasmLoaded) {
-      throw new Error('WASM not initialized. Call initialize() first.');
-    }
-
-    try {
-      this.updateStatus('fetching_proof', 20, 'Fetching Merkle proof...');
-      await this.sleep(300);
-
-      this.updateStatus('generating', 40, 'Generating zero-knowledge proof...');
-
-      // TODO: Call actual gnark-wasm proof generation:
-      // const result = await wasmModule.generateMembershipProof(
-      //   inputs.identitySecret,
-      //   inputs.merkleRoot,
-      //   inputs.merkleProof.pathElements,
-      //   inputs.merkleProof.pathIndices,
-      //   inputs.externalNullifier,
-      // );
-
-      // Simulate proof generation time (real: 10-30s on mobile, 2-5s on desktop)
-      await this.sleep(2000);
-
-      const nullifierHash = this.computeNullifierHash(
-        inputs.identitySecret,
-        inputs.externalNullifier
-      );
-
-      const proof = this.mockGenerateProof(inputs, nullifierHash);
-
-      this.updateStatus('complete', 100, 'Proof generated successfully');
-
-      return proof;
-    } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : 'Unknown error';
-      this.updateStatus('error', 0, 'Proof generation failed', message);
-      throw err;
-    }
+    void inputs;
+    const message =
+      'Mock proofs are not chain-compatible; real Groth16 proof generation is unavailable.';
+    this.updateStatus('error', 0, 'ZKP submission unavailable', message);
+    throw new Error(message);
   }
 
   // ---------------------------------------------------------------
@@ -204,10 +165,6 @@ export class ZKPService {
     error?: string
   ): void {
     this.statusCallback?.({ step, progress, message, error });
-  }
-
-  private sleep(ms: number): Promise<void> {
-    return new Promise((resolve) => setTimeout(resolve, ms));
   }
 
   private randomHex(bytes: number): string {
@@ -235,22 +192,4 @@ export class ZKPService {
     return (hex + hex + hex + hex + hex + hex + hex + hex).slice(0, 64);
   }
 
-  private mockGenerateProof(
-    inputs: ProofInputs,
-    nullifierHash: string
-  ): GeneratedProof {
-    // Mock serialized Groth16 proof (hex-encoded bytes)
-    const proofHex = this.randomHex(192); // ~384 hex chars
-
-    return {
-      proof: proofHex,
-      nullifierHash,
-      merkleRoot: inputs.merkleRoot,
-      publicSignals: [
-        inputs.merkleRoot,
-        nullifierHash,
-        inputs.externalNullifier,
-      ],
-    };
-  }
 }
