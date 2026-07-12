@@ -364,8 +364,28 @@
 - GitHub Go build/vet/race/coverage and Docker block/restart run `29170712626`,
   Docs, DeepScan, Web, Mobile, Rust, and all five manual Security Scan
   `29170832988` jobs pass. Independent multi-node operations review remains.
+- Created isolated GH-8 checkout and rebased only its CI/docs commits onto
+  final GH-21 `b59efa2`, discarding the obsolete link-only 636-case handoff.
+- Combined Action-major upgrades with read-only, non-persisted checkout
+  credentials, Node 22 for the maintained client, main-only push automation,
+  PR/manual feature execution, and no duplicate branch/PR suites.
+- Found the docs gate silently checked nonexistent `wiki-github/` paths while
+  the real wiki claimed v0.1-alpha, 182 tests, Go 1.23, Testnet Ready, usable
+  anonymity/mobile, and no high/critical issues. Replaced those claims with
+  evidence-backed 683-case recovery status and explicit blockers.
+- Corrected the recovery installation path to select the branch that actually
+  provides GH-21 lifecycle commands; created real wiki current/testing pages
+  and reconciled linked architecture/operator toolchain facts.
+- Local workflow YAML, docs consistency/arithmetic, JSON, wiki target,
+  stale-current-claim, and diff checks pass. GitHub Action execution is pending.
+- Published rebased GH-8 PR #24 head `3964f4a`; synchronized PR metadata,
+  Issue #8, and recovery epic #4 with the 683-case docs/wiki/CI audit findings.
+- GitHub Go race/coverage + Docker restart `29171461365`, Rust `29171461357`,
+  Web `29171461355`, Mobile `29171461342`, Docs `29171461348`, DeepScan,
+  CodeRabbit, and all five Security Scan `29171476126` jobs pass.
+- PR #25 remains draft/red against unrecovered main; no gate bypass is allowed.
 
-## 2026-07-12 12:18 EEST - GH-12 review remediation
+## 2026-07-12 12:35 EEST - GH-12 review remediation and stack refresh
 
 - Accepted both actionable PR #19 review findings. Because `CreateDomain` has
   no error return, the escrow-divergence test now reads the domain back and
@@ -376,6 +396,12 @@
   and preservation of the 21,000,000 PNYX canonical supply cap.
 - Focused registered-invariant regression, full Go tests, vet, and build pass.
   Published commit `eec91c7`, answered and resolved both PR #19 review threads,
-  rebased/published PR #22 at `0c72ad0`, and propagated the fix locally through
-  PR #23. Refreshed GitHub verification and propagation through PR #24 remain
-  in progress.
+  rebased/published PR #22 at `0c72ad0`, rebased/published PR #23 at `49938a3`,
+  and published the propagated PR #24 stack head.
+- PRs #19, #22, #23, and #24 are mergeable on exact consecutive bases with no
+  unresolved review threads. Their refreshed standard checks pass, as do all
+  five jobs in Security runs `29172007410`, `29172246257`, `29172246373`, and
+  `29172246235` respectively.
+- PR #9 remains technically green and mergeable but correctly requires one
+  independent approval. PR #25 remains red against unrecovered `main`; neither
+  gate is bypassed, and meaningful recovery work remains available.

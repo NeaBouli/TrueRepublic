@@ -1,16 +1,25 @@
 name: Docs Consistency Check
 
 on:
+  workflow_dispatch:
   pull_request:
     paths:
       - 'README.md'
+      - 'CLAUDE.md'
       - 'docs/**'
-      - 'wiki-github/**'
+      - 'scripts/check-consistency.sh'
+      - '.github/workflows/docs-check.yml'
+      - 'wiki/**'
+
+permissions:
+  contents: read
 
 jobs:
   check:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
+        with:
+          persist-credentials: false
       - name: Check Consistency
         run: ./scripts/check-consistency.sh

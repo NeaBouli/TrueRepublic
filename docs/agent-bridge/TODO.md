@@ -12,13 +12,13 @@
 ## P1 - consensus and wallet audit
 
 - [x] GH-7: audit PNYX 21M cap, denomination, and ledger conservation paths.
-- [x] GH-11: denomination/cap branch is locally and GitHub verified in PR #15;
-  keep it stacked until PR #9 receives independent approval.
-- [x] GH-14: PR #16 is rebased, mergeable, locally/GitHub green, and has zero
-  unresolved review threads; keep it stacked until its bases merge.
+- [x] GH-11: denomination/cap branch was locally and GitHub verified and merged
+  via PR #15.
+- [x] GH-14: PR #16 was locally/GitHub green with zero unresolved review
+  threads and is merged.
 - [x] GH-13: PR #17 final review remediation is locally/GitHub green, both
-  Docker builds and security pass, and all five review threads are resolved;
-  keep it stacked until its bases merge.
+  Docker builds and security pass, all five review threads are resolved, and
+  the PR is merged.
 - [x] GH-10: DEX bank custody, provider LP ownership, canonical burns, registry
   authority, and rollback evidence are locally green on stacked PR #18.
 - [x] GH-12: exact custom genesis, non-empty custody round trip, and registered
@@ -42,8 +42,14 @@
 
 - [x] GH-8: review the preserved legacy checkout; no code is safe/useful for
   wholesale merge, and the checkout remains preserved pending final archive.
-- [ ] GH-8: finish CLAUDE.md and historical-doc reconciliation; README, status
-  JSON, limitations, website, and current 683-test count are aligned on GH-21.
-- [ ] GH-8: add bridge/docs consistency to CI.
-- [x] PR #9 is ready, mergeable, fully green, and awaiting the required
-  independent approval.
+- [x] GH-8: align CLAUDE, install, FAQ, README, status JSON, limitations,
+  landing page, and real wiki status/security claims to the 683-test recovery
+  source of truth.
+- [x] GH-8: enforce suite/module/cap arithmetic and real wiki/agent/public
+  status through docs CI; modernize Action runtimes without credential or
+  duplicate-run regression.
+- [x] GH-8: publish audited head `3964f4a`; every updated GitHub Action and
+  manual Security Scan `29171476126` passes.
+- [ ] GH-8: complete refreshed docs/recovery CI and merge PR #24, then rebase
+  PR #27 and replace the obsolete PR #25 visibility track.
+- [x] PRs #9, #15, #16, #17, #18, #19, #22, and #23 are merged to `main`.

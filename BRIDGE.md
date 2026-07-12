@@ -12,12 +12,13 @@ Canonical coordination lives in [`docs/agent-bridge/`](docs/agent-bridge/README.
 - GH-12 genesis/invariant audit: [`PR19_AUDIT.md`](docs/agent-bridge/PR19_AUDIT.md)
 - GH-20 ZKP/auth audit: [`PR22_AUDIT.md`](docs/agent-bridge/PR22_AUDIT.md)
 - GH-21 node lifecycle audit: [`PR23_AUDIT.md`](docs/agent-bridge/PR23_AUDIT.md)
+- GH-8 docs/CI audit: [`PR24_AUDIT.md`](docs/agent-bridge/PR24_AUDIT.md)
 - Decisions: [`DECISIONS.md`](docs/agent-bridge/DECISIONS.md)
 - Security: [`SECURITY_NOTES.md`](docs/agent-bridge/SECURITY_NOTES.md)
 
 GitHub recovery epic: [#4](https://github.com/NeaBouli/TrueRepublic/issues/4)
 
-## 2026-07-12 12:18 EEST GH-12 review remediation → Published and propagated
+## 2026-07-12 12:35 EEST GH-12 review remediation → Stack green
 
 - **Branch:** `fix/GH-12-genesis-invariants`
 - **Issue:** [GH-12](https://github.com/NeaBouli/TrueRepublic/issues/12)
@@ -30,9 +31,48 @@ GitHub recovery epic: [#4](https://github.com/NeaBouli/TrueRepublic/issues/4)
 - **Tests:** focused registered-invariant regression, `go test ./... -count=1`,
   `go vet ./...`, and `go build ./...` → PASS
 - **GitHub:** commit `eec91c7` published; both review threads answered and
-  resolved; PR #22 rebased and published at `0c72ad0`; propagated locally
-  through PR #23
-- **Ready for:** refreshed PR #23 verification and propagation through PR #24
+  resolved; PR #22 published at `0c72ad0`, PR #23 published at `49938a3`, and
+  PR #24 published with the propagated fix; all refreshed PR #19/#22/#23/#24
+  checks and Security runs `29172007410`, `29172246257`, `29172246373`, and
+  `29172246235` pass; all four PRs are mergeable with zero unresolved threads
+- **Ready for:** independent approval of PR #9 and ordered stack merge; the
+  active recovery goal continues and is not blocked
+
+## 2026-07-12 12:09 EEST GH-8 docs/CI reconciliation → GitHub green
+
+- **Branch:** `fix/GH-8-docs-final`
+- **Issue:** [GH-8](https://github.com/NeaBouli/TrueRepublic/issues/8)
+- **PR:** [#24](https://github.com/NeaBouli/TrueRepublic/pull/24) (stacked draft against final GH-21)
+- **Changed:** Node-24-backed official Action majors with read-only/non-persisted
+  checkout credentials; non-duplicate workflow triggers; strengthened suite,
+  module, cap, agent-guide, landing-page, and real-wiki consistency gates;
+  replaced stale CLAUDE/install/FAQ/wiki recovery and security claims
+- **Audit fixes:** rebased only the six GH-8 CI/docs commits onto final GH-21
+  `49938a3`; preserved Node 22 for the maintained client; corrected false
+  anonymous-voting/mobile-wallet availability; made installation explicitly
+  select the unmerged recovery branch; replaced the skipped `wiki-github/`
+  checks and created missing current/testing status pages
+- **Tests:** every workflow YAML parses; docs consistency, JSON, relative wiki
+  target, stale-current-claim, and diff checks → PASS; underlying 683-case
+  GH-21 code head remains unchanged
+- **Risk:** Medium — public security/readiness claims and CI trust/runtime
+- **GitHub:** Go race/coverage + Docker restart `29172243080`, Rust
+  `29172243094`, Web `29172243172`, Mobile `29172243069`, Docs
+  `29172243125`, DeepScan, CodeRabbit, and all five Security Scan
+  `29172246235` jobs → PASS
+- **Ready for:** independent documentation/recovery review and ordered stack
+  merge; PR #25 remains separately blocked on old-main security
+
+### Codex review feedback
+
+Conditional PASS. The initial rebased draft still contained 636-test,
+Go-1.23, anonymous-voting, mobile-wallet, and Testnet-Ready claims and a docs
+gate pointed at a nonexistent wiki directory. Those findings are remediated.
+All modernized Action majors now pass on GitHub. PR #25 remains a separate
+default-branch visibility track and must not bypass the vulnerable current
+`main` or the ordered recovery stack.
+
+---
 
 ## 2026-07-12 11:41 EEST GH-21 node lifecycle → GitHub green
 
@@ -43,7 +83,7 @@ GitHub recovery epic: [#4](https://github.com/NeaBouli/TrueRepublic/issues/4)
   generated CometBFT-key PoD genesis with exact bank-backed stake, consensus
   parameter keeper, clean signal shutdown, export, non-root Debian/glibc image,
   persistent container restart gate, and restored CLI build-version metadata
-- **Audit fixes:** rebased without content drift onto final GH-20 head `fac50a4`;
+- **Audit fixes:** rebased without content drift onto final GH-20 head `0c72ad0`;
   rejected existing/conflicting consensus validator sets without mutation;
   wrote genesis atomically with mode `0600`; fixed the reproduced blank/failing
   `version` and `--version` interfaces before publication
@@ -54,8 +94,8 @@ GitHub recovery epic: [#4](https://github.com/NeaBouli/TrueRepublic/issues/4)
 - **Risk:** Critical — consensus key identity, bank-backed bootstrap stake,
   persistent application state, restart safety, and operator container runtime
 - **GitHub:** Go build/vet/race/coverage and Docker block/restart pass in run
-  `29170712626`; Docs, DeepScan, Web, Mobile, Rust, and manual Security Scan
-  `29170832988` pass; CodeRabbit is check-green
+  `29172166826`; Docs, DeepScan, Web, CodeRabbit, and manual Security Scan
+  `29172246373` pass
 - **Ready for:** independent multi-node operations review and ordered stack
   merge; not production
 
@@ -302,5 +342,29 @@ jobs now prove the corrected image builds.
 Conditional PASS for the GH-13 scope after the three audit hardenings. DEX
 custody/burn integration, custom-genesis reconciliation, runtime invariants,
 and anonymous recipient binding remain separately blocking.
+
+---
+
+## 2026-07-12 23:53 EEST GH-8 recovery documentation → Review
+
+- **Branch:** `fix/GH-8-docs-final`
+- **Issue:** [GH-8](https://github.com/NeaBouli/TrueRepublic/issues/8)
+- **PR:** [#24](https://github.com/NeaBouli/TrueRepublic/pull/24)
+- **Changed:** rebased all eight GH-8 commits patch-equivalently onto the PR
+  #23 merge; reconciled README, machine status, wiki, security notes, project
+  state, and queue with the recovery foundation now present on `main`
+- **Tests:** `git range-diff 49938a3..backup/GH-8-before-main-20260713
+  origin/main..HEAD` → 8/8 commits patch-equivalent;
+  `bash scripts/check-consistency.sh` → PASS; workflow YAML parse → PASS;
+  `git diff --check` → PASS after removing two Markdown trailing spaces
+- **Risk:** Medium — public recovery truth and CI definitions; production
+  readiness remains explicitly false
+- **Ready for:** refreshed GitHub CI, review, and ordered squash merge
+
+### Codex review feedback
+
+The documentation now distinguishes a merged recovery foundation from a
+production release. Cryptographic, multi-node operations, legacy-client, and
+release-process blockers remain prominent and unchanged.
 
 ---

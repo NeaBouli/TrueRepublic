@@ -76,13 +76,19 @@ Yes, by **2/3 majority vote** of domain members. Any member can initiate a vote-
 | Red | Expiring, will be auto-deleted if not supported |
 
 ### Is voting anonymous?
-Yes. Members register domain-specific key pairs via the permission register. Ratings are submitted with domain public keys, making them **unlinkable** to member identities.
+The on-chain recovery design supports domain-scoped anonymous ratings and binds
+proofs to the chain, proposal, and rating. However, both web clients currently
+reject mock proof generation/submission. Anonymous voting is therefore not
+available for production use until a compatible real prover and independent
+cryptographic review exist.
 
 ## Wallet
 
 ### Which wallets are supported?
-- **Keplr** (browser extension) -- Recommended for web
-- **Mobile wallet** (React Native app) -- For iOS/Android
+- `client-web` is the only maintained client during recovery and integrates
+  browser-wallet/CosmJS flows.
+- `web-wallet` and `mobile-wallet` are deprecated legacy clients and must not be
+  used for real keys or funds.
 
 ### How long do transactions take?
 Approximately **5 seconds** (one block confirmation).
@@ -96,7 +102,9 @@ Common causes: insufficient funds, wrong network, pending transaction. See [Trou
 Minimum: 2 CPU, 4 GB RAM, 100 GB SSD. Recommended: 4+ CPU, 8+ GB RAM, 250+ GB NVMe SSD. See [Requirements](node-operators/installation/requirements.md).
 
 ### Docker or native build?
-Docker is recommended for most operators. It includes the full stack (node, web wallet, monitoring). See [Docker Setup](node-operators/installation/docker-setup.md).
+Docker is the reproducible local recovery-node path and its restart gate passes
+in CI. The wider Compose stack still contains legacy client/monitoring surfaces
+and is not a production deployment approval. See [Docker Setup](node-operators/installation/docker-setup.md).
 
 ### What ports need to be open?
 Only **26656/tcp** (P2P) is required. Optionally open 26657 (RPC) if serving public queries.
@@ -123,13 +131,17 @@ Validator stake withdrawals are capped at **10% of the domain's total payouts**.
 ## Development
 
 ### What is the tech stack?
-Go 1.23 (blockchain), Cosmos SDK v0.50.13, CometBFT v0.38.21, React 18 (web), Expo/React Native (mobile), Rust/CosmWasm 3 (smart contracts).
+Go 1.26.5, Cosmos SDK v0.50.14, CometBFT v0.38.22, React 18.2 +
+TypeScript/Vite for the maintained web client, and Rust/CosmWasm for contracts.
+The Expo/React Native client is deprecated and security-blocked.
 
 ### How do I contribute?
 Fork the repo, create a branch, write tests, and submit a PR. See [Developer Docs](developers/README.md).
 
 ### Where are the tests?
-182 tests across 3 modules. Run with `make test` or `go test ./... -race -cover`.
+The recovery baseline has 683 verified cases: 649 Go, 26 Rust, and eight
+maintained-client tests. Run `go test ./... -race -cover -count=1` and see
+`docs/status.json` for the authoritative breakdown.
 
 ### How do I integrate with CosmJS?
 See [CosmJS Examples](developers/integration-guide/cosmjs-examples.md) for complete code samples.

@@ -1,38 +1,17 @@
 # Project State
 
-Updated: 2026-07-12 11:41 EEST
+Updated: 2026-07-12 23:53 EEST
 
 ## Repository
 
 - GitHub: `NeaBouli/TrueRepublic`
-- Baseline: `origin/main` at `d8545cf`
-- Recovery branch: `fix/GH-4-recovery-foundation`
-- Ready PR: #9 (`fix/GH-4-recovery-foundation` -> `main`), head `acfc3d5`
-- Stacked implementation branch: `fix/GH-11-pnyx-cap`
-- Stacked draft PR: #15 (`fix/GH-11-pnyx-cap` -> `fix/GH-4-recovery-foundation`)
-- Stacked worktree: `/Users/gio/Desktop/repos/TrueRepublic-gh11`
-- GH-14 branch: `fix/GH-14-bank-escrow`
-- GH-14 draft PR: #16 (`fix/GH-14-bank-escrow` -> `fix/GH-11-pnyx-cap`)
-- GH-14 worktree: `/Users/gio/Desktop/repos/TrueRepublic-gh14`
-- GH-13 branch: `fix/GH-13-cap-issuance`
-- GH-13 draft PR: #17 (`fix/GH-13-cap-issuance` -> `fix/GH-14-bank-escrow`)
-- GH-13 worktree: `/Users/gio/Desktop/repos/TrueRepublic-gh13`
-- GH-10 branch: `fix/GH-10-dex-custody`
-- GH-10 draft PR: #18 (`fix/GH-10-dex-custody` -> `fix/GH-13-cap-issuance`)
-- GH-10 recovery checkout:
-  `/Users/gio/Documents/Codex/2026-07-11/erkunden/TrueRepublic-gh10`
-- GH-12 branch: `fix/GH-12-genesis-invariants`
-- GH-12 draft PR: #19 (`fix/GH-12-genesis-invariants` -> `fix/GH-10-dex-custody`)
-- GH-12 recovery checkout:
-  `/Users/gio/Documents/Codex/2026-07-11/erkunden/TrueRepublic-gh12`
-- GH-20 branch: `fix/GH-20-zkp-binding`
-- GH-20 draft PR: #22 (`fix/GH-20-zkp-binding` -> `fix/GH-12-genesis-invariants`)
-- GH-20 recovery checkout:
+- Baseline: `origin/main` at `34e2b52` after the verified PR #23 squash merge.
+- Merged recovery PRs: #9, #15, #16, #17, #18, #19, #22, and #23.
+- Current review: PR #24 (`fix/GH-8-docs-final` -> `main`).
+- Remaining deployment follow-up: PR #27 (`fix/GH-26-pod-init-script`), to be
+  rebased after PR #24.
+- Active recovery checkout:
   `/Users/gio/Documents/Codex/2026-07-11/erkunden/TrueRepublic-gh20`
-- GH-21 branch: `fix/GH-21-node-lifecycle`
-- GH-21 draft PR: #23 (`fix/GH-21-node-lifecycle` -> `fix/GH-20-zkp-binding`)
-- GH-21 recovery checkout:
-  `/Users/gio/Documents/Codex/2026-07-11/erkunden/TrueRepublic-gh21`
 - Recovery worktree: `/Users/gio/Desktop/repos/TrueRepublic-recovery`
 - Legacy local checkout: preserved at `/Users/gio/Desktop/repos/TrueRepublic`
 - GitHub epic: #4
@@ -121,7 +100,8 @@ Updated: 2026-07-12 11:41 EEST
   install/lint/6 tests/build/audit, CLI smoke, module integrity, and docs/diff
   checks pass; see `PR19_AUDIT.md`.
 - GH-12 GitHub Docs, DeepScan, Web, Mobile, Rust, Go, both Docker jobs, and
-  manual Security Scan run `29158360390` are green. CodeRabbit remains pending.
+  refreshed Security Scan `29172007410` are green. Both actionable review
+  threads are answered/resolved at head `eec91c7`.
 - GH-20 is rebased onto final PR #19. Proofs bind versioned chain/proposal/rating
   signals while one-vote nullifiers remain rating-independent and chain-scoped.
   Random trusted setup is removed from consensus. Genesis pins circuit ID, VK
@@ -131,28 +111,37 @@ Updated: 2026-07-12 11:41 EEST
   cases/race/coverage, Rust 26 tests/audit, maintained-client lint/8 tests/build/
   audit, four focused legacy tests/build/audit, module integrity, and diff checks
   pass; see `PR22_AUDIT.md`.
-- GH-21 is rebased without content drift onto final PR #22 head `fac50a4`.
+- GH-21 is rebased without implementation drift onto PR #22 head `0c72ad0`.
   Standard Cosmos/Comet lifecycle now uses the configured persistent database
   and home; `init` binds the generated CometBFT key to exactly bank-backed PoD
   genesis and refuses conflicting validator sets. Native block production,
   SIGINT shutdown, same-home restart, height advancement, invariants, export,
   649 Go cases, targeted race, vet, build, CLI version, shell syntax, and diff
-  checks pass locally. Root coverage is 64.3%. Published head `ec1ce17` is
-  mergeable; GitHub Go/Docker run `29170712626`, Docs, DeepScan, Web, Mobile,
-  Rust, and manual Security Scan `29170832988` pass; see `PR23_AUDIT.md`.
+  checks pass locally. Root coverage is 64.3%. Published head `49938a3` is
+  mergeable; GitHub Go/Docker run `29172166826`, Docs, DeepScan, Web,
+  CodeRabbit, and Security Scan `29172246373` pass; see `PR23_AUDIT.md`.
+- GH-8 is rebased onto final GH-21 `49938a3`. It modernizes official
+  Action runtimes without credential persistence or duplicate feature runs,
+  strengthens suite/module/cap consistency, and reconciles CLAUDE, install,
+  FAQ, landing, and real wiki status/security claims to 683 cases. Workflow
+  YAML, docs, JSON, wiki target, stale-current-claim, and diff checks pass;
+  Published stack head is mergeable. GitHub Go/Docker, Rust, Web, Mobile,
+  Docs, DeepScan, CodeRabbit, and all five Security Scan `29172246235` jobs
+  pass. See `PR24_AUDIT.md`.
 
 ## Public-status warning
 
 `docs/status.json`, README, limitations, and the landing page now mark recovery
 as active and separate 683 verified tests from the historical 577 figure.
-`CLAUDE.md` still needs reconciliation.
+`CLAUDE.md`, install guidance, FAQ, landing page, and wiki are reconciled on
+PR #24; the implementation foundation through PR #23 is visible on `main`.
 
 ## Blocking audit result
 
-The token/ledger audit is 12/12 PASS locally across the ordered stack:
+The token/ledger audit is 12/12 PASS locally across the merged recovery work:
 denomination/cap, governance custody, reward issuance, DEX custody, custom
 genesis, and runtime invariants. The repository remains recovery-only because
-the stack is unmerged/unreviewed, GH-20 still needs a real prover/external
+GH-20 still needs a real prover/external
 cryptographic review, and GH-21 still needs independent multi-node operations
 review.
 
@@ -160,9 +149,9 @@ GH-11 implements the canonical denomination metadata (`upnyx`, six decimal
 places, 21,000,000,000,000 base-unit cap) and pre-init bank-genesis cap checks.
 Its final audit corrections are locally verified and rebased onto PR #9 head
 `acfc3d5`; refreshed PR #15 GitHub checks are green at head `e0ff339`.
-GH-14 closes the declared treasury/stake custody slice on its stacked branch.
+GH-14 closes the declared treasury/stake custody slice on `main`.
 GH-13 closes cap-checked reward issuance, GH-10 closes DEX custody/LP/burn/
 authority, and GH-12 closes custom-genesis/runtime-invariant findings locally.
 GH-20 closes the on-chain ZKP binding and mock-client safety implementation
 locally. GH-21 closes the native single-node persistence/restart implementation
-locally. These remediations remain stacked and unmerged.
+locally and in GitHub CI. These remediations are merged to `main`.

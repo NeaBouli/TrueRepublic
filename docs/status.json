@@ -60,7 +60,7 @@
   },
   "features": {
     "zkp": {
-      "status": "recovery_verified_on_chain_client_disabled_unmerged",
+      "status": "recovery_verified_on_chain_client_disabled_merged",
       "client": "mock_preview_fail_closed_not_submittable",
       "proof_system": "groth16",
       "circuit_binding": "chain_proposal_rating_signal_on_pr22",
@@ -77,7 +77,7 @@
       "note": "Transfer module active, staking/upgrade stubbed"
     },
     "dex": {
-      "status": "recovery_verified_locally_unmerged",
+      "status": "recovery_verified_merged",
       "multi_asset": true,
       "web_client": true,
       "custody": "module_bank_backed_on_pr18",
@@ -86,7 +86,7 @@
       "burn": "canonical_bank_supply_on_pr18"
     },
     "ledger_invariants": {
-      "status": "recovery_verified_locally_unmerged",
+      "status": "recovery_verified_merged",
       "genesis": "exact_bank_claim_reconciliation_on_pr19",
       "supply_cap": "registered_every_block_on_pr19",
       "governance_escrow": "registered_every_block_on_pr19",
@@ -94,7 +94,7 @@
       "lp_conservation": "registered_every_block_on_pr19"
     },
     "node_lifecycle": {
-      "status": "recovery_verified_local_and_github_unmerged",
+      "status": "recovery_verified_local_and_github_merged",
       "bootstrap": "generated_cometbft_key_exact_bank_backed_pod_on_pr23",
       "persistence": "native_same_home_restart_and_export_verified_on_pr23",
       "container": "non_root_debian_glibc_restart_green_on_pr23"

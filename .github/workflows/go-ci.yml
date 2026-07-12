@@ -1,6 +1,7 @@
 name: Go CI
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - main
@@ -24,15 +25,18 @@ on:
       - 'docker-compose.yml'
       - 'scripts/docker-entrypoint.sh'
 
+permissions:
+  contents: read
+
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           persist-credentials: false
 
-      - uses: actions/setup-go@v5
+      - uses: actions/setup-go@v6
         with:
           go-version: '1.26.5'
 
@@ -48,7 +52,7 @@ jobs:
   docker-restart-smoke:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           persist-credentials: false
 

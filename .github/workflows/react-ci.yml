@@ -3,6 +3,8 @@ name: Client Web CI
 on:
   workflow_dispatch:
   push:
+    branches:
+      - main
     paths:
       - 'client-web/**'
       - '.github/workflows/react-ci.yml'
@@ -11,6 +13,9 @@ on:
       - 'client-web/**'
       - '.github/workflows/react-ci.yml'
 
+permissions:
+  contents: read
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -18,13 +23,14 @@ jobs:
       run:
         working-directory: client-web
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           persist-credentials: false
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v5
         with:
           node-version: '22'
+          package-manager-cache: false
 
       - name: Install dependencies
         run: npm ci

@@ -94,3 +94,18 @@
   fail closed until a compatible real prover is shipped and reviewed.
 - Anonymous rewards remain deferred until the proof or a separate claim binds
   a safe recipient without destroying vote privacy.
+
+## 2026-07-12 - Documentation authority and CI runtimes
+
+- `docs/status.json` is the machine source for the current version, recovery
+  test totals/module split, technology versions, 21M cap, and feature limits.
+- README, CLAUDE, landing page, and real wiki Home/current/testing pages must
+  contain the current version and total; CI also proves suite/module sums and
+  decimal-to-base-unit cap arithmetic.
+- Historical milestone counts may remain only when explicitly labeled
+  historical, never as current security or production evidence.
+- GitHub workflows use current official Action majors with `contents: read` and
+  non-persisted checkout credentials. Project Node/Go versions remain explicit
+  and separate from the Actions embedded runtime.
+- Feature branches run through pull requests or manual dispatch; routine push
+  automation is main-only to avoid duplicate evidence.

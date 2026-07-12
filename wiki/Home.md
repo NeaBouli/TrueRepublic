@@ -2,114 +2,70 @@
   <img src="https://raw.githubusercontent.com/NeaBouli/TrueRepublic/main/assets/logo.png" alt="TrueRepublic Logo" width="200"/>
 </p>
 
-<h2 align="center">TrueRepublic/PNYX Technical Wiki</h2>
+# TrueRepublic / PNYX Technical Wiki
 
-<p align="center">
-  <img src="https://raw.githubusercontent.com/NeaBouli/TrueRepublic/main/assets/pnx_logo.png" alt="PNYX Coin" width="100"/>
-</p>
+> **Recovery audit active — not production-ready.** The verified recovery
+> foundation is merged to `main`. Do not use the project for real keys, funds,
+> anonymous voting, or a public network until the remaining independent
+> security and operations reviews pass.
 
-Welcome to the TrueRepublic technical documentation wiki.
+## Current recovery evidence
 
-## Quick Navigation
+| Item | Verified state |
+|---|---|
+| Version label | v0.4.0 recovery |
+| Tests | 683 total: 649 Go, 26 Rust, 8 maintained-client |
+| PNYX cap | 21,000,000 PNYX = 21,000,000,000,000 `upnyx` |
+| Node | Native and Docker single-node restart verified and merged via PR #23 |
+| ZKP client | Mock generation/submission disabled; real prover pending |
+| Maintained client | `client-web` |
+| Legacy clients | `web-wallet` and `mobile-wallet`; not approved for real keys |
 
-### For Developers
+Authoritative machine status: [`docs/status.json`](https://github.com/NeaBouli/TrueRepublic/blob/main/docs/status.json).
+Recovery tracking: [Issue #4](https://github.com/NeaBouli/TrueRepublic/issues/4).
+
+## Navigation
+
+### Developers
+
 - [Architecture Overview](develop/Architecture-Overview)
 - [Code Structure](develop/Code-Structure)
 - [Module Deep-Dive](develop/Module-Deep-Dive)
-- [API Reference](develop/API-Reference)
-- [Development Setup](develop/Development-Setup)
-- [Contributing Guide](develop/Contributing-Guide)
-- [Smart Contracts](develop/Smart-Contracts)
-- [Frontend Architecture](develop/Frontend-Architecture)
 
-### For Users
+### Users
+
 - [System Overview](users/System-Overview)
 - [Installation Wizards](users/Installation-Wizards)
 - [User Manuals](users/User-Manuals)
 - [How It Works](users/How-It-Works)
-- [Frontend Guide](users/Frontend-Guide)
-- [FAQ](users/FAQ)
 
-### For Node Operators
-- [Node Setup Guide](operations/Node-Setup)
+### Node operators
+
+- [Node Setup](operations/Node-Setup)
 - [Validator Guide](operations/Validator-Guide)
 - [Deployment Options](operations/Deployment-Options)
-- [Monitoring & Maintenance](operations/Monitoring)
+- [Monitoring](operations/Monitoring)
 - [Troubleshooting](operations/Troubleshooting)
 
-### Security & Audits
-- [Security Architecture](security/Security-Architecture)
+### Security and status
+
+- [Current Status](status/Current-Status)
+- [Testing Status](status/Testing-Status)
 - [Audit Reports](security/Audit-Reports)
-- [Test Coverage](security/Test-Coverage)
 - [Known Issues](security/Known-Issues)
+- [Security Architecture](security/Security-Architecture)
 - [Best Practices](security/Best-Practices)
 
-### Project Status
-- [Current Status](status/Current-Status)
-- [Roadmap](status/Roadmap)
-- [Feature Matrix](status/Feature-Matrix)
-- [Testing Status](status/Testing-Status)
-- [Known Bugs](status/Known-Bugs)
+## Technology baseline
 
-## Project Information
-
-| | |
+| Layer | Recovery version |
 |---|---|
-| **Repository** | https://github.com/NeaBouli/TrueRepublic |
-| **Version** | 0.1.0-alpha |
-| **Status** | Pre-production (Testnet Ready) |
-| **License** | Apache 2.0 |
+| Go | 1.26.5 |
+| Cosmos SDK | v0.50.14 |
+| CometBFT | v0.38.22 |
+| ibc-go | v8.7.0 |
+| wasmd / wasmvm | v0.53.3 / v2.2.2 |
+| Maintained web client | React 18.2, TypeScript 5.9, Vite 8.1, CosmJS 0.39 |
 
-## Technology Stack
-
-| Layer | Technology | Version |
-|-------|-----------|---------|
-| Consensus | CometBFT | v0.38.21 |
-| Application | Cosmos SDK | v0.50.13 |
-| Language | Go | 1.23.5 |
-| Smart Contracts | CosmWasm (Rust) | cosmwasm-std 3 |
-| Web Frontend | React + Tailwind CSS | 18.2 / 3.4 |
-| Mobile | React Native + Expo | 0.74 / 51.0 |
-| Wallet | Keplr + CosmJS | 0.32-0.38 |
-| Infrastructure | Docker, Prometheus, Grafana, Nginx | |
-
-## Key Features
-
-| Feature | Description |
-|---------|-------------|
-| Direct Democracy Governance | Domains, proposals, voting |
-| Systemic Consensing | Rating scale -5 to +5 |
-| Stones Voting | Dynamic ranking, VoteToEarn |
-| Proof-of-Domain Consensus | Anti-whale, community-aligned |
-| Integrated DEX | AMM with x*y=k, 0.3% fee, 1% PNYX burn |
-| Anonymous Voting | Domain key pairs (WP S4) |
-| VoteToEarn | Rewards for participation |
-| CosmWasm Support | Wasm smart contracts |
-| Suggestion Lifecycle | Green/yellow/red zones, auto-delete |
-| Admin Election | Stone-based, continuous |
-
-## Getting Started
-
-| Audience | Start Here |
-|----------|-----------|
-| **Developers** | [Architecture Overview](develop/Architecture-Overview) |
-| **Users** | [Installation Wizards](users/Installation-Wizards) |
-| **Operators** | [Node Setup Guide](operations/Node-Setup) |
-
-## Key Metrics
-
-- **182 unit tests** across 3 modules (2,705 lines of test code)
-- **17 transaction types** (13 governance + 4 DEX)
-- **6 query endpoints** (4 governance + 2 DEX)
-- **5 tokenomics equations** fully implemented
-- **30+ documentation pages** in `/docs`
-
-## Community
-
-- Issues: https://github.com/NeaBouli/TrueRepublic/issues
-- Telegram: https://t.me/truerepublic
-- Email: p.cypher@protonmail.com
-
-## License
-
-Apache License 2.0 -- See LICENSE file
+Historical milestone documents describe implemented surface area, not current
+production approval. Use the status and audit pages above for current claims.

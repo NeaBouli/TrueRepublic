@@ -2,10 +2,9 @@
 
 ## Open
 
-- The token/ledger slice passes locally/GitHub through GH-12, but remains
-  stacked and unmerged; independent review is still required.
-  Canonical denomination and declared treasury/stake custody are remediated on
-  stacked branches but remain unmerged. See `CODEX_AUDIT.md` and GH-7.
+- The token/ledger recovery slice through GH-12 is merged to `main` after local
+  and GitHub verification. Independent release-security review is still
+  required. See `CODEX_AUDIT.md` and GH-7.
 - Anonymous legacy rating signatures and Groth16 proofs do not bind a bank
   reward recipient. Direct payout to the transaction sender is front-runnable;
   production handlers therefore defer those rewards pending GH-7.
@@ -23,6 +22,9 @@
   public key to exact bank-backed PoD genesis and refuses conflicting sets.
 - The v0.4 client production bundle is 1.68 MB (309 kB gzip); route-level code
   splitting is recommended before treating low-bandwidth/mobile UX as ready.
+- PR #25 targets the unrecovered old main and its Go/Rust security gates fail.
+  Do not weaken or bypass those checks to publish default-branch status; merge
+  the reviewed foundation first, then rebase or replace the visibility track.
 
 ## Resolved during recovery
 
@@ -61,6 +63,9 @@
   graceful SIGINT shutdown, same-home restart, height advancement, invariant
   execution, and export pass with the generated validator key; genesis writes
   are atomic and mode `0600`.
+- Modernized workflows use read-only permissions and do not persist checkout
+  credentials. Maintained-client jobs stay on Node 22; legacy jobs are
+  informational and do not convert vulnerable clients into approved targets.
 
 ## Legacy client blockers
 

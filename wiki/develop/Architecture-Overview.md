@@ -31,8 +31,8 @@ API LAYER
 ├── ABCI Queries ← Custom module queries via /custom/{module}/...
 └── WebSocket (port 26657/websocket) ← Real-time events
     ↓
-APPLICATION LAYER (Cosmos SDK v0.50.13)
-├── x/truedemocracy ← Core governance (13 msg types, 116 tests)
+APPLICATION LAYER (Cosmos SDK v0.50.14)
+├── x/truedemocracy ← Core governance (23 msg types, 446 recovery cases)
 │   ├── keeper.go ← Domain CRUD, proposals, ratings
 │   ├── anonymity.go ← Permission register, domain key pairs (WP S4)
 │   ├── stones.go ← VoteToEarn, stone voting, list sorting (WP S3.1)
@@ -40,14 +40,14 @@ APPLICATION LAYER (Cosmos SDK v0.50.13)
 │   ├── governance.go ← Admin election, exclusion, cleanup (WP S3.6)
 │   ├── validator.go ← Proof of Domain, staking, transfer limits
 │   └── slashing.go ← Double-sign (5%), downtime (1%)
-├── x/dex ← AMM exchange (4 msg types, 24 tests)
+├── x/dex ← AMM exchange (7 msg types, 116 recovery cases)
 │   └── keeper.go ← CreatePool, Swap (x*y=k), Add/RemoveLiquidity
 ├── treasury/keeper ← Tokenomics equations 1-5 (31 tests)
 │   └── rewards.go ← Domain interest, staking rewards, decay
 ├── CosmWasm ← Smart contracts (governance.rs, treasury.rs)
 └── Standard modules (auth, bank, staking, etc.)
     ↓
-CONSENSUS LAYER (CometBFT v0.38.21)
+CONSENSUS LAYER (CometBFT v0.38.22)
 ├── Byzantine Fault Tolerance (instant finality)
 ├── P2P Networking (port 26656)
 ├── Block Production (~5s blocks)
@@ -65,25 +65,25 @@ STORAGE LAYER
 
 ## Technology Stack
 
-### Backend: Go 1.23+
+### Backend: Go 1.26.5
 
 | Aspect | Detail |
 |--------|--------|
 | **Why Go?** | Cosmos SDK requirement, excellent performance, strong concurrency |
 | **Key Libraries** | Cosmos SDK, CometBFT, Cobra CLI, LevelDB |
 | **Build** | `make build` produces `truerepublicd` binary |
-| **Test** | `go test ./... -race -cover` (182 tests) |
+| **Test** | `go test ./... -race -cover -count=1 -timeout=600s` (649 Go cases) |
 
-### Framework: Cosmos SDK v0.50.13
+### Framework: Cosmos SDK v0.50.14
 
 | Aspect | Detail |
 |--------|--------|
 | **Why Cosmos SDK?** | Proven blockchain framework, modular, IBC-ready, battle-tested |
 | **Custom Modules** | `x/truedemocracy`, `x/dex` |
-| **Standard Modules** | auth, bank, staking, gov, distribution |
+| **Standard Modules** | auth, bank, crisis, consensus params, capability, IBC, transfer, wasm; staking/governance/distribution remain explicit boundaries |
 | **Codec** | Amino (legacy) + Protobuf (modern) |
 
-### Consensus: CometBFT v0.38.21
+### Consensus: CometBFT v0.38.22
 
 | Aspect | Detail |
 |--------|--------|
@@ -172,7 +172,7 @@ STORAGE LAYER
 
 ### x/truedemocracy -- Core Governance
 
-**13 message types, 116 tests, 6 source files + types/module/CLI**
+**23 message types, 446 recovery cases**
 
 ```
 x/truedemocracy/
@@ -191,7 +191,7 @@ x/truedemocracy/
 ├── types.go          ← Domain, Validator, Issue, Suggestion, Rating
 ├── tree.go           ← Hierarchical node tree for vote propagation
 ├── module.go         ← SDK module wiring, InitGenesis, EndBlock
-└── *_test.go         ← 116 tests (stones, lifecycle, governance, anonymity, validator, slashing)
+└── *_test.go         ← governance, escrow, issuance, lifecycle, ZKP, validator, and slashing regressions
 ```
 
 **EndBlock Processing Order:**
@@ -204,7 +204,7 @@ x/truedemocracy/
 
 ### x/dex -- Decentralized Exchange
 
-**4 message types, 24 tests**
+**7 message types, 116 recovery cases**
 
 ```
 x/dex/
@@ -216,7 +216,7 @@ x/dex/
 ├── query_server.go   ← gRPC query handlers
 ├── types.go          ← Pool type, fee constants (SwapFeeBps=30, BurnBps=100)
 ├── module.go         ← SDK module wiring
-└── keeper_test.go    ← 24 tests (swap, liquidity, fees, burn)
+└── *_test.go         ← custody, ownership, swap, liquidity, registry, genesis, and invariant regressions
 ```
 
 **Swap Formula:** `output = (outReserve * input * 9970) / (inReserve * 10000 + input * 9970)`
