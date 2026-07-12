@@ -1,13 +1,14 @@
 # TrueRepublic — Token Supply and Ledger Audit
-> Scope: `treasury/keeper`, `x/truedemocracy`, `x/dex`, app wiring, genesis, and maintained-client denomination handling  ·  Date: 2026-07-11  ·  Result: 3 FAIL / 2 WARN / 7 PASS
+> Scope: `treasury/keeper`, `x/truedemocracy`, `x/dex`, app wiring, genesis, and maintained-client denomination handling  ·  Date: 2026-07-12  ·  Result: 1 FAIL / 2 WARN / 9 PASS
 
 ## Summary
 
 The recovery branches now define one six-decimal `upnyx` base denomination,
 validate and enforce the 21,000,000 PNYX cap against canonical bank supply,
-back governance/stake claims with bank escrow, and mint validator/domain
-inflation through one capped issuance service. DEX custody/burn integration,
-custom genesis reconciliation, and runtime invariants remain blocking. This
+back governance/stake claims with bank escrow, mint validator/domain
+inflation through one capped issuance service, and settle DEX reserves, LP
+ownership, swaps, and burns against canonical bank state. Custom genesis
+reconciliation and registered runtime invariants remain blocking. This
 code must not handle real funds or be treated as a production token economy
 until those findings are resolved.
 
@@ -15,8 +16,10 @@ until those findings are resolved.
 > routes validator/domain inflation and validator slash burns through canonical
 > bank supply, clips aggregate minting at the cap, and commits both EndBlock
 > inflation phases atomically. Anonymous rating rewards remain deferred because
-> current proof/signature payloads do not bind a safe recipient. DEX integration,
-> custom genesis, runtime invariants, and final review remain open.
+> current proof/signature payloads do not bind a safe recipient. GH-10 now
+> provides bank-backed DEX custody, provider-owned LP shares, authority checks,
+> and canonical burns. Custom genesis, runtime invariants, and final stacked
+> review remain open.
 
 ## Findings by domain
 
@@ -30,7 +33,7 @@ until those findings are resolved.
 - **[PASS] Genesis and every recovery reward mint use canonical capped bank supply** — `token/denom.go`, `token/issuance.go`, `app.go`, `x/truedemocracy/validator.go`
   - What: Bank genesis rejects supply above 21,000,000 PNYX; the issuance service reads `x/bank` supply and mints at most the remaining base units into authorized module escrow.
   - Evidence: Tests cover below/at/above-cap supply, aggregate final-unit allocation, invalid supply, bank failure, exact burn/remint behavior, and end-block treasury/stake parity.
-  - Fix: Route DEX burns through the same service in GH-10 and add the independent runtime invariant in GH-12.
+  - Fix: Preserve GH-10's canonical DEX burn path and add the independent runtime invariant in GH-12.
 
 ### Governance, treasury, and staking accounting — PASS
 
@@ -44,17 +47,17 @@ until those findings are resolved.
   - Evidence: Tests cover final-cap aggregation, first/second mint rollback, canonical decay, interval-only payouts, vote-transfer neutrality, slash burns, and escrow parity.
   - Fix: Preserve the single issuance boundary; complete recipient-bound anonymous reward claims in GH-7.
 
-### DEX custody and authorization — FAIL
+### DEX custody and authorization — PASS
 
-- **[🔴 BLOCKING] DEX reserves, swaps, burns, and LP shares are not bank-backed** — `x/dex/keeper.go:14`, `x/dex/msg_server.go:117`, `x/dex/msg_server.go:136`, `x/dex/msg_server.go:157`, `x/dex/msg_server.go:174`, `x/dex/keeper.go:455`
-  - What: The DEX keeper has no bank keeper or module account. Handlers mutate declared reserves and return values without taking input coins, paying output coins, burning bank PNYX, or recording per-provider LP ownership.
-  - Path: Any signer can declare liquidity they do not own, swap without paying input, then call remove-liquidity with arbitrary shares up to global total shares. The pool state reports returned coins and burned PNYX, but no bank balances change.
-  - Fix: Add DEX module custody, atomic bank transfers, real PNYX burn permission, and provider-indexed LP share balances. Every state transition must reconcile module balances, pool reserves, and total/provider shares.
+- **[PASS] DEX reserves, swaps, burns, and LP shares are bank-backed** — `x/dex/custody.go`, `x/dex/msg_server.go`, `app.go`
+  - What: Exact module-bank custody backs every pool reserve; cached public transitions move real inputs/outputs, assign shares by provider, and burn PNYX through the canonical issuance service.
+  - Evidence: Tests cover direct/two-hop settlement, constant-product monotonicity, supply burns, foreign-share withdrawal rejection, denom-prefix key isolation, reserve/share divergence, slippage, and injected transfer/burn rollback.
+  - Fix: Preserve the custody wrapper as the only public transition path and register its parity checks as runtime invariants in GH-12.
 
-- **[🟠 HIGH] Any signer can register assets or toggle trading status** — `x/dex/msg_server.go:192`, `x/dex/msg_server.go:214`, `x/dex/asset_registry.go:52`, `x/dex/asset_registry.go:116`
-  - What: Registry messages require a signer but perform no authority check.
-  - Path: An arbitrary account registers a spoofed denom/symbol or disables a legitimate market, affecting routing and pool availability chain-wide.
-  - Fix: Require governance/module authority or an explicit allowlisted admin and test unauthorized callers.
+- **[PASS] Asset registry mutation requires chain authority** — `x/dex/custody.go`, `x/dex/msg_server.go`
+  - What: Register and status messages compare the authenticated signer with the configured chain authority before state mutation.
+  - Evidence: Unauthorized registration/status changes fail; the configured authority path succeeds.
+  - Fix: Keep authority wiring explicit and exercise proposal execution when the governance runtime is completed.
 
 ### Genesis and invariants — FAIL
 
@@ -96,16 +99,15 @@ until those findings are resolved.
 
 ### 🔴 BLOCKING
 
-1. Rebuild DEX custody, bank settlement, burn, and per-provider LP ownership.
-2. Validate custom genesis and reconcile all internal ledgers to bank/module balances.
+1. Validate custom genesis and reconcile all internal ledgers to bank/module balances.
 
 Implemented on stacked recovery branches: #11 (denom/cap), #14
-(treasury/stake escrow), and #13 (rewards). Remaining implementation tickets:
-#10 (DEX custody) and #12 (genesis/invariants).
+(treasury/stake escrow), #13 (rewards), and #10 (DEX custody). Remaining
+implementation ticket: #12 (genesis/invariants).
 
 ### 🟠 HIGH
 
-1. Restrict asset registry and trading-status changes to chain authority.
+None identified in this audit slice.
 
 ### 🟡 MEDIUM
 

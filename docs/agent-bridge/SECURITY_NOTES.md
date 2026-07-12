@@ -2,8 +2,8 @@
 
 ## Open
 
-- Token/ledger audit still blocks production on runtime crisis invariants, DEX
-  custody/authorization/burn integration, and genesis reconciliation.
+- Token/ledger audit still blocks production on runtime crisis invariants and
+  custom-genesis reconciliation.
   Canonical denomination and declared treasury/stake custody are remediated on
   stacked branches but remain unmerged. See `CODEX_AUDIT.md` and GH-7.
 - Anonymous legacy rating signatures and Groth16 proofs do not bind a bank
@@ -33,6 +33,11 @@
 - Validator/domain inflation and validator slash burns use one canonical,
   cap-checked bank-supply service; both EndBlock inflation phases settle under
   one cache and treasury-funded vote rewards remain supply-neutral.
+- DEX reserves are held by the module bank account; create/add/remove/swap
+  settlement is cached and atomic, withdrawals require provider-owned LP
+  shares, registry messages require chain authority, and swap burns reduce
+  canonical PNYX supply. Length-prefixed LP keys prevent valid denom-prefix
+  collisions from corrupting conservation totals.
 
 ## Legacy client blockers
 

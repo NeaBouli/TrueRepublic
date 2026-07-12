@@ -1,6 +1,6 @@
 # Project State
 
-Updated: 2026-07-11 23:02 EEST
+Updated: 2026-07-12 03:34 EEST
 
 ## Repository
 
@@ -17,6 +17,10 @@ Updated: 2026-07-11 23:02 EEST
 - GH-13 branch: `fix/GH-13-cap-issuance`
 - GH-13 draft PR: #17 (`fix/GH-13-cap-issuance` -> `fix/GH-14-bank-escrow`)
 - GH-13 worktree: `/Users/gio/Desktop/repos/TrueRepublic-gh13`
+- GH-10 branch: `fix/GH-10-dex-custody`
+- GH-10 draft PR: #18 (`fix/GH-10-dex-custody` -> `fix/GH-13-cap-issuance`)
+- GH-10 recovery checkout:
+  `/Users/gio/Documents/Codex/2026-07-11/erkunden/TrueRepublic-gh10`
 - Recovery worktree: `/Users/gio/Desktop/repos/TrueRepublic-recovery`
 - Legacy local checkout: preserved at `/Users/gio/Desktop/repos/TrueRepublic`
 - GitHub epic: #4
@@ -31,7 +35,7 @@ Updated: 2026-07-11 23:02 EEST
   vulnerabilities after upgrades.
 - GH-14 local v0.4 client: `npm ci`, lint, six regression tests, production build, and
   `npm audit` all PASS. Main bundle is 1.68 MB before gzip (performance warning).
-- Current GH-13 branch test count is 601: 569 Go, 26 Rust, and six
+- Current GH-10 branch test count is 610: 578 Go, 26 Rust, and six
   maintained-client tests. The prior 577 figure is retained only as historical.
 - GH-13 local Go 1.26.5: build, vet, normal tests, race tests, and coverage PASS.
   Coverage: root 10.2%, token 93.5%, treasury 97.0%, DEX 34.2%, governance 55.8%.
@@ -81,26 +85,35 @@ Updated: 2026-07-11 23:02 EEST
   GitHub. Both Go/Docker jobs, docs, DeepScan, CodeRabbit, and the manual
   security workflow are green; all five review threads are resolved. See
   `PR17_AUDIT.md`.
+- GH-10 is rebased onto final PR #17 and moves every public DEX reserve through
+  exact module-bank custody. Provider-indexed LP shares gate withdrawals,
+  direct and cross-asset swaps settle atomically, PNYX burns reduce canonical
+  supply, and registry/status mutation requires chain authority. Length-prefixed
+  LP keys prevent valid denom-prefix collisions. Local Go build/vet/578 tests/
+  race, Rust 26 tests/audit, maintained-client install/lint/6 tests/build/audit,
+  CLI smoke, module verification, and docs/diff checks pass. GitHub refresh is
+  pending; see `PR18_AUDIT.md`.
 
 ## Public-status warning
 
 `docs/status.json`, README, limitations, and the landing page now mark recovery
-as active and separate 601 verified tests from the historical 577 figure.
+as active and separate 610 verified tests from the historical 577 figure.
 `CLAUDE.md` still needs reconciliation.
 
 ## Blocking audit result
 
 The first GH-7 token/ledger audit remains FAIL overall, but its denomination,
 bank-genesis cap, governance custody, and reward-issuance slices are remediated
-on the ordered stack. DEX custody/authority/burns and custom-genesis/runtime
-conservation remain blocking. The repository stays recovery-only until the
-remaining `CODEX_AUDIT.md` blockers close.
+on the ordered stack. GH-10 closes DEX custody/authority/burns locally;
+custom-genesis/runtime conservation remains blocking. The repository stays
+recovery-only until the remaining `CODEX_AUDIT.md` blockers close.
 
 GH-11 implements the canonical denomination metadata (`upnyx`, six decimal
 places, 21,000,000,000,000 base-unit cap) and pre-init bank-genesis cap checks.
 Its final audit corrections are locally verified and rebased onto PR #9 head
 `acfc3d5`; refreshed PR #15 GitHub checks are green at head `e0ff339`.
 GH-14 closes the declared treasury/stake custody slice on its stacked branch.
-GH-13 closes the cap-checked reward issuance slice locally on its rebased
-branch. These remediations remain unmerged and do not close DEX custody or
-custom-genesis/runtime-invariant blockers.
+GH-13 closes the cap-checked reward issuance slice, and GH-10 closes the DEX
+custody/LP/burn/authority slice locally on its rebased branch. These
+remediations remain unmerged and do not close custom-genesis/runtime-invariant
+blockers.

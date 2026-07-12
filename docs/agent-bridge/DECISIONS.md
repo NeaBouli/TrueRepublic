@@ -11,8 +11,9 @@
 - Maximum supply is **21,000,000 whole PNYX**. GH-11 enforces the
   `21,000,000,000,000 upnyx` bank-genesis boundary and GH-13 enforces the same
   canonical bank-supply cap for recovered runtime reward issuance.
-- DEX custody/burn integration and an independent runtime crisis invariant
-  remain pending in GH-10/GH-12; they do not create a second supply source.
+- GH-10 routes DEX burns through the canonical issuance service. The
+  independent runtime supply/custody invariant remains pending in GH-12; no
+  custom module creates a second supply source.
 
 ## 2026-07-11 - Status publication
 
@@ -37,3 +38,14 @@
   deterministic store-key order.
 - Domain interest uses payouts since the prior interval snapshot, not the same
   cumulative historical payouts repeatedly.
+
+## 2026-07-12 - DEX custody and LP ownership
+
+- The `dex` module account is the sole bank custodian for every pool reserve.
+- Public create/add/remove/swap transitions use a cached all-or-nothing bank
+  settlement and must pass reserve and LP conservation before commit.
+- LP ownership is indexed by pool and authenticated provider; global pool
+  shares are not transferable withdrawal authority.
+- PNYX output burns reduce both pool reserves and canonical bank supply through
+  `token.IssuanceService`.
+- Asset registry/status mutation requires the configured chain authority.

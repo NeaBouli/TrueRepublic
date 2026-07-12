@@ -4,8 +4,8 @@
   "release_date": "2026-03-04",
   "tests": {
     "status": "recovery_verified_locally",
-    "total": 601,
-    "go": 569,
+    "total": 610,
+    "go": 578,
     "rust": 26,
     "frontend": 6,
     "historical_total": 577
@@ -33,7 +33,7 @@
     "root": 17,
     "token": 11,
     "treasury": 36,
-    "dex": 100,
+    "dex": 109,
     "truedemocracy": 405
   },
   "token": {
@@ -74,11 +74,13 @@
       "note": "Transfer module active, staking/upgrade stubbed"
     },
     "dex": {
-      "status": "recovery_audit_active",
+      "status": "recovery_verified_locally_unmerged",
       "multi_asset": true,
       "web_client": true,
-      "custody": "not_bank_backed",
-      "burn": "internal_accounting_only"
+      "custody": "module_bank_backed_on_pr18",
+      "lp_ownership": "provider_indexed_on_pr18",
+      "registry_authority": "chain_authority_on_pr18",
+      "burn": "canonical_bank_supply_on_pr18"
     },
     "web_client": {
       "status": "recovery_verified_locally",
