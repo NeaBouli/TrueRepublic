@@ -35,7 +35,7 @@ GitHub recovery epic: [#4](https://github.com/NeaBouli/TrueRepublic/issues/4)
   through PR #23
 - **Ready for:** refreshed PR #23 verification and propagation through PR #24
 
-## 2026-07-12 11:58 EEST GH-8 docs/CI reconciliation → Local verification
+## 2026-07-12 12:09 EEST GH-8 docs/CI reconciliation → GitHub green
 
 - **Branch:** `fix/GH-8-docs-final`
 - **Issue:** [GH-8](https://github.com/NeaBouli/TrueRepublic/issues/8)
@@ -53,17 +53,21 @@ GitHub recovery epic: [#4](https://github.com/NeaBouli/TrueRepublic/issues/4)
   target, stale-current-claim, and diff checks → PASS; underlying 683-case
   GH-21 code head remains unchanged
 - **Risk:** Medium — public security/readiness claims and CI trust/runtime
-- **Pending:** publish rebased PR head; execute every updated GitHub Action and
-  manual Security Scan; independent documentation/recovery review
-- **Ready for:** GitHub draft verification only
+- **GitHub:** Go race/coverage + Docker restart `29171461365`, Rust
+  `29171461357`, Web `29171461355`, Mobile `29171461342`, Docs
+  `29171461348`, DeepScan, CodeRabbit, and all five Security Scan
+  `29171476126` jobs → PASS
+- **Ready for:** independent documentation/recovery review and ordered stack
+  merge; PR #25 remains separately blocked on old-main security
 
 ### Codex review feedback
 
-Local conditional PASS. The initial rebased draft still contained 636-test,
+Conditional PASS. The initial rebased draft still contained 636-test,
 Go-1.23, anonymous-voting, mobile-wallet, and Testnet-Ready claims and a docs
 gate pointed at a nonexistent wiki directory. Those findings are remediated.
-PR #25 remains a separate default-branch visibility track and must not bypass
-the vulnerable current `main` or the ordered recovery stack.
+All modernized Action majors now pass on GitHub. PR #25 remains a separate
+default-branch visibility track and must not bypass the vulnerable current
+`main` or the ordered recovery stack.
 
 ---
 

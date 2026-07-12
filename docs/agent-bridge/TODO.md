@@ -48,7 +48,9 @@
 - [x] GH-8: enforce suite/module/cap arithmetic and real wiki/agent/public
   status through docs CI; modernize Action runtimes without credential or
   duplicate-run regression.
-- [ ] GH-8: publish the rebased PR #24 head and pass every updated GitHub Action,
-  manual Security Scan, and independent docs/recovery review.
+- [x] GH-8: publish audited head `3964f4a`; every updated GitHub Action and
+  manual Security Scan `29171476126` passes.
+- [ ] GH-8: obtain independent docs/recovery review, preserve ordered stack
+  merge, then rebase or replace PR #25 after the safe foundation reaches main.
 - [x] PR #9 is ready, mergeable, fully green, and awaiting the required
   independent approval.

@@ -1,6 +1,6 @@
 # Project State
 
-Updated: 2026-07-12 11:58 EEST
+Updated: 2026-07-12 12:09 EEST
 
 ## Repository
 
@@ -149,7 +149,9 @@ Updated: 2026-07-12 11:58 EEST
   strengthens suite/module/cap consistency, and reconciles CLAUDE, install,
   FAQ, landing, and real wiki status/security claims to 683 cases. Workflow
   YAML, docs, JSON, wiki target, stale-current-claim, and diff checks pass;
-  GitHub execution on the rebased head is pending. See `PR24_AUDIT.md`.
+  Published head `3964f4a` is mergeable. GitHub Go/Docker, Rust, Web, Mobile,
+  Docs, DeepScan, CodeRabbit, and all five Security Scan `29171476126` jobs
+  pass. See `PR24_AUDIT.md`.
 
 ## Public-status warning
 

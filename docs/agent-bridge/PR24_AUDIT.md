@@ -1,5 +1,5 @@
 # PR #24 Audit — GH-8 Documentation, Public Status, and CI Runtime
-> Scope: agent/operator/public docs, repository wiki, docs consistency gate, and six GitHub workflows  ·  Date: 2026-07-12  ·  Result: 0 FAIL / 2 WARN / 6 PASS
+> Scope: agent/operator/public docs, repository wiki, docs consistency gate, and six GitHub workflows  ·  Date: 2026-07-12  ·  Result: 0 FAIL / 1 WARN / 7 PASS
 
 ## Summary
 
@@ -9,8 +9,8 @@ merged or production-ready. The documentation gate validates the real wiki
 instead of silently skipping a nonexistent directory and also proves suite,
 module, and 21M-cap arithmetic. Official GitHub Actions are modernized while
 preserving read-only, non-persisted checkout credentials and avoiding duplicate
-feature-branch runs. GitHub execution of the rebased workflow heads and the
-separate default-branch visibility decision remain pending.
+feature-branch runs. Every modernized Action and the manual security matrix
+passes on GitHub. The separate default-branch visibility decision remains open.
 
 ## Findings by domain
 
@@ -70,13 +70,16 @@ separate default-branch visibility decision remain pending.
     competing duplicate contexts.
   - Fix: Preserve main-push + PR + manual dispatch semantics.
 
-### Remaining delivery boundaries — WARN
+### GitHub execution — PASS
 
-- **[MEDIUM] Modernized Action majors are not yet executed on the rebased head** — `.github/workflows/*.yml`
-  - What: YAML parsing proves structure, not runner compatibility.
-  - Path: A changed Action input or runtime can still fail only on GitHub.
-  - Fix: Publish the rebased head and require all updated workflows plus the
-    manual Security Scan before approval.
+- **[PASS] Every modernized Action runs on the rebased head** — `.github/workflows/*.yml`
+  - What: checkout v5, setup-go v6, and setup-node v5 execute across docs, Go,
+    Docker, Rust, maintained web, legacy mobile, and the manual security matrix.
+  - Path: GitHub proves runner/input compatibility in addition to local YAML
+    structure.
+  - Fix: Keep these workflows green on the final documentation head.
+
+### Remaining delivery boundary — WARN
 
 - **[HIGH] Default-branch visibility remains separate and currently red** — PR #25
   - What: The public-main docs PR targets the vulnerable old main and its Go/
@@ -96,6 +99,9 @@ separate default-branch visibility decision remain pending.
 - Wiki Home target existence check: PASS
 - `git diff --check`: PASS
 - Underlying GH-21 final head `b59efa2`: unchanged and GitHub green
+- GitHub Go/Docker `29171461365`, Rust `29171461357`, Web `29171461355`,
+  Mobile `29171461342`, Docs `29171461348`, DeepScan, and CodeRabbit: PASS
+- Manual Security Scan `29171476126`: PASS, all five jobs
 
 ## Priority matrix
 
@@ -110,7 +116,7 @@ None in the locally audited GH-8 docs/CI diff.
 
 ### 🟡 MEDIUM
 
-1. Run all modernized GitHub Actions on the rebased PR #24 head.
+None identified.
 
 ### 🟢 LOW
 

@@ -378,6 +378,12 @@
   and reconciled linked architecture/operator toolchain facts.
 - Local workflow YAML, docs consistency/arithmetic, JSON, wiki target,
   stale-current-claim, and diff checks pass. GitHub Action execution is pending.
+- Published rebased GH-8 PR #24 head `3964f4a`; synchronized PR metadata,
+  Issue #8, and recovery epic #4 with the 683-case docs/wiki/CI audit findings.
+- GitHub Go race/coverage + Docker restart `29171461365`, Rust `29171461357`,
+  Web `29171461355`, Mobile `29171461342`, Docs `29171461348`, DeepScan,
+  CodeRabbit, and all five Security Scan `29171476126` jobs pass.
+- PR #25 remains draft/red against unrecovered main; no gate bypass is allowed.
 
 ## 2026-07-12 12:18 EEST - GH-12 review remediation
 
