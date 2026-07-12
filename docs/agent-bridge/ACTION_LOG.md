@@ -423,3 +423,5 @@
   proves one consensus validator, matching custom PoD identity, canonical
   `upnyx` bank supply, no mnemonic artifact, and configured gas/Prometheus.
 - Publication and GitHub Go/Docker/security verification remain in progress.
+- Published implementation/audit head `86ff1c8` and opened stacked draft PR
+  #27 against final PR #24. Refreshed GitHub gates are running.

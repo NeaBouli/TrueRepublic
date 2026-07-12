@@ -23,7 +23,8 @@ GitHub recovery epic: [#4](https://github.com/NeaBouli/TrueRepublic/issues/4)
 
 - **Branch:** `fix/GH-26-pod-init-script`
 - **Issue:** [GH-26](https://github.com/NeaBouli/TrueRepublic/issues/26)
-- **Planned PR:** stacked against final PR #24
+- **PR:** [#27](https://github.com/NeaBouli/TrueRepublic/pull/27) (stacked draft
+  against final PR #24)
 - **Changed:** removed every keyring-account, mnemonic-file, `gentx`,
   `collect-gentxs`, and extra-genesis-supply action from `scripts/init-node.sh`;
   it now delegates only to the generated-key, exact bank-backed PoD daemon init
@@ -34,7 +35,9 @@ GitHub recovery epic: [#4](https://github.com/NeaBouli/TrueRepublic/issues/4)
 - **Tests:** focused wrapper regression, real compiled-daemon init/genesis
   assertions, full 650-case Go suite, vet, shell syntax, docs/JSON/diff → PASS
 - **Risk:** High — operator genesis, validator identity, token supply, key safety
-- **Ready for:** publication and GitHub Go/Docker/security verification
+- **GitHub:** implementation/audit head `86ff1c8` published; refreshed gates
+  pending
+- **Ready for:** GitHub Go/Docker/security verification
 
 ## 2026-07-12 12:35 EEST GH-12 review remediation → Stack green
 

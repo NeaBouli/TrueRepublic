@@ -134,7 +134,8 @@ Updated: 2026-07-13 00:15 EEST
   wrapper now invokes only daemon `init`; its regression and a real compiled
   init prove generated-key, exact bank-backed PoD genesis without mnemonic,
   account, gentx, or extra-supply side effects. Full Go/vet/docs/shell gates
-  pass locally; GitHub verification is pending. See `PR27_AUDIT.md`.
+  pass locally. Published head `86ff1c8` is in stacked draft PR #27; GitHub
+  verification is pending. See `PR27_AUDIT.md`.
 
 ## Public-status warning
 
