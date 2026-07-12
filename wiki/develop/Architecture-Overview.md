@@ -72,7 +72,7 @@ STORAGE LAYER
 | **Why Go?** | Cosmos SDK requirement, excellent performance, strong concurrency |
 | **Key Libraries** | Cosmos SDK, CometBFT, Cobra CLI, LevelDB |
 | **Build** | `make build` produces `truerepublicd` binary |
-| **Test** | `go test ./... -race -cover -count=1 -timeout=600s` (649 Go cases) |
+| **Test** | `go test ./... -race -cover -count=1 -timeout=600s` (650 Go cases) |
 
 ### Framework: Cosmos SDK v0.50.14
 

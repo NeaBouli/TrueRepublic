@@ -13,10 +13,67 @@ Canonical coordination lives in [`docs/agent-bridge/`](docs/agent-bridge/README.
 - GH-20 ZKP/auth audit: [`PR22_AUDIT.md`](docs/agent-bridge/PR22_AUDIT.md)
 - GH-21 node lifecycle audit: [`PR23_AUDIT.md`](docs/agent-bridge/PR23_AUDIT.md)
 - GH-8 docs/CI audit: [`PR24_AUDIT.md`](docs/agent-bridge/PR24_AUDIT.md)
+- GH-26 operator init audit: [`PR27_AUDIT.md`](docs/agent-bridge/PR27_AUDIT.md)
 - Decisions: [`DECISIONS.md`](docs/agent-bridge/DECISIONS.md)
 - Security: [`SECURITY_NOTES.md`](docs/agent-bridge/SECURITY_NOTES.md)
 
 GitHub recovery epic: [#4](https://github.com/NeaBouli/TrueRepublic/issues/4)
+
+## 2026-07-13 00:15 EEST GH-26 safe operator init → Review
+
+- **Branch:** `fix/GH-26-pod-init-script`
+- **Issue:** [GH-26](https://github.com/NeaBouli/TrueRepublic/issues/26)
+- **PR:** [#27](https://github.com/NeaBouli/TrueRepublic/pull/27)
+- **Changed:** rebased the safe daemon-only initialization wrapper and its
+  regression/evidence commits onto the verified PR #24 merge; documentation
+  conflicts were reconciled to preserve the current `main` recovery status
+- **Tests:** `go test ./... -race -cover -count=1 -timeout=600s` → PASS;
+  shell syntax, docs consistency, JSON/YAML parsing, conflict-marker scan, and
+  diff checks → PASS; GitHub Docker/security gates are being refreshed
+  against `main`
+- **Risk:** High — operator genesis, validator identity, token supply, and key
+  safety; production readiness remains explicitly false
+- **Ready for:** local verification, refreshed GitHub CI, and squash merge
+
+### Codex review feedback
+
+The implementation commit is patch-equivalent to the previously green PR #27.
+Only stale pre-merge documentation required conflict resolution; no runtime
+behavior was changed during the rebase.
+
+## 2026-07-12 13:14 EEST Public GitHub Pages → Recovery status live
+
+- **Site:** [neabouli.github.io/TrueRepublic](https://neabouli.github.io/TrueRepublic/)
+- **Source:** `fix/GH-26-pod-init-script:/docs` at `50b0d9a`; GitHub Pages
+  build `1090733247` → BUILT without error
+- **Live verification:** page reports `Recovery audit active`, `not approved
+  for production`, `21M` maximum PNYX supply, and `684 recovery-verified tests`
+- **Safety:** no runtime commit was merged to `main`, no branch-protection rule
+  was bypassed, and red PR #25 remains untouched against unrecovered `main`
+- **Remaining protected gate:** PR #9 is fully green/mergeable and awaits one
+  independent approval before the ordered stack can reach `main`
+
+## 2026-07-12 13:01 EEST GH-26 safe operator init → GitHub green
+
+- **Branch:** `fix/GH-26-pod-init-script`
+- **Issue:** [GH-26](https://github.com/NeaBouli/TrueRepublic/issues/26)
+- **PR:** [#27](https://github.com/NeaBouli/TrueRepublic/pull/27) (stacked draft
+  against final PR #24)
+- **Changed:** removed every keyring-account, mnemonic-file, `gentx`,
+  `collect-gentxs`, and extra-genesis-supply action from `scripts/init-node.sh`;
+  it now delegates only to the generated-key, exact bank-backed PoD daemon init
+- **Regression:** asserts the exact daemon command, forbidden-command absence,
+  gas/Prometheus edits, no mnemonic artifact, and supported-path status output
+- **Docs:** quick start, native install, wiki, limitations, decisions, security,
+  audit, public status, and test source of truth now describe one init boundary
+- **Tests:** focused wrapper regression, real compiled-daemon init/genesis
+  assertions, full 650-case Go suite, vet, shell syntax, docs/JSON/diff → PASS
+- **Risk:** High — operator genesis, validator identity, token supply, key safety
+- **GitHub:** implementation/audit head `86ff1c8`; Go race/coverage and Docker
+  restart run `29172845624`, Docs `29172845627`, Security `29172846057`,
+  DeepScan, and CodeRabbit → PASS; zero unresolved review threads
+- **Ready for:** independent operations review and ordered stack merge; not
+  production
 
 ## 2026-07-12 12:35 EEST GH-12 review remediation → Stack green
 

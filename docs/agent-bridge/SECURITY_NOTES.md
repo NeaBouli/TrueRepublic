@@ -17,9 +17,6 @@
 - GH-21 native and GitHub-container single-node lifecycle passes. Independent
   multi-node operations review remains pending; IBC staking/upgrade and
   standard CosmWasm staking/distribution stay explicit stubs.
-- The legacy node initialization script invokes unavailable `x/staking` gentx
-  commands and must not be used. PR #23 instead binds the generated CometBFT
-  public key to exact bank-backed PoD genesis and refuses conflicting sets.
 - The v0.4 client production bundle is 1.68 MB (309 kB gzip); route-level code
   splitting is recommended before treating low-bandwidth/mobile UX as ready.
 - PR #25 targets the unrecovered old main and its Go/Rust security gates fail.
@@ -63,6 +60,9 @@
   graceful SIGINT shutdown, same-home restart, height advancement, invariant
   execution, and export pass with the generated validator key; genesis writes
   are atomic and mode `0600`.
+- The operator init wrapper no longer creates keyring mnemonics/accounts or
+  invokes unavailable `x/staking` gentx commands. It delegates exclusively to
+  the generated-key, exact bank-backed PoD daemon init boundary.
 - Modernized workflows use read-only permissions and do not persist checkout
   credentials. Maintained-client jobs stay on Node 22; legacy jobs are
   informational and do not convert vulnerable clients into approved targets.

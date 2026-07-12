@@ -12,7 +12,7 @@ source of current security or production-readiness claims.
 - Recovery epic: GitHub issue #4
 - Continuous handoff: `BRIDGE.md` and `docs/agent-bridge/`
 - Authoritative machine-readable status: `docs/status.json`
-- Verified recovery total: 683 cases (649 Go, 26 Rust, eight maintained-client)
+- Verified recovery total: 684 cases (650 Go, 26 Rust, eight maintained-client)
 - PNYX cap: 21,000,000 PNYX = 21,000,000,000,000 `upnyx`
 
 The implementation is split across stacked draft PRs. Preserve this order:
@@ -26,6 +26,7 @@ The implementation is split across stacked draft PRs. Preserve this order:
 7. PR #22 — ZKP vote statement/VK safety
 8. PR #23 — persistent Cosmos/Comet node lifecycle
 9. PR #24 — final documentation, public-status and CI-runtime reconciliation
+10. PR #27 — retire the broken legacy init wrapper (GH-26)
 
 Do not claim these changes are on `main` until they are merged in order.
 

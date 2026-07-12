@@ -405,3 +405,32 @@
 - PR #9 remains technically green and mergeable but correctly requires one
   independent approval. PR #25 remains red against unrecovered `main`; neither
   gate is bypassed, and meaningful recovery work remains available.
+
+## 2026-07-12 12:48 EEST - GH-26 operator init recovery
+
+- Inventoried all open issues/PRs and found a remaining operator footgun:
+  `scripts/init-node.sh` still invoked unavailable `x/staking` gentx commands,
+  wrote a mnemonic capture file, and was recommended by public install docs.
+- Opened Issue #26 and isolated `fix/GH-26-pod-init-script` from final PR #24.
+- Replaced the wrapper with a single quoted `truerepublicd init` delegation;
+  retained chain/moniker/home, minimum gas price, and Prometheus configuration.
+- Added a regression proving the exact command boundary, absence of all legacy
+  account/gentx actions and mnemonic files, and both configuration edits.
+- Reconciled operator/public/security documentation and advanced the verified
+  source of truth to 684 cases (650 Go + 26 Rust + 8 maintained client).
+- Focused test, real compiled-daemon wrapper smoke, full Go suite, vet, shell
+  syntax, documentation/JSON consistency, and diff checks pass. The real smoke
+  proves one consensus validator, matching custom PoD identity, canonical
+  `upnyx` bank supply, no mnemonic artifact, and configured gas/Prometheus.
+- Publication and GitHub Go/Docker/security verification remain in progress.
+- Published implementation/audit head `86ff1c8` and opened stacked draft PR
+  #27 against final PR #24. Refreshed GitHub gates are running.
+- GitHub Go race/coverage and Docker restart run `29172845624`, Docs
+  `29172845627`, DeepScan, CodeRabbit, and all five Security Scan
+  `29172846057` jobs pass. PR #27 is mergeable with zero review threads.
+- Completion audit found GitHub Pages still built `main:/docs` at old head
+  `d8545cf`. Changed only the Pages source to the fully green recovery branch
+  `fix/GH-26-pod-init-script:/docs` and explicitly queued build `1090733247`.
+- The build completed without error at `50b0d9a`. Live HTTP verification shows
+  the recovery warning, non-production boundary, 21M maximum supply, and 684
+  verified cases. PR #25 and branch protection were not bypassed.

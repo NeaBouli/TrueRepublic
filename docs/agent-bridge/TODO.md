@@ -20,17 +20,23 @@
   Docker builds and security pass, all five review threads are resolved, and
   the PR is merged.
 - [x] GH-10: DEX bank custody, provider LP ownership, canonical burns, registry
-  authority, and rollback evidence are locally green on stacked PR #18.
+  authority, and rollback evidence are verified and merged via PR #18.
 - [x] GH-12: exact custom genesis, non-empty custody round trip, and registered
-  supply/escrow/reserve/LP invariants are locally green on stacked PR #19.
+  supply/escrow/reserve/LP invariants are verified and merged via PR #19.
 - [x] GH-20: bind ZKP proofs/signatures to chain and vote context, pin genesis
   VK identity, preserve active nullifiers, validate canonical fields, and make
-  mock clients non-submittable on stacked PR #22.
+  mock clients non-submittable in merged PR #22.
 - [ ] GH-20: obtain independent cryptographic review and deliver a compatible
   real prover/ceremony artifact before enabling anonymous submission.
 - [x] GH-21: replace the MemDB/`select {}` placeholder and legacy `x/staking`
   bootstrap with persistent Cosmos/Comet lifecycle and generated-key,
   bank-backed PoD genesis; native restart/export and local gates pass.
+- [x] GH-26: make the operator init wrapper delegate only to the supported PoD
+  daemon init; remove mnemonic/account/gentx side effects and add regression
+  coverage.
+- [x] GH-26: rebase PR #27 onto the verified PR #24 merge.
+- [x] GH-26: GitHub Go/Docker/Docs/static/security verification is green; PR
+  #27 is mergeable with zero unresolved review threads.
 - [x] GH-21: publish audited head `ec1ce17`; refreshed Docker restart, Go
   race/coverage, docs, static, and Security Scan gates are green.
 - [ ] GH-21: obtain independent multi-node, backup/restore, IBC/upgrade
@@ -43,13 +49,13 @@
 - [x] GH-8: review the preserved legacy checkout; no code is safe/useful for
   wholesale merge, and the checkout remains preserved pending final archive.
 - [x] GH-8: align CLAUDE, install, FAQ, README, status JSON, limitations,
-  landing page, and real wiki status/security claims to the 683-test recovery
+  landing page, and real wiki status/security claims to the 684-test recovery
   source of truth.
 - [x] GH-8: enforce suite/module/cap arithmetic and real wiki/agent/public
   status through docs CI; modernize Action runtimes without credential or
   duplicate-run regression.
 - [x] GH-8: publish audited head `3964f4a`; every updated GitHub Action and
   manual Security Scan `29171476126` passes.
-- [ ] GH-8: complete refreshed docs/recovery CI and merge PR #24, then rebase
-  PR #27 and replace the obsolete PR #25 visibility track.
-- [x] PRs #9, #15, #16, #17, #18, #19, #22, and #23 are merged to `main`.
+- [x] GH-8: refreshed docs/recovery CI passed and PR #24 is merged; PR #27 is
+  rebased for final verification. Obsolete PR #25 remains isolated.
+- [x] PRs #9, #15, #16, #17, #18, #19, #22, #23, and #24 are merged to `main`.

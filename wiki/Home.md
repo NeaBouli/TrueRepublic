@@ -14,7 +14,7 @@
 | Item | Verified state |
 |---|---|
 | Version label | v0.4.0 recovery |
-| Tests | 683 total: 649 Go, 26 Rust, 8 maintained-client |
+| Tests | 684 total: 650 Go, 26 Rust, 8 maintained-client |
 | PNYX cap | 21,000,000 PNYX = 21,000,000,000,000 `upnyx` |
 | Node | Native and Docker single-node restart verified and merged via PR #23 |
 | ZKP client | Mock generation/submission disabled; real prover pending |

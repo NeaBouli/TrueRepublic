@@ -94,5 +94,6 @@ Total recovery evidence: 647 tests (615 Go + 26 Rust + 6 maintained client).
 - GH-21: production PoD node initialization, persistent lifecycle, and restart
 - Independent stacked review and final merge consolidation (CodeRabbit pending)
 
-The current `scripts/init-node.sh` still assumes unavailable `x/staking` gentx
-commands. Do not use it for production launch.
+At the PR #19 boundary, `scripts/init-node.sh` still assumed unavailable
+`x/staking` gentx commands. GH-26 later replaces that wrapper with an exclusive
+delegation to the generated-key, bank-backed PoD daemon init boundary.

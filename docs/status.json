@@ -4,8 +4,8 @@
   "release_date": "2026-03-04",
   "tests": {
     "status": "recovery_verified_locally",
-    "total": 683,
-    "go": 649,
+    "total": 684,
+    "go": 650,
     "rust": 26,
     "frontend": 8,
     "historical_total": 577
@@ -30,7 +30,7 @@
     }
   },
   "modules": {
-    "root": 39,
+    "root": 40,
     "token": 12,
     "treasury": 36,
     "dex": 116,
@@ -120,7 +120,7 @@
     "zkp_client": "mock preview is fail-closed and non-submittable; compatible real prover pending",
     "tx_history": "not yet implemented in web client",
     "ibc_transfers_ui": "query support only in web client",
-    "node_bootstrap": "legacy x/staking gentx path replaced on PR23 by generated CometBFT-key PoD genesis; independent multi-node operations review pending"
+    "node_bootstrap": "init-node wrapper delegates exclusively to generated CometBFT-key, exact bank-backed PoD genesis; independent multi-node operations review pending"
   },
   "branding": {
     "logo_main": "https://raw.githubusercontent.com/NeaBouli/TrueRepublic/main/assets/logo.png",
