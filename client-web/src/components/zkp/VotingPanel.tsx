@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import { useIdentityStore } from '@/stores/identityStore';
 import { ZKPService } from '@/services/zkp';
 import { Card } from '@/components/common/Card';
@@ -38,31 +38,35 @@ export function VotingPanel({
   const [alreadyVoted, setAlreadyVoted] = useState(false);
   const [showIdentitySetup, setShowIdentitySetup] = useState(false);
 
-  const checkIfAlreadyVoted = useCallback(async () => {
-    if (!identity) return;
-
-    try {
-      const extNullifier = zkpService.computeExternalNullifier(
-        domainId,
-        issueName,
-        suggestion.suggestionId
-      );
-      const nullifierHash = zkpService.computeNullifierHash(
-        identity.secret,
-        extNullifier
-      );
-      const used = await zkpService.isNullifierUsed(domainId, nullifierHash);
-      setAlreadyVoted(used);
-    } catch {
-      // Best-effort check; node may be offline
-    }
-  }, [identity, domainId, issueName, suggestion.suggestionId]);
-
   useEffect(() => {
-    if (hasIdentity && identity) {
-      checkIfAlreadyVoted();
-    }
-  }, [hasIdentity, identity, checkIfAlreadyVoted]);
+    if (!hasIdentity || !identity) return;
+
+    let cancelled = false;
+    const checkVoteStatus = async () => {
+      try {
+        const extNullifier = zkpService.computeExternalNullifier(
+          domainId,
+          issueName,
+          suggestion.suggestionId
+        );
+        const nullifierHash = zkpService.computeNullifierHash(
+          identity.secret,
+          extNullifier
+        );
+        const used = await zkpService.isNullifierUsed(domainId, nullifierHash);
+        if (!cancelled) {
+          setAlreadyVoted(used);
+        }
+      } catch {
+        // Best-effort check; node may be offline.
+      }
+    };
+
+    void checkVoteStatus();
+    return () => {
+      cancelled = true;
+    };
+  }, [hasIdentity, identity, domainId, issueName, suggestion.suggestionId]);
 
   const handleVote = async () => {
     if (!identity) return;

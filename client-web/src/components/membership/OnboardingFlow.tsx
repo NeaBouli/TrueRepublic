@@ -23,32 +23,23 @@ export function OnboardingFlow() {
   const { identity, hasIdentity, createIdentity } = useIdentityStore();
   const { memberships, loadMembership } = useMembershipStore();
 
-  const [step, setStep] = useState<
-    'identity' | 'submit' | 'waiting' | 'complete'
-  >('identity');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState('');
   const [txHash, setTxHash] = useState('');
 
   const membership = domainId ? memberships[domainId] : null;
+  const step = !hasIdentity
+    ? 'identity'
+    : membership?.isMember && membership.hasIdentityCommitment
+      ? 'complete'
+      : membership?.isMember
+        ? 'submit'
+        : 'waiting';
 
   useEffect(() => {
     if (!domainId || !currentWallet) return;
     loadMembership(domainId, currentWallet.address);
   }, [domainId, currentWallet, loadMembership]);
-
-  useEffect(() => {
-    if (!hasIdentity) {
-      setStep('identity');
-    } else if (membership?.isMember && membership?.hasIdentityCommitment) {
-      setStep('complete');
-    } else if (membership?.isMember) {
-      // Member but no identity commitment registered yet
-      setStep('submit');
-    } else {
-      setStep('waiting');
-    }
-  }, [hasIdentity, membership]);
 
   // Poll for membership approval
   useEffect(() => {

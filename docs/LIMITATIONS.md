@@ -1,4 +1,18 @@
-# Known Limitations (v0.3.0)
+# Known Limitations (v0.4.0 recovery)
+
+## Recovery status (2026-07-11)
+
+The repository is undergoing a security and reproducibility recovery tracked in
+[GitHub issue #4](https://github.com/NeaBouli/TrueRepublic/issues/4). It is not
+approved for production or real funds during this audit.
+
+- `client-web` is the maintained v0.4 web client and has passed the current
+  dependency, lint, test, and production-build recovery checks.
+- `web-wallet` is legacy and currently has unresolved high/critical dependency
+  advisories, including obsolete CosmJS cryptography.
+- `mobile-wallet` is legacy and currently has unresolved high/critical Expo,
+  React Native, Axios, protobuf, XML, and CosmJS dependency advisories.
+- Client-side ZKP generation remains a SHA-256 mock, not real Groth16 proof generation.
 
 ## IBC Modules (Stubbed)
 

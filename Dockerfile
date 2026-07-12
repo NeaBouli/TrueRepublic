@@ -1,9 +1,11 @@
 # ============================================================
 # Stage 1: Build the truerepublicd binary
 # ============================================================
-FROM golang:1.23-alpine AS builder
+FROM golang:1.26.5-bookworm AS builder
 
-RUN apk add --no-cache make gcc musl-dev linux-headers git
+RUN apt-get update \
+    && apt-get install --yes --no-install-recommends build-essential git \
+    && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /src
 COPY go.mod go.sum ./
@@ -14,15 +16,20 @@ RUN CGO_ENABLED=1 go build \
     -ldflags="-s -w -X main.version=$(git describe --tags --always 2>/dev/null || echo dev)" \
     -o /usr/local/bin/truerepublicd \
     ./
+RUN cp "$(go list -m -f '{{.Dir}}' github.com/CosmWasm/wasmvm/v2)/internal/api/libwasmvm.$(uname -m).so" /usr/local/lib/
 
 # ============================================================
 # Stage 2: Minimal runtime image
 # ============================================================
-FROM alpine:3.19
+FROM debian:bookworm-slim
 
-RUN apk add --no-cache ca-certificates libstdc++ libc6-compat
+RUN apt-get update \
+    && apt-get install --yes --no-install-recommends ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
 
 COPY --from=builder /usr/local/bin/truerepublicd /usr/local/bin/truerepublicd
+COPY --from=builder /usr/local/lib/libwasmvm.*.so /usr/lib/
+RUN ldconfig
 
 EXPOSE 26656 26657 1317 9090
 

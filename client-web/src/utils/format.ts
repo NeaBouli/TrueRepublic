@@ -2,22 +2,31 @@
  * Format PNYX amount (from micro to display)
  */
 export function formatPnyx(amount: string | number): string {
-  const num = typeof amount === 'string' ? parseInt(amount, 10) : amount;
-  const pnyx = num / 1_000_000;
+  const normalized = typeof amount === 'number' ? amount.toString() : amount;
+  if (!/^\d+$/.test(normalized)) return '0.00';
 
-  return pnyx.toLocaleString('en-US', {
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 6,
-  });
+  const microPnyx = BigInt(normalized);
+  const whole = microPnyx / 1_000_000n;
+  const rawFraction = (microPnyx % 1_000_000n).toString().padStart(6, '0');
+  const fraction = rawFraction.replace(/0+$/, '').padEnd(2, '0');
+  const groupedWhole = whole.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+
+  return `${groupedWhole}.${fraction}`;
 }
 
 /**
  * Parse PNYX input (from display to micro)
  */
 export function parsePnyx(input: string): string {
-  const num = parseFloat(input.replace(/,/g, ''));
-  if (isNaN(num)) return '0';
-  return Math.floor(num * 1_000_000).toString();
+  const normalized = input.replace(/,/g, '').trim();
+  if (!/^\d+(\.\d{0,6})?$/.test(normalized)) return '0';
+
+  const [whole, fraction = ''] = normalized.split('.');
+  const fractionalMicroPnyx = fraction.padEnd(6, '0');
+
+  return (
+    BigInt(whole) * 1_000_000n + BigInt(fractionalMicroPnyx || '0')
+  ).toString();
 }
 
 /**

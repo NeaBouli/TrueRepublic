@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useWalletStore } from '@/stores/walletStore';
 import { useDEXStore } from '@/stores/dexStore';
@@ -24,7 +24,6 @@ export function AddLiquidity() {
   const pool = pools.find((p) => p.asset_denom === assetDenom);
 
   const [pnyxAmount, setPnyxAmount] = useState('');
-  const [assetAmount, setAssetAmount] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [txHash, setTxHash] = useState('');
   const [error, setError] = useState('');
@@ -38,30 +37,26 @@ export function AddLiquidity() {
     }
   }, [pools.length, loadPools]);
 
-  // Auto-calculate asset amount based on pool ratio
-  useEffect(() => {
+  const assetAmount = useMemo(() => {
     if (!pool || !pnyxAmount) {
-      setAssetAmount('');
-      return;
+      return '';
     }
 
     const pnyxAmt = parseInt(pnyxAmount, 10);
     if (isNaN(pnyxAmt) || pnyxAmt <= 0) {
-      setAssetAmount('');
-      return;
+      return '';
     }
 
     const pnyxRes = BigInt(pool.pnyx_reserve);
     const assetRes = BigInt(pool.asset_reserve);
 
     if (pnyxRes === 0n) {
-      setAssetAmount('');
-      return;
+      return '';
     }
 
     // Proportional deposit: asset_amt = pnyx_amt * asset_reserve / pnyx_reserve
     const calculatedAsset = (BigInt(pnyxAmt) * assetRes) / pnyxRes;
-    setAssetAmount(calculatedAsset.toString());
+    return calculatedAsset.toString();
   }, [pnyxAmount, pool]);
 
   const estimatedShares = (() => {

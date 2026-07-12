@@ -1,32 +1,42 @@
-name: Web Wallet CI
+name: Client Web CI
 
 on:
   workflow_dispatch:
   push:
     paths:
-      - 'web-wallet/**'
+      - 'client-web/**'
+      - '.github/workflows/react-ci.yml'
   pull_request:
     paths:
-      - 'web-wallet/**'
+      - 'client-web/**'
+      - '.github/workflows/react-ci.yml'
 
 jobs:
   build:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: web-wallet
+        working-directory: client-web
     steps:
       - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
 
       - uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '22'
 
       - name: Install dependencies
-        run: npm install
+        run: npm ci
 
-      - name: Build
-        run: CI=false npm run build
+      - name: Lint
+        run: npm run lint
 
       - name: Test
-        run: npm test -- --watchAll=false --passWithNoTests
+        run: npm test -- --run
+
+      - name: Build
+        run: npm run build
+
+      - name: Audit dependencies
+        run: npm audit --audit-level=high

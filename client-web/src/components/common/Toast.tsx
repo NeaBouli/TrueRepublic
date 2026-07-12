@@ -1,4 +1,4 @@
-import { create } from 'zustand';
+import { useToastStore } from '@/stores/toastStore';
 import {
   CheckCircleIcon,
   ExclamationTriangleIcon,
@@ -6,38 +6,6 @@ import {
   XCircleIcon,
   XMarkIcon,
 } from '@heroicons/react/24/outline';
-
-interface Toast {
-  id: string;
-  type: 'success' | 'error' | 'warning' | 'info';
-  message: string;
-  duration?: number;
-}
-
-interface ToastStore {
-  toasts: Toast[];
-  addToast: (toast: Omit<Toast, 'id'>) => void;
-  removeToast: (id: string) => void;
-}
-
-export const useToastStore = create<ToastStore>((set) => ({
-  toasts: [],
-  addToast: (toast) => {
-    const id = Math.random().toString(36).substring(7);
-    set((state) => ({ toasts: [...state.toasts, { ...toast, id }] }));
-
-    if (toast.duration !== 0) {
-      setTimeout(() => {
-        set((state) => ({
-          toasts: state.toasts.filter((t) => t.id !== id),
-        }));
-      }, toast.duration || 5000);
-    }
-  },
-  removeToast: (id) => {
-    set((state) => ({ toasts: state.toasts.filter((t) => t.id !== id) }));
-  },
-}));
 
 const iconMap = {
   success: <CheckCircleIcon className="h-5 w-5 text-green-600" />,
