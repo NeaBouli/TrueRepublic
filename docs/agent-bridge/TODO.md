@@ -31,8 +31,10 @@
 - [x] GH-21: replace the MemDB/`select {}` placeholder and legacy `x/staking`
   bootstrap with persistent Cosmos/Comet lifecycle and generated-key,
   bank-backed PoD genesis; native restart/export and local gates pass.
-- [ ] GH-21: publish the rebased audited head and require refreshed Docker
-  restart, Go race/coverage, docs, security, and independent operations review.
+- [x] GH-21: publish audited head `ec1ce17`; refreshed Docker restart, Go
+  race/coverage, docs, static, and Security Scan gates are green.
+- [ ] GH-21: obtain independent multi-node, backup/restore, IBC/upgrade
+  operations review before public-network approval.
 - [x] GH-7: DEX rounding, slippage, pool accounting, custody, and authorization
   audit completed in GH-10; GH-12 retains genesis/runtime invariants.
 

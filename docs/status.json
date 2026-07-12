@@ -94,10 +94,10 @@
       "lp_conservation": "registered_every_block_on_pr19"
     },
     "node_lifecycle": {
-      "status": "recovery_verified_locally_unmerged_github_pending",
+      "status": "recovery_verified_local_and_github_unmerged",
       "bootstrap": "generated_cometbft_key_exact_bank_backed_pod_on_pr23",
       "persistence": "native_same_home_restart_and_export_verified_on_pr23",
-      "container": "non_root_debian_glibc_restart_gate_pending_on_rebased_pr23"
+      "container": "non_root_debian_glibc_restart_green_on_pr23"
     },
     "web_client": {
       "status": "recovery_verified_locally",
@@ -120,7 +120,7 @@
     "zkp_client": "mock preview is fail-closed and non-submittable; compatible real prover pending",
     "tx_history": "not yet implemented in web client",
     "ibc_transfers_ui": "query support only in web client",
-    "node_bootstrap": "legacy x/staking gentx path replaced on PR23 by generated CometBFT-key PoD genesis; refreshed Docker and independent operations review pending"
+    "node_bootstrap": "legacy x/staking gentx path replaced on PR23 by generated CometBFT-key PoD genesis; independent multi-node operations review pending"
   },
   "branding": {
     "logo_main": "https://raw.githubusercontent.com/NeaBouli/TrueRepublic/main/assets/logo.png",

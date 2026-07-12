@@ -1,6 +1,6 @@
 # Project State
 
-Updated: 2026-07-12 11:29 EEST
+Updated: 2026-07-12 11:41 EEST
 
 ## Repository
 
@@ -137,8 +137,9 @@ Updated: 2026-07-12 11:29 EEST
   genesis and refuses conflicting validator sets. Native block production,
   SIGINT shutdown, same-home restart, height advancement, invariants, export,
   649 Go cases, targeted race, vet, build, CLI version, shell syntax, and diff
-  checks pass locally. Root coverage is 64.3%. The rebased head and its Docker
-  restart/security gates are not yet published; see `PR23_AUDIT.md`.
+  checks pass locally. Root coverage is 64.3%. Published head `ec1ce17` is
+  mergeable; GitHub Go/Docker run `29170712626`, Docs, DeepScan, Web, Mobile,
+  Rust, and manual Security Scan `29170832988` pass; see `PR23_AUDIT.md`.
 
 ## Public-status warning
 
@@ -152,8 +153,8 @@ The token/ledger audit is 12/12 PASS locally across the ordered stack:
 denomination/cap, governance custody, reward issuance, DEX custody, custom
 genesis, and runtime invariants. The repository remains recovery-only because
 the stack is unmerged/unreviewed, GH-20 still needs a real prover/external
-cryptographic review, and GH-21 still needs refreshed GitHub Docker/security
-evidence plus independent multi-node operations review.
+cryptographic review, and GH-21 still needs independent multi-node operations
+review.
 
 GH-11 implements the canonical denomination metadata (`upnyx`, six decimal
 places, 21,000,000,000,000 base-unit cap) and pre-init bank-genesis cap checks.

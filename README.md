@@ -254,7 +254,7 @@ cd client-web && npm ci && npm run lint && npm test -- --run && npm run build
 | React Native + Expo | 0.74 / 51.0 | Legacy; security migration required |
 | Keplr + CosmJS | 0.39 | Maintained v0.4 client |
 
-**Known Limitations:** IBC staking/upgrade remains stubbed (PoD is used instead), a real ZKP prover/ceremony review is pending, and PR #23 still needs refreshed Docker plus independent multi-node operations evidence. See [LIMITATIONS.md](docs/LIMITATIONS.md).
+**Known Limitations:** IBC staking/upgrade remains stubbed (PoD is used instead), a real ZKP prover/ceremony review is pending, and PR #23 still needs independent multi-node operations evidence. See [LIMITATIONS.md](docs/LIMITATIONS.md).
 
 ---
 
@@ -279,7 +279,8 @@ approval. Current evidence, risks, and commands are maintained in
 - 🟡 GH-12 genesis/runtime conservation is locally verified on stacked PR #19
 - 🟡 PR #23 locally replaces the legacy `x/staking` gentx path with generated
   CometBFT-key, bank-backed PoD genesis and proves native restart/export;
-  refreshed Docker and independent multi-node operations evidence remain open
+  GitHub Docker restart passes and independent multi-node operations evidence
+  remains open
 - 🟡 ZKP UI is a clearly disabled preview until a compatible real Groth16 prover exists
 - ✅ Developer Tooling: 4 CosmWasm example contracts, shared bindings, testing utils
 - 🟡 DEX burns reduce canonical bank supply on stacked PR #18

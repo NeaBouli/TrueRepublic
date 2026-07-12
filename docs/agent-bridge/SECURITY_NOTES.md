@@ -15,10 +15,9 @@
 - Rust stable CosmWasm 3.0.4 dev-tooling pulls unmaintained/unsound transitive
   crates through Wasmer. No fixable cargo-audit vulnerability remains, but the
   warnings require monitoring or a stable upstream upgrade.
-- GH-21 native single-node lifecycle passes locally. Refreshed GitHub Docker/
-  security evidence and independent multi-node operations review remain
-  pending; IBC staking/upgrade and standard CosmWasm staking/distribution stay
-  explicit stubs.
+- GH-21 native and GitHub-container single-node lifecycle passes. Independent
+  multi-node operations review remains pending; IBC staking/upgrade and
+  standard CosmWasm staking/distribution stay explicit stubs.
 - The legacy node initialization script invokes unavailable `x/staking` gentx
   commands and must not be used. PR #23 instead binds the generated CometBFT
   public key to exact bank-backed PoD genesis and refuses conflicting sets.

@@ -46,8 +46,8 @@ approved for production or real funds during this audit.
 
 ## Production Node Lifecycle
 
-**Status:** Locally recovery-verified on stacked PR #23; refreshed GitHub and
-independent operations review pending
+**Status:** Locally and GitHub recovery-verified on stacked PR #23; independent
+operations review pending
 **Current:** The standard `truerepublicd init` command binds the generated
 CometBFT Ed25519 public key to matching PoD and actual positive-power consensus
 validators with sufficient, exact bank-backed minimum stake. Initialization
@@ -56,8 +56,9 @@ produces blocks, shuts down on SIGINT, restarts from the same home, advances
 height, preserves invariants, and exports state. The non-root Debian/glibc
 container has a blocking restart gate.
 **Impact:** Do not use the legacy `scripts/init-node.sh` `x/staking` gentx path.
-Do not claim public-network readiness until the rebased PR #23 Docker job and
-independent multi-node, backup/restore, IBC/upgrade operations review pass.
+The rebased PR #23 Docker restart job passes. Do not claim public-network
+readiness until independent multi-node, backup/restore, IBC/upgrade operations
+review passes.
 
 ## ZKP Client
 

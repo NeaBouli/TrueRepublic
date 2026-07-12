@@ -24,9 +24,9 @@ production approval.
 > fails closed on pinned genesis VK state, preserves active nullifiers, and
 > disables mock client submission. GH-21 now replaces the MemDB placeholder
 > with persistent Cosmos/Comet lifecycle and generated-key, bank-backed PoD
-> genesis. Recipient binding, a real prover/ceremony, refreshed GH-21 Docker/
-> security gates, multi-node operations evidence, and independent review remain
-> open.
+> genesis. Recipient binding, a real prover/ceremony, multi-node operations
+> evidence, and independent review remain open. GH-21 GitHub Go, Docker, docs,
+> client, Rust, static, and security gates pass.
 
 ## Findings by domain
 
@@ -130,17 +130,17 @@ production approval.
     SIGINT, restarts from the same home, advances height, runs invariants, and
     exports state; targeted lifecycle race, vet, CGO build, and both CLI version
     interfaces pass.
-  - Fix: Require refreshed GitHub Docker restart/security gates and separate
-    independent multi-node/IBC/upgrade operations evidence before a public
-    network. See `docs/agent-bridge/PR23_AUDIT.md`.
+  - Fix: Preserve the green GitHub Docker restart/security gates and require
+    separate independent multi-node/IBC/upgrade operations evidence before a
+    public network. See `docs/agent-bridge/PR23_AUDIT.md`.
 
 ## Priority matrix
 
 ### 🔴 BLOCKING
 
 None inside the locally implemented ledger/ZKP/single-node lifecycle slice. A
-real prover, external cryptographic review, recipient binding, refreshed Docker
-evidence, independent multi-node operations review, and ordered merge remain
+real prover, external cryptographic review, recipient binding, independent
+multi-node operations review, and ordered merge remain
 project-level release blockers.
 
 ### 🟠 HIGH

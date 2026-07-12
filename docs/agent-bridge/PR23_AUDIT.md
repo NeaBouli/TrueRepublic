@@ -1,5 +1,5 @@
 # PR #23 Audit — GH-21 Persistent PoD Node Lifecycle
-> Scope: `app.go`, `server_lifecycle.go`, genesis integration, Docker/Compose, entrypoint, and Go CI  ·  Date: 2026-07-12  ·  Result: 0 FAIL / 2 WARN / 8 PASS
+> Scope: `app.go`, `server_lifecycle.go`, genesis integration, Docker/Compose, entrypoint, and Go CI  ·  Date: 2026-07-12  ·  Result: 0 FAIL / 1 WARN / 9 PASS
 
 ## Summary
 
@@ -9,8 +9,8 @@ Initialization binds the node's generated CometBFT Ed25519 public key to one
 exactly bank-backed PoD validator and refuses to overwrite an existing
 consensus set. Native start, signal shutdown, same-home restart, height
 advancement, invariant execution, and export pass locally. The stacked draft
-is not production-approved: refreshed GitHub Docker evidence and independent
-multi-node operations review remain required.
+is not production-approved: independent multi-node operations review remains
+required.
 
 ## Findings by domain
 
@@ -82,14 +82,14 @@ multi-node operations review remain required.
     restart failures make the job fail.
   - Fix: Keep this job required for node-runtime changes.
 
-### Operations verification — WARN
+### Operations verification — PASS / WARN
 
-- **[MEDIUM] Local Docker execution is unavailable** — `Dockerfile`, `.github/workflows/go-ci.yml`
-  - What: This host has no Docker CLI/daemon, so only shell syntax and native
-    lifecycle execution were locally reproduced.
-  - Path: A container-only defect is not excluded until the refreshed GitHub
-    Docker restart job passes on the published head.
-  - Fix: Treat the GitHub Docker job as mandatory before approving PR #23.
+- **[PASS] GitHub reproduces the container lifecycle on the published head** — `Dockerfile`, `.github/workflows/go-ci.yml`
+  - What: This host has no Docker CLI/daemon, so GitHub run `29170712626` is the
+    authoritative container evidence.
+  - Path: The job validated Compose, built the Debian/glibc image, reached a
+    committed block, restarted the same container, and required height advance.
+  - Fix: Keep the Docker restart job mandatory for node-runtime changes.
 
 - **[HIGH] Evidence remains single-node and stub-bounded** — `ibc_stubs.go`, `wasm_stubs.go`, `docs/LIMITATIONS.md`
   - What: IBC staking/upgrade and standard CosmWasm staking/distribution remain
@@ -109,7 +109,12 @@ multi-node operations review remain required.
 - `go vet ./...`, `CGO_ENABLED=1 go build ./...`: PASS
 - Linker-injected `truerepublicd --version` and `truerepublicd version`: PASS
 - `sh -n scripts/docker-entrypoint.sh`, `git diff --check`: PASS
-- Local Docker and ShellCheck: unavailable; GitHub gates required
+- Local Docker and ShellCheck: unavailable; authoritative GitHub Docker gate
+  used and satisfied
+- GitHub Go/Docker run `29170712626`: PASS, including image build, first block,
+  same-container restart, and height advancement
+- GitHub Docs, DeepScan, Web, Mobile, Rust: PASS
+- Manual Security Scan `29170832988`: PASS, all five jobs
 - Recovery total: 683 (649 Go + 26 Rust + 8 maintained-client)
 
 ## Priority matrix
@@ -125,7 +130,7 @@ None in the locally executed single-node lifecycle slice.
 
 ### 🟡 MEDIUM
 
-1. Refreshed GitHub Docker restart evidence is pending for the rebased head.
+None identified.
 
 ### 🟢 LOW
 

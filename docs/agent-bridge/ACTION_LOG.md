@@ -359,6 +359,11 @@
 - Prepared the local GH-21 audit/bridge/public-status evidence at 683 total
   recovery cases. Local Docker and ShellCheck are unavailable; refreshed
   GitHub Docker restart and security jobs remain mandatory before approval.
+- Published audited GH-21 head `ec1ce17`; synchronized PR #23, Issue #21, and
+  recovery epic #4 with the 649 Go / 683 total evidence and version regression.
+- GitHub Go build/vet/race/coverage and Docker block/restart run `29170712626`,
+  Docs, DeepScan, Web, Mobile, Rust, and all five manual Security Scan
+  `29170832988` jobs pass. Independent multi-node operations review remains.
 
 ## 2026-07-12 12:18 EEST - GH-12 review remediation
 

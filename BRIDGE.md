@@ -34,11 +34,11 @@ GitHub recovery epic: [#4](https://github.com/NeaBouli/TrueRepublic/issues/4)
 - **Ready for:** refreshed PR #22 verification and propagation through PRs #23
   and #24
 
-## 2026-07-12 11:29 EEST GH-21 node lifecycle → Local verification
+## 2026-07-12 11:41 EEST GH-21 node lifecycle → GitHub green
 
 - **Branch:** `fix/GH-21-node-lifecycle`
 - **Issue:** [GH-21](https://github.com/NeaBouli/TrueRepublic/issues/21)
-- **PR:** [#23](https://github.com/NeaBouli/TrueRepublic/pull/23) (stacked draft against GH-20; GitHub head refresh pending)
+- **PR:** [#23](https://github.com/NeaBouli/TrueRepublic/pull/23) (stacked draft against GH-20), audited code head `ec1ce17`
 - **Changed:** standard Cosmos server lifecycle with persistent home/database,
   generated CometBFT-key PoD genesis with exact bank-backed stake, consensus
   parameter keeper, clean signal shutdown, export, non-root Debian/glibc image,
@@ -53,17 +53,19 @@ GitHub recovery epic: [#4](https://github.com/NeaBouli/TrueRepublic/issues/4)
   shell syntax, and diff checks → PASS
 - **Risk:** Critical — consensus key identity, bank-backed bootstrap stake,
   persistent application state, restart safety, and operator container runtime
-- **Pending:** publish rebased head; GitHub Docker restart, Go race/coverage,
-  docs, static review, and security workflow; independent operations review
-- **Ready for:** GitHub draft verification only, not merge or production
+- **GitHub:** Go build/vet/race/coverage and Docker block/restart pass in run
+  `29170712626`; Docs, DeepScan, Web, Mobile, Rust, and manual Security Scan
+  `29170832988` pass; CodeRabbit is check-green
+- **Ready for:** independent multi-node operations review and ordered stack
+  merge; not production
 
 ### Codex review feedback
 
-Local conditional PASS. The former MemDB/`select {}` placeholder and invalid
+Conditional PASS. The former MemDB/`select {}` placeholder and invalid
 `x/staking` gentx bootstrap are no longer the node path. A real subprocess
 produced blocks, stopped on SIGINT, restarted from the same home, advanced
-height, preserved invariants, and exported state. Docker remains unverified
-until the refreshed GitHub job passes; IBC staking/upgrade and multi-node
+height, preserved invariants, and exported state. GitHub independently repeated
+the image build and same-container restart. IBC staking/upgrade and multi-node
 operations remain explicit non-production boundaries.
 
 ## 2026-07-12 05:28 EEST GH-20 ZKP/authentication → GitHub green
