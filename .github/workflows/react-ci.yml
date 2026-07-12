@@ -3,6 +3,8 @@ name: Client Web CI
 on:
   workflow_dispatch:
   push:
+    branches:
+      - main
     paths:
       - 'client-web/**'
       - '.github/workflows/react-ci.yml'
@@ -10,6 +12,9 @@ on:
     paths:
       - 'client-web/**'
       - '.github/workflows/react-ci.yml'
+
+permissions:
+  contents: read
 
 jobs:
   build:

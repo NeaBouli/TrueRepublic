@@ -25,6 +25,9 @@ on:
       - 'docker-compose.yml'
       - 'scripts/docker-entrypoint.sh'
 
+permissions:
+  contents: read
+
 jobs:
   build-and-test:
     runs-on: ubuntu-latest

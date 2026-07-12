@@ -3,6 +3,8 @@ name: Mobile Wallet CI
 on:
   workflow_dispatch:
   push:
+    branches:
+      - main
     paths:
       - 'mobile-wallet/**'
       - '.github/workflows/react-native-ci.yml'
@@ -10,6 +12,9 @@ on:
     paths:
       - 'mobile-wallet/**'
       - '.github/workflows/react-native-ci.yml'
+
+permissions:
+  contents: read
 
 jobs:
   lint:
@@ -19,6 +24,8 @@ jobs:
         working-directory: mobile-wallet
     steps:
       - uses: actions/checkout@v5
+        with:
+          persist-credentials: false
 
       - uses: actions/setup-node@v5
         with:

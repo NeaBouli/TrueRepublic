@@ -3,6 +3,8 @@ name: Rust CI
 on:
   workflow_dispatch:
   push:
+    branches:
+      - main
     paths:
       - 'contracts/**'
       - '.github/workflows/rust-ci.yml'
@@ -10,6 +12,9 @@ on:
     paths:
       - 'contracts/**'
       - '.github/workflows/rust-ci.yml'
+
+permissions:
+  contents: read
 
 jobs:
   build-and-test:
@@ -19,6 +24,8 @@ jobs:
         working-directory: contracts
     steps:
       - uses: actions/checkout@v5
+        with:
+          persist-credentials: false
 
       - uses: dtolnay/rust-toolchain@stable
 
