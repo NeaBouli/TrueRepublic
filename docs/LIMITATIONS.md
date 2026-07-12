@@ -55,10 +55,10 @@ rejects canonical supply above the 21,000,000 PNYX cap. A real native process
 produces blocks, shuts down on SIGINT, restarts from the same home, advances
 height, preserves invariants, and exports state. The non-root Debian/glibc
 container has a blocking restart gate.
-**Impact:** Do not use the legacy `scripts/init-node.sh` `x/staking` gentx path.
-The rebased PR #23 Docker restart job passes. Do not claim public-network
-readiness until independent multi-node, backup/restore, IBC/upgrade operations
-review passes.
+**Impact:** `scripts/init-node.sh` delegates exclusively to the supported daemon
+init boundary and never creates staking gentxs or extra accounts. The Docker
+restart job passes. Do not claim public-network readiness until independent
+multi-node, backup/restore, IBC/upgrade operations review passes.
 
 ## ZKP Client
 

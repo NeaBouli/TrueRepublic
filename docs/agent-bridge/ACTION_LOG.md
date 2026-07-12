@@ -405,3 +405,21 @@
 - PR #9 remains technically green and mergeable but correctly requires one
   independent approval. PR #25 remains red against unrecovered `main`; neither
   gate is bypassed, and meaningful recovery work remains available.
+
+## 2026-07-12 12:48 EEST - GH-26 operator init recovery
+
+- Inventoried all open issues/PRs and found a remaining operator footgun:
+  `scripts/init-node.sh` still invoked unavailable `x/staking` gentx commands,
+  wrote a mnemonic capture file, and was recommended by public install docs.
+- Opened Issue #26 and isolated `fix/GH-26-pod-init-script` from final PR #24.
+- Replaced the wrapper with a single quoted `truerepublicd init` delegation;
+  retained chain/moniker/home, minimum gas price, and Prometheus configuration.
+- Added a regression proving the exact command boundary, absence of all legacy
+  account/gentx actions and mnemonic files, and both configuration edits.
+- Reconciled operator/public/security documentation and advanced the verified
+  source of truth to 684 cases (650 Go + 26 Rust + 8 maintained client).
+- Focused test, real compiled-daemon wrapper smoke, full Go suite, vet, shell
+  syntax, documentation/JSON consistency, and diff checks pass. The real smoke
+  proves one consensus validator, matching custom PoD identity, canonical
+  `upnyx` bank supply, no mnemonic artifact, and configured gas/Prometheus.
+- Publication and GitHub Go/Docker/security verification remain in progress.

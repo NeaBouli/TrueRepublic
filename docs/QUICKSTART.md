@@ -27,33 +27,26 @@ CGO_ENABLED=1 make build
 
 # Verify
 ./build/truerepublicd version
-# v0.3.0
+# v0.4.0
 ```
 
 ## Start Local Chain
 
 ```bash
-# Initialize
-./build/truerepublicd init dev --chain-id truerepublic-dev
-
-# Create key
-./build/truerepublicd keys add alice
-
-# Add genesis account
-./build/truerepublicd genesis add-genesis-account alice 100000000pnyx
-
-# Generate genesis tx
-./build/truerepublicd genesis gentx alice 50000000pnyx \
-  --chain-id truerepublic-dev
-
-# Collect genesis
-./build/truerepublicd genesis collect-gentxs
+# Initialize generated-key, bank-backed PoD genesis
+BINARY=./build/truerepublicd \
+CHAIN_ID=truerepublic-dev \
+MONIKER=dev \
+CHAIN_HOME="$PWD/.truerepublic-dev" \
+./scripts/init-node.sh
 
 # Start chain
-./build/truerepublicd start
+./build/truerepublicd start --home "$PWD/.truerepublic-dev"
 ```
 
 Chain is now running on `localhost:26657` (RPC) and `localhost:1317` (REST).
+TrueRepublic does not wire `x/staking`; do not add staking gentxs. Transaction
+examples below require a separately funded account and are not a faucet flow.
 
 ## Quick Examples
 

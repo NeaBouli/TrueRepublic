@@ -99,7 +99,7 @@ production approval.
 
 - **[PASS] Public ledger claims distinguish stacked recovery from production** — `README.md`, `docs/status.json`, `docs/index.html`
   - What: Public status identifies the exact locally verified branch and retains the non-production warning for unmerged review, ZKP, and node-lifecycle work.
-  - Evidence: Documentation consistency checks use one 683-test source of truth.
+  - Evidence: Documentation consistency checks use one 684-test source of truth.
   - Fix: Keep status evidence-based through final stack consolidation.
 
 ### ZKP authentication and replay resistance — PASS
@@ -126,13 +126,22 @@ production approval.
     `init` binds the generated CometBFT Ed25519 public key to matching custom
     consensus state with exact cap-checked bank backing, refuses conflicting
     validator sets, and writes genesis atomically with mode `0600`.
-  - Evidence: 649 Go cases pass. A real daemon produces blocks, stops cleanly on
+  - Evidence: 650 Go cases pass, including the supported init-wrapper boundary.
+    A real daemon produces blocks, stops cleanly on
     SIGINT, restarts from the same home, advances height, runs invariants, and
     exports state; targeted lifecycle race, vet, CGO build, and both CLI version
     interfaces pass.
   - Fix: Preserve the green GitHub Docker restart/security gates and require
     separate independent multi-node/IBC/upgrade operations evidence before a
     public network. See `docs/agent-bridge/PR23_AUDIT.md`.
+
+- **[PASS] Operator init wrapper cannot fall back to unavailable staking gentx** — `scripts/init-node.sh`, `init_node_script_test.go`
+  - What: The wrapper invokes only `truerepublicd init`, whose generated-key PoD
+    bootstrap is already bank/cap validated, then applies local gas/metrics
+    configuration. It creates no account, mnemonic file, gentx, or extra supply.
+  - Evidence: The wrapper regression asserts the exact daemon invocation,
+    forbidden-command absence, configuration edits, and no mnemonic artifact.
+  - Fix: Keep `truerepublicd init` as the only genesis bootstrap boundary.
 
 ## Priority matrix
 

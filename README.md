@@ -16,7 +16,7 @@
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/tests-683%20recovery--verified-orange" alt="Recovery-verified tests"/>
+  <img src="https://img.shields.io/badge/tests-684%20recovery--verified-orange" alt="Recovery-verified tests"/>
   <img src="https://img.shields.io/badge/version-v0.4.0-blue" alt="Version"/>
   <img src="https://img.shields.io/badge/recovery-active-orange" alt="Recovery active"/>
   <img src="https://img.shields.io/badge/Go-1.26.5-00ADD8?logo=go" alt="Go"/>
@@ -228,7 +228,7 @@ TrueRepublic/
 # Blockchain
 go mod tidy
 go build ./...
-go test ./... -race -cover -count=1 -timeout=600s    # 649 tests
+go test ./... -race -cover -count=1 -timeout=600s    # 650 tests
 
 # Smart contracts
 cd contracts && cargo test --workspace       # 26 tests
@@ -266,7 +266,7 @@ The checklist below records implemented surface area, not a production security
 approval. Current evidence, risks, and commands are maintained in
 [`BRIDGE.md`](BRIDGE.md) and [GitHub issue #4](https://github.com/NeaBouli/TrueRepublic/issues/4).
 
-- 🟡 683 tests recovery-verified locally (649 Go + 26 Rust + 8 maintained-client)
+- 🟡 684 tests recovery-verified locally (650 Go + 26 Rust + 8 maintained-client)
 - ✅ Core blockchain compiles and runs
 - 🟡 Tokenomics, exact custom genesis, and every-block ledger invariants are locally verified through stacked PR #19
 - 🟡 Governance surface implemented; escrow/auth recovery is in stacked review
@@ -277,10 +277,10 @@ approval. Current evidence, risks, and commands are maintained in
 - 🟡 Multi-Asset DEX bank custody, provider LP ownership, authority checks, and
   canonical burns are locally verified on stacked PR #18
 - 🟡 GH-12 genesis/runtime conservation is locally verified on stacked PR #19
-- 🟡 PR #23 locally replaces the legacy `x/staking` gentx path with generated
-  CometBFT-key, bank-backed PoD genesis and proves native restart/export;
-  GitHub Docker restart passes and independent multi-node operations evidence
-  remains open
+- 🟡 PR #23 provides generated CometBFT-key, bank-backed PoD genesis and
+  proves native restart/export; GH-26 makes `scripts/init-node.sh` delegate only
+  to that supported path. GitHub Docker restart passes and independent
+  multi-node operations evidence remains open
 - 🟡 ZKP UI is a clearly disabled preview until a compatible real Groth16 prover exists
 - ✅ Developer Tooling: 4 CosmWasm example contracts, shared bindings, testing utils
 - 🟡 DEX burns reduce canonical bank supply on stacked PR #18
@@ -313,8 +313,8 @@ approval. Current evidence, risks, and commands are maintained in
 - 📋 **v0.5.0 (Q3 2026):** Native Apps (iOS/Android)
 - 🎯 **v1.0.0 (Q4 2026):** Production Release — External audit, mainnet launch
 
-> Historical test count: 577. The authoritative recovery-verified total is 683
-> (649 Go + 26 Rust + 8 maintained-client), reproduced locally on the current branch.
+> Historical test count: 577. The authoritative recovery-verified total is 684
+> (650 Go + 26 Rust + 8 maintained-client), reproduced locally on the current branch.
 
 ---
 

@@ -384,14 +384,17 @@ npm install
 
 ```bash
 # Initialize local testnet
-./scripts/init-node.sh
+BINARY=./build/truerepublicd ./scripts/init-node.sh
 
 # Start node
-./scripts/start-node.sh
+BINARY=./build/truerepublicd ./scripts/start-node.sh
 
 # In another terminal, check status
 curl localhost:26657/status
 ```
+
+The initializer delegates only to the generated-key, bank-backed PoD bootstrap.
+TrueRepublic does not use `x/staking` gentx or collect-gentxs commands.
 
 ### Step 6: Run Tests
 

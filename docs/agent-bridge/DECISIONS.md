@@ -61,8 +61,9 @@
   balances before any custom state mutation.
 - Supply, governance escrow, DEX reserves, and provider LP totals are registered
   `x/crisis` routes checked every block.
-- The legacy `x/staking` gentx initialization script is not a valid PoD launch
-  path and must not be used.
+- `truerepublicd init` is the only valid PoD bootstrap boundary. The GH-26
+  wrapper delegates exclusively to it and cannot create staking gentxs,
+  keyring mnemonics, extra genesis accounts, or additional token supply.
 
 ## 2026-07-12 - Persistent PoD node bootstrap
 

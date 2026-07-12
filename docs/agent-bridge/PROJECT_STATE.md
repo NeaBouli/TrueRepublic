@@ -1,17 +1,19 @@
 # Project State
 
-Updated: 2026-07-12 23:53 EEST
+Updated: 2026-07-13 00:15 EEST
 
 ## Repository
 
 - GitHub: `NeaBouli/TrueRepublic`
-- Baseline: `origin/main` at `34e2b52` after the verified PR #23 squash merge.
-- Merged recovery PRs: #9, #15, #16, #17, #18, #19, #22, and #23.
-- Current review: PR #24 (`fix/GH-8-docs-final` -> `main`).
-- Remaining deployment follow-up: PR #27 (`fix/GH-26-pod-init-script`), to be
-  rebased after PR #24.
+- Baseline: `origin/main` at `071a11e` after the verified PR #24 squash merge.
+- Merged recovery PRs: #9, #15, #16, #17, #18, #19, #22, #23, and #24.
+- Current review: PR #27 (`fix/GH-26-pod-init-script` -> `main`).
 - Active recovery checkout:
   `/Users/gio/Documents/Codex/2026-07-11/erkunden/TrueRepublic-gh20`
+- GH-26 branch: `fix/GH-26-pod-init-script`
+- GH-26 issue: #26; PR #27 is being rebased and verified against `main`.
+- GH-26 recovery checkout:
+  `/Users/gio/Documents/Codex/2026-07-11/erkunden/TrueRepublic-gh26`
 - Recovery worktree: `/Users/gio/Desktop/repos/TrueRepublic-recovery`
 - Legacy local checkout: preserved at `/Users/gio/Desktop/repos/TrueRepublic`
 - GitHub epic: #4
@@ -26,7 +28,7 @@ Updated: 2026-07-12 23:53 EEST
   vulnerabilities after upgrades.
 - GH-14 local v0.4 client: `npm ci`, lint, six regression tests, production build, and
   `npm audit` all PASS. Main bundle is 1.68 MB before gzip (performance warning).
-- Current GH-21 branch test count is 683: 649 Go, 26 Rust, and eight
+- Current GH-26 branch test count is 684: 650 Go, 26 Rust, and eight
   maintained-client tests. Four focused legacy-web ZKP regressions pass
   separately and are not included in that authoritative total. The prior 577
   figure is retained only as historical.
@@ -123,18 +125,23 @@ Updated: 2026-07-12 23:53 EEST
 - GH-8 is rebased onto final GH-21 `49938a3`. It modernizes official
   Action runtimes without credential persistence or duplicate feature runs,
   strengthens suite/module/cap consistency, and reconciles CLAUDE, install,
-  FAQ, landing, and real wiki status/security claims to 683 cases. Workflow
+  FAQ, landing, and real wiki status/security claims to 684 cases. Workflow
   YAML, docs, JSON, wiki target, stale-current-claim, and diff checks pass;
   Published stack head is mergeable. GitHub Go/Docker, Rust, Web, Mobile,
   Docs, DeepScan, CodeRabbit, and all five Security Scan `29172246235` jobs
   pass. See `PR24_AUDIT.md`.
+- GH-26 removes the last public `x/staking` bootstrap footgun. The operator
+  wrapper now invokes only daemon `init`; its regression and a real compiled
+  init prove generated-key, exact bank-backed PoD genesis without mnemonic,
+  account, gentx, or extra-supply side effects. Full Go/vet/docs/shell gates
+  pass locally; GitHub verification is pending. See `PR27_AUDIT.md`.
 
 ## Public-status warning
 
 `docs/status.json`, README, limitations, and the landing page now mark recovery
-as active and separate 683 verified tests from the historical 577 figure.
+as active and separate 684 verified tests from the historical 577 figure.
 `CLAUDE.md`, install guidance, FAQ, landing page, and wiki are reconciled on
-PR #24; the implementation foundation through PR #23 is visible on `main`.
+PR #24 and are visible on `main`.
 
 ## Blocking audit result
 

@@ -4,14 +4,14 @@ Build and run TrueRepublic directly on your system without Docker.
 
 ## Prerequisites
 
-- Go 1.23.5+ ([download](https://go.dev/dl/))
+- Go 1.26.5 ([download](https://go.dev/dl/))
 - Make
 - Git
 
 Verify Go installation:
 ```bash
 go version
-# go version go1.23.5 linux/amd64
+# go version go1.26.5 linux/amd64
 ```
 
 ## Step 1: Clone Repository
@@ -42,10 +42,14 @@ Verify:
 # Set environment variables
 export CHAIN_ID=truerepublic-1
 export MONIKER=my-node
+export BINARY=./build/truerepublicd
 
-# Initialize (creates ~/.truerepublic/)
+# Initialize generated-key, exact bank-backed PoD genesis
 ./scripts/init-node.sh
 ```
+
+The wrapper calls only `truerepublicd init`. It does not create a keyring
+mnemonic, genesis account, staking gentx, or additional token supply.
 
 This creates:
 ```
@@ -62,10 +66,10 @@ This creates:
 ## Step 4: Start Node
 
 ```bash
-./scripts/start-node.sh
+BINARY=./build/truerepublicd ./scripts/start-node.sh
 
 # Or directly:
-./build/truerepublicd start
+./build/truerepublicd start --home "$HOME/.truerepublic"
 ```
 
 The node starts with:

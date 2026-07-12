@@ -15,11 +15,11 @@
   identity; both public web clients reject mock proof submission.
 - Persistent Cosmos/Comet single-node lifecycle with generated-key,
   bank-backed PoD genesis and native plus Docker restart evidence.
-- 683 recovery-verified tests: 649 Go, 26 Rust, and 8 maintained-client.
+- 684 recovery-verified tests: 650 Go, 26 Rust, and 8 maintained-client.
 
 ## Merged recovery sequence
 
-PR #9 → #15 → #16 → #17 → #18 → #19 → #22 → #23 → #24.
+PR #9 → #15 → #16 → #17 → #18 → #19 → #22 → #23 → #24 → #27.
 
 The recovery foundation was reviewed, verified, and merged to `main` in this
 order. PR #27 remains the deployment-initialization follow-up.
@@ -34,5 +34,5 @@ order. PR #27 remains the deployment-initialization follow-up.
 - Migration or removal of the deprecated legacy web/mobile clients.
 
 See [Issue #4](https://github.com/NeaBouli/TrueRepublic/issues/4),
-[`BRIDGE.md`](https://github.com/NeaBouli/TrueRepublic/blob/fix/GH-8-docs-final/BRIDGE.md),
-and [`docs/status.json`](https://github.com/NeaBouli/TrueRepublic/blob/fix/GH-8-docs-final/docs/status.json).
+[`BRIDGE.md`](https://github.com/NeaBouli/TrueRepublic/blob/fix/GH-26-pod-init-script/BRIDGE.md),
+and [`docs/status.json`](https://github.com/NeaBouli/TrueRepublic/blob/fix/GH-26-pod-init-script/docs/status.json).
