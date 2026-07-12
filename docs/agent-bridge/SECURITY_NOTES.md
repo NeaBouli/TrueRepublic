@@ -2,10 +2,9 @@
 
 ## Open
 
-- The token/ledger slice passes locally/GitHub through GH-12, but remains
-  stacked and unmerged; independent review is still required.
-  Canonical denomination and declared treasury/stake custody are remediated on
-  stacked branches but remain unmerged. See `CODEX_AUDIT.md` and GH-7.
+- The token/ledger recovery slice through GH-12 is merged to `main` after local
+  and GitHub verification. Independent release-security review is still
+  required. See `CODEX_AUDIT.md` and GH-7.
 - Anonymous legacy rating signatures and Groth16 proofs do not bind a bank
   reward recipient. Direct payout to the transaction sender is front-runnable;
   production handlers therefore defer those rewards pending GH-7.

@@ -1,7 +1,7 @@
 # Current Status
 
-**Version:** v0.4.0 recovery  
-**Release state:** recovery active, stacked and unmerged  
+**Version:** v0.4.0 recovery
+**Release state:** recovery foundation merged to `main`
 **Production-ready:** no
 
 ## Verified foundation
@@ -17,15 +17,16 @@
   bank-backed PoD genesis and native plus Docker restart evidence.
 - 683 recovery-verified tests: 649 Go, 26 Rust, and 8 maintained-client.
 
-## Ordered draft stack
+## Merged recovery sequence
 
 PR #9 → #15 → #16 → #17 → #18 → #19 → #22 → #23 → #24.
 
-These changes are not on `main` until reviewed and merged in that order.
+The recovery foundation was reviewed, verified, and merged to `main` in this
+order. PR #27 remains the deployment-initialization follow-up.
 
 ## Release blockers
 
-- Independent review and ordered stack merge.
+- Release qualification and independent security review.
 - Compatible real Groth16 client prover and external circuit/ceremony review.
 - Privacy-preserving anonymous reward recipient binding.
 - Independent multi-node, IBC/upgrade, backup/restore, monitoring, and

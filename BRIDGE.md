@@ -344,3 +344,27 @@ custody/burn integration, custom-genesis reconciliation, runtime invariants,
 and anonymous recipient binding remain separately blocking.
 
 ---
+
+## 2026-07-12 23:53 EEST GH-8 recovery documentation → Review
+
+- **Branch:** `fix/GH-8-docs-final`
+- **Issue:** [GH-8](https://github.com/NeaBouli/TrueRepublic/issues/8)
+- **PR:** [#24](https://github.com/NeaBouli/TrueRepublic/pull/24)
+- **Changed:** rebased all eight GH-8 commits patch-equivalently onto the PR
+  #23 merge; reconciled README, machine status, wiki, security notes, project
+  state, and queue with the recovery foundation now present on `main`
+- **Tests:** `git range-diff 49938a3..backup/GH-8-before-main-20260713
+  origin/main..HEAD` → 8/8 commits patch-equivalent;
+  `bash scripts/check-consistency.sh` → PASS; workflow YAML parse → PASS;
+  `git diff --check` → PASS after removing two Markdown trailing spaces
+- **Risk:** Medium — public recovery truth and CI definitions; production
+  readiness remains explicitly false
+- **Ready for:** refreshed GitHub CI, review, and ordered squash merge
+
+### Codex review feedback
+
+The documentation now distinguishes a merged recovery foundation from a
+production release. Cryptographic, multi-node operations, legacy-client, and
+release-process blockers remain prominent and unchanged.
+
+---

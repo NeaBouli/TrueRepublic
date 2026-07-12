@@ -4,9 +4,10 @@
 
 # TrueRepublic / PNYX Technical Wiki
 
-> **Recovery audit active — not production-ready.** The ordered recovery stack
-> is still unmerged. Do not use the project for real keys, funds, anonymous
-> voting, or a public network until the documented independent reviews pass.
+> **Recovery audit active — not production-ready.** The verified recovery
+> foundation is merged to `main`. Do not use the project for real keys, funds,
+> anonymous voting, or a public network until the remaining independent
+> security and operations reviews pass.
 
 ## Current recovery evidence
 
@@ -15,12 +16,12 @@
 | Version label | v0.4.0 recovery |
 | Tests | 683 total: 649 Go, 26 Rust, 8 maintained-client |
 | PNYX cap | 21,000,000 PNYX = 21,000,000,000,000 `upnyx` |
-| Node | Native and Docker single-node restart verified on stacked PR #23 |
+| Node | Native and Docker single-node restart verified and merged via PR #23 |
 | ZKP client | Mock generation/submission disabled; real prover pending |
 | Maintained client | `client-web` |
 | Legacy clients | `web-wallet` and `mobile-wallet`; not approved for real keys |
 
-Authoritative machine status: [`docs/status.json`](https://github.com/NeaBouli/TrueRepublic/blob/fix/GH-8-docs-final/docs/status.json).
+Authoritative machine status: [`docs/status.json`](https://github.com/NeaBouli/TrueRepublic/blob/main/docs/status.json).
 Recovery tracking: [Issue #4](https://github.com/NeaBouli/TrueRepublic/issues/4).
 
 ## Navigation

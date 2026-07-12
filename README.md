@@ -195,7 +195,7 @@ TrueRepublic/
 | Validator Slashing | ✅ | `x/truedemocracy/slashing.go` |
 | Tokenomics (eq.1-5) | ✅ | `treasury/keeper/rewards.go` |
 | DEX / AMM (x*y=k) | 🟡 Recovery verified on PR #19 | Atomic custody/burns plus exact genesis and every-block reserve/LP invariants |
-| Multi-Asset DEX (BTC/ETH/LUSD) | 🟡 Recovery verified on PR #19 | Provider LP ownership and chain-authorized registry; stacked branch remains unmerged |
+| Multi-Asset DEX (BTC/ETH/LUSD) | 🟡 Recovery verified on PR #19 | Provider LP ownership and chain-authorized registry; recovery implementation merged to `main` |
 | Node Staking Rewards (10% APY) | ✅ | `treasury/keeper/rewards.go` (eq.5) |
 | Domain Interest (25% APY) | ✅ | `treasury/keeper/rewards.go` (eq.4) |
 | Release Decay | ✅ | `treasury/keeper/rewards.go` |

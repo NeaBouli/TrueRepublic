@@ -2,11 +2,12 @@
 
 ## Critical release blockers
 
-### Recovery stack is unmerged and independently unapproved
+### Recovery foundation is not a production approval
 
 The 21M cap, custody, issuance, DEX, genesis/invariant, ZKP, and node-lifecycle
-remediations live in ordered draft PRs. Do not use administrator bypass or
-present branch evidence as deployed `main` behavior.
+remediations were verified and merged to `main` through the ordered recovery
+PRs. This does not replace independent cryptographic, multi-node operations,
+or release-security review.
 
 ### Anonymous voting is not client-ready
 
