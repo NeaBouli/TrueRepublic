@@ -39,6 +39,7 @@ import (
 	servertypes "github.com/cosmos/cosmos-sdk/server/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
 	signingtypes "github.com/cosmos/cosmos-sdk/types/tx/signing"
+	sdkversion "github.com/cosmos/cosmos-sdk/version"
 	authtx "github.com/cosmos/cosmos-sdk/x/auth/tx"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	crisis "github.com/cosmos/cosmos-sdk/x/crisis"
@@ -53,6 +54,12 @@ import (
 const envPrefix = "TRUEREPUBLIC"
 
 var defaultNodeHome = filepath.Join(userHomeDir(), ".truerepublic")
+
+func init() {
+	sdkversion.Name = "TrueRepublic"
+	sdkversion.AppName = "truerepublicd"
+	sdkversion.Version = version
+}
 
 func userHomeDir() string {
 	home, err := os.UserHomeDir()
@@ -172,6 +179,7 @@ func newRootCmd() *cobra.Command {
 	rootCmd := &cobra.Command{
 		Use:           "truerepublicd",
 		Short:         "TrueRepublic blockchain daemon and CLI",
+		Version:       version,
 		SilenceErrors: true,
 		PersistentPreRunE: func(cmd *cobra.Command, _ []string) error {
 			cmd.SetOut(cmd.OutOrStdout())

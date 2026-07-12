@@ -15,6 +15,7 @@ import (
 
 	cmted25519 "github.com/cometbft/cometbft/crypto/ed25519"
 	cmttypes "github.com/cometbft/cometbft/types"
+	sdkversion "github.com/cosmos/cosmos-sdk/version"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	crisistypes "github.com/cosmos/cosmos-sdk/x/crisis/types"
@@ -26,6 +27,12 @@ import (
 
 func TestRootUsesStandardCosmosServerCommands(t *testing.T) {
 	root := newRootCmd()
+	if root.Version != version {
+		t.Fatalf("root version = %q, want injected version %q", root.Version, version)
+	}
+	if sdkversion.Name != "TrueRepublic" || sdkversion.AppName != "truerepublicd" || sdkversion.Version != version {
+		t.Fatalf("SDK version metadata = (%q, %q, %q), want TrueRepublic/truerepublicd/%s", sdkversion.Name, sdkversion.AppName, sdkversion.Version, version)
+	}
 	for _, path := range []string{"init", "start", "export", "comet", "keys"} {
 		cmd, _, err := root.Find([]string{path})
 		if err != nil || cmd == root {
