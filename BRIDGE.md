@@ -31,9 +31,9 @@ GitHub recovery epic: [#4](https://github.com/NeaBouli/TrueRepublic/issues/4)
 - **Tests:** focused registered-invariant regression, `go test ./... -count=1`,
   `go vet ./...`, and `go build ./...` → PASS
 - **GitHub:** commit `eec91c7` published; both review threads answered and
-  resolved; PR #22 rebased and published at `0c72ad0`; propagated locally
-  through PR #23
-- **Ready for:** refreshed PR #23 verification and propagation through PR #24
+  resolved; PR #22 published at `0c72ad0`, PR #23 published at `49938a3`, and
+  the fix propagated locally through PR #24
+- **Ready for:** PR #24 publication and refreshed GitHub verification
 
 ## 2026-07-12 12:09 EEST GH-8 docs/CI reconciliation → GitHub green
 
