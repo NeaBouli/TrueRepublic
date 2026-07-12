@@ -2,6 +2,8 @@ package truedemocracy
 
 import (
 	"bytes"
+	"crypto/sha256"
+	"encoding/hex"
 	"fmt"
 	"math/big"
 	"sync"
@@ -14,6 +16,11 @@ import (
 	"github.com/consensys/gnark/std/hash/mimc"
 )
 
+const (
+	MembershipCircuitID          = "truerepublic/membership-vote/v2-bn254-mimc-depth20"
+	membershipPublicWitnessCount = 4
+)
+
 // MembershipCircuit is the Groth16 circuit for anonymous set membership.
 // It proves knowledge of an identitySecret whose MiMC hash is a leaf
 // in the Merkle tree, and computes a deterministic nullifier.
@@ -22,6 +29,7 @@ type MembershipCircuit struct {
 	MerkleRoot        frontend.Variable `gnark:",public"`
 	NullifierHash     frontend.Variable `gnark:",public"`
 	ExternalNullifier frontend.Variable `gnark:",public"`
+	SignalHash        frontend.Variable `gnark:",public"`
 
 	// Private inputs (known only to prover).
 	IdentitySecret frontend.Variable
@@ -34,7 +42,8 @@ type MembershipCircuit struct {
 // 2. Merkle path from commitment to root
 // 3. nullifier = MiMC(identitySecret, externalNullifier)
 // 4. nullifier == NullifierHash
-// 5. All PathIndices are boolean
+// 5. SignalHash is a non-zero public input bound to the proof
+// 6. All PathIndices are boolean
 func (c *MembershipCircuit) Define(api frontend.API) error {
 	// 1. Compute commitment = MiMC(identitySecret).
 	commitHasher, err := mimc.NewMiMC(api)
@@ -73,6 +82,11 @@ func (c *MembershipCircuit) Define(api frontend.API) error {
 
 	// 4. Assert nullifier matches public input.
 	api.AssertIsEqual(nullifier, c.NullifierHash)
+
+	// 5. SignalHash is deliberately independent from the nullifier so a voter
+	// keeps one stable nullifier per suggestion while the proof is still bound
+	// to the exact rating being submitted.
+	api.AssertIsDifferent(c.SignalHash, 0)
 
 	return nil
 }
@@ -121,8 +135,25 @@ func GenerateMembershipProof(
 	pathIndices []int,
 	externalNullifier []byte,
 ) (proofBytes []byte, nullifierHash []byte, err error) {
+	return GenerateMembershipProofForSignal(keys, identitySecret, merkleRoot, siblings, pathIndices, externalNullifier, externalNullifier)
+}
+
+// GenerateMembershipProofForSignal creates a membership proof bound to a
+// distinct public signal (for ratings, the chain-scoped vote and value).
+func GenerateMembershipProofForSignal(
+	keys *ZKPKeys,
+	identitySecret []byte,
+	merkleRoot []byte,
+	siblings [][]byte,
+	pathIndices []int,
+	externalNullifier []byte,
+	signalHash []byte,
+) (proofBytes []byte, nullifierHash []byte, err error) {
 	if len(siblings) != MerkleTreeDepth || len(pathIndices) != MerkleTreeDepth {
 		return nil, nil, fmt.Errorf("siblings and pathIndices must have length %d", MerkleTreeDepth)
+	}
+	if err := validateProofPublicInputs(merkleRoot, nil, externalNullifier, signalHash); err != nil {
+		return nil, nil, err
 	}
 
 	// Compute nullifier off-chain for return value.
@@ -136,6 +167,7 @@ func GenerateMembershipProof(
 		MerkleRoot:        new(big.Int).SetBytes(merkleRoot),
 		NullifierHash:     new(big.Int).SetBytes(nullifierHash),
 		ExternalNullifier: new(big.Int).SetBytes(externalNullifier),
+		SignalHash:        new(big.Int).SetBytes(signalHash),
 		IdentitySecret:    new(big.Int).SetBytes(identitySecret),
 	}
 	for i := 0; i < MerkleTreeDepth; i++ {
@@ -170,6 +202,22 @@ func VerifyMembershipProof(
 	nullifierHash []byte,
 	externalNullifier []byte,
 ) error {
+	return VerifyMembershipProofForSignal(vk, proofBytes, merkleRoot, nullifierHash, externalNullifier, externalNullifier)
+}
+
+// VerifyMembershipProofForSignal verifies membership and the exact public
+// signal to which the proof was bound.
+func VerifyMembershipProofForSignal(
+	vk groth16.VerifyingKey,
+	proofBytes []byte,
+	merkleRoot []byte,
+	nullifierHash []byte,
+	externalNullifier []byte,
+	signalHash []byte,
+) error {
+	if err := validateProofPublicInputs(merkleRoot, nullifierHash, externalNullifier, signalHash); err != nil {
+		return err
+	}
 	proof, err := DeserializeProof(proofBytes)
 	if err != nil {
 		return fmt.Errorf("proof deserialization failed: %w", err)
@@ -180,6 +228,7 @@ func VerifyMembershipProof(
 		MerkleRoot:        new(big.Int).SetBytes(merkleRoot),
 		NullifierHash:     new(big.Int).SetBytes(nullifierHash),
 		ExternalNullifier: new(big.Int).SetBytes(externalNullifier),
+		SignalHash:        new(big.Int).SetBytes(signalHash),
 	}
 	publicWitness, err := frontend.NewWitness(&publicAssignment, ecc.BN254.ScalarField(),
 		frontend.PublicOnly())
@@ -188,6 +237,35 @@ func VerifyMembershipProof(
 	}
 
 	return groth16.Verify(proof, vk, publicWitness)
+}
+
+func validateProofPublicInputs(merkleRoot, nullifierHash, externalNullifier, signalHash []byte) error {
+	inputs := []struct {
+		name  string
+		value []byte
+	}{
+		{"merkle root", merkleRoot},
+		{"external nullifier", externalNullifier},
+		{"signal hash", signalHash},
+	}
+	if nullifierHash != nil {
+		inputs = append(inputs, struct {
+			name  string
+			value []byte
+		}{"nullifier hash", nullifierHash})
+	}
+	for _, input := range inputs {
+		if len(input.value) != 32 {
+			return fmt.Errorf("%s must be exactly 32 bytes", input.name)
+		}
+		if new(big.Int).SetBytes(input.value).Cmp(ecc.BN254.ScalarField()) >= 0 {
+			return fmt.Errorf("%s is not a canonical BN254 field element", input.name)
+		}
+	}
+	if new(big.Int).SetBytes(signalHash).Sign() == 0 {
+		return fmt.Errorf("signal hash must be non-zero")
+	}
+	return nil
 }
 
 // SerializeProof serializes a Groth16 proof to bytes.
@@ -202,8 +280,12 @@ func SerializeProof(proof groth16.Proof) ([]byte, error) {
 // DeserializeProof deserializes bytes back to a Groth16 proof.
 func DeserializeProof(data []byte) (groth16.Proof, error) {
 	proof := groth16.NewProof(ecc.BN254)
-	if _, err := proof.ReadFrom(bytes.NewReader(data)); err != nil {
+	reader := bytes.NewReader(data)
+	if _, err := proof.ReadFrom(reader); err != nil {
 		return nil, fmt.Errorf("proof deserialization failed: %w", err)
+	}
+	if reader.Len() != 0 {
+		return nil, fmt.Errorf("proof contains %d trailing bytes", reader.Len())
 	}
 	return proof, nil
 }
@@ -220,8 +302,44 @@ func SerializeVerifyingKey(vk groth16.VerifyingKey) ([]byte, error) {
 // DeserializeVerifyingKey deserializes bytes back to a Groth16 verifying key.
 func DeserializeVerifyingKey(data []byte) (groth16.VerifyingKey, error) {
 	vk := groth16.NewVerifyingKey(ecc.BN254)
-	if _, err := vk.ReadFrom(bytes.NewReader(data)); err != nil {
+	reader := bytes.NewReader(data)
+	if _, err := vk.ReadFrom(reader); err != nil {
 		return nil, fmt.Errorf("verifying key deserialization failed: %w", err)
+	}
+	if reader.Len() != 0 {
+		return nil, fmt.Errorf("verifying key contains %d trailing bytes", reader.Len())
+	}
+	return vk, nil
+}
+
+func VerifyingKeyFingerprint(data []byte) string {
+	digest := sha256.Sum256(data)
+	return hex.EncodeToString(digest[:])
+}
+
+// ValidateMembershipVerifyingKey pins the trusted genesis artifact to the
+// expected circuit version, exact bytes, fingerprint, curve, and public-input
+// shape. The genesis file remains the trust anchor for the ceremony output.
+func ValidateMembershipVerifyingKey(data []byte, circuitID, fingerprint string) (groth16.VerifyingKey, error) {
+	if circuitID != MembershipCircuitID {
+		return nil, fmt.Errorf("unsupported ZKP circuit id %q", circuitID)
+	}
+	if fingerprint != VerifyingKeyFingerprint(data) {
+		return nil, fmt.Errorf("verifying key SHA-256 fingerprint mismatch")
+	}
+	vk, err := DeserializeVerifyingKey(data)
+	if err != nil {
+		return nil, err
+	}
+	if vk.CurveID() != ecc.BN254 || vk.NbPublicWitness() != membershipPublicWitnessCount {
+		return nil, fmt.Errorf("verifying key does not match %s public-input shape", MembershipCircuitID)
+	}
+	canonical, err := SerializeVerifyingKey(vk)
+	if err != nil {
+		return nil, err
+	}
+	if !bytes.Equal(canonical, data) {
+		return nil, fmt.Errorf("verifying key encoding is not canonical")
 	}
 	return vk, nil
 }

@@ -104,8 +104,13 @@ export default function ZKPVotingPanel({
   return (
     <div className="bg-dark-800 border border-dark-700 rounded-xl p-4 space-y-3">
       <h4 className="text-sm font-semibold text-dark-300 uppercase tracking-wider">
-        Anonymous Rating (ZKP)
+        Anonymous Rating Preview (ZKP)
       </h4>
+
+      <p className="text-xs text-amber-400 border border-amber-700 rounded-lg p-2">
+        Submission disabled: this wallet only generates mock bytes, not a
+        chain-compatible Groth16 proof.
+      </p>
 
       <div>
         <div className="flex items-center justify-between text-xs text-dark-500 mb-1">
@@ -130,10 +135,10 @@ export default function ZKPVotingPanel({
       {!proof ? (
         <button
           onClick={handleGenerateProof}
-          disabled={generating}
+          disabled={true}
           className="w-full px-3 py-2 text-sm font-medium bg-republic-600 text-white rounded-lg hover:bg-republic-700 transition-colors disabled:opacity-50"
         >
-          {generating ? "Generating Proof..." : "Generate ZKP Proof"}
+          Real ZKP Prover Unavailable
         </button>
       ) : (
         <div className="space-y-2">
@@ -158,8 +163,7 @@ export default function ZKPVotingPanel({
       )}
 
       <p className="text-xs text-dark-600">
-        Your vote is anonymous. The ZKP proves domain membership without
-        revealing your identity.
+        No anonymous vote can be submitted from this preview.
       </p>
     </div>
   );

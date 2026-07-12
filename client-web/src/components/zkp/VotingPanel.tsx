@@ -33,7 +33,7 @@ export function VotingPanel({
   const [proofStatus, setProofStatus] = useState<ProofGenerationStatus>({
     step: 'idle',
     progress: 0,
-    message: 'Ready to generate proof',
+    message: 'Real Groth16 prover not installed',
   });
   const [alreadyVoted, setAlreadyVoted] = useState(false);
   const [showIdentitySetup, setShowIdentitySetup] = useState(false);
@@ -222,22 +222,23 @@ export function VotingPanel({
         </div>
       </div>
 
-      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
-        <div className="text-sm text-blue-900">
-          <strong>Anonymous Voting</strong>
-          <p className="mt-1 text-blue-800">
-            Your vote will be cryptographically anonymous. No one can link
-            it to your identity.
+      <div className="bg-amber-50 border border-amber-300 rounded-lg p-4 mb-6">
+        <div className="text-sm text-amber-950">
+          <strong>ZKP preview — submission disabled</strong>
+          <p className="mt-1 text-amber-900">
+            This client only contains a mock proof interface. It cannot create
+            a proof accepted by the chain and will not submit an anonymous vote.
           </p>
         </div>
       </div>
 
       <Button
         onClick={handleVote}
+        disabled={!zkpService.isSubmittable}
         className="w-full flex items-center justify-center gap-2"
       >
         <ShieldCheckIcon className="h-5 w-5" />
-        Submit Anonymous Vote
+        Anonymous Voting Unavailable
       </Button>
 
       <div className="mt-3 text-center">

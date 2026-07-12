@@ -136,21 +136,11 @@ export async function queryPurgeSchedule(domainName) {
 }
 
 export async function submitAnonymousVote(sender, domainName, issueName, suggestionName, rating, proof, nullifierHash, merkleRoot) {
-  const client = await getSigningClient();
-  const msg = {
-    typeUrl: "/truedemocracy.MsgRateWithProof",
-    value: {
-      sender,
-      domain_name: domainName,
-      issue_name: issueName,
-      suggestion_name: suggestionName,
-      rating: Number(rating),
-      proof_hex: proof,
-      nullifier_hash_hex: nullifierHash,
-      merkle_root_hex: merkleRoot || "",
-    },
-  };
-  return client.signAndBroadcast(sender, [msg], "auto");
+  void sender; void domainName; void issueName; void suggestionName;
+  void rating; void proof; void nullifierHash; void merkleRoot;
+  throw new Error(
+    "Anonymous vote submission is disabled until a compatible real Groth16 prover is installed."
+  );
 }
 
 // DEX Analytics API

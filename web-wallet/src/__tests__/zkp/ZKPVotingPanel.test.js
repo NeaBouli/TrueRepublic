@@ -1,11 +1,7 @@
 import React from "react";
-import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import ZKPVotingPanel from "../../components/zkp/ZKPVotingPanel";
 import { submitAnonymousVote } from "../../services/api";
-
-jest.mock("../../services/api", () => ({
-  submitAnonymousVote: jest.fn(),
-}));
 
 // Mock crypto.getRandomValues for Node test environment.
 const mockCrypto = {
@@ -33,20 +29,12 @@ describe("ZKPVotingPanel", () => {
     expect(screen.getByRole("slider")).toHaveValue("0");
   });
 
-  test("renders generate proof button", () => {
+  test("clearly disables the mock prover", () => {
     render(<ZKPVotingPanel {...defaultProps} />);
-    expect(screen.getByText("Generate ZKP Proof")).toBeInTheDocument();
-  });
-
-  test("proof generation shows submit button", async () => {
-    render(<ZKPVotingPanel {...defaultProps} />);
-    fireEvent.click(screen.getByText("Generate ZKP Proof"));
-    await waitFor(
-      () => {
-        expect(screen.getByText("Submit Anonymous Vote")).toBeInTheDocument();
-      },
-      { timeout: 3000 }
-    );
+    const button = screen.getByText("Real ZKP Prover Unavailable");
+    expect(button).toBeDisabled();
+    expect(screen.queryByText("Submit Anonymous Vote")).not.toBeInTheDocument();
+    expect(screen.getByText(/Submission disabled/)).toBeInTheDocument();
   });
 
   test("shows disconnect message when not connected", () => {
@@ -54,5 +42,20 @@ describe("ZKPVotingPanel", () => {
     expect(
       screen.getByText("Connect wallet for anonymous voting")
     ).toBeInTheDocument();
+  });
+
+  test("API rejects mock proof submission fail-closed", async () => {
+    await expect(
+      submitAnonymousVote(
+        defaultProps.address,
+        defaultProps.domainName,
+        defaultProps.issueName,
+        defaultProps.suggestionName,
+        3,
+        "00",
+        "00",
+        ""
+      )
+    ).rejects.toThrow("submission is disabled");
   });
 });

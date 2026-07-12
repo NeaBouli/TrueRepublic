@@ -8,11 +8,13 @@ approved for production or real funds during this audit.
 
 - `client-web` is the maintained v0.4 web client and has passed the current
   dependency, lint, test, and production-build recovery checks.
-- `web-wallet` is legacy and currently has unresolved high/critical dependency
-  advisories, including obsolete CosmJS cryptography.
+- `web-wallet` is legacy and still uses obsolete CosmJS cryptography and Create
+  React App. Its mock ZKP submission path is disabled and its focused tests,
+  build, and current npm audit pass, but it is not approved for real keys.
 - `mobile-wallet` is legacy and currently has unresolved high/critical Expo,
   React Native, Axios, protobuf, XML, and CosmJS dependency advisories.
-- Client-side ZKP generation remains a SHA-256 mock, not real Groth16 proof generation.
+- Client-side ZKP generation remains a mock, not real Groth16 proof generation.
+  Both web clients now fail closed and cannot submit mock proofs.
 
 ## IBC Modules (Stubbed)
 
@@ -57,10 +59,12 @@ resulting canonical supply must remain within the 21,000,000 PNYX cap.
 
 ## ZKP Client
 
-**Status:** Architecture complete, client integration pending
+**Status:** On-chain binding recovery-verified on stacked PR #22; client disabled
 **Timeline:** v0.4.0
-**Current:** Domain Key Pairs provide voting privacy
-**Future:** gnark-wasm client-side proof generation
+**Current:** Proofs bind chain/proposal/rating, nullifiers persist across export,
+and the trusted genesis VK is pinned by circuit ID, SHA-256, curve, shape, and
+canonical encoding. Anonymous rewards remain deferred.
+**Future:** Compatible real prover, ceremony artifacts, and independent circuit review
 
 ## Workarounds
 
@@ -71,7 +75,8 @@ Use TrueRepublic's PoD system instead of traditional staking.
 Manual chain halt + restart with new binary.
 
 ### For ZKP
-Use Domain Keys (current) or wait for v0.4.0 client.
+Do not submit anonymous votes from either web client. Use the reviewed
+domain-key path without anonymous rewards, or wait for a compatible real prover.
 
 ## Reporting Issues
 

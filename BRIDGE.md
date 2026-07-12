@@ -10,12 +10,13 @@ Canonical coordination lives in [`docs/agent-bridge/`](docs/agent-bridge/README.
 - GH-13 issuance audit: [`PR17_AUDIT.md`](docs/agent-bridge/PR17_AUDIT.md)
 - GH-10 DEX custody audit: [`PR18_AUDIT.md`](docs/agent-bridge/PR18_AUDIT.md)
 - GH-12 genesis/invariant audit: [`PR19_AUDIT.md`](docs/agent-bridge/PR19_AUDIT.md)
+- GH-20 ZKP/auth audit: [`PR22_AUDIT.md`](docs/agent-bridge/PR22_AUDIT.md)
 - Decisions: [`DECISIONS.md`](docs/agent-bridge/DECISIONS.md)
 - Security: [`SECURITY_NOTES.md`](docs/agent-bridge/SECURITY_NOTES.md)
 
 GitHub recovery epic: [#4](https://github.com/NeaBouli/TrueRepublic/issues/4)
 
-## 2026-07-12 12:18 EEST GH-12 review remediation → Locally verified
+## 2026-07-12 12:18 EEST GH-12 review remediation → Published and propagated
 
 - **Branch:** `fix/GH-12-genesis-invariants`
 - **Issue:** [GH-12](https://github.com/NeaBouli/TrueRepublic/issues/12)
@@ -27,9 +28,41 @@ GitHub recovery epic: [#4](https://github.com/NeaBouli/TrueRepublic/issues/4)
   supply within the 21,000,000 PNYX cap
 - **Tests:** focused registered-invariant regression, `go test ./... -count=1`,
   `go vet ./...`, and `go build ./...` → PASS
-- **Risk:** High — test validity and operator-facing consensus bootstrap contract
-- **Ready for:** publication, review-thread resolution, and ordered propagation
-  through PRs #22, #23, and #24
+- **GitHub:** commit `eec91c7` published; both review threads answered and
+  resolved; propagated locally through PR #22
+- **Ready for:** refreshed PR #22 verification and propagation through PRs #23
+  and #24
+
+## 2026-07-12 05:28 EEST GH-20 ZKP/authentication → GitHub green
+
+- **Branch:** `fix/GH-20-zkp-binding`
+- **Issue:** [GH-20](https://github.com/NeaBouli/TrueRepublic/issues/20)
+- **PR:** [#22](https://github.com/NeaBouli/TrueRepublic/pull/22) (stacked draft against GH-12)
+- **Changed:** versioned chain/proposal/rating proof signal; chain-scoped,
+  rating-independent one-vote nullifier; fail-closed genesis VK; canonical
+  BN254 fields; exact active-nullifier export/import; disabled mock submission
+- **Audit fixes:** rebased to final PR #19; pinned circuit ID, VK SHA-256,
+  curve/public-input shape, and canonical encoding; recomputed genesis Merkle
+  roots; rejected malformed ZKP state; preserved Big-Purge nullifier semantics;
+  removed both public clients' false mock-proof submission path
+- **Tests:** Go build/vet, 643 cases, race, and coverage → PASS (root 66.1%,
+  token 92.6%, treasury 97.0%, DEX 45.3%, governance 58.9%); Rust 26 tests/
+  audit; maintained client lint/8 tests/build/audit; legacy ZKP 4 tests/build →
+  PASS
+- **Risk:** Critical — anonymous vote integrity, cross-chain replay, trusted
+  setup determinism, genesis identity roots, and double-vote state
+- **GitHub:** Docs, DeepScan, Web, Mobile, Rust, both Go/Docker runs, and manual
+  Security Scan run `29159603247` pass; CodeRabbit is check-green but explicitly
+  rate-limited and produced no substantive review
+- **Ready for:** independent cryptographic review; compatible real client prover
+  remains intentionally unavailable
+
+### Codex review feedback
+
+Conditional PASS for GH-20's on-chain binding and fail-closed client scope.
+Anonymous rewards remain deferred because the proof does not bind a safe bank
+recipient. A real prover plus external ceremony/circuit review is still required
+before advertising or enabling anonymous voting.
 
 ## 2026-07-12 04:52 EEST GH-12 genesis and invariants → GitHub green
 

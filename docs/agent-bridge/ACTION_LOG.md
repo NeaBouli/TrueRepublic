@@ -322,6 +322,32 @@
   builds pass. Manually dispatched Security Scan run `29158360390`; all five
   jobs pass. Requested CodeRabbit review; its independent result is pending.
 
+## 2026-07-12 05:12 EEST - GH-20 ZKP/authentication audit
+
+- Rebased GH-20's single code commit onto final PR #19 and discarded two stale
+  documentation snapshots for evidence-based regeneration.
+- Preserved chain/rating signal binding, rating-independent chain/proposal
+  nullifiers, transaction-time setup removal, canonical commitment checks, and
+  altered-rating/cross-chain regressions.
+- Found and fixed missing active-nullifier export. Genesis now round-trips exact
+  nullifier records/heights without resurrecting values cleared by Big Purge.
+- Pinned genesis VK configuration by supported circuit ID, SHA-256, BN254 curve,
+  four-public-input shape, canonical serialization, and no trailing bytes.
+- Recomputed genesis identity Merkle roots and rejected malformed commitments,
+  history, rating authentication fields, nullifiers, and proof public inputs.
+- Found and disabled a legacy wallet path that generated random mock proof bytes
+  and called `signAndBroadcast` while claiming anonymity. Both maintained and
+  legacy web clients now fail closed and display non-submittable preview status.
+- Verified 643 Go cases, race, vet, build, coverage (root 66.1%, token 92.6%,
+  treasury 97.0%, DEX 45.3%, governance 58.9%), 26 Rust tests/audit, eight
+  maintained-client tests/lint/build/audit, four focused legacy ZKP tests/build/
+  audit, module integrity, and diff/secret/setup checks.
+- Published rebased PR #22 head `6732276`; synchronized Issue #20, recovery
+  epic #4, PR metadata, BRIDGE, audit, README, status JSON, and GitHub Pages.
+- GitHub Docs, DeepScan, Web, Mobile, Rust, both Go/Docker runs, and manual
+  Security Scan run `29159603247` pass. CodeRabbit is check-green but explicitly
+  rate-limited and produced no substantive independent cryptographic review.
+
 ## 2026-07-12 12:18 EEST - GH-12 review remediation
 
 - Accepted both actionable PR #19 review findings. Because `CreateDomain` has
@@ -332,5 +358,6 @@
   to a positive-power CometBFT validator, sufficient exact bank-backed stake,
   and preservation of the 21,000,000 PNYX canonical supply cap.
 - Focused registered-invariant regression, full Go tests, vet, and build pass.
-  GitHub publication, thread resolution, and ordered stack propagation remain
-  in progress.
+  Published commit `eec91c7`, answered and resolved both PR #19 review threads,
+  and propagated the fix locally through PR #22. Refreshed GitHub verification
+  and propagation through PRs #23 and #24 remain in progress.

@@ -1,7 +1,9 @@
 package truedemocracy
 
 import (
+	"bytes"
 	"crypto/sha256"
+	"encoding/binary"
 	"encoding/hex"
 	"fmt"
 	"math/big"
@@ -226,13 +228,42 @@ func VerifyMerkleProof(root, leaf []byte, siblings [][]byte, pathIndices []int) 
 // Both client and chain must compute the same value for proof verification.
 // The context is typically "domainName|issueName|suggestionName" for ratings.
 func ComputeExternalNullifier(context string) ([]byte, error) {
-	h := sha256.Sum256([]byte(context))
+	return hashToField([]byte(context)), nil
+}
+
+func hashToField(data []byte) []byte {
+	h := sha256.Sum256(data)
 	n := new(big.Int).SetBytes(h[:])
 	n.Mod(n, ecc.BN254.ScalarField())
 	b := make([]byte, 32)
 	nBytes := n.Bytes()
 	copy(b[32-len(nBytes):], nBytes)
-	return b, nil
+	return b
+}
+
+func encodeVoteContext(chainID, domainName, issueName, suggestionName string, rating *int) []byte {
+	var buf bytes.Buffer
+	buf.WriteString("TrueRepublic/vote/v1")
+	for _, value := range []string{chainID, domainName, issueName, suggestionName} {
+		_ = binary.Write(&buf, binary.BigEndian, uint32(len(value)))
+		buf.WriteString(value)
+	}
+	if rating != nil {
+		_ = binary.Write(&buf, binary.BigEndian, int64(*rating))
+	}
+	return buf.Bytes()
+}
+
+// ComputeVoteNullifierScope returns a stable, chain-scoped nullifier context
+// for one suggestion. Rating is excluded so changing the value cannot evade
+// the one-vote rule.
+func ComputeVoteNullifierScope(chainID, domainName, issueName, suggestionName string) []byte {
+	return hashToField(encodeVoteContext(chainID, domainName, issueName, suggestionName, nil))
+}
+
+// ComputeVoteSignal binds a proof to the chain, suggestion, and exact rating.
+func ComputeVoteSignal(chainID, domainName, issueName, suggestionName string, rating int) []byte {
+	return hashToField(encodeVoteContext(chainID, domainName, issueName, suggestionName, &rating))
 }
 
 // HexToFieldElement converts a hex string to a 32-byte big-endian

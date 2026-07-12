@@ -182,6 +182,30 @@ func TestAnonymousRating(t *testing.T) {
 	})
 }
 
+func TestRateProposalWithSignatureBindsChainID(t *testing.T) {
+	k, ctx := setupKeeper(t)
+	ctx = ctx.WithChainID("truerepublic-test-1")
+	setupDomainWithIssue(t, k, ctx)
+	aliceKey := domainKey("alice-chain-bound-vote")
+	if err := k.JoinPermissionRegister(ctx, "AnonDomain", "alice", aliceKey.PubKey().Bytes()); err != nil {
+		t.Fatal(err)
+	}
+
+	rating := 3
+	wrongPayload := encodeVoteContext("truerepublic-test-2", "AnonDomain", "Climate", "GreenDeal", &rating)
+	wrongSig, _ := aliceKey.Sign(wrongPayload)
+	pubKeyHex := hex.EncodeToString(aliceKey.PubKey().Bytes())
+	if _, err := k.RateProposalWithSignature(ctx, "AnonDomain", "Climate", "GreenDeal", rating, pubKeyHex, hex.EncodeToString(wrongSig)); err == nil {
+		t.Fatal("signature from another chain must fail")
+	}
+
+	payload := encodeVoteContext(ctx.ChainID(), "AnonDomain", "Climate", "GreenDeal", &rating)
+	sig, _ := aliceKey.Sign(payload)
+	if _, err := k.RateProposalWithSignature(ctx, "AnonDomain", "Climate", "GreenDeal", rating, pubKeyHex, hex.EncodeToString(sig)); err != nil {
+		t.Fatalf("chain-bound signature should succeed: %v", err)
+	}
+}
+
 // ---------- Double Vote Prevention ----------
 
 func TestDoubleVotePrevention(t *testing.T) {

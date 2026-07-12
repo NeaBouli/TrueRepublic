@@ -115,11 +115,8 @@ func TestExportGenesisContainsValidators(t *testing.T) {
 func TestExportGenesisContainsVK(t *testing.T) {
 	am, k, ctx := setupModuleForGenesis(t)
 
-	// Initialize the verifying key.
-	_, err := k.EnsureVerifyingKey(ctx)
-	if err != nil {
-		t.Fatalf("EnsureVerifyingKey failed: %v", err)
-	}
+	// Install the consensus-configured verifying key.
+	setTestVerifyingKey(t, k, ctx)
 
 	exported := am.ExportGenesis(ctx, nil)
 	var genesis GenesisState
@@ -130,6 +127,9 @@ func TestExportGenesisContainsVK(t *testing.T) {
 	if genesis.VerifyingKeyHex == "" {
 		t.Fatal("exported genesis should contain non-empty VK hex")
 	}
+	if genesis.ZKPCircuitID != MembershipCircuitID {
+		t.Fatalf("exported circuit id = %q", genesis.ZKPCircuitID)
+	}
 
 	// Verify the hex is valid.
 	vkBytes, err := hex.DecodeString(genesis.VerifyingKeyHex)
@@ -138,6 +138,9 @@ func TestExportGenesisContainsVK(t *testing.T) {
 	}
 	if len(vkBytes) == 0 {
 		t.Fatal("VK bytes should not be empty")
+	}
+	if genesis.VerifyingKeySHA256 != VerifyingKeyFingerprint(vkBytes) {
+		t.Fatal("exported VK fingerprint mismatch")
 	}
 }
 
@@ -154,26 +157,25 @@ func TestExportGenesisNoVKWhenNotInitialized(t *testing.T) {
 		t.Fatalf("unmarshal failed: %v", err)
 	}
 
-	if genesis.VerifyingKeyHex != "" {
-		t.Fatal("VK hex should be empty when ZKP was not initialized")
+	if genesis.VerifyingKeyHex != "" || genesis.VerifyingKeySHA256 != "" || genesis.ZKPCircuitID != "" {
+		t.Fatal("VK configuration should be empty when ZKP was not initialized")
 	}
 }
 
 func TestInitGenesisWithVK(t *testing.T) {
 	// Setup first module instance and generate VK.
 	_, k1, ctx1 := setupModuleForGenesis(t)
-	vkBytes1, err := k1.EnsureVerifyingKey(ctx1)
-	if err != nil {
-		t.Fatalf("EnsureVerifyingKey failed: %v", err)
-	}
+	vkBytes1 := setTestVerifyingKey(t, k1, ctx1)
 	vkHex := hex.EncodeToString(vkBytes1)
 
 	// Create a new module instance and InitGenesis with VK.
 	am2, k2, ctx2 := setupModuleForGenesis(t)
 	genesisData := GenesisState{
-		Domains:         []Domain{},
-		Validators:      []GenesisValidator{},
-		VerifyingKeyHex: vkHex,
+		Domains:            []Domain{},
+		Validators:         []GenesisValidator{},
+		ZKPCircuitID:       MembershipCircuitID,
+		VerifyingKeyHex:    vkHex,
+		VerifyingKeySHA256: VerifyingKeyFingerprint(vkBytes1),
 	}
 	bz, _ := json.Marshal(genesisData)
 	am2.InitGenesis(ctx2, nil, bz)
@@ -206,7 +208,12 @@ func TestInitGenesisWithoutVK(t *testing.T) {
 func TestInitGenesisBaselinesDomainPayoutSnapshots(t *testing.T) {
 	am, keeper, ctx := setupModuleForGenesis(t)
 	const payouts int64 = 42_000
-	genesisData := GenesisState{Domains: []Domain{{Name: "Restored", TotalPayouts: payouts}}}
+	admin := sdk.AccAddress("snapshot-admin")
+	genesisData := GenesisState{Domains: []Domain{{
+		Name: "Restored", Admin: admin, Members: []string{admin.String()},
+		Treasury: sdk.NewCoins(), Issues: []Issue{}, PermissionReg: []string{},
+		TotalPayouts: payouts,
+	}}}
 	bz, err := json.Marshal(genesisData)
 	if err != nil {
 		t.Fatal(err)
@@ -230,17 +237,15 @@ func TestGenesisRoundTrip(t *testing.T) {
 
 	admin := sdk.AccAddress("admin1")
 	k1.CreateDomain(ctx1, "RoundTripDomain", admin, sdk.NewCoins(sdk.NewInt64Coin(PNYXDenom, 500_000*PNYXUnit)))
-	k1.AddMember(ctx1, "RoundTripDomain", "validator1", admin)
+	validatorAddr := sdk.AccAddress("validator1").String()
+	k1.AddMember(ctx1, "RoundTripDomain", validatorAddr, admin)
 
 	pubKey := testPubKey("roundtrip-val")
 	stake := sdk.NewCoins(sdk.NewInt64Coin(PNYXDenom, 100_000*PNYXUnit))
-	k1.RegisterValidator(ctx1, "validator1", pubKey, stake, "RoundTripDomain")
+	k1.RegisterValidator(ctx1, validatorAddr, pubKey, stake, "RoundTripDomain")
 
 	// Initialize VK.
-	_, err := k1.EnsureVerifyingKey(ctx1)
-	if err != nil {
-		t.Fatalf("EnsureVerifyingKey failed: %v", err)
-	}
+	setTestVerifyingKey(t, k1, ctx1)
 
 	// Export.
 	exported := am1.ExportGenesis(ctx1, nil)
@@ -259,7 +264,7 @@ func TestGenesisRoundTrip(t *testing.T) {
 	}
 
 	// Verify validator.
-	v, found := k2.GetValidator(ctx2, "validator1")
+	v, found := k2.GetValidator(ctx2, validatorAddr)
 	if !found {
 		t.Fatal("validator should exist after round-trip")
 	}
@@ -277,7 +282,7 @@ func TestGenesisRoundTrip(t *testing.T) {
 	}
 
 	// Verify VK can be deserialized.
-	_, err = DeserializeVerifyingKey(vkBytes)
+	_, err := DeserializeVerifyingKey(vkBytes)
 	if err != nil {
 		t.Fatalf("DeserializeVerifyingKey failed after round-trip: %v", err)
 	}

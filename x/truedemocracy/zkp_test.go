@@ -70,7 +70,7 @@ func TestGenerateAndVerifyProof(t *testing.T) {
 		t.Fatalf("GenerateProof failed: %v", err)
 	}
 
-	extNullifier := []byte("TestDomain|Issue1|Suggestion1")
+	extNullifier := hashToField([]byte("TestDomain|Issue1|Suggestion1"))
 	proofBytes, nullifierHash, err := GenerateMembershipProof(
 		keys, secrets[memberIdx], tree.Root, siblings, pathIndices, extNullifier,
 	)
@@ -96,7 +96,7 @@ func TestProofWithWrongRootFails(t *testing.T) {
 	tree, secrets, _ := buildTestTree(t, 3)
 
 	siblings, pathIndices, _ := tree.GenerateProof(0)
-	extNullifier := []byte("TestDomain|Issue1|Suggestion1")
+	extNullifier := hashToField([]byte("TestDomain|Issue1|Suggestion1"))
 
 	proofBytes, nullifierHash, err := GenerateMembershipProof(
 		keys, secrets[0], tree.Root, siblings, pathIndices, extNullifier,
@@ -118,7 +118,7 @@ func TestProofWithWrongNullifierFails(t *testing.T) {
 	tree, secrets, _ := buildTestTree(t, 3)
 
 	siblings, pathIndices, _ := tree.GenerateProof(0)
-	extNullifier := []byte("TestDomain|Issue1|Suggestion1")
+	extNullifier := hashToField([]byte("TestDomain|Issue1|Suggestion1"))
 
 	proofBytes, _, err := GenerateMembershipProof(
 		keys, secrets[0], tree.Root, siblings, pathIndices, extNullifier,
@@ -140,7 +140,7 @@ func TestZKPNullifierDeterminism(t *testing.T) {
 	tree, secrets, _ := buildTestTree(t, 3)
 
 	siblings, pathIndices, _ := tree.GenerateProof(0)
-	extNullifier := []byte("TestDomain|Issue1|Suggestion1")
+	extNullifier := hashToField([]byte("TestDomain|Issue1|Suggestion1"))
 
 	_, null1, err := GenerateMembershipProof(
 		keys, secrets[0], tree.Root, siblings, pathIndices, extNullifier,
@@ -169,7 +169,7 @@ func TestZKPNullifierUniqueness(t *testing.T) {
 
 	_, null1, err := GenerateMembershipProof(
 		keys, secrets[0], tree.Root, siblings, pathIndices,
-		[]byte("TestDomain|Issue1|Suggestion1"),
+		hashToField([]byte("TestDomain|Issue1|Suggestion1")),
 	)
 	if err != nil {
 		t.Fatalf("first proof failed: %v", err)
@@ -177,7 +177,7 @@ func TestZKPNullifierUniqueness(t *testing.T) {
 
 	_, null2, err := GenerateMembershipProof(
 		keys, secrets[0], tree.Root, siblings, pathIndices,
-		[]byte("TestDomain|Issue1|Suggestion2"),
+		hashToField([]byte("TestDomain|Issue1|Suggestion2")),
 	)
 	if err != nil {
 		t.Fatalf("second proof failed: %v", err)
@@ -191,7 +191,7 @@ func TestZKPNullifierUniqueness(t *testing.T) {
 func TestDifferentSecretsUnlinkable(t *testing.T) {
 	keys := getTestZKPKeys(t)
 	tree, secrets, _ := buildTestTree(t, 3)
-	extNullifier := []byte("TestDomain|Issue1|Suggestion1")
+	extNullifier := hashToField([]byte("TestDomain|Issue1|Suggestion1"))
 
 	siblings0, pathIndices0, _ := tree.GenerateProof(0)
 	_, null0, err := GenerateMembershipProof(
@@ -219,7 +219,7 @@ func TestProofSerialization(t *testing.T) {
 	tree, secrets, _ := buildTestTree(t, 3)
 
 	siblings, pathIndices, _ := tree.GenerateProof(0)
-	extNullifier := []byte("TestDomain|Issue1|Suggestion1")
+	extNullifier := hashToField([]byte("TestDomain|Issue1|Suggestion1"))
 
 	proofBytes, nullifierHash, err := GenerateMembershipProof(
 		keys, secrets[0], tree.Root, siblings, pathIndices, extNullifier,
@@ -267,7 +267,7 @@ func TestVerifyingKeySerialization(t *testing.T) {
 	// Verify a proof with the deserialized key.
 	tree, secrets, _ := buildTestTree(t, 3)
 	siblings, pathIndices, _ := tree.GenerateProof(0)
-	extNullifier := []byte("TestDomain|Issue1|Suggestion1")
+	extNullifier := hashToField([]byte("TestDomain|Issue1|Suggestion1"))
 
 	proofBytes, nullifierHash, err := GenerateMembershipProof(
 		keys, secrets[0], tree.Root, siblings, pathIndices, extNullifier,

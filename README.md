@@ -16,7 +16,7 @@
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/tests-647%20recovery--verified-orange" alt="Recovery-verified tests"/>
+  <img src="https://img.shields.io/badge/tests-677%20recovery--verified-orange" alt="Recovery-verified tests"/>
   <img src="https://img.shields.io/badge/version-v0.4.0-blue" alt="Version"/>
   <img src="https://img.shields.io/badge/recovery-active-orange" alt="Recovery active"/>
   <img src="https://img.shields.io/badge/Go-1.26.5-00ADD8?logo=go" alt="Go"/>
@@ -142,7 +142,7 @@ npm run dev
 ```
 
 - Wallet: Create/import, encrypted storage, send PNYX
-- Governance: Browse domains, vote anonymously, create suggestions
+- Governance: Browse domains and create suggestions; anonymous submission remains disabled until a real prover exists
 - DEX: Swap tokens, provide liquidity, manage LP positions
 - Membership: Join domains, 2-step onboarding
 - Admin: Domain management, member verification
@@ -200,7 +200,7 @@ TrueRepublic/
 | Domain Interest (25% APY) | ✅ | `treasury/keeper/rewards.go` (eq.4) |
 | Release Decay | ✅ | `treasury/keeper/rewards.go` |
 | Anonymous Voting (WP S4) | ✅ | `x/truedemocracy/anonymity.go` |
-| Zero-Knowledge Proofs (Groth16) | ✅ | `x/truedemocracy/zkp.go` |
+| Zero-Knowledge Proofs (Groth16) | 🟡 Recovery verified on PR #22 | Chain/rating binding and fail-closed VK; real client prover and external review pending |
 | CosmWasm Smart Contracts | ✅ | `x/truedemocracy/wasm_bindings.go` |
 | Domain-Bank Bridge | ✅ | `x/truedemocracy/treasury_bridge.go` |
 | IBC Transfer (ICS-20) | ✅ | `app.go` (ibc-go v8.4.0) |
@@ -228,7 +228,7 @@ TrueRepublic/
 # Blockchain
 go mod tidy
 go build ./...
-go test ./... -race -cover -count=1 -timeout=600s    # 615 tests
+go test ./... -race -cover -count=1 -timeout=600s    # 643 tests
 
 # Smart contracts
 cd contracts && cargo test --workspace       # 26 tests
@@ -244,17 +244,17 @@ cd client-web && npm ci && npm run lint && npm test -- --run && npm run build
 | Component | Version | Status |
 |-----------|---------|--------|
 | Cosmos SDK | v0.50.14 | Production |
-| CometBFT | v0.38.21 | Production |
+| CometBFT | v0.38.22 | Recovery verified |
 | CosmWasm | v0.53.3 | Production |
-| ibc-go | v8.4.0 | Transfer Active |
-| gnark (ZKP) | v0.9.x | Architecture Ready |
+| ibc-go | v8.7.0 | Transfer Active |
+| gnark (ZKP) | v0.14.0 | On-chain recovery verified; client disabled |
 | Go | 1.26.5 | Recovery verified |
 | Rust | 1.75+ | Contracts |
 | React | 18.2 | Maintained v0.4 client |
 | React Native + Expo | 0.74 / 51.0 | Legacy; security migration required |
 | Keplr + CosmJS | 0.39 | Maintained v0.4 client |
 
-**Known Limitations:** IBC staking/upgrade stubbed (PoD used instead), ZKP client integration v0.4.0. See [LIMITATIONS.md](docs/LIMITATIONS.md).
+**Known Limitations:** IBC staking/upgrade stubbed (PoD used instead), real ZKP prover/ceremony review pending, and node bootstrap blocked by GH-21. See [LIMITATIONS.md](docs/LIMITATIONS.md).
 
 ---
 
@@ -266,7 +266,7 @@ The checklist below records implemented surface area, not a production security
 approval. Current evidence, risks, and commands are maintained in
 [`BRIDGE.md`](BRIDGE.md) and [GitHub issue #4](https://github.com/NeaBouli/TrueRepublic/issues/4).
 
-- 🟡 647 tests recovery-verified locally (615 Go + 26 Rust + 6 maintained-client)
+- 🟡 677 tests recovery-verified locally (643 Go + 26 Rust + 8 maintained-client)
 - ✅ Core blockchain compiles and runs
 - 🟡 Tokenomics, exact custom genesis, and every-block ledger invariants are locally verified through stacked PR #19
 - 🟡 Governance surface implemented; escrow/auth recovery is in stacked review
@@ -279,7 +279,7 @@ approval. Current evidence, risks, and commands are maintained in
 - 🟡 GH-12 genesis/runtime conservation is locally verified on stacked PR #19
 - 🔴 Production node bootstrap still requires replacing the legacy `x/staking`
   gentx script with the real PoD/CometBFT key flow in GH-21
-- ✅ UI Components: ZKP voting panel, DEX analytics (8 React components)
+- 🟡 ZKP UI is a clearly disabled preview until a compatible real Groth16 prover exists
 - ✅ Developer Tooling: 4 CosmWasm example contracts, shared bindings, testing utils
 - 🟡 DEX burns reduce canonical bank supply on stacked PR #18
 - ✅ Canonical v0.4 web client with 3-column governance UI
@@ -304,15 +304,15 @@ approval. Current evidence, risks, and commands are maintained in
   - ✅ Wallet Foundation (create/import/encrypt/send)
   - ✅ Governance UI (domains, issues, suggestions, stones)
   - ✅ DEX Interface (swap, liquidity, LP positions)
-  - ✅ ZKP Anonymous Voting (mock, gnark-wasm ready)
+  - 🟡 ZKP Anonymous Voting (on-chain binding verified; mock submission disabled; real prover pending)
   - ✅ Domain Membership & Onboarding
   - ✅ Admin Dashboard (member management, stats)
   - ✅ Network Explorer (validators, blocks, IBC)
 - 📋 **v0.5.0 (Q3 2026):** Native Apps (iOS/Android)
 - 🎯 **v1.0.0 (Q4 2026):** Production Release — External audit, mainnet launch
 
-> Historical test count: 577. The authoritative recovery-verified total is 647
-> (615 Go + 26 Rust + 6 maintained-client), reproduced locally on the current branch.
+> Historical test count: 577. The authoritative recovery-verified total is 677
+> (643 Go + 26 Rust + 8 maintained-client), reproduced locally on the current branch.
 
 ---
 
