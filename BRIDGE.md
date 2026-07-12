@@ -181,6 +181,28 @@ bypass the required independent GitHub approval.
 
 ---
 
+## 2026-07-12 23:53 EEST GH-21 node lifecycle → Review
+
+- **Branch:** `fix/GH-21-node-lifecycle`
+- **Issue:** [GH-21](https://github.com/NeaBouli/TrueRepublic/issues/21)
+- **PR:** [#23](https://github.com/NeaBouli/TrueRepublic/pull/23)
+- **Changed:** rebased the ten GH-21 lifecycle commits onto `main` after the
+  verified squash merge of PR #22; no implementation delta was introduced
+- **Tests:** `git range-diff 0c72ad0..backup/GH-21-before-main-20260712 origin/main..HEAD`
+  → 10/10 commits patch-equivalent; `go test ./... -race -cover -count=1
+  -timeout=600s` → PASS (sandbox-exempt run required for localhost bind)
+- **Risk:** High — persistent node lifecycle, genesis reconciliation, and
+  container restart behavior; Docker is verified by the required GitHub gate
+- **Ready for:** refreshed GitHub CI, review, and ordered squash merge
+
+### Codex review feedback
+
+The rebased code is patch-equivalent to the previously reviewed GH-21 stack.
+Local Go race/coverage verification passes; merge remains gated on refreshed
+GitHub build, Docker restart smoke, lint, and analysis checks.
+
+---
+
 ## 2026-07-11 22:08 EEST GH-14 escrow audit → Local verification
 
 - **Branch:** `fix/GH-14-bank-escrow`
