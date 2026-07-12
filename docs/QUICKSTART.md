@@ -75,14 +75,14 @@ Chain is now running on `localhost:26657` (RPC) and `localhost:1317` (REST).
   --from alice
 
 # Create PNYX/BTC pool
-./build/truerepublicd tx dex create-pool pnyx ibc/BTC 1000000 10000 \
+./build/truerepublicd tx dex create-pool upnyx ibc/BTC 1000000 10000 \
   --from alice
 ```
 
 ### Swap Tokens
 
 ```bash
-./build/truerepublicd tx dex swap pool-0 pnyx 1000 0 \
+./build/truerepublicd tx dex swap pool-0 upnyx 1000 0 \
   --from alice
 ```
 

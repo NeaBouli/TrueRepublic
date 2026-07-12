@@ -28,7 +28,7 @@ export default function WalletScreen() {
     const updateBalance = async (addr) => {
         try {
             const client = await SigningStargateClient.connect(RPC_ENDPOINT);
-            const bal = await client.getBalance(addr, "pnyx");
+            const bal = await client.getBalance(addr, "upnyx");
             setBalance(`${bal.amount} PNYX`);
         } catch (error) {
             setBalance("Error fetching balance");
@@ -39,7 +39,7 @@ export default function WalletScreen() {
         if (!wallet || !recipient || !amount) return Alert.alert("Error", "Please fill all fields.");
         try {
             const client = await SigningStargateClient.connectWithSigner(RPC_ENDPOINT, wallet);
-            const result = await client.sendTokens(address, recipient, [{ denom: "pnyx", amount }], "auto");
+            const result = await client.sendTokens(address, recipient, [{ denom: "upnyx", amount }], "auto");
             Alert.alert("Success", "TX: " + result.transactionHash);
             updateBalance(address);
         } catch (error) {

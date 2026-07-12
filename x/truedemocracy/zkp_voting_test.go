@@ -126,7 +126,7 @@ func TestEnsureVerifyingKeyIdempotent(t *testing.T) {
 func setupDomainWithZKPIdentity(t *testing.T, k Keeper, ctx sdk.Context, domainName string, numMembers int) [][]byte {
 	t.Helper()
 	admin := sdk.AccAddress("admin1")
-	k.CreateDomain(ctx, domainName, admin, sdk.NewCoins(sdk.NewInt64Coin("pnyx", 500_000)))
+	k.CreateDomain(ctx, domainName, admin, sdk.NewCoins(sdk.NewInt64Coin(PNYXDenom, 500_000)))
 
 	secrets := make([][]byte, numMembers)
 	for i := 0; i < numMembers; i++ {
@@ -194,7 +194,7 @@ func generateZKPRating(t *testing.T, k Keeper, ctx sdk.Context, domainName strin
 func addProposal(t *testing.T, k Keeper, ctx sdk.Context, domainName, issueName, suggestionName string) {
 	t.Helper()
 	admin := sdk.AccAddress("admin1")
-	fee := sdk.NewCoins(sdk.NewInt64Coin("pnyx", 10_000_000))
+	fee := sdk.NewCoins(sdk.NewInt64Coin(PNYXDenom, 10_000_000))
 	if err := k.SubmitProposal(ctx, domainName, issueName, suggestionName, admin.String(), fee, ""); err != nil {
 		t.Fatalf("SubmitProposal failed: %v", err)
 	}
@@ -298,7 +298,7 @@ func TestRateProposalWithZKPWrongProof(t *testing.T) {
 func TestRateProposalWithZKPEmptyMerkleRoot(t *testing.T) {
 	k, ctx := setupKeeper(t)
 	admin := sdk.AccAddress("admin1")
-	k.CreateDomain(ctx, "EmptyDomain", admin, sdk.NewCoins(sdk.NewInt64Coin("pnyx", 500_000)))
+	k.CreateDomain(ctx, "EmptyDomain", admin, sdk.NewCoins(sdk.NewInt64Coin(PNYXDenom, 500_000)))
 
 	_, err := k.RateProposalWithZKP(ctx, "EmptyDomain", "Issue", "Sugg", 3, "aabb", "aabb", "")
 	if err == nil {
@@ -334,7 +334,7 @@ func TestRateProposalWithZKPRewardsDistributed(t *testing.T) {
 	addProposal(t, k, ctx, "ZKPDomain", "Climate", "GreenDeal")
 
 	domainBefore, _ := k.GetDomain(ctx, "ZKPDomain")
-	treasuryBefore := domainBefore.Treasury.AmountOf("pnyx").Int64()
+	treasuryBefore := domainBefore.Treasury.AmountOf(PNYXDenom).Int64()
 
 	proofHex, nullifierHex := generateZKPRating(t, k, ctx, "ZKPDomain", secrets, 2, "Climate", "GreenDeal")
 	reward, err := k.RateProposalWithZKP(ctx, "ZKPDomain", "Climate", "GreenDeal", 4, proofHex, nullifierHex, "")
@@ -343,12 +343,12 @@ func TestRateProposalWithZKPRewardsDistributed(t *testing.T) {
 	}
 
 	domainAfter, _ := k.GetDomain(ctx, "ZKPDomain")
-	treasuryAfter := domainAfter.Treasury.AmountOf("pnyx").Int64()
+	treasuryAfter := domainAfter.Treasury.AmountOf(PNYXDenom).Int64()
 
 	if treasuryAfter >= treasuryBefore {
 		t.Fatal("treasury should decrease after reward payout")
 	}
-	if reward.AmountOf("pnyx").Int64() != treasuryBefore-treasuryAfter {
+	if reward.AmountOf(PNYXDenom).Int64() != treasuryBefore-treasuryAfter {
 		t.Fatal("reward amount should match treasury decrease")
 	}
 }
@@ -533,7 +533,7 @@ func TestE2EZKPRatingFlow(t *testing.T) {
 
 	// 1. Create domain.
 	admin := sdk.AccAddress("admin1")
-	k.CreateDomain(ctx, "E2EDomain", admin, sdk.NewCoins(sdk.NewInt64Coin("pnyx", 500_000)))
+	k.CreateDomain(ctx, "E2EDomain", admin, sdk.NewCoins(sdk.NewInt64Coin(PNYXDenom, 500_000)))
 
 	// 2. Add member.
 	memberAddr := sdk.AccAddress("memberA").String()
@@ -558,7 +558,7 @@ func TestE2EZKPRatingFlow(t *testing.T) {
 	}
 
 	// 4. Submit a proposal.
-	fee := sdk.NewCoins(sdk.NewInt64Coin("pnyx", 10_000_000))
+	fee := sdk.NewCoins(sdk.NewInt64Coin(PNYXDenom, 10_000_000))
 	if err := k.SubmitProposal(ctx, "E2EDomain", "Energy", "Solar", admin.String(), fee, ""); err != nil {
 		t.Fatalf("SubmitProposal failed: %v", err)
 	}
@@ -619,7 +619,7 @@ func TestE2EZKPRatingFlow(t *testing.T) {
 func TestMerkleRootHistory(t *testing.T) {
 	k, ctx := setupKeeper(t)
 	admin := sdk.AccAddress("admin1")
-	k.CreateDomain(ctx, "HistDomain", admin, sdk.NewCoins(sdk.NewInt64Coin("pnyx", 500_000)))
+	k.CreateDomain(ctx, "HistDomain", admin, sdk.NewCoins(sdk.NewInt64Coin(PNYXDenom, 500_000)))
 
 	memberAddr := sdk.AccAddress("memberA").String()
 	k.AddMember(ctx, "HistDomain", memberAddr, admin)
@@ -656,7 +656,7 @@ func TestMerkleRootHistory(t *testing.T) {
 func TestMerkleRootHistoryCap(t *testing.T) {
 	k, ctx := setupKeeper(t)
 	admin := sdk.AccAddress("admin1")
-	k.CreateDomain(ctx, "CapDomain", admin, sdk.NewCoins(sdk.NewInt64Coin("pnyx", 500_000)))
+	k.CreateDomain(ctx, "CapDomain", admin, sdk.NewCoins(sdk.NewInt64Coin(PNYXDenom, 500_000)))
 
 	memberAddr := sdk.AccAddress("memberA").String()
 	k.AddMember(ctx, "CapDomain", memberAddr, admin)
@@ -771,7 +771,7 @@ func TestRateWithEmptyMerkleRootUsesCurrentRoot(t *testing.T) {
 func TestBigPurgeClearsRootHistory(t *testing.T) {
 	k, ctx := setupKeeper(t)
 	admin := sdk.AccAddress("admin1")
-	k.CreateDomain(ctx, "PurgeHistDomain", admin, sdk.NewCoins(sdk.NewInt64Coin("pnyx", 500_000)))
+	k.CreateDomain(ctx, "PurgeHistDomain", admin, sdk.NewCoins(sdk.NewInt64Coin(PNYXDenom, 500_000)))
 
 	memberAddr := sdk.AccAddress("memberA").String()
 	k.AddMember(ctx, "PurgeHistDomain", memberAddr, admin)

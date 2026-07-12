@@ -100,7 +100,7 @@ pub fn execute(
             let withdraw_msg = CosmosMsg::Custom(TrueRepublicMsg::WithdrawFromDomain {
                 domain_name: state.config.domain_name.clone(),
                 recipient: schedule.beneficiary.to_string(),
-                amount: format!("{}pnyx", claimable),
+                amount: format!("{}upnyx", claimable),
             });
             save_state(deps.storage, &state)?;
             Ok(Response::new()
@@ -392,6 +392,6 @@ mod tests {
         let res = query(deps.as_ref(), mock_env(), QueryMsg::TreasuryBalance {}).unwrap();
         let treasury: DomainTreasuryResponse = cosmwasm_std::from_json(res).unwrap();
         assert_eq!(treasury.domain_name, "TestDomain");
-        assert_eq!(treasury.amount, "1000000pnyx");
+        assert_eq!(treasury.amount, "1000000upnyx");
     }
 }

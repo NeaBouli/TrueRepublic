@@ -94,7 +94,7 @@ func TestAddMember(t *testing.T) {
 	k, ctx := setupKeeper(t)
 
 	admin := sdk.AccAddress("admin1")
-	k.CreateDomain(ctx, "TestDomain", admin, sdk.NewCoins(sdk.NewInt64Coin("pnyx", 100_000)))
+	k.CreateDomain(ctx, "TestDomain", admin, sdk.NewCoins(sdk.NewInt64Coin(PNYXDenom, 100_000)))
 
 	t.Run("admin can add member", func(t *testing.T) {
 		err := k.AddMember(ctx, "TestDomain", "alice", admin)
@@ -141,7 +141,7 @@ func TestTwoStepOnboardingFullFlow(t *testing.T) {
 	k, ctx := setupKeeper(t)
 
 	admin := sdk.AccAddress("admin1")
-	k.CreateDomain(ctx, "OnboardDomain", admin, sdk.NewCoins(sdk.NewInt64Coin("pnyx", 100_000)))
+	k.CreateDomain(ctx, "OnboardDomain", admin, sdk.NewCoins(sdk.NewInt64Coin(PNYXDenom, 100_000)))
 
 	// Step 1: Admin adds alice.
 	err := k.AddMember(ctx, "OnboardDomain", "alice", admin)
@@ -167,7 +167,7 @@ func TestOnboardingWithoutMembershipFails(t *testing.T) {
 	k, ctx := setupKeeper(t)
 
 	admin := sdk.AccAddress("admin1")
-	k.CreateDomain(ctx, "OnboardDomain", admin, sdk.NewCoins(sdk.NewInt64Coin("pnyx", 100_000)))
+	k.CreateDomain(ctx, "OnboardDomain", admin, sdk.NewCoins(sdk.NewInt64Coin(PNYXDenom, 100_000)))
 
 	// Skip step 1 — try to register domain key directly (not a member).
 	outsiderKey := domainKey("outsider-key")
@@ -184,7 +184,7 @@ func TestMsgServerOnboardToDomain(t *testing.T) {
 	srv := NewMsgServer(k)
 
 	admin := sdk.AccAddress("admin1")
-	k.CreateDomain(ctx, "SigDomain", admin, sdk.NewCoins(sdk.NewInt64Coin("pnyx", 100_000)))
+	k.CreateDomain(ctx, "SigDomain", admin, sdk.NewCoins(sdk.NewInt64Coin(PNYXDenom, 100_000)))
 
 	// Add alice as member.
 	k.AddMember(ctx, "SigDomain", sdk.AccAddress("alice").String(), admin)
@@ -260,7 +260,7 @@ func TestMsgServerApproveOnboarding(t *testing.T) {
 	srv := NewMsgServer(k)
 
 	admin := sdk.AccAddress("admin1")
-	k.CreateDomain(ctx, "ApproveDomain", admin, sdk.NewCoins(sdk.NewInt64Coin("pnyx", 100_000)))
+	k.CreateDomain(ctx, "ApproveDomain", admin, sdk.NewCoins(sdk.NewInt64Coin(PNYXDenom, 100_000)))
 
 	// Add alice as member.
 	k.AddMember(ctx, "ApproveDomain", "alice", admin)
@@ -299,7 +299,7 @@ func TestMsgServerRejectOnboarding(t *testing.T) {
 	srv := NewMsgServer(k)
 
 	admin := sdk.AccAddress("admin1")
-	k.CreateDomain(ctx, "RejectDomain", admin, sdk.NewCoins(sdk.NewInt64Coin("pnyx", 100_000)))
+	k.CreateDomain(ctx, "RejectDomain", admin, sdk.NewCoins(sdk.NewInt64Coin(PNYXDenom, 100_000)))
 
 	// Create a pending request.
 	request := OnboardingRequest{

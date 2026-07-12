@@ -275,7 +275,7 @@ func TestAssetRegistryGenesisRoundTrip(t *testing.T) {
 
 	// Register several assets.
 	originals := []RegisteredAsset{
-		{IBCDenom: "pnyx", Symbol: "PNYX", Name: "TrueRepublic Native Token", Decimals: 6, OriginChain: "truerepublic-1", TradingEnabled: true},
+		{IBCDenom: pnyxDenom, Symbol: "PNYX", Name: "TrueRepublic Native Token", Decimals: 6, OriginChain: "truerepublic-1", TradingEnabled: true},
 		{IBCDenom: "ibc/BTC", Symbol: "BTC", Name: "Bitcoin", Decimals: 8, OriginChain: "cosmoshub-4", IBCChannel: "channel-0", TradingEnabled: true},
 		{IBCDenom: "ibc/ETH", Symbol: "ETH", Name: "Ethereum", Decimals: 18, OriginChain: "ethereum", IBCChannel: "channel-1", TradingEnabled: false},
 	}
@@ -371,7 +371,7 @@ func TestSwapWithIBCDenom(t *testing.T) {
 	k.CreatePool(ctx, "ibc/BTC", math.NewInt(1_000_000), math.NewInt(1_000_000))
 
 	// Swap PNYX for IBC BTC.
-	out, err := k.Swap(ctx, "pnyx", math.NewInt(10_000), "ibc/BTC", math.ZeroInt())
+	out, err := k.Swap(ctx, pnyxDenom, math.NewInt(10_000), "ibc/BTC", math.ZeroInt())
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
@@ -380,7 +380,7 @@ func TestSwapWithIBCDenom(t *testing.T) {
 	}
 
 	// Swap IBC BTC for PNYX.
-	out, err = k.Swap(ctx, "ibc/BTC", math.NewInt(5_000), "pnyx", math.ZeroInt())
+	out, err = k.Swap(ctx, "ibc/BTC", math.NewInt(5_000), pnyxDenom, math.ZeroInt())
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
@@ -402,8 +402,8 @@ func TestDefaultGenesisIncludesPNYX(t *testing.T) {
 	if pnyx.Symbol != "PNYX" {
 		t.Errorf("first default asset symbol = %s, want PNYX", pnyx.Symbol)
 	}
-	if pnyx.IBCDenom != "pnyx" {
-		t.Errorf("PNYX denom = %s, want pnyx", pnyx.IBCDenom)
+	if pnyx.IBCDenom != pnyxDenom {
+		t.Errorf("PNYX denom = %s, want upnyx", pnyx.IBCDenom)
 	}
 	if pnyx.Decimals != 6 {
 		t.Errorf("PNYX decimals = %d, want 6", pnyx.Decimals)

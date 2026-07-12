@@ -213,11 +213,11 @@ func findSuggestionIndex(issue Issue, suggestionName string) int {
 // payStoneReward calculates and deducts the VoteToEarn reward (eq.2) from the
 // domain treasury. Returns the reward coins (may be empty if treasury is low).
 func (k Keeper) payStoneReward(domain *Domain) sdk.Coins {
-	rewardAmt := rewards.CalcReward(domain.Treasury.AmountOf("pnyx"))
+	rewardAmt := rewards.CalcReward(domain.Treasury.AmountOf(PNYXDenom))
 	if !rewardAmt.IsPositive() {
 		return sdk.Coins{}
 	}
-	reward := sdk.NewCoins(sdk.NewCoin("pnyx", rewardAmt))
+	reward := sdk.NewCoins(sdk.NewCoin(PNYXDenom, rewardAmt))
 	domain.Treasury = domain.Treasury.Sub(reward...)
 	domain.TotalPayouts += rewardAmt.Int64()
 	return reward

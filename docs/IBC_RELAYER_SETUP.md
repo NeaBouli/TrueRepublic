@@ -100,7 +100,7 @@ key_name = 'relayer-a'
 store_prefix = 'ibc'
 default_gas = 200000
 max_gas = 1000000
-gas_price = { price = 0.025, denom = 'pnyx' }
+gas_price = { price = 0.025, denom = 'upnyx' }
 gas_multiplier = 1.2
 clock_drift = '5s'
 max_block_time = '30s'
@@ -119,7 +119,7 @@ key_name = 'relayer-b'
 store_prefix = 'ibc'
 default_gas = 200000
 max_gas = 1000000
-gas_price = { price = 0.025, denom = 'pnyx' }
+gas_price = { price = 0.025, denom = 'upnyx' }
 gas_multiplier = 1.2
 clock_drift = '5s'
 max_block_time = '30s'
@@ -180,7 +180,7 @@ truerepublicd query bank balances cosmos1<recipient-on-chain-b> \
   --chain-id truerepublic-test-2
 
 # Expected: ibc/<hash> denomination with 1000 amount
-# The IBC denom is: ibc/SHA256(transfer/channel-0/pnyx)
+# The IBC denom is: ibc/SHA256(transfer/channel-0/upnyx)
 ```
 
 ---

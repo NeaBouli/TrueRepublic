@@ -8,7 +8,7 @@ BINARY="${BINARY:-truerepublicd}"
 CHAIN_ID="${CHAIN_ID:-truerepublic-1}"
 MONIKER="${MONIKER:-truerepublic-node}"
 CHAIN_HOME="${CHAIN_HOME:-$HOME/.truerepublic}"
-DENOM="pnyx"
+DENOM="upnyx"
 GENESIS_AMOUNT="1000000000${DENOM}"
 STAKING_AMOUNT="100000${DENOM}"
 
@@ -24,7 +24,7 @@ $BINARY init "$MONIKER" --chain-id "$CHAIN_ID" --home "$CHAIN_HOME"
 
 # Set minimum gas price in app.toml
 if [ -f "${CHAIN_HOME}/config/app.toml" ]; then
-    sed -i.bak "s/minimum-gas-prices = \"\"/minimum-gas-prices = \"0.001${DENOM}\"/" \
+    sed -i.bak "s/minimum-gas-prices = \"\"/minimum-gas-prices = \"1000${DENOM}\"/" \
         "${CHAIN_HOME}/config/app.toml"
 fi
 

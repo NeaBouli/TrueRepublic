@@ -83,7 +83,7 @@ const RPC_ENDPOINT = "https://rpc.truerepublic.network";
 const client = await SigningStargateClient.connect(RPC_ENDPOINT);
 
 // Query balance
-const balance = await client.getBalance(address, "pnyx");
+const balance = await client.getBalance(address, "upnyx");
 ```
 
 ## Building for Production

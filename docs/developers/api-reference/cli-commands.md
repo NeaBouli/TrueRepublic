@@ -29,11 +29,11 @@ truerepublicd tx truedemocracy submit-proposal \
 
 # Register as PoD validator
 truerepublicd tx truedemocracy register-validator \
-    [pubkey-hex] [stake]pnyx [domain] \
+    [pubkey-hex] [stake]upnyx [domain] \
     --from mykey --chain-id truerepublic-1
 
 # Withdraw validator stake (10% transfer limit)
-truerepublicd tx truedemocracy withdraw-stake [amount]pnyx \
+truerepublicd tx truedemocracy withdraw-stake [amount]upnyx \
     --from mykey --chain-id truerepublic-1
 
 # Remove a validator
@@ -82,7 +82,7 @@ truerepublicd tx truedemocracy vote-delete \
 
 ```bash
 # Create a liquidity pool
-truerepublicd tx dex create-pool [asset-denom] [pnyx-amt] [asset-amt] \
+truerepublicd tx dex create-pool [asset-denom] [upnyx-amt] [asset-amt] \
     --from mykey --chain-id truerepublic-1
 
 # Swap tokens (0.3% fee, 1% PNYX burn)
@@ -90,7 +90,7 @@ truerepublicd tx dex swap [input-denom] [input-amt] [output-denom] \
     --from mykey --chain-id truerepublic-1
 
 # Add liquidity to pool
-truerepublicd tx dex add-liquidity [asset-denom] [pnyx-amt] [asset-amt] \
+truerepublicd tx dex add-liquidity [asset-denom] [upnyx-amt] [asset-amt] \
     --from mykey --chain-id truerepublic-1
 
 # Remove liquidity (burn LP shares)
@@ -169,7 +169,7 @@ truerepublicd tx dex create-pool atom 100000 50000 \
     --from lp-provider --chain-id truerepublic-1
 
 # Swap 1000 PNYX for ATOM
-truerepublicd tx dex swap pnyx 1000 atom \
+truerepublicd tx dex swap upnyx 1000 atom \
     --from trader --chain-id truerepublic-1
 
 # Check pool state

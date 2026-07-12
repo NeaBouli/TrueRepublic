@@ -71,6 +71,24 @@
   (treasury/stake escrow), #13 (cap-checked rewards), #10 (DEX custody/LP/burn),
   and #12 (genesis/runtime invariants).
 
+## 2026-07-11 12:55 EEST - GH-11 denomination and cap implementation
+
+- Created stacked worktree/branch `fix/GH-11-pnyx-cap` from the PR #9 head.
+- Added one canonical Go token package for `upnyx`, six decimals, 100,000 PNYX
+  minimum stake, and the 21,000,000 PNYX / 21,000,000,000,000 upnyx cap.
+- Added bank-genesis validation for cap boundaries and legacy display-denom
+  balances plus canonical bank metadata injection before module init.
+- Migrated Go modules, CosmWasm examples/testing helpers, maintained client, and
+  operational documentation to `upnyx` base-unit semantics; legacy client and
+  node-init metadata were aligned as well without changing their deprecated status.
+- Go build/race/vet passes with 540 tests; token package coverage is 88.0%.
+- Rust tests (26), Clippy, and cargo audit pass with the six already documented
+  transitive dev-tooling warnings.
+- Maintained client lint, six tests, build, and zero-advisory audit pass.
+- Legacy web wallet still builds with warnings and passes 18 tests; legacy
+  mobile still has no tests. Their known 68/51-advisory blockers are unchanged.
+- Documentation consistency and diff checks pass at 572 recovery-verified tests.
+
 ## 2026-07-11 13:10 EEST - PR #9 GitHub verification
 
 - Confirmed every current PR #9 check is green: Go, Rust, canonical client,
@@ -78,6 +96,13 @@
   and informational legacy npm audits.
 - Closed GH-5 and GH-6 after both local and GitHub acceptance criteria passed.
 - GH-7, GH-8, and ledger remediation tickets remain open.
+
+## 2026-07-11 13:15 EEST - GH-11 stacked publication
+
+- Rebased GH-11 onto the latest green PR #9 head.
+- Pushed `fix/GH-11-pnyx-cap` and opened stacked draft PR #15 against
+  `fix/GH-4-recovery-foundation` so its diff contains only the cap/denom block.
+- GitHub checks for PR #15 are pending; GH-11 remains open.
 
 ## 2026-07-11 13:20 EEST - Preserved checkout reconciliation
 
@@ -142,3 +167,24 @@
   library-path resolution all pass.
 - `govulncheck` still reports only the four documented reachable findings with
   `Fixed in: N/A`; neither newly reported fixable dependency advisory remains.
+
+## 2026-07-11 21:09 EEST - Docker recovery and final GH-11 audit
+
+- Replaced the Alpine/musl node image path in PR #9 with a Debian/glibc builder
+  and runtime, copied the architecture-specific wasmvm shared library, and ran
+  `ldconfig` in the runtime image.
+- Verified both GitHub Docker builds and all other PR #9 gates pass; converted
+  PR #9 from draft to ready and requested the required independent review from
+  `xxlfan72` and `ijuedt`.
+- Audited every GH-11 denomination boundary and found a production validator
+  tree stake that had been renamed to `upnyx` without base-unit scaling.
+- Corrected the default stake from 0.1 PNYX to 100,000 PNYX and added a
+  regression test across all seven generated nodes.
+- Corrected Compose, node-init, environment, operator-documentation, and
+  maintained-client gas prices so the migration preserves economic values.
+- Normalized canonical bank metadata by removing conflicting legacy PNYX
+  metadata while preserving unrelated asset metadata; expanded tests.
+- Full Go build/race/vet, Rust test/Clippy/audit, maintained-client
+  test/lint/build/audit, documentation consistency, and diff checks pass.
+- The added validator-tree regression brings the recovery-verified total to
+  573: 541 Go cases, 26 Rust tests, and six maintained-client tests.

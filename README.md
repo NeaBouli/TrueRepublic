@@ -16,7 +16,7 @@
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/tests-564%20recovery--verified-orange" alt="Recovery-verified tests"/>
+  <img src="https://img.shields.io/badge/tests-573%20recovery--verified-orange" alt="Recovery-verified tests"/>
   <img src="https://img.shields.io/badge/version-v0.4.0-blue" alt="Version"/>
   <img src="https://img.shields.io/badge/recovery-active-orange" alt="Recovery active"/>
   <img src="https://img.shields.io/badge/Go-1.26.5-00ADD8?logo=go" alt="Go"/>
@@ -266,7 +266,7 @@ The checklist below records implemented surface area, not a production security
 approval. Current evidence, risks, and commands are maintained in
 [`BRIDGE.md`](BRIDGE.md) and [GitHub issue #4](https://github.com/NeaBouli/TrueRepublic/issues/4).
 
-- 🟡 564 tests recovery-verified locally (533 Go + 26 Rust + 5 maintained-client)
+- 🟡 573 tests recovery-verified locally (541 Go + 26 Rust + 6 maintained-client)
 - ✅ Core blockchain compiles and runs
 - ✅ Whitepaper tokenomics fully implemented (equations 1-5)
 - ✅ Complete governance system (domains, proposals, voting, lifecycle)

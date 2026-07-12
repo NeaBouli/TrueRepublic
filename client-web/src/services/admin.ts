@@ -97,7 +97,8 @@ export class AdminService {
 
       // Get PNYX balance from treasury coins
       const pnyxCoin = treasury.find(
-        (c: { denom: string; amount: string }) => c.denom === 'upnyx'
+        (coin: { denom: string; amount: string }) =>
+          coin.denom === this.config.coinMinimalDenom
       );
 
       return {

@@ -90,7 +90,7 @@ Default chain config points to local node:
 - RPC: `http://localhost:26657`
 - REST: `http://localhost:1317`
 - Bech32: `true1...`
-- Denom: `pnyx` (6 decimals)
+- Base denom: `upnyx`; display denom: `PNYX` (6 decimals)
 
 ## Build Output
 

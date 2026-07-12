@@ -1,14 +1,18 @@
 package keeper
 
-import "cosmossdk.io/math"
+import (
+	"cosmossdk.io/math"
+
+	"truerepublic/token"
+)
 
 // Whitepaper appendix 8.1.1 — global constants and default values.
 const (
-	CDom      int64 = 2          // Factor for initial domain treasury calculation
-	CPut      int64 = 15         // Factor for put price (caps user count in price formula)
-	CEarn     int64 = 1000       // Factor for rewards (voting, stoning)
-	StakeMin  int64 = 100_000    // Required node stake in PNYX
-	SupplyMax int64 = 21_000_000 // Fixed maximum PNYX supply
+	CDom      int64 = 2                        // Factor for initial domain treasury calculation
+	CPut      int64 = 15                       // Factor for put price (caps user count in price formula)
+	CEarn     int64 = 1000                     // Factor for rewards (voting, stoning)
+	StakeMin  int64 = token.StakeMinBaseUnits  // 100,000 PNYX in upnyx
+	SupplyMax int64 = token.MaxSupplyBaseUnits // 21,000,000 PNYX in upnyx
 
 	SecondsPerYear int64 = 31_557_600 // 365.25 * 24 * 60 * 60
 )

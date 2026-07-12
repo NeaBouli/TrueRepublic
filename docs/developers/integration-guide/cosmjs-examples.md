@@ -43,20 +43,20 @@ const chainConfig = {
         bech32PrefixConsPub: "truerepublicvalconspub",
     },
     currencies: [
-        { coinDenom: "PNYX", coinMinimalDenom: "pnyx", coinDecimals: 0 },
+        { coinDenom: "PNYX", coinMinimalDenom: "upnyx", coinDecimals: 6 },
     ],
     feeCurrencies: [
         {
             coinDenom: "PNYX",
-            coinMinimalDenom: "pnyx",
-            coinDecimals: 0,
+            coinMinimalDenom: "upnyx",
+            coinDecimals: 6,
             gasPriceStep: { low: 0, average: 0, high: 0 },
         },
     ],
     stakeCurrency: {
         coinDenom: "PNYX",
-        coinMinimalDenom: "pnyx",
-        coinDecimals: 0,
+        coinMinimalDenom: "upnyx",
+        coinDecimals: 6,
     },
 };
 
@@ -85,7 +85,7 @@ async function connectWithKeplr() {
 ```javascript
 async function getBalance(address) {
     const client = await SigningStargateClient.connect(RPC_ENDPOINT);
-    const balance = await client.getBalance(address, "pnyx");
+    const balance = await client.getBalance(address, "upnyx");
     console.log(`Balance: ${balance.amount} ${balance.denom}`);
     return balance;
 }
@@ -100,7 +100,7 @@ async function sendPnyx(senderAddress, recipientAddress, amount) {
     const result = await client.sendTokens(
         senderAddress,
         recipientAddress,
-        [{ denom: "pnyx", amount: String(amount) }],
+        [{ denom: "upnyx", amount: String(amount) }],
         "auto" // auto gas estimation
     );
 
@@ -145,7 +145,7 @@ async function submitProposal(domain, issue, suggestion, fee) {
             issue_name: issue,
             suggestion_name: suggestion,
             creator: address,
-            fee: [{ denom: "pnyx", amount: String(fee) }],
+            fee: [{ denom: "upnyx", amount: String(fee) }],
             external_link: "",
         },
     };

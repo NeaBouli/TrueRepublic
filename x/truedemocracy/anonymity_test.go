@@ -16,7 +16,7 @@ func domainKey(seed string) *ed25519.PrivKey {
 // setupDomainWithIssue creates a domain with members and a proposal for testing.
 func setupDomainWithIssue(t *testing.T, k Keeper, ctx sdk.Context) {
 	t.Helper()
-	k.CreateDomain(ctx, "AnonDomain", sdk.AccAddress("admin1"), sdk.NewCoins(sdk.NewInt64Coin("pnyx", 500_000)))
+	k.CreateDomain(ctx, "AnonDomain", sdk.AccAddress("admin1"), sdk.NewCoins(sdk.NewInt64Coin(PNYXDenom, 500_000)))
 
 	// Add members.
 	domain, _ := k.GetDomain(ctx, "AnonDomain")
@@ -147,7 +147,7 @@ func TestAnonymousRating(t *testing.T) {
 		if err != nil {
 			t.Fatalf("unexpected error: %v", err)
 		}
-		if !reward.AmountOf("pnyx").IsPositive() {
+		if !reward.AmountOf(PNYXDenom).IsPositive() {
 			t.Error("reward should be positive")
 		}
 		if cache["avg_rating"] != 3 {
@@ -406,7 +406,7 @@ func TestBigPurgeScheduleUpdateInterval(t *testing.T) {
 func TestCreateDomainInitializesPurgeSchedule(t *testing.T) {
 	k, ctx := setupKeeper(t)
 
-	k.CreateDomain(ctx, "AutoPurge", sdk.AccAddress("admin1"), sdk.NewCoins(sdk.NewInt64Coin("pnyx", 100_000)))
+	k.CreateDomain(ctx, "AutoPurge", sdk.AccAddress("admin1"), sdk.NewCoins(sdk.NewInt64Coin(PNYXDenom, 100_000)))
 
 	schedule, exists := k.GetBigPurgeSchedule(ctx, "AutoPurge")
 	if !exists {

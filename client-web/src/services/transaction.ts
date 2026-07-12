@@ -106,7 +106,7 @@ export class TransactionService {
         timestamp: new Date().toISOString(),
         type: 'cosmos.bank.v1beta1.MsgSend',
         from: '',
-        fee: { denom: 'pnyx', amount: '0' },
+        fee: { denom: this.config.coinMinimalDenom, amount: '0' },
         status: tx.code === 0 ? 'success' : 'failed',
       };
     } catch {

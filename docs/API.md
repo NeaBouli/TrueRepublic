@@ -24,9 +24,9 @@
 
 | Command | Usage | Description |
 |---------|-------|-------------|
-| create-pool | `truerepublicd tx dex create-pool [asset-denom] [pnyx-amount] [asset-amount]` | Create a PNYX/asset liquidity pool |
+| create-pool | `truerepublicd tx dex create-pool [asset-denom] [upnyx-amount] [asset-amount]` | Create a PNYX/asset liquidity pool |
 | swap | `truerepublicd tx dex swap [input-denom] [input-amount] [output-denom]` | Swap tokens via AMM (0.3% fee, 1% PNYX burn) |
-| add-liquidity | `truerepublicd tx dex add-liquidity [asset-denom] [pnyx-amount] [asset-amount]` | Add liquidity and receive LP shares |
+| add-liquidity | `truerepublicd tx dex add-liquidity [asset-denom] [upnyx-amount] [asset-amount]` | Add liquidity and receive LP shares |
 | remove-liquidity | `truerepublicd tx dex remove-liquidity [asset-denom] [shares]` | Remove liquidity by burning LP shares |
 
 ## CLI Query Commands

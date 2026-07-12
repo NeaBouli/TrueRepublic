@@ -9,8 +9,6 @@ import (
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 )
 
-const pnyxDenom = "pnyx"
-
 type Keeper struct {
 	StoreKey storetypes.StoreKey
 	cdc      *codec.LegacyAmino
@@ -62,10 +60,10 @@ func (k Keeper) CreatePool(ctx sdk.Context, assetDenom string, pnyxAmt, assetAmt
 	shares := intSqrt(pnyxAmt.Mul(assetAmt))
 
 	pool := Pool{
-		PnyxReserve:  pnyxAmt,
-		AssetReserve: assetAmt,
-		AssetDenom:   assetDenom,
-		TotalShares:  shares,
+		PnyxReserve:     pnyxAmt,
+		AssetReserve:    assetAmt,
+		AssetDenom:      assetDenom,
+		TotalShares:     shares,
 		TotalBurned:     math.ZeroInt(),
 		SwapCount:       0,
 		TotalVolumePnyx: math.ZeroInt(),
@@ -98,7 +96,7 @@ func computeSwapOutput(inReserve, outReserve, inputAmt math.Int, outputIsPnyx bo
 //
 //	out = (outReserve * in * (10000 - fee)) / (inReserve * 10000 + in * (10000 - fee))
 //
-// One of inputDenom/outputDenom must be "pnyx" and the other the pool's
+// One of inputDenom/outputDenom must be "upnyx" and the other the pool's
 // asset denom. If minOutput is positive, the swap fails when the output
 // would be less than minOutput (slippage protection).
 func (k Keeper) Swap(ctx sdk.Context, inputDenom string, inputAmt math.Int, outputDenom string, minOutput math.Int) (math.Int, error) {
@@ -220,7 +218,7 @@ func (k Keeper) SwapExact(ctx sdk.Context, inputDenom string, inputAmt math.Int,
 
 // EstimateSwapOutput calculates the expected output for a swap without
 // executing it. Returns (expectedOutput, route, error) where route is the
-// list of denoms traversed (e.g., ["btc", "pnyx", "eth"] for cross-asset).
+// list of denoms traversed (e.g., ["btc", "upnyx", "eth"] for cross-asset).
 func (k Keeper) EstimateSwapOutput(ctx sdk.Context, inputDenom string, inputAmt math.Int, outputDenom string) (math.Int, []string, error) {
 	if inputDenom == outputDenom {
 		return math.Int{}, nil, errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "input and output denoms must differ")
@@ -486,7 +484,7 @@ func resolveAssetDenom(denomA, denomB string) (string, error) {
 	case denomA != pnyxDenom && denomB == pnyxDenom:
 		return denomA, nil
 	default:
-		return "", errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "exactly one denom must be pnyx")
+		return "", errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "exactly one denom must be upnyx")
 	}
 }
 

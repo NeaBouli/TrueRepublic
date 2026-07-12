@@ -45,8 +45,8 @@ func TestCreatePoolNativePnyxSkipsValidation(t *testing.T) {
 
 	// PNYX is native — no registration needed. But CreatePool always pairs
 	// PNYX with an asset, so pnyx can't be the assetDenom. This test
-	// confirms that "pnyx" denom validation itself doesn't fail.
-	err := k.validateAssetForTrading(ctx, "pnyx")
+	// confirms that pnyxDenom denom validation itself doesn't fail.
+	err := k.validateAssetForTrading(ctx, pnyxDenom)
 	if err != nil {
 		t.Fatalf("pnyx should skip validation, got: %v", err)
 	}
@@ -65,7 +65,7 @@ func TestSwapTradingDisabledFails(t *testing.T) {
 	k.UpdateAssetTradingStatus(ctx, "ibc/ETH", false)
 
 	// Swap should fail.
-	_, err := k.Swap(ctx, "pnyx", math.NewInt(1000), "ibc/ETH", math.ZeroInt())
+	_, err := k.Swap(ctx, pnyxDenom, math.NewInt(1000), "ibc/ETH", math.ZeroInt())
 	if err == nil {
 		t.Fatal("expected error for swap on disabled asset")
 	}
@@ -74,7 +74,7 @@ func TestSwapTradingDisabledFails(t *testing.T) {
 	}
 
 	// Reverse direction should also fail.
-	_, err = k.Swap(ctx, "ibc/ETH", math.NewInt(1000), "pnyx", math.ZeroInt())
+	_, err = k.Swap(ctx, "ibc/ETH", math.NewInt(1000), pnyxDenom, math.ZeroInt())
 	if err == nil {
 		t.Fatal("expected error for reverse swap on disabled asset")
 	}
@@ -91,7 +91,7 @@ func TestReEnableTradingAllowsSwap(t *testing.T) {
 	k.UpdateAssetTradingStatus(ctx, "ibc/LUSD", true)
 
 	// Swap should work again.
-	out, err := k.Swap(ctx, "pnyx", math.NewInt(1000), "ibc/LUSD", math.ZeroInt())
+	out, err := k.Swap(ctx, pnyxDenom, math.NewInt(1000), "ibc/LUSD", math.ZeroInt())
 	if err != nil {
 		t.Fatalf("swap should succeed after re-enabling: %v", err)
 	}
@@ -115,7 +115,7 @@ func TestGetSymbolForDenom(t *testing.T) {
 		denom string
 		want  string
 	}{
-		{"pnyx", "PNYX"},
+		{pnyxDenom, "PNYX"},
 		{"ibc/27394FB092D2ECCD56123C74F36E4C1F926001CEADA9CA97EA622B25F41E5EB2", "BTC"},
 		{"unknown_denom", "unknown_denom"}, // fallback to raw denom
 	}
@@ -176,7 +176,7 @@ func TestMultiAssetPoolCreation(t *testing.T) {
 
 	// Swap in each pool.
 	for _, p := range pools {
-		out, err := k.Swap(ctx, "pnyx", math.NewInt(p.swapAmt), p.denom, math.ZeroInt())
+		out, err := k.Swap(ctx, pnyxDenom, math.NewInt(p.swapAmt), p.denom, math.ZeroInt())
 		if err != nil {
 			t.Fatalf("swap PNYX→%s: %v", p.denom, err)
 		}

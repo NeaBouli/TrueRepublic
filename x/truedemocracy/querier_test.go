@@ -4,9 +4,9 @@ import (
 	"encoding/json"
 	"testing"
 
+	abci "github.com/cometbft/cometbft/abci/types"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	abci "github.com/cometbft/cometbft/abci/types"
 )
 
 // ---------- QueryZKPState (ABCI querier) ----------
@@ -14,7 +14,7 @@ import (
 func TestQuerierZKPState(t *testing.T) {
 	k, ctx := setupKeeper(t)
 	admin := sdk.AccAddress("admin1")
-	k.CreateDomain(ctx, "TestDomain", admin, sdk.NewCoins(sdk.NewInt64Coin("pnyx", 100_000)))
+	k.CreateDomain(ctx, "TestDomain", admin, sdk.NewCoins(sdk.NewInt64Coin(PNYXDenom, 100_000)))
 
 	cdc := codec.NewLegacyAmino()
 	sdk.RegisterLegacyAminoCodec(cdc)
@@ -53,7 +53,7 @@ func TestQuerierZKPState(t *testing.T) {
 func TestQuerierNullifier(t *testing.T) {
 	k, ctx := setupKeeper(t)
 	admin := sdk.AccAddress("admin1")
-	k.CreateDomain(ctx, "TestDomain", admin, sdk.NewCoins(sdk.NewInt64Coin("pnyx", 100_000)))
+	k.CreateDomain(ctx, "TestDomain", admin, sdk.NewCoins(sdk.NewInt64Coin(PNYXDenom, 100_000)))
 
 	cdc := codec.NewLegacyAmino()
 	sdk.RegisterLegacyAminoCodec(cdc)
@@ -85,7 +85,7 @@ func TestQuerierNullifier(t *testing.T) {
 func TestQuerierPurgeSchedule(t *testing.T) {
 	k, ctx := setupKeeper(t)
 	admin := sdk.AccAddress("admin1")
-	k.CreateDomain(ctx, "TestDomain", admin, sdk.NewCoins(sdk.NewInt64Coin("pnyx", 100_000)))
+	k.CreateDomain(ctx, "TestDomain", admin, sdk.NewCoins(sdk.NewInt64Coin(PNYXDenom, 100_000)))
 
 	k.SetBigPurgeSchedule(ctx, BigPurgeSchedule{
 		DomainName:       "TestDomain",

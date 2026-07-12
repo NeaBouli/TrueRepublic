@@ -167,7 +167,7 @@ fee = min(500 * 15, 500 * 10) = min(7,500, 5,000) = 5,000 PNYX
 **CLI:**
 ```bash
 truerepublicd tx truedemocracy submit-proposal \
-    [domain] [issue] [suggestion] [fee]pnyx [external-link] \
+    [domain] [issue] [suggestion] [fee]upnyx [external-link] \
     --from mykey --chain-id truerepublic-1
 ```
 

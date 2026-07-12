@@ -27,7 +27,7 @@ impl MockPool {
         let fee_bps: u128 = 30;
         let burn_bps: u128 = 100;
 
-        let (in_reserve, out_reserve, output_is_pnyx) = if input_denom == "pnyx" {
+        let (in_reserve, out_reserve, output_is_pnyx) = if input_denom == "upnyx" {
             (self.pnyx_reserve, self.asset_reserve, false)
         } else if input_denom == self.asset_denom {
             (self.asset_reserve, self.pnyx_reserve, true)
@@ -55,7 +55,7 @@ impl MockPool {
         let fee_bps: u128 = 30;
         let ref_amt: u128 = 1_000_000;
 
-        let (in_reserve, out_reserve) = if input_denom == "pnyx" {
+        let (in_reserve, out_reserve) = if input_denom == "upnyx" {
             (self.pnyx_reserve.u128(), self.asset_reserve.u128())
         } else if input_denom == self.asset_denom {
             (self.asset_reserve.u128(), self.pnyx_reserve.u128())
@@ -76,7 +76,7 @@ mod tests {
     fn test_equal_pool_swap() {
         let pool = MockPool::new("atom", 1_000_000, 1_000_000);
         let (output, burn) = pool
-            .compute_swap_output("pnyx", Uint128::new(1000))
+            .compute_swap_output("upnyx", Uint128::new(1000))
             .unwrap();
         // With 0.3% fee: out = 1M * 1000 * 9970 / (1M * 10000 + 1000 * 9970) = 996
         assert!(output.u128() > 990 && output.u128() < 1000);
@@ -96,7 +96,7 @@ mod tests {
     #[test]
     fn test_spot_price_equal_pool() {
         let pool = MockPool::new("atom", 1_000_000, 1_000_000);
-        let price = pool.spot_price("pnyx").unwrap();
+        let price = pool.spot_price("upnyx").unwrap();
         // price = 1M * 1M * 9970 / (1M * 10000) = 997000
         assert_eq!(price.u128(), 997_000);
     }

@@ -10,8 +10,10 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	capabilitytypes "github.com/cosmos/ibc-go/modules/capability/types"
-	ibcexported "github.com/cosmos/ibc-go/v8/modules/core/exported"
 	transfertypes "github.com/cosmos/ibc-go/v8/modules/apps/transfer/types"
+	ibcexported "github.com/cosmos/ibc-go/v8/modules/core/exported"
+
+	"truerepublic/token"
 )
 
 // --- IBCStakingKeeper Tests ---
@@ -179,7 +181,7 @@ func TestIBCTransferDenomTrace(t *testing.T) {
 	// Verify IBC denom trace hash computation.
 	trace := transfertypes.DenomTrace{
 		Path:      "transfer/channel-0",
-		BaseDenom: "pnyx",
+		BaseDenom: token.BaseDenom,
 	}
 
 	ibcDenom := trace.IBCDenom()
@@ -197,7 +199,7 @@ func TestIBCTransferDenomTrace(t *testing.T) {
 	// Different path should produce different denom.
 	trace2 := transfertypes.DenomTrace{
 		Path:      "transfer/channel-1",
-		BaseDenom: "pnyx",
+		BaseDenom: token.BaseDenom,
 	}
 	if trace.IBCDenom() == trace2.IBCDenom() {
 		t.Fatal("different paths should produce different IBC denoms")

@@ -10,7 +10,7 @@ import (
 // with 3 candidate suggestions for election tests (WP §3.7).
 func setupElectionDomain(t *testing.T, k Keeper, ctx sdk.Context, mode VotingMode, abstentionAllowed bool) {
 	t.Helper()
-	k.CreateDomain(ctx, "ElecDomain", sdk.AccAddress("admin1"), sdk.NewCoins(sdk.NewInt64Coin("pnyx", 500_000)))
+	k.CreateDomain(ctx, "ElecDomain", sdk.AccAddress("admin1"), sdk.NewCoins(sdk.NewInt64Coin(PNYXDenom, 500_000)))
 
 	domain, _ := k.GetDomain(ctx, "ElecDomain")
 	domain.Members = []string{"alice", "bob", "charlie", "dave", "eve"}

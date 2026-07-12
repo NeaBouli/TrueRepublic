@@ -22,10 +22,10 @@ func (k Keeper) HandleDoubleSign(ctx sdk.Context, pubKeyBytes []byte) error {
 	val.Jailed = true
 	val.JailedUntil = ctx.BlockTime().Unix() + DowntimeJailDuration*10
 
-	if val.Stake.AmountOf("pnyx").LT(math.NewInt(rewards.StakeMin)) {
+	if val.Stake.AmountOf(PNYXDenom).LT(math.NewInt(rewards.StakeMin)) {
 		val.Power = 0
 	} else {
-		val.Power = val.Stake.AmountOf("pnyx").Int64() / rewards.StakeMin
+		val.Power = val.Stake.AmountOf(PNYXDenom).Int64() / rewards.StakeMin
 	}
 
 	k.SetValidator(ctx, val)
@@ -50,10 +50,10 @@ func (k Keeper) HandleDowntime(ctx sdk.Context, pubKeyBytes []byte) error {
 		val.JailedUntil = ctx.BlockTime().Unix() + DowntimeJailDuration
 		val.MissedBlocks = 0
 
-		if val.Stake.AmountOf("pnyx").LT(math.NewInt(rewards.StakeMin)) {
+		if val.Stake.AmountOf(PNYXDenom).LT(math.NewInt(rewards.StakeMin)) {
 			val.Power = 0
 		} else {
-			val.Power = val.Stake.AmountOf("pnyx").Int64() / rewards.StakeMin
+			val.Power = val.Stake.AmountOf(PNYXDenom).Int64() / rewards.StakeMin
 		}
 	}
 
@@ -75,7 +75,7 @@ func (k Keeper) Unjail(ctx sdk.Context, operatorAddr string) error {
 	if ctx.BlockTime().Unix() < val.JailedUntil {
 		return errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "jail duration has not elapsed")
 	}
-	if val.Stake.AmountOf("pnyx").LT(math.NewInt(rewards.StakeMin)) {
+	if val.Stake.AmountOf(PNYXDenom).LT(math.NewInt(rewards.StakeMin)) {
 		return errorsmod.Wrap(sdkerrors.ErrInsufficientFunds, "stake below minimum after slash")
 	}
 	if !k.EnforceDomainMembership(ctx, operatorAddr) {
@@ -85,14 +85,14 @@ func (k Keeper) Unjail(ctx sdk.Context, operatorAddr string) error {
 	val, _ = k.GetValidator(ctx, operatorAddr) // re-read after membership check
 	val.Jailed = false
 	val.JailedUntil = 0
-	val.Power = val.Stake.AmountOf("pnyx").Int64() / rewards.StakeMin
+	val.Power = val.Stake.AmountOf(PNYXDenom).Int64() / rewards.StakeMin
 	k.SetValidator(ctx, val)
 	return nil
 }
 
 // slashStake reduces a validator's PNYX stake by the given percentage.
 func slashStake(val Validator, pct int64) Validator {
-	pnyxAmt := val.Stake.AmountOf("pnyx")
+	pnyxAmt := val.Stake.AmountOf(PNYXDenom)
 	penalty := pnyxAmt.Mul(math.NewInt(pct)).Quo(math.NewInt(100))
 	if penalty.IsZero() {
 		penalty = math.OneInt() // slash at least 1
@@ -101,6 +101,6 @@ func slashStake(val Validator, pct int64) Validator {
 	if remaining.IsNegative() {
 		remaining = math.ZeroInt()
 	}
-	val.Stake = sdk.NewCoins(sdk.NewCoin("pnyx", remaining))
+	val.Stake = sdk.NewCoins(sdk.NewCoin(PNYXDenom, remaining))
 	return val
 }

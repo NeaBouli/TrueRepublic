@@ -13,7 +13,7 @@ import (
 func TestBigPurgeNotTriggeredBeforeTime(t *testing.T) {
 	k, ctx := setupKeeper(t)
 
-	k.CreateDomain(ctx, "PurgeDomain", sdk.AccAddress("admin1"), sdk.NewCoins(sdk.NewInt64Coin("pnyx", 100_000)))
+	k.CreateDomain(ctx, "PurgeDomain", sdk.AccAddress("admin1"), sdk.NewCoins(sdk.NewInt64Coin(PNYXDenom, 100_000)))
 
 	// Add member and register a domain key.
 	domain, _ := k.GetDomain(ctx, "PurgeDomain")
@@ -39,7 +39,7 @@ func TestBigPurgeNotTriggeredBeforeTime(t *testing.T) {
 func TestBigPurgeTriggeredAtScheduledTime(t *testing.T) {
 	k, ctx := setupKeeper(t)
 
-	k.CreateDomain(ctx, "PurgeDomain", sdk.AccAddress("admin1"), sdk.NewCoins(sdk.NewInt64Coin("pnyx", 100_000)))
+	k.CreateDomain(ctx, "PurgeDomain", sdk.AccAddress("admin1"), sdk.NewCoins(sdk.NewInt64Coin(PNYXDenom, 100_000)))
 
 	// Add members and register keys.
 	domain, _ := k.GetDomain(ctx, "PurgeDomain")
@@ -74,7 +74,7 @@ func TestBigPurgeTriggeredAtScheduledTime(t *testing.T) {
 func TestBigPurgeMembersPreserved(t *testing.T) {
 	k, ctx := setupKeeper(t)
 
-	k.CreateDomain(ctx, "PurgeDomain", sdk.AccAddress("admin1"), sdk.NewCoins(sdk.NewInt64Coin("pnyx", 100_000)))
+	k.CreateDomain(ctx, "PurgeDomain", sdk.AccAddress("admin1"), sdk.NewCoins(sdk.NewInt64Coin(PNYXDenom, 100_000)))
 
 	domain, _ := k.GetDomain(ctx, "PurgeDomain")
 	domain.Members = append(domain.Members, "alice", "bob")
@@ -106,7 +106,7 @@ func TestBigPurgeMembersPreserved(t *testing.T) {
 func TestBigPurgeReschedules(t *testing.T) {
 	k, ctx := setupKeeper(t)
 
-	k.CreateDomain(ctx, "PurgeDomain", sdk.AccAddress("admin1"), sdk.NewCoins(sdk.NewInt64Coin("pnyx", 100_000)))
+	k.CreateDomain(ctx, "PurgeDomain", sdk.AccAddress("admin1"), sdk.NewCoins(sdk.NewInt64Coin(PNYXDenom, 100_000)))
 
 	schedule, _ := k.GetBigPurgeSchedule(ctx, "PurgeDomain")
 	originalInterval := schedule.PurgeInterval
@@ -131,7 +131,7 @@ func TestBigPurgeReschedules(t *testing.T) {
 func TestBigPurgeAnnouncementEmitted(t *testing.T) {
 	k, ctx := setupKeeper(t)
 
-	k.CreateDomain(ctx, "PurgeDomain", sdk.AccAddress("admin1"), sdk.NewCoins(sdk.NewInt64Coin("pnyx", 100_000)))
+	k.CreateDomain(ctx, "PurgeDomain", sdk.AccAddress("admin1"), sdk.NewCoins(sdk.NewInt64Coin(PNYXDenom, 100_000)))
 
 	schedule, _ := k.GetBigPurgeSchedule(ctx, "PurgeDomain")
 
@@ -162,7 +162,7 @@ func TestBigPurgeAnnouncementEmitted(t *testing.T) {
 func TestBigPurgeAnnouncementNotDuplicated(t *testing.T) {
 	k, ctx := setupKeeper(t)
 
-	k.CreateDomain(ctx, "PurgeDomain", sdk.AccAddress("admin1"), sdk.NewCoins(sdk.NewInt64Coin("pnyx", 100_000)))
+	k.CreateDomain(ctx, "PurgeDomain", sdk.AccAddress("admin1"), sdk.NewCoins(sdk.NewInt64Coin(PNYXDenom, 100_000)))
 
 	schedule, _ := k.GetBigPurgeSchedule(ctx, "PurgeDomain")
 
@@ -202,7 +202,7 @@ func TestBigPurgeAnnouncementNotDuplicated(t *testing.T) {
 func TestBigPurgeExecutionEvent(t *testing.T) {
 	k, ctx := setupKeeper(t)
 
-	k.CreateDomain(ctx, "PurgeDomain", sdk.AccAddress("admin1"), sdk.NewCoins(sdk.NewInt64Coin("pnyx", 100_000)))
+	k.CreateDomain(ctx, "PurgeDomain", sdk.AccAddress("admin1"), sdk.NewCoins(sdk.NewInt64Coin(PNYXDenom, 100_000)))
 
 	schedule, _ := k.GetBigPurgeSchedule(ctx, "PurgeDomain")
 	ctx = ctx.WithBlockTime(time.Unix(schedule.NextPurgeTime+1, 0))
@@ -230,7 +230,7 @@ func TestMultipleDomainsPurgeIndependently(t *testing.T) {
 	k, ctx := setupKeeper(t)
 
 	// Create domain 1.
-	k.CreateDomain(ctx, "Domain1", sdk.AccAddress("admin1"), sdk.NewCoins(sdk.NewInt64Coin("pnyx", 100_000)))
+	k.CreateDomain(ctx, "Domain1", sdk.AccAddress("admin1"), sdk.NewCoins(sdk.NewInt64Coin(PNYXDenom, 100_000)))
 	domain1, _ := k.GetDomain(ctx, "Domain1")
 	domain1.Members = append(domain1.Members, "alice")
 	st := ctx.KVStore(k.StoreKey)
@@ -242,7 +242,7 @@ func TestMultipleDomainsPurgeIndependently(t *testing.T) {
 
 	// Create domain 2 one day later (different purge schedule).
 	ctx2 := ctx.WithBlockTime(ctx.BlockTime().Add(24 * time.Hour))
-	k.CreateDomain(ctx2, "Domain2", sdk.AccAddress("admin2"), sdk.NewCoins(sdk.NewInt64Coin("pnyx", 100_000)))
+	k.CreateDomain(ctx2, "Domain2", sdk.AccAddress("admin2"), sdk.NewCoins(sdk.NewInt64Coin(PNYXDenom, 100_000)))
 	domain2, _ := k.GetDomain(ctx2, "Domain2")
 	domain2.Members = append(domain2.Members, "bob")
 	bz = k.cdc.MustMarshalLengthPrefixed(&domain2)

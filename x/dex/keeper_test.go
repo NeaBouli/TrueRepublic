@@ -8,10 +8,10 @@ import (
 	"cosmossdk.io/store"
 	"cosmossdk.io/store/metrics"
 	storetypes "cosmossdk.io/store/types"
+	cmtproto "github.com/cometbft/cometbft/proto/tendermint/types"
 	dbm "github.com/cosmos/cosmos-db"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	cmtproto "github.com/cometbft/cometbft/proto/tendermint/types"
 )
 
 func setupKeeper(t *testing.T) (Keeper, sdk.Context) {
@@ -99,7 +99,7 @@ func TestSwap(t *testing.T) {
 		poolBefore, _ := k.GetPool(ctx, "atom")
 		kBefore := poolBefore.PnyxReserve.Mul(poolBefore.AssetReserve)
 
-		out, err := k.Swap(ctx, "pnyx", math.NewInt(10_000), "atom", math.ZeroInt())
+		out, err := k.Swap(ctx, pnyxDenom, math.NewInt(10_000), "atom", math.ZeroInt())
 		if err != nil {
 			t.Fatalf("unexpected error: %v", err)
 		}
@@ -117,7 +117,7 @@ func TestSwap(t *testing.T) {
 	})
 
 	t.Run("ATOM to PNYX", func(t *testing.T) {
-		out, err := k.Swap(ctx, "atom", math.NewInt(5_000), "pnyx", math.ZeroInt())
+		out, err := k.Swap(ctx, "atom", math.NewInt(5_000), pnyxDenom, math.ZeroInt())
 		if err != nil {
 			t.Fatalf("unexpected error: %v", err)
 		}
@@ -127,21 +127,21 @@ func TestSwap(t *testing.T) {
 	})
 
 	t.Run("unknown denom", func(t *testing.T) {
-		_, err := k.Swap(ctx, "pnyx", math.NewInt(100), "xxx", math.ZeroInt())
+		_, err := k.Swap(ctx, pnyxDenom, math.NewInt(100), "xxx", math.ZeroInt())
 		if err == nil {
 			t.Fatal("expected error for unknown pool")
 		}
 	})
 
 	t.Run("zero input", func(t *testing.T) {
-		_, err := k.Swap(ctx, "pnyx", math.ZeroInt(), "atom", math.ZeroInt())
+		_, err := k.Swap(ctx, pnyxDenom, math.ZeroInt(), "atom", math.ZeroInt())
 		if err == nil {
 			t.Fatal("expected error for zero input")
 		}
 	})
 
 	t.Run("both pnyx", func(t *testing.T) {
-		_, err := k.Swap(ctx, "pnyx", math.NewInt(100), "pnyx", math.ZeroInt())
+		_, err := k.Swap(ctx, pnyxDenom, math.NewInt(100), pnyxDenom, math.ZeroInt())
 		if err == nil {
 			t.Fatal("expected error when both denoms are pnyx")
 		}
@@ -158,7 +158,7 @@ func TestSwapFeeDeduction(t *testing.T) {
 	//     = 9970000000000 / (10000000000 + 99700000)
 	//     = 9970000000000 / 10099700000
 	//     ≈ 9871 (less than ~9901 without fee)
-	out, err := k.Swap(ctx, "pnyx", math.NewInt(10_000), "atom", math.ZeroInt())
+	out, err := k.Swap(ctx, pnyxDenom, math.NewInt(10_000), "atom", math.ZeroInt())
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -182,8 +182,8 @@ func TestSwapFeeAccumulation(t *testing.T) {
 
 	// Perform many swaps in both directions.
 	for i := 0; i < 20; i++ {
-		k.Swap(ctx, "pnyx", math.NewInt(1_000), "atom", math.ZeroInt())
-		k.Swap(ctx, "atom", math.NewInt(1_000), "pnyx", math.ZeroInt())
+		k.Swap(ctx, pnyxDenom, math.NewInt(1_000), "atom", math.ZeroInt())
+		k.Swap(ctx, "atom", math.NewInt(1_000), pnyxDenom, math.ZeroInt())
 	}
 
 	poolAfter, _ := k.GetPool(ctx, "atom")
@@ -310,7 +310,7 @@ func TestSwapPNYXBurn(t *testing.T) {
 	k.CreatePool(ctx, "atom", math.NewInt(1_000_000), math.NewInt(1_000_000))
 
 	// Swap ATOM → PNYX (buying PNYX triggers 1% burn).
-	out, err := k.Swap(ctx, "atom", math.NewInt(10_000), "pnyx", math.ZeroInt())
+	out, err := k.Swap(ctx, "atom", math.NewInt(10_000), pnyxDenom, math.ZeroInt())
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -346,7 +346,7 @@ func TestSwapNoBurnOnSell(t *testing.T) {
 	k.CreatePool(ctx, "atom", math.NewInt(1_000_000), math.NewInt(1_000_000))
 
 	// Swap PNYX → ATOM (selling PNYX — no burn).
-	_, err := k.Swap(ctx, "pnyx", math.NewInt(10_000), "atom", math.ZeroInt())
+	_, err := k.Swap(ctx, pnyxDenom, math.NewInt(10_000), "atom", math.ZeroInt())
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -363,7 +363,7 @@ func TestBurnAccumulation(t *testing.T) {
 
 	// Perform multiple swaps buying PNYX.
 	for i := 0; i < 5; i++ {
-		_, err := k.Swap(ctx, "atom", math.NewInt(1_000), "pnyx", math.ZeroInt())
+		_, err := k.Swap(ctx, "atom", math.NewInt(1_000), pnyxDenom, math.ZeroInt())
 		if err != nil {
 			t.Fatalf("swap %d failed: %v", i, err)
 		}
@@ -386,14 +386,14 @@ func TestBurnReducesUserOutput(t *testing.T) {
 	k.CreatePool(ctx, "atom", math.NewInt(1_000_000), math.NewInt(1_000_000))
 
 	// Buy PNYX (has burn).
-	outBuy, _ := k.Swap(ctx, "atom", math.NewInt(10_000), "pnyx", math.ZeroInt())
+	outBuy, _ := k.Swap(ctx, "atom", math.NewInt(10_000), pnyxDenom, math.ZeroInt())
 
 	// Reset pool.
 	k2, ctx2 := setupKeeperWithDefaults(t)
 	k2.CreatePool(ctx2, "atom", math.NewInt(1_000_000), math.NewInt(1_000_000))
 
 	// Sell PNYX for same amount (no burn).
-	outSell, _ := k2.Swap(ctx2, "pnyx", math.NewInt(10_000), "atom", math.ZeroInt())
+	outSell, _ := k2.Swap(ctx2, pnyxDenom, math.NewInt(10_000), "atom", math.ZeroInt())
 
 	// Both should be positive and similar magnitude, but buy output
 	// (PNYX) should be reduced by the burn.
@@ -440,7 +440,7 @@ func TestSwapSlippageProtection(t *testing.T) {
 
 	t.Run("minOutput met", func(t *testing.T) {
 		// With a 1M/1M pool, swapping 10k PNYX → ATOM gives ~9871.
-		out, err := k.Swap(ctx, "pnyx", math.NewInt(10_000), "atom", math.NewInt(9000))
+		out, err := k.Swap(ctx, pnyxDenom, math.NewInt(10_000), "atom", math.NewInt(9000))
 		if err != nil {
 			t.Fatalf("unexpected error: %v", err)
 		}
@@ -450,7 +450,7 @@ func TestSwapSlippageProtection(t *testing.T) {
 	})
 
 	t.Run("minOutput not met", func(t *testing.T) {
-		_, err := k.Swap(ctx, "pnyx", math.NewInt(10_000), "atom", math.NewInt(999_999))
+		_, err := k.Swap(ctx, pnyxDenom, math.NewInt(10_000), "atom", math.NewInt(999_999))
 		if err == nil {
 			t.Fatal("expected slippage error")
 		}
@@ -460,7 +460,7 @@ func TestSwapSlippageProtection(t *testing.T) {
 	})
 
 	t.Run("zero minOutput skips check", func(t *testing.T) {
-		_, err := k.Swap(ctx, "pnyx", math.NewInt(10_000), "atom", math.ZeroInt())
+		_, err := k.Swap(ctx, pnyxDenom, math.NewInt(10_000), "atom", math.ZeroInt())
 		if err != nil {
 			t.Fatalf("zero minOutput should skip slippage check: %v", err)
 		}
@@ -474,7 +474,7 @@ func TestSwapExactDirect(t *testing.T) {
 	k.CreatePool(ctx, "atom", math.NewInt(1_000_000), math.NewInt(1_000_000))
 
 	// Direct swap (one side is PNYX) should delegate to Swap.
-	out, err := k.SwapExact(ctx, "pnyx", math.NewInt(10_000), "atom", math.ZeroInt())
+	out, err := k.SwapExact(ctx, pnyxDenom, math.NewInt(10_000), "atom", math.ZeroInt())
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
@@ -507,7 +507,7 @@ func TestSwapExactCrossAsset(t *testing.T) {
 	k2, ctx2 := setupKeeper(t)
 	k2.RegisterAsset(ctx2, RegisteredAsset{IBCDenom: "ibc/ETH", Symbol: "ETH", Decimals: 18, TradingEnabled: true})
 	k2.CreatePool(ctx2, "ibc/ETH", math.NewInt(1_000_000), math.NewInt(1_000_000))
-	directOut, _ := k2.Swap(ctx2, "pnyx", math.NewInt(10_000), "ibc/ETH", math.ZeroInt())
+	directOut, _ := k2.Swap(ctx2, pnyxDenom, math.NewInt(10_000), "ibc/ETH", math.ZeroInt())
 	if out.GTE(directOut) {
 		t.Errorf("cross-asset output %s should be less than direct %s (double fees)", out, directOut)
 	}
@@ -543,7 +543,7 @@ func TestSwapExactNonexistentPoolFails(t *testing.T) {
 	k, ctx := setupKeeper(t)
 	k.RegisterAsset(ctx, RegisteredAsset{IBCDenom: "ibc/BTC", Symbol: "BTC", Decimals: 8, TradingEnabled: true})
 
-	_, err := k.SwapExact(ctx, "pnyx", math.NewInt(1000), "ibc/BTC", math.ZeroInt())
+	_, err := k.SwapExact(ctx, pnyxDenom, math.NewInt(1000), "ibc/BTC", math.ZeroInt())
 	if err == nil {
 		t.Fatal("expected error for nonexistent pool")
 	}
@@ -571,7 +571,7 @@ func TestEstimateSwapOutputDirect(t *testing.T) {
 	k, ctx := setupKeeperWithDefaults(t)
 	k.CreatePool(ctx, "atom", math.NewInt(1_000_000), math.NewInt(1_000_000))
 
-	estimate, route, err := k.EstimateSwapOutput(ctx, "pnyx", math.NewInt(10_000), "atom")
+	estimate, route, err := k.EstimateSwapOutput(ctx, pnyxDenom, math.NewInt(10_000), "atom")
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
@@ -581,12 +581,12 @@ func TestEstimateSwapOutputDirect(t *testing.T) {
 	if len(route) != 2 {
 		t.Fatalf("direct route should have 2 elements, got %d", len(route))
 	}
-	if route[0] != "pnyx" || route[1] != "atom" {
+	if route[0] != pnyxDenom || route[1] != "atom" {
 		t.Errorf("route = %v, want [pnyx atom]", route)
 	}
 
 	// Estimate should match actual swap output.
-	actual, _ := k.Swap(ctx, "pnyx", math.NewInt(10_000), "atom", math.ZeroInt())
+	actual, _ := k.Swap(ctx, pnyxDenom, math.NewInt(10_000), "atom", math.ZeroInt())
 	if !estimate.Equal(actual) {
 		t.Errorf("estimate %s != actual %s", estimate, actual)
 	}
@@ -609,7 +609,7 @@ func TestEstimateSwapOutputCrossAsset(t *testing.T) {
 	if len(route) != 3 {
 		t.Fatalf("cross-asset route should have 3 elements, got %d", len(route))
 	}
-	if route[0] != "ibc/BTC" || route[1] != "pnyx" || route[2] != "ibc/ETH" {
+	if route[0] != "ibc/BTC" || route[1] != pnyxDenom || route[2] != "ibc/ETH" {
 		t.Errorf("route = %v, want [ibc/BTC pnyx ibc/ETH]", route)
 	}
 }
@@ -631,14 +631,14 @@ func TestMsgSwapExactValidateBasic(t *testing.T) {
 		msg     MsgSwapExact
 		wantErr bool
 	}{
-		{"valid", MsgSwapExact{InputDenom: "pnyx", InputAmt: 100, OutputDenom: "atom", MinOutput: 0}, false},
-		{"valid with minOutput", MsgSwapExact{InputDenom: "pnyx", InputAmt: 100, OutputDenom: "atom", MinOutput: 50}, false},
+		{"valid", MsgSwapExact{InputDenom: pnyxDenom, InputAmt: 100, OutputDenom: "atom", MinOutput: 0}, false},
+		{"valid with minOutput", MsgSwapExact{InputDenom: pnyxDenom, InputAmt: 100, OutputDenom: "atom", MinOutput: 50}, false},
 		{"empty input denom", MsgSwapExact{InputDenom: "", InputAmt: 100, OutputDenom: "atom"}, true},
-		{"empty output denom", MsgSwapExact{InputDenom: "pnyx", InputAmt: 100, OutputDenom: ""}, true},
+		{"empty output denom", MsgSwapExact{InputDenom: pnyxDenom, InputAmt: 100, OutputDenom: ""}, true},
 		{"same denom", MsgSwapExact{InputDenom: "atom", InputAmt: 100, OutputDenom: "atom"}, true},
-		{"zero amount", MsgSwapExact{InputDenom: "pnyx", InputAmt: 0, OutputDenom: "atom"}, true},
-		{"negative amount", MsgSwapExact{InputDenom: "pnyx", InputAmt: -1, OutputDenom: "atom"}, true},
-		{"negative minOutput", MsgSwapExact{InputDenom: "pnyx", InputAmt: 100, OutputDenom: "atom", MinOutput: -1}, true},
+		{"zero amount", MsgSwapExact{InputDenom: pnyxDenom, InputAmt: 0, OutputDenom: "atom"}, true},
+		{"negative amount", MsgSwapExact{InputDenom: pnyxDenom, InputAmt: -1, OutputDenom: "atom"}, true},
+		{"negative minOutput", MsgSwapExact{InputDenom: pnyxDenom, InputAmt: 100, OutputDenom: "atom", MinOutput: -1}, true},
 	}
 
 	for _, tt := range tests {
@@ -695,7 +695,7 @@ func TestSwapVolumeTracking(t *testing.T) {
 	k.CreatePool(ctx, "atom", math.NewInt(1_000_000), math.NewInt(1_000_000))
 
 	// Swap PNYX -> atom.
-	k.Swap(ctx, "pnyx", math.NewInt(10_000), "atom", math.ZeroInt())
+	k.Swap(ctx, pnyxDenom, math.NewInt(10_000), "atom", math.ZeroInt())
 	pool, _ := k.GetPool(ctx, "atom")
 
 	if pool.SwapCount != 1 {
@@ -711,7 +711,7 @@ func TestSwapVolumeTrackingReverse(t *testing.T) {
 	k.CreatePool(ctx, "atom", math.NewInt(1_000_000), math.NewInt(1_000_000))
 
 	// Swap atom -> PNYX — volume should track gross PNYX output (before burn).
-	k.Swap(ctx, "atom", math.NewInt(10_000), "pnyx", math.ZeroInt())
+	k.Swap(ctx, "atom", math.NewInt(10_000), pnyxDenom, math.ZeroInt())
 	pool, _ := k.GetPool(ctx, "atom")
 
 	if pool.SwapCount != 1 {
@@ -728,9 +728,9 @@ func TestSwapVolumeMultipleSwaps(t *testing.T) {
 	k, ctx := setupKeeperWithDefaults(t)
 	k.CreatePool(ctx, "atom", math.NewInt(1_000_000), math.NewInt(1_000_000))
 
-	k.Swap(ctx, "pnyx", math.NewInt(5_000), "atom", math.ZeroInt())
-	k.Swap(ctx, "pnyx", math.NewInt(3_000), "atom", math.ZeroInt())
-	k.Swap(ctx, "atom", math.NewInt(2_000), "pnyx", math.ZeroInt())
+	k.Swap(ctx, pnyxDenom, math.NewInt(5_000), "atom", math.ZeroInt())
+	k.Swap(ctx, pnyxDenom, math.NewInt(3_000), "atom", math.ZeroInt())
+	k.Swap(ctx, "atom", math.NewInt(2_000), pnyxDenom, math.ZeroInt())
 
 	pool, _ := k.GetPool(ctx, "atom")
 	if pool.SwapCount != 3 {
@@ -748,7 +748,7 @@ func TestComputeSpotPriceEqual(t *testing.T) {
 	k, ctx := setupKeeperWithDefaults(t)
 	k.CreatePool(ctx, "atom", math.NewInt(1_000_000), math.NewInt(1_000_000))
 
-	price, err := k.ComputeSpotPrice(ctx, "pnyx", "atom")
+	price, err := k.ComputeSpotPrice(ctx, pnyxDenom, "atom")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -763,7 +763,7 @@ func TestComputeSpotPriceImbalanced(t *testing.T) {
 	k.CreatePool(ctx, "atom", math.NewInt(2_000_000), math.NewInt(1_000_000))
 
 	// 2M PNYX / 1M ATOM: marginal price = 1M * 1M * 9970 / (2M * 10000) = 498500.
-	price, err := k.ComputeSpotPrice(ctx, "pnyx", "atom")
+	price, err := k.ComputeSpotPrice(ctx, pnyxDenom, "atom")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -806,7 +806,7 @@ func TestComputeLiquidityDepth(t *testing.T) {
 	k, ctx := setupKeeperWithDefaults(t)
 	k.CreatePool(ctx, "atom", math.NewInt(1_000_000), math.NewInt(1_000_000))
 
-	levels, err := k.ComputeLiquidityDepth(ctx, "pnyx", "atom")
+	levels, err := k.ComputeLiquidityDepth(ctx, pnyxDenom, "atom")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -835,7 +835,7 @@ func TestComputeLiquidityDepthSmallPool(t *testing.T) {
 	k, ctx := setupKeeperWithDefaults(t)
 	k.CreatePool(ctx, "atom", math.NewInt(1_000), math.NewInt(1_000))
 
-	levels, err := k.ComputeLiquidityDepth(ctx, "pnyx", "atom")
+	levels, err := k.ComputeLiquidityDepth(ctx, pnyxDenom, "atom")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -851,7 +851,7 @@ func TestComputeLiquidityDepthSmallPool(t *testing.T) {
 
 func TestComputeLiquidityDepthNonexistent(t *testing.T) {
 	k, ctx := setupKeeperWithDefaults(t)
-	_, err := k.ComputeLiquidityDepth(ctx, "pnyx", "atom")
+	_, err := k.ComputeLiquidityDepth(ctx, pnyxDenom, "atom")
 	if err == nil {
 		t.Error("expected error for nonexistent pool")
 	}
@@ -915,9 +915,9 @@ func TestPoolStatsAfterSwaps(t *testing.T) {
 	k.CreatePool(ctx, "atom", math.NewInt(1_000_000), math.NewInt(1_000_000))
 
 	// Perform several swaps.
-	k.Swap(ctx, "pnyx", math.NewInt(10_000), "atom", math.ZeroInt())
-	k.Swap(ctx, "atom", math.NewInt(5_000), "pnyx", math.ZeroInt())
-	k.Swap(ctx, "pnyx", math.NewInt(20_000), "atom", math.ZeroInt())
+	k.Swap(ctx, pnyxDenom, math.NewInt(10_000), "atom", math.ZeroInt())
+	k.Swap(ctx, "atom", math.NewInt(5_000), pnyxDenom, math.ZeroInt())
+	k.Swap(ctx, pnyxDenom, math.NewInt(20_000), "atom", math.ZeroInt())
 
 	pool, _ := k.GetPool(ctx, "atom")
 	if pool.SwapCount != 3 {

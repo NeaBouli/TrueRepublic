@@ -19,11 +19,11 @@ type MsgCreateDomain struct {
 	InitialCoins sdk.Coins      `protobuf:"bytes,3,rep,name=initial_coins,json=initialCoins,proto3,castrepeated=github.com/cosmos/cosmos-sdk/types.Coins" json:"initial_coins"`
 }
 
-func (m *MsgCreateDomain) ProtoMessage()             {}
-func (m *MsgCreateDomain) Reset()                    { *m = MsgCreateDomain{} }
-func (m *MsgCreateDomain) String() string            { b, _ := json.Marshal(m); return string(b) }
-func (m MsgCreateDomain) Route() string              { return ModuleName }
-func (m MsgCreateDomain) Type() string               { return "create_domain" }
+func (m *MsgCreateDomain) ProtoMessage()               {}
+func (m *MsgCreateDomain) Reset()                      { *m = MsgCreateDomain{} }
+func (m *MsgCreateDomain) String() string              { b, _ := json.Marshal(m); return string(b) }
+func (m MsgCreateDomain) Route() string                { return ModuleName }
+func (m MsgCreateDomain) Type() string                 { return "create_domain" }
 func (m MsgCreateDomain) GetSigners() []sdk.AccAddress { return []sdk.AccAddress{m.Admin} }
 func (m MsgCreateDomain) ValidateBasic() error {
 	if m.Name == "" {
@@ -47,11 +47,11 @@ type MsgSubmitProposal struct {
 	ExternalLink   string         `protobuf:"bytes,7,opt,name=external_link,json=externalLink,proto3" json:"external_link"`
 }
 
-func (m *MsgSubmitProposal) ProtoMessage()             {}
-func (m *MsgSubmitProposal) Reset()                    { *m = MsgSubmitProposal{} }
-func (m *MsgSubmitProposal) String() string            { b, _ := json.Marshal(m); return string(b) }
-func (m MsgSubmitProposal) Route() string              { return ModuleName }
-func (m MsgSubmitProposal) Type() string               { return "submit_proposal" }
+func (m *MsgSubmitProposal) ProtoMessage()               {}
+func (m *MsgSubmitProposal) Reset()                      { *m = MsgSubmitProposal{} }
+func (m *MsgSubmitProposal) String() string              { b, _ := json.Marshal(m); return string(b) }
+func (m MsgSubmitProposal) Route() string                { return ModuleName }
+func (m MsgSubmitProposal) Type() string                 { return "submit_proposal" }
 func (m MsgSubmitProposal) GetSigners() []sdk.AccAddress { return []sdk.AccAddress{m.Sender} }
 func (m MsgSubmitProposal) ValidateBasic() error {
 	if m.DomainName == "" || m.IssueName == "" || m.SuggestionName == "" {
@@ -70,11 +70,11 @@ type MsgRegisterValidator struct {
 	DomainName   string         `protobuf:"bytes,5,opt,name=domain_name,json=domainName,proto3" json:"domain_name"`
 }
 
-func (m *MsgRegisterValidator) ProtoMessage()             {}
-func (m *MsgRegisterValidator) Reset()                    { *m = MsgRegisterValidator{} }
-func (m *MsgRegisterValidator) String() string            { b, _ := json.Marshal(m); return string(b) }
-func (m MsgRegisterValidator) Route() string              { return ModuleName }
-func (m MsgRegisterValidator) Type() string               { return "register_validator" }
+func (m *MsgRegisterValidator) ProtoMessage()               {}
+func (m *MsgRegisterValidator) Reset()                      { *m = MsgRegisterValidator{} }
+func (m *MsgRegisterValidator) String() string              { b, _ := json.Marshal(m); return string(b) }
+func (m MsgRegisterValidator) Route() string                { return ModuleName }
+func (m MsgRegisterValidator) Type() string                 { return "register_validator" }
 func (m MsgRegisterValidator) GetSigners() []sdk.AccAddress { return []sdk.AccAddress{m.Sender} }
 func (m MsgRegisterValidator) ValidateBasic() error {
 	if m.OperatorAddr == "" || m.PubKey == "" || m.DomainName == "" {
@@ -91,11 +91,11 @@ type MsgWithdrawStake struct {
 	Amount       int64          `protobuf:"varint,3,opt,name=amount,proto3" json:"amount"`
 }
 
-func (m *MsgWithdrawStake) ProtoMessage()             {}
-func (m *MsgWithdrawStake) Reset()                    { *m = MsgWithdrawStake{} }
-func (m *MsgWithdrawStake) String() string            { b, _ := json.Marshal(m); return string(b) }
-func (m MsgWithdrawStake) Route() string              { return ModuleName }
-func (m MsgWithdrawStake) Type() string               { return "withdraw_stake" }
+func (m *MsgWithdrawStake) ProtoMessage()               {}
+func (m *MsgWithdrawStake) Reset()                      { *m = MsgWithdrawStake{} }
+func (m *MsgWithdrawStake) String() string              { b, _ := json.Marshal(m); return string(b) }
+func (m MsgWithdrawStake) Route() string                { return ModuleName }
+func (m MsgWithdrawStake) Type() string                 { return "withdraw_stake" }
 func (m MsgWithdrawStake) GetSigners() []sdk.AccAddress { return []sdk.AccAddress{m.Sender} }
 func (m MsgWithdrawStake) ValidateBasic() error {
 	if m.OperatorAddr == "" {
@@ -114,11 +114,11 @@ type MsgRemoveValidator struct {
 	OperatorAddr string         `protobuf:"bytes,2,opt,name=operator_addr,json=operatorAddr,proto3" json:"operator_addr"`
 }
 
-func (m *MsgRemoveValidator) ProtoMessage()             {}
-func (m *MsgRemoveValidator) Reset()                    { *m = MsgRemoveValidator{} }
-func (m *MsgRemoveValidator) String() string            { b, _ := json.Marshal(m); return string(b) }
-func (m MsgRemoveValidator) Route() string              { return ModuleName }
-func (m MsgRemoveValidator) Type() string               { return "remove_validator" }
+func (m *MsgRemoveValidator) ProtoMessage()               {}
+func (m *MsgRemoveValidator) Reset()                      { *m = MsgRemoveValidator{} }
+func (m *MsgRemoveValidator) String() string              { b, _ := json.Marshal(m); return string(b) }
+func (m MsgRemoveValidator) Route() string                { return ModuleName }
+func (m MsgRemoveValidator) Type() string                 { return "remove_validator" }
 func (m MsgRemoveValidator) GetSigners() []sdk.AccAddress { return []sdk.AccAddress{m.Sender} }
 func (m MsgRemoveValidator) ValidateBasic() error {
 	if m.OperatorAddr == "" {
@@ -134,11 +134,11 @@ type MsgUnjail struct {
 	OperatorAddr string         `protobuf:"bytes,2,opt,name=operator_addr,json=operatorAddr,proto3" json:"operator_addr"`
 }
 
-func (m *MsgUnjail) ProtoMessage()             {}
-func (m *MsgUnjail) Reset()                    { *m = MsgUnjail{} }
-func (m *MsgUnjail) String() string            { b, _ := json.Marshal(m); return string(b) }
-func (m MsgUnjail) Route() string              { return ModuleName }
-func (m MsgUnjail) Type() string               { return "unjail" }
+func (m *MsgUnjail) ProtoMessage()               {}
+func (m *MsgUnjail) Reset()                      { *m = MsgUnjail{} }
+func (m *MsgUnjail) String() string              { b, _ := json.Marshal(m); return string(b) }
+func (m MsgUnjail) Route() string                { return ModuleName }
+func (m MsgUnjail) Type() string                 { return "unjail" }
 func (m MsgUnjail) GetSigners() []sdk.AccAddress { return []sdk.AccAddress{m.Sender} }
 func (m MsgUnjail) ValidateBasic() error {
 	if m.OperatorAddr == "" {
@@ -156,11 +156,11 @@ type MsgJoinPermissionRegister struct {
 	DomainPubKey string         `protobuf:"bytes,4,opt,name=domain_pub_key,json=domainPubKey,proto3" json:"domain_pub_key"` // hex-encoded
 }
 
-func (m *MsgJoinPermissionRegister) ProtoMessage()             {}
-func (m *MsgJoinPermissionRegister) Reset()                    { *m = MsgJoinPermissionRegister{} }
-func (m *MsgJoinPermissionRegister) String() string            { b, _ := json.Marshal(m); return string(b) }
-func (m MsgJoinPermissionRegister) Route() string              { return ModuleName }
-func (m MsgJoinPermissionRegister) Type() string               { return "join_permission_register" }
+func (m *MsgJoinPermissionRegister) ProtoMessage()               {}
+func (m *MsgJoinPermissionRegister) Reset()                      { *m = MsgJoinPermissionRegister{} }
+func (m *MsgJoinPermissionRegister) String() string              { b, _ := json.Marshal(m); return string(b) }
+func (m MsgJoinPermissionRegister) Route() string                { return ModuleName }
+func (m MsgJoinPermissionRegister) Type() string                 { return "join_permission_register" }
 func (m MsgJoinPermissionRegister) GetSigners() []sdk.AccAddress { return []sdk.AccAddress{m.Sender} }
 func (m MsgJoinPermissionRegister) ValidateBasic() error {
 	if m.DomainName == "" || m.MemberAddr == "" || m.DomainPubKey == "" {
@@ -176,11 +176,11 @@ type MsgPurgePermissionRegister struct {
 	DomainName string         `protobuf:"bytes,2,opt,name=domain_name,json=domainName,proto3" json:"domain_name"`
 }
 
-func (m *MsgPurgePermissionRegister) ProtoMessage()             {}
-func (m *MsgPurgePermissionRegister) Reset()                    { *m = MsgPurgePermissionRegister{} }
-func (m *MsgPurgePermissionRegister) String() string            { b, _ := json.Marshal(m); return string(b) }
-func (m MsgPurgePermissionRegister) Route() string              { return ModuleName }
-func (m MsgPurgePermissionRegister) Type() string               { return "purge_permission_register" }
+func (m *MsgPurgePermissionRegister) ProtoMessage()               {}
+func (m *MsgPurgePermissionRegister) Reset()                      { *m = MsgPurgePermissionRegister{} }
+func (m *MsgPurgePermissionRegister) String() string              { b, _ := json.Marshal(m); return string(b) }
+func (m MsgPurgePermissionRegister) Route() string                { return ModuleName }
+func (m MsgPurgePermissionRegister) Type() string                 { return "purge_permission_register" }
 func (m MsgPurgePermissionRegister) GetSigners() []sdk.AccAddress { return []sdk.AccAddress{m.Caller} }
 func (m MsgPurgePermissionRegister) ValidateBasic() error {
 	if m.DomainName == "" {
@@ -198,11 +198,11 @@ type MsgPlaceStoneOnIssue struct {
 	MemberAddr string         `protobuf:"bytes,4,opt,name=member_addr,json=memberAddr,proto3" json:"member_addr"`
 }
 
-func (m *MsgPlaceStoneOnIssue) ProtoMessage()             {}
-func (m *MsgPlaceStoneOnIssue) Reset()                    { *m = MsgPlaceStoneOnIssue{} }
-func (m *MsgPlaceStoneOnIssue) String() string            { b, _ := json.Marshal(m); return string(b) }
-func (m MsgPlaceStoneOnIssue) Route() string              { return ModuleName }
-func (m MsgPlaceStoneOnIssue) Type() string               { return "place_stone_issue" }
+func (m *MsgPlaceStoneOnIssue) ProtoMessage()               {}
+func (m *MsgPlaceStoneOnIssue) Reset()                      { *m = MsgPlaceStoneOnIssue{} }
+func (m *MsgPlaceStoneOnIssue) String() string              { b, _ := json.Marshal(m); return string(b) }
+func (m MsgPlaceStoneOnIssue) Route() string                { return ModuleName }
+func (m MsgPlaceStoneOnIssue) Type() string                 { return "place_stone_issue" }
 func (m MsgPlaceStoneOnIssue) GetSigners() []sdk.AccAddress { return []sdk.AccAddress{m.Sender} }
 func (m MsgPlaceStoneOnIssue) ValidateBasic() error {
 	if m.DomainName == "" || m.IssueName == "" || m.MemberAddr == "" {
@@ -221,11 +221,11 @@ type MsgPlaceStoneOnSuggestion struct {
 	MemberAddr     string         `protobuf:"bytes,5,opt,name=member_addr,json=memberAddr,proto3" json:"member_addr"`
 }
 
-func (m *MsgPlaceStoneOnSuggestion) ProtoMessage()             {}
-func (m *MsgPlaceStoneOnSuggestion) Reset()                    { *m = MsgPlaceStoneOnSuggestion{} }
-func (m *MsgPlaceStoneOnSuggestion) String() string            { b, _ := json.Marshal(m); return string(b) }
-func (m MsgPlaceStoneOnSuggestion) Route() string              { return ModuleName }
-func (m MsgPlaceStoneOnSuggestion) Type() string               { return "place_stone_suggestion" }
+func (m *MsgPlaceStoneOnSuggestion) ProtoMessage()               {}
+func (m *MsgPlaceStoneOnSuggestion) Reset()                      { *m = MsgPlaceStoneOnSuggestion{} }
+func (m *MsgPlaceStoneOnSuggestion) String() string              { b, _ := json.Marshal(m); return string(b) }
+func (m MsgPlaceStoneOnSuggestion) Route() string                { return ModuleName }
+func (m MsgPlaceStoneOnSuggestion) Type() string                 { return "place_stone_suggestion" }
 func (m MsgPlaceStoneOnSuggestion) GetSigners() []sdk.AccAddress { return []sdk.AccAddress{m.Sender} }
 func (m MsgPlaceStoneOnSuggestion) ValidateBasic() error {
 	if m.DomainName == "" || m.IssueName == "" || m.SuggestionName == "" || m.MemberAddr == "" {
@@ -243,11 +243,11 @@ type MsgPlaceStoneOnMember struct {
 	VoterAddr    string         `protobuf:"bytes,4,opt,name=voter_addr,json=voterAddr,proto3" json:"voter_addr"`
 }
 
-func (m *MsgPlaceStoneOnMember) ProtoMessage()             {}
-func (m *MsgPlaceStoneOnMember) Reset()                    { *m = MsgPlaceStoneOnMember{} }
-func (m *MsgPlaceStoneOnMember) String() string            { b, _ := json.Marshal(m); return string(b) }
-func (m MsgPlaceStoneOnMember) Route() string              { return ModuleName }
-func (m MsgPlaceStoneOnMember) Type() string               { return "place_stone_member" }
+func (m *MsgPlaceStoneOnMember) ProtoMessage()               {}
+func (m *MsgPlaceStoneOnMember) Reset()                      { *m = MsgPlaceStoneOnMember{} }
+func (m *MsgPlaceStoneOnMember) String() string              { b, _ := json.Marshal(m); return string(b) }
+func (m MsgPlaceStoneOnMember) Route() string                { return ModuleName }
+func (m MsgPlaceStoneOnMember) Type() string                 { return "place_stone_member" }
 func (m MsgPlaceStoneOnMember) GetSigners() []sdk.AccAddress { return []sdk.AccAddress{m.Sender} }
 func (m MsgPlaceStoneOnMember) ValidateBasic() error {
 	if m.DomainName == "" || m.TargetMember == "" || m.VoterAddr == "" {
@@ -265,11 +265,11 @@ type MsgVoteToExclude struct {
 	VoterAddr    string         `protobuf:"bytes,4,opt,name=voter_addr,json=voterAddr,proto3" json:"voter_addr"`
 }
 
-func (m *MsgVoteToExclude) ProtoMessage()             {}
-func (m *MsgVoteToExclude) Reset()                    { *m = MsgVoteToExclude{} }
-func (m *MsgVoteToExclude) String() string            { b, _ := json.Marshal(m); return string(b) }
-func (m MsgVoteToExclude) Route() string              { return ModuleName }
-func (m MsgVoteToExclude) Type() string               { return "vote_exclude" }
+func (m *MsgVoteToExclude) ProtoMessage()               {}
+func (m *MsgVoteToExclude) Reset()                      { *m = MsgVoteToExclude{} }
+func (m *MsgVoteToExclude) String() string              { b, _ := json.Marshal(m); return string(b) }
+func (m MsgVoteToExclude) Route() string                { return ModuleName }
+func (m MsgVoteToExclude) Type() string                 { return "vote_exclude" }
 func (m MsgVoteToExclude) GetSigners() []sdk.AccAddress { return []sdk.AccAddress{m.Sender} }
 func (m MsgVoteToExclude) ValidateBasic() error {
 	if m.DomainName == "" || m.TargetMember == "" || m.VoterAddr == "" {
@@ -288,11 +288,11 @@ type MsgVoteToDelete struct {
 	MemberAddr     string         `protobuf:"bytes,5,opt,name=member_addr,json=memberAddr,proto3" json:"member_addr"`
 }
 
-func (m *MsgVoteToDelete) ProtoMessage()             {}
-func (m *MsgVoteToDelete) Reset()                    { *m = MsgVoteToDelete{} }
-func (m *MsgVoteToDelete) String() string            { b, _ := json.Marshal(m); return string(b) }
-func (m MsgVoteToDelete) Route() string              { return ModuleName }
-func (m MsgVoteToDelete) Type() string               { return "vote_delete" }
+func (m *MsgVoteToDelete) ProtoMessage()               {}
+func (m *MsgVoteToDelete) Reset()                      { *m = MsgVoteToDelete{} }
+func (m *MsgVoteToDelete) String() string              { b, _ := json.Marshal(m); return string(b) }
+func (m MsgVoteToDelete) Route() string                { return ModuleName }
+func (m MsgVoteToDelete) Type() string                 { return "vote_delete" }
 func (m MsgVoteToDelete) GetSigners() []sdk.AccAddress { return []sdk.AccAddress{m.Sender} }
 func (m MsgVoteToDelete) ValidateBasic() error {
 	if m.DomainName == "" || m.IssueName == "" || m.SuggestionName == "" || m.MemberAddr == "" {
@@ -309,15 +309,15 @@ type MsgRateProposal struct {
 	IssueName      string         `protobuf:"bytes,3,opt,name=issue_name,json=issueName,proto3" json:"issue_name"`
 	SuggestionName string         `protobuf:"bytes,4,opt,name=suggestion_name,json=suggestionName,proto3" json:"suggestion_name"`
 	Rating         int32          `protobuf:"varint,5,opt,name=rating,proto3" json:"rating"`
-	DomainPubKey   string         `protobuf:"bytes,6,opt,name=domain_pub_key,json=domainPubKey,proto3" json:"domain_pub_key"`     // hex-encoded ed25519 pubkey
-	Signature      string         `protobuf:"bytes,7,opt,name=signature,proto3" json:"signature"`                                   // hex-encoded signature
+	DomainPubKey   string         `protobuf:"bytes,6,opt,name=domain_pub_key,json=domainPubKey,proto3" json:"domain_pub_key"` // hex-encoded ed25519 pubkey
+	Signature      string         `protobuf:"bytes,7,opt,name=signature,proto3" json:"signature"`                             // hex-encoded signature
 }
 
-func (m *MsgRateProposal) ProtoMessage()             {}
-func (m *MsgRateProposal) Reset()                    { *m = MsgRateProposal{} }
-func (m *MsgRateProposal) String() string            { b, _ := json.Marshal(m); return string(b) }
-func (m MsgRateProposal) Route() string              { return ModuleName }
-func (m MsgRateProposal) Type() string               { return "rate_proposal" }
+func (m *MsgRateProposal) ProtoMessage()               {}
+func (m *MsgRateProposal) Reset()                      { *m = MsgRateProposal{} }
+func (m *MsgRateProposal) String() string              { b, _ := json.Marshal(m); return string(b) }
+func (m MsgRateProposal) Route() string                { return ModuleName }
+func (m MsgRateProposal) Type() string                 { return "rate_proposal" }
 func (m MsgRateProposal) GetSigners() []sdk.AccAddress { return []sdk.AccAddress{m.Sender} }
 func (m MsgRateProposal) ValidateBasic() error {
 	if m.DomainName == "" || m.IssueName == "" || m.SuggestionName == "" {
@@ -340,16 +340,16 @@ type MsgRateWithProof struct {
 	IssueName      string         `protobuf:"bytes,3,opt,name=issue_name,json=issueName,proto3" json:"issue_name"`
 	SuggestionName string         `protobuf:"bytes,4,opt,name=suggestion_name,json=suggestionName,proto3" json:"suggestion_name"`
 	Rating         int32          `protobuf:"varint,5,opt,name=rating,proto3" json:"rating"`
-	Proof          string         `protobuf:"bytes,6,opt,name=proof,proto3" json:"proof"`                                         // hex-encoded Groth16 proof
-	NullifierHash  string         `protobuf:"bytes,7,opt,name=nullifier_hash,json=nullifierHash,proto3" json:"nullifier_hash"`     // hex-encoded (64 chars)
-	MerkleRoot     string         `protobuf:"bytes,8,opt,name=merkle_root,json=merkleRoot,proto3" json:"merkle_root"`              // optional; empty = current root
+	Proof          string         `protobuf:"bytes,6,opt,name=proof,proto3" json:"proof"`                                      // hex-encoded Groth16 proof
+	NullifierHash  string         `protobuf:"bytes,7,opt,name=nullifier_hash,json=nullifierHash,proto3" json:"nullifier_hash"` // hex-encoded (64 chars)
+	MerkleRoot     string         `protobuf:"bytes,8,opt,name=merkle_root,json=merkleRoot,proto3" json:"merkle_root"`          // optional; empty = current root
 }
 
-func (m *MsgRateWithProof) ProtoMessage()             {}
-func (m *MsgRateWithProof) Reset()                    { *m = MsgRateWithProof{} }
-func (m *MsgRateWithProof) String() string            { b, _ := json.Marshal(m); return string(b) }
-func (m MsgRateWithProof) Route() string              { return ModuleName }
-func (m MsgRateWithProof) Type() string               { return "rate_with_proof" }
+func (m *MsgRateWithProof) ProtoMessage()               {}
+func (m *MsgRateWithProof) Reset()                      { *m = MsgRateWithProof{} }
+func (m *MsgRateWithProof) String() string              { b, _ := json.Marshal(m); return string(b) }
+func (m MsgRateWithProof) Route() string                { return ModuleName }
+func (m MsgRateWithProof) Type() string                 { return "rate_with_proof" }
 func (m MsgRateWithProof) GetSigners() []sdk.AccAddress { return []sdk.AccAddress{m.Sender} }
 func (m MsgRateWithProof) ValidateBasic() error {
 	if m.DomainName == "" || m.IssueName == "" || m.SuggestionName == "" {
@@ -389,11 +389,11 @@ type MsgAddMember struct {
 	NewMember  string         `protobuf:"bytes,3,opt,name=new_member,json=newMember,proto3" json:"new_member"`
 }
 
-func (m *MsgAddMember) ProtoMessage()             {}
-func (m *MsgAddMember) Reset()                    { *m = MsgAddMember{} }
-func (m *MsgAddMember) String() string            { b, _ := json.Marshal(m); return string(b) }
-func (m MsgAddMember) Route() string              { return ModuleName }
-func (m MsgAddMember) Type() string               { return "add_member" }
+func (m *MsgAddMember) ProtoMessage()               {}
+func (m *MsgAddMember) Reset()                      { *m = MsgAddMember{} }
+func (m *MsgAddMember) String() string              { b, _ := json.Marshal(m); return string(b) }
+func (m MsgAddMember) Route() string                { return ModuleName }
+func (m MsgAddMember) Type() string                 { return "add_member" }
 func (m MsgAddMember) GetSigners() []sdk.AccAddress { return []sdk.AccAddress{m.Sender} }
 func (m MsgAddMember) ValidateBasic() error {
 	if m.DomainName == "" || m.NewMember == "" {
@@ -412,11 +412,11 @@ type MsgOnboardToDomain struct {
 	SignatureHex    string         `protobuf:"bytes,5,opt,name=signature_hex,json=signatureHex,proto3" json:"signature_hex"`
 }
 
-func (m *MsgOnboardToDomain) ProtoMessage()             {}
-func (m *MsgOnboardToDomain) Reset()                    { *m = MsgOnboardToDomain{} }
-func (m *MsgOnboardToDomain) String() string            { b, _ := json.Marshal(m); return string(b) }
-func (m MsgOnboardToDomain) Route() string              { return ModuleName }
-func (m MsgOnboardToDomain) Type() string               { return "onboard_to_domain" }
+func (m *MsgOnboardToDomain) ProtoMessage()               {}
+func (m *MsgOnboardToDomain) Reset()                      { *m = MsgOnboardToDomain{} }
+func (m *MsgOnboardToDomain) String() string              { b, _ := json.Marshal(m); return string(b) }
+func (m MsgOnboardToDomain) Route() string                { return ModuleName }
+func (m MsgOnboardToDomain) Type() string                 { return "onboard_to_domain" }
 func (m MsgOnboardToDomain) GetSigners() []sdk.AccAddress { return []sdk.AccAddress{m.Sender} }
 func (m MsgOnboardToDomain) ValidateBasic() error {
 	if m.DomainName == "" {
@@ -436,11 +436,11 @@ type MsgApproveOnboarding struct {
 	RequesterAddr string         `protobuf:"bytes,3,opt,name=requester_addr,json=requesterAddr,proto3" json:"requester_addr"`
 }
 
-func (m *MsgApproveOnboarding) ProtoMessage()             {}
-func (m *MsgApproveOnboarding) Reset()                    { *m = MsgApproveOnboarding{} }
-func (m *MsgApproveOnboarding) String() string            { b, _ := json.Marshal(m); return string(b) }
-func (m MsgApproveOnboarding) Route() string              { return ModuleName }
-func (m MsgApproveOnboarding) Type() string               { return "approve_onboarding" }
+func (m *MsgApproveOnboarding) ProtoMessage()               {}
+func (m *MsgApproveOnboarding) Reset()                      { *m = MsgApproveOnboarding{} }
+func (m *MsgApproveOnboarding) String() string              { b, _ := json.Marshal(m); return string(b) }
+func (m MsgApproveOnboarding) Route() string                { return ModuleName }
+func (m MsgApproveOnboarding) Type() string                 { return "approve_onboarding" }
 func (m MsgApproveOnboarding) GetSigners() []sdk.AccAddress { return []sdk.AccAddress{m.Sender} }
 func (m MsgApproveOnboarding) ValidateBasic() error {
 	if m.DomainName == "" || m.RequesterAddr == "" {
@@ -457,11 +457,11 @@ type MsgRejectOnboarding struct {
 	RequesterAddr string         `protobuf:"bytes,3,opt,name=requester_addr,json=requesterAddr,proto3" json:"requester_addr"`
 }
 
-func (m *MsgRejectOnboarding) ProtoMessage()             {}
-func (m *MsgRejectOnboarding) Reset()                    { *m = MsgRejectOnboarding{} }
-func (m *MsgRejectOnboarding) String() string            { b, _ := json.Marshal(m); return string(b) }
-func (m MsgRejectOnboarding) Route() string              { return ModuleName }
-func (m MsgRejectOnboarding) Type() string               { return "reject_onboarding" }
+func (m *MsgRejectOnboarding) ProtoMessage()               {}
+func (m *MsgRejectOnboarding) Reset()                      { *m = MsgRejectOnboarding{} }
+func (m *MsgRejectOnboarding) String() string              { b, _ := json.Marshal(m); return string(b) }
+func (m MsgRejectOnboarding) Route() string                { return ModuleName }
+func (m MsgRejectOnboarding) Type() string                 { return "reject_onboarding" }
 func (m MsgRejectOnboarding) GetSigners() []sdk.AccAddress { return []sdk.AccAddress{m.Sender} }
 func (m MsgRejectOnboarding) ValidateBasic() error {
 	if m.DomainName == "" || m.RequesterAddr == "" {
@@ -478,11 +478,11 @@ type MsgRegisterIdentity struct {
 	Commitment string         `protobuf:"bytes,3,opt,name=commitment,proto3" json:"commitment"` // hex-encoded MiMC commitment (64 hex chars)
 }
 
-func (m *MsgRegisterIdentity) ProtoMessage()             {}
-func (m *MsgRegisterIdentity) Reset()                    { *m = MsgRegisterIdentity{} }
-func (m *MsgRegisterIdentity) String() string            { b, _ := json.Marshal(m); return string(b) }
-func (m MsgRegisterIdentity) Route() string              { return ModuleName }
-func (m MsgRegisterIdentity) Type() string               { return "register_identity" }
+func (m *MsgRegisterIdentity) ProtoMessage()               {}
+func (m *MsgRegisterIdentity) Reset()                      { *m = MsgRegisterIdentity{} }
+func (m *MsgRegisterIdentity) String() string              { b, _ := json.Marshal(m); return string(b) }
+func (m MsgRegisterIdentity) Route() string                { return ModuleName }
+func (m MsgRegisterIdentity) Type() string                 { return "register_identity" }
 func (m MsgRegisterIdentity) GetSigners() []sdk.AccAddress { return []sdk.AccAddress{m.Sender} }
 func (m MsgRegisterIdentity) ValidateBasic() error {
 	if m.DomainName == "" {
@@ -511,11 +511,11 @@ type MsgCastElectionVote struct {
 	Choice        int32          `protobuf:"varint,6,opt,name=choice,proto3" json:"choice"` // 0=approve, 1=abstain
 }
 
-func (m *MsgCastElectionVote) ProtoMessage()             {}
-func (m *MsgCastElectionVote) Reset()                    { *m = MsgCastElectionVote{} }
-func (m *MsgCastElectionVote) String() string            { b, _ := json.Marshal(m); return string(b) }
-func (m MsgCastElectionVote) Route() string              { return ModuleName }
-func (m MsgCastElectionVote) Type() string               { return "cast_election_vote" }
+func (m *MsgCastElectionVote) ProtoMessage()               {}
+func (m *MsgCastElectionVote) Reset()                      { *m = MsgCastElectionVote{} }
+func (m *MsgCastElectionVote) String() string              { b, _ := json.Marshal(m); return string(b) }
+func (m MsgCastElectionVote) Route() string                { return ModuleName }
+func (m MsgCastElectionVote) Type() string                 { return "cast_election_vote" }
 func (m MsgCastElectionVote) GetSigners() []sdk.AccAddress { return []sdk.AccAddress{m.Sender} }
 func (m MsgCastElectionVote) ValidateBasic() error {
 	if m.DomainName == "" || m.IssueName == "" || m.VoterAddr == "" {
@@ -538,11 +538,11 @@ type MsgDepositToDomain struct {
 	Amount     sdk.Coin       `protobuf:"bytes,3,opt,name=amount,proto3" json:"amount"`
 }
 
-func (m *MsgDepositToDomain) ProtoMessage()             {}
-func (m *MsgDepositToDomain) Reset()                    { *m = MsgDepositToDomain{} }
-func (m *MsgDepositToDomain) String() string            { b, _ := json.Marshal(m); return string(b) }
-func (m MsgDepositToDomain) Route() string              { return ModuleName }
-func (m MsgDepositToDomain) Type() string               { return "deposit_to_domain" }
+func (m *MsgDepositToDomain) ProtoMessage()               {}
+func (m *MsgDepositToDomain) Reset()                      { *m = MsgDepositToDomain{} }
+func (m *MsgDepositToDomain) String() string              { b, _ := json.Marshal(m); return string(b) }
+func (m MsgDepositToDomain) Route() string                { return ModuleName }
+func (m MsgDepositToDomain) Type() string                 { return "deposit_to_domain" }
 func (m MsgDepositToDomain) GetSigners() []sdk.AccAddress { return []sdk.AccAddress{m.Sender} }
 func (m MsgDepositToDomain) ValidateBasic() error {
 	if m.DomainName == "" {
@@ -551,8 +551,8 @@ func (m MsgDepositToDomain) ValidateBasic() error {
 	if !m.Amount.IsPositive() {
 		return sdkerrors.ErrInvalidRequest.Wrap("amount must be positive")
 	}
-	if m.Amount.Denom != "pnyx" {
-		return sdkerrors.ErrInvalidRequest.Wrap("only pnyx deposits supported")
+	if m.Amount.Denom != PNYXDenom {
+		return sdkerrors.ErrInvalidRequest.Wrap("only upnyx deposits supported")
 	}
 	return nil
 }
@@ -566,11 +566,11 @@ type MsgWithdrawFromDomain struct {
 	Amount     sdk.Coin       `protobuf:"bytes,4,opt,name=amount,proto3" json:"amount"`
 }
 
-func (m *MsgWithdrawFromDomain) ProtoMessage()             {}
-func (m *MsgWithdrawFromDomain) Reset()                    { *m = MsgWithdrawFromDomain{} }
-func (m *MsgWithdrawFromDomain) String() string            { b, _ := json.Marshal(m); return string(b) }
-func (m MsgWithdrawFromDomain) Route() string              { return ModuleName }
-func (m MsgWithdrawFromDomain) Type() string               { return "withdraw_from_domain" }
+func (m *MsgWithdrawFromDomain) ProtoMessage()               {}
+func (m *MsgWithdrawFromDomain) Reset()                      { *m = MsgWithdrawFromDomain{} }
+func (m *MsgWithdrawFromDomain) String() string              { b, _ := json.Marshal(m); return string(b) }
+func (m MsgWithdrawFromDomain) Route() string                { return ModuleName }
+func (m MsgWithdrawFromDomain) Type() string                 { return "withdraw_from_domain" }
 func (m MsgWithdrawFromDomain) GetSigners() []sdk.AccAddress { return []sdk.AccAddress{m.Sender} }
 func (m MsgWithdrawFromDomain) ValidateBasic() error {
 	if m.DomainName == "" {
@@ -582,8 +582,8 @@ func (m MsgWithdrawFromDomain) ValidateBasic() error {
 	if !m.Amount.IsPositive() {
 		return sdkerrors.ErrInvalidRequest.Wrap("amount must be positive")
 	}
-	if m.Amount.Denom != "pnyx" {
-		return sdkerrors.ErrInvalidRequest.Wrap("only pnyx withdrawals supported")
+	if m.Amount.Denom != PNYXDenom {
+		return sdkerrors.ErrInvalidRequest.Wrap("only upnyx withdrawals supported")
 	}
 	return nil
 }

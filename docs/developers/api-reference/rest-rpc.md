@@ -95,7 +95,7 @@ GET /cosmos/bank/v1beta1/supply
 curl http://localhost:1317/cosmos/bank/v1beta1/supply
 
 # Supply of specific denom
-GET /cosmos/bank/v1beta1/supply/by_denom?denom=pnyx
+GET /cosmos/bank/v1beta1/supply/by_denom?denom=upnyx
 ```
 
 ### Auth Module

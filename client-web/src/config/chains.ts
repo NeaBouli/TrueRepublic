@@ -7,9 +7,9 @@ export const TRUEREPUBLIC_MAINNET: ChainConfig = {
   rest: 'http://localhost:1317',
   bech32Prefix: 'true',
   coinDenom: 'PNYX',
-  coinMinimalDenom: 'pnyx',
+  coinMinimalDenom: 'upnyx',
   coinDecimals: 6,
-  gasPrice: '0.025pnyx',
+  gasPrice: '25000upnyx',
 };
 
 export const TRUEREPUBLIC_TESTNET: ChainConfig = {
@@ -19,9 +19,9 @@ export const TRUEREPUBLIC_TESTNET: ChainConfig = {
   rest: 'http://localhost:1317',
   bech32Prefix: 'true',
   coinDenom: 'PNYX',
-  coinMinimalDenom: 'pnyx',
+  coinMinimalDenom: 'upnyx',
   coinDecimals: 6,
-  gasPrice: '0.025pnyx',
+  gasPrice: '25000upnyx',
 };
 
 export const DEFAULT_CHAIN = TRUEREPUBLIC_MAINNET;

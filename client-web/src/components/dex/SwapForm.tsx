@@ -22,7 +22,9 @@ export function SwapForm() {
     useWalletStore();
   const { swapEstimate, estimateSwap, clearEstimate, assets } = useDEXStore();
 
-  const [inputDenom, setInputDenom] = useState<string | null>('pnyx');
+  const [inputDenom, setInputDenom] = useState<string | null>(
+    DEFAULT_CHAIN.coinMinimalDenom
+  );
   const [outputDenom, setOutputDenom] = useState<string | null>(null);
   const [inputAmount, setInputAmount] = useState('');
   const [slippage, setSlippage] = useState('1');

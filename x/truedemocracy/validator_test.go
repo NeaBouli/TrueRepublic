@@ -9,11 +9,11 @@ import (
 	"cosmossdk.io/store"
 	"cosmossdk.io/store/metrics"
 	storetypes "cosmossdk.io/store/types"
+	cmtproto "github.com/cometbft/cometbft/proto/tendermint/types"
 	dbm "github.com/cosmos/cosmos-db"
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/crypto/keys/ed25519"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	cmtproto "github.com/cometbft/cometbft/proto/tendermint/types"
 
 	rewards "truerepublic/treasury/keeper"
 )
@@ -49,10 +49,24 @@ func testPubKey(seed string) []byte {
 	return ed25519.GenPrivKeyFromSecret([]byte(seed)).PubKey().Bytes()
 }
 
+func TestBuildTreeUsesCanonicalStakeUnits(t *testing.T) {
+	nodes := BuildTree()
+	if len(nodes) != 7 {
+		t.Fatalf("node count = %d, want 7", len(nodes))
+	}
+
+	want := math.NewInt(100_000 * PNYXUnit)
+	for _, node := range nodes {
+		if got := node.Stake.AmountOf(PNYXDenom); !got.Equal(want) {
+			t.Fatalf("%s stake = %s%s, want %s%s", node.ID, got, PNYXDenom, want, PNYXDenom)
+		}
+	}
+}
+
 // setupDomainWithValidator creates a domain and registers a validator in it.
 func setupDomainWithValidator(t *testing.T, k Keeper, ctx sdk.Context) (string, []byte) {
 	t.Helper()
-	k.CreateDomain(ctx, "TestDomain", sdk.AccAddress("admin1"), sdk.NewCoins(sdk.NewInt64Coin("pnyx", 500_000)))
+	k.CreateDomain(ctx, "TestDomain", sdk.AccAddress("admin1"), sdk.NewCoins(sdk.NewInt64Coin(PNYXDenom, 500_000*PNYXUnit)))
 
 	// Re-save domain with the validator operator as a member.
 	domain, _ := k.GetDomain(ctx, "TestDomain")
@@ -62,7 +76,7 @@ func setupDomainWithValidator(t *testing.T, k Keeper, ctx sdk.Context) (string, 
 	st.Set([]byte("domain:TestDomain"), bz)
 
 	pk := testPubKey("oper1")
-	stake := sdk.NewCoins(sdk.NewInt64Coin("pnyx", 100_000))
+	stake := sdk.NewCoins(sdk.NewInt64Coin(PNYXDenom, 100_000*PNYXUnit))
 	if err := k.RegisterValidator(ctx, "oper1", pk, stake, "TestDomain"); err != nil {
 		t.Fatal(err)
 	}
@@ -72,7 +86,7 @@ func setupDomainWithValidator(t *testing.T, k Keeper, ctx sdk.Context) (string, 
 func TestRegisterValidator(t *testing.T) {
 	k, ctx := setupKeeper(t)
 
-	k.CreateDomain(ctx, "Party", sdk.AccAddress("admin1"), sdk.NewCoins(sdk.NewInt64Coin("pnyx", 500_000)))
+	k.CreateDomain(ctx, "Party", sdk.AccAddress("admin1"), sdk.NewCoins(sdk.NewInt64Coin(PNYXDenom, 500_000*PNYXUnit)))
 	// Add member to domain.
 	domain, _ := k.GetDomain(ctx, "Party")
 	domain.Members = append(domain.Members, "val1")
@@ -83,7 +97,7 @@ func TestRegisterValidator(t *testing.T) {
 	pk := testPubKey("val1")
 
 	t.Run("happy path", func(t *testing.T) {
-		stake := sdk.NewCoins(sdk.NewInt64Coin("pnyx", 100_000))
+		stake := sdk.NewCoins(sdk.NewInt64Coin(PNYXDenom, 100_000*PNYXUnit))
 		err := k.RegisterValidator(ctx, "val1", pk, stake, "Party")
 		if err != nil {
 			t.Fatalf("unexpected error: %v", err)
@@ -101,7 +115,7 @@ func TestRegisterValidator(t *testing.T) {
 	})
 
 	t.Run("duplicate registration", func(t *testing.T) {
-		stake := sdk.NewCoins(sdk.NewInt64Coin("pnyx", 100_000))
+		stake := sdk.NewCoins(sdk.NewInt64Coin(PNYXDenom, 100_000*PNYXUnit))
 		err := k.RegisterValidator(ctx, "val1", pk, stake, "Party")
 		if err == nil {
 			t.Fatal("expected error for duplicate registration")
@@ -115,7 +129,7 @@ func TestRegisterValidator(t *testing.T) {
 		bz := k.cdc.MustMarshalLengthPrefixed(&domain)
 		st.Set([]byte("domain:Party"), bz)
 
-		stake := sdk.NewCoins(sdk.NewInt64Coin("pnyx", 99_999))
+		stake := sdk.NewCoins(sdk.NewInt64Coin(PNYXDenom, 99_999*PNYXUnit))
 		err := k.RegisterValidator(ctx, "val2", pk2, stake, "Party")
 		if err == nil {
 			t.Fatal("expected error for insufficient stake")
@@ -124,7 +138,7 @@ func TestRegisterValidator(t *testing.T) {
 
 	t.Run("non-member", func(t *testing.T) {
 		pk3 := testPubKey("outsider")
-		stake := sdk.NewCoins(sdk.NewInt64Coin("pnyx", 100_000))
+		stake := sdk.NewCoins(sdk.NewInt64Coin(PNYXDenom, 100_000*PNYXUnit))
 		err := k.RegisterValidator(ctx, "outsider", pk3, stake, "Party")
 		if err == nil {
 			t.Fatal("expected error for non-member")
@@ -137,7 +151,7 @@ func TestRegisterValidator(t *testing.T) {
 		bz := k.cdc.MustMarshalLengthPrefixed(&domain)
 		st.Set([]byte("domain:Party"), bz)
 
-		stake := sdk.NewCoins(sdk.NewInt64Coin("pnyx", 100_000))
+		stake := sdk.NewCoins(sdk.NewInt64Coin(PNYXDenom, 100_000*PNYXUnit))
 		err := k.RegisterValidator(ctx, "val3", []byte("short"), stake, "Party")
 		if err == nil {
 			t.Fatal("expected error for bad pubkey length")
@@ -189,7 +203,7 @@ func TestIterateValidators(t *testing.T) {
 	st.Set([]byte("domain:TestDomain"), bz)
 
 	pk2 := testPubKey("oper2")
-	stake := sdk.NewCoins(sdk.NewInt64Coin("pnyx", 200_000))
+	stake := sdk.NewCoins(sdk.NewInt64Coin(PNYXDenom, 200_000*PNYXUnit))
 	if err := k.RegisterValidator(ctx, "oper2", pk2, stake, "TestDomain"); err != nil {
 		t.Fatal(err)
 	}
@@ -254,7 +268,7 @@ func TestDistributeStakingRewards(t *testing.T) {
 			t.Fatal(err)
 		}
 		val, _ := k.GetValidator(ctx2, "oper1")
-		if !val.Stake.AmountOf("pnyx").Equal(math.NewInt(100_000)) {
+		if !val.Stake.AmountOf(PNYXDenom).Equal(math.NewInt(100_000 * PNYXUnit)) {
 			t.Errorf("stake changed before interval: %s", val.Stake)
 		}
 	})
@@ -266,11 +280,11 @@ func TestDistributeStakingRewards(t *testing.T) {
 			t.Fatal(err)
 		}
 		val, _ := k.GetValidator(ctx2, "oper1")
-		stakeAmt := val.Stake.AmountOf("pnyx")
+		stakeAmt := val.Stake.AmountOf(PNYXDenom)
 
 		// Expected: CalcNodeReward(100000, 0, 3600)
-		expected := rewards.CalcNodeReward(math.NewInt(100_000), math.ZeroInt(), RewardInterval)
-		wantStake := math.NewInt(100_000).Add(expected)
+		expected := rewards.CalcNodeReward(math.NewInt(100_000*PNYXUnit), math.ZeroInt(), RewardInterval)
+		wantStake := math.NewInt(100_000 * PNYXUnit).Add(expected)
 		if !stakeAmt.Equal(wantStake) {
 			t.Errorf("stake = %s, want %s (reward = %s)", stakeAmt, wantStake, expected)
 		}
@@ -325,7 +339,7 @@ func registerVal(t *testing.T, k Keeper, ctx sdk.Context, domainName, operAddr, 
 	st.Set([]byte("domain:"+domainName), bz)
 
 	pk := testPubKey(seed)
-	stake := sdk.NewCoins(sdk.NewInt64Coin("pnyx", stakeAmt))
+	stake := sdk.NewCoins(sdk.NewInt64Coin(PNYXDenom, stakeAmt))
 	if err := k.RegisterValidator(ctx, operAddr, pk, stake, domainName); err != nil {
 		t.Fatal(err)
 	}
@@ -333,19 +347,19 @@ func registerVal(t *testing.T, k Keeper, ctx sdk.Context, domainName, operAddr, 
 
 func TestTransferLimitEnforcement(t *testing.T) {
 	k, ctx := setupKeeper(t)
-	k.CreateDomain(ctx, "LimitDomain", sdk.AccAddress("admin1"), sdk.NewCoins(sdk.NewInt64Coin("pnyx", 5_000_000)))
+	k.CreateDomain(ctx, "LimitDomain", sdk.AccAddress("admin1"), sdk.NewCoins(sdk.NewInt64Coin(PNYXDenom, 5_000_000*PNYXUnit)))
 
-	registerVal(t, k, ctx, "LimitDomain", "val1", "val1-lim", 200_000)
+	registerVal(t, k, ctx, "LimitDomain", "val1", "val1-lim", 200_000*PNYXUnit)
 
 	// Set domain payouts to 1,000,000 → 10% limit = 100,000.
 	domain, _ := k.GetDomain(ctx, "LimitDomain")
-	domain.TotalPayouts = 1_000_000
+	domain.TotalPayouts = 1_000_000 * PNYXUnit
 	st := ctx.KVStore(k.StoreKey)
 	bz := k.cdc.MustMarshalLengthPrefixed(&domain)
 	st.Set([]byte("domain:LimitDomain"), bz)
 
 	// Try to withdraw 150,000 → exceeds 10% limit (100,000). Should fail.
-	err := k.WithdrawStake(ctx, "val1", 150_000)
+	err := k.WithdrawStake(ctx, "val1", 150_000*PNYXUnit)
 	if err == nil {
 		t.Fatal("expected error — withdraw exceeds 10% of domain payouts")
 	}
@@ -353,26 +367,26 @@ func TestTransferLimitEnforcement(t *testing.T) {
 
 func TestTransferWithinLimit(t *testing.T) {
 	k, ctx := setupKeeper(t)
-	k.CreateDomain(ctx, "OkDomain", sdk.AccAddress("admin1"), sdk.NewCoins(sdk.NewInt64Coin("pnyx", 5_000_000)))
+	k.CreateDomain(ctx, "OkDomain", sdk.AccAddress("admin1"), sdk.NewCoins(sdk.NewInt64Coin(PNYXDenom, 5_000_000*PNYXUnit)))
 
-	registerVal(t, k, ctx, "OkDomain", "val1", "val1-ok", 200_000)
+	registerVal(t, k, ctx, "OkDomain", "val1", "val1-ok", 200_000*PNYXUnit)
 
 	// Set domain payouts to 2,000,000 → 10% limit = 200,000.
 	domain, _ := k.GetDomain(ctx, "OkDomain")
-	domain.TotalPayouts = 2_000_000
+	domain.TotalPayouts = 2_000_000 * PNYXUnit
 	st := ctx.KVStore(k.StoreKey)
 	bz := k.cdc.MustMarshalLengthPrefixed(&domain)
 	st.Set([]byte("domain:OkDomain"), bz)
 
 	// Withdraw 100,000 → within limit. Should succeed.
-	err := k.WithdrawStake(ctx, "val1", 100_000)
+	err := k.WithdrawStake(ctx, "val1", 100_000*PNYXUnit)
 	if err != nil {
 		t.Fatalf("withdrawal within limit should succeed: %v", err)
 	}
 
 	// Verify TransferredStake was incremented.
 	domain, _ = k.GetDomain(ctx, "OkDomain")
-	if domain.TransferredStake != 100_000 {
+	if domain.TransferredStake != 100_000*PNYXUnit {
 		t.Errorf("TransferredStake = %d, want 100000", domain.TransferredStake)
 	}
 
@@ -381,44 +395,44 @@ func TestTransferWithinLimit(t *testing.T) {
 	if !found {
 		t.Fatal("validator should still exist")
 	}
-	if val.Stake.AmountOf("pnyx").Int64() != 100_000 {
-		t.Errorf("validator stake = %d, want 100000", val.Stake.AmountOf("pnyx").Int64())
+	if val.Stake.AmountOf(PNYXDenom).Int64() != 100_000*PNYXUnit {
+		t.Errorf("validator stake = %d, want 100000", val.Stake.AmountOf(PNYXDenom).Int64())
 	}
 }
 
 func TestPayoutIncreasesLimit(t *testing.T) {
 	k, ctx := setupKeeper(t)
-	k.CreateDomain(ctx, "GrowDomain", sdk.AccAddress("admin1"), sdk.NewCoins(sdk.NewInt64Coin("pnyx", 5_000_000)))
+	k.CreateDomain(ctx, "GrowDomain", sdk.AccAddress("admin1"), sdk.NewCoins(sdk.NewInt64Coin(PNYXDenom, 5_000_000*PNYXUnit)))
 
-	registerVal(t, k, ctx, "GrowDomain", "val1", "val1-grow", 300_000)
+	registerVal(t, k, ctx, "GrowDomain", "val1", "val1-grow", 300_000*PNYXUnit)
 
 	// Initial payouts = 1,000,000 → limit = 100,000.
 	domain, _ := k.GetDomain(ctx, "GrowDomain")
-	domain.TotalPayouts = 1_000_000
+	domain.TotalPayouts = 1_000_000 * PNYXUnit
 	st := ctx.KVStore(k.StoreKey)
 	bz := k.cdc.MustMarshalLengthPrefixed(&domain)
 	st.Set([]byte("domain:GrowDomain"), bz)
 
 	// Withdraw 100,000 → exactly at limit, should succeed.
-	err := k.WithdrawStake(ctx, "val1", 100_000)
+	err := k.WithdrawStake(ctx, "val1", 100_000*PNYXUnit)
 	if err != nil {
 		t.Fatalf("withdraw at limit should succeed: %v", err)
 	}
 
 	// Now another 1,000 should fail (limit exhausted).
-	err = k.WithdrawStake(ctx, "val1", 1_000)
+	err = k.WithdrawStake(ctx, "val1", 1_000*PNYXUnit)
 	if err == nil {
 		t.Fatal("expected error — limit exhausted")
 	}
 
 	// Increase payouts → limit increases.
 	domain, _ = k.GetDomain(ctx, "GrowDomain")
-	domain.TotalPayouts = 3_000_000 // new limit = 300,000; already transferred 100,000 → 200,000 left
+	domain.TotalPayouts = 3_000_000 * PNYXUnit // new limit = 300,000; already transferred 100,000 → 200,000 left
 	bz = k.cdc.MustMarshalLengthPrefixed(&domain)
 	st.Set([]byte("domain:GrowDomain"), bz)
 
 	// Now withdraw 100,000 more — should succeed (200,000 remaining capacity).
-	err = k.WithdrawStake(ctx, "val1", 100_000)
+	err = k.WithdrawStake(ctx, "val1", 100_000*PNYXUnit)
 	if err != nil {
 		t.Fatalf("after payout increase, withdraw should succeed: %v", err)
 	}
@@ -426,32 +440,32 @@ func TestPayoutIncreasesLimit(t *testing.T) {
 
 func TestMultipleValidators(t *testing.T) {
 	k, ctx := setupKeeper(t)
-	k.CreateDomain(ctx, "MultiDomain", sdk.AccAddress("admin1"), sdk.NewCoins(sdk.NewInt64Coin("pnyx", 5_000_000)))
+	k.CreateDomain(ctx, "MultiDomain", sdk.AccAddress("admin1"), sdk.NewCoins(sdk.NewInt64Coin(PNYXDenom, 5_000_000*PNYXUnit)))
 
-	registerVal(t, k, ctx, "MultiDomain", "val1", "val1-multi", 200_000)
-	registerVal(t, k, ctx, "MultiDomain", "val2", "val2-multi", 200_000)
+	registerVal(t, k, ctx, "MultiDomain", "val1", "val1-multi", 200_000*PNYXUnit)
+	registerVal(t, k, ctx, "MultiDomain", "val2", "val2-multi", 200_000*PNYXUnit)
 
 	// Set payouts = 2,000,000 → 10% limit = 200,000 total across all validators.
 	domain, _ := k.GetDomain(ctx, "MultiDomain")
-	domain.TotalPayouts = 2_000_000
+	domain.TotalPayouts = 2_000_000 * PNYXUnit
 	st := ctx.KVStore(k.StoreKey)
 	bz := k.cdc.MustMarshalLengthPrefixed(&domain)
 	st.Set([]byte("domain:MultiDomain"), bz)
 
 	// val1 withdraws 100,000 → success (100,000 of 200,000 used).
-	err := k.WithdrawStake(ctx, "val1", 100_000)
+	err := k.WithdrawStake(ctx, "val1", 100_000*PNYXUnit)
 	if err != nil {
 		t.Fatalf("val1 withdraw should succeed: %v", err)
 	}
 
 	// val2 withdraws 100,000 → success (200,000 of 200,000 used).
-	err = k.WithdrawStake(ctx, "val2", 100_000)
+	err = k.WithdrawStake(ctx, "val2", 100_000*PNYXUnit)
 	if err != nil {
 		t.Fatalf("val2 withdraw should succeed: %v", err)
 	}
 
 	// val1 tries another 1,000 → fail (limit exhausted).
-	err = k.WithdrawStake(ctx, "val1", 1_000)
+	err = k.WithdrawStake(ctx, "val1", 1_000*PNYXUnit)
 	if err == nil {
 		t.Fatal("expected error — domain transfer limit exhausted")
 	}
@@ -459,19 +473,19 @@ func TestMultipleValidators(t *testing.T) {
 
 func TestWithdrawBelowMinRemovesValidator(t *testing.T) {
 	k, ctx := setupKeeper(t)
-	k.CreateDomain(ctx, "RemDomain", sdk.AccAddress("admin1"), sdk.NewCoins(sdk.NewInt64Coin("pnyx", 5_000_000)))
+	k.CreateDomain(ctx, "RemDomain", sdk.AccAddress("admin1"), sdk.NewCoins(sdk.NewInt64Coin(PNYXDenom, 5_000_000*PNYXUnit)))
 
-	registerVal(t, k, ctx, "RemDomain", "val1", "val1-rem", 150_000)
+	registerVal(t, k, ctx, "RemDomain", "val1", "val1-rem", 150_000*PNYXUnit)
 
 	// Set payouts high enough that limit is not an issue.
 	domain, _ := k.GetDomain(ctx, "RemDomain")
-	domain.TotalPayouts = 10_000_000 // limit = 1,000,000
+	domain.TotalPayouts = 10_000_000 * PNYXUnit // limit = 1,000,000
 	st := ctx.KVStore(k.StoreKey)
 	bz := k.cdc.MustMarshalLengthPrefixed(&domain)
 	st.Set([]byte("domain:RemDomain"), bz)
 
 	// Withdraw 60,000 → remaining 90,000 < StakeMin (100,000) → validator removed.
-	err := k.WithdrawStake(ctx, "val1", 60_000)
+	err := k.WithdrawStake(ctx, "val1", 60_000*PNYXUnit)
 	if err != nil {
 		t.Fatalf("withdraw should succeed: %v", err)
 	}
@@ -483,12 +497,12 @@ func TestWithdrawBelowMinRemovesValidator(t *testing.T) {
 
 func TestWithdrawNoPayoutsBlocked(t *testing.T) {
 	k, ctx := setupKeeper(t)
-	k.CreateDomain(ctx, "NoPay", sdk.AccAddress("admin1"), sdk.NewCoins(sdk.NewInt64Coin("pnyx", 5_000_000)))
+	k.CreateDomain(ctx, "NoPay", sdk.AccAddress("admin1"), sdk.NewCoins(sdk.NewInt64Coin(PNYXDenom, 5_000_000*PNYXUnit)))
 
-	registerVal(t, k, ctx, "NoPay", "val1", "val1-nopay", 100_000)
+	registerVal(t, k, ctx, "NoPay", "val1", "val1-nopay", 100_000*PNYXUnit)
 
 	// TotalPayouts = 0 → no transfers allowed.
-	err := k.WithdrawStake(ctx, "val1", 50_000)
+	err := k.WithdrawStake(ctx, "val1", 50_000*PNYXUnit)
 	if err == nil {
 		t.Fatal("expected error — no payouts, transfers blocked")
 	}
@@ -512,7 +526,7 @@ func TestPayoutTrackingFromStoneReward(t *testing.T) {
 
 func TestPowerScalesWithStake(t *testing.T) {
 	k, ctx := setupKeeper(t)
-	k.CreateDomain(ctx, "Big", sdk.AccAddress("admin1"), sdk.NewCoins(sdk.NewInt64Coin("pnyx", 500_000)))
+	k.CreateDomain(ctx, "Big", sdk.AccAddress("admin1"), sdk.NewCoins(sdk.NewInt64Coin(PNYXDenom, 500_000*PNYXUnit)))
 	domain, _ := k.GetDomain(ctx, "Big")
 	domain.Members = append(domain.Members, "whale")
 	st := ctx.KVStore(k.StoreKey)
@@ -520,7 +534,7 @@ func TestPowerScalesWithStake(t *testing.T) {
 	st.Set([]byte("domain:Big"), bz)
 
 	pk := testPubKey("whale")
-	stake := sdk.NewCoins(sdk.NewInt64Coin("pnyx", 300_000))
+	stake := sdk.NewCoins(sdk.NewInt64Coin(PNYXDenom, 300_000*PNYXUnit))
 	if err := k.RegisterValidator(ctx, "whale", pk, stake, "Big"); err != nil {
 		t.Fatal(err)
 	}
@@ -534,11 +548,11 @@ func TestPowerScalesWithStake(t *testing.T) {
 
 func TestDistributeDomainInterest(t *testing.T) {
 	k, ctx := setupKeeper(t)
-	k.CreateDomain(ctx, "Active", sdk.AccAddress("admin1"), sdk.NewCoins(sdk.NewInt64Coin("pnyx", 500_000)))
+	k.CreateDomain(ctx, "Active", sdk.AccAddress("admin1"), sdk.NewCoins(sdk.NewInt64Coin(PNYXDenom, 500_000*PNYXUnit)))
 
 	// Set up domain with payouts so it qualifies for interest.
 	domain, _ := k.GetDomain(ctx, "Active")
-	domain.TotalPayouts = 100_000 // active domain
+	domain.TotalPayouts = 100_000 * PNYXUnit // active domain
 	st := ctx.KVStore(k.StoreKey)
 	bz := k.cdc.MustMarshalLengthPrefixed(&domain)
 	st.Set([]byte("domain:Active"), bz)
@@ -555,7 +569,7 @@ func TestDistributeDomainInterest(t *testing.T) {
 			t.Fatal(err)
 		}
 		domain, _ := k.GetDomain(ctx2, "Active")
-		if !domain.Treasury.AmountOf("pnyx").Equal(math.NewInt(500_000)) {
+		if !domain.Treasury.AmountOf(PNYXDenom).Equal(math.NewInt(500_000 * PNYXUnit)) {
 			t.Errorf("treasury changed before interval: %s", domain.Treasury)
 		}
 	})
@@ -566,13 +580,13 @@ func TestDistributeDomainInterest(t *testing.T) {
 			t.Fatal(err)
 		}
 		domain, _ := k.GetDomain(ctx2, "Active")
-		treasuryAmt := domain.Treasury.AmountOf("pnyx")
+		treasuryAmt := domain.Treasury.AmountOf(PNYXDenom)
 
 		// Expected: CalcDomainInterest(500000, 100000, 0, 3600)
 		expected := rewards.CalcDomainInterest(
-			math.NewInt(500_000), math.NewInt(100_000), math.ZeroInt(), RewardInterval,
+			math.NewInt(500_000*PNYXUnit), math.NewInt(100_000*PNYXUnit), math.ZeroInt(), RewardInterval,
 		)
-		wantTreasury := math.NewInt(500_000).Add(expected)
+		wantTreasury := math.NewInt(500_000 * PNYXUnit).Add(expected)
 		if !treasuryAmt.Equal(wantTreasury) {
 			t.Errorf("treasury = %s, want %s (interest = %s)", treasuryAmt, wantTreasury, expected)
 		}
@@ -581,7 +595,7 @@ func TestDistributeDomainInterest(t *testing.T) {
 
 func TestDomainInterestZeroPayouts(t *testing.T) {
 	k, ctx := setupKeeper(t)
-	k.CreateDomain(ctx, "Idle", sdk.AccAddress("admin1"), sdk.NewCoins(sdk.NewInt64Coin("pnyx", 500_000)))
+	k.CreateDomain(ctx, "Idle", sdk.AccAddress("admin1"), sdk.NewCoins(sdk.NewInt64Coin(PNYXDenom, 500_000*PNYXUnit)))
 
 	// Domain with zero payouts — should earn no interest.
 	st := ctx.KVStore(k.StoreKey)
@@ -595,7 +609,7 @@ func TestDomainInterestZeroPayouts(t *testing.T) {
 		t.Fatal(err)
 	}
 	domain, _ := k.GetDomain(ctx2, "Idle")
-	if !domain.Treasury.AmountOf("pnyx").Equal(math.NewInt(500_000)) {
+	if !domain.Treasury.AmountOf(PNYXDenom).Equal(math.NewInt(500_000 * PNYXUnit)) {
 		t.Errorf("idle domain treasury should not change: got %s", domain.Treasury)
 	}
 }
@@ -603,7 +617,7 @@ func TestDomainInterestZeroPayouts(t *testing.T) {
 func TestDomainInterestCappedByPayout(t *testing.T) {
 	k, ctx := setupKeeper(t)
 	// Large treasury, small payouts → interest capped by payout.
-	k.CreateDomain(ctx, "Big", sdk.AccAddress("admin1"), sdk.NewCoins(sdk.NewInt64Coin("pnyx", 10_000_000)))
+	k.CreateDomain(ctx, "Big", sdk.AccAddress("admin1"), sdk.NewCoins(sdk.NewInt64Coin(PNYXDenom, 10_000_000*PNYXUnit)))
 
 	domain, _ := k.GetDomain(ctx, "Big")
 	domain.TotalPayouts = 1 // tiny payout → caps interest at 1
@@ -621,7 +635,7 @@ func TestDomainInterestCappedByPayout(t *testing.T) {
 		t.Fatal(err)
 	}
 	domain, _ = k.GetDomain(ctx2, "Big")
-	interest := domain.Treasury.AmountOf("pnyx").Sub(math.NewInt(10_000_000))
+	interest := domain.Treasury.AmountOf(PNYXDenom).Sub(math.NewInt(10_000_000 * PNYXUnit))
 
 	// The raw interest on 10M at 25% for 1 hour is large, but it must be capped at payout=1.
 	if interest.GT(math.NewInt(1)) {
@@ -631,10 +645,10 @@ func TestDomainInterestCappedByPayout(t *testing.T) {
 
 func TestDomainInterestDecaysWithRelease(t *testing.T) {
 	k, ctx := setupKeeper(t)
-	k.CreateDomain(ctx, "Decay", sdk.AccAddress("admin1"), sdk.NewCoins(sdk.NewInt64Coin("pnyx", 500_000)))
+	k.CreateDomain(ctx, "Decay", sdk.AccAddress("admin1"), sdk.NewCoins(sdk.NewInt64Coin(PNYXDenom, 500_000*PNYXUnit)))
 
 	domain, _ := k.GetDomain(ctx, "Decay")
-	domain.TotalPayouts = 1_000_000 // high cap so it doesn't constrain
+	domain.TotalPayouts = 1_000_000 * PNYXUnit // high cap so it doesn't constrain
 	st := ctx.KVStore(k.StoreKey)
 	bz := k.cdc.MustMarshalLengthPrefixed(&domain)
 	st.Set([]byte("domain:Decay"), bz)
@@ -651,11 +665,11 @@ func TestDomainInterestDecaysWithRelease(t *testing.T) {
 		t.Fatal(err)
 	}
 	domain, _ = k.GetDomain(ctx2, "Decay")
-	interestWithDecay := domain.Treasury.AmountOf("pnyx").Sub(math.NewInt(500_000))
+	interestWithDecay := domain.Treasury.AmountOf(PNYXDenom).Sub(math.NewInt(500_000 * PNYXUnit))
 
 	// Compare with zero-release interest.
 	interestNoDecay := rewards.CalcDomainInterest(
-		math.NewInt(500_000), math.NewInt(1_000_000), math.ZeroInt(), RewardInterval,
+		math.NewInt(500_000*PNYXUnit), math.NewInt(1_000_000*PNYXUnit), math.ZeroInt(), RewardInterval,
 	)
 
 	if !interestWithDecay.LT(interestNoDecay) {
@@ -666,7 +680,7 @@ func TestDomainInterestDecaysWithRelease(t *testing.T) {
 
 func TestDomainInterestFirstCallInitializes(t *testing.T) {
 	k, ctx := setupKeeper(t)
-	k.CreateDomain(ctx, "Fresh", sdk.AccAddress("admin1"), sdk.NewCoins(sdk.NewInt64Coin("pnyx", 500_000)))
+	k.CreateDomain(ctx, "Fresh", sdk.AccAddress("admin1"), sdk.NewCoins(sdk.NewInt64Coin(PNYXDenom, 500_000*PNYXUnit)))
 
 	// Don't set dom:last-interest-time — first call should initialize it.
 	st := ctx.KVStore(k.StoreKey)
@@ -679,7 +693,7 @@ func TestDomainInterestFirstCallInitializes(t *testing.T) {
 
 	// Should have initialized the timer without changing treasury.
 	domain, _ := k.GetDomain(ctx, "Fresh")
-	if !domain.Treasury.AmountOf("pnyx").Equal(math.NewInt(500_000)) {
+	if !domain.Treasury.AmountOf(PNYXDenom).Equal(math.NewInt(500_000 * PNYXUnit)) {
 		t.Errorf("first call should not pay interest: %s", domain.Treasury)
 	}
 

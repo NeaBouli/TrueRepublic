@@ -79,7 +79,7 @@ prometheus_listen_addr = ":26660"
 
 ```toml
 # Minimum gas price for transactions
-minimum-gas-prices = "0.001pnyx"
+minimum-gas-prices = "1000upnyx"
 ```
 
 ### API Configuration

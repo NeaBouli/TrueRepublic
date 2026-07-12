@@ -8,10 +8,12 @@ import (
 	"context"
 	"errors"
 
+	abci "github.com/cometbft/cometbft/abci/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	distrtypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
-	abci "github.com/cometbft/cometbft/abci/types"
+
+	"truerepublic/token"
 )
 
 var errNotAvailable = errors.New("feature not available: requires module integration")
@@ -21,7 +23,7 @@ var errNotAvailable = errors.New("feature not available: requires module integra
 type StubStakingKeeper struct{}
 
 func (StubStakingKeeper) BondDenom(_ context.Context) (string, error) {
-	return "pnyx", nil
+	return token.BaseDenom, nil
 }
 
 func (StubStakingKeeper) GetValidator(_ context.Context, _ sdk.ValAddress) (stakingtypes.Validator, error) {

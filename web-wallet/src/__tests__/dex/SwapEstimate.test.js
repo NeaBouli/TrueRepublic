@@ -21,7 +21,7 @@ describe("SwapEstimate", () => {
   test("shows estimate result with route", async () => {
     queryEstimateSwap.mockResolvedValue({
       expected_output: "990",
-      route: ["pnyx", "atom"],
+      route: ["upnyx", "atom"],
       route_symbols: ["PNYX", "ATOM"],
       hops: 1,
     });
@@ -40,7 +40,7 @@ describe("SwapEstimate", () => {
   test("shows cross-asset warning for multi-hop", async () => {
     queryEstimateSwap.mockResolvedValue({
       expected_output: "950",
-      route: ["atom", "pnyx", "btc"],
+      route: ["atom", "upnyx", "btc"],
       route_symbols: ["ATOM", "PNYX", "BTC"],
       hops: 2,
     });

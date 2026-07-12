@@ -19,17 +19,17 @@ export const chainConfig = {
     bech32PrefixConsPub: "truerepublicvalconspub",
   },
   currencies: [
-    { coinDenom: "PNYX", coinMinimalDenom: "pnyx", coinDecimals: 0 },
+    { coinDenom: "PNYX", coinMinimalDenom: "upnyx", coinDecimals: 6 },
   ],
   feeCurrencies: [
     {
       coinDenom: "PNYX",
-      coinMinimalDenom: "pnyx",
-      coinDecimals: 0,
+      coinMinimalDenom: "upnyx",
+      coinDecimals: 6,
       gasPriceStep: { low: 0, average: 0, high: 0 },
     },
   ],
-  stakeCurrency: { coinDenom: "PNYX", coinMinimalDenom: "pnyx", coinDecimals: 0 },
+  stakeCurrency: { coinDenom: "PNYX", coinMinimalDenom: "upnyx", coinDecimals: 6 },
 };
 
 // Get a read-only client
@@ -90,7 +90,7 @@ export async function castVote(sender, domainName, issueName, suggestionName, st
 // Wallet API
 export async function getBalance(address) {
   const client = await getQueryClient();
-  return client.getBalance(address, "pnyx");
+  return client.getBalance(address, "upnyx");
 }
 
 export async function sendTokens(sender, recipient, amount) {
@@ -98,7 +98,7 @@ export async function sendTokens(sender, recipient, amount) {
   return client.sendTokens(
     sender,
     recipient,
-    [{ denom: "pnyx", amount: String(amount) }],
+    [{ denom: "upnyx", amount: String(amount) }],
     "auto"
   );
 }

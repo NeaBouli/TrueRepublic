@@ -86,7 +86,7 @@ func GetQueryCmd(cdc *codec.LegacyAmino) *cobra.Command {
 
 func CmdCreatePool() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "create-pool [asset-denom-or-symbol] [pnyx-amt] [asset-amt]",
+		Use:   "create-pool [asset-denom-or-symbol] [upnyx-amt] [asset-amt]",
 		Short: "Create a new PNYX/<asset> liquidity pool (accepts symbols like BTC)",
 		Args:  cobra.ExactArgs(3),
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -96,7 +96,7 @@ func CmdCreatePool() *cobra.Command {
 			}
 			pnyxAmt, err := strconv.ParseInt(args[1], 10, 64)
 			if err != nil {
-				return fmt.Errorf("invalid pnyx amount: %w", err)
+				return fmt.Errorf("invalid upnyx amount: %w", err)
 			}
 			assetAmt, err := strconv.ParseInt(args[2], 10, 64)
 			if err != nil {
@@ -181,7 +181,7 @@ func CmdSwapExact() *cobra.Command {
 
 func CmdAddLiquidity() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "add-liquidity [asset-denom-or-symbol] [pnyx-amt] [asset-amt]",
+		Use:   "add-liquidity [asset-denom-or-symbol] [upnyx-amt] [asset-amt]",
 		Short: "Add liquidity to an existing pool (accepts symbols like BTC)",
 		Args:  cobra.ExactArgs(3),
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -191,7 +191,7 @@ func CmdAddLiquidity() *cobra.Command {
 			}
 			pnyxAmt, err := strconv.ParseInt(args[1], 10, 64)
 			if err != nil {
-				return fmt.Errorf("invalid pnyx amount: %w", err)
+				return fmt.Errorf("invalid upnyx amount: %w", err)
 			}
 			assetAmt, err := strconv.ParseInt(args[2], 10, 64)
 			if err != nil {

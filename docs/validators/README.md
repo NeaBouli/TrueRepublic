@@ -43,7 +43,7 @@ truerepublicd tx truedemocracy create-domain my-domain 200000pnyx \
 ```bash
 truerepublicd tx truedemocracy register-validator \
     <pubkey-hex> \
-    <stake-amount>pnyx \
+    <stake-amount>upnyx \
     <domain-name> \
     --from mykey --chain-id truerepublic-1
 ```
@@ -174,7 +174,7 @@ curl http://localhost:26657/status | jq .result.sync_info
 ### Withdrawing Stake
 
 ```bash
-truerepublicd tx truedemocracy withdraw-stake <amount>pnyx \
+truerepublicd tx truedemocracy withdraw-stake <amount>upnyx \
     --from mykey --chain-id truerepublic-1
 ```
 

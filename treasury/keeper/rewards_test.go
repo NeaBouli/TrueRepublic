@@ -4,6 +4,8 @@ import (
 	"testing"
 
 	"cosmossdk.io/math"
+
+	"truerepublic/token"
 )
 
 // Whitepaper §8.1.4 worked example: treasury of 2000× fee, c_earn = 1000,
@@ -41,10 +43,10 @@ func TestCalcPutPrice(t *testing.T) {
 		want     int64
 	}{
 		// p_rew = 500000/1000 = 500
-		{"small domain, capped by nUser", 500_000, 10, 5_000},   // 500 * 10
-		{"large domain, capped by cPut", 500_000, 20, 7_500},    // 500 * 15
-		{"exactly cPut users", 500_000, 15, 7_500},               // 500 * 15 == 500 * 15
-		{"single user", 500_000, 1, 500},                          // 500 * 1
+		{"small domain, capped by nUser", 500_000, 10, 5_000}, // 500 * 10
+		{"large domain, capped by cPut", 500_000, 20, 7_500},  // 500 * 15
+		{"exactly cPut users", 500_000, 15, 7_500},            // 500 * 15 == 500 * 15
+		{"single user", 500_000, 1, 500},                      // 500 * 1
 		{"zero users", 500_000, 0, 0},
 		{"empty treasury", 0, 10, 0},
 		{"treasury below c_earn", 999, 10, 0},
@@ -96,7 +98,7 @@ func TestCalcNodeReward(t *testing.T) {
 
 		// Full year, 1M released: 100000 * 0.1 * 1.0 * (1 - 1M/21M)
 		// = 10000 * 20/21 = 9523.80... → 9523
-		{"full year, 1M released", 100_000, 1_000_000, oneYear, 9523},
+		{"full year, 1M released", 100_000, 1_000_000 * token.WholeTokenBaseUnits, oneYear, 9523},
 
 		// One day, zero release: 100000 * 0.1 * (86400/31557600) * 1.0
 		// = 10000 * 0.002737... = 27.37... → 27
@@ -142,7 +144,7 @@ func TestCalcDomainInterest(t *testing.T) {
 
 		// Full year, 1M released: 500000 * 0.25 * 1.0 * (20/21)
 		// = 125000 * 20/21 = 119047.61... → 119047
-		{"full year, 1M released", 500_000, 200_000, 1_000_000, oneYear, 119_047},
+		{"full year, 1M released", 500_000, 200_000, 1_000_000 * token.WholeTokenBaseUnits, oneYear, 119_047},
 
 		// All coins released: decay = 0
 		{"all released", 500_000, 200_000, SupplyMax, oneYear, 0},
@@ -209,7 +211,7 @@ func TestTreasuryDrainage(t *testing.T) {
 	// After 694 payouts treasury should be ≈ 50 % of initial.
 	// Integer division introduces rounding so allow 49-51 %.
 	half := initial.Quo(math.NewInt(2))
-	lower := half.Mul(math.NewInt(98)).Quo(math.NewInt(100)) // 49 %
+	lower := half.Mul(math.NewInt(98)).Quo(math.NewInt(100))  // 49 %
 	upper := half.Mul(math.NewInt(102)).Quo(math.NewInt(100)) // 51 %
 
 	if treasury.LT(lower) || treasury.GT(upper) {

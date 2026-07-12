@@ -28,7 +28,9 @@ export function AddLiquidity() {
   const [txHash, setTxHash] = useState('');
   const [error, setError] = useState('');
 
-  const pnyxBalance = balances.find((b) => b.denom === 'upnyx');
+  const pnyxBalance = balances.find(
+    (balance) => balance.denom === DEFAULT_CHAIN.coinMinimalDenom
+  );
   const assetBalance = balances.find((b) => b.denom === assetDenom);
 
   useEffect(() => {

@@ -5,10 +5,10 @@ import (
 
 	errorsmod "cosmossdk.io/errors"
 	"cosmossdk.io/math"
-	sdk "github.com/cosmos/cosmos-sdk/types"
-	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	abci "github.com/cometbft/cometbft/abci/types"
 	cryptoproto "github.com/cometbft/cometbft/proto/tendermint/crypto"
+	sdk "github.com/cosmos/cosmos-sdk/types"
+	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
 	rewards "truerepublic/treasury/keeper"
 )
@@ -29,7 +29,7 @@ func (k Keeper) RegisterValidator(ctx sdk.Context, operatorAddr string, pubKeyBy
 		return errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "pubkey must be 32 bytes (ed25519)")
 	}
 
-	pnyxAmt := stake.AmountOf("pnyx")
+	pnyxAmt := stake.AmountOf(PNYXDenom)
 	if pnyxAmt.LT(math.NewInt(rewards.StakeMin)) {
 		return errorsmod.Wrapf(sdkerrors.ErrInsufficientFunds, "stake %s below minimum %d", pnyxAmt, rewards.StakeMin)
 	}
@@ -115,7 +115,7 @@ func (k Keeper) WithdrawStake(ctx sdk.Context, operatorAddr string, amount int64
 		return errorsmod.Wrap(sdkerrors.ErrUnknownRequest, "validator not found")
 	}
 
-	stakeAmt := val.Stake.AmountOf("pnyx").Int64()
+	stakeAmt := val.Stake.AmountOf(PNYXDenom).Int64()
 	if amount > stakeAmt {
 		return errorsmod.Wrapf(sdkerrors.ErrInsufficientFunds,
 			"withdraw %d exceeds current stake %d", amount, stakeAmt)
@@ -148,7 +148,7 @@ func (k Keeper) WithdrawStake(ctx sdk.Context, operatorAddr string, amount int64
 		return k.RemoveValidator(ctx, operatorAddr)
 	}
 
-	val.Stake = sdk.NewCoins(sdk.NewInt64Coin("pnyx", newStake))
+	val.Stake = sdk.NewCoins(sdk.NewInt64Coin(PNYXDenom, newStake))
 	val.Power = newStake / rewards.StakeMin
 	k.SetValidator(ctx, val)
 	return nil
@@ -267,11 +267,11 @@ func (k Keeper) DistributeStakingRewards(ctx sdk.Context) error {
 		if val.Jailed {
 			return false
 		}
-		stakeAmt := val.Stake.AmountOf("pnyx")
+		stakeAmt := val.Stake.AmountOf(PNYXDenom)
 		reward := rewards.CalcNodeReward(stakeAmt, totalRelease, elapsed)
 		if reward.IsPositive() {
-			val.Stake = val.Stake.Add(sdk.NewCoin("pnyx", reward))
-			val.Power = val.Stake.AmountOf("pnyx").Int64() / rewards.StakeMin
+			val.Stake = val.Stake.Add(sdk.NewCoin(PNYXDenom, reward))
+			val.Power = val.Stake.AmountOf(PNYXDenom).Int64() / rewards.StakeMin
 			k.SetValidator(ctx, val)
 			newRelease = newRelease.Add(reward)
 		}
@@ -317,7 +317,7 @@ func (k Keeper) DistributeDomainInterest(ctx sdk.Context) error {
 	}
 
 	k.IterateDomains(ctx, func(domain Domain) bool {
-		treasure := domain.Treasury.AmountOf("pnyx")
+		treasure := domain.Treasury.AmountOf(PNYXDenom)
 		if !treasure.IsPositive() {
 			return false
 		}
@@ -327,7 +327,7 @@ func (k Keeper) DistributeDomainInterest(ctx sdk.Context) error {
 		payout := math.NewInt(domain.TotalPayouts)
 		interest := rewards.CalcDomainInterest(treasure, payout, totalRelease, elapsed)
 		if interest.IsPositive() {
-			domain.Treasury = domain.Treasury.Add(sdk.NewCoin("pnyx", interest))
+			domain.Treasury = domain.Treasury.Add(sdk.NewCoin(PNYXDenom, interest))
 			bz := k.cdc.MustMarshalLengthPrefixed(&domain)
 			store.Set([]byte("domain:"+domain.Name), bz)
 		}

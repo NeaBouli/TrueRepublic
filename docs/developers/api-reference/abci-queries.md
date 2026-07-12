@@ -24,7 +24,7 @@ All module queries use the legacy ABCI querier pattern via CometBFT RPC.
   "name": "Climate",
   "admin": "truerepublic1abc...",
   "members": ["truerepublic1abc...", "truerepublic1def..."],
-  "treasury": [{"denom": "pnyx", "amount": "500000"}],
+  "treasury": [{"denom": "upnyx", "amount": "500000"}],
   "issues": [
     {
       "name": "Carbon Reporting",
@@ -68,7 +68,7 @@ All module queries use the legacy ABCI querier pattern via CometBFT RPC.
 {
   "operator_address": "truerepublic1abc...",
   "pub_key": "abcdef1234567890...",
-  "stake": [{"denom": "pnyx", "amount": "150000"}],
+  "stake": [{"denom": "upnyx", "amount": "150000"}],
   "domains": ["Climate", "Tech"],
   "power": 1,
   "jailed": false,

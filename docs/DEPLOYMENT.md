@@ -82,7 +82,7 @@ export MONIKER=my-node
 
 ```bash
 # Set minimum gas price
-sed -i 's/minimum-gas-prices = ""/minimum-gas-prices = "0.025pnyx"/' \
+sed -i 's/minimum-gas-prices = ""/minimum-gas-prices = "25000upnyx"/' \
   ~/.truerepublic/config/app.toml
 
 # Enable Prometheus metrics

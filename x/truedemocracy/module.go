@@ -9,13 +9,13 @@ import (
 	gwruntime "github.com/grpc-ecosystem/grpc-gateway/runtime"
 	"github.com/spf13/cobra"
 
+	abci "github.com/cometbft/cometbft/abci/types"
+	cryptoproto "github.com/cometbft/cometbft/proto/tendermint/crypto"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
-	abci "github.com/cometbft/cometbft/abci/types"
-	cryptoproto "github.com/cometbft/cometbft/proto/tendermint/crypto"
 
 	rewards "truerepublic/treasury/keeper"
 )
@@ -76,7 +76,7 @@ func (AppModuleBasic) ValidateGenesis(cdc codec.JSONCodec, config client.TxEncod
 
 func (AppModuleBasic) RegisterGRPCGatewayRoutes(clientCtx client.Context, mux *gwruntime.ServeMux) {}
 
-func (AppModuleBasic) GetTxCmd() *cobra.Command   { return GetTxCmd() }
+func (AppModuleBasic) GetTxCmd() *cobra.Command    { return GetTxCmd() }
 func (AppModuleBasic) GetQueryCmd() *cobra.Command { return GetQueryCmd(codec.NewLegacyAmino()) }
 
 // AppModule
@@ -120,7 +120,7 @@ func (am AppModule) InitGenesis(ctx sdk.Context, cdc codec.JSONCodec, data json.
 	// Register genesis validators and build initial validator set.
 	var updates []abci.ValidatorUpdate
 	for _, gv := range genesisState.Validators {
-		stake := sdk.NewCoins(sdk.NewInt64Coin("pnyx", gv.Stake))
+		stake := sdk.NewCoins(sdk.NewInt64Coin(PNYXDenom, gv.Stake))
 		if err := am.keeper.RegisterValidator(ctx, gv.OperatorAddr, gv.PubKey, stake, gv.Domain); err != nil {
 			continue
 		}
@@ -183,7 +183,7 @@ func (am AppModule) EndBlock(goCtx context.Context) ([]abci.ValidatorUpdate, err
 	// 3. Enforce minimum stake.
 	var underStaked []string
 	am.keeper.IterateValidators(ctx, func(v Validator) bool {
-		if v.Stake.AmountOf("pnyx").LT(math.NewInt(rewards.StakeMin)) {
+		if v.Stake.AmountOf(PNYXDenom).LT(math.NewInt(rewards.StakeMin)) {
 			underStaked = append(underStaked, v.OperatorAddr)
 		}
 		return false
@@ -225,7 +225,7 @@ func (am AppModule) ExportGenesis(ctx sdk.Context, cdc codec.JSONCodec) json.Raw
 		validators = append(validators, GenesisValidator{
 			OperatorAddr: v.OperatorAddr,
 			PubKey:       v.PubKey,
-			Stake:        v.Stake.AmountOf("pnyx").Int64(),
+			Stake:        v.Stake.AmountOf(PNYXDenom).Int64(),
 			Domain:       domain,
 		})
 		return false

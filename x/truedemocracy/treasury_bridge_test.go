@@ -73,45 +73,45 @@ func TestDepositToDomain(t *testing.T) {
 
 	admin := sdk.AccAddress("admin1")
 	user := sdk.AccAddress("user-alice")
-	k.CreateDomain(ctx, "TestDomain", admin, sdk.NewCoins(sdk.NewInt64Coin("pnyx", 1000)))
+	k.CreateDomain(ctx, "TestDomain", admin, sdk.NewCoins(sdk.NewInt64Coin(PNYXDenom, 1000)))
 
 	// Fund user account.
-	bk.fundAccount(user, sdk.NewCoins(sdk.NewInt64Coin("pnyx", 500)))
+	bk.fundAccount(user, sdk.NewCoins(sdk.NewInt64Coin(PNYXDenom, 500)))
 
 	t.Run("success", func(t *testing.T) {
-		err := k.DepositToDomain(ctx, user, "TestDomain", sdk.NewInt64Coin("pnyx", 100))
+		err := k.DepositToDomain(ctx, user, "TestDomain", sdk.NewInt64Coin(PNYXDenom, 100))
 		if err != nil {
 			t.Fatalf("unexpected error: %v", err)
 		}
 
 		// User balance decreased.
 		userBal := bk.accounts[user.String()]
-		if userBal.AmountOf("pnyx").Int64() != 400 {
-			t.Errorf("user balance = %d, want 400", userBal.AmountOf("pnyx").Int64())
+		if userBal.AmountOf(PNYXDenom).Int64() != 400 {
+			t.Errorf("user balance = %d, want 400", userBal.AmountOf(PNYXDenom).Int64())
 		}
 
 		// Module account received coins.
 		modBal := bk.modules[ModuleName]
-		if modBal.AmountOf("pnyx").Int64() != 100 {
-			t.Errorf("module balance = %d, want 100", modBal.AmountOf("pnyx").Int64())
+		if modBal.AmountOf(PNYXDenom).Int64() != 100 {
+			t.Errorf("module balance = %d, want 100", modBal.AmountOf(PNYXDenom).Int64())
 		}
 
 		// Domain treasury increased.
 		domain, _ := k.GetDomain(ctx, "TestDomain")
-		if domain.Treasury.AmountOf("pnyx").Int64() != 1100 {
-			t.Errorf("treasury = %d, want 1100", domain.Treasury.AmountOf("pnyx").Int64())
+		if domain.Treasury.AmountOf(PNYXDenom).Int64() != 1100 {
+			t.Errorf("treasury = %d, want 1100", domain.Treasury.AmountOf(PNYXDenom).Int64())
 		}
 	})
 
 	t.Run("domain not found", func(t *testing.T) {
-		err := k.DepositToDomain(ctx, user, "NoSuchDomain", sdk.NewInt64Coin("pnyx", 100))
+		err := k.DepositToDomain(ctx, user, "NoSuchDomain", sdk.NewInt64Coin(PNYXDenom, 100))
 		if err == nil {
 			t.Fatal("expected error for missing domain")
 		}
 	})
 
 	t.Run("insufficient funds", func(t *testing.T) {
-		err := k.DepositToDomain(ctx, user, "TestDomain", sdk.NewInt64Coin("pnyx", 9999))
+		err := k.DepositToDomain(ctx, user, "TestDomain", sdk.NewInt64Coin(PNYXDenom, 9999))
 		if err == nil {
 			t.Fatal("expected error for insufficient funds")
 		}
@@ -125,7 +125,7 @@ func TestDepositToDomain(t *testing.T) {
 	})
 
 	t.Run("zero amount", func(t *testing.T) {
-		err := k.DepositToDomain(ctx, user, "TestDomain", sdk.NewInt64Coin("pnyx", 0))
+		err := k.DepositToDomain(ctx, user, "TestDomain", sdk.NewInt64Coin(PNYXDenom, 0))
 		if err == nil {
 			t.Fatal("expected error for zero amount")
 		}
@@ -139,53 +139,53 @@ func TestWithdrawFromDomain(t *testing.T) {
 
 	admin := sdk.AccAddress("admin1")
 	recipient := sdk.AccAddress("recipient1")
-	k.CreateDomain(ctx, "WithdrawDomain", admin, sdk.NewCoins(sdk.NewInt64Coin("pnyx", 5000)))
+	k.CreateDomain(ctx, "WithdrawDomain", admin, sdk.NewCoins(sdk.NewInt64Coin(PNYXDenom, 5000)))
 
 	// Fund the module account to back the treasury.
-	bk.fundModule(ModuleName, sdk.NewCoins(sdk.NewInt64Coin("pnyx", 5000)))
+	bk.fundModule(ModuleName, sdk.NewCoins(sdk.NewInt64Coin(PNYXDenom, 5000)))
 
 	t.Run("success", func(t *testing.T) {
-		err := k.WithdrawFromDomain(ctx, "WithdrawDomain", recipient, sdk.NewInt64Coin("pnyx", 1000), admin)
+		err := k.WithdrawFromDomain(ctx, "WithdrawDomain", recipient, sdk.NewInt64Coin(PNYXDenom, 1000), admin)
 		if err != nil {
 			t.Fatalf("unexpected error: %v", err)
 		}
 
 		// Recipient received coins.
 		recipientBal := bk.accounts[recipient.String()]
-		if recipientBal.AmountOf("pnyx").Int64() != 1000 {
-			t.Errorf("recipient balance = %d, want 1000", recipientBal.AmountOf("pnyx").Int64())
+		if recipientBal.AmountOf(PNYXDenom).Int64() != 1000 {
+			t.Errorf("recipient balance = %d, want 1000", recipientBal.AmountOf(PNYXDenom).Int64())
 		}
 
 		// Domain treasury decreased.
 		domain, _ := k.GetDomain(ctx, "WithdrawDomain")
-		if domain.Treasury.AmountOf("pnyx").Int64() != 4000 {
-			t.Errorf("treasury = %d, want 4000", domain.Treasury.AmountOf("pnyx").Int64())
+		if domain.Treasury.AmountOf(PNYXDenom).Int64() != 4000 {
+			t.Errorf("treasury = %d, want 4000", domain.Treasury.AmountOf(PNYXDenom).Int64())
 		}
 
 		// Module account debited.
 		modBal := bk.modules[ModuleName]
-		if modBal.AmountOf("pnyx").Int64() != 4000 {
-			t.Errorf("module balance = %d, want 4000", modBal.AmountOf("pnyx").Int64())
+		if modBal.AmountOf(PNYXDenom).Int64() != 4000 {
+			t.Errorf("module balance = %d, want 4000", modBal.AmountOf(PNYXDenom).Int64())
 		}
 	})
 
 	t.Run("unauthorized", func(t *testing.T) {
 		randomUser := sdk.AccAddress("random-user")
-		err := k.WithdrawFromDomain(ctx, "WithdrawDomain", recipient, sdk.NewInt64Coin("pnyx", 100), randomUser)
+		err := k.WithdrawFromDomain(ctx, "WithdrawDomain", recipient, sdk.NewInt64Coin(PNYXDenom, 100), randomUser)
 		if err == nil {
 			t.Fatal("expected error for unauthorized withdraw")
 		}
 	})
 
 	t.Run("insufficient treasury", func(t *testing.T) {
-		err := k.WithdrawFromDomain(ctx, "WithdrawDomain", recipient, sdk.NewInt64Coin("pnyx", 999999), admin)
+		err := k.WithdrawFromDomain(ctx, "WithdrawDomain", recipient, sdk.NewInt64Coin(PNYXDenom, 999999), admin)
 		if err == nil {
 			t.Fatal("expected error for insufficient treasury")
 		}
 	})
 
 	t.Run("domain not found", func(t *testing.T) {
-		err := k.WithdrawFromDomain(ctx, "NoSuchDomain", recipient, sdk.NewInt64Coin("pnyx", 100), admin)
+		err := k.WithdrawFromDomain(ctx, "NoSuchDomain", recipient, sdk.NewInt64Coin(PNYXDenom, 100), admin)
 		if err == nil {
 			t.Fatal("expected error for missing domain")
 		}
@@ -199,7 +199,7 @@ func TestWithdrawFromDomain(t *testing.T) {
 	})
 
 	t.Run("zero amount", func(t *testing.T) {
-		err := k.WithdrawFromDomain(ctx, "WithdrawDomain", recipient, sdk.NewInt64Coin("pnyx", 0), admin)
+		err := k.WithdrawFromDomain(ctx, "WithdrawDomain", recipient, sdk.NewInt64Coin(PNYXDenom, 0), admin)
 		if err == nil {
 			t.Fatal("expected error for zero amount")
 		}
@@ -213,41 +213,41 @@ func TestDepositWithdrawRoundTrip(t *testing.T) {
 
 	admin := sdk.AccAddress("admin1")
 	user := sdk.AccAddress("user-round")
-	k.CreateDomain(ctx, "RoundTrip", admin, sdk.NewCoins(sdk.NewInt64Coin("pnyx", 0)))
+	k.CreateDomain(ctx, "RoundTrip", admin, sdk.NewCoins(sdk.NewInt64Coin(PNYXDenom, 0)))
 
 	// Fund user with 1000 PNYX.
-	bk.fundAccount(user, sdk.NewCoins(sdk.NewInt64Coin("pnyx", 1000)))
+	bk.fundAccount(user, sdk.NewCoins(sdk.NewInt64Coin(PNYXDenom, 1000)))
 
 	// Deposit 500.
-	err := k.DepositToDomain(ctx, user, "RoundTrip", sdk.NewInt64Coin("pnyx", 500))
+	err := k.DepositToDomain(ctx, user, "RoundTrip", sdk.NewInt64Coin(PNYXDenom, 500))
 	if err != nil {
 		t.Fatalf("deposit: %v", err)
 	}
 
 	// Verify mid-state.
 	userBal := bk.accounts[user.String()]
-	if userBal.AmountOf("pnyx").Int64() != 500 {
-		t.Errorf("user after deposit = %d, want 500", userBal.AmountOf("pnyx").Int64())
+	if userBal.AmountOf(PNYXDenom).Int64() != 500 {
+		t.Errorf("user after deposit = %d, want 500", userBal.AmountOf(PNYXDenom).Int64())
 	}
 	domain, _ := k.GetDomain(ctx, "RoundTrip")
-	if domain.Treasury.AmountOf("pnyx").Int64() != 500 {
-		t.Errorf("treasury after deposit = %d, want 500", domain.Treasury.AmountOf("pnyx").Int64())
+	if domain.Treasury.AmountOf(PNYXDenom).Int64() != 500 {
+		t.Errorf("treasury after deposit = %d, want 500", domain.Treasury.AmountOf(PNYXDenom).Int64())
 	}
 
 	// Admin withdraws 200 back to user.
-	err = k.WithdrawFromDomain(ctx, "RoundTrip", user, sdk.NewInt64Coin("pnyx", 200), admin)
+	err = k.WithdrawFromDomain(ctx, "RoundTrip", user, sdk.NewInt64Coin(PNYXDenom, 200), admin)
 	if err != nil {
 		t.Fatalf("withdraw: %v", err)
 	}
 
 	// Verify final state.
 	userBal = bk.accounts[user.String()]
-	if userBal.AmountOf("pnyx").Int64() != 700 {
-		t.Errorf("user after withdraw = %d, want 700 (500+200)", userBal.AmountOf("pnyx").Int64())
+	if userBal.AmountOf(PNYXDenom).Int64() != 700 {
+		t.Errorf("user after withdraw = %d, want 700 (500+200)", userBal.AmountOf(PNYXDenom).Int64())
 	}
 	domain, _ = k.GetDomain(ctx, "RoundTrip")
-	if domain.Treasury.AmountOf("pnyx").Int64() != 300 {
-		t.Errorf("treasury after withdraw = %d, want 300 (500-200)", domain.Treasury.AmountOf("pnyx").Int64())
+	if domain.Treasury.AmountOf(PNYXDenom).Int64() != 300 {
+		t.Errorf("treasury after withdraw = %d, want 300 (500-200)", domain.Treasury.AmountOf(PNYXDenom).Int64())
 	}
 }
 
@@ -256,17 +256,17 @@ func TestDepositWithdrawRoundTrip(t *testing.T) {
 func TestBridgeWithoutBankKeeper(t *testing.T) {
 	k, ctx := setupKeeper(t) // bankKeeper is nil
 	admin := sdk.AccAddress("admin1")
-	k.CreateDomain(ctx, "NoBankDomain", admin, sdk.NewCoins(sdk.NewInt64Coin("pnyx", 100)))
+	k.CreateDomain(ctx, "NoBankDomain", admin, sdk.NewCoins(sdk.NewInt64Coin(PNYXDenom, 100)))
 
 	t.Run("deposit fails gracefully", func(t *testing.T) {
-		err := k.DepositToDomain(ctx, admin, "NoBankDomain", sdk.NewInt64Coin("pnyx", 10))
+		err := k.DepositToDomain(ctx, admin, "NoBankDomain", sdk.NewInt64Coin(PNYXDenom, 10))
 		if err == nil {
 			t.Fatal("expected error when bankKeeper is nil")
 		}
 	})
 
 	t.Run("withdraw fails gracefully", func(t *testing.T) {
-		err := k.WithdrawFromDomain(ctx, "NoBankDomain", admin, sdk.NewInt64Coin("pnyx", 10), admin)
+		err := k.WithdrawFromDomain(ctx, "NoBankDomain", admin, sdk.NewInt64Coin(PNYXDenom, 10), admin)
 		if err == nil {
 			t.Fatal("expected error when bankKeeper is nil")
 		}
@@ -280,7 +280,7 @@ func TestMsgDepositToDomainValidateBasic(t *testing.T) {
 		msg := MsgDepositToDomain{
 			Sender:     sdk.AccAddress("sender1"),
 			DomainName: "TestDomain",
-			Amount:     sdk.NewInt64Coin("pnyx", 100),
+			Amount:     sdk.NewInt64Coin(PNYXDenom, 100),
 		}
 		if err := msg.ValidateBasic(); err != nil {
 			t.Errorf("unexpected error: %v", err)
@@ -290,7 +290,7 @@ func TestMsgDepositToDomainValidateBasic(t *testing.T) {
 	t.Run("empty domain", func(t *testing.T) {
 		msg := MsgDepositToDomain{
 			Sender: sdk.AccAddress("sender1"),
-			Amount: sdk.NewInt64Coin("pnyx", 100),
+			Amount: sdk.NewInt64Coin(PNYXDenom, 100),
 		}
 		if err := msg.ValidateBasic(); err == nil {
 			t.Error("expected error for empty domain")
@@ -315,7 +315,7 @@ func TestMsgWithdrawFromDomainValidateBasic(t *testing.T) {
 			Sender:     sdk.AccAddress("sender1"),
 			DomainName: "TestDomain",
 			Recipient:  "cosmos1abc",
-			Amount:     sdk.NewInt64Coin("pnyx", 100),
+			Amount:     sdk.NewInt64Coin(PNYXDenom, 100),
 		}
 		if err := msg.ValidateBasic(); err != nil {
 			t.Errorf("unexpected error: %v", err)
@@ -326,7 +326,7 @@ func TestMsgWithdrawFromDomainValidateBasic(t *testing.T) {
 		msg := MsgWithdrawFromDomain{
 			Sender:     sdk.AccAddress("sender1"),
 			DomainName: "TestDomain",
-			Amount:     sdk.NewInt64Coin("pnyx", 100),
+			Amount:     sdk.NewInt64Coin(PNYXDenom, 100),
 		}
 		if err := msg.ValidateBasic(); err == nil {
 			t.Error("expected error for empty recipient")

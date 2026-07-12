@@ -15,7 +15,7 @@ func assetRegistryKey(ibcDenom string) []byte {
 
 // RegisteredAsset represents a whitelisted trading asset on the DEX.
 type RegisteredAsset struct {
-	// IBC denom (e.g., "ibc/27394FB..." or "pnyx" for native)
+	// IBC denom (e.g., "ibc/27394FB..." or "upnyx" for native)
 	IBCDenom string `json:"ibc_denom"`
 	// Display symbol (e.g., "BTC", "ETH", "LUSD")
 	Symbol string `json:"symbol"`
