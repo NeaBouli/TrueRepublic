@@ -307,7 +307,7 @@ groups:
 
 **Time:** 45 minutes
 **Requirements:**
-- Go 1.23+
+- Go 1.26.5
 - Node.js 18+
 - Git
 
@@ -317,10 +317,10 @@ groups:
 
 ```bash
 # Download Go
-wget https://go.dev/dl/go1.23.0.linux-amd64.tar.gz
+wget https://go.dev/dl/go1.26.5.linux-amd64.tar.gz
 
 # Extract
-sudo tar -C /usr/local -xzf go1.23.0.linux-amd64.tar.gz
+sudo tar -C /usr/local -xzf go1.26.5.linux-amd64.tar.gz
 
 # Add to PATH
 echo 'export PATH=$PATH:/usr/local/go/bin' >> ~/.bashrc
@@ -469,7 +469,7 @@ make build
 
 # If still fails, check Go version:
 go version
-# Should be 1.23 or higher
+# Should be 1.26.5
 ```
 
 ## Getting Help

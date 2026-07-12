@@ -8,9 +8,9 @@ Complete directory structure, file organization, and development conventions.
 TrueRepublic/
 │
 ├── app.go                          # Cosmos SDK application wiring (TrueRepublicApp)
-├── go.mod / go.sum                 # Go module: SDK v0.50.13, CometBFT v0.38.21
+├── go.mod / go.sum                 # Go module: SDK v0.50.14, CometBFT v0.38.22
 ├── Makefile                        # Build: build, install, test, lint, docker-*
-├── Dockerfile                      # Multi-stage: golang:1.23-alpine → alpine:3.19
+├── Dockerfile                      # Multi-stage: Go 1.26.5 Bookworm → non-root Debian Bookworm slim
 ├── docker-compose.yml              # Full stack: node, web-wallet, nginx, prometheus, grafana
 ├── .env.example                    # Environment template
 ├── README.md                       # Project overview + feature matrix
@@ -18,7 +18,7 @@ TrueRepublic/
 ├── SECURITY.md                     # Security policy
 │
 ├── x/                              # Custom Cosmos SDK modules
-│   ├── truedemocracy/              # Core governance (13 msg types, 116 tests)
+│   ├── truedemocracy/              # Core governance (23 msg types, 446 recovery cases)
 │   │   ├── keeper.go               #   Domain CRUD, proposals, anonymous ratings
 │   │   ├── anonymity.go            #   Permission register, domain key pairs (WP S4)
 │   │   ├── stones.go               #   VoteToEarn, stone voting, list sorting (WP S3.1)
@@ -41,7 +41,7 @@ TrueRepublic/
 │   │   ├── validator_test.go       #   26 validator/PoD/transfer limit tests
 │   │   └── slashing_test.go        #   6 slashing tests
 │   │
-│   └── dex/                        # DEX module (4 msg types, 24 tests)
+│   └── dex/                        # DEX module (7 msg types, 116 recovery cases)
 │       ├── keeper.go               #   CreatePool, Swap (x*y=k), Add/RemoveLiquidity
 │       ├── types.go                #   Pool type, SwapFeeBps=30, BurnBps=100
 │       ├── msgs.go                 #   4 SDK message types

@@ -12,7 +12,7 @@ source of current security or production-readiness claims.
 - Recovery epic: GitHub issue #4
 - Continuous handoff: `BRIDGE.md` and `docs/agent-bridge/`
 - Authoritative machine-readable status: `docs/status.json`
-- Verified recovery total: 636 cases (604 Go, 26 Rust, six maintained-client)
+- Verified recovery total: 683 cases (649 Go, 26 Rust, eight maintained-client)
 - PNYX cap: 21,000,000 PNYX = 21,000,000,000,000 `upnyx`
 
 The implementation is split across stacked draft PRs. Preserve this order:
@@ -25,6 +25,7 @@ The implementation is split across stacked draft PRs. Preserve this order:
 6. PR #19 — genesis reconciliation and runtime invariants
 7. PR #22 — ZKP vote statement/VK safety
 8. PR #23 — persistent Cosmos/Comet node lifecycle
+9. PR #24 — final documentation, public-status and CI-runtime reconciliation
 
 Do not claim these changes are on `main` until they are merged in order.
 
@@ -124,10 +125,11 @@ and exact rating while retaining a rating-independent one-vote nullifier.
 Transaction execution never generates trusted setup; a missing configured VK
 fails closed.
 
-The maintained web client still uses mock proof generation. Anonymous voting is
-not production-approved until a compatible real prover and independent
-cryptographic review exist. Anonymous rewards remain deferred because current
-proof/signature submissions do not bind a safe payout recipient.
+The maintained and legacy web clients reject mock proof generation and
+submission. Anonymous voting is not production-approved until a compatible
+real prover and independent cryptographic review exist. Anonymous rewards
+remain deferred because current proof/signature submissions do not bind a safe
+payout recipient.
 
 ## Client policy
 

@@ -20,13 +20,16 @@ Installationsziele für reale Schlüssel.
 ```bash
 git clone https://github.com/NeaBouli/TrueRepublic.git
 cd TrueRepublic
+git switch --track origin/fix/GH-21-node-lifecycle
 go build -o build/truerepublicd .
 go test ./... -count=1
 ```
 
 Der aktuelle Recovery-Stack liegt bis zur geordneten Zusammenführung in den
-Draft-PRs #9, #15, #16, #17, #18, #19, #22 und #23. `main` enthält diese
-Änderungen noch nicht vollständig.
+Draft-PRs #9, #15, #16, #17, #18, #19, #22, #23 und #24. `main` enthält diese
+Änderungen noch nicht vollständig. Der explizite Branch-Wechsel ist deshalb
+für die folgenden Recovery-Node-Befehle erforderlich; er ist keine
+Mainnet-Freigabe.
 
 ## Lokalen Recovery-Node starten
 

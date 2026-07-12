@@ -43,7 +43,7 @@ Complete guide to deploying a TrueRepublic full node.
 ### Software Requirements
 
 - Docker 20.10+ (for Docker setup)
-- Go 1.23+ (for native setup)
+- Go 1.26.5 (for native setup)
 - Git 2.30+
 
 ---
@@ -199,15 +199,15 @@ docker-compose logs --tail=100 truerepublic-node
 ### Step 1: Install Go
 
 ```bash
-# Download Go 1.23
+# Download Go 1.26.5
 cd ~
-wget https://go.dev/dl/go1.23.0.linux-amd64.tar.gz
+wget https://go.dev/dl/go1.26.5.linux-amd64.tar.gz
 
 # Remove old Go (if exists)
 sudo rm -rf /usr/local/go
 
 # Extract
-sudo tar -C /usr/local -xzf go1.23.0.linux-amd64.tar.gz
+sudo tar -C /usr/local -xzf go1.26.5.linux-amd64.tar.gz
 
 # Add to PATH
 echo 'export PATH=$PATH:/usr/local/go/bin' >> ~/.bashrc
@@ -216,7 +216,7 @@ source ~/.bashrc
 
 # Verify
 go version
-# Should show: go version go1.23.0 linux/amd64
+# Should show: go version go1.26.5 linux/amd64
 ```
 
 ### Step 2: Clone and Build

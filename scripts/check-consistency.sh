@@ -63,9 +63,9 @@ check_file() {
 check_file "README.md" "README"
 check_file "CLAUDE.md" "Agent Guide"
 check_file "docs/index.html" "Landing Page"
-check_file "wiki-github/Home.md" "Wiki Home"
-check_file "wiki-github/status-Current-Status.md" "Wiki Current Status"
-check_file "wiki-github/status-Testing-Status.md" "Wiki Testing Status"
+check_file "wiki/Home.md" "Wiki Home"
+check_file "wiki/status/Current-Status.md" "Wiki Current Status"
+check_file "wiki/status/Testing-Status.md" "Wiki Testing Status"
 
 if [ "$ERRORS" -gt 0 ]; then
   echo "FAILED: $ERRORS inconsistencies found"
