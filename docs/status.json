@@ -4,8 +4,8 @@
   "release_date": "2026-03-04",
   "tests": {
     "status": "recovery_verified_locally",
-    "total": 677,
-    "go": 643,
+    "total": 683,
+    "go": 649,
     "rust": 26,
     "frontend": 8,
     "historical_total": 577
@@ -30,7 +30,7 @@
     }
   },
   "modules": {
-    "root": 33,
+    "root": 39,
     "token": 12,
     "treasury": 36,
     "dex": 116,
@@ -93,6 +93,12 @@
       "dex_reserves": "registered_every_block_on_pr19",
       "lp_conservation": "registered_every_block_on_pr19"
     },
+    "node_lifecycle": {
+      "status": "recovery_verified_locally_unmerged_github_pending",
+      "bootstrap": "generated_cometbft_key_exact_bank_backed_pod_on_pr23",
+      "persistence": "native_same_home_restart_and_export_verified_on_pr23",
+      "container": "non_root_debian_glibc_restart_gate_pending_on_rebased_pr23"
+    },
     "web_client": {
       "status": "recovery_verified_locally",
       "features": [
@@ -114,7 +120,7 @@
     "zkp_client": "mock preview is fail-closed and non-submittable; compatible real prover pending",
     "tx_history": "not yet implemented in web client",
     "ibc_transfers_ui": "query support only in web client",
-    "node_bootstrap": "real CometBFT validator keys required; legacy x/staking gentx script pending GH-21 replacement"
+    "node_bootstrap": "legacy x/staking gentx path replaced on PR23 by generated CometBFT-key PoD genesis; refreshed Docker and independent operations review pending"
   },
   "branding": {
     "logo_main": "https://raw.githubusercontent.com/NeaBouli/TrueRepublic/main/assets/logo.png",

@@ -347,6 +347,18 @@
 - GitHub Docs, DeepScan, Web, Mobile, Rust, both Go/Docker runs, and manual
   Security Scan run `29159603247` pass. CodeRabbit is check-green but explicitly
   rate-limited and produced no substantive independent cryptographic review.
+- Rebased the six audited GH-21 implementation commits without content drift
+  onto final GH-20 bridge head `fac50a4`.
+- Reproduced and fixed a release regression introduced by the lifecycle move:
+  `truerepublicd --version` failed and `truerepublicd version` was blank because
+  Cobra/Cosmos SDK application metadata was no longer wired.
+- Verified 649 Go cases and coverage (root 64.3%, token 92.6%, treasury 97.0%,
+  DEX 45.3%, governance 58.9%), a real native block/SIGINT/same-home restart/
+  export flow under race, vet, CGO build, both version interfaces, entrypoint
+  syntax, and diff checks.
+- Prepared the local GH-21 audit/bridge/public-status evidence at 683 total
+  recovery cases. Local Docker and ShellCheck are unavailable; refreshed
+  GitHub Docker restart and security jobs remain mandatory before approval.
 
 ## 2026-07-12 12:18 EEST - GH-12 review remediation
 

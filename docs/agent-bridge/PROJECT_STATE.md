@@ -1,6 +1,6 @@
 # Project State
 
-Updated: 2026-07-12 05:12 EEST
+Updated: 2026-07-12 11:29 EEST
 
 ## Repository
 
@@ -29,6 +29,10 @@ Updated: 2026-07-12 05:12 EEST
 - GH-20 draft PR: #22 (`fix/GH-20-zkp-binding` -> `fix/GH-12-genesis-invariants`)
 - GH-20 recovery checkout:
   `/Users/gio/Documents/Codex/2026-07-11/erkunden/TrueRepublic-gh20`
+- GH-21 branch: `fix/GH-21-node-lifecycle`
+- GH-21 draft PR: #23 (`fix/GH-21-node-lifecycle` -> `fix/GH-20-zkp-binding`)
+- GH-21 recovery checkout:
+  `/Users/gio/Documents/Codex/2026-07-11/erkunden/TrueRepublic-gh21`
 - Recovery worktree: `/Users/gio/Desktop/repos/TrueRepublic-recovery`
 - Legacy local checkout: preserved at `/Users/gio/Desktop/repos/TrueRepublic`
 - GitHub epic: #4
@@ -43,7 +47,7 @@ Updated: 2026-07-12 05:12 EEST
   vulnerabilities after upgrades.
 - GH-14 local v0.4 client: `npm ci`, lint, six regression tests, production build, and
   `npm audit` all PASS. Main bundle is 1.68 MB before gzip (performance warning).
-- Current GH-20 branch test count is 677: 643 Go, 26 Rust, and eight
+- Current GH-21 branch test count is 683: 649 Go, 26 Rust, and eight
   maintained-client tests. Four focused legacy-web ZKP regressions pass
   separately and are not included in that authoritative total. The prior 577
   figure is retained only as historical.
@@ -127,11 +131,19 @@ Updated: 2026-07-12 05:12 EEST
   cases/race/coverage, Rust 26 tests/audit, maintained-client lint/8 tests/build/
   audit, four focused legacy tests/build/audit, module integrity, and diff checks
   pass; see `PR22_AUDIT.md`.
+- GH-21 is rebased without content drift onto final PR #22 head `fac50a4`.
+  Standard Cosmos/Comet lifecycle now uses the configured persistent database
+  and home; `init` binds the generated CometBFT key to exactly bank-backed PoD
+  genesis and refuses conflicting validator sets. Native block production,
+  SIGINT shutdown, same-home restart, height advancement, invariants, export,
+  649 Go cases, targeted race, vet, build, CLI version, shell syntax, and diff
+  checks pass locally. Root coverage is 64.3%. The rebased head and its Docker
+  restart/security gates are not yet published; see `PR23_AUDIT.md`.
 
 ## Public-status warning
 
 `docs/status.json`, README, limitations, and the landing page now mark recovery
-as active and separate 677 verified tests from the historical 577 figure.
+as active and separate 683 verified tests from the historical 577 figure.
 `CLAUDE.md` still needs reconciliation.
 
 ## Blocking audit result
@@ -140,7 +152,8 @@ The token/ledger audit is 12/12 PASS locally across the ordered stack:
 denomination/cap, governance custody, reward issuance, DEX custody, custom
 genesis, and runtime invariants. The repository remains recovery-only because
 the stack is unmerged/unreviewed, GH-20 still needs a real prover/external
-cryptographic review, and GH-21 node lifecycle remains open.
+cryptographic review, and GH-21 still needs refreshed GitHub Docker/security
+evidence plus independent multi-node operations review.
 
 GH-11 implements the canonical denomination metadata (`upnyx`, six decimal
 places, 21,000,000,000,000 base-unit cap) and pre-init bank-genesis cap checks.
@@ -150,4 +163,5 @@ GH-14 closes the declared treasury/stake custody slice on its stacked branch.
 GH-13 closes cap-checked reward issuance, GH-10 closes DEX custody/LP/burn/
 authority, and GH-12 closes custom-genesis/runtime-invariant findings locally.
 GH-20 closes the on-chain ZKP binding and mock-client safety implementation
+locally. GH-21 closes the native single-node persistence/restart implementation
 locally. These remediations remain stacked and unmerged.

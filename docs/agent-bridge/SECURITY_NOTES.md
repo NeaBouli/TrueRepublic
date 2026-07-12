@@ -15,10 +15,13 @@
 - Rust stable CosmWasm 3.0.4 dev-tooling pulls unmaintained/unsound transitive
   crates through Wasmer. No fixable cargo-audit vulnerability remains, but the
   warnings require monitoring or a stable upstream upgrade.
-- GH-21 node lifecycle and final stacked/independent review remain pending.
+- GH-21 native single-node lifecycle passes locally. Refreshed GitHub Docker/
+  security evidence and independent multi-node operations review remain
+  pending; IBC staking/upgrade and standard CosmWasm staking/distribution stay
+  explicit stubs.
 - The legacy node initialization script invokes unavailable `x/staking` gentx
-  commands. PR #19 deliberately refuses a hard-coded validator secret and
-  requires real CometBFT keys; GH-21 must deliver the production PoD bootstrap.
+  commands and must not be used. PR #23 instead binds the generated CometBFT
+  public key to exact bank-backed PoD genesis and refuses conflicting sets.
 - The v0.4 client production bundle is 1.68 MB (309 kB gzip); route-level code
   splitting is recommended before treating low-bandwidth/mobile UX as ready.
 
@@ -55,6 +58,10 @@
   without undoing Big Purge semantics.
 - Maintained and legacy web clients cannot generate or broadcast mock ZKP
   proofs; focused client regressions assert the fail-closed boundary.
+- The MemDB/`select {}` node placeholder is removed. Native block production,
+  graceful SIGINT shutdown, same-home restart, height advancement, invariant
+  execution, and export pass with the generated validator key; genesis writes
+  are atomic and mode `0600`.
 
 ## Legacy client blockers
 

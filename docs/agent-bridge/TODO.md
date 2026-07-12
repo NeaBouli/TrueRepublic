@@ -28,6 +28,11 @@
   mock clients non-submittable on stacked PR #22.
 - [ ] GH-20: obtain independent cryptographic review and deliver a compatible
   real prover/ceremony artifact before enabling anonymous submission.
+- [x] GH-21: replace the MemDB/`select {}` placeholder and legacy `x/staking`
+  bootstrap with persistent Cosmos/Comet lifecycle and generated-key,
+  bank-backed PoD genesis; native restart/export and local gates pass.
+- [ ] GH-21: publish the rebased audited head and require refreshed Docker
+  restart, Go race/coverage, docs, security, and independent operations review.
 - [x] GH-7: DEX rounding, slippage, pool accounting, custody, and authorization
   audit completed in GH-10; GH-12 retains genesis/runtime invariants.
 
@@ -35,7 +40,8 @@
 
 - [x] GH-8: review the preserved legacy checkout; no code is safe/useful for
   wholesale merge, and the checkout remains preserved pending final archive.
-- [ ] GH-8: align README, CLAUDE.md, status JSON, limitations, website, and test counts.
+- [ ] GH-8: finish CLAUDE.md and historical-doc reconciliation; README, status
+  JSON, limitations, website, and current 683-test count are aligned on GH-21.
 - [ ] GH-8: add bridge/docs consistency to CI.
 - [x] PR #9 is ready, mergeable, fully green, and awaiting the required
   independent approval.

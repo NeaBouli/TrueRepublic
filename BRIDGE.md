@@ -11,6 +11,7 @@ Canonical coordination lives in [`docs/agent-bridge/`](docs/agent-bridge/README.
 - GH-10 DEX custody audit: [`PR18_AUDIT.md`](docs/agent-bridge/PR18_AUDIT.md)
 - GH-12 genesis/invariant audit: [`PR19_AUDIT.md`](docs/agent-bridge/PR19_AUDIT.md)
 - GH-20 ZKP/auth audit: [`PR22_AUDIT.md`](docs/agent-bridge/PR22_AUDIT.md)
+- GH-21 node lifecycle audit: [`PR23_AUDIT.md`](docs/agent-bridge/PR23_AUDIT.md)
 - Decisions: [`DECISIONS.md`](docs/agent-bridge/DECISIONS.md)
 - Security: [`SECURITY_NOTES.md`](docs/agent-bridge/SECURITY_NOTES.md)
 
@@ -32,6 +33,38 @@ GitHub recovery epic: [#4](https://github.com/NeaBouli/TrueRepublic/issues/4)
   resolved; propagated locally through PR #22
 - **Ready for:** refreshed PR #22 verification and propagation through PRs #23
   and #24
+
+## 2026-07-12 11:29 EEST GH-21 node lifecycle → Local verification
+
+- **Branch:** `fix/GH-21-node-lifecycle`
+- **Issue:** [GH-21](https://github.com/NeaBouli/TrueRepublic/issues/21)
+- **PR:** [#23](https://github.com/NeaBouli/TrueRepublic/pull/23) (stacked draft against GH-20; GitHub head refresh pending)
+- **Changed:** standard Cosmos server lifecycle with persistent home/database,
+  generated CometBFT-key PoD genesis with exact bank-backed stake, consensus
+  parameter keeper, clean signal shutdown, export, non-root Debian/glibc image,
+  persistent container restart gate, and restored CLI build-version metadata
+- **Audit fixes:** rebased without content drift onto final GH-20 head `fac50a4`;
+  rejected existing/conflicting consensus validator sets without mutation;
+  wrote genesis atomically with mode `0600`; fixed the reproduced blank/failing
+  `version` and `--version` interfaces before publication
+- **Tests:** `go test ./... -count=1 -timeout=600s` → PASS; 649 Go cases and
+  coverage → PASS (root 64.3%, token 92.6%, treasury 97.0%, DEX 45.3%,
+  governance 58.9%); targeted lifecycle race, vet, CGO build, CLI version,
+  shell syntax, and diff checks → PASS
+- **Risk:** Critical — consensus key identity, bank-backed bootstrap stake,
+  persistent application state, restart safety, and operator container runtime
+- **Pending:** publish rebased head; GitHub Docker restart, Go race/coverage,
+  docs, static review, and security workflow; independent operations review
+- **Ready for:** GitHub draft verification only, not merge or production
+
+### Codex review feedback
+
+Local conditional PASS. The former MemDB/`select {}` placeholder and invalid
+`x/staking` gentx bootstrap are no longer the node path. A real subprocess
+produced blocks, stopped on SIGINT, restarted from the same home, advanced
+height, preserved invariants, and exported state. Docker remains unverified
+until the refreshed GitHub job passes; IBC staking/upgrade and multi-node
+operations remain explicit non-production boundaries.
 
 ## 2026-07-12 05:28 EEST GH-20 ZKP/authentication → GitHub green
 
