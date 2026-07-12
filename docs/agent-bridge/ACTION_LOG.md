@@ -376,5 +376,6 @@
   and preservation of the 21,000,000 PNYX canonical supply cap.
 - Focused registered-invariant regression, full Go tests, vet, and build pass.
   Published commit `eec91c7`, answered and resolved both PR #19 review threads,
-  and propagated the fix locally through PR #22. Refreshed GitHub verification
-  and propagation through PRs #23 and #24 remain in progress.
+  rebased/published PR #22 at `0c72ad0`, and propagated the fix locally through
+  PR #23. Refreshed GitHub verification and propagation through PR #24 remain
+  in progress.

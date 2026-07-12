@@ -30,9 +30,9 @@ GitHub recovery epic: [#4](https://github.com/NeaBouli/TrueRepublic/issues/4)
 - **Tests:** focused registered-invariant regression, `go test ./... -count=1`,
   `go vet ./...`, and `go build ./...` → PASS
 - **GitHub:** commit `eec91c7` published; both review threads answered and
-  resolved; propagated locally through PR #22
-- **Ready for:** refreshed PR #22 verification and propagation through PRs #23
-  and #24
+  resolved; PR #22 rebased and published at `0c72ad0`; propagated locally
+  through PR #23
+- **Ready for:** refreshed PR #23 verification and propagation through PR #24
 
 ## 2026-07-12 11:41 EEST GH-21 node lifecycle → GitHub green
 
