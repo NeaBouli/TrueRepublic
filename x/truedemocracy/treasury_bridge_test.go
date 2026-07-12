@@ -5,8 +5,12 @@ import (
 	"fmt"
 	"testing"
 
+	"cosmossdk.io/math"
+	storetypes "cosmossdk.io/store/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
+
+	"truerepublic/token"
 )
 
 // --- Mock BankKeeper ---
@@ -15,10 +19,15 @@ import (
 type mockBankKeeper struct {
 	accounts            map[string]sdk.Coins // address → balances
 	modules             map[string]sdk.Coins // module name → balances
+	supply              sdk.Coins
 	failAccountToModule bool
 	failModuleToAccount bool
+	failMint            bool
+	failMintAt          int
+	mintCalls           int
 	failBurn            bool
 	burned              sdk.Coins
+	storeKey            storetypes.StoreKey
 }
 
 func newMockBankKeeper() *mockBankKeeper {
@@ -30,10 +39,12 @@ func newMockBankKeeper() *mockBankKeeper {
 
 func (m *mockBankKeeper) fundAccount(addr sdk.AccAddress, coins sdk.Coins) {
 	m.accounts[addr.String()] = m.accounts[addr.String()].Add(coins...)
+	m.supply = m.supply.Add(coins...)
 }
 
 func (m *mockBankKeeper) fundModule(moduleName string, coins sdk.Coins) {
 	m.modules[moduleName] = m.modules[moduleName].Add(coins...)
+	m.supply = m.supply.Add(coins...)
 }
 
 func (m *mockBankKeeper) SendCoinsFromAccountToModule(_ context.Context, senderAddr sdk.AccAddress, recipientModule string, amt sdk.Coins) error {
@@ -68,26 +79,75 @@ func (m *mockBankKeeper) SendCoinsFromModuleToAccount(_ context.Context, senderM
 	return nil
 }
 
-func (m *mockBankKeeper) BurnCoins(_ context.Context, moduleName string, amt sdk.Coins) error {
-	if m.failBurn {
-		return fmt.Errorf("injected burn failure")
-	}
-	bal := m.modules[moduleName]
-	for _, coin := range amt {
-		if bal.AmountOf(coin.Denom).LT(coin.Amount) {
-			return fmt.Errorf("insufficient module funds to burn: %s < %s", bal.AmountOf(coin.Denom), coin.Amount)
+func (m *mockBankKeeper) GetBalance(ctx context.Context, addr sdk.AccAddress, denom string) sdk.Coin {
+	if addr.Equals(authtypes.NewModuleAddress(ModuleName)) {
+		amount := m.modules[ModuleName].AmountOf(denom)
+		if m.storeKey != nil {
+			amount = amount.Add(m.storedDelta(ctx, "module", ModuleName, denom))
 		}
+		return sdk.NewCoin(denom, amount)
 	}
-	m.modules[moduleName] = bal.Sub(amt...)
-	m.burned = m.burned.Add(amt...)
+	return sdk.NewCoin(denom, m.accounts[addr.String()].AmountOf(denom))
+}
+
+func (m *mockBankKeeper) GetSupply(ctx context.Context, denom string) sdk.Coin {
+	return sdk.NewCoin(denom, m.supply.AmountOf(denom).Add(m.storedDelta(ctx, "supply", "", denom)))
+}
+
+func (m *mockBankKeeper) MintCoins(ctx context.Context, moduleName string, amounts sdk.Coins) error {
+	m.mintCalls++
+	if m.failMint || (m.failMintAt > 0 && m.mintCalls == m.failMintAt) {
+		return fmt.Errorf("injected mint failure")
+	}
+	for _, coin := range amounts {
+		m.addStoredDelta(ctx, "module", moduleName, coin.Denom, coin.Amount)
+		m.addStoredDelta(ctx, "supply", "", coin.Denom, coin.Amount)
+	}
 	return nil
 }
 
-func (m *mockBankKeeper) GetBalance(_ context.Context, addr sdk.AccAddress, denom string) sdk.Coin {
-	if addr.Equals(authtypes.NewModuleAddress(ModuleName)) {
-		return sdk.NewCoin(denom, m.modules[ModuleName].AmountOf(denom))
+func (m *mockBankKeeper) BurnCoins(ctx context.Context, moduleName string, amounts sdk.Coins) error {
+	if m.failBurn {
+		return fmt.Errorf("injected burn failure")
 	}
-	return sdk.NewCoin(denom, m.accounts[addr.String()].AmountOf(denom))
+	for _, coin := range amounts {
+		moduleBalance := m.modules[moduleName].AmountOf(coin.Denom).
+			Add(m.storedDelta(ctx, "module", moduleName, coin.Denom))
+		if moduleBalance.LT(coin.Amount) {
+			return fmt.Errorf("insufficient module funds to burn")
+		}
+	}
+	for _, coin := range amounts {
+		m.addStoredDelta(ctx, "module", moduleName, coin.Denom, coin.Amount.Neg())
+		m.addStoredDelta(ctx, "supply", "", coin.Denom, coin.Amount.Neg())
+	}
+	m.burned = m.burned.Add(amounts...)
+	return nil
+}
+
+func (m *mockBankKeeper) storedDelta(ctx context.Context, kind, owner, denom string) math.Int {
+	if m.storeKey == nil {
+		return math.ZeroInt()
+	}
+	store := sdk.UnwrapSDKContext(ctx).KVStore(m.storeKey)
+	bz := store.Get([]byte("mock-bank:" + kind + ":" + owner + ":" + denom))
+	if bz == nil {
+		return math.ZeroInt()
+	}
+	amount, ok := math.NewIntFromString(string(bz))
+	if !ok {
+		panic("invalid mock bank delta")
+	}
+	return amount
+}
+
+func (m *mockBankKeeper) addStoredDelta(ctx context.Context, kind, owner, denom string, amount math.Int) {
+	if m.storeKey == nil {
+		panic("mock bank store key is not configured")
+	}
+	store := sdk.UnwrapSDKContext(ctx).KVStore(m.storeKey)
+	key := []byte("mock-bank:" + kind + ":" + owner + ":" + denom)
+	store.Set(key, []byte(m.storedDelta(ctx, kind, owner, denom).Add(amount).String()))
 }
 
 // setupKeeperWithBank creates a Keeper with a mock BankKeeper for bridge tests.
@@ -95,7 +155,9 @@ func setupKeeperWithBank(t *testing.T) (Keeper, sdk.Context, *mockBankKeeper) {
 	t.Helper()
 	k, ctx := setupKeeper(t) // from validator_test.go (bankKeeper=nil)
 	bk := newMockBankKeeper()
+	bk.storeKey = k.StoreKey
 	k.bankKeeper = bk
+	k.issuer = token.NewIssuanceService(bk, ModuleName)
 	return k, ctx, bk
 }
 

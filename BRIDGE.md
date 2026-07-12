@@ -7,6 +7,7 @@ Canonical coordination lives in [`docs/agent-bridge/`](docs/agent-bridge/README.
 - Audit trail: [`ACTION_LOG.md`](docs/agent-bridge/ACTION_LOG.md)
 - GH-11 cap audit: [`PR15_AUDIT.md`](docs/agent-bridge/PR15_AUDIT.md)
 - GH-14 escrow audit: [`PR16_AUDIT.md`](docs/agent-bridge/PR16_AUDIT.md)
+- GH-13 issuance audit: [`PR17_AUDIT.md`](docs/agent-bridge/PR17_AUDIT.md)
 - Decisions: [`DECISIONS.md`](docs/agent-bridge/DECISIONS.md)
 - Security: [`SECURITY_NOTES.md`](docs/agent-bridge/SECURITY_NOTES.md)
 
@@ -102,5 +103,37 @@ remediation clusters. No administrative branch-protection bypass is permitted.
 The patch matches the glibc/wasmvm linkage already proven by GH-21 while keeping
 GH-4's existing entrypoint and root data path unchanged. Both GitHub Docker
 jobs now prove the corrected image builds.
+
+---
+
+## 2026-07-11 23:02 EEST GH-13 canonical reward issuance → GitHub verification
+
+- **Branch:** `fix/GH-13-cap-issuance`
+- **Issue:** [GH-13](https://github.com/NeaBouli/TrueRepublic/issues/13)
+- **PR:** [#17](https://github.com/NeaBouli/TrueRepublic/pull/17) (stacked draft against GH-14)
+- **Changed:** canonical bank-supply issuance service, cap-clipped validator and
+  domain inflation, supply-neutral treasury payouts, interval payout snapshots,
+  centralized slash burns, atomic two-phase EndBlock reward settlement, and an
+  architecture-safe/reproducible wasmvm node image with a reduced build context
+- **Audit fixes:** rejected invalid canonical supply, closed the partial
+  EndBlock commit boundary between staking issuance and domain issuance, and
+  removed a duplicate Amino registration that panicked every CLI/node startup;
+  final review also made bank-mock issuance rollback-aware and baselined restored
+  domain payout snapshots
+- **Tests:** Go build/vet, 569 cases, race, and coverage → PASS; token 93.5%,
+  governance 55.8%; Rust 26 tests/Clippy/audit, client lint/6 tests/build/audit,
+  documentation consistency, Dockerfile/YAML/diff checks → PASS. Both GitHub
+  Docker builds, both Go jobs, DeepScan, docs, and the manual security workflow
+  → PASS on the final remediation head; the complete security workflow also
+  passes and all five review threads are resolved.
+- **Risk:** High — canonical supply, mint/burn authority, reward inflation,
+  validator power, and treasury claims
+- **Ready for:** ordered stacked review after PRs #9, #15, and #16
+
+### Codex review feedback
+
+Conditional PASS for the GH-13 scope after the three audit hardenings. DEX
+custody/burn integration, custom-genesis reconciliation, runtime invariants,
+and anonymous recipient binding remain separately blocking.
 
 ---

@@ -114,6 +114,10 @@ func (am AppModule) InitGenesis(ctx sdk.Context, cdc codec.JSONCodec, data json.
 	for _, domain := range genesisState.Domains {
 		bz := am.cdc.MustMarshalLengthPrefixed(&domain)
 		store.Set([]byte("domain:"+domain.Name), bz)
+		store.Set(
+			domainPayoutSnapshotKey(domain.Name),
+			am.cdc.MustMarshalLengthPrefixed(domain.TotalPayouts),
+		)
 		am.keeper.InitializeBigPurgeSchedule(ctx, domain.Name)
 	}
 
@@ -145,10 +149,6 @@ func (am AppModule) InitGenesis(ctx sdk.Context, cdc codec.JSONCodec, data json.
 	timeBz := am.cdc.MustMarshalLengthPrefixed(ctx.BlockTime().Unix())
 	store.Set([]byte("pod:last-reward-time"), timeBz)
 	store.Set([]byte("dom:last-interest-time"), timeBz)
-	zeroInt := math.ZeroInt()
-	releaseBz := am.cdc.MustMarshalLengthPrefixed(&zeroInt)
-	store.Set([]byte("pod:total-release"), releaseBz)
-
 	return updates
 }
 
@@ -158,15 +158,18 @@ func (am AppModule) InitGenesis(ctx sdk.Context, cdc codec.JSONCodec, data json.
 func (am AppModule) EndBlock(goCtx context.Context) ([]abci.ValidatorUpdate, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	// 1. Distribute staking rewards if the interval has elapsed.
-	if err := am.keeper.DistributeStakingRewards(ctx); err != nil {
+	// Commit both inflation paths as one reward phase. If domain issuance fails
+	// after staking issuance, neither the bank mint nor matching claims/timers
+	// become visible to the rest of EndBlock.
+	rewardCtx, writeRewards := ctx.CacheContext()
+	if err := am.keeper.DistributeStakingRewards(rewardCtx); err != nil {
 		return nil, err
 	}
 
-	// 1b. Distribute domain interest (eq.4) alongside staking rewards.
-	if err := am.keeper.DistributeDomainInterest(ctx); err != nil {
+	if err := am.keeper.DistributeDomainInterest(rewardCtx); err != nil {
 		return nil, err
 	}
+	writeRewards()
 
 	// 2. Disable validators no longer in any domain. Their stake record stays
 	// intact so custody remains withdrawable and escrow parity is preserved.

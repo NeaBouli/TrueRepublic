@@ -254,7 +254,8 @@ func (k Keeper) EnforceDomainMembership(ctx sdk.Context, operatorAddr string) bo
 // DistributeStakingRewards distributes node staking rewards (eq.5) to all
 // bonded validators if at least RewardInterval seconds have elapsed.
 func (k Keeper) DistributeStakingRewards(ctx sdk.Context) error {
-	store := ctx.KVStore(k.StoreKey)
+	cacheCtx, write := ctx.CacheContext()
+	store := cacheCtx.KVStore(k.StoreKey)
 	blockTime := ctx.BlockTime().Unix()
 
 	// Load last reward time.
@@ -265,6 +266,7 @@ func (k Keeper) DistributeStakingRewards(ctx sdk.Context) error {
 		// First call — initialize and return.
 		bz := k.cdc.MustMarshalLengthPrefixed(blockTime)
 		store.Set([]byte("pod:last-reward-time"), bz)
+		write()
 		return nil
 	}
 
@@ -273,35 +275,51 @@ func (k Keeper) DistributeStakingRewards(ctx sdk.Context) error {
 		return nil
 	}
 
-	// Load total coins released so far.
-	var totalRelease math.Int
-	if bz := store.Get([]byte("pod:total-release")); bz != nil {
-		k.cdc.MustUnmarshalLengthPrefixed(bz, &totalRelease)
-	} else {
-		totalRelease = math.ZeroInt()
+	supply, err := k.issuer.Supply(cacheCtx)
+	if err != nil {
+		return errorsmod.Wrap(err, "read canonical supply for staking rewards")
 	}
 
-	var newRelease math.Int = math.ZeroInt()
-
-	k.IterateValidators(ctx, func(val Validator) bool {
+	type allocation struct {
+		validator Validator
+		requested math.Int
+	}
+	var allocations []allocation
+	totalRequested := math.ZeroInt()
+	k.IterateValidators(cacheCtx, func(val Validator) bool {
 		if val.Jailed {
 			return false
 		}
 		stakeAmt := val.Stake.AmountOf(PNYXDenom)
-		reward := rewards.CalcNodeReward(stakeAmt, totalRelease, elapsed)
+		reward := rewards.CalcNodeReward(stakeAmt, supply, elapsed)
 		if reward.IsPositive() {
-			val.Stake = val.Stake.Add(sdk.NewCoin(PNYXDenom, reward))
-			val.Power = val.Stake.AmountOf(PNYXDenom).Int64() / rewards.StakeMin
-			k.SetValidator(ctx, val)
-			newRelease = newRelease.Add(reward)
+			allocations = append(allocations, allocation{validator: val, requested: reward})
+			totalRequested = totalRequested.Add(reward)
 		}
 		return false
 	})
 
-	totalRelease = totalRelease.Add(newRelease)
-	store.Set([]byte("pod:total-release"), k.cdc.MustMarshalLengthPrefixed(&totalRelease))
+	minted, err := k.issuer.MintUpToCap(cacheCtx, totalRequested)
+	if err != nil {
+		return errorsmod.Wrap(err, "mint staking rewards")
+	}
+	remaining := minted
+	for _, allocation := range allocations {
+		grant := allocation.requested
+		if grant.GT(remaining) {
+			grant = remaining
+		}
+		if !grant.IsPositive() {
+			break
+		}
+		allocation.validator.Stake = allocation.validator.Stake.Add(sdk.NewCoin(PNYXDenom, grant))
+		allocation.validator.Power = allocation.validator.Stake.AmountOf(PNYXDenom).Int64() / rewards.StakeMin
+		k.SetValidator(cacheCtx, allocation.validator)
+		remaining = remaining.Sub(grant)
+	}
 	store.Set([]byte("pod:last-reward-time"), k.cdc.MustMarshalLengthPrefixed(blockTime))
 
+	write()
 	return nil
 }
 
@@ -310,7 +328,8 @@ func (k Keeper) DistributeStakingRewards(ctx sdk.Context) error {
 // node staking rewards. Only active domains (with payouts in this interval)
 // receive interest, capped by their payout amount.
 func (k Keeper) DistributeDomainInterest(ctx sdk.Context) error {
-	store := ctx.KVStore(k.StoreKey)
+	cacheCtx, write := ctx.CacheContext()
+	store := cacheCtx.KVStore(k.StoreKey)
 	blockTime := ctx.BlockTime().Unix()
 
 	// Load last domain interest time.
@@ -320,6 +339,11 @@ func (k Keeper) DistributeDomainInterest(ctx sdk.Context) error {
 	} else {
 		bz := k.cdc.MustMarshalLengthPrefixed(blockTime)
 		store.Set([]byte("dom:last-interest-time"), bz)
+		k.IterateDomains(cacheCtx, func(domain Domain) bool {
+			store.Set(domainPayoutSnapshotKey(domain.Name), k.cdc.MustMarshalLengthPrefixed(domain.TotalPayouts))
+			return false
+		})
+		write()
 		return nil
 	}
 
@@ -328,34 +352,63 @@ func (k Keeper) DistributeDomainInterest(ctx sdk.Context) error {
 		return nil
 	}
 
-	// Load total coins released.
-	var totalRelease math.Int
-	if bz := store.Get([]byte("pod:total-release")); bz != nil {
-		k.cdc.MustUnmarshalLengthPrefixed(bz, &totalRelease)
-	} else {
-		totalRelease = math.ZeroInt()
+	supply, err := k.issuer.Supply(cacheCtx)
+	if err != nil {
+		return errorsmod.Wrap(err, "read canonical supply for domain interest")
 	}
 
-	k.IterateDomains(ctx, func(domain Domain) bool {
+	type allocation struct {
+		domain    Domain
+		requested math.Int
+	}
+	var allocations []allocation
+	totalRequested := math.ZeroInt()
+	k.IterateDomains(cacheCtx, func(domain Domain) bool {
 		treasure := domain.Treasury.AmountOf(PNYXDenom)
-		if !treasure.IsPositive() {
-			return false
+		snapshotKey := domainPayoutSnapshotKey(domain.Name)
+		previousPayouts := domain.TotalPayouts
+		if bz := store.Get(snapshotKey); bz != nil {
+			k.cdc.MustUnmarshalLengthPrefixed(bz, &previousPayouts)
 		}
-
-		// Payout during this interval = domain's TotalPayouts (cumulative).
-		// eq.4 caps interest at payout amount to reward only active domains.
-		payout := math.NewInt(domain.TotalPayouts)
-		interest := rewards.CalcDomainInterest(treasure, payout, totalRelease, elapsed)
+		intervalPayouts := domain.TotalPayouts - previousPayouts
+		if intervalPayouts < 0 {
+			intervalPayouts = 0
+		}
+		interest := rewards.CalcDomainInterest(treasure, math.NewInt(intervalPayouts), supply, elapsed)
 		if interest.IsPositive() {
-			domain.Treasury = domain.Treasury.Add(sdk.NewCoin(PNYXDenom, interest))
-			bz := k.cdc.MustMarshalLengthPrefixed(&domain)
-			store.Set([]byte("domain:"+domain.Name), bz)
+			allocations = append(allocations, allocation{domain: domain, requested: interest})
+			totalRequested = totalRequested.Add(interest)
 		}
+		// Missing snapshots belong to pre-GH-13 state. Baseline them lazily at
+		// the current cumulative payout so historical payouts are never rewarded.
+		store.Set(snapshotKey, k.cdc.MustMarshalLengthPrefixed(domain.TotalPayouts))
 		return false
 	})
 
+	minted, err := k.issuer.MintUpToCap(cacheCtx, totalRequested)
+	if err != nil {
+		return errorsmod.Wrap(err, "mint domain interest")
+	}
+	remaining := minted
+	for _, allocation := range allocations {
+		grant := allocation.requested
+		if grant.GT(remaining) {
+			grant = remaining
+		}
+		if !grant.IsPositive() {
+			break
+		}
+		allocation.domain.Treasury = allocation.domain.Treasury.Add(sdk.NewCoin(PNYXDenom, grant))
+		store.Set([]byte("domain:"+allocation.domain.Name), k.cdc.MustMarshalLengthPrefixed(&allocation.domain))
+		remaining = remaining.Sub(grant)
+	}
 	store.Set([]byte("dom:last-interest-time"), k.cdc.MustMarshalLengthPrefixed(blockTime))
+	write()
 	return nil
+}
+
+func domainPayoutSnapshotKey(domainName string) []byte {
+	return []byte("dom:last-payouts:" + domainName)
 }
 
 // BuildValidatorUpdates constructs the CometBFT ValidatorUpdate slice for

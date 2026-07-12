@@ -16,7 +16,7 @@
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/tests-589%20recovery--verified-orange" alt="Recovery-verified tests"/>
+  <img src="https://img.shields.io/badge/tests-601%20recovery--verified-orange" alt="Recovery-verified tests"/>
   <img src="https://img.shields.io/badge/version-v0.4.0-blue" alt="Version"/>
   <img src="https://img.shields.io/badge/recovery-active-orange" alt="Recovery active"/>
   <img src="https://img.shields.io/badge/Go-1.26.5-00ADD8?logo=go" alt="Go"/>
@@ -125,7 +125,7 @@ See [INSTALLATION.md](INSTALLATION.md) for detailed instructions.
 | **Stones Voting** | Highlight importance, elect admins, earn rewards | [Stones Guide](docs/user-manual/stones-voting-guide.md) |
 | **Anonymous Voting** | Domain key pairs for unlinkable ratings (WP S4) | [Architecture](docs/developers/architecture/module-reference.md) |
 | **Proof of Domain** | Validators must be active domain members | [Validator Guide](docs/validators/README.md) |
-| **DEX (AMM)** | Token swaps with 0.3% fee + 1% PNYX burn | [DEX Guide](docs/user-manual/dex-trading-guide.md) |
+| **DEX (recovery simulation)** | Deterministic AMM arithmetic; bank custody, LP ownership, authorization, and real burn remain blocked by GH-10 | [DEX Guide](docs/user-manual/dex-trading-guide.md) |
 | **VoteToEarn** | Earn PNYX rewards for active participation | [Stones Guide](docs/user-manual/stones-voting-guide.md) |
 | **Suggestion Lifecycle** | Green/yellow/red zones with auto-delete | [Governance](docs/user-manual/governance-tutorial.md) |
 | **IBC Transfers** | Cross-chain PNYX via ICS-20 (ibc-go v8) | [IBC Setup](docs/IBC_RELAYER_SETUP.md) |
@@ -194,8 +194,8 @@ TrueRepublic/
 | Proof of Domain (PoD) | ✅ | `x/truedemocracy/validator.go` |
 | Validator Slashing | ✅ | `x/truedemocracy/slashing.go` |
 | Tokenomics (eq.1-5) | ✅ | `treasury/keeper/rewards.go` |
-| DEX / AMM (x*y=k) | ✅ | `x/dex/keeper.go` |
-| Multi-Asset DEX (BTC/ETH/LUSD) | ✅ | `x/dex/keeper.go` (asset registry + trading validation) |
+| DEX / AMM (x*y=k) | 🟡 Recovery simulation | Arithmetic only; bank custody/settlement blocked by GH-10 |
+| Multi-Asset DEX (BTC/ETH/LUSD) | 🟡 Recovery-blocked | Registry/validation exist; authority and bank-backed LP ownership blocked by GH-10 |
 | Node Staking Rewards (10% APY) | ✅ | `treasury/keeper/rewards.go` (eq.5) |
 | Domain Interest (25% APY) | ✅ | `treasury/keeper/rewards.go` (eq.4) |
 | Release Decay | ✅ | `treasury/keeper/rewards.go` |
@@ -266,28 +266,28 @@ The checklist below records implemented surface area, not a production security
 approval. Current evidence, risks, and commands are maintained in
 [`BRIDGE.md`](BRIDGE.md) and [GitHub issue #4](https://github.com/NeaBouli/TrueRepublic/issues/4).
 
-- 🟡 589 tests recovery-verified locally (557 Go + 26 Rust + 6 maintained-client)
+- 🟡 601 tests recovery-verified locally (569 Go + 26 Rust + 6 maintained-client)
 - ✅ Core blockchain compiles and runs
-- ✅ Whitepaper tokenomics fully implemented (equations 1-5)
-- ✅ Complete governance system (domains, proposals, voting, lifecycle)
-- ✅ Zero-Knowledge Proofs (Groth16 ZK-SNARKs for anonymous voting)
+- 🟡 Tokenomics equations plus capped bank issuance implemented on recovery branches; genesis/runtime invariants pending
+- 🟡 Governance surface implemented; escrow/auth recovery is in stacked review
+- 🟡 Groth16 voting backend tested; reward-recipient binding and real web proof generation remain open
 - ✅ CosmWasm smart contract integration (wasmd v0.53.3)
-- ✅ Domain-Bank Bridge (dual accounting, deposit/withdraw)
+- 🟡 Domain-Bank escrow recovery implemented on stacked PR #16
 - ✅ IBC Transfer module (ibc-go v8.4.0, cross-chain PNYX transfers)
-- ✅ Multi-Asset DEX: asset registry, trading validation, symbol resolution
-- ✅ Cross-Chain Liquidity: multi-hop swaps, pool analytics, slippage protection
+- 🔴 Multi-Asset DEX arithmetic only; bank custody, LP ownership, and authority checks are not recovered
+- 🔴 Cross-chain liquidity paths are simulation-only until DEX custody is rebuilt
 - ✅ UI Components: ZKP voting panel, DEX analytics (8 React components)
 - ✅ Developer Tooling: 4 CosmWasm example contracts, shared bindings, testing utils
-- ✅ DEX with AMM, liquidity pools, swap fees, PNYX burn
-- ✅ Web wallet with 3-column governance UI
-- ✅ Mobile wallet with bottom-tab navigation
+- 🔴 DEX burn is internal accounting only, not a canonical bank burn
+- ✅ Canonical v0.4 web client with 3-column governance UI
+- 🔴 Legacy mobile wallet is deprecated and security-blocked
 - ✅ Comprehensive documentation (30+ guides)
 
 ### Roadmap
 
 - ✅ **v0.1.x (Feb 2026):** Security fixes, documentation, elections
 - ✅ **v0.2.x (Feb 2026):** Governance core — Systemic Consensing, Tokenomics, Elections
-- ✅ **v0.3.0 (Q1 2026): ZKP Anonymity, CosmWasm, IBC, Multi-Asset DEX (100% COMPLETE)**
+- 🟡 **v0.3.0 (Q1 2026): historical feature surface implemented; recovery verification incomplete**
   - ✅ Weeks 1-4: ZKP Anonymity Layer (Groth16, Merkle trees, nullifiers)
   - ✅ Week 5: CosmWasm Integration (wasmd v0.53.3, custom bindings)
   - ✅ Week 6: Domain-Bank Bridge (dual accounting, deposit/withdraw)
@@ -308,8 +308,8 @@ approval. Current evidence, risks, and commands are maintained in
 - 📋 **v0.5.0 (Q3 2026):** Native Apps (iOS/Android)
 - 🎯 **v1.0.0 (Q4 2026):** Production Release — External audit, mainnet launch
 
-> Historical test count: 577. The authoritative recovery-verified total is 589
-> (557 Go + 26 Rust + 6 maintained-client), reproduced locally and in CI.
+> Historical test count: 577. The authoritative recovery-verified total is 601
+> (569 Go + 26 Rust + 6 maintained-client), reproduced locally on the current branch.
 
 ---
 

@@ -130,8 +130,7 @@ func (k Keeper) slashValidatorStake(ctx sdk.Context, val Validator, pct int64) (
 	val = slashStake(val, pct)
 	penalty := before.Sub(val.Stake.AmountOf(PNYXDenom))
 	if penalty.IsPositive() {
-		coins := sdk.NewCoins(sdk.NewCoin(PNYXDenom, penalty))
-		if err := k.bankKeeper.BurnCoins(ctx, ModuleName, coins); err != nil {
+		if err := k.issuer.Burn(ctx, penalty); err != nil {
 			return Validator{}, errorsmod.Wrap(err, "validator slash burn failed")
 		}
 	}

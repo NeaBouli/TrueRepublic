@@ -212,3 +212,59 @@
 - Accepted CodeRabbit's slash-atomicity hardening and three stale documentation
   findings. Rejected only its obsolete suggestion that refreshed PR #15 checks
   were pending because live GitHub evidence shows them green at `e0ff339`.
+
+## 2026-07-11 23:02 EEST - GH-13 canonical issuance rebase and audit
+
+- Rebasing retained only the GH-13 implementation commit on top of verified PR
+  #16 head `fa693a8`; stale GH-13 documentation commits were intentionally
+  skipped and reconstructed from current evidence.
+- Audited canonical supply reads, minter/burner permissions, cap clipping,
+  validator/domain allocation, interval snapshots, vote transfers, slashing,
+  EndBlock ordering, and mint/burn failure paths against whitepaper equations
+  4/5 and the 21,000,000 PNYX rule.
+- Found and fixed a high-severity abstraction bypass: validator slashing now
+  uses `token.IssuanceService.Burn` rather than calling the bank keeper directly.
+- Found and fixed a high-severity partial-settlement boundary: staking and
+  domain issuance now share one outer EndBlock cache, with a second-mint failure
+  regression proving claims, timers, and snapshots roll back together.
+- Added missing-bank, nil/negative supply, failed burn, and second-mint failure
+  coverage. Canonical supply input is validated before cap calculations.
+- Go build, vet, 567 cases, race, and coverage pass. Current coverage is root
+  10.2%, token 93.5%, treasury 97.0%, DEX 34.2%, and governance 55.8%.
+- Updated the structured audit, public DEX limitations, canonical reward docs,
+  599-test status, bridge decisions, security notes, and PR #17 audit record.
+- Hardened the node Dockerfile to derive `libwasmvm` from Docker's target
+  architecture (`amd64`/`arm64`) instead of host `uname`, added runtime linkage
+  validation and `libgcc-s1`, and injected the immutable GitHub commit as the
+  binary version.
+- Added `.dockerignore`; the excluded Rust target and installed client
+  dependencies alone reduce the prior 1.6 GB local build context by more than
+  1.5 GB and prevent local environment/key files from entering the context.
+- Re-ran Rust Clippy and audit after all changes. Clippy passes; audit reports
+  no vulnerability and the same six allowed transitive dev-tooling warnings.
+  Maintained-client and documentation gates pass; GitHub must execute the
+  actual Docker build because this workstation has no Docker engine.
+- The first GitHub image execution proved wasmvm selection/linkage correct but
+  exposed an older application startup panic: `legacytx.StdTx` was registered
+  directly and then a second time by the auth codec. Removed the duplicate,
+  unified application/CLI codec construction, exposed the injected build
+  version through Cobra, and added the 567th Go regression test.
+- Published `b738d70`. Both refreshed Docker builds now pass their linkage and
+  CLI-start smoke check; both Go jobs (including race/coverage), docs, DeepScan,
+  and the complete manually triggered security workflow are green.
+- Thread-aware GitHub inspection reports zero unresolved review threads. The
+  prior full CodeRabbit review completed without findings; the incremental
+  startup-fix refresh was acknowledged but temporarily rate-limited.
+- The accepted final 33-file review found five inline issues plus two additional
+  findings. Made mock-bank mint/burn deltas cache-backed and extended the
+  second-mint regression to prove supply/escrow rollback and parity.
+- Initialized restored-domain payout snapshots at genesis and lazily backfilled
+  pre-GH-13 state, preventing historical payout windfalls. Added genesis and
+  upgrade-compatible lazy-backfill regressions.
+- Added the container `--version` smoke, reconciled PNYX-cap decisions, DEX
+  status, equation signatures, and branch-head handover wording. Full local Go
+  build/vet, 569 cases, focused race, coverage, and docs consistency pass.
+- Published `0e6cf38`, replied to every inline finding with implementation and
+  test evidence, and recorded the two non-inline fixes in the PR conversation.
+  Both Go jobs, both Docker builds, docs, DeepScan, CodeRabbit, and the manually
+  triggered security workflow pass; all five review threads are resolved.

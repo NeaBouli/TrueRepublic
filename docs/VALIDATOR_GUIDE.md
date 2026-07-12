@@ -69,7 +69,7 @@ This prevents validators from extracting more value than the domain generates.
 - **Release decay:** Rewards decrease as total supply approaches 21M PNYX
 
 ```
-reward = stake * ApyNode * timeInYears * (1 - totalReleased / 21000000)
+reward = stake * ApyNode * timeInYears * (1 - canonicalBankSupply / 21000000)
 ```
 
 ### Domain Interest (eq.4)

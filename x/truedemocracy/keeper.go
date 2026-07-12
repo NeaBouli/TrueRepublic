@@ -11,14 +11,15 @@ import (
 	"github.com/cosmos/cosmos-sdk/crypto/keys/ed25519"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+	"truerepublic/token"
 	rewards "truerepublic/treasury/keeper"
 )
 
 // BankKeeper defines the x/bank methods required for the treasury bridge.
 type BankKeeper interface {
+	token.IssuanceBankKeeper
 	SendCoinsFromAccountToModule(ctx context.Context, senderAddr sdk.AccAddress, recipientModule string, amt sdk.Coins) error
 	SendCoinsFromModuleToAccount(ctx context.Context, senderModule string, recipientAddr sdk.AccAddress, amt sdk.Coins) error
-	BurnCoins(ctx context.Context, moduleName string, amt sdk.Coins) error
 	GetBalance(ctx context.Context, addr sdk.AccAddress, denom string) sdk.Coin
 }
 
@@ -27,10 +28,17 @@ type Keeper struct {
 	nodes      []*Node
 	cdc        *codec.LegacyAmino
 	bankKeeper BankKeeper // nil until x/bank is wired (bridge functions check)
+	issuer     token.IssuanceService
 }
 
 func NewKeeper(cdc *codec.LegacyAmino, storeKey storetypes.StoreKey, nodes []*Node, bankKeeper BankKeeper) Keeper {
-	return Keeper{StoreKey: storeKey, nodes: nodes, cdc: cdc, bankKeeper: bankKeeper}
+	return Keeper{
+		StoreKey:   storeKey,
+		nodes:      nodes,
+		cdc:        cdc,
+		bankKeeper: bankKeeper,
+		issuer:     token.NewIssuanceService(bankKeeper, ModuleName),
+	}
 }
 
 // GetDomain loads a domain from the KV store by name.

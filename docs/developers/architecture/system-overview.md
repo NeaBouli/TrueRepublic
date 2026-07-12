@@ -73,12 +73,11 @@ type TrueRepublicApp struct {
 
 ### EndBlock Processing Order
 
-1. Distribute staking rewards (every 3,600 blocks)
-2. Distribute domain treasury interest
-3. Enforce domain membership (evict validators without domains)
-4. Process suggestion lifecycles (zone transitions, auto-delete)
-5. Process governance (admin election, inactivity cleanup)
-6. Return validator set updates to CometBFT
+1. Atomically distribute staking rewards and domain treasury interest (every 3,600 seconds)
+2. Enforce domain membership (evict validators without domains)
+3. Process suggestion lifecycles (zone transitions, auto-delete)
+4. Process governance (admin election, inactivity cleanup)
+5. Return validator set updates to CometBFT
 
 ## Module Architecture
 

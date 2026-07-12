@@ -7,6 +7,7 @@ on:
       - 'go.mod'
       - 'go.sum'
       - 'Dockerfile'
+      - '.dockerignore'
       - '.github/workflows/go-ci.yml'
   pull_request:
     paths:
@@ -14,6 +15,7 @@ on:
       - 'go.mod'
       - 'go.sum'
       - 'Dockerfile'
+      - '.dockerignore'
       - '.github/workflows/go-ci.yml'
 
 jobs:
@@ -45,4 +47,4 @@ jobs:
           persist-credentials: false
 
       - name: Build node image
-        run: docker build --tag truerepublic:ci .
+        run: docker build --build-arg VERSION="${GITHUB_SHA}" --tag truerepublic:ci .
