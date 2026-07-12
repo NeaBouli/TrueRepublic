@@ -364,6 +364,20 @@
 - GitHub Go build/vet/race/coverage and Docker block/restart run `29170712626`,
   Docs, DeepScan, Web, Mobile, Rust, and all five manual Security Scan
   `29170832988` jobs pass. Independent multi-node operations review remains.
+- Created isolated GH-8 checkout and rebased only its CI/docs commits onto
+  final GH-21 `b59efa2`, discarding the obsolete link-only 636-case handoff.
+- Combined Action-major upgrades with read-only, non-persisted checkout
+  credentials, Node 22 for the maintained client, main-only push automation,
+  PR/manual feature execution, and no duplicate branch/PR suites.
+- Found the docs gate silently checked nonexistent `wiki-github/` paths while
+  the real wiki claimed v0.1-alpha, 182 tests, Go 1.23, Testnet Ready, usable
+  anonymity/mobile, and no high/critical issues. Replaced those claims with
+  evidence-backed 683-case recovery status and explicit blockers.
+- Corrected the recovery installation path to select the branch that actually
+  provides GH-21 lifecycle commands; created real wiki current/testing pages
+  and reconciled linked architecture/operator toolchain facts.
+- Local workflow YAML, docs consistency/arithmetic, JSON, wiki target,
+  stale-current-claim, and diff checks pass. GitHub Action execution is pending.
 
 ## 2026-07-12 12:18 EEST - GH-12 review remediation
 

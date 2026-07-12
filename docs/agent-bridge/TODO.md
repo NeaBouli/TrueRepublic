@@ -42,8 +42,13 @@
 
 - [x] GH-8: review the preserved legacy checkout; no code is safe/useful for
   wholesale merge, and the checkout remains preserved pending final archive.
-- [ ] GH-8: finish CLAUDE.md and historical-doc reconciliation; README, status
-  JSON, limitations, website, and current 683-test count are aligned on GH-21.
-- [ ] GH-8: add bridge/docs consistency to CI.
+- [x] GH-8: align CLAUDE, install, FAQ, README, status JSON, limitations,
+  landing page, and real wiki status/security claims to the 683-test recovery
+  source of truth.
+- [x] GH-8: enforce suite/module/cap arithmetic and real wiki/agent/public
+  status through docs CI; modernize Action runtimes without credential or
+  duplicate-run regression.
+- [ ] GH-8: publish the rebased PR #24 head and pass every updated GitHub Action,
+  manual Security Scan, and independent docs/recovery review.
 - [x] PR #9 is ready, mergeable, fully green, and awaiting the required
   independent approval.

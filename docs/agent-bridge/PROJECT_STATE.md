@@ -1,6 +1,6 @@
 # Project State
 
-Updated: 2026-07-12 11:41 EEST
+Updated: 2026-07-12 11:58 EEST
 
 ## Repository
 
@@ -33,6 +33,10 @@ Updated: 2026-07-12 11:41 EEST
 - GH-21 draft PR: #23 (`fix/GH-21-node-lifecycle` -> `fix/GH-20-zkp-binding`)
 - GH-21 recovery checkout:
   `/Users/gio/Documents/Codex/2026-07-11/erkunden/TrueRepublic-gh21`
+- GH-8 branch: `fix/GH-8-docs-final`
+- GH-8 draft PR: #24 (`fix/GH-8-docs-final` -> `fix/GH-21-node-lifecycle`)
+- GH-8 recovery checkout:
+  `/Users/gio/Documents/Codex/2026-07-11/erkunden/TrueRepublic-gh8`
 - Recovery worktree: `/Users/gio/Desktop/repos/TrueRepublic-recovery`
 - Legacy local checkout: preserved at `/Users/gio/Desktop/repos/TrueRepublic`
 - GitHub epic: #4
@@ -140,6 +144,12 @@ Updated: 2026-07-12 11:41 EEST
   checks pass locally. Root coverage is 64.3%. Published head `ec1ce17` is
   mergeable; GitHub Go/Docker run `29170712626`, Docs, DeepScan, Web, Mobile,
   Rust, and manual Security Scan `29170832988` pass; see `PR23_AUDIT.md`.
+- GH-8 is locally rebased onto final GH-21 `b59efa2`. It modernizes official
+  Action runtimes without credential persistence or duplicate feature runs,
+  strengthens suite/module/cap consistency, and reconciles CLAUDE, install,
+  FAQ, landing, and real wiki status/security claims to 683 cases. Workflow
+  YAML, docs, JSON, wiki target, stale-current-claim, and diff checks pass;
+  GitHub execution on the rebased head is pending. See `PR24_AUDIT.md`.
 
 ## Public-status warning
 

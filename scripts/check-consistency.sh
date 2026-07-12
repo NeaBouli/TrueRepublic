@@ -2,7 +2,7 @@
 # Consistency Check Script
 # Verifies version/tests/supply across all docs
 
-set -e
+set -euo pipefail
 
 echo "Checking Documentation Consistency..."
 
@@ -50,13 +50,14 @@ check_file() {
   local label="$2"
 
   if [ ! -f "$file" ]; then
-    echo "SKIP: $file not found"
+    echo "FAIL: required file $file not found"
+    ERRORS=$((ERRORS+1))
     return
   fi
 
   echo "Checking $label ($file)..."
-  grep -q "$VERSION" "$file" && echo "  OK Version" || { echo "  FAIL Version ($VERSION not found)"; ERRORS=$((ERRORS+1)); }
-  grep -q "$TESTS" "$file" && echo "  OK Tests" || { echo "  FAIL Tests ($TESTS not found)"; ERRORS=$((ERRORS+1)); }
+  grep -Fq "$VERSION" "$file" && echo "  OK Version" || { echo "  FAIL Version ($VERSION not found)"; ERRORS=$((ERRORS+1)); }
+  grep -Fq "$TESTS" "$file" && echo "  OK Tests" || { echo "  FAIL Tests ($TESTS not found)"; ERRORS=$((ERRORS+1)); }
   echo ""
 }
 

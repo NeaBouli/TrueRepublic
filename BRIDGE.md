@@ -12,6 +12,7 @@ Canonical coordination lives in [`docs/agent-bridge/`](docs/agent-bridge/README.
 - GH-12 genesis/invariant audit: [`PR19_AUDIT.md`](docs/agent-bridge/PR19_AUDIT.md)
 - GH-20 ZKP/auth audit: [`PR22_AUDIT.md`](docs/agent-bridge/PR22_AUDIT.md)
 - GH-21 node lifecycle audit: [`PR23_AUDIT.md`](docs/agent-bridge/PR23_AUDIT.md)
+- GH-8 docs/CI audit: [`PR24_AUDIT.md`](docs/agent-bridge/PR24_AUDIT.md)
 - Decisions: [`DECISIONS.md`](docs/agent-bridge/DECISIONS.md)
 - Security: [`SECURITY_NOTES.md`](docs/agent-bridge/SECURITY_NOTES.md)
 
@@ -33,6 +34,38 @@ GitHub recovery epic: [#4](https://github.com/NeaBouli/TrueRepublic/issues/4)
   resolved; PR #22 rebased and published at `0c72ad0`; propagated locally
   through PR #23
 - **Ready for:** refreshed PR #23 verification and propagation through PR #24
+
+## 2026-07-12 11:58 EEST GH-8 docs/CI reconciliation → Local verification
+
+- **Branch:** `fix/GH-8-docs-final`
+- **Issue:** [GH-8](https://github.com/NeaBouli/TrueRepublic/issues/8)
+- **PR:** [#24](https://github.com/NeaBouli/TrueRepublic/pull/24) (stacked draft against final GH-21)
+- **Changed:** Node-24-backed official Action majors with read-only/non-persisted
+  checkout credentials; non-duplicate workflow triggers; strengthened suite,
+  module, cap, agent-guide, landing-page, and real-wiki consistency gates;
+  replaced stale CLAUDE/install/FAQ/wiki recovery and security claims
+- **Audit fixes:** rebased only the two substantive GH-8 commits onto GH-21
+  `b59efa2`; preserved Node 22 for the maintained client; corrected false
+  anonymous-voting/mobile-wallet availability; made installation explicitly
+  select the unmerged recovery branch; replaced the skipped `wiki-github/`
+  checks and created missing current/testing status pages
+- **Tests:** every workflow YAML parses; docs consistency, JSON, relative wiki
+  target, stale-current-claim, and diff checks → PASS; underlying 683-case
+  GH-21 code head remains unchanged
+- **Risk:** Medium — public security/readiness claims and CI trust/runtime
+- **Pending:** publish rebased PR head; execute every updated GitHub Action and
+  manual Security Scan; independent documentation/recovery review
+- **Ready for:** GitHub draft verification only
+
+### Codex review feedback
+
+Local conditional PASS. The initial rebased draft still contained 636-test,
+Go-1.23, anonymous-voting, mobile-wallet, and Testnet-Ready claims and a docs
+gate pointed at a nonexistent wiki directory. Those findings are remediated.
+PR #25 remains a separate default-branch visibility track and must not bypass
+the vulnerable current `main` or the ordered recovery stack.
+
+---
 
 ## 2026-07-12 11:41 EEST GH-21 node lifecycle → GitHub green
 
