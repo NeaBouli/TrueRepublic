@@ -17,12 +17,12 @@
   bank-backed PoD genesis and native plus Docker restart evidence.
 - 684 recovery-verified tests: 650 Go, 26 Rust, and 8 maintained-client.
 
-## Merged recovery sequence
+## Recovery sequence
 
 PR #9 → #15 → #16 → #17 → #18 → #19 → #22 → #23 → #24 → #27.
 
-The recovery foundation was reviewed, verified, and merged to `main` in this
-order. PR #27 remains the deployment-initialization follow-up.
+The recovery foundation through PR #24 was reviewed, verified, and merged to
+`main` in this order. PR #27 is the current deployment-initialization follow-up.
 
 ## Release blockers
 

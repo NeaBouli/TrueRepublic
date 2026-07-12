@@ -268,22 +268,22 @@ approval. Current evidence, risks, and commands are maintained in
 
 - 🟡 684 tests recovery-verified locally (650 Go + 26 Rust + 8 maintained-client)
 - ✅ Core blockchain compiles and runs
-- 🟡 Tokenomics, exact custom genesis, and every-block ledger invariants are locally verified through stacked PR #19
-- 🟡 Governance surface implemented; escrow/auth recovery is in stacked review
+- 🟡 Tokenomics, exact custom genesis, and every-block ledger invariants are recovery-verified and merged through PR #19
+- 🟡 Governance escrow/auth recovery is verified and merged; independent release review remains open
 - 🟡 Groth16 voting backend tested; reward-recipient binding and real web proof generation remain open
 - ✅ CosmWasm smart contract integration (wasmd v0.53.3)
-- 🟡 Domain-Bank escrow recovery implemented on stacked PR #16
+- 🟡 Domain-Bank escrow recovery implemented and merged via PR #16
 - ✅ IBC Transfer module (ibc-go v8.4.0, cross-chain PNYX transfers)
 - 🟡 Multi-Asset DEX bank custody, provider LP ownership, authority checks, and
-  canonical burns are locally verified on stacked PR #18
-- 🟡 GH-12 genesis/runtime conservation is locally verified on stacked PR #19
+  canonical burns are recovery-verified and merged via PR #18
+- 🟡 GH-12 genesis/runtime conservation is recovery-verified and merged via PR #19
 - 🟡 PR #23 provides generated CometBFT-key, bank-backed PoD genesis and
   proves native restart/export; GH-26 makes `scripts/init-node.sh` delegate only
   to that supported path. GitHub Docker restart passes and independent
   multi-node operations evidence remains open
 - 🟡 ZKP UI is a clearly disabled preview until a compatible real Groth16 prover exists
 - ✅ Developer Tooling: 4 CosmWasm example contracts, shared bindings, testing utils
-- 🟡 DEX burns reduce canonical bank supply on stacked PR #18
+- 🟡 DEX burns reduce canonical bank supply via merged PR #18
 - ✅ Canonical v0.4 web client with 3-column governance UI
 - 🔴 Legacy mobile wallet is deprecated and security-blocked
 - ✅ Comprehensive documentation (30+ guides)

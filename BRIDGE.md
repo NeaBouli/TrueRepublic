@@ -19,6 +19,28 @@ Canonical coordination lives in [`docs/agent-bridge/`](docs/agent-bridge/README.
 
 GitHub recovery epic: [#4](https://github.com/NeaBouli/TrueRepublic/issues/4)
 
+## 2026-07-13 00:15 EEST GH-26 safe operator init → Review
+
+- **Branch:** `fix/GH-26-pod-init-script`
+- **Issue:** [GH-26](https://github.com/NeaBouli/TrueRepublic/issues/26)
+- **PR:** [#27](https://github.com/NeaBouli/TrueRepublic/pull/27)
+- **Changed:** rebased the safe daemon-only initialization wrapper and its
+  regression/evidence commits onto the verified PR #24 merge; documentation
+  conflicts were reconciled to preserve the current `main` recovery status
+- **Tests:** `go test ./... -race -cover -count=1 -timeout=600s` → PASS;
+  shell syntax, docs consistency, JSON/YAML parsing, conflict-marker scan, and
+  diff checks → PASS; GitHub Docker/security gates are being refreshed
+  against `main`
+- **Risk:** High — operator genesis, validator identity, token supply, and key
+  safety; production readiness remains explicitly false
+- **Ready for:** local verification, refreshed GitHub CI, and squash merge
+
+### Codex review feedback
+
+The implementation commit is patch-equivalent to the previously green PR #27.
+Only stale pre-merge documentation required conflict resolution; no runtime
+behavior was changed during the rebase.
+
 ## 2026-07-12 13:14 EEST Public GitHub Pages → Recovery status live
 
 - **Site:** [neabouli.github.io/TrueRepublic](https://neabouli.github.io/TrueRepublic/)
