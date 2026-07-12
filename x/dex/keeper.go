@@ -1,21 +1,41 @@
 package dex
 
 import (
+	"context"
+
 	errorsmod "cosmossdk.io/errors"
 	"cosmossdk.io/math"
 	storetypes "cosmossdk.io/store/types"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+
+	"truerepublic/token"
 )
 
-type Keeper struct {
-	StoreKey storetypes.StoreKey
-	cdc      *codec.LegacyAmino
+type BankKeeper interface {
+	token.IssuanceBankKeeper
+	SendCoinsFromAccountToModule(ctx context.Context, senderAddr sdk.AccAddress, recipientModule string, amt sdk.Coins) error
+	SendCoinsFromModuleToAccount(ctx context.Context, senderModule string, recipientAddr sdk.AccAddress, amt sdk.Coins) error
+	GetBalance(ctx context.Context, addr sdk.AccAddress, denom string) sdk.Coin
 }
 
-func NewKeeper(cdc *codec.LegacyAmino, storeKey storetypes.StoreKey) Keeper {
-	return Keeper{StoreKey: storeKey, cdc: cdc}
+type Keeper struct {
+	StoreKey  storetypes.StoreKey
+	cdc       *codec.LegacyAmino
+	bank      BankKeeper
+	issuer    token.IssuanceService
+	authority string
+}
+
+func NewKeeper(cdc *codec.LegacyAmino, storeKey storetypes.StoreKey, bank BankKeeper, authority string) Keeper {
+	return Keeper{
+		StoreKey:  storeKey,
+		cdc:       cdc,
+		bank:      bank,
+		issuer:    token.NewIssuanceService(bank, ModuleName),
+		authority: authority,
+	}
 }
 
 func poolKey(assetDenom string) []byte {
@@ -46,6 +66,9 @@ func (k Keeper) SetPool(ctx sdk.Context, pool Pool) {
 func (k Keeper) CreatePool(ctx sdk.Context, assetDenom string, pnyxAmt, assetAmt math.Int) error {
 	if !pnyxAmt.IsPositive() || !assetAmt.IsPositive() {
 		return errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "both reserve amounts must be positive")
+	}
+	if assetDenom == pnyxDenom {
+		return errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "pool asset must differ from upnyx")
 	}
 
 	// Validate asset is registered and trading enabled.
@@ -414,8 +437,8 @@ func (k Keeper) ComputeLPPosition(ctx sdk.Context, assetDenom string, shares mat
 }
 
 // AddLiquidity deposits PNYX and the paired asset proportionally and mints
-// LP shares. The caller receives shares proportional to the smaller ratio
-// of the two deposits relative to pool reserves.
+// LP shares. Deposits must match the current reserve ratio exactly so excess
+// funds cannot become an unintended donation to existing providers.
 func (k Keeper) AddLiquidity(ctx sdk.Context, assetDenom string, pnyxAmt, assetAmt math.Int) (math.Int, error) {
 	if !pnyxAmt.IsPositive() || !assetAmt.IsPositive() {
 		return math.Int{}, errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "both amounts must be positive")
@@ -425,18 +448,14 @@ func (k Keeper) AddLiquidity(ctx sdk.Context, assetDenom string, pnyxAmt, assetA
 	if !found {
 		return math.Int{}, errorsmod.Wrapf(sdkerrors.ErrUnknownRequest, "no pool for %s", assetDenom)
 	}
-
-	// shares = min(pnyxAmt/pnyxReserve, assetAmt/assetReserve) * totalShares
-	// Using cross-multiplication to avoid decimal division:
-	//   sharesByPnyx = pnyxAmt * totalShares / pnyxReserve
-	//   sharesByAsset = assetAmt * totalShares / assetReserve
-	sharesByPnyx := pnyxAmt.Mul(pool.TotalShares).Quo(pool.PnyxReserve)
-	sharesByAsset := assetAmt.Mul(pool.TotalShares).Quo(pool.AssetReserve)
-
-	shares := sharesByPnyx
-	if sharesByAsset.LT(sharesByPnyx) {
-		shares = sharesByAsset
+	if !pnyxAmt.Mul(pool.AssetReserve).Equal(assetAmt.Mul(pool.PnyxReserve)) {
+		return math.Int{}, errorsmod.Wrap(
+			sdkerrors.ErrInvalidRequest,
+			"liquidity deposit must match the current pool reserve ratio",
+		)
 	}
+
+	shares := pnyxAmt.Mul(pool.TotalShares).Quo(pool.PnyxReserve)
 
 	if !shares.IsPositive() {
 		return math.Int{}, errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "deposit too small to mint shares")
@@ -467,6 +486,10 @@ func (k Keeper) RemoveLiquidity(ctx sdk.Context, assetDenom string, shares math.
 
 	pnyxOut = pool.PnyxReserve.Mul(shares).Quo(pool.TotalShares)
 	assetOut = pool.AssetReserve.Mul(shares).Quo(pool.TotalShares)
+	if shares.Equal(pool.TotalShares) {
+		ctx.KVStore(k.StoreKey).Delete(poolKey(assetDenom))
+		return pnyxOut, assetOut, nil
+	}
 
 	pool.PnyxReserve = pool.PnyxReserve.Sub(pnyxOut)
 	pool.AssetReserve = pool.AssetReserve.Sub(assetOut)

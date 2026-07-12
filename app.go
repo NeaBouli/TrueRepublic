@@ -59,6 +59,7 @@ var maccPerms = map[string][]string{
 	authtypes.FeeCollectorName: nil,
 	wasmtypes.ModuleName:       {authtypes.Burner},
 	truedemocracy.ModuleName:   {authtypes.Minter, authtypes.Burner}, // capped issuance, escrow, and slash burns
+	dex.ModuleName:             {authtypes.Burner},                   // canonical swap burn
 	transfertypes.ModuleName:   {authtypes.Minter, authtypes.Burner},
 }
 
@@ -213,7 +214,7 @@ func NewTrueRepublicApp(logger log.Logger, db dbm.DB, homeDir string) *TrueRepub
 
 	// --- Governance module keepers ---
 	tdKeeper := truedemocracy.NewKeeper(cdc, keys[truedemocracy.ModuleName], truedemocracy.BuildTree(), app.bankKeeper)
-	dexKeeper := dex.NewKeeper(cdc, keys[dex.ModuleName])
+	dexKeeper := dex.NewKeeper(cdc, keys[dex.ModuleName], app.bankKeeper, authority)
 	app.tdKeeper = tdKeeper
 	app.dexKeeper = dexKeeper
 

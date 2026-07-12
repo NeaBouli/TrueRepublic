@@ -23,6 +23,9 @@ func (m MsgCreatePool) Route() string                { return ModuleName }
 func (m MsgCreatePool) Type() string                 { return "create_pool" }
 func (m MsgCreatePool) GetSigners() []sdk.AccAddress { return []sdk.AccAddress{m.Sender} }
 func (m MsgCreatePool) ValidateBasic() error {
+	if m.Sender.Empty() {
+		return sdkerrors.ErrInvalidAddress.Wrap("sender is required")
+	}
 	if m.AssetDenom == "" {
 		return sdkerrors.ErrInvalidRequest.Wrap("asset_denom is required")
 	}
@@ -48,13 +51,16 @@ func (m MsgSwap) Route() string                { return ModuleName }
 func (m MsgSwap) Type() string                 { return "swap" }
 func (m MsgSwap) GetSigners() []sdk.AccAddress { return []sdk.AccAddress{m.Sender} }
 func (m MsgSwap) ValidateBasic() error {
+	if m.Sender.Empty() {
+		return sdkerrors.ErrInvalidAddress.Wrap("sender is required")
+	}
 	if m.InputDenom == "" || m.OutputDenom == "" {
 		return sdkerrors.ErrInvalidRequest.Wrap("input_denom and output_denom are required")
 	}
 	if m.InputAmt <= 0 {
 		return sdkerrors.ErrInvalidRequest.Wrap("input_amt must be positive")
 	}
-	return nil
+	return sdkerrors.ErrInvalidRequest.Wrap("legacy swap without slippage protection is disabled; use swap_exact")
 }
 
 // --- MsgAddLiquidity ---
@@ -73,6 +79,9 @@ func (m MsgAddLiquidity) Route() string                { return ModuleName }
 func (m MsgAddLiquidity) Type() string                 { return "add_liquidity" }
 func (m MsgAddLiquidity) GetSigners() []sdk.AccAddress { return []sdk.AccAddress{m.Sender} }
 func (m MsgAddLiquidity) ValidateBasic() error {
+	if m.Sender.Empty() {
+		return sdkerrors.ErrInvalidAddress.Wrap("sender is required")
+	}
 	if m.AssetDenom == "" {
 		return sdkerrors.ErrInvalidRequest.Wrap("asset_denom is required")
 	}
@@ -97,6 +106,9 @@ func (m MsgRemoveLiquidity) Route() string                { return ModuleName }
 func (m MsgRemoveLiquidity) Type() string                 { return "remove_liquidity" }
 func (m MsgRemoveLiquidity) GetSigners() []sdk.AccAddress { return []sdk.AccAddress{m.Sender} }
 func (m MsgRemoveLiquidity) ValidateBasic() error {
+	if m.Sender.Empty() {
+		return sdkerrors.ErrInvalidAddress.Wrap("sender is required")
+	}
 	if m.AssetDenom == "" {
 		return sdkerrors.ErrInvalidRequest.Wrap("asset_denom is required")
 	}
@@ -181,6 +193,9 @@ func (m MsgSwapExact) Route() string                { return ModuleName }
 func (m MsgSwapExact) Type() string                 { return "swap_exact" }
 func (m MsgSwapExact) GetSigners() []sdk.AccAddress { return []sdk.AccAddress{m.Sender} }
 func (m MsgSwapExact) ValidateBasic() error {
+	if m.Sender.Empty() {
+		return sdkerrors.ErrInvalidAddress.Wrap("sender is required")
+	}
 	if m.InputDenom == "" || m.OutputDenom == "" {
 		return sdkerrors.ErrInvalidRequest.Wrap("input_denom and output_denom are required")
 	}
@@ -190,8 +205,8 @@ func (m MsgSwapExact) ValidateBasic() error {
 	if m.InputAmt <= 0 {
 		return sdkerrors.ErrInvalidRequest.Wrap("input_amt must be positive")
 	}
-	if m.MinOutput < 0 {
-		return sdkerrors.ErrInvalidRequest.Wrap("min_output cannot be negative")
+	if m.MinOutput <= 0 {
+		return sdkerrors.ErrInvalidRequest.Wrap("min_output must be positive")
 	}
 	return nil
 }

@@ -268,3 +268,28 @@
   test evidence, and recorded the two non-inline fixes in the PR conversation.
   Both Go jobs, both Docker builds, docs, DeepScan, CodeRabbit, and the manually
   triggered security workflow pass; all five review threads are resolved.
+## 2026-07-12 03:34 EEST - GH-10 DEX custody audit and verification
+
+- Rebased `fix/GH-10-dex-custody` onto final PR #17
+  head `29fb228`, preserving both governance and DEX module burn permissions.
+- Audited direct and two-hop DEX value paths: exact
+  account/module transfers, reserve changes, intermediate PNYX routing, burn
+  deltas, LP ownership, authority checks, slippage, and cached commit boundaries.
+- Fixed a valid-denom LP key collision by replacing
+  textual prefixes with length-prefixed keys; added `atom`/`atom:staked`
+  conservation regression coverage.
+- Added KV-backed failure regressions for create/add/
+  remove/swap/burn paths, proving account, pool, LP, analytics, and supply
+  rollback on every settlement boundary.
+- Verified 578 Go cases plus race/vet/build/CLI smoke,
+  26 Rust tests and audit, six maintained-client tests plus lint/build/audit,
+  Go module integrity, docs consistency, and clean diff/secret checks. Docker
+  remains delegated to GitHub because no local Docker CLI is installed.
+- Published rebased PR #18 head `3234741`; updated Issue #10 acceptance state,
+  recovery epic #4, PR metadata, BRIDGE, audit, README, status JSON, and GitHub
+  Pages source.
+- GitHub docs, DeepScan, Go build/vet/race/coverage, and the real Docker build
+  pass. Manually dispatched Security Scan run `29156922464`; govulncheck, Rust
+  audit, canonical npm audit, and both informational legacy audits all pass.
+- Requested focused CodeRabbit review. The service reported its quota exhausted
+  for 44 minutes, so substantive external review remains explicitly pending.

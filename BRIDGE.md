@@ -8,10 +8,39 @@ Canonical coordination lives in [`docs/agent-bridge/`](docs/agent-bridge/README.
 - GH-11 cap audit: [`PR15_AUDIT.md`](docs/agent-bridge/PR15_AUDIT.md)
 - GH-14 escrow audit: [`PR16_AUDIT.md`](docs/agent-bridge/PR16_AUDIT.md)
 - GH-13 issuance audit: [`PR17_AUDIT.md`](docs/agent-bridge/PR17_AUDIT.md)
+- GH-10 DEX custody audit: [`PR18_AUDIT.md`](docs/agent-bridge/PR18_AUDIT.md)
 - Decisions: [`DECISIONS.md`](docs/agent-bridge/DECISIONS.md)
 - Security: [`SECURITY_NOTES.md`](docs/agent-bridge/SECURITY_NOTES.md)
 
 GitHub recovery epic: [#4](https://github.com/NeaBouli/TrueRepublic/issues/4)
+
+## 2026-07-12 03:34 EEST GH-10 DEX custody → Local verification
+
+- **Branch:** `fix/GH-10-dex-custody`
+- **Issue:** [GH-10](https://github.com/NeaBouli/TrueRepublic/issues/10)
+- **PR:** [#18](https://github.com/NeaBouli/TrueRepublic/pull/18) (stacked draft against GH-13)
+- **Changed:** bank-backed pool custody, atomic create/add/remove/swap
+  settlement, provider-indexed LP ownership, governance authority for registry
+  mutation, and canonical PNYX burns through `token.IssuanceService`
+- **Audit fixes:** rebased onto final PR #17, retained both module burn
+  permissions, replaced collision-prone textual LP prefixes with
+  length-prefixed keys, and added rollback regressions for every custody flow
+- **Tests:** Go build/vet, 578 cases, and race → PASS; Rust 26 tests/audit →
+  PASS with six tracked transitive warnings; maintained client install/lint/6
+  tests/build/audit → PASS; docs/module/diff consistency → PASS
+- **Risk:** High — user funds, pool reserves, LP ownership, canonical supply,
+  and chain-wide asset authorization
+- **GitHub:** docs, DeepScan, Go build/vet/race/coverage, and the real Docker
+  build pass on `3234741`; manual Security Scan run `29156922464` passes all
+  five jobs
+- **Ready for:** independent review; CodeRabbit is temporarily rate-limited
+  and did not produce a substantive review
+
+### Codex review feedback
+
+Conditional PASS for GH-10. Every public DEX value transition now reconciles
+bank custody, pool reserves, provider shares, and canonical burns before commit.
+GH-12 custom-genesis reconciliation/runtime invariants still block production.
 
 ## 2026-07-11 20:09 EEST GH-4 foundation merge audit → Review
 

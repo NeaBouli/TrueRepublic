@@ -16,7 +16,7 @@
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/tests-601%20recovery--verified-orange" alt="Recovery-verified tests"/>
+  <img src="https://img.shields.io/badge/tests-610%20recovery--verified-orange" alt="Recovery-verified tests"/>
   <img src="https://img.shields.io/badge/version-v0.4.0-blue" alt="Version"/>
   <img src="https://img.shields.io/badge/recovery-active-orange" alt="Recovery active"/>
   <img src="https://img.shields.io/badge/Go-1.26.5-00ADD8?logo=go" alt="Go"/>
@@ -125,7 +125,7 @@ See [INSTALLATION.md](INSTALLATION.md) for detailed instructions.
 | **Stones Voting** | Highlight importance, elect admins, earn rewards | [Stones Guide](docs/user-manual/stones-voting-guide.md) |
 | **Anonymous Voting** | Domain key pairs for unlinkable ratings (WP S4) | [Architecture](docs/developers/architecture/module-reference.md) |
 | **Proof of Domain** | Validators must be active domain members | [Validator Guide](docs/validators/README.md) |
-| **DEX (recovery simulation)** | Deterministic AMM arithmetic; bank custody, LP ownership, authorization, and real burn remain blocked by GH-10 | [DEX Guide](docs/user-manual/dex-trading-guide.md) |
+| **DEX (stacked recovery)** | PR #18 adds bank custody, provider-owned LP shares, authority checks, atomic settlement, and canonical burns; GH-12 invariants remain blocking | [DEX Guide](docs/user-manual/dex-trading-guide.md) |
 | **VoteToEarn** | Earn PNYX rewards for active participation | [Stones Guide](docs/user-manual/stones-voting-guide.md) |
 | **Suggestion Lifecycle** | Green/yellow/red zones with auto-delete | [Governance](docs/user-manual/governance-tutorial.md) |
 | **IBC Transfers** | Cross-chain PNYX via ICS-20 (ibc-go v8) | [IBC Setup](docs/IBC_RELAYER_SETUP.md) |
@@ -194,8 +194,8 @@ TrueRepublic/
 | Proof of Domain (PoD) | ✅ | `x/truedemocracy/validator.go` |
 | Validator Slashing | ✅ | `x/truedemocracy/slashing.go` |
 | Tokenomics (eq.1-5) | ✅ | `treasury/keeper/rewards.go` |
-| DEX / AMM (x*y=k) | 🟡 Recovery simulation | Arithmetic only; bank custody/settlement blocked by GH-10 |
-| Multi-Asset DEX (BTC/ETH/LUSD) | 🟡 Recovery-blocked | Registry/validation exist; authority and bank-backed LP ownership blocked by GH-10 |
+| DEX / AMM (x*y=k) | 🟡 Recovery verified on PR #18 | Atomic bank custody/settlement and canonical burns; GH-12 genesis/runtime invariants remain |
+| Multi-Asset DEX (BTC/ETH/LUSD) | 🟡 Recovery verified on PR #18 | Provider LP ownership and chain-authorized registry; stacked branch remains unmerged |
 | Node Staking Rewards (10% APY) | ✅ | `treasury/keeper/rewards.go` (eq.5) |
 | Domain Interest (25% APY) | ✅ | `treasury/keeper/rewards.go` (eq.4) |
 | Release Decay | ✅ | `treasury/keeper/rewards.go` |
@@ -228,7 +228,7 @@ TrueRepublic/
 # Blockchain
 go mod tidy
 go build ./...
-go test ./... -race -cover -count=1 -timeout=600s    # 533 tests
+go test ./... -race -cover -count=1 -timeout=600s    # 578 tests
 
 # Smart contracts
 cd contracts && cargo test --workspace       # 26 tests
@@ -266,7 +266,7 @@ The checklist below records implemented surface area, not a production security
 approval. Current evidence, risks, and commands are maintained in
 [`BRIDGE.md`](BRIDGE.md) and [GitHub issue #4](https://github.com/NeaBouli/TrueRepublic/issues/4).
 
-- 🟡 601 tests recovery-verified locally (569 Go + 26 Rust + 6 maintained-client)
+- 🟡 610 tests recovery-verified locally (578 Go + 26 Rust + 6 maintained-client)
 - ✅ Core blockchain compiles and runs
 - 🟡 Tokenomics equations plus capped bank issuance implemented on recovery branches; genesis/runtime invariants pending
 - 🟡 Governance surface implemented; escrow/auth recovery is in stacked review
@@ -274,11 +274,12 @@ approval. Current evidence, risks, and commands are maintained in
 - ✅ CosmWasm smart contract integration (wasmd v0.53.3)
 - 🟡 Domain-Bank escrow recovery implemented on stacked PR #16
 - ✅ IBC Transfer module (ibc-go v8.4.0, cross-chain PNYX transfers)
-- 🔴 Multi-Asset DEX arithmetic only; bank custody, LP ownership, and authority checks are not recovered
-- 🔴 Cross-chain liquidity paths are simulation-only until DEX custody is rebuilt
+- 🟡 Multi-Asset DEX bank custody, provider LP ownership, authority checks, and
+  canonical burns are locally verified on stacked PR #18
+- 🔴 GH-12 genesis/runtime conservation still blocks production liquidity
 - ✅ UI Components: ZKP voting panel, DEX analytics (8 React components)
 - ✅ Developer Tooling: 4 CosmWasm example contracts, shared bindings, testing utils
-- 🔴 DEX burn is internal accounting only, not a canonical bank burn
+- 🟡 DEX burns reduce canonical bank supply on stacked PR #18
 - ✅ Canonical v0.4 web client with 3-column governance UI
 - 🔴 Legacy mobile wallet is deprecated and security-blocked
 - ✅ Comprehensive documentation (30+ guides)
@@ -308,8 +309,8 @@ approval. Current evidence, risks, and commands are maintained in
 - 📋 **v0.5.0 (Q3 2026):** Native Apps (iOS/Android)
 - 🎯 **v1.0.0 (Q4 2026):** Production Release — External audit, mainnet launch
 
-> Historical test count: 577. The authoritative recovery-verified total is 601
-> (569 Go + 26 Rust + 6 maintained-client), reproduced locally on the current branch.
+> Historical test count: 577. The authoritative recovery-verified total is 610
+> (578 Go + 26 Rust + 6 maintained-client), reproduced locally on the current branch.
 
 ---
 

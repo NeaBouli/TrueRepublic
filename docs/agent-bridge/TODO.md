@@ -19,10 +19,12 @@
 - [x] GH-13: PR #17 final review remediation is locally/GitHub green, both
   Docker builds and security pass, and all five review threads are resolved;
   keep it stacked until its bases merge.
-- [ ] GH-10: implement DEX bank custody, provider LP ownership, and real burns.
+- [x] GH-10: DEX bank custody, provider LP ownership, canonical burns, registry
+  authority, and rollback evidence are locally green on stacked PR #18.
 - [ ] GH-12: validate genesis and add ledger conservation invariants.
 - [ ] GH-7: audit ZKP/nullifier/domain-key authentication and client-side mock boundaries.
-- [ ] GH-7: audit DEX rounding, slippage, pool accounting, and authorization.
+- [x] GH-7: DEX rounding, slippage, pool accounting, custody, and authorization
+  audit completed in GH-10; GH-12 retains genesis/runtime invariants.
 
 ## P2 - delivery
 
