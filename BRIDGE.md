@@ -19,6 +19,29 @@ Canonical coordination lives in [`docs/agent-bridge/`](docs/agent-bridge/README.
 
 GitHub recovery epic: [#4](https://github.com/NeaBouli/TrueRepublic/issues/4)
 
+## 2026-07-13 02:35 EEST GH-29 Road to Rollout → Review
+
+- **Branch:** `docs/GH-29-rollout-roadmap`
+- **Issue:** [GH-29](https://github.com/NeaBouli/TrueRepublic/issues/29)
+- **PR:** [#30](https://github.com/NeaBouli/TrueRepublic/pull/30)
+- **Changed:** adding an English public rollout board and detailed checklist
+  covering network recovery, production ZKP/privacy, IBC completeness, client
+  consolidation, quality/security, operations, release engineering, staged
+  testnets, and the final go/no-go gate
+- **Tests:** `bash scripts/check-consistency.sh` → PASS; `git diff --check`
+  → PASS; required content/link and conflict-marker checks → PASS; browser
+  DOM/console → PASS; desktop and 375px mobile rendering → PASS without
+  horizontal overflow
+- **Risk:** Low for runtime; high communication importance because incomplete
+  work must not be mistaken for production approval
+- **Ready for:** GitHub CI, review, merge, and Pages deploy
+
+### Codex review feedback
+
+The seven phases cover the known technical and operational blockers through a
+staged rollout and explicit go/no-go decision. The page preserves the recovery
+safety boundary and does not imply a release date or production approval.
+
 ## 2026-07-13 00:37 EEST Recovery merge chain → Done
 
 - **Branch:** `main`
