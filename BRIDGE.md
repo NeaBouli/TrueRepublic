@@ -16,7 +16,7 @@ Canonical coordination lives in [`docs/agent-bridge/`](docs/agent-bridge/README.
 
 GitHub recovery epic: [#4](https://github.com/NeaBouli/TrueRepublic/issues/4)
 
-## 2026-07-12 05:12 EEST GH-20 ZKP/authentication → Local verification
+## 2026-07-12 05:28 EEST GH-20 ZKP/authentication → GitHub green
 
 - **Branch:** `fix/GH-20-zkp-binding`
 - **Issue:** [GH-20](https://github.com/NeaBouli/TrueRepublic/issues/20)
@@ -34,8 +34,11 @@ GitHub recovery epic: [#4](https://github.com/NeaBouli/TrueRepublic/issues/4)
   PASS
 - **Risk:** Critical — anonymous vote integrity, cross-chain replay, trusted
   setup determinism, genesis identity roots, and double-vote state
-- **Ready for:** publication, GitHub CI/security, and independent cryptographic
-  review; compatible real client prover remains intentionally unavailable
+- **GitHub:** Docs, DeepScan, Web, Mobile, Rust, both Go/Docker runs, and manual
+  Security Scan run `29159603247` pass; CodeRabbit is check-green but explicitly
+  rate-limited and produced no substantive review
+- **Ready for:** independent cryptographic review; compatible real client prover
+  remains intentionally unavailable
 
 ### Codex review feedback
 

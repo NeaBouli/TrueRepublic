@@ -83,6 +83,8 @@ Setup remains a test/tooling function and is not reachable from handlers.
 - Legacy web focused ZKP 4 tests/build/audit: PASS; obsolete CosmJS/Create React
   App architecture and source-map warnings remain non-production blockers
 - Diff, JSON, documentation, production-secret, and consensus-setup checks: PASS
+- GitHub Docs, DeepScan, Web, Mobile, Rust, both Go/Docker runs, and manually
+  dispatched Security Scan run `29159603247`: PASS
 
 Authoritative recovery evidence: 677 tests (643 Go + 26 Rust + 8 maintained
 client). Four focused legacy-web regressions are additional and excluded from
@@ -95,6 +97,10 @@ that total.
 - Privacy-preserving anonymous reward recipient binding
 - GH-21 production PoD node initialization, persistence, restart, and ops
 - Final independent stacked review and merge consolidation
+
+CodeRabbit's status check is green, but its conversation explicitly reports the
+review limit was reached and contains no substantive findings. It is not counted
+as the required independent cryptographic review.
 
 Do not enable anonymous submission or claim production anonymity until the
 out-of-scope cryptographic deliverables are complete.

@@ -342,6 +342,11 @@
   treasury 97.0%, DEX 45.3%, governance 58.9%), 26 Rust tests/audit, eight
   maintained-client tests/lint/build/audit, four focused legacy ZKP tests/build/
   audit, module integrity, and diff/secret/setup checks.
+- Published rebased PR #22 head `6732276`; synchronized Issue #20, recovery
+  epic #4, PR metadata, BRIDGE, audit, README, status JSON, and GitHub Pages.
+- GitHub Docs, DeepScan, Web, Mobile, Rust, both Go/Docker runs, and manual
+  Security Scan run `29159603247` pass. CodeRabbit is check-green but explicitly
+  rate-limited and produced no substantive independent cryptographic review.
 
 ## 2026-07-12 12:18 EEST - GH-12 review remediation
 
