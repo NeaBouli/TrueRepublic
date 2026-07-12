@@ -1,5 +1,5 @@
 # TrueRepublic — Token Supply and Ledger Audit
-> Scope: `treasury/keeper`, `x/truedemocracy`, `x/dex`, app wiring, genesis, and maintained-client denomination handling  ·  Date: 2026-07-12  ·  Result: 1 FAIL / 2 WARN / 9 PASS
+> Scope: `treasury/keeper`, `x/truedemocracy`, `x/dex`, app wiring, genesis, and maintained-client denomination handling  ·  Date: 2026-07-12  ·  Result: 12 PASS
 
 ## Summary
 
@@ -7,10 +7,11 @@ The recovery branches now define one six-decimal `upnyx` base denomination,
 validate and enforce the 21,000,000 PNYX cap against canonical bank supply,
 back governance/stake claims with bank escrow, mint validator/domain
 inflation through one capped issuance service, and settle DEX reserves, LP
-ownership, swaps, and burns against canonical bank state. Custom genesis
-reconciliation and registered runtime invariants remain blocking. This
-code must not handle real funds or be treated as a production token economy
-until those findings are resolved.
+ownership, swaps, and burns against canonical bank state. GH-12 now validates
+and reconciles custom genesis before mutation, exports LP ownership, and checks
+supply, escrow, reserves, and LP conservation every block. This ledger slice
+passes on stacked, unmerged recovery branches; it is not an external audit or
+production approval.
 
 > Remediation update: GH-11 and GH-14 pass their local/GitHub gates. GH-13 now
 > routes validator/domain inflation and validator slash burns through canonical
@@ -18,8 +19,10 @@ until those findings are resolved.
 > inflation phases atomically. Anonymous rating rewards remain deferred because
 > current proof/signature payloads do not bind a safe recipient. GH-10 now
 > provides bank-backed DEX custody, provider-owned LP shares, authority checks,
-> and canonical burns. Custom genesis, runtime invariants, and final stacked
-> review remain open.
+> and canonical burns. GH-12 now closes custom-genesis and runtime-invariant
+> findings locally. ZKP recipient binding, the real node initialization/lifecycle
+> path, final GitHub gates, and independent stacked review remain open outside
+> or after this ledger slice.
 
 ## Findings by domain
 
@@ -33,14 +36,14 @@ until those findings are resolved.
 - **[PASS] Genesis and every recovery reward mint use canonical capped bank supply** — `token/denom.go`, `token/issuance.go`, `app.go`, `x/truedemocracy/validator.go`
   - What: Bank genesis rejects supply above 21,000,000 PNYX; the issuance service reads `x/bank` supply and mints at most the remaining base units into authorized module escrow.
   - Evidence: Tests cover below/at/above-cap supply, aggregate final-unit allocation, invalid supply, bank failure, exact burn/remint behavior, and end-block treasury/stake parity.
-  - Fix: Preserve GH-10's canonical DEX burn path and add the independent runtime invariant in GH-12.
+  - Fix: Preserve GH-10's canonical DEX burn path and GH-12's independent runtime supply invariant.
 
 ### Governance, treasury, and staking accounting — PASS
 
 - **[PASS] Authenticated treasury and validator claims are backed by exact module escrow** — `x/truedemocracy/escrow.go`, `x/truedemocracy/msg_server.go`, `x/truedemocracy/treasury_bridge.go`, `x/truedemocracy/escrow_test.go`
   - What: Domain creation, proposal fees, validator registration, deposits, withdrawals, stake settlement, and signer claims now use exact `upnyx` bank transfers and cached atomic state transitions.
   - Evidence: Tests reject zero-balance declarations, spoofed identities, duplicate credits/pubkeys, dust withdrawals, missing CosmWasm signers, and injected transfer/burn failures; parity is checked after creation, fees, stake, withdrawal, payouts, and slashing.
-  - Fix: Preserve `CacheContext` boundaries and expand the same custody model to DEX and genesis.
+  - Fix: Preserve `CacheContext` boundaries and GH-12's exact genesis reconciliation.
 
 - **[PASS] Validator/domain inflation is bank-minted and vote rewards settle from escrow** — `token/issuance.go`, `x/truedemocracy/validator.go`, `x/truedemocracy/module.go`, `x/truedemocracy/issuance_test.go`
   - What: Validator and active-domain rewards mint exact capped `upnyx` into module escrow before matching internal claims commit. Both inflation phases share an outer EndBlock cache; vote rewards transfer existing treasury escrow and unsafe anonymous recipients remain deferred.
@@ -59,12 +62,12 @@ until those findings are resolved.
   - Evidence: Unauthorized registration/status changes fail; the configured authority path succeeds.
   - Fix: Keep authority wiring explicit and exercise proposal execution when the governance runtime is completed.
 
-### Genesis and invariants — FAIL
+### Genesis and invariants — PASS
 
-- **[🔴 BLOCKING] Genesis accepts unbacked custom module ledgers** — `x/truedemocracy/module.go:73`, `x/truedemocracy/module.go:106`, `x/dex/module.go:50`, `x/dex/module.go:83`
-  - What: Both custom modules return success from `ValidateGenesis` and load declared treasuries, stakes, pools, and shares without reconciling corresponding module bank balances.
-  - Path: Bank genesis can respect the 21M cap while unrelated internal claims add unbacked treasury/stake/DEX purchasing power that nodes still accept.
-  - Fix: Validate denomination, non-negative values, uniqueness, module escrow parity, pool reserves, and LP share totals before chain start.
+- **[PASS] Custom genesis is structurally valid and exactly bank-backed before mutation** — `genesis.go`, `x/truedemocracy/genesis_validation.go`, `x/dex/genesis.go`
+  - What: Full-app initialization rejects malformed, duplicate, negative, unbacked, share-divergent, and over-cap state before any custom module writes. Export includes provider LP ownership and non-empty export/import preserves supply and custody.
+  - Evidence: Full-app and module tests cover exact treasury/stake/DEX backing, duplicate pools/assets/providers, invalid validators/domains, non-empty round trips, and startup at the cap boundary.
+  - Fix: Preserve pre-mutation validation and require real CometBFT validator public keys; never restore a hard-coded bootstrap private secret.
 
 ### Precision and deterministic math — PASS
 
@@ -83,27 +86,24 @@ until those findings are resolved.
   - Path: Values above JavaScript's safe integer limit round-trip without `Number` precision loss.
   - Fix: Reuse the same helper everywhere after the canonical denom/decimal decision.
 
-### Recovery guardrails — WARN
+### Recovery guardrails — PASS
 
-- **[🟡 MEDIUM] No crisis invariant detects ledger divergence at runtime** — `x/truedemocracy/module.go:97`, `x/dex/module.go:74`
-  - What: Both modules register no invariants, so module escrow/reserve/claim divergence is silent.
-  - Path: A faulty transition commits mismatched balances and subsequent blocks continue until a withdrawal or swap exposes the deficit.
-  - Fix: Add deterministic invariants for bank supply cap, treasury escrow parity, DEX reserve parity, and LP share conservation; expose them to continuous tests even if `x/crisis` is later removed.
+- **[PASS] Registered crisis invariants detect every ledger divergence** — `token/invariant.go`, `x/truedemocracy/module.go`, `x/dex/module.go`, `genesis_integration_test.go`
+  - What: `x/crisis` checks canonical supply, governance escrow, DEX reserves, and provider LP conservation every block.
+  - Evidence: Full-app tests deliberately corrupt each of the four boundaries and prove the registered invariant halts; exact state passes.
+  - Fix: Keep the one-block invariant period until equivalent operational evidence justifies a measured alternative.
 
-- **[🟡 MEDIUM] Public feature descriptions still imply functional token economics** — `README.md:196`, `README.md:197`, `docs/ARCHITECTURE.md:84`
-  - What: The recovery warning is visible, but detailed tables still mark tokenomics and DEX implementation with check marks.
-  - Path: A reader can interpret implemented arithmetic/state simulation as bank-backed functionality despite the recovery warning.
-  - Fix: Mark these rows as simulation/recovery-blocked until the bank-backed invariants pass.
+- **[PASS] Public ledger claims distinguish stacked recovery from production** — `README.md`, `docs/status.json`, `docs/index.html`
+  - What: Public status identifies the exact locally verified branch and retains the non-production warning for unmerged review, ZKP, and node-lifecycle work.
+  - Evidence: Documentation consistency checks use one 647-test source of truth.
+  - Fix: Keep status evidence-based through final stack consolidation.
 
 ## Priority matrix
 
 ### 🔴 BLOCKING
 
-1. Validate custom genesis and reconcile all internal ledgers to bank/module balances.
-
-Implemented on stacked recovery branches: #11 (denom/cap), #14
-(treasury/stake escrow), #13 (rewards), and #10 (DEX custody). Remaining
-implementation ticket: #12 (genesis/invariants).
+None inside this ledger-audit slice. Project-level ZKP/authentication and node
+lifecycle blockers remain tracked separately.
 
 ### 🟠 HIGH
 
@@ -111,8 +111,7 @@ None identified in this audit slice.
 
 ### 🟡 MEDIUM
 
-1. Add runtime supply, escrow, reserve, and LP conservation invariants.
-2. Downgrade detailed public implementation claims until those invariants pass.
+None identified in this audit slice.
 
 ### 🟢 LOW
 

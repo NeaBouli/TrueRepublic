@@ -9,10 +9,58 @@ Canonical coordination lives in [`docs/agent-bridge/`](docs/agent-bridge/README.
 - GH-14 escrow audit: [`PR16_AUDIT.md`](docs/agent-bridge/PR16_AUDIT.md)
 - GH-13 issuance audit: [`PR17_AUDIT.md`](docs/agent-bridge/PR17_AUDIT.md)
 - GH-10 DEX custody audit: [`PR18_AUDIT.md`](docs/agent-bridge/PR18_AUDIT.md)
+- GH-12 genesis/invariant audit: [`PR19_AUDIT.md`](docs/agent-bridge/PR19_AUDIT.md)
 - Decisions: [`DECISIONS.md`](docs/agent-bridge/DECISIONS.md)
 - Security: [`SECURITY_NOTES.md`](docs/agent-bridge/SECURITY_NOTES.md)
 
 GitHub recovery epic: [#4](https://github.com/NeaBouli/TrueRepublic/issues/4)
+
+## 2026-07-12 12:18 EEST GH-12 review remediation → Locally verified
+
+- **Branch:** `fix/GH-12-genesis-invariants`
+- **Issue:** [GH-12](https://github.com/NeaBouli/TrueRepublic/issues/12)
+- **PR:** [#19](https://github.com/NeaBouli/TrueRepublic/pull/19)
+- **Changed:** verified that the no-error-return `CreateDomain` helper actually
+  creates the intended escrow divergence instead of silently continuing; made
+  production-bootstrap requirements explicit: a real Ed25519 key, positive
+  CometBFT voting power, sufficient exact bank-backed stake, and canonical
+  supply within the 21,000,000 PNYX cap
+- **Tests:** focused registered-invariant regression, `go test ./... -count=1`,
+  `go vet ./...`, and `go build ./...` → PASS
+- **Risk:** High — test validity and operator-facing consensus bootstrap contract
+- **Ready for:** publication, review-thread resolution, and ordered propagation
+  through PRs #22, #23, and #24
+
+## 2026-07-12 04:52 EEST GH-12 genesis and invariants → GitHub green
+
+- **Branch:** `fix/GH-12-genesis-invariants`
+- **Issue:** [GH-12](https://github.com/NeaBouli/TrueRepublic/issues/12)
+- **PR:** [#19](https://github.com/NeaBouli/TrueRepublic/pull/19) (stacked draft against GH-10)
+- **Changed:** pre-mutation custom-genesis validation and exact module-bank
+  reconciliation, provider LP export, non-empty round-trip preservation,
+  every-block supply/escrow/reserve/LP crisis invariants, and repaired custom
+  service/app startup wiring
+- **Audit fixes:** rebased onto final PR #18; adapted LP export/invariants to
+  collision-free keys; removed a publicly derivable bootstrap validator secret;
+  bootstraps only from real CometBFT Ed25519 public keys with exact stake; made
+  InitGenesis failures explicit; added four full-app divergence regressions
+- **Tests:** Go build/vet, 615 cases, race, and coverage → PASS (root 66.1%,
+  token 92.6%, treasury 97.0%, DEX 45.3%, governance 56.6%); Rust 26 tests/
+  audit and maintained client install/lint/6 tests/build/audit → PASS
+- **Risk:** Critical — InitChain, validator keys, canonical supply, module
+  escrow, DEX reserves, and consensus-halting invariants
+- **GitHub:** Docs, DeepScan, Web, Mobile, Rust, Go build/vet/test, and both
+  Docker builds pass; manual Security Scan run `29158360390` passes all five
+  jobs
+- **Ready for:** independent cryptographic/stacked review; CodeRabbit is
+  requested and still pending
+
+### Codex review feedback
+
+Conditional PASS for the ledger/genesis scope. The old default bootstrap would
+have exposed a reproducible consensus private key; it is removed. GH-21 must
+replace the still-invalid legacy `x/staking` gentx script with a PoD-aware real
+validator-key flow before production node launch.
 
 ## 2026-07-12 03:34 EEST GH-10 DEX custody → Local verification
 

@@ -2,8 +2,8 @@
 
 ## Open
 
-- Token/ledger audit still blocks production on runtime crisis invariants and
-  custom-genesis reconciliation.
+- The token/ledger slice passes locally through GH-12, but remains unmerged and
+  awaits GitHub/security/independent review.
   Canonical denomination and declared treasury/stake custody are remediated on
   stacked branches but remain unmerged. See `CODEX_AUDIT.md` and GH-7.
 - Anonymous legacy rating signatures and Groth16 proofs do not bind a bank
@@ -15,6 +15,9 @@
   crates through Wasmer. No fixable cargo-audit vulnerability remains, but the
   warnings require monitoring or a stable upstream upgrade.
 - Full consensus/token-conservation/authentication audit is pending.
+- The legacy node initialization script invokes unavailable `x/staking` gentx
+  commands. PR #19 deliberately refuses a hard-coded validator secret and
+  requires real CometBFT keys; GH-21 must deliver the production PoD bootstrap.
 - The v0.4 client production bundle is 1.68 MB (309 kB gzip); route-level code
   splitting is recommended before treating low-bandwidth/mobile UX as ready.
 
@@ -38,6 +41,11 @@
   shares, registry messages require chain authority, and swap burns reduce
   canonical PNYX supply. Length-prefixed LP keys prevent valid denom-prefix
   collisions from corrupting conservation totals.
+- Custom genesis rejects malformed/unbacked state before mutation, non-empty
+  export/import preserves canonical supply and custody, and every-block crisis
+  routes halt on cap, escrow, reserve, or LP divergence.
+- Removed the GH-12 prototype's publicly derivable bootstrap-validator private
+  secret; production code contains no default validator secret.
 
 ## Legacy client blockers
 

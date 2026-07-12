@@ -320,16 +320,18 @@ func (k Keeper) ValidateEscrowParity(ctx sdk.Context) error {
 		return err
 	}
 	moduleAddress := authtypes.NewModuleAddress(ModuleName)
-	bankBalance := k.bankKeeper.GetBalance(ctx, moduleAddress, PNYXDenom).Amount
 	claims := k.EscrowClaims(ctx)
-	if !bankBalance.Equal(claims) {
+	expected := sdk.NewCoins()
+	if claims.IsPositive() {
+		expected = sdk.NewCoins(sdk.NewCoin(PNYXDenom, claims))
+	}
+	bankBalance := k.bankKeeper.GetAllBalances(ctx, moduleAddress)
+	if !bankBalance.Equal(expected) {
 		return errorsmod.Wrapf(
 			sdkerrors.ErrLogic,
-			"escrow mismatch: bank=%s%s claims=%s%s",
+			"escrow mismatch: bank=%s claims=%s",
 			bankBalance,
-			PNYXDenom,
-			claims,
-			PNYXDenom,
+			expected,
 		)
 	}
 	return nil

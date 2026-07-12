@@ -293,3 +293,44 @@
   audit, canonical npm audit, and both informational legacy audits all pass.
 - Requested focused CodeRabbit review. The service reported its quota exhausted
   for 44 minutes, so substantive external review remains explicitly pending.
+
+## 2026-07-12 04:32 EEST - GH-12 genesis and runtime-invariant audit
+
+- Rebased GH-12's code commit onto final PR #18 and discarded three obsolete
+  documentation commits for evidence-based regeneration.
+- Preserved the CLI Amino panic fix, both issuance tests, cache-aware bank mocks,
+  and GH-10's collision-free LP keys while adapting global LP export/orphan
+  detection to the new length-prefixed format.
+- Reproduced and fixed the prototype's critical hard-coded validator secret.
+  Production defaults are empty; InitChain accepts actual CometBFT Ed25519
+  public keys and creates exact cap-checked module stake, or rejects startup.
+- Replaced silent InitGenesis skips with explicit failure and fail-closed JSON
+  export behavior.
+- Expanded full-app evidence from escrow-only to independent supply, escrow,
+  reserve, and LP invariant halts. Added non-empty bank/treasury/stake/pool/LP
+  export-import preservation plus over-cap, duplicate, negative, and unbacked
+  rejection tests.
+- Verified 615 Go cases, race, vet, build, coverage (root 66.1%, token 92.6%,
+  treasury 97.0%, DEX 45.3%, governance 56.6%), 26 Rust tests/audit, six
+  maintained-client tests/lint/build/audit, CLI smoke, and module integrity.
+- Recorded the residual GH-21 blocker: `scripts/init-node.sh` still invokes the
+  unavailable `x/staking` gentx flow and must not launch production nodes.
+- Published rebased PR #19 head `9d521ce`; synchronized Issue #12, recovery
+  epic #4, PR metadata, BRIDGE, audit, README, status JSON, and GitHub Pages
+  source.
+- GitHub Docs, DeepScan, Web, Mobile, Rust, Go build/vet/test, and both Docker
+  builds pass. Manually dispatched Security Scan run `29158360390`; all five
+  jobs pass. Requested CodeRabbit review; its independent result is pending.
+
+## 2026-07-12 12:18 EEST - GH-12 review remediation
+
+- Accepted both actionable PR #19 review findings. Because `CreateDomain` has
+  no error return, the escrow-divergence test now reads the domain back and
+  validates its treasury, so a failed fixture cannot masquerade as invariant
+  coverage.
+- Expanded the production-node limitation to require a real Ed25519 key bound
+  to a positive-power CometBFT validator, sufficient exact bank-backed stake,
+  and preservation of the 21,000,000 PNYX canonical supply cap.
+- Focused registered-invariant regression, full Go tests, vet, and build pass.
+  GitHub publication, thread resolution, and ordered stack propagation remain
+  in progress.

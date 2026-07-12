@@ -49,3 +49,17 @@
 - PNYX output burns reduce both pool reserves and canonical bank supply through
   `token.IssuanceService`.
 - Asset registry/status mutation requires the configured chain authority.
+
+## 2026-07-12 - Safe consensus genesis
+
+- Production defaults contain no validator private secret or fixed validator
+  identity.
+- When custom PoD genesis is empty, InitChain accepts only real positive-power
+  Ed25519 validators supplied by CometBFT and creates exact bank-backed minimum
+  stake for those public keys within the 21M cap.
+- Explicit custom treasury/stake/DEX claims must equal the complete module bank
+  balances before any custom state mutation.
+- Supply, governance escrow, DEX reserves, and provider LP totals are registered
+  `x/crisis` routes checked every block.
+- The legacy `x/staking` gentx initialization script is not a valid PoD launch
+  path and remains blocked under GH-21.

@@ -163,6 +163,7 @@ func (*MsgWithdrawFromDomainResponse) String() string { return "MsgWithdrawFromD
 // ---------------------------------------------------------------------------
 
 func init() {
+	registerMsgFileDescriptor()
 	// Register Msg types with gogoproto for MsgServiceRouter resolution.
 	gogoproto.RegisterType((*MsgCreateDomain)(nil), "truedemocracy.MsgCreateDomain")
 	gogoproto.RegisterType((*MsgSubmitProposal)(nil), "truedemocracy.MsgSubmitProposal")
@@ -1287,7 +1288,7 @@ var _Msg_serviceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "truedemocracy/tx.proto",
+	Metadata: msgDescriptorFile,
 }
 
 // Ensure unused imports are referenced.
