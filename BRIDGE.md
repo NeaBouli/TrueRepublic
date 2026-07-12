@@ -23,6 +23,7 @@ GitHub recovery epic: [#4](https://github.com/NeaBouli/TrueRepublic/issues/4)
 
 - **Branch:** `docs/GH-29-rollout-roadmap`
 - **Issue:** [GH-29](https://github.com/NeaBouli/TrueRepublic/issues/29)
+- **PR:** [#30](https://github.com/NeaBouli/TrueRepublic/pull/30)
 - **Changed:** adding an English public rollout board and detailed checklist
   covering network recovery, production ZKP/privacy, IBC completeness, client
   consolidation, quality/security, operations, release engineering, staged

@@ -8,8 +8,8 @@ Updated: 2026-07-13 02:35 EEST
 - Baseline: `origin/main` at `0818b16` after the verified recovery-status merge.
 - Merged recovery PRs: #9, #15, #16, #17, #18, #19, #22, #23, #24, #27,
   and #28.
-- Current work: GH-29 public Road to Rollout and production-readiness checklist
-  on `docs/GH-29-rollout-roadmap`.
+- Current review: PR #30 publishes the GH-29 Road to Rollout and
+  production-readiness checklist from `docs/GH-29-rollout-roadmap`.
 - Active recovery checkout:
   `/Users/gio/Documents/Codex/2026-07-11/erkunden/TrueRepublic-gh20`
 - GH-26 branch: `fix/GH-26-pod-init-script`
