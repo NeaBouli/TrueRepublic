@@ -19,6 +19,18 @@ Canonical coordination lives in [`docs/agent-bridge/`](docs/agent-bridge/README.
 
 GitHub recovery epic: [#4](https://github.com/NeaBouli/TrueRepublic/issues/4)
 
+## 2026-07-12 13:14 EEST Public GitHub Pages → Recovery status live
+
+- **Site:** [neabouli.github.io/TrueRepublic](https://neabouli.github.io/TrueRepublic/)
+- **Source:** `fix/GH-26-pod-init-script:/docs` at `50b0d9a`; GitHub Pages
+  build `1090733247` → BUILT without error
+- **Live verification:** page reports `Recovery audit active`, `not approved
+  for production`, `21M` maximum PNYX supply, and `684 recovery-verified tests`
+- **Safety:** no runtime commit was merged to `main`, no branch-protection rule
+  was bypassed, and red PR #25 remains untouched against unrecovered `main`
+- **Remaining protected gate:** PR #9 is fully green/mergeable and awaits one
+  independent approval before the ordered stack can reach `main`
+
 ## 2026-07-12 13:01 EEST GH-26 safe operator init → GitHub green
 
 - **Branch:** `fix/GH-26-pod-init-script`

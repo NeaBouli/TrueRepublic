@@ -428,3 +428,9 @@
 - GitHub Go race/coverage and Docker restart run `29172845624`, Docs
   `29172845627`, DeepScan, CodeRabbit, and all five Security Scan
   `29172846057` jobs pass. PR #27 is mergeable with zero review threads.
+- Completion audit found GitHub Pages still built `main:/docs` at old head
+  `d8545cf`. Changed only the Pages source to the fully green recovery branch
+  `fix/GH-26-pod-init-script:/docs` and explicitly queued build `1090733247`.
+- The build completed without error at `50b0d9a`. Live HTTP verification shows
+  the recovery warning, non-production boundary, 21M maximum supply, and 684
+  verified cases. PR #25 and branch protection were not bypassed.

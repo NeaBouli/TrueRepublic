@@ -43,6 +43,10 @@ Updated: 2026-07-13 00:15 EEST
   3 critical); not approved for keys or funds.
 - Public README, status JSON, limitations, and GitHub Pages source now display
   an active recovery warning and link to GH-4.
+- Public GitHub Pages is configured from
+  `fix/GH-26-pod-init-script:/docs`; build `1090733247` at `50b0d9a` is live
+  and exposes the recovery/non-production warning, 21M cap, and 684-test state.
+  `main` remains protected at `d8545cf`; PR #25 was not bypassed.
 - Canonical `client-web` now has dedicated GitHub install/lint/test/build/audit
   gates; legacy client audits remain informational during migration.
 - PR #9 GitHub checks are all green: Go CI, Rust CI, Client Web CI,
