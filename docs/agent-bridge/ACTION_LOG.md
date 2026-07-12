@@ -358,5 +358,6 @@
   to a positive-power CometBFT validator, sufficient exact bank-backed stake,
   and preservation of the 21,000,000 PNYX canonical supply cap.
 - Focused registered-invariant regression, full Go tests, vet, and build pass.
-  GitHub publication, thread resolution, and ordered stack propagation remain
-  in progress.
+  Published commit `eec91c7`, answered and resolved both PR #19 review threads,
+  and propagated the fix locally through PR #22. Refreshed GitHub verification
+  and propagation through PRs #23 and #24 remain in progress.

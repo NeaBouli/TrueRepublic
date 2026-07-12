@@ -16,6 +16,23 @@ Canonical coordination lives in [`docs/agent-bridge/`](docs/agent-bridge/README.
 
 GitHub recovery epic: [#4](https://github.com/NeaBouli/TrueRepublic/issues/4)
 
+## 2026-07-12 12:18 EEST GH-12 review remediation → Published and propagated
+
+- **Branch:** `fix/GH-12-genesis-invariants`
+- **Issue:** [GH-12](https://github.com/NeaBouli/TrueRepublic/issues/12)
+- **PR:** [#19](https://github.com/NeaBouli/TrueRepublic/pull/19)
+- **Changed:** verified that the no-error-return `CreateDomain` helper actually
+  creates the intended escrow divergence instead of silently continuing; made
+  production-bootstrap requirements explicit: a real Ed25519 key, positive
+  CometBFT voting power, sufficient exact bank-backed stake, and canonical
+  supply within the 21,000,000 PNYX cap
+- **Tests:** focused registered-invariant regression, `go test ./... -count=1`,
+  `go vet ./...`, and `go build ./...` → PASS
+- **GitHub:** commit `eec91c7` published; both review threads answered and
+  resolved; propagated locally through PR #22
+- **Ready for:** refreshed PR #22 verification and propagation through PRs #23
+  and #24
+
 ## 2026-07-12 05:28 EEST GH-20 ZKP/authentication → GitHub green
 
 - **Branch:** `fix/GH-20-zkp-binding`
@@ -46,22 +63,6 @@ Conditional PASS for GH-20's on-chain binding and fail-closed client scope.
 Anonymous rewards remain deferred because the proof does not bind a safe bank
 recipient. A real prover plus external ceremony/circuit review is still required
 before advertising or enabling anonymous voting.
-
-## 2026-07-12 12:18 EEST GH-12 review remediation → Locally verified
-
-- **Branch:** `fix/GH-12-genesis-invariants`
-- **Issue:** [GH-12](https://github.com/NeaBouli/TrueRepublic/issues/12)
-- **PR:** [#19](https://github.com/NeaBouli/TrueRepublic/pull/19)
-- **Changed:** verified that the no-error-return `CreateDomain` helper actually
-  creates the intended escrow divergence instead of silently continuing; made
-  production-bootstrap requirements explicit: a real Ed25519 key, positive
-  CometBFT voting power, sufficient exact bank-backed stake, and canonical
-  supply within the 21,000,000 PNYX cap
-- **Tests:** focused registered-invariant regression, `go test ./... -count=1`,
-  `go vet ./...`, and `go build ./...` → PASS
-- **Risk:** High — test validity and operator-facing consensus bootstrap contract
-- **Ready for:** publication, review-thread resolution, and ordered propagation
-  through PRs #22, #23, and #24
 
 ## 2026-07-12 04:52 EEST GH-12 genesis and invariants → GitHub green
 
