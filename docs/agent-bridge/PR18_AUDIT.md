@@ -69,7 +69,15 @@ proves unchanged accounts, pools, LP ownership, analytics, and supply.
 - `go mod verify`, documentation consistency, secret/diff checks: PASS
 - Local Docker rebuild unavailable because the workstation has no Docker CLI;
   PR #17 already proves the unchanged architecture-safe Dockerfile, and PR #18
-  must refresh both GitHub Docker jobs after publication.
+  refreshed the GitHub Docker job successfully at head `3234741`.
+- GitHub docs, DeepScan, Go build/vet/race/coverage, and Docker: PASS.
+- Manual Security Scan
+  [run 29156922464](https://github.com/NeaBouli/TrueRepublic/actions/runs/29156922464):
+  PASS for govulncheck, Rust audit, canonical npm audit, and both informational
+  legacy-client audit jobs.
+- CodeRabbit accepted the focused review request but then reported its review
+  quota exhausted for 44 minutes. No substantive external review is claimed;
+  independent review remains pending.
 
 ## Explicitly out of scope
 

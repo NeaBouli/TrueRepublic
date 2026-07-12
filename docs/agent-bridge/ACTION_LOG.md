@@ -285,3 +285,11 @@
   26 Rust tests and audit, six maintained-client tests plus lint/build/audit,
   Go module integrity, docs consistency, and clean diff/secret checks. Docker
   remains delegated to GitHub because no local Docker CLI is installed.
+- Published rebased PR #18 head `3234741`; updated Issue #10 acceptance state,
+  recovery epic #4, PR metadata, BRIDGE, audit, README, status JSON, and GitHub
+  Pages source.
+- GitHub docs, DeepScan, Go build/vet/race/coverage, and the real Docker build
+  pass. Manually dispatched Security Scan run `29156922464`; govulncheck, Rust
+  audit, canonical npm audit, and both informational legacy audits all pass.
+- Requested focused CodeRabbit review. The service reported its quota exhausted
+  for 44 minutes, so substantive external review remains explicitly pending.

@@ -91,8 +91,11 @@ Updated: 2026-07-12 03:34 EEST
   supply, and registry/status mutation requires chain authority. Length-prefixed
   LP keys prevent valid denom-prefix collisions. Local Go build/vet/578 tests/
   race, Rust 26 tests/audit, maintained-client install/lint/6 tests/build/audit,
-  CLI smoke, module verification, and docs/diff checks pass. GitHub refresh is
-  pending; see `PR18_AUDIT.md`.
+  CLI smoke, module verification, and docs/diff checks pass. GitHub docs,
+  DeepScan, Go build/vet/race/coverage, and Docker pass at `3234741`; manual
+  Security Scan run `29156922464` passes all five jobs. CodeRabbit is
+  rate-limited and substantive external review remains pending; see
+  `PR18_AUDIT.md`.
 
 ## Public-status warning
 

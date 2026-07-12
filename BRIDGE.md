@@ -30,8 +30,11 @@ GitHub recovery epic: [#4](https://github.com/NeaBouli/TrueRepublic/issues/4)
   tests/build/audit → PASS; docs/module/diff consistency → PASS
 - **Risk:** High — user funds, pool reserves, LP ownership, canonical supply,
   and chain-wide asset authorization
-- **Ready for:** force-push of the rebased stack, refreshed GitHub CI/security,
-  and independent review
+- **GitHub:** docs, DeepScan, Go build/vet/race/coverage, and the real Docker
+  build pass on `3234741`; manual Security Scan run `29156922464` passes all
+  five jobs
+- **Ready for:** independent review; CodeRabbit is temporarily rate-limited
+  and did not produce a substantive review
 
 ### Codex review feedback
 
