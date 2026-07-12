@@ -4,11 +4,33 @@ import (
 	"testing"
 
 	"cosmossdk.io/math"
+	"github.com/cosmos/cosmos-sdk/crypto/keys/ed25519"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
+func validDemocracyGenesis() GenesisState {
+	admin := sdk.AccAddress("genesis-admin")
+	return GenesisState{
+		Domains: []Domain{{
+			Name:          "Test",
+			Admin:         admin,
+			Members:       []string{admin.String()},
+			Treasury:      sdk.NewCoins(),
+			Issues:        []Issue{},
+			Options:       DomainOptions{AdminElectable: true},
+			PermissionReg: []string{},
+		}},
+		Validators: []GenesisValidator{{
+			OperatorAddr: admin.String(),
+			PubKey:       ed25519.GenPrivKeyFromSecret([]byte("genesis-validation-test")).PubKey().Bytes(),
+			Stake:        100_000 * PNYXUnit,
+			Domain:       "Test",
+		}},
+	}
+}
+
 func TestValidateGenesisStateRejectsMalformedAndDuplicateDemocracyState(t *testing.T) {
-	if err := ValidateGenesisState(DefaultGenesisState()); err != nil {
+	if err := ValidateGenesisState(validDemocracyGenesis()); err != nil {
 		t.Fatalf("valid default genesis rejected: %v", err)
 	}
 	tests := []struct {
@@ -32,7 +54,7 @@ func TestValidateGenesisStateRejectsMalformedAndDuplicateDemocracyState(t *testi
 	}
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
-			genesis := DefaultGenesisState()
+			genesis := validDemocracyGenesis()
 			tc.mutate(&genesis)
 			if err := ValidateGenesisState(genesis); err == nil {
 				t.Fatal("malformed genesis was accepted")
@@ -42,7 +64,7 @@ func TestValidateGenesisStateRejectsMalformedAndDuplicateDemocracyState(t *testi
 }
 
 func TestGenesisEscrowClaimsIncludesTreasuryAndStake(t *testing.T) {
-	genesis := DefaultGenesisState()
+	genesis := validDemocracyGenesis()
 	genesis.Domains[0].Treasury = sdk.NewCoins(sdk.NewInt64Coin(PNYXDenom, 123))
 	claims, err := GenesisEscrowClaims(genesis)
 	if err != nil {

@@ -2,7 +2,6 @@ package truedemocracy
 
 import (
 	"github.com/cosmos/cosmos-sdk/codec"
-	"github.com/cosmos/cosmos-sdk/crypto/keys/ed25519"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
 	"truerepublic/token"
@@ -224,23 +223,8 @@ func RegisterCodec(cdc *codec.LegacyAmino) {
 }
 
 func DefaultGenesisState() GenesisState {
-	admin := sdk.AccAddress("bootstrap-admin")
-	pubKey := ed25519.GenPrivKeyFromSecret([]byte("truerepublic-bootstrap-validator")).PubKey().Bytes()
 	return GenesisState{
-		Domains: []Domain{{
-			Name:          "Bootstrap",
-			Admin:         admin,
-			Members:       []string{admin.String()},
-			Treasury:      sdk.NewCoins(),
-			Issues:        []Issue{},
-			Options:       DomainOptions{AdminElectable: true},
-			PermissionReg: []string{},
-		}},
-		Validators: []GenesisValidator{{
-			OperatorAddr: admin.String(),
-			PubKey:       pubKey,
-			Stake:        100_000 * PNYXUnit,
-			Domain:       "Bootstrap",
-		}},
+		Domains:    []Domain{},
+		Validators: []GenesisValidator{},
 	}
 }

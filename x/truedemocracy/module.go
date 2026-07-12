@@ -68,7 +68,10 @@ func (AppModuleBasic) RegisterInterfaces(registry codectypes.InterfaceRegistry) 
 
 func (AppModuleBasic) DefaultGenesis(cdc codec.JSONCodec) json.RawMessage {
 	genesis := DefaultGenesisState()
-	bz, _ := json.Marshal(genesis)
+	bz, err := json.Marshal(genesis)
+	if err != nil {
+		panic(err)
+	}
 	return bz
 }
 
@@ -119,7 +122,7 @@ func (am AppModule) ConsensusVersion() uint64 { return 1 }
 func (am AppModule) InitGenesis(ctx sdk.Context, cdc codec.JSONCodec, data json.RawMessage) []abci.ValidatorUpdate {
 	var genesisState GenesisState
 	if err := json.Unmarshal(data, &genesisState); err != nil {
-		return nil
+		panic(err)
 	}
 
 	// Restore domains from genesis (full state, not just name/admin/treasury).
@@ -139,7 +142,7 @@ func (am AppModule) InitGenesis(ctx sdk.Context, cdc codec.JSONCodec, data json.
 	for _, gv := range genesisState.Validators {
 		stake := sdk.NewCoins(sdk.NewInt64Coin(PNYXDenom, gv.Stake))
 		if err := am.keeper.RegisterValidator(ctx, gv.OperatorAddr, gv.PubKey, stake, gv.Domain); err != nil {
-			continue
+			panic(err)
 		}
 		power := gv.Stake / rewards.StakeMin
 		pk := cryptoproto.PublicKey{
@@ -151,11 +154,13 @@ func (am AppModule) InitGenesis(ctx sdk.Context, cdc codec.JSONCodec, data json.
 	// Load verifying key from genesis if present.
 	if genesisState.VerifyingKeyHex != "" {
 		vkBytes, err := hex.DecodeString(genesisState.VerifyingKeyHex)
-		if err == nil {
-			if _, err := DeserializeVerifyingKey(vkBytes); err == nil {
-				am.keeper.SetVerifyingKey(ctx, vkBytes)
-			}
+		if err != nil {
+			panic(err)
 		}
+		if _, err := DeserializeVerifyingKey(vkBytes); err != nil {
+			panic(err)
+		}
+		am.keeper.SetVerifyingKey(ctx, vkBytes)
 	}
 
 	// Initialize PoD reward tracking state.
@@ -277,6 +282,9 @@ func (am AppModule) ExportGenesis(ctx sdk.Context, cdc codec.JSONCodec) json.Raw
 		Validators:      validators,
 		VerifyingKeyHex: vkHex,
 	}
-	bz, _ := json.Marshal(genesis)
+	bz, err := json.Marshal(genesis)
+	if err != nil {
+		panic(err)
+	}
 	return bz
 }

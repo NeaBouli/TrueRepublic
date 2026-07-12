@@ -4,34 +4,111 @@ import (
 	"encoding/json"
 	"fmt"
 
+	"cosmossdk.io/math"
+	abci "github.com/cometbft/cometbft/abci/types"
 	"github.com/cosmos/cosmos-sdk/codec"
+	"github.com/cosmos/cosmos-sdk/crypto/keys/ed25519"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
-	bank "github.com/cosmos/cosmos-sdk/x/bank"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 
+	rewards "truerepublic/treasury/keeper"
 	"truerepublic/x/dex"
 	"truerepublic/x/truedemocracy"
 )
 
-// bankAppModuleBasic supplies the bank half of the deterministic bootstrap
-// validator. Custom genesis files must keep bank/custom claims exactly aligned.
-type bankAppModuleBasic struct{ bank.AppModuleBasic }
-
-func (bankAppModuleBasic) DefaultGenesis(cdc codec.JSONCodec) json.RawMessage {
-	stake := sdk.NewInt64Coin(truedemocracy.PNYXDenom, 100_000*truedemocracy.PNYXUnit)
-	balance := banktypes.Balance{
-		Address: authtypes.NewModuleAddress(truedemocracy.ModuleName).String(),
-		Coins:   sdk.NewCoins(stake),
+// ensureConsensusGenesis creates a bank-backed PoD bootstrap only from the
+// public keys supplied by CometBFT's consensus genesis. It never derives a
+// production validator from a hard-coded or otherwise shared private secret.
+func ensureConsensusGenesis(cdc codec.Codec, appState map[string]json.RawMessage, validators []abci.ValidatorUpdate) error {
+	var democracyGenesis truedemocracy.GenesisState
+	if err := json.Unmarshal(appState[truedemocracy.ModuleName], &democracyGenesis); err != nil {
+		return fmt.Errorf("decode %s genesis: %w", truedemocracy.ModuleName, err)
 	}
-	genesis := banktypes.NewGenesisState(
-		banktypes.DefaultParams(),
-		[]banktypes.Balance{balance},
-		sdk.NewCoins(stake),
-		nil,
-		nil,
-	)
-	return cdc.MustMarshalJSON(genesis)
+	if len(democracyGenesis.Validators) > 0 {
+		return nil
+	}
+	if len(democracyGenesis.Domains) > 0 {
+		return fmt.Errorf("%s genesis defines domains but no validators", truedemocracy.ModuleName)
+	}
+	if len(validators) == 0 {
+		return fmt.Errorf("consensus genesis must provide at least one validator")
+	}
+
+	members := make([]string, 0, len(validators))
+	genesisValidators := make([]truedemocracy.GenesisValidator, 0, len(validators))
+	seen := make(map[string]struct{}, len(validators))
+	totalStake := math.ZeroInt()
+	var bootstrapAdmin sdk.AccAddress
+	for i, validator := range validators {
+		pubKey := validator.PubKey.GetEd25519()
+		if validator.Power <= 0 || len(pubKey) != ed25519.PubKeySize {
+			return fmt.Errorf("consensus validator %d must have positive power and a 32-byte ed25519 key", i)
+		}
+		operatorAddress := sdk.AccAddress((&ed25519.PubKey{Key: pubKey}).Address())
+		operator := operatorAddress.String()
+		if _, exists := seen[operator]; exists {
+			return fmt.Errorf("duplicate consensus validator %q", operator)
+		}
+		seen[operator] = struct{}{}
+		if bootstrapAdmin.Empty() {
+			bootstrapAdmin = operatorAddress
+		}
+		members = append(members, operator)
+		genesisValidators = append(genesisValidators, truedemocracy.GenesisValidator{
+			OperatorAddr: operator,
+			PubKey:       pubKey,
+			Stake:        rewards.StakeMin,
+			Domain:       "Bootstrap",
+		})
+		totalStake = totalStake.AddRaw(rewards.StakeMin)
+	}
+	democracyGenesis = truedemocracy.GenesisState{
+		Domains: []truedemocracy.Domain{{
+			Name:          "Bootstrap",
+			Admin:         bootstrapAdmin,
+			Members:       members,
+			Treasury:      sdk.NewCoins(),
+			Issues:        []truedemocracy.Issue{},
+			Options:       truedemocracy.DomainOptions{AdminElectable: true},
+			PermissionReg: []string{},
+		}},
+		Validators: genesisValidators,
+	}
+	democracyJSON, err := json.Marshal(democracyGenesis)
+	if err != nil {
+		return err
+	}
+	appState[truedemocracy.ModuleName] = democracyJSON
+
+	bankGenesis := banktypes.GetGenesisStateFromAppState(cdc, appState)
+	moduleAddress := authtypes.NewModuleAddress(truedemocracy.ModuleName).String()
+	stakeCoins := sdk.NewCoins(sdk.NewCoin(truedemocracy.PNYXDenom, totalStake))
+	found := false
+	for i := range bankGenesis.Balances {
+		if bankGenesis.Balances[i].Address != moduleAddress {
+			continue
+		}
+		found = true
+		if !bankGenesis.Balances[i].Coins.Empty() && !bankGenesis.Balances[i].Coins.Equal(stakeCoins) {
+			return fmt.Errorf("existing %s module balance does not match consensus bootstrap stake", truedemocracy.ModuleName)
+		}
+		if bankGenesis.Balances[i].Coins.Empty() {
+			bankGenesis.Balances[i].Coins = stakeCoins
+			bankGenesis.Supply = bankGenesis.Supply.Add(stakeCoins...)
+		}
+		break
+	}
+	if !found {
+		bankGenesis.Balances = append(bankGenesis.Balances, banktypes.Balance{Address: moduleAddress, Coins: stakeCoins})
+		bankGenesis.Supply = bankGenesis.Supply.Add(stakeCoins...)
+	}
+	bankJSON, err := cdc.MarshalJSON(bankGenesis)
+	if err != nil {
+		return err
+	}
+	appState[banktypes.ModuleName] = bankJSON
+	return nil
 }
 
 // validateLedgerGenesis reconciles custom claims against exact x/bank module

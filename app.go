@@ -71,7 +71,7 @@ var version = "dev"
 
 var ModuleBasics = module.NewBasicManager(
 	auth.AppModuleBasic{},
-	bankAppModuleBasic{},
+	bank.AppModuleBasic{},
 	crisis.AppModuleBasic{},
 	capability.AppModuleBasic{},
 	ibc.AppModuleBasic{},
@@ -392,6 +392,9 @@ func (app *TrueRepublicApp) InitChainer(ctx sdk.Context, req *abci.RequestInitCh
 		if _, ok := genesisState[name]; !ok {
 			genesisState[name] = data
 		}
+	}
+	if err := ensureConsensusGenesis(app.appCodec, genesisState, req.Validators); err != nil {
+		return nil, err
 	}
 
 	bankGenesis := banktypes.GetGenesisStateFromAppState(app.appCodec, genesisState)

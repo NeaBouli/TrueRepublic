@@ -45,7 +45,10 @@ func (AppModuleBasic) RegisterInterfaces(registry codectypes.InterfaceRegistry) 
 
 func (AppModuleBasic) DefaultGenesis(cdc codec.JSONCodec) json.RawMessage {
 	genesis := DefaultGenesisState()
-	bz, _ := json.Marshal(genesis)
+	bz, err := json.Marshal(genesis)
+	if err != nil {
+		panic(err)
+	}
 	return bz
 }
 
@@ -136,6 +139,9 @@ func (am AppModule) ExportGenesis(ctx sdk.Context, cdc codec.JSONCodec) json.Raw
 		RegisteredAssets: am.keeper.GetAllAssets(ctx),
 		LPPositions:      am.keeper.GetAllLPPositions(ctx),
 	}
-	bz, _ := json.Marshal(genesis)
+	bz, err := json.Marshal(genesis)
+	if err != nil {
+		panic(err)
+	}
 	return bz
 }
