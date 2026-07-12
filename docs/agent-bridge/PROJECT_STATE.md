@@ -1,6 +1,6 @@
 # Project State
 
-Updated: 2026-07-12 12:09 EEST
+Updated: 2026-07-12 12:35 EEST
 
 ## Repository
 
@@ -125,7 +125,8 @@ Updated: 2026-07-12 12:09 EEST
   install/lint/6 tests/build/audit, CLI smoke, module integrity, and docs/diff
   checks pass; see `PR19_AUDIT.md`.
 - GH-12 GitHub Docs, DeepScan, Web, Mobile, Rust, Go, both Docker jobs, and
-  manual Security Scan run `29158360390` are green. CodeRabbit remains pending.
+  refreshed Security Scan `29172007410` are green. Both actionable review
+  threads are answered/resolved at head `eec91c7`.
 - GH-20 is rebased onto final PR #19. Proofs bind versioned chain/proposal/rating
   signals while one-vote nullifiers remain rating-independent and chain-scoped.
   Random trusted setup is removed from consensus. Genesis pins circuit ID, VK
@@ -135,29 +136,30 @@ Updated: 2026-07-12 12:09 EEST
   cases/race/coverage, Rust 26 tests/audit, maintained-client lint/8 tests/build/
   audit, four focused legacy tests/build/audit, module integrity, and diff checks
   pass; see `PR22_AUDIT.md`.
-- GH-21 is rebased without content drift onto final PR #22 head `fac50a4`.
+- GH-21 is rebased without implementation drift onto PR #22 head `0c72ad0`.
   Standard Cosmos/Comet lifecycle now uses the configured persistent database
   and home; `init` binds the generated CometBFT key to exactly bank-backed PoD
   genesis and refuses conflicting validator sets. Native block production,
   SIGINT shutdown, same-home restart, height advancement, invariants, export,
   649 Go cases, targeted race, vet, build, CLI version, shell syntax, and diff
-  checks pass locally. Root coverage is 64.3%. Published head `ec1ce17` is
-  mergeable; GitHub Go/Docker run `29170712626`, Docs, DeepScan, Web, Mobile,
-  Rust, and manual Security Scan `29170832988` pass; see `PR23_AUDIT.md`.
-- GH-8 is locally rebased onto final GH-21 `b59efa2`. It modernizes official
+  checks pass locally. Root coverage is 64.3%. Published head `49938a3` is
+  mergeable; GitHub Go/Docker run `29172166826`, Docs, DeepScan, Web,
+  CodeRabbit, and Security Scan `29172246373` pass; see `PR23_AUDIT.md`.
+- GH-8 is rebased onto final GH-21 `49938a3`. It modernizes official
   Action runtimes without credential persistence or duplicate feature runs,
   strengthens suite/module/cap consistency, and reconciles CLAUDE, install,
   FAQ, landing, and real wiki status/security claims to 683 cases. Workflow
   YAML, docs, JSON, wiki target, stale-current-claim, and diff checks pass;
-  Published head `3964f4a` is mergeable. GitHub Go/Docker, Rust, Web, Mobile,
-  Docs, DeepScan, CodeRabbit, and all five Security Scan `29171476126` jobs
+  Published stack head is mergeable. GitHub Go/Docker, Rust, Web, Mobile,
+  Docs, DeepScan, CodeRabbit, and all five Security Scan `29172246235` jobs
   pass. See `PR24_AUDIT.md`.
 
 ## Public-status warning
 
 `docs/status.json`, README, limitations, and the landing page now mark recovery
 as active and separate 683 verified tests from the historical 577 figure.
-`CLAUDE.md` still needs reconciliation.
+`CLAUDE.md`, install guidance, FAQ, landing page, and wiki are reconciled on
+PR #24; default-branch visibility remains pending the safe ordered merge.
 
 ## Blocking audit result
 

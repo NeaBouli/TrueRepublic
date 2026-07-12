@@ -385,7 +385,7 @@
   CodeRabbit, and all five Security Scan `29171476126` jobs pass.
 - PR #25 remains draft/red against unrecovered main; no gate bypass is allowed.
 
-## 2026-07-12 12:18 EEST - GH-12 review remediation
+## 2026-07-12 12:35 EEST - GH-12 review remediation and stack refresh
 
 - Accepted both actionable PR #19 review findings. Because `CreateDomain` has
   no error return, the escrow-divergence test now reads the domain back and
@@ -397,5 +397,11 @@
 - Focused registered-invariant regression, full Go tests, vet, and build pass.
   Published commit `eec91c7`, answered and resolved both PR #19 review threads,
   rebased/published PR #22 at `0c72ad0`, rebased/published PR #23 at `49938a3`,
-  and propagated the fix locally through PR #24. PR #24 publication and
-  refreshed GitHub verification remain in progress.
+  and published the propagated PR #24 stack head.
+- PRs #19, #22, #23, and #24 are mergeable on exact consecutive bases with no
+  unresolved review threads. Their refreshed standard checks pass, as do all
+  five jobs in Security runs `29172007410`, `29172246257`, `29172246373`, and
+  `29172246235` respectively.
+- PR #9 remains technically green and mergeable but correctly requires one
+  independent approval. PR #25 remains red against unrecovered `main`; neither
+  gate is bypassed, and meaningful recovery work remains available.

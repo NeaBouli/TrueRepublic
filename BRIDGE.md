@@ -18,7 +18,7 @@ Canonical coordination lives in [`docs/agent-bridge/`](docs/agent-bridge/README.
 
 GitHub recovery epic: [#4](https://github.com/NeaBouli/TrueRepublic/issues/4)
 
-## 2026-07-12 12:18 EEST GH-12 review remediation → Published and propagated
+## 2026-07-12 12:35 EEST GH-12 review remediation → Stack green
 
 - **Branch:** `fix/GH-12-genesis-invariants`
 - **Issue:** [GH-12](https://github.com/NeaBouli/TrueRepublic/issues/12)
@@ -32,8 +32,11 @@ GitHub recovery epic: [#4](https://github.com/NeaBouli/TrueRepublic/issues/4)
   `go vet ./...`, and `go build ./...` → PASS
 - **GitHub:** commit `eec91c7` published; both review threads answered and
   resolved; PR #22 published at `0c72ad0`, PR #23 published at `49938a3`, and
-  the fix propagated locally through PR #24
-- **Ready for:** PR #24 publication and refreshed GitHub verification
+  PR #24 published with the propagated fix; all refreshed PR #19/#22/#23/#24
+  checks and Security runs `29172007410`, `29172246257`, `29172246373`, and
+  `29172246235` pass; all four PRs are mergeable with zero unresolved threads
+- **Ready for:** independent approval of PR #9 and ordered stack merge; the
+  active recovery goal continues and is not blocked
 
 ## 2026-07-12 12:09 EEST GH-8 docs/CI reconciliation → GitHub green
 
@@ -44,8 +47,8 @@ GitHub recovery epic: [#4](https://github.com/NeaBouli/TrueRepublic/issues/4)
   checkout credentials; non-duplicate workflow triggers; strengthened suite,
   module, cap, agent-guide, landing-page, and real-wiki consistency gates;
   replaced stale CLAUDE/install/FAQ/wiki recovery and security claims
-- **Audit fixes:** rebased only the two substantive GH-8 commits onto GH-21
-  `b59efa2`; preserved Node 22 for the maintained client; corrected false
+- **Audit fixes:** rebased only the six GH-8 CI/docs commits onto final GH-21
+  `49938a3`; preserved Node 22 for the maintained client; corrected false
   anonymous-voting/mobile-wallet availability; made installation explicitly
   select the unmerged recovery branch; replaced the skipped `wiki-github/`
   checks and created missing current/testing status pages
@@ -53,10 +56,10 @@ GitHub recovery epic: [#4](https://github.com/NeaBouli/TrueRepublic/issues/4)
   target, stale-current-claim, and diff checks → PASS; underlying 683-case
   GH-21 code head remains unchanged
 - **Risk:** Medium — public security/readiness claims and CI trust/runtime
-- **GitHub:** Go race/coverage + Docker restart `29171461365`, Rust
-  `29171461357`, Web `29171461355`, Mobile `29171461342`, Docs
-  `29171461348`, DeepScan, CodeRabbit, and all five Security Scan
-  `29171476126` jobs → PASS
+- **GitHub:** Go race/coverage + Docker restart `29172243080`, Rust
+  `29172243094`, Web `29172243172`, Mobile `29172243069`, Docs
+  `29172243125`, DeepScan, CodeRabbit, and all five Security Scan
+  `29172246235` jobs → PASS
 - **Ready for:** independent documentation/recovery review and ordered stack
   merge; PR #25 remains separately blocked on old-main security
 
@@ -80,7 +83,7 @@ default-branch visibility track and must not bypass the vulnerable current
   generated CometBFT-key PoD genesis with exact bank-backed stake, consensus
   parameter keeper, clean signal shutdown, export, non-root Debian/glibc image,
   persistent container restart gate, and restored CLI build-version metadata
-- **Audit fixes:** rebased without content drift onto final GH-20 head `fac50a4`;
+- **Audit fixes:** rebased without content drift onto final GH-20 head `0c72ad0`;
   rejected existing/conflicting consensus validator sets without mutation;
   wrote genesis atomically with mode `0600`; fixed the reproduced blank/failing
   `version` and `--version` interfaces before publication
@@ -91,8 +94,8 @@ default-branch visibility track and must not bypass the vulnerable current
 - **Risk:** Critical — consensus key identity, bank-backed bootstrap stake,
   persistent application state, restart safety, and operator container runtime
 - **GitHub:** Go build/vet/race/coverage and Docker block/restart pass in run
-  `29170712626`; Docs, DeepScan, Web, Mobile, Rust, and manual Security Scan
-  `29170832988` pass; CodeRabbit is check-green
+  `29172166826`; Docs, DeepScan, Web, CodeRabbit, and manual Security Scan
+  `29172246373` pass
 - **Ready for:** independent multi-node operations review and ordered stack
   merge; not production
 

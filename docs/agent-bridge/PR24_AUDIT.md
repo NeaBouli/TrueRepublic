@@ -98,10 +98,13 @@ passes on GitHub. The separate default-branch visibility decision remains open.
 - Stale current-claim scan across agent/install/FAQ/landing/wiki/workflows: PASS
 - Wiki Home target existence check: PASS
 - `git diff --check`: PASS
-- Underlying GH-21 final head `b59efa2`: unchanged and GitHub green
-- GitHub Go/Docker `29171461365`, Rust `29171461357`, Web `29171461355`,
-  Mobile `29171461342`, Docs `29171461348`, DeepScan, and CodeRabbit: PASS
-- Manual Security Scan `29171476126`: PASS, all five jobs
+- Underlying GH-21 head `49938a3`: implementation unchanged by GH-8 and GitHub
+  green after the PR #19 review-fix propagation
+- GitHub Go/Docker `29172243080`, Rust `29172243094`, Web `29172243172`,
+  Mobile `29172243069`, Docs `29172243125`, DeepScan, and CodeRabbit: PASS
+- Manual Security Scan `29172246235`: PASS, all five jobs
+- Ordered PR #19/#22/#23/#24 bases exactly match their predecessor heads; all
+  are mergeable and have zero unresolved review threads
 
 ## Priority matrix
 
