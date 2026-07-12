@@ -21,8 +21,8 @@
 
 PR #9 → #15 → #16 → #17 → #18 → #19 → #22 → #23 → #24 → #27.
 
-The recovery foundation through PR #24 was reviewed, verified, and merged to
-`main` in this order. PR #27 is the current deployment-initialization follow-up.
+The recovery foundation and safe deployment-initialization wrapper were
+reviewed, verified, and merged to `main` in this order.
 
 ## Release blockers
 
@@ -34,5 +34,5 @@ The recovery foundation through PR #24 was reviewed, verified, and merged to
 - Migration or removal of the deprecated legacy web/mobile clients.
 
 See [Issue #4](https://github.com/NeaBouli/TrueRepublic/issues/4),
-[`BRIDGE.md`](https://github.com/NeaBouli/TrueRepublic/blob/fix/GH-26-pod-init-script/BRIDGE.md),
-and [`docs/status.json`](https://github.com/NeaBouli/TrueRepublic/blob/fix/GH-26-pod-init-script/docs/status.json).
+[`BRIDGE.md`](https://github.com/NeaBouli/TrueRepublic/blob/main/BRIDGE.md),
+and [`docs/status.json`](https://github.com/NeaBouli/TrueRepublic/blob/main/docs/status.json).

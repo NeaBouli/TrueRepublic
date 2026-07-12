@@ -1,17 +1,17 @@
 # Project State
 
-Updated: 2026-07-13 00:15 EEST
+Updated: 2026-07-13 00:37 EEST
 
 ## Repository
 
 - GitHub: `NeaBouli/TrueRepublic`
-- Baseline: `origin/main` at `071a11e` after the verified PR #24 squash merge.
-- Merged recovery PRs: #9, #15, #16, #17, #18, #19, #22, #23, and #24.
-- Current review: PR #27 (`fix/GH-26-pod-init-script` -> `main`).
+- Baseline: `origin/main` at `513716c` after the verified PR #27 squash merge.
+- Merged recovery PRs: #9, #15, #16, #17, #18, #19, #22, #23, #24, and #27.
+- Current review: final public-status synchronization against GitHub issue #4.
 - Active recovery checkout:
   `/Users/gio/Documents/Codex/2026-07-11/erkunden/TrueRepublic-gh20`
 - GH-26 branch: `fix/GH-26-pod-init-script`
-- GH-26 issue: #26; PR #27 is being rebased and verified against `main`.
+- GH-26 issue: #26; PR #27 is verified and merged to `main`.
 - GH-26 recovery checkout:
   `/Users/gio/Documents/Codex/2026-07-11/erkunden/TrueRepublic-gh26`
 - Recovery worktree: `/Users/gio/Desktop/repos/TrueRepublic-recovery`
@@ -28,7 +28,7 @@ Updated: 2026-07-13 00:15 EEST
   vulnerabilities after upgrades.
 - GH-14 local v0.4 client: `npm ci`, lint, six regression tests, production build, and
   `npm audit` all PASS. Main bundle is 1.68 MB before gzip (performance warning).
-- Current GH-26 branch test count is 684: 650 Go, 26 Rust, and eight
+- Current `main` test count is 684: 650 Go, 26 Rust, and eight
   maintained-client tests. Four focused legacy-web ZKP regressions pass
   separately and are not included in that authoritative total. The prior 577
   figure is retained only as historical.
@@ -138,9 +138,9 @@ Updated: 2026-07-13 00:15 EEST
   wrapper now invokes only daemon `init`; its regression and a real compiled
   init prove generated-key, exact bank-backed PoD genesis without mnemonic,
   account, gentx, or extra-supply side effects. Full Go/vet/docs/shell gates
-  pass locally. The original PR #27 GitHub Go/Docker/Docs/DeepScan/CodeRabbit
-  and Security run `29172846057` passed with zero review threads; the rebased
-  head now awaits refreshed gates against `main`. See `PR27_AUDIT.md`.
+  pass locally. Rebased PR #27 passed GitHub Go/Docker run `29190764808`,
+  Docs/Pages run `29190763221`, Security run `29190764842`, DeepScan, and
+  CodeRabbit before squash merge `513716c`. See `PR27_AUDIT.md`.
 
 ## Public-status warning
 
