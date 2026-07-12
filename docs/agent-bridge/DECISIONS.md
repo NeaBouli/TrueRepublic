@@ -63,3 +63,20 @@
   `x/crisis` routes checked every block.
 - The legacy `x/staking` gentx initialization script is not a valid PoD launch
   path and remains blocked under GH-21.
+
+## 2026-07-12 - ZKP circuit and nullifier trust boundary
+
+- Anonymous vote proofs bind a versioned length-prefixed chain ID, domain,
+  issue, suggestion, and exact rating signal.
+- The one-vote nullifier excludes rating but includes chain and proposal
+  identity, so changing a rating cannot create another voting scope.
+- Consensus never performs randomized Groth16 setup. Genesis is the ceremony
+  trust anchor and pins the expected circuit ID, VK SHA-256, BN254 curve,
+  four-public-input shape, and canonical serialized bytes.
+- Genesis recomputes identity Merkle roots and exports the exact active
+  nullifier records. Historical ratings are not used to resurrect nullifiers
+  intentionally cleared by a Big Purge.
+- Mock proof generation is not a degraded transaction mode. Both web clients
+  fail closed until a compatible real prover is shipped and reviewed.
+- Anonymous rewards remain deferred until the proof or a separate claim binds
+  a safe recipient without destroying vote privacy.

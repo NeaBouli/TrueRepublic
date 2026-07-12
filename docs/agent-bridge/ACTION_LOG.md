@@ -322,6 +322,27 @@
   builds pass. Manually dispatched Security Scan run `29158360390`; all five
   jobs pass. Requested CodeRabbit review; its independent result is pending.
 
+## 2026-07-12 05:12 EEST - GH-20 ZKP/authentication audit
+
+- Rebased GH-20's single code commit onto final PR #19 and discarded two stale
+  documentation snapshots for evidence-based regeneration.
+- Preserved chain/rating signal binding, rating-independent chain/proposal
+  nullifiers, transaction-time setup removal, canonical commitment checks, and
+  altered-rating/cross-chain regressions.
+- Found and fixed missing active-nullifier export. Genesis now round-trips exact
+  nullifier records/heights without resurrecting values cleared by Big Purge.
+- Pinned genesis VK configuration by supported circuit ID, SHA-256, BN254 curve,
+  four-public-input shape, canonical serialization, and no trailing bytes.
+- Recomputed genesis identity Merkle roots and rejected malformed commitments,
+  history, rating authentication fields, nullifiers, and proof public inputs.
+- Found and disabled a legacy wallet path that generated random mock proof bytes
+  and called `signAndBroadcast` while claiming anonymity. Both maintained and
+  legacy web clients now fail closed and display non-submittable preview status.
+- Verified 643 Go cases, race, vet, build, coverage (root 66.1%, token 92.6%,
+  treasury 97.0%, DEX 45.3%, governance 58.9%), 26 Rust tests/audit, eight
+  maintained-client tests/lint/build/audit, four focused legacy ZKP tests/build/
+  audit, module integrity, and diff/secret/setup checks.
+
 ## 2026-07-12 12:18 EEST - GH-12 review remediation
 
 - Accepted both actionable PR #19 review findings. Because `CreateDomain` has

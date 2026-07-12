@@ -1,5 +1,5 @@
 # TrueRepublic — Token Supply and Ledger Audit
-> Scope: `treasury/keeper`, `x/truedemocracy`, `x/dex`, app wiring, genesis, and maintained-client denomination handling  ·  Date: 2026-07-12  ·  Result: 12 PASS
+> Scope: `treasury/keeper`, `x/truedemocracy`, `x/dex`, app wiring, genesis, ZKP authentication, and maintained-client safety  ·  Date: 2026-07-12  ·  Result: 15 PASS
 
 ## Summary
 
@@ -20,9 +20,10 @@ production approval.
 > current proof/signature payloads do not bind a safe recipient. GH-10 now
 > provides bank-backed DEX custody, provider-owned LP shares, authority checks,
 > and canonical burns. GH-12 now closes custom-genesis and runtime-invariant
-> findings locally. ZKP recipient binding, the real node initialization/lifecycle
-> path, final GitHub gates, and independent stacked review remain open outside
-> or after this ledger slice.
+> findings locally. GH-20 now binds anonymous votes to chain/proposal/rating,
+> fails closed on pinned genesis VK state, preserves active nullifiers, and
+> disables mock client submission. Recipient binding, a real prover/ceremony,
+> the node lifecycle, final GitHub gates, and independent review remain open.
 
 ## Findings by domain
 
@@ -95,15 +96,33 @@ production approval.
 
 - **[PASS] Public ledger claims distinguish stacked recovery from production** — `README.md`, `docs/status.json`, `docs/index.html`
   - What: Public status identifies the exact locally verified branch and retains the non-production warning for unmerged review, ZKP, and node-lifecycle work.
-  - Evidence: Documentation consistency checks use one 647-test source of truth.
+  - Evidence: Documentation consistency checks use one 677-test source of truth.
   - Fix: Keep status evidence-based through final stack consolidation.
+
+### ZKP authentication and replay resistance — PASS
+
+- **[PASS] Anonymous proofs and legacy signatures bind chain and exact vote context** — `x/truedemocracy/merkle.go`, `x/truedemocracy/keeper.go`, `x/truedemocracy/zkp.go`
+  - What: Versioned length-prefixed signals bind chain ID, domain, issue, suggestion, and rating. The one-vote nullifier includes chain/proposal identity but deliberately excludes rating.
+  - Evidence: Altered-rating and cross-chain proof/signature regressions fail without consuming the valid nullifier; the correctly bound proof succeeds.
+  - Fix: Preserve the versioned encoding and require circuit/prover migrations to be explicit consensus upgrades.
+
+- **[PASS] Consensus setup and genesis ZKP state fail closed** — `x/truedemocracy/anonymity.go`, `x/truedemocracy/genesis_validation.go`, `x/truedemocracy/module.go`
+  - What: Transactions never run randomized Groth16 setup. Genesis pins circuit ID, VK SHA-256, BN254 curve, public-input shape, and canonical bytes; identity roots are recomputed from canonical commitments.
+  - Evidence: Tests reject missing/mismatched IDs and fingerprints, trailing VK bytes, malformed fields, mismatched trees, and absent VK at vote time.
+  - Fix: Treat genesis ceremony artifacts as the trust anchor and require external review before enabling a real prover.
+
+- **[PASS] Double-vote state and mock-client boundaries survive lifecycle changes** — `x/truedemocracy/module.go`, `client-web/src/services/zkp.ts`, `web-wallet/src/services/api.js`
+  - What: Export/import preserves the exact active nullifier records and heights without resurrecting values cleared by Big Purge. Both web clients reject mock proof submission.
+  - Evidence: Nullifier round-trip/purge regressions, 8 maintained-client tests, and 4 focused legacy-client tests pass; both clients build and audit cleanly.
+  - Fix: Keep anonymous rewards deferred and submission disabled until a compatible real prover and recipient-binding design pass independent review.
 
 ## Priority matrix
 
 ### 🔴 BLOCKING
 
-None inside this ledger-audit slice. Project-level ZKP/authentication and node
-lifecycle blockers remain tracked separately.
+None inside the implemented ledger/ZKP fail-closed slice. A real prover,
+external cryptographic review, recipient binding, and node lifecycle remain
+project-level release blockers.
 
 ### 🟠 HIGH
 

@@ -1,6 +1,6 @@
 # Project State
 
-Updated: 2026-07-12 04:32 EEST
+Updated: 2026-07-12 05:12 EEST
 
 ## Repository
 
@@ -25,6 +25,10 @@ Updated: 2026-07-12 04:32 EEST
 - GH-12 draft PR: #19 (`fix/GH-12-genesis-invariants` -> `fix/GH-10-dex-custody`)
 - GH-12 recovery checkout:
   `/Users/gio/Documents/Codex/2026-07-11/erkunden/TrueRepublic-gh12`
+- GH-20 branch: `fix/GH-20-zkp-binding`
+- GH-20 draft PR: #22 (`fix/GH-20-zkp-binding` -> `fix/GH-12-genesis-invariants`)
+- GH-20 recovery checkout:
+  `/Users/gio/Documents/Codex/2026-07-11/erkunden/TrueRepublic-gh20`
 - Recovery worktree: `/Users/gio/Desktop/repos/TrueRepublic-recovery`
 - Legacy local checkout: preserved at `/Users/gio/Desktop/repos/TrueRepublic`
 - GitHub epic: #4
@@ -39,14 +43,17 @@ Updated: 2026-07-12 04:32 EEST
   vulnerabilities after upgrades.
 - GH-14 local v0.4 client: `npm ci`, lint, six regression tests, production build, and
   `npm audit` all PASS. Main bundle is 1.68 MB before gzip (performance warning).
-- Current GH-12 branch test count is 647: 615 Go, 26 Rust, and six
-  maintained-client tests. The prior 577 figure is retained only as historical.
+- Current GH-20 branch test count is 677: 643 Go, 26 Rust, and eight
+  maintained-client tests. Four focused legacy-web ZKP regressions pass
+  separately and are not included in that authoritative total. The prior 577
+  figure is retained only as historical.
 - GH-13 local Go 1.26.5: build, vet, normal tests, race tests, and coverage PASS.
   Coverage: root 10.2%, token 93.5%, treasury 97.0%, DEX 34.2%, governance 55.8%.
 - Go vulnerability gate: no reachable finding with an available fix remains;
   four upstream `N/A` findings are tracked for import-path reduction.
-- Legacy `web-wallet`: build/test command reaches audit, but 68 advisories remain
-  (26 high, 2 critical); not approved for keys or funds.
+- Legacy `web-wallet`: focused ZKP tests, build, and current npm audit pass, but
+  obsolete CosmJS crypto/Create React App and source-map warnings remain; mock
+  proof submission is disabled and it is not approved for keys or funds.
 - Legacy `mobile-wallet`: no tests exist and 51 advisories remain (22 high,
   3 critical); not approved for keys or funds.
 - Public README, status JSON, limitations, and GitHub Pages source now display
@@ -109,20 +116,31 @@ Updated: 2026-07-12 04:32 EEST
   build/vet/615 cases/race/coverage, Rust 26 tests/audit, maintained-client
   install/lint/6 tests/build/audit, CLI smoke, module integrity, and docs/diff
   checks pass; see `PR19_AUDIT.md`.
+- GH-12 GitHub Docs, DeepScan, Web, Mobile, Rust, Go, both Docker jobs, and
+  manual Security Scan run `29158360390` are green. CodeRabbit remains pending.
+- GH-20 is rebased onto final PR #19. Proofs bind versioned chain/proposal/rating
+  signals while one-vote nullifiers remain rating-independent and chain-scoped.
+  Random trusted setup is removed from consensus. Genesis pins circuit ID, VK
+  SHA-256, BN254/public-input shape, and canonical bytes; recomputes identity
+  roots; and round-trips exact active nullifiers without undoing Big Purges.
+  Both web clients now reject mock proof submission. Local Go build/vet/643
+  cases/race/coverage, Rust 26 tests/audit, maintained-client lint/8 tests/build/
+  audit, four focused legacy tests/build/audit, module integrity, and diff checks
+  pass; see `PR22_AUDIT.md`.
 
 ## Public-status warning
 
 `docs/status.json`, README, limitations, and the landing page now mark recovery
-as active and separate 647 verified tests from the historical 577 figure.
+as active and separate 677 verified tests from the historical 577 figure.
 `CLAUDE.md` still needs reconciliation.
 
 ## Blocking audit result
 
-The GH-7 token/ledger audit is 12/12 PASS locally across the ordered stack:
+The token/ledger audit is 12/12 PASS locally across the ordered stack:
 denomination/cap, governance custody, reward issuance, DEX custody, custom
 genesis, and runtime invariants. The repository remains recovery-only because
-the stack is unmerged/unreviewed and GH-20 ZKP plus GH-21 node-lifecycle work
-remain outside this ledger slice.
+the stack is unmerged/unreviewed, GH-20 still needs a real prover/external
+cryptographic review, and GH-21 node lifecycle remains open.
 
 GH-11 implements the canonical denomination metadata (`upnyx`, six decimal
 places, 21,000,000,000,000 base-unit cap) and pre-init bank-genesis cap checks.
@@ -131,4 +149,5 @@ Its final audit corrections are locally verified and rebased onto PR #9 head
 GH-14 closes the declared treasury/stake custody slice on its stacked branch.
 GH-13 closes cap-checked reward issuance, GH-10 closes DEX custody/LP/burn/
 authority, and GH-12 closes custom-genesis/runtime-invariant findings locally.
-These remediations remain stacked and unmerged.
+GH-20 closes the on-chain ZKP binding and mock-client safety implementation
+locally. These remediations remain stacked and unmerged.

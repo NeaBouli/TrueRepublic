@@ -23,7 +23,11 @@
   authority, and rollback evidence are locally green on stacked PR #18.
 - [x] GH-12: exact custom genesis, non-empty custody round trip, and registered
   supply/escrow/reserve/LP invariants are locally green on stacked PR #19.
-- [ ] GH-7: audit ZKP/nullifier/domain-key authentication and client-side mock boundaries.
+- [x] GH-20: bind ZKP proofs/signatures to chain and vote context, pin genesis
+  VK identity, preserve active nullifiers, validate canonical fields, and make
+  mock clients non-submittable on stacked PR #22.
+- [ ] GH-20: obtain independent cryptographic review and deliver a compatible
+  real prover/ceremony artifact before enabling anonymous submission.
 - [x] GH-7: DEX rounding, slippage, pool accounting, custody, and authorization
   audit completed in GH-10; GH-12 retains genesis/runtime invariants.
 

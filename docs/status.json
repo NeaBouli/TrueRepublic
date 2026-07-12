@@ -4,10 +4,10 @@
   "release_date": "2026-03-04",
   "tests": {
     "status": "recovery_verified_locally",
-    "total": 647,
-    "go": 615,
+    "total": 677,
+    "go": 643,
     "rust": 26,
-    "frontend": 6,
+    "frontend": 8,
     "historical_total": 577
   },
   "web_client": {
@@ -17,7 +17,7 @@
     "routes": 22,
     "stores": 7,
     "services": 10,
-    "build_size_gzip": "309.06 kB"
+    "build_size_gzip": "309.01 kB"
   },
   "recovery": {
     "status": "active",
@@ -34,7 +34,7 @@
     "token": 12,
     "treasury": 36,
     "dex": 116,
-    "truedemocracy": 418
+    "truedemocracy": 446
   },
   "token": {
     "symbol": "PNYX",
@@ -47,9 +47,9 @@
   "tech": {
     "go": "1.26.5",
     "cosmos_sdk": "v0.50.14",
-    "cometbft": "v0.38.21",
+    "cometbft": "v0.38.22",
     "cosmwasm": "v0.53.3",
-    "ibc_go": "v8.4.0",
+    "ibc_go": "v8.7.0",
     "rust": "1.75+",
     "react": "18.2",
     "typescript": "5.9",
@@ -60,10 +60,13 @@
   },
   "features": {
     "zkp": {
-      "status": "architecture_ready",
-      "client": "mock_implementation",
+      "status": "recovery_verified_on_chain_client_disabled_unmerged",
+      "client": "mock_preview_fail_closed_not_submittable",
       "proof_system": "groth16",
-      "note": "Circuit designed & tested on-chain. Web client uses SHA-256 mock (2s proof gen). Real gnark-wasm planned for v0.4.1."
+      "circuit_binding": "chain_proposal_rating_signal_on_pr22",
+      "nullifier": "chain_proposal_scoped_rating_independent_on_pr22",
+      "verifying_key": "genesis_circuit_id_sha256_shape_pinned_on_pr22",
+      "note": "Mock proof submission is disabled in maintained and legacy web clients. Real compatible prover and external ceremony/circuit review remain required."
     },
     "cosmwasm": {
       "status": "recovery_verified_locally",
@@ -97,7 +100,7 @@
         "send_transactions",
         "governance_browser",
         "dex_swap_liquidity",
-        "zkp_anonymous_voting",
+        "zkp_anonymous_voting_preview_disabled",
         "domain_membership",
         "admin_dashboard",
         "network_explorer"
@@ -108,7 +111,7 @@
     "ibc_staking": "stubbed - PoD consensus instead",
     "ibc_upgrade": "stubbed - not integrated",
     "x_staking": "stubbed - PoD consensus instead",
-    "zkp_client": "mock - SHA-256 placeholder, gnark-wasm in v0.4.1",
+    "zkp_client": "mock preview is fail-closed and non-submittable; compatible real prover pending",
     "tx_history": "not yet implemented in web client",
     "ibc_transfers_ui": "query support only in web client",
     "node_bootstrap": "real CometBFT validator keys required; legacy x/staking gentx script pending GH-21 replacement"
