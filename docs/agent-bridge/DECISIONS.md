@@ -62,7 +62,21 @@
 - Supply, governance escrow, DEX reserves, and provider LP totals are registered
   `x/crisis` routes checked every block.
 - The legacy `x/staking` gentx initialization script is not a valid PoD launch
-  path and remains blocked under GH-21.
+  path and must not be used.
+
+## 2026-07-12 - Persistent PoD node bootstrap
+
+- `truerepublicd init` uses the generated CometBFT Ed25519 validator public key
+  as the single bootstrap PoD identity; no validator private key is embedded in
+  application genesis or source.
+- Bootstrap stake is created only as exact cap-checked `x/bank` module backing
+  for the matching custom validator. Conflicting existing consensus sets are
+  rejected rather than silently replaced.
+- Standard Cosmos server lifecycle, persistent database/home, signal shutdown,
+  restart, and export are the supported node path. The old MemDB/`select {}` and
+  `x/staking` gentx paths are retired.
+- Single-node success does not prove multi-node, IBC upgrade, relayer, backup,
+  or restore readiness; those require separate operations evidence.
 
 ## 2026-07-12 - ZKP circuit and nullifier trust boundary
 

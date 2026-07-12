@@ -2,6 +2,8 @@ name: Go CI
 
 on:
   push:
+    branches:
+      - main
     paths:
       - '**.go'
       - 'go.mod'
@@ -9,6 +11,8 @@ on:
       - 'Dockerfile'
       - '.dockerignore'
       - '.github/workflows/go-ci.yml'
+      - 'docker-compose.yml'
+      - 'scripts/docker-entrypoint.sh'
   pull_request:
     paths:
       - '**.go'
@@ -17,6 +21,8 @@ on:
       - 'Dockerfile'
       - '.dockerignore'
       - '.github/workflows/go-ci.yml'
+      - 'docker-compose.yml'
+      - 'scripts/docker-entrypoint.sh'
 
 jobs:
   build-and-test:
@@ -39,12 +45,57 @@ jobs:
       - name: Test
         run: CGO_ENABLED=1 go test ./... -race -cover -count=1 -timeout=600s
 
-  docker-build:
+  docker-restart-smoke:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
         with:
           persist-credentials: false
 
+      - name: Validate Compose configuration
+        run: docker compose config --quiet
+
       - name: Build node image
-        run: docker build --build-arg VERSION="${GITHUB_SHA}" --tag truerepublic:ci .
+        run: docker build --build-arg VERSION="${GITHUB_SHA}" --tag truerepublic-node:ci .
+
+      - name: Start node container
+        run: docker run --detach --name truerepublic-node-ci --publish 37657:26657 truerepublic-node:ci
+
+      - name: Wait for first committed block
+        id: first
+        run: |
+          for attempt in $(seq 1 60); do
+            height=$(curl --fail --silent http://127.0.0.1:37657/status | jq -r '.result.sync_info.latest_block_height // 0' || true)
+            if [ "${height:-0}" -ge 1 ]; then
+              echo "height=${height}" >> "$GITHUB_OUTPUT"
+              exit 0
+            fi
+            sleep 2
+          done
+          docker logs truerepublic-node-ci
+          exit 1
+
+      - name: Restart persistent container
+        run: docker restart truerepublic-node-ci
+
+      - name: Verify height advances after restart
+        env:
+          FIRST_HEIGHT: ${{ steps.first.outputs.height }}
+        run: |
+          for attempt in $(seq 1 60); do
+            height=$(curl --fail --silent http://127.0.0.1:37657/status | jq -r '.result.sync_info.latest_block_height // 0' || true)
+            if [ "${height:-0}" -gt "$FIRST_HEIGHT" ]; then
+              exit 0
+            fi
+            sleep 2
+          done
+          docker logs truerepublic-node-ci
+          exit 1
+
+      - name: Show node logs on failure
+        if: failure()
+        run: docker logs truerepublic-node-ci || true
+
+      - name: Remove node container
+        if: always()
+        run: docker rm --force truerepublic-node-ci || true

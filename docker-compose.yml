@@ -14,11 +14,18 @@ services:
       - "${LCD_PORT:-1317}:1317"
       - "${GRPC_PORT:-9090}:9090"
     volumes:
-      - node-data:/root/.truerepublic
+      - node-data:/home/truerepublic/.truerepublic
     environment:
       - MONIKER=${MONIKER:-truerepublic-node}
       - CHAIN_ID=${CHAIN_ID:-truerepublic-1}
       - MIN_GAS_PRICE=${MIN_GAS_PRICE:-1000upnyx}
+    command:
+      - start
+      - --rpc.laddr=tcp://0.0.0.0:26657
+      - --grpc.address=0.0.0.0:9090
+      - --api.enable=true
+      - --api.address=tcp://0.0.0.0:1317
+      - --minimum-gas-prices=${MIN_GAS_PRICE:-1000upnyx}
     networks:
       - truerepublic-net
     logging:

@@ -44,18 +44,21 @@ approved for production or real funds during this audit.
 **Impact:** Contracts cannot query standard distribution
 **Code:** `wasm_stubs.go - WasmDistributionKeeper`
 
-## Production Node Bootstrap
+## Production Node Lifecycle
 
-**Status:** Recovery-blocked by GH-21
-**Reason:** PR #19 removes the insecure hard-coded bootstrap validator secret
-and accepts only real Ed25519 public keys supplied by CometBFT genesis. The
-legacy `scripts/init-node.sh` still invokes `x/staking` gentx commands even
-though TrueRepublic uses PoD and does not wire `x/staking`.
-**Impact:** Do not use the legacy initialization script for production. A
-PoD-aware command must bind the node's real Ed25519
-`priv_validator_key.json` public key to an actual positive-power CometBFT
-validator with sufficient, exact bank-backed custom stake before launch. The
-resulting canonical supply must remain within the 21,000,000 PNYX cap.
+**Status:** Locally and GitHub recovery-verified on stacked PR #23; independent
+operations review pending
+**Current:** The standard `truerepublicd init` command binds the generated
+CometBFT Ed25519 public key to matching PoD and actual positive-power consensus
+validators with sufficient, exact bank-backed minimum stake. Initialization
+rejects canonical supply above the 21,000,000 PNYX cap. A real native process
+produces blocks, shuts down on SIGINT, restarts from the same home, advances
+height, preserves invariants, and exports state. The non-root Debian/glibc
+container has a blocking restart gate.
+**Impact:** Do not use the legacy `scripts/init-node.sh` `x/staking` gentx path.
+The rebased PR #23 Docker restart job passes. Do not claim public-network
+readiness until independent multi-node, backup/restore, IBC/upgrade operations
+review passes.
 
 ## ZKP Client
 

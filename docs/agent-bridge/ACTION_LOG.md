@@ -347,6 +347,23 @@
 - GitHub Docs, DeepScan, Web, Mobile, Rust, both Go/Docker runs, and manual
   Security Scan run `29159603247` pass. CodeRabbit is check-green but explicitly
   rate-limited and produced no substantive independent cryptographic review.
+- Rebased the six audited GH-21 implementation commits without content drift
+  onto final GH-20 bridge head `fac50a4`.
+- Reproduced and fixed a release regression introduced by the lifecycle move:
+  `truerepublicd --version` failed and `truerepublicd version` was blank because
+  Cobra/Cosmos SDK application metadata was no longer wired.
+- Verified 649 Go cases and coverage (root 64.3%, token 92.6%, treasury 97.0%,
+  DEX 45.3%, governance 58.9%), a real native block/SIGINT/same-home restart/
+  export flow under race, vet, CGO build, both version interfaces, entrypoint
+  syntax, and diff checks.
+- Prepared the local GH-21 audit/bridge/public-status evidence at 683 total
+  recovery cases. Local Docker and ShellCheck are unavailable; refreshed
+  GitHub Docker restart and security jobs remain mandatory before approval.
+- Published audited GH-21 head `ec1ce17`; synchronized PR #23, Issue #21, and
+  recovery epic #4 with the 649 Go / 683 total evidence and version regression.
+- GitHub Go build/vet/race/coverage and Docker block/restart run `29170712626`,
+  Docs, DeepScan, Web, Mobile, Rust, and all five manual Security Scan
+  `29170832988` jobs pass. Independent multi-node operations review remains.
 
 ## 2026-07-12 12:18 EEST - GH-12 review remediation
 
@@ -359,5 +376,6 @@
   and preservation of the 21,000,000 PNYX canonical supply cap.
 - Focused registered-invariant regression, full Go tests, vet, and build pass.
   Published commit `eec91c7`, answered and resolved both PR #19 review threads,
-  and propagated the fix locally through PR #22. Refreshed GitHub verification
-  and propagation through PRs #23 and #24 remain in progress.
+  rebased/published PR #22 at `0c72ad0`, and propagated the fix locally through
+  PR #23. Refreshed GitHub verification and propagation through PR #24 remain
+  in progress.

@@ -1,5 +1,5 @@
 # TrueRepublic — Token Supply and Ledger Audit
-> Scope: `treasury/keeper`, `x/truedemocracy`, `x/dex`, app wiring, genesis, ZKP authentication, and maintained-client safety  ·  Date: 2026-07-12  ·  Result: 15 PASS
+> Scope: `treasury/keeper`, `x/truedemocracy`, `x/dex`, app wiring, genesis, ZKP authentication, maintained-client safety, and native node lifecycle  ·  Date: 2026-07-12  ·  Result: 16 PASS
 
 ## Summary
 
@@ -22,8 +22,11 @@ production approval.
 > and canonical burns. GH-12 now closes custom-genesis and runtime-invariant
 > findings locally. GH-20 now binds anonymous votes to chain/proposal/rating,
 > fails closed on pinned genesis VK state, preserves active nullifiers, and
-> disables mock client submission. Recipient binding, a real prover/ceremony,
-> the node lifecycle, final GitHub gates, and independent review remain open.
+> disables mock client submission. GH-21 now replaces the MemDB placeholder
+> with persistent Cosmos/Comet lifecycle and generated-key, bank-backed PoD
+> genesis. Recipient binding, a real prover/ceremony, multi-node operations
+> evidence, and independent review remain open. GH-21 GitHub Go, Docker, docs,
+> client, Rust, static, and security gates pass.
 
 ## Findings by domain
 
@@ -96,7 +99,7 @@ production approval.
 
 - **[PASS] Public ledger claims distinguish stacked recovery from production** — `README.md`, `docs/status.json`, `docs/index.html`
   - What: Public status identifies the exact locally verified branch and retains the non-production warning for unmerged review, ZKP, and node-lifecycle work.
-  - Evidence: Documentation consistency checks use one 677-test source of truth.
+  - Evidence: Documentation consistency checks use one 683-test source of truth.
   - Fix: Keep status evidence-based through final stack consolidation.
 
 ### ZKP authentication and replay resistance — PASS
@@ -116,12 +119,28 @@ production approval.
   - Evidence: Nullifier round-trip/purge regressions, 8 maintained-client tests, and 4 focused legacy-client tests pass; both clients build and audit cleanly.
   - Fix: Keep anonymous rewards deferred and submission disabled until a compatible real prover and recipient-binding design pass independent review.
 
+### Persistent node lifecycle — PASS
+
+- **[PASS] Generated-key PoD bootstrap and persistent restart replace the in-memory placeholder** — `server_lifecycle.go`, `server_lifecycle_test.go`, `genesis_integration_test.go`
+  - What: Standard Cosmos server commands use the configured home and database.
+    `init` binds the generated CometBFT Ed25519 public key to matching custom
+    consensus state with exact cap-checked bank backing, refuses conflicting
+    validator sets, and writes genesis atomically with mode `0600`.
+  - Evidence: 649 Go cases pass. A real daemon produces blocks, stops cleanly on
+    SIGINT, restarts from the same home, advances height, runs invariants, and
+    exports state; targeted lifecycle race, vet, CGO build, and both CLI version
+    interfaces pass.
+  - Fix: Preserve the green GitHub Docker restart/security gates and require
+    separate independent multi-node/IBC/upgrade operations evidence before a
+    public network. See `docs/agent-bridge/PR23_AUDIT.md`.
+
 ## Priority matrix
 
 ### 🔴 BLOCKING
 
-None inside the implemented ledger/ZKP fail-closed slice. A real prover,
-external cryptographic review, recipient binding, and node lifecycle remain
+None inside the locally implemented ledger/ZKP/single-node lifecycle slice. A
+real prover, external cryptographic review, recipient binding, independent
+multi-node operations review, and ordered merge remain
 project-level release blockers.
 
 ### 🟠 HIGH

@@ -11,6 +11,7 @@ Canonical coordination lives in [`docs/agent-bridge/`](docs/agent-bridge/README.
 - GH-10 DEX custody audit: [`PR18_AUDIT.md`](docs/agent-bridge/PR18_AUDIT.md)
 - GH-12 genesis/invariant audit: [`PR19_AUDIT.md`](docs/agent-bridge/PR19_AUDIT.md)
 - GH-20 ZKP/auth audit: [`PR22_AUDIT.md`](docs/agent-bridge/PR22_AUDIT.md)
+- GH-21 node lifecycle audit: [`PR23_AUDIT.md`](docs/agent-bridge/PR23_AUDIT.md)
 - Decisions: [`DECISIONS.md`](docs/agent-bridge/DECISIONS.md)
 - Security: [`SECURITY_NOTES.md`](docs/agent-bridge/SECURITY_NOTES.md)
 
@@ -29,9 +30,43 @@ GitHub recovery epic: [#4](https://github.com/NeaBouli/TrueRepublic/issues/4)
 - **Tests:** focused registered-invariant regression, `go test ./... -count=1`,
   `go vet ./...`, and `go build ./...` → PASS
 - **GitHub:** commit `eec91c7` published; both review threads answered and
-  resolved; propagated locally through PR #22
-- **Ready for:** refreshed PR #22 verification and propagation through PRs #23
-  and #24
+  resolved; PR #22 rebased and published at `0c72ad0`; propagated locally
+  through PR #23
+- **Ready for:** refreshed PR #23 verification and propagation through PR #24
+
+## 2026-07-12 11:41 EEST GH-21 node lifecycle → GitHub green
+
+- **Branch:** `fix/GH-21-node-lifecycle`
+- **Issue:** [GH-21](https://github.com/NeaBouli/TrueRepublic/issues/21)
+- **PR:** [#23](https://github.com/NeaBouli/TrueRepublic/pull/23) (stacked draft against GH-20), audited code head `ec1ce17`
+- **Changed:** standard Cosmos server lifecycle with persistent home/database,
+  generated CometBFT-key PoD genesis with exact bank-backed stake, consensus
+  parameter keeper, clean signal shutdown, export, non-root Debian/glibc image,
+  persistent container restart gate, and restored CLI build-version metadata
+- **Audit fixes:** rebased without content drift onto final GH-20 head `fac50a4`;
+  rejected existing/conflicting consensus validator sets without mutation;
+  wrote genesis atomically with mode `0600`; fixed the reproduced blank/failing
+  `version` and `--version` interfaces before publication
+- **Tests:** `go test ./... -count=1 -timeout=600s` → PASS; 649 Go cases and
+  coverage → PASS (root 64.3%, token 92.6%, treasury 97.0%, DEX 45.3%,
+  governance 58.9%); targeted lifecycle race, vet, CGO build, CLI version,
+  shell syntax, and diff checks → PASS
+- **Risk:** Critical — consensus key identity, bank-backed bootstrap stake,
+  persistent application state, restart safety, and operator container runtime
+- **GitHub:** Go build/vet/race/coverage and Docker block/restart pass in run
+  `29170712626`; Docs, DeepScan, Web, Mobile, Rust, and manual Security Scan
+  `29170832988` pass; CodeRabbit is check-green
+- **Ready for:** independent multi-node operations review and ordered stack
+  merge; not production
+
+### Codex review feedback
+
+Conditional PASS. The former MemDB/`select {}` placeholder and invalid
+`x/staking` gentx bootstrap are no longer the node path. A real subprocess
+produced blocks, stopped on SIGINT, restarted from the same home, advanced
+height, preserved invariants, and exported state. GitHub independently repeated
+the image build and same-container restart. IBC staking/upgrade and multi-node
+operations remain explicit non-production boundaries.
 
 ## 2026-07-12 05:28 EEST GH-20 ZKP/authentication → GitHub green
 
@@ -143,6 +178,28 @@ Conditional approval for the recovery-foundation scope. The seven ledger and
 token-economy blockers in `CODEX_AUDIT.md` remain explicitly out of scope and
 must stay non-production until the ordered implementation PRs land. Do not
 bypass the required independent GitHub approval.
+
+---
+
+## 2026-07-12 23:53 EEST GH-21 node lifecycle → Review
+
+- **Branch:** `fix/GH-21-node-lifecycle`
+- **Issue:** [GH-21](https://github.com/NeaBouli/TrueRepublic/issues/21)
+- **PR:** [#23](https://github.com/NeaBouli/TrueRepublic/pull/23)
+- **Changed:** rebased the ten GH-21 lifecycle commits onto `main` after the
+  verified squash merge of PR #22; no implementation delta was introduced
+- **Tests:** `git range-diff 0c72ad0..backup/GH-21-before-main-20260712 origin/main..HEAD`
+  → 10/10 commits patch-equivalent; `go test ./... -race -cover -count=1
+  -timeout=600s` → PASS (sandbox-exempt run required for localhost bind)
+- **Risk:** High — persistent node lifecycle, genesis reconciliation, and
+  container restart behavior; Docker is verified by the required GitHub gate
+- **Ready for:** refreshed GitHub CI, review, and ordered squash merge
+
+### Codex review feedback
+
+The rebased code is patch-equivalent to the previously reviewed GH-21 stack.
+Local Go race/coverage verification passes; merge remains gated on refreshed
+GitHub build, Docker restart smoke, lint, and analysis checks.
 
 ---
 
