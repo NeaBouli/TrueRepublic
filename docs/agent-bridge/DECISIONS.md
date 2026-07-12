@@ -17,3 +17,10 @@
 
 - Public project status is evidence-based: no feature, test count, security
   state, or release completeness claim may exceed verified code and CI results.
+
+## 2026-07-11 - Validator slash custody
+
+- Slashed validator PNYX is burned from the `truedemocracy` module escrow.
+- It must not be credited to an admin-withdrawable domain treasury because the
+  whitepaper removes the penalty from circulation and the treasury path would
+  allow validator/admin collusion to recover it.

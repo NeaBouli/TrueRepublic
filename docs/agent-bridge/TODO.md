@@ -12,9 +12,10 @@
 ## P1 - consensus and wallet audit
 
 - [x] GH-7: audit PNYX 21M cap, denomination, and ledger conservation paths.
-- [ ] GH-11: final denomination/cap audit fixes are verified and rebased onto
-  PR #9 head `acfc3d5`; confirm refreshed GitHub checks.
-- [ ] GH-14: back domain treasury and validator stake with bank escrow.
+- [x] GH-11: denomination/cap branch is locally and GitHub verified in PR #15;
+  keep it stacked until PR #9 receives independent approval.
+- [ ] GH-14: escrow implementation and audit fixes pass the complete local
+  matrix; publish the rebased PR #16 head and confirm refreshed GitHub checks.
 - [ ] GH-13: issue all rewards through cap-checked bank minting.
 - [ ] GH-10: implement DEX bank custody, provider LP ownership, and real burns.
 - [ ] GH-12: validate genesis and add ledger conservation invariants.

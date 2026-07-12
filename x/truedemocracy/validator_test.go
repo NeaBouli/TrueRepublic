@@ -471,7 +471,7 @@ func TestMultipleValidators(t *testing.T) {
 	}
 }
 
-func TestWithdrawBelowMinRemovesValidator(t *testing.T) {
+func TestWithdrawBelowMinRejectsDustStake(t *testing.T) {
 	k, ctx := setupKeeper(t)
 	k.CreateDomain(ctx, "RemDomain", sdk.AccAddress("admin1"), sdk.NewCoins(sdk.NewInt64Coin(PNYXDenom, 5_000_000*PNYXUnit)))
 
@@ -484,14 +484,17 @@ func TestWithdrawBelowMinRemovesValidator(t *testing.T) {
 	bz := k.cdc.MustMarshalLengthPrefixed(&domain)
 	st.Set([]byte("domain:RemDomain"), bz)
 
-	// Withdraw 60,000 → remaining 90,000 < StakeMin (100,000) → validator removed.
+	// Withdraw 60,000 → remaining 90,000 < StakeMin (100,000) → rejected.
 	err := k.WithdrawStake(ctx, "val1", 60_000*PNYXUnit)
-	if err != nil {
-		t.Fatalf("withdraw should succeed: %v", err)
+	if err == nil {
+		t.Fatal("expected withdrawal to reject dust stake")
 	}
-	_, found := k.GetValidator(ctx, "val1")
-	if found {
-		t.Error("validator should be removed when stake drops below minimum")
+	validator, found := k.GetValidator(ctx, "val1")
+	if !found {
+		t.Fatal("validator should remain after rejected withdrawal")
+	}
+	if got := validator.Stake.AmountOf(PNYXDenom).Int64(); got != 150_000*PNYXUnit {
+		t.Fatalf("stake changed after rejected withdrawal: got %d", got)
 	}
 }
 

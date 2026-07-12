@@ -390,6 +390,12 @@ func TestWasmMsgPlaceStoneOnIssue(t *testing.T) {
 	if m.MemberAddr != sender.String() {
 		t.Errorf("member_addr = %q, want %q", m.MemberAddr, sender.String())
 	}
+	if !m.Sender.Equals(sender) {
+		t.Errorf("sender = %s, want %s", m.Sender, sender)
+	}
+	if err := m.ValidateBasic(); err != nil {
+		t.Fatalf("encoded message must pass signer validation: %v", err)
+	}
 }
 
 func TestWasmMsgPlaceStoneOnSuggestion(t *testing.T) {
@@ -420,6 +426,12 @@ func TestWasmMsgPlaceStoneOnSuggestion(t *testing.T) {
 	}
 	if m.MemberAddr != sender.String() {
 		t.Errorf("member_addr = %q, want %q", m.MemberAddr, sender.String())
+	}
+	if !m.Sender.Equals(sender) {
+		t.Errorf("sender = %s, want %s", m.Sender, sender)
+	}
+	if err := m.ValidateBasic(); err != nil {
+		t.Fatalf("encoded message must pass signer validation: %v", err)
 	}
 }
 
@@ -455,6 +467,12 @@ func TestWasmMsgCastElectionVote(t *testing.T) {
 	}
 	if m.Choice != 0 {
 		t.Errorf("choice = %d, want 0", m.Choice)
+	}
+	if !m.Sender.Equals(sender) {
+		t.Errorf("sender = %s, want %s", m.Sender, sender)
+	}
+	if err := m.ValidateBasic(); err != nil {
+		t.Fatalf("encoded message must pass signer validation: %v", err)
 	}
 }
 

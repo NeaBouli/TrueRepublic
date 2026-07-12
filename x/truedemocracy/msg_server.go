@@ -264,7 +264,9 @@ var _ MsgServer = msgServer{}
 func (m msgServer) CreateDomain(goCtx context.Context, msg *MsgCreateDomain) (*MsgCreateDomainResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	m.Keeper.CreateDomain(ctx, msg.Name, msg.Admin, msg.InitialCoins)
+	if err := m.Keeper.CreateDomainWithEscrow(ctx, msg.Name, msg.Admin, msg.InitialCoins); err != nil {
+		return nil, err
+	}
 
 	ctx.EventManager().EmitEvent(sdk.NewEvent(
 		"create_domain",
@@ -278,7 +280,16 @@ func (m msgServer) CreateDomain(goCtx context.Context, msg *MsgCreateDomain) (*M
 func (m msgServer) SubmitProposal(goCtx context.Context, msg *MsgSubmitProposal) (*MsgSubmitProposalResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	err := m.Keeper.SubmitProposal(ctx, msg.DomainName, msg.IssueName, msg.SuggestionName, msg.Creator, msg.Fee, msg.ExternalLink)
+	err := m.Keeper.SubmitProposalWithEscrow(
+		ctx,
+		msg.Sender,
+		msg.Creator,
+		msg.DomainName,
+		msg.IssueName,
+		msg.SuggestionName,
+		msg.Fee,
+		msg.ExternalLink,
+	)
 	if err != nil {
 		return nil, err
 	}
@@ -296,12 +307,12 @@ func (m msgServer) SubmitProposal(goCtx context.Context, msg *MsgSubmitProposal)
 func (m msgServer) RegisterValidator(goCtx context.Context, msg *MsgRegisterValidator) (*MsgRegisterValidatorResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	pubKeyBytes, err := hex.DecodeString(msg.PubKey)
+	pubKeyBytes, err := decodeValidatorPubKey(msg.PubKey)
 	if err != nil {
-		return nil, errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "invalid hex-encoded public key")
+		return nil, err
 	}
 
-	err = m.Keeper.RegisterValidator(ctx, msg.OperatorAddr, pubKeyBytes, msg.Stake, msg.DomainName)
+	err = m.Keeper.RegisterValidatorWithEscrow(ctx, msg.Sender, msg.OperatorAddr, pubKeyBytes, msg.Stake, msg.DomainName)
 	if err != nil {
 		return nil, err
 	}
@@ -318,7 +329,7 @@ func (m msgServer) RegisterValidator(goCtx context.Context, msg *MsgRegisterVali
 func (m msgServer) WithdrawStake(goCtx context.Context, msg *MsgWithdrawStake) (*MsgWithdrawStakeResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	err := m.Keeper.WithdrawStake(ctx, msg.OperatorAddr, msg.Amount)
+	err := m.Keeper.WithdrawStakeWithEscrow(ctx, msg.Sender, msg.OperatorAddr, msg.Amount)
 	if err != nil {
 		return nil, err
 	}
@@ -335,7 +346,7 @@ func (m msgServer) WithdrawStake(goCtx context.Context, msg *MsgWithdrawStake) (
 func (m msgServer) RemoveValidator(goCtx context.Context, msg *MsgRemoveValidator) (*MsgRemoveValidatorResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	err := m.Keeper.RemoveValidator(ctx, msg.OperatorAddr)
+	err := m.Keeper.RemoveValidatorWithEscrow(ctx, msg.Sender, msg.OperatorAddr)
 	if err != nil {
 		return nil, err
 	}
@@ -351,6 +362,9 @@ func (m msgServer) RemoveValidator(goCtx context.Context, msg *MsgRemoveValidato
 func (m msgServer) Unjail(goCtx context.Context, msg *MsgUnjail) (*MsgUnjailResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
+	if err := requireSignerClaim(msg.Sender, msg.OperatorAddr, "operator address"); err != nil {
+		return nil, err
+	}
 	err := m.Keeper.Unjail(ctx, msg.OperatorAddr)
 	if err != nil {
 		return nil, err
@@ -367,6 +381,9 @@ func (m msgServer) Unjail(goCtx context.Context, msg *MsgUnjail) (*MsgUnjailResp
 func (m msgServer) JoinPermissionRegister(goCtx context.Context, msg *MsgJoinPermissionRegister) (*MsgJoinPermissionRegisterResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
+	if err := requireSignerClaim(msg.Sender, msg.MemberAddr, "member address"); err != nil {
+		return nil, err
+	}
 	pubKeyBytes, err := hex.DecodeString(msg.DomainPubKey)
 	if err != nil {
 		return nil, errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "invalid hex-encoded domain public key")
@@ -404,7 +421,7 @@ func (m msgServer) PurgePermissionRegister(goCtx context.Context, msg *MsgPurgeP
 func (m msgServer) PlaceStoneOnIssue(goCtx context.Context, msg *MsgPlaceStoneOnIssue) (*MsgPlaceStoneOnIssueResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	reward, err := m.Keeper.PlaceStoneOnIssue(ctx, msg.DomainName, msg.IssueName, msg.MemberAddr)
+	reward, err := m.Keeper.PlaceStoneOnIssueWithPayout(ctx, msg.Sender, msg.DomainName, msg.IssueName, msg.MemberAddr)
 	if err != nil {
 		return nil, err
 	}
@@ -422,7 +439,14 @@ func (m msgServer) PlaceStoneOnIssue(goCtx context.Context, msg *MsgPlaceStoneOn
 func (m msgServer) PlaceStoneOnSuggestion(goCtx context.Context, msg *MsgPlaceStoneOnSuggestion) (*MsgPlaceStoneOnSuggestionResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	reward, err := m.Keeper.PlaceStoneOnSuggestion(ctx, msg.DomainName, msg.IssueName, msg.SuggestionName, msg.MemberAddr)
+	reward, err := m.Keeper.PlaceStoneOnSuggestionWithPayout(
+		ctx,
+		msg.Sender,
+		msg.DomainName,
+		msg.IssueName,
+		msg.SuggestionName,
+		msg.MemberAddr,
+	)
 	if err != nil {
 		return nil, err
 	}
@@ -441,6 +465,9 @@ func (m msgServer) PlaceStoneOnSuggestion(goCtx context.Context, msg *MsgPlaceSt
 func (m msgServer) PlaceStoneOnMember(goCtx context.Context, msg *MsgPlaceStoneOnMember) (*MsgPlaceStoneOnMemberResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
+	if err := requireSignerClaim(msg.Sender, msg.VoterAddr, "voter address"); err != nil {
+		return nil, err
+	}
 	err := m.Keeper.PlaceStoneOnMember(ctx, msg.DomainName, msg.TargetMember, msg.VoterAddr)
 	if err != nil {
 		return nil, err
@@ -458,6 +485,9 @@ func (m msgServer) PlaceStoneOnMember(goCtx context.Context, msg *MsgPlaceStoneO
 func (m msgServer) VoteToExclude(goCtx context.Context, msg *MsgVoteToExclude) (*MsgVoteToExcludeResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
+	if err := requireSignerClaim(msg.Sender, msg.VoterAddr, "voter address"); err != nil {
+		return nil, err
+	}
 	excluded, err := m.Keeper.VoteToExclude(ctx, msg.DomainName, msg.TargetMember, msg.VoterAddr)
 	if err != nil {
 		return nil, err
@@ -476,6 +506,9 @@ func (m msgServer) VoteToExclude(goCtx context.Context, msg *MsgVoteToExclude) (
 func (m msgServer) VoteToDelete(goCtx context.Context, msg *MsgVoteToDelete) (*MsgVoteToDeleteResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
+	if err := requireSignerClaim(msg.Sender, msg.MemberAddr, "member address"); err != nil {
+		return nil, err
+	}
 	deleted, err := m.Keeper.VoteToDelete(ctx, msg.DomainName, msg.IssueName, msg.SuggestionName, msg.MemberAddr)
 	if err != nil {
 		return nil, err
@@ -495,7 +528,15 @@ func (m msgServer) VoteToDelete(goCtx context.Context, msg *MsgVoteToDelete) (*M
 func (m msgServer) RateProposal(goCtx context.Context, msg *MsgRateProposal) (*MsgRateProposalResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	reward, err := m.Keeper.RateProposalWithSignature(ctx, msg.DomainName, msg.IssueName, msg.SuggestionName, int(msg.Rating), msg.DomainPubKey, msg.Signature)
+	reward, err := m.Keeper.RateProposalWithSignatureDeferredReward(
+		ctx,
+		msg.DomainName,
+		msg.IssueName,
+		msg.SuggestionName,
+		int(msg.Rating),
+		msg.DomainPubKey,
+		msg.Signature,
+	)
 	if err != nil {
 		return nil, err
 	}
@@ -515,6 +556,9 @@ func (m msgServer) RateProposal(goCtx context.Context, msg *MsgRateProposal) (*M
 func (m msgServer) CastElectionVote(goCtx context.Context, msg *MsgCastElectionVote) (*MsgCastElectionVoteResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
+	if err := requireSignerClaim(msg.Sender, msg.VoterAddr, "voter address"); err != nil {
+		return nil, err
+	}
 	err := m.Keeper.CastElectionVote(ctx, msg.DomainName, msg.IssueName, msg.CandidateName, msg.VoterAddr, VoteChoice(msg.Choice))
 	if err != nil {
 		return nil, err
@@ -649,7 +693,16 @@ func (m msgServer) RegisterIdentity(goCtx context.Context, msg *MsgRegisterIdent
 func (m msgServer) RateWithProof(goCtx context.Context, msg *MsgRateWithProof) (*MsgRateWithProofResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	reward, err := m.Keeper.RateProposalWithZKP(ctx, msg.DomainName, msg.IssueName, msg.SuggestionName, int(msg.Rating), msg.Proof, msg.NullifierHash, msg.MerkleRoot)
+	reward, err := m.Keeper.RateProposalWithZKPDeferredReward(
+		ctx,
+		msg.DomainName,
+		msg.IssueName,
+		msg.SuggestionName,
+		int(msg.Rating),
+		msg.Proof,
+		msg.NullifierHash,
+		msg.MerkleRoot,
+	)
 	if err != nil {
 		return nil, err
 	}

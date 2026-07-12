@@ -13,6 +13,7 @@ import (
 func TestHandleDoubleSign(t *testing.T) {
 	k, ctx := setupKeeper(t)
 	_, pk := setupDomainWithValidator(t, k, ctx)
+	bank := backExistingEscrow(&k, ctx)
 
 	if err := k.HandleDoubleSign(ctx, pk); err != nil {
 		t.Fatalf("unexpected error: %v", err)
@@ -32,6 +33,10 @@ func TestHandleDoubleSign(t *testing.T) {
 	if !got.Equal(want) {
 		t.Errorf("stake after slash = %s, want %s", got, want)
 	}
+	wantBurned := int64(5_000 * PNYXUnit)
+	if got := bank.burned.AmountOf(PNYXDenom).Int64(); got != wantBurned {
+		t.Errorf("burned = %d%s, want %d%s", got, PNYXDenom, wantBurned, PNYXDenom)
+	}
 }
 
 func TestHandleDoubleSignBelowMinimum(t *testing.T) {
@@ -47,8 +52,11 @@ func TestHandleDoubleSignBelowMinimum(t *testing.T) {
 	pk := testPubKey("lowval")
 	stake := sdk.NewCoins(sdk.NewInt64Coin(PNYXDenom, 100_000*PNYXUnit))
 	k.RegisterValidator(ctx, "lowval", pk, stake, "D")
+	backExistingEscrow(&k, ctx)
 
-	k.HandleDoubleSign(ctx, pk)
+	if err := k.HandleDoubleSign(ctx, pk); err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
 
 	val, _ := k.GetValidator(ctx, "lowval")
 	// After 5% slash: 95_000 < 100_000 → power should be 0.
@@ -60,6 +68,7 @@ func TestHandleDoubleSignBelowMinimum(t *testing.T) {
 func TestHandleDowntime(t *testing.T) {
 	k, ctx := setupKeeper(t)
 	_, pk := setupDomainWithValidator(t, k, ctx)
+	bank := backExistingEscrow(&k, ctx)
 
 	// Miss blocks below threshold — no slash.
 	threshold := SignedBlocksWindow - MinSignedPerWindow // 50
@@ -92,6 +101,10 @@ func TestHandleDowntime(t *testing.T) {
 	}
 	if val.MissedBlocks != 0 {
 		t.Errorf("missed blocks should be reset, got %d", val.MissedBlocks)
+	}
+	wantBurned := int64(1_000 * PNYXUnit)
+	if got := bank.burned.AmountOf(PNYXDenom).Int64(); got != wantBurned {
+		t.Errorf("burned = %d%s, want %d%s", got, PNYXDenom, wantBurned, PNYXDenom)
 	}
 }
 

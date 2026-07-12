@@ -18,9 +18,14 @@ func (k Keeper) HandleDoubleSign(ctx sdk.Context, pubKeyBytes []byte) error {
 		return errorsmod.Wrap(sdkerrors.ErrUnknownRequest, "validator not found")
 	}
 
-	val = slashStake(val, SlashFractionDoubleSign)
+	cacheCtx, write := ctx.CacheContext()
+	var err error
+	val, err = k.slashValidatorStake(cacheCtx, val, SlashFractionDoubleSign)
+	if err != nil {
+		return err
+	}
 	val.Jailed = true
-	val.JailedUntil = ctx.BlockTime().Unix() + DowntimeJailDuration*10
+	val.JailedUntil = cacheCtx.BlockTime().Unix() + DowntimeJailDuration*10
 
 	if val.Stake.AmountOf(PNYXDenom).LT(math.NewInt(rewards.StakeMin)) {
 		val.Power = 0
@@ -28,7 +33,8 @@ func (k Keeper) HandleDoubleSign(ctx sdk.Context, pubKeyBytes []byte) error {
 		val.Power = val.Stake.AmountOf(PNYXDenom).Int64() / rewards.StakeMin
 	}
 
-	k.SetValidator(ctx, val)
+	k.SetValidator(cacheCtx, val)
+	write()
 	return nil
 }
 
@@ -41,13 +47,18 @@ func (k Keeper) HandleDowntime(ctx sdk.Context, pubKeyBytes []byte) error {
 		return errorsmod.Wrap(sdkerrors.ErrUnknownRequest, "validator not found")
 	}
 
+	cacheCtx, write := ctx.CacheContext()
 	val.MissedBlocks++
 
 	threshold := SignedBlocksWindow - MinSignedPerWindow
 	if val.MissedBlocks > threshold {
-		val = slashStake(val, SlashFractionDowntime)
+		var err error
+		val, err = k.slashValidatorStake(cacheCtx, val, SlashFractionDowntime)
+		if err != nil {
+			return err
+		}
 		val.Jailed = true
-		val.JailedUntil = ctx.BlockTime().Unix() + DowntimeJailDuration
+		val.JailedUntil = cacheCtx.BlockTime().Unix() + DowntimeJailDuration
 		val.MissedBlocks = 0
 
 		if val.Stake.AmountOf(PNYXDenom).LT(math.NewInt(rewards.StakeMin)) {
@@ -57,7 +68,8 @@ func (k Keeper) HandleDowntime(ctx sdk.Context, pubKeyBytes []byte) error {
 		}
 	}
 
-	k.SetValidator(ctx, val)
+	k.SetValidator(cacheCtx, val)
+	write()
 	return nil
 }
 
@@ -103,4 +115,25 @@ func slashStake(val Validator, pct int64) Validator {
 	}
 	val.Stake = sdk.NewCoins(sdk.NewCoin(PNYXDenom, remaining))
 	return val
+}
+
+// slashValidatorStake removes the slashed claim from validator stake and burns
+// the same amount from module escrow. The whitepaper requires slashed PNYX to
+// leave circulation; crediting it to an admin-withdrawable domain treasury
+// would let a colluding validator recover the penalty.
+func (k Keeper) slashValidatorStake(ctx sdk.Context, val Validator, pct int64) (Validator, error) {
+	if err := requireBankKeeper(k.bankKeeper); err != nil {
+		return Validator{}, err
+	}
+
+	before := val.Stake.AmountOf(PNYXDenom)
+	val = slashStake(val, pct)
+	penalty := before.Sub(val.Stake.AmountOf(PNYXDenom))
+	if penalty.IsPositive() {
+		coins := sdk.NewCoins(sdk.NewCoin(PNYXDenom, penalty))
+		if err := k.bankKeeper.BurnCoins(ctx, ModuleName, coins); err != nil {
+			return Validator{}, errorsmod.Wrap(err, "validator slash burn failed")
+		}
+	}
+	return val, nil
 }

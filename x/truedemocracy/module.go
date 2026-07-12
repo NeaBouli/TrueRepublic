@@ -153,8 +153,8 @@ func (am AppModule) InitGenesis(ctx sdk.Context, cdc codec.JSONCodec, data json.
 }
 
 // EndBlock implements module.HasABCIEndBlock. It distributes staking rewards
-// and domain interest, enforces domain membership and minimum stake, and
-// returns CometBFT validator set updates.
+// and domain interest, disables ineligible validators without destroying
+// their escrow claims, and returns CometBFT validator set updates.
 func (am AppModule) EndBlock(goCtx context.Context) ([]abci.ValidatorUpdate, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
@@ -168,19 +168,27 @@ func (am AppModule) EndBlock(goCtx context.Context) ([]abci.ValidatorUpdate, err
 		return nil, err
 	}
 
-	// 2. Enforce domain membership — remove validators no longer in any domain.
-	var toRemove []string
+	// 2. Disable validators no longer in any domain. Their stake record stays
+	// intact so custody remains withdrawable and escrow parity is preserved.
+	var validatorAddresses []string
 	am.keeper.IterateValidators(ctx, func(v Validator) bool {
-		if !am.keeper.EnforceDomainMembership(ctx, v.OperatorAddr) {
-			toRemove = append(toRemove, v.OperatorAddr)
-		}
+		validatorAddresses = append(validatorAddresses, v.OperatorAddr)
 		return false
 	})
-	for _, addr := range toRemove {
-		am.keeper.RemoveValidator(ctx, addr)
+	for _, address := range validatorAddresses {
+		if am.keeper.EnforceDomainMembership(ctx, address) {
+			continue
+		}
+		validator, found := am.keeper.GetValidator(ctx, address)
+		if !found {
+			continue
+		}
+		validator.Jailed = true
+		validator.Power = 0
+		am.keeper.SetValidator(ctx, validator)
 	}
 
-	// 3. Enforce minimum stake.
+	// 3. Disable under-staked validators while retaining their withdrawal claim.
 	var underStaked []string
 	am.keeper.IterateValidators(ctx, func(v Validator) bool {
 		if v.Stake.AmountOf(PNYXDenom).LT(math.NewInt(rewards.StakeMin)) {
@@ -188,8 +196,14 @@ func (am AppModule) EndBlock(goCtx context.Context) ([]abci.ValidatorUpdate, err
 		}
 		return false
 	})
-	for _, addr := range underStaked {
-		am.keeper.RemoveValidator(ctx, addr)
+	for _, address := range underStaked {
+		validator, found := am.keeper.GetValidator(ctx, address)
+		if !found {
+			continue
+		}
+		validator.Jailed = true
+		validator.Power = 0
+		am.keeper.SetValidator(ctx, validator)
 	}
 
 	// 4. Evaluate suggestion lifecycle zones (green/yellow/red → auto-delete).
