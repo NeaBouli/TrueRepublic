@@ -1,6 +1,7 @@
 package dex
 
 import (
+	"encoding/binary"
 	"sort"
 
 	errorsmod "cosmossdk.io/errors"
@@ -11,11 +12,19 @@ import (
 )
 
 func lpBalanceKey(assetDenom, provider string) []byte {
-	return []byte("lp:" + assetDenom + ":" + provider)
+	key := lpPoolPrefix(assetDenom)
+	return append(key, []byte(provider)...)
 }
 
 func lpPoolPrefix(assetDenom string) []byte {
-	return []byte("lp:" + assetDenom + ":")
+	// Length-prefix the denom so valid names such as "atom" and
+	// "atom:staked" cannot share an iteration prefix and corrupt the LP
+	// conservation total.
+	prefix := make([]byte, len("lp:")+4+len(assetDenom))
+	copy(prefix, "lp:")
+	binary.BigEndian.PutUint32(prefix[len("lp:"):], uint32(len(assetDenom)))
+	copy(prefix[len("lp:")+4:], assetDenom)
+	return prefix
 }
 
 func (k Keeper) requireBank() error {

@@ -374,6 +374,95 @@ func TestCustodyBankFailuresRollbackAllState(t *testing.T) {
 	}
 }
 
+func TestCustodyAddRemoveAndSwapTransferFailuresRollback(t *testing.T) {
+	keeper, ctx, bank, _ := setupCustodyKeeper(t)
+	provider := sdk.AccAddress("transfer-provider")
+	second := sdk.AccAddress("transfer-second")
+	trader := sdk.AccAddress("transfer-trader")
+	bank.fundAccount(ctx, provider, sdk.NewCoins(
+		sdk.NewInt64Coin(pnyxDenom, 2_000_000),
+		sdk.NewInt64Coin("atom", 2_000_000),
+	))
+	bank.fundAccount(ctx, second, sdk.NewCoins(
+		sdk.NewInt64Coin(pnyxDenom, 100_000),
+		sdk.NewInt64Coin("atom", 100_000),
+	))
+	bank.fundAccount(ctx, trader, sdk.NewCoins(sdk.NewInt64Coin("atom", 100_000)))
+	if err := keeper.CreatePoolWithCustody(ctx, provider, "atom", math.NewInt(1_000_000), math.NewInt(1_000_000)); err != nil {
+		t.Fatal(err)
+	}
+
+	poolBefore, _ := keeper.GetPool(ctx, "atom")
+	secondPnyxBefore := bank.balance(ctx, accountOwner(second), pnyxDenom)
+	secondAtomBefore := bank.balance(ctx, accountOwner(second), "atom")
+	bank.failAccountToModule = true
+	if _, err := keeper.AddLiquidityWithCustody(ctx, second, "atom", math.NewInt(100_000), math.NewInt(100_000)); err == nil {
+		t.Fatal("expected injected add-liquidity transfer failure")
+	}
+	bank.failAccountToModule = false
+	poolAfter, _ := keeper.GetPool(ctx, "atom")
+	if !poolAfter.PnyxReserve.Equal(poolBefore.PnyxReserve) ||
+		!poolAfter.AssetReserve.Equal(poolBefore.AssetReserve) ||
+		!poolAfter.TotalShares.Equal(poolBefore.TotalShares) {
+		t.Fatal("failed liquidity deposit committed pool state")
+	}
+	if !keeper.GetLPBalance(ctx, "atom", second).IsZero() {
+		t.Fatal("failed liquidity deposit committed LP ownership")
+	}
+	if !bank.balance(ctx, accountOwner(second), pnyxDenom).Equal(secondPnyxBefore) ||
+		!bank.balance(ctx, accountOwner(second), "atom").Equal(secondAtomBefore) {
+		t.Fatal("failed liquidity deposit changed provider balances")
+	}
+
+	providerShares := keeper.GetLPBalance(ctx, "atom", provider)
+	providerPnyxBefore := bank.balance(ctx, accountOwner(provider), pnyxDenom)
+	providerAtomBefore := bank.balance(ctx, accountOwner(provider), "atom")
+	bank.failModuleToAccount = true
+	if _, _, err := keeper.RemoveLiquidityWithCustody(ctx, provider, "atom", providerShares.QuoRaw(2)); err == nil {
+		t.Fatal("expected injected remove-liquidity transfer failure")
+	}
+	bank.failModuleToAccount = false
+	poolAfter, _ = keeper.GetPool(ctx, "atom")
+	if !poolAfter.PnyxReserve.Equal(poolBefore.PnyxReserve) ||
+		!poolAfter.AssetReserve.Equal(poolBefore.AssetReserve) ||
+		!poolAfter.TotalShares.Equal(poolBefore.TotalShares) {
+		t.Fatal("failed liquidity withdrawal committed pool state")
+	}
+	if !keeper.GetLPBalance(ctx, "atom", provider).Equal(providerShares) {
+		t.Fatal("failed liquidity withdrawal changed LP ownership")
+	}
+	if !bank.balance(ctx, accountOwner(provider), pnyxDenom).Equal(providerPnyxBefore) ||
+		!bank.balance(ctx, accountOwner(provider), "atom").Equal(providerAtomBefore) {
+		t.Fatal("failed liquidity withdrawal changed provider balances")
+	}
+
+	traderAtomBefore := bank.balance(ctx, accountOwner(trader), "atom")
+	traderPnyxBefore := bank.balance(ctx, accountOwner(trader), pnyxDenom)
+	supplyBefore := bank.GetSupply(ctx, pnyxDenom).Amount
+	bank.failModuleToAccount = true
+	if _, err := keeper.SwapWithCustody(ctx, trader, "atom", math.NewInt(10_000), pnyxDenom, math.OneInt()); err == nil {
+		t.Fatal("expected injected swap output transfer failure")
+	}
+	bank.failModuleToAccount = false
+	poolAfter, _ = keeper.GetPool(ctx, "atom")
+	if !poolAfter.PnyxReserve.Equal(poolBefore.PnyxReserve) ||
+		!poolAfter.AssetReserve.Equal(poolBefore.AssetReserve) ||
+		!poolAfter.TotalBurned.Equal(poolBefore.TotalBurned) ||
+		poolAfter.SwapCount != poolBefore.SwapCount {
+		t.Fatal("failed swap output transfer committed pool state")
+	}
+	if !bank.balance(ctx, accountOwner(trader), "atom").Equal(traderAtomBefore) ||
+		!bank.balance(ctx, accountOwner(trader), pnyxDenom).Equal(traderPnyxBefore) {
+		t.Fatal("failed swap output transfer changed trader balances")
+	}
+	if !bank.GetSupply(ctx, pnyxDenom).Amount.Equal(supplyBefore) {
+		t.Fatal("failed swap output transfer changed canonical supply")
+	}
+	if err := keeper.validateCustodyAndShares(ctx); err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestRegistryRequiresChainAuthority(t *testing.T) {
 	keeper, ctx, _, authority := setupCustodyKeeper(t)
 	server := NewMsgServer(keeper)
@@ -420,5 +509,43 @@ func TestCustodyInvariantsDetectDivergence(t *testing.T) {
 	}
 	if err := keeper.ValidateReserveCustody(ctx); err == nil {
 		t.Fatal("reserve invariant missed excess module balance")
+	}
+}
+
+func TestLPShareTotalsDoNotCollideAcrossDenomPrefixes(t *testing.T) {
+	keeper, ctx, bank, _ := setupCustodyKeeper(t)
+	provider := sdk.AccAddress("prefix-provider")
+	const prefixedDenom = "atom:staked"
+	if err := keeper.RegisterAsset(ctx, RegisteredAsset{
+		IBCDenom:       prefixedDenom,
+		Symbol:         "stATOM",
+		Decimals:       6,
+		TradingEnabled: true,
+	}); err != nil {
+		t.Fatal(err)
+	}
+	bank.fundAccount(ctx, provider, sdk.NewCoins(
+		sdk.NewInt64Coin(pnyxDenom, 4_000_000),
+		sdk.NewInt64Coin("atom", 2_000_000),
+		sdk.NewInt64Coin(prefixedDenom, 2_000_000),
+	))
+	if err := keeper.CreatePoolWithCustody(ctx, provider, "atom", math.NewInt(1_000_000), math.NewInt(1_000_000)); err != nil {
+		t.Fatal(err)
+	}
+	if err := keeper.CreatePoolWithCustody(ctx, provider, prefixedDenom, math.NewInt(1_000_000), math.NewInt(1_000_000)); err != nil {
+		t.Fatal(err)
+	}
+
+	for _, denom := range []string{"atom", prefixedDenom} {
+		pool, found := keeper.GetPool(ctx, denom)
+		if !found {
+			t.Fatalf("pool %s not found", denom)
+		}
+		if total := keeper.LPShareTotal(ctx, denom); !total.Equal(pool.TotalShares) {
+			t.Fatalf("LP total for %s = %s, want %s", denom, total, pool.TotalShares)
+		}
+	}
+	if err := keeper.ValidateLPConservation(ctx); err != nil {
+		t.Fatal(err)
 	}
 }
