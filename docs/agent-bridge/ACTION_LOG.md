@@ -472,3 +472,17 @@
   network-recovery ticket. The new job remains on the repository's v5 baseline.
 - Genesis/binder regressions pass and the hardened real four-validator harness
   passes in 68.90 seconds, its third successful local run.
+
+## 2026-07-14 04:03 EEST - GH-32 merged and rollout tracker advanced
+
+- Published review-remediation commit `7dd0fbb`; all four CodeRabbit threads
+  are answered or automatically recognized as addressed and are resolved.
+- The first final-head attempt failed four jobs before checkout because GitHub
+  could not resolve action download metadata and returned `Service Unavailable`.
+  Job-level logs confirmed no project command ran, so no code was changed.
+- Reran only failed jobs. Go run `29253316692` passes build/race/coverage,
+  Docker restart, and multi-validator recovery; Security run `29253316707`
+  passes Go vulnerability, Rust, maintained-client, and both legacy audits.
+  Docs, DeepScan, and CodeRabbit also pass.
+- Squash-merged PR #33 as `9d68a6f`; GitHub automatically closed Issue #32.
+  GH-29 remains open and its first Phase 1 checkbox now links the evidence.
