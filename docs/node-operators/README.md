@@ -17,6 +17,7 @@ This guide covers everything you need to run a TrueRepublic node, from initial s
 ### Operations
 - [Monitoring](operations/monitoring.md)
 - [Backup & Recovery](operations/backup-recovery.md)
+- [Multi-Validator Recovery Harness](operations/multi-validator-recovery.md)
 - [Upgrades](operations/upgrades.md)
 - [Security Hardening](operations/security.md)
 

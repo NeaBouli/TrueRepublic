@@ -251,6 +251,35 @@ func bindGenesisValidatorKey(genesisPath string, pubKey []byte) error {
 	if err != nil {
 		return err
 	}
+	if err := configureGenesisValidatorSet(genesis, []genesisValidatorIdentity{{
+		Name:   "truerepublic-bootstrap",
+		PubKey: pubKey,
+	}}); err != nil {
+		return err
+	}
+	updated, err := json.MarshalIndent(genesis, "", "  ")
+	if err != nil {
+		return err
+	}
+	return atomicWriteFile(genesisPath, updated, 0o600)
+}
+
+// genesisValidatorIdentity contains only public consensus identity. Private
+// validator material remains in each node home and must never be collected in
+// a shared genesis artifact.
+type genesisValidatorIdentity struct {
+	Name   string
+	PubKey []byte
+}
+
+// configureGenesisValidatorSet builds matching CometBFT and bank-backed PoD
+// validator sets on a previously unbound genesis document. Keeping this logic
+// separate from private-key generation makes multi-validator recovery tests
+// possible without weakening init's refusal to replace an existing set.
+func configureGenesisValidatorSet(genesis *genutiltypes.AppGenesis, validators []genesisValidatorIdentity) error {
+	if genesis == nil {
+		return errors.New("genesis is required")
+	}
 	var appState map[string]json.RawMessage
 	if err := json.Unmarshal(genesis.AppState, &appState); err != nil {
 		return err
@@ -261,45 +290,67 @@ func bindGenesisValidatorKey(genesisPath string, pubKey []byte) error {
 	if len(genesis.Consensus.Validators) != 0 {
 		return errors.New("refusing to replace an existing consensus validator set")
 	}
-	validatorUpdate := abci.ValidatorUpdate{
-		PubKey: cryptoproto.PublicKey{Sum: &cryptoproto.PublicKey_Ed25519{Ed25519: append([]byte(nil), pubKey...)}},
-		Power:  1,
+	if len(validators) == 0 {
+		return errors.New("at least one validator identity is required")
+	}
+	updates := make([]abci.ValidatorUpdate, 0, len(validators))
+	consensusValidators := make([]cmttypes.GenesisValidator, 0, len(validators))
+	seenNames := make(map[string]struct{}, len(validators))
+	for i, validator := range validators {
+		if validator.Name == "" {
+			return fmt.Errorf("validator %d name is required", i)
+		}
+		if _, exists := seenNames[validator.Name]; exists {
+			return fmt.Errorf("duplicate validator name %q", validator.Name)
+		}
+		seenNames[validator.Name] = struct{}{}
+		if len(validator.PubKey) != cmted25519.PubKeySize {
+			return fmt.Errorf("validator %q public key must be %d bytes", validator.Name, cmted25519.PubKeySize)
+		}
+		pubKey := append([]byte(nil), validator.PubKey...)
+		updates = append(updates, abci.ValidatorUpdate{
+			PubKey: cryptoproto.PublicKey{Sum: &cryptoproto.PublicKey_Ed25519{Ed25519: pubKey}},
+			Power:  1,
+		})
+		consensusKey := cmted25519.PubKey(pubKey)
+		consensusValidators = append(consensusValidators, cmttypes.GenesisValidator{
+			Address: consensusKey.Address(),
+			PubKey:  consensusKey,
+			Power:   1,
+			Name:    validator.Name,
+		})
 	}
 	interfaceRegistry := codectypes.NewInterfaceRegistry()
 	ModuleBasics.RegisterInterfaces(interfaceRegistry)
 	appCodec := codec.NewProtoCodec(interfaceRegistry)
-	if err := ensureConsensusGenesis(appCodec, appState, []abci.ValidatorUpdate{validatorUpdate}); err != nil {
+	if err := ensureConsensusGenesis(appCodec, appState, updates); err != nil {
 		return fmt.Errorf("build bank-backed PoD genesis: %w", err)
 	}
 	var democracyGenesis truedemocracy.GenesisState
 	if err := json.Unmarshal(appState[truedemocracy.ModuleName], &democracyGenesis); err != nil {
 		return err
 	}
-	if len(democracyGenesis.Validators) != 1 || !bytes.Equal(democracyGenesis.Validators[0].PubKey, pubKey) {
-		return errors.New("generated PoD validator does not match the node consensus key")
+	if len(democracyGenesis.Validators) != len(validators) {
+		return errors.New("generated PoD validator set does not match the consensus set")
+	}
+	for i, validator := range validators {
+		if !bytes.Equal(democracyGenesis.Validators[i].PubKey, validator.PubKey) {
+			return fmt.Errorf("generated PoD validator %d does not match its consensus key", i)
+		}
 	}
 	if err := validateLedgerGenesis(appCodec, appState); err != nil {
 		return fmt.Errorf("generated PoD genesis is not bank-backed: %w", err)
 	}
-	genesis.AppState, err = json.Marshal(appState)
+	appStateJSON, err := json.Marshal(appState)
 	if err != nil {
 		return err
 	}
-	consensusKey := cmted25519.PubKey(append([]byte(nil), pubKey...))
-	genesis.Consensus.Validators = []cmttypes.GenesisValidator{{
-		Address: consensusKey.Address(),
-		PubKey:  consensusKey,
-		Power:   1,
-		Name:    "truerepublic-bootstrap",
-	}}
+	genesis.AppState = appStateJSON
+	genesis.Consensus.Validators = consensusValidators
 	if err := genesis.ValidateAndComplete(); err != nil {
 		return err
 	}
-	updated, err := json.MarshalIndent(genesis, "", "  ")
-	if err != nil {
-		return err
-	}
-	return atomicWriteFile(genesisPath, updated, 0o600)
+	return nil
 }
 
 func atomicWriteFile(path string, data []byte, mode os.FileMode) (err error) {

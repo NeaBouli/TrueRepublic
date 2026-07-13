@@ -5,6 +5,8 @@
 - [ ] GH-4: keep the recovery epic and acceptance criteria current.
 - [ ] GH-29: complete the seven-phase production-readiness roadmap and attach
   evidence for every rollout exit gate before any public-network launch.
+- [x] GH-29: reopen the issue as the execution tracker; PR #31 completed only
+  the roadmap handoff, not the rollout phases.
 - [x] GH-5: Go/Rust toolchains, tests, static checks, vulnerability gates, and
   GitHub security CI are green.
 - [x] GH-6: v0.4 client lint, tests, build, exact amount handling, maintained
@@ -43,6 +45,10 @@
   race/coverage, docs, static, and Security Scan gates are green.
 - [ ] GH-21: obtain independent multi-node, backup/restore, IBC/upgrade
   operations review before public-network approval.
+- [x] GH-32: build and locally verify the four-validator bank-backed PoD
+  consensus/failure/restart/catch-up/export harness.
+- [ ] GH-32: publish the implementation, obtain green Go multi-validator,
+  Docker, docs, static-analysis, and security gates, then merge and close.
 - [x] GH-7: DEX rounding, slippage, pool accounting, custody, and authorization
   audit completed in GH-10; GH-12 retains genesis/runtime invariants.
 
@@ -51,7 +57,8 @@
 - [x] GH-8: review the preserved legacy checkout; no code is safe/useful for
   wholesale merge, and the checkout remains preserved pending final archive.
 - [x] GH-8: align CLAUDE, install, FAQ, README, status JSON, limitations,
-  landing page, and real wiki status/security claims to the 684-test recovery
+  landing page, and real wiki status/security claims to the historical
+  684-test recovery
   source of truth.
 - [x] GH-8: enforce suite/module/cap arithmetic and real wiki/agent/public
   status through docs CI; modernize Action runtimes without credential or

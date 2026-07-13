@@ -46,8 +46,8 @@ approved for production or real funds during this audit.
 
 ## Production Node Lifecycle
 
-**Status:** Locally and GitHub recovery-verified on stacked PR #23; independent
-operations review pending
+**Status:** Single-node lifecycle is merged; GH-32 adds a bounded four-validator
+failure/restart/catch-up harness. Independent operations review remains pending.
 **Current:** The standard `truerepublicd init` command binds the generated
 CometBFT Ed25519 public key to matching PoD and actual positive-power consensus
 validators with sufficient, exact bank-backed minimum stake. Initialization
@@ -57,8 +57,11 @@ height, preserves invariants, and exports state. The non-root Debian/glibc
 container has a blocking restart gate.
 **Impact:** `scripts/init-node.sh` delegates exclusively to the supported daemon
 init boundary and never creates staking gentxs or extra accounts. The Docker
-restart job passes. Do not claim public-network readiness until independent
-multi-node, backup/restore, IBC/upgrade operations review passes.
+restart job passes. The GH-32 gate proves common-height app-hash agreement,
+one-validator failure, continued quorum, restart/catch-up, and recovered export.
+Do not claim public-network readiness until partition, state-sync,
+backup/restore, IBC/upgrade, load, topology, and independent operations review
+passes.
 
 ## ZKP Client
 

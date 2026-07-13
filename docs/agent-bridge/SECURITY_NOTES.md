@@ -14,9 +14,12 @@
 - Rust stable CosmWasm 3.0.4 dev-tooling pulls unmaintained/unsound transitive
   crates through Wasmer. No fixable cargo-audit vulnerability remains, but the
   warnings require monitoring or a stable upstream upgrade.
-- GH-21 native and GitHub-container single-node lifecycle passes. Independent
-  multi-node operations review remains pending; IBC staking/upgrade and
-  standard CosmWasm staking/distribution stay explicit stubs.
+- GH-21 native and GitHub-container single-node lifecycle passes. GH-32 locally
+  proves a bounded four-validator failure/restart/catch-up slice without shared
+  private material. Partitions, state sync, backup/restore, upgrades, IBC,
+  load/topology, and independent operations review remain pending; IBC
+  staking/upgrade and standard CosmWasm staking/distribution stay explicit
+  stubs.
 - The v0.4 client production bundle is 1.68 MB (309 kB gzip); route-level code
   splitting is recommended before treating low-bandwidth/mobile UX as ready.
 - PR #25 targets the unrecovered old main and its Go/Rust security gates fail.

@@ -14,6 +14,7 @@ Canonical coordination lives in [`docs/agent-bridge/`](docs/agent-bridge/README.
 - GH-21 node lifecycle audit: [`PR23_AUDIT.md`](docs/agent-bridge/PR23_AUDIT.md)
 - GH-8 docs/CI audit: [`PR24_AUDIT.md`](docs/agent-bridge/PR24_AUDIT.md)
 - GH-26 operator init audit: [`PR27_AUDIT.md`](docs/agent-bridge/PR27_AUDIT.md)
+- GH-32 multi-validator audit: [`GH32_AUDIT.md`](docs/agent-bridge/GH32_AUDIT.md)
 - Decisions: [`DECISIONS.md`](docs/agent-bridge/DECISIONS.md)
 - Security: [`SECURITY_NOTES.md`](docs/agent-bridge/SECURITY_NOTES.md)
 
@@ -492,5 +493,36 @@ and anonymous recipient binding remain separately blocking.
 The documentation now distinguishes a merged recovery foundation from a
 production release. Cryptographic, multi-node operations, legacy-client, and
 release-process blockers remain prominent and unchanged.
+
+---
+
+## 2026-07-14 00:28 EEST GH-32 multi-validator recovery → In Progress
+
+- **Branch:** `feature/GH-32-multi-validator-harness`
+- **Issue:** [GH-32](https://github.com/NeaBouli/TrueRepublic/issues/32), child
+  of reopened rollout tracker [GH-29](https://github.com/NeaBouli/TrueRepublic/issues/29)
+- **Changed:** added internal public-key-only multi-validator genesis assembly;
+  four independent validator homes; consensus, failure, restart/catch-up,
+  common-height app-hash, clean shutdown, export, and ledger checks; dedicated
+  CI job; operator runbook; synchronized public recovery status
+- **Tests:** genesis/binder regressions → PASS; full normal Go suite → 651 PASS;
+  separately gated four-validator harness → PASS twice locally, latest 55.84s;
+  full Go race/coverage (root 64.9%), build, vet, docs consistency, workflow
+  YAML, JSON, and diff checks → PASS
+- **Risk:** High — consensus identity, PoD/bank genesis parity, quorum recovery,
+  persistent state, and CI process cleanup
+- **Ready for:** final local race/vet/build/security audit, commit, push, PR,
+  GitHub gates, independent review, merge, Issue/Bridge closure, and Pages proof
+
+### Lead Dev notes
+
+The first real run exposed strict-loopback address-book rejection and a shared
+pprof port. Both adjustments are confined to temporary localhost test config;
+production CometBFT defaults and the single-node `init` refusal boundary remain
+unchanged. This closes only the bounded four-validator Phase 1 checklist item.
+
+### Codex review feedback
+
+Pending final-head verification and GitHub checks.
 
 ---
