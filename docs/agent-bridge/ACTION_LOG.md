@@ -456,3 +456,19 @@
   685-case public source-of-truth update, and exact remaining-scope warnings.
 - Full Go race/coverage passes: root 64.9%, token 92.6%, treasury 97.0%, DEX
   45.3%, and governance 58.9%; build and vet also pass.
+
+## 2026-07-14 02:05 EEST - GH-32 review remediation
+
+- PR #33's initial GitHub matrix passed, including the dedicated four-validator
+  job, Go/Docker, documentation, security, Node audit, and static-analysis gates.
+- Accepted review findings for an ambiguous public roadmap bullet, missing
+  subprocess/request cancellation, and a recovery assertion that only checked
+  the last survivor-produced height.
+- The harness now threads the test context through every child process and HTTP
+  request, selects a target two blocks after the stopped process restarts, then
+  requires all four nodes to reach it and agree on that post-restart app hash.
+- Rejected the proposed `actions/checkout@v7` edit: the official action has no
+  v7 release, and a runtime-major migration is separate from this bounded
+  network-recovery ticket. The new job remains on the repository's v5 baseline.
+- Genesis/binder regressions pass and the hardened real four-validator harness
+  passes in 68.90 seconds, its third successful local run.

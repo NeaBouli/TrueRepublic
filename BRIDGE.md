@@ -496,7 +496,7 @@ release-process blockers remain prominent and unchanged.
 
 ---
 
-## 2026-07-14 00:28 EEST GH-32 multi-validator recovery → In Progress
+## 2026-07-14 02:05 EEST GH-32 multi-validator recovery → Review
 
 - **Branch:** `feature/GH-32-multi-validator-harness`
 - **Issue:** [GH-32](https://github.com/NeaBouli/TrueRepublic/issues/32), child
@@ -506,23 +506,32 @@ release-process blockers remain prominent and unchanged.
   common-height app-hash, clean shutdown, export, and ledger checks; dedicated
   CI job; operator runbook; synchronized public recovery status
 - **Tests:** genesis/binder regressions → PASS; full normal Go suite → 651 PASS;
-  separately gated four-validator harness → PASS twice locally, latest 55.84s;
+  separately gated four-validator harness → PASS three times locally, latest
+  hardened run 68.90s; initial PR #33 GitHub matrix → PASS;
   full Go race/coverage (root 64.9%), build, vet, docs consistency, workflow
   YAML, JSON, and diff checks → PASS
 - **Risk:** High — consensus identity, PoD/bank genesis parity, quorum recovery,
   persistent state, and CI process cleanup
-- **Ready for:** final local race/vet/build/security audit, commit, push, PR,
-  GitHub gates, independent review, merge, Issue/Bridge closure, and Pages proof
+- **Ready for:** publish review remediation, refreshed GitHub gates, zero-thread
+  review audit, merge, Issue/Bridge closure, and Pages proof
 
 ### Lead Dev notes
 
 The first real run exposed strict-loopback address-book rejection and a shared
 pprof port. Both adjustments are confined to temporary localhost test config;
 production CometBFT defaults and the single-node `init` refusal boundary remain
-unchanged. This closes only the bounded four-validator Phase 1 checklist item.
+unchanged. CodeRabbit then correctly identified that the recovered node was
+only compared at a pre-rejoin height and that subprocess/HTTP work lacked test
+cancellation. The harness now requires all four nodes to reach and agree at a
+height selected two blocks after the stopped process restarts, and threads
+`testing.T` context through every child process and request.
+This closes only the bounded four-validator Phase 1 checklist item.
 
 ### Codex review feedback
 
-Pending final-head verification and GitHub checks.
+Three findings were accepted and locally verified. The proposed
+`actions/checkout@v7` change was rejected because no official v7 release
+exists; the job remains aligned with the repository's existing v5 baseline.
+Final-head GitHub verification is pending.
 
 ---

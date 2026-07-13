@@ -1,6 +1,6 @@
 # Project State
 
-Updated: 2026-07-14 00:28 EEST
+Updated: 2026-07-14 02:05 EEST
 
 ## Repository
 
@@ -10,8 +10,8 @@ Updated: 2026-07-14 00:28 EEST
   #28, #30, and #31.
 - Current work: GH-29 is reopened as the rollout execution tracker. GH-32 on
   `feature/GH-32-multi-validator-harness` implements the first Phase 1 gate;
-  local four-validator consensus/failure/recovery evidence is green and GitHub
-  publication is pending.
+  PR #33's initial GitHub matrix is green and review remediation is locally
+  verified before final-head publication.
 - Active recovery checkout:
   `/Users/gio/Documents/Codex/2026-07-11/erkunden/TrueRepublic-gh20`
 - GH-26 branch: `fix/GH-26-pod-init-script`
@@ -37,13 +37,16 @@ Updated: 2026-07-14 00:28 EEST
   separately and are not included in that authoritative total. The prior 577
   figure is retained only as historical.
 - GH-32 branch count is 685: 651 Go, 26 Rust, and eight maintained-client
-  tests. The separately gated four-validator process harness also passes twice
-  locally and is not added again to that arithmetic total. Full Go race/
-  coverage passes with root/application coverage at 64.9%.
+  tests. The separately gated four-validator process harness also passes three
+  times locally and is not added again to that arithmetic total. The latest
+  hardened run requires new post-rejoin blocks and passed in 68.90 seconds.
+  Full Go race/coverage passes with root/application coverage at 64.9%.
 - GH-32 uses four independently generated CometBFT Ed25519 keys, one identical
   bank-backed PoD genesis, explicit localhost persistent peers, common-height
   app-hash checks, one-validator failure with continued quorum, restart/catch-up,
   clean SIGINT shutdown, recovered export, and post-export ledger validation.
+  Child processes and RPC requests inherit the test context so a canceled or
+  timed-out test cannot orphan network work.
   Localhost address-book relaxation and duplicate-IP allowance are confined to
   temporary test configuration; production defaults are unchanged.
 - GH-13 local Go 1.26.5: build, vet, normal tests, race tests, and coverage PASS.

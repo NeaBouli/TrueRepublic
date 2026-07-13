@@ -7,8 +7,10 @@ GH-32 is conditionally ready to publish for its bounded local four-validator
 scope. It generates independent private-validator homes, shares public
 identities only, creates matching CometBFT and exactly bank-backed PoD genesis,
 and proves quorum continuation plus deterministic catch-up and app-hash
-agreement after one-validator failure. Production CometBFT defaults are not
-weakened. The largest remaining risk is scope: partitions, state sync,
+agreement at a newly committed post-rejoin height after one-validator failure.
+Every subprocess and RPC request is tied to the test lifecycle. Production
+CometBFT defaults are not weakened. The largest remaining risk is scope:
+partitions, state sync,
 validator-set changes, backup/restore, upgrades, IBC, load, topology, and
 independent operations review are not proven by this ticket.
 
@@ -59,8 +61,8 @@ independent operations review are not proven by this ticket.
 - **[PASS] One-validator failure preserves quorum and catches up** — `multi_validator_harness_test.go:168`
   - What: One of four equal-power validators stops; the other three commit two
     additional blocks; the stopped home restarts and catches up.
-  - Path: A false-positive restart cannot pass unless all four nodes reach the
-    post-failure height and agree on its app hash.
+  - Path: A false-positive restart cannot pass unless all four nodes reach two
+    further blocks selected after rejoin and agree on that new app hash.
   - Fix: Keep the explicit pre-/post-failure height and app-hash gates.
 
 - **[PASS] Shutdown, logs, and export are deterministic** — `multi_validator_harness_test.go:149`, `multi_validator_harness_test.go:183`
@@ -68,7 +70,8 @@ independent operations review are not proven by this ticket.
     emitted on failure, and recovered state exports after processes close.
   - Path: Hung or non-zero shutdown, lost state, truncated export, missing PoD
     validators, or ledger divergence fails the test.
-  - Fix: Preserve bounded shutdown waits and failure-log output.
+  - Fix: Preserve bounded shutdown waits, failure-log output, and test-context
+    cancellation for all child processes and RPC requests.
 
 ### CI and documentation — PASS
 

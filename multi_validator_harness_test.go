@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -88,9 +89,10 @@ func TestMultiValidatorConsensusRecovery(t *testing.T) {
 	if os.Getenv(multiValidatorSmokeEnv) != "1" {
 		t.Skipf("set %s=1 to run the multi-validator process harness", multiValidatorSmokeEnv)
 	}
+	ctx := t.Context()
 
 	binary := filepath.Join(t.TempDir(), "truerepublicd")
-	build := exec.Command("go", "build", "-o", binary, ".")
+	build := exec.CommandContext(ctx, "go", "build", "-o", binary, ".")
 	if output, err := build.CombinedOutput(); err != nil {
 		t.Fatalf("build daemon: %v\n%s", err, output)
 	}
@@ -105,7 +107,7 @@ func TestMultiValidatorConsensusRecovery(t *testing.T) {
 			p2pPort: freeTCPPort(t),
 			logPath: filepath.Join(t.TempDir(), fmt.Sprintf("validator-%d.log", i+1)),
 		}
-		initCmd := exec.Command(binary, "init", validator.name, "--chain-id", chainID, "--home", validator.home)
+		initCmd := exec.CommandContext(ctx, binary, "init", validator.name, "--chain-id", chainID, "--home", validator.home)
 		if output, err := initCmd.CombinedOutput(); err != nil {
 			t.Fatalf("init %s: %v\n%s", validator.name, err, output)
 		}
@@ -119,7 +121,7 @@ func TestMultiValidatorConsensusRecovery(t *testing.T) {
 			t.Fatalf("read %s public key: %v", validator.name, err)
 		}
 		validator.pubKey = append([]byte(nil), pubKey.Bytes()...)
-		nodeIDCmd := exec.Command(binary, "comet", "show-node-id", "--home", validator.home)
+		nodeIDCmd := exec.CommandContext(ctx, binary, "comet", "show-node-id", "--home", validator.home)
 		nodeID, err := nodeIDCmd.Output()
 		if err != nil {
 			t.Fatalf("read %s node id: %v", validator.name, err)
@@ -158,7 +160,7 @@ func TestMultiValidatorConsensusRecovery(t *testing.T) {
 	})
 
 	for _, validator := range validators {
-		if err := validator.start(binary, persistentPeers(validator, validators)); err != nil {
+		if err := validator.start(ctx, binary, persistentPeers(validator, validators)); err != nil {
 			t.Fatalf("start %s: %v", validator.name, err)
 		}
 	}
@@ -174,18 +176,19 @@ func TestMultiValidatorConsensusRecovery(t *testing.T) {
 	recoveryHeight := failureHeight + 2
 	waitForSmokeHeight(t, survivors, recoveryHeight, 90*time.Second)
 
-	if err := failed.start(binary, persistentPeers(failed, validators)); err != nil {
+	if err := failed.start(ctx, binary, persistentPeers(failed, validators)); err != nil {
 		t.Fatalf("restart %s: %v", failed.name, err)
 	}
-	waitForSmokeHeight(t, validators, recoveryHeight, 90*time.Second)
-	assertCommonAppHash(t, validators, recoveryHeight)
+	postRestartHeight := smokeHeight(t, survivors[0]) + 2
+	waitForSmokeHeight(t, validators, postRestartHeight, 90*time.Second)
+	assertCommonAppHash(t, validators, postRestartHeight)
 
 	for _, validator := range validators {
 		if err := validator.stop(true); err != nil {
 			t.Fatalf("stop %s after recovery: %v", validator.name, err)
 		}
 	}
-	exported := exec.Command(binary, "export", "--home", failed.home)
+	exported := exec.CommandContext(ctx, binary, "export", "--home", failed.home)
 	exportOutput, err := exported.Output()
 	if err != nil {
 		t.Fatalf("export recovered %s state: %v", failed.name, err)
@@ -197,8 +200,8 @@ func TestMultiValidatorConsensusRecovery(t *testing.T) {
 	if err := json.Unmarshal(exportOutput, &exportedGenesis); err != nil {
 		t.Fatalf("decode recovered export: %v", err)
 	}
-	if exportedGenesis.InitialHeight <= recoveryHeight {
-		t.Fatalf("exported initial height = %d, want greater than recovery height %d", exportedGenesis.InitialHeight, recoveryHeight)
+	if exportedGenesis.InitialHeight <= postRestartHeight {
+		t.Fatalf("exported initial height = %d, want greater than post-restart height %d", exportedGenesis.InitialHeight, postRestartHeight)
 	}
 	var democracyGenesis truedemocracy.GenesisState
 	if err := json.Unmarshal(exportedGenesis.AppState[truedemocracy.ModuleName], &democracyGenesis); err != nil {
@@ -273,7 +276,7 @@ func configureLocalhostSmokeP2P(t *testing.T, configPath string) {
 	}
 }
 
-func (validator *smokeValidator) start(binary, peers string) error {
+func (validator *smokeValidator) start(ctx context.Context, binary, peers string) error {
 	if validator.command != nil {
 		return errors.New("validator process is already running")
 	}
@@ -281,7 +284,7 @@ func (validator *smokeValidator) start(binary, peers string) error {
 	if err != nil {
 		return err
 	}
-	command := exec.Command(binary,
+	command := exec.CommandContext(ctx, binary,
 		"start",
 		"--home", validator.home,
 		"--rpc.laddr", fmt.Sprintf("tcp://127.0.0.1:%d", validator.rpcPort),
@@ -353,7 +356,7 @@ func waitForSmokeHeight(t *testing.T, validators []*smokeValidator, minimum int6
 	for time.Now().Before(deadline) {
 		ready := true
 		for _, validator := range validators {
-			height, err := querySmokeHeight(validator)
+			height, err := querySmokeHeight(t.Context(), validator)
 			if err != nil || height < minimum {
 				ready = false
 				break
@@ -369,16 +372,20 @@ func waitForSmokeHeight(t *testing.T, validators []*smokeValidator, minimum int6
 
 func smokeHeight(t *testing.T, validator *smokeValidator) int64 {
 	t.Helper()
-	height, err := querySmokeHeight(validator)
+	height, err := querySmokeHeight(t.Context(), validator)
 	if err != nil {
 		t.Fatalf("query %s height: %v", validator.name, err)
 	}
 	return height
 }
 
-func querySmokeHeight(validator *smokeValidator) (int64, error) {
+func querySmokeHeight(ctx context.Context, validator *smokeValidator) (int64, error) {
 	client := &http.Client{Timeout: time.Second}
-	response, err := client.Get(fmt.Sprintf("http://127.0.0.1:%d/status", validator.rpcPort))
+	request, err := http.NewRequestWithContext(ctx, http.MethodGet, fmt.Sprintf("http://127.0.0.1:%d/status", validator.rpcPort), nil)
+	if err != nil {
+		return 0, err
+	}
+	response, err := client.Do(request)
 	if err != nil {
 		return 0, err
 	}
@@ -421,7 +428,11 @@ func smokeAppHash(t *testing.T, validator *smokeValidator, height int64) string 
 	t.Helper()
 	client := &http.Client{Timeout: time.Second}
 	url := fmt.Sprintf("http://127.0.0.1:%d/block?height=%d", validator.rpcPort, height)
-	response, err := client.Get(url)
+	request, err := http.NewRequestWithContext(t.Context(), http.MethodGet, url, nil)
+	if err != nil {
+		t.Fatalf("build %s block %d request: %v", validator.name, height, err)
+	}
+	response, err := client.Do(request)
 	if err != nil {
 		t.Fatalf("query %s block %d: %v", validator.name, height, err)
 	}
