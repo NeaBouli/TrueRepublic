@@ -4,8 +4,8 @@
   "release_date": "2026-03-04",
   "tests": {
     "status": "recovery_verified_locally",
-    "total": 684,
-    "go": 650,
+    "total": 685,
+    "go": 651,
     "rust": 26,
     "frontend": 8,
     "historical_total": 577
@@ -30,7 +30,7 @@
     }
   },
   "modules": {
-    "root": 40,
+    "root": 41,
     "token": 12,
     "treasury": 36,
     "dex": 116,
@@ -98,7 +98,8 @@
       "bootstrap": "generated_cometbft_key_exact_bank_backed_pod_on_pr23",
       "persistence": "native_same_home_restart_and_export_verified_on_pr23",
       "container": "non_root_debian_glibc_restart_green_on_pr23",
-      "operator_init": "daemon_only_safe_wrapper_merged_on_pr27"
+      "operator_init": "daemon_only_safe_wrapper_merged_on_pr27",
+      "multi_validator_recovery": "four_validator_failure_restart_catchup_and_app_hash_agreement_on_gh32"
     },
     "web_client": {
       "status": "recovery_verified_locally",

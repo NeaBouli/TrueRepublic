@@ -1,15 +1,17 @@
 # Project State
 
-Updated: 2026-07-13 02:50 EEST
+Updated: 2026-07-14 02:05 EEST
 
 ## Repository
 
 - GitHub: `NeaBouli/TrueRepublic`
-- Baseline: `origin/main` at `0818b16` after the verified recovery-status merge.
+- Baseline: `origin/main` at `7255264` after the rollout-roadmap handoff merge.
 - Merged recovery PRs: #9, #15, #16, #17, #18, #19, #22, #23, #24, #27,
-  and #28.
-- Current work: GH-29 remains open as the execution tracker for the public
-  Road to Rollout; PR #30 published the roadmap to `main` as `162038f`.
+  #28, #30, and #31.
+- Current work: GH-29 is reopened as the rollout execution tracker. GH-32 on
+  `feature/GH-32-multi-validator-harness` implements the first Phase 1 gate;
+  PR #33's initial GitHub matrix is green and review remediation is locally
+  verified before final-head publication.
 - Active recovery checkout:
   `/Users/gio/Documents/Codex/2026-07-11/erkunden/TrueRepublic-gh20`
 - GH-26 branch: `fix/GH-26-pod-init-script`
@@ -34,6 +36,19 @@ Updated: 2026-07-13 02:50 EEST
   maintained-client tests. Four focused legacy-web ZKP regressions pass
   separately and are not included in that authoritative total. The prior 577
   figure is retained only as historical.
+- GH-32 branch count is 685: 651 Go, 26 Rust, and eight maintained-client
+  tests. The separately gated four-validator process harness also passes three
+  times locally and is not added again to that arithmetic total. The latest
+  hardened run requires new post-rejoin blocks and passed in 68.90 seconds.
+  Full Go race/coverage passes with root/application coverage at 64.9%.
+- GH-32 uses four independently generated CometBFT Ed25519 keys, one identical
+  bank-backed PoD genesis, explicit localhost persistent peers, common-height
+  app-hash checks, one-validator failure with continued quorum, restart/catch-up,
+  clean SIGINT shutdown, recovered export, and post-export ledger validation.
+  Child processes and RPC requests inherit the test context so a canceled or
+  timed-out test cannot orphan network work.
+  Localhost address-book relaxation and duplicate-IP allowance are confined to
+  temporary test configuration; production defaults are unchanged.
 - GH-13 local Go 1.26.5: build, vet, normal tests, race tests, and coverage PASS.
   Coverage: root 10.2%, token 93.5%, treasury 97.0%, DEX 34.2%, governance 55.8%.
 - Go vulnerability gate: no reachable finding with an available fix remains;
@@ -45,10 +60,10 @@ Updated: 2026-07-13 02:50 EEST
   3 critical); not approved for keys or funds.
 - Public README, status JSON, limitations, and GitHub Pages source now display
   an active recovery warning and link to GH-4.
-- Public GitHub Pages is configured from
-  `fix/GH-26-pod-init-script:/docs`; build `1090733247` at `50b0d9a` is live
-  and exposes the recovery/non-production warning, 21M cap, and 684-test state.
-  `main` remains protected at `d8545cf`; PR #25 was not bypassed.
+- Public GitHub Pages is configured from `main:/docs`; the latest verified
+  build at `7255264` exposes the recovery/non-production warning, 21M cap,
+  684-test baseline, and Road to Rollout. GH-32's 685-case/four-validator
+  update is not live until its reviewed merge.
 - Canonical `client-web` now has dedicated GitHub install/lint/test/build/audit
   gates; legacy client audits remain informational during migration.
 - PR #9 GitHub checks are all green: Go CI, Rust CI, Client Web CI,
@@ -157,8 +172,9 @@ The token/ledger audit is 12/12 PASS locally across the merged recovery work:
 denomination/cap, governance custody, reward issuance, DEX custody, custom
 genesis, and runtime invariants. The repository remains recovery-only because
 GH-20 still needs a real prover/external
-cryptographic review, and GH-21 still needs independent multi-node operations
-review.
+cryptographic review. GH-32 closes only the bounded four-validator
+failure/restart/catch-up slice; partitions, state sync, backup/restore,
+upgrades, load, topology, IBC, and independent operations review remain open.
 
 GH-11 implements the canonical denomination metadata (`upnyx`, six decimal
 places, 21,000,000,000,000 base-unit cap) and pre-init bank-genesis cap checks.

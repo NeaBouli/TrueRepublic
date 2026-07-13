@@ -13,9 +13,10 @@
   recovery stack.
 - Chain/proposal/rating-bound ZKP statement and pinned genesis verification-key
   identity; both public web clients reject mock proof submission.
-- Persistent Cosmos/Comet single-node lifecycle with generated-key,
-  bank-backed PoD genesis and native plus Docker restart evidence.
-- 684 recovery-verified tests: 650 Go, 26 Rust, and 8 maintained-client.
+- Persistent Cosmos/Comet lifecycle with generated-key, bank-backed PoD
+  genesis, native/Docker restart evidence, and a bounded four-validator
+  failure/restart/catch-up harness.
+- 685 recovery-verified tests: 651 Go, 26 Rust, and 8 maintained-client.
 
 ## Recovery sequence
 
@@ -29,8 +30,8 @@ reviewed, verified, and merged to `main` in this order.
 - Release qualification and independent security review.
 - Compatible real Groth16 client prover and external circuit/ceremony review.
 - Privacy-preserving anonymous reward recipient binding.
-- Independent multi-node, IBC/upgrade, backup/restore, monitoring, and
-  operations evidence.
+- Network partition/state-sync, IBC/upgrade, backup/restore, monitoring, load,
+  topology, and independent operations evidence.
 - Migration or removal of the deprecated legacy web/mobile clients.
 
 See [Issue #4](https://github.com/NeaBouli/TrueRepublic/issues/4),

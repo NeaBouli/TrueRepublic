@@ -14,7 +14,7 @@ parent recovery record remains
 
 - The ordered recovery merge chain is on `main`.
 - The maximum supply is fixed at 21,000,000 PNYX.
-- The source of truth records 684 recovery-verified tests: 650 Go, 26 Rust,
+- The source of truth records 685 recovery-verified tests: 651 Go, 26 Rust,
   and 8 maintained-client tests.
 - Ledger, escrow, issuance, DEX custody, genesis, runtime invariants, ZKP
   statement binding, node persistence, and the safe operator-init boundary
@@ -26,7 +26,8 @@ approval.
 
 ## Phase 1 — Network and disaster-recovery evidence
 
-- [ ] Build a reproducible multi-validator test harness.
+- [x] Build a reproducible four-validator consensus and recovery harness
+  ([GH-32](https://github.com/NeaBouli/TrueRepublic/issues/32)).
 - [ ] Verify validator join, leave, restart, and replacement procedures.
 - [ ] Exercise network partitions, delayed peers, validator failure, and
   recovery without ledger divergence.

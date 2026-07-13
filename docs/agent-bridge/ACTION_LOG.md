@@ -434,3 +434,41 @@
 - The build completed without error at `50b0d9a`. Live HTTP verification shows
   the recovery warning, non-production boundary, 21M maximum supply, and 684
   verified cases. PR #25 and branch protection were not bypassed.
+
+## 2026-07-14 00:28 EEST - GH-32 multi-validator recovery implementation
+
+- Reopened GH-29 after confirming PR #31 closed the roadmap handoff rather than
+  the seven rollout phases; created child Issue #32 with explicit bounded scope.
+- Extracted single-validator genesis binding into a reusable internal public-key
+  set assembler while preserving `init` refusal to overwrite an existing set.
+- Added four independently generated validator homes and keys, one identical
+  exactly bank-backed PoD genesis, explicit persistent peers, common-height
+  app-hash checks, one-validator failure, three-validator continued quorum,
+  restart/catch-up, clean shutdown, export, and exported-ledger validation.
+- The first run correctly failed because strict CometBFT address books reject
+  loopback peers and every node inherited pprof port 6060. Restricted
+  address-book/duplicate-IP relaxation to temporary localhost configs and
+  disabled pprof only for harness processes; production defaults are unchanged.
+- Targeted genesis/binder tests pass. The full normal Go suite passes with 651
+  cases. The separately gated four-validator harness passes twice locally, most
+  recently in 55.84 seconds.
+- Added a dedicated `multi-validator-recovery` Go CI job, operator runbook,
+  685-case public source-of-truth update, and exact remaining-scope warnings.
+- Full Go race/coverage passes: root 64.9%, token 92.6%, treasury 97.0%, DEX
+  45.3%, and governance 58.9%; build and vet also pass.
+
+## 2026-07-14 02:05 EEST - GH-32 review remediation
+
+- PR #33's initial GitHub matrix passed, including the dedicated four-validator
+  job, Go/Docker, documentation, security, Node audit, and static-analysis gates.
+- Accepted review findings for an ambiguous public roadmap bullet, missing
+  subprocess/request cancellation, and a recovery assertion that only checked
+  the last survivor-produced height.
+- The harness now threads the test context through every child process and HTTP
+  request, selects a target two blocks after the stopped process restarts, then
+  requires all four nodes to reach it and agree on that post-restart app hash.
+- Rejected the proposed `actions/checkout@v7` edit: the official action has no
+  v7 release, and a runtime-major migration is separate from this bounded
+  network-recovery ticket. The new job remains on the repository's v5 baseline.
+- Genesis/binder regressions pass and the hardened real four-validator harness
+  passes in 68.90 seconds, its third successful local run.

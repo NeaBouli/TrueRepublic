@@ -1,23 +1,23 @@
 # Testing Status
 
-The current **v0.4.0 recovery** source of truth records **684 verified cases**.
+The current **v0.4.0 recovery** source of truth records **685 verified cases**.
 
 | Suite | Passing cases |
 |---|---:|
-| Go root/application | 40 |
+| Go root/application | 41 |
 | Go token | 12 |
 | Go treasury | 36 |
 | Go DEX | 116 |
 | Go governance | 446 |
 | Rust/CosmWasm | 26 |
 | Maintained client | 8 |
-| **Total** | **684** |
+| **Total** | **685** |
 
 ## Current Go coverage
 
 | Package | Statements |
 |---|---:|
-| root/application | 64.3% |
+| root/application | 64.9% |
 | token | 92.6% |
 | treasury | 97.0% |
 | DEX | 45.3% |
@@ -27,6 +27,8 @@ The current **v0.4.0 recovery** source of truth records **684 verified cases**.
 
 ```bash
 CGO_ENABLED=1 go test ./... -race -cover -count=1 -timeout=600s
+TRUEREPUBLIC_MULTI_VALIDATOR_SMOKE=1 go test . \
+  -run '^TestMultiValidatorConsensusRecovery$' -count=1 -timeout=300s -v
 go vet ./...
 CGO_ENABLED=1 go build ./...
 ./scripts/check-consistency.sh
@@ -36,9 +38,9 @@ The maintained client is verified with `npm ci`, lint, 8 tests, production
 build, and audit. The CosmWasm workspace is verified with tests, formatting,
 Clippy, build, and audit.
 
-GH-21 final-head run `29170968611` passes Go race/coverage and the Docker
-first-block/same-container-restart/height-advance gate. Security Scan
-`29170832988` passes all five jobs on the audited code head.
+GH-32 adds the separately gated four-validator failure/restart/catch-up and
+common-height app-hash test. It does not replace the remaining partition,
+state-sync, backup/restore, upgrade, load, or independent operations gates.
 
 Green tests are recovery evidence, not an external security or production
 approval. See [Current Status](Current-Status) for remaining gates.

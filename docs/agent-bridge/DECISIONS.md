@@ -110,3 +110,16 @@
   and separate from the Actions embedded runtime.
 - Feature branches run through pull requests or manual dispatch; routine push
   automation is main-only to avoid duplicate evidence.
+
+## 2026-07-14 - Multi-validator recovery boundary
+
+- Shared validator genesis contains public CometBFT identities only. Every
+  private validator key remains in its independently generated node home.
+- The single-node `truerepublicd init` command continues to refuse replacing an
+  existing consensus set. Multi-validator assembly reuses an internal audited
+  public-identity function without weakening that operator boundary.
+- Loopback address-book relaxation, duplicate-IP permission, and disabled
+  pprof apply only to temporary localhost harness configuration. Production
+  CometBFT defaults remain strict.
+- Four-validator failure/restart/catch-up and app-hash agreement close one
+  Phase 1 checklist item, not multi-node or public-network readiness.
