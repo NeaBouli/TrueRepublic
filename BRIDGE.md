@@ -510,7 +510,8 @@ release-process blockers remain prominent and unchanged.
   separately gated four-validator harness → PASS three times locally, latest
   hardened run 68.90s; final PR #33 GitHub matrix → PASS;
   full Go race/coverage (root 64.9%), build, vet, docs consistency, workflow
-  YAML, JSON, and diff checks → PASS
+  YAML, JSON, and diff checks → PASS; final `main` Security run `29261145077`
+  and Pages build `1093339877` at `2851759` → PASS
 - **Risk:** High — consensus identity, PoD/bank genesis parity, quorum recovery,
   persistent state, and CI process cleanup
 - **Next:** continue the remaining GH-29 Phase 1 network/disaster-recovery gates;
@@ -536,5 +537,7 @@ exists; the job remains aligned with the repository's existing v5 baseline.
 Four review threads are resolved. GitHub's first final-head attempt returned
 `Service Unavailable` before action download for four jobs; failed-job reruns
 then passed without code changes. PR #33 merged as `9d68a6f` and closed GH-32.
+Bridge closure PR #34 merged as `2851759`; Pages is live from `main:/docs` with
+the 685-case count and bounded four-validator evidence.
 
 ---

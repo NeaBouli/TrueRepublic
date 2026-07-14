@@ -486,3 +486,14 @@
   Docs, DeepScan, and CodeRabbit also pass.
 - Squash-merged PR #33 as `9d68a6f`; GitHub automatically closed Issue #32.
   GH-29 remains open and its first Phase 1 checkbox now links the evidence.
+
+## 2026-07-14 04:16 EEST - GH-32 final main and Pages proof
+
+- Squash-merged bridge closure PR #34 as `2851759`; no pull requests remain
+  open, GH-32 is closed with all nine criteria checked, and GH-29 remains open
+  with only the completed multi-validator item checked.
+- Final `main` Security run `29261145077` passes all five jobs. The previously
+  documented upstream-only govulncheck annotations remain non-blocking.
+- GitHub Pages build `1093339877` completed from `main:/docs` at exact commit
+  `2851759`. Live HTTP verification confirms the recovery/non-production
+  warning, 21M cap, 685 verified cases, and four-validator recovery evidence.

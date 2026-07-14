@@ -1,13 +1,13 @@
 # Project State
 
-Updated: 2026-07-14 04:03 EEST
+Updated: 2026-07-14 04:16 EEST
 
 ## Repository
 
 - GitHub: `NeaBouli/TrueRepublic`
-- Baseline: `origin/main` at `9d68a6f` after the GH-32 recovery-harness merge.
+- Baseline: `origin/main` at `2851759` after the GH-32 bridge-closure merge.
 - Merged recovery PRs: #9, #15, #16, #17, #18, #19, #22, #23, #24, #27,
-  #28, #30, #31, and #33.
+  #28, #30, #31, #33, and #34.
 - Current work: GH-29 remains open as the rollout execution tracker. GH-32 and
   PR #33 close its first Phase 1 gate with local and GitHub evidence; remaining
   network/disaster-recovery gates stay open.
@@ -59,9 +59,9 @@ Updated: 2026-07-14 04:03 EEST
   3 critical); not approved for keys or funds.
 - Public README, status JSON, limitations, and GitHub Pages source now display
   an active recovery warning and link to GH-4.
-- Public GitHub Pages is configured from `main:/docs`; GH-32's 685-case and
-  four-validator update is merged at `9d68a6f` and is awaiting final live-build
-  verification. The recovery/non-production warning and 21M cap remain intact.
+- Public GitHub Pages is configured from `main:/docs`. Build `1093339877`
+  completed at `2851759`; live HTTP verification confirms GH-32's 685-case and
+  four-validator update, recovery/non-production warning, and 21M cap.
 - Canonical `client-web` now has dedicated GitHub install/lint/test/build/audit
   gates; legacy client audits remain informational during migration.
 - PR #9 GitHub checks are all green: Go CI, Rust CI, Client Web CI,
