@@ -1,17 +1,16 @@
 # Project State
 
-Updated: 2026-07-14 02:05 EEST
+Updated: 2026-07-14 04:03 EEST
 
 ## Repository
 
 - GitHub: `NeaBouli/TrueRepublic`
-- Baseline: `origin/main` at `7255264` after the rollout-roadmap handoff merge.
+- Baseline: `origin/main` at `9d68a6f` after the GH-32 recovery-harness merge.
 - Merged recovery PRs: #9, #15, #16, #17, #18, #19, #22, #23, #24, #27,
-  #28, #30, and #31.
-- Current work: GH-29 is reopened as the rollout execution tracker. GH-32 on
-  `feature/GH-32-multi-validator-harness` implements the first Phase 1 gate;
-  PR #33's initial GitHub matrix is green and review remediation is locally
-  verified before final-head publication.
+  #28, #30, #31, and #33.
+- Current work: GH-29 remains open as the rollout execution tracker. GH-32 and
+  PR #33 close its first Phase 1 gate with local and GitHub evidence; remaining
+  network/disaster-recovery gates stay open.
 - Active recovery checkout:
   `/Users/gio/Documents/Codex/2026-07-11/erkunden/TrueRepublic-gh20`
 - GH-26 branch: `fix/GH-26-pod-init-script`
@@ -36,7 +35,7 @@ Updated: 2026-07-14 02:05 EEST
   maintained-client tests. Four focused legacy-web ZKP regressions pass
   separately and are not included in that authoritative total. The prior 577
   figure is retained only as historical.
-- GH-32 branch count is 685: 651 Go, 26 Rust, and eight maintained-client
+- Current `main` count is 685: 651 Go, 26 Rust, and eight maintained-client
   tests. The separately gated four-validator process harness also passes three
   times locally and is not added again to that arithmetic total. The latest
   hardened run requires new post-rejoin blocks and passed in 68.90 seconds.
@@ -60,10 +59,9 @@ Updated: 2026-07-14 02:05 EEST
   3 critical); not approved for keys or funds.
 - Public README, status JSON, limitations, and GitHub Pages source now display
   an active recovery warning and link to GH-4.
-- Public GitHub Pages is configured from `main:/docs`; the latest verified
-  build at `7255264` exposes the recovery/non-production warning, 21M cap,
-  684-test baseline, and Road to Rollout. GH-32's 685-case/four-validator
-  update is not live until its reviewed merge.
+- Public GitHub Pages is configured from `main:/docs`; GH-32's 685-case and
+  four-validator update is merged at `9d68a6f` and is awaiting final live-build
+  verification. The recovery/non-production warning and 21M cap remain intact.
 - Canonical `client-web` now has dedicated GitHub install/lint/test/build/audit
   gates; legacy client audits remain informational during migration.
 - PR #9 GitHub checks are all green: Go CI, Rust CI, Client Web CI,

@@ -47,8 +47,9 @@
   operations review before public-network approval.
 - [x] GH-32: build and locally verify the four-validator bank-backed PoD
   consensus/failure/restart/catch-up/export harness.
-- [ ] GH-32: publish the implementation, obtain green Go multi-validator,
-  Docker, docs, static-analysis, and security gates, then merge and close.
+- [x] GH-32: publish the implementation, obtain green Go multi-validator,
+  Docker, docs, static-analysis, and security gates, then merge and close via
+  PR #33 / merge `9d68a6f`.
 - [x] GH-7: DEX rounding, slippage, pool accounting, custody, and authorization
   audit completed in GH-10; GH-12 retains genesis/runtime invariants.
 

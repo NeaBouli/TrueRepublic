@@ -3,8 +3,8 @@
 
 ## Summary
 
-GH-32 is conditionally ready to publish for its bounded local four-validator
-scope. It generates independent private-validator homes, shares public
+GH-32 is merged and verified for its bounded four-validator localhost scope.
+It generates independent private-validator homes, shares public
 identities only, creates matching CometBFT and exactly bank-backed PoD genesis,
 and proves quorum continuation plus deterministic catch-up and app-hash
 agreement at a newly committed post-rejoin height after one-validator failure.
@@ -13,6 +13,11 @@ CometBFT defaults are not weakened. The largest remaining risk is scope:
 partitions, state sync,
 validator-set changes, backup/restore, upgrades, IBC, load, topology, and
 independent operations review are not proven by this ticket.
+
+Final evidence: PR #33 merged as `9d68a6f` after the complete GitHub matrix
+passed and all four review threads were resolved. The initial final-head
+infrastructure failures occurred before action download (`Service Unavailable`)
+and passed on failed-job rerun without code changes.
 
 ## Findings by domain
 

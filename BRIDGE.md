@@ -496,24 +496,25 @@ release-process blockers remain prominent and unchanged.
 
 ---
 
-## 2026-07-14 02:05 EEST GH-32 multi-validator recovery → Review
+## 2026-07-14 04:03 EEST GH-32 multi-validator recovery → Done
 
-- **Branch:** `feature/GH-32-multi-validator-harness`
-- **Issue:** [GH-32](https://github.com/NeaBouli/TrueRepublic/issues/32), child
-  of reopened rollout tracker [GH-29](https://github.com/NeaBouli/TrueRepublic/issues/29)
+- **Branch:** `main` at `9d68a6f`
+- **Issue:** [GH-32](https://github.com/NeaBouli/TrueRepublic/issues/32), closed;
+  child of open rollout tracker [GH-29](https://github.com/NeaBouli/TrueRepublic/issues/29)
+- **PR:** [#33](https://github.com/NeaBouli/TrueRepublic/pull/33), squash merged
 - **Changed:** added internal public-key-only multi-validator genesis assembly;
   four independent validator homes; consensus, failure, restart/catch-up,
   common-height app-hash, clean shutdown, export, and ledger checks; dedicated
   CI job; operator runbook; synchronized public recovery status
 - **Tests:** genesis/binder regressions → PASS; full normal Go suite → 651 PASS;
   separately gated four-validator harness → PASS three times locally, latest
-  hardened run 68.90s; initial PR #33 GitHub matrix → PASS;
+  hardened run 68.90s; final PR #33 GitHub matrix → PASS;
   full Go race/coverage (root 64.9%), build, vet, docs consistency, workflow
   YAML, JSON, and diff checks → PASS
 - **Risk:** High — consensus identity, PoD/bank genesis parity, quorum recovery,
   persistent state, and CI process cleanup
-- **Ready for:** publish review remediation, refreshed GitHub gates, zero-thread
-  review audit, merge, Issue/Bridge closure, and Pages proof
+- **Next:** continue the remaining GH-29 Phase 1 network/disaster-recovery gates;
+  this bounded result is not production or public-network approval
 
 ### Lead Dev notes
 
@@ -529,9 +530,11 @@ This closes only the bounded four-validator Phase 1 checklist item.
 
 ### Codex review feedback
 
-Three findings were accepted and locally verified. The proposed
+Three findings were accepted and locally/GitHub verified. The proposed
 `actions/checkout@v7` change was rejected because no official v7 release
 exists; the job remains aligned with the repository's existing v5 baseline.
-Final-head GitHub verification is pending.
+Four review threads are resolved. GitHub's first final-head attempt returned
+`Service Unavailable` before action download for four jobs; failed-job reruns
+then passed without code changes. PR #33 merged as `9d68a6f` and closed GH-32.
 
 ---
