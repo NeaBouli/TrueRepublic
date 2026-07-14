@@ -1,13 +1,15 @@
 # Project State
 
-Updated: 2026-07-14 04:16 EEST
+Updated: 2026-07-14 05:09 EEST
 
 ## Repository
 
 - GitHub: `NeaBouli/TrueRepublic`
-- Baseline: `origin/main` at `2851759` after the GH-32 bridge-closure merge.
+- Baseline: canonical `origin/main`; exact implementation and evidence commits
+  are recorded in `ACTION_LOG.md` so this live state does not self-expire after
+  documentation-only merges.
 - Merged recovery PRs: #9, #15, #16, #17, #18, #19, #22, #23, #24, #27,
-  #28, #30, #31, #33, and #34.
+  #28, #30, #31, #33, #34, and #35.
 - Current work: GH-29 remains open as the rollout execution tracker. GH-32 and
   PR #33 close its first Phase 1 gate with local and GitHub evidence; remaining
   network/disaster-recovery gates stay open.
@@ -31,7 +33,7 @@ Updated: 2026-07-14 04:16 EEST
   vulnerabilities after upgrades.
 - GH-14 local v0.4 client: `npm ci`, lint, six regression tests, production build, and
   `npm audit` all PASS. Main bundle is 1.68 MB before gzip (performance warning).
-- Current `main` test count is 684: 650 Go, 26 Rust, and eight
+- The pre-GH-32 `main` baseline was 684: 650 Go, 26 Rust, and eight
   maintained-client tests. Four focused legacy-web ZKP regressions pass
   separately and are not included in that authoritative total. The prior 577
   figure is retained only as historical.
@@ -59,8 +61,8 @@ Updated: 2026-07-14 04:16 EEST
   3 critical); not approved for keys or funds.
 - Public README, status JSON, limitations, and GitHub Pages source now display
   an active recovery warning and link to GH-4.
-- Public GitHub Pages is configured from `main:/docs`. Build `1093339877`
-  completed at `2851759`; live HTTP verification confirms GH-32's 685-case and
+- Public GitHub Pages is configured from `main:/docs`. The latest verified live
+  build after the GH-32 evidence closure confirms the 685-case and
   four-validator update, recovery/non-production warning, and 21M cap.
 - Canonical `client-web` now has dedicated GitHub install/lint/test/build/audit
   gates; legacy client audits remain informational during migration.
