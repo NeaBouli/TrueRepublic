@@ -39,11 +39,12 @@ Updated: 2026-07-15 13:20 EEST
   maintained-client tests. Four focused legacy-web ZKP regressions pass
   separately and are not included in that authoritative total. The prior 577
   figure is retained only as historical.
-- Current `main` count is 685: 651 Go, 26 Rust, and eight maintained-client
-  tests. The separately gated four-validator process harness also passes three
-  times locally and is not added again to that arithmetic total. The latest
-  hardened run requires new post-rejoin blocks and passed in 68.90 seconds.
-  Full Go race/coverage passes with root/application coverage at 64.9%.
+- Current `main` count is 689: 655 Go, 26 Rust, and eight maintained-client
+  tests. The separately gated four-validator and six-node validator lifecycle
+  process harnesses are not added again to that arithmetic total. The latest
+  hardened four-validator run requires new post-rejoin blocks and passed in
+  68.90 seconds. Full Go race/coverage passes with root/application coverage at
+  65.9% on PR #40.
 - GH-32 uses four independently generated CometBFT Ed25519 keys, one identical
   bank-backed PoD genesis, explicit localhost persistent peers, common-height
   app-hash checks, one-validator failure with continued quorum, restart/catch-up,
@@ -70,9 +71,9 @@ Updated: 2026-07-15 13:20 EEST
   3 critical); not approved for keys or funds.
 - Public README, status JSON, limitations, and GitHub Pages source now display
   an active recovery warning and link to GH-4.
-- Public GitHub Pages is configured from `main:/docs`. The latest verified live
-  build after the GH-32 evidence closure confirms the 685-case and
-  four-validator update, recovery/non-production warning, and 21M cap.
+- Public GitHub Pages is configured from `main:/docs`. The latest source update
+  records the 689-case and validator-lifecycle evidence, recovery/non-production
+  warning, and 21M cap.
 - Canonical `client-web` now has dedicated GitHub install/lint/test/build/audit
   gates; legacy client audits remain informational during migration.
 - PR #9 GitHub checks are all green: Go CI, Rust CI, Client Web CI,

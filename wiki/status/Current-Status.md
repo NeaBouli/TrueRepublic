@@ -16,7 +16,7 @@
 - Persistent Cosmos/Comet lifecycle with generated-key, bank-backed PoD
   genesis, native/Docker restart evidence, and a bounded four-validator
   failure/restart/catch-up harness.
-- 685 recovery-verified tests: 651 Go, 26 Rust, and 8 maintained-client.
+- 689 recovery-verified tests: 655 Go, 26 Rust, and 8 maintained-client.
 
 ## Recovery sequence
 

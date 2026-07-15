@@ -6,7 +6,7 @@ and summarized in [Testing Status](../status/Testing-Status).
 
 ## Recovery suites
 
-- Go: 651 passing cases across root/application, token, treasury, DEX, and
+- Go: 655 passing cases across root/application, token, treasury, DEX, and
   governance packages.
 - Rust/CosmWasm: 26 passing cases.
 - Maintained `client-web`: 8 passing cases plus lint, build, and audit.
