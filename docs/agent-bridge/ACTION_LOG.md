@@ -1,6 +1,6 @@
 # Action Log
 
-## 2026-07-15 23:08 EEST - GH-39 validator lifecycle evidence
+## 2026-07-15 13:20 EEST - GH-39 validator lifecycle evidence
 
 - Continued `feature/GH-39-validator-lifecycle` from the active rollout goal.
 - Fixed Cosmos SDK v0.50 custom signer resolution for hand-written
@@ -24,6 +24,11 @@
 - Remaining boundary: public validator leave is still economically coupled to
   full stake withdrawal, so process-level join/replacement evidence is paired
   with Keeper/ABCI power-zero tombstone regression coverage for leave.
+- Published [PR #40](https://github.com/NeaBouli/TrueRepublic/pull/40), waited
+  for green GitHub checks (`build-and-test`, `multi-validator-recovery`,
+  `docker-restart-smoke`, docs consistency, CodeRabbit, DeepScan, Go/Rust
+  security scans, and Node audits), and merged it to `main` as
+  `ad30d188c7956c28cff5bf53304bc04848ba569a`.
 
 ## 2026-07-11 11:50 EEST - Recovery initialization
 

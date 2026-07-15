@@ -1,6 +1,6 @@
 # Project State
 
-Updated: 2026-07-15 23:08 EEST
+Updated: 2026-07-15 13:20 EEST
 
 ## Repository
 
@@ -9,12 +9,12 @@ Updated: 2026-07-15 23:08 EEST
   are recorded in `ACTION_LOG.md` so this live state does not self-expire after
   documentation-only merges.
 - Merged recovery PRs: #9, #15, #16, #17, #18, #19, #22, #23, #24, #27,
-  #28, #30, #31, #33, #34, and #35.
+  #28, #30, #31, #33, #34, #35, and #40.
 - Current work: GH-29 remains open as the rollout execution tracker. GH-32 and
-  PR #33 close its first Phase 1 gate with local and GitHub evidence. GH-39 now
-  has local validator join/replacement/restart-catch-up evidence and leave
-  power-zero Keeper/ABCI coverage on branch `feature/GH-39-validator-lifecycle`;
-  GitHub PR/check/merge evidence is pending.
+  PR #33 close its first Phase 1 gate with local and GitHub evidence. GH-39 is
+  now merged via PR #40 with green GitHub CI for validator
+  join/replacement/restart-catch-up evidence plus Keeper/ABCI power-zero leave
+  coverage.
 - Active recovery checkout:
   `/Users/gio/Documents/Codex/2026-07-11/erkunden/TrueRepublic-gh20`
 - GH-26 branch: `fix/GH-26-pod-init-script`
@@ -52,11 +52,13 @@ Updated: 2026-07-15 23:08 EEST
   timed-out test cannot orphan network work.
   Localhost address-book relaxation and duplicate-IP allowance are confined to
   temporary test configuration; production defaults are unchanged.
-- GH-39 branch evidence adds custom SDK v0.50 signer resolution for hand-written
+- GH-39 merged evidence adds custom SDK v0.50 signer resolution for hand-written
   truedemocracy Msgs, shares the configured InterfaceRegistry with BaseApp and
   tx/event paths, verifies delivered tx results through CometBFT RPC, and passes
   a gated six-node join/replacement lifecycle smoke in 117.638 seconds. Full
-  `go test ./...` passes locally on the branch.
+  `go test ./...` passes locally, and PR #40 GitHub checks are green:
+  `build-and-test`, `multi-validator-recovery`, `docker-restart-smoke`, docs
+  consistency, CodeRabbit, DeepScan, Go/Rust security scans, and Node audits.
 - GH-13 local Go 1.26.5: build, vet, normal tests, race tests, and coverage PASS.
   Coverage: root 10.2%, token 93.5%, treasury 97.0%, DEX 34.2%, governance 55.8%.
 - Go vulnerability gate: no reachable finding with an available fix remains;

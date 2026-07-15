@@ -20,9 +20,11 @@ Canonical coordination lives in [`docs/agent-bridge/`](docs/agent-bridge/README.
 
 GitHub recovery epic: [#4](https://github.com/NeaBouli/TrueRepublic/issues/4)
 
-## 2026-07-15 23:08 EEST GH-39 validator lifecycle evidence → Review
+## 2026-07-15 13:20 EEST GH-39 validator lifecycle evidence → Done
 
-- **Branch:** `feature/GH-39-validator-lifecycle`
+- **Branch/PR:** `feature/GH-39-validator-lifecycle`,
+  [PR #40](https://github.com/NeaBouli/TrueRepublic/pull/40), merged to
+  `main` as `ad30d188c7956c28cff5bf53304bc04848ba569a`
 - **Issues:** [GH-39](https://github.com/NeaBouli/TrueRepublic/issues/39),
   parent tracker [GH-29](https://github.com/NeaBouli/TrueRepublic/issues/29)
 - **Changed:** fixed validator-removal ABCI evidence by retaining one-shot
@@ -32,14 +34,18 @@ GitHub recovery epic: [#4](https://github.com/NeaBouli/TrueRepublic/issues/4)
   join, replacement, full-node catch-up, and restart-safe validator-set
   convergence; hardened the smoke harness to verify delivered tx results via
   CometBFT RPC.
-- **Evidence:** `TRUEREPUBLIC_MULTI_VALIDATOR_SMOKE=1 go test . -run
+- **Evidence:** GitHub checks for PR #40 are green: `build-and-test`,
+  `multi-validator-recovery`, `docker-restart-smoke`, docs consistency,
+  CodeRabbit, DeepScan, Go/Rust security scans, and maintained/legacy Node
+  audits. Local evidence: `TRUEREPUBLIC_MULTI_VALIDATOR_SMOKE=1 go test . -run
   TestMultiValidatorJoinReplacementLifecycle -count=1 -timeout=300s` → PASS
   (`117.638s`); `go test ./...` → PASS; focused validator removal/update and
   tx round-trip tests → PASS.
 - **Boundary:** public validator leave/removal remains constrained by existing
   stake-withdrawal economics, so process-level join/replacement/restart evidence
   is paired with Keeper/ABCI power-zero regression coverage for leave.
-- **Ready for:** push, PR, GitHub CI, review, merge, then GH-29/GH-39 closure.
+- **Closed:** GH-39 evidence is merged; GH-29 remains open as the parent
+  rollout tracker.
 
 ### Codex review feedback
 
