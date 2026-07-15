@@ -123,3 +123,15 @@
   CometBFT defaults remain strict.
 - Four-validator failure/restart/catch-up and app-hash agreement close one
   Phase 1 checklist item, not multi-node or public-network readiness.
+
+## 2026-07-15 - Codex subagent role split
+
+- The primary Codex agent remains responsible for architecture, security/risk
+  decisions, final verification, Bridge updates, GitHub issues, PRs, merges, and
+  public status claims.
+- Project-scoped `.codex` configuration defines `spark_worker` as a narrow
+  `gpt-5.3-codex-spark` worker for small bounded patches, file search, and
+  focused checks.
+- Subagent recursion stays capped at one level (`agents.max_depth = 1`) and
+  concurrency at six open threads (`agents.max_threads = 6`) to keep token use
+  predictable while allowing targeted parallel help.

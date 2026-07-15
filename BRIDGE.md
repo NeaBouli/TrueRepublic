@@ -541,3 +541,33 @@ Bridge closure PR #34 merged as `2851759`; Pages is live from `main:/docs` with
 the 685-case count and bounded four-validator evidence.
 
 ---
+
+## 2026-07-15 20:10 EEST GH-37 Codex subagent role configuration -> Review
+
+- **Branch:** `chore/GH-37-codex-agent-roles`
+- **Issue:** [GH-37](https://github.com/NeaBouli/TrueRepublic/issues/37)
+- **Changed:**
+  - `.codex/config.toml` - project subagent concurrency and depth limits
+  - `.codex/agents/spark-worker.toml` - narrow Spark worker role
+  - `docs/agent-bridge/COOPERATION_RULES.md` - Sol/main and Spark role split
+  - `docs/agent-bridge/DECISIONS.md` - durable delegation decision
+  - `docs/agent-bridge/ACTION_LOG.md` - task progress log
+  - `docs/agent-bridge/TODO.md` - GH-37 queue entry
+- **Tests:** `python3`/`tomllib` parse for both `.codex` TOML files -> PASS;
+  `git diff --check` -> PASS; `bash scripts/check-consistency.sh` -> PASS
+- **Risk:** Low - workflow configuration and documentation only; no runtime,
+  consensus, wallet, or public status behavior changes
+- **Ready for:** PR and merge
+
+### Lead Dev notes
+
+The main agent remains responsible for architecture, security/risk judgment,
+final verification, GitHub issue/PR state, merges, pushes, and Bridge updates.
+`spark_worker` is intentionally limited to small delegated patches, file search,
+and focused checks, then reports back to the main agent.
+
+### Codex review feedback
+
+Local verification passes. No runtime or public status behavior is affected.
+
+---

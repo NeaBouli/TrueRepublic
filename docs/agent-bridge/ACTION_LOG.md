@@ -497,3 +497,16 @@
 - GitHub Pages build `1093339877` completed from `main:/docs` at exact commit
   `2851759`. Live HTTP verification confirms the recovery/non-production
   warning, 21M cap, 685 verified cases, and four-validator recovery evidence.
+
+## 2026-07-15 20:10 EEST - GH-37 Codex subagent role configuration
+
+- Opened GH-37 to track the project-scoped Codex agent role split.
+- Added `.codex/config.toml` with one-level subagent nesting and a six-thread
+  cap for predictable delegation.
+- Added `.codex/agents/spark-worker.toml` as a narrow
+  `gpt-5.3-codex-spark` worker for small bounded patches, file search, and
+  focused checks.
+- Documented that the main Codex agent keeps architecture, risk, integration,
+  final verification, GitHub updates, merges, and Bridge responsibility.
+- Verified both `.codex` TOML files parse with Python `tomllib`; `git diff
+  --check` and `bash scripts/check-consistency.sh` pass.
