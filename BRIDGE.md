@@ -542,10 +542,11 @@ the 685-case count and bounded four-validator evidence.
 
 ---
 
-## 2026-07-15 20:10 EEST GH-37 Codex subagent role configuration -> Review
+## 2026-07-15 20:10 EEST GH-37 Codex subagent role configuration -> Done
 
 - **Branch:** `chore/GH-37-codex-agent-roles`
 - **Issue:** [GH-37](https://github.com/NeaBouli/TrueRepublic/issues/37)
+- **PR:** [#38](https://github.com/NeaBouli/TrueRepublic/pull/38)
 - **Changed:**
   - `.codex/config.toml` - project subagent concurrency and depth limits
   - `.codex/agents/spark-worker.toml` - narrow Spark worker role
@@ -554,10 +555,11 @@ the 685-case count and bounded four-validator evidence.
   - `docs/agent-bridge/ACTION_LOG.md` - task progress log
   - `docs/agent-bridge/TODO.md` - GH-37 queue entry
 - **Tests:** `python3`/`tomllib` parse for both `.codex` TOML files -> PASS;
-  `git diff --check` -> PASS; `bash scripts/check-consistency.sh` -> PASS
+  `git diff --check` -> PASS; `bash scripts/check-consistency.sh` -> PASS;
+  GitHub Docs Consistency, Security Scan, and DeepScan -> PASS
 - **Risk:** Low - workflow configuration and documentation only; no runtime,
   consensus, wallet, or public status behavior changes
-- **Ready for:** PR and merge
+- **Ready for:** merged workflow baseline
 
 ### Lead Dev notes
 
@@ -568,6 +570,9 @@ and focused checks, then reports back to the main agent.
 
 ### Codex review feedback
 
-Local verification passes. No runtime or public status behavior is affected.
+Local and GitHub verification pass. CodeRabbit remained pending without
+comments at merge time; branch protection has no required status checks and the
+change is workflow/documentation-only. No runtime or public status behavior is
+affected.
 
 ---

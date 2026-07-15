@@ -510,3 +510,6 @@
   final verification, GitHub updates, merges, and Bridge responsibility.
 - Verified both `.codex` TOML files parse with Python `tomllib`; `git diff
   --check` and `bash scripts/check-consistency.sh` pass.
+- PR #38 opened for GH-37. GitHub Docs Consistency, Security Scan, and DeepScan
+  pass; CodeRabbit remained pending without comments during the final merge
+  decision.
