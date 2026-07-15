@@ -1,6 +1,7 @@
 package truedemocracy
 
 import (
+	"bytes"
 	"testing"
 	"time"
 
@@ -9,6 +10,7 @@ import (
 	"cosmossdk.io/store"
 	"cosmossdk.io/store/metrics"
 	storetypes "cosmossdk.io/store/types"
+	abci "github.com/cometbft/cometbft/abci/types"
 	cmtproto "github.com/cometbft/cometbft/proto/tendermint/types"
 	dbm "github.com/cosmos/cosmos-db"
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -325,6 +327,73 @@ func TestBuildValidatorUpdates(t *testing.T) {
 			t.Errorf("jailed validator power = %d, want 0", updates[0].Power)
 		}
 	})
+}
+
+func TestValidatorJoinLeaveReplacementUpdates(t *testing.T) {
+	k, ctx := setupKeeper(t)
+	k.CreateDomain(ctx, "Lifecycle", sdk.AccAddress("admin1"), sdk.NewCoins(sdk.NewInt64Coin(PNYXDenom, 500_000*PNYXUnit)))
+
+	registerVal(t, k, ctx, "Lifecycle", "validator-1", "lifecycle-validator-1", 100_000*PNYXUnit)
+	validator1, found := k.GetValidator(ctx, "validator-1")
+	if !found {
+		t.Fatal("validator-1 not registered")
+	}
+	assertValidatorUpdatePower(t, k.BuildValidatorUpdates(ctx), validator1.PubKey, 1)
+
+	registerVal(t, k, ctx, "Lifecycle", "validator-2", "lifecycle-validator-2", 100_000*PNYXUnit)
+	validator2, found := k.GetValidator(ctx, "validator-2")
+	if !found {
+		t.Fatal("validator-2 not registered")
+	}
+	joinUpdates := k.BuildValidatorUpdates(ctx)
+	assertValidatorUpdatePower(t, joinUpdates, validator1.PubKey, 1)
+	assertValidatorUpdatePower(t, joinUpdates, validator2.PubKey, 1)
+
+	if err := k.RemoveValidator(ctx, "validator-1"); err != nil {
+		t.Fatalf("remove validator-1: %v", err)
+	}
+	leaveUpdates := k.BuildValidatorUpdates(ctx)
+	assertValidatorUpdatePower(t, leaveUpdates, validator1.PubKey, 0)
+	assertValidatorUpdatePower(t, leaveUpdates, validator2.PubKey, 1)
+	if _, found := k.GetValidatorByPubKey(ctx, validator1.PubKey); found {
+		t.Fatal("removed validator pubkey index remained")
+	}
+
+	replayedUpdates := k.BuildValidatorUpdates(ctx)
+	assertNoValidatorUpdate(t, replayedUpdates, validator1.PubKey)
+	assertValidatorUpdatePower(t, replayedUpdates, validator2.PubKey, 1)
+
+	registerVal(t, k, ctx, "Lifecycle", "validator-3", "lifecycle-validator-3", 100_000*PNYXUnit)
+	replacement, found := k.GetValidator(ctx, "validator-3")
+	if !found {
+		t.Fatal("replacement validator not registered")
+	}
+	replacementUpdates := k.BuildValidatorUpdates(ctx)
+	assertNoValidatorUpdate(t, replacementUpdates, validator1.PubKey)
+	assertValidatorUpdatePower(t, replacementUpdates, validator2.PubKey, 1)
+	assertValidatorUpdatePower(t, replacementUpdates, replacement.PubKey, 1)
+}
+
+func assertValidatorUpdatePower(t *testing.T, updates []abci.ValidatorUpdate, pubKey []byte, power int64) {
+	t.Helper()
+	for _, update := range updates {
+		if bytes.Equal(update.PubKey.GetEd25519(), pubKey) {
+			if update.Power != power {
+				t.Fatalf("validator update power = %d, want %d", update.Power, power)
+			}
+			return
+		}
+	}
+	t.Fatalf("validator update for pubkey %x not found", pubKey)
+}
+
+func assertNoValidatorUpdate(t *testing.T, updates []abci.ValidatorUpdate, pubKey []byte) {
+	t.Helper()
+	for _, update := range updates {
+		if bytes.Equal(update.PubKey.GetEd25519(), pubKey) {
+			t.Fatalf("unexpected validator update for pubkey %x with power %d", pubKey, update.Power)
+		}
+	}
 }
 
 // ---------- PoD Transfer Limit (WP §7) ----------

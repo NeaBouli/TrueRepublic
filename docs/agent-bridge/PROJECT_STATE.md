@@ -1,6 +1,6 @@
 # Project State
 
-Updated: 2026-07-14 05:09 EEST
+Updated: 2026-07-15 23:08 EEST
 
 ## Repository
 
@@ -11,8 +11,10 @@ Updated: 2026-07-14 05:09 EEST
 - Merged recovery PRs: #9, #15, #16, #17, #18, #19, #22, #23, #24, #27,
   #28, #30, #31, #33, #34, and #35.
 - Current work: GH-29 remains open as the rollout execution tracker. GH-32 and
-  PR #33 close its first Phase 1 gate with local and GitHub evidence; remaining
-  network/disaster-recovery gates stay open.
+  PR #33 close its first Phase 1 gate with local and GitHub evidence. GH-39 now
+  has local validator join/replacement/restart-catch-up evidence and leave
+  power-zero Keeper/ABCI coverage on branch `feature/GH-39-validator-lifecycle`;
+  GitHub PR/check/merge evidence is pending.
 - Active recovery checkout:
   `/Users/gio/Documents/Codex/2026-07-11/erkunden/TrueRepublic-gh20`
 - GH-26 branch: `fix/GH-26-pod-init-script`
@@ -50,6 +52,11 @@ Updated: 2026-07-14 05:09 EEST
   timed-out test cannot orphan network work.
   Localhost address-book relaxation and duplicate-IP allowance are confined to
   temporary test configuration; production defaults are unchanged.
+- GH-39 branch evidence adds custom SDK v0.50 signer resolution for hand-written
+  truedemocracy Msgs, shares the configured InterfaceRegistry with BaseApp and
+  tx/event paths, verifies delivered tx results through CometBFT RPC, and passes
+  a gated six-node join/replacement lifecycle smoke in 117.638 seconds. Full
+  `go test ./...` passes locally on the branch.
 - GH-13 local Go 1.26.5: build, vet, normal tests, race tests, and coverage PASS.
   Coverage: root 10.2%, token 93.5%, treasury 97.0%, DEX 34.2%, governance 55.8%.
 - Go vulnerability gate: no reachable finding with an available fix remains;

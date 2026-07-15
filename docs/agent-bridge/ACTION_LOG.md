@@ -1,5 +1,30 @@
 # Action Log
 
+## 2026-07-15 23:08 EEST - GH-39 validator lifecycle evidence
+
+- Continued `feature/GH-39-validator-lifecycle` from the active rollout goal.
+- Fixed Cosmos SDK v0.50 custom signer resolution for hand-written
+  truedemocracy Msgs, including dynamic protobuf messages used during tx decode.
+- Replaced the partial BaseApp router-only registry setup with
+  `SetInterfaceRegistry` so tx decoding, event generation, gRPC, and message
+  routing share the same address codecs and custom signer functions.
+- Added delivered-transaction verification to the process harness using
+  CometBFT `/tx` RPC, preventing `broadcast-mode sync` from hiding DeliverTx
+  failures.
+- Fixed process-harness account-number handling for offline signing and added
+  explicit RPC/catch-up waits before replacement validator tx submission.
+- Proved validator join/replacement with a gated six-node process harness:
+  `TRUEREPUBLIC_MULTI_VALIDATOR_SMOKE=1 go test . -run
+  TestMultiValidatorJoinReplacementLifecycle -count=1 -timeout=300s` PASS in
+  117.638s.
+- Re-ran focused validator lifecycle tests and full repository tests:
+  `go test ./x/truedemocracy -run
+  'TestValidatorJoinLeaveReplacementUpdates|TestBuildValidatorUpdates|TestRemoveValidator'
+  -count=1` PASS; targeted root lifecycle/tx tests PASS; `go test ./...` PASS.
+- Remaining boundary: public validator leave is still economically coupled to
+  full stake withdrawal, so process-level join/replacement evidence is paired
+  with Keeper/ABCI power-zero tombstone regression coverage for leave.
+
 ## 2026-07-11 11:50 EEST - Recovery initialization
 
 - Created GitHub recovery epic #4.
