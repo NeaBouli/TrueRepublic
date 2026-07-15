@@ -1,6 +1,6 @@
 # TrueRepublic Road to Rollout
 
-Updated: 2026-07-13
+Updated: 2026-07-15
 
 TrueRepublic has a recovered and CI-verified v0.4 engineering foundation. It
 is **not production-ready, mainnet-ready, or approved for real funds or keys**.
@@ -28,7 +28,9 @@ approval.
 
 - [x] Build a reproducible four-validator consensus and recovery harness
   ([GH-32](https://github.com/NeaBouli/TrueRepublic/issues/32)).
-- [ ] Verify validator join, leave, restart, and replacement procedures.
+- [x] Verify validator join, replacement, restart/catch-up, and leave
+  power-zero evidence
+  ([GH-39](https://github.com/NeaBouli/TrueRepublic/issues/39)).
 - [ ] Exercise network partitions, delayed peers, validator failure, and
   recovery without ledger divergence.
 - [ ] Verify state sync and catch-up from a trusted snapshot.

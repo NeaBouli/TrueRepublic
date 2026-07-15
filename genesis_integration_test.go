@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"encoding/json"
 	"testing"
 	"time"
@@ -12,10 +13,12 @@ import (
 	cmtproto "github.com/cometbft/cometbft/proto/tendermint/types"
 	cmttypes "github.com/cometbft/cometbft/types"
 	dbm "github.com/cosmos/cosmos-db"
+	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	"github.com/cosmos/cosmos-sdk/crypto/keys/ed25519"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
+	genutiltypes "github.com/cosmos/cosmos-sdk/x/genutil/types"
 
 	"truerepublic/token"
 	"truerepublic/x/dex"
@@ -132,6 +135,138 @@ func TestEmptyAppGenesisRequiresConsensusValidatorKey(t *testing.T) {
 	}
 	if _, err := app.InitChain(&abci.RequestInitChain{AppStateBytes: bz}); err == nil {
 		t.Fatal("empty app genesis accepted without a real consensus validator key")
+	}
+}
+
+func TestCreateDomainTxHandlerEscrowsToModuleAccount(t *testing.T) {
+	app := newGenesisTestApp(t)
+	appState, err := json.Marshal(defaultGenesisForApp(app))
+	if err != nil {
+		t.Fatal(err)
+	}
+	genesis := &genutiltypes.AppGenesis{
+		ChainID:   "create-domain-handler-test",
+		AppState:  appState,
+		Consensus: &genutiltypes.ConsensusGenesis{},
+	}
+	validatorPubKey := ed25519.GenPrivKeyFromSecret([]byte("create-domain-handler-validator")).PubKey().Bytes()
+	if err := configureGenesisValidatorSet(genesis, []genesisValidatorIdentity{{
+		Name:   "validator-1",
+		PubKey: validatorPubKey,
+	}}); err != nil {
+		t.Fatalf("configure validator set: %v", err)
+	}
+	var state map[string]json.RawMessage
+	if err := json.Unmarshal(genesis.AppState, &state); err != nil {
+		t.Fatal(err)
+	}
+	admin := sdk.AccAddress(bytes.Repeat([]byte{7}, 20))
+	addSmokeAccountsToGenesis(t, app, state, []smokeAccount{{
+		name:    "admin",
+		address: admin.String(),
+		balance: 1_000_000 * token.WholeTokenBaseUnits,
+	}})
+	if err := initGenesisApp(app, state); err != nil {
+		t.Fatalf("init genesis: %v", err)
+	}
+	ctx := app.NewContext(false)
+	srv := truedemocracy.NewMsgServer(app.tdKeeper)
+	initial := sdk.NewCoins(token.NewCoin(math.NewInt(500_000 * token.WholeTokenBaseUnits)))
+	if _, err := srv.CreateDomain(ctx, &truedemocracy.MsgCreateDomain{
+		Name:         "Lifecycle",
+		Admin:        admin,
+		InitialCoins: initial,
+	}); err != nil {
+		t.Fatalf("create domain: %v", err)
+	}
+	if _, found := app.tdKeeper.GetDomain(ctx, "Lifecycle"); !found {
+		t.Fatal("created domain not found")
+	}
+	moduleBalance := app.bankKeeper.GetAllBalances(ctx, authtypes.NewModuleAddress(truedemocracy.ModuleName))
+	if !moduleBalance.IsAllGTE(initial) {
+		t.Fatalf("module escrow balance = %s, want at least %s", moduleBalance, initial)
+	}
+}
+
+func TestAuthAccountQueryPacksFundedGenesisAccount(t *testing.T) {
+	app := newGenesisTestApp(t)
+	appState, err := json.Marshal(defaultGenesisForApp(app))
+	if err != nil {
+		t.Fatal(err)
+	}
+	genesis := &genutiltypes.AppGenesis{
+		ChainID:   "auth-account-query-test",
+		AppState:  appState,
+		Consensus: &genutiltypes.ConsensusGenesis{},
+	}
+	validatorPubKey := ed25519.GenPrivKeyFromSecret([]byte("auth-account-query-validator")).PubKey().Bytes()
+	if err := configureGenesisValidatorSet(genesis, []genesisValidatorIdentity{{
+		Name:   "validator-1",
+		PubKey: validatorPubKey,
+	}}); err != nil {
+		t.Fatalf("configure validator set: %v", err)
+	}
+	var state map[string]json.RawMessage
+	if err := json.Unmarshal(genesis.AppState, &state); err != nil {
+		t.Fatal(err)
+	}
+	admin := sdk.AccAddress(bytes.Repeat([]byte{9}, 20))
+	addSmokeAccountsToGenesis(t, app, state, []smokeAccount{{
+		name:    "admin",
+		address: admin.String(),
+		balance: 1_000_000 * token.WholeTokenBaseUnits,
+	}})
+	if err := initGenesisApp(app, state); err != nil {
+		t.Fatalf("init genesis: %v", err)
+	}
+	ctx := app.NewContext(false)
+	account := app.accountKeeper.GetAccount(ctx, admin)
+	if account == nil {
+		t.Fatal("funded genesis account missing from account keeper")
+	}
+	any, err := codectypes.NewAnyWithValue(account)
+	if err != nil {
+		t.Fatalf("pack account any: %v", err)
+	}
+	var unpacked sdk.AccountI
+	if err := app.appCodec.InterfaceRegistry().UnpackAny(any, &unpacked); err != nil {
+		t.Fatalf("unpack account any: %v", err)
+	}
+	if !unpacked.GetAddress().Equals(admin) {
+		t.Fatalf("unpacked address = %s, want %s", unpacked.GetAddress(), admin)
+	}
+}
+
+func TestCreateDomainMsgSurvivesTxBinaryRoundTrip(t *testing.T) {
+	app := newGenesisTestApp(t)
+	admin := sdk.AccAddress(bytes.Repeat([]byte{8}, 20))
+	initial := sdk.NewCoins(token.NewCoin(math.NewInt(500_000 * token.WholeTokenBaseUnits)))
+	builder := app.txConfig.NewTxBuilder()
+	if err := builder.SetMsgs(&truedemocracy.MsgCreateDomain{
+		Name:         "Lifecycle",
+		Admin:        admin,
+		InitialCoins: initial,
+	}); err != nil {
+		t.Fatal(err)
+	}
+	encoded, err := app.txConfig.TxEncoder()(builder.GetTx())
+	if err != nil {
+		t.Fatalf("encode tx: %v", err)
+	}
+	decodedTx, err := app.txConfig.TxDecoder()(encoded)
+	if err != nil {
+		t.Fatalf("decode tx: %v", err)
+	}
+	msgs := decodedTx.GetMsgs()
+	if len(msgs) != 1 {
+		t.Fatalf("decoded msg count = %d, want 1", len(msgs))
+	}
+	decoded, ok := msgs[0].(*truedemocracy.MsgCreateDomain)
+	if !ok {
+		t.Fatalf("decoded msg type = %T, want MsgCreateDomain", msgs[0])
+	}
+	if !decoded.Admin.Equals(admin) || !decoded.InitialCoins.Equal(initial) || decoded.Name != "Lifecycle" {
+		t.Fatalf("decoded msg mismatch: %#v", decoded)
 	}
 }
 

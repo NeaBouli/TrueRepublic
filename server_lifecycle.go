@@ -31,14 +31,12 @@ import (
 	nodeservice "github.com/cosmos/cosmos-sdk/client/grpc/node"
 	"github.com/cosmos/cosmos-sdk/client/keys"
 	"github.com/cosmos/cosmos-sdk/codec"
-	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	"github.com/cosmos/cosmos-sdk/server"
 	"github.com/cosmos/cosmos-sdk/server/api"
 	svrcmd "github.com/cosmos/cosmos-sdk/server/cmd"
 	serverconfig "github.com/cosmos/cosmos-sdk/server/config"
 	servertypes "github.com/cosmos/cosmos-sdk/server/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
-	signingtypes "github.com/cosmos/cosmos-sdk/types/tx/signing"
 	sdkversion "github.com/cosmos/cosmos-sdk/version"
 	authtx "github.com/cosmos/cosmos-sdk/x/auth/tx"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
@@ -159,11 +157,11 @@ func initAppConfig() (string, interface{}) {
 }
 
 func newRootCmd() *cobra.Command {
+	configureSDKConfig()
 	legacyAmino := makeAminoCodec()
-	interfaceRegistry := codectypes.NewInterfaceRegistry()
-	ModuleBasics.RegisterInterfaces(interfaceRegistry)
+	interfaceRegistry := makeInterfaceRegistry()
 	appCodec := codec.NewProtoCodec(interfaceRegistry)
-	txConfig := authtx.NewTxConfig(appCodec, []signingtypes.SignMode{signingtypes.SignMode_SIGN_MODE_DIRECT})
+	txConfig := makeTxConfig(appCodec)
 
 	initClientCtx := client.Context{}.
 		WithCodec(appCodec).
@@ -320,8 +318,7 @@ func configureGenesisValidatorSet(genesis *genutiltypes.AppGenesis, validators [
 			Name:    validator.Name,
 		})
 	}
-	interfaceRegistry := codectypes.NewInterfaceRegistry()
-	ModuleBasics.RegisterInterfaces(interfaceRegistry)
+	interfaceRegistry := makeInterfaceRegistry()
 	appCodec := codec.NewProtoCodec(interfaceRegistry)
 	if err := ensureConsensusGenesis(appCodec, appState, updates); err != nil {
 		return fmt.Errorf("build bank-backed PoD genesis: %w", err)

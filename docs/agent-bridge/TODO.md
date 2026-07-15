@@ -50,6 +50,11 @@
 - [x] GH-32: publish the implementation, obtain green Go multi-validator,
   Docker, docs, static-analysis, and security gates, then merge and close via
   PR #33 / merge `9d68a6f`.
+- [x] GH-39: locally verify validator join/replacement lifecycle evidence with
+  a gated six-node process harness, full-node catch-up, delivered tx checks,
+  and Keeper/ABCI power-zero removal regression coverage.
+- [ ] GH-39: publish the branch, obtain green GitHub checks/review, merge, and
+  update GH-29/GH-39 closure evidence.
 - [x] GH-7: DEX rounding, slippage, pool accounting, custody, and authorization
   audit completed in GH-10; GH-12 retains genesis/runtime invariants.
 

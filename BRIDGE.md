@@ -20,6 +20,35 @@ Canonical coordination lives in [`docs/agent-bridge/`](docs/agent-bridge/README.
 
 GitHub recovery epic: [#4](https://github.com/NeaBouli/TrueRepublic/issues/4)
 
+## 2026-07-15 23:08 EEST GH-39 validator lifecycle evidence → Review
+
+- **Branch:** `feature/GH-39-validator-lifecycle`
+- **Issues:** [GH-39](https://github.com/NeaBouli/TrueRepublic/issues/39),
+  parent tracker [GH-29](https://github.com/NeaBouli/TrueRepublic/issues/29)
+- **Changed:** fixed validator-removal ABCI evidence by retaining one-shot
+  power-zero tombstones; wired Cosmos SDK v0.50 signing contexts consistently
+  across InterfaceRegistry, TxConfig, BaseApp, CLI, event generation, and
+  dynamic Msg decoding; added a gated six-node process harness for validator
+  join, replacement, full-node catch-up, and restart-safe validator-set
+  convergence; hardened the smoke harness to verify delivered tx results via
+  CometBFT RPC.
+- **Evidence:** `TRUEREPUBLIC_MULTI_VALIDATOR_SMOKE=1 go test . -run
+  TestMultiValidatorJoinReplacementLifecycle -count=1 -timeout=300s` → PASS
+  (`117.638s`); `go test ./...` → PASS; focused validator removal/update and
+  tx round-trip tests → PASS.
+- **Boundary:** public validator leave/removal remains constrained by existing
+  stake-withdrawal economics, so process-level join/replacement/restart evidence
+  is paired with Keeper/ABCI power-zero regression coverage for leave.
+- **Ready for:** push, PR, GitHub CI, review, merge, then GH-29/GH-39 closure.
+
+### Codex review feedback
+
+The previous GH-39 blockers were real infrastructure bugs: custom hand-written
+messages were missing SDK v0.50 signer resolvers in multiple signing contexts,
+and sync broadcast hid DeliverTx failures. The branch now verifies delivered
+transactions and proves a new validator joins the CometBFT set before a
+replacement validator catches up and joins cleanly.
+
 ## 2026-07-13 02:50 EEST GH-29 Road to Rollout → Done
 
 - **Branch:** `main`

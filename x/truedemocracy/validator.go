@@ -22,6 +22,10 @@ func valPubKeyKey(pubKeyBytes []byte) []byte {
 	return []byte("val-pubkey:" + hex.EncodeToString(pubKeyBytes))
 }
 
+func removedValidatorKey(pubKeyBytes []byte) []byte {
+	return []byte("validator-removed:" + hex.EncodeToString(pubKeyBytes))
+}
+
 // RegisterValidator registers a new Proof of Domain validator.
 // The operator must be a member of the given domain and stake >= StakeMin PNYX.
 func (k Keeper) RegisterValidator(ctx sdk.Context, operatorAddr string, pubKeyBytes []byte, stake sdk.Coins, domainName string) error {
@@ -60,6 +64,9 @@ func (k Keeper) RegisterValidator(ctx sdk.Context, operatorAddr string, pubKeyBy
 	}
 	if store.Has(valPubKeyKey(pubKeyBytes)) {
 		return errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "validator public key already registered")
+	}
+	if store.Has(removedValidatorKey(pubKeyBytes)) {
+		return errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "validator public key removal is pending")
 	}
 
 	power := pnyxAmt.Int64() / rewards.StakeMin
@@ -174,7 +181,8 @@ func (k Keeper) WithdrawStake(ctx sdk.Context, operatorAddr string, amount int64
 	return nil
 }
 
-// RemoveValidator deletes a validator and its reverse index.
+// RemoveValidator deletes a validator, its reverse index, and records a
+// one-shot CometBFT power-zero update for the removed consensus key.
 func (k Keeper) RemoveValidator(ctx sdk.Context, operatorAddr string) error {
 	val, found := k.GetValidator(ctx, operatorAddr)
 	if !found {
@@ -183,6 +191,7 @@ func (k Keeper) RemoveValidator(ctx sdk.Context, operatorAddr string) error {
 	store := ctx.KVStore(k.StoreKey)
 	store.Delete(validatorKey(operatorAddr))
 	store.Delete(valPubKeyKey(val.PubKey))
+	store.Set(removedValidatorKey(val.PubKey), append([]byte(nil), val.PubKey...))
 	return nil
 }
 
@@ -411,8 +420,10 @@ func domainPayoutSnapshotKey(domainName string) []byte {
 	return []byte("dom:last-payouts:" + domainName)
 }
 
-// BuildValidatorUpdates constructs the CometBFT ValidatorUpdate slice for
-// the current validator set. Jailed validators are reported with Power 0.
+// BuildValidatorUpdates constructs the CometBFT ValidatorUpdate slice for the
+// current validator set. Jailed validators are reported with Power 0. Validators
+// removed since the last call are emitted once with Power 0 so CometBFT can
+// evict them from the consensus set.
 func (k Keeper) BuildValidatorUpdates(ctx sdk.Context) []abci.ValidatorUpdate {
 	var updates []abci.ValidatorUpdate
 
@@ -427,6 +438,23 @@ func (k Keeper) BuildValidatorUpdates(ctx sdk.Context) []abci.ValidatorUpdate {
 		updates = append(updates, abci.ValidatorUpdate{PubKey: pk, Power: power})
 		return false
 	})
+
+	store := ctx.KVStore(k.StoreKey)
+	removedPrefix := []byte("validator-removed:")
+	iter := store.Iterator(removedPrefix, prefixEnd(removedPrefix))
+	var removalKeys [][]byte
+	for ; iter.Valid(); iter.Next() {
+		pubKey := append([]byte(nil), iter.Value()...)
+		pk := cryptoproto.PublicKey{
+			Sum: &cryptoproto.PublicKey_Ed25519{Ed25519: pubKey},
+		}
+		updates = append(updates, abci.ValidatorUpdate{PubKey: pk, Power: 0})
+		removalKeys = append(removalKeys, append([]byte(nil), iter.Key()...))
+	}
+	iter.Close()
+	for _, key := range removalKeys {
+		store.Delete(key)
+	}
 
 	return updates
 }

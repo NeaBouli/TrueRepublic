@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"strings"
+	"sync"
 
 	"cosmossdk.io/log"
 	storetypes "cosmossdk.io/store/types"
@@ -20,10 +21,12 @@ import (
 	sdkaddress "github.com/cosmos/cosmos-sdk/codec/address"
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	"github.com/cosmos/cosmos-sdk/runtime"
+	"github.com/cosmos/cosmos-sdk/std"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
 	signingtypes "github.com/cosmos/cosmos-sdk/types/tx/signing"
 	auth "github.com/cosmos/cosmos-sdk/x/auth"
+	authante "github.com/cosmos/cosmos-sdk/x/auth/ante"
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 	authtx "github.com/cosmos/cosmos-sdk/x/auth/tx"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
@@ -38,6 +41,7 @@ import (
 	crisistypes "github.com/cosmos/cosmos-sdk/x/crisis/types"
 	paramskeeper "github.com/cosmos/cosmos-sdk/x/params/keeper"
 	paramstypes "github.com/cosmos/cosmos-sdk/x/params/types"
+	gogoproto "github.com/cosmos/gogoproto/proto"
 
 	// IBC
 	capability "github.com/cosmos/ibc-go/modules/capability"
@@ -82,6 +86,48 @@ var ModuleBasics = module.NewBasicManager(
 	dex.AppModuleBasic{},
 )
 
+var sdkConfigOnce sync.Once
+
+func configureSDKConfig() {
+	sdkConfigOnce.Do(func() {
+		config := sdk.GetConfig()
+		config.SetBech32PrefixForAccount("truerepublic", "truerepublicpub")
+		config.SetBech32PrefixForValidator("truerepublicvaloper", "truerepublicvaloperpub")
+		config.SetBech32PrefixForConsensusNode("truerepublicvalcons", "truerepublicvalconspub")
+		config.Seal()
+	})
+}
+
+func makeInterfaceRegistry() codectypes.InterfaceRegistry {
+	signingOptions, err := authtx.NewDefaultSigningOptions()
+	if err != nil {
+		panic(err)
+	}
+	truedemocracy.RegisterCustomGetSigners(signingOptions)
+
+	interfaceRegistry, err := codectypes.NewInterfaceRegistryWithOptions(codectypes.InterfaceRegistryOptions{
+		ProtoFiles:     gogoproto.HybridResolver,
+		SigningOptions: *signingOptions,
+	})
+	if err != nil {
+		panic(err)
+	}
+	std.RegisterInterfaces(interfaceRegistry)
+	ModuleBasics.RegisterInterfaces(interfaceRegistry)
+	return interfaceRegistry
+}
+
+func makeTxConfig(appCodec codec.Codec) client.TxConfig {
+	txConfig, err := authtx.NewTxConfigWithOptions(appCodec, authtx.ConfigOptions{
+		EnabledSignModes: []signingtypes.SignMode{signingtypes.SignMode_SIGN_MODE_DIRECT},
+		SigningContext:   appCodec.InterfaceRegistry().SigningContext(),
+	})
+	if err != nil {
+		panic(err)
+	}
+	return txConfig
+}
+
 type TrueRepublicApp struct {
 	*baseapp.BaseApp
 	mm              *module.Manager
@@ -107,13 +153,12 @@ type TrueRepublicApp struct {
 }
 
 func NewTrueRepublicApp(logger log.Logger, db dbm.DB, homeDir string, baseAppOptions ...func(*baseapp.BaseApp)) *TrueRepublicApp {
+	configureSDKConfig()
 	cdc := makeAminoCodec()
 
-	interfaceRegistry := codectypes.NewInterfaceRegistry()
-	ModuleBasics.RegisterInterfaces(interfaceRegistry)
+	interfaceRegistry := makeInterfaceRegistry()
 	appCodec := codec.NewProtoCodec(interfaceRegistry)
-
-	txCfg := authtx.NewTxConfig(appCodec, []signingtypes.SignMode{signingtypes.SignMode_SIGN_MODE_DIRECT})
+	txCfg := makeTxConfig(appCodec)
 
 	// Store keys: KV, transient, and memory stores.
 	keys := storetypes.NewKVStoreKeys(
@@ -142,9 +187,10 @@ func NewTrueRepublicApp(logger log.Logger, db dbm.DB, homeDir string, baseAppOpt
 		memKeys:  memKeys,
 	}
 
-	// Set interface registry on the message service router so it can resolve
-	// message type URLs during RegisterService.
-	app.MsgServiceRouter().SetInterfaceRegistry(interfaceRegistry)
+	// Set the shared interface registry on BaseApp and its routers so tx
+	// decoding, message routing, event generation, and gRPC all use the same
+	// address codecs and custom signer resolvers.
+	app.SetInterfaceRegistry(interfaceRegistry)
 
 	// Authority address for governance operations (standard pattern).
 	authority := authtypes.NewModuleAddress("gov").String()
@@ -348,6 +394,16 @@ func NewTrueRepublicApp(logger log.Logger, db dbm.DB, homeDir string, baseAppOpt
 	app.SetInitChainer(app.InitChainer)
 	app.SetBeginBlocker(app.BeginBlocker)
 	app.SetEndBlocker(app.EndBlocker)
+	anteHandler, err := authante.NewAnteHandler(authante.HandlerOptions{
+		AccountKeeper:   app.accountKeeper,
+		BankKeeper:      app.bankKeeper,
+		SignModeHandler: txCfg.SignModeHandler(),
+		SigGasConsumer:  authante.DefaultSigVerificationGasConsumer,
+	})
+	if err != nil {
+		panic(err)
+	}
+	app.SetAnteHandler(anteHandler)
 
 	app.MountKVStores(keys)
 	app.MountTransientStores(tkeys)
@@ -448,7 +504,7 @@ func (app *TrueRepublicApp) EndBlocker(ctx sdk.Context) (sdk.EndBlock, error) {
 // makeAminoCodec creates and configures the amino codec for CLI operations.
 func makeAminoCodec() *codec.LegacyAmino {
 	cdc := codec.NewLegacyAmino()
-	sdk.RegisterLegacyAminoCodec(cdc)
+	std.RegisterLegacyAminoCodec(cdc)
 	// auth registers legacytx.StdTx itself. Registering legacytx directly before
 	// auth panics during every CLI/node startup because Amino rejects duplicate
 	// concrete type registrations.
