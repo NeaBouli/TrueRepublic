@@ -72,3 +72,6 @@
   `main`.
 - [ ] GH-29: keep the public Road to Rollout page, detailed checklist, GitHub
   issue, and Bridge status synchronized as workstreams close.
+- [x] GH-37: configure project-scoped Codex subagent roles so the main agent can
+  delegate small bounded work to `spark_worker` without losing architecture,
+  security, GitHub, or Bridge ownership.
