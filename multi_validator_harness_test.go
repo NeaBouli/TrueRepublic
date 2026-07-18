@@ -52,6 +52,11 @@ type smokeAccount struct {
 	sequence      uint64
 }
 
+type smokeExportedGenesis struct {
+	InitialHeight int64                      `json:"initial_height"`
+	AppState      map[string]json.RawMessage `json:"app_state"`
+}
+
 func TestConfigureGenesisValidatorSetBuildsExactBankBackedSet(t *testing.T) {
 	app := newGenesisTestApp(t)
 	appState, err := json.Marshal(ModuleBasics.DefaultGenesis(app.appCodec))
@@ -330,6 +335,103 @@ func TestMultiValidatorJoinReplacementLifecycle(t *testing.T) {
 	assertCommonAppHash(t, replacementSet, postReplacementHeight)
 }
 
+func TestMultiValidatorNetworkPartitionRecovery(t *testing.T) {
+	if os.Getenv(multiValidatorSmokeEnv) != "1" {
+		t.Skipf("set %s=1 to run the multi-validator process harness", multiValidatorSmokeEnv)
+	}
+	ctx := t.Context()
+
+	binary := filepath.Join(t.TempDir(), "truerepublicd")
+	build := exec.CommandContext(ctx, "go", "build", "-o", binary, ".")
+	if output, err := build.CombinedOutput(); err != nil {
+		t.Fatalf("build daemon: %v\n%s", err, output)
+	}
+
+	const chainID = "truerepublic-network-partition-1"
+	validators := make([]*smokeValidator, 4)
+	for i := range validators {
+		validator := &smokeValidator{
+			name:    fmt.Sprintf("validator-%d", i+1),
+			home:    filepath.Join(t.TempDir(), fmt.Sprintf("node-%d", i+1)),
+			rpcPort: freeTCPPort(t),
+			p2pPort: freeTCPPort(t),
+			logPath: filepath.Join(t.TempDir(), fmt.Sprintf("validator-%d.log", i+1)),
+		}
+		initSmokeValidator(t, ctx, binary, chainID, validator)
+		validators[i] = validator
+	}
+	quorum := validators[:3]
+	isolated := validators[3]
+	admin := addSmokeKey(t, ctx, binary, quorum[0].home, "partition-admin", 0, 800_000*token.WholeTokenBaseUnits)
+
+	sharedGenesis := buildSharedSmokeGenesis(t, chainID, validators, admin)
+	for _, validator := range validators {
+		genesisPath := filepath.Join(validator.home, "config", "genesis.json")
+		if err := atomicWriteFile(genesisPath, sharedGenesis, 0o600); err != nil {
+			t.Fatalf("write %s shared genesis: %v", validator.name, err)
+		}
+	}
+
+	t.Cleanup(func() {
+		for _, validator := range validators {
+			_ = validator.stop(false)
+		}
+		if t.Failed() {
+			for _, validator := range validators {
+				validator.logContents(t)
+			}
+		}
+	})
+
+	for _, validator := range quorum {
+		if err := validator.start(ctx, binary, persistentPeers(validator, quorum)); err != nil {
+			t.Fatalf("start quorum %s: %v", validator.name, err)
+		}
+	}
+	waitForSmokeHeight(t, quorum, 2, 90*time.Second)
+	assertCommonAppHash(t, quorum, 2)
+	assertSmokeValidatorPowers(t, quorum[0], validators, "1")
+
+	if err := isolated.start(ctx, binary, ""); err != nil {
+		t.Fatalf("start isolated validator without peers: %v", err)
+	}
+	waitForSmokeRPC(t, isolated, 30*time.Second)
+
+	partitionStartHeight := smokeHeight(t, quorum[0])
+	runSmokeTx(t, ctx, binary, quorum[0], &admin, chainID,
+		"create-domain", "PartitionRecovery", fmt.Sprintf("%d%s", 500_000*token.WholeTokenBaseUnits, token.BaseDenom))
+	quorumTargetHeight := partitionStartHeight + 3
+	waitForSmokeHeight(t, quorum, quorumTargetHeight, 90*time.Second)
+	assertCommonAppHash(t, quorum, quorumTargetHeight)
+
+	isolatedHeight := smokeHeight(t, isolated)
+	if isolatedHeight >= quorumTargetHeight {
+		t.Fatalf("isolated validator reached height %d during partition, want below quorum height %d", isolatedHeight, quorumTargetHeight)
+	}
+
+	if err := isolated.stop(true); err != nil {
+		t.Fatalf("stop isolated validator before reconnect: %v", err)
+	}
+	if err := isolated.start(ctx, binary, persistentPeers(isolated, validators)); err != nil {
+		t.Fatalf("restart isolated validator with peers: %v", err)
+	}
+	recoveryTargetHeight := smokeHeight(t, quorum[0]) + 2
+	waitForSmokeHeight(t, validators, recoveryTargetHeight, 120*time.Second)
+	assertCommonAppHash(t, validators, recoveryTargetHeight)
+	assertSmokeValidatorPowers(t, validators[0], validators, "1")
+
+	for _, validator := range validators {
+		if err := validator.stop(true); err != nil {
+			t.Fatalf("stop %s after partition recovery: %v", validator.name, err)
+		}
+		exportedGenesis := exportSmokeGenesis(t, ctx, binary, validator, recoveryTargetHeight)
+		exportApp := newGenesisTestApp(t)
+		if err := validateLedgerGenesis(exportApp.appCodec, exportedGenesis.AppState); err != nil {
+			t.Fatalf("%s recovered export is not exactly bank-backed: %v", validator.name, err)
+		}
+	}
+}
+
 func buildSharedSmokeGenesis(t *testing.T, chainID string, validators []*smokeValidator, accounts ...smokeAccount) []byte {
 	t.Helper()
 	app := newGenesisTestApp(t)
@@ -578,6 +680,13 @@ func waitForSmokeValidatorPower(t *testing.T, validator *smokeValidator, pubKey 
 	t.Fatalf("%s validator set did not include pubkey %x with power %s within %s", validator.name, pubKey, power, timeout)
 }
 
+func assertSmokeValidatorPowers(t *testing.T, node *smokeValidator, validators []*smokeValidator, power string) {
+	t.Helper()
+	for _, validator := range validators {
+		waitForSmokeValidatorPower(t, node, validator.pubKey, power, 90*time.Second)
+	}
+}
+
 func querySmokeValidatorPower(ctx context.Context, validator *smokeValidator, pubKey []byte) (string, error) {
 	client := &http.Client{Timeout: time.Second}
 	request, err := http.NewRequestWithContext(ctx, http.MethodGet, fmt.Sprintf("http://127.0.0.1:%d/validators", validator.rpcPort), nil)
@@ -752,6 +861,21 @@ func waitForSmokeHeight(t *testing.T, validators []*smokeValidator, minimum int6
 	t.Fatalf("validators did not all reach height %d within %s", minimum, timeout)
 }
 
+func waitForSmokeRPC(t *testing.T, validator *smokeValidator, timeout time.Duration) {
+	t.Helper()
+	deadline := time.Now().Add(timeout)
+	var lastErr error
+	for time.Now().Before(deadline) {
+		if _, err := querySmokeHeight(t.Context(), validator); err == nil {
+			return
+		} else {
+			lastErr = err
+		}
+		time.Sleep(250 * time.Millisecond)
+	}
+	t.Fatalf("%s RPC was not ready within %s: %v", validator.name, timeout, lastErr)
+}
+
 func smokeHeight(t *testing.T, validator *smokeValidator) int64 {
 	t.Helper()
 	height, err := querySmokeHeight(t.Context(), validator)
@@ -786,6 +910,23 @@ func querySmokeHeight(ctx context.Context, validator *smokeValidator) (int64, er
 		return 0, err
 	}
 	return strconv.ParseInt(status.Result.SyncInfo.LatestBlockHeight, 10, 64)
+}
+
+func exportSmokeGenesis(t *testing.T, ctx context.Context, binary string, validator *smokeValidator, minimumInitialHeight int64) smokeExportedGenesis {
+	t.Helper()
+	exported := exec.CommandContext(ctx, binary, "export", "--home", validator.home)
+	exportOutput, err := exported.Output()
+	if err != nil {
+		t.Fatalf("export recovered %s state: %v", validator.name, err)
+	}
+	var exportedGenesis smokeExportedGenesis
+	if err := json.Unmarshal(exportOutput, &exportedGenesis); err != nil {
+		t.Fatalf("decode recovered %s export: %v", validator.name, err)
+	}
+	if exportedGenesis.InitialHeight <= minimumInitialHeight {
+		t.Fatalf("%s exported initial height = %d, want greater than %d", validator.name, exportedGenesis.InitialHeight, minimumInitialHeight)
+	}
+	return exportedGenesis
 }
 
 func assertCommonAppHash(t *testing.T, validators []*smokeValidator, height int64) {

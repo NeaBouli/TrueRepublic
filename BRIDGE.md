@@ -20,6 +20,41 @@ Canonical coordination lives in [`docs/agent-bridge/`](docs/agent-bridge/README.
 
 GitHub recovery epic: [#4](https://github.com/NeaBouli/TrueRepublic/issues/4)
 
+## 2026-07-19 00:54 EEST GH-41 network partition recovery → Review
+
+- **Branch:** `feature/GH-41-network-partition-recovery`
+- **Issues:** [GH-41](https://github.com/NeaBouli/TrueRepublic/issues/41),
+  parent tracker [GH-29](https://github.com/NeaBouli/TrueRepublic/issues/29)
+- **Changed:** added `TestMultiValidatorNetworkPartitionRecovery`, a gated
+  four-validator process harness where a 3-of-4 quorum starts without the fourth
+  peer, the isolated validator starts with no peers, the quorum commits a real
+  governance transaction during the partition, and the isolated validator then
+  reconnects, catches up, shares the same app hash, and exports
+  ledger-valid state.
+- **Tests:** `TRUEREPUBLIC_MULTI_VALIDATOR_SMOKE=1 go test . -run
+  TestMultiValidatorNetworkPartitionRecovery -count=1 -timeout=300s -v` → PASS
+  (`104.175s` package runtime); `TRUEREPUBLIC_MULTI_VALIDATOR_SMOKE=1 go test .
+  -run 'TestMultiValidatorConsensusRecovery|TestMultiValidatorJoinReplacementLifecycle|TestMultiValidatorNetworkPartitionRecovery'
+  -count=1 -timeout=600s -v` → PASS (`392.147s`); `go test ./...` → PASS.
+- **Risk:** Medium-high. The task exercises consensus/process behavior and must
+  prove no app-hash, bank-supply, module-escrow, reserve, or validator-power
+  divergence after recovery.
+- **Ready for:** PR, GitHub CI, review, merge, then GH-29/GH-41 closure.
+
+### Lead Dev notes
+
+The implementation intentionally keeps the network-failure evidence behind
+`TRUEREPUBLIC_MULTI_VALIDATOR_SMOKE=1`. The public recovery count is unchanged
+because this is a separately gated process harness, not part of the normal
+recovery-verified arithmetic.
+
+### Codex review feedback
+
+The current evidence proves quorum-side progress during a minority partition,
+delayed/isolated peer recovery, app-hash convergence, validator-power
+preservation, and bank-backed export validation after recovery. This remains
+rollout evidence only, not production approval.
+
 ## 2026-07-15 13:20 EEST GH-39 validator lifecycle evidence → Done
 
 - **Branch/PR:** `feature/GH-39-validator-lifecycle`,

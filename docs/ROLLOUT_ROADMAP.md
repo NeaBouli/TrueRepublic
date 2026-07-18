@@ -31,7 +31,7 @@ approval.
 - [x] Verify validator join, replacement, restart/catch-up, and leave
   power-zero evidence
   ([GH-39](https://github.com/NeaBouli/TrueRepublic/issues/39)).
-- [ ] Exercise network partitions, delayed peers, validator failure, and
+- [x] Exercise network partitions, delayed peers, validator failure, and
   recovery without ledger divergence.
 - [ ] Verify state sync and catch-up from a trusted snapshot.
 - [ ] Run backup, restore, export, and import drills from documented artifacts.
