@@ -1,6 +1,6 @@
 # Project State
 
-Updated: 2026-07-19 01:56 EEST
+Updated: 2026-07-19 02:52 EEST
 
 ## Repository
 
@@ -18,7 +18,9 @@ Updated: 2026-07-19 01:56 EEST
   reconnect/catch-up, app-hash convergence, validator-power, and bank-backed
   export evidence is merged through PR #42 with green GitHub checks. GH-43
   trusted snapshot state-sync catch-up is merged through PR #44 with green
-  local and GitHub evidence.
+  local and GitHub evidence. GH-45 backup/restore/export/import drills are in
+  progress on `feature/GH-45-backup-restore-drill` with local sanitized
+  backup/restore smoke evidence passing; PR/GitHub CI evidence is pending.
 - Active recovery checkout:
   `/Users/gio/Documents/Codex/2026-07-11/erkunden/TrueRepublic-gh20`
 - GH-26 branch: `fix/GH-26-pod-init-script`
@@ -80,6 +82,14 @@ Updated: 2026-07-19 01:56 EEST
   validator powers, and exports ledger-valid state. Local targeted run passes
   in 130.528s; the combined CI-smoke equivalent passes in 197.835s; full local
   `go test ./...` passes in 65.114s; PR #44 GitHub checks are green.
+- GH-45 local evidence adds a gated sanitized backup/restore/export/import
+  harness. A live full node is backed up without node key, validator key,
+  validator signing state, or keyring material; the artifact restores into a
+  freshly initialized home while preserving local keys; the restored node
+  catches up, converges on app hash, exports ledger-valid state, and re-imports
+  the exported genesis. Local targeted run passes in 88.224s; full local
+  `go test ./...` passes in 58.843s; the combined CI-smoke equivalent passes
+  in 290.498s. PR/GitHub evidence is pending.
 - GH-13 local Go 1.26.5: build, vet, normal tests, race tests, and coverage PASS.
   Coverage: root 10.2%, token 93.5%, treasury 97.0%, DEX 34.2%, governance 55.8%.
 - Go vulnerability gate: no reachable finding with an available fix remains;

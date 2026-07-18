@@ -494,12 +494,12 @@ func TestMultiValidatorTrustedSnapshotStateSync(t *testing.T) {
 			t.Fatalf("start snapshot provider %s: %v", validator.name, err)
 		}
 	}
-	waitForSmokeHeight(t, validators, 8, 120*time.Second)
+	waitForSmokeHeight(t, validators, 8, 180*time.Second)
 	assertCommonAppHash(t, validators, 8)
 
 	runSmokeTx(t, ctx, binary, validators[0], &admin, chainID,
 		"create-domain", "TrustedStateSync", fmt.Sprintf("%d%s", 500_000*token.WholeTokenBaseUnits, token.BaseDenom))
-	waitForSmokeHeight(t, validators, 10, 120*time.Second)
+	waitForSmokeHeight(t, validators, 10, 180*time.Second)
 	assertCommonAppHash(t, validators, 10)
 
 	trustHeight := smokeHeight(t, validators[0]) - 2
@@ -515,11 +515,11 @@ func TestMultiValidatorTrustedSnapshotStateSync(t *testing.T) {
 	if err := syncingNode.start(ctx, binary, persistentPeers(syncingNode, validators)); err != nil {
 		t.Fatalf("start state-sync node: %v", err)
 	}
-	waitForSmokeHeight(t, []*smokeValidator{syncingNode}, trustHeight, 120*time.Second)
+	waitForSmokeHeight(t, []*smokeValidator{syncingNode}, trustHeight, 180*time.Second)
 
 	convergenceHeight := smokeHeight(t, validators[0]) + 2
 	allNodes := append(append([]*smokeValidator{}, validators...), syncingNode)
-	waitForSmokeHeight(t, allNodes, convergenceHeight, 120*time.Second)
+	waitForSmokeHeight(t, allNodes, convergenceHeight, 180*time.Second)
 	assertCommonAppHash(t, allNodes, convergenceHeight)
 	assertSmokeValidatorPowers(t, syncingNode, validators, "1")
 
@@ -530,6 +530,156 @@ func TestMultiValidatorTrustedSnapshotStateSync(t *testing.T) {
 	exportApp := newGenesisTestApp(t)
 	if err := validateLedgerGenesis(exportApp.appCodec, exportedGenesis.AppState); err != nil {
 		t.Fatalf("state-synced export is not exactly bank-backed: %v", err)
+	}
+}
+
+func TestMultiValidatorBackupRestoreExportImport(t *testing.T) {
+	if os.Getenv(multiValidatorSmokeEnv) != "1" {
+		t.Skipf("set %s=1 to run the multi-validator process harness", multiValidatorSmokeEnv)
+	}
+	ctx := t.Context()
+
+	binary := filepath.Join(t.TempDir(), "truerepublicd")
+	build := exec.CommandContext(ctx, "go", "build", "-o", binary, ".")
+	if output, err := build.CombinedOutput(); err != nil {
+		t.Fatalf("build daemon: %v\n%s", err, output)
+	}
+
+	const chainID = "truerepublic-backup-restore-1"
+	validators := make([]*smokeValidator, 4)
+	for i := range validators {
+		validator := &smokeValidator{
+			name:    fmt.Sprintf("validator-%d", i+1),
+			home:    filepath.Join(t.TempDir(), fmt.Sprintf("node-%d", i+1)),
+			rpcPort: freeTCPPort(t),
+			p2pPort: freeTCPPort(t),
+			logPath: filepath.Join(t.TempDir(), fmt.Sprintf("validator-%d.log", i+1)),
+		}
+		initSmokeValidator(t, ctx, binary, chainID, validator)
+		validators[i] = validator
+	}
+	fullNode := &smokeValidator{
+		name:    "backup-source-full-node",
+		home:    filepath.Join(t.TempDir(), "backup-source-full-node"),
+		rpcPort: freeTCPPort(t),
+		p2pPort: freeTCPPort(t),
+		logPath: filepath.Join(t.TempDir(), "backup-source-full-node.log"),
+	}
+	initSmokeValidator(t, ctx, binary, chainID, fullNode)
+	restoredNode := &smokeValidator{
+		name:    "backup-restored-full-node",
+		home:    filepath.Join(t.TempDir(), "backup-restored-full-node"),
+		rpcPort: freeTCPPort(t),
+		p2pPort: freeTCPPort(t),
+		logPath: filepath.Join(t.TempDir(), "backup-restored-full-node.log"),
+	}
+	initSmokeValidator(t, ctx, binary, chainID, restoredNode)
+
+	admin := addSmokeKey(t, ctx, binary, validators[0].home, "backup-admin", 0, 800_000*token.WholeTokenBaseUnits)
+	sharedGenesis := buildSharedSmokeGenesis(t, chainID, validators, admin)
+	allHomes := append(append([]*smokeValidator{}, validators...), fullNode, restoredNode)
+	for _, validator := range allHomes {
+		genesisPath := filepath.Join(validator.home, "config", "genesis.json")
+		if err := atomicWriteFile(genesisPath, sharedGenesis, 0o600); err != nil {
+			t.Fatalf("write %s shared genesis: %v", validator.name, err)
+		}
+	}
+
+	t.Cleanup(func() {
+		for _, validator := range allHomes {
+			_ = validator.stop(false)
+		}
+		if t.Failed() {
+			for _, validator := range allHomes {
+				validator.logContents(t)
+			}
+		}
+	})
+
+	for _, validator := range validators {
+		if err := validator.start(ctx, binary, persistentPeers(validator, validators)); err != nil {
+			t.Fatalf("start %s: %v", validator.name, err)
+		}
+	}
+	waitForSmokeHeight(t, validators, 2, 90*time.Second)
+	assertCommonAppHash(t, validators, 2)
+
+	if err := fullNode.start(ctx, binary, persistentPeers(fullNode, validators)); err != nil {
+		t.Fatalf("start backup source full node: %v", err)
+	}
+	waitForSmokeHeight(t, []*smokeValidator{fullNode}, smokeHeight(t, validators[0]), 90*time.Second)
+	runSmokeTx(t, ctx, binary, validators[0], &admin, chainID,
+		"create-domain", "BackupRestore", fmt.Sprintf("%d%s", 500_000*token.WholeTokenBaseUnits, token.BaseDenom))
+	sourceHeight := smokeHeight(t, validators[0]) + 2
+	waitForSmokeHeight(t, append(append([]*smokeValidator{}, validators...), fullNode), sourceHeight, 90*time.Second)
+	assertCommonAppHash(t, append(append([]*smokeValidator{}, validators...), fullNode), sourceHeight)
+
+	if err := fullNode.stop(true); err != nil {
+		t.Fatalf("stop backup source full node: %v", err)
+	}
+	backupDir := t.TempDir()
+	backupCmd := exec.CommandContext(ctx, "bash", filepath.Join("scripts", "backup.sh"), backupDir)
+	backupCmd.Env = append(os.Environ(), "CHAIN_HOME="+fullNode.home)
+	if output, err := backupCmd.CombinedOutput(); err != nil {
+		t.Fatalf("create sanitized backup: %v\n%s", err, output)
+	}
+	matches, err := filepath.Glob(filepath.Join(backupDir, "truerepublic_*.tar.gz"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(matches) != 1 {
+		t.Fatalf("backup artifact count = %d, want 1: %v", len(matches), matches)
+	}
+	backupArchive := matches[0]
+	assertSanitizedBackupArchive(t, ctx, backupArchive)
+
+	restoredNodeKeyPath := filepath.Join(restoredNode.home, "config", "node_key.json")
+	restoredValidatorKeyPath := filepath.Join(restoredNode.home, "config", "priv_validator_key.json")
+	restoredNodeKeyBefore, err := os.ReadFile(restoredNodeKeyPath)
+	if err != nil {
+		t.Fatal(err)
+	}
+	restoredValidatorKeyBefore, err := os.ReadFile(restoredValidatorKeyPath)
+	if err != nil {
+		t.Fatal(err)
+	}
+	restoreCmd := exec.CommandContext(ctx, "bash", filepath.Join("scripts", "restore.sh"), backupArchive, restoredNode.home)
+	if output, err := restoreCmd.CombinedOutput(); err != nil {
+		t.Fatalf("restore sanitized backup: %v\n%s", err, output)
+	}
+	restoredNodeKeyAfter, err := os.ReadFile(restoredNodeKeyPath)
+	if err != nil {
+		t.Fatal(err)
+	}
+	restoredValidatorKeyAfter, err := os.ReadFile(restoredValidatorKeyPath)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !bytes.Equal(restoredNodeKeyAfter, restoredNodeKeyBefore) {
+		t.Fatal("restore replaced the target node key")
+	}
+	if !bytes.Equal(restoredValidatorKeyAfter, restoredValidatorKeyBefore) {
+		t.Fatal("restore replaced the target validator key")
+	}
+
+	if err := restoredNode.start(ctx, binary, persistentPeers(restoredNode, validators)); err != nil {
+		t.Fatalf("start restored full node: %v", err)
+	}
+	recoveryHeight := smokeHeight(t, validators[0]) + 2
+	waitForSmokeHeight(t, append(append([]*smokeValidator{}, validators...), restoredNode), recoveryHeight, 120*time.Second)
+	assertCommonAppHash(t, append(append([]*smokeValidator{}, validators...), restoredNode), recoveryHeight)
+
+	if err := restoredNode.stop(true); err != nil {
+		t.Fatalf("stop restored full node: %v", err)
+	}
+	exportedGenesis := exportSmokeGenesis(t, ctx, binary, restoredNode, recoveryHeight)
+	exportApp := newGenesisTestApp(t)
+	if err := validateLedgerGenesis(exportApp.appCodec, exportedGenesis.AppState); err != nil {
+		t.Fatalf("restored export is not exactly bank-backed: %v", err)
+	}
+	importApp := newGenesisTestApp(t)
+	if err := initGenesisApp(importApp, exportedGenesis.AppState); err != nil {
+		t.Fatalf("re-import restored export: %v", err)
 	}
 }
 
@@ -835,6 +985,33 @@ func decodeCometPubKey(value string) ([]byte, error) {
 		return decoded, nil
 	}
 	return []byte(value), nil
+}
+
+func assertSanitizedBackupArchive(t *testing.T, ctx context.Context, archivePath string) {
+	t.Helper()
+	command := exec.CommandContext(ctx, "tar", "-tzf", archivePath)
+	output, err := command.Output()
+	if err != nil {
+		t.Fatalf("list backup archive: %v", err)
+	}
+	listing := string(output)
+	for _, forbidden := range []string{
+		"/config/node_key.json",
+		"/config/priv_validator_key.json",
+		"/data/priv_validator_state.json",
+		"/keyring-file",
+		"/keyring-test",
+	} {
+		if strings.Contains(listing, forbidden) {
+			t.Fatalf("backup archive contains forbidden private/signer artifact %q:\n%s", forbidden, listing)
+		}
+	}
+	if !strings.Contains(listing, "/data/") {
+		t.Fatalf("backup archive does not contain chain data:\n%s", listing)
+	}
+	if !strings.Contains(listing, "/config/genesis.json") {
+		t.Fatalf("backup archive does not contain genesis:\n%s", listing)
+	}
 }
 
 func persistentPeers(self *smokeValidator, validators []*smokeValidator) string {

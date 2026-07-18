@@ -67,6 +67,10 @@
 - [x] GH-43: publish PR, obtain green GitHub checks/review, merge via PR #44 /
   `12a37339e9cff957d1b44413aa36160aed4e8d29`, close GH-43, and update
   GH-29/roadmap closure evidence.
+- [x] GH-45: locally verify sanitized backup, fresh-home restore, restored
+  catch-up, app-hash convergence, export, ledger validation, and re-import.
+- [ ] GH-45: publish PR, obtain green GitHub checks/review, merge, close GH-45,
+  and update GH-29/roadmap closure evidence.
 - [x] GH-7: DEX rounding, slippage, pool accounting, custody, and authorization
   audit completed in GH-10; GH-12 retains genesis/runtime invariants.
 

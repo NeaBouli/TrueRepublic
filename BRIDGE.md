@@ -20,6 +20,47 @@ Canonical coordination lives in [`docs/agent-bridge/`](docs/agent-bridge/README.
 
 GitHub recovery epic: [#4](https://github.com/NeaBouli/TrueRepublic/issues/4)
 
+## 2026-07-19 02:52 EEST GH-45 backup/restore/export/import → In Progress
+
+- **Branch:** `feature/GH-45-backup-restore-drill`
+- **Issue:** [GH-45](https://github.com/NeaBouli/TrueRepublic/issues/45),
+  parent tracker [GH-29](https://github.com/NeaBouli/TrueRepublic/issues/29)
+- **Changed:** hardening the operator backup path into a sanitized chain-data
+  artifact that excludes node keys, validator keys, validator signing state,
+  and keyrings; adding `scripts/restore.sh` to restore sanitized data into an
+  already initialized target home while preserving local keys; adding
+  `TestMultiValidatorBackupRestoreExportImport`, a gated process drill that
+  backs up a live full node, verifies the archive contains no private/signer
+  artifacts, restores into a fresh home, restarts/catches up, checks common app
+  hash, exports restored state, validates ledger invariants, and re-imports the
+  export.
+- **Tests:** `bash -n scripts/backup.sh scripts/restore.sh` → PASS; `go test .
+  -run 'TestMultiValidatorBackupRestoreExportImport|TestConfigureGenesisValidatorSetBuildsExactBankBackedSet'
+  -count=1 -timeout=300s -v` → PASS/SKIP as expected without the smoke env;
+  `TRUEREPUBLIC_MULTI_VALIDATOR_SMOKE=1 go test . -run
+  TestMultiValidatorBackupRestoreExportImport -count=1 -timeout=420s -v` →
+  PASS (`88.224s` package runtime); `go test ./...` → PASS (`58.843s`);
+  `bash scripts/check-consistency.sh` → PASS;
+  `TRUEREPUBLIC_MULTI_VALIDATOR_SMOKE=1 go test . -run
+  '^(TestMultiValidatorConsensusRecovery|TestMultiValidatorTrustedSnapshotStateSync|TestMultiValidatorBackupRestoreExportImport)$'
+  -count=1 -timeout=720s -v` → PASS (`290.498s`). GitHub evidence is still in
+  progress.
+- **Risk:** High. Backup/restore touches operator disaster recovery and key
+  safety; the backup artifact must not leak private validator/node material or
+  silently replace target keys during restore.
+- **Ready for:** combined CI-smoke equivalent, PR publication, GitHub CI,
+  merge, and final GH-29/roadmap sync.
+
+### Lead Dev notes
+
+The restore path intentionally requires an initialized target home. It restores
+chain data/config while preserving locally generated identity and signing
+material. This is rollout evidence only, not production approval.
+
+### Codex review feedback
+
+Pending combined verification and PR checks.
+
 ## 2026-07-19 01:42 EEST GH-43 trusted snapshot state sync → Done
 
 - **Branch/PR:** `feature/GH-43-trusted-snapshot-state-sync`,
