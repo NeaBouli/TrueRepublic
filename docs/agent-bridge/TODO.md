@@ -61,6 +61,11 @@
 - [x] GH-41: publish PR, obtain green GitHub checks/review, merge via PR #42 /
   `8544943dd6fab483884392f1f04e83acbeb8f3f7`, and update GH-29/GH-41 closure
   evidence.
+- [x] GH-43: locally verify trusted snapshot state sync catch-up with derived
+  trust height/hash, app-hash convergence, validator-power visibility, and
+  exported-ledger validation.
+- [ ] GH-43: publish PR, obtain green GitHub checks/review, merge, close GH-43,
+  and update GH-29/roadmap closure evidence.
 - [x] GH-7: DEX rounding, slippage, pool accounting, custody, and authorization
   audit completed in GH-10; GH-12 retains genesis/runtime invariants.
 

@@ -61,10 +61,10 @@ jobs:
         with:
           go-version: '1.26.5'
 
-      - name: Run four-validator failure and recovery harness
+      - name: Run multi-validator recovery and state-sync harnesses
         env:
           TRUEREPUBLIC_MULTI_VALIDATOR_SMOKE: '1'
-        run: go test . -run '^TestMultiValidatorConsensusRecovery$' -count=1 -timeout=300s -v
+        run: go test . -run '^(TestMultiValidatorConsensusRecovery|TestMultiValidatorTrustedSnapshotStateSync)$' -count=1 -timeout=480s -v
 
   docker-restart-smoke:
     runs-on: ubuntu-latest
