@@ -23,6 +23,12 @@
   TestMultiValidatorNetworkPartitionRecovery -count=1 -timeout=300s -v` PASS
   in 104.175s; all three gated process harnesses pass together in 392.147s;
   `go test ./...` PASS.
+- Published PR #42, waited for green GitHub checks (`build-and-test`,
+  `multi-validator-recovery`, `docker-restart-smoke`, docs check,
+  CodeRabbit, DeepScan, Go/Rust security scans, and Node audits), and merged it
+  to `main` as `8544943dd6fab483884392f1f04e83acbeb8f3f7`.
+- GitHub automatically closed GH-41. GH-29 remains open as the parent rollout
+  tracker.
 
 ## 2026-07-15 13:20 EEST - GH-39 validator lifecycle evidence
 

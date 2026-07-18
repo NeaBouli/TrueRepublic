@@ -58,8 +58,9 @@
   closure evidence.
 - [x] GH-41: locally verify network partitions, delayed peers, validator
   failure, and recovery without ledger divergence.
-- [ ] GH-41: publish PR, obtain green GitHub checks/review, merge, and update
-  GH-29/GH-41 closure evidence.
+- [x] GH-41: publish PR, obtain green GitHub checks/review, merge via PR #42 /
+  `8544943dd6fab483884392f1f04e83acbeb8f3f7`, and update GH-29/GH-41 closure
+  evidence.
 - [x] GH-7: DEX rounding, slippage, pool accounting, custody, and authorization
   audit completed in GH-10; GH-12 retains genesis/runtime invariants.
 

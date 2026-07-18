@@ -20,9 +20,11 @@ Canonical coordination lives in [`docs/agent-bridge/`](docs/agent-bridge/README.
 
 GitHub recovery epic: [#4](https://github.com/NeaBouli/TrueRepublic/issues/4)
 
-## 2026-07-19 00:54 EEST GH-41 network partition recovery → Review
+## 2026-07-19 00:54 EEST GH-41 network partition recovery → Done
 
-- **Branch:** `feature/GH-41-network-partition-recovery`
+- **Branch/PR:** `feature/GH-41-network-partition-recovery`,
+  [PR #42](https://github.com/NeaBouli/TrueRepublic/pull/42), merged to
+  `main` as `8544943dd6fab483884392f1f04e83acbeb8f3f7`
 - **Issues:** [GH-41](https://github.com/NeaBouli/TrueRepublic/issues/41),
   parent tracker [GH-29](https://github.com/NeaBouli/TrueRepublic/issues/29)
 - **Changed:** added `TestMultiValidatorNetworkPartitionRecovery`, a gated
@@ -36,10 +38,14 @@ GitHub recovery epic: [#4](https://github.com/NeaBouli/TrueRepublic/issues/4)
   (`104.175s` package runtime); `TRUEREPUBLIC_MULTI_VALIDATOR_SMOKE=1 go test .
   -run 'TestMultiValidatorConsensusRecovery|TestMultiValidatorJoinReplacementLifecycle|TestMultiValidatorNetworkPartitionRecovery'
   -count=1 -timeout=600s -v` → PASS (`392.147s`); `go test ./...` → PASS.
+  GitHub checks for PR #42 are green: `build-and-test`,
+  `multi-validator-recovery`, `docker-restart-smoke`, `check`, `go-vuln`,
+  Rust audit, Node audits, DeepScan, and CodeRabbit.
 - **Risk:** Medium-high. The task exercises consensus/process behavior and must
   prove no app-hash, bank-supply, module-escrow, reserve, or validator-power
   divergence after recovery.
-- **Ready for:** PR, GitHub CI, review, merge, then GH-29/GH-41 closure.
+- **Closed:** GH-41 evidence is merged and closed; GH-29 remains open as the
+  parent rollout tracker.
 
 ### Lead Dev notes
 
