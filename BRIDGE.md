@@ -20,6 +20,43 @@ Canonical coordination lives in [`docs/agent-bridge/`](docs/agent-bridge/README.
 
 GitHub recovery epic: [#4](https://github.com/NeaBouli/TrueRepublic/issues/4)
 
+## 2026-07-19 01:42 EEST GH-43 trusted snapshot state sync → In Progress
+
+- **Branch:** `feature/GH-43-trusted-snapshot-state-sync`
+- **Issue:** [GH-43](https://github.com/NeaBouli/TrueRepublic/issues/43),
+  parent tracker [GH-29](https://github.com/NeaBouli/TrueRepublic/issues/29)
+- **Changed:** adding a gated process-level drill for a fresh node catching up
+  through CometBFT/Cosmos state sync from trusted snapshot metadata. The drill
+  enables snapshots on the trusted validators, derives trust height and trust
+  hash from a running trusted RPC endpoint, starts a fresh non-validator node
+  with state sync enabled, then verifies catch-up, app-hash convergence,
+  validator-power visibility, and exported ledger validity.
+- **Tests:** `go test . -run
+  'TestMultiValidatorTrustedSnapshotStateSync|TestConfigureGenesisValidatorSetBuildsExactBankBackedSet'
+  -count=1 -timeout=300s -v` → PASS/SKIP as expected without the smoke env;
+  `TRUEREPUBLIC_MULTI_VALIDATOR_SMOKE=1 go test . -run
+  TestMultiValidatorTrustedSnapshotStateSync -count=1 -timeout=360s -v` → PASS
+  (`130.528s` package runtime); `TRUEREPUBLIC_MULTI_VALIDATOR_SMOKE=1 go test
+  . -run '^(TestMultiValidatorConsensusRecovery|TestMultiValidatorTrustedSnapshotStateSync)$'
+  -count=1 -timeout=480s -v` → PASS (`197.835s`); `go test ./...` → PASS
+  (`65.114s`); `bash scripts/check-consistency.sh` → PASS. GitHub evidence is
+  still in progress.
+- **Risk:** Medium-high. State sync is disaster-recovery critical and must not
+  trust hardcoded metadata, stale RPC endpoints, or app-state that diverges from
+  the trusted validator set.
+- **Ready for:** full local verification, PR publication, GitHub CI, merge, and
+  final GH-29/roadmap sync.
+
+### Lead Dev notes
+
+This remains gated behind `TRUEREPUBLIC_MULTI_VALIDATOR_SMOKE=1` because it
+starts real CometBFT processes. It is rollout evidence only, not production
+approval.
+
+### Codex review feedback
+
+Pending full verification and PR checks.
+
 ## 2026-07-19 00:54 EEST GH-41 network partition recovery → Done
 
 - **Branch/PR:** `feature/GH-41-network-partition-recovery`,

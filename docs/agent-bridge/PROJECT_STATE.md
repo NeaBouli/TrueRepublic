@@ -1,6 +1,6 @@
 # Project State
 
-Updated: 2026-07-19 00:54 EEST
+Updated: 2026-07-19 01:42 EEST
 
 ## Repository
 
@@ -16,7 +16,10 @@ Updated: 2026-07-19 00:54 EEST
   join/replacement/restart-catch-up evidence plus Keeper/ABCI power-zero leave
   coverage. GH-41 network partition, delayed peer, quorum progress,
   reconnect/catch-up, app-hash convergence, validator-power, and bank-backed
-  export evidence is merged through PR #42 with green GitHub checks.
+  export evidence is merged through PR #42 with green GitHub checks. GH-43
+  trusted snapshot state-sync catch-up is in progress on
+  `feature/GH-43-trusted-snapshot-state-sync` with local gated smoke evidence
+  passing; PR/GitHub CI evidence is pending.
 - Active recovery checkout:
   `/Users/gio/Documents/Codex/2026-07-11/erkunden/TrueRepublic-gh20`
 - GH-26 branch: `fix/GH-26-pod-init-script`
@@ -71,6 +74,13 @@ Updated: 2026-07-19 00:54 EEST
   power, and exports ledger-valid state. Local targeted run passes in 104.175s;
   all gated process harnesses pass together in 392.147s; full local
   `go test ./...` passes; PR #42 GitHub checks are green.
+- GH-43 local evidence adds a gated trusted snapshot state-sync harness. Four
+  trusted validators serve snapshots, a real governance transaction commits
+  before sync, a fresh non-validator node derives trust height/hash from trusted
+  RPC, catches up through state sync, converges on the same app hash, sees all
+  validator powers, and exports ledger-valid state. Local targeted run passes
+  in 130.528s; the combined CI-smoke equivalent passes in 197.835s; full local
+  `go test ./...` passes in 65.114s. PR/GitHub CI evidence is pending.
 - GH-13 local Go 1.26.5: build, vet, normal tests, race tests, and coverage PASS.
   Coverage: root 10.2%, token 93.5%, treasury 97.0%, DEX 34.2%, governance 55.8%.
 - Go vulnerability gate: no reachable finding with an available fix remains;

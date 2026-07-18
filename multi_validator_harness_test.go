@@ -432,6 +432,107 @@ func TestMultiValidatorNetworkPartitionRecovery(t *testing.T) {
 	}
 }
 
+func TestMultiValidatorTrustedSnapshotStateSync(t *testing.T) {
+	if os.Getenv(multiValidatorSmokeEnv) != "1" {
+		t.Skipf("set %s=1 to run the multi-validator process harness", multiValidatorSmokeEnv)
+	}
+	ctx := t.Context()
+
+	binary := filepath.Join(t.TempDir(), "truerepublicd")
+	build := exec.CommandContext(ctx, "go", "build", "-o", binary, ".")
+	if output, err := build.CombinedOutput(); err != nil {
+		t.Fatalf("build daemon: %v\n%s", err, output)
+	}
+
+	const chainID = "truerepublic-state-sync-1"
+	validators := make([]*smokeValidator, 4)
+	for i := range validators {
+		validator := &smokeValidator{
+			name:    fmt.Sprintf("validator-%d", i+1),
+			home:    filepath.Join(t.TempDir(), fmt.Sprintf("node-%d", i+1)),
+			rpcPort: freeTCPPort(t),
+			p2pPort: freeTCPPort(t),
+			logPath: filepath.Join(t.TempDir(), fmt.Sprintf("validator-%d.log", i+1)),
+		}
+		initSmokeValidator(t, ctx, binary, chainID, validator)
+		validators[i] = validator
+	}
+	syncingNode := &smokeValidator{
+		name:    "state-sync-node",
+		home:    filepath.Join(t.TempDir(), "state-sync-node"),
+		rpcPort: freeTCPPort(t),
+		p2pPort: freeTCPPort(t),
+		logPath: filepath.Join(t.TempDir(), "state-sync-node.log"),
+	}
+	initSmokeValidator(t, ctx, binary, chainID, syncingNode)
+
+	admin := addSmokeKey(t, ctx, binary, validators[0].home, "state-sync-admin", 0, 800_000*token.WholeTokenBaseUnits)
+	sharedGenesis := buildSharedSmokeGenesis(t, chainID, validators, admin)
+	for _, validator := range append(append([]*smokeValidator{}, validators...), syncingNode) {
+		genesisPath := filepath.Join(validator.home, "config", "genesis.json")
+		if err := atomicWriteFile(genesisPath, sharedGenesis, 0o600); err != nil {
+			t.Fatalf("write %s shared genesis: %v", validator.name, err)
+		}
+	}
+
+	t.Cleanup(func() {
+		for _, validator := range append(append([]*smokeValidator{}, validators...), syncingNode) {
+			_ = validator.stop(false)
+		}
+		if t.Failed() {
+			for _, validator := range append(append([]*smokeValidator{}, validators...), syncingNode) {
+				validator.logContents(t)
+			}
+		}
+	})
+
+	for _, validator := range validators {
+		if err := validator.startWithArgs(ctx, binary, persistentPeers(validator, validators),
+			"--state-sync.snapshot-interval", "2",
+			"--state-sync.snapshot-keep-recent", "3",
+		); err != nil {
+			t.Fatalf("start snapshot provider %s: %v", validator.name, err)
+		}
+	}
+	waitForSmokeHeight(t, validators, 8, 120*time.Second)
+	assertCommonAppHash(t, validators, 8)
+
+	runSmokeTx(t, ctx, binary, validators[0], &admin, chainID,
+		"create-domain", "TrustedStateSync", fmt.Sprintf("%d%s", 500_000*token.WholeTokenBaseUnits, token.BaseDenom))
+	waitForSmokeHeight(t, validators, 10, 120*time.Second)
+	assertCommonAppHash(t, validators, 10)
+
+	trustHeight := smokeHeight(t, validators[0]) - 2
+	if trustHeight < 4 {
+		t.Fatalf("trust height = %d, want at least 4", trustHeight)
+	}
+	trustHash := smokeBlockHash(t, validators[0], trustHeight)
+	if trustHash == "" {
+		t.Fatalf("%s returned an empty block hash at trust height %d", validators[0].name, trustHeight)
+	}
+	configureSmokeStateSync(t, filepath.Join(syncingNode.home, "config", "config.toml"), trustHeight, trustHash, validators[0], validators[1])
+
+	if err := syncingNode.start(ctx, binary, persistentPeers(syncingNode, validators)); err != nil {
+		t.Fatalf("start state-sync node: %v", err)
+	}
+	waitForSmokeHeight(t, []*smokeValidator{syncingNode}, trustHeight, 120*time.Second)
+
+	convergenceHeight := smokeHeight(t, validators[0]) + 2
+	allNodes := append(append([]*smokeValidator{}, validators...), syncingNode)
+	waitForSmokeHeight(t, allNodes, convergenceHeight, 120*time.Second)
+	assertCommonAppHash(t, allNodes, convergenceHeight)
+	assertSmokeValidatorPowers(t, syncingNode, validators, "1")
+
+	if err := syncingNode.stop(true); err != nil {
+		t.Fatalf("stop state-sync node: %v", err)
+	}
+	exportedGenesis := exportSmokeGenesis(t, ctx, binary, syncingNode, convergenceHeight)
+	exportApp := newGenesisTestApp(t)
+	if err := validateLedgerGenesis(exportApp.appCodec, exportedGenesis.AppState); err != nil {
+		t.Fatalf("state-synced export is not exactly bank-backed: %v", err)
+	}
+}
+
 func buildSharedSmokeGenesis(t *testing.T, chainID string, validators []*smokeValidator, accounts ...smokeAccount) []byte {
 	t.Helper()
 	app := newGenesisTestApp(t)
@@ -767,7 +868,53 @@ func configureLocalhostSmokeP2P(t *testing.T, configPath string) {
 	}
 }
 
+func configureSmokeStateSync(t *testing.T, configPath string, trustHeight int64, trustHash string, rpcServers ...*smokeValidator) {
+	t.Helper()
+	if len(rpcServers) < 2 {
+		t.Fatal("state sync requires at least two trusted RPC servers")
+	}
+	config, err := os.ReadFile(configPath)
+	if err != nil {
+		t.Fatal(err)
+	}
+	rpcs := make([]string, 0, len(rpcServers))
+	for _, server := range rpcServers {
+		rpcs = append(rpcs, fmt.Sprintf("http://127.0.0.1:%d", server.rpcPort))
+	}
+	updated := replaceTomlSectionValue(t, string(config), "[statesync]", "enable = false", "enable = true")
+	updated = replaceTomlSectionValue(t, updated, "[statesync]", `rpc_servers = ""`, fmt.Sprintf(`rpc_servers = "%s"`, strings.Join(rpcs, ",")))
+	updated = replaceTomlSectionValue(t, updated, "[statesync]", "trust_height = 0", fmt.Sprintf("trust_height = %d", trustHeight))
+	updated = replaceTomlSectionValue(t, updated, "[statesync]", `trust_hash = ""`, fmt.Sprintf(`trust_hash = "%s"`, trustHash))
+	if err := atomicWriteFile(configPath, []byte(updated), 0o600); err != nil {
+		t.Fatal(err)
+	}
+}
+
+func replaceTomlSectionValue(t *testing.T, content, section, original, replacement string) string {
+	t.Helper()
+	start := strings.Index(content, section+"\n")
+	if start < 0 {
+		t.Fatalf("missing TOML section %s", section)
+	}
+	bodyStart := start + len(section) + 1
+	nextRel := strings.Index(content[bodyStart:], "\n[")
+	end := len(content)
+	if nextRel >= 0 {
+		end = bodyStart + nextRel
+	}
+	sectionBody := content[bodyStart:end]
+	if strings.Count(sectionBody, original) != 1 {
+		t.Fatalf("section %s contains %d copies of %q, want 1", section, strings.Count(sectionBody, original), original)
+	}
+	sectionBody = strings.Replace(sectionBody, original, replacement, 1)
+	return content[:bodyStart] + sectionBody + content[end:]
+}
+
 func (validator *smokeValidator) start(ctx context.Context, binary, peers string) error {
+	return validator.startWithArgs(ctx, binary, peers)
+}
+
+func (validator *smokeValidator) startWithArgs(ctx context.Context, binary, peers string, extraArgs ...string) error {
 	if validator.command != nil {
 		return errors.New("validator process is already running")
 	}
@@ -775,7 +922,7 @@ func (validator *smokeValidator) start(ctx context.Context, binary, peers string
 	if err != nil {
 		return err
 	}
-	command := exec.CommandContext(ctx, binary,
+	commandArgs := []string{
 		"start",
 		"--home", validator.home,
 		"--rpc.laddr", fmt.Sprintf("tcp://127.0.0.1:%d", validator.rpcPort),
@@ -784,8 +931,10 @@ func (validator *smokeValidator) start(ctx context.Context, binary, peers string
 		"--rpc.pprof_laddr", "",
 		"--grpc.enable=false",
 		"--api.enable=false",
-		"--minimum-gas-prices", "0"+token.BaseDenom,
-	)
+		"--minimum-gas-prices", "0" + token.BaseDenom,
+	}
+	commandArgs = append(commandArgs, extraArgs...)
+	command := exec.CommandContext(ctx, binary, commandArgs...)
 	command.Stdout = logFile
 	command.Stderr = logFile
 	if err := command.Start(); err != nil {
@@ -976,4 +1125,45 @@ func smokeAppHash(t *testing.T, validator *smokeValidator, height int64) string 
 		t.Fatalf("decode %s block %d: %v", validator.name, height, err)
 	}
 	return block.Result.Block.Header.AppHash
+}
+
+func smokeBlockHash(t *testing.T, validator *smokeValidator, height int64) string {
+	t.Helper()
+	client := &http.Client{Timeout: time.Second}
+	url := fmt.Sprintf("http://127.0.0.1:%d/commit?height=%d", validator.rpcPort, height)
+	request, err := http.NewRequestWithContext(t.Context(), http.MethodGet, url, nil)
+	if err != nil {
+		t.Fatalf("build %s commit %d request: %v", validator.name, height, err)
+	}
+	response, err := client.Do(request)
+	if err != nil {
+		t.Fatalf("query %s commit %d: %v", validator.name, height, err)
+	}
+	defer response.Body.Close()
+	if response.StatusCode != http.StatusOK {
+		t.Fatalf("query %s commit %d: %s", validator.name, height, response.Status)
+	}
+	var commit struct {
+		Result struct {
+			SignedHeader struct {
+				Commit struct {
+					BlockID struct {
+						Hash string `json:"hash"`
+					} `json:"block_id"`
+				} `json:"commit"`
+			} `json:"signed_header"`
+		} `json:"result"`
+		Error *struct {
+			Code    int    `json:"code"`
+			Message string `json:"message"`
+			Data    string `json:"data"`
+		} `json:"error"`
+	}
+	if err := json.NewDecoder(response.Body).Decode(&commit); err != nil {
+		t.Fatalf("decode %s commit %d: %v", validator.name, height, err)
+	}
+	if commit.Error != nil {
+		t.Fatalf("query %s commit %d returned error %d %s: %s", validator.name, height, commit.Error.Code, commit.Error.Message, commit.Error.Data)
+	}
+	return commit.Result.SignedHeader.Commit.BlockID.Hash
 }

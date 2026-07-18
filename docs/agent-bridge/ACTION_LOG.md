@@ -1,5 +1,29 @@
 # Action Log
 
+## 2026-07-19 01:42 EEST - GH-43 trusted snapshot state sync start
+
+- Opened GH-43 for the next GH-29 Phase 1 gap: trusted snapshot state sync
+  catch-up.
+- Created branch `feature/GH-43-trusted-snapshot-state-sync`.
+- Added `TestMultiValidatorTrustedSnapshotStateSync`, a gated process harness
+  that enables snapshots on four trusted validators, commits a real
+  `create-domain` transaction, derives trust height and trust hash from a
+  trusted RPC endpoint, starts a fresh non-validator node with state sync
+  enabled, and verifies catch-up to a common app hash.
+- Added harness helpers for state-sync-safe start flags, scoped `[statesync]`
+  config patching, and trusted block-hash lookup through CometBFT RPC.
+- Local evidence:
+  `go test . -run
+  'TestMultiValidatorTrustedSnapshotStateSync|TestConfigureGenesisValidatorSetBuildsExactBankBackedSet'
+  -count=1 -timeout=300s -v` PASS/SKIP as expected without the smoke env;
+  `TRUEREPUBLIC_MULTI_VALIDATOR_SMOKE=1 go test . -run
+  TestMultiValidatorTrustedSnapshotStateSync -count=1 -timeout=360s -v` PASS
+  in 130.528s; `TRUEREPUBLIC_MULTI_VALIDATOR_SMOKE=1 go test . -run
+  '^(TestMultiValidatorConsensusRecovery|TestMultiValidatorTrustedSnapshotStateSync)$'
+  -count=1 -timeout=480s -v` PASS in 197.835s; `go test ./...` PASS in
+  65.114s; `bash scripts/check-consistency.sh` PASS.
+- PR publication, GitHub CI, and closure sync remain in progress.
+
 ## 2026-07-19 00:54 EEST - GH-41 network partition recovery start
 
 - Confirmed `main` is synchronized with `origin/main` at `464a36a`.
