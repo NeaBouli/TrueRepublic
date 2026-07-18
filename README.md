@@ -254,7 +254,7 @@ cd client-web && npm ci && npm run lint && npm test -- --run && npm run build
 | React Native + Expo | 0.74 / 51.0 | Legacy; security migration required |
 | Keplr + CosmJS | 0.39 | Maintained v0.4 client |
 
-**Known Limitations:** IBC staking/upgrade remains stubbed (PoD is used instead), a real ZKP prover/ceremony review is pending, and the bounded four-validator recovery harness does not yet cover partitions, state sync, backup/restore, upgrades, or independent operations review. See [LIMITATIONS.md](docs/LIMITATIONS.md).
+**Known Limitations:** IBC staking/upgrade remains stubbed (PoD is used instead), a real ZKP prover/ceremony review is pending, and the bounded four-validator recovery harness does not yet cover backup/restore, upgrades, rollback, or independent operations review. See [LIMITATIONS.md](docs/LIMITATIONS.md).
 
 ---
 

@@ -22,7 +22,12 @@
   '^(TestMultiValidatorConsensusRecovery|TestMultiValidatorTrustedSnapshotStateSync)$'
   -count=1 -timeout=480s -v` PASS in 197.835s; `go test ./...` PASS in
   65.114s; `bash scripts/check-consistency.sh` PASS.
-- PR publication, GitHub CI, and closure sync remain in progress.
+- Published PR #44, waited for green GitHub checks (`build-and-test`,
+  `multi-validator-recovery`, `docker-restart-smoke`, docs check, CodeRabbit,
+  DeepScan, Go/Rust security scans, and Node audits), and merged it to `main`
+  as `12a37339e9cff957d1b44413aa36160aed4e8d29`.
+- GitHub automatically closed GH-43. GH-29 remains open as the parent rollout
+  tracker.
 
 ## 2026-07-19 00:54 EEST - GH-41 network partition recovery start
 

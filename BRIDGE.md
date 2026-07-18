@@ -20,10 +20,12 @@ Canonical coordination lives in [`docs/agent-bridge/`](docs/agent-bridge/README.
 
 GitHub recovery epic: [#4](https://github.com/NeaBouli/TrueRepublic/issues/4)
 
-## 2026-07-19 01:42 EEST GH-43 trusted snapshot state sync → In Progress
+## 2026-07-19 01:42 EEST GH-43 trusted snapshot state sync → Done
 
-- **Branch:** `feature/GH-43-trusted-snapshot-state-sync`
-- **Issue:** [GH-43](https://github.com/NeaBouli/TrueRepublic/issues/43),
+- **Branch/PR:** `feature/GH-43-trusted-snapshot-state-sync`,
+  [PR #44](https://github.com/NeaBouli/TrueRepublic/pull/44), merged to
+  `main` as `12a37339e9cff957d1b44413aa36160aed4e8d29`
+- **Issues:** [GH-43](https://github.com/NeaBouli/TrueRepublic/issues/43),
   parent tracker [GH-29](https://github.com/NeaBouli/TrueRepublic/issues/29)
 - **Changed:** adding a gated process-level drill for a fresh node catching up
   through CometBFT/Cosmos state sync from trusted snapshot metadata. The drill
@@ -39,13 +41,15 @@ GitHub recovery epic: [#4](https://github.com/NeaBouli/TrueRepublic/issues/4)
   (`130.528s` package runtime); `TRUEREPUBLIC_MULTI_VALIDATOR_SMOKE=1 go test
   . -run '^(TestMultiValidatorConsensusRecovery|TestMultiValidatorTrustedSnapshotStateSync)$'
   -count=1 -timeout=480s -v` → PASS (`197.835s`); `go test ./...` → PASS
-  (`65.114s`); `bash scripts/check-consistency.sh` → PASS. GitHub evidence is
-  still in progress.
+  (`65.114s`); `bash scripts/check-consistency.sh` → PASS. GitHub PR #44
+  checks are green: `build-and-test`, `multi-validator-recovery`,
+  `docker-restart-smoke`, docs check, `go-vuln`, Rust audit, maintained and
+  legacy Node audits, DeepScan, and CodeRabbit.
 - **Risk:** Medium-high. State sync is disaster-recovery critical and must not
   trust hardcoded metadata, stale RPC endpoints, or app-state that diverges from
   the trusted validator set.
-- **Ready for:** full local verification, PR publication, GitHub CI, merge, and
-  final GH-29/roadmap sync.
+- **Closed:** GH-43 evidence is merged and closed; GH-29 remains open as the
+  parent rollout tracker.
 
 ### Lead Dev notes
 
@@ -55,7 +59,10 @@ approval.
 
 ### Codex review feedback
 
-Pending full verification and PR checks.
+The current evidence proves trusted snapshot state-sync catch-up from derived
+trust metadata, app-hash convergence after sync, validator-power visibility from
+the synced node, and bank-backed exported state. This remains rollout evidence
+only, not production approval.
 
 ## 2026-07-19 00:54 EEST GH-41 network partition recovery → Done
 

@@ -33,7 +33,7 @@ approval.
   ([GH-39](https://github.com/NeaBouli/TrueRepublic/issues/39)).
 - [x] Exercise network partitions, delayed peers, validator failure, and
   recovery without ledger divergence.
-- [ ] Verify state sync and catch-up from a trusted snapshot.
+- [x] Verify state sync and catch-up from a trusted snapshot.
 - [ ] Run backup, restore, export, and import drills from documented artifacts.
 - [ ] Prove application and consensus upgrades on persisted state.
 - [ ] Prove rollback after a failed upgrade within a defined recovery window.

@@ -1,6 +1,6 @@
 # Project State
 
-Updated: 2026-07-19 01:42 EEST
+Updated: 2026-07-19 01:56 EEST
 
 ## Repository
 
@@ -9,7 +9,7 @@ Updated: 2026-07-19 01:42 EEST
   are recorded in `ACTION_LOG.md` so this live state does not self-expire after
   documentation-only merges.
 - Merged recovery PRs: #9, #15, #16, #17, #18, #19, #22, #23, #24, #27,
-  #28, #30, #31, #33, #34, #35, #40, and #42.
+  #28, #30, #31, #33, #34, #35, #40, #42, and #44.
 - Current work: GH-29 remains open as the rollout execution tracker. GH-32 and
   PR #33 close its first Phase 1 gate with local and GitHub evidence. GH-39 is
   now merged via PR #40 with green GitHub CI for validator
@@ -17,9 +17,8 @@ Updated: 2026-07-19 01:42 EEST
   coverage. GH-41 network partition, delayed peer, quorum progress,
   reconnect/catch-up, app-hash convergence, validator-power, and bank-backed
   export evidence is merged through PR #42 with green GitHub checks. GH-43
-  trusted snapshot state-sync catch-up is in progress on
-  `feature/GH-43-trusted-snapshot-state-sync` with local gated smoke evidence
-  passing; PR/GitHub CI evidence is pending.
+  trusted snapshot state-sync catch-up is merged through PR #44 with green
+  local and GitHub evidence.
 - Active recovery checkout:
   `/Users/gio/Documents/Codex/2026-07-11/erkunden/TrueRepublic-gh20`
 - GH-26 branch: `fix/GH-26-pod-init-script`
@@ -29,7 +28,7 @@ Updated: 2026-07-19 01:42 EEST
 - Recovery worktree: `/Users/gio/Desktop/repos/TrueRepublic-recovery`
 - Legacy local checkout: preserved at `/Users/gio/Desktop/repos/TrueRepublic`
 - GitHub epic: #4
-- Open GitHub issue set after cleanup and GH-41 merge: #4 recovery epic, #7
+- Open GitHub issue set after cleanup and GH-43 merge: #4 recovery epic, #7
   audit/review parent, and #29 rollout tracker.
 
 ## Verified state
@@ -74,13 +73,13 @@ Updated: 2026-07-19 01:42 EEST
   power, and exports ledger-valid state. Local targeted run passes in 104.175s;
   all gated process harnesses pass together in 392.147s; full local
   `go test ./...` passes; PR #42 GitHub checks are green.
-- GH-43 local evidence adds a gated trusted snapshot state-sync harness. Four
+- GH-43 merged evidence adds a gated trusted snapshot state-sync harness. Four
   trusted validators serve snapshots, a real governance transaction commits
   before sync, a fresh non-validator node derives trust height/hash from trusted
   RPC, catches up through state sync, converges on the same app hash, sees all
   validator powers, and exports ledger-valid state. Local targeted run passes
   in 130.528s; the combined CI-smoke equivalent passes in 197.835s; full local
-  `go test ./...` passes in 65.114s. PR/GitHub CI evidence is pending.
+  `go test ./...` passes in 65.114s; PR #44 GitHub checks are green.
 - GH-13 local Go 1.26.5: build, vet, normal tests, race tests, and coverage PASS.
   Coverage: root 10.2%, token 93.5%, treasury 97.0%, DEX 34.2%, governance 55.8%.
 - Go vulnerability gate: no reachable finding with an available fix remains;
@@ -203,9 +202,10 @@ The token/ledger audit is 12/12 PASS locally across the merged recovery work:
 denomination/cap, governance custody, reward issuance, DEX custody, custom
 genesis, and runtime invariants. The repository remains recovery-only because
 GH-20 still needs a real prover/external
-cryptographic review. GH-32 closes only the bounded four-validator
-failure/restart/catch-up slice; partitions, state sync, backup/restore,
-upgrades, load, topology, IBC, and independent operations review remain open.
+cryptographic review. GH-32/GH-41/GH-43 close bounded four-validator
+failure/restart/catch-up, partition-recovery, and trusted state-sync slices;
+backup/restore, upgrades, rollback, load, topology, IBC, and independent
+operations review remain open.
 
 GH-11 implements the canonical denomination metadata (`upnyx`, six decimal
 places, 21,000,000,000,000 base-unit cap) and pre-init bank-genesis cap checks.
