@@ -1,5 +1,5 @@
 #!/bin/bash
-# TrueRepublic chain data backup script.
+# TrueRepublic sanitized chain data backup script.
 # Usage: ./scripts/backup.sh [backup-dir]
 # Cron:  0 3 * * * /path/to/scripts/backup.sh
 
@@ -16,6 +16,12 @@ mkdir -p "$BACKUP_DIR"
 echo "[$(date)] Starting backup of $CHAIN_HOME..."
 
 tar -czf "${BACKUP_DIR}/${BACKUP_FILE}" \
+    --exclude "$(basename "$CHAIN_HOME")/config/node_key.json" \
+    --exclude "$(basename "$CHAIN_HOME")/config/priv_validator_key.json" \
+    --exclude "$(basename "$CHAIN_HOME")/data/priv_validator_state.json" \
+    --exclude "$(basename "$CHAIN_HOME")/keyring-file" \
+    --exclude "$(basename "$CHAIN_HOME")/keyring-test" \
+    --exclude "$(basename "$CHAIN_HOME")/keyring-test-*" \
     -C "$(dirname "$CHAIN_HOME")" \
     "$(basename "$CHAIN_HOME")"
 

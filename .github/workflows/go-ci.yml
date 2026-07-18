@@ -13,7 +13,9 @@ on:
       - '.dockerignore'
       - '.github/workflows/go-ci.yml'
       - 'docker-compose.yml'
+      - 'scripts/backup.sh'
       - 'scripts/docker-entrypoint.sh'
+      - 'scripts/restore.sh'
   pull_request:
     paths:
       - '**.go'
@@ -23,7 +25,9 @@ on:
       - '.dockerignore'
       - '.github/workflows/go-ci.yml'
       - 'docker-compose.yml'
+      - 'scripts/backup.sh'
       - 'scripts/docker-entrypoint.sh'
+      - 'scripts/restore.sh'
 
 permissions:
   contents: read
@@ -51,7 +55,7 @@ jobs:
 
   multi-validator-recovery:
     runs-on: ubuntu-latest
-    timeout-minutes: 8
+    timeout-minutes: 12
     steps:
       - uses: actions/checkout@v5
         with:
@@ -61,10 +65,10 @@ jobs:
         with:
           go-version: '1.26.5'
 
-      - name: Run multi-validator recovery and state-sync harnesses
+      - name: Run multi-validator recovery, state-sync, and backup/restore harnesses
         env:
           TRUEREPUBLIC_MULTI_VALIDATOR_SMOKE: '1'
-        run: go test . -run '^(TestMultiValidatorConsensusRecovery|TestMultiValidatorTrustedSnapshotStateSync)$' -count=1 -timeout=480s -v
+        run: go test . -run '^(TestMultiValidatorConsensusRecovery|TestMultiValidatorTrustedSnapshotStateSync|TestMultiValidatorBackupRestoreExportImport)$' -count=1 -timeout=720s -v
 
   docker-restart-smoke:
     runs-on: ubuntu-latest

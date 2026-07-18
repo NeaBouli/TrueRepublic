@@ -1,5 +1,35 @@
 # Action Log
 
+## 2026-07-19 02:52 EEST - GH-45 backup/restore/export/import start
+
+- Confirmed `main` is synchronized with `origin/main` at `d121d34`.
+- Confirmed no open PRs; only #4, #7, and #29 were open before creating the
+  next Phase 1 task.
+- Opened GH-45 for the next GH-29 Phase 1 gap: backup, restore, export, and
+  import disaster-recovery drills.
+- Created branch `feature/GH-45-backup-restore-drill`.
+- Hardened `scripts/backup.sh` so chain-data backups exclude node keys,
+  validator keys, validator signing state, and keyrings.
+- Added `scripts/restore.sh`, which restores sanitized backup data into an
+  already initialized target home while preserving the target's local keys.
+- Added `TestMultiValidatorBackupRestoreExportImport`, a gated process harness
+  that backs up a live full node, verifies the backup archive contains no
+  private/signer artifacts, restores it into a fresh home, restarts/catches up,
+  verifies app-hash convergence, exports the restored state, validates ledger
+  invariants, and re-imports the exported genesis.
+- Local evidence so far:
+  `bash -n scripts/backup.sh scripts/restore.sh` PASS; `go test . -run
+  'TestMultiValidatorBackupRestoreExportImport|TestConfigureGenesisValidatorSetBuildsExactBankBackedSet'
+  -count=1 -timeout=300s -v` PASS/SKIP as expected without the smoke env;
+  `TRUEREPUBLIC_MULTI_VALIDATOR_SMOKE=1 go test . -run
+  TestMultiValidatorBackupRestoreExportImport -count=1 -timeout=420s -v` PASS
+  in 88.224s; `go test ./...` PASS in 58.843s; `bash
+  scripts/check-consistency.sh` PASS; `TRUEREPUBLIC_MULTI_VALIDATOR_SMOKE=1
+  go test . -run
+  '^(TestMultiValidatorConsensusRecovery|TestMultiValidatorTrustedSnapshotStateSync|TestMultiValidatorBackupRestoreExportImport)$'
+  -count=1 -timeout=720s -v` PASS in 290.498s.
+- PR publication, GitHub CI, and closure sync remain in progress.
+
 ## 2026-07-19 01:42 EEST - GH-43 trusted snapshot state sync start
 
 - Opened GH-43 for the next GH-29 Phase 1 gap: trusted snapshot state sync
