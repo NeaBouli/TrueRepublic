@@ -11,6 +11,18 @@
 - Opened GH-41 for the next Phase 1 rollout gap: network partitions, delayed
   peers, validator failure, and recovery without ledger divergence.
 - Created branch `feature/GH-41-network-partition-recovery`.
+- Added `TestMultiValidatorNetworkPartitionRecovery`, which starts a 3-of-4
+  quorum without the fourth peer, starts the fourth validator isolated with no
+  peers, commits a real `create-domain` transaction on the quorum side, then
+  reconnects the isolated validator and verifies catch-up to the same app hash.
+- The new harness also verifies all validator powers after recovery and exports
+  every node state through `validateLedgerGenesis` to prove bank supply,
+  treasury/stake escrow, DEX reserve, and LP invariant consistency.
+- Local evidence:
+  `TRUEREPUBLIC_MULTI_VALIDATOR_SMOKE=1 go test . -run
+  TestMultiValidatorNetworkPartitionRecovery -count=1 -timeout=300s -v` PASS
+  in 104.175s; all three gated process harnesses pass together in 392.147s;
+  `go test ./...` PASS.
 
 ## 2026-07-15 13:20 EEST - GH-39 validator lifecycle evidence
 

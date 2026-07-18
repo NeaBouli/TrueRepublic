@@ -14,8 +14,11 @@ Updated: 2026-07-19 00:54 EEST
   PR #33 close its first Phase 1 gate with local and GitHub evidence. GH-39 is
   now merged via PR #40 with green GitHub CI for validator
   join/replacement/restart-catch-up evidence plus Keeper/ABCI power-zero leave
-  coverage. GH-41 is the active Phase 1 task for network partitions, delayed
-  peers, validator failure, and ledger-safe recovery.
+  coverage. GH-41 now has local network partition, delayed peer, quorum
+  progress, reconnect/catch-up, app-hash convergence, validator-power, and
+  bank-backed export evidence on branch
+  `feature/GH-41-network-partition-recovery`; GitHub PR/check/merge evidence is
+  pending.
 - Active recovery checkout:
   `/Users/gio/Documents/Codex/2026-07-11/erkunden/TrueRepublic-gh20`
 - GH-26 branch: `fix/GH-26-pod-init-script`
@@ -63,6 +66,13 @@ Updated: 2026-07-19 00:54 EEST
   `go test ./...` passes locally, and PR #40 GitHub checks are green:
   `build-and-test`, `multi-validator-recovery`, `docker-restart-smoke`, docs
   consistency, CodeRabbit, DeepScan, Go/Rust security scans, and Node audits.
+- GH-41 branch evidence adds a gated four-validator network partition recovery
+  harness. A 3-of-4 quorum progresses and commits a real governance transaction
+  while the fourth validator is isolated with no peers; the isolated validator
+  then reconnects, catches up, shares the same app hash, retains validator
+  power, and exports ledger-valid state. Local targeted run passes in 104.175s;
+  all gated process harnesses pass together in 392.147s; full `go test ./...`
+  passes locally.
 - GH-13 local Go 1.26.5: build, vet, normal tests, race tests, and coverage PASS.
   Coverage: root 10.2%, token 93.5%, treasury 97.0%, DEX 34.2%, governance 55.8%.
 - Go vulnerability gate: no reachable finding with an available fix remains;

@@ -56,8 +56,10 @@
 - [x] GH-39: publish the branch, obtain green GitHub checks/review, merge via
   PR #40 / `ad30d188c7956c28cff5bf53304bc04848ba569a`, and update GH-29/GH-39
   closure evidence.
-- [ ] GH-41: verify network partitions, delayed peers, validator failure, and
-  recovery without ledger divergence.
+- [x] GH-41: locally verify network partitions, delayed peers, validator
+  failure, and recovery without ledger divergence.
+- [ ] GH-41: publish PR, obtain green GitHub checks/review, merge, and update
+  GH-29/GH-41 closure evidence.
 - [x] GH-7: DEX rounding, slippage, pool accounting, custody, and authorization
   audit completed in GH-10; GH-12 retains genesis/runtime invariants.
 
