@@ -20,6 +20,29 @@ Canonical coordination lives in [`docs/agent-bridge/`](docs/agent-bridge/README.
 
 GitHub recovery epic: [#4](https://github.com/NeaBouli/TrueRepublic/issues/4)
 
+## 2026-07-19 00:54 EEST GH-41 network partition recovery → In Progress
+
+- **Branch:** `feature/GH-41-network-partition-recovery`
+- **Issues:** [GH-41](https://github.com/NeaBouli/TrueRepublic/issues/41),
+  parent tracker [GH-29](https://github.com/NeaBouli/TrueRepublic/issues/29)
+- **Changed:** started the next Phase 1 rollout evidence task for network
+  partitions, delayed peers, validator failure, and ledger-safe recovery.
+- **Tests:** not run yet; implementation has not started.
+- **Risk:** Medium-high. The task exercises consensus/process behavior and must
+  prove no app-hash, bank-supply, module-escrow, reserve, or validator-power
+  divergence after recovery.
+- **Ready for:** implementation and focused harness design.
+
+### Lead Dev notes
+
+Build on the existing GH-32/GH-39 process harnesses. Keep expensive network
+failure evidence gated so normal tests stay practical. Any public status update
+must keep the non-production/mainnet boundary explicit.
+
+### Codex review feedback
+
+Pending implementation.
+
 ## 2026-07-15 13:20 EEST GH-39 validator lifecycle evidence → Done
 
 - **Branch/PR:** `feature/GH-39-validator-lifecycle`,

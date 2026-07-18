@@ -1,5 +1,17 @@
 # Action Log
 
+## 2026-07-19 00:54 EEST - GH-41 network partition recovery start
+
+- Confirmed `main` is synchronized with `origin/main` at `464a36a`.
+- Confirmed no open PRs and latest `main` Go CI, Security Scan, and Pages
+  deployment are green.
+- Cleaned stale completed issues #8, #11, #13, #14, #20, and #21 with closure
+  comments that preserve remaining rollout boundaries under GH-29/GH-7.
+- Left #4, #7, and #29 open intentionally as parent/audit/rollout trackers.
+- Opened GH-41 for the next Phase 1 rollout gap: network partitions, delayed
+  peers, validator failure, and recovery without ledger divergence.
+- Created branch `feature/GH-41-network-partition-recovery`.
+
 ## 2026-07-15 13:20 EEST - GH-39 validator lifecycle evidence
 
 - Continued `feature/GH-39-validator-lifecycle` from the active rollout goal.

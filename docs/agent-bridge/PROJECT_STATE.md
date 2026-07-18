@@ -1,6 +1,6 @@
 # Project State
 
-Updated: 2026-07-15 13:20 EEST
+Updated: 2026-07-19 00:54 EEST
 
 ## Repository
 
@@ -14,7 +14,8 @@ Updated: 2026-07-15 13:20 EEST
   PR #33 close its first Phase 1 gate with local and GitHub evidence. GH-39 is
   now merged via PR #40 with green GitHub CI for validator
   join/replacement/restart-catch-up evidence plus Keeper/ABCI power-zero leave
-  coverage.
+  coverage. GH-41 is the active Phase 1 task for network partitions, delayed
+  peers, validator failure, and ledger-safe recovery.
 - Active recovery checkout:
   `/Users/gio/Documents/Codex/2026-07-11/erkunden/TrueRepublic-gh20`
 - GH-26 branch: `fix/GH-26-pod-init-script`
@@ -24,6 +25,8 @@ Updated: 2026-07-15 13:20 EEST
 - Recovery worktree: `/Users/gio/Desktop/repos/TrueRepublic-recovery`
 - Legacy local checkout: preserved at `/Users/gio/Desktop/repos/TrueRepublic`
 - GitHub epic: #4
+- Open GitHub issue set after cleanup: #4 recovery epic, #7 audit/review
+  parent, #29 rollout tracker, and #41 active network-failure child task.
 
 ## Verified state
 
