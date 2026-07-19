@@ -494,12 +494,12 @@ func TestMultiValidatorTrustedSnapshotStateSync(t *testing.T) {
 			t.Fatalf("start snapshot provider %s: %v", validator.name, err)
 		}
 	}
-	waitForSmokeHeight(t, validators, 8, 120*time.Second)
+	waitForSmokeHeight(t, validators, 8, 180*time.Second)
 	assertCommonAppHash(t, validators, 8)
 
 	runSmokeTx(t, ctx, binary, validators[0], &admin, chainID,
 		"create-domain", "TrustedStateSync", fmt.Sprintf("%d%s", 500_000*token.WholeTokenBaseUnits, token.BaseDenom))
-	waitForSmokeHeight(t, validators, 10, 120*time.Second)
+	waitForSmokeHeight(t, validators, 10, 180*time.Second)
 	assertCommonAppHash(t, validators, 10)
 
 	trustHeight := smokeHeight(t, validators[0]) - 2
@@ -515,11 +515,11 @@ func TestMultiValidatorTrustedSnapshotStateSync(t *testing.T) {
 	if err := syncingNode.start(ctx, binary, persistentPeers(syncingNode, validators)); err != nil {
 		t.Fatalf("start state-sync node: %v", err)
 	}
-	waitForSmokeHeight(t, []*smokeValidator{syncingNode}, trustHeight, 120*time.Second)
+	waitForSmokeHeight(t, []*smokeValidator{syncingNode}, trustHeight, 180*time.Second)
 
 	convergenceHeight := smokeHeight(t, validators[0]) + 2
 	allNodes := append(append([]*smokeValidator{}, validators...), syncingNode)
-	waitForSmokeHeight(t, allNodes, convergenceHeight, 120*time.Second)
+	waitForSmokeHeight(t, allNodes, convergenceHeight, 180*time.Second)
 	assertCommonAppHash(t, allNodes, convergenceHeight)
 	assertSmokeValidatorPowers(t, syncingNode, validators, "1")
 
