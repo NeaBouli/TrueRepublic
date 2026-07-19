@@ -20,6 +20,32 @@ Canonical coordination lives in [`docs/agent-bridge/`](docs/agent-bridge/README.
 
 GitHub recovery epic: [#4](https://github.com/NeaBouli/TrueRepublic/issues/4)
 
+## 2026-07-19 03:31 EEST GH-47 CI build-and-test timeout → Done
+
+- **Issue:** [GH-47](https://github.com/NeaBouli/TrueRepublic/issues/47),
+  parent tracker [GH-29](https://github.com/NeaBouli/TrueRepublic/issues/29)
+- **Changed:** added an explicit 20-minute job timeout to the Go CI
+  `build-and-test` job so a stuck GitHub runner cannot leave `main`
+  indefinitely in progress.
+- **Tests:** local `go test ./...` → PASS (`58.913s`); `python3 -m json.tool
+  docs/status.json >/dev/null` → PASS; `bash -n scripts/backup.sh
+  scripts/restore.sh` → PASS; `git diff --check` → PASS; `bash
+  scripts/check-consistency.sh` → PASS.
+- **Risk:** Low. This changes CI runner bounds only; code and test commands are
+  unchanged.
+- **Closed:** pending final GitHub main run confirmation and GH-47 closure.
+
+### Lead Dev notes
+
+PR #46's merge commit produced a stale GitHub `build-and-test` job that stayed
+in progress for hours even though local `go test ./...` passed and the
+dedicated `multi-validator-recovery` and Docker jobs were green. The explicit
+job timeout prevents that state from recurring.
+
+### Codex review feedback
+
+Approved after local verification; awaiting refreshed GitHub checks.
+
 ## 2026-07-19 02:52 EEST GH-45 backup/restore/export/import → Done
 
 - **Branch/PR:** `feature/GH-45-backup-restore-drill`,

@@ -1,6 +1,6 @@
 # Project State
 
-Updated: 2026-07-19 03:19 EEST
+Updated: 2026-07-19 03:31 EEST
 
 ## Repository
 
@@ -19,7 +19,10 @@ Updated: 2026-07-19 03:19 EEST
   export evidence is merged through PR #42 with green GitHub checks. GH-43
   trusted snapshot state-sync catch-up is merged through PR #44 with green
   local and GitHub evidence. GH-45 sanitized backup/restore/export/import
-  drills are merged through PR #46 with green local and GitHub evidence.
+  drills are merged through PR #46 with green local and GitHub evidence. GH-47
+  bounds the Go CI `build-and-test` job with a 20-minute timeout after a stale
+  GitHub runner left the PR #46 merge-commit run in progress despite local Go
+  tests passing.
 - Active recovery checkout:
   `/Users/gio/Documents/Codex/2026-07-11/erkunden/TrueRepublic-gh20`
 - GH-26 branch: `fix/GH-26-pod-init-script`

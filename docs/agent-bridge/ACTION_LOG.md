@@ -1,5 +1,15 @@
 # Action Log
 
+## 2026-07-19 03:31 EEST - GH-47 CI build-and-test timeout
+
+- Opened GH-47 after the PR #46 merge-commit Go CI run left `build-and-test`
+  in progress for hours while `multi-validator-recovery` and
+  `docker-restart-smoke` were green.
+- Reproduced the normal suite locally: `go test ./...` PASS in 58.913s.
+- Added a 20-minute timeout to the Go CI `build-and-test` job. The test command
+  itself is unchanged.
+- Final GitHub main-run confirmation is pending.
+
 ## 2026-07-19 02:52 EEST - GH-45 backup/restore/export/import start
 
 - Confirmed `main` is synchronized with `origin/main` at `d121d34`.

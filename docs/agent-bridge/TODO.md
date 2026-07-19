@@ -9,6 +9,8 @@
   the roadmap handoff, not the rollout phases.
 - [x] GH-5: Go/Rust toolchains, tests, static checks, vulnerability gates, and
   GitHub security CI are green.
+- [x] GH-47: bound the Go CI `build-and-test` job with a 20-minute timeout so
+  stuck GitHub runners cannot leave `main` indefinitely in progress.
 - [x] GH-6: v0.4 client lint, tests, build, exact amount handling, maintained
   wallet crypto, npm audit, and GitHub CI are green.
 - [x] GH-8: reproduce legacy web wallet and mobile wallet CI/security state.
