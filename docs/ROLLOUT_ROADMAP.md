@@ -34,7 +34,7 @@ approval.
 - [x] Exercise network partitions, delayed peers, validator failure, and
   recovery without ledger divergence.
 - [x] Verify state sync and catch-up from a trusted snapshot.
-- [ ] Run backup, restore, export, and import drills from documented artifacts.
+- [x] Run backup, restore, export, and import drills from documented artifacts.
 - [ ] Prove application and consensus upgrades on persisted state.
 - [ ] Prove rollback after a failed upgrade within a defined recovery window.
 - [ ] Define and test validator-key backup, rotation, and compromise response.

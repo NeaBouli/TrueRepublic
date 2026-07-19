@@ -54,12 +54,11 @@ logic as a fast unit regression.
 
 ## Not proven
 
-GH-32/GH-41/GH-43 are bounded four-validator failure/restart/catch-up,
-partition-recovery, and trusted state-sync slices. The following Road to
-Rollout gates remain open:
+GH-32/GH-41/GH-43/GH-45 are bounded four-validator failure/restart/catch-up,
+partition-recovery, trusted state-sync, and sanitized backup/restore slices.
+The following Road to Rollout gates remain open:
 
 - validator-key backup, rotation, and compromise response;
-- backup/restore and export/import drills from operator artifacts;
 - persisted-state upgrades and rollback;
 - IBC relayer and cross-chain failure recovery;
 - sustained load, public topology, monitoring, and independent operations

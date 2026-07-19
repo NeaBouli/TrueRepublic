@@ -15,9 +15,10 @@
   crates through Wasmer. No fixable cargo-audit vulnerability remains, but the
   warnings require monitoring or a stable upstream upgrade.
 - GH-21 native and GitHub-container single-node lifecycle passes. GH-32/GH-41/
-  GH-43 prove bounded four-validator failure/restart/catch-up,
-  partition-recovery, and trusted state-sync slices without shared private
-  material. Backup/restore, upgrades, rollback, IBC, load/topology, and
+  GH-43/GH-45 prove bounded four-validator failure/restart/catch-up,
+  partition-recovery, trusted state-sync, and sanitized backup/restore/export/
+  import slices without shared private material. Upgrades, rollback,
+  validator-key compromise response, network policy, IBC, load/topology, and
   independent operations review remain pending; IBC staking/upgrade and
   standard CosmWasm staking/distribution stay explicit stubs.
 - The v0.4 client production bundle is 1.68 MB (309 kB gzip); route-level code

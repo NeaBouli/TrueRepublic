@@ -1,6 +1,6 @@
 # Project State
 
-Updated: 2026-07-19 02:52 EEST
+Updated: 2026-07-19 03:19 EEST
 
 ## Repository
 
@@ -9,7 +9,7 @@ Updated: 2026-07-19 02:52 EEST
   are recorded in `ACTION_LOG.md` so this live state does not self-expire after
   documentation-only merges.
 - Merged recovery PRs: #9, #15, #16, #17, #18, #19, #22, #23, #24, #27,
-  #28, #30, #31, #33, #34, #35, #40, #42, and #44.
+  #28, #30, #31, #33, #34, #35, #40, #42, #44, and #46.
 - Current work: GH-29 remains open as the rollout execution tracker. GH-32 and
   PR #33 close its first Phase 1 gate with local and GitHub evidence. GH-39 is
   now merged via PR #40 with green GitHub CI for validator
@@ -18,9 +18,8 @@ Updated: 2026-07-19 02:52 EEST
   reconnect/catch-up, app-hash convergence, validator-power, and bank-backed
   export evidence is merged through PR #42 with green GitHub checks. GH-43
   trusted snapshot state-sync catch-up is merged through PR #44 with green
-  local and GitHub evidence. GH-45 backup/restore/export/import drills are in
-  progress on `feature/GH-45-backup-restore-drill` with local sanitized
-  backup/restore smoke evidence passing; PR/GitHub CI evidence is pending.
+  local and GitHub evidence. GH-45 sanitized backup/restore/export/import
+  drills are merged through PR #46 with green local and GitHub evidence.
 - Active recovery checkout:
   `/Users/gio/Documents/Codex/2026-07-11/erkunden/TrueRepublic-gh20`
 - GH-26 branch: `fix/GH-26-pod-init-script`
@@ -30,7 +29,7 @@ Updated: 2026-07-19 02:52 EEST
 - Recovery worktree: `/Users/gio/Desktop/repos/TrueRepublic-recovery`
 - Legacy local checkout: preserved at `/Users/gio/Desktop/repos/TrueRepublic`
 - GitHub epic: #4
-- Open GitHub issue set after cleanup and GH-43 merge: #4 recovery epic, #7
+- Open GitHub issue set after cleanup and GH-45 merge: #4 recovery epic, #7
   audit/review parent, and #29 rollout tracker.
 
 ## Verified state
@@ -82,14 +81,15 @@ Updated: 2026-07-19 02:52 EEST
   validator powers, and exports ledger-valid state. Local targeted run passes
   in 130.528s; the combined CI-smoke equivalent passes in 197.835s; full local
   `go test ./...` passes in 65.114s; PR #44 GitHub checks are green.
-- GH-45 local evidence adds a gated sanitized backup/restore/export/import
+- GH-45 merged evidence adds a gated sanitized backup/restore/export/import
   harness. A live full node is backed up without node key, validator key,
   validator signing state, or keyring material; the artifact restores into a
   freshly initialized home while preserving local keys; the restored node
   catches up, converges on app hash, exports ledger-valid state, and re-imports
   the exported genesis. Local targeted run passes in 88.224s; full local
   `go test ./...` passes in 58.843s; the combined CI-smoke equivalent passes
-  in 290.498s. PR/GitHub evidence is pending.
+  in 290.498s; a focused state-sync timeout hardening recheck passes in
+  127.784s; PR #46 GitHub checks are green.
 - GH-13 local Go 1.26.5: build, vet, normal tests, race tests, and coverage PASS.
   Coverage: root 10.2%, token 93.5%, treasury 97.0%, DEX 34.2%, governance 55.8%.
 - Go vulnerability gate: no reachable finding with an available fix remains;
@@ -212,9 +212,10 @@ The token/ledger audit is 12/12 PASS locally across the merged recovery work:
 denomination/cap, governance custody, reward issuance, DEX custody, custom
 genesis, and runtime invariants. The repository remains recovery-only because
 GH-20 still needs a real prover/external
-cryptographic review. GH-32/GH-41/GH-43 close bounded four-validator
-failure/restart/catch-up, partition-recovery, and trusted state-sync slices;
-backup/restore, upgrades, rollback, load, topology, IBC, and independent
+cryptographic review. GH-32/GH-41/GH-43/GH-45 close bounded four-validator
+failure/restart/catch-up, partition-recovery, trusted state-sync, and sanitized
+backup/restore/export/import slices; upgrades, rollback, validator-key
+compromise response, network policy, load, topology, IBC, and independent
 operations review remain open.
 
 GH-11 implements the canonical denomination metadata (`upnyx`, six decimal

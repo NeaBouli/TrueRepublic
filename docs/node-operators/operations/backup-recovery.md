@@ -26,6 +26,22 @@ crontab -e
 ```
 
 Backups are retained for 30 days. Old backups are automatically cleaned up.
+The script creates a sanitized chain-data artifact: it intentionally excludes
+`config/node_key.json`, `config/priv_validator_key.json`,
+`data/priv_validator_state.json`, and keyring directories. Store validator and
+node keys through the separate offline key-backup procedure, not in routine
+chain-data archives.
+
+### Restore a Sanitized Backup
+
+Initialize the target home first, then restore the sanitized data over it. This
+preserves the target's local node and validator keys.
+
+```bash
+truerepublicd init restored-node --chain-id truerepublic-1 --home /path/to/restore-home
+./scripts/restore.sh /path/to/backups/truerepublic_YYYY-MM-DD.tar.gz /path/to/restore-home
+truerepublicd start --home /path/to/restore-home
+```
 
 ### Docker Volume Backup
 
@@ -45,14 +61,14 @@ docker compose start truerepublic-node
 
 ## Manual Backup
 
-### Full Backup
+### Chain Data Backup
 
 ```bash
 # Stop the node for consistency
 sudo systemctl stop truerepublicd
 
-# Create backup
-tar -czf truerepublic_backup_$(date +%Y%m%d).tar.gz ~/.truerepublic
+# Create sanitized chain-data backup
+CHAIN_HOME="$HOME/.truerepublic" ./scripts/backup.sh "$HOME/truerepublic-backups"
 
 # Restart
 sudo systemctl start truerepublicd
@@ -73,20 +89,20 @@ cp ~/.truerepublic/config/priv_validator_key.json ~/validator_key_backup.json
 
 ## Recovery
 
-### From Full Backup
+### From Sanitized Backup
 
 ```bash
 # Stop the node
 sudo systemctl stop truerepublicd
 
-# Remove existing data
-rm -rf ~/.truerepublic
+# Initialize a fresh target home first
+truerepublicd init restored-node --chain-id truerepublic-1 --home ~/.truerepublic-restored
 
-# Restore backup
-tar -xzf truerepublic_backup_YYYYMMDD.tar.gz -C ~/
+# Restore sanitized chain data while preserving local keys
+./scripts/restore.sh ~/truerepublic-backups/truerepublic_YYYY-MM-DD.tar.gz ~/.truerepublic-restored
 
 # Start
-sudo systemctl start truerepublicd
+truerepublicd start --home ~/.truerepublic-restored
 ```
 
 ### From Docker Volume Backup

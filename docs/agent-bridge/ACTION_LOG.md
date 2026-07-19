@@ -28,7 +28,20 @@
   go test . -run
   '^(TestMultiValidatorConsensusRecovery|TestMultiValidatorTrustedSnapshotStateSync|TestMultiValidatorBackupRestoreExportImport)$'
   -count=1 -timeout=720s -v` PASS in 290.498s.
-- PR publication, GitHub CI, and closure sync remain in progress.
+- Published PR #46. The first GitHub `multi-validator-recovery` run exposed an
+  existing trusted state-sync timeout in the combined CI-smoke command, not a
+  failure in the new backup/restore harness.
+- Hardened the state-sync waits from 120s to 180s and raised the CI smoke
+  timeout from 720s/12m to 900s/15m. Focused local verification:
+  `TRUEREPUBLIC_MULTI_VALIDATOR_SMOKE=1 go test . -run
+  TestMultiValidatorTrustedSnapshotStateSync -count=1 -timeout=420s -v` PASS
+  in 127.784s.
+- Refreshed PR #46 GitHub checks are green: `build-and-test`,
+  `multi-validator-recovery`, `docker-restart-smoke`, docs `check`, CodeRabbit,
+  DeepScan, Go/Rust security scans, and Node audits.
+- Merged PR #46 to `main` as
+  `26bf44b7933c25f379db475fd34d2cfb8e49c626`; GitHub automatically closed
+  GH-45. GH-29 remains open as the parent rollout tracker.
 
 ## 2026-07-19 01:42 EEST - GH-43 trusted snapshot state sync start
 

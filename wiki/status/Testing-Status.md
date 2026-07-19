@@ -38,10 +38,11 @@ The maintained client is verified with `npm ci`, lint, 8 tests, production
 build, and audit. The CosmWasm workspace is verified with tests, formatting,
 Clippy, build, and audit.
 
-GH-32/GH-41/GH-43 add the separately gated four-validator
-failure/restart/catch-up, partition-recovery, trusted state-sync, and
-common-height app-hash tests. They do not replace the remaining backup/restore,
-upgrade, rollback, load, or independent operations gates.
+GH-32/GH-41/GH-43/GH-45 add the separately gated four-validator
+failure/restart/catch-up, partition-recovery, trusted state-sync, sanitized
+backup/restore/export/import, and common-height app-hash tests. They do not
+replace the remaining upgrade, rollback, validator-key operations, network
+policy, load, or independent operations gates.
 
 Green tests are recovery evidence, not an external security or production
 approval. See [Current Status](Current-Status) for remaining gates.

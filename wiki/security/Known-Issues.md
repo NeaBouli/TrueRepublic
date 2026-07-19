@@ -17,8 +17,11 @@ reward recipient binding are still required.
 
 ## High-priority operational gaps
 
-- Single-node native and Docker restart pass, but multi-node consensus, peer
-  failure, IBC relaying/upgrades, backup/restore, and rollback drills do not.
+- Single-node native and Docker restart pass. Bounded four-validator failure,
+  restart, catch-up, partition recovery, trusted state sync, and sanitized
+  backup/restore/export/import now pass. IBC relaying/upgrades, persisted-state
+  upgrade, rollback, validator-key compromise response, and network-policy
+  drills remain open.
 - IBC staking/upgrade and standard CosmWasm staking/distribution remain explicit
   stubs.
 - Production monitoring, alerting, incident response, validator key custody,

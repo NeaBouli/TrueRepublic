@@ -43,8 +43,8 @@
   #27 was merged to `main` with zero unresolved review threads.
 - [x] GH-21: publish audited head `ec1ce17`; refreshed Docker restart, Go
   race/coverage, docs, static, and Security Scan gates are green.
-- [ ] GH-21: obtain independent multi-node, backup/restore, IBC/upgrade
-  operations review before public-network approval.
+- [ ] GH-21: obtain independent multi-node, IBC/upgrade, rollback, and
+  release-operations review before public-network approval.
 - [x] GH-32: build and locally verify the four-validator bank-backed PoD
   consensus/failure/restart/catch-up/export harness.
 - [x] GH-32: publish the implementation, obtain green Go multi-validator,
@@ -69,8 +69,9 @@
   GH-29/roadmap closure evidence.
 - [x] GH-45: locally verify sanitized backup, fresh-home restore, restored
   catch-up, app-hash convergence, export, ledger validation, and re-import.
-- [ ] GH-45: publish PR, obtain green GitHub checks/review, merge, close GH-45,
-  and update GH-29/roadmap closure evidence.
+- [x] GH-45: publish PR, obtain green GitHub checks/review, merge via PR #46 /
+  `26bf44b7933c25f379db475fd34d2cfb8e49c626`, close GH-45, and update
+  GH-29/roadmap closure evidence.
 - [x] GH-7: DEX rounding, slippage, pool accounting, custody, and authorization
   audit completed in GH-10; GH-12 retains genesis/runtime invariants.
 

@@ -26,7 +26,9 @@ and summarized in [Testing Status](../status/Testing-Status).
 The critical recovery paths also include explicit cap boundaries, bank/custom
 ledger reconciliation, atomic rollback, invariant corruption, ZKP replay and
 encoding failures, generated validator-key binding, persistent restart, Docker
-restart, and a separately gated four-validator failure/restart/catch-up test.
+restart, and separately gated four-validator failure/restart/catch-up,
+join/replacement, partition recovery, trusted state-sync, and sanitized
+backup/restore/export/import tests.
 
 Coverage percentages and test counts are evidence for the current stacked
 branch only. They are not a production-readiness threshold or external audit.

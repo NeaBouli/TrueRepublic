@@ -46,9 +46,10 @@ approved for production or real funds during this audit.
 
 ## Production Node Lifecycle
 
-**Status:** Single-node lifecycle is merged; GH-32/GH-41/GH-43 add bounded
-four-validator failure/restart/catch-up, partition recovery, and trusted
-snapshot state-sync harnesses. Independent operations review remains pending.
+**Status:** Single-node lifecycle is merged; GH-32/GH-41/GH-43/GH-45 add
+bounded four-validator failure/restart/catch-up, partition recovery, trusted
+snapshot state-sync, and sanitized backup/restore/export/import harnesses.
+Independent operations review remains pending.
 **Current:** The standard `truerepublicd init` command binds the generated
 CometBFT Ed25519 public key to matching PoD and actual positive-power consensus
 validators with sufficient, exact bank-backed minimum stake. Initialization
@@ -58,11 +59,12 @@ height, preserves invariants, and exports state. The non-root Debian/glibc
 container has a blocking restart gate.
 **Impact:** `scripts/init-node.sh` delegates exclusively to the supported daemon
 init boundary and never creates staking gentxs or extra accounts. The Docker
-restart job passes. The GH-32/GH-41/GH-43 gates prove common-height app-hash
-agreement, one-validator failure, continued quorum, restart/catch-up,
-partition recovery, trusted snapshot state sync, and recovered export. Do not
-claim public-network readiness until backup/restore, IBC/upgrade, rollback,
-load, topology, and independent operations review passes.
+restart job passes. The GH-32/GH-41/GH-43/GH-45 gates prove common-height
+app-hash agreement, one-validator failure, continued quorum, restart/catch-up,
+partition recovery, trusted snapshot state sync, sanitized backup/restore,
+restored export, and re-import. Do not claim public-network readiness until
+IBC/upgrade, rollback, validator-key compromise response, network policy, load,
+topology, and independent operations review passes.
 
 ## ZKP Client
 

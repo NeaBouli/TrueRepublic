@@ -262,17 +262,23 @@ sudo su - truerepublic
 0 3 * * * /path/to/scripts/backup.sh
 ```
 
-### Manual Backup
+### Manual Chain Data Backup
 
 ```bash
-tar -czf truerepublic_backup.tar.gz ~/.truerepublic
+CHAIN_HOME=~/.truerepublic ./scripts/backup.sh ~/truerepublic-backups
 ```
 
-### Restore
+The backup script writes a sanitized chain-data archive. It excludes
+`config/node_key.json`, `config/priv_validator_key.json`,
+`data/priv_validator_state.json`, and keyring directories. Store validator keys
+and signer state through a separate offline key-custody process.
+
+### Restore Sanitized Chain Data
 
 ```bash
-tar -xzf truerepublic_backup.tar.gz -C ~/
-./build/truerepublicd start
+./build/truerepublicd init restored-node --chain-id truerepublic-1 --home ~/.truerepublic-restored
+./scripts/restore.sh ~/truerepublic-backups/truerepublic_YYYY-MM-DD.tar.gz ~/.truerepublic-restored
+./build/truerepublicd start --home ~/.truerepublic-restored
 ```
 
 ---
