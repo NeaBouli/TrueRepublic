@@ -8,7 +8,9 @@
 - Reproduced the normal suite locally: `go test ./...` PASS in 58.913s.
 - Added a 20-minute timeout to the Go CI `build-and-test` job. The test command
   itself is unchanged.
-- Final GitHub main-run confirmation is pending.
+- Pushed the fix to `main` as `63b76bf`. GitHub `main` checks are green:
+  Go CI (`build-and-test`, `multi-validator-recovery`,
+  `docker-restart-smoke`), Security Scan, and Pages.
 
 ## 2026-07-19 02:52 EEST - GH-45 backup/restore/export/import start
 

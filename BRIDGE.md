@@ -30,10 +30,12 @@ GitHub recovery epic: [#4](https://github.com/NeaBouli/TrueRepublic/issues/4)
 - **Tests:** local `go test ./...` → PASS (`58.913s`); `python3 -m json.tool
   docs/status.json >/dev/null` → PASS; `bash -n scripts/backup.sh
   scripts/restore.sh` → PASS; `git diff --check` → PASS; `bash
-  scripts/check-consistency.sh` → PASS.
+  scripts/check-consistency.sh` → PASS. GitHub `main` checks at `63b76bf` are
+  green: Go CI (`build-and-test`, `multi-validator-recovery`,
+  `docker-restart-smoke`), Security Scan, and Pages.
 - **Risk:** Low. This changes CI runner bounds only; code and test commands are
   unchanged.
-- **Closed:** pending final GitHub main run confirmation and GH-47 closure.
+- **Closed:** GH-47 evidence is merged; GitHub main checks are green.
 
 ### Lead Dev notes
 
@@ -44,7 +46,7 @@ job timeout prevents that state from recurring.
 
 ### Codex review feedback
 
-Approved after local verification; awaiting refreshed GitHub checks.
+Approved after local verification and refreshed green GitHub main checks.
 
 ## 2026-07-19 02:52 EEST GH-45 backup/restore/export/import → Done
 

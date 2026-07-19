@@ -1,6 +1,6 @@
 # Project State
 
-Updated: 2026-07-19 03:31 EEST
+Updated: 2026-07-19 03:43 EEST
 
 ## Repository
 
@@ -22,7 +22,8 @@ Updated: 2026-07-19 03:31 EEST
   drills are merged through PR #46 with green local and GitHub evidence. GH-47
   bounds the Go CI `build-and-test` job with a 20-minute timeout after a stale
   GitHub runner left the PR #46 merge-commit run in progress despite local Go
-  tests passing.
+  tests passing; refreshed `main` Go CI, Security Scan, and Pages pass at
+  `63b76bf`.
 - Active recovery checkout:
   `/Users/gio/Documents/Codex/2026-07-11/erkunden/TrueRepublic-gh20`
 - GH-26 branch: `fix/GH-26-pod-init-script`
