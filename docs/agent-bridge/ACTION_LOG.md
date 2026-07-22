@@ -704,3 +704,22 @@
   GH-29 remained open.
 - Opened GH-51 for the remaining medium package-selection finding and linked
   the complete audit/remediation evidence from GH-29 and GH-4.
+
+## 2026-07-23 00:24 EEST - GH-51 root Go package isolation
+
+- Reproduced the issue: root `go list ./...` discovers
+  `truerepublic/client-web/node_modules/flatted/golang/pkg/flatted` after the
+  maintained-client dependencies are installed.
+- Added `scripts/go-packages.sh`, which derives explicit package directories
+  only from Git-managed, non-ignored Go source and defensively excludes
+  `node_modules` and `vendor` trees. Makefile verification, contributor/agent
+  guidance, and GitHub Go CI now use that same selector.
+- Added `scripts/test-go-packages.sh`; its ignored dependency-source probe
+  leaves the selected five repository packages unchanged.
+- Ran `npm ci` concurrently with selector verification, build, vet, and the
+  complete race/coverage suite. All pass; root coverage is 65.9%, and npm
+  reports zero vulnerabilities. The normal 655-case suite also passes.
+- The combined consensus recovery, trusted state-sync, and sanitized
+  backup/restore/export/import harnesses pass in 265.381s. Compose/Docker cannot
+  run locally because the Docker executable is unavailable, so final-head
+  GitHub Docker evidence remains required before merge.

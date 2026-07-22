@@ -227,8 +227,8 @@ TrueRepublic/
 ```bash
 # Blockchain
 go mod tidy
-go build ./...
-go test ./... -race -cover -count=1 -timeout=600s    # 655 tests
+./scripts/go-packages.sh go build
+./scripts/go-packages.sh go test -race -cover -count=1 -timeout=600s    # 655 tests
 
 # Smart contracts
 cd contracts && cargo test --workspace       # 26 tests

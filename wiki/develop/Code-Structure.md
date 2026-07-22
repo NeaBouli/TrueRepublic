@@ -305,8 +305,8 @@ import { fetchDomains, submitProposal } from "../services/api";
 |--------|---------|-------------|
 | `build` | `go build -o build/truerepublicd .` | Build binary |
 | `install` | `go install .` | Install to $GOPATH/bin |
-| `test` | `go test ./... -race -cover` | Run all tests |
-| `lint` | `go vet ./... && staticcheck ./...` | Static analysis |
+| `test` | `./scripts/go-packages.sh go test -race -cover` | Run all tests |
+| `lint` | `./scripts/go-packages.sh go vet && ./scripts/go-packages.sh staticcheck` | Static analysis |
 | `clean` | `rm -rf build/` | Clean build artifacts |
 | `docker-build` | `docker compose build` | Build Docker images |
 | `docker-up` | `docker compose up -d` | Start full stack |

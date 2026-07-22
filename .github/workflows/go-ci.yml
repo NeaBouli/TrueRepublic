@@ -15,7 +15,9 @@ on:
       - 'docker-compose.yml'
       - 'scripts/backup.sh'
       - 'scripts/docker-entrypoint.sh'
+      - 'scripts/go-packages.sh'
       - 'scripts/restore.sh'
+      - 'scripts/test-go-packages.sh'
   pull_request:
     paths:
       - '**.go'
@@ -27,7 +29,9 @@ on:
       - 'docker-compose.yml'
       - 'scripts/backup.sh'
       - 'scripts/docker-entrypoint.sh'
+      - 'scripts/go-packages.sh'
       - 'scripts/restore.sh'
+      - 'scripts/test-go-packages.sh'
 
 permissions:
   contents: read
@@ -45,14 +49,17 @@ jobs:
         with:
           go-version: '1.26.5'
 
+      - name: Verify repository Go package selection
+        run: ./scripts/test-go-packages.sh
+
       - name: Build
-        run: CGO_ENABLED=1 go build ./...
+        run: CGO_ENABLED=1 ./scripts/go-packages.sh go build
 
       - name: Vet
-        run: go vet ./...
+        run: ./scripts/go-packages.sh go vet
 
       - name: Test
-        run: CGO_ENABLED=1 go test ./... -race -cover -count=1 -timeout=600s
+        run: CGO_ENABLED=1 ./scripts/go-packages.sh go test -race -cover -count=1 -timeout=600s
 
   multi-validator-recovery:
     runs-on: ubuntu-latest

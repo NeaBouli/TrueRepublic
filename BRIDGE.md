@@ -816,3 +816,33 @@ restart, Go/Rust/Node security, docs, DeepScan, and CodeRabbit. The valid audit-
 tally finding was fixed and its review thread resolved before merge.
 
 ---
+
+## 2026-07-23 00:24 EEST GH-51 isolate root Go package selection → Review
+
+- **Branch:** `fix/GH-51-go-package-selector`
+- **Issue:** [GH-51](https://github.com/NeaBouli/TrueRepublic/issues/51)
+- **Changed:**
+  - `scripts/go-packages.sh` — explicit repository-owned Go package selector
+    and generic command wrapper
+  - `scripts/test-go-packages.sh` — ignored `node_modules` regression probe
+  - `Makefile`, `.github/workflows/go-ci.yml` — shared local/CI verification
+  - contributor, installation, testing, wiki, audit, and agent-bridge guidance
+- **Tests:** selector regression → PASS; concurrent `npm ci` plus Go build/vet/
+  race/coverage → PASS; normal 655-case Go suite → PASS; consensus recovery,
+  state-sync, and backup/restore harnesses → PASS (`265.381s`); docs consistency,
+  workflow YAML, shell syntax, and diff checks → PASS
+- **Risk:** Low — developer tooling and CI package discovery only; no runtime,
+  consensus, ledger, wallet, contract, dependency, or deployment behavior change
+- **Ready for:** GitHub PR review and final-head Go/Docker/security evidence
+
+### Lead Dev notes
+
+The wrapper uses Git's tracked/untracked-but-not-ignored source view, so local
+new packages remain visible while ignored dependency installations do not.
+Docker is unavailable locally; the PR Docker restart gate is mandatory.
+
+### Codex review feedback
+
+Pending final-head GitHub checks.
+
+---

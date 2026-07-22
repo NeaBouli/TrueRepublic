@@ -114,17 +114,21 @@ git push origin feature/your-feature-name
 
 ```bash
 # Run all tests
-go test ./... -timeout=600s
+./scripts/go-packages.sh go test -timeout=600s
 
 # Run specific module
 go test ./x/dex/...
 
 # Run with coverage
-go test -cover ./...
+./scripts/go-packages.sh go test -cover
 
 # Run with race detector
-go test -race -cover -count=1 -timeout=600s ./...
+./scripts/go-packages.sh go test -race -cover -count=1 -timeout=600s
 ```
+
+The wrapper selects Git-managed, non-ignored Go source directories and keeps
+frontend `node_modules` packages out of root-module verification. Run
+`./scripts/go-packages.sh --list` to inspect the exact package set.
 
 Writing tests:
 

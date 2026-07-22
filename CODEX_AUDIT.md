@@ -1,5 +1,5 @@
 # TrueRepublic — Recovery Foundation Audit
-> Scope: `treasury/keeper`, `x/truedemocracy`, `x/dex`, app wiring, genesis, ZKP authentication, maintained-client safety, node lifecycle, and current rollout evidence  ·  Date: 2026-07-22  ·  Result: 0 FAIL / 3 WARN / 17 PASS
+> Scope: `treasury/keeper`, `x/truedemocracy`, `x/dex`, app wiring, genesis, ZKP authentication, maintained-client safety, node lifecycle, and current rollout evidence  ·  Date: 2026-07-23  ·  Result: 0 FAIL / 2 WARN / 18 PASS
 
 ## Summary
 
@@ -152,10 +152,10 @@ GitHub verification; this is not an external audit or production approval.
   - Path: Treating the merged foundation as production approval would launch without rehearsed migration, rollback, compromise, or full-network operating procedures.
   - Fix: Close each GH-29 rollout gate with a ticket, executable drill, local evidence, green final-head CI, and an independent review boundary.
 
-- **[MEDIUM] Root Go wildcards discover frontend dependency source after `npm ci`** — `CLAUDE.md`, `Makefile`, `client-web/package-lock.json`
-  - What: With `client-web/node_modules` present, `go list ./...` also discovers `truerepublic/client-web/node_modules/flatted/golang/pkg/flatted`.
-  - Path: Local `go build ./...`, `go vet ./...`, and `go test ./...` can inspect or build untracked frontend dependency source; a concurrent `npm ci` can make those commands fail on a transient missing file even though the chain code is unchanged.
-  - Fix: Add a repository-owned Go package selector that excludes frontend dependency trees, and use it consistently in local tooling and CI.
+- **[PASS] Root Go verification excludes installed frontend dependency source** — `scripts/go-packages.sh`, `scripts/test-go-packages.sh`, `Makefile`, `.github/workflows/go-ci.yml`
+  - What: GH-51 derives one root-module package set from Git-managed, non-ignored Go sources and passes it explicitly to build, vet, tests, staticcheck, local verification, and GitHub Go CI.
+  - Evidence: The selector returns only `.`, `token`, `treasury/keeper`, `x/dex`, and `x/truedemocracy`; its regression probe proves ignored `node_modules` Go source cannot change that set. Build, vet, normal tests, and race/coverage pass while `npm ci` concurrently replaces the maintained client's dependency tree.
+  - Fix: Keep local and CI root-module verification on `scripts/go-packages.sh`; use `--list` when auditing the selected directories.
 
 - **[LOW] Maintained-client bundle remains large** — `client-web/src`, `docs/status.json`
   - What: The verified production build emits a 1,678.30 kB main chunk (309.01 kB gzip) and triggers the bundler's 500 kB warning.

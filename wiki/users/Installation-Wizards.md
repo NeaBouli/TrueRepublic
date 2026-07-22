@@ -403,11 +403,12 @@ TrueRepublic does not use `x/staking` gentx or collect-gentxs commands.
 make test
 
 # Frontend tests
-cd web-wallet
-npm test
+cd client-web
+npm ci
+npm test -- --run
 
 # Test coverage
-go test ./... -cover
+./scripts/go-packages.sh go test -cover
 ```
 
 **Done! Development environment ready.**
