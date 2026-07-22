@@ -1,6 +1,6 @@
 # TrueRepublic Road to Rollout
 
-Updated: 2026-07-15
+Updated: 2026-07-23
 
 TrueRepublic has a recovered and CI-verified v0.4 engineering foundation. It
 is **not production-ready, mainnet-ready, or approved for real funds or keys**.
@@ -35,8 +35,13 @@ approval.
   recovery without ledger divergence.
 - [x] Verify state sync and catch-up from a trusted snapshot.
 - [x] Run backup, restore, export, and import drills from documented artifacts.
-- [ ] Prove application and consensus upgrades on persisted state.
-- [ ] Prove rollback after a failed upgrade within a defined recovery window.
+- [x] Prove compatible rolling binary replacement on persisted validator state
+  ([GH-53](https://github.com/NeaBouli/TrueRepublic/issues/53)).
+- [x] Prove rollback after a candidate fails before opening state, without
+  replacing validator identity or regressing signer state
+  ([GH-53](https://github.com/NeaBouli/TrueRepublic/issues/53)).
+- [ ] Implement and prove governance-controlled consensus-breaking state
+  migrations and rollback after a partially applied migration.
 - [ ] Define and test validator-key backup, rotation, and compromise response.
 - [ ] Define seed, persistent-peer, RPC, API, firewall, and rate-limit policy.
 

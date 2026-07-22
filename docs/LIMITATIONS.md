@@ -27,7 +27,8 @@ approved for production or real funds during this audit.
 ### IBC Upgrade
 **Status:** Stubbed (No-op)
 **Reason:** x/upgrade module not integrated
-**Impact:** IBC upgrades must be handled manually
+**Impact:** Compatible binary replacement is manual; governance-controlled
+state migrations and IBC client upgrades are unsupported
 **Code:** `ibc_stubs.go - IBCUpgradeKeeper`
 
 ## CosmWasm Stubs
@@ -46,9 +47,10 @@ approved for production or real funds during this audit.
 
 ## Production Node Lifecycle
 
-**Status:** Single-node lifecycle is merged; GH-32/GH-41/GH-43/GH-45 add
+**Status:** Single-node lifecycle is merged; GH-32/GH-41/GH-43/GH-45/GH-53 add
 bounded four-validator failure/restart/catch-up, partition recovery, trusted
-snapshot state-sync, and sanitized backup/restore/export/import harnesses.
+snapshot state-sync, sanitized backup/restore/export/import, compatible binary
+replacement, and fail-before-open rollback harnesses.
 Independent operations review remains pending.
 **Current:** The standard `truerepublicd init` command binds the generated
 CometBFT Ed25519 public key to matching PoD and actual positive-power consensus
@@ -56,15 +58,19 @@ validators with sufficient, exact bank-backed minimum stake. Initialization
 rejects canonical supply above the 21,000,000 PNYX cap. A real native process
 produces blocks, shuts down on SIGINT, restarts from the same home, advances
 height, preserves invariants, and exports state. The non-root Debian/glibc
-container has a blocking restart gate.
+container has a blocking restart gate. GH-53 additionally proves compatible
+rolling replacement on the same homes, deterministic failure before state is
+opened, full return to the baseline binary, unchanged identity keys,
+non-regressing signer state, app-hash agreement, and ledger-valid export/import.
 **Impact:** `scripts/init-node.sh` delegates exclusively to the supported daemon
 init boundary and never creates staking gentxs or extra accounts. The Docker
 restart job passes. The GH-32/GH-41/GH-43/GH-45 gates prove common-height
 app-hash agreement, one-validator failure, continued quorum, restart/catch-up,
 partition recovery, trusted snapshot state sync, sanitized backup/restore,
 restored export, and re-import. Do not claim public-network readiness until
-IBC/upgrade, rollback, validator-key compromise response, network policy, load,
-topology, and independent operations review passes.
+consensus-breaking state migration, partially applied migration recovery,
+validator-key compromise response, network policy, load, topology, and
+independent operations review pass.
 
 ## ZKP Client
 
