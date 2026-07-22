@@ -89,6 +89,15 @@
 - [x] GH-53: publish PR #54, obtain green final-head GitHub checks, resolve all
   six review threads, merge as `3e44905`, close GH-53, and synchronize
   GH-29/Bridge closure evidence.
+- [x] GH-55: prove coupled consensus-key/signer-state cold custody and
+  single-signer failover with a fresh P2P identity, app-hash convergence,
+  monotonic signing position, export, and ledger validation; replace unsafe
+  operator backup/recovery guidance.
+- [ ] GH-55: publish the branch, pass final-head review and all GitHub checks,
+  merge, close the issue, and synchronize GH-29/Bridge closure evidence.
+- [ ] GH-56: design authenticated atomic consensus-key rotation, permanent
+  old-key revocation, and bootstrap operator-authority separation. Do not use
+  stake-withdrawing `remove-validator` plus re-registration as a substitute.
 - [x] GH-7: DEX rounding, slippage, pool accounting, custody, and authorization
   audit completed in GH-10; GH-12 retains genesis/runtime invariants.
 

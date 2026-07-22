@@ -67,10 +67,12 @@ init boundary and never creates staking gentxs or extra accounts. The Docker
 restart job passes. The GH-32/GH-41/GH-43/GH-45 gates prove common-height
 app-hash agreement, one-validator failure, continued quorum, restart/catch-up,
 partition recovery, trusted snapshot state sync, sanitized backup/restore,
-restored export, and re-import. Do not claim public-network readiness until
+restored export/re-import, compatible binary replacement/rollback, and
+single-signer validator-identity cold failover. Do not claim public-network readiness until
 consensus-breaking state migration, partially applied migration recovery,
-validator-key compromise response, network policy, load, topology, and
-independent operations review pass.
+authenticated consensus-key rotation, compromised consensus-key
+eviction/recovery, network policy, load, topology, and independent operations
+review pass.
 
 ## ZKP Client
 

@@ -15,10 +15,33 @@ Canonical coordination lives in [`docs/agent-bridge/`](docs/agent-bridge/README.
 - GH-8 docs/CI audit: [`PR24_AUDIT.md`](docs/agent-bridge/PR24_AUDIT.md)
 - GH-26 operator init audit: [`PR27_AUDIT.md`](docs/agent-bridge/PR27_AUDIT.md)
 - GH-32 multi-validator audit: [`GH32_AUDIT.md`](docs/agent-bridge/GH32_AUDIT.md)
+- GH-55 validator identity recovery audit: [`GH55_AUDIT.md`](docs/agent-bridge/GH55_AUDIT.md)
 - Decisions: [`DECISIONS.md`](docs/agent-bridge/DECISIONS.md)
 - Security: [`SECURITY_NOTES.md`](docs/agent-bridge/SECURITY_NOTES.md)
 
 GitHub recovery epic: [#4](https://github.com/NeaBouli/TrueRepublic/issues/4)
+
+## 2026-07-23 06:04 EEST GH-55 validator identity custody/failover → In progress
+
+- **Issues/branch:** [GH-55](https://github.com/NeaBouli/TrueRepublic/issues/55),
+  follow-up [GH-56](https://github.com/NeaBouli/TrueRepublic/issues/56), parent
+  [GH-29](https://github.com/NeaBouli/TrueRepublic/issues/29), branch
+  `feature/GH-55-validator-identity-recovery`.
+- **Scope:** prove a planned cold transfer of the coupled consensus key and
+  current signer state only after the source validator stops, into a fresh
+  recovery home with a new P2P identity. Add fail-closed custody and compromise
+  guidance and remove unsafe plaintext/key-only restore instructions.
+- **Boundary:** on-chain consensus-key rotation, permanent old-key revocation,
+  and bootstrap operator-authority separation do not exist yet and remain open
+  in GH-56. `remove-validator` plus re-registration is not a supported rotation
+  path.
+- **Local evidence:** focused real-process failover PASS in 62.17s; full
+  656-case Go suite PASS; all five real recovery drills PASS together in
+  636.342s; build, vet, shell syntax, JSON, docs consistency, and diff checks
+  PASS. The structured audit records 0 FAIL / 1 WARN / 5 PASS, with only the
+  separate GH-56 protocol gap warned.
+- **Current state:** ready to publish; GH-55 must not close until final-head
+  review, GitHub CI, and merge all pass.
 
 ## 2026-07-23 05:27 EEST GH-53 persisted binary upgrade/rollback → Done
 

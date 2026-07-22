@@ -108,20 +108,20 @@ truerepublicd tx truedemocracy unjail \
 
 ### Backups
 
-```bash
-# Daily automated backup
-0 3 * * * /path/to/scripts/backup.sh
-
-# Manual backup before upgrades
-tar -czf pre-upgrade-backup.tar.gz ~/.truerepublic
-```
+Use `scripts/backup.sh` for sanitized chain data. It deliberately excludes
+consensus keys, signer state, node keys, and account keyrings. Never archive the
+full validator home. For planned validator failover, custody
+`priv_validator_key.json` together with the latest
+`priv_validator_state.json` only after a clean stop; see
+[Validator Identity Custody and Recovery](node-operators/operations/validator-identity-recovery.md).
 
 ### Security
 
 - Run behind a firewall (UFW recommended)
 - Only expose P2P (26656) and optionally RPC (26657) publicly
 - Use a sentry node architecture for DDoS protection
-- Keep the validator key (`priv_validator_key.json`) secure and backed up offline
+- Keep the consensus key and current signer state together in encrypted offline custody
+- Never run two copies of one consensus identity or restore stale signer state
 
 ### Firewall Rules
 

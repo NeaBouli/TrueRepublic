@@ -155,6 +155,9 @@ truerepublicd tx truedemocracy unjail \
 - Monitor block signing with Prometheus metrics
 - Set up alerts for `cometbft_consensus_missing_validators`
 - **Never run two nodes with the same validator key** (double-sign risk)
+- Never restore a consensus key without its current signer state or reset the
+  signer height/round/step. Follow the
+  [validator identity recovery procedure](../node-operators/operations/validator-identity-recovery.md).
 
 ## Validator Operations
 

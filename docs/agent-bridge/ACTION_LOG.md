@@ -1,5 +1,43 @@
 # Action Log
 
+## 2026-07-23 06:04 EEST - GH-55 validator identity recovery start
+
+- Confirmed synchronized, clean `main` at `93f0263` with no open PRs before
+  opening the next Phase 1 rollout task.
+- Opened GH-55 for validator consensus-identity cold custody, single-signer
+  failover, and compromise containment; created branch
+  `feature/GH-55-validator-identity-recovery`.
+- Audited the boundary between `node_key.json` (P2P identity) and the coupled
+  `priv_validator_key.json` plus current `priv_validator_state.json`
+  consensus-safety unit. Found unsafe key-only restore, plaintext full-home,
+  configuration, Docker-volume, and pre-upgrade archive guidance.
+- Confirmed the protocol does not yet support safe key rotation:
+  `remove-validator` withdraws stake subject to a domain transfer limit, while
+  bootstrap operator authority is derived from the consensus key. Opened
+  follow-up GH-56 for authenticated atomic rotation, permanent revocation, and
+  separated bootstrap operator authority.
+- Implementation in progress: real four-validator cold-failover evidence, a
+  fail-closed custody/incident runbook, corrected backup/security guidance,
+  CI coverage, rollout status, and Bridge synchronization.
+- Local evidence is green: the focused real-process failover passes in 62.17s;
+  the full 656-case Go suite passes; build, vet, shell syntax, JSON, docs
+  consistency, and diff checks pass; and all five multi-process recovery drills
+  pass together in 636.342s. The new drill proves exact post-stop signer-state
+  transfer, a distinct P2P identity, strict signing-position advance, unchanged
+  consensus power, common app hash, source isolation, valid export/ledger, and
+  re-import.
+- The structured GH-55 pre-ship audit records 0 FAIL / 1 WARN / 5 PASS. Its one
+  HIGH warning is the separate GH-56 protocol rotation gap, not a defect in the
+  bounded cold-failover path.
+- PR #57 is published. CodeRabbit raised eight review threads; four valid
+  findings removed a duplicated word, retained compromised-key recovery as a
+  separate blocker, made permission examples honor `CHAIN_HOME`, and required
+  dedicated service-account ownership verification. The two future-date
+  findings conflict with the authoritative July 23 runtime, and the two Go
+  wrapper findings are invalid because the multi-package wrapper cannot combine
+  `go build -o <file>` with multiple package arguments while the existing `.`
+  commands already select the root package explicitly.
+
 ## 2026-07-23 04:54 EEST - GH-53 persisted binary upgrade and rollback start
 
 - Confirmed `main` was synchronized with `origin/main` at `312752a`, with no

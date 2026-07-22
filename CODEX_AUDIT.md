@@ -103,7 +103,7 @@ GitHub verification; this is not an external audit or production approval.
 
 - **[PASS] Public ledger claims distinguish merged recovery evidence from production** — `README.md`, `docs/status.json`, `docs/index.html`
   - What: Public status identifies the merged recovery foundation and retains the non-production warning for the remaining cryptographic, upgrade, operations, and release work.
-  - Evidence: Documentation consistency checks use one 689-test source of truth.
+  - Evidence: Documentation consistency checks use one 690-test source of truth.
   - Fix: Keep status evidence-based as each GH-29 rollout gate closes.
 
 ### ZKP authentication and replay resistance — PASS
@@ -130,7 +130,7 @@ GitHub verification; this is not an external audit or production approval.
     `init` binds the generated CometBFT Ed25519 public key to matching custom
     consensus state with exact cap-checked bank backing, refuses conflicting
     validator sets, and writes genesis atomically with mode `0600`.
-  - Evidence: 655 Go cases pass, including the supported init-wrapper boundary.
+  - Evidence: 656 Go cases pass, including the supported init-wrapper boundary.
     A real daemon produces blocks, stops cleanly on
     SIGINT, restarts from the same home, advances height, runs invariants, and
     exports state; targeted lifecycle race, vet, CGO build, and both CLI version
@@ -150,8 +150,8 @@ GitHub verification; this is not an external audit or production approval.
 ### Release readiness and developer ergonomics — WARN
 
 - **[HIGH] Production rollout evidence is intentionally incomplete** — `docs/ROLLOUT_ROADMAP.md`, `docs/agent-bridge/TODO.md`
-  - What: The recovery foundation is merged, but persisted-state upgrade/rollback, validator-key compromise response, network policy, IBC, load/topology, monitoring, and independent operations review are not closed.
-  - Path: Treating the merged foundation as production approval would launch without rehearsed migration, rollback, compromise, or full-network operating procedures.
+  - What: The recovery foundation is merged, but consensus-breaking migration recovery, authenticated consensus-key rotation, network policy, IBC, load/topology, monitoring, and independent operations review are not closed.
+  - Path: Treating the merged foundation as production approval would launch without rehearsed state migration, key rotation, or full-network operating procedures.
   - Fix: Close each GH-29 rollout gate with a ticket, executable drill, local evidence, green final-head CI, and an independent review boundary.
 
 - **[PASS] Root Go verification excludes installed frontend dependency source** — `scripts/go-packages.sh`, `scripts/test-go-packages.sh`, `Makefile`, `.github/workflows/go-ci.yml`

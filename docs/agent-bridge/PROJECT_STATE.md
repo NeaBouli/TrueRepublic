@@ -79,9 +79,9 @@ Updated: 2026-07-23 02:27 UTC
   maintained-client tests. Four focused legacy-web ZKP regressions pass
   separately and are not included in that authoritative total. The prior 577
   figure is retained only as historical.
-- Current `main` count is 689: 655 Go, 26 Rust, and eight maintained-client
-  tests. The separately gated four-validator and six-node validator lifecycle
-  process harnesses are not added again to that arithmetic total. The latest
+- Current recovery branch count is 690: 656 Go, 26 Rust, and eight maintained-client
+  tests. The separately gated multi-validator process
+  harnesses are not added again to that arithmetic total. The latest
   hardened four-validator run requires new post-rejoin blocks and passed in
   68.90 seconds. Full Go race/coverage passes with root/application coverage at
   65.9% on PR #40.
@@ -143,7 +143,7 @@ Updated: 2026-07-23 02:27 UTC
 - Public README, status JSON, limitations, and GitHub Pages source now display
   an active recovery warning and link to GH-4.
 - Public GitHub Pages is configured from `main:/docs`. The latest source update
-  records the 689-case and validator-lifecycle evidence, recovery/non-production
+  records the 690-case and validator-lifecycle evidence, recovery/non-production
   warning, and 21M cap.
 - Canonical `client-web` now has dedicated GitHub install/lint/test/build/audit
   gates; legacy client audits remain informational during migration.
@@ -245,7 +245,7 @@ Updated: 2026-07-23 02:27 UTC
 ## Public-status warning
 
 `docs/status.json`, README, limitations, and the landing page now mark recovery
-as active and separate 689 verified tests from the historical 577 figure.
+as active and separate 690 verified tests from the historical 577 figure.
 `CLAUDE.md`, install guidance, FAQ, landing page, wiki, and the root audit are
 reconciled with the merged recovery foundation while retaining the explicit
 non-production boundary.
@@ -256,13 +256,14 @@ The current recovery-foundation audit records 0 FAIL / 2 WARN / 18 PASS across
 denomination/cap, governance custody, reward issuance, DEX custody, custom
 genesis, runtime invariants, ZKP boundaries, maintained-client safety, and node
 lifecycle. The repository remains recovery-only because GH-20 still needs a
-real prover and external cryptographic review. GH-32/GH-41/GH-43/GH-45/GH-53
+real prover and external cryptographic review. GH-32/GH-41/GH-43/GH-45/GH-53/GH-55
 close bounded four-validator failure/restart/catch-up, partition-recovery,
 trusted state-sync, sanitized backup/restore/export/import, compatible binary
-replacement, and fail-before-open rollback slices. Consensus-breaking state
-migration, partially applied migration recovery, validator-key compromise
-response, network policy, load, topology, IBC, and independent operations
-review remain open.
+replacement, fail-before-open rollback, and validator identity cold-failover
+slices. Consensus-breaking state migration, partially applied migration
+recovery, authenticated consensus-key rotation, compromised consensus-key
+eviction/recovery, network policy, load, topology, IBC, and independent
+operations review remain open.
 
 GH-11 implements the canonical denomination metadata (`upnyx`, six decimal
 places, 21,000,000,000,000 base-unit cap) and pre-init bank-genesis cap checks.

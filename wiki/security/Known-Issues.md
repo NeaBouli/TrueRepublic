@@ -19,9 +19,11 @@ reward recipient binding are still required.
 
 - Single-node native and Docker restart pass. Bounded four-validator failure,
   restart, catch-up, partition recovery, trusted state sync, and sanitized
-  backup/restore/export/import now pass. IBC relaying/upgrades, persisted-state
-  upgrade, rollback, validator-key compromise response, and network-policy
-  drills remain open.
+  backup/restore/export/import, compatible binary rollback, and single-signer
+  identity failover now pass. IBC relaying/upgrades, persisted-state
+  consensus-breaking migration recovery, authenticated consensus-key rotation,
+  compromised consensus-key eviction/recovery, and network-policy drills remain
+  open.
 - IBC staking/upgrade and standard CosmWasm staking/distribution remain explicit
   stubs.
 - Production monitoring, alerting, incident response, validator key custody,
