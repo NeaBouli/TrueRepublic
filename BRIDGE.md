@@ -801,7 +801,8 @@ affected.
 
 The audit found no recovery-foundation failure. Three residual warnings remain
 explicit: incomplete GH-29 rollout evidence, root Go wildcard discovery under
-an installed frontend dependency tree, and the maintained-client bundle size.
+an installed frontend dependency tree ([GH-51](https://github.com/NeaBouli/TrueRepublic/issues/51)),
+and the maintained-client bundle size.
 Docker is unavailable in this local environment; the latest canonical GitHub
 Docker restart check is green.
 

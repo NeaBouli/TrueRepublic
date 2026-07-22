@@ -46,7 +46,8 @@ Updated: 2026-07-22 23:37 EEST
 - Legacy local checkout: preserved at `/Users/gio/Desktop/repos/TrueRepublic`
 - GitHub epic: #4
 - Open GitHub issue set after GH-48/GH-50 closure: #4 recovery epic, #7
-  audit/review parent, and #29 rollout tracker.
+  audit/review parent, #29 rollout tracker, and #51 Go package-selection
+  reproducibility follow-up.
 
 ## Verified state
 

@@ -700,4 +700,7 @@
   Rust audit, maintained and legacy Node audits, docs consistency, DeepScan,
   and CodeRabbit. The one valid review thread is resolved.
 - Squash-merged PR #49 as `7dbde858d0d3d5410f22d16a1a3bac614325d925`;
-  GitHub closed GH-48 and GH-50. Only GH-4, GH-7, and GH-29 remain open.
+  GitHub closed GH-48 and GH-50. At the merge point, only GH-4, GH-7, and
+  GH-29 remained open.
+- Opened GH-51 for the remaining medium package-selection finding and linked
+  the complete audit/remediation evidence from GH-29 and GH-4.
