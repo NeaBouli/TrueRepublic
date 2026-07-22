@@ -23,9 +23,6 @@
   standard CosmWasm staking/distribution stay explicit stubs.
 - The v0.4 client production bundle is 1.68 MB (309 kB gzip); route-level code
   splitting is recommended before treating low-bandwidth/mobile UX as ready.
-- PR #25 targets the unrecovered old main and its Go/Rust security gates fail.
-  Do not weaken or bypass those checks to publish default-branch status; merge
-  the reviewed foundation first, then rebase or replace the visibility track.
 
 ## Resolved during recovery
 
@@ -79,4 +76,5 @@
 - `mobile-wallet`: 51 npm advisories (22 high, 3 critical), obsolete CosmJS
   crypto, Expo 51 / React Native 0.74, and no test files.
 - Both clients are now labeled deprecated in public status. Do not use them for
-  real keys or production funds until GH-8 completes a migration or removal plan.
+  real keys or production funds until a dedicated migration or removal task is
+  implemented and independently verified.

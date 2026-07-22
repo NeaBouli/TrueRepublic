@@ -774,3 +774,34 @@ change is workflow/documentation-only. No runtime or public status behavior is
 affected.
 
 ---
+
+## 2026-07-22 23:04 EEST GH-48 post-merge status audit → Review
+
+- **Branch:** `fix/GH-48-post-merge-status`
+- **Issue:** [GH-48](https://github.com/NeaBouli/TrueRepublic/issues/48)
+- **Changed:** current contributor, audit, operator, limitations, security, and
+  bridge status now distinguish the merged recovery foundation from remaining
+  production-rollout work; historical bridge entries remain unchanged
+- **Tests:** maintained client `npm ci`, lint, 8 tests, build, and audit → PASS;
+  Rust format, Clippy `-D warnings`, and 26 workspace tests → PASS; docs,
+  shell, JSON, workflow YAML, secret-literal, and dependency-version checks →
+  PASS; isolated Go build/vet/655 tests → PASS (`75.399s` root package);
+  `cargo audit` → PASS with six known allowed transitive warnings
+- **Risk:** Low — documentation and audit truth only; no consensus, ledger,
+  wallet, contract, deployment, or runtime behavior changes
+- **Ready for:** final local review, PR, and final-head GitHub checks
+
+### Lead Dev notes
+
+The audit found no recovery-foundation failure. Three residual warnings remain
+explicit: incomplete GH-29 rollout evidence, root Go wildcard discovery under
+an installed frontend dependency tree, and the maintained-client bundle size.
+Docker is unavailable in this local environment; the latest canonical GitHub
+Docker restart check is green.
+
+### Codex review feedback
+
+Local diff and evidence approved for publication. Final approval remains gated
+on final-head GitHub checks.
+
+---

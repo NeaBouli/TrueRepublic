@@ -1,17 +1,17 @@
-# TrueRepublic — Token Supply and Ledger Audit
-> Scope: `treasury/keeper`, `x/truedemocracy`, `x/dex`, app wiring, genesis, ZKP authentication, maintained-client safety, and native node lifecycle  ·  Date: 2026-07-12  ·  Result: 16 PASS
+# TrueRepublic — Recovery Foundation Audit
+> Scope: `treasury/keeper`, `x/truedemocracy`, `x/dex`, app wiring, genesis, ZKP authentication, maintained-client safety, node lifecycle, and current rollout evidence  ·  Date: 2026-07-22  ·  Result: 0 FAIL / 3 WARN / 16 PASS
 
 ## Summary
 
-The recovery branches now define one six-decimal `upnyx` base denomination,
+The recovery foundation on `main` defines one six-decimal `upnyx` base denomination,
 validate and enforce the 21,000,000 PNYX cap against canonical bank supply,
 back governance/stake claims with bank escrow, mint validator/domain
 inflation through one capped issuance service, and settle DEX reserves, LP
 ownership, swaps, and burns against canonical bank state. GH-12 now validates
 and reconciles custom genesis before mutation, exports LP ownership, and checks
 supply, escrow, reserves, and LP conservation every block. This ledger slice
-passes on stacked, unmerged recovery branches; it is not an external audit or
-production approval.
+and the bounded multi-validator recovery drills are merged and pass local and
+GitHub verification; this is not an external audit or production approval.
 
 > Remediation update: GH-11 and GH-14 pass their local/GitHub gates. GH-13 now
 > routes validator/domain inflation and validator slash burns through canonical
@@ -24,9 +24,11 @@ production approval.
 > fails closed on pinned genesis VK state, preserves active nullifiers, and
 > disables mock client submission. GH-21 now replaces the MemDB placeholder
 > with persistent Cosmos/Comet lifecycle and generated-key, bank-backed PoD
-> genesis. Recipient binding, a real prover/ceremony, multi-node operations
-> evidence, and independent review remain open. GH-21 GitHub Go, Docker, docs,
-> client, Rust, static, and security gates pass.
+> genesis. Recipient binding, a real prover/ceremony, and independent review
+> remain open. Bounded failure/restart/catch-up, partition, trusted state-sync,
+> and sanitized backup/restore/export/import drills are merged; upgrade/
+> rollback, validator-key response, network policy, IBC, load/topology, and
+> independent operations evidence remain open.
 
 ## Findings by domain
 
@@ -34,7 +36,7 @@ production approval.
 
 - **[PASS] Chain, maintained client, contracts, and operator docs use one 21M denomination model** — `token/denom.go`, `client-web/src/config/chains.ts`, `docs/node-operators/configuration/genesis-params.md`
   - What: `upnyx` is the canonical base denom, `pnyx`/PNYX is the six-decimal display unit, and the cap is 21,000,000,000,000 base units.
-  - Evidence: GH-11 boundary tests, full local polyglot gates, and all stacked PR #15 checks pass.
+  - Evidence: GH-11 boundary tests, full local polyglot gates, and merged PR #15 checks pass.
   - Fix: Preserve the centralized token package and reject reintroduction of display-denom balances.
 
 - **[PASS] Genesis and every recovery reward mint use canonical capped bank supply** — `token/denom.go`, `token/issuance.go`, `app.go`, `x/truedemocracy/validator.go`
@@ -97,10 +99,10 @@ production approval.
   - Evidence: Full-app tests deliberately corrupt each of the four boundaries and prove the registered invariant halts; exact state passes.
   - Fix: Keep the one-block invariant period until equivalent operational evidence justifies a measured alternative.
 
-- **[PASS] Public ledger claims distinguish stacked recovery from production** — `README.md`, `docs/status.json`, `docs/index.html`
-  - What: Public status identifies the exact locally verified branch and retains the non-production warning for unmerged review, ZKP, and node-lifecycle work.
-  - Evidence: Documentation consistency checks use one 684-test source of truth.
-  - Fix: Keep status evidence-based through final stack consolidation.
+- **[PASS] Public ledger claims distinguish merged recovery evidence from production** — `README.md`, `docs/status.json`, `docs/index.html`
+  - What: Public status identifies the merged recovery foundation and retains the non-production warning for the remaining cryptographic, upgrade, operations, and release work.
+  - Evidence: Documentation consistency checks use one 689-test source of truth.
+  - Fix: Keep status evidence-based as each GH-29 rollout gate closes.
 
 ### ZKP authentication and replay resistance — PASS
 
@@ -126,7 +128,7 @@ production approval.
     `init` binds the generated CometBFT Ed25519 public key to matching custom
     consensus state with exact cap-checked bank backing, refuses conflicting
     validator sets, and writes genesis atomically with mode `0600`.
-  - Evidence: 650 Go cases pass, including the supported init-wrapper boundary.
+  - Evidence: 655 Go cases pass, including the supported init-wrapper boundary.
     A real daemon produces blocks, stops cleanly on
     SIGINT, restarts from the same home, advances height, runs invariants, and
     exports state; targeted lifecycle race, vet, CGO build, and both CLI version
@@ -143,23 +145,40 @@ production approval.
     forbidden-command absence, configuration edits, and no mnemonic artifact.
   - Fix: Keep `truerepublicd init` as the only genesis bootstrap boundary.
 
+### Release readiness and developer ergonomics — WARN
+
+- **[HIGH] Production rollout evidence is intentionally incomplete** — `docs/ROLLOUT_ROADMAP.md`, `docs/agent-bridge/TODO.md`
+  - What: The recovery foundation is merged, but persisted-state upgrade/rollback, validator-key compromise response, network policy, IBC, load/topology, monitoring, and independent operations review are not closed.
+  - Path: Treating the merged foundation as production approval would launch without rehearsed migration, rollback, compromise, or full-network operating procedures.
+  - Fix: Close each GH-29 rollout gate with a ticket, executable drill, local evidence, green final-head CI, and an independent review boundary.
+
+- **[MEDIUM] Root Go wildcards discover frontend dependency source after `npm ci`** — `CLAUDE.md`, `Makefile`, `client-web/package-lock.json`
+  - What: With `client-web/node_modules` present, `go list ./...` also discovers `truerepublic/client-web/node_modules/flatted/golang/pkg/flatted`.
+  - Path: Local `go build ./...`, `go vet ./...`, and `go test ./...` can inspect or build untracked frontend dependency source; a concurrent `npm ci` can make those commands fail on a transient missing file even though the chain code is unchanged.
+  - Fix: Add a repository-owned Go package selector that excludes frontend dependency trees, and use it consistently in local tooling and CI.
+
+- **[LOW] Maintained-client bundle remains large** — `client-web/src`, `docs/status.json`
+  - What: The verified production build emits a 1,678.30 kB main chunk (309.01 kB gzip) and triggers the bundler's 500 kB warning.
+  - Path: Low-bandwidth and mobile users download the full client bundle before route-specific code is needed.
+  - Fix: Add route-level code splitting and a measured bundle budget before rollout UX approval.
+
 ## Priority matrix
 
 ### 🔴 BLOCKING
 
-None inside the locally implemented ledger/ZKP/single-node lifecycle slice. A
-real prover, external cryptographic review, recipient binding, independent
-multi-node operations review, and ordered merge remain
-project-level release blockers.
+None inside the merged recovery-foundation slice. A real prover, external
+cryptographic review, recipient binding, upgrade/rollback and validator-key
+response drills, network policy, IBC/load/topology evidence, monitoring, and
+independent operations review remain project-level release blockers.
 
 ### 🟠 HIGH
 
-None identified in this audit slice.
+1. Complete the remaining GH-29 rollout evidence before production approval.
 
 ### 🟡 MEDIUM
 
-None identified in this audit slice.
+1. Isolate root Go package selection from installed frontend dependency trees.
 
 ### 🟢 LOW
 
-None identified in this audit slice.
+1. Split the maintained-client bundle and enforce a measured size budget.

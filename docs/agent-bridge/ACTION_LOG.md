@@ -657,3 +657,23 @@
 - PR #38 opened for GH-37. GitHub Docs Consistency, Security Scan, and DeepScan
   pass; CodeRabbit remained pending without comments during the final merge
   decision.
+
+## 2026-07-22 23:04 EEST - GH-48 fast post-merge audit
+
+- Confirmed local `main` and `origin/main` were identical at `6a308c5`, with no
+  open pull requests and only GH-4, GH-7, and GH-29 open before this task.
+- Confirmed the latest scheduled Security Scan at `6a308c5`, the latest Pages
+  build, and the latest code-bearing Go CI at `63b76bf` are green.
+- Opened GH-48 after finding live documentation that still described the
+  already merged PR #9 through PR #27 recovery sequence as drafts/unmerged.
+- Corrected the contributor guide, root audit, DEX guide, ZKP limitation,
+  security queue, and live project state without altering historical logs.
+- Recorded three residual warnings: remaining GH-29 rollout evidence, root Go
+  wildcard discovery in installed frontend dependencies, and the 1,678.30 kB
+  maintained-client main chunk.
+- Maintained-client install/lint/8 tests/build/audit, Rust format/Clippy/26
+  tests, isolated Go build/vet/655 tests, docs consistency, shell syntax, JSON,
+  workflow YAML, and diff checks pass. `cargo audit` exits cleanly with the six
+  already documented allowed transitive warnings. Docker and `govulncheck` are
+  unavailable locally, so current green GitHub security/Docker evidence remains
+  required on the final published head.

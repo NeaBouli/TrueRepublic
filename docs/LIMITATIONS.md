@@ -68,7 +68,7 @@ topology, and independent operations review passes.
 
 ## ZKP Client
 
-**Status:** On-chain binding recovery-verified on stacked PR #22; client disabled
+**Status:** On-chain binding recovery-verified and merged via PR #22; client disabled
 **Timeline:** v0.4.0
 **Current:** Proofs bind chain/proposal/rating, nullifiers persist across export,
 and the trusted genesis VK is pinned by circuit ID, SHA-256, curve, shape, and
