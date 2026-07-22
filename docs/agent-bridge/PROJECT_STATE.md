@@ -1,6 +1,6 @@
 # Project State
 
-Updated: 2026-07-19 03:43 EEST
+Updated: 2026-07-22 23:04 EEST
 
 ## Repository
 
@@ -22,8 +22,19 @@ Updated: 2026-07-19 03:43 EEST
   drills are merged through PR #46 with green local and GitHub evidence. GH-47
   bounds the Go CI `build-and-test` job with a 20-minute timeout after a stale
   GitHub runner left the PR #46 merge-commit run in progress despite local Go
-  tests passing; refreshed `main` Go CI, Security Scan, and Pages pass at
-  `63b76bf`.
+  tests passing; refreshed `main` Go CI passes at `63b76bf`, and the latest
+  `main` commit `6a308c5` has green Security Scan and Pages evidence.
+- GH-48 tracks the 2026-07-22 fast audit reconciliation. Local/GitHub state is
+  synchronized with no open PRs before the task; the audit found no recovery-
+  foundation failure, corrected live documentation that still called merged
+  PRs unmerged, and records three residual warnings: incomplete rollout gates,
+  root Go wildcard discovery under installed frontend dependencies, and the
+  maintained-client bundle size.
+- GH-50 tracks GO-2026-5970, first surfaced by PR #49 after the vulnerability
+  database changed since the last green scheduled scan. The minimal remediation
+  updates `golang.org/x/text` from v0.37.0 to the scanner-reported fixed
+  v0.39.0. Exact local Security Scan filtering, Go build, vet, and all 655 Go
+  tests pass; refreshed final-head GitHub verification remains pending.
 - Active recovery checkout:
   `/Users/gio/Documents/Codex/2026-07-11/erkunden/TrueRepublic-gh20`
 - GH-26 branch: `fix/GH-26-pod-init-script`
@@ -110,14 +121,16 @@ Updated: 2026-07-19 03:43 EEST
   warning, and 21M cap.
 - Canonical `client-web` now has dedicated GitHub install/lint/test/build/audit
   gates; legacy client audits remain informational during migration.
-- PR #9 GitHub checks are all green: Go CI, Rust CI, Client Web CI,
-  documentation consistency, govulncheck, Rust audit, canonical npm audit, and
-  informational legacy npm audits.
+- PR #9's final GitHub checks passed before the ordered recovery chain was
+  merged to `main`: Go CI, Rust CI, Client Web CI, documentation consistency,
+  govulncheck, Rust audit, canonical npm audit, and informational legacy audits.
 - Both Debian/glibc Docker builds pass with the architecture-specific wasmvm
   shared library; the module path is resolved dynamically from Go metadata.
 - Codex merge audit: conditional approval with 0 FAIL / 3 WARN / 7 PASS.
-- GitHub branch protection requires one approval; PR #9 currently has none and
-  must not be merged through the administrator bypass.
+- GitHub branch protection currently requests one approval but defines no
+  required status-check contexts and does not enforce the rule for admins.
+  Project workflow therefore continues to require final-head CI evidence and a
+  reviewable PR even when GitHub would technically allow an administrator merge.
 - CodeRabbit review remediation passes locally and on GitHub: checkout credentials are
   disabled, security workflow permissions are read-only, canonical client CI
   uses Node 22, current Go security releases are applied, and the full local
@@ -138,7 +151,7 @@ Updated: 2026-07-19 03:43 EEST
   now maps Docker target architecture to the correct wasmvm library, verifies
   runtime linkage during image construction, and excludes 1.5+ GB of local
   build artifacts/dependencies from the context. The image build and
-  CLI startup are proven by both GitHub Docker jobs. PR #17 is mergeable; both
+  CLI startup are proven by both GitHub Docker jobs. PR #17 was merged; both
   Go jobs, docs, DeepScan, the manual security matrix, and the prior full
   CodeRabbit review completed with five inline and two additional findings.
   Rollback-aware mock-bank evidence, restored payout snapshot baselines,
@@ -176,25 +189,25 @@ Updated: 2026-07-19 03:43 EEST
   roots; and round-trips exact active nullifiers without undoing Big Purges.
   Both web clients now reject mock proof submission. Local Go build/vet/643
   cases/race/coverage, Rust 26 tests/audit, maintained-client lint/8 tests/build/
-  audit, four focused legacy tests/build/audit, module integrity, and diff checks
-  pass; see `PR22_AUDIT.md`.
-- GH-21 is rebased without implementation drift onto PR #22 head `0c72ad0`.
+  audit, four focused legacy tests/build/audit, module integrity, and diff
+  checks pass; see `PR22_AUDIT.md`.
+- GH-21 was rebased without implementation drift onto PR #22 head `0c72ad0`.
   Standard Cosmos/Comet lifecycle now uses the configured persistent database
   and home; `init` binds the generated CometBFT key to exactly bank-backed PoD
   genesis and refuses conflicting validator sets. Native block production,
   SIGINT shutdown, same-home restart, height advancement, invariants, export,
   649 Go cases, targeted race, vet, build, CLI version, shell syntax, and diff
-  checks pass locally. Root coverage is 64.3%. Published head `49938a3` is
-  mergeable; GitHub Go/Docker run `29172166826`, Docs, DeepScan, Web,
-  CodeRabbit, and Security Scan `29172246373` pass; see `PR23_AUDIT.md`.
-- GH-8 is rebased onto final GH-21 `49938a3`. It modernizes official
+  checks pass locally. Root coverage is 64.3%. GitHub Go/Docker run
+  `29172166826`, Docs, DeepScan, Web, CodeRabbit, and Security Scan
+  `29172246373` passed before PR #23 merged; see `PR23_AUDIT.md`.
+- GH-8 was rebased onto final GH-21 `49938a3`. It modernizes official
   Action runtimes without credential persistence or duplicate feature runs,
   strengthens suite/module/cap consistency, and reconciles CLAUDE, install,
   FAQ, landing, and real wiki status/security claims to 684 cases. Workflow
-  YAML, docs, JSON, wiki target, stale-current-claim, and diff checks pass;
-  Published stack head is mergeable. GitHub Go/Docker, Rust, Web, Mobile,
-  Docs, DeepScan, CodeRabbit, and all five Security Scan `29172246235` jobs
-  pass. See `PR24_AUDIT.md`.
+  YAML, docs, JSON, wiki target, stale-current-claim, and diff checks passed.
+  GitHub Go/Docker, Rust, Web, Mobile, Docs, DeepScan, CodeRabbit, and all five
+  Security Scan `29172246235` jobs passed before PR #24 merged. See
+  `PR24_AUDIT.md`.
 - GH-26 removes the last public `x/staking` bootstrap footgun. The operator
   wrapper now invokes only daemon `init`; its regression and a real compiled
   init prove generated-key, exact bank-backed PoD genesis without mnemonic,
@@ -206,17 +219,18 @@ Updated: 2026-07-19 03:43 EEST
 ## Public-status warning
 
 `docs/status.json`, README, limitations, and the landing page now mark recovery
-as active and separate 684 verified tests from the historical 577 figure.
-`CLAUDE.md`, install guidance, FAQ, landing page, and wiki are reconciled on
-PR #24 and are visible on `main`.
+as active and separate 689 verified tests from the historical 577 figure.
+`CLAUDE.md`, install guidance, FAQ, landing page, wiki, and the root audit are
+reconciled with the merged recovery foundation while retaining the explicit
+non-production boundary.
 
 ## Blocking audit result
 
-The token/ledger audit is 12/12 PASS locally across the merged recovery work:
+The current recovery-foundation audit records 0 FAIL / 3 WARN / 17 PASS across
 denomination/cap, governance custody, reward issuance, DEX custody, custom
-genesis, and runtime invariants. The repository remains recovery-only because
-GH-20 still needs a real prover/external
-cryptographic review. GH-32/GH-41/GH-43/GH-45 close bounded four-validator
+genesis, runtime invariants, ZKP boundaries, maintained-client safety, and node
+lifecycle. The repository remains recovery-only because GH-20 still needs a
+real prover and external cryptographic review. GH-32/GH-41/GH-43/GH-45 close bounded four-validator
 failure/restart/catch-up, partition-recovery, trusted state-sync, and sanitized
 backup/restore/export/import slices; upgrades, rollback, validator-key
 compromise response, network policy, load, topology, IBC, and independent
@@ -224,11 +238,12 @@ operations review remain open.
 
 GH-11 implements the canonical denomination metadata (`upnyx`, six decimal
 places, 21,000,000,000,000 base-unit cap) and pre-init bank-genesis cap checks.
-Its final audit corrections are locally verified and rebased onto PR #9 head
-`acfc3d5`; refreshed PR #15 GitHub checks are green at head `e0ff339`.
+Its final audit corrections and PR #15 checks passed before the ordered merge
+to `main`.
 GH-14 closes the declared treasury/stake custody slice on `main`.
 GH-13 closes cap-checked reward issuance, GH-10 closes DEX custody/LP/burn/
-authority, and GH-12 closes custom-genesis/runtime-invariant findings locally.
-GH-20 closes the on-chain ZKP binding and mock-client safety implementation
-locally. GH-21 closes the native single-node persistence/restart implementation
-locally and in GitHub CI. These remediations are merged to `main`.
+authority, and GH-12 closes custom-genesis/runtime-invariant findings on
+`main`. GH-20 closes the on-chain ZKP binding and mock-client safety
+implementation on `main`. GH-21 closes the native single-node persistence/
+restart implementation locally and in GitHub CI. These remediations are merged
+to `main`.

@@ -657,3 +657,41 @@
 - PR #38 opened for GH-37. GitHub Docs Consistency, Security Scan, and DeepScan
   pass; CodeRabbit remained pending without comments during the final merge
   decision.
+
+## 2026-07-22 23:04 EEST - GH-48 fast post-merge audit
+
+- Confirmed local `main` and `origin/main` were identical at `6a308c5`, with no
+  open pull requests and only GH-4, GH-7, and GH-29 open before this task.
+- Confirmed the latest scheduled Security Scan at `6a308c5`, the latest Pages
+  build, and the latest code-bearing Go CI at `63b76bf` are green.
+- Opened GH-48 after finding live documentation that still described the
+  already merged PR #9 through PR #27 recovery sequence as drafts/unmerged.
+- Corrected the contributor guide, root audit, DEX guide, ZKP limitation,
+  security queue, and live project state without altering historical logs.
+- Recorded three residual warnings: remaining GH-29 rollout evidence, root Go
+  wildcard discovery in installed frontend dependencies, and the 1,678.30 kB
+  maintained-client main chunk.
+- Maintained-client install/lint/8 tests/build/audit, Rust format/Clippy/26
+  tests, isolated Go build/vet/655 tests, docs consistency, shell syntax, JSON,
+  workflow YAML, and diff checks pass. `cargo audit` exits cleanly with the six
+  already documented allowed transitive warnings. Docker and `govulncheck` are
+  unavailable locally, so current green GitHub security/Docker evidence remains
+  required on the final published head.
+
+## 2026-07-22 23:14 EEST - GH-50 GO-2026-5970 remediation
+
+- PR #49's current vulnerability database found reachable GO-2026-5970 through
+  Unicode normalization used by the ZKP dependency path. The affected indirect
+  module was `golang.org/x/text` v0.37.0; the scanner reports v0.39.0 as fixed.
+- Opened GH-50 and updated `golang.org/x/text` to v0.39.0. Module resolution
+  also advances `golang.org/x/sync` to v0.21.0 and records the already directly
+  imported `cosmossdk.io/x/tx` in the direct require block.
+- A current local `govulncheck` no longer reports GO-2026-5970. Four reachable
+  upstream findings remain with `Fixed in: N/A`; the existing Security Scan
+  gate continues to fail only when a reachable fixable version exists.
+- Exact CI-filter reproduction passes: no reachable finding with an available
+  fix remains. Go build, vet, and the full 655-case suite pass after the update;
+  the root package completes in 64.499 seconds.
+- Accepted CodeRabbit's audit-tally finding: the document contains 17 distinct
+  `[PASS]` findings, so the root audit and live project state now report
+  0 FAIL / 3 WARN / 17 PASS.

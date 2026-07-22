@@ -15,7 +15,8 @@ source of current security or production-readiness claims.
 - Verified recovery total: 689 cases (655 Go, 26 Rust, eight maintained-client)
 - PNYX cap: 21,000,000 PNYX = 21,000,000,000,000 `upnyx`
 
-The implementation is split across stacked draft PRs. Preserve this order:
+The recovery foundation was reviewed and merged to `main` through this ordered
+PR sequence:
 
 1. PR #9 — recovery foundation
 2. PR #15 — canonical PNYX denomination and cap
@@ -28,7 +29,8 @@ The implementation is split across stacked draft PRs. Preserve this order:
 9. PR #24 — final documentation, public-status and CI-runtime reconciliation
 10. PR #27 — retire the broken legacy init wrapper (GH-26)
 
-Do not claim these changes are on `main` until they are merged in order.
+All ten PRs above are merged. Treat their order as historical implementation
+provenance, not as an open merge queue or production approval.
 
 ## Repository shape
 
@@ -147,7 +149,8 @@ unchanged. Recovery worktrees are based on current GitHub state.
 - Read `BRIDGE.md` before starting.
 - Work against a GitHub issue and update the bridge/action log continuously.
 - Use conventional commits and scoped, reviewable changes.
-- Keep stacked PR bases intact and merge in documented order.
+- Keep each new rollout task tied to a GitHub issue, focused branch, and
+  reviewable PR.
 - Preserve unrelated local changes.
 - Never commit secrets, generated key material, databases or node homes.
 - Update README, `docs/status.json`, limitations and landing-page totals only
@@ -158,6 +161,7 @@ unchanged. Recovery worktrees are based on current GitHub state.
 ## Production boundary
 
 Recovery testnet functionality is not a mainnet approval. Remaining gates
-include stacked merge, independent consensus/cryptographic/operations review,
-real client proof generation, multi-node/IBC testing, monitoring/alerting and a
-formal release process.
+include persisted-state upgrade/rollback drills, validator-key compromise
+response, network policy, IBC/load/topology evidence, monitoring/alerting,
+independent consensus/cryptographic/operations review, real client proof
+generation, and a formal release process.

@@ -3,10 +3,10 @@
 Guide to using TrueRepublic's built-in Decentralized Exchange (DEX) for swapping tokens and providing liquidity.
 
 > [!WARNING]
-> The bank-custody recovery is implemented on stacked PR #18 and exact
-> genesis/runtime conservation on PR #19. Neither branch is merged or approved
-> for production funds. Amounts are integer base units (`upnyx`, where 1 PNYX
-> = 1,000,000 upnyx).
+> The bank-custody recovery from PR #18 and exact genesis/runtime conservation
+> from PR #19 are merged to `main` and recovery-verified. This is not production
+> approval for real funds. Amounts are integer base units (`upnyx`, where
+> 1 PNYX = 1,000,000 upnyx).
 
 ## Overview
 
