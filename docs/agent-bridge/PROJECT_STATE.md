@@ -1,6 +1,6 @@
 # Project State
 
-Updated: 2026-07-22 23:04 EEST
+Updated: 2026-07-22 23:37 EEST
 
 ## Repository
 
@@ -9,7 +9,7 @@ Updated: 2026-07-22 23:04 EEST
   are recorded in `ACTION_LOG.md` so this live state does not self-expire after
   documentation-only merges.
 - Merged recovery PRs: #9, #15, #16, #17, #18, #19, #22, #23, #24, #27,
-  #28, #30, #31, #33, #34, #35, #40, #42, #44, and #46.
+  #28, #30, #31, #33, #34, #35, #40, #42, #44, #46, and #49.
 - Current work: GH-29 remains open as the rollout execution tracker. GH-32 and
   PR #33 close its first Phase 1 gate with local and GitHub evidence. GH-39 is
   now merged via PR #40 with green GitHub CI for validator
@@ -22,19 +22,20 @@ Updated: 2026-07-22 23:04 EEST
   drills are merged through PR #46 with green local and GitHub evidence. GH-47
   bounds the Go CI `build-and-test` job with a 20-minute timeout after a stale
   GitHub runner left the PR #46 merge-commit run in progress despite local Go
-  tests passing; refreshed `main` Go CI passes at `63b76bf`, and the latest
-  `main` commit `6a308c5` has green Security Scan and Pages evidence.
-- GH-48 tracks the 2026-07-22 fast audit reconciliation. Local/GitHub state is
+  tests passing; refreshed `main` Go CI passes at `63b76bf`.
+- GH-48 closed the 2026-07-22 fast audit reconciliation. Local/GitHub state was
   synchronized with no open PRs before the task; the audit found no recovery-
   foundation failure, corrected live documentation that still called merged
   PRs unmerged, and records three residual warnings: incomplete rollout gates,
   root Go wildcard discovery under installed frontend dependencies, and the
   maintained-client bundle size.
-- GH-50 tracks GO-2026-5970, first surfaced by PR #49 after the vulnerability
+- GH-50 closed GO-2026-5970, first surfaced by PR #49 after the vulnerability
   database changed since the last green scheduled scan. The minimal remediation
   updates `golang.org/x/text` from v0.37.0 to the scanner-reported fixed
   v0.39.0. Exact local Security Scan filtering, Go build, vet, and all 655 Go
-  tests pass; refreshed final-head GitHub verification remains pending.
+  tests pass. PR #49 final-head Go build/race/coverage, multi-validator recovery,
+  Docker restart, Go/Rust/Node security, docs, DeepScan, and CodeRabbit checks
+  are green; the PR merged as `7dbde85` and closed GH-48/GH-50.
 - Active recovery checkout:
   `/Users/gio/Documents/Codex/2026-07-11/erkunden/TrueRepublic-gh20`
 - GH-26 branch: `fix/GH-26-pod-init-script`
@@ -44,7 +45,7 @@ Updated: 2026-07-22 23:04 EEST
 - Recovery worktree: `/Users/gio/Desktop/repos/TrueRepublic-recovery`
 - Legacy local checkout: preserved at `/Users/gio/Desktop/repos/TrueRepublic`
 - GitHub epic: #4
-- Open GitHub issue set after cleanup and GH-45 merge: #4 recovery epic, #7
+- Open GitHub issue set after GH-48/GH-50 closure: #4 recovery epic, #7
   audit/review parent, and #29 rollout tracker.
 
 ## Verified state

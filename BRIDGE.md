@@ -775,11 +775,13 @@ affected.
 
 ---
 
-## 2026-07-22 23:04 EEST GH-48/GH-50 post-merge audit remediation → Review
+## 2026-07-22 23:04 EEST GH-48/GH-50 post-merge audit remediation → Done
 
 - **Branch:** `fix/GH-48-post-merge-status`
 - **Issues:** [GH-48](https://github.com/NeaBouli/TrueRepublic/issues/48),
   [GH-50](https://github.com/NeaBouli/TrueRepublic/issues/50)
+- **PR:** [#49](https://github.com/NeaBouli/TrueRepublic/pull/49), squash
+  merged to `main` as `7dbde858d0d3d5410f22d16a1a3bac614325d925`
 - **Changed:** current contributor, audit, operator, limitations, security, and
   bridge status now distinguish the merged recovery foundation from remaining
   production-rollout work; `golang.org/x/text` is updated from v0.37.0 to
@@ -791,9 +793,9 @@ affected.
   `cargo audit` → PASS with six known allowed transitive warnings; after the
   GH-50 update, exact Security Scan filtering → PASS and isolated Go build,
   vet, and 655 tests → PASS (`64.499s` root package)
-- **Risk:** Low — documentation and audit truth only; no consensus, ledger,
-  wallet, contract, deployment, or runtime behavior changes
-- **Ready for:** final local review, PR, and final-head GitHub checks
+- **Risk:** Medium — security dependency update plus documentation/audit truth;
+  no intended consensus, ledger, wallet, contract, or deployment behavior change
+- **Ready for:** next GH-29 rollout task
 
 ### Lead Dev notes
 
@@ -808,6 +810,8 @@ Docker restart check is green.
 PR #49's first Security Scan exposed newly published GO-2026-5970 in
 `golang.org/x/text` v0.37.0. The minimal v0.39.0 remediation removes that
 finding locally; the exact CI gate, build, vet, and full tests pass. Final
-approval remains gated on refreshed GitHub checks.
+head checks are green: Go build/race/coverage, multi-validator recovery, Docker
+restart, Go/Rust/Node security, docs, DeepScan, and CodeRabbit. The valid audit-
+tally finding was fixed and its review thread resolved before merge.
 
 ---

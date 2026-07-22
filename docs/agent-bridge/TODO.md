@@ -11,10 +11,10 @@
   GitHub security CI are green.
 - [x] GH-47: bound the Go CI `build-and-test` job with a 20-minute timeout so
   stuck GitHub runners cannot leave `main` indefinitely in progress.
-- [ ] GH-48: reconcile live post-merge contributor/operator/audit status,
+- [x] GH-48: reconcile live post-merge contributor/operator/audit status,
   publish the verified fast-audit evidence, and close after final-head GitHub
   checks pass.
-- [ ] GH-50: update `golang.org/x/text` to v0.39.0 for reachable GO-2026-5970,
+- [x] GH-50: update `golang.org/x/text` to v0.39.0 for reachable GO-2026-5970,
   rerun full Go verification, and close only after final-head Security Scan is
   green.
 - [x] GH-6: v0.4 client lint, tests, build, exact amount handling, maintained
