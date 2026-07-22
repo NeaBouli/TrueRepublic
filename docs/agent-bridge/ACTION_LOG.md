@@ -705,7 +705,7 @@
 - Opened GH-51 for the remaining medium package-selection finding and linked
   the complete audit/remediation evidence from GH-29 and GH-4.
 
-## 2026-07-23 00:24 EEST - GH-51 root Go package isolation
+## 2026-07-22 11:24 UTC - GH-51 root Go package isolation
 
 - Reproduced the issue: root `go list ./...` discovers
   `truerepublic/client-web/node_modules/flatted/golang/pkg/flatted` after the

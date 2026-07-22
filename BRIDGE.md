@@ -817,7 +817,7 @@ tally finding was fixed and its review thread resolved before merge.
 
 ---
 
-## 2026-07-23 00:24 EEST GH-51 isolate root Go package selection → Review
+## 2026-07-22 11:24 UTC GH-51 isolate root Go package selection → Review
 
 - **Branch:** `fix/GH-51-go-package-selector`
 - **Issue:** [GH-51](https://github.com/NeaBouli/TrueRepublic/issues/51)

@@ -6,6 +6,8 @@ ROOT_DIR=$(git -C "$(dirname "${BASH_SOURCE[0]}")/.." rev-parse --show-toplevel)
 collect_packages() {
   git -C "$ROOT_DIR" ls-files --cached --others --exclude-standard -- '*.go' |
     while IFS= read -r source; do
+      [[ -f "$ROOT_DIR/$source" ]] || continue
+
       case "/$source/" in
         */node_modules/* | */vendor/*)
           continue

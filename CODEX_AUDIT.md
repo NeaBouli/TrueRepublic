@@ -177,7 +177,7 @@ independent operations review remain project-level release blockers.
 
 ### 🟡 MEDIUM
 
-1. Isolate root Go package selection from installed frontend dependency trees.
+No unresolved medium finding remains in the recovery-foundation slice.
 
 ### 🟢 LOW
 

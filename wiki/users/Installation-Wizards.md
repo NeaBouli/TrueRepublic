@@ -406,6 +406,7 @@ make test
 cd client-web
 npm ci
 npm test -- --run
+cd ..
 
 # Test coverage
 ./scripts/go-packages.sh go test -cover
