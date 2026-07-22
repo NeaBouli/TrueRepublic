@@ -26,6 +26,10 @@
 
 ## Resolved during recovery
 
+- Updated `golang.org/x/text` from v0.37.0 to v0.39.0 after the 2026-07-22
+  vulnerability database exposed reachable GO-2026-5970 through the ZKP
+  dependency path. The four remaining reachable Go findings have no available
+  fixed version and remain explicitly visible in Security Scan output.
 - Updated Go dependencies for fixable `go-getter` and `x/net` advisories.
 - Updated Go toolchain away from vulnerable Go 1.24.13.
 - Updated v0.4 client dependencies, including CosmJS crypto, Vite, Vitest,

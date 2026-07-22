@@ -14,6 +14,9 @@
 - [ ] GH-48: reconcile live post-merge contributor/operator/audit status,
   publish the verified fast-audit evidence, and close after final-head GitHub
   checks pass.
+- [ ] GH-50: update `golang.org/x/text` to v0.39.0 for reachable GO-2026-5970,
+  rerun full Go verification, and close only after final-head Security Scan is
+  green.
 - [x] GH-6: v0.4 client lint, tests, build, exact amount handling, maintained
   wallet crypto, npm audit, and GitHub CI are green.
 - [x] GH-8: reproduce legacy web wallet and mobile wallet CI/security state.

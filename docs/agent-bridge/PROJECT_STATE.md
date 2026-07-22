@@ -30,6 +30,11 @@ Updated: 2026-07-22 23:04 EEST
   PRs unmerged, and records three residual warnings: incomplete rollout gates,
   root Go wildcard discovery under installed frontend dependencies, and the
   maintained-client bundle size.
+- GH-50 tracks GO-2026-5970, first surfaced by PR #49 after the vulnerability
+  database changed since the last green scheduled scan. The minimal remediation
+  updates `golang.org/x/text` from v0.37.0 to the scanner-reported fixed
+  v0.39.0. Exact local Security Scan filtering, Go build, vet, and all 655 Go
+  tests pass; refreshed final-head GitHub verification remains pending.
 - Active recovery checkout:
   `/Users/gio/Documents/Codex/2026-07-11/erkunden/TrueRepublic-gh20`
 - GH-26 branch: `fix/GH-26-pod-init-script`

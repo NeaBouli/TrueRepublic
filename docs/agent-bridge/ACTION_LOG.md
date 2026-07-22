@@ -677,3 +677,18 @@
   already documented allowed transitive warnings. Docker and `govulncheck` are
   unavailable locally, so current green GitHub security/Docker evidence remains
   required on the final published head.
+
+## 2026-07-22 23:14 EEST - GH-50 GO-2026-5970 remediation
+
+- PR #49's current vulnerability database found reachable GO-2026-5970 through
+  Unicode normalization used by the ZKP dependency path. The affected indirect
+  module was `golang.org/x/text` v0.37.0; the scanner reports v0.39.0 as fixed.
+- Opened GH-50 and updated `golang.org/x/text` to v0.39.0. Module resolution
+  also advances `golang.org/x/sync` to v0.21.0 and records the already directly
+  imported `cosmossdk.io/x/tx` in the direct require block.
+- A current local `govulncheck` no longer reports GO-2026-5970. Four reachable
+  upstream findings remain with `Fixed in: N/A`; the existing Security Scan
+  gate continues to fail only when a reachable fixable version exists.
+- Exact CI-filter reproduction passes: no reachable finding with an available
+  fix remains. Go build, vet, and the full 655-case suite pass after the update;
+  the root package completes in 64.499 seconds.
