@@ -1,5 +1,5 @@
 # TrueRepublic — Recovery Foundation Audit
-> Scope: `treasury/keeper`, `x/truedemocracy`, `x/dex`, app wiring, genesis, ZKP authentication, maintained-client safety, node lifecycle, and current rollout evidence  ·  Date: 2026-07-22  ·  Result: 0 FAIL / 3 WARN / 16 PASS
+> Scope: `treasury/keeper`, `x/truedemocracy`, `x/dex`, app wiring, genesis, ZKP authentication, maintained-client safety, node lifecycle, and current rollout evidence  ·  Date: 2026-07-22  ·  Result: 0 FAIL / 3 WARN / 17 PASS
 
 ## Summary
 

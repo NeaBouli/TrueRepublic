@@ -692,3 +692,6 @@
 - Exact CI-filter reproduction passes: no reachable finding with an available
   fix remains. Go build, vet, and the full 655-case suite pass after the update;
   the root package completes in 64.499 seconds.
+- Accepted CodeRabbit's audit-tally finding: the document contains 17 distinct
+  `[PASS]` findings, so the root audit and live project state now report
+  0 FAIL / 3 WARN / 17 PASS.

@@ -226,7 +226,7 @@ non-production boundary.
 
 ## Blocking audit result
 
-The current recovery-foundation audit records 0 FAIL / 3 WARN / 16 PASS across
+The current recovery-foundation audit records 0 FAIL / 3 WARN / 17 PASS across
 denomination/cap, governance custody, reward issuance, DEX custody, custom
 genesis, runtime invariants, ZKP boundaries, maintained-client safety, and node
 lifecycle. The repository remains recovery-only because GH-20 still needs a
