@@ -1,6 +1,6 @@
 # Project State
 
-Updated: 2026-07-22 23:37 EEST
+Updated: 2026-07-22 11:24 UTC
 
 ## Repository
 
@@ -36,6 +36,11 @@ Updated: 2026-07-22 23:37 EEST
   tests pass. PR #49 final-head Go build/race/coverage, multi-validator recovery,
   Docker restart, Go/Rust/Node security, docs, DeepScan, and CodeRabbit checks
   are green; the PR merged as `7dbde85` and closed GH-48/GH-50.
+- GH-51 is in review on `fix/GH-51-go-package-selector`. One repository-owned
+  wrapper now derives the root-module package set from Git-managed, non-ignored
+  Go sources, excluding installed frontend dependency trees. Local selector,
+  build, vet, normal tests, race/coverage, and all three multi-validator
+  recovery harnesses pass; GitHub final-head Docker and CI evidence is pending.
 - Active recovery checkout:
   `/Users/gio/Documents/Codex/2026-07-11/erkunden/TrueRepublic-gh20`
 - GH-26 branch: `fix/GH-26-pod-init-script`
@@ -228,7 +233,7 @@ non-production boundary.
 
 ## Blocking audit result
 
-The current recovery-foundation audit records 0 FAIL / 3 WARN / 17 PASS across
+The current recovery-foundation audit records 0 FAIL / 2 WARN / 18 PASS across
 denomination/cap, governance custody, reward issuance, DEX custody, custom
 genesis, runtime invariants, ZKP boundaries, maintained-client safety, and node
 lifecycle. The repository remains recovery-only because GH-20 still needs a

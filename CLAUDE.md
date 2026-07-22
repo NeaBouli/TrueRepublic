@@ -66,13 +66,19 @@ boundaries.
 Run from the repository root:
 
 ```bash
-go build ./...
-go vet ./...
-go test ./... -count=1
-go test -race ./... -count=1 -timeout=600s
+./scripts/go-packages.sh go build
+./scripts/go-packages.sh go vet
+./scripts/go-packages.sh go test -count=1
+./scripts/go-packages.sh go test -race -count=1 -timeout=600s
 ./scripts/check-consistency.sh
 git diff --check
 ```
+
+`scripts/go-packages.sh` derives the root-module package set from Git-managed,
+non-ignored Go sources and excludes dependency trees such as `node_modules` and
+`vendor`. Use `./scripts/go-packages.sh --list` to inspect the selected package
+directories; do not replace the wrapper with a repository-root `./...`
+wildcard in automation.
 
 Maintained client:
 

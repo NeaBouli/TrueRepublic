@@ -26,11 +26,11 @@ The current **v0.4.0 recovery** source of truth records **689 verified cases**.
 ## Reproduction commands
 
 ```bash
-CGO_ENABLED=1 go test ./... -race -cover -count=1 -timeout=600s
+CGO_ENABLED=1 ./scripts/go-packages.sh go test -race -cover -count=1 -timeout=600s
 TRUEREPUBLIC_MULTI_VALIDATOR_SMOKE=1 go test . \
   -run '^TestMultiValidatorConsensusRecovery$' -count=1 -timeout=300s -v
-go vet ./...
-CGO_ENABLED=1 go build ./...
+./scripts/go-packages.sh go vet
+CGO_ENABLED=1 ./scripts/go-packages.sh go build
 ./scripts/check-consistency.sh
 ```
 

@@ -103,8 +103,8 @@ cargo wasm
 ## Run Tests
 
 ```bash
-# All Go tests (533)
-go test ./... -timeout=600s
+# All Go tests (655)
+./scripts/go-packages.sh go test -timeout=600s
 
 # Specific module
 go test ./x/dex/...
@@ -112,8 +112,8 @@ go test ./x/dex/...
 # All Rust tests (26)
 cd contracts && cargo test --workspace
 
-# Frontend tests (18)
-cd web-wallet && npm test
+# Maintained frontend tests (8)
+cd client-web && npm ci && npm test -- --run
 ```
 
 ## Next Steps
