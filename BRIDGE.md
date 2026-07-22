@@ -817,7 +817,7 @@ tally finding was fixed and its review thread resolved before merge.
 
 ---
 
-## 2026-07-22 11:24 UTC GH-51 isolate root Go package selection → Review
+## 2026-07-22 11:24 UTC GH-51 isolate root Go package selection → Done
 
 - **Branch:** `fix/GH-51-go-package-selector`
 - **Issue:** [GH-51](https://github.com/NeaBouli/TrueRepublic/issues/51)
@@ -833,7 +833,9 @@ tally finding was fixed and its review thread resolved before merge.
   workflow YAML, shell syntax, and diff checks → PASS
 - **Risk:** Low — developer tooling and CI package discovery only; no runtime,
   consensus, ledger, wallet, contract, dependency, or deployment behavior change
-- **Ready for:** GitHub PR review and final-head Go/Docker/security evidence
+- **PR:** [#52](https://github.com/NeaBouli/TrueRepublic/pull/52), squash
+  merged to `main` as `ae7105afb564547c2eb17933d4a325267be51d46`
+- **Ready for:** next GH-29 rollout task
 
 ### Lead Dev notes
 
@@ -843,6 +845,9 @@ Docker is unavailable locally; the PR Docker restart gate is mandatory.
 
 ### Codex review feedback
 
-Pending final-head GitHub checks.
+Approved and merged. CodeRabbit's four valid findings were fixed in `6a668ee`,
+answered, and all threads resolved. Final head passes all 11 GitHub checks:
+Go build/vet/race/coverage, multi-validator recovery, Docker restart,
+Go/Rust/Node security, docs, DeepScan, and CodeRabbit. GH-51 is closed.
 
 ---

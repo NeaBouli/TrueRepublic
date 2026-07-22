@@ -17,7 +17,7 @@
 - [x] GH-50: update `golang.org/x/text` to v0.39.0 for reachable GO-2026-5970,
   rerun full Go verification, and close only after final-head Security Scan is
   green.
-- [ ] GH-51: isolate root Go package selection from installed frontend
+- [x] GH-51: isolate root Go package selection from installed frontend
   `node_modules` trees and align local/CI verification commands.
 - [x] GH-6: v0.4 client lint, tests, build, exact amount handling, maintained
   wallet crypto, npm audit, and GitHub CI are green.

@@ -9,7 +9,7 @@ Updated: 2026-07-22 11:24 UTC
   are recorded in `ACTION_LOG.md` so this live state does not self-expire after
   documentation-only merges.
 - Merged recovery PRs: #9, #15, #16, #17, #18, #19, #22, #23, #24, #27,
-  #28, #30, #31, #33, #34, #35, #40, #42, #44, #46, and #49.
+  #28, #30, #31, #33, #34, #35, #40, #42, #44, #46, #49, and #52.
 - Current work: GH-29 remains open as the rollout execution tracker. GH-32 and
   PR #33 close its first Phase 1 gate with local and GitHub evidence. GH-39 is
   now merged via PR #40 with green GitHub CI for validator
@@ -36,11 +36,13 @@ Updated: 2026-07-22 11:24 UTC
   tests pass. PR #49 final-head Go build/race/coverage, multi-validator recovery,
   Docker restart, Go/Rust/Node security, docs, DeepScan, and CodeRabbit checks
   are green; the PR merged as `7dbde85` and closed GH-48/GH-50.
-- GH-51 is in review on `fix/GH-51-go-package-selector`. One repository-owned
-  wrapper now derives the root-module package set from Git-managed, non-ignored
-  Go sources, excluding installed frontend dependency trees. Local selector,
-  build, vet, normal tests, race/coverage, and all three multi-validator
-  recovery harnesses pass; GitHub final-head Docker and CI evidence is pending.
+- GH-51 is closed through merged PR #52 (`ae7105a`). One repository-owned
+  wrapper derives the root-module package set from Git-managed, non-ignored Go
+  sources, excluding installed frontend dependency trees. Local selector,
+  concurrent frontend install plus build/vet/race/coverage, normal tests, and
+  all three multi-validator recovery harnesses pass. Final-head GitHub Go,
+  Docker, security, docs, and static-analysis checks are green; all four valid
+  CodeRabbit findings were corrected and their threads resolved.
 - Active recovery checkout:
   `/Users/gio/Documents/Codex/2026-07-11/erkunden/TrueRepublic-gh20`
 - GH-26 branch: `fix/GH-26-pod-init-script`
@@ -50,9 +52,8 @@ Updated: 2026-07-22 11:24 UTC
 - Recovery worktree: `/Users/gio/Desktop/repos/TrueRepublic-recovery`
 - Legacy local checkout: preserved at `/Users/gio/Desktop/repos/TrueRepublic`
 - GitHub epic: #4
-- Open GitHub issue set after GH-48/GH-50 closure: #4 recovery epic, #7
-  audit/review parent, #29 rollout tracker, and #51 Go package-selection
-  reproducibility follow-up.
+- Open GitHub issue set after GH-51 closure: #4 recovery epic, #7 audit/review
+  parent, and #29 rollout tracker.
 
 ## Verified state
 

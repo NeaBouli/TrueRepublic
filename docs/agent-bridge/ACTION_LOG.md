@@ -723,3 +723,11 @@
   backup/restore/export/import harnesses pass in 265.381s. Compose/Docker cannot
   run locally because the Docker executable is unavailable, so final-head
   GitHub Docker evidence remains required before merge.
+- CodeRabbit reported four valid findings: normalize the Bridge timestamp,
+  remove the resolved medium-priority duplicate, ignore missing indexed source,
+  and return to the repository root in the wiki test sequence. All were fixed
+  in `6a668ee`, answered, and resolved.
+- PR #52 final head passes all 11 checks: Go build/vet/race/coverage (7m11s),
+  multi-validator recovery (5m44s), Docker restart (3m20s), Go vulnerability,
+  Rust audit, maintained and legacy Node audits, docs consistency, DeepScan,
+  and CodeRabbit. PR #52 was squash-merged as `ae7105a`; GH-51 closed.
