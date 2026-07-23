@@ -33,18 +33,39 @@ Choose immutable paths instead of overwriting the running binary in place:
 export CHAIN_HOME="$HOME/.truerepublic"
 export OLD_BINARY="/opt/truerepublic/v0.4.0/truerepublicd"
 export NEW_BINARY="/opt/truerepublic/v0.4.1/truerepublicd"
+export CHECKPOINT_HEIGHT="12345" # replace with the coordinated checkpoint
+export TRUSTED_RPCS="http://trusted-rpc-a:26657 http://trusted-rpc-b:26657"
 
 "$OLD_BINARY" version
 "$NEW_BINARY" version
 sha256sum "$OLD_BINARY" "$NEW_BINARY"
-curl --fail --silent http://127.0.0.1:26657/status | jq \
-  '.result.sync_info | {latest_block_height, catching_up}'
-curl --fail --silent 'http://127.0.0.1:26657/block?height=<checkpoint-height>' | jq -r \
-  '.result.block.header.app_hash'
+
+reference_app_hash=""
+for rpc in $TRUSTED_RPCS; do
+  latest_height="$(curl --fail --silent "$rpc/status" | jq -er \
+    '.result.sync_info.latest_block_height | tonumber')"
+  if [ "$latest_height" -lt "$CHECKPOINT_HEIGHT" ]; then
+    echo "$rpc is below checkpoint height $CHECKPOINT_HEIGHT" >&2
+    exit 1
+  fi
+  app_hash="$(curl --fail --silent \
+    "$rpc/block?height=$CHECKPOINT_HEIGHT" | jq -er \
+    '.result.block.header.app_hash')"
+  printf '%s height=%s checkpoint_app_hash=%s\n' \
+    "$rpc" "$latest_height" "$app_hash"
+  if [ -z "$reference_app_hash" ]; then
+    reference_app_hash="$app_hash"
+  elif [ "$app_hash" != "$reference_app_hash" ]; then
+    echo "trusted RPC app hashes disagree at height $CHECKPOINT_HEIGHT" >&2
+    exit 1
+  fi
+done
 ```
 
-Record the checkpoint height and app hash from more than one trusted node. Stop
-the local service cleanly and create a sanitized chain-data backup:
+Replace the example checkpoint height and RPC URLs before executing the block.
+It fails if either trusted endpoint is below the checkpoint or their app hashes
+disagree. Record the matching heights and hash, then stop the local service
+cleanly and create a sanitized chain-data backup:
 
 ```bash
 sudo systemctl stop truerepublicd
@@ -65,7 +86,19 @@ single validator:
 
 ```bash
 sudo systemctl edit truerepublicd
-# Set ExecStart to: /opt/truerepublic/v0.4.1/truerepublicd start --home /home/<operator>/.truerepublic
+```
+
+Enter this drop-in, clearing the original command before replacing it:
+
+```ini
+[Service]
+ExecStart=
+ExecStart=/opt/truerepublic/v0.4.1/truerepublicd start --home /home/<operator>/.truerepublic
+```
+
+Then reload and start the service:
+
+```bash
 sudo systemctl daemon-reload
 sudo systemctl start truerepublicd
 ```
@@ -100,7 +133,19 @@ If the candidate exits before it opens state or fails its readiness checks:
 ```bash
 sudo systemctl stop truerepublicd
 sudo systemctl edit truerepublicd
-# Restore ExecStart to: /opt/truerepublic/v0.4.0/truerepublicd start --home /home/<operator>/.truerepublic
+```
+
+Enter the last known-good command as the complete override:
+
+```ini
+[Service]
+ExecStart=
+ExecStart=/opt/truerepublic/v0.4.0/truerepublicd start --home /home/<operator>/.truerepublic
+```
+
+Then reload and start the service:
+
+```bash
 sudo systemctl daemon-reload
 sudo systemctl start truerepublicd
 ```
