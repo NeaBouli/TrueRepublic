@@ -1,15 +1,13 @@
 # Project State
 
-Updated: 2026-07-23 09:40 UTC
+Updated: 2026-07-23 00:06 UTC
 
 ## Repository
 
-- Active task: GH-56 on `feature/GH-56-consensus-key-rotation`. Local
-  implementation, adversarial review, normal gates, and the real five-process
-  harness pass. The branch separates bootstrap operator authority from
-  consensus keys, adds authenticated atomic rotation, permanent revocation,
-  deterministic CometBFT H+2 activation, and export/import evidence. It
-  remains unpublished until final GitHub review and CI pass.
+- GH-56 is closed through merged PR #62 (`80ab674`). Authenticated atomic
+  consensus-key rotation, permanent revocation, separate bootstrap operator
+  authority, deterministic CometBFT H+2 activation, and real five-process
+  export/import evidence are now on `main`.
 - PR #58 separately merged the requested developer BTC support address through
   GitHub's supported custom funding link; the team multisig remains unchanged.
 
@@ -19,7 +17,7 @@ Updated: 2026-07-23 09:40 UTC
   documentation-only merges.
 - Merged recovery PRs: #9, #15, #16, #17, #18, #19, #22, #23, #24, #27,
   #28, #30, #31, #33, #34, #35, #40, #42, #44, #46, #49, #52, #54, #57,
-  and #58.
+  #58, and #62.
 - Current work: GH-29 remains open as the rollout execution tracker. GH-32 and
   PR #33 close its first Phase 1 gate with local and GitHub evidence. GH-39 is
   now merged via PR #40 with green GitHub CI for validator
@@ -43,6 +41,12 @@ Updated: 2026-07-23 09:40 UTC
   head passed Go race/coverage, multi-validator recovery, Docker restart,
   docs, Go/Rust/Node security, DeepScan, and CodeRabbit; all six review threads
   are resolved.
+- GH-56 is closed through merged PR #62 (`80ab674`). Final head `239cc6f`
+  passed Go build/vet/race/coverage in 6m44s, the combined recovery/rotation/
+  state-sync/backup/identity/upgrade process matrix in 9m39s, Docker restart,
+  Docs, Go/Rust/Node security scans, and DeepScan. CodeRabbit was rate-limited;
+  the recorded independent adversarial review found no P0 and no additional
+  P2. Residual rollout work is bounded by GH-59, GH-60, and GH-61.
 - GH-48 closed the 2026-07-22 fast audit reconciliation. Local/GitHub state was
   synchronized with no open PRs before the task; the audit found no recovery-
   foundation failure, corrected live documentation that still called merged
@@ -72,9 +76,9 @@ Updated: 2026-07-23 09:40 UTC
 - Recovery worktree: `/Users/gio/Desktop/repos/TrueRepublic-recovery`
 - Legacy local checkout: preserved at `/Users/gio/Desktop/repos/TrueRepublic`
 - GitHub epic: #4
-- Current open GitHub issue set: #4 recovery epic, #7 audit/review parent, #29
-  rollout tracker, active GH-56, and its bounded follow-ups GH-59, GH-60, and
-  GH-61. No pull request is open before GH-56 publication.
+- Current open GitHub issue set after GH-56 closure: #4 recovery epic, #7
+  audit/review parent, #29 rollout tracker, and bounded follow-ups GH-59,
+  GH-60, and GH-61.
 
 ## Verified state
 
@@ -96,6 +100,11 @@ Updated: 2026-07-23 09:40 UTC
   hardened four-validator run requires new post-rejoin blocks and passed in
   68.90 seconds. Full Go race/coverage passes with root/application coverage at
   65.9% on PR #40.
+- GH-56 final-head CI proves the complete combined multi-validator process
+  matrix in 9m39s. Its rotation slice stops the old signer, authenticates the
+  operator transaction, applies old-key zero and replacement activation at
+  H+2, preserves validator claims and app-hash convergence, rejects revoked-key
+  reuse, and round-trips export/import.
 - GH-32 uses four independently generated CometBFT Ed25519 keys, one identical
   bank-backed PoD genesis, explicit localhost persistent peers, common-height
   app-hash checks, one-validator failure with continued quorum, restart/catch-up,

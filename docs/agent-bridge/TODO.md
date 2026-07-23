@@ -99,8 +99,8 @@
 - [x] GH-56: locally implement and verify authenticated atomic consensus-key
   rotation, permanent old-key revocation, and bootstrap operator-authority
   separation without stake-withdrawing removal/re-registration.
-- [ ] GH-56: publish the audited branch, pass final-head GitHub review/CI,
-  merge, close the issue, and synchronize GH-29 plus the Bridge.
+- [x] GH-56: publish the audited branch, pass final-head GitHub review/CI,
+  merge as `80ab674`, close the issue, and synchronize GH-29 plus the Bridge.
 - [x] GH-7: DEX rounding, slippage, pool accounting, custody, and authorization
   audit completed in GH-10; GH-12 retains genesis/runtime invariants.
 

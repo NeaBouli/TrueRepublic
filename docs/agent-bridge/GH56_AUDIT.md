@@ -65,5 +65,17 @@ not production approval.
 - Independent final read-only security review: no P0 and no additional P2
   finding; the two P1 rollout boundaries are tracked by GH-59 and GH-60.
 
-GitHub CI and review evidence must be appended after the published final head
-passes and before GH-56 is closed.
+## GitHub closure evidence
+
+- PR #62 final head: `239cc6f`.
+- Go build/vet/race/coverage: PASS in 6m44s.
+- Combined recovery, rotation, state-sync, backup/restore, identity recovery,
+  and upgrade/rollback process matrix: PASS in 9m39s.
+- Docker restart: PASS in 3m20s.
+- Docs consistency, Go vulnerability, Rust audit, all Node audits, and DeepScan:
+  PASS.
+- CodeRabbit reported no content review because its review service was
+  rate-limited; the independent adversarial review above remains the substantive
+  final-head review evidence.
+- PR #62 squash-merged to `main` as `80ab6741423049d6faa3bfc8d2671feebb314134`;
+  GitHub closed GH-56 automatically.
