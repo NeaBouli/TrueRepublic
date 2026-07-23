@@ -45,6 +45,7 @@ func (AppModuleBasic) RegisterInterfaces(registry codectypes.InterfaceRegistry) 
 		&MsgRegisterValidator{},
 		&MsgWithdrawStake{},
 		&MsgRemoveValidator{},
+		&MsgRotateValidatorKey{},
 		&MsgUnjail{},
 		&MsgJoinPermissionRegister{},
 		&MsgPurgePermissionRegister{},
@@ -143,6 +144,9 @@ func (am AppModule) InitGenesis(ctx sdk.Context, cdc codec.JSONCodec, data json.
 	for _, record := range genesisState.UsedNullifiers {
 		am.keeper.SetNullifierUsed(ctx, record.DomainName, record.NullifierHash, record.UsedAtHeight)
 	}
+	for _, record := range genesisState.RevokedValidatorKeys {
+		am.keeper.restoreRevokedValidatorKey(ctx, record)
+	}
 
 	// Register genesis validators and build initial validator set.
 	var updates []abci.ValidatorUpdate
@@ -156,6 +160,9 @@ func (am AppModule) InitGenesis(ctx sdk.Context, cdc codec.JSONCodec, data json.
 			Sum: &cryptoproto.PublicKey_Ed25519{Ed25519: gv.PubKey},
 		}
 		updates = append(updates, abci.ValidatorUpdate{PubKey: pk, Power: power})
+	}
+	for _, rotation := range genesisState.PendingValidatorRotations {
+		am.keeper.restorePendingValidatorKeyRotation(ctx, rotation)
 	}
 
 	// Load verifying key from genesis if present.
@@ -214,6 +221,7 @@ func (am AppModule) EndBlock(goCtx context.Context) ([]abci.ValidatorUpdate, err
 		if !found {
 			continue
 		}
+		am.keeper.QueueValidatorPowerZero(ctx, validator)
 		validator.Jailed = true
 		validator.Power = 0
 		am.keeper.SetValidator(ctx, validator)
@@ -232,6 +240,7 @@ func (am AppModule) EndBlock(goCtx context.Context) ([]abci.ValidatorUpdate, err
 		if !found {
 			continue
 		}
+		am.keeper.QueueValidatorPowerZero(ctx, validator)
 		validator.Jailed = true
 		validator.Power = 0
 		am.keeper.SetValidator(ctx, validator)
@@ -278,6 +287,22 @@ func (am AppModule) ExportGenesis(ctx sdk.Context, cdc codec.JSONCodec) json.Raw
 	if validators == nil {
 		validators = []GenesisValidator{}
 	}
+	var revokedValidatorKeys []RevokedValidatorKey
+	am.keeper.IterateRevokedValidatorKeys(ctx, func(record RevokedValidatorKey) bool {
+		revokedValidatorKeys = append(revokedValidatorKeys, record)
+		return false
+	})
+	if revokedValidatorKeys == nil {
+		revokedValidatorKeys = []RevokedValidatorKey{}
+	}
+	var pendingValidatorRotations []PendingValidatorKeyRotation
+	am.keeper.IteratePendingValidatorKeyRotations(ctx, func(record PendingValidatorKeyRotation) bool {
+		pendingValidatorRotations = append(pendingValidatorRotations, record)
+		return false
+	})
+	if pendingValidatorRotations == nil {
+		pendingValidatorRotations = []PendingValidatorKeyRotation{}
+	}
 	usedNullifiers := make([]NullifierRecord, 0)
 	nullifierStore := storeprefix.NewStore(ctx.KVStore(am.keeper.StoreKey), []byte("nullifier:"))
 	iterator := nullifierStore.Iterator(nil, nil)
@@ -298,12 +323,14 @@ func (am AppModule) ExportGenesis(ctx sdk.Context, cdc codec.JSONCodec) json.Raw
 	}
 
 	genesis := GenesisState{
-		Domains:            domains,
-		Validators:         validators,
-		UsedNullifiers:     usedNullifiers,
-		ZKPCircuitID:       circuitID,
-		VerifyingKeyHex:    vkHex,
-		VerifyingKeySHA256: vkFingerprint,
+		Domains:                   domains,
+		Validators:                validators,
+		RevokedValidatorKeys:      revokedValidatorKeys,
+		PendingValidatorRotations: pendingValidatorRotations,
+		UsedNullifiers:            usedNullifiers,
+		ZKPCircuitID:              circuitID,
+		VerifyingKeyHex:           vkHex,
+		VerifyingKeySHA256:        vkFingerprint,
 	}
 	bz, err := json.Marshal(genesis)
 	if err != nil {

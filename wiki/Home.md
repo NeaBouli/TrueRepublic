@@ -14,7 +14,7 @@
 | Item | Verified state |
 |---|---|
 | Version label | v0.4.0 recovery |
-| Tests | 690 total: 656 Go, 26 Rust, 8 maintained-client |
+| Tests | 717 total: 683 Go, 26 Rust, 8 maintained-client |
 | PNYX cap | 21,000,000 PNYX = 21,000,000,000,000 `upnyx` |
 | Node | Restart, four-validator recovery, state sync, sanitized backup/restore, compatible binary rollback, and cold identity failover verified |
 | ZKP client | Mock generation/submission disabled; real prover pending |

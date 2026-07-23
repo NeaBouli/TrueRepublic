@@ -88,7 +88,8 @@ func TestValidatorIdentityColdFailover(t *testing.T) {
 		p2pPort: freeTCPPort(t),
 		logPath: filepath.Join(t.TempDir(), fmt.Sprintf("%s-recovered.log", source.name)),
 	}
-	initCmd := exec.CommandContext(ctx, binary, "init", recovery.name, "--chain-id", chainID, "--home", recovery.home)
+	recovery.operatorAddr = smokeOperatorAddress(recovery.name)
+	initCmd := exec.CommandContext(ctx, binary, "init", recovery.name, "--chain-id", chainID, "--home", recovery.home, "--bootstrap-operator", recovery.operatorAddr)
 	if output, err := initCmd.CombinedOutput(); err != nil {
 		t.Fatalf("init %s: %v\n%s", recovery.name, err, output)
 	}

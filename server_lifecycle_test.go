@@ -15,6 +15,7 @@ import (
 
 	cmted25519 "github.com/cometbft/cometbft/crypto/ed25519"
 	cmttypes "github.com/cometbft/cometbft/types"
+	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkversion "github.com/cosmos/cosmos-sdk/version"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
@@ -55,6 +56,9 @@ func TestRootUsesStandardCosmosServerCommands(t *testing.T) {
 	if got := initCmd.Flags().Lookup("default-denom").DefValue; got != token.BaseDenom {
 		t.Fatalf("init default denom = %q, want %q", got, token.BaseDenom)
 	}
+	if initCmd.Flags().Lookup("bootstrap-operator") == nil {
+		t.Fatal("init bootstrap-operator flag is missing")
+	}
 }
 
 func TestNodeStartsStopsAndRestartsFromPersistentHome(t *testing.T) {
@@ -64,7 +68,8 @@ func TestNodeStartsStopsAndRestartsFromPersistentHome(t *testing.T) {
 		t.Fatalf("build daemon: %v\n%s", err, output)
 	}
 	home := filepath.Join(t.TempDir(), "node")
-	initCmd := exec.Command(binary, "init", "restart-node", "--chain-id", "truerepublic-restart-1", "--home", home)
+	operatorAddr := sdk.AccAddress(bytes.Repeat([]byte{0x23}, 20)).String()
+	initCmd := exec.Command(binary, "init", "restart-node", "--chain-id", "truerepublic-restart-1", "--home", home, "--bootstrap-operator", operatorAddr)
 	if output, err := initCmd.CombinedOutput(); err != nil {
 		t.Fatalf("init node: %v\n%s", err, output)
 	}
@@ -228,7 +233,8 @@ func TestBindGenesisValidatorKeyUsesGeneratedNodeKey(t *testing.T) {
 	}
 
 	generatedPubKey := bytes.Repeat([]byte{0x42}, 32)
-	if err := bindGenesisValidatorKey(path, generatedPubKey); err != nil {
+	operatorAddr := sdk.AccAddress(bytes.Repeat([]byte{0x24}, 20)).String()
+	if err := bindGenesisValidatorKey(path, generatedPubKey, operatorAddr); err != nil {
 		t.Fatal(err)
 	}
 	updated, err := os.ReadFile(path)
@@ -250,8 +256,26 @@ func TestBindGenesisValidatorKeyUsesGeneratedNodeKey(t *testing.T) {
 	if got := tdGenesis.Validators[0].PubKey; !bytes.Equal(got, generatedPubKey) {
 		t.Fatalf("bootstrap pubkey = %x, want generated key %x", got, generatedPubKey)
 	}
+	if got := tdGenesis.Validators[0].OperatorAddr; got != operatorAddr {
+		t.Fatalf("bootstrap operator = %q, want independent account %q", got, operatorAddr)
+	}
 	if len(tdGenesis.Domains) != 1 || len(tdGenesis.Validators) != 1 {
 		t.Fatalf("unexpected PoD bootstrap state: %+v", tdGenesis)
+	}
+	authGenesis := authtypes.GetGenesisStateFromAppState(app.appCodec, updatedState)
+	accounts, err := authtypes.UnpackAccounts(authGenesis.Accounts)
+	if err != nil {
+		t.Fatal(err)
+	}
+	foundOperatorAccount := false
+	for _, account := range accounts {
+		if account.GetAddress().String() == operatorAddr {
+			foundOperatorAccount = true
+			break
+		}
+	}
+	if !foundOperatorAccount {
+		t.Fatal("bootstrap operator authority is missing from auth genesis")
 	}
 	bankGenesis := banktypes.GetGenesisStateFromAppState(app.appCodec, updatedState)
 	moduleAddress := authtypes.NewModuleAddress(truedemocracy.ModuleName).String()
@@ -285,6 +309,55 @@ func TestBindGenesisValidatorKeyUsesGeneratedNodeKey(t *testing.T) {
 	}
 }
 
+func TestBindGenesisValidatorKeyRejectsConsensusDerivedOperator(t *testing.T) {
+	appState := ModuleBasics.DefaultGenesis(newGenesisTestApp(t).appCodec)
+	appStateJSON, err := json.Marshal(appState)
+	if err != nil {
+		t.Fatal(err)
+	}
+	path := filepath.Join(t.TempDir(), "genesis.json")
+	genesisDoc := &genutiltypes.AppGenesis{
+		ChainID: "test-coupled-operator-chain", AppState: appStateJSON, Consensus: &genutiltypes.ConsensusGenesis{},
+	}
+	if err := genesisDoc.SaveAs(path); err != nil {
+		t.Fatal(err)
+	}
+	pubKey := bytes.Repeat([]byte{0x43}, 32)
+	coupledOperator := sdk.AccAddress(cmted25519.PubKey(pubKey).Address()).String()
+	before, _ := os.ReadFile(path)
+	if err := bindGenesisValidatorKey(path, pubKey, coupledOperator); err == nil {
+		t.Fatal("consensus-derived operator authority accepted")
+	}
+	after, _ := os.ReadFile(path)
+	if !bytes.Equal(after, before) {
+		t.Fatal("rejected coupled operator mutated genesis")
+	}
+}
+
+func TestBindGenesisValidatorKeyRejectsReservedModuleOperator(t *testing.T) {
+	appState := ModuleBasics.DefaultGenesis(newGenesisTestApp(t).appCodec)
+	appStateJSON, err := json.Marshal(appState)
+	if err != nil {
+		t.Fatal(err)
+	}
+	path := filepath.Join(t.TempDir(), "genesis.json")
+	genesisDoc := &genutiltypes.AppGenesis{
+		ChainID: "test-module-operator-chain", AppState: appStateJSON, Consensus: &genutiltypes.ConsensusGenesis{},
+	}
+	if err := genesisDoc.SaveAs(path); err != nil {
+		t.Fatal(err)
+	}
+	before, _ := os.ReadFile(path)
+	moduleOperator := authtypes.NewModuleAddress(truedemocracy.ModuleName).String()
+	if err := bindGenesisValidatorKey(path, bytes.Repeat([]byte{0x44}, 32), moduleOperator); err == nil {
+		t.Fatal("reserved module account accepted as bootstrap operator")
+	}
+	after, _ := os.ReadFile(path)
+	if !bytes.Equal(after, before) {
+		t.Fatal("rejected module operator mutated genesis")
+	}
+}
+
 func TestBindGenesisValidatorKeyRejectsInvalidKeyWithoutMutation(t *testing.T) {
 	appState := ModuleBasics.DefaultGenesis(newGenesisTestApp(t).appCodec)
 	appStateJSON, err := json.Marshal(appState)
@@ -299,7 +372,7 @@ func TestBindGenesisValidatorKeyRejectsInvalidKeyWithoutMutation(t *testing.T) {
 		t.Fatal(err)
 	}
 	before, _ := os.ReadFile(path)
-	if err := bindGenesisValidatorKey(path, []byte{1}); err == nil {
+	if err := bindGenesisValidatorKey(path, []byte{1}, sdk.AccAddress(bytes.Repeat([]byte{0x25}, 20)).String()); err == nil {
 		t.Fatal("invalid consensus key accepted")
 	}
 	after, _ := os.ReadFile(path)
@@ -326,7 +399,7 @@ func TestBindGenesisValidatorKeyRefusesExistingConsensusSet(t *testing.T) {
 		t.Fatal(err)
 	}
 	before, _ := os.ReadFile(path)
-	if err := bindGenesisValidatorKey(path, bytes.Repeat([]byte{0x22}, 32)); err == nil {
+	if err := bindGenesisValidatorKey(path, bytes.Repeat([]byte{0x22}, 32), sdk.AccAddress(bytes.Repeat([]byte{0x26}, 20)).String()); err == nil {
 		t.Fatal("existing consensus validator set was replaced")
 	}
 	after, _ := os.ReadFile(path)

@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"context"
+	"crypto/sha256"
 	"encoding/base64"
 	"encoding/hex"
 	"encoding/json"
@@ -18,6 +19,7 @@ import (
 	"time"
 
 	"cosmossdk.io/math"
+	cmted25519 "github.com/cometbft/cometbft/crypto/ed25519"
 	"github.com/cometbft/cometbft/privval"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
@@ -31,16 +33,17 @@ import (
 const multiValidatorSmokeEnv = "TRUEREPUBLIC_MULTI_VALIDATOR_SMOKE"
 
 type smokeValidator struct {
-	name    string
-	home    string
-	nodeID  string
-	pubKey  []byte
-	rpcPort int
-	p2pPort int
-	logPath string
-	command *exec.Cmd
-	done    chan error
-	logFile *os.File
+	name         string
+	home         string
+	nodeID       string
+	pubKey       []byte
+	operatorAddr string
+	rpcPort      int
+	p2pPort      int
+	logPath      string
+	command      *exec.Cmd
+	done         chan error
+	logFile      *os.File
 }
 
 type smokeAccount struct {
@@ -71,8 +74,9 @@ func TestConfigureGenesisValidatorSetBuildsExactBankBackedSet(t *testing.T) {
 	identities := make([]genesisValidatorIdentity, 4)
 	for i := range identities {
 		identities[i] = genesisValidatorIdentity{
-			Name:   fmt.Sprintf("validator-%d", i+1),
-			PubKey: bytes.Repeat([]byte{byte(i + 1)}, 32),
+			Name:         fmt.Sprintf("validator-%d", i+1),
+			PubKey:       bytes.Repeat([]byte{byte(i + 1)}, 32),
+			OperatorAddr: sdk.AccAddress(bytes.Repeat([]byte{byte(i + 21)}, 20)).String(),
 		}
 	}
 	if err := configureGenesisValidatorSet(genesis, identities); err != nil {
@@ -105,6 +109,26 @@ func TestConfigureGenesisValidatorSetBuildsExactBankBackedSet(t *testing.T) {
 	}
 }
 
+func TestConfigureGenesisValidatorSetRejectsCrossCoupledOperators(t *testing.T) {
+	app := newGenesisTestApp(t)
+	appState, err := json.Marshal(ModuleBasics.DefaultGenesis(app.appCodec))
+	if err != nil {
+		t.Fatal(err)
+	}
+	genesis := &genutiltypes.AppGenesis{
+		ChainID: "truerepublic-cross-coupling-1", AppState: appState, Consensus: &genutiltypes.ConsensusGenesis{},
+	}
+	firstKey := bytes.Repeat([]byte{0x61}, 32)
+	secondKey := bytes.Repeat([]byte{0x62}, 32)
+	identities := []genesisValidatorIdentity{
+		{Name: "validator-1", PubKey: firstKey, OperatorAddr: sdk.AccAddress(cmted25519.PubKey(secondKey).Address()).String()},
+		{Name: "validator-2", PubKey: secondKey, OperatorAddr: sdk.AccAddress(cmted25519.PubKey(firstKey).Address()).String()},
+	}
+	if err := configureGenesisValidatorSet(genesis, identities); err == nil {
+		t.Fatal("cross-coupled bootstrap operator authorities were accepted")
+	}
+}
+
 func TestMultiValidatorConsensusRecovery(t *testing.T) {
 	if os.Getenv(multiValidatorSmokeEnv) != "1" {
 		t.Skipf("set %s=1 to run the multi-validator process harness", multiValidatorSmokeEnv)
@@ -127,7 +151,8 @@ func TestMultiValidatorConsensusRecovery(t *testing.T) {
 			p2pPort: freeTCPPort(t),
 			logPath: filepath.Join(t.TempDir(), fmt.Sprintf("validator-%d.log", i+1)),
 		}
-		initCmd := exec.CommandContext(ctx, binary, "init", validator.name, "--chain-id", chainID, "--home", validator.home)
+		validator.operatorAddr = smokeOperatorAddress(validator.name)
+		initCmd := exec.CommandContext(ctx, binary, "init", validator.name, "--chain-id", chainID, "--home", validator.home, "--bootstrap-operator", validator.operatorAddr)
 		if output, err := initCmd.CombinedOutput(); err != nil {
 			t.Fatalf("init %s: %v\n%s", validator.name, err, output)
 		}
@@ -265,9 +290,9 @@ func TestMultiValidatorJoinReplacementLifecycle(t *testing.T) {
 	joiningValidator := validators[4]
 	replacementValidator := validators[5]
 
-	admin := addSmokeKey(t, ctx, binary, initialValidators[0].home, "lifecycle-admin", 0, 1_500_000*token.WholeTokenBaseUnits)
-	joiningOperator := addSmokeKey(t, ctx, binary, joiningValidator.home, "joining-operator", 1, 200_000*token.WholeTokenBaseUnits)
-	replacementOperator := addSmokeKey(t, ctx, binary, replacementValidator.home, "replacement-operator", 2, 200_000*token.WholeTokenBaseUnits)
+	admin := addSmokeKey(t, ctx, binary, initialValidators[0].home, "lifecycle-admin", 4, 1_500_000*token.WholeTokenBaseUnits)
+	joiningOperator := addSmokeKey(t, ctx, binary, joiningValidator.home, "joining-operator", 5, 200_000*token.WholeTokenBaseUnits)
+	replacementOperator := addSmokeKey(t, ctx, binary, replacementValidator.home, "replacement-operator", 6, 200_000*token.WholeTokenBaseUnits)
 
 	sharedGenesis := buildSharedSmokeGenesis(t, chainID, initialValidators, admin, joiningOperator, replacementOperator)
 	for _, validator := range validators {
@@ -362,7 +387,7 @@ func TestMultiValidatorNetworkPartitionRecovery(t *testing.T) {
 	}
 	quorum := validators[:3]
 	isolated := validators[3]
-	admin := addSmokeKey(t, ctx, binary, quorum[0].home, "partition-admin", 0, 800_000*token.WholeTokenBaseUnits)
+	admin := addSmokeKey(t, ctx, binary, quorum[0].home, "partition-admin", 4, 800_000*token.WholeTokenBaseUnits)
 
 	sharedGenesis := buildSharedSmokeGenesis(t, chainID, validators, admin)
 	for _, validator := range validators {
@@ -466,7 +491,7 @@ func TestMultiValidatorTrustedSnapshotStateSync(t *testing.T) {
 	}
 	initSmokeValidator(t, ctx, binary, chainID, syncingNode)
 
-	admin := addSmokeKey(t, ctx, binary, validators[0].home, "state-sync-admin", 0, 800_000*token.WholeTokenBaseUnits)
+	admin := addSmokeKey(t, ctx, binary, validators[0].home, "state-sync-admin", 4, 800_000*token.WholeTokenBaseUnits)
 	sharedGenesis := buildSharedSmokeGenesis(t, chainID, validators, admin)
 	for _, validator := range append(append([]*smokeValidator{}, validators...), syncingNode) {
 		genesisPath := filepath.Join(validator.home, "config", "genesis.json")
@@ -575,7 +600,7 @@ func TestMultiValidatorBackupRestoreExportImport(t *testing.T) {
 	}
 	initSmokeValidator(t, ctx, binary, chainID, restoredNode)
 
-	admin := addSmokeKey(t, ctx, binary, validators[0].home, "backup-admin", 0, 800_000*token.WholeTokenBaseUnits)
+	admin := addSmokeKey(t, ctx, binary, validators[0].home, "backup-admin", 4, 800_000*token.WholeTokenBaseUnits)
 	sharedGenesis := buildSharedSmokeGenesis(t, chainID, validators, admin)
 	allHomes := append(append([]*smokeValidator{}, validators...), fullNode, restoredNode)
 	for _, validator := range allHomes {
@@ -697,7 +722,12 @@ func buildSharedSmokeGenesis(t *testing.T, chainID string, validators []*smokeVa
 	}
 	identities := make([]genesisValidatorIdentity, len(validators))
 	for i, validator := range validators {
-		identities[i] = genesisValidatorIdentity{Name: validator.name, PubKey: validator.pubKey}
+		operatorAddr := validator.operatorAddr
+		if operatorAddr == "" {
+			operatorAddr = smokeOperatorAddress(validator.name)
+			validators[i].operatorAddr = operatorAddr
+		}
+		identities[i] = genesisValidatorIdentity{Name: validator.name, PubKey: validator.pubKey, OperatorAddr: operatorAddr}
 	}
 	if err := configureGenesisValidatorSet(genesis, identities); err != nil {
 		t.Fatalf("build shared multi-validator genesis: %v", err)
@@ -726,7 +756,10 @@ func buildSharedSmokeGenesis(t *testing.T, chainID string, validators []*smokeVa
 
 func initSmokeValidator(t *testing.T, ctx context.Context, binary, chainID string, validator *smokeValidator) {
 	t.Helper()
-	initCmd := exec.CommandContext(ctx, binary, "init", validator.name, "--chain-id", chainID, "--home", validator.home)
+	if validator.operatorAddr == "" {
+		validator.operatorAddr = smokeOperatorAddress(validator.name)
+	}
+	initCmd := exec.CommandContext(ctx, binary, "init", validator.name, "--chain-id", chainID, "--home", validator.home, "--bootstrap-operator", validator.operatorAddr)
 	if output, err := initCmd.CombinedOutput(); err != nil {
 		t.Fatalf("init %s: %v\n%s", validator.name, err, output)
 	}
@@ -749,6 +782,14 @@ func initSmokeValidator(t *testing.T, ctx context.Context, binary, chainID strin
 	if validator.nodeID == "" {
 		t.Fatalf("%s node id is empty", validator.name)
 	}
+}
+
+func smokeOperatorAddress(name string) string {
+	digest := sha256.Sum256([]byte("truerepublic-smoke-operator:" + name))
+	// Process harnesses can be selected in isolation, before any test has
+	// configured the Cosmos SDK global address prefix. Encode the chain prefix
+	// explicitly so Linux CI cannot silently produce a cosmos1... operator.
+	return sdk.MustBech32ifyAddressBytes("truerepublic", digest[:20])
 }
 
 func addSmokeKey(t *testing.T, ctx context.Context, binary, home, name string, accountNumber uint64, balance int64) smokeAccount {
@@ -783,15 +824,26 @@ func addSmokeAccountsToGenesis(t *testing.T, app *TrueRepublicApp, state map[str
 	t.Helper()
 	authGenesis := authtypes.GetGenesisStateFromAppState(app.appCodec, state)
 	bankGenesis := banktypes.GetGenesisStateFromAppState(app.appCodec, state)
+	existingAccounts, err := authtypes.UnpackAccounts(authGenesis.Accounts)
+	if err != nil {
+		t.Fatal(err)
+	}
+	existingByAddress := make(map[string]authtypes.GenesisAccount, len(existingAccounts))
+	for _, existing := range existingAccounts {
+		existingByAddress[existing.GetAddress().String()] = existing
+	}
 	genesisAccounts := make(authtypes.GenesisAccounts, 0, len(accounts))
 	for _, account := range accounts {
 		address, err := sdk.AccAddressFromBech32(account.address)
 		if err != nil {
 			t.Fatalf("decode smoke account %s address: %v", account.name, err)
 		}
-		baseAccount := authtypes.NewBaseAccountWithAddress(address)
-		baseAccount.AccountNumber = account.accountNumber
-		genesisAccounts = append(genesisAccounts, baseAccount)
+		if _, exists := existingByAddress[account.address]; !exists {
+			baseAccount := authtypes.NewBaseAccountWithAddress(address)
+			baseAccount.AccountNumber = account.accountNumber
+			genesisAccounts = append(genesisAccounts, baseAccount)
+			existingByAddress[account.address] = baseAccount
+		}
 		coins := sdk.NewCoins(token.NewCoin(math.NewInt(account.balance)))
 		bankGenesis.Balances = append(bankGenesis.Balances, banktypes.Balance{Address: account.address, Coins: coins})
 		if !bankGenesis.Supply.Empty() {

@@ -13,6 +13,25 @@ import (
 // ValidateGenesisState validates all custom state that can create treasury or
 // stake claims. Cross-module bank backing is checked by the application.
 func ValidateGenesisState(genesis GenesisState) error {
+	if len(genesis.BootstrapOperatorAddresses) > 0 {
+		if len(genesis.Domains) != 0 || len(genesis.Validators) != 0 {
+			return fmt.Errorf("bootstrap operator addresses are only allowed before domains and validators are materialized")
+		}
+		seen := make(map[string]struct{}, len(genesis.BootstrapOperatorAddresses))
+		for _, address := range genesis.BootstrapOperatorAddresses {
+			if address == "" {
+				return fmt.Errorf("bootstrap operator address is required")
+			}
+			if _, err := sdk.AccAddressFromBech32(address); err != nil {
+				return fmt.Errorf("bootstrap operator address %q is invalid: %w", address, err)
+			}
+			if _, exists := seen[address]; exists {
+				return fmt.Errorf("duplicate bootstrap operator address %q", address)
+			}
+			seen[address] = struct{}{}
+		}
+	}
+
 	domains := make(map[string]Domain, len(genesis.Domains))
 	for _, domain := range genesis.Domains {
 		if err := validateGenesisDomain(domain); err != nil {
@@ -36,6 +55,9 @@ func ValidateGenesisState(genesis GenesisState) error {
 		if _, exists := operators[validator.OperatorAddr]; exists {
 			return fmt.Errorf("duplicate validator operator %q", validator.OperatorAddr)
 		}
+		operators[validator.OperatorAddr] = struct{}{}
+	}
+	for _, validator := range genesis.Validators {
 		if len(validator.PubKey) != 32 {
 			return fmt.Errorf("validator %q pubkey must be 32 bytes", validator.OperatorAddr)
 		}
@@ -53,8 +75,82 @@ func ValidateGenesisState(genesis GenesisState) error {
 		if !containsString(domain.Members, validator.OperatorAddr) {
 			return fmt.Errorf("validator %q is not a member of domain %q", validator.OperatorAddr, validator.Domain)
 		}
-		operators[validator.OperatorAddr] = struct{}{}
 		pubKeys[pubKey] = validator.OperatorAddr
+	}
+
+	revokedPubKeys := make(map[string]RevokedValidatorKey, len(genesis.RevokedValidatorKeys))
+	for _, record := range genesis.RevokedValidatorKeys {
+		if len(record.PubKey) != 32 {
+			return fmt.Errorf("revoked validator pubkey must be 32 bytes")
+		}
+		if record.OperatorAddr == "" {
+			return fmt.Errorf("revoked validator operator address is required")
+		}
+		if _, err := sdk.AccAddressFromBech32(record.OperatorAddr); err != nil {
+			return fmt.Errorf("revoked validator operator address %q is invalid: %w", record.OperatorAddr, err)
+		}
+		if record.RevokedAtHeight < 0 {
+			return fmt.Errorf("revoked validator key height cannot be negative")
+		}
+		key := hex.EncodeToString(record.PubKey)
+		if _, exists := revokedPubKeys[key]; exists {
+			return fmt.Errorf("duplicate revoked validator pubkey %q", key)
+		}
+		if operator, active := pubKeys[key]; active {
+			return fmt.Errorf("revoked validator pubkey is active for %q", operator)
+		}
+		revokedPubKeys[key] = record
+	}
+	for _, validator := range genesis.Validators {
+		derived := consensusKeyDerivedOperator(validator.PubKey)
+		if _, coupled := operators[derived]; coupled {
+			return fmt.Errorf("validator operator %q collides with an active consensus-key authority", derived)
+		}
+	}
+	for _, record := range genesis.RevokedValidatorKeys {
+		derived := consensusKeyDerivedOperator(record.PubKey)
+		if _, coupled := operators[derived]; coupled {
+			return fmt.Errorf("validator operator %q collides with a revoked consensus-key authority", derived)
+		}
+	}
+
+	pendingOperators := make(map[string]struct{}, len(genesis.PendingValidatorRotations))
+	pendingPubKeys := make(map[string]string, len(genesis.PendingValidatorRotations)*2)
+	for _, rotation := range genesis.PendingValidatorRotations {
+		if _, err := sdk.AccAddressFromBech32(rotation.OperatorAddr); err != nil {
+			return fmt.Errorf("pending rotation operator address %q is invalid: %w", rotation.OperatorAddr, err)
+		}
+		if _, exists := pendingOperators[rotation.OperatorAddr]; exists {
+			return fmt.Errorf("duplicate pending rotation for operator %q", rotation.OperatorAddr)
+		}
+		if len(rotation.OldPubKey) != 32 || len(rotation.NewPubKey) != 32 {
+			return fmt.Errorf("pending rotation keys for %q must be 32 bytes", rotation.OperatorAddr)
+		}
+		oldKey := hex.EncodeToString(rotation.OldPubKey)
+		newKey := hex.EncodeToString(rotation.NewPubKey)
+		if oldKey == newKey {
+			return fmt.Errorf("pending rotation keys for %q must differ", rotation.OperatorAddr)
+		}
+		if rotation.StartedHeight < 0 || rotation.ClearAfterHeight < rotation.StartedHeight || rotation.ClearAfterHeight-rotation.StartedHeight < 2 {
+			return fmt.Errorf("pending rotation heights for %q are invalid", rotation.OperatorAddr)
+		}
+		if activeOperator, active := pubKeys[newKey]; !active || activeOperator != rotation.OperatorAddr {
+			return fmt.Errorf("pending rotation new key for %q is not its active validator key", rotation.OperatorAddr)
+		}
+		if _, active := pubKeys[oldKey]; active {
+			return fmt.Errorf("pending rotation old key for %q is still active", rotation.OperatorAddr)
+		}
+		revocation, revoked := revokedPubKeys[oldKey]
+		if !revoked || revocation.OperatorAddr != rotation.OperatorAddr {
+			return fmt.Errorf("pending rotation old key for %q lacks a matching revocation", rotation.OperatorAddr)
+		}
+		for _, key := range []string{oldKey, newKey} {
+			if other, exists := pendingPubKeys[key]; exists {
+				return fmt.Errorf("pending rotation key is shared by %q and %q", other, rotation.OperatorAddr)
+			}
+			pendingPubKeys[key] = rotation.OperatorAddr
+		}
+		pendingOperators[rotation.OperatorAddr] = struct{}{}
 	}
 
 	usedNullifiers := make(map[string]struct{}, len(genesis.UsedNullifiers))

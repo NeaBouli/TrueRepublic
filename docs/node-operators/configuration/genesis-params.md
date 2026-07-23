@@ -96,7 +96,8 @@ To customize genesis for a new network:
 
 ```bash
 # Generate default genesis
-truerepublicd init my-node --chain-id my-chain
+truerepublicd init my-node --chain-id my-chain \
+  --bootstrap-operator "$BOOTSTRAP_OPERATOR"
 
 # Edit genesis
 vi ~/.truerepublic/config/genesis.json

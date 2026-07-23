@@ -13,7 +13,7 @@ import (
 // blocks). The validator loses SlashFractionDoubleSign percent of its stake
 // and is jailed for 10× the standard downtime jail duration.
 func (k Keeper) HandleDoubleSign(ctx sdk.Context, pubKeyBytes []byte) error {
-	val, found := k.GetValidatorByPubKey(ctx, pubKeyBytes)
+	val, found := k.GetValidatorForDoubleSignEvidence(ctx, pubKeyBytes)
 	if !found {
 		return errorsmod.Wrap(sdkerrors.ErrUnknownRequest, "validator not found")
 	}
@@ -24,6 +24,7 @@ func (k Keeper) HandleDoubleSign(ctx sdk.Context, pubKeyBytes []byte) error {
 	if err != nil {
 		return err
 	}
+	k.QueueValidatorPowerZero(cacheCtx, val)
 	val.Jailed = true
 	val.JailedUntil = cacheCtx.BlockTime().Unix() + DowntimeJailDuration*10
 
@@ -57,6 +58,7 @@ func (k Keeper) HandleDowntime(ctx sdk.Context, pubKeyBytes []byte) error {
 		if err != nil {
 			return err
 		}
+		k.QueueValidatorPowerZero(cacheCtx, val)
 		val.Jailed = true
 		val.JailedUntil = cacheCtx.BlockTime().Unix() + DowntimeJailDuration
 		val.MissedBlocks = 0

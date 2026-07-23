@@ -68,7 +68,8 @@ This path therefore restores a full node, not an existing validator identity.
 ```bash
 truerepublicd init restored-node \
   --chain-id truerepublic-1 \
-  --home /path/to/restore-home
+  --home /path/to/restore-home \
+  --bootstrap-operator "$BOOTSTRAP_OPERATOR"
 
 ./scripts/restore.sh \
   /path/to/backups/truerepublic_YYYY-MM-DD.tar.gz \

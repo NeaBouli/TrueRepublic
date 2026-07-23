@@ -36,6 +36,7 @@ import (
 	svrcmd "github.com/cosmos/cosmos-sdk/server/cmd"
 	serverconfig "github.com/cosmos/cosmos-sdk/server/config"
 	servertypes "github.com/cosmos/cosmos-sdk/server/types"
+	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
 	sdkversion "github.com/cosmos/cosmos-sdk/version"
 	authtx "github.com/cosmos/cosmos-sdk/x/auth/tx"
@@ -218,6 +219,8 @@ func newRootCmd() *cobra.Command {
 // and exactly bank-backed PoD genesis from this node's generated public key.
 func initNodeCmd(basicManager module.BasicManager, home string) *cobra.Command {
 	cmd := genutilcli.InitCmd(basicManager, home)
+	const bootstrapOperatorFlag = "bootstrap-operator"
+	cmd.Flags().String(bootstrapOperatorFlag, "", "independent account address authorized to operate the bootstrap validator")
 	defaultDenom := cmd.Flags().Lookup(genutilcli.FlagDefaultBondDenom)
 	if defaultDenom != nil {
 		defaultDenom.DefValue = token.BaseDenom
@@ -225,6 +228,16 @@ func initNodeCmd(basicManager module.BasicManager, home string) *cobra.Command {
 	}
 	initRun := cmd.RunE
 	cmd.RunE = func(cmd *cobra.Command, args []string) error {
+		operatorAddr, err := cmd.Flags().GetString(bootstrapOperatorFlag)
+		if err != nil {
+			return err
+		}
+		if operatorAddr == "" {
+			return fmt.Errorf("--%s is required and must identify an independently controlled account", bootstrapOperatorFlag)
+		}
+		if _, err := validateOperatorAccountAddress(operatorAddr); err != nil {
+			return fmt.Errorf("invalid --%s: %w", bootstrapOperatorFlag, err)
+		}
 		if err := initRun(cmd, args); err != nil {
 			return err
 		}
@@ -236,12 +249,12 @@ func initNodeCmd(basicManager module.BasicManager, home string) *cobra.Command {
 		if err != nil {
 			return fmt.Errorf("read generated validator public key: %w", err)
 		}
-		return bindGenesisValidatorKey(serverCtx.Config.GenesisFile(), pubKey.Bytes())
+		return bindGenesisValidatorKey(serverCtx.Config.GenesisFile(), pubKey.Bytes(), operatorAddr)
 	}
 	return cmd
 }
 
-func bindGenesisValidatorKey(genesisPath string, pubKey []byte) error {
+func bindGenesisValidatorKey(genesisPath string, pubKey []byte, operatorAddr string) error {
 	if len(pubKey) != cmted25519.PubKeySize {
 		return fmt.Errorf("generated validator public key must be %d bytes", cmted25519.PubKeySize)
 	}
@@ -250,8 +263,9 @@ func bindGenesisValidatorKey(genesisPath string, pubKey []byte) error {
 		return err
 	}
 	if err := configureGenesisValidatorSet(genesis, []genesisValidatorIdentity{{
-		Name:   "truerepublic-bootstrap",
-		PubKey: pubKey,
+		Name:         "truerepublic-bootstrap",
+		PubKey:       pubKey,
+		OperatorAddr: operatorAddr,
 	}}); err != nil {
 		return err
 	}
@@ -266,8 +280,9 @@ func bindGenesisValidatorKey(genesisPath string, pubKey []byte) error {
 // validator material remains in each node home and must never be collected in
 // a shared genesis artifact.
 type genesisValidatorIdentity struct {
-	Name   string
-	PubKey []byte
+	Name         string
+	PubKey       []byte
+	OperatorAddr string
 }
 
 // configureGenesisValidatorSet builds matching CometBFT and bank-backed PoD
@@ -294,6 +309,8 @@ func configureGenesisValidatorSet(genesis *genutiltypes.AppGenesis, validators [
 	updates := make([]abci.ValidatorUpdate, 0, len(validators))
 	consensusValidators := make([]cmttypes.GenesisValidator, 0, len(validators))
 	seenNames := make(map[string]struct{}, len(validators))
+	seenOperators := make(map[string]struct{}, len(validators))
+	bootstrapOperators := make([]string, 0, len(validators))
 	for i, validator := range validators {
 		if validator.Name == "" {
 			return fmt.Errorf("validator %d name is required", i)
@@ -305,6 +322,19 @@ func configureGenesisValidatorSet(genesis *genutiltypes.AppGenesis, validators [
 		if len(validator.PubKey) != cmted25519.PubKeySize {
 			return fmt.Errorf("validator %q public key must be %d bytes", validator.Name, cmted25519.PubKeySize)
 		}
+		operator, err := validateOperatorAccountAddress(validator.OperatorAddr)
+		if err != nil {
+			return fmt.Errorf("validator %q operator address is invalid: %w", validator.Name, err)
+		}
+		if _, exists := seenOperators[validator.OperatorAddr]; exists {
+			return fmt.Errorf("duplicate validator operator %q", validator.OperatorAddr)
+		}
+		seenOperators[validator.OperatorAddr] = struct{}{}
+		consensusDerived := sdk.AccAddress(cmted25519.PubKey(validator.PubKey).Address())
+		if operator.Equals(consensusDerived) {
+			return fmt.Errorf("validator %q operator must be independent from its consensus key", validator.Name)
+		}
+		bootstrapOperators = append(bootstrapOperators, validator.OperatorAddr)
 		pubKey := append([]byte(nil), validator.PubKey...)
 		updates = append(updates, abci.ValidatorUpdate{
 			PubKey: cryptoproto.PublicKey{Sum: &cryptoproto.PublicKey_Ed25519{Ed25519: pubKey}},
@@ -318,12 +348,27 @@ func configureGenesisValidatorSet(genesis *genutiltypes.AppGenesis, validators [
 			Name:    validator.Name,
 		})
 	}
+	for _, validator := range validators {
+		derived := sdk.AccAddress(cmted25519.PubKey(validator.PubKey).Address()).String()
+		if _, coupled := seenOperators[derived]; coupled {
+			return fmt.Errorf("validator operator %q collides with a consensus-key authority", derived)
+		}
+	}
 	interfaceRegistry := makeInterfaceRegistry()
 	appCodec := codec.NewProtoCodec(interfaceRegistry)
+	var democracyGenesis truedemocracy.GenesisState
+	if err := json.Unmarshal(appState[truedemocracy.ModuleName], &democracyGenesis); err != nil {
+		return err
+	}
+	democracyGenesis.BootstrapOperatorAddresses = bootstrapOperators
+	democracyJSON, err := json.Marshal(democracyGenesis)
+	if err != nil {
+		return err
+	}
+	appState[truedemocracy.ModuleName] = democracyJSON
 	if err := ensureConsensusGenesis(appCodec, appState, updates); err != nil {
 		return fmt.Errorf("build bank-backed PoD genesis: %w", err)
 	}
-	var democracyGenesis truedemocracy.GenesisState
 	if err := json.Unmarshal(appState[truedemocracy.ModuleName], &democracyGenesis); err != nil {
 		return err
 	}
@@ -333,6 +378,9 @@ func configureGenesisValidatorSet(genesis *genutiltypes.AppGenesis, validators [
 	for i, validator := range validators {
 		if !bytes.Equal(democracyGenesis.Validators[i].PubKey, validator.PubKey) {
 			return fmt.Errorf("generated PoD validator %d does not match its consensus key", i)
+		}
+		if democracyGenesis.Validators[i].OperatorAddr != validator.OperatorAddr {
+			return fmt.Errorf("generated PoD validator %d does not match its operator authority", i)
 		}
 	}
 	if err := validateLedgerGenesis(appCodec, appState); err != nil {

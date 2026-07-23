@@ -7,6 +7,7 @@ import (
 	"cosmossdk.io/math"
 	abci "github.com/cometbft/cometbft/abci/types"
 	cryptoproto "github.com/cometbft/cometbft/proto/tendermint/crypto"
+	"github.com/cosmos/cosmos-sdk/crypto/keys/ed25519"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
@@ -26,11 +27,40 @@ func removedValidatorKey(pubKeyBytes []byte) []byte {
 	return []byte("validator-removed:" + hex.EncodeToString(pubKeyBytes))
 }
 
+func revokedValidatorKey(pubKeyBytes []byte) []byte {
+	return []byte("validator-revoked:" + hex.EncodeToString(pubKeyBytes))
+}
+
+func pendingValidatorRotationKey(operatorAddr string) []byte {
+	return []byte("validator-rotation:" + operatorAddr)
+}
+
+func pendingValidatorPubKeyKey(pubKeyBytes []byte) []byte {
+	return []byte("validator-rotation-pubkey:" + hex.EncodeToString(pubKeyBytes))
+}
+
+func consensusAuthorityIndexKey(operatorAddr string) []byte {
+	return []byte("validator-consensus-authority:" + operatorAddr)
+}
+
+func consensusKeyDerivedOperator(pubKeyBytes []byte) string {
+	return sdk.AccAddress((&ed25519.PubKey{Key: pubKeyBytes}).Address()).String()
+}
+
+func (k Keeper) validatorAuthorityIsCoupled(ctx sdk.Context, operatorAddr string, pubKeyBytes []byte) bool {
+	store := ctx.KVStore(k.StoreKey)
+	derived := consensusKeyDerivedOperator(pubKeyBytes)
+	return operatorAddr == derived || store.Has(validatorKey(derived)) || store.Has(consensusAuthorityIndexKey(operatorAddr))
+}
+
 // RegisterValidator registers a new Proof of Domain validator.
 // The operator must be a member of the given domain and stake >= StakeMin PNYX.
 func (k Keeper) RegisterValidator(ctx sdk.Context, operatorAddr string, pubKeyBytes []byte, stake sdk.Coins, domainName string) error {
 	if len(pubKeyBytes) != 32 {
 		return errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "pubkey must be 32 bytes (ed25519)")
+	}
+	if k.validatorAuthorityIsCoupled(ctx, operatorAddr, pubKeyBytes) {
+		return errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "validator operator authority must remain independent from active and revoked consensus keys")
 	}
 
 	pnyxAmt := stake.AmountOf(PNYXDenom)
@@ -68,6 +98,12 @@ func (k Keeper) RegisterValidator(ctx sdk.Context, operatorAddr string, pubKeyBy
 	if store.Has(removedValidatorKey(pubKeyBytes)) {
 		return errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "validator public key removal is pending")
 	}
+	if store.Has(revokedValidatorKey(pubKeyBytes)) {
+		return errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "validator public key is permanently revoked")
+	}
+	if store.Has(pendingValidatorPubKeyKey(pubKeyBytes)) {
+		return errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "validator public key rotation is pending")
+	}
 
 	power := pnyxAmt.Int64() / rewards.StakeMin
 
@@ -85,6 +121,7 @@ func (k Keeper) RegisterValidator(ctx sdk.Context, operatorAddr string, pubKeyBy
 	valBz := k.cdc.MustMarshalLengthPrefixed(&val)
 	store.Set(validatorKey(operatorAddr), valBz)
 	store.Set(valPubKeyKey(pubKeyBytes), []byte(operatorAddr))
+	store.Set(consensusAuthorityIndexKey(consensusKeyDerivedOperator(pubKeyBytes)), []byte(operatorAddr))
 
 	return nil
 }
@@ -108,14 +145,186 @@ func (k Keeper) SetValidator(ctx sdk.Context, val Validator) {
 	store.Set(validatorKey(val.OperatorAddr), bz)
 }
 
+// QueueValidatorPowerZero records a one-shot removal only for a key that may
+// already exist in CometBFT's validator set. A just-rotated replacement key is
+// not active until H+2; queuing power zero for it in the rotation block would
+// make CometBFT reject an attempt to remove a validator it has never seen.
+func (k Keeper) QueueValidatorPowerZero(ctx sdk.Context, val Validator) {
+	if val.Jailed || val.Power <= 0 {
+		return
+	}
+	store := ctx.KVStore(k.StoreKey)
+	if bz := store.Get(pendingValidatorRotationKey(val.OperatorAddr)); bz != nil {
+		var pending PendingValidatorKeyRotation
+		k.cdc.MustUnmarshalLengthPrefixed(bz, &pending)
+		if string(pending.NewPubKey) == string(val.PubKey) {
+			if ctx.BlockHeight() > pending.StartedHeight {
+				pending.DeactivateNewKey = true
+				store.Set(pendingValidatorRotationKey(val.OperatorAddr), k.cdc.MustMarshalLengthPrefixed(&pending))
+			}
+			return
+		}
+	}
+	store.Set(removedValidatorKey(val.PubKey), append([]byte(nil), val.PubKey...))
+}
+
 // GetValidatorByPubKey looks up a validator via the reverse pubkey index.
 func (k Keeper) GetValidatorByPubKey(ctx sdk.Context, pubKeyBytes []byte) (Validator, bool) {
 	store := ctx.KVStore(k.StoreKey)
 	addrBz := store.Get(valPubKeyKey(pubKeyBytes))
 	if addrBz == nil {
-		return Validator{}, false
+		// CometBFT applies validator updates after a delay. Preserve attribution
+		// of the old key during that window so evidence and missed-block records
+		// are charged to the same operator after rotation.
+		addrBz = store.Get(pendingValidatorPubKeyKey(pubKeyBytes))
+		if addrBz == nil {
+			return Validator{}, false
+		}
 	}
 	return k.GetValidator(ctx, string(addrBz))
+}
+
+// RotateValidatorKey atomically replaces an authenticated operator's
+// consensus key while preserving every stake, domain, power and jail claim.
+func (k Keeper) RotateValidatorKey(ctx sdk.Context, sender sdk.AccAddress, operatorAddr string, expectedOldPubKey, newPubKey []byte) ([]byte, error) {
+	if err := requireSignerClaim(sender, operatorAddr, "operator address"); err != nil {
+		return nil, err
+	}
+	if len(newPubKey) != 32 {
+		return nil, errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "pubkey must be 32 bytes (ed25519)")
+	}
+
+	cacheCtx, write := ctx.CacheContext()
+	store := cacheCtx.KVStore(k.StoreKey)
+	val, found := k.GetValidator(cacheCtx, operatorAddr)
+	if !found {
+		return nil, errorsmod.Wrap(sdkerrors.ErrUnknownRequest, "validator not found")
+	}
+	if val.Jailed || val.Power <= 0 {
+		return nil, errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "only an active positive-power validator can rotate its consensus key")
+	}
+	if operatorAddr == consensusKeyDerivedOperator(val.PubKey) {
+		return nil, errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "legacy consensus-derived operator authority requires an explicit migration")
+	}
+	if string(val.PubKey) != string(expectedOldPubKey) {
+		return nil, errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "expected old validator public key does not match current key")
+	}
+	if store.Has(pendingValidatorRotationKey(operatorAddr)) {
+		return nil, errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "validator key rotation is already pending")
+	}
+	if string(val.PubKey) == string(newPubKey) {
+		return nil, errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "new validator public key must differ from current key")
+	}
+	if cacheCtx.BlockHeight() < 0 || cacheCtx.BlockHeight() > int64(^uint64(0)>>1)-2 {
+		return nil, errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "block height cannot represent validator key activation window")
+	}
+	if store.Has(removedValidatorKey(val.PubKey)) {
+		return nil, errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "current validator public key removal is pending")
+	}
+	if store.Has(valPubKeyKey(newPubKey)) {
+		return nil, errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "validator public key already registered")
+	}
+	if store.Has(removedValidatorKey(newPubKey)) {
+		return nil, errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "validator public key removal is pending")
+	}
+	if store.Has(revokedValidatorKey(newPubKey)) {
+		return nil, errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "validator public key is permanently revoked")
+	}
+	if store.Has(pendingValidatorPubKeyKey(newPubKey)) {
+		return nil, errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "validator public key rotation is pending")
+	}
+	if store.Has(validatorKey(consensusKeyDerivedOperator(newPubKey))) {
+		return nil, errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "new consensus key must remain independent from every validator operator authority")
+	}
+
+	oldPubKey := append([]byte(nil), val.PubKey...)
+	revoked := RevokedValidatorKey{
+		PubKey:          oldPubKey,
+		OperatorAddr:    operatorAddr,
+		RevokedAtHeight: cacheCtx.BlockHeight(),
+	}
+	pending := PendingValidatorKeyRotation{
+		OperatorAddr:     operatorAddr,
+		OldPubKey:        oldPubKey,
+		NewPubKey:        append([]byte(nil), newPubKey...),
+		StartedHeight:    cacheCtx.BlockHeight(),
+		ClearAfterHeight: cacheCtx.BlockHeight() + 2,
+	}
+
+	store.Delete(valPubKeyKey(oldPubKey))
+	store.Set(removedValidatorKey(oldPubKey), oldPubKey)
+	store.Set(revokedValidatorKey(oldPubKey), k.cdc.MustMarshalLengthPrefixed(&revoked))
+	store.Set(consensusAuthorityIndexKey(consensusKeyDerivedOperator(oldPubKey)), []byte(operatorAddr))
+	store.Set(consensusAuthorityIndexKey(consensusKeyDerivedOperator(newPubKey)), []byte(operatorAddr))
+	store.Set(pendingValidatorRotationKey(operatorAddr), k.cdc.MustMarshalLengthPrefixed(&pending))
+	store.Set(pendingValidatorPubKeyKey(oldPubKey), []byte(operatorAddr))
+	store.Set(pendingValidatorPubKeyKey(newPubKey), []byte(operatorAddr))
+	val.PubKey = append([]byte(nil), newPubKey...)
+	k.SetValidator(cacheCtx, val)
+	store.Set(valPubKeyKey(newPubKey), []byte(operatorAddr))
+	write()
+	return oldPubKey, nil
+}
+
+func (k Keeper) IsValidatorKeyRevoked(ctx sdk.Context, pubKey []byte) bool {
+	return ctx.KVStore(k.StoreKey).Has(revokedValidatorKey(pubKey))
+}
+
+// GetValidatorForDoubleSignEvidence resolves active and pending keys first,
+// then uses the permanent revocation owner. Equivocation evidence can arrive
+// after the H→H+2 activation window, while downtime attribution must not.
+func (k Keeper) GetValidatorForDoubleSignEvidence(ctx sdk.Context, pubKey []byte) (Validator, bool) {
+	if validator, found := k.GetValidatorByPubKey(ctx, pubKey); found {
+		return validator, true
+	}
+	bz := ctx.KVStore(k.StoreKey).Get(revokedValidatorKey(pubKey))
+	if bz == nil {
+		return Validator{}, false
+	}
+	var record RevokedValidatorKey
+	k.cdc.MustUnmarshalLengthPrefixed(bz, &record)
+	return k.GetValidator(ctx, record.OperatorAddr)
+}
+
+func (k Keeper) IterateRevokedValidatorKeys(ctx sdk.Context, fn func(RevokedValidatorKey) bool) {
+	store := ctx.KVStore(k.StoreKey)
+	prefix := []byte("validator-revoked:")
+	iter := store.Iterator(prefix, prefixEnd(prefix))
+	defer iter.Close()
+	for ; iter.Valid(); iter.Next() {
+		var record RevokedValidatorKey
+		k.cdc.MustUnmarshalLengthPrefixed(iter.Value(), &record)
+		if fn(record) {
+			return
+		}
+	}
+}
+
+func (k Keeper) IteratePendingValidatorKeyRotations(ctx sdk.Context, fn func(PendingValidatorKeyRotation) bool) {
+	store := ctx.KVStore(k.StoreKey)
+	prefix := []byte("validator-rotation:")
+	iter := store.Iterator(prefix, prefixEnd(prefix))
+	defer iter.Close()
+	for ; iter.Valid(); iter.Next() {
+		var record PendingValidatorKeyRotation
+		k.cdc.MustUnmarshalLengthPrefixed(iter.Value(), &record)
+		if fn(record) {
+			return
+		}
+	}
+}
+
+func (k Keeper) restoreRevokedValidatorKey(ctx sdk.Context, record RevokedValidatorKey) {
+	store := ctx.KVStore(k.StoreKey)
+	store.Set(revokedValidatorKey(record.PubKey), k.cdc.MustMarshalLengthPrefixed(&record))
+	store.Set(consensusAuthorityIndexKey(consensusKeyDerivedOperator(record.PubKey)), []byte(record.OperatorAddr))
+}
+
+func (k Keeper) restorePendingValidatorKeyRotation(ctx sdk.Context, record PendingValidatorKeyRotation) {
+	store := ctx.KVStore(k.StoreKey)
+	store.Set(pendingValidatorRotationKey(record.OperatorAddr), k.cdc.MustMarshalLengthPrefixed(&record))
+	store.Set(pendingValidatorPubKeyKey(record.OldPubKey), []byte(record.OperatorAddr))
+	store.Set(pendingValidatorPubKeyKey(record.NewPubKey), []byte(record.OperatorAddr))
 }
 
 // WithdrawStake allows a validator to withdraw some or all of their staked
@@ -189,6 +398,9 @@ func (k Keeper) RemoveValidator(ctx sdk.Context, operatorAddr string) error {
 		return errorsmod.Wrap(sdkerrors.ErrUnknownRequest, "validator not found")
 	}
 	store := ctx.KVStore(k.StoreKey)
+	if store.Has(pendingValidatorRotationKey(operatorAddr)) {
+		return errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "validator key rotation is pending")
+	}
 	store.Delete(validatorKey(operatorAddr))
 	store.Delete(valPubKeyKey(val.PubKey))
 	store.Set(removedValidatorKey(val.PubKey), append([]byte(nil), val.PubKey...))
@@ -428,14 +640,13 @@ func (k Keeper) BuildValidatorUpdates(ctx sdk.Context) []abci.ValidatorUpdate {
 	var updates []abci.ValidatorUpdate
 
 	k.IterateValidators(ctx, func(val Validator) bool {
+		if val.Jailed || val.Power <= 0 {
+			return false
+		}
 		pk := cryptoproto.PublicKey{
 			Sum: &cryptoproto.PublicKey_Ed25519{Ed25519: val.PubKey},
 		}
-		power := val.Power
-		if val.Jailed {
-			power = 0
-		}
-		updates = append(updates, abci.ValidatorUpdate{PubKey: pk, Power: power})
+		updates = append(updates, abci.ValidatorUpdate{PubKey: pk, Power: val.Power})
 		return false
 	})
 
@@ -454,6 +665,39 @@ func (k Keeper) BuildValidatorUpdates(ctx sdk.Context) []abci.ValidatorUpdate {
 	iter.Close()
 	for _, key := range removalKeys {
 		store.Delete(key)
+	}
+
+	// If inactivation happens at H+1 after H scheduled the replacement, emit a
+	// one-shot power-zero update while that key is present in NextValidators.
+	// Same-H inactivation never schedules the replacement and needs no removal.
+	var deferred []PendingValidatorKeyRotation
+	k.IteratePendingValidatorKeyRotations(ctx, func(rotation PendingValidatorKeyRotation) bool {
+		if rotation.DeactivateNewKey && ctx.BlockHeight() >= rotation.StartedHeight+1 {
+			deferred = append(deferred, rotation)
+		}
+		return false
+	})
+	for _, rotation := range deferred {
+		pk := cryptoproto.PublicKey{Sum: &cryptoproto.PublicKey_Ed25519{Ed25519: rotation.NewPubKey}}
+		updates = append(updates, abci.ValidatorUpdate{PubKey: pk, Power: 0})
+		rotation.DeactivateNewKey = false
+		store.Set(pendingValidatorRotationKey(rotation.OperatorAddr), k.cdc.MustMarshalLengthPrefixed(&rotation))
+	}
+
+	// The old consensus key must remain attributable through CometBFT's H→H+2
+	// activation window. Clear the durable guard only after all processing at
+	// the terminal height has completed.
+	var completed []PendingValidatorKeyRotation
+	k.IteratePendingValidatorKeyRotations(ctx, func(rotation PendingValidatorKeyRotation) bool {
+		if ctx.BlockHeight() >= rotation.ClearAfterHeight {
+			completed = append(completed, rotation)
+		}
+		return false
+	})
+	for _, rotation := range completed {
+		store.Delete(pendingValidatorRotationKey(rotation.OperatorAddr))
+		store.Delete(pendingValidatorPubKeyKey(rotation.OldPubKey))
+		store.Delete(pendingValidatorPubKeyKey(rotation.NewPubKey))
 	}
 
 	return updates
