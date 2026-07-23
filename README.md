@@ -353,3 +353,5 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for detailed guidelines.
 ## Donations
 
 Team (BTC multi-sig): `bc1qyamf3twgcqckuqrvmwgwnhzupgshxs37eejdgl0ntcqve98qnvhqe6cjl9`
+
+Developer support (BTC): `bc1p2kh7reqf7l5zmssk8kdx2fx0q6suzfmsgdrphl9wjsxarns56jkq4tqvjm`
