@@ -20,9 +20,9 @@ Updated: 2026-07-23 21:25 UTC
   #58, and #62.
 - Current work: GH-59 ABCI++ validator slashing is implemented locally on
   `feature/GH-59-abci-slashing`. The final independent local merge gate records
-  0 P0 / 0 P1 / 0 P2 in `GH59_AUDIT.md`; publication, final-head GitHub CI,
-  merge, and issue closure remain pending. GH-29 remains open as the rollout
-  execution tracker. GH-32 and
+  0 P0 / 0 P1 / 0 P2 in `GH59_AUDIT.md`; commit `c8a56f8` is published in
+  PR #65. Final-head GitHub CI, merge, and issue closure remain pending. GH-29
+  remains open as the rollout execution tracker. GH-32 and
   PR #33 close its first Phase 1 gate with local and GitHub evidence. GH-39 is
   now merged via PR #40 with green GitHub CI for validator
   join/replacement/restart-catch-up evidence plus Keeper/ABCI power-zero leave

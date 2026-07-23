@@ -905,5 +905,5 @@
   reports no race and 68.5% root / 61.8% `x/truedemocracy` coverage.
 - The final independent read-only merge-gate review reports 0 P0, 0 P1, and
   0 P2. Detailed invariants and evidence are recorded in `GH59_AUDIT.md`.
-- Publication, final-head GitHub CI, merge, GH-59 closure, and GH-29
-  synchronization remain pending.
+- Published commit `c8a56f8` in PR #65. Final-head GitHub CI, merge, GH-59
+  closure, and GH-29 synchronization remain pending.
