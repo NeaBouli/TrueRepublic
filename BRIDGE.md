@@ -16,27 +16,34 @@ Canonical coordination lives in [`docs/agent-bridge/`](docs/agent-bridge/README.
 - GH-26 operator init audit: [`PR27_AUDIT.md`](docs/agent-bridge/PR27_AUDIT.md)
 - GH-32 multi-validator audit: [`GH32_AUDIT.md`](docs/agent-bridge/GH32_AUDIT.md)
 - GH-55 validator identity recovery audit: [`GH55_AUDIT.md`](docs/agent-bridge/GH55_AUDIT.md)
+- GH-56 consensus-key rotation audit: [`GH56_AUDIT.md`](docs/agent-bridge/GH56_AUDIT.md)
 - Decisions: [`DECISIONS.md`](docs/agent-bridge/DECISIONS.md)
 - Security: [`SECURITY_NOTES.md`](docs/agent-bridge/SECURITY_NOTES.md)
 
 GitHub recovery epic: [#4](https://github.com/NeaBouli/TrueRepublic/issues/4)
 
-## 2026-07-23 11:18 EEST GH-56 authenticated consensus-key rotation → In progress
+## 2026-07-23 03:10 EEST GH-56 authenticated consensus-key rotation → Done
 
-- **Issue/branch:** [GH-56](https://github.com/NeaBouli/TrueRepublic/issues/56),
-  branch `feature/GH-56-consensus-key-rotation`; parent rollout tracker
-  [GH-29](https://github.com/NeaBouli/TrueRepublic/issues/29).
-- **Protocol direction:** add an operator-authenticated atomic key swap that
-  preserves stake, domain, escrow, voting power, jail state, and missed-block
-  state; emit old-key power zero plus new-key activation together; persist a
-  permanent old-key revocation and the CometBFT `H → H+2` activation window.
-- **Bootstrap boundary:** `truerepublicd init` now requires a separately
-  controlled bootstrap operator address. Consensus-derived operator authority
-  is rejected, and the public operator identity is added to auth genesis
-  without generating or embedding a private account secret.
-- **Evidence in progress:** core Keeper/message/genesis tests, exact app/Comet
-  binding checks, a real four-validator rotation into a pre-synced replacement
-  signer, export/import revocation, compromise-response runbook, and full CI.
+- **Issue/PR:** [GH-56](https://github.com/NeaBouli/TrueRepublic/issues/56),
+  [PR #62](https://github.com/NeaBouli/TrueRepublic/pull/62), squash-merged to
+  `main` as `80ab674`; parent rollout tracker
+  [GH-29](https://github.com/NeaBouli/TrueRepublic/issues/29) is synchronized.
+- **Protocol:** an authenticated atomic key swap preserves validator claims,
+  emits one old-key power-zero transition, activates the replacement at H+2,
+  permanently revokes the old key, and retains delayed evidence attribution.
+- **Authority boundary:** bootstrap and runtime operators are independent of
+  consensus identity. Self-, cross-, historical-consensus-derived, and module
+  authorities fail closed without generating or embedding account secrets.
+- **Evidence:** 717 verified cases; local rotation harness PASS in 168.12s;
+  final-head Go build/vet/race/coverage PASS in 6m44s; combined recovery,
+  rotation, state-sync, backup/restore, identity, and upgrade process matrix
+  PASS in 9m39s; Docker, docs, security, and DeepScan PASS. The audit records
+  0 FAIL / 3 WARN / 16 PASS and no P0.
+- **Residual rollout boundaries:** [GH-59](https://github.com/NeaBouli/TrueRepublic/issues/59)
+  wires ABCI++ evidence to slashing, [GH-60](https://github.com/NeaBouli/TrueRepublic/issues/60)
+  completes inactive-validator export/import, and
+  [GH-61](https://github.com/NeaBouli/TrueRepublic/issues/61) migrates legacy
+  consensus-derived operator authorities.
 - **Separate repository update:** developer BTC support was merged through
   [PR #58](https://github.com/NeaBouli/TrueRepublic/pull/58) after green checks;
   the existing team multisig remains unchanged.
