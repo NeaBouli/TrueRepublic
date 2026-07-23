@@ -59,6 +59,12 @@ func (k Keeper) RegisterValidator(ctx sdk.Context, operatorAddr string, pubKeyBy
 	if len(pubKeyBytes) != 32 {
 		return errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "pubkey must be 32 bytes (ed25519)")
 	}
+	if _, found := k.GetPendingValidatorRemoval(ctx, operatorAddr); found {
+		return errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "validator exit evidence hold is still pending")
+	}
+	if ctx.KVStore(k.StoreKey).Has(consensusKeyHistoryKey(consensusAddressFromPubKey(pubKeyBytes))) {
+		return errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "validator public key already exists in permanent consensus history")
+	}
 	if k.validatorAuthorityIsCoupled(ctx, operatorAddr, pubKeyBytes) {
 		return errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "validator operator authority must remain independent from active and revoked consensus keys")
 	}
@@ -122,6 +128,7 @@ func (k Keeper) RegisterValidator(ctx sdk.Context, operatorAddr string, pubKeyBy
 	store.Set(validatorKey(operatorAddr), valBz)
 	store.Set(valPubKeyKey(pubKeyBytes), []byte(operatorAddr))
 	store.Set(consensusAuthorityIndexKey(consensusKeyDerivedOperator(pubKeyBytes)), []byte(operatorAddr))
+	k.registerConsensusKeyRecord(ctx, pubKeyBytes, operatorAddr, initialConsensusActivationHeight(ctx))
 
 	return nil
 }
@@ -200,7 +207,9 @@ func (k Keeper) RotateValidatorKey(ctx sdk.Context, sender sdk.AccAddress, opera
 	if !found {
 		return nil, errorsmod.Wrap(sdkerrors.ErrUnknownRequest, "validator not found")
 	}
-	if val.Jailed || val.Power <= 0 {
+	currentRecord, recordFound := k.GetConsensusKeyRecord(cacheCtx, consensusAddressFromPubKey(val.PubKey))
+	tombstoneRecovery := recordFound && currentRecord.Tombstoned && val.Jailed && val.Power > 0
+	if (val.Jailed || val.Power <= 0) && !tombstoneRecovery {
 		return nil, errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "only an active positive-power validator can rotate its consensus key")
 	}
 	if operatorAddr == consensusKeyDerivedOperator(val.PubKey) {
@@ -233,6 +242,9 @@ func (k Keeper) RotateValidatorKey(ctx sdk.Context, sender sdk.AccAddress, opera
 	if store.Has(pendingValidatorPubKeyKey(newPubKey)) {
 		return nil, errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "validator public key rotation is pending")
 	}
+	if store.Has(consensusKeyHistoryKey(consensusAddressFromPubKey(newPubKey))) {
+		return nil, errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "new validator public key already exists in permanent consensus history")
+	}
 	if store.Has(validatorKey(consensusKeyDerivedOperator(newPubKey))) {
 		return nil, errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "new consensus key must remain independent from every validator operator authority")
 	}
@@ -259,6 +271,9 @@ func (k Keeper) RotateValidatorKey(ctx sdk.Context, sender sdk.AccAddress, opera
 	store.Set(pendingValidatorRotationKey(operatorAddr), k.cdc.MustMarshalLengthPrefixed(&pending))
 	store.Set(pendingValidatorPubKeyKey(oldPubKey), []byte(operatorAddr))
 	store.Set(pendingValidatorPubKeyKey(newPubKey), []byte(operatorAddr))
+	activationHeight := cacheCtx.BlockHeight() + sdk.ValidatorUpdateDelay + 1
+	k.retireConsensusKeyRecord(cacheCtx, oldPubKey, activationHeight)
+	k.registerConsensusKeyRecord(cacheCtx, newPubKey, operatorAddr, activationHeight)
 	val.PubKey = append([]byte(nil), newPubKey...)
 	k.SetValidator(cacheCtx, val)
 	store.Set(valPubKeyKey(newPubKey), []byte(operatorAddr))
@@ -404,6 +419,7 @@ func (k Keeper) RemoveValidator(ctx sdk.Context, operatorAddr string) error {
 	store.Delete(validatorKey(operatorAddr))
 	store.Delete(valPubKeyKey(val.PubKey))
 	store.Set(removedValidatorKey(val.PubKey), append([]byte(nil), val.PubKey...))
+	k.retireConsensusKeyRecord(ctx, val.PubKey, ctx.BlockHeight()+sdk.ValidatorUpdateDelay+1)
 	return nil
 }
 

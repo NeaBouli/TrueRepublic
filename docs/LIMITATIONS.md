@@ -75,8 +75,12 @@ single-signer validator-identity cold failover, plus authenticated atomic
 rotation with permanent revocation. Do not claim public-network readiness until
 consensus-breaking state migration, partially applied migration recovery,
 legacy authority migration, round-trip-safe inactive-validator export,
-ABCI++ evidence/slashing integration, network policy, load, topology, and
-independent operations review pass.
+network policy, load, topology, independent ABCI++ slashing/security review,
+and independent operations review pass.
+
+Partial validator stake withdrawals are disabled until generalized slashable
+unbonding can retain the withdrawn claim through the CometBFT evidence window.
+Full validator exits remain supported through the evidence-window escrow hold.
 
 ## ZKP Client
 

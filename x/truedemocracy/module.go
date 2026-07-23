@@ -5,6 +5,7 @@ import (
 	"encoding/hex"
 	"encoding/json"
 
+	"cosmossdk.io/core/appmodule"
 	"cosmossdk.io/math"
 	storeprefix "cosmossdk.io/store/prefix"
 	gwruntime "github.com/grpc-ecosystem/grpc-gateway/runtime"
@@ -23,9 +24,10 @@ import (
 )
 
 var (
-	_ module.AppModuleBasic  = AppModuleBasic{}
-	_ module.AppModule       = AppModule{}
-	_ module.HasABCIEndBlock = AppModule{}
+	_ module.AppModuleBasic     = AppModuleBasic{}
+	_ module.AppModule          = AppModule{}
+	_ appmodule.HasBeginBlocker = AppModule{}
+	_ module.HasABCIEndBlock    = AppModule{}
 )
 
 // AppModuleBasic
@@ -152,17 +154,49 @@ func (am AppModule) InitGenesis(ctx sdk.Context, cdc codec.JSONCodec, data json.
 	var updates []abci.ValidatorUpdate
 	for _, gv := range genesisState.Validators {
 		stake := sdk.NewCoins(sdk.NewInt64Coin(PNYXDenom, gv.Stake))
-		if err := am.keeper.RegisterValidator(ctx, gv.OperatorAddr, gv.PubKey, stake, gv.Domain); err != nil {
-			panic(err)
-		}
 		power := gv.Stake / rewards.StakeMin
-		pk := cryptoproto.PublicKey{
-			Sum: &cryptoproto.PublicKey_Ed25519{Ed25519: gv.PubKey},
+		validator := Validator{
+			OperatorAddr: gv.OperatorAddr,
+			PubKey:       append([]byte(nil), gv.PubKey...),
+			Stake:        stake,
+			Domains:      []string{gv.Domain},
+			Power:        power,
+			Jailed:       gv.Jailed,
+			JailedUntil:  gv.JailedUntil,
+			MissedBlocks: gv.MissedBlocks,
 		}
-		updates = append(updates, abci.ValidatorUpdate{PubKey: pk, Power: power})
+		am.keeper.SetValidator(ctx, validator)
+		store.Set(valPubKeyKey(gv.PubKey), []byte(gv.OperatorAddr))
+		store.Set(consensusAuthorityIndexKey(consensusKeyDerivedOperator(gv.PubKey)), []byte(gv.OperatorAddr))
+		am.keeper.registerConsensusKeyRecord(ctx, gv.PubKey, gv.OperatorAddr, initialConsensusActivationHeight(ctx))
+		if !gv.Jailed && power > 0 {
+			pk := cryptoproto.PublicKey{
+				Sum: &cryptoproto.PublicKey_Ed25519{Ed25519: gv.PubKey},
+			}
+			updates = append(updates, abci.ValidatorUpdate{PubKey: pk, Power: power})
+		}
 	}
 	for _, rotation := range genesisState.PendingValidatorRotations {
 		am.keeper.restorePendingValidatorKeyRotation(ctx, rotation)
+	}
+	for _, removal := range genesisState.PendingValidatorRemovals {
+		am.keeper.SetPendingValidatorRemoval(ctx, removal)
+	}
+	for _, record := range genesisState.ConsensusKeyHistory {
+		am.keeper.setConsensusKeyRecord(ctx, record)
+		store.Set(
+			consensusAuthorityIndexKey(consensusKeyDerivedOperator(record.PubKey)),
+			[]byte(record.OperatorAddr),
+		)
+	}
+	for _, info := range genesisState.ValidatorSigningInfos {
+		am.keeper.setValidatorSigningInfo(ctx, info)
+	}
+	for _, record := range genesisState.ProcessedInfractions {
+		am.keeper.setProcessedInfraction(ctx, record)
+	}
+	if len(genesisState.LastCommitCursor.Hash) > 0 {
+		am.keeper.setLastCommitCursor(ctx, genesisState.LastCommitCursor)
 	}
 
 	// Load verifying key from genesis if present.
@@ -185,6 +219,12 @@ func (am AppModule) InitGenesis(ctx sdk.Context, cdc codec.JSONCodec, data json.
 		store.Set(domainPayoutSnapshotKey(domain.Name), am.cdc.MustMarshalLengthPrefixed(domain.TotalPayouts))
 	}
 	return updates
+}
+
+// BeginBlock consumes the deterministic ABCI++ evidence and decided-last-
+// commit data populated by BaseApp before transactions execute.
+func (am AppModule) BeginBlock(goCtx context.Context) error {
+	return am.keeper.ProcessConsensusSignals(sdk.UnwrapSDKContext(goCtx))
 }
 
 // EndBlock implements module.HasABCIEndBlock. It distributes staking rewards
@@ -255,7 +295,13 @@ func (am AppModule) EndBlock(goCtx context.Context) ([]abci.ValidatorUpdate, err
 	// 6. Check and execute Big Purges (WP S4: periodic permission register cleanup).
 	am.keeper.CheckAndExecuteBigPurges(ctx)
 
-	// 7. Build and return validator updates.
+	// 7. Release validator exit holds only after both CometBFT evidence-age
+	// boundaries have been strictly exceeded.
+	if err := am.keeper.ProcessPendingValidatorRemovals(ctx); err != nil {
+		return nil, err
+	}
+
+	// 8. Build and return validator updates.
 	updates := am.keeper.BuildValidatorUpdates(ctx)
 	return updates, nil
 }
@@ -281,6 +327,9 @@ func (am AppModule) ExportGenesis(ctx sdk.Context, cdc codec.JSONCodec) json.Raw
 			PubKey:       v.PubKey,
 			Stake:        v.Stake.AmountOf(PNYXDenom).Int64(),
 			Domain:       domain,
+			Jailed:       v.Jailed,
+			JailedUntil:  v.JailedUntil,
+			MissedBlocks: v.MissedBlocks,
 		})
 		return false
 	})
@@ -303,6 +352,39 @@ func (am AppModule) ExportGenesis(ctx sdk.Context, cdc codec.JSONCodec) json.Raw
 	if pendingValidatorRotations == nil {
 		pendingValidatorRotations = []PendingValidatorKeyRotation{}
 	}
+	var consensusKeyHistory []ConsensusKeyRecord
+	am.keeper.IterateConsensusKeyRecords(ctx, func(record ConsensusKeyRecord) bool {
+		consensusKeyHistory = append(consensusKeyHistory, record)
+		return false
+	})
+	if consensusKeyHistory == nil {
+		consensusKeyHistory = []ConsensusKeyRecord{}
+	}
+	var validatorSigningInfos []ValidatorSigningInfo
+	am.keeper.IterateValidatorSigningInfos(ctx, func(info ValidatorSigningInfo) bool {
+		validatorSigningInfos = append(validatorSigningInfos, info)
+		return false
+	})
+	if validatorSigningInfos == nil {
+		validatorSigningInfos = []ValidatorSigningInfo{}
+	}
+	var processedInfractions []ProcessedInfraction
+	am.keeper.IterateProcessedInfractions(ctx, func(record ProcessedInfraction) bool {
+		processedInfractions = append(processedInfractions, record)
+		return false
+	})
+	if processedInfractions == nil {
+		processedInfractions = []ProcessedInfraction{}
+	}
+	var pendingValidatorRemovals []PendingValidatorRemoval
+	am.keeper.IteratePendingValidatorRemovals(ctx, func(removal PendingValidatorRemoval) bool {
+		pendingValidatorRemovals = append(pendingValidatorRemovals, removal)
+		return false
+	})
+	if pendingValidatorRemovals == nil {
+		pendingValidatorRemovals = []PendingValidatorRemoval{}
+	}
+	lastCommitCursor, _ := am.keeper.getLastCommitCursor(ctx)
 	usedNullifiers := make([]NullifierRecord, 0)
 	nullifierStore := storeprefix.NewStore(ctx.KVStore(am.keeper.StoreKey), []byte("nullifier:"))
 	iterator := nullifierStore.Iterator(nil, nil)
@@ -327,6 +409,11 @@ func (am AppModule) ExportGenesis(ctx sdk.Context, cdc codec.JSONCodec) json.Raw
 		Validators:                validators,
 		RevokedValidatorKeys:      revokedValidatorKeys,
 		PendingValidatorRotations: pendingValidatorRotations,
+		ConsensusKeyHistory:       consensusKeyHistory,
+		ValidatorSigningInfos:     validatorSigningInfos,
+		ProcessedInfractions:      processedInfractions,
+		PendingValidatorRemovals:  pendingValidatorRemovals,
+		LastCommitCursor:          lastCommitCursor,
 		UsedNullifiers:            usedNullifiers,
 		ZKPCircuitID:              circuitID,
 		VerifyingKeyHex:           vkHex,

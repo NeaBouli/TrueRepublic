@@ -4,8 +4,8 @@
   "release_date": "2026-03-04",
   "tests": {
     "status": "recovery_verified_locally",
-    "total": 717,
-    "go": 683,
+    "total": 726,
+    "go": 692,
     "rust": 26,
     "frontend": 8,
     "historical_total": 577
@@ -30,11 +30,11 @@
     }
   },
   "modules": {
-    "root": 50,
+    "root": 51,
     "token": 12,
     "treasury": 36,
     "dex": 116,
-    "truedemocracy": 469
+    "truedemocracy": 477
   },
   "token": {
     "symbol": "PNYX",
@@ -100,7 +100,8 @@
       "container": "non_root_debian_glibc_restart_green_on_pr23",
       "operator_init": "daemon_only_safe_wrapper_merged_on_pr27",
       "multi_validator_recovery": "failure_restart_catchup_partition_state_sync_backup_restore_export_import_compatible_binary_upgrade_fail_before_open_rollback_and_app_hash_agreement_merged_on_gh32_gh41_gh43_gh45_gh53",
-      "consensus_key_rotation": "authenticated_atomic_h_plus_2_rotation_permanent_revocation_and_separate_operator_authority_locally_verified_on_gh56"
+      "consensus_key_rotation": "authenticated_atomic_h_plus_2_rotation_permanent_revocation_and_separate_operator_authority_merged_on_gh56",
+      "consensus_slashing": "abci_plus_plus_equivocation_downtime_replay_exit_hold_and_four_process_recovery_locally_verified_on_gh59"
     },
     "web_client": {
       "status": "recovery_verified_locally",

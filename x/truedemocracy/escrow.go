@@ -146,6 +146,17 @@ func (k Keeper) WithdrawStakeWithEscrow(ctx sdk.Context, sender sdk.AccAddress, 
 	if amount <= 0 {
 		return errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "withdrawal amount must be positive")
 	}
+	validator, found := k.GetValidator(ctx, operatorAddr)
+	if found {
+		stake := validator.Stake.AmountOf(PNYXDenom)
+		if stake.IsInt64() && stake.Int64() == amount {
+			return k.RemoveValidatorWithEscrow(ctx, sender, operatorAddr)
+		}
+		return errorsmod.Wrap(
+			sdkerrors.ErrInvalidRequest,
+			"partial validator withdrawals are disabled until slashable unbonding is implemented; use a full validator exit",
+		)
+	}
 
 	cacheCtx, write := ctx.CacheContext()
 	if err := k.WithdrawStake(cacheCtx, operatorAddr, amount); err != nil {
@@ -159,9 +170,13 @@ func (k Keeper) WithdrawStakeWithEscrow(ctx sdk.Context, sender sdk.AccAddress, 
 	return nil
 }
 
-// RemoveValidatorWithEscrow is a full authenticated withdrawal. It reuses the
-// transfer-limit and accounting checks applied by WithdrawStake.
+// RemoveValidatorWithEscrow is a full authenticated exit. It atomically
+// removes validator power but retains the stake in module escrow until the
+// CometBFT evidence window has expired.
 func (k Keeper) RemoveValidatorWithEscrow(ctx sdk.Context, sender sdk.AccAddress, operatorAddr string) error {
+	if err := requireBankKeeper(k.bankKeeper); err != nil {
+		return err
+	}
 	if err := requireSignerClaim(sender, operatorAddr, "operator address"); err != nil {
 		return err
 	}
@@ -169,11 +184,26 @@ func (k Keeper) RemoveValidatorWithEscrow(ctx sdk.Context, sender sdk.AccAddress
 	if !found {
 		return errorsmod.Wrap(sdkerrors.ErrUnknownRequest, "validator not found")
 	}
+	if _, found := k.GetPendingValidatorRemoval(ctx, operatorAddr); found {
+		return errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "validator removal is already pending")
+	}
 	amount := validator.Stake.AmountOf(PNYXDenom)
 	if !amount.IsPositive() || !amount.IsInt64() {
 		return errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "validator stake is invalid")
 	}
-	return k.WithdrawStakeWithEscrow(ctx, sender, operatorAddr, amount.Int64())
+
+	removal, err := newPendingValidatorRemoval(ctx, validator, sender.String())
+	if err != nil {
+		return err
+	}
+
+	cacheCtx, write := ctx.CacheContext()
+	if err := k.WithdrawStake(cacheCtx, operatorAddr, amount.Int64()); err != nil {
+		return err
+	}
+	k.SetPendingValidatorRemoval(cacheCtx, removal)
+	write()
+	return nil
 }
 
 type rewardAction func(ctx sdk.Context) (sdk.Coins, error)
@@ -300,8 +330,9 @@ func (k Keeper) RateProposalWithZKPDeferredReward(
 	})
 }
 
-// EscrowClaims returns the aggregate upnyx claims held in domain treasuries
-// and validator stake records. Reward issuance must fund this same escrow.
+// EscrowClaims returns the aggregate upnyx claims held in domain treasuries,
+// active validator stake records, and evidence-window exit holds. Reward
+// issuance must fund this same escrow.
 func (k Keeper) EscrowClaims(ctx sdk.Context) math.Int {
 	claims := math.ZeroInt()
 	k.IterateDomains(ctx, func(domain Domain) bool {
@@ -310,6 +341,10 @@ func (k Keeper) EscrowClaims(ctx sdk.Context) math.Int {
 	})
 	k.IterateValidators(ctx, func(validator Validator) bool {
 		claims = claims.Add(validator.Stake.AmountOf(PNYXDenom))
+		return false
+	})
+	k.IteratePendingValidatorRemovals(ctx, func(removal PendingValidatorRemoval) bool {
+		claims = claims.Add(removal.Validator.Stake.AmountOf(PNYXDenom))
 		return false
 	})
 	return claims

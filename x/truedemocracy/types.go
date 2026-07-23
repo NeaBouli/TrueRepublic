@@ -174,6 +174,9 @@ type GenesisValidator struct {
 	PubKey       []byte `json:"pub_key"`
 	Stake        int64  `json:"stake"`
 	Domain       string `json:"domain"`
+	Jailed       bool   `json:"jailed,omitempty"`
+	JailedUntil  int64  `json:"jailed_until,omitempty"`
+	MissedBlocks int64  `json:"missed_blocks,omitempty"`
 }
 
 // RevokedValidatorKey permanently retires a consensus key. Retired keys can
@@ -198,11 +201,75 @@ type PendingValidatorKeyRotation struct {
 	DeactivateNewKey bool   `json:"deactivate_new_key,omitempty"`
 }
 
+// ConsensusKeyRecord permanently binds a CometBFT consensus address to its
+// operator and exact active-height interval. Retired records are retained so
+// delayed evidence cannot be redirected or silently ignored after rotation or
+// removal.
+type ConsensusKeyRecord struct {
+	ConsensusAddress []byte `json:"consensus_address"`
+	PubKey           []byte `json:"pub_key"`
+	OperatorAddr     string `json:"operator_addr"`
+	ActivatedHeight  int64  `json:"activated_height"`
+	RetiredHeight    int64  `json:"retired_height,omitempty"` // exclusive; zero while active
+	Tombstoned       bool   `json:"tombstoned,omitempty"`
+}
+
+// ValidatorSigningInfo is operator-scoped so a GH-56 consensus-key rotation
+// cannot reset the rolling liveness window.
+type ValidatorSigningInfo struct {
+	OperatorAddr             string `json:"operator_addr"`
+	StartCommitHeight        int64  `json:"start_commit_height"`
+	IndexOffset              int64  `json:"index_offset"`
+	MissedBlocks             int64  `json:"missed_blocks"`
+	MissedBitmap             []byte `json:"missed_bitmap"`
+	LastObservedCommitHeight int64  `json:"last_observed_commit_height"`
+}
+
+// ProcessedInfraction is the durable, exportable replay marker and audit
+// record for one normalized CometBFT equivocation offense.
+type ProcessedInfraction struct {
+	ID                  []byte `json:"id"`
+	MisbehaviorType     int32  `json:"misbehavior_type"`
+	ConsensusAddress    []byte `json:"consensus_address"`
+	OperatorAddr        string `json:"operator_addr"`
+	InfractionHeight    int64  `json:"infraction_height"`
+	InfractionTimeNanos int64  `json:"infraction_time_nanos"`
+	ObservedHeight      int64  `json:"observed_height"`
+	ValidatorPower      int64  `json:"validator_power"`
+	TotalVotingPower    int64  `json:"total_voting_power"`
+	BurnedAmount        int64  `json:"burned_amount"`
+}
+
+// LastCommitCursor makes decided-last-commit ingestion idempotent across
+// replay, restart, export and import.
+type LastCommitCursor struct {
+	CommitHeight int64  `json:"commit_height"`
+	Hash         []byte `json:"hash"`
+}
+
+// PendingValidatorRemoval keeps an exiting validator's stake in module escrow
+// until both CometBFT evidence-age limits have expired.
+type PendingValidatorRemoval struct {
+	Validator               Validator `json:"validator"`
+	RecipientAddr           string    `json:"recipient_addr"`
+	RemovedAtHeight         int64     `json:"removed_at_height"`
+	RemovedAtTimeNanos      int64     `json:"removed_at_time_nanos"`
+	ConsensusRetiredHeight  int64     `json:"consensus_retired_height"`
+	ConsensusRetiredAtNanos int64     `json:"consensus_retired_at_nanos,omitempty"`
+	ReleaseAfterHeight      int64     `json:"release_after_height"`
+	ReleaseAfterTimeNanos   int64     `json:"release_after_time_nanos,omitempty"`
+}
+
 type GenesisState struct {
 	Domains                    []Domain                      `json:"domains"`
 	Validators                 []GenesisValidator            `json:"validators"`
 	RevokedValidatorKeys       []RevokedValidatorKey         `json:"revoked_validator_keys"`
 	PendingValidatorRotations  []PendingValidatorKeyRotation `json:"pending_validator_rotations"`
+	ConsensusKeyHistory        []ConsensusKeyRecord          `json:"consensus_key_history,omitempty"`
+	ValidatorSigningInfos      []ValidatorSigningInfo        `json:"validator_signing_infos,omitempty"`
+	ProcessedInfractions       []ProcessedInfraction         `json:"processed_infractions,omitempty"`
+	PendingValidatorRemovals   []PendingValidatorRemoval     `json:"pending_validator_removals,omitempty"`
+	LastCommitCursor           LastCommitCursor              `json:"last_commit_cursor,omitempty"`
 	BootstrapOperatorAddresses []string                      `json:"bootstrap_operator_addresses,omitempty"`
 	UsedNullifiers             []NullifierRecord             `json:"used_nullifiers"`
 	ZKPCircuitID               string                        `json:"zkp_circuit_id,omitempty"`
@@ -225,6 +292,11 @@ func RegisterCodec(cdc *codec.LegacyAmino) {
 	cdc.RegisterConcrete(GenesisValidator{}, "truedemocracy/GenesisValidator", nil)
 	cdc.RegisterConcrete(RevokedValidatorKey{}, "truedemocracy/RevokedValidatorKey", nil)
 	cdc.RegisterConcrete(PendingValidatorKeyRotation{}, "truedemocracy/PendingValidatorKeyRotation", nil)
+	cdc.RegisterConcrete(ConsensusKeyRecord{}, "truedemocracy/ConsensusKeyRecord", nil)
+	cdc.RegisterConcrete(ValidatorSigningInfo{}, "truedemocracy/ValidatorSigningInfo", nil)
+	cdc.RegisterConcrete(ProcessedInfraction{}, "truedemocracy/ProcessedInfraction", nil)
+	cdc.RegisterConcrete(LastCommitCursor{}, "truedemocracy/LastCommitCursor", nil)
+	cdc.RegisterConcrete(PendingValidatorRemoval{}, "truedemocracy/PendingValidatorRemoval", nil)
 
 	// Message types for CLI transactions.
 	cdc.RegisterConcrete(MsgCreateDomain{}, "truedemocracy/MsgCreateDomain", nil)
@@ -259,5 +331,9 @@ func DefaultGenesisState() GenesisState {
 		Validators:                []GenesisValidator{},
 		RevokedValidatorKeys:      []RevokedValidatorKey{},
 		PendingValidatorRotations: []PendingValidatorKeyRotation{},
+		ConsensusKeyHistory:       []ConsensusKeyRecord{},
+		ValidatorSigningInfos:     []ValidatorSigningInfo{},
+		ProcessedInfractions:      []ProcessedInfraction{},
+		PendingValidatorRemovals:  []PendingValidatorRemoval{},
 	}
 }
