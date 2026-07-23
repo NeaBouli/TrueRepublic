@@ -19,8 +19,9 @@
   partition-recovery, trusted state-sync, and sanitized backup/restore/export/
   import, compatible binary replacement/rollback, and single-signer identity
   failover slices. Consensus-breaking migration recovery, authenticated
-  consensus-key rotation, network policy, IBC, load/topology, and independent
-  operations review remain pending; IBC staking/upgrade and
+  consensus-key rotation, compromised consensus-key eviction/recovery, network
+  policy, IBC, load/topology, and independent operations review remain pending;
+  IBC staking/upgrade and
   standard CosmWasm staking/distribution stay explicit stubs.
 - The v0.4 client production bundle is 1.68 MB (309 kB gzip); route-level code
   splitting is recommended before treating low-bandwidth/mobile UX as ready.

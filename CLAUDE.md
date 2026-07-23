@@ -169,8 +169,8 @@ unchanged. Recovery worktrees are based on current GitHub state.
 Recovery testnet functionality is not a mainnet approval. GH-53 proves only
 compatible persisted-state binary replacement and fail-before-open rollback.
 Remaining gates include consensus-breaking state migration and partially
-applied migration recovery, authenticated consensus-key rotation, network
-policy,
+applied migration recovery, authenticated consensus-key rotation, compromised
+consensus-key eviction/recovery, network policy,
 IBC/load/topology evidence, monitoring/alerting, independent consensus/
 cryptographic/operations review, real client proof generation, and a formal
 release process.

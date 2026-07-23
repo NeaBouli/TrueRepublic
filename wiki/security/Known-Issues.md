@@ -22,7 +22,8 @@ reward recipient binding are still required.
   backup/restore/export/import, compatible binary rollback, and single-signer
   identity failover now pass. IBC relaying/upgrades, persisted-state
   consensus-breaking migration recovery, authenticated consensus-key rotation,
-  and network-policy drills remain open.
+  compromised consensus-key eviction/recovery, and network-policy drills remain
+  open.
 - IBC staking/upgrade and standard CosmWasm staking/distribution remain explicit
   stubs.
 - Production monitoring, alerting, incident response, validator key custody,

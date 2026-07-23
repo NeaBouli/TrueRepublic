@@ -43,13 +43,24 @@ ship a script that emits a plaintext validator-identity archive.
    custody register. Never publish the checksums of secret material.
 4. Transfer both files to the fresh home using an authenticated encrypted
    channel. Preserve the fresh host's node key.
-5. Set owner-only permissions:
+5. Assign both files to the dedicated service account, set owner-only
+   permissions, and verify ownership before startup:
 
    ```bash
+   CHAIN_HOME="${CHAIN_HOME:-$HOME/.truerepublic}"
+   sudo chown truerepublic:truerepublic \
+     "$CHAIN_HOME/config/priv_validator_key.json" \
+     "$CHAIN_HOME/data/priv_validator_state.json"
    chmod 600 \
      "$CHAIN_HOME/config/priv_validator_key.json" \
      "$CHAIN_HOME/data/priv_validator_state.json"
+   stat -c '%U:%G %a %n' \
+     "$CHAIN_HOME/config/priv_validator_key.json" \
+     "$CHAIN_HOME/data/priv_validator_state.json"
    ```
+
+   Both records must report `truerepublic:truerepublic 600`. Use the actual
+   dedicated service account when the deployment uses a different name.
 
 6. Before start, verify all of the following:
    - the old signer remains stopped and isolated;

@@ -81,7 +81,7 @@ Updated: 2026-07-23 02:27 UTC
   figure is retained only as historical.
 - Current recovery branch count is 690: 656 Go, 26 Rust, and eight maintained-client
   tests. The separately gated multi-validator process
-  process harnesses are not added again to that arithmetic total. The latest
+  harnesses are not added again to that arithmetic total. The latest
   hardened four-validator run requires new post-rejoin blocks and passed in
   68.90 seconds. Full Go race/coverage passes with root/application coverage at
   65.9% on PR #40.
@@ -261,8 +261,9 @@ close bounded four-validator failure/restart/catch-up, partition-recovery,
 trusted state-sync, sanitized backup/restore/export/import, compatible binary
 replacement, fail-before-open rollback, and validator identity cold-failover
 slices. Consensus-breaking state migration, partially applied migration
-recovery, authenticated consensus-key rotation, network policy, load, topology,
-IBC, and independent operations review remain open.
+recovery, authenticated consensus-key rotation, compromised consensus-key
+eviction/recovery, network policy, load, topology, IBC, and independent
+operations review remain open.
 
 GH-11 implements the canonical denomination metadata (`upnyx`, six decimal
 places, 21,000,000,000,000 base-unit cap) and pre-init bank-genesis cap checks.

@@ -33,7 +33,7 @@ reviewed, verified, and merged to `main` in this order.
 - Compatible real Groth16 client prover and external circuit/ceremony review.
 - Privacy-preserving anonymous reward recipient binding.
 - IBC/consensus-breaking migration recovery, authenticated consensus-key
-  rotation, network policy,
+  rotation, compromised consensus-key eviction/recovery, network policy,
   monitoring, load, topology, and independent operations evidence.
 - Migration or removal of the deprecated legacy web/mobile clients.
 

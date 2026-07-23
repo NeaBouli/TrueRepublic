@@ -29,6 +29,14 @@
 - The structured GH-55 pre-ship audit records 0 FAIL / 1 WARN / 5 PASS. Its one
   HIGH warning is the separate GH-56 protocol rotation gap, not a defect in the
   bounded cold-failover path.
+- PR #57 is published. CodeRabbit raised eight review threads; four valid
+  findings removed a duplicated word, retained compromised-key recovery as a
+  separate blocker, made permission examples honor `CHAIN_HOME`, and required
+  dedicated service-account ownership verification. The two future-date
+  findings conflict with the authoritative July 23 runtime, and the two Go
+  wrapper findings are invalid because the multi-package wrapper cannot combine
+  `go build -o <file>` with multiple package arguments while the existing `.`
+  commands already select the root package explicitly.
 
 ## 2026-07-23 04:54 EEST - GH-53 persisted binary upgrade and rollback start
 

@@ -70,8 +70,9 @@ partition recovery, trusted snapshot state sync, sanitized backup/restore,
 restored export/re-import, compatible binary replacement/rollback, and
 single-signer validator-identity cold failover. Do not claim public-network readiness until
 consensus-breaking state migration, partially applied migration recovery,
-authenticated consensus-key rotation, network policy, load, topology, and
-independent operations review pass.
+authenticated consensus-key rotation, compromised consensus-key
+eviction/recovery, network policy, load, topology, and independent operations
+review pass.
 
 ## ZKP Client
 

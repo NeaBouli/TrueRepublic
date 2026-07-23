@@ -60,9 +60,10 @@ two active copies can double-sign.
 
 1. **Restrict permissions:**
 ```bash
+CHAIN_HOME="${CHAIN_HOME:-$HOME/.truerepublic}"
 chmod 600 \
-  ~/.truerepublic/config/priv_validator_key.json \
-  ~/.truerepublic/data/priv_validator_state.json
+  "$CHAIN_HOME/config/priv_validator_key.json" \
+  "$CHAIN_HOME/data/priv_validator_state.json"
 ```
 
 2. **Custody as a pair:** capture both files only after a clean validator stop,
