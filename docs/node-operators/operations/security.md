@@ -51,28 +51,43 @@ sudo dpkg-reconfigure -plow unattended-upgrades
 
 ## Key Security
 
-### Validator Key Protection
+### Validator Identity Protection
 
-The validator key (`priv_validator_key.json`) is the most sensitive file:
+The consensus key (`priv_validator_key.json`) and latest signer state
+(`priv_validator_state.json`) form one safety unit. The signer state prevents
+height/round/step regression; a key-only recovery, stale state, reset state, or
+two active copies can double-sign.
 
 1. **Restrict permissions:**
 ```bash
-chmod 600 ~/.truerepublic/config/priv_validator_key.json
+chmod 600 \
+  ~/.truerepublic/config/priv_validator_key.json \
+  ~/.truerepublic/data/priv_validator_state.json
 ```
 
-2. **Back up offline:** Copy to an air-gapped device or encrypted USB
+2. **Custody as a pair:** capture both files only after a clean validator stop,
+using an approved encrypted offline vault or encrypted removable media.
 
-3. **Never expose:** Don't include in Docker images, backups uploaded to cloud, or version control
+3. **Never expose:** do not include either file in Docker images, full-volume or
+configuration archives, cloud backups, tickets, logs, chat, or version control.
 
-4. **Consider HSM:** For production validators, use a Hardware Security Module (e.g., YubiHSM) or Tendermint KMS
+4. **Keep identities distinct:** `node_key.json` is only the P2P identity.
+Changing it does not rotate or contain a compromised consensus key.
+
+5. **Consider remote custody:** Production use requires a separately reviewed
+HSM/KMS or remote-signer design; the repository does not yet prove one.
+
+Follow [Validator Identity Custody and Recovery](validator-identity-recovery.md)
+for the single-signer failover and compromise-containment contract.
 
 ### Key Management Best Practices
 
 | Practice | Description |
 |----------|-------------|
-| Offline backup | Store validator key on encrypted offline media |
+| Offline custody | Store the consensus key and current signer state together on encrypted offline media |
 | Access control | Only the node operator should have access |
-| Key rotation | Plan for key rotation procedures |
+| Single signer | Prove the source signer stopped before starting a recovered signer |
+| Key rotation | Treat on-chain consensus-key rotation as unsupported until its protocol task passes |
 | Monitoring | Alert on unexpected validator behavior |
 
 ## Network Security
@@ -133,8 +148,9 @@ sudo systemctl enable fail2ban
 - [ ] Dedicated non-root user for node
 - [ ] SSH key-only authentication
 - [ ] Firewall configured (UFW)
-- [ ] Validator key backed up offline
-- [ ] File permissions restricted (600 for keys)
+- [ ] Consensus key and current signer state held together in encrypted offline custody
+- [ ] Planned failover drill proves exactly one signer and a fresh P2P identity
+- [ ] File permissions restricted (600 for consensus key and signer state)
 - [ ] Automatic security updates enabled
 - [ ] Monitoring and alerting configured
 - [ ] TLS for public endpoints

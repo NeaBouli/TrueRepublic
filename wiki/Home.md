@@ -14,9 +14,9 @@
 | Item | Verified state |
 |---|---|
 | Version label | v0.4.0 recovery |
-| Tests | 689 total: 655 Go, 26 Rust, 8 maintained-client |
+| Tests | 690 total: 656 Go, 26 Rust, 8 maintained-client |
 | PNYX cap | 21,000,000 PNYX = 21,000,000,000,000 `upnyx` |
-| Node | Single-node restart plus bounded four-validator failure/recovery, state sync, and sanitized backup/restore verified |
+| Node | Restart, four-validator recovery, state sync, sanitized backup/restore, compatible binary rollback, and cold identity failover verified |
 | ZKP client | Mock generation/submission disabled; real prover pending |
 | Maintained client | `client-web` |
 | Legacy clients | `web-wallet` and `mobile-wallet`; not approved for real keys |

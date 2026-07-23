@@ -139,7 +139,7 @@ The Expo/React Native client is deprecated and security-blocked.
 Fork the repo, create a branch, write tests, and submit a PR. See [Developer Docs](developers/README.md).
 
 ### Where are the tests?
-The recovery baseline has 689 verified cases: 655 Go, 26 Rust, and eight
+The recovery baseline has 690 verified cases: 656 Go, 26 Rust, and eight
 maintained-client tests. Run `./scripts/go-packages.sh go test -race -cover -count=1` and see
 `docs/status.json` for the authoritative breakdown.
 

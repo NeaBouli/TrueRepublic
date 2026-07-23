@@ -1,174 +1,126 @@
 # Backup & Recovery
 
-## What to Back Up
+TrueRepublic uses two deliberately separate recovery paths:
 
-| Item | Location | Priority |
-|------|----------|----------|
-| Validator key | `~/.truerepublic/config/priv_validator_key.json` | **Critical** |
-| Node key | `~/.truerepublic/config/node_key.json` | High |
-| Genesis file | `~/.truerepublic/config/genesis.json` | High |
-| Configuration | `~/.truerepublic/config/*.toml` | Medium |
-| Chain data | `~/.truerepublic/data/` | Low (can re-sync) |
+1. sanitized chain-data backup for ordinary node recovery; and
+2. offline validator-identity custody for a validator failover.
 
-> **Warning:** The validator key (`priv_validator_key.json`) is your most critical file. If lost, you lose your validator identity. If compromised, an attacker can double-sign and get your stake slashed. Store it securely.
+Never put consensus keys, signer state, node keys, or account keyrings in a
+routine archive or remote backup.
 
-## Automated Backup
+## Identity and Data Boundaries
 
-### Using the Backup Script
+| Item | Location | Recovery rule |
+|------|----------|---------------|
+| Consensus key | `config/priv_validator_key.json` | Custody together with the latest signer state |
+| Consensus signer state | `data/priv_validator_state.json` | Must never regress in height/round/step |
+| P2P node key | `config/node_key.json` | Generate independently for a replacement host |
+| Account keyring | configured keyring backend | Back up using the keyring's own secure procedure |
+| Genesis and configuration | `config/genesis.json`, `config/*.toml` | Reproduce from approved network configuration |
+| Chain data | remaining `data/` contents | Sanitized backup or re-sync |
+
+The consensus key and its latest signer state are one safety unit. A key-only
+restore, stale signer state, `priv_validator_state.json` reset, or two active
+copies of one consensus identity can cause double-signing. The P2P node key is
+not a substitute for the consensus key and may be different on a recovery
+host.
+
+For validator custody and failover, follow
+[Validator Identity Custody and Recovery](validator-identity-recovery.md).
+
+## Sanitized Chain-Data Backup
+
+Run the maintained script manually or from a scheduler:
 
 ```bash
-# Run manually
 ./scripts/backup.sh /path/to/backup/dir
 
-# Schedule daily at 3 AM via cron
-crontab -e
-0 3 * * * /path/to/TrueRepublic/scripts/backup.sh /path/to/backups
+# Example: daily at 03:00
+0 3 * * * CHAIN_HOME=/home/truerepublic/.truerepublic /path/to/TrueRepublic/scripts/backup.sh /path/to/backups
 ```
 
-Backups are retained for 30 days. Old backups are automatically cleaned up.
-The script creates a sanitized chain-data artifact: it intentionally excludes
-`config/node_key.json`, `config/priv_validator_key.json`,
-`data/priv_validator_state.json`, and keyring directories. Store validator and
-node keys through the separate offline key-backup procedure, not in routine
-chain-data archives.
-
-### Restore a Sanitized Backup
-
-Initialize the target home first, then restore the sanitized data over it. This
-preserves the target's local node and validator keys.
+The script stops no process. Stop the service first when a crash-consistent
+snapshot cannot be guaranteed by the underlying storage:
 
 ```bash
-truerepublicd init restored-node --chain-id truerepublic-1 --home /path/to/restore-home
-./scripts/restore.sh /path/to/backups/truerepublic_YYYY-MM-DD.tar.gz /path/to/restore-home
+sudo systemctl stop truerepublicd
+CHAIN_HOME="$HOME/.truerepublic" ./scripts/backup.sh "$HOME/truerepublic-backups"
+sudo systemctl start truerepublicd
+```
+
+The archive intentionally excludes:
+
+- `config/node_key.json`;
+- `config/priv_validator_key.json`;
+- `data/priv_validator_state.json`; and
+- keyring directories.
+
+Backups are retained for 30 days by default. Remote replication is acceptable
+only for this sanitized artifact and must still use encrypted transport,
+encrypted storage, restricted credentials, and restore testing.
+
+## Restore Sanitized Chain Data
+
+Initialize a fresh target home first. This creates new local node and validator
+keys; the restore script preserves them while restoring only sanitized data.
+This path therefore restores a full node, not an existing validator identity.
+
+```bash
+truerepublicd init restored-node \
+  --chain-id truerepublic-1 \
+  --home /path/to/restore-home
+
+./scripts/restore.sh \
+  /path/to/backups/truerepublic_YYYY-MM-DD.tar.gz \
+  /path/to/restore-home
+
 truerepublicd start --home /path/to/restore-home
 ```
 
-### Docker Volume Backup
+Verify the genesis checksum, approved peers, chain ID, sync status, and current
+app hash before using the recovered node for RPC or transaction submission.
+
+## Docker Nodes
+
+Do not archive the complete Docker volume: it can contain plaintext consensus
+keys, signer state, and account keyrings. Stop the container and run the same
+sanitized backup script against the mounted chain home. Restore into a newly
+initialized volume using `scripts/restore.sh`.
+
+## Pre-Upgrade Recovery Point
+
+Do not create a tarball of the full chain home before an upgrade. Stop the node,
+create a sanitized chain-data backup, record the running binary checksum and
+height, and preserve validator identity only through the separate custody
+procedure:
 
 ```bash
-# Stop the node first for consistent backup
-docker compose stop truerepublic-node
-
-# Backup volume
-docker run --rm \
-    -v truerepublic_node-data:/data:ro \
-    -v $(pwd)/backups:/backup \
-    alpine tar czf /backup/node-$(date +%Y%m%d).tar.gz /data
-
-# Restart
-docker compose start truerepublic-node
-```
-
-## Manual Backup
-
-### Chain Data Backup
-
-```bash
-# Stop the node for consistency
 sudo systemctl stop truerepublicd
-
-# Create sanitized chain-data backup
+sha256sum /usr/local/bin/truerepublicd > truerepublic-binary.sha256
 CHAIN_HOME="$HOME/.truerepublic" ./scripts/backup.sh "$HOME/truerepublic-backups"
-
-# Restart
 sudo systemctl start truerepublicd
 ```
 
-### Configuration Only (No Chain Data)
+See [Upgrades](upgrades.md) for the tested binary-replacement boundary.
+Consensus-breaking state migrations and rollback after a partially applied
+migration remain unsupported.
 
-```bash
-tar -czf truerepublic_config_$(date +%Y%m%d).tar.gz ~/.truerepublic/config
-```
+## Fail-Closed Conditions
 
-### Validator Key Only
+Do not start a recovered validator when any of these is true:
 
-```bash
-cp ~/.truerepublic/config/priv_validator_key.json ~/validator_key_backup.json
-# Store this file OFFLINE in a secure location
-```
+- the original signer is not proven stopped and isolated;
+- the consensus key and signer state do not come from the same custody point;
+- signer-state freshness or integrity cannot be established;
+- the chain ID, genesis, or intended consensus public key is uncertain; or
+- compromise of the consensus key is suspected.
 
-## Recovery
-
-### From Sanitized Backup
-
-```bash
-# Stop the node
-sudo systemctl stop truerepublicd
-
-# Initialize a fresh target home first
-truerepublicd init restored-node --chain-id truerepublic-1 --home ~/.truerepublic-restored
-
-# Restore sanitized chain data while preserving local keys
-./scripts/restore.sh ~/truerepublic-backups/truerepublic_YYYY-MM-DD.tar.gz ~/.truerepublic-restored
-
-# Start
-truerepublicd start --home ~/.truerepublic-restored
-```
-
-### From Docker Volume Backup
-
-```bash
-make docker-down
-docker volume rm truerepublic_node-data
-docker volume create truerepublic_node-data
-
-docker run --rm \
-    -v truerepublic_node-data:/data \
-    -v $(pwd)/backups:/backup \
-    alpine tar xzf /backup/node-YYYYMMDD.tar.gz -C /
-
-make docker-up
-```
-
-### From Configuration Only (Re-sync Chain)
-
-```bash
-# Restore config
-tar -xzf truerepublic_config_YYYYMMDD.tar.gz -C ~/
-
-# Start - node will sync from peers
-sudo systemctl start truerepublicd
-```
-
-### Validator Key Recovery
-
-If you only have the validator key backup:
-
-1. Initialize a fresh node
-2. Copy the validator key:
-```bash
-cp validator_key_backup.json ~/.truerepublic/config/priv_validator_key.json
-```
-3. Ensure genesis.json matches the network
-4. Start and let it sync
-
-## Pre-Upgrade Backup
-
-Always back up before chain upgrades:
-
-```bash
-# Tag the backup with the current version
-sudo systemctl stop truerepublicd
-tar -czf truerepublic_pre-upgrade_v$(cat VERSION).tar.gz ~/.truerepublic
-sudo systemctl start truerepublicd
-```
-
-## Remote Backup
-
-Configure `rclone` in `scripts/backup.sh` for remote storage:
-
-```bash
-# Install rclone
-curl https://rclone.org/install.sh | sudo bash
-
-# Configure a remote (S3, GCS, etc.)
-rclone config
-
-# Test upload
-rclone copy backups/ remote:truerepublic-backups/
-```
+For suspected compromise, follow the containment procedure in
+[Validator Identity Custody and Recovery](validator-identity-recovery.md). A
+backup of a compromised key is also compromised.
 
 ## Next Steps
 
+- [Validator Identity Custody and Recovery](validator-identity-recovery.md)
 - [Upgrades](upgrades.md)
 - [Security Hardening](security.md)
