@@ -37,6 +37,10 @@
   wrapper findings are invalid because the multi-package wrapper cannot combine
   `go build -o <file>` with multiple package arguments while the existing `.`
   commands already select the root package explicitly.
+- PR #57 final head `aa66aa9` passed Go build/vet/race/coverage (6m55s), all
+  five multi-validator recovery drills (8m44s), Docker restart (3m33s), docs,
+  Go/Rust/Node security, DeepScan, and CodeRabbit. All eight review threads are
+  resolved. The PR squash-merged to `main` as `e8670c6` and closed GH-55.
 
 ## 2026-07-23 04:54 EEST - GH-53 persisted binary upgrade and rollback start
 

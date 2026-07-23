@@ -21,7 +21,7 @@ Canonical coordination lives in [`docs/agent-bridge/`](docs/agent-bridge/README.
 
 GitHub recovery epic: [#4](https://github.com/NeaBouli/TrueRepublic/issues/4)
 
-## 2026-07-23 06:04 EEST GH-55 validator identity custody/failover → In progress
+## 2026-07-23 06:45 EEST GH-55 validator identity custody/failover → Done
 
 - **Issues/branch:** [GH-55](https://github.com/NeaBouli/TrueRepublic/issues/55),
   follow-up [GH-56](https://github.com/NeaBouli/TrueRepublic/issues/56), parent
@@ -40,8 +40,14 @@ GitHub recovery epic: [#4](https://github.com/NeaBouli/TrueRepublic/issues/4)
   636.342s; build, vet, shell syntax, JSON, docs consistency, and diff checks
   PASS. The structured audit records 0 FAIL / 1 WARN / 5 PASS, with only the
   separate GH-56 protocol gap warned.
-- **Current state:** ready to publish; GH-55 must not close until final-head
-  review, GitHub CI, and merge all pass.
+- **Review/merge:** PR #57 final head `aa66aa9` passed Go race/coverage in
+  6m55s, the five-drill multi-validator job in 8m44s, Docker in 3m33s, docs,
+  Go/Rust/Node security, DeepScan, and CodeRabbit. Four valid review findings
+  were fixed, four invalid findings were answered with evidence, and all eight
+  threads are resolved. Squash-merged to `main` as `e8670c6`; GH-55 is closed.
+- **Current state:** the cold-failover slice is complete. GH-56 remains open for
+  authenticated rotation/revocation and compromised-key recovery remains a
+  separate production blocker.
 
 ## 2026-07-23 05:27 EEST GH-53 persisted binary upgrade/rollback → Done
 

@@ -79,7 +79,7 @@ Updated: 2026-07-23 02:27 UTC
   maintained-client tests. Four focused legacy-web ZKP regressions pass
   separately and are not included in that authoritative total. The prior 577
   figure is retained only as historical.
-- Current recovery branch count is 690: 656 Go, 26 Rust, and eight maintained-client
+- Current `main` count is 690: 656 Go, 26 Rust, and eight maintained-client
   tests. The separately gated multi-validator process
   harnesses are not added again to that arithmetic total. The latest
   hardened four-validator run requires new post-rejoin blocks and passed in

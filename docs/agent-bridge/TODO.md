@@ -93,8 +93,9 @@
   single-signer failover with a fresh P2P identity, app-hash convergence,
   monotonic signing position, export, and ledger validation; replace unsafe
   operator backup/recovery guidance.
-- [ ] GH-55: publish the branch, pass final-head review and all GitHub checks,
-  merge, close the issue, and synchronize GH-29/Bridge closure evidence.
+- [x] GH-55: publish PR #57, pass final-head review and all GitHub checks,
+  resolve all eight threads, merge as `e8670c6`, close the issue, and
+  synchronize GH-29/Bridge closure evidence.
 - [ ] GH-56: design authenticated atomic consensus-key rotation, permanent
   old-key revocation, and bootstrap operator-authority separation. Do not use
   stake-withdrawing `remove-validator` plus re-registration as a substitute.
