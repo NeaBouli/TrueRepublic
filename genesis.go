@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 
@@ -26,6 +27,31 @@ func ensureConsensusGenesis(cdc codec.Codec, appState map[string]json.RawMessage
 		return fmt.Errorf("decode %s genesis: %w", truedemocracy.ModuleName, err)
 	}
 	if len(democracyGenesis.Validators) > 0 {
+		if len(validators) == 0 {
+			return nil
+		}
+		if len(democracyGenesis.Validators) != len(validators) {
+			return fmt.Errorf("application and consensus genesis validator counts differ")
+		}
+		matched := make([]bool, len(validators))
+		for _, appValidator := range democracyGenesis.Validators {
+			found := false
+			for i, consensusValidator := range validators {
+				if matched[i] || !bytes.Equal(appValidator.PubKey, consensusValidator.PubKey.GetEd25519()) {
+					continue
+				}
+				wantPower := appValidator.Stake / rewards.StakeMin
+				if consensusValidator.Power != wantPower {
+					return fmt.Errorf("application and consensus power differ for validator %q", appValidator.OperatorAddr)
+				}
+				matched[i] = true
+				found = true
+				break
+			}
+			if !found {
+				return fmt.Errorf("application validator %q has no matching consensus key", appValidator.OperatorAddr)
+			}
+		}
 		return nil
 	}
 	if len(democracyGenesis.Domains) > 0 {
@@ -33,6 +59,9 @@ func ensureConsensusGenesis(cdc codec.Codec, appState map[string]json.RawMessage
 	}
 	if len(validators) == 0 {
 		return fmt.Errorf("consensus genesis must provide at least one validator")
+	}
+	if len(democracyGenesis.BootstrapOperatorAddresses) != len(validators) {
+		return fmt.Errorf("consensus genesis requires exactly one independent bootstrap operator address per validator")
 	}
 
 	members := make([]string, 0, len(validators))
@@ -45,7 +74,14 @@ func ensureConsensusGenesis(cdc codec.Codec, appState map[string]json.RawMessage
 		if validator.Power <= 0 || len(pubKey) != ed25519.PubKeySize {
 			return fmt.Errorf("consensus validator %d must have positive power and a 32-byte ed25519 key", i)
 		}
-		operatorAddress := sdk.AccAddress((&ed25519.PubKey{Key: pubKey}).Address())
+		operatorAddress, err := sdk.AccAddressFromBech32(democracyGenesis.BootstrapOperatorAddresses[i])
+		if err != nil {
+			return fmt.Errorf("bootstrap operator %d is invalid: %w", i, err)
+		}
+		consensusDerived := sdk.AccAddress((&ed25519.PubKey{Key: pubKey}).Address())
+		if operatorAddress.Equals(consensusDerived) {
+			return fmt.Errorf("bootstrap operator %d must be independent from its consensus key", i)
+		}
 		operator := operatorAddress.String()
 		if _, exists := seen[operator]; exists {
 			return fmt.Errorf("duplicate consensus validator %q", operator)
@@ -80,6 +116,47 @@ func ensureConsensusGenesis(cdc codec.Codec, appState map[string]json.RawMessage
 		return err
 	}
 	appState[truedemocracy.ModuleName] = democracyJSON
+
+	authGenesis := authtypes.GetGenesisStateFromAppState(cdc, appState)
+	existingAccounts, err := authtypes.UnpackAccounts(authGenesis.Accounts)
+	if err != nil {
+		return fmt.Errorf("decode auth genesis accounts: %w", err)
+	}
+	existingAddresses := make(map[string]struct{}, len(existingAccounts))
+	nextAccountNumber := uint64(0)
+	for _, account := range existingAccounts {
+		existingAddresses[account.GetAddress().String()] = struct{}{}
+		if account.GetAccountNumber() >= nextAccountNumber {
+			if account.GetAccountNumber() == ^uint64(0) {
+				return fmt.Errorf("auth genesis account number space is exhausted")
+			}
+			nextAccountNumber = account.GetAccountNumber() + 1
+		}
+	}
+	for _, operator := range members {
+		if _, exists := existingAddresses[operator]; exists {
+			continue
+		}
+		address, err := sdk.AccAddressFromBech32(operator)
+		if err != nil {
+			return err
+		}
+		account := authtypes.NewBaseAccountWithAddress(address)
+		account.AccountNumber = nextAccountNumber
+		nextAccountNumber++
+		existingAccounts = append(existingAccounts, account)
+		existingAddresses[operator] = struct{}{}
+	}
+	packedAccounts, err := authtypes.PackAccounts(existingAccounts)
+	if err != nil {
+		return fmt.Errorf("encode auth genesis accounts: %w", err)
+	}
+	authGenesis.Accounts = packedAccounts
+	authJSON, err := cdc.MarshalJSON(&authGenesis)
+	if err != nil {
+		return err
+	}
+	appState[authtypes.ModuleName] = authJSON
 
 	bankGenesis := banktypes.GetGenesisStateFromAppState(cdc, appState)
 	moduleAddress := authtypes.NewModuleAddress(truedemocracy.ModuleName).String()

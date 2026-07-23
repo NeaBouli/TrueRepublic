@@ -19,6 +19,7 @@ services:
       - MONIKER=${MONIKER:-truerepublic-node}
       - CHAIN_ID=${CHAIN_ID:-truerepublic-1}
       - MIN_GAS_PRICE=${MIN_GAS_PRICE:-1000upnyx}
+      - BOOTSTRAP_OPERATOR=${BOOTSTRAP_OPERATOR}
     command:
       - start
       - --rpc.laddr=tcp://0.0.0.0:26657

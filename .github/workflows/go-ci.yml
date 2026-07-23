@@ -92,7 +92,7 @@ jobs:
         run: docker build --build-arg VERSION="${GITHUB_SHA}" --tag truerepublic-node:ci .
 
       - name: Start node container
-        run: docker run --detach --name truerepublic-node-ci --publish 37657:26657 truerepublic-node:ci
+        run: docker run --detach --name truerepublic-node-ci --publish 37657:26657 -e BOOTSTRAP_OPERATOR=truerepublic13hgqwy9986x5nk6jt23ns5v7j0acs8qmhchhtw truerepublic-node:ci
 
       - name: Wait for first committed block
         id: first

@@ -29,6 +29,7 @@ func GetTxCmd() *cobra.Command {
 		CmdRegisterValidator(),
 		CmdWithdrawStake(),
 		CmdRemoveValidator(),
+		CmdRotateValidatorKey(),
 		CmdUnjail(),
 		CmdJoinPermissionRegister(),
 		CmdPurgePermissionRegister(),
@@ -213,6 +214,31 @@ func CmdRemoveValidator() *cobra.Command {
 			msg := MsgRemoveValidator{
 				Sender:       clientCtx.GetFromAddress(),
 				OperatorAddr: args[0],
+			}
+			if err := msg.ValidateBasic(); err != nil {
+				return err
+			}
+			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), &msg)
+		},
+	}
+	flags.AddTxFlagsToCmd(cmd)
+	return cmd
+}
+
+func CmdRotateValidatorKey() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "rotate-validator-key [new-pubkey-hex]",
+		Short: "Atomically rotate the signing operator's validator consensus key",
+		Args:  cobra.ExactArgs(1),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			clientCtx, err := client.GetClientTxContext(cmd)
+			if err != nil {
+				return err
+			}
+			msg := MsgRotateValidatorKey{
+				Sender:       clientCtx.GetFromAddress(),
+				OperatorAddr: clientCtx.GetFromAddress().String(),
+				NewPubKey:    args[0],
 			}
 			if err := msg.ValidateBasic(); err != nil {
 				return err

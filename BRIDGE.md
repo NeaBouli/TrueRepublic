@@ -21,6 +21,26 @@ Canonical coordination lives in [`docs/agent-bridge/`](docs/agent-bridge/README.
 
 GitHub recovery epic: [#4](https://github.com/NeaBouli/TrueRepublic/issues/4)
 
+## 2026-07-23 11:18 EEST GH-56 authenticated consensus-key rotation → In progress
+
+- **Issue/branch:** [GH-56](https://github.com/NeaBouli/TrueRepublic/issues/56),
+  branch `feature/GH-56-consensus-key-rotation`; parent rollout tracker
+  [GH-29](https://github.com/NeaBouli/TrueRepublic/issues/29).
+- **Protocol direction:** add an operator-authenticated atomic key swap that
+  preserves stake, domain, escrow, voting power, jail state, and missed-block
+  state; emit old-key power zero plus new-key activation together; persist a
+  permanent old-key revocation and the CometBFT `H → H+2` activation window.
+- **Bootstrap boundary:** `truerepublicd init` now requires a separately
+  controlled bootstrap operator address. Consensus-derived operator authority
+  is rejected, and the public operator identity is added to auth genesis
+  without generating or embedding a private account secret.
+- **Evidence in progress:** core Keeper/message/genesis tests, exact app/Comet
+  binding checks, a real four-validator rotation into a pre-synced replacement
+  signer, export/import revocation, compromise-response runbook, and full CI.
+- **Separate repository update:** developer BTC support was merged through
+  [PR #58](https://github.com/NeaBouli/TrueRepublic/pull/58) after green checks;
+  the existing team multisig remains unchanged.
+
 ## 2026-07-23 06:45 EEST GH-55 validator identity custody/failover → Done
 
 - **Issues/branch:** [GH-55](https://github.com/NeaBouli/TrueRepublic/issues/55),

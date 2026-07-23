@@ -145,6 +145,43 @@ func (m MsgRemoveValidator) ValidateBasic() error {
 	return requireSignerClaim(m.Sender, m.OperatorAddr, "operator address")
 }
 
+// --- MsgRotateValidatorKey ---
+
+type MsgRotateValidatorKey struct {
+	Sender       sdk.AccAddress `protobuf:"bytes,1,opt,name=sender,proto3,casttype=github.com/cosmos/cosmos-sdk/types.AccAddress" json:"sender"`
+	OperatorAddr string         `protobuf:"bytes,2,opt,name=operator_addr,json=operatorAddr,proto3" json:"operator_addr"`
+	NewPubKey    string         `protobuf:"bytes,3,opt,name=new_pub_key,json=newPubKey,proto3" json:"new_pub_key"`
+}
+
+func (m *MsgRotateValidatorKey) ProtoMessage()               {}
+func (m *MsgRotateValidatorKey) Reset()                      { *m = MsgRotateValidatorKey{} }
+func (m *MsgRotateValidatorKey) String() string              { b, _ := json.Marshal(m); return string(b) }
+func (m MsgRotateValidatorKey) Route() string                { return ModuleName }
+func (m MsgRotateValidatorKey) Type() string                 { return "rotate_validator_key" }
+func (m MsgRotateValidatorKey) GetSigners() []sdk.AccAddress { return []sdk.AccAddress{m.Sender} }
+func (m MsgRotateValidatorKey) ValidateBasic() error {
+	if m.Sender.Empty() {
+		return sdkerrors.ErrInvalidAddress.Wrap("sender address is required")
+	}
+	if m.OperatorAddr == "" || m.NewPubKey == "" {
+		return sdkerrors.ErrInvalidRequest.Wrap("operator_addr and new_pub_key are required")
+	}
+	if err := requireSignerClaim(m.Sender, m.OperatorAddr, "operator address"); err != nil {
+		return err
+	}
+	pubKey, err := decodeValidatorPubKey(m.NewPubKey)
+	if err != nil {
+		return err
+	}
+	if len(pubKey) != 32 {
+		return sdkerrors.ErrInvalidRequest.Wrap("new_pub_key must encode 32 bytes")
+	}
+	if hex.EncodeToString(pubKey) != m.NewPubKey {
+		return sdkerrors.ErrInvalidRequest.Wrap("new_pub_key must use canonical lowercase hex")
+	}
+	return nil
+}
+
 // --- MsgUnjail ---
 
 type MsgUnjail struct {

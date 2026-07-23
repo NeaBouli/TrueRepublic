@@ -176,13 +176,37 @@ type GenesisValidator struct {
 	Domain       string `json:"domain"`
 }
 
+// RevokedValidatorKey permanently retires a consensus key. Retired keys can
+// never be registered again, which prevents a compromised key from returning
+// after an operator has rotated away from it.
+type RevokedValidatorKey struct {
+	PubKey          []byte `json:"pub_key"`
+	OperatorAddr    string `json:"operator_addr"`
+	RevokedAtHeight int64  `json:"revoked_at_height"`
+}
+
+// PendingValidatorKeyRotation covers CometBFT's delayed validator-update
+// activation window. During this window the old consensus key still resolves
+// to the operator for evidence and liveness attribution, and another rotation
+// is rejected.
+type PendingValidatorKeyRotation struct {
+	OperatorAddr     string `json:"operator_addr"`
+	OldPubKey        []byte `json:"old_pub_key"`
+	NewPubKey        []byte `json:"new_pub_key"`
+	StartedHeight    int64  `json:"started_height"`
+	ClearAfterHeight int64  `json:"clear_after_height"`
+}
+
 type GenesisState struct {
-	Domains            []Domain           `json:"domains"`
-	Validators         []GenesisValidator `json:"validators"`
-	UsedNullifiers     []NullifierRecord  `json:"used_nullifiers"`
-	ZKPCircuitID       string             `json:"zkp_circuit_id,omitempty"`
-	VerifyingKeyHex    string             `json:"verifying_key_hex,omitempty"`
-	VerifyingKeySHA256 string             `json:"verifying_key_sha256,omitempty"`
+	Domains                    []Domain                      `json:"domains"`
+	Validators                 []GenesisValidator            `json:"validators"`
+	RevokedValidatorKeys       []RevokedValidatorKey         `json:"revoked_validator_keys"`
+	PendingValidatorRotations  []PendingValidatorKeyRotation `json:"pending_validator_rotations"`
+	BootstrapOperatorAddresses []string                      `json:"bootstrap_operator_addresses,omitempty"`
+	UsedNullifiers             []NullifierRecord             `json:"used_nullifiers"`
+	ZKPCircuitID               string                        `json:"zkp_circuit_id,omitempty"`
+	VerifyingKeyHex            string                        `json:"verifying_key_hex,omitempty"`
+	VerifyingKeySHA256         string                        `json:"verifying_key_sha256,omitempty"`
 }
 
 func RegisterCodec(cdc *codec.LegacyAmino) {
@@ -198,6 +222,8 @@ func RegisterCodec(cdc *codec.LegacyAmino) {
 	cdc.RegisterConcrete(NullifierRecord{}, "truedemocracy/NullifierRecord", nil)
 	cdc.RegisterConcrete(Validator{}, "truedemocracy/Validator", nil)
 	cdc.RegisterConcrete(GenesisValidator{}, "truedemocracy/GenesisValidator", nil)
+	cdc.RegisterConcrete(RevokedValidatorKey{}, "truedemocracy/RevokedValidatorKey", nil)
+	cdc.RegisterConcrete(PendingValidatorKeyRotation{}, "truedemocracy/PendingValidatorKeyRotation", nil)
 
 	// Message types for CLI transactions.
 	cdc.RegisterConcrete(MsgCreateDomain{}, "truedemocracy/MsgCreateDomain", nil)
@@ -205,6 +231,7 @@ func RegisterCodec(cdc *codec.LegacyAmino) {
 	cdc.RegisterConcrete(MsgRegisterValidator{}, "truedemocracy/MsgRegisterValidator", nil)
 	cdc.RegisterConcrete(MsgWithdrawStake{}, "truedemocracy/MsgWithdrawStake", nil)
 	cdc.RegisterConcrete(MsgRemoveValidator{}, "truedemocracy/MsgRemoveValidator", nil)
+	cdc.RegisterConcrete(MsgRotateValidatorKey{}, "truedemocracy/MsgRotateValidatorKey", nil)
 	cdc.RegisterConcrete(MsgUnjail{}, "truedemocracy/MsgUnjail", nil)
 	cdc.RegisterConcrete(MsgJoinPermissionRegister{}, "truedemocracy/MsgJoinPermissionRegister", nil)
 	cdc.RegisterConcrete(MsgPurgePermissionRegister{}, "truedemocracy/MsgPurgePermissionRegister", nil)
@@ -227,7 +254,9 @@ func RegisterCodec(cdc *codec.LegacyAmino) {
 
 func DefaultGenesisState() GenesisState {
 	return GenesisState{
-		Domains:    []Domain{},
-		Validators: []GenesisValidator{},
+		Domains:                   []Domain{},
+		Validators:                []GenesisValidator{},
+		RevokedValidatorKeys:      []RevokedValidatorKey{},
+		PendingValidatorRotations: []PendingValidatorKeyRotation{},
 	}
 }

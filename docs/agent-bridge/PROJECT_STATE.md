@@ -1,8 +1,16 @@
 # Project State
 
-Updated: 2026-07-23 02:27 UTC
+Updated: 2026-07-23 08:18 UTC
 
 ## Repository
+
+- Active task: GH-56 on `feature/GH-56-consensus-key-rotation`. Work in
+  progress separates bootstrap operator authority from consensus keys, adds
+  authenticated atomic rotation, permanent revocation, CometBFT H+2 pending
+  state, and real multi-validator/export-import evidence. It remains
+  unsupported until review and CI pass.
+- PR #58 separately merged the requested developer BTC support address through
+  GitHub's supported custom funding link; the team multisig remains unchanged.
 
 - GitHub: `NeaBouli/TrueRepublic`
 - Baseline: canonical `origin/main`; exact implementation and evidence commits

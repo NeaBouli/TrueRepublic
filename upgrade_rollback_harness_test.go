@@ -57,7 +57,7 @@ func TestMultiValidatorPersistedBinaryUpgradeRollback(t *testing.T) {
 		validators[i] = validator
 	}
 
-	admin := addSmokeKey(t, ctx, baselineBinary, validators[0].home, "upgrade-admin", 0, 800_000*token.WholeTokenBaseUnits)
+	admin := addSmokeKey(t, ctx, baselineBinary, validators[0].home, "upgrade-admin", 4, 800_000*token.WholeTokenBaseUnits)
 	sharedGenesis := buildSharedSmokeGenesis(t, chainID, validators, admin)
 	for _, validator := range validators {
 		if err := atomicWriteFile(filepath.Join(validator.home, "config", "genesis.json"), sharedGenesis, 0o600); err != nil {

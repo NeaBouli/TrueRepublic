@@ -88,6 +88,7 @@ func msgTypesForDescriptor() []reflect.Type {
 		reflect.TypeOf((*MsgRegisterValidator)(nil)),
 		reflect.TypeOf((*MsgWithdrawStake)(nil)),
 		reflect.TypeOf((*MsgRemoveValidator)(nil)),
+		reflect.TypeOf((*MsgRotateValidatorKey)(nil)),
 		reflect.TypeOf((*MsgUnjail)(nil)),
 		reflect.TypeOf((*MsgJoinPermissionRegister)(nil)),
 		reflect.TypeOf((*MsgPurgePermissionRegister)(nil)),
@@ -116,6 +117,7 @@ func msgResponseTypesForDescriptor() []string {
 		"MsgRegisterValidatorResponse",
 		"MsgWithdrawStakeResponse",
 		"MsgRemoveValidatorResponse",
+		"MsgRotateValidatorKeyResponse",
 		"MsgUnjailResponse",
 		"MsgJoinPermissionRegisterResponse",
 		"MsgPurgePermissionRegisterResponse",
@@ -226,6 +228,9 @@ func (*MsgWithdrawStake) Descriptor() ([]byte, []int) {
 func (*MsgRemoveValidator) Descriptor() ([]byte, []int) {
 	return descriptorForMessage("MsgRemoveValidator")
 }
+func (*MsgRotateValidatorKey) Descriptor() ([]byte, []int) {
+	return descriptorForMessage("MsgRotateValidatorKey")
+}
 func (*MsgUnjail) Descriptor() ([]byte, []int) { return descriptorForMessage("MsgUnjail") }
 func (*MsgJoinPermissionRegister) Descriptor() ([]byte, []int) {
 	return descriptorForMessage("MsgJoinPermissionRegister")
@@ -286,6 +291,9 @@ func (*MsgWithdrawStakeResponse) Descriptor() ([]byte, []int) {
 }
 func (*MsgRemoveValidatorResponse) Descriptor() ([]byte, []int) {
 	return descriptorForMessage("MsgRemoveValidatorResponse")
+}
+func (*MsgRotateValidatorKeyResponse) Descriptor() ([]byte, []int) {
+	return descriptorForMessage("MsgRotateValidatorKeyResponse")
 }
 func (*MsgUnjailResponse) Descriptor() ([]byte, []int) {
 	return descriptorForMessage("MsgUnjailResponse")

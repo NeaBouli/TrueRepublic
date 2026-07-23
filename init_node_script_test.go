@@ -32,6 +32,7 @@ printf 'prometheus = false\n' > "$FAKE_HOME/config/config.toml"
 		"CHAIN_ID=truerepublic-wrapper-test",
 		"MONIKER=wrapper-node",
 		"CHAIN_HOME="+home,
+		"BOOTSTRAP_OPERATOR=truerepublic13hgqwy9986x5nk6jt23ns5v7j0acs8qmhchhtw",
 		"INVOCATIONS="+invocations,
 		"FAKE_HOME="+home,
 	)
@@ -44,7 +45,7 @@ printf 'prometheus = false\n' > "$FAKE_HOME/config/config.toml"
 	if err != nil {
 		t.Fatal(err)
 	}
-	want := "init wrapper-node --chain-id truerepublic-wrapper-test --home " + home + "\n"
+	want := "init wrapper-node --chain-id truerepublic-wrapper-test --home " + home + " --bootstrap-operator truerepublic13hgqwy9986x5nk6jt23ns5v7j0acs8qmhchhtw\n"
 	if string(called) != want {
 		t.Fatalf("unexpected daemon commands:\n got: %q\nwant: %q", called, want)
 	}

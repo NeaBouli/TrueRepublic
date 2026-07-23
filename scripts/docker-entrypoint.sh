@@ -9,6 +9,8 @@ for argument in "$@"; do
   if [ "${previous}" = "--home" ]; then
     node_home="${argument}"
     explicit_home=true
+    previous=""
+    continue
   fi
   case "${argument}" in
     --home=*)
@@ -20,8 +22,14 @@ for argument in "$@"; do
 done
 
 if [ "${1:-}" = "start" ] && [ ! -f "${node_home}/config/genesis.json" ]; then
+  if [ -z "${BOOTSTRAP_OPERATOR:-}" ]; then
+    echo "Error: BOOTSTRAP_OPERATOR is required for first-start initialization." >&2
+    echo "Set BOOTSTRAP_OPERATOR to the independently controlled account address." >&2
+    exit 1
+  fi
   truerepublicd init "${MONIKER:-truerepublic-node}" \
     --chain-id "${CHAIN_ID:-truerepublic-1}" \
+    --bootstrap-operator "${BOOTSTRAP_OPERATOR}" \
     --home "${node_home}"
 fi
 

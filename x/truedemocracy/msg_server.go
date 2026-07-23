@@ -48,6 +48,12 @@ func (*MsgRemoveValidatorResponse) ProtoMessage()  {}
 func (*MsgRemoveValidatorResponse) Reset()         {}
 func (*MsgRemoveValidatorResponse) String() string { return "MsgRemoveValidatorResponse" }
 
+type MsgRotateValidatorKeyResponse struct{}
+
+func (*MsgRotateValidatorKeyResponse) ProtoMessage()  {}
+func (*MsgRotateValidatorKeyResponse) Reset()         {}
+func (*MsgRotateValidatorKeyResponse) String() string { return "MsgRotateValidatorKeyResponse" }
+
 type MsgUnjailResponse struct{}
 
 func (*MsgUnjailResponse) ProtoMessage()  {}
@@ -170,6 +176,7 @@ func init() {
 	gogoproto.RegisterType((*MsgRegisterValidator)(nil), "truedemocracy.MsgRegisterValidator")
 	gogoproto.RegisterType((*MsgWithdrawStake)(nil), "truedemocracy.MsgWithdrawStake")
 	gogoproto.RegisterType((*MsgRemoveValidator)(nil), "truedemocracy.MsgRemoveValidator")
+	gogoproto.RegisterType((*MsgRotateValidatorKey)(nil), "truedemocracy.MsgRotateValidatorKey")
 	gogoproto.RegisterType((*MsgUnjail)(nil), "truedemocracy.MsgUnjail")
 	gogoproto.RegisterType((*MsgJoinPermissionRegister)(nil), "truedemocracy.MsgJoinPermissionRegister")
 	gogoproto.RegisterType((*MsgPurgePermissionRegister)(nil), "truedemocracy.MsgPurgePermissionRegister")
@@ -195,6 +202,7 @@ func init() {
 	gogoproto.RegisterType((*MsgRegisterValidatorResponse)(nil), "truedemocracy.MsgRegisterValidatorResponse")
 	gogoproto.RegisterType((*MsgWithdrawStakeResponse)(nil), "truedemocracy.MsgWithdrawStakeResponse")
 	gogoproto.RegisterType((*MsgRemoveValidatorResponse)(nil), "truedemocracy.MsgRemoveValidatorResponse")
+	gogoproto.RegisterType((*MsgRotateValidatorKeyResponse)(nil), "truedemocracy.MsgRotateValidatorKeyResponse")
 	gogoproto.RegisterType((*MsgUnjailResponse)(nil), "truedemocracy.MsgUnjailResponse")
 	gogoproto.RegisterType((*MsgJoinPermissionRegisterResponse)(nil), "truedemocracy.MsgJoinPermissionRegisterResponse")
 	gogoproto.RegisterType((*MsgPurgePermissionRegisterResponse)(nil), "truedemocracy.MsgPurgePermissionRegisterResponse")
@@ -236,6 +244,7 @@ type MsgServer interface {
 	RegisterValidator(context.Context, *MsgRegisterValidator) (*MsgRegisterValidatorResponse, error)
 	WithdrawStake(context.Context, *MsgWithdrawStake) (*MsgWithdrawStakeResponse, error)
 	RemoveValidator(context.Context, *MsgRemoveValidator) (*MsgRemoveValidatorResponse, error)
+	RotateValidatorKey(context.Context, *MsgRotateValidatorKey) (*MsgRotateValidatorKeyResponse, error)
 	Unjail(context.Context, *MsgUnjail) (*MsgUnjailResponse, error)
 	JoinPermissionRegister(context.Context, *MsgJoinPermissionRegister) (*MsgJoinPermissionRegisterResponse, error)
 	PurgePermissionRegister(context.Context, *MsgPurgePermissionRegister) (*MsgPurgePermissionRegisterResponse, error)
@@ -358,6 +367,29 @@ func (m msgServer) RemoveValidator(goCtx context.Context, msg *MsgRemoveValidato
 	))
 
 	return &MsgRemoveValidatorResponse{}, nil
+}
+
+func (m msgServer) RotateValidatorKey(goCtx context.Context, msg *MsgRotateValidatorKey) (*MsgRotateValidatorKeyResponse, error) {
+	ctx := sdk.UnwrapSDKContext(goCtx)
+	if err := msg.ValidateBasic(); err != nil {
+		return nil, err
+	}
+	newPubKey, err := decodeValidatorPubKey(msg.NewPubKey)
+	if err != nil {
+		return nil, err
+	}
+	oldPubKey, err := m.Keeper.RotateValidatorKey(ctx, msg.Sender, msg.OperatorAddr, newPubKey)
+	if err != nil {
+		return nil, err
+	}
+	ctx.EventManager().EmitEvent(sdk.NewEvent(
+		"rotate_validator_key",
+		sdk.NewAttribute("operator", msg.OperatorAddr),
+		sdk.NewAttribute("old_pubkey", hex.EncodeToString(oldPubKey)),
+		sdk.NewAttribute("new_pubkey", hex.EncodeToString(newPubKey)),
+		sdk.NewAttribute("activation_height", fmt.Sprintf("%d", ctx.BlockHeight()+2)),
+	))
+	return &MsgRotateValidatorKeyResponse{}, nil
 }
 
 func (m msgServer) Unjail(goCtx context.Context, msg *MsgUnjail) (*MsgUnjailResponse, error) {
@@ -856,6 +888,24 @@ func _Msg_RemoveValidator_Handler(srv interface{}, ctx context.Context, dec func
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Msg_RotateValidatorKey_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgRotateValidatorKey)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServer).RotateValidatorKey(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/truedemocracy.Msg/RotateValidatorKey",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServer).RotateValidatorKey(ctx, req.(*MsgRotateValidatorKey))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _Msg_Unjail_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(MsgUnjail)
 	if err := dec(in); err != nil {
@@ -1213,6 +1263,10 @@ var _Msg_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "RemoveValidator",
 			Handler:    _Msg_RemoveValidator_Handler,
+		},
+		{
+			MethodName: "RotateValidatorKey",
+			Handler:    _Msg_RotateValidatorKey_Handler,
 		},
 		{
 			MethodName: "Unjail",

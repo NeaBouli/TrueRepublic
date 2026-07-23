@@ -100,10 +100,6 @@ func exactlyBackedGenesisForApp(t *testing.T, app *TrueRepublicApp) map[string]j
 }
 
 func initGenesisApp(app *TrueRepublicApp, state map[string]json.RawMessage) error {
-	bz, err := json.Marshal(state)
-	if err != nil {
-		return err
-	}
 	var democracyGenesis truedemocracy.GenesisState
 	if decodeErr := json.Unmarshal(state[truedemocracy.ModuleName], &democracyGenesis); decodeErr != nil {
 		return decodeErr
@@ -111,10 +107,20 @@ func initGenesisApp(app *TrueRepublicApp, state map[string]json.RawMessage) erro
 	validators := []abci.ValidatorUpdate{}
 	if len(democracyGenesis.Domains) == 0 && len(democracyGenesis.Validators) == 0 {
 		pubKey := ed25519.GenPrivKeyFromSecret([]byte("full-app-consensus-test")).PubKey().Bytes()
+		democracyGenesis.BootstrapOperatorAddresses = []string{sdk.AccAddress(bytes.Repeat([]byte{0x39}, 20)).String()}
+		democracyJSON, marshalErr := json.Marshal(democracyGenesis)
+		if marshalErr != nil {
+			return marshalErr
+		}
+		state[truedemocracy.ModuleName] = democracyJSON
 		validators = append(validators, abci.ValidatorUpdate{
 			PubKey: cryptoproto.PublicKey{Sum: &cryptoproto.PublicKey_Ed25519{Ed25519: pubKey}},
 			Power:  1,
 		})
+	}
+	bz, err := json.Marshal(state)
+	if err != nil {
+		return err
 	}
 	consensusParams := cmttypes.DefaultConsensusParams().ToProto()
 	_, err = app.InitChain(&abci.RequestInitChain{
@@ -138,6 +144,44 @@ func TestEmptyAppGenesisRequiresConsensusValidatorKey(t *testing.T) {
 	}
 }
 
+func TestEnsureConsensusGenesisRejectsMismatchedExistingValidatorSet(t *testing.T) {
+	app := newGenesisTestApp(t)
+	appState, err := json.Marshal(defaultGenesisForApp(app))
+	if err != nil {
+		t.Fatal(err)
+	}
+	genesis := &genutiltypes.AppGenesis{
+		ChainID: "validator-binding-test", AppState: appState, Consensus: &genutiltypes.ConsensusGenesis{},
+	}
+	pubKey := ed25519.GenPrivKeyFromSecret([]byte("validator-binding-key")).PubKey().Bytes()
+	operator := sdk.AccAddress(bytes.Repeat([]byte{0x3a}, 20)).String()
+	if err := configureGenesisValidatorSet(genesis, []genesisValidatorIdentity{{
+		Name: "validator-1", PubKey: pubKey, OperatorAddr: operator,
+	}}); err != nil {
+		t.Fatal(err)
+	}
+	var state map[string]json.RawMessage
+	if err := json.Unmarshal(genesis.AppState, &state); err != nil {
+		t.Fatal(err)
+	}
+	matching := []abci.ValidatorUpdate{{
+		PubKey: cryptoproto.PublicKey{Sum: &cryptoproto.PublicKey_Ed25519{Ed25519: pubKey}}, Power: 1,
+	}}
+	if err := ensureConsensusGenesis(app.appCodec, state, matching); err != nil {
+		t.Fatalf("matching validator binding rejected: %v", err)
+	}
+	wrongPower := append([]abci.ValidatorUpdate(nil), matching...)
+	wrongPower[0].Power = 2
+	if err := ensureConsensusGenesis(app.appCodec, state, wrongPower); err == nil {
+		t.Fatal("mismatched consensus power accepted")
+	}
+	wrongKey := append([]abci.ValidatorUpdate(nil), matching...)
+	wrongKey[0].PubKey = cryptoproto.PublicKey{Sum: &cryptoproto.PublicKey_Ed25519{Ed25519: bytes.Repeat([]byte{0x55}, 32)}}
+	if err := ensureConsensusGenesis(app.appCodec, state, wrongKey); err == nil {
+		t.Fatal("mismatched consensus key accepted")
+	}
+}
+
 func TestCreateDomainTxHandlerEscrowsToModuleAccount(t *testing.T) {
 	app := newGenesisTestApp(t)
 	appState, err := json.Marshal(defaultGenesisForApp(app))
@@ -151,8 +195,9 @@ func TestCreateDomainTxHandlerEscrowsToModuleAccount(t *testing.T) {
 	}
 	validatorPubKey := ed25519.GenPrivKeyFromSecret([]byte("create-domain-handler-validator")).PubKey().Bytes()
 	if err := configureGenesisValidatorSet(genesis, []genesisValidatorIdentity{{
-		Name:   "validator-1",
-		PubKey: validatorPubKey,
+		Name:         "validator-1",
+		PubKey:       validatorPubKey,
+		OperatorAddr: sdk.AccAddress(bytes.Repeat([]byte{0x31}, 20)).String(),
 	}}); err != nil {
 		t.Fatalf("configure validator set: %v", err)
 	}
@@ -162,9 +207,10 @@ func TestCreateDomainTxHandlerEscrowsToModuleAccount(t *testing.T) {
 	}
 	admin := sdk.AccAddress(bytes.Repeat([]byte{7}, 20))
 	addSmokeAccountsToGenesis(t, app, state, []smokeAccount{{
-		name:    "admin",
-		address: admin.String(),
-		balance: 1_000_000 * token.WholeTokenBaseUnits,
+		name:          "admin",
+		address:       admin.String(),
+		balance:       1_000_000 * token.WholeTokenBaseUnits,
+		accountNumber: 1,
 	}})
 	if err := initGenesisApp(app, state); err != nil {
 		t.Fatalf("init genesis: %v", err)
@@ -201,8 +247,9 @@ func TestAuthAccountQueryPacksFundedGenesisAccount(t *testing.T) {
 	}
 	validatorPubKey := ed25519.GenPrivKeyFromSecret([]byte("auth-account-query-validator")).PubKey().Bytes()
 	if err := configureGenesisValidatorSet(genesis, []genesisValidatorIdentity{{
-		Name:   "validator-1",
-		PubKey: validatorPubKey,
+		Name:         "validator-1",
+		PubKey:       validatorPubKey,
+		OperatorAddr: sdk.AccAddress(bytes.Repeat([]byte{0x32}, 20)).String(),
 	}}); err != nil {
 		t.Fatalf("configure validator set: %v", err)
 	}
@@ -212,9 +259,10 @@ func TestAuthAccountQueryPacksFundedGenesisAccount(t *testing.T) {
 	}
 	admin := sdk.AccAddress(bytes.Repeat([]byte{9}, 20))
 	addSmokeAccountsToGenesis(t, app, state, []smokeAccount{{
-		name:    "admin",
-		address: admin.String(),
-		balance: 1_000_000 * token.WholeTokenBaseUnits,
+		name:          "admin",
+		address:       admin.String(),
+		balance:       1_000_000 * token.WholeTokenBaseUnits,
+		accountNumber: 1,
 	}})
 	if err := initGenesisApp(app, state); err != nil {
 		t.Fatalf("init genesis: %v", err)
