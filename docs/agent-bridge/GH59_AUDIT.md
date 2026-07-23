@@ -44,5 +44,12 @@ history relations for revocations and pending rotations.
   -timeout=600s`: PASS; no race finding, with 68.5% root and 61.8%
   `x/truedemocracy` statement coverage
 
-GitHub final-head CI remains the publication gate. This audit does not claim a
-production rollout approval; the remaining rollout program continues in GH-29.
+## GitHub closure
+
+PR #65 final head `313b327` passed all 11 checks, including Go
+build/vet/race/coverage, the combined multi-validator process matrix, Docker,
+documentation consistency, and Go/Rust/Node security gates. It was
+squash-merged as `934a042017e860852e945f1f82ca2da571fcff86`, closing GH-59.
+
+This audit does not claim a production rollout approval; the remaining rollout
+program continues in GH-29.

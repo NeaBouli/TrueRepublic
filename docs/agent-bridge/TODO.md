@@ -107,8 +107,8 @@
 - [x] GH-59: prove real four-process downtime, restart/catch-up, duplicate-vote
   evidence, power-zero transitions, app-hash convergence, and ledger-valid
   export.
-- [ ] GH-59: publish the audited branch, pass final-head GitHub review/CI,
-  merge, close the issue, and synchronize GH-29 plus the Bridge.
+- [x] GH-59: publish the audited branch, pass all 11 final-head GitHub checks,
+  merge as `934a042`, close the issue, and synchronize GH-29 plus the Bridge.
 - [x] GH-7: DEX rounding, slippage, pool accounting, custody, and authorization
   audit completed in GH-10; GH-12 retains genesis/runtime invariants.
 

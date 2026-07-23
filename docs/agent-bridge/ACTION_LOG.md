@@ -32,9 +32,9 @@
   is 726 cases: 692 Go, 26 Rust, and eight maintained-client. The first
   adversarial review exposed an Unjail cursor halt, historical-key/hold reuse,
   partial-withdrawal custody, replay-binding, and genesis-relation gaps; all are
-  remediated with focused regressions. Full race/coverage verification, final
-  re-review, GitHub PR/CI, merge, issue closure, and GH-29 synchronization
-  remain pending.
+  remediated with focused regressions. The final review found 0 P0 / 0 P1 /
+  0 P2. PR #65 passed all 11 final-head checks and merged as `934a042`; GH-59
+  closed and GH-29 was synchronized.
 
 ## 2026-07-23 06:04 EEST - GH-55 validator identity recovery start
 
@@ -905,5 +905,16 @@
   reports no race and 68.5% root / 61.8% `x/truedemocracy` coverage.
 - The final independent read-only merge-gate review reports 0 P0, 0 P1, and
   0 P2. Detailed invariants and evidence are recorded in `GH59_AUDIT.md`.
-- Published commit `c8a56f8` in PR #65. Final-head GitHub CI, merge, GH-59
-  closure, and GH-29 synchronization remain pending.
+- Published commit `c8a56f8` in PR #65; the closure evidence follows below.
+
+## 2026-07-24 00:50 EEST - GH-59 GitHub closure
+
+- PR #65 final head `313b327` passed all 11 checks: Go build/vet/race/coverage
+  in 7m05s, the combined multi-validator process matrix in 11m46s, Docker
+  restart in 3m15s, docs, Go/Rust/Node security, DeepScan, and CodeRabbit.
+- Zero unresolved review threads remained. CodeRabbit was rate-limited and
+  produced no content review; the recorded independent final audit found
+  0 P0 / 0 P1 / 0 P2.
+- Squash-merged PR #65 as `934a042017e860852e945f1f82ca2da571fcff86`.
+  GitHub closed GH-59. GH-60 and GH-61 remain the bounded consensus-state
+  follow-ups under the still-open GH-29 rollout tracker.
