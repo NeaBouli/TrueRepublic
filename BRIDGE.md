@@ -20,6 +20,26 @@ Canonical coordination lives in [`docs/agent-bridge/`](docs/agent-bridge/README.
 
 GitHub recovery epic: [#4](https://github.com/NeaBouli/TrueRepublic/issues/4)
 
+## 2026-07-23 05:27 EEST GH-53 persisted binary upgrade/rollback → Done
+
+- **Issue/PR:** [GH-53](https://github.com/NeaBouli/TrueRepublic/issues/53),
+  [PR #54](https://github.com/NeaBouli/TrueRepublic/pull/54), merged to `main`
+  as `3e44905`; parent tracker
+  [GH-29](https://github.com/NeaBouli/TrueRepublic/issues/29).
+- **Changed:** added a gated four-validator process drill for compatible rolling
+  binary replacement, deterministic failure before opening state, and full
+  return to the baseline artifact on unchanged persisted homes. Replaced unsafe
+  full-home rollback guidance with a multi-RPC, signer-state-safe runbook.
+- **Evidence:** unchanged node/validator identity keys, non-regressing signing
+  positions, historical/current app-hash convergence, validator power, funded
+  domain persistence, ledger-valid export, and re-import. Local combined
+  process run passed in 453.076s. PR final-head Go race/coverage,
+  multi-validator recovery, Docker, docs, security, DeepScan, and CodeRabbit
+  checks are green; all six review threads are resolved.
+- **Boundary:** this closes compatible binary replacement and fail-before-open
+  rollback evidence only. `x/upgrade`, consensus-breaking state migration, and
+  recovery after a partially applied migration remain open rollout gates.
+
 ## 2026-07-19 03:31 EEST GH-47 CI build-and-test timeout → Done
 
 - **Issue:** [GH-47](https://github.com/NeaBouli/TrueRepublic/issues/47),

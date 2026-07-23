@@ -1,6 +1,6 @@
 # Project State
 
-Updated: 2026-07-23 01:54 UTC
+Updated: 2026-07-23 02:27 UTC
 
 ## Repository
 
@@ -9,7 +9,7 @@ Updated: 2026-07-23 01:54 UTC
   are recorded in `ACTION_LOG.md` so this live state does not self-expire after
   documentation-only merges.
 - Merged recovery PRs: #9, #15, #16, #17, #18, #19, #22, #23, #24, #27,
-  #28, #30, #31, #33, #34, #35, #40, #42, #44, #46, #49, and #52.
+  #28, #30, #31, #33, #34, #35, #40, #42, #44, #46, #49, #52, and #54.
 - Current work: GH-29 remains open as the rollout execution tracker. GH-32 and
   PR #33 close its first Phase 1 gate with local and GitHub evidence. GH-39 is
   now merged via PR #40 with green GitHub CI for validator
@@ -23,14 +23,16 @@ Updated: 2026-07-23 01:54 UTC
   bounds the Go CI `build-and-test` job with a 20-minute timeout after a stale
   GitHub runner left the PR #46 merge-commit run in progress despite local Go
   tests passing; refreshed `main` Go CI passes at `63b76bf`.
-- GH-53 is the active Phase 1 rollout task. Its local four-validator process
-  drill passes in 203.97s: compatible versioned binaries roll across persisted
-  homes, a deterministic candidate fails before opening state, every validator
-  returns to the baseline binary, identity keys remain unchanged, signing
-  positions never regress, historical/current app hashes and validator power
-  converge, and the recovered non-empty state exports, validates, and
-  re-imports. The operator runbook now forbids stale signer-state restoration.
-  GitHub PR/final-head CI/merge evidence remains pending.
+- GH-53 is closed through merged PR #54 (`3e44905`). Its four-validator process
+  drill proves compatible versioned binaries rolling across persisted homes, a
+  deterministic candidate failure before state opens, return of every
+  validator to the baseline binary, unchanged identity keys, non-regressing
+  signing positions, historical/current app-hash and validator-power
+  convergence, and recovered non-empty export/validation/re-import. The
+  operator runbook now forbids stale signer-state restoration. PR #54 final
+  head passed Go race/coverage, multi-validator recovery, Docker restart,
+  docs, Go/Rust/Node security, DeepScan, and CodeRabbit; all six review threads
+  are resolved.
 - GH-48 closed the 2026-07-22 fast audit reconciliation. Local/GitHub state was
   synchronized with no open PRs before the task; the audit found no recovery-
   foundation failure, corrected live documentation that still called merged

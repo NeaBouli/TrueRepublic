@@ -86,8 +86,9 @@
   fail-before-open rollback on persisted four-validator homes, including
   app-hash, power, key identity, monotonic signer-state, export, ledger, and
   re-import evidence; replace unsafe full-home rollback guidance.
-- [ ] GH-53: publish the reviewable PR, obtain green final-head GitHub checks,
-  merge, close GH-53, and synchronize GH-29/Bridge closure evidence.
+- [x] GH-53: publish PR #54, obtain green final-head GitHub checks, resolve all
+  six review threads, merge as `3e44905`, close GH-53, and synchronize
+  GH-29/Bridge closure evidence.
 - [x] GH-7: DEX rounding, slippage, pool accounting, custody, and authorization
   audit completed in GH-10; GH-12 retains genesis/runtime invariants.
 
