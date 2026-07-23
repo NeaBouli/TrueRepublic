@@ -19,6 +19,7 @@ import (
 	"time"
 
 	"cosmossdk.io/math"
+	cmted25519 "github.com/cometbft/cometbft/crypto/ed25519"
 	"github.com/cometbft/cometbft/privval"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
@@ -105,6 +106,26 @@ func TestConfigureGenesisValidatorSetBuildsExactBankBackedSet(t *testing.T) {
 	}
 	if err := validateLedgerGenesis(app.appCodec, state); err != nil {
 		t.Fatalf("multi-validator genesis is not exactly bank-backed: %v", err)
+	}
+}
+
+func TestConfigureGenesisValidatorSetRejectsCrossCoupledOperators(t *testing.T) {
+	app := newGenesisTestApp(t)
+	appState, err := json.Marshal(ModuleBasics.DefaultGenesis(app.appCodec))
+	if err != nil {
+		t.Fatal(err)
+	}
+	genesis := &genutiltypes.AppGenesis{
+		ChainID: "truerepublic-cross-coupling-1", AppState: appState, Consensus: &genutiltypes.ConsensusGenesis{},
+	}
+	firstKey := bytes.Repeat([]byte{0x61}, 32)
+	secondKey := bytes.Repeat([]byte{0x62}, 32)
+	identities := []genesisValidatorIdentity{
+		{Name: "validator-1", PubKey: firstKey, OperatorAddr: sdk.AccAddress(cmted25519.PubKey(secondKey).Address()).String()},
+		{Name: "validator-2", PubKey: secondKey, OperatorAddr: sdk.AccAddress(cmted25519.PubKey(firstKey).Address()).String()},
+	}
+	if err := configureGenesisValidatorSet(genesis, identities); err == nil {
+		t.Fatal("cross-coupled bootstrap operator authorities were accepted")
 	}
 }
 

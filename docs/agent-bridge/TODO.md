@@ -96,9 +96,11 @@
 - [x] GH-55: publish PR #57, pass final-head review and all GitHub checks,
   resolve all eight threads, merge as `e8670c6`, close the issue, and
   synchronize GH-29/Bridge closure evidence.
-- [ ] GH-56: design authenticated atomic consensus-key rotation, permanent
-  old-key revocation, and bootstrap operator-authority separation. Do not use
-  stake-withdrawing `remove-validator` plus re-registration as a substitute.
+- [x] GH-56: locally implement and verify authenticated atomic consensus-key
+  rotation, permanent old-key revocation, and bootstrap operator-authority
+  separation without stake-withdrawing removal/re-registration.
+- [ ] GH-56: publish the audited branch, pass final-head GitHub review/CI,
+  merge, close the issue, and synchronize GH-29 plus the Bridge.
 - [x] GH-7: DEX rounding, slippage, pool accounting, custody, and authorization
   audit completed in GH-10; GH-12 retains genesis/runtime invariants.
 

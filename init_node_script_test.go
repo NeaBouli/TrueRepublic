@@ -76,3 +76,71 @@ printf 'prometheus = false\n' > "$FAKE_HOME/config/config.toml"
 		t.Fatalf("wrapper did not report the supported bootstrap path: %s", output)
 	}
 }
+
+func TestDockerEntrypointRequiresBootstrapOperatorOnlyForFreshHome(t *testing.T) {
+	t.Parallel()
+
+	tempDir := t.TempDir()
+	binDir := filepath.Join(tempDir, "bin")
+	if err := os.MkdirAll(binDir, 0o700); err != nil {
+		t.Fatal(err)
+	}
+	invocations := filepath.Join(tempDir, "invocations")
+	fakeBinary := filepath.Join(binDir, "truerepublicd")
+	fake := `#!/bin/sh
+set -eu
+printf '%s\n' "$*" >> "$INVOCATIONS"
+if [ "${1:-}" = "init" ]; then
+  mkdir -p "$HOME/.truerepublic/config"
+  printf '{}\n' > "$HOME/.truerepublic/config/genesis.json"
+fi
+`
+	if err := os.WriteFile(fakeBinary, []byte(fake), 0o700); err != nil {
+		t.Fatal(err)
+	}
+
+	run := func(operator string) ([]byte, error) {
+		cmd := exec.Command("sh", "scripts/docker-entrypoint.sh", "start")
+		cmd.Env = append(os.Environ(),
+			"HOME="+tempDir,
+			"PATH="+binDir+":"+os.Getenv("PATH"),
+			"INVOCATIONS="+invocations,
+			"BOOTSTRAP_OPERATOR="+operator,
+		)
+		return cmd.CombinedOutput()
+	}
+	if output, err := run(""); err == nil || !strings.Contains(string(output), "BOOTSTRAP_OPERATOR is required") {
+		t.Fatalf("fresh-home entrypoint did not fail closed: err=%v output=%s", err, output)
+	}
+	if _, err := os.Stat(invocations); !os.IsNotExist(err) {
+		t.Fatal("entrypoint invoked daemon before validating bootstrap operator")
+	}
+
+	operator := "truerepublic13hgqwy9986x5nk6jt23ns5v7j0acs8qmhchhtw"
+	if output, err := run(operator); err != nil {
+		t.Fatalf("entrypoint with operator failed: %v\n%s", err, output)
+	}
+	called, err := os.ReadFile(invocations)
+	if err != nil {
+		t.Fatal(err)
+	}
+	want := "init truerepublic-node --chain-id truerepublic-1 --bootstrap-operator " + operator + " --home " + filepath.Join(tempDir, ".truerepublic") + "\nstart --home " + filepath.Join(tempDir, ".truerepublic") + "\n"
+	if string(called) != want {
+		t.Fatalf("unexpected entrypoint commands:\n got: %q\nwant: %q", called, want)
+	}
+
+	if err := os.WriteFile(invocations, nil, 0o600); err != nil {
+		t.Fatal(err)
+	}
+	if output, err := run(""); err != nil {
+		t.Fatalf("initialized home unexpectedly required operator: %v\n%s", err, output)
+	}
+	called, err = os.ReadFile(invocations)
+	if err != nil {
+		t.Fatal(err)
+	}
+	want = "start --home " + filepath.Join(tempDir, ".truerepublic") + "\n"
+	if string(called) != want {
+		t.Fatalf("initialized-home entrypoint commands:\n got: %q\nwant: %q", called, want)
+	}
+}

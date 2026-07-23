@@ -43,13 +43,16 @@ Verify:
 export CHAIN_ID=truerepublic-1
 export MONIKER=my-node
 export BINARY=./build/truerepublicd
+export BOOTSTRAP_OPERATOR=truerepublic1... # independently controlled account
 
 # Initialize generated-key, exact bank-backed PoD genesis
 ./scripts/init-node.sh
 ```
 
-The wrapper calls only `truerepublicd init`. It does not create a keyring
-mnemonic, genesis account, staking gentx, or additional token supply.
+The wrapper calls only `truerepublicd init` and binds the public
+`BOOTSTRAP_OPERATOR` identity separately from the generated consensus key. It
+does not create a keyring mnemonic, private account key, staking gentx, or
+additional token supply.
 
 This creates:
 ```

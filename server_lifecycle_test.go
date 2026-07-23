@@ -334,6 +334,30 @@ func TestBindGenesisValidatorKeyRejectsConsensusDerivedOperator(t *testing.T) {
 	}
 }
 
+func TestBindGenesisValidatorKeyRejectsReservedModuleOperator(t *testing.T) {
+	appState := ModuleBasics.DefaultGenesis(newGenesisTestApp(t).appCodec)
+	appStateJSON, err := json.Marshal(appState)
+	if err != nil {
+		t.Fatal(err)
+	}
+	path := filepath.Join(t.TempDir(), "genesis.json")
+	genesisDoc := &genutiltypes.AppGenesis{
+		ChainID: "test-module-operator-chain", AppState: appStateJSON, Consensus: &genutiltypes.ConsensusGenesis{},
+	}
+	if err := genesisDoc.SaveAs(path); err != nil {
+		t.Fatal(err)
+	}
+	before, _ := os.ReadFile(path)
+	moduleOperator := authtypes.NewModuleAddress(truedemocracy.ModuleName).String()
+	if err := bindGenesisValidatorKey(path, bytes.Repeat([]byte{0x44}, 32), moduleOperator); err == nil {
+		t.Fatal("reserved module account accepted as bootstrap operator")
+	}
+	after, _ := os.ReadFile(path)
+	if !bytes.Equal(after, before) {
+		t.Fatal("rejected module operator mutated genesis")
+	}
+}
+
 func TestBindGenesisValidatorKeyRejectsInvalidKeyWithoutMutation(t *testing.T) {
 	appState := ModuleBasics.DefaultGenesis(newGenesisTestApp(t).appCodec)
 	appStateJSON, err := json.Marshal(appState)

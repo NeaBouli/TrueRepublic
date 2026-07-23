@@ -195,6 +195,7 @@ type PendingValidatorKeyRotation struct {
 	NewPubKey        []byte `json:"new_pub_key"`
 	StartedHeight    int64  `json:"started_height"`
 	ClearAfterHeight int64  `json:"clear_after_height"`
+	DeactivateNewKey bool   `json:"deactivate_new_key,omitempty"`
 }
 
 type GenesisState struct {

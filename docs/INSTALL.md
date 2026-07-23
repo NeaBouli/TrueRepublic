@@ -33,7 +33,8 @@ die noch offenen Rollout-Gates sind in GitHub-Issue #29 dokumentiert.
 ```bash
 ./build/truerepublicd init local-node \
   --chain-id truerepublic-local-1 \
-  --home "$HOME/.truerepublic"
+  --home "$HOME/.truerepublic" \
+  --bootstrap-operator "$BOOTSTRAP_OPERATOR"
 
 ./build/truerepublicd keys add local-user \
   --keyring-backend test \

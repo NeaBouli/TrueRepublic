@@ -47,14 +47,17 @@ state migrations and IBC client upgrades are unsupported
 
 ## Production Node Lifecycle
 
-**Status:** Single-node lifecycle is merged; GH-32/GH-41/GH-43/GH-45/GH-53 add
+**Status:** Single-node lifecycle is merged; GH-32/GH-41/GH-43/GH-45/GH-53/GH-56 add
 bounded four-validator failure/restart/catch-up, partition recovery, trusted
 snapshot state-sync, sanitized backup/restore/export/import, compatible binary
-replacement, and fail-before-open rollback harnesses.
+replacement, fail-before-open rollback, and authenticated validator-key
+rotation/revocation harnesses.
 Independent operations review remains pending.
-**Current:** The standard `truerepublicd init` command binds the generated
-CometBFT Ed25519 public key to matching PoD and actual positive-power consensus
-validators with sufficient, exact bank-backed minimum stake. Initialization
+**Current:** The standard `truerepublicd init --bootstrap-operator` command
+binds an independently controlled account authority to the generated CometBFT
+Ed25519 consensus key and matching bank-backed positive-power PoD validator.
+Same-key, cross-validator, revoked-key, and reserved module-account authority
+collisions are rejected. Initialization
 rejects canonical supply above the 21,000,000 PNYX cap. A real native process
 produces blocks, shuts down on SIGINT, restarts from the same home, advances
 height, preserves invariants, and exports state. The non-root Debian/glibc
@@ -68,11 +71,12 @@ restart job passes. The GH-32/GH-41/GH-43/GH-45 gates prove common-height
 app-hash agreement, one-validator failure, continued quorum, restart/catch-up,
 partition recovery, trusted snapshot state sync, sanitized backup/restore,
 restored export/re-import, compatible binary replacement/rollback, and
-single-signer validator-identity cold failover. Do not claim public-network readiness until
+single-signer validator-identity cold failover, plus authenticated atomic
+rotation with permanent revocation. Do not claim public-network readiness until
 consensus-breaking state migration, partially applied migration recovery,
-authenticated consensus-key rotation, compromised consensus-key
-eviction/recovery, network policy, load, topology, and independent operations
-review pass.
+legacy authority migration, round-trip-safe inactive-validator export,
+ABCI++ evidence/slashing integration, network policy, load, topology, and
+independent operations review pass.
 
 ## ZKP Client
 

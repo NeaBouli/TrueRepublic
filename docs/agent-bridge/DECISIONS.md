@@ -67,9 +67,9 @@
 
 ## 2026-07-12 - Persistent PoD node bootstrap
 
-- `truerepublicd init` uses the generated CometBFT Ed25519 validator public key
-  as the single bootstrap PoD identity; no validator private key is embedded in
-  application genesis or source.
+- Superseded by the 2026-07-23 GH-56 decision below. The generated CometBFT
+  Ed25519 key remains the consensus identity, but it is no longer permitted to
+  define the operator authority.
 - Bootstrap stake is created only as exact cap-checked `x/bank` module backing
   for the matching custom validator. Conflicting existing consensus sets are
   rejected rather than silently replaced.
@@ -78,6 +78,21 @@
   `x/staking` gentx paths are retired.
 - Single-node success does not prove multi-node, IBC upgrade, relayer, backup,
   or restore readiness; those require separate operations evidence.
+
+## 2026-07-23 - Independent validator operator authority and key rotation
+
+- Every genesis validator binds an explicit account operator independently
+  from its CometBFT consensus key. Same-validator, cross-validator, active-key,
+  revoked-key, and reserved module-account collisions fail closed.
+- `truerepublicd init --bootstrap-operator` records only the public operator
+  account and creates no private key, mnemonic, gentx, or liquid allocation.
+- An authenticated rotation is conditional on an active, non-jailed,
+  positive-power validator, binds the signed request to the expected old key,
+  preserves claims, schedules the new key for H+2, and permanently revokes the
+  old key. Reuse fails across export/import.
+- Pre-GH-56 homes do not gain this separation through a binary replacement.
+  The supported prelaunch transition is a reviewed fresh genesis; no in-place
+  authority migration is claimed.
 
 ## 2026-07-12 - ZKP circuit and nullifier trust boundary
 

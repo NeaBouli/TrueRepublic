@@ -378,7 +378,11 @@ func (m msgServer) RotateValidatorKey(goCtx context.Context, msg *MsgRotateValid
 	if err != nil {
 		return nil, err
 	}
-	oldPubKey, err := m.Keeper.RotateValidatorKey(ctx, msg.Sender, msg.OperatorAddr, newPubKey)
+	expectedOldPubKey, err := decodeValidatorPubKey(msg.ExpectedOldPubKey)
+	if err != nil {
+		return nil, err
+	}
+	oldPubKey, err := m.Keeper.RotateValidatorKey(ctx, msg.Sender, msg.OperatorAddr, expectedOldPubKey, newPubKey)
 	if err != nil {
 		return nil, err
 	}
@@ -387,7 +391,7 @@ func (m msgServer) RotateValidatorKey(goCtx context.Context, msg *MsgRotateValid
 		sdk.NewAttribute("operator", msg.OperatorAddr),
 		sdk.NewAttribute("old_pubkey", hex.EncodeToString(oldPubKey)),
 		sdk.NewAttribute("new_pubkey", hex.EncodeToString(newPubKey)),
-		sdk.NewAttribute("activation_height", fmt.Sprintf("%d", ctx.BlockHeight()+2)),
+		sdk.NewAttribute("scheduled_activation_height", fmt.Sprintf("%d", ctx.BlockHeight()+2)),
 	))
 	return &MsgRotateValidatorKeyResponse{}, nil
 }

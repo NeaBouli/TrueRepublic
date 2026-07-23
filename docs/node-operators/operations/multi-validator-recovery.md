@@ -58,10 +58,13 @@ GH-32/GH-41/GH-43/GH-45 are bounded four-validator failure/restart/catch-up,
 partition-recovery, trusted state-sync, and sanitized backup/restore slices.
 GH-55 separately proves a cold transfer of the coupled consensus key and
 current signer state into a stopped recovery home with a new P2P identity.
+GH-56 separately proves authenticated bootstrap-validator key rotation,
+permanent revocation, H-to-H+2 activation, and export/import persistence.
 The following Road to Rollout gates remain open:
 
-- authenticated consensus-key rotation, old-key revocation, and bootstrap
-  operator-authority separation;
+- ABCI++ misbehavior/last-commit integration with automatic economic slashing;
+- round-trip-safe export of inactive, excluded, or under-staked validator
+  claims;
 - consensus-breaking state migration and partially applied migration recovery;
 - IBC relayer and cross-chain failure recovery;
 - sustained load, public topology, monitoring, and independent operations

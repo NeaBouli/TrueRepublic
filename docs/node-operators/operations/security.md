@@ -88,7 +88,7 @@ for the single-signer failover and compromise-containment contract.
 | Offline custody | Store the consensus key and current signer state together on encrypted offline media |
 | Access control | Only the node operator should have access |
 | Single signer | Prove the source signer stopped before starting a recovered signer |
-| Key rotation | Treat on-chain consensus-key rotation as unsupported until its protocol task passes |
+| Key rotation | Use the authenticated [validator key-rotation runbook](validator-key-rotation.md) only for active positive-power validators with independent operator custody |
 | Monitoring | Alert on unexpected validator behavior |
 
 ## Network Security

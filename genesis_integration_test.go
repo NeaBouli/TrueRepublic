@@ -164,11 +164,26 @@ func TestEnsureConsensusGenesisRejectsMismatchedExistingValidatorSet(t *testing.
 	if err := json.Unmarshal(genesis.AppState, &state); err != nil {
 		t.Fatal(err)
 	}
+	authGenesis := authtypes.GetGenesisStateFromAppState(app.appCodec, state)
+	authGenesis.Accounts = nil
+	authJSON, err := app.appCodec.MarshalJSON(&authGenesis)
+	if err != nil {
+		t.Fatal(err)
+	}
+	state[authtypes.ModuleName] = authJSON
 	matching := []abci.ValidatorUpdate{{
 		PubKey: cryptoproto.PublicKey{Sum: &cryptoproto.PublicKey_Ed25519{Ed25519: pubKey}}, Power: 1,
 	}}
 	if err := ensureConsensusGenesis(app.appCodec, state, matching); err != nil {
 		t.Fatalf("matching validator binding rejected: %v", err)
+	}
+	authGenesis = authtypes.GetGenesisStateFromAppState(app.appCodec, state)
+	accounts, err := authtypes.UnpackAccounts(authGenesis.Accounts)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(accounts) != 1 || accounts[0].GetAddress().String() != operator {
+		t.Fatalf("materialized validator operator auth accounts = %#v, want %s", accounts, operator)
 	}
 	wrongPower := append([]abci.ValidatorUpdate(nil), matching...)
 	wrongPower[0].Power = 2

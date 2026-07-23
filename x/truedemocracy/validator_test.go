@@ -316,6 +316,7 @@ func TestBuildValidatorUpdates(t *testing.T) {
 
 	t.Run("jailed validator has power 0", func(t *testing.T) {
 		val, _ := k.GetValidator(ctx, "oper1")
+		k.QueueValidatorPowerZero(ctx, val)
 		val.Jailed = true
 		k.SetValidator(ctx, val)
 
@@ -325,6 +326,9 @@ func TestBuildValidatorUpdates(t *testing.T) {
 		}
 		if updates[0].Power != 0 {
 			t.Errorf("jailed validator power = %d, want 0", updates[0].Power)
+		}
+		if repeated := k.BuildValidatorUpdates(ctx); len(repeated) != 0 {
+			t.Fatalf("repeated jailed-validator update = %#v, want none", repeated)
 		}
 	})
 }

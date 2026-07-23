@@ -809,3 +809,26 @@
   multi-validator recovery (5m44s), Docker restart (3m20s), Go vulnerability,
   Rust audit, maintained and legacy Node audits, docs consistency, DeepScan,
   and CodeRabbit. PR #52 was squash-merged as `ae7105a`; GH-51 closed.
+
+## 2026-07-23 12:40 EEST - GH-56 local implementation and audit
+
+- Implemented authenticated atomic validator consensus-key rotation with a
+  signed expected-old-key precondition, permanent old-key revocation, and one
+  deterministic H to H+2 CometBFT transition while preserving operator claims.
+- Separated bootstrap operator authority from consensus identity, rejected
+  self/cross/historical consensus-derived authorities and module accounts, and
+  materialized missing public operator base accounts without generating secret
+  material.
+- Added delayed old-key evidence attribution, one-shot/deferred removal
+  handling, genesis/export/import validation, CLI/API support, Docker/operator
+  plumbing, and a dedicated rotation/compromise-response runbook.
+- Added the real five-process rotation harness. Four active validators rotate
+  to a pre-synchronized stopped-key replacement; the old signer stays offline,
+  activation occurs at H+2, claims and app hash converge, old-key reuse fails,
+  and export/re-import succeeds. Final local run PASS in 168.12 seconds.
+- Full normal Go suite, focused authority/transition regressions, repository Go
+  vet, docs consistency, shell syntax, and diff checks pass. Verified recovery
+  arithmetic is now 717 cases: 683 Go, 26 Rust, and eight maintained-client.
+- Final adversarial review found no P0. Residual rollout warnings are isolated
+  in GH-59 (ABCI++ evidence/slashing), GH-60 (inactive validator round trip),
+  and GH-61 (legacy authority migration). See `GH56_AUDIT.md`.

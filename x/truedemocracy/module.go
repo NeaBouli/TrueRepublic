@@ -221,6 +221,7 @@ func (am AppModule) EndBlock(goCtx context.Context) ([]abci.ValidatorUpdate, err
 		if !found {
 			continue
 		}
+		am.keeper.QueueValidatorPowerZero(ctx, validator)
 		validator.Jailed = true
 		validator.Power = 0
 		am.keeper.SetValidator(ctx, validator)
@@ -239,6 +240,7 @@ func (am AppModule) EndBlock(goCtx context.Context) ([]abci.ValidatorUpdate, err
 		if !found {
 			continue
 		}
+		am.keeper.QueueValidatorPowerZero(ctx, validator)
 		validator.Jailed = true
 		validator.Power = 0
 		am.keeper.SetValidator(ctx, validator)

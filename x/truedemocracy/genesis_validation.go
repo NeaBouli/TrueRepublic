@@ -55,6 +55,9 @@ func ValidateGenesisState(genesis GenesisState) error {
 		if _, exists := operators[validator.OperatorAddr]; exists {
 			return fmt.Errorf("duplicate validator operator %q", validator.OperatorAddr)
 		}
+		operators[validator.OperatorAddr] = struct{}{}
+	}
+	for _, validator := range genesis.Validators {
 		if len(validator.PubKey) != 32 {
 			return fmt.Errorf("validator %q pubkey must be 32 bytes", validator.OperatorAddr)
 		}
@@ -72,7 +75,6 @@ func ValidateGenesisState(genesis GenesisState) error {
 		if !containsString(domain.Members, validator.OperatorAddr) {
 			return fmt.Errorf("validator %q is not a member of domain %q", validator.OperatorAddr, validator.Domain)
 		}
-		operators[validator.OperatorAddr] = struct{}{}
 		pubKeys[pubKey] = validator.OperatorAddr
 	}
 
@@ -98,6 +100,18 @@ func ValidateGenesisState(genesis GenesisState) error {
 			return fmt.Errorf("revoked validator pubkey is active for %q", operator)
 		}
 		revokedPubKeys[key] = record
+	}
+	for _, validator := range genesis.Validators {
+		derived := consensusKeyDerivedOperator(validator.PubKey)
+		if _, coupled := operators[derived]; coupled {
+			return fmt.Errorf("validator operator %q collides with an active consensus-key authority", derived)
+		}
+	}
+	for _, record := range genesis.RevokedValidatorKeys {
+		derived := consensusKeyDerivedOperator(record.PubKey)
+		if _, coupled := operators[derived]; coupled {
+			return fmt.Errorf("validator operator %q collides with a revoked consensus-key authority", derived)
+		}
 	}
 
 	pendingOperators := make(map[string]struct{}, len(genesis.PendingValidatorRotations))

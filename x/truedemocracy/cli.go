@@ -227,18 +227,19 @@ func CmdRemoveValidator() *cobra.Command {
 
 func CmdRotateValidatorKey() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "rotate-validator-key [new-pubkey-hex]",
+		Use:   "rotate-validator-key [expected-old-pubkey-hex] [new-pubkey-hex]",
 		Short: "Atomically rotate the signing operator's validator consensus key",
-		Args:  cobra.ExactArgs(1),
+		Args:  cobra.ExactArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
 				return err
 			}
 			msg := MsgRotateValidatorKey{
-				Sender:       clientCtx.GetFromAddress(),
-				OperatorAddr: clientCtx.GetFromAddress().String(),
-				NewPubKey:    args[0],
+				Sender:            clientCtx.GetFromAddress(),
+				OperatorAddr:      clientCtx.GetFromAddress().String(),
+				ExpectedOldPubKey: args[0],
+				NewPubKey:         args[1],
 			}
 			if err := msg.ValidateBasic(); err != nil {
 				return err

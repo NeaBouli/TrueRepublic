@@ -5,8 +5,13 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"reflect"
+	"strings"
 	"testing"
 
+	abci "github.com/cometbft/cometbft/abci/types"
+	cmted25519 "github.com/cometbft/cometbft/crypto/ed25519"
+	cmttypes "github.com/cometbft/cometbft/types"
+	"github.com/cosmos/cosmos-sdk/crypto/keys/ed25519"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
 	rewards "truerepublic/treasury/keeper"
@@ -38,7 +43,7 @@ func TestRotateValidatorKeyPreservesClaimsAndActivationGuard(t *testing.T) {
 	oldKey := append([]byte(nil), before.PubKey...)
 	newKey := testPubKey("rotation-new")
 
-	rotatedOld, err := k.RotateValidatorKey(ctx, operator, operator.String(), newKey)
+	rotatedOld, err := k.RotateValidatorKey(ctx, operator, operator.String(), oldKey, newKey)
 	if err != nil {
 		t.Fatalf("rotate: %v", err)
 	}
@@ -66,7 +71,7 @@ func TestRotateValidatorKeyPreservesClaimsAndActivationGuard(t *testing.T) {
 	updates := k.BuildValidatorUpdates(ctx)
 	assertValidatorUpdatePower(t, updates, oldKey, 0)
 	assertValidatorUpdatePower(t, updates, newKey, before.Power)
-	if _, err := k.RotateValidatorKey(ctx, operator, operator.String(), testPubKey("rotation-too-soon")); err == nil {
+	if _, err := k.RotateValidatorKey(ctx, operator, operator.String(), newKey, testPubKey("rotation-too-soon")); err == nil {
 		t.Fatal("second rotation succeeded inside activation window")
 	}
 	if err := k.HandleDowntime(ctx, oldKey); err != nil {
@@ -85,7 +90,10 @@ func TestRotateValidatorKeyPreservesClaimsAndActivationGuard(t *testing.T) {
 	if _, found := k.GetValidatorByPubKey(ctx, oldKey); found {
 		t.Fatal("old key attribution remained after H+2")
 	}
-	if _, err := k.RotateValidatorKey(ctx.WithBlockHeight(12), operator, operator.String(), testPubKey("rotation-third")); err != nil {
+	if got, found := k.GetValidatorForDoubleSignEvidence(ctx.WithBlockHeight(12), oldKey); !found || got.OperatorAddr != operator.String() {
+		t.Fatal("permanently revoked key lost delayed evidence attribution")
+	}
+	if _, err := k.RotateValidatorKey(ctx.WithBlockHeight(12), operator, operator.String(), newKey, testPubKey("rotation-third")); err != nil {
 		t.Fatalf("rotation remained blocked after activation: %v", err)
 	}
 }
@@ -114,7 +122,7 @@ func TestRotateValidatorKeyFailsClosedAndAtomically(t *testing.T) {
 	}
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
-			if _, err := k.RotateValidatorKey(ctx, tc.sender, operator.String(), tc.key); err == nil {
+			if _, err := k.RotateValidatorKey(ctx, tc.sender, operator.String(), before.PubKey, tc.key); err == nil {
 				t.Fatal("expected rotation error")
 			}
 			got, _ := k.GetValidator(ctx, operator.String())
@@ -123,8 +131,19 @@ func TestRotateValidatorKeyFailsClosedAndAtomically(t *testing.T) {
 			}
 		})
 	}
+	if _, err := k.RotateValidatorKey(ctx, operator, operator.String(), testPubKey("stale-old"), testPubKey("stale-new")); err == nil {
+		t.Fatal("stale expected old key was accepted")
+	}
+	inactive := before
+	inactive.Jailed = true
+	inactive.Power = 0
+	k.SetValidator(ctx, inactive)
+	if _, err := k.RotateValidatorKey(ctx, operator, operator.String(), before.PubKey, testPubKey("inactive-new")); err == nil {
+		t.Fatal("inactive zero-power validator rotation succeeded")
+	}
+	k.SetValidator(ctx, before)
 
-	oldKey, err := k.RotateValidatorKey(ctx, operator, operator.String(), testPubKey("valid-new"))
+	oldKey, err := k.RotateValidatorKey(ctx, operator, operator.String(), before.PubKey, testPubKey("valid-new"))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -137,11 +156,133 @@ func TestRotateValidatorKeyFailsClosedAndAtomically(t *testing.T) {
 	}
 }
 
+func TestRotationThenSameBlockInactivationOnlyRemovesOldKey(t *testing.T) {
+	k, baseCtx := setupKeeper(t)
+	ctx := baseCtx.WithBlockHeight(30)
+	operator, before := setupRotationValidator(t, k, ctx)
+	newKey := testPubKey("same-block-inactive-new")
+	if _, err := k.RotateValidatorKey(ctx, operator, operator.String(), before.PubKey, newKey); err != nil {
+		t.Fatal(err)
+	}
+	rotated, _ := k.GetValidator(ctx, operator.String())
+	k.QueueValidatorPowerZero(ctx, rotated)
+	rotated.Jailed = true
+	rotated.Power = 0
+	k.SetValidator(ctx, rotated)
+	updates := k.BuildValidatorUpdates(ctx)
+	assertValidatorUpdatePower(t, updates, before.PubKey, 0)
+	cometSet := cmttypes.NewValidatorSet([]*cmttypes.Validator{
+		cmttypes.NewValidator(cmted25519.PubKey(before.PubKey), before.Power),
+		cmttypes.NewValidator(cmted25519.PubKey(testPubKey("same-block-stable")), 1),
+	})
+	if err := cometSet.UpdateWithChangeSet(cometChanges(updates)); err != nil {
+		t.Fatalf("Comet rejected same-block inactivation updates: %v", err)
+	}
+	for _, update := range updates {
+		if bytes.Equal(update.PubKey.GetEd25519(), newKey) {
+			t.Fatalf("never-active replacement key received invalid power-zero update: %#v", update)
+		}
+	}
+	if later := k.BuildValidatorUpdates(ctx.WithBlockHeight(31)); len(later) != 0 {
+		t.Fatalf("never-active replacement emitted a later removal: %#v", later)
+	}
+}
+
+func TestRotationThenNextBlockInactivationDefersNewKeyRemovalOnce(t *testing.T) {
+	k, baseCtx := setupKeeper(t)
+	ctx := baseCtx.WithBlockHeight(40)
+	operator, before := setupRotationValidator(t, k, ctx)
+	newKey := testPubKey("next-block-inactive-new")
+	if _, err := k.RotateValidatorKey(ctx, operator, operator.String(), before.PubKey, newKey); err != nil {
+		t.Fatal(err)
+	}
+	initial := k.BuildValidatorUpdates(ctx)
+	assertValidatorUpdatePower(t, initial, before.PubKey, 0)
+	assertValidatorUpdatePower(t, initial, newKey, before.Power)
+	stableKey := testPubKey("stable-comet-validator")
+	cometSet := cmttypes.NewValidatorSet([]*cmttypes.Validator{
+		cmttypes.NewValidator(cmted25519.PubKey(before.PubKey), before.Power),
+		cmttypes.NewValidator(cmted25519.PubKey(stableKey), 1),
+	})
+	if err := cometSet.UpdateWithChangeSet(cometChanges(initial)); err != nil {
+		t.Fatalf("Comet rejected normal rotation update set: %v", err)
+	}
+
+	nextCtx := ctx.WithBlockHeight(41)
+	rotated, _ := k.GetValidator(nextCtx, operator.String())
+	k.QueueValidatorPowerZero(nextCtx, rotated)
+	rotated.Jailed = true
+	rotated.Power = 0
+	k.SetValidator(nextCtx, rotated)
+	deferred := k.BuildValidatorUpdates(nextCtx)
+	assertValidatorUpdatePower(t, deferred, newKey, 0)
+	if err := cometSet.UpdateWithChangeSet(cometChanges(deferred)); err != nil {
+		t.Fatalf("Comet rejected deferred replacement removal: %v", err)
+	}
+	if repeated := k.BuildValidatorUpdates(ctx.WithBlockHeight(42)); len(repeated) != 0 {
+		t.Fatalf("deferred replacement removal repeated: %#v", repeated)
+	}
+}
+
+func cometChanges(updates []abci.ValidatorUpdate) []*cmttypes.Validator {
+	changes := make([]*cmttypes.Validator, 0, len(updates))
+	for _, update := range updates {
+		changes = append(changes, cmttypes.NewValidator(cmted25519.PubKey(update.PubKey.GetEd25519()), update.Power))
+	}
+	return changes
+}
+
+func TestRuntimeValidatorAuthoritySeparation(t *testing.T) {
+	k, ctx := setupKeeper(t)
+	selfKey := testPubKey("self-coupled-runtime")
+	selfOperator := sdk.AccAddress((&ed25519.PubKey{Key: selfKey}).Address())
+	k.CreateDomain(ctx, "Coupled", selfOperator, sdk.NewCoins())
+	stake := sdk.NewCoins(sdk.NewInt64Coin(PNYXDenom, rewards.StakeMin))
+	if err := k.RegisterValidator(ctx, selfOperator.String(), selfKey, stake, "Coupled"); err == nil {
+		t.Fatal("self-coupled runtime validator registration succeeded")
+	}
+	legacy := Validator{
+		OperatorAddr: selfOperator.String(), PubKey: selfKey, Stake: stake,
+		Domains: []string{"Coupled"}, Power: 1,
+	}
+	k.SetValidator(ctx, legacy)
+	ctx.KVStore(k.StoreKey).Set(valPubKeyKey(selfKey), []byte(selfOperator.String()))
+	if _, err := k.RotateValidatorKey(ctx, selfOperator, selfOperator.String(), selfKey, testPubKey("legacy-migration-attempt")); err == nil {
+		t.Fatal("legacy coupled validator rotated without an explicit authority migration")
+	}
+
+	operator, before := setupRotationValidator(t, k, ctx)
+	collisionKey := testPubKey("cross-coupled-runtime")
+	collisionOperator := sdk.AccAddress((&ed25519.PubKey{Key: collisionKey}).Address())
+	domain, _ := k.GetDomain(ctx, "Rotation")
+	domain.Members = append(domain.Members, collisionOperator.String())
+	ctx.KVStore(k.StoreKey).Set([]byte("domain:Rotation"), k.cdc.MustMarshalLengthPrefixed(&domain))
+	if err := k.RegisterValidator(ctx, collisionOperator.String(), testPubKey("safe-other-consensus"), stake, "Rotation"); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := k.RotateValidatorKey(ctx, operator, operator.String(), before.PubKey, collisionKey); err == nil {
+		t.Fatal("rotation coupled a consensus key to another validator operator")
+	}
+	rotatedKey := testPubKey("runtime-revocation-target")
+	if _, err := k.RotateValidatorKey(ctx, operator, operator.String(), before.PubKey, rotatedKey); err != nil {
+		t.Fatal(err)
+	}
+	k.BuildValidatorUpdates(ctx)
+	k.BuildValidatorUpdates(ctx.WithBlockHeight(ctx.BlockHeight() + 2))
+	revokedDerivedOperator := sdk.AccAddress((&ed25519.PubKey{Key: before.PubKey}).Address())
+	domain, _ = k.GetDomain(ctx, "Rotation")
+	domain.Members = append(domain.Members, revokedDerivedOperator.String())
+	ctx.KVStore(k.StoreKey).Set([]byte("domain:Rotation"), k.cdc.MustMarshalLengthPrefixed(&domain))
+	if err := k.RegisterValidator(ctx, revokedDerivedOperator.String(), testPubKey("post-revocation-safe-key"), stake, "Rotation"); err == nil {
+		t.Fatal("operator derived from a revoked consensus key was registered")
+	}
+}
+
 func TestValidatorRotationGenesisRoundTrip(t *testing.T) {
 	am1, k1, ctx1 := setupModuleForGenesis(t)
 	ctx1 = ctx1.WithBlockHeight(20)
-	operator, _ := setupRotationValidator(t, k1, ctx1)
-	oldKey, err := k1.RotateValidatorKey(ctx1, operator, operator.String(), testPubKey("roundtrip-new"))
+	operator, before := setupRotationValidator(t, k1, ctx1)
+	oldKey, err := k1.RotateValidatorKey(ctx1, operator, operator.String(), before.PubKey, testPubKey("roundtrip-new"))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -171,9 +312,10 @@ func TestValidatorRotationGenesisRoundTrip(t *testing.T) {
 func TestMsgRotateValidatorKeyValidationAndDescriptor(t *testing.T) {
 	operator := rotationTestAddress(4)
 	msg := MsgRotateValidatorKey{
-		Sender:       operator,
-		OperatorAddr: operator.String(),
-		NewPubKey:    hex.EncodeToString(testPubKey("message-key")),
+		Sender:            operator,
+		OperatorAddr:      operator.String(),
+		ExpectedOldPubKey: hex.EncodeToString(testPubKey("message-old-key")),
+		NewPubKey:         hex.EncodeToString(testPubKey("message-key")),
 	}
 	if err := msg.ValidateBasic(); err != nil {
 		t.Fatalf("valid message rejected: %v", err)
@@ -190,6 +332,10 @@ func TestMsgRotateValidatorKeyValidationAndDescriptor(t *testing.T) {
 	if err := msg.ValidateBasic(); err == nil {
 		t.Fatal("malformed key accepted")
 	}
+	msg.ExpectedOldPubKey = "BAD"
+	if err := msg.ValidateBasic(); err == nil || !strings.Contains(err.Error(), "expected_old_pub_key") {
+		t.Fatalf("both-invalid key error was not deterministic: %v", err)
+	}
 }
 
 func TestMsgServerRotateValidatorKeyEmitsDeterministicEvent(t *testing.T) {
@@ -198,9 +344,10 @@ func TestMsgServerRotateValidatorKeyEmitsDeterministicEvent(t *testing.T) {
 	operator, before := setupRotationValidator(t, k, ctx)
 	newKey := testPubKey("event-new")
 	msg := &MsgRotateValidatorKey{
-		Sender:       operator,
-		OperatorAddr: operator.String(),
-		NewPubKey:    hex.EncodeToString(newKey),
+		Sender:            operator,
+		OperatorAddr:      operator.String(),
+		ExpectedOldPubKey: hex.EncodeToString(before.PubKey),
+		NewPubKey:         hex.EncodeToString(newKey),
 	}
 	if _, err := NewMsgServer(k).RotateValidatorKey(sdk.WrapSDKContext(ctx), msg); err != nil {
 		t.Fatal(err)
@@ -213,7 +360,7 @@ func TestMsgServerRotateValidatorKeyEmitsDeterministicEvent(t *testing.T) {
 		{"operator", operator.String()},
 		{"old_pubkey", hex.EncodeToString(before.PubKey)},
 		{"new_pubkey", hex.EncodeToString(newKey)},
-		{"activation_height", "9"},
+		{"scheduled_activation_height", "9"},
 	}
 	if len(events[0].Attributes) != len(want) {
 		t.Fatalf("attribute count = %d, want %d", len(events[0].Attributes), len(want))
@@ -279,6 +426,65 @@ func TestValidateGenesisRejectsMalformedValidatorRotationState(t *testing.T) {
 				t.Fatal("expected validation error")
 			}
 		})
+	}
+}
+
+func TestValidateGenesisRejectsConsensusDerivedOperator(t *testing.T) {
+	pubKey := testPubKey("coupled-genesis-key")
+	operator := sdk.AccAddress((&ed25519.PubKey{Key: pubKey}).Address())
+	genesis := GenesisState{
+		Domains: []Domain{{
+			Name: "Coupled", Admin: operator, Members: []string{operator.String()},
+			Treasury: sdk.NewCoins(), Issues: []Issue{}, PermissionReg: []string{},
+		}},
+		Validators: []GenesisValidator{{
+			OperatorAddr: operator.String(), PubKey: pubKey, Stake: rewards.StakeMin, Domain: "Coupled",
+		}},
+	}
+	if err := ValidateGenesisState(genesis); err == nil || !strings.Contains(err.Error(), "collides") {
+		t.Fatalf("consensus-derived operator genesis was not rejected: %v", err)
+	}
+}
+
+func TestValidateGenesisRejectsCrossCoupledOperators(t *testing.T) {
+	firstKey := testPubKey("cross-genesis-first")
+	secondKey := testPubKey("cross-genesis-second")
+	firstOperator := sdk.AccAddress((&ed25519.PubKey{Key: secondKey}).Address())
+	secondOperator := sdk.AccAddress((&ed25519.PubKey{Key: firstKey}).Address())
+	genesis := GenesisState{
+		Domains: []Domain{{
+			Name: "Cross", Admin: firstOperator,
+			Members:  []string{firstOperator.String(), secondOperator.String()},
+			Treasury: sdk.NewCoins(), Issues: []Issue{}, PermissionReg: []string{},
+		}},
+		Validators: []GenesisValidator{
+			{OperatorAddr: firstOperator.String(), PubKey: firstKey, Stake: rewards.StakeMin, Domain: "Cross"},
+			{OperatorAddr: secondOperator.String(), PubKey: secondKey, Stake: rewards.StakeMin, Domain: "Cross"},
+		},
+	}
+	if err := ValidateGenesisState(genesis); err == nil || !strings.Contains(err.Error(), "collides") {
+		t.Fatalf("cross-coupled validator genesis was not rejected: %v", err)
+	}
+}
+
+func TestValidateGenesisRejectsOperatorDerivedFromRevokedKey(t *testing.T) {
+	revokedKey := testPubKey("revoked-genesis-authority")
+	operator := sdk.AccAddress((&ed25519.PubKey{Key: revokedKey}).Address())
+	genesis := GenesisState{
+		Domains: []Domain{{
+			Name: "RevokedAuthority", Admin: operator, Members: []string{operator.String()},
+			Treasury: sdk.NewCoins(), Issues: []Issue{}, PermissionReg: []string{},
+		}},
+		Validators: []GenesisValidator{{
+			OperatorAddr: operator.String(), PubKey: testPubKey("independent-active-key"),
+			Stake: rewards.StakeMin, Domain: "RevokedAuthority",
+		}},
+		RevokedValidatorKeys: []RevokedValidatorKey{{
+			PubKey: revokedKey, OperatorAddr: operator.String(), RevokedAtHeight: 1,
+		}},
+	}
+	if err := ValidateGenesisState(genesis); err == nil || !strings.Contains(err.Error(), "revoked") {
+		t.Fatalf("operator derived from revoked key was not rejected: %v", err)
 	}
 }
 

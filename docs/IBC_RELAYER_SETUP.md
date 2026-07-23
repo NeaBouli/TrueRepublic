@@ -34,11 +34,13 @@ IBC enables cross-chain PNYX transfers between TrueRepublic and any IBC-enabled 
 ### Chain A: TrueRepublic
 
 ```bash
-# Initialize chain A
-truerepublicd init test-node-a --chain-id truerepublic-test-1 --home ~/.truerepublic-a
-
-# Add genesis account
+# Create the independently controlled operator account, then initialize chain A
 truerepublicd keys add validator-a --keyring-backend test --home ~/.truerepublic-a
+OPERATOR_A="$(truerepublicd keys show validator-a -a --keyring-backend test --home ~/.truerepublic-a)"
+truerepublicd init test-node-a --chain-id truerepublic-test-1 \
+  --home ~/.truerepublic-a --bootstrap-operator "$OPERATOR_A"
+
+# Fund the genesis account
 truerepublicd genesis add-genesis-account validator-a 10000000pnyx --keyring-backend test --home ~/.truerepublic-a
 
 # Start chain A (default ports: RPC 26657, gRPC 9090)
@@ -48,11 +50,13 @@ truerepublicd start --home ~/.truerepublic-a
 ### Chain B: Second TrueRepublic Instance (or any Cosmos chain)
 
 ```bash
-# Initialize chain B with different chain-id and ports
-truerepublicd init test-node-b --chain-id truerepublic-test-2 --home ~/.truerepublic-b
-
-# Add genesis account
+# Create a separate operator, then initialize chain B with different settings
 truerepublicd keys add validator-b --keyring-backend test --home ~/.truerepublic-b
+OPERATOR_B="$(truerepublicd keys show validator-b -a --keyring-backend test --home ~/.truerepublic-b)"
+truerepublicd init test-node-b --chain-id truerepublic-test-2 \
+  --home ~/.truerepublic-b --bootstrap-operator "$OPERATOR_B"
+
+# Fund the genesis account
 truerepublicd genesis add-genesis-account validator-b 10000000pnyx --keyring-backend test --home ~/.truerepublic-b
 
 # Start chain B (offset ports to avoid conflicts)

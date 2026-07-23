@@ -235,7 +235,7 @@ func initNodeCmd(basicManager module.BasicManager, home string) *cobra.Command {
 		if operatorAddr == "" {
 			return fmt.Errorf("--%s is required and must identify an independently controlled account", bootstrapOperatorFlag)
 		}
-		if _, err := sdk.AccAddressFromBech32(operatorAddr); err != nil {
+		if _, err := validateOperatorAccountAddress(operatorAddr); err != nil {
 			return fmt.Errorf("invalid --%s: %w", bootstrapOperatorFlag, err)
 		}
 		if err := initRun(cmd, args); err != nil {
@@ -322,7 +322,7 @@ func configureGenesisValidatorSet(genesis *genutiltypes.AppGenesis, validators [
 		if len(validator.PubKey) != cmted25519.PubKeySize {
 			return fmt.Errorf("validator %q public key must be %d bytes", validator.Name, cmted25519.PubKeySize)
 		}
-		operator, err := sdk.AccAddressFromBech32(validator.OperatorAddr)
+		operator, err := validateOperatorAccountAddress(validator.OperatorAddr)
 		if err != nil {
 			return fmt.Errorf("validator %q operator address is invalid: %w", validator.Name, err)
 		}
@@ -347,6 +347,12 @@ func configureGenesisValidatorSet(genesis *genutiltypes.AppGenesis, validators [
 			Power:   1,
 			Name:    validator.Name,
 		})
+	}
+	for _, validator := range validators {
+		derived := sdk.AccAddress(cmted25519.PubKey(validator.PubKey).Address()).String()
+		if _, coupled := seenOperators[derived]; coupled {
+			return fmt.Errorf("validator operator %q collides with a consensus-key authority", derived)
+		}
 	}
 	interfaceRegistry := makeInterfaceRegistry()
 	appCodec := codec.NewProtoCodec(interfaceRegistry)

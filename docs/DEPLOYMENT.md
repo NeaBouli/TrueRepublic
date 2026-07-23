@@ -75,7 +75,9 @@ CGO_ENABLED=1 make build
 ```bash
 export CHAIN_ID=truerepublic-1
 export MONIKER=my-node
-./build/truerepublicd init $MONIKER --chain-id $CHAIN_ID
+export BOOTSTRAP_OPERATOR=truerepublic1... # independently controlled account
+./build/truerepublicd init "$MONIKER" --chain-id "$CHAIN_ID" \
+  --bootstrap-operator "$BOOTSTRAP_OPERATOR"
 ```
 
 ### 3. Configure
@@ -103,7 +105,8 @@ sed -i 's/prometheus = false/prometheus = true/' \
 ### Node 1 (Seed)
 
 ```bash
-./build/truerepublicd init node1 --chain-id truerepublic-testnet
+./build/truerepublicd init node1 --chain-id truerepublic-testnet \
+  --bootstrap-operator "$NODE1_OPERATOR"
 # Note the node ID
 ./build/truerepublicd tendermint show-node-id
 # e.g., abc123def456...
@@ -112,7 +115,8 @@ sed -i 's/prometheus = false/prometheus = true/' \
 ### Node 2+
 
 ```bash
-./build/truerepublicd init node2 --chain-id truerepublic-testnet
+./build/truerepublicd init node2 --chain-id truerepublic-testnet \
+  --bootstrap-operator "$NODE2_OPERATOR"
 
 # Add seed node
 sed -i 's/seeds = ""/seeds = "abc123def456@node1-ip:26656"/' \
@@ -276,7 +280,9 @@ and signer state through a separate offline key-custody process.
 ### Restore Sanitized Chain Data
 
 ```bash
-./build/truerepublicd init restored-node --chain-id truerepublic-1 --home ~/.truerepublic-restored
+./build/truerepublicd init restored-node --chain-id truerepublic-1 \
+  --home ~/.truerepublic-restored \
+  --bootstrap-operator "$RESTORE_BOOTSTRAP_OPERATOR"
 ./scripts/restore.sh ~/truerepublic-backups/truerepublic_YYYY-MM-DD.tar.gz ~/.truerepublic-restored
 ./build/truerepublicd start --home ~/.truerepublic-restored
 ```

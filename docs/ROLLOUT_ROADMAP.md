@@ -14,7 +14,7 @@ parent recovery record remains
 
 - The ordered recovery merge chain is on `main`.
 - The maximum supply is fixed at 21,000,000 PNYX.
-- The source of truth records 690 recovery-verified tests: 656 Go, 26 Rust,
+- The source of truth records 717 recovery-verified tests: 683 Go, 26 Rust,
   and 8 maintained-client tests.
 - Ledger, escrow, issuance, DEX custody, genesis, runtime invariants, ZKP
   statement binding, node persistence, and the safe operator-init boundary
@@ -45,10 +45,16 @@ approval.
 - [x] Define and test coupled validator-key/signer-state cold custody,
   single-signer failover, and compromise containment
   ([GH-55](https://github.com/NeaBouli/TrueRepublic/issues/55)).
-- [ ] Implement authenticated atomic consensus-key rotation, permanent old-key
+- [x] Implement authenticated atomic consensus-key rotation, permanent old-key
   revocation, and bootstrap operator-authority separation
   ([GH-56](https://github.com/NeaBouli/TrueRepublic/issues/56)).
 - [ ] Define seed, persistent-peer, RPC, API, firewall, and rate-limit policy.
+- [ ] Implement a governance-controlled migration for pre-GH-56 coupled
+  validator authorities; binary replacement alone is not a migration
+  ([GH-61](https://github.com/NeaBouli/TrueRepublic/issues/61)).
+- [ ] Preserve inactive, excluded, jailed, and under-staked validator claims in
+  round-trip-safe export/import state
+  ([GH-60](https://github.com/NeaBouli/TrueRepublic/issues/60)).
 
 **Exit gate:** the same documented procedure must reproduce consensus,
 recovery, upgrade, and rollback results on clean infrastructure.
@@ -114,6 +120,9 @@ software.
   provide stronger guarantees than example tests.
 - [ ] Test concurrent submissions, duplicate messages, replay attempts, and
   deterministic restart behavior.
+- [ ] Wire ABCI++ misbehavior and last-commit data into the economic slashing
+  handlers and test evidence-window custody after validator removal
+  ([GH-59](https://github.com/NeaBouli/TrueRepublic/issues/59)).
 - [ ] Maintain dependency, static-analysis, secret, and supply-chain gates.
 - [ ] Refresh the threat model for consensus, governance, DEX, ZKP, IBC,
   operator, and client boundaries.

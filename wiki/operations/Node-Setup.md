@@ -244,7 +244,8 @@ truerepublicd version
 
 ```bash
 # Initialize node
-truerepublicd init my-node-name --chain-id truerepublic-1
+truerepublicd init my-node-name --chain-id truerepublic-1 \
+  --bootstrap-operator "$BOOTSTRAP_OPERATOR"
 
 # This creates:
 # ~/.truerepublic/config/config.toml
@@ -643,7 +644,8 @@ sudo systemctl start truerepublicd
 rm -rf ~/.truerepublic/data
 
 # Reinitialize
-truerepublicd init my-node-name --chain-id truerepublic-1
+truerepublicd init my-node-name --chain-id truerepublic-1 \
+  --bootstrap-operator "$BOOTSTRAP_OPERATOR"
 
 # Restore config
 # (keys, genesis, config.toml, app.toml)

@@ -1,7 +1,9 @@
 # Validator Identity Custody and Recovery
 
-Status: cold-failover procedure. This does not implement on-chain consensus-key
-rotation and does not authorize production keys or real funds.
+Status: cold-failover procedure for moving the same coupled key and signer
+state. For replacing a consensus key, use the separate
+[validator key-rotation procedure](validator-key-rotation.md). Neither path
+authorizes production keys or real funds before rollout approval.
 
 ## The Safety Unit
 
@@ -89,11 +91,11 @@ freshness or escalate to coordinated network recovery.
    identity cannot be safely evicted, remain stopped and use a coordinated
    manual recovery decision.
 
-TrueRepublic does not yet provide authenticated atomic consensus-key rotation,
-permanent old-key revocation, or separate bootstrap operator authority. The
-existing `remove-validator` flow withdraws stake and is subject to the domain
-transfer limit; remove plus re-register is therefore not a supported rotation
-procedure. This protocol gap is tracked separately from cold failover.
+TrueRepublic provides a separate authenticated atomic rotation flow with
+permanent old-key revocation. Do not approximate it with `remove-validator`:
+that flow withdraws stake and is subject to the domain transfer limit. Cold
+failover remains the correct procedure only when the consensus identity itself
+must remain unchanged.
 
 ## Automated Evidence
 
@@ -116,7 +118,6 @@ and exported ledger invariants remained valid.
 - recovery from a compromised consensus key;
 - simultaneous or automatic hot failover;
 - HSM/KMS or remote-signer integration;
-- authenticated on-chain key rotation and old-key revocation; or
 - governance emergency recovery after operator authority compromise.
 
 Track these rollout boundaries in
