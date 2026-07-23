@@ -1,6 +1,6 @@
 # Project State
 
-Updated: 2026-07-23 21:25 UTC
+Updated: 2026-07-23 21:50 UTC
 
 ## Repository
 
@@ -17,12 +17,13 @@ Updated: 2026-07-23 21:25 UTC
   documentation-only merges.
 - Merged recovery PRs: #9, #15, #16, #17, #18, #19, #22, #23, #24, #27,
   #28, #30, #31, #33, #34, #35, #40, #42, #44, #46, #49, #52, #54, #57,
-  #58, and #62.
-- Current work: GH-59 ABCI++ validator slashing is implemented locally on
-  `feature/GH-59-abci-slashing`. The final independent local merge gate records
-  0 P0 / 0 P1 / 0 P2 in `GH59_AUDIT.md`; commit `c8a56f8` is published in
-  PR #65. Final-head GitHub CI, merge, and issue closure remain pending. GH-29
-  remains open as the rollout execution tracker. GH-32 and
+  #58, #62, and #65.
+- Current work: GH-59 ABCI++ validator slashing is closed through merged PR #65
+  (`934a042`). The independent merge gate records 0 P0 / 0 P1 / 0 P2 in
+  `GH59_AUDIT.md`, and all 11 final-head GitHub checks passed. GH-60 inactive
+  validator claim round-trip and GH-61 legacy authority migration are the next
+  bounded consensus-state tasks. GH-29 remains open as the rollout execution
+  tracker. GH-32 and
   PR #33 close its first Phase 1 gate with local and GitHub evidence. GH-39 is
   now merged via PR #40 with green GitHub CI for validator
   join/replacement/restart-catch-up evidence plus Keeper/ABCI power-zero leave
@@ -50,7 +51,13 @@ Updated: 2026-07-23 21:25 UTC
   state-sync/backup/identity/upgrade process matrix in 9m39s, Docker restart,
   Docs, Go/Rust/Node security scans, and DeepScan. CodeRabbit was rate-limited;
   the recorded independent adversarial review found no P0 and no additional
-  P2. Residual rollout work is bounded by GH-59, GH-60, and GH-61.
+  P2. GH-59 is now closed; residual rollout work is bounded by GH-60 and GH-61.
+- GH-59 is closed through merged PR #65 (`934a042`). Final head `313b327`
+  passed all 11 GitHub checks: Go build/vet/race/coverage in 7m05s, the combined
+  recovery/slashing/rotation/state-sync/backup/identity/upgrade process matrix
+  in 11m46s, Docker restart in 3m15s, docs, Go/Rust/Node security scans,
+  DeepScan, and the rate-limited CodeRabbit status. The independent final review
+  found 0 P0 / 0 P1 / 0 P2 and no unresolved review thread remained.
 - GH-48 closed the 2026-07-22 fast audit reconciliation. Local/GitHub state was
   synchronized with no open PRs before the task; the audit found no recovery-
   foundation failure, corrected live documentation that still called merged
@@ -80,9 +87,9 @@ Updated: 2026-07-23 21:25 UTC
 - Recovery worktree: `/Users/gio/Desktop/repos/TrueRepublic-recovery`
 - Legacy local checkout: preserved at `/Users/gio/Desktop/repos/TrueRepublic`
 - GitHub epic: #4
-- Current open GitHub issue set after GH-56 closure: #4 recovery epic, #7
-  audit/review parent, #29 rollout tracker, and bounded follow-ups GH-59,
-  GH-60, and GH-61.
+- Current open GitHub issue set after GH-59 closure: #4 recovery epic, #7
+  audit/review parent, #29 rollout tracker, and bounded follow-ups GH-60 and
+  GH-61.
 
 ## Verified state
 
