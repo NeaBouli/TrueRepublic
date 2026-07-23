@@ -82,6 +82,12 @@
 - [x] GH-45: publish PR, obtain green GitHub checks/review, merge via PR #46 /
   `26bf44b7933c25f379db475fd34d2cfb8e49c626`, close GH-45, and update
   GH-29/roadmap closure evidence.
+- [x] GH-53: locally prove compatible rolling binary replacement and
+  fail-before-open rollback on persisted four-validator homes, including
+  app-hash, power, key identity, monotonic signer-state, export, ledger, and
+  re-import evidence; replace unsafe full-home rollback guidance.
+- [ ] GH-53: publish the reviewable PR, obtain green final-head GitHub checks,
+  merge, close GH-53, and synchronize GH-29/Bridge closure evidence.
 - [x] GH-7: DEX rounding, slippage, pool accounting, custody, and authorization
   audit completed in GH-10; GH-12 retains genesis/runtime invariants.
 

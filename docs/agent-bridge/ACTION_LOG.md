@@ -1,5 +1,31 @@
 # Action Log
 
+## 2026-07-23 04:54 EEST - GH-53 persisted binary upgrade and rollback start
+
+- Confirmed `main` was synchronized with `origin/main` at `312752a`, with no
+  open PRs and only parent issues #4, #7, and #29 open.
+- Opened GH-53 under rollout tracker GH-29 and created branch
+  `feature/GH-53-persisted-upgrade-rollback`.
+- Audited the upgrade boundary: versioned binary builds are supported, but
+  `x/upgrade`, migration handlers, and governance-controlled halt/resume are
+  not wired. Scope is therefore compatible binary replacement and
+  fail-before-open rollback, not consensus-breaking state migration.
+- Found and removed unsafe operator guidance that archived/restored the entire
+  validator home and could regress `priv_validator_state.json` after newer
+  heights were signed.
+- Added `TestMultiValidatorPersistedBinaryUpgradeRollback`: four real
+  validators commit a funded domain, roll one-by-one to a separately versioned
+  compatible artifact, exercise an intentional candidate failure before state
+  is opened, and roll every node back to the baseline artifact on the same
+  homes. The drill checks historical/current app hashes, validator power,
+  unchanged node/validator identity keys, non-regressing signing positions,
+  exported ledger validity, persisted application state, and re-import.
+- Local focused compile/SKIP verification passes. The gated real-process drill
+  passes in 203.97s. The full repository suite passes (`truerepublic` in
+  55.207s plus all module packages). The CI-equivalent combined consensus,
+  trusted state-sync, backup/restore, and upgrade/rollback process run passes
+  in 453.076s; the new drill completes in 193.69s inside that sequence.
+
 ## 2026-07-19 03:31 EEST - GH-47 CI build-and-test timeout
 
 - Opened GH-47 after the PR #46 merge-commit Go CI run left `build-and-test`

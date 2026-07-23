@@ -166,8 +166,10 @@ unchanged. Recovery worktrees are based on current GitHub state.
 
 ## Production boundary
 
-Recovery testnet functionality is not a mainnet approval. Remaining gates
-include persisted-state upgrade/rollback drills, validator-key compromise
-response, network policy, IBC/load/topology evidence, monitoring/alerting,
-independent consensus/cryptographic/operations review, real client proof
-generation, and a formal release process.
+Recovery testnet functionality is not a mainnet approval. GH-53 proves only
+compatible persisted-state binary replacement and fail-before-open rollback.
+Remaining gates include consensus-breaking state migration and partially
+applied migration recovery, validator-key compromise response, network policy,
+IBC/load/topology evidence, monitoring/alerting, independent consensus/
+cryptographic/operations review, real client proof generation, and a formal
+release process.

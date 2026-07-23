@@ -99,7 +99,7 @@
       "persistence": "native_same_home_restart_and_export_verified_on_pr23",
       "container": "non_root_debian_glibc_restart_green_on_pr23",
       "operator_init": "daemon_only_safe_wrapper_merged_on_pr27",
-      "multi_validator_recovery": "four_validator_failure_restart_catchup_partition_state_sync_backup_restore_export_import_and_app_hash_agreement_on_gh32_gh41_gh43_gh45"
+      "multi_validator_recovery": "four_validator_failure_restart_catchup_partition_state_sync_backup_restore_export_import_compatible_binary_upgrade_fail_before_open_rollback_and_app_hash_agreement_on_gh32_gh41_gh43_gh45_gh53"
     },
     "web_client": {
       "status": "recovery_verified_locally",
@@ -117,7 +117,7 @@
   },
   "limitations": {
     "ibc_staking": "stubbed - PoD consensus instead",
-    "ibc_upgrade": "stubbed - not integrated",
+    "ibc_upgrade": "stubbed - compatible binary replacement and fail-before-open rollback verified on GH-53; state migration not integrated",
     "x_staking": "stubbed - PoD consensus instead",
     "zkp_client": "mock preview is fail-closed and non-submittable; compatible real prover pending",
     "tx_history": "not yet implemented in web client",

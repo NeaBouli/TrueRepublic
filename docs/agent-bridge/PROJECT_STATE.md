@@ -1,6 +1,6 @@
 # Project State
 
-Updated: 2026-07-22 11:24 UTC
+Updated: 2026-07-23 01:54 UTC
 
 ## Repository
 
@@ -23,6 +23,14 @@ Updated: 2026-07-22 11:24 UTC
   bounds the Go CI `build-and-test` job with a 20-minute timeout after a stale
   GitHub runner left the PR #46 merge-commit run in progress despite local Go
   tests passing; refreshed `main` Go CI passes at `63b76bf`.
+- GH-53 is the active Phase 1 rollout task. Its local four-validator process
+  drill passes in 203.97s: compatible versioned binaries roll across persisted
+  homes, a deterministic candidate fails before opening state, every validator
+  returns to the baseline binary, identity keys remain unchanged, signing
+  positions never regress, historical/current app hashes and validator power
+  converge, and the recovered non-empty state exports, validates, and
+  re-imports. The operator runbook now forbids stale signer-state restoration.
+  GitHub PR/final-head CI/merge evidence remains pending.
 - GH-48 closed the 2026-07-22 fast audit reconciliation. Local/GitHub state was
   synchronized with no open PRs before the task; the audit found no recovery-
   foundation failure, corrected live documentation that still called merged
@@ -113,6 +121,14 @@ Updated: 2026-07-22 11:24 UTC
   `go test ./...` passes in 58.843s; the combined CI-smoke equivalent passes
   in 290.498s; a focused state-sync timeout hardening recheck passes in
   127.784s; PR #46 GitHub checks are green.
+- GH-53 local evidence adds a gated compatible binary upgrade and failed-
+  candidate rollback harness. It uses separately versioned artifacts on four
+  persisted validator homes, preserves quorum during rolling replacement,
+  proves a fail-before-open candidate leaves keys and signing state byte-for-
+  byte unchanged, rolls all validators back to the baseline artifact, verifies
+  non-regressing signing positions, app-hash convergence and validator power,
+  and validates/re-imports the non-empty exported ledger. This does not claim
+  `x/upgrade` or consensus-breaking migration support.
 - GH-13 local Go 1.26.5: build, vet, normal tests, race tests, and coverage PASS.
   Coverage: root 10.2%, token 93.5%, treasury 97.0%, DEX 34.2%, governance 55.8%.
 - Go vulnerability gate: no reachable finding with an available fix remains;
@@ -238,11 +254,13 @@ The current recovery-foundation audit records 0 FAIL / 2 WARN / 18 PASS across
 denomination/cap, governance custody, reward issuance, DEX custody, custom
 genesis, runtime invariants, ZKP boundaries, maintained-client safety, and node
 lifecycle. The repository remains recovery-only because GH-20 still needs a
-real prover and external cryptographic review. GH-32/GH-41/GH-43/GH-45 close bounded four-validator
-failure/restart/catch-up, partition-recovery, trusted state-sync, and sanitized
-backup/restore/export/import slices; upgrades, rollback, validator-key
-compromise response, network policy, load, topology, IBC, and independent
-operations review remain open.
+real prover and external cryptographic review. GH-32/GH-41/GH-43/GH-45/GH-53
+close bounded four-validator failure/restart/catch-up, partition-recovery,
+trusted state-sync, sanitized backup/restore/export/import, compatible binary
+replacement, and fail-before-open rollback slices. Consensus-breaking state
+migration, partially applied migration recovery, validator-key compromise
+response, network policy, load, topology, IBC, and independent operations
+review remain open.
 
 GH-11 implements the canonical denomination metadata (`upnyx`, six decimal
 places, 21,000,000,000,000 base-unit cap) and pre-init bank-genesis cap checks.

@@ -254,7 +254,7 @@ cd client-web && npm ci && npm run lint && npm test -- --run && npm run build
 | React Native + Expo | 0.74 / 51.0 | Legacy; security migration required |
 | Keplr + CosmJS | 0.39 | Maintained v0.4 client |
 
-**Known Limitations:** IBC staking/upgrade remains stubbed (PoD is used instead), a real ZKP prover/ceremony review is pending, and the bounded four-validator recovery harness does not yet cover persisted-state upgrades, rollback, validator-key compromise response, network policy, or independent operations review. See [LIMITATIONS.md](docs/LIMITATIONS.md).
+**Known Limitations:** IBC staking/upgrade remains stubbed (PoD is used instead), a real ZKP prover/ceremony review is pending, and the bounded four-validator recovery harness now proves only compatible binary replacement and fail-before-open rollback—not consensus-breaking state migration. Validator-key compromise response, network policy, and independent operations review remain open. See [LIMITATIONS.md](docs/LIMITATIONS.md).
 
 ---
 
@@ -279,9 +279,10 @@ approval. Current evidence, risks, and commands are maintained in
 - 🟡 GH-12 genesis/runtime conservation is recovery-verified and merged via PR #19
 - 🟡 PR #23 provides generated CometBFT-key, bank-backed PoD genesis and
   proves native restart/export; GH-26 makes `scripts/init-node.sh` delegate only
-  to that supported path. GH-32/GH-41/GH-43/GH-45 add four-validator
+  to that supported path. GH-32/GH-41/GH-43/GH-45/GH-53 add four-validator
   failure/restart/catch-up, partition, state-sync, and sanitized backup/restore
-  gates; broader multi-node operations evidence remains open
+  gates plus compatible binary upgrade/fail-before-open rollback evidence;
+  consensus-breaking migrations and broader multi-node operations remain open
 - 🟡 ZKP UI is a clearly disabled preview until a compatible real Groth16 prover exists
 - ✅ Developer Tooling: 4 CosmWasm example contracts, shared bindings, testing utils
 - 🟡 DEX burns reduce canonical bank supply via merged PR #18

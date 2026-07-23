@@ -26,8 +26,10 @@ GitHub verification; this is not an external audit or production approval.
 > with persistent Cosmos/Comet lifecycle and generated-key, bank-backed PoD
 > genesis. Recipient binding, a real prover/ceremony, and independent review
 > remain open. Bounded failure/restart/catch-up, partition, trusted state-sync,
-> and sanitized backup/restore/export/import drills are merged; upgrade/
-> rollback, validator-key response, network policy, IBC, load/topology, and
+> and sanitized backup/restore/export/import drills are merged. GH-53 adds
+> compatible binary replacement and fail-before-open rollback evidence;
+> consensus-breaking migration, validator-key response, network policy, IBC,
+> load/topology, and
 > independent operations evidence remain open.
 
 ## Findings by domain
