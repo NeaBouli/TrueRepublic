@@ -16,7 +16,7 @@
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/tests-717%20recovery--verified-orange" alt="Recovery-verified tests"/>
+  <img src="https://img.shields.io/badge/tests-726%20recovery--verified-orange" alt="Recovery-verified tests"/>
   <img src="https://img.shields.io/badge/version-v0.4.0-blue" alt="Version"/>
   <img src="https://img.shields.io/badge/recovery-active-orange" alt="Recovery active"/>
   <img src="https://img.shields.io/badge/Go-1.26.5-00ADD8?logo=go" alt="Go"/>
@@ -266,7 +266,7 @@ The checklist below records implemented surface area, not a production security
 approval. Current evidence, risks, and commands are maintained in
 [`BRIDGE.md`](BRIDGE.md) and [GitHub issue #4](https://github.com/NeaBouli/TrueRepublic/issues/4).
 
-- 🟡 717 tests recovery-verified locally (683 Go + 26 Rust + 8 maintained-client), including the separately verified GH-56 rotation harness
+- 🟡 726 tests recovery-verified locally (692 Go + 26 Rust + 8 maintained-client), including the separately verified GH-56 rotation and GH-59 slashing harnesses
 - ✅ Core blockchain compiles and runs
 - 🟡 Tokenomics, exact custom genesis, and every-block ledger invariants are recovery-verified and merged through PR #19
 - 🟡 Governance escrow/auth recovery is verified and merged; independent release review remains open
@@ -315,8 +315,8 @@ approval. Current evidence, risks, and commands are maintained in
 - 📋 **v0.5.0 (Q3 2026):** Native Apps (iOS/Android)
 - 🎯 **v1.0.0 (Q4 2026):** Production Release — External audit, mainnet launch
 
-> Historical test count: 577. The authoritative recovery-verified total is 717
-> (683 Go + 26 Rust + 8 maintained-client), reproduced locally on the current branch.
+> Historical test count: 577. The authoritative recovery-verified total is 726
+> (692 Go + 26 Rust + 8 maintained-client), reproduced locally on the current branch.
 
 ---
 

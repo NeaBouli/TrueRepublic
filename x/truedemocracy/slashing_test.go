@@ -85,9 +85,15 @@ func TestHandleDowntime(t *testing.T) {
 		t.Errorf("missed blocks = %d, want %d", val.MissedBlocks, threshold)
 	}
 
-	// One more miss exceeds threshold → slash and jail.
+	// One more miss exceeds the threshold, but the validator is not assessed
+	// until a complete 100-block rolling window has been observed.
 	if err := k.HandleDowntime(ctx, pk); err != nil {
 		t.Fatal(err)
+	}
+	for height := threshold + 2; height <= SignedBlocksWindow; height++ {
+		if err := k.recordValidatorSignature(ctx, "oper1", height, false); err != nil {
+			t.Fatal(err)
+		}
 	}
 	val, _ = k.GetValidator(ctx, "oper1")
 	if !val.Jailed {
@@ -140,6 +146,39 @@ func TestUnjail(t *testing.T) {
 			t.Errorf("power = %d, want 1", val.Power)
 		}
 	})
+}
+
+func TestUnjailStartsLivenessAtFirstObservedCommit(t *testing.T) {
+	k, ctx := setupKeeper(t)
+	setupDomainWithValidator(t, k, ctx)
+	k.setValidatorSigningInfo(ctx, ValidatorSigningInfo{
+		OperatorAddr:             "oper1",
+		StartCommitHeight:        1,
+		IndexOffset:              40,
+		MissedBlocks:             0,
+		MissedBitmap:             make([]byte, livenessBitmapLength),
+		LastObservedCommitHeight: 40,
+	})
+	val, _ := k.GetValidator(ctx, "oper1")
+	val.Jailed = true
+	val.JailedUntil = ctx.BlockTime().Unix() - 1
+	val.Power = 0
+	k.SetValidator(ctx, val)
+
+	unJailCtx := ctx.WithBlockHeight(50)
+	if err := k.Unjail(unJailCtx, "oper1"); err != nil {
+		t.Fatal(err)
+	}
+	if _, found := k.getValidatorSigningInfo(unJailCtx, "oper1"); found {
+		t.Fatal("unjail retained a stale liveness cursor")
+	}
+	if err := k.recordValidatorSignature(unJailCtx, "oper1", 52, false); err != nil {
+		t.Fatalf("first delayed post-unjail commit halted liveness: %v", err)
+	}
+	info, found := k.getValidatorSigningInfo(unJailCtx, "oper1")
+	if !found || info.LastObservedCommitHeight != 52 {
+		t.Fatal("post-unjail liveness did not restart at the first observed commit")
+	}
 }
 
 func TestUnjailFailsStakeBelowMin(t *testing.T) {

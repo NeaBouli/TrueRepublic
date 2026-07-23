@@ -1,9 +1,12 @@
 package truedemocracy
 
 import (
+	"bytes"
+	"crypto/sha256"
 	"encoding/hex"
 	"fmt"
 
+	"cosmossdk.io/core/comet"
 	"cosmossdk.io/math"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
@@ -44,6 +47,7 @@ func ValidateGenesisState(genesis GenesisState) error {
 	}
 
 	operators := make(map[string]struct{}, len(genesis.Validators))
+	activeValidators := make(map[string]GenesisValidator, len(genesis.Validators))
 	pubKeys := make(map[string]string, len(genesis.Validators))
 	for _, validator := range genesis.Validators {
 		if validator.OperatorAddr == "" {
@@ -56,6 +60,7 @@ func ValidateGenesisState(genesis GenesisState) error {
 			return fmt.Errorf("duplicate validator operator %q", validator.OperatorAddr)
 		}
 		operators[validator.OperatorAddr] = struct{}{}
+		activeValidators[validator.OperatorAddr] = validator
 	}
 	for _, validator := range genesis.Validators {
 		if len(validator.PubKey) != 32 {
@@ -65,8 +70,13 @@ func ValidateGenesisState(genesis GenesisState) error {
 		if operator, exists := pubKeys[pubKey]; exists {
 			return fmt.Errorf("duplicate validator pubkey for %q and %q", operator, validator.OperatorAddr)
 		}
-		if validator.Stake < rewards.StakeMin {
+		if validator.Stake <= 0 || (!validator.Jailed && validator.Stake < rewards.StakeMin) {
 			return fmt.Errorf("validator %q stake %d is below minimum %d", validator.OperatorAddr, validator.Stake, rewards.StakeMin)
+		}
+		if validator.JailedUntil < 0 || validator.MissedBlocks < 0 ||
+			validator.MissedBlocks > SignedBlocksWindow ||
+			(!validator.Jailed && validator.JailedUntil != 0) {
+			return fmt.Errorf("validator %q jail or liveness state is invalid", validator.OperatorAddr)
 		}
 		domain, found := domains[validator.Domain]
 		if !found {
@@ -153,6 +163,209 @@ func ValidateGenesisState(genesis GenesisState) error {
 		pendingOperators[rotation.OperatorAddr] = struct{}{}
 	}
 
+	pendingRemovalOperators := make(map[string]PendingValidatorRemoval, len(genesis.PendingValidatorRemovals))
+	pendingStakeByDomain := make(map[string]math.Int)
+	for _, removal := range genesis.PendingValidatorRemovals {
+		operator := removal.Validator.OperatorAddr
+		if _, err := sdk.AccAddressFromBech32(operator); err != nil {
+			return fmt.Errorf("pending removal operator address %q is invalid: %w", operator, err)
+		}
+		if _, active := operators[operator]; active {
+			return fmt.Errorf("pending removal operator %q is still active", operator)
+		}
+		if _, exists := pendingRemovalOperators[operator]; exists {
+			return fmt.Errorf("duplicate pending removal for operator %q", operator)
+		}
+		if _, err := sdk.AccAddressFromBech32(removal.RecipientAddr); err != nil || removal.RecipientAddr != operator {
+			return fmt.Errorf("pending removal recipient for %q must match its operator", operator)
+		}
+		if len(removal.Validator.PubKey) != 32 {
+			return fmt.Errorf("pending removal pubkey for %q must be 32 bytes", operator)
+		}
+		if err := validatePNYXCoins(removal.Validator.Stake, "pending validator removal stake"); err != nil {
+			return fmt.Errorf("pending removal for %q: %w", operator, err)
+		}
+		if !removal.Validator.Stake.AmountOf(PNYXDenom).IsInt64() {
+			return fmt.Errorf("pending removal stake for %q exceeds supported range", operator)
+		}
+		if len(removal.Validator.Domains) != 1 {
+			return fmt.Errorf("pending removal for %q must reference exactly one accounting domain", operator)
+		}
+		domainName := removal.Validator.Domains[0]
+		if _, found := domains[domainName]; !found {
+			return fmt.Errorf("pending removal for %q references missing domain %q", operator, domainName)
+		}
+		pendingStake := math.ZeroInt()
+		if existing, found := pendingStakeByDomain[domainName]; found {
+			pendingStake = existing
+		}
+		pendingStakeByDomain[domainName] = pendingStake.Add(removal.Validator.Stake.AmountOf(PNYXDenom))
+		if removal.RemovedAtHeight < 0 ||
+			removal.ConsensusRetiredHeight <= removal.RemovedAtHeight ||
+			removal.ReleaseAfterHeight < removal.ConsensusRetiredHeight {
+			return fmt.Errorf("pending removal heights for %q are invalid", operator)
+		}
+		if removal.RemovedAtTimeNanos < 0 ||
+			(removal.ConsensusRetiredAtNanos == 0) != (removal.ReleaseAfterTimeNanos == 0) ||
+			removal.ConsensusRetiredAtNanos < 0 ||
+			removal.ReleaseAfterTimeNanos < removal.ConsensusRetiredAtNanos {
+			return fmt.Errorf("pending removal times for %q are invalid", operator)
+		}
+		pendingRemovalOperators[operator] = removal
+	}
+	for domainName, pendingStake := range pendingStakeByDomain {
+		domain := domains[domainName]
+		if math.NewInt(domain.TransferredStake).LT(pendingStake) {
+			return fmt.Errorf("domain %q transferred stake does not cover pending validator holds", domainName)
+		}
+	}
+	if (len(genesis.PendingValidatorRemovals) > 0 ||
+		len(genesis.ValidatorSigningInfos) > 0 ||
+		len(genesis.ProcessedInfractions) > 0 ||
+		len(genesis.RevokedValidatorKeys) > 0 ||
+		len(genesis.PendingValidatorRotations) > 0) &&
+		len(genesis.ConsensusKeyHistory) == 0 {
+		return fmt.Errorf("consensus slashing state requires complete consensus key history")
+	}
+
+	consensusAddresses := make(map[string]ConsensusKeyRecord, len(genesis.ConsensusKeyHistory))
+	consensusPubKeys := make(map[string]struct{}, len(genesis.ConsensusKeyHistory))
+	for _, record := range genesis.ConsensusKeyHistory {
+		if len(record.ConsensusAddress) != consensusAddressLength || len(record.PubKey) != 32 {
+			return fmt.Errorf("consensus key history entry has invalid key material")
+		}
+		if !bytes.Equal(record.ConsensusAddress, consensusAddressFromPubKey(record.PubKey)) {
+			return fmt.Errorf("consensus key history address does not match its pubkey")
+		}
+		if _, err := sdk.AccAddressFromBech32(record.OperatorAddr); err != nil {
+			return fmt.Errorf("consensus key history operator %q is invalid: %w", record.OperatorAddr, err)
+		}
+		if record.ActivatedHeight <= 0 ||
+			(record.RetiredHeight != 0 && record.RetiredHeight < record.ActivatedHeight) {
+			return fmt.Errorf("consensus key history interval for %q is invalid", record.OperatorAddr)
+		}
+		key := hex.EncodeToString(record.ConsensusAddress)
+		if _, exists := consensusAddresses[key]; exists {
+			return fmt.Errorf("duplicate consensus key history address %q", key)
+		}
+		pubKey := hex.EncodeToString(record.PubKey)
+		if _, exists := consensusPubKeys[pubKey]; exists {
+			return fmt.Errorf("duplicate consensus key history pubkey %q", pubKey)
+		}
+		consensusAddresses[key] = record
+		consensusPubKeys[pubKey] = struct{}{}
+	}
+	if len(genesis.ConsensusKeyHistory) > 0 {
+		for operator, validator := range activeValidators {
+			record, found := consensusAddresses[hex.EncodeToString(consensusAddressFromPubKey(validator.PubKey))]
+			if !found || record.OperatorAddr != operator || !bytes.Equal(record.PubKey, validator.PubKey) ||
+				record.RetiredHeight != 0 {
+				return fmt.Errorf("active validator %q lacks a matching open consensus key record", operator)
+			}
+			if record.Tombstoned && !validator.Jailed {
+				return fmt.Errorf("active validator %q uses a tombstoned key without being jailed", operator)
+			}
+		}
+		for operator, removal := range pendingRemovalOperators {
+			record, found := consensusAddresses[hex.EncodeToString(consensusAddressFromPubKey(removal.Validator.PubKey))]
+			if !found || record.OperatorAddr != operator ||
+				record.RetiredHeight != removal.ConsensusRetiredHeight {
+				return fmt.Errorf("pending removal %q lacks matching retired consensus history", operator)
+			}
+		}
+		for _, record := range genesis.ConsensusKeyHistory {
+			if record.RetiredHeight != 0 {
+				continue
+			}
+			validator, found := activeValidators[record.OperatorAddr]
+			if !found || !bytes.Equal(validator.PubKey, record.PubKey) {
+				return fmt.Errorf("open consensus key record for %q has no matching active validator", record.OperatorAddr)
+			}
+		}
+		for _, revoked := range genesis.RevokedValidatorKeys {
+			history, found := consensusAddresses[hex.EncodeToString(consensusAddressFromPubKey(revoked.PubKey))]
+			wantRetiredHeight := revoked.RevokedAtHeight + sdk.ValidatorUpdateDelay + 1
+			if !found || history.OperatorAddr != revoked.OperatorAddr ||
+				!bytes.Equal(history.PubKey, revoked.PubKey) ||
+				history.RetiredHeight != wantRetiredHeight {
+				return fmt.Errorf("revoked consensus key for %q is inconsistent with key history", revoked.OperatorAddr)
+			}
+		}
+		for _, rotation := range genesis.PendingValidatorRotations {
+			transitionHeight := rotation.StartedHeight + sdk.ValidatorUpdateDelay + 1
+			oldHistory, oldFound := consensusAddresses[hex.EncodeToString(consensusAddressFromPubKey(rotation.OldPubKey))]
+			newHistory, newFound := consensusAddresses[hex.EncodeToString(consensusAddressFromPubKey(rotation.NewPubKey))]
+			if !oldFound || oldHistory.OperatorAddr != rotation.OperatorAddr ||
+				oldHistory.RetiredHeight != transitionHeight ||
+				!newFound || newHistory.OperatorAddr != rotation.OperatorAddr ||
+				newHistory.ActivatedHeight != transitionHeight {
+				return fmt.Errorf("pending rotation for %q is inconsistent with key history", rotation.OperatorAddr)
+			}
+		}
+	}
+
+	signingOperators := make(map[string]struct{}, len(genesis.ValidatorSigningInfos))
+	for _, info := range genesis.ValidatorSigningInfos {
+		if _, err := sdk.AccAddressFromBech32(info.OperatorAddr); err != nil {
+			return fmt.Errorf("validator signing operator %q is invalid: %w", info.OperatorAddr, err)
+		}
+		if err := validateSigningInfo(info); err != nil {
+			return fmt.Errorf("validator signing info for %q is invalid: %w", info.OperatorAddr, err)
+		}
+		if _, exists := signingOperators[info.OperatorAddr]; exists {
+			return fmt.Errorf("duplicate validator signing info for %q", info.OperatorAddr)
+		}
+		if _, active := activeValidators[info.OperatorAddr]; !active {
+			if _, pending := pendingRemovalOperators[info.OperatorAddr]; !pending {
+				return fmt.Errorf("validator signing info for %q has no active or held claim", info.OperatorAddr)
+			}
+		}
+		signingOperators[info.OperatorAddr] = struct{}{}
+	}
+
+	processedIDs := make(map[string]struct{}, len(genesis.ProcessedInfractions))
+	for _, record := range genesis.ProcessedInfractions {
+		if len(record.ID) != sha256.Size || len(record.ConsensusAddress) != consensusAddressLength {
+			return fmt.Errorf("processed infraction has invalid identity material")
+		}
+		if record.MisbehaviorType != int32(comet.DuplicateVote) &&
+			record.MisbehaviorType != int32(comet.LightClientAttack) {
+			return fmt.Errorf("processed infraction has unsupported type %d", record.MisbehaviorType)
+		}
+		if _, err := sdk.AccAddressFromBech32(record.OperatorAddr); err != nil {
+			return fmt.Errorf("processed infraction operator %q is invalid: %w", record.OperatorAddr, err)
+		}
+		if record.InfractionHeight <= 0 ||
+			record.ObservedHeight <= record.InfractionHeight ||
+			record.InfractionTimeNanos <= 0 ||
+			record.ValidatorPower <= 0 ||
+			record.TotalVotingPower < record.ValidatorPower ||
+			record.BurnedAmount < 0 {
+			return fmt.Errorf("processed infraction for %q is malformed", record.OperatorAddr)
+		}
+		key := hex.EncodeToString(record.ID)
+		if _, exists := processedIDs[key]; exists {
+			return fmt.Errorf("duplicate processed infraction %q", key)
+		}
+		if len(genesis.ConsensusKeyHistory) > 0 {
+			history, found := consensusAddresses[hex.EncodeToString(record.ConsensusAddress)]
+			if !found || history.OperatorAddr != record.OperatorAddr || !history.Tombstoned ||
+				record.InfractionHeight < history.ActivatedHeight ||
+				(history.RetiredHeight > 0 && record.InfractionHeight >= history.RetiredHeight) {
+				return fmt.Errorf("processed infraction %q is inconsistent with consensus key history", key)
+			}
+		}
+		processedIDs[key] = struct{}{}
+	}
+
+	if len(genesis.LastCommitCursor.Hash) == 0 {
+		if genesis.LastCommitCursor.CommitHeight != 0 {
+			return fmt.Errorf("last commit cursor height requires a hash")
+		}
+	} else if len(genesis.LastCommitCursor.Hash) != sha256.Size || genesis.LastCommitCursor.CommitHeight < 0 {
+		return fmt.Errorf("last commit cursor is malformed")
+	}
+
 	usedNullifiers := make(map[string]struct{}, len(genesis.UsedNullifiers))
 	for _, record := range genesis.UsedNullifiers {
 		if _, exists := domains[record.DomainName]; !exists {
@@ -201,6 +414,9 @@ func GenesisEscrowClaims(genesis GenesisState) (math.Int, error) {
 	}
 	for _, validator := range genesis.Validators {
 		claims = claims.Add(math.NewInt(validator.Stake))
+	}
+	for _, removal := range genesis.PendingValidatorRemovals {
+		claims = claims.Add(removal.Validator.Stake.AmountOf(PNYXDenom))
 	}
 	return claims, nil
 }

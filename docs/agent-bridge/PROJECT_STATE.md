@@ -1,6 +1,6 @@
 # Project State
 
-Updated: 2026-07-23 00:06 UTC
+Updated: 2026-07-23 21:25 UTC
 
 ## Repository
 
@@ -18,7 +18,11 @@ Updated: 2026-07-23 00:06 UTC
 - Merged recovery PRs: #9, #15, #16, #17, #18, #19, #22, #23, #24, #27,
   #28, #30, #31, #33, #34, #35, #40, #42, #44, #46, #49, #52, #54, #57,
   #58, and #62.
-- Current work: GH-29 remains open as the rollout execution tracker. GH-32 and
+- Current work: GH-59 ABCI++ validator slashing is implemented locally on
+  `feature/GH-59-abci-slashing`. The final independent local merge gate records
+  0 P0 / 0 P1 / 0 P2 in `GH59_AUDIT.md`; publication, final-head GitHub CI,
+  merge, and issue closure remain pending. GH-29 remains open as the rollout
+  execution tracker. GH-32 and
   PR #33 close its first Phase 1 gate with local and GitHub evidence. GH-39 is
   now merged via PR #40 with green GitHub CI for validator
   join/replacement/restart-catch-up evidence plus Keeper/ABCI power-zero leave
@@ -94,7 +98,7 @@ Updated: 2026-07-23 00:06 UTC
   maintained-client tests. Four focused legacy-web ZKP regressions pass
   separately and are not included in that authoritative total. The prior 577
   figure is retained only as historical.
-- Current branch count is 717: 683 Go, 26 Rust, and eight maintained-client
+- Current branch count is 726: 692 Go, 26 Rust, and eight maintained-client
   tests. The separately gated process harness is counted only after it passes
   explicitly and is not added again to that arithmetic total. The latest
   hardened four-validator run requires new post-rejoin blocks and passed in
@@ -163,7 +167,7 @@ Updated: 2026-07-23 00:06 UTC
 - Public README, status JSON, limitations, and GitHub Pages source now display
   an active recovery warning and link to GH-4.
 - Public GitHub Pages is configured from `main:/docs`. The latest source update
-  records the 717-case and validator-lifecycle evidence, recovery/non-production
+  records the 726-case and validator-lifecycle evidence, recovery/non-production
   warning, and 21M cap.
 - Canonical `client-web` now has dedicated GitHub install/lint/test/build/audit
   gates; legacy client audits remain informational during migration.
@@ -265,7 +269,7 @@ Updated: 2026-07-23 00:06 UTC
 ## Public-status warning
 
 `docs/status.json`, README, limitations, and the landing page now mark recovery
-as active and separate 717 verified tests from the historical 577 figure.
+as active and separate 726 verified tests from the historical 577 figure.
 `CLAUDE.md`, install guidance, FAQ, landing page, wiki, and the root audit are
 reconciled with the merged recovery foundation while retaining the explicit
 non-production boundary.

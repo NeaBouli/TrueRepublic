@@ -1,5 +1,41 @@
 # Action Log
 
+## 2026-07-23 19:40 EEST - GH-59 ABCI++ validator slashing
+
+- Wired BaseApp's deterministic BeginBlock ABCI++ boundary to CometBFT
+  misbehavior and decided-last-commit ingestion. Canonical commit cursors,
+  normalized infraction IDs, processed markers, consensus-key active intervals,
+  tombstones, and operator-scoped rolling liveness bitmaps now survive restart
+  and export/import.
+- Equivocation burns 5% exactly once per tombstoned consensus key, jails the
+  operator, emits power zero, and remains attributable after key rotation.
+  Downtime burns 1% only after more than 50 misses in a complete rolling
+  100-block window, then jails and emits power zero.
+- Closed the exit-before-evidence path: authenticated full removal and full
+  withdrawal retain the complete stake in module escrow until both CometBFT
+  evidence-age limits are strictly exceeded. Delayed evidence slashes the held
+  claim before payout.
+- Extended genesis validation/export/import for historical keys, replay state,
+  liveness, jail state, processed infractions, and pending exits. A jailed
+  below-minimum validator now round-trips without being resurrected or making
+  the exported genesis invalid.
+- Added the operator slashing/incident runbook and the gated real four-process
+  harness. The harness proves 100-block downtime, exact 1% burn, restart and
+  catch-up as a full node, real CometBFT duplicate-vote evidence broadcast,
+  exact 5% burn, both power-zero transitions, common app hash, and ledger-valid
+  export. The first diagnostic run used production's five-second commit
+  interval and correctly exceeded a four-minute observation deadline; the
+  test-only temporary homes now use bounded accelerated consensus timeouts.
+  The complete real-process rerun passes in 200.95 seconds.
+- Local normal `go test ./...` passes. Focused ABCI++, replay, rotation,
+  liveness, exit-hold, and export/import regressions pass. Recovery arithmetic
+  is 726 cases: 692 Go, 26 Rust, and eight maintained-client. The first
+  adversarial review exposed an Unjail cursor halt, historical-key/hold reuse,
+  partial-withdrawal custody, replay-binding, and genesis-relation gaps; all are
+  remediated with focused regressions. Full race/coverage verification, final
+  re-review, GitHub PR/CI, merge, issue closure, and GH-29 synchronization
+  remain pending.
+
 ## 2026-07-23 06:04 EEST - GH-55 validator identity recovery start
 
 - Confirmed synchronized, clean `main` at `93f0263` with no open PRs before
@@ -850,3 +886,24 @@
 - Squash-merged PR #62 as `80ab6741423049d6faa3bfc8d2671feebb314134`.
   GitHub closed GH-56; GH-59, GH-60, and GH-61 retain the explicit residual
   rollout boundaries.
+
+## 2026-07-24 00:25 EEST - GH-59 final local merge gate
+
+- Completed deterministic ABCI++ evidence and decided-last-commit ingestion,
+  exact equivocation/downtime penalties, consensus-key history, tombstones,
+  replay cursors, rolling liveness, and evidence-window exit custody.
+- Added fail-closed genesis/export/import relations across validators, signing
+  state, revocations, rotations, infractions, and pending exits. Mature payout
+  now removes signing state atomically; partial withdrawal remains disabled
+  until generalized slashable unbonding exists.
+- A real four-process harness proves 100-block downtime, restart/catch-up,
+  cryptographically valid duplicate-vote evidence, exact burns, validator
+  power-zero transitions, app-hash convergence, and ledger-valid export.
+- Fresh local checks pass: docs consistency at 726 tests and the 21M cap,
+  package selection, all five Go packages (root/process package 158.108s),
+  build, vet, diff checks, and the complete race/coverage gate. The latter
+  reports no race and 68.5% root / 61.8% `x/truedemocracy` coverage.
+- The final independent read-only merge-gate review reports 0 P0, 0 P1, and
+  0 P2. Detailed invariants and evidence are recorded in `GH59_AUDIT.md`.
+- Publication, final-head GitHub CI, merge, GH-59 closure, and GH-29
+  synchronization remain pending.

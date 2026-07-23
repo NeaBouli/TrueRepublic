@@ -14,7 +14,7 @@ parent recovery record remains
 
 - The ordered recovery merge chain is on `main`.
 - The maximum supply is fixed at 21,000,000 PNYX.
-- The source of truth records 717 recovery-verified tests: 683 Go, 26 Rust,
+- The source of truth records 726 recovery-verified tests: 692 Go, 26 Rust,
   and 8 maintained-client tests.
 - Ledger, escrow, issuance, DEX custody, genesis, runtime invariants, ZKP
   statement binding, node persistence, and the safe operator-init boundary
@@ -120,7 +120,7 @@ software.
   provide stronger guarantees than example tests.
 - [ ] Test concurrent submissions, duplicate messages, replay attempts, and
   deterministic restart behavior.
-- [ ] Wire ABCI++ misbehavior and last-commit data into the economic slashing
+- [x] Wire ABCI++ misbehavior and last-commit data into the economic slashing
   handlers and test evidence-window custody after validator removal
   ([GH-59](https://github.com/NeaBouli/TrueRepublic/issues/59)).
 - [ ] Maintain dependency, static-analysis, secret, and supply-chain gates.

@@ -398,6 +398,21 @@ func TestValidateGenesisRejectsMalformedValidatorRotationState(t *testing.T) {
 			OperatorAddr: operator.String(), OldPubKey: oldKey, NewPubKey: newKey,
 			StartedHeight: 4, ClearAfterHeight: 6,
 		}},
+		ConsensusKeyHistory: []ConsensusKeyRecord{
+			{
+				ConsensusAddress: consensusAddressFromPubKey(oldKey),
+				PubKey:           oldKey,
+				OperatorAddr:     operator.String(),
+				ActivatedHeight:  1,
+				RetiredHeight:    6,
+			},
+			{
+				ConsensusAddress: consensusAddressFromPubKey(newKey),
+				PubKey:           newKey,
+				OperatorAddr:     operator.String(),
+				ActivatedHeight:  6,
+			},
+		},
 	}
 	if err := ValidateGenesisState(base); err != nil {
 		t.Fatalf("valid rotation genesis rejected: %v", err)
@@ -411,6 +426,15 @@ func TestValidateGenesisRejectsMalformedValidatorRotationState(t *testing.T) {
 		{name: "old key not revoked", mutate: func(g *GenesisState) { g.RevokedValidatorKeys = nil }},
 		{name: "new key not active", mutate: func(g *GenesisState) { g.PendingValidatorRotations[0].NewPubKey = testPubKey("not-active") }},
 		{name: "window too short", mutate: func(g *GenesisState) { g.PendingValidatorRotations[0].ClearAfterHeight = 5 }},
+		{name: "old history owner mismatch", mutate: func(g *GenesisState) {
+			g.ConsensusKeyHistory[0].OperatorAddr = rotationTestAddress(7).String()
+		}},
+		{name: "old history retirement mismatch", mutate: func(g *GenesisState) {
+			g.ConsensusKeyHistory[0].RetiredHeight = 7
+		}},
+		{name: "new history activation mismatch", mutate: func(g *GenesisState) {
+			g.ConsensusKeyHistory[1].ActivatedHeight = 7
+		}},
 		{name: "duplicate pending", mutate: func(g *GenesisState) {
 			g.PendingValidatorRotations = append(g.PendingValidatorRotations, g.PendingValidatorRotations[0])
 		}},
@@ -421,6 +445,7 @@ func TestValidateGenesisRejectsMalformedValidatorRotationState(t *testing.T) {
 			candidate.Validators = append([]GenesisValidator(nil), base.Validators...)
 			candidate.RevokedValidatorKeys = append([]RevokedValidatorKey(nil), base.RevokedValidatorKeys...)
 			candidate.PendingValidatorRotations = append([]PendingValidatorKeyRotation(nil), base.PendingValidatorRotations...)
+			candidate.ConsensusKeyHistory = append([]ConsensusKeyRecord(nil), base.ConsensusKeyHistory...)
 			tc.mutate(&candidate)
 			if err := ValidateGenesisState(candidate); err == nil {
 				t.Fatal("expected validation error")

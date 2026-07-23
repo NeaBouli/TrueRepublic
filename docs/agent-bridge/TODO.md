@@ -101,6 +101,14 @@
   separation without stake-withdrawing removal/re-registration.
 - [x] GH-56: publish the audited branch, pass final-head GitHub review/CI,
   merge as `80ab674`, close the issue, and synchronize GH-29 plus the Bridge.
+- [x] GH-59: locally wire deterministic ABCI++ misbehavior and decided-last-
+  commit ingestion into exact equivocation/downtime burns, replay-safe key
+  history, rolling liveness, and evidence-window validator-exit custody.
+- [x] GH-59: prove real four-process downtime, restart/catch-up, duplicate-vote
+  evidence, power-zero transitions, app-hash convergence, and ledger-valid
+  export.
+- [ ] GH-59: publish the audited branch, pass final-head GitHub review/CI,
+  merge, close the issue, and synchronize GH-29 plus the Bridge.
 - [x] GH-7: DEX rounding, slippage, pool accounting, custody, and authorization
   audit completed in GH-10; GH-12 retains genesis/runtime invariants.
 

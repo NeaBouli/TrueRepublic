@@ -19,6 +19,7 @@ This guide covers everything you need to run a TrueRepublic node, from initial s
 - [Backup & Recovery](operations/backup-recovery.md)
 - [Validator Identity Custody and Recovery](operations/validator-identity-recovery.md)
 - [Validator Consensus-Key Rotation](operations/validator-key-rotation.md)
+- [Validator Slashing and Recovery](operations/validator-slashing.md)
 - [Multi-Validator Recovery Harness](operations/multi-validator-recovery.md)
 - [Upgrades](operations/upgrades.md)
 - [Security Hardening](operations/security.md)
