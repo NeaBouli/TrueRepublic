@@ -724,7 +724,7 @@ func buildSharedSmokeGenesis(t *testing.T, chainID string, validators []*smokeVa
 	for i, validator := range validators {
 		operatorAddr := validator.operatorAddr
 		if operatorAddr == "" {
-			operatorAddr = sdk.AccAddress(bytes.Repeat([]byte{byte(i + 41)}, 20)).String()
+			operatorAddr = smokeOperatorAddress(validator.name)
 			validators[i].operatorAddr = operatorAddr
 		}
 		identities[i] = genesisValidatorIdentity{Name: validator.name, PubKey: validator.pubKey, OperatorAddr: operatorAddr}
@@ -786,7 +786,10 @@ func initSmokeValidator(t *testing.T, ctx context.Context, binary, chainID strin
 
 func smokeOperatorAddress(name string) string {
 	digest := sha256.Sum256([]byte("truerepublic-smoke-operator:" + name))
-	return sdk.AccAddress(digest[:20]).String()
+	// Process harnesses can be selected in isolation, before any test has
+	// configured the Cosmos SDK global address prefix. Encode the chain prefix
+	// explicitly so Linux CI cannot silently produce a cosmos1... operator.
+	return sdk.MustBech32ifyAddressBytes("truerepublic", digest[:20])
 }
 
 func addSmokeKey(t *testing.T, ctx context.Context, binary, home, name string, accountNumber uint64, balance int64) smokeAccount {

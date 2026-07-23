@@ -60,6 +60,8 @@ not production approval.
 - Documentation consistency, shell syntax, JSON, and `git diff --check`: PASS.
 - `TestMultiValidatorConsensusKeyRotation`: PASS in 168.12 seconds against four
   active validators and one pre-synchronized replacement node.
+- CI-only operator-prefix remediation: the legacy consensus-recovery harness
+  now passes from isolated test selection in 99.33 seconds.
 - Independent final read-only security review: no P0 and no additional P2
   finding; the two P1 rollout boundaries are tracked by GH-59 and GH-60.
 

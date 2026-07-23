@@ -832,3 +832,9 @@
 - Final adversarial review found no P0. Residual rollout warnings are isolated
   in GH-59 (ABCI++ evidence/slashing), GH-60 (inactive validator round trip),
   and GH-61 (legacy authority migration). See `GH56_AUDIT.md`.
+- PR #62's first combined process run exposed a CI-only harness setup defect:
+  isolated test selection had not configured the Cosmos SDK global prefix, so
+  legacy smoke helpers emitted `cosmos1...` operators that the hardened init
+  correctly rejected. `smokeOperatorAddress` now encodes `truerepublic`
+  explicitly, independent of test order. The previously first-failing
+  four-validator recovery harness passes in isolation in 99.33 seconds.
