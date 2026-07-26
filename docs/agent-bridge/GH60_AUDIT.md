@@ -61,3 +61,14 @@ This is a local merge gate only. GH-60 remains open until the branch is
 published, final-head GitHub checks and review are green, the PR is merged, and
 GH-29 plus the Bridge are synchronized. No production rollout approval is
 claimed.
+
+## PR #67 security-gate remediation
+
+The first final-head Security Scan exposed newly published High advisories in
+`brace-expansion <=5.0.7` and `postcss <=8.5.17`; npm's retiring quick endpoint
+reported them as an HTTP 400 invalid-tree error. The maintained client now uses
+PostCSS `^8.5.23`, patched brace-expansion `5.0.8`, and a compatible unified
+minimatch `10.2.5` path. Fresh install, lint, eight tests, production build, and
+the unchanged `npm audit --audit-level=high` gate pass locally. Two Moderate
+React Router advisories remain explicit and require a separately reviewed
+breaking v7 migration.

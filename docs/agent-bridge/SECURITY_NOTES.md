@@ -91,6 +91,12 @@
 - The real four-process recovery drill proves exact bank-backed export/import
   of downtime- and equivocation-disabled validators. This closes GH-60 locally,
   not the broader production rollout or independent operations review.
+- PR #67's first Security Scan surfaced new High advisories in PostCSS and
+  brace-expansion. Patched PostCSS `8.5.23`, brace-expansion `5.0.8`, and a
+  compatible minimatch `10.2.5` transitive path pass clean install, lint, tests,
+  build, and the unchanged High-severity npm audit gate. Two Moderate React
+  Router advisories remain below that gate pending a dedicated breaking v7
+  migration review.
 
 ## Legacy client blockers
 

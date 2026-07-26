@@ -979,3 +979,23 @@ Go/Rust/Node security, docs, DeepScan, and CodeRabbit. GH-51 is closed.
   final-head GitHub checks/review before merge and Bridge closure.
 
 ---
+
+## 2026-07-26 21:15 EEST PR #67 maintained-client security remediation → PASS locally
+
+- **Trigger:** GitHub `node-audit-client` failed twice after clean `npm ci`.
+  The retiring quick-audit endpoint returned HTTP 400; the official bulk
+  advisory response exposed two newly published High findings rather than a
+  GH-60 code regression.
+- **Changed:** `postcss` moves to `^8.5.23`; `brace-expansion` is pinned to
+  patched `5.0.8`; `minimatch` is consistently overridden to `10.2.5` so the
+  old ESLint transitive path remains API-compatible.
+- **Verification:** clean `npm ci`, ESLint, eight Vitest cases, TypeScript/Vite
+  production build, and `npm audit --audit-level=high` PASS. Audit still reports
+  two Moderate React Router findings below the existing High gate.
+- **GitHub status before refresh:** Docs, Docker, Go vulnerability, Rust audit,
+  legacy Node audits, and DeepScan PASS; Go build/race, combined process matrix,
+  CodeRabbit, and refreshed maintained-client Security Scan remain pending.
+- **Risk:** dependency-only security remediation in the maintained client; no
+  consensus, ledger, validator, wallet-key, deployment, or production action.
+
+---

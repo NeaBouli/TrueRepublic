@@ -963,3 +963,21 @@
 - GH-60 remains open. Next: publish the branch, open/update the PR and GH-29,
   require final-head GitHub CI/review, remediate any finding, then merge and
   record closure. No production rollout approval is claimed.
+
+## 2026-07-26 21:15 EEST - PR #67 maintained-client Security Scan remediation
+
+- Published GH-60 commit `cfe065e` and opened PR #67. Updated GH-60 and GH-29
+  with the local process/race/review evidence.
+- GitHub's maintained-client npm audit failed twice after successful clean
+  installs. The retiring quick endpoint returned HTTP 400; querying the
+  official bulk advisory dataset exposed new High findings in
+  `brace-expansion <=5.0.7` and `postcss <=8.5.17`.
+- Updated direct PostCSS to `^8.5.23`; pinned `brace-expansion` to patched
+  `5.0.8`; unified the old ESLint transitive minimatch path at `10.2.5` so the
+  patched brace-expansion CommonJS contract remains compatible.
+- Fresh `npm ci`, lint, eight tests, TypeScript/Vite production build, and
+  `npm audit --audit-level=high` pass. Two Moderate React Router advisories
+  remain visible and require a separately reviewed breaking v7 migration;
+  they do not fail the existing High gate.
+- Next: publish the lockfile remediation and require every final-head GitHub
+  check and review to refresh before merge.
