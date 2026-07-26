@@ -1,6 +1,7 @@
 package truedemocracy
 
 import (
+	"strings"
 	"testing"
 
 	"cosmossdk.io/math"
@@ -281,71 +282,76 @@ func TestValidateGenesisStateAcceptsExplicitActiveAndInactiveClaims(t *testing.T
 
 func TestValidateGenesisStateRejectsMalformedResurrection(t *testing.T) {
 	tests := []struct {
-		name   string
-		mutate func(*GenesisState)
+		name    string
+		mutate  func(*GenesisState)
+		wantErr string
 	}{
 		{"resurrect excluded claim as active", func(g *GenesisState) {
 			g.Validators[1].Active = explicitActiveFlag(true)
-		}},
+		}, "active flag contradicts its jail or power state"},
 		{"active flag with jail", func(g *GenesisState) {
 			g.Validators[0].Jailed = true
-		}},
+		}, "active flag contradicts its jail or power state"},
 		{"active flag with zero power", func(g *GenesisState) {
 			g.Validators[0].Power = 0
-		}},
+		}, "active flag contradicts its jail or power state"},
 		{"active power inconsistent with stake", func(g *GenesisState) {
 			g.Validators[0].Power = 5
-		}},
+		}, "power 5 is inconsistent with stake"},
 		{"active flag with under-minimum stake", func(g *GenesisState) {
 			g.Validators[0].Stake = rewards.StakeMin / 2
-		}},
+		}, "power 2 is inconsistent with stake"},
 		{"inactive flag contradicts active state", func(g *GenesisState) {
 			g.Validators[0].Active = explicitActiveFlag(false)
-		}},
+		}, "inactive flag contradicts its active state"},
 		{"inactive unjailed positive power without domains", func(g *GenesisState) {
 			g.Validators[1].Jailed = false
 			g.Validators[1].Power = 1
-		}},
+		}, "inactive flag contradicts its active state"},
 		{"inactive power inconsistent with stake", func(g *GenesisState) {
 			g.Validators[1].Power = 7
-		}},
+		}, "power 7 is inconsistent with stake"},
 		{"legacy record mixed with domain list", func(g *GenesisState) {
 			g.Validators[0].Active = nil
-		}},
+		}, "mixes legacy and explicit active/inactive fields"},
 		{"legacy record mixed with explicit power", func(g *GenesisState) {
 			g.Validators[1].Active = nil
 			g.Validators[1].Power = 1
-		}},
+		}, "mixes legacy and explicit active/inactive fields"},
 		{"primary domain contradicts domain list", func(g *GenesisState) {
 			g.Validators[0].Domain = "Second"
-		}},
+		}, "primary domain contradicts its domain list"},
 		{"domain list without primary domain", func(g *GenesisState) {
 			g.Validators[0].Domain = ""
-		}},
+		}, "primary domain contradicts its domain list"},
 		{"duplicate domain in list", func(g *GenesisState) {
 			g.Validators[0].Domains = []string{"Test", "Test"}
-		}},
+		}, "lists duplicate domain"},
 		{"inactive references missing domain", func(g *GenesisState) {
 			g.Validators[1].Domain = "missing"
 			g.Validators[1].Domains = []string{"missing"}
-		}},
+		}, "references missing domain"},
 		{"active lacks membership in one domain", func(g *GenesisState) {
 			g.Domains[1].Members = []string{g.Domains[1].Admin.String()}
-		}},
+		}, "is not a member of domain"},
 		{"revoked key reused by inactive claim", func(g *GenesisState) {
 			g.RevokedValidatorKeys = []RevokedValidatorKey{{
 				PubKey:          append([]byte(nil), g.Validators[1].PubKey...),
 				OperatorAddr:    g.Validators[1].OperatorAddr,
 				RevokedAtHeight: 1,
 			}}
-		}},
+		}, "revoked validator pubkey is reused by validator"},
 	}
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
 			genesis := validActiveInactiveGenesis()
 			tc.mutate(&genesis)
-			if err := ValidateGenesisState(genesis); err == nil {
+			err := ValidateGenesisState(genesis)
+			if err == nil {
 				t.Fatal("malformed active/inactive genesis was accepted")
+			}
+			if !strings.Contains(err.Error(), tc.wantErr) {
+				t.Fatalf("error = %v, want it to mention %q", err, tc.wantErr)
 			}
 		})
 	}

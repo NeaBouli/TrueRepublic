@@ -18,12 +18,13 @@
   GH-43/GH-45/GH-53/GH-55 prove bounded four-validator failure/restart/catch-up,
   partition-recovery, trusted state-sync, and sanitized backup/restore/export/
   import, compatible binary replacement/rollback, and single-signer identity
-  failover slices. GH-56 locally proves authenticated atomic consensus-key
-  rotation, permanent old-key revocation, separate operator authority, and a
-  stopped old signer; final GitHub CI/merge remain pending. Consensus-breaking
-  migration recovery, automatic ABCI++ evidence-to-slashing wiring, complete
-  inactive-validator export/import, network policy, IBC, load/topology, and
-  independent operations review remain pending;
+  failover slices. GH-56 proves authenticated atomic consensus-key rotation,
+  permanent old-key revocation, separate operator authority, and a stopped old
+  signer. GH-59 wires automatic ABCI++ evidence to slashing, and GH-60 locally
+  proves complete inactive-validator export/import; GH-60 final-head GitHub
+  review, CI, and merge remain pending. Consensus-breaking migration recovery,
+  network policy, IBC, load/topology, and independent operations review remain
+  pending;
   IBC staking/upgrade and
   standard CosmWasm staking/distribution stay explicit stubs.
 - The v0.4 client production bundle is 1.68 MB (309 kB gzip); route-level code

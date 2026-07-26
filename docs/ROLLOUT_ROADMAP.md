@@ -1,6 +1,6 @@
 # TrueRepublic Road to Rollout
 
-Updated: 2026-07-23
+Updated: 2026-07-26
 
 TrueRepublic has a recovered and CI-verified v0.4 engineering foundation. It
 is **not production-ready, mainnet-ready, or approved for real funds or keys**.

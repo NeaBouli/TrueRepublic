@@ -517,11 +517,13 @@ func TestInitGenesisRejectsResurrectedInactiveClaim(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	defer func() {
-		if recover() == nil {
-			t.Fatal("resurrected inactive claim was imported")
-		}
-	}()
 	am2, _, ctx2 := setupModuleForGenesis(t)
-	am2.InitGenesis(ctx2, nil, tampered)
+	func() {
+		defer func() {
+			if recover() == nil {
+				t.Error("resurrected inactive claim was imported")
+			}
+		}()
+		am2.InitGenesis(ctx2, nil, tampered)
+	}()
 }

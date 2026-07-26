@@ -112,9 +112,11 @@
 - [x] GH-60: implement explicit active/inactive validator genesis state and
   preserve custody, all domains, jail, missed-block, power, signing,
   revocation/rotation/infraction, and pending-exit semantics exactly.
-- [ ] GH-60: add malformed-resurrection and revoked-key-reuse regressions plus
-  real process-level export/import evidence; publish only after complete local
-  verification, independent review, and final-head GitHub CI.
+- [x] GH-60: add malformed-resurrection and revoked-key-reuse regressions plus
+  real process-level export/import evidence; complete local verification and
+  independent review.
+- [ ] GH-60: publish the verified implementation and close only after
+  final-head GitHub CI and review pass.
 - [x] GH-7: DEX rounding, slippage, pool accounting, custody, and authorization
   audit completed in GH-10; GH-12 retains genesis/runtime invariants.
 

@@ -981,3 +981,30 @@
   they do not fail the existing High gate.
 - Next: publish the lockfile remediation and require every final-head GitHub
   check and review to refresh before merge.
+
+## 2026-07-26 21:17 EEST - PR #67 review remediation
+
+- Triaged every CodeRabbit finding. Synchronized GH-60 local-complete versus
+  publication-pending records, refreshed the rollout snapshot date, documented
+  the uncached Go command and GH-60 recovery gate, pinned validation-test error
+  reasons, and scoped the panic assertion only around `InitGenesis`.
+- Softened an inaccurate inactive-state comment: stored power zero is itself
+  an explicit non-consensus state and remains valid even for an unjailed,
+  sufficiently staked member.
+- Rejected the suggestion to derive export activity from domain/stake
+  eligibility. The runtime consensus classification is exactly unjailed plus
+  positive stored power; reclassifying malformed positive-power state as
+  inactive would still fail import validation and would hide corruption rather
+  than preserve it exactly.
+- Focused governance tests, docs consistency at 733 cases / 21M PNYX, and diff
+  checks pass. Next: run the complete final-diff Go gate, publish, answer and
+  resolve review threads, then require refreshed GitHub checks before merge.
+
+## 2026-07-26 21:25 EEST - PR #67 final review-diff gate
+
+- All five uncached Go packages pass, followed by Vet, CGO build, complete race
+  and coverage, docs consistency, and diff checks.
+- Coverage is 68.5% root, 92.6% token, 97.0% treasury, 45.3% DEX, and 62.2%
+  governance.
+- No local blocker remains. Next: publish the review remediation, resolve its
+  GitHub threads with evidence, and wait for the refreshed final-head gates.

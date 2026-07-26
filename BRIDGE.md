@@ -999,3 +999,35 @@ Go/Rust/Node security, docs, DeepScan, and CodeRabbit. GH-51 is closed.
   consensus, ledger, validator, wallet-key, deployment, or production action.
 
 ---
+
+## 2026-07-26 21:17 EEST PR #67 review remediation → PASS locally
+
+- **Status:** all four CodeRabbit review threads were triaged. Documentation,
+  reproduction commands, GH-60 local/publication status, expected validation
+  errors, and panic-recovery test scope were corrected.
+- **Preserved invariant:** the request to classify a malformed unjailed,
+  positive-power runtime validator as inactive during export was rejected.
+  Doing so would neither round-trip nor pass explicit inactive validation and
+  would conceal corrupt active state instead of failing closed.
+- **Verification:** `go test ./x/truedemocracy -count=1`, documentation
+  consistency at 733 cases / 21M PNYX, and `git diff --check` PASS.
+- **Kimi contribution:** unchanged from the bounded implementation and
+  independent review recorded above; Sol owns this review remediation,
+  integration, final tests, GitHub replies, and merge decision.
+- **Risk/blocker:** no local blocker. Full final-diff Go gates and refreshed
+  final-head GitHub CI/review remain required before merge.
+
+---
+
+## 2026-07-26 21:25 EEST PR #67 final review-diff gate → PASS
+
+- **Tests:** all five uncached Go package tests, Vet, CGO build, full race and
+  coverage, docs consistency, and diff checks PASS.
+- **Coverage:** root 68.5%, token 92.6%, treasury 97.0%, DEX 45.3%, governance
+  62.2%.
+- **Status:** review remediation is ready to publish. No local code, test,
+  security, or documentation blocker remains.
+- **Next:** commit/push the review fixes, answer and resolve every review
+  thread, then require the refreshed GitHub head to pass before merge.
+
+---

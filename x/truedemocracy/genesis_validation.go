@@ -126,8 +126,9 @@ func ValidateGenesisState(genesis GenesisState) error {
 		} else {
 			// An explicit inactive record is a retained custody claim. It may
 			// be excluded from domain membership or fall below minimum stake,
-			// but it must carry a genuine inactivity reason and stored power
-			// that is either zero or exactly stake-derived.
+			// and its stored power must be either zero or exactly
+			// stake-derived. Unjailed positive power would contradict the
+			// explicit inactive classification.
 			if power < 0 || (power != 0 && power != validator.Stake/rewards.StakeMin) {
 				return fmt.Errorf("validator %q power %d is inconsistent with stake %d", validator.OperatorAddr, power, validator.Stake)
 			}
@@ -157,7 +158,7 @@ func ValidateGenesisState(genesis GenesisState) error {
 			return fmt.Errorf("duplicate revoked validator pubkey %q", key)
 		}
 		if operator, active := pubKeys[key]; active {
-			return fmt.Errorf("revoked validator pubkey is active for %q", operator)
+			return fmt.Errorf("revoked validator pubkey is reused by validator %q", operator)
 		}
 		revokedPubKeys[key] = record
 	}

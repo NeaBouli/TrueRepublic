@@ -26,6 +26,7 @@ The current **v0.4.0 recovery** source of truth records **733 verified cases**.
 ## Reproduction commands
 
 ```bash
+./scripts/go-packages.sh go test -count=1
 CGO_ENABLED=1 ./scripts/go-packages.sh go test -race -cover -count=1 -timeout=600s
 TRUEREPUBLIC_MULTI_VALIDATOR_SMOKE=1 go test . \
   -run '^TestMultiValidatorConsensusRecovery$' -count=1 -timeout=300s -v
@@ -38,11 +39,12 @@ The maintained client is verified with `npm ci`, lint, 8 tests, production
 build, and audit. The CosmWasm workspace is verified with tests, formatting,
 Clippy, build, and audit.
 
-GH-32/GH-41/GH-43/GH-45/GH-53/GH-55/GH-56 add the separately gated multi-validator
-failure/restart/catch-up, partition-recovery, trusted state-sync, sanitized
-backup/restore/export/import, compatible binary replacement/rollback,
-single-signer identity failover, authenticated consensus-key rotation, and
-common-height app-hash tests. They do not replace the remaining
+GH-32/GH-41/GH-43/GH-45/GH-53/GH-55/GH-56/GH-60 add the separately gated
+multi-validator failure/restart/catch-up, partition-recovery, trusted
+state-sync, sanitized backup/restore/export/import, compatible binary
+replacement/rollback, single-signer identity failover, authenticated
+consensus-key rotation, inactive-validator genesis round-trip, and common-height
+app-hash tests. They do not replace the remaining
 consensus-breaking migration, network policy, load, or independent operations
 gates.
 
