@@ -1008,3 +1008,20 @@
   governance.
 - No local blocker remains. Next: publish the review remediation, resolve its
   GitHub threads with evidence, and wait for the refreshed final-head gates.
+
+## 2026-07-26 21:40 EEST - GH-60 closure
+
+- Published final review remediation as `0cad6df`, answered and resolved all
+  four CodeRabbit threads, and preserved fail-closed runtime activity
+  classification rather than masking corrupt state during export.
+- All 12 final-head GitHub checks passed: Go build/vet/race/coverage in 7m14s,
+  combined real multi-validator recovery in 11m55s, Docker restart in 3m33s,
+  maintained-client build, docs, Go/Rust/Node security, DeepScan, and
+  CodeRabbit.
+- The normal merge remained blocked only by the formal second-review branch
+  rule. With explicit owner authorization and Kimi's independent 0 P0 / 0 P1 /
+  0 P2 review recorded, Sol used the scoped admin squash merge. PR #67 merged
+  as `c5a3d38`; GitHub closed GH-60.
+- GH-29, the roadmap, Bridge, audit, security notes, TODO, and project state
+  are synchronized in the closure branch. GH-61 is the next bounded
+  consensus-state task; no deployment or production rollout is approved.
