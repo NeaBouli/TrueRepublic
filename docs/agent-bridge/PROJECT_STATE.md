@@ -1,6 +1,6 @@
 # Project State
 
-Updated: 2026-07-26 17:50 UTC
+Updated: 2026-07-26 08:40 UTC
 
 ## Repository
 
@@ -17,16 +17,14 @@ Updated: 2026-07-26 17:50 UTC
   documentation-only merges.
 - Merged recovery PRs: #9, #15, #16, #17, #18, #19, #22, #23, #24, #27,
   #28, #30, #31, #33, #34, #35, #40, #42, #44, #46, #49, #52, #54, #57,
-  #58, #62, and #65.
-- Current work: GH-60 inactive validator claim round-trip is locally complete
-  and independently reviewed on `feature/GH-60-inactive-validator-genesis`.
-  Explicit active/inactive representation, legacy compatibility, complete
-  domains, exact stake/jail/missed-block/power recovery, fail-closed malformed
-  resurrection, and the real four-process export/import drill pass. Publication,
-  final-head GitHub CI, review, merge, and closure remain pending. GH-59 remains
-  closed through merged
-  PR #65 (`934a042`) with 0 P0 / 0 P1 / 0 P2. GH-61 legacy authority migration
-  remains the next bounded consensus-state task. GH-29 remains open as the
+  #58, #62, #65, and #67.
+- Current work: GH-60 inactive validator claim round-trip is closed through
+  merged PR #67 (`c5a3d38`). Explicit active/inactive representation, legacy
+  compatibility, complete domains, exact stake/jail/missed-block/power
+  recovery, fail-closed malformed resurrection, and the real four-process
+  export/import drill pass locally and on the final GitHub head. GH-61 legacy
+  authority migration remains the next bounded consensus-state task. GH-29
+  remains open as the
   rollout execution tracker. GH-32 and
   PR #33 close its first Phase 1 gate with local and GitHub evidence. GH-39 is
   now merged via PR #40 with green GitHub CI for validator
@@ -55,7 +53,8 @@ Updated: 2026-07-26 17:50 UTC
   state-sync/backup/identity/upgrade process matrix in 9m39s, Docker restart,
   Docs, Go/Rust/Node security scans, and DeepScan. CodeRabbit was rate-limited;
   the recorded independent adversarial review found no P0 and no additional
-  P2. GH-59 is now closed; residual rollout work is bounded by GH-60 and GH-61.
+  P2. GH-59 and GH-60 are closed; residual consensus-state rollout work is
+  bounded by GH-61.
 - GH-59 is closed through merged PR #65 (`934a042`). Final head `313b327`
   passed all 11 GitHub checks: Go build/vet/race/coverage in 7m05s, the combined
   recovery/slashing/rotation/state-sync/backup/identity/upgrade process matrix
@@ -91,9 +90,8 @@ Updated: 2026-07-26 17:50 UTC
 - Recovery worktree: `/Users/gio/Desktop/repos/TrueRepublic-recovery`
 - Legacy local checkout: preserved at `/Users/gio/Desktop/repos/TrueRepublic`
 - GitHub epic: #4
-- Current open GitHub issue set after GH-59 closure: #4 recovery epic, #7
-  audit/review parent, #29 rollout tracker, and bounded follow-ups GH-60 and
-  GH-61.
+- Current open GitHub issue set after GH-60 closure: #4 recovery epic, #7
+  audit/review parent, #29 rollout tracker, and bounded follow-up GH-61.
 
 ## Verified state
 
@@ -109,7 +107,7 @@ Updated: 2026-07-26 17:50 UTC
   maintained-client tests. Four focused legacy-web ZKP regressions pass
   separately and are not included in that authoritative total. The prior 577
   figure is retained only as historical.
-- Current branch count is 726: 692 Go, 26 Rust, and eight maintained-client
+- Current main count is 733: 699 Go, 26 Rust, and eight maintained-client
   tests. The separately gated process harness is counted only after it passes
   explicitly and is not added again to that arithmetic total. The latest
   hardened four-validator run requires new post-rejoin blocks and passed in

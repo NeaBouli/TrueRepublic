@@ -55,12 +55,14 @@ P1, or P2 finding.
 - `./scripts/check-consistency.sh`: PASS at 733 cases and 21,000,000 PNYX.
 - `git diff --check`: PASS.
 
-## Remaining gate
+## Publication result
 
-This is a local merge gate only. GH-60 remains open until the branch is
-published, final-head GitHub checks and review are green, the PR is merged, and
-GH-29 plus the Bridge are synchronized. No production rollout approval is
-claimed.
+PR #67 final head `0cad6df` passed all 12 GitHub checks, including Go
+build/vet/race/coverage in 7m14s, the combined real multi-validator recovery
+matrix in 11m55s, Docker restart in 3m33s, docs, Go/Rust/Node security,
+DeepScan, and CodeRabbit. All four review threads were resolved. PR #67 was
+squash-merged as `c5a3d38`, and GitHub closed GH-60. No production rollout
+approval is claimed.
 
 ## PR #67 security-gate remediation
 

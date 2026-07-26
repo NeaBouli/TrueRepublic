@@ -1031,3 +1031,21 @@ Go/Rust/Node security, docs, DeepScan, and CodeRabbit. GH-51 is closed.
   thread, then require the refreshed GitHub head to pass before merge.
 
 ---
+
+## 2026-07-26 21:40 EEST GH-60 / PR #67 → Done
+
+- **Merge:** final head `0cad6df` passed all 12 GitHub checks and PR #67 was
+  squash-merged to `main` as `c5a3d38`; GitHub closed GH-60.
+- **GitHub evidence:** Go build/vet/race/coverage PASS in 7m14s; combined real
+  multi-validator recovery PASS in 11m55s; Docker restart PASS in 3m33s; docs,
+  Go/Rust/Node security, maintained-client build, DeepScan, and CodeRabbit PASS.
+- **Review:** all four review threads are resolved. Kimi's independent final
+  review recorded 0 P0 / 0 P1 / 0 P2. The admin merge was used only because
+  the owner-approved PR had no second GitHub account available to satisfy the
+  formal approval rule.
+- **Status:** inactive validator claims now round-trip on `main`; Bridge,
+  roadmap, audit, issue, and GH-29 closure evidence are being synchronized.
+  GH-61 is the next bounded consensus-state task. No rollout or deployment is
+  approved.
+
+---
