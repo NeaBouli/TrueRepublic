@@ -1,11 +1,14 @@
 package truedemocracy
 
 import (
+	"strings"
 	"testing"
 
 	"cosmossdk.io/math"
 	"github.com/cosmos/cosmos-sdk/crypto/keys/ed25519"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+
+	rewards "truerepublic/treasury/keeper"
 )
 
 func validDemocracyGenesis() GenesisState {
@@ -182,5 +185,174 @@ func TestGenesisEscrowClaimsIncludesTreasuryAndStake(t *testing.T) {
 	want := math.NewInt(genesis.Validators[0].Stake + 123)
 	if !claims.Equal(want) {
 		t.Fatalf("claims=%s want=%s", claims, want)
+	}
+}
+
+func explicitActiveFlag(active bool) *bool { return &active }
+
+// validActiveInactiveGenesis carries one explicit active multi-domain
+// validator and one explicit inactive retained claim (excluded, jailed).
+func validActiveInactiveGenesis() GenesisState {
+	admin := sdk.AccAddress("genesis-admin")
+	activeOperator := sdk.AccAddress("gh60-active-operator").String()
+	inactiveOperator := sdk.AccAddress("gh60-inactive-operator").String()
+	return GenesisState{
+		Domains: []Domain{
+			{
+				Name: "Test", Admin: admin,
+				Members:  []string{admin.String(), activeOperator},
+				Treasury: sdk.NewCoins(), Issues: []Issue{}, PermissionReg: []string{},
+			},
+			{
+				Name: "Second", Admin: admin,
+				Members:  []string{admin.String(), activeOperator},
+				Treasury: sdk.NewCoins(), Issues: []Issue{}, PermissionReg: []string{},
+			},
+		},
+		Validators: []GenesisValidator{
+			{
+				OperatorAddr: activeOperator,
+				PubKey:       testPubKey("gh60-active"),
+				Stake:        2 * rewards.StakeMin,
+				Domain:       "Test",
+				Domains:      []string{"Test", "Second"},
+				Power:        2,
+				Active:       explicitActiveFlag(true),
+			},
+			{
+				OperatorAddr: inactiveOperator,
+				PubKey:       testPubKey("gh60-inactive"),
+				Stake:        rewards.StakeMin,
+				Active:       explicitActiveFlag(false),
+				Jailed:       true,
+			},
+		},
+	}
+}
+
+func TestValidateGenesisStateAcceptsExplicitActiveAndInactiveClaims(t *testing.T) {
+	if err := ValidateGenesisState(validActiveInactiveGenesis()); err != nil {
+		t.Fatalf("explicit active/inactive genesis rejected: %v", err)
+	}
+
+	admin := sdk.AccAddress("genesis-admin")
+	jailedOperator := sdk.AccAddress("gh60-jailed-operator").String()
+	underStakedOperator := sdk.AccAddress("gh60-under-operator").String()
+	nonMemberOperator := sdk.AccAddress("gh60-nonmember-operator").String()
+	genesis := GenesisState{
+		Domains: []Domain{{
+			Name: "Test", Admin: admin,
+			Members:  []string{admin.String(), jailedOperator},
+			Treasury: sdk.NewCoins(), Issues: []Issue{}, PermissionReg: []string{},
+		}},
+		Validators: []GenesisValidator{
+			{ // under-staked retained claim keeps its exact stake
+				OperatorAddr: underStakedOperator,
+				PubKey:       testPubKey("gh60-under-staked"),
+				Stake:        rewards.StakeMin / 2,
+				Active:       explicitActiveFlag(false),
+				Jailed:       true,
+			},
+			{ // downtime-jailed claim retains stored power and domain
+				OperatorAddr: jailedOperator,
+				PubKey:       testPubKey("gh60-jailed"),
+				Stake:        rewards.StakeMin,
+				Domain:       "Test",
+				Domains:      []string{"Test"},
+				Power:        1,
+				Active:       explicitActiveFlag(false),
+				Jailed:       true,
+				JailedUntil:  600,
+			},
+			{ // excluded from membership but still listing the domain
+				OperatorAddr: nonMemberOperator,
+				PubKey:       testPubKey("gh60-non-member"),
+				Stake:        rewards.StakeMin,
+				Domain:       "Test",
+				Domains:      []string{"Test"},
+				Active:       explicitActiveFlag(false),
+				Jailed:       true,
+			},
+		},
+	}
+	if err := ValidateGenesisState(genesis); err != nil {
+		t.Fatalf("legitimate inactive retained claims rejected: %v", err)
+	}
+}
+
+func TestValidateGenesisStateRejectsMalformedResurrection(t *testing.T) {
+	tests := []struct {
+		name    string
+		mutate  func(*GenesisState)
+		wantErr string
+	}{
+		{"resurrect excluded claim as active", func(g *GenesisState) {
+			g.Validators[1].Active = explicitActiveFlag(true)
+		}, "active flag contradicts its jail or power state"},
+		{"active flag with jail", func(g *GenesisState) {
+			g.Validators[0].Jailed = true
+		}, "active flag contradicts its jail or power state"},
+		{"active flag with zero power", func(g *GenesisState) {
+			g.Validators[0].Power = 0
+		}, "active flag contradicts its jail or power state"},
+		{"active power inconsistent with stake", func(g *GenesisState) {
+			g.Validators[0].Power = 5
+		}, "power 5 is inconsistent with stake"},
+		{"active flag with under-minimum stake", func(g *GenesisState) {
+			g.Validators[0].Stake = rewards.StakeMin / 2
+		}, "power 2 is inconsistent with stake"},
+		{"inactive flag contradicts active state", func(g *GenesisState) {
+			g.Validators[0].Active = explicitActiveFlag(false)
+		}, "inactive flag contradicts its active state"},
+		{"inactive unjailed positive power without domains", func(g *GenesisState) {
+			g.Validators[1].Jailed = false
+			g.Validators[1].Power = 1
+		}, "inactive flag contradicts its active state"},
+		{"inactive power inconsistent with stake", func(g *GenesisState) {
+			g.Validators[1].Power = 7
+		}, "power 7 is inconsistent with stake"},
+		{"legacy record mixed with domain list", func(g *GenesisState) {
+			g.Validators[0].Active = nil
+		}, "mixes legacy and explicit active/inactive fields"},
+		{"legacy record mixed with explicit power", func(g *GenesisState) {
+			g.Validators[1].Active = nil
+			g.Validators[1].Power = 1
+		}, "mixes legacy and explicit active/inactive fields"},
+		{"primary domain contradicts domain list", func(g *GenesisState) {
+			g.Validators[0].Domain = "Second"
+		}, "primary domain contradicts its domain list"},
+		{"domain list without primary domain", func(g *GenesisState) {
+			g.Validators[0].Domain = ""
+		}, "primary domain contradicts its domain list"},
+		{"duplicate domain in list", func(g *GenesisState) {
+			g.Validators[0].Domains = []string{"Test", "Test"}
+		}, "lists duplicate domain"},
+		{"inactive references missing domain", func(g *GenesisState) {
+			g.Validators[1].Domain = "missing"
+			g.Validators[1].Domains = []string{"missing"}
+		}, "references missing domain"},
+		{"active lacks membership in one domain", func(g *GenesisState) {
+			g.Domains[1].Members = []string{g.Domains[1].Admin.String()}
+		}, "is not a member of domain"},
+		{"revoked key reused by inactive claim", func(g *GenesisState) {
+			g.RevokedValidatorKeys = []RevokedValidatorKey{{
+				PubKey:          append([]byte(nil), g.Validators[1].PubKey...),
+				OperatorAddr:    g.Validators[1].OperatorAddr,
+				RevokedAtHeight: 1,
+			}}
+		}, "revoked validator pubkey is reused by validator"},
+	}
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
+			genesis := validActiveInactiveGenesis()
+			tc.mutate(&genesis)
+			err := ValidateGenesisState(genesis)
+			if err == nil {
+				t.Fatal("malformed active/inactive genesis was accepted")
+			}
+			if !strings.Contains(err.Error(), tc.wantErr) {
+				t.Fatalf("error = %v, want it to mention %q", err, tc.wantErr)
+			}
+		})
 	}
 }

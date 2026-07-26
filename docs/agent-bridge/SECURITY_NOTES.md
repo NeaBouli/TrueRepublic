@@ -18,12 +18,13 @@
   GH-43/GH-45/GH-53/GH-55 prove bounded four-validator failure/restart/catch-up,
   partition-recovery, trusted state-sync, and sanitized backup/restore/export/
   import, compatible binary replacement/rollback, and single-signer identity
-  failover slices. GH-56 locally proves authenticated atomic consensus-key
-  rotation, permanent old-key revocation, separate operator authority, and a
-  stopped old signer; final GitHub CI/merge remain pending. Consensus-breaking
-  migration recovery, automatic ABCI++ evidence-to-slashing wiring, complete
-  inactive-validator export/import, network policy, IBC, load/topology, and
-  independent operations review remain pending;
+  failover slices. GH-56 proves authenticated atomic consensus-key rotation,
+  permanent old-key revocation, separate operator authority, and a stopped old
+  signer. GH-59 wires automatic ABCI++ evidence to slashing, and GH-60 locally
+  proves complete inactive-validator export/import; GH-60 final-head GitHub
+  review, CI, and merge remain pending. Consensus-breaking migration recovery,
+  network policy, IBC, load/topology, and independent operations review remain
+  pending;
   IBC staking/upgrade and
   standard CosmWasm staking/distribution stay explicit stubs.
 - The v0.4 client production bundle is 1.68 MB (309 kB gzip); route-level code
@@ -76,6 +77,27 @@
 - Modernized workflows use read-only permissions and do not persist checkout
   credentials. Maintained-client jobs stay on Node 22; legacy jobs are
   informational and do not convert vulnerable clients into approved targets.
+
+## GH-60 inactive validator genesis boundary
+
+- New exports explicitly distinguish active consensus validators from inactive
+  retained custody claims while preserving complete domains and stored power.
+- An active claim must be unjailed, carry exact positive stake-derived power,
+  and belong to every listed domain. An inactive claim with positive stored
+  power must be jailed; malformed flag, jail, power, or domain combinations
+  fail before state mutation.
+- Revoked consensus keys remain unusable by active and inactive claims, and
+  existing rotation/history/signing/infraction/pending-exit relations remain
+  mandatory.
+- The real four-process recovery drill proves exact bank-backed export/import
+  of downtime- and equivocation-disabled validators. This closes GH-60 locally,
+  not the broader production rollout or independent operations review.
+- PR #67's first Security Scan surfaced new High advisories in PostCSS and
+  brace-expansion. Patched PostCSS `8.5.23`, brace-expansion `5.0.8`, and a
+  compatible minimatch `10.2.5` transitive path pass clean install, lint, tests,
+  build, and the unchanged High-severity npm audit gate. Two Moderate React
+  Router advisories remain below that gate pending a dedicated breaking v7
+  migration review.
 
 ## Legacy client blockers
 

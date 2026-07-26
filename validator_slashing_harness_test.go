@@ -9,6 +9,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"slices"
 	"testing"
 	"time"
 
@@ -17,6 +18,7 @@ import (
 	cmtproto "github.com/cometbft/cometbft/proto/tendermint/types"
 	rpchttp "github.com/cometbft/cometbft/rpc/client/http"
 	cmttypes "github.com/cometbft/cometbft/types"
+	sdk "github.com/cosmos/cosmos-sdk/types"
 
 	"truerepublic/token"
 	"truerepublic/x/truedemocracy"
@@ -86,7 +88,10 @@ func TestMultiValidatorConsensusSlashing(t *testing.T) {
 	}
 	startHeight := smokeHeight(t, validators[0])
 	livenessHeight := startHeight + truedemocracy.SignedBlocksWindow + 3
-	waitForSmokeHeight(t, validators[:3], livenessHeight, 120*time.Second)
+	// This phase deliberately advances the full liveness window. Leave enough
+	// headroom for loaded CI hosts where consensus rounds exceed the tuned
+	// sub-second happy path.
+	waitForSmokeHeight(t, validators[:3], livenessHeight, 300*time.Second)
 
 	downtimeValidator := querySmokeApplicationValidator(t, ctx, binary, validators[0], downtimeTarget.operatorAddr)
 	if !downtimeValidator.Jailed || downtimeValidator.Power != 0 {
@@ -131,6 +136,8 @@ func TestMultiValidatorConsensusSlashing(t *testing.T) {
 	convergenceHeight := smokeHeight(t, validators[0]) + 2
 	waitForSmokeHeight(t, validators, convergenceHeight, 120*time.Second)
 	assertCommonAppHash(t, validators, convergenceHeight)
+	downtimeValidator = querySmokeApplicationValidator(t, ctx, binary, validators[0], downtimeTarget.operatorAddr)
+	equivocationValidator = querySmokeApplicationValidator(t, ctx, binary, validators[0], equivocationTarget.operatorAddr)
 	for _, validator := range validators {
 		if err := validator.stop(true); err != nil {
 			t.Fatalf("stop %s before export: %v", validator.name, err)
@@ -151,6 +158,64 @@ func TestMultiValidatorConsensusSlashing(t *testing.T) {
 	}
 	if len(democracyGenesis.LastCommitCursor.Hash) != sha256.Size {
 		t.Fatal("exported slashing state lacks the replay cursor")
+	}
+	assertExportedInactiveValidator(t, democracyGenesis, downtimeValidator)
+	assertExportedInactiveValidator(t, democracyGenesis, equivocationValidator)
+
+	recoveredApp := newGenesisTestApp(t)
+	if err := initGenesisApp(recoveredApp, exported.AppState); err != nil {
+		t.Fatalf("re-import slashing export: %v", err)
+	}
+	recoveredCtx := recoveredApp.NewContext(false)
+	assertRecoveredInactiveValidator(t, recoveredApp.tdKeeper, recoveredCtx, downtimeValidator)
+	assertRecoveredInactiveValidator(t, recoveredApp.tdKeeper, recoveredCtx, equivocationValidator)
+}
+
+func assertExportedInactiveValidator(
+	t *testing.T,
+	genesis truedemocracy.GenesisState,
+	want truedemocracy.Validator,
+) {
+	t.Helper()
+	for _, validator := range genesis.Validators {
+		if validator.OperatorAddr != want.OperatorAddr {
+			continue
+		}
+		if validator.Active == nil || *validator.Active {
+			t.Fatalf("exported validator %q active flag = %v, want explicit inactive", want.OperatorAddr, validator.Active)
+		}
+		if validator.Stake != want.Stake.AmountOf(truedemocracy.PNYXDenom).Int64() ||
+			validator.Power != want.Power ||
+			validator.Jailed != want.Jailed ||
+			validator.JailedUntil != want.JailedUntil ||
+			validator.MissedBlocks != want.MissedBlocks ||
+			!slices.Equal(validator.Domains, want.Domains) {
+			t.Fatalf("exported inactive validator %q drifted: got %+v want %+v", want.OperatorAddr, validator, want)
+		}
+		return
+	}
+	t.Fatalf("export omitted inactive validator %q", want.OperatorAddr)
+}
+
+func assertRecoveredInactiveValidator(
+	t *testing.T,
+	keeper truedemocracy.Keeper,
+	ctx sdk.Context,
+	want truedemocracy.Validator,
+) {
+	t.Helper()
+	validator, found := keeper.GetValidator(ctx, want.OperatorAddr)
+	if !found {
+		t.Fatalf("re-import omitted inactive validator %q", want.OperatorAddr)
+	}
+	if !validator.Stake.Equal(want.Stake) ||
+		!bytes.Equal(validator.PubKey, want.PubKey) ||
+		validator.Power != want.Power ||
+		validator.Jailed != want.Jailed ||
+		validator.JailedUntil != want.JailedUntil ||
+		validator.MissedBlocks != want.MissedBlocks ||
+		!slices.Equal(validator.Domains, want.Domains) {
+		t.Fatalf("re-imported inactive validator %q drifted: got %+v want %+v", want.OperatorAddr, validator, want)
 	}
 }
 

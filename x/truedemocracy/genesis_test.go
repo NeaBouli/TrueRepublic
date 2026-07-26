@@ -14,6 +14,8 @@ import (
 	dbm "github.com/cosmos/cosmos-db"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+
+	rewards "truerepublic/treasury/keeper"
 )
 
 // setupModuleForGenesis creates a fresh AppModule, Keeper, and sdk.Context for genesis tests.
@@ -286,4 +288,242 @@ func TestGenesisRoundTrip(t *testing.T) {
 	if err != nil {
 		t.Fatalf("DeserializeVerifyingKey failed after round-trip: %v", err)
 	}
+}
+
+func TestDefaultGenesisStateValidates(t *testing.T) {
+	if err := ValidateGenesisState(DefaultGenesisState()); err != nil {
+		t.Fatalf("default genesis rejected: %v", err)
+	}
+}
+
+func TestGenesisRoundTripPreservesMultiDomainActiveValidator(t *testing.T) {
+	am1, k1, ctx1 := setupModuleForGenesis(t)
+
+	admin := sdk.AccAddress("admin-md")
+	operator := sdk.AccAddress("operator-md").String()
+	k1.CreateDomain(ctx1, "DomainA", admin, sdk.NewCoins(sdk.NewInt64Coin(PNYXDenom, 500_000*PNYXUnit)))
+	k1.CreateDomain(ctx1, "DomainB", admin, sdk.NewCoins(sdk.NewInt64Coin(PNYXDenom, 500_000*PNYXUnit)))
+	if err := k1.AddMember(ctx1, "DomainA", operator, admin); err != nil {
+		t.Fatal(err)
+	}
+	if err := k1.AddMember(ctx1, "DomainB", operator, admin); err != nil {
+		t.Fatal(err)
+	}
+	pubKey := testPubKey("gh60-multidomain")
+	stake := sdk.NewCoins(sdk.NewInt64Coin(PNYXDenom, 2*rewards.StakeMin))
+	if err := k1.RegisterValidator(ctx1, operator, pubKey, stake, "DomainA"); err != nil {
+		t.Fatalf("RegisterValidator failed: %v", err)
+	}
+	validator, found := k1.GetValidator(ctx1, operator)
+	if !found {
+		t.Fatal("validator missing after registration")
+	}
+	validator.Domains = []string{"DomainA", "DomainB"}
+	k1.SetValidator(ctx1, validator)
+
+	exported := am1.ExportGenesis(ctx1, nil)
+	var genesis GenesisState
+	if err := json.Unmarshal(exported, &genesis); err != nil {
+		t.Fatalf("unmarshal failed: %v", err)
+	}
+	if len(genesis.Validators) != 1 {
+		t.Fatalf("expected 1 validator, got %d", len(genesis.Validators))
+	}
+	gv := genesis.Validators[0]
+	if gv.Domain != "DomainA" || len(gv.Domains) != 2 || gv.Domains[0] != "DomainA" || gv.Domains[1] != "DomainB" {
+		t.Fatalf("export flattened multi-domain state: domain=%q domains=%v", gv.Domain, gv.Domains)
+	}
+	if gv.Active == nil || !*gv.Active {
+		t.Fatal("active validator was not classified active")
+	}
+	if gv.Power != 2 {
+		t.Fatalf("exported power = %d, want 2", gv.Power)
+	}
+
+	am2, k2, ctx2 := setupModuleForGenesis(t)
+	updates := am2.InitGenesis(ctx2, nil, exported)
+	if len(updates) != 1 || updates[0].Power != 2 {
+		t.Fatalf("init updates = %v, want one power-2 update", updates)
+	}
+	restored, found := k2.GetValidator(ctx2, operator)
+	if !found {
+		t.Fatal("validator should exist after round-trip")
+	}
+	if len(restored.Domains) != 2 || restored.Domains[0] != "DomainA" || restored.Domains[1] != "DomainB" {
+		t.Fatalf("restored domains = %v, want [DomainA DomainB]", restored.Domains)
+	}
+	if restored.Power != 2 || restored.Jailed ||
+		restored.Stake.AmountOf(PNYXDenom).Int64() != 2*rewards.StakeMin {
+		t.Fatalf("restored validator drifted: %+v", restored)
+	}
+}
+
+func TestGenesisRoundTripRetainsInactiveClaimsExactly(t *testing.T) {
+	am1, k1, ctx1 := setupModuleForGenesis(t)
+
+	admin := sdk.AccAddress("admin-ia")
+	k1.CreateDomain(ctx1, "RetainDomain", admin, sdk.NewCoins(sdk.NewInt64Coin(PNYXDenom, 500_000*PNYXUnit)))
+	operators := []string{
+		sdk.AccAddress("operator-under").String(),
+		sdk.AccAddress("operator-excluded").String(),
+		sdk.AccAddress("operator-jailed").String(),
+	}
+	for i, operator := range operators {
+		if err := k1.AddMember(ctx1, "RetainDomain", operator, admin); err != nil {
+			t.Fatal(err)
+		}
+		stake := sdk.NewCoins(sdk.NewInt64Coin(PNYXDenom, rewards.StakeMin))
+		if err := k1.RegisterValidator(ctx1, operator, testPubKey("gh60-inactive-"+string(rune('a'+i))), stake, "RetainDomain"); err != nil {
+			t.Fatalf("RegisterValidator failed: %v", err)
+		}
+	}
+
+	// Under-staked claim: slashed below minimum, disabled, stake retained.
+	under, _ := k1.GetValidator(ctx1, operators[0])
+	under.Stake = sdk.NewCoins(sdk.NewInt64Coin(PNYXDenom, rewards.StakeMin/2))
+	under.Jailed = true
+	under.Power = 0
+	k1.SetValidator(ctx1, under)
+
+	// Excluded claim: no domain membership remains, custody retained.
+	excluded, _ := k1.GetValidator(ctx1, operators[1])
+	excluded.Domains = nil
+	excluded.Jailed = true
+	excluded.Power = 0
+	k1.SetValidator(ctx1, excluded)
+
+	// Downtime-jailed claim: domain and stored power retained until unjail.
+	jailed, _ := k1.GetValidator(ctx1, operators[2])
+	jailed.Jailed = true
+	jailed.JailedUntil = 1_700_000_600
+	jailed.MissedBlocks = 7
+	k1.SetValidator(ctx1, jailed)
+
+	exported := am1.ExportGenesis(ctx1, nil)
+	var genesis GenesisState
+	if err := json.Unmarshal(exported, &genesis); err != nil {
+		t.Fatalf("unmarshal failed: %v", err)
+	}
+	if len(genesis.Validators) != 3 {
+		t.Fatalf("expected 3 validators, got %d", len(genesis.Validators))
+	}
+	for _, gv := range genesis.Validators {
+		if gv.Active == nil || *gv.Active {
+			t.Fatalf("inactive claim %q was classified active", gv.OperatorAddr)
+		}
+	}
+
+	am2, k2, ctx2 := setupModuleForGenesis(t)
+	updates := am2.InitGenesis(ctx2, nil, exported)
+	if len(updates) != 0 {
+		t.Fatalf("inactive claims emitted consensus updates: %v", updates)
+	}
+
+	restoredUnder, found := k2.GetValidator(ctx2, operators[0])
+	if !found || restoredUnder.Stake.AmountOf(PNYXDenom).Int64() != rewards.StakeMin/2 ||
+		!restoredUnder.Jailed || restoredUnder.Power != 0 ||
+		len(restoredUnder.Domains) != 1 || restoredUnder.Domains[0] != "RetainDomain" {
+		t.Fatalf("under-staked claim drifted: %+v", restoredUnder)
+	}
+	restoredExcluded, found := k2.GetValidator(ctx2, operators[1])
+	if !found || restoredExcluded.Stake.AmountOf(PNYXDenom).Int64() != rewards.StakeMin ||
+		!restoredExcluded.Jailed || restoredExcluded.Power != 0 || len(restoredExcluded.Domains) != 0 {
+		t.Fatalf("excluded claim drifted: %+v", restoredExcluded)
+	}
+	restoredJailed, found := k2.GetValidator(ctx2, operators[2])
+	if !found || !restoredJailed.Jailed || restoredJailed.JailedUntil != 1_700_000_600 ||
+		restoredJailed.MissedBlocks != 7 || restoredJailed.Power != 1 ||
+		len(restoredJailed.Domains) != 1 || restoredJailed.Domains[0] != "RetainDomain" {
+		t.Fatalf("jailed claim drifted: %+v", restoredJailed)
+	}
+}
+
+func TestInitGenesisAcceptsLegacyValidatorRecord(t *testing.T) {
+	admin := sdk.AccAddress("legacy-admin")
+	operator := sdk.AccAddress("legacy-operator").String()
+	legacy := GenesisState{
+		Domains: []Domain{{
+			Name: "Legacy", Admin: admin,
+			Members:  []string{admin.String(), operator},
+			Treasury: sdk.NewCoins(), Issues: []Issue{}, PermissionReg: []string{},
+		}},
+		Validators: []GenesisValidator{{
+			OperatorAddr: operator,
+			PubKey:       testPubKey("gh60-legacy"),
+			Stake:        rewards.StakeMin,
+			Domain:       "Legacy",
+		}},
+	}
+	bz, err := json.Marshal(legacy)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	// The legacy wire format must not grow GH-60 keys.
+	var wire struct {
+		Validators []map[string]json.RawMessage `json:"validators"`
+	}
+	if err := json.Unmarshal(bz, &wire); err != nil {
+		t.Fatal(err)
+	}
+	for _, key := range []string{"active", "domains", "power"} {
+		if _, present := wire.Validators[0][key]; present {
+			t.Fatalf("legacy record unexpectedly carries %q", key)
+		}
+	}
+
+	am, k, ctx := setupModuleForGenesis(t)
+	updates := am.InitGenesis(ctx, nil, bz)
+	if len(updates) != 1 || updates[0].Power != 1 {
+		t.Fatalf("legacy init updates = %v, want one power-1 update", updates)
+	}
+	restored, found := k.GetValidator(ctx, operator)
+	if !found {
+		t.Fatal("legacy validator missing after init")
+	}
+	if len(restored.Domains) != 1 || restored.Domains[0] != "Legacy" || restored.Power != 1 || restored.Jailed {
+		t.Fatalf("legacy validator restored incorrectly: %+v", restored)
+	}
+}
+
+func TestInitGenesisRejectsResurrectedInactiveClaim(t *testing.T) {
+	am1, k1, ctx1 := setupModuleForGenesis(t)
+
+	admin := sdk.AccAddress("admin-rs")
+	operator := sdk.AccAddress("operator-rs").String()
+	k1.CreateDomain(ctx1, "ResurrectDomain", admin, sdk.NewCoins(sdk.NewInt64Coin(PNYXDenom, 500_000*PNYXUnit)))
+	if err := k1.AddMember(ctx1, "ResurrectDomain", operator, admin); err != nil {
+		t.Fatal(err)
+	}
+	stake := sdk.NewCoins(sdk.NewInt64Coin(PNYXDenom, rewards.StakeMin))
+	if err := k1.RegisterValidator(ctx1, operator, testPubKey("gh60-resurrect"), stake, "ResurrectDomain"); err != nil {
+		t.Fatalf("RegisterValidator failed: %v", err)
+	}
+	validator, _ := k1.GetValidator(ctx1, operator)
+	validator.Domains = nil
+	validator.Jailed = true
+	validator.Power = 0
+	k1.SetValidator(ctx1, validator)
+
+	exported := am1.ExportGenesis(ctx1, nil)
+	var genesis GenesisState
+	if err := json.Unmarshal(exported, &genesis); err != nil {
+		t.Fatal(err)
+	}
+	active := true
+	genesis.Validators[0].Active = &active
+	tampered, err := json.Marshal(genesis)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	am2, _, ctx2 := setupModuleForGenesis(t)
+	func() {
+		defer func() {
+			if recover() == nil {
+				t.Error("resurrected inactive claim was imported")
+			}
+		}()
+		am2.InitGenesis(ctx2, nil, tampered)
+	}()
 }

@@ -1,6 +1,6 @@
 # Project State
 
-Updated: 2026-07-23 21:50 UTC
+Updated: 2026-07-26 17:50 UTC
 
 ## Repository
 
@@ -18,12 +18,16 @@ Updated: 2026-07-23 21:50 UTC
 - Merged recovery PRs: #9, #15, #16, #17, #18, #19, #22, #23, #24, #27,
   #28, #30, #31, #33, #34, #35, #40, #42, #44, #46, #49, #52, #54, #57,
   #58, #62, and #65.
-- Current work: GH-59 ABCI++ validator slashing is closed through merged PR #65
-  (`934a042`). The independent merge gate records 0 P0 / 0 P1 / 0 P2 in
-  `GH59_AUDIT.md`, and all 11 final-head GitHub checks passed. GH-60 inactive
-  validator claim round-trip and GH-61 legacy authority migration are the next
-  bounded consensus-state tasks. GH-29 remains open as the rollout execution
-  tracker. GH-32 and
+- Current work: GH-60 inactive validator claim round-trip is locally complete
+  and independently reviewed on `feature/GH-60-inactive-validator-genesis`.
+  Explicit active/inactive representation, legacy compatibility, complete
+  domains, exact stake/jail/missed-block/power recovery, fail-closed malformed
+  resurrection, and the real four-process export/import drill pass. Publication,
+  final-head GitHub CI, review, merge, and closure remain pending. GH-59 remains
+  closed through merged
+  PR #65 (`934a042`) with 0 P0 / 0 P1 / 0 P2. GH-61 legacy authority migration
+  remains the next bounded consensus-state task. GH-29 remains open as the
+  rollout execution tracker. GH-32 and
   PR #33 close its first Phase 1 gate with local and GitHub evidence. GH-39 is
   now merged via PR #40 with green GitHub CI for validator
   join/replacement/restart-catch-up evidence plus Keeper/ABCI power-zero leave
