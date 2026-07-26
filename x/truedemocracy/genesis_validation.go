@@ -70,7 +70,7 @@ func ValidateGenesisState(genesis GenesisState) error {
 		if operator, exists := pubKeys[pubKey]; exists {
 			return fmt.Errorf("duplicate validator pubkey for %q and %q", operator, validator.OperatorAddr)
 		}
-		if validator.Stake <= 0 || (!validator.Jailed && validator.Stake < rewards.StakeMin) {
+		if validator.Stake <= 0 {
 			return fmt.Errorf("validator %q stake %d is below minimum %d", validator.OperatorAddr, validator.Stake, rewards.StakeMin)
 		}
 		if validator.JailedUntil < 0 || validator.MissedBlocks < 0 ||
@@ -78,12 +78,62 @@ func ValidateGenesisState(genesis GenesisState) error {
 			(!validator.Jailed && validator.JailedUntil != 0) {
 			return fmt.Errorf("validator %q jail or liveness state is invalid", validator.OperatorAddr)
 		}
-		domain, found := domains[validator.Domain]
-		if !found {
-			return fmt.Errorf("validator %q references missing domain %q", validator.OperatorAddr, validator.Domain)
+		validatorDomains, power, active, err := resolveGenesisValidator(validator)
+		if err != nil {
+			return err
 		}
-		if !containsString(domain.Members, validator.OperatorAddr) {
-			return fmt.Errorf("validator %q is not a member of domain %q", validator.OperatorAddr, validator.Domain)
+		seenDomains := make(map[string]struct{}, len(validatorDomains))
+		for _, domainName := range validatorDomains {
+			if _, exists := seenDomains[domainName]; exists {
+				return fmt.Errorf("validator %q lists duplicate domain %q", validator.OperatorAddr, domainName)
+			}
+			seenDomains[domainName] = struct{}{}
+			if _, found := domains[domainName]; !found {
+				return fmt.Errorf("validator %q references missing domain %q", validator.OperatorAddr, domainName)
+			}
+		}
+		if validator.Active == nil {
+			// Legacy records keep their original strict rules: every record
+			// references exactly one domain, holds membership, and an unjailed
+			// record meets the minimum stake.
+			if !validator.Jailed && validator.Stake < rewards.StakeMin {
+				return fmt.Errorf("validator %q stake %d is below minimum %d", validator.OperatorAddr, validator.Stake, rewards.StakeMin)
+			}
+			if validator.Domain == "" {
+				return fmt.Errorf("validator %q references missing domain %q", validator.OperatorAddr, validator.Domain)
+			}
+			if !containsString(domains[validator.Domain].Members, validator.OperatorAddr) {
+				return fmt.Errorf("validator %q is not a member of domain %q", validator.OperatorAddr, validator.Domain)
+			}
+		} else if active {
+			// An explicit active record retains the strict rules: positive
+			// stake-derived power, no jail state, and membership in every
+			// listed domain.
+			if validator.Jailed || power <= 0 {
+				return fmt.Errorf("validator %q active flag contradicts its jail or power state", validator.OperatorAddr)
+			}
+			if power != validator.Stake/rewards.StakeMin {
+				return fmt.Errorf("validator %q power %d is inconsistent with stake %d", validator.OperatorAddr, power, validator.Stake)
+			}
+			if len(validatorDomains) == 0 {
+				return fmt.Errorf("validator %q active flag requires at least one domain", validator.OperatorAddr)
+			}
+			for _, domainName := range validatorDomains {
+				if !containsString(domains[domainName].Members, validator.OperatorAddr) {
+					return fmt.Errorf("validator %q is not a member of domain %q", validator.OperatorAddr, domainName)
+				}
+			}
+		} else {
+			// An explicit inactive record is a retained custody claim. It may
+			// be excluded from domain membership or fall below minimum stake,
+			// but it must carry a genuine inactivity reason and stored power
+			// that is either zero or exactly stake-derived.
+			if power < 0 || (power != 0 && power != validator.Stake/rewards.StakeMin) {
+				return fmt.Errorf("validator %q power %d is inconsistent with stake %d", validator.OperatorAddr, power, validator.Stake)
+			}
+			if !validator.Jailed && power > 0 {
+				return fmt.Errorf("validator %q inactive flag contradicts its active state", validator.OperatorAddr)
+			}
 		}
 		pubKeys[pubKey] = validator.OperatorAddr
 	}
@@ -401,6 +451,33 @@ func ValidateGenesisState(genesis GenesisState) error {
 		}
 	}
 	return nil
+}
+
+// resolveGenesisValidator collapses a GenesisValidator into its canonical
+// runtime view: the complete domain list, the stored consensus power, and the
+// active/inactive classification. A record without an explicit Active flag is
+// a legacy pre-GH-60 record: it must not carry any GH-60 field, and its
+// domains, power, and activity are derived exactly as the original layout
+// derived them.
+func resolveGenesisValidator(validator GenesisValidator) (domains []string, power int64, active bool, err error) {
+	if validator.Active == nil {
+		if validator.Power != 0 || validator.Domains != nil {
+			return nil, 0, false, fmt.Errorf("validator %q mixes legacy and explicit active/inactive fields", validator.OperatorAddr)
+		}
+		if validator.Domain != "" {
+			domains = []string{validator.Domain}
+		}
+		power = validator.Stake / rewards.StakeMin
+		return domains, power, !validator.Jailed && power > 0, nil
+	}
+	if (len(validator.Domains) == 0) != (validator.Domain == "") {
+		return nil, 0, false, fmt.Errorf("validator %q primary domain contradicts its domain list", validator.OperatorAddr)
+	}
+	if len(validator.Domains) > 0 && validator.Domains[0] != validator.Domain {
+		return nil, 0, false, fmt.Errorf("validator %q primary domain contradicts its domain list", validator.OperatorAddr)
+	}
+	domains = append([]string(nil), validator.Domains...)
+	return domains, validator.Power, *validator.Active, nil
 }
 
 // GenesisEscrowClaims returns all PNYX treasury and validator stake claims.

@@ -14,7 +14,7 @@ parent recovery record remains
 
 - The ordered recovery merge chain is on `main`.
 - The maximum supply is fixed at 21,000,000 PNYX.
-- The source of truth records 726 recovery-verified tests: 692 Go, 26 Rust,
+- The source of truth records 733 recovery-verified tests: 699 Go, 26 Rust,
   and 8 maintained-client tests.
 - Ledger, escrow, issuance, DEX custody, genesis, runtime invariants, ZKP
   statement binding, node persistence, and the safe operator-init boundary

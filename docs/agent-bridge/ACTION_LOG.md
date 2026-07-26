@@ -918,3 +918,48 @@
 - Squash-merged PR #65 as `934a042017e860852e945f1f82ca2da571fcff86`.
   GitHub closed GH-59. GH-60 and GH-61 remain the bounded consensus-state
   follow-ups under the still-open GH-29 rollout tracker.
+
+## 2026-07-26 19:40 EEST - GH-60 inactive validator genesis start
+
+- Reconstructed the task from clean `origin/main` at `996ae05`, GH-60, the
+  global and local rules, and the complete current Bridge state. GH-59 remains
+  closed and is not being repeated.
+- GH-60 requires exact retained inactive validator state across export/import:
+  custody, complete domain membership, jail, missed blocks, power semantics,
+  rotations, revocations, signing/infraction state, pending exits, ledger
+  backing, and cap parity. Resurrection and historical-key reuse must fail
+  closed.
+- Created `feature/GH-60-inactive-validator-genesis`; no unrelated local user
+  changes were present.
+- Adopted the Sol/Kimi role split. Kimi receives one bounded, secret-free local
+  implementation slice; Sol retains architecture, security, integration,
+  external writes, complete testing, review, PR/merge, and Bridge ownership.
+- Verification has not run yet for GH-60. Next: inspect exact genesis paths,
+  start the Kimi slice, review its diff, add remaining integration/process
+  evidence, and run the complete relevant gate chain.
+
+## 2026-07-26 20:50 EEST - GH-60 local merge gate
+
+- Kimi K3 implemented the bounded genesis core: new exports explicitly carry
+  active/inactive classification, all domains, and stored power while valid
+  legacy records keep their previous single-domain, stake-derived semantics.
+- Sol reviewed every changed line and added process-level recovery to the real
+  four-validator slashing harness. The drill proves exact inactive export and
+  re-import after downtime and double-sign penalties, with ledger parity and
+  no stake/domain/jail/liveness/power drift. PASS in 441.52s.
+- The first real drill exposed only an existing harness-timeout flake: the
+  loaded host could not advance the 100-block liveness window within 120s. The
+  liveness phase now has 300s headroom; the repeated full drill passed.
+- Kimi's independent read-only review found one P2 fail-closed gap: an explicit
+  inactive claim could be unjailed with positive power when its domains were
+  empty. Sol now rejects every inactive unjailed positive-power record and
+  added a dedicated regression. The refreshed review reports 0 P0 / 0 P1 /
+  0 P2.
+- Final exact local CI chain passes: package selector; all five Go packages;
+  build; vet; race/coverage (68.5% root, 62.2% truedemocracy); docs consistency
+  at 733 cases and 21,000,000 PNYX; and `git diff --check`.
+- Added `GH60_AUDIT.md`; updated current Bridge/project/TODO state and public
+  recovery totals from 726 to 733 (699 Go, 26 Rust, eight maintained-client).
+- GH-60 remains open. Next: publish the branch, open/update the PR and GH-29,
+  require final-head GitHub CI/review, remediate any finding, then merge and
+  record closure. No production rollout approval is claimed.

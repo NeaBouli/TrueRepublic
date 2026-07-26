@@ -150,16 +150,21 @@ func (am AppModule) InitGenesis(ctx sdk.Context, cdc codec.JSONCodec, data json.
 		am.keeper.restoreRevokedValidatorKey(ctx, record)
 	}
 
-	// Register genesis validators and build initial validator set.
+	// Register genesis validators and build initial validator set. Only
+	// explicitly or legacy-derived active records receive consensus power;
+	// retained inactive claims are restored exactly as exported.
 	var updates []abci.ValidatorUpdate
 	for _, gv := range genesisState.Validators {
+		domains, power, active, err := resolveGenesisValidator(gv)
+		if err != nil {
+			panic(err)
+		}
 		stake := sdk.NewCoins(sdk.NewInt64Coin(PNYXDenom, gv.Stake))
-		power := gv.Stake / rewards.StakeMin
 		validator := Validator{
 			OperatorAddr: gv.OperatorAddr,
 			PubKey:       append([]byte(nil), gv.PubKey...),
 			Stake:        stake,
-			Domains:      []string{gv.Domain},
+			Domains:      domains,
 			Power:        power,
 			Jailed:       gv.Jailed,
 			JailedUntil:  gv.JailedUntil,
@@ -169,7 +174,7 @@ func (am AppModule) InitGenesis(ctx sdk.Context, cdc codec.JSONCodec, data json.
 		store.Set(valPubKeyKey(gv.PubKey), []byte(gv.OperatorAddr))
 		store.Set(consensusAuthorityIndexKey(consensusKeyDerivedOperator(gv.PubKey)), []byte(gv.OperatorAddr))
 		am.keeper.registerConsensusKeyRecord(ctx, gv.PubKey, gv.OperatorAddr, initialConsensusActivationHeight(ctx))
-		if !gv.Jailed && power > 0 {
+		if active {
 			pk := cryptoproto.PublicKey{
 				Sum: &cryptoproto.PublicKey_Ed25519{Ed25519: gv.PubKey},
 			}
@@ -318,15 +323,23 @@ func (am AppModule) ExportGenesis(ctx sdk.Context, cdc codec.JSONCodec) json.Raw
 
 	var validators []GenesisValidator
 	am.keeper.IterateValidators(ctx, func(v Validator) bool {
+		// GH-60: preserve the complete domain list, the stored power, and an
+		// explicit active/inactive classification so retained inactive claims
+		// round-trip exactly. Domain keeps the legacy primary-domain view.
+		domains := append([]string(nil), v.Domains...)
 		domain := ""
-		if len(v.Domains) > 0 {
-			domain = v.Domains[0]
+		if len(domains) > 0 {
+			domain = domains[0]
 		}
+		active := !v.Jailed && v.Power > 0
 		validators = append(validators, GenesisValidator{
 			OperatorAddr: v.OperatorAddr,
 			PubKey:       v.PubKey,
 			Stake:        v.Stake.AmountOf(PNYXDenom).Int64(),
 			Domain:       domain,
+			Domains:      domains,
+			Power:        v.Power,
+			Active:       &active,
 			Jailed:       v.Jailed,
 			JailedUntil:  v.JailedUntil,
 			MissedBlocks: v.MissedBlocks,

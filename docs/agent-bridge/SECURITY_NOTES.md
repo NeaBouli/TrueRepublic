@@ -77,6 +77,21 @@
   credentials. Maintained-client jobs stay on Node 22; legacy jobs are
   informational and do not convert vulnerable clients into approved targets.
 
+## GH-60 inactive validator genesis boundary
+
+- New exports explicitly distinguish active consensus validators from inactive
+  retained custody claims while preserving complete domains and stored power.
+- An active claim must be unjailed, carry exact positive stake-derived power,
+  and belong to every listed domain. An inactive claim with positive stored
+  power must be jailed; malformed flag, jail, power, or domain combinations
+  fail before state mutation.
+- Revoked consensus keys remain unusable by active and inactive claims, and
+  existing rotation/history/signing/infraction/pending-exit relations remain
+  mandatory.
+- The real four-process recovery drill proves exact bank-backed export/import
+  of downtime- and equivocation-disabled validators. This closes GH-60 locally,
+  not the broader production rollout or independent operations review.
+
 ## Legacy client blockers
 
 - `web-wallet`: obsolete CosmJS crypto, legacy Create React App toolchain, and

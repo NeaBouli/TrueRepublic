@@ -150,3 +150,17 @@
 - Subagent recursion stays capped at one level (`agents.max_depth = 1`) and
   concurrency at six open threads (`agents.max_threads = 6`) to keep token use
   predictable while allowing targeted parallel help.
+
+## 2026-07-26 - Sol, Kimi K3, and helper role split
+
+- Codex Sol remains accountable for scope, architecture, security, integration,
+  all external writes, complete verification, GitHub coordination, and closure.
+- Kimi K3 is the preferred senior partner for larger bounded implementations,
+  difficult bugs, repo-wide analysis, architecture alternatives, and
+  independent deep reviews. It receives only secret-free repository scope and
+  cannot delegate.
+- Kimi implementation output is never self-approving: Sol reviews the complete
+  diff and reruns the relevant full test and integration chain.
+- Claude Code and `spark_worker` remain limited to small, clearly bounded
+  helper work. Delegation never grants production, deployment, IAM, payment,
+  authentication, migration, publishing, deletion, or secret access.

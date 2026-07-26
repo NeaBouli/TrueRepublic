@@ -927,3 +927,55 @@ Go build/vet/race/coverage, multi-validator recovery, Docker restart,
 Go/Rust/Node security, docs, DeepScan, and CodeRabbit. GH-51 is closed.
 
 ---
+
+## 2026-07-26 19:40 EEST GH-60 inactive validator genesis round-trip → In Progress
+
+- **Branch:** `feature/GH-60-inactive-validator-genesis`
+- **Issue:** [GH-60](https://github.com/NeaBouli/TrueRepublic/issues/60);
+  parent rollout tracker
+  [GH-29](https://github.com/NeaBouli/TrueRepublic/issues/29)
+- **Scope:** preserve legitimate inactive, excluded, jailed, and under-staked
+  validator claims exactly across export/import, including all domains, jail,
+  missed blocks, power semantics, revocations, rotations, signing/infraction
+  state, pending exits, ledger backing, and supply parity. Malformed
+  resurrection and revoked-key reuse must fail closed.
+- **Roles:** Codex Sol owns scope, architecture, security, integration,
+  external writes, complete verification, PR/merge, and closure. Kimi K3 owns
+  one bounded secret-free local implementation block and may not delegate.
+- **Baseline:** clean `origin/main` at `996ae05`; GH-59 is already closed.
+- **Risk:** High — consensus state, validator custody, genesis validation, and
+  ledger parity.
+- **Current verification:** not run yet for GH-60.
+- **Next:** inspect the exact export/validation/import paths, delegate the
+  bounded representation/test slice to Kimi, review the diff, then run focused,
+  complete Go, race/coverage, docs, and real process recovery gates.
+
+---
+
+## 2026-07-26 20:50 EEST GH-60 local merge gate → PASS, publication pending
+
+- **Branch:** `feature/GH-60-inactive-validator-genesis`
+- **Issue:** [GH-60](https://github.com/NeaBouli/TrueRepublic/issues/60);
+  parent [GH-29](https://github.com/NeaBouli/TrueRepublic/issues/29)
+- **Status:** local implementation and review complete; GitHub publication,
+  final-head CI/review, merge, issue closure, and tracker synchronization remain.
+- **Changed:** explicit active/inactive genesis representation, complete domains
+  and stored power, exact inactive custody/jail/liveness recovery, legacy
+  compatibility, fail-closed resurrection/key reuse, real process re-import
+  assertions, reliable liveness-window timeout, GH-60 audit, Bridge, rollout,
+  wiki, and verified 733-case public status.
+- **Kimi contribution:** bounded genesis-core implementation and independent
+  read-only deep review. The review found one P2 malformed-state gap: inactive,
+  unjailed positive power with no domains. Sol tightened the invariant, added a
+  regression, and reran all gates. Final review result: 0 P0 / 0 P1 / 0 P2.
+- **Tests:** focused GH-60 tests PASS; real four-process downtime/double-sign
+  export/import drill PASS in 441.52s; package selector, Go build, vet, complete
+  race/coverage, docs consistency at 733 cases and 21M PNYX, JSON, and diff
+  checks PASS. Coverage: root 68.5%, truedemocracy 62.2%.
+- **Risk/blocker:** no local code blocker. Final GitHub Docker, security,
+  review, and branch-head checks remain mandatory before merge. No production
+  or deployment approval is claimed.
+- **Next:** commit, push, open PR, update GH-60/GH-29, then monitor and remediate
+  final-head GitHub checks/review before merge and Bridge closure.
+
+---

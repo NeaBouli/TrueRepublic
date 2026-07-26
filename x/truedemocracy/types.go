@@ -169,14 +169,32 @@ type NullifierRecord struct {
 }
 
 // GenesisValidator is the genesis-file representation of a validator.
+//
+// GH-60 adds Domains, Power, and Active so a retained inactive custody claim
+// (excluded from every domain, jailed, or under minimum stake) exports and
+// imports exactly instead of being flattened into a single active Domain.
+// Records written before GH-60 carry none of these fields; they are read as
+// legacy records with one domain, stake-derived power, and activity derived
+// from the jail flag, so existing valid genesis files keep working.
 type GenesisValidator struct {
 	OperatorAddr string `json:"operator_addr"`
 	PubKey       []byte `json:"pub_key"`
 	Stake        int64  `json:"stake"`
-	Domain       string `json:"domain"`
-	Jailed       bool   `json:"jailed,omitempty"`
-	JailedUntil  int64  `json:"jailed_until,omitempty"`
-	MissedBlocks int64  `json:"missed_blocks,omitempty"`
+	// Domain is the primary accounting domain. Legacy records carry only this
+	// field; explicit records keep it equal to Domains[0] (or empty when the
+	// claim retains no domain).
+	Domain string `json:"domain"`
+	// Domains is the complete runtime domain list. Nil marks a legacy record.
+	Domains []string `json:"domains,omitempty"`
+	// Power is the stored consensus power (stake/StakeMin, or zero for a
+	// disabled claim). Zero with a nil Active marks a legacy record.
+	Power int64 `json:"power,omitempty"`
+	// Active is the explicit active/inactive classification. Nil marks a
+	// legacy record; non-nil selects the explicit GH-60 representation.
+	Active       *bool `json:"active,omitempty"`
+	Jailed       bool  `json:"jailed,omitempty"`
+	JailedUntil  int64 `json:"jailed_until,omitempty"`
+	MissedBlocks int64 `json:"missed_blocks,omitempty"`
 }
 
 // RevokedValidatorKey permanently retires a consensus key. Retired keys can
