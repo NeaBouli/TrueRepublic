@@ -1347,3 +1347,43 @@
   truedemocracy 62.2%.
 - Together with the corrected 8/8 process matrix and docs checks, the final
   local remediation diff is ready for staged review and publication.
+
+## 2026-07-29 04:18 EEST - GH-61 merged and closed
+
+- PR #69 final head `33895dca627139d541e74236afb63d2b9fb5bff2`
+  passed all 11 GitHub checks. The complete process matrix passed in 13m38s;
+  Go build/race/coverage, Docker restart, docs, Go/Rust/Node security,
+  DeepScan, and CodeRabbit also passed.
+- All original and final CodeRabbit threads were answered with evidence and
+  resolved; zero unresolved threads remained before merge.
+- PR #69 squash-merged to `main` as
+  `264ab7c817414e3081149c61d8b5b6fb0ce5e368` and automatically closed
+  GH-61.
+- Started the documentation-only closure sync from that exact clean main commit
+  to align Bridge, Project State, TODO, Road to Rollout, Limitations, Security
+  Notes, and GH-29.
+
+## 2026-07-29 04:24 EEST - Public recovery totals reconciled
+
+- Reproduced 819 Go cases on merged main via package-scoped `go test -json`:
+  root 62, migration 82, token 12, treasury 36, DEX 116, truedemocracy 511.
+- Updated the authoritative public total from the stale GH-60 baseline
+  733/699 to 853 total: 819 Go, 26 Rust, and eight maintained-client cases.
+- Synchronized status JSON, README, agent guide, Pages source, wiki status,
+  module arithmetic, Project State, and final root/migration/governance
+  coverage. Separately gated process harnesses remain excluded from the count.
+
+## 2026-07-29 04:35 EEST - PR #70 independent closure review remediated
+
+- Kimi K3 performed a bounded read-only review and made no repository changes.
+  It independently verified the PR #69 merge and issue state, all 11 final-head
+  checks, zero unresolved review threads, exact 853/819 arithmetic and
+  per-module Go counts, coverage evidence, documentation-only scope, and
+  retained non-production boundaries.
+- Review found no P0/P1, code, security, or production-claim issue. Corrected
+  its sole material P2 (stale 733/699 roadmap baseline) and minor P3s (roadmap
+  date and GH-61 omission from the wiki harness list).
+- CodeRabbit did not rerun after its successful draft-skip result despite the
+  ready-for-review/manual request; the independent Kimi review is retained as
+  fallback evidence. Final merge still requires Sol diff review, green
+  final-head checks, and zero unresolved threads.

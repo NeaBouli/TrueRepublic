@@ -53,8 +53,8 @@ snapshot state-sync, sanitized backup/restore/export/import, compatible binary
 replacement, fail-before-open rollback, and authenticated validator-key
 rotation/revocation harnesses. GH-61 adds a bounded reviewed-fresh-genesis
 legacy-authority transformer and real historical four-validator
-halt/export/transform/start/rollback drill; final review and merge remain open.
-Independent operations review remains pending.
+halt/export/transform/start/rollback drill, merged through PR #69. Independent
+operations and broader migration-security review remain pending.
 **Current:** The standard `truerepublicd init --bootstrap-operator` command
 binds an independently controlled account authority to the generated CometBFT
 Ed25519 consensus key and matching bank-backed positive-power PoD validator.
@@ -78,8 +78,9 @@ rotation with permanent revocation. The GH-61 path is intentionally limited to
 empty CosmWasm state and a new chain ID; it is not an in-place upgrade or a
 generic governance migration. Do not claim public-network readiness until
 generic consensus-breaking state migration, partially applied in-place
-migration recovery, network policy, load, topology, independent GH-61/ABCI++
-slashing security review, and independent operations review pass.
+migration recovery, network policy, load, topology, broader independent
+migration/ABCI++ slashing security review, and independent operations review
+pass.
 
 Partial validator stake withdrawals are disabled until generalized slashable
 unbonding can retain the withdrawn claim through the CometBFT evidence window.

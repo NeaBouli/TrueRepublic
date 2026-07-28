@@ -1688,3 +1688,60 @@ Go/Rust/Node security, docs, DeepScan, and CodeRabbit. GH-51 is closed.
   feedback only with exact final-head evidence.
 
 ---
+
+## 2026-07-29 04:18 EEST GH-61 → Merged / Closure Sync In Progress
+
+- **Final PR head:** `33895dca627139d541e74236afb63d2b9fb5bff2`;
+  all 11 GitHub checks PASS, including the complete multi-validator recovery
+  matrix in 13m38s, Go build/race/coverage, Docker, docs, Go/Rust/Node security,
+  DeepScan, and CodeRabbit.
+- **Review:** seven original review clusters plus the final timezone false
+  positive are answered with evidence; zero unresolved threads remain.
+- **Merge:** PR #69 squash-merged to `main` as
+  `264ab7c817414e3081149c61d8b5b6fb0ce5e368`. GH-61 is closed.
+- **Closure branch:** `docs/GH-61-closure` starts from the exact clean merge
+  commit. Scope is documentation/ticket synchronization only.
+- **Next:** update Project State, TODO, Road to Rollout, Limitations, Action Log,
+  Security Notes, GH-29, and the global Bridge; run docs/diff checks; publish and
+  merge the closure PR only on green final-head evidence.
+
+---
+
+## 2026-07-29 04:24 EEST GH-61 Closure → Public Count Reconciled
+
+- Reproduced the merged repository's package-case count with normal
+  `go test -json`: root 62, migration 82, token 12, treasury 36, DEX 116, and
+  truedemocracy 511, totaling 819 Go cases.
+- The public authoritative total is therefore 853: 819 Go + 26 Rust + eight
+  maintained-client cases. The prior 733/699 values were the pre-GH-61 GH-60
+  baseline and were stale after PR #69.
+- Updated status JSON, README badge/status, agent guide, GitHub Pages source,
+  wiki home/current/testing status, module arithmetic, and final coverage
+  values. Process harnesses remain separately gated and are not double-counted.
+- Next: run the exact docs-consistency and diff gates, review/stage the closure
+  diff, then publish the documentation-only closure PR.
+
+---
+
+## 2026-07-29 04:35 EEST PR #70 Independent Closure Review → Remediated
+
+- **Review:** Kimi K3 completed a bounded, read-only independent review of the
+  documentation-only closure diff and changed no repository files. It verified
+  PR #69/GH-61/GH-29 state, all 11 final-head checks, zero unresolved review
+  threads, the 853 = 819 + 26 + 8 arithmetic, per-module Go counts, coverage,
+  scope, and retained non-production boundaries.
+- **Findings:** no P0/P1, code, security, or production-claim findings. The only
+  material P2 was a stale 733/699 baseline in `docs/ROLLOUT_ROADMAP.md`; minor
+  P3s were its old update date and the wiki harness list omitting GH-61.
+- **Remediation:** corrected the roadmap to 853/819 and 2026-07-29, clarified
+  that separately gated process harnesses are never double-counted, and added
+  GH-61 legacy-authority migration/rollback to the wiki harness inventory.
+- **Review fallback:** CodeRabbit retained its successful draft-skip result
+  after PR #70 was marked ready and manually requested. Kimi supplies the
+  independent closure review; Sol owns final diff review and all final-head
+  gates.
+- **Next:** run documentation consistency, arithmetic, stale-value, and diff
+  checks; commit/push the remediation; require green final-head PR #70 checks
+  and zero unresolved threads before merge.
+
+---

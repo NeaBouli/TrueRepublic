@@ -123,8 +123,9 @@
   migration/export/reimport/rollback drill with an operator runbook.
 - [x] GH-61: complete full local/security gates and independent final review;
   remediate the in-scope review finding and record residual risks.
-- [ ] GH-61: publish the branch and PR, remediate review/CI findings, merge only
-  on green final-head evidence, close the issue, and synchronize GH-29/Bridge.
+- [x] GH-61: publish the branch, remediate review/CI findings, pass all 11
+  final-head checks with zero unresolved threads, merge through PR #69 as
+  `264ab7c`, close the issue, and synchronize GH-29/Bridge.
 - [x] GH-7: DEX rounding, slippage, pool accounting, custody, and authorization
   audit completed in GH-10; GH-12 retains genesis/runtime invariants.
 

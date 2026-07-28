@@ -1,6 +1,6 @@
 # TrueRepublic Road to Rollout
 
-Updated: 2026-07-26
+Updated: 2026-07-29
 
 TrueRepublic has a recovered and CI-verified v0.4 engineering foundation. It
 is **not production-ready, mainnet-ready, or approved for real funds or keys**.
@@ -14,7 +14,7 @@ parent recovery record remains
 
 - The ordered recovery merge chain is on `main`.
 - The maximum supply is fixed at 21,000,000 PNYX.
-- The source of truth records 733 recovery-verified tests: 699 Go, 26 Rust,
+- The source of truth records 853 recovery-verified tests: 819 Go, 26 Rust,
   and 8 maintained-client tests.
 - Ledger, escrow, issuance, DEX custody, genesis, runtime invariants, ZKP
   statement binding, node persistence, and the safe operator-init boundary
@@ -49,11 +49,11 @@ approval.
   revocation, and bootstrap operator-authority separation
   ([GH-56](https://github.com/NeaBouli/TrueRepublic/issues/56)).
 - [ ] Define seed, persistent-peer, RPC, API, firewall, and rate-limit policy.
-- [ ] Complete final review and merge of the reviewed fresh-genesis migration
-  for pre-GH-56 coupled validator authorities; no independent legacy
-  governance anchor exists, so this must not be described as retroactive
-  governance authorization
-  ([GH-61](https://github.com/NeaBouli/TrueRepublic/issues/61)).
+- [x] Complete final review and merge of the bounded fresh-genesis migration
+  for pre-GH-56 coupled validator authorities through
+  [PR #69](https://github.com/NeaBouli/TrueRepublic/pull/69); no independent
+  legacy governance anchor exists, so this is not retroactive governance
+  authorization ([GH-61](https://github.com/NeaBouli/TrueRepublic/issues/61)).
 - [x] Preserve inactive, excluded, jailed, and under-staked validator claims in
   round-trip-safe export/import state
   ([GH-60](https://github.com/NeaBouli/TrueRepublic/issues/60)).
