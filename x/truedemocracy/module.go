@@ -173,7 +173,7 @@ func (am AppModule) InitGenesis(ctx sdk.Context, cdc codec.JSONCodec, data json.
 		am.keeper.SetValidator(ctx, validator)
 		store.Set(valPubKeyKey(gv.PubKey), []byte(gv.OperatorAddr))
 		store.Set(consensusAuthorityIndexKey(consensusKeyDerivedOperator(gv.PubKey)), []byte(gv.OperatorAddr))
-		am.keeper.registerConsensusKeyRecord(ctx, gv.PubKey, gv.OperatorAddr, initialConsensusActivationHeight(ctx))
+		am.keeper.registerConsensusKeyRecord(ctx, gv.PubKey, gv.OperatorAddr, genesisConsensusActivationHeight(ctx))
 		if active {
 			pk := cryptoproto.PublicKey{
 				Sum: &cryptoproto.PublicKey_Ed25519{Ed25519: gv.PubKey},

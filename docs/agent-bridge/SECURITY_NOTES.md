@@ -108,3 +108,50 @@
 - Both clients are now labeled deprecated in public status. Do not use them for
   real keys or production funds until a dedicated migration or removal task is
   implemented and independently verified.
+
+## GH-61 exact source-export binding
+
+- **Resolved locally (GH61-SB-001):** every fresh replacement operator now
+  signs one canonical descriptor containing the exact 32-byte SHA-256 of the
+  raw source-export bytes. Both direct transform entry points and the offline
+  CLI reject a missing, malformed, or mismatched commitment before parsing,
+  rewriting, or creating output. A CLI regression proves that a post-signing
+  byte mutation leaves no output artifact.
+- The exact export digest complements, but does not replace, the independently
+  observed source header app hash. No app-hash-to-export cryptographic proof or
+  retroactive governance-authorization claim is made.
+- Independent Kimi review found no P0/P1/P2 issue in the artifact binding. Sol
+  corrected its one in-scope test-attribution observation by canonically
+  sorting an added mapping before proving the signed mapping count changed.
+- **Open side finding (GH61-SB-002):** the bounded offline transformer still
+  amplifies memory and CPU for large valid artifacts. A measured 64 MiB padded
+  artifact reached approximately 1.75 GiB maximum resident memory and a
+  33.51-second focused transform path. The per-module/per-mapping stale-address
+  sweep is also multiplicative. This requires a separate approved hardening
+  task and was not changed by the exact-binding remediation.
+- **P3 boundary:** stale-address detection in preserved unknown-module JSON is
+  a literal canonical-string sweep; alternate textual encodings of the same
+  address are outside that sweep. Typed Auth, Bank, DEX, and truedemocracy
+  fields remain structurally decoded and reconciled.
+- PR #69's first final-head scan surfaced newly published reachable
+  GO-2026-6061 in gRPC `v1.79.3`. Upgrading to the scanner-named fixed
+  `v1.82.1` removes that finding; current local `govulncheck` reports no
+  reachable vulnerability with an available fix. The complete Race/Coverage
+  gate and all eight real multi-validator process scenarios pass with the new
+  transport dependency graph.
+- PR #69 review remediation makes the offline ceremony fail closed around the
+  operator procedure: validators are stopped/isolated without changing the
+  source validator set, and the exact source export is written privately to a
+  same-directory temporary file before an atomic no-overwrite publication.
+- A proposed rejection of active application validators when the exported
+  Comet validator list is empty was disproved by the real historical process
+  drill: canonical Cosmos SDK running-chain exports omit that list and rely on
+  validated application state for InitChain validator updates. The transform
+  therefore accepts the empty canonical export form but continues exact
+  key/power reconciliation whenever a Comet list is present.
+- All other review findings are implemented, including independent supply
+  snapshotting, complete legacy-address assertions, stderr-safe subprocess
+  diagnostics, foreign-prefix and malformed-key regressions, one shared
+  traversal of every consensus-key-bearing collection, and a decode-once
+  canonical mapping sort. The corrected eight-scenario matrix passes in
+  1169.685s; the prior 1200-second cap had only about 30 seconds of margin.

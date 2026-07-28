@@ -175,6 +175,11 @@ keys, non-regressing signing state, exported ledger invariants, and re-import.
 This evidence does not complete the separate `x/upgrade` and state-migration
 rollout gate.
 
+The bounded pre-GH-56 operator-authority transition is documented separately
+in [Legacy Validator-Authority Migration](legacy-authority-migration.md). It
+uses a distinct-chain reviewed fresh genesis and must not be treated as an
+in-place binary upgrade.
+
 ## Next steps
 
 - [Backup & Recovery](backup-recovery.md)

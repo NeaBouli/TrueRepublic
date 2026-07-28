@@ -1049,3 +1049,642 @@ Go/Rust/Node security, docs, DeepScan, and CodeRabbit. GH-51 is closed.
   approved.
 
 ---
+
+## 2026-07-26 21:56 EEST GH-61 legacy operator-authority migration → In Progress
+
+- **Branch:** `feature/GH-61-legacy-authority-migration`
+- **Issue:** [GH-61](https://github.com/NeaBouli/TrueRepublic/issues/61);
+  parent rollout tracker
+  [GH-29](https://github.com/NeaBouli/TrueRepublic/issues/29)
+- **Scope:** design and prove a deterministic, governance-controlled halt /
+  export / migration / re-import ceremony for pre-GH-56 validators whose
+  operator addresses were derived from consensus keys. Every replacement
+  operator must authenticate independently; consensus keys may never confer
+  account authority.
+- **Required invariants:** preserve Comet validator identity/power, validator
+  stake and module escrow, domains, revocations, signing/infraction history,
+  pending exits, auth accounts, bank supply, and replay safety. Partial,
+  duplicate, cross-coupled, wrong-height, or unauthenticated plans fail before
+  mutation; rollback may not create a dual signer.
+- **Roles:** Codex Sol owns architecture, security, integration, full tests,
+  GitHub writes, merge, and closure. Kimi K3 receives a bounded secret-free
+  architecture/development block and may not delegate.
+- **Baseline:** clean `origin/main` at `8c0c555`; GH-60 is closed and no pull
+  request is open.
+- **Risk:** High — consensus identity, operator authorization, genesis
+  migration, escrow ownership, and replay safety.
+- **Current verification:** not run yet for GH-61.
+- **Next:** independently review the safest migration boundary, define the
+  canonical signed plan and fail-closed state rewrite, then implement focused
+  unit/integration/process evidence before the complete repository gate.
+
+---
+
+## 2026-07-26 22:09 EEST GH-61 architecture review → Security decision pending
+
+- **Kimi contribution:** read-only repo-wide review mapped every operator
+  reference that a migration must rewrite: validators and indexes, domains,
+  consensus history, revocations, signing/infraction state, pending rotations
+  and exits, auth/bank balances, DEX provider claims, Comet identity/power, and
+  the replay cursor. It recommends a pure atomic halt/export/transform/re-import
+  boundary because neither `x/gov` nor `x/upgrade` is wired.
+- **Sol security finding:** the proposed legacy-consent and validator-quorum
+  signatures used the old consensus keys. That would infer account/governance
+  authority from consensus identity and directly contradict GH-61's acceptance
+  criterion. This design is rejected and no code was written from it.
+- **Confirmed constraints:** current genesis validation cannot re-import a
+  pre-GH-56 coupled validator; current registration and rotation deliberately
+  refuse the same coupling. Stake remains module-escrowed and heights must stay
+  monotonic across export/import.
+- **Verification:** read-only architecture inspection only; no GH-61 tests
+  exist or ran yet.
+- **Risk/blocker:** the legacy state may contain no independently controlled
+  governance signer at all. Before implementation, the authorization anchor
+  must be proven independent from every active, historical, and revoked
+  consensus key; otherwise the task must add an explicit governance anchor or
+  remain fresh-genesis-only.
+- **Next:** adversarially review the authorization-anchor question, then record
+  the final architecture decision before assigning a bounded implementation.
+
+---
+
+## 2026-07-26 22:20 EEST GH-61 authorization-anchor review → No legacy anchor
+
+- **Decision:** pre-GH-56 exportable state contains no independently
+  controlled, machine-verifiable authority that the old protocol empowered to
+  replace validator operators. The first transition therefore cannot honestly
+  be described as governance-authorized from legacy state.
+- **Evidence:** `x/gov` and `x/upgrade` are not wired; the `gov` module address
+  cannot sign; legacy validator operators and the bootstrap domain admin were
+  derived from consensus keys; domain permission/ZKP keys and arbitrary
+  auth/bank accounts have no protocol-granted authority over validator
+  identity. Reusing any of them would either violate the no-consensus-authority
+  invariant or invent authority retroactively.
+- **Kimi contribution:** bounded read-only adversarial review independently
+  enumerated every candidate anchor, confirmed the legacy bootstrap coupling
+  from pre-GH-56 source history, and found no valid old-state signer. No Kimi
+  write diff was produced.
+- **Supported boundary:** the one-time recovery must be a published, reviewed,
+  state-preserving fresh-genesis ceremony bound to an exact halt height and
+  source app hash. Each replacement account must provide an independent
+  proof-of-possession over the canonical migration descriptor. A new,
+  consensus-independent governance commitment may begin in the migrated
+  genesis for future authority, but it cannot retroactively authorize this
+  first rewrite.
+- **Verification:** repository and history inspection only; no code changed and
+  no GH-61 tests ran. Existing local modifications remain Bridge/audit entries
+  only.
+- **Risk/blocker:** the original phrase “governance-controlled migration” is
+  impossible if it means authority rooted in pre-GH-56 state. Implementation
+  must explicitly document the reviewed-genesis trust boundary and must not
+  claim stronger provenance.
+- **Next:** publish the architecture finding to GH-61, narrow the acceptance
+  wording to the honest trust boundary, then implement the canonical
+  descriptor/proof verifier and deterministic exact-state transformer with
+  rollback and multi-validator drill evidence.
+
+---
+
+## 2026-07-26 22:38 EEST GH-61 canonical descriptor/proofs → Local PASS
+
+- **Implemented:** new `migration` package defines descriptor v1 binding source
+  and target chain IDs, positive halt height, 32-byte source app hash,
+  transform ID, and the complete sorted one-to-one operator mapping. Every
+  replacement proves possession of its fresh SDK ed25519 or secp256k1 account
+  key over one domain-separated deterministic encoding of the full descriptor.
+- **Fail-closed checks:** malformed or mixed-prefix account addresses, wrong key
+  derivation/type/signature, duplicate or unsorted mappings, old/new
+  cross-coupling, field mutation/replay, malformed supplied consensus keys, and
+  every new address derived from a caller-supplied active, historical, pending,
+  or revoked consensus key are rejected.
+- **Kimi contribution:** owned only
+  `migration/legacy_authority.go` and
+  `migration/legacy_authority_test.go`; implemented the bounded core and 36
+  negative cases. Its tests exposed and it fixed a stale-index comparator bug
+  in `SortMappings` before handoff.
+- **Sol review:** read the complete write diff, added stable JSON field names,
+  required exact 20-byte address payloads already in `SigningBytes`, and added
+  regressions for both. No governance authority is inferred: the public API and
+  package documentation state that proofs establish fresh-key possession only.
+- **Verification:** `gofmt -l migration` clean; `go vet ./migration` PASS;
+  `go test ./migration -count=1` PASS in 0.946s;
+  `go test -race ./migration -count=1` PASS in 2.578s;
+  `git diff --check` PASS.
+- **Risk/blocker:** consensus exclusion is only complete when the transformer
+  supplies every exported active, historical, pending, and revoked key. No
+  transformer, CLI, full-genesis reconciliation, rollback drill, or repo-wide
+  gate exists yet, so GH-61 remains In Progress.
+- **Next:** implement the typed, atomic full-genesis transformer and prove that
+  it discovers the complete legacy key set, rewrites every operator-bearing
+  claim, rejects stale/unknown references, and preserves all non-authority
+  state exactly.
+
+---
+
+## 2026-07-26 22:59 EEST GH-61 transformer threat review → Boundary hardened
+
+- **Security refinement:** the target chain ID must differ from the signed
+  source chain ID so pre-migration account transactions cannot replay on the
+  recovered chain. Descriptor verification and its negative tests now enforce
+  that rule.
+- **Wasm boundary:** typed Wasm creator/admin/access-list fields and arbitrary
+  contract state can retain operator authority in binary or application-defined
+  form. The generic transformer must reject nonempty contract state unless a
+  separately reviewed contract-aware adapter proves its migration; byte-search
+  alone is insufficient.
+- **Auth boundary:** the transformer must reconstruct and repack only mapped
+  `BaseAccount` records, preserve account number/sequence, replace the old
+  public key, reject mapped module/unknown account types, and independently
+  reject duplicate account numbers before and after the rewrite so SDK import
+  cannot silently renumber signer identities.
+- **Independent review:** Sol's read-only field audit confirmed the complete
+  custom-module rewrite list and identified the Wasm/account-number gaps before
+  transformer code was accepted.
+- **Kimi contribution:** a second bounded implementation session developed the
+  typed transform/test design but was stopped before writing files when its
+  planning exceeded the bounded execution window. No partial transformer diff
+  exists.
+- **Verification:** after the chain-ID hardening,
+  `go test ./migration -count=1` PASS in 1.334s and
+  `git diff --check` PASS.
+- **Status:** descriptor/proof core remains locally green; transformer remains
+  In Progress. No commit, push, PR, merge, rollout, or deployment occurred.
+- **Next:** resume from the reviewed design with a smaller implementation slice:
+  state-derived key inventory and typed truedemocracy rewrite first, followed by
+  Auth/Bank/DEX reconciliation and the explicit empty-Wasm gate.
+
+---
+
+## 2026-07-27 00:09 EEST GH-61 truedemocracy transform core → Local PASS
+
+- **Implemented:** `migration/transform_core.go` accepts a complete exported
+  genesis document, derives its forbidden consensus-key inventory from active
+  validators, history, revocations, both pending-rotation keys, and pending
+  removals, then verifies the signed descriptor against that state-derived set.
+- **Exact mapping gate:** every typed truedemocracy address that is both present
+  and consensus-key-derived must be mapped exactly once; missing, extra,
+  non-coupled, stale, invalid-proof, and replacement-collision cases fail before
+  output is returned.
+- **Atomic rewrite:** validators, bootstrap operators, domain admin/members,
+  suggestion creators, revocations, rotations, key history, signing infos,
+  infractions, and pending-removal operator/recipient fields are rewritten on
+  decoded state copies. Consensus keys, stake, domains, evidence state, heights,
+  and unrelated modules remain unchanged. The rewritten module passes
+  `ValidateGenesisState`, and old operator literals are rejected in its JSON.
+- **Delegated contribution:** the Spark worker produced an initial core/test
+  draft, but its tests failed Sol's gate because they duplicated helpers,
+  derived secp256k1 addresses incorrectly, used a 20-byte app hash, and built an
+  invalid genesis fixture. Sol replaced the faulty suite and hardened prefix,
+  panic, collision, and literal-remnant handling before acceptance.
+- **Verification:** `gofmt -l migration` clean; `go vet ./migration` PASS;
+  `go test ./migration -count=1` PASS in 3.726s;
+  `go test -race ./migration -count=1` PASS in 3.617s;
+  `git diff --check` PASS.
+- **Status:** the typed custom-module core is locally green. Auth, Bank, DEX,
+  Wasm, outer chain-id/height binding, CLI, process drills, full repository
+  gates, commit, push, and PR remain open.
+- **Next:** compose the full app-state reconciler around this core, enforcing
+  unique auth account numbers, fresh BaseAccount repacking, exact balances/LP
+  ownership, unchanged supply/escrow, and an empty-contract Wasm gate.
+
+---
+
+## 2026-07-27 00:24 EEST GH-61 full app-state reconciliation → Local PASS
+
+- **Implemented:** `migration/app_state.go` composes the verified
+  truedemocracy rewrite with typed Auth, Bank, and DEX reconciliation, binds the
+  outer source/target chain IDs and exact `halt_height + 1` initial height, and
+  requires all safety-critical modules to be present.
+- **Auth integrity:** mapped `BaseAccount` records retain account number and
+  sequence, receive the signed fresh public key, and are repacked atomically.
+  Duplicate addresses/numbers, pre-existing target accounts, mapped module or
+  unsupported account types, and invalid post-state fail closed. A mapped
+  operator absent from Auth remains absent instead of receiving invented
+  identity state.
+- **Bank/DEX integrity:** operator balances, LP providers, and asset
+  registration authorities move to the exact signed replacements. Supply,
+  module balances, DEX invariants, and unrelated state are preserved; target
+  collisions are rejected.
+- **Wasm and unknown-module boundary:** any exported CosmWasm code or contract
+  state is rejected until a contract-aware adapter exists. Unknown modules are
+  retained, but the final application-wide scan rejects any remaining literal
+  legacy operator address.
+- **Review contribution:** the earlier independent transformer review supplied
+  the complete Auth/Wasm and custom-module risk inventory. Sol implemented and
+  reviewed this integration slice and corrected the Wasm test fixture and
+  malformed-module regression before acceptance; no unreviewed delegated write
+  was accepted.
+- **Verification:** `gofmt -l migration` clean; `go vet ./migration` PASS;
+  `go test ./migration -count=1` PASS in 2.177s;
+  `go test -race ./migration -count=1` PASS in 6.398s;
+  `git diff --check` PASS.
+- **Risk/blocker:** trusted source-header app-hash comparison remains an
+  explicit ceremony/CLI responsibility because it cannot be derived from
+  genesis JSON. Nonempty Wasm state is intentionally unsupported. CLI,
+  export/transform/re-import and rollback drills, repository-wide gates,
+  commit, push, PR, and merge remain open.
+- **Next:** expose one fail-closed offline CLI that verifies the trusted app
+  hash, reads descriptor and export files without mutation, writes atomically,
+  and supports the documented rehearsal and rollback procedure.
+
+---
+
+## 2026-07-27 00:54 EEST GH-61 canonical offline CLI and re-import → Local PASS
+
+- **Implemented:** `truerepublicd migration legacy-authority` requires a strict
+  signed descriptor, full export, new output path, and independently obtained
+  trusted halt-height app hash. Descriptor unknown/trailing fields, malformed
+  hashes, non-regular or aliased inputs, existing outputs, and over-limit files
+  fail closed.
+- **Atomic output:** the command writes and syncs a private `0600` temporary
+  file, installs it through a no-overwrite hard link, syncs the directory, and
+  removes partial output/temp files on every reported failure. It never prints
+  descriptor proofs, public keys, addresses, or genesis content.
+- **Full boundary hardening:** a nonempty embedded genesis `app_hash` is
+  rejected. A present CometBFT validator set must match every active
+  application validator's ed25519 key and exact power; an empty exported set is
+  permitted because `InitChain` reconstructs it from application state.
+  Consensus data is otherwise preserved.
+- **Import gate:** before any file is created, the canonical CLI reruns the
+  application's cross-module ledger validator over the transformed Auth, Bank,
+  DEX, and truedemocracy state.
+- **End-to-end regression:** the Cobra command consumes a valid coupled legacy
+  fixture and fresh-key proof, checks the trusted app hash, transforms it,
+  writes privately, removes every legacy address literal, and reimports the
+  output into a fresh `TrueRepublicApp`.
+- **Kimi contribution:** a bounded Kimi implementation attempt reconstructed
+  the file-safety design but was stopped before writes after remaining in
+  planning. Sol implemented the bounded patch, reviewed every line, identified
+  and closed the missing Comet/App validator boundary, and ran all gates.
+- **Verification:** `gofmt -l` and `git diff --check` clean;
+  `go vet ./migration .` PASS; `go test ./migration . -count=1` PASS
+  (`migration` 3.951s, root 141.937s); focused race PASS
+  (`migration` 13.865s, root 13.296s); canonical transform/reimport regression
+  PASS in 12.041s; built daemon help exposes the command and all four required
+  flags.
+- **Risk/blocker:** this proves the deterministic offline command and in-memory
+  re-import, not yet a live pre-GH-56 four-validator halt/transform/restart/
+  rollback ceremony. Operator documentation and that real process drill remain
+  mandatory before GH-61 can close.
+- **Next:** add the pinned pre-GH-56 binary process harness and operator
+  runbook, prove source halt/app-hash capture, target-chain convergence, source
+  rollback without dual signers, and recovered export/re-import.
+
+---
+
+## 2026-07-27 01:34 EEST GH-61 historical process drill and runbook → Local PASS
+
+- **Real historical source:** the gated process harness archives and builds
+  pinned pre-GH-56 revision
+  `0e51a05b008f395e3f7391358e117f0817d4eb39`, starts four real coupled-authority
+  validators, removes quorum, records one stable common halt-height app hash,
+  stops every source signer, and exports the exact halt successor.
+- **Target proof:** four fresh secp256k1 operator keys sign one canonical
+  descriptor. The current daemon CLI verifies and transforms the historical
+  export, then four clean target homes with a distinct chain ID progress,
+  converge on one app hash, retain every expected consensus key at positive
+  power, and produce a ledger-valid export that reimports into a fresh app.
+- **Rollback proof:** every target signer is cleanly stopped before the
+  untouched historical homes restart. The source chain resumes beyond the halt
+  and reconverges, proving rollback without concurrent copies or target/source
+  state mixing.
+- **Protocol defect found and fixed:** the first target run exposed that
+  restored genesis consensus-key history used runtime H+2 activation. At a
+  non-one initial height, block H+1 therefore rejected the decided commit for
+  H. Genesis activation now uses the actual initial height while runtime
+  validator registration retains H+2; a focused regression covers heights
+  0/1/4.
+- **Harness corrections:** the first rehearsal fixed an explicit test-process
+  bech32 prefix; the final assertion now requires each consensus key with
+  positive power because normal validator rewards increase exact power after
+  restart. Neither correction weakened application/Comet reconciliation.
+- **Documentation:** added the English operator runbook with the honest
+  reviewed-fresh-genesis authorization boundary, descriptor/proof format,
+  halt/export/transform/start/rollback sequence, signer isolation, fail-closed
+  conditions, and exact automated-evidence command. Roadmap, limitations,
+  upgrades, and operator index now link the supported boundary.
+- **Verification:** final
+  `TRUEREPUBLIC_MULTI_VALIDATOR_SMOKE=1 go test . -run
+  '^TestMultiValidatorLegacyAuthorityMigrationRollback$' -count=1
+  -timeout=900s -v` PASS in 249.13s; activation regression and focused
+  truedemocracy tests PASS in 3.588s; post-doc focused packages PASS
+  (`truedemocracy` 2.537s, `migration` 5.105s, root 3.688s);
+  docs consistency PASS; `go vet .`, `gofmt -l`, and `git diff --check` PASS.
+- **Risk/blocker:** GH-61 is locally implemented and process-proven, but not
+  Done. Full repository/security gates, independent final adversarial review,
+  commit/push, PR, final-head GitHub workflows, review remediation, merge, and
+  issue/roadmap closure remain. Nonempty Wasm state and generic in-place
+  migrations remain explicitly unsupported.
+- **Next:** run the complete local verification/security matrix, commission an
+  independent read-only final review of the full GH-61 diff, remediate every
+  valid finding, then publish the reviewable PR.
+
+---
+
+## 2026-07-28 20:12 EEST GH-61 exact export-artifact binding → In Progress
+
+- **Branch:** `feature/GH-61-legacy-authority-migration`
+- **Issue:** [GH-61](https://github.com/NeaBouli/TrueRepublic/issues/61)
+- **Authorization:** Gio explicitly approved this exactly bounded local
+  security remediation after the 2026-07-28 Bridge workflow refresh. No push,
+  merge, deployment, public-network action, or follow-up task is included.
+- **Definition of Ready:** bind the exact source-export bytes to the canonical
+  descriptor signed by every fresh replacement operator; reject any
+  post-signing byte mutation before transformation or output.
+- **Scope:** `AGENTS.md` workflow prerequisite; descriptor/canonical signing
+  bytes; offline CLI verification; descriptor, CLI, historical harness, and
+  operator-runbook regressions; complete relevant local verification and
+  independent read-only review.
+- **Non-goals:** no app-hash-to-export cryptographic proof claim, no production
+  ceremony, no deployment, no generic Wasm migration, and no remediation of
+  the separate resource-amplification candidate in this task.
+- **Acceptance:** the signed descriptor contains one exact 32-byte SHA-256
+  commitment to the raw export; malformed/missing/mutated commitments fail
+  closed; the CLI hashes the bytes it actually transforms; the real process
+  harness and documentation use the same artifact; full relevant gates pass.
+- **Risk:** High — changes canonical recovery authorization and genesis
+  migration semantics. Codex Sol owns design, implementation, integration, and
+  full verification; Kimi K3 performs an independent secret-free read-only
+  final review.
+- **Current evidence:** the pre-fix disposable CLI reproduction accepted a
+  post-signing governance-state mutation and re-imported it successfully,
+  confirming the missing artifact binding. Repository files were not modified
+  by that reproduction.
+- **Next:** add the signed export digest and fail-closed CLI check, run focused
+  regressions, review the full diff, then execute the complete relevant gate.
+
+---
+
+## 2026-07-28 20:49 EEST GH-61 exact export-artifact binding → Done locally
+
+- **Outcome:** GH61-SB-001 is fixed locally. Descriptor v1 now contains
+  `source_genesis_sha256`; the canonical bytes signed by every fresh operator
+  bind the exact raw export that the transform consumes. Missing, malformed,
+  or changed commitments fail before JSON parsing, state rewrite, ledger
+  validation, or output creation.
+- **Changed for this bounded task:** project-local `AGENTS.md`;
+  `migration/legacy_authority.go`, `migration/transform_core.go`, and related
+  descriptor/core/application tests; CLI and historical harness fixtures;
+  `docs/node-operators/operations/legacy-authority-migration.md`; Bridge,
+  Action Log, Security Notes, Project State, and TODO.
+- **Regression depth:** the CLI mutation regression proves that changing the
+  signed export leaves no output. Other raw-mutating negative fixtures recompute
+  and re-sign their exact digest so source-chain, height, consensus, Auth, Bank,
+  DEX, Wasm, stale-reference, and malformed-JSON gates remain independently
+  exercised.
+- **Kimi contribution:** independent secret-free read-only review; write guard
+  before/after remained
+  `8beb30ec6fe6d22368bf7587190dfe31f06a47a69ceeeb2690ef528df18620b5`.
+  Kimi reported no P0/P1/P2 issue. Sol fixed the one accepted P3 test-
+  attribution observation and retained ownership of design, diff review, and
+  all final gates.
+- **Verification:** focused migration/root suite PASS (`migration` 3.318s,
+  root 6.837s); `make verify` PASS, including selector, build, vet, and
+  Race/Coverage (root 193.441s/69.4%, migration 18.935s/82.5%, token
+  5.397s/92.6%, treasury 9.157s/97.0%, DEX 23.969s/45.3%,
+  truedemocracy 172.168s/62.2%); docs consistency PASS; `gofmt -l` empty;
+  `git diff --check` PASS.
+- **Real process evidence:**
+  `TRUEREPUBLIC_MULTI_VALIDATOR_SMOKE=1 go test . -run
+  '^TestMultiValidatorLegacyAuthorityMigrationRollback$' -count=1
+  -timeout=900s -v` PASS in 174.82s (package 178.949s), preserving the exact
+  four-validator migration, target convergence, export/re-import, signer
+  isolation, and untouched-source rollback evidence.
+- **Residual risks:** GH61-SB-002 resource amplification and the P3
+  canonical-string limitation for preserved unknown-module address scans are
+  documented but intentionally not changed. Nonempty Wasm, generic in-place
+  migration, public ceremony, and app-hash-to-export proof remain unsupported.
+- **Blockers:** none for this authorized local remediation. Publication,
+  GitHub PR/CI/review, merge, issue closure, production actions, and any
+  follow-up hardening require their own current task authorization under the
+  refreshed workflow; none were performed.
+- **Next authorized step:** none. Target Stop is active.
+
+---
+
+## 2026-07-29 02:02 EEST GH-61 publication and closure → In Progress
+
+- **Branch:** `feature/GH-61-legacy-authority-migration`
+- **Issue:** [GH-61](https://github.com/NeaBouli/TrueRepublic/issues/61)
+- **Authorization:** Gio approved the immediately proposed publication stage
+  with “Ok dann weitermachen”: commit and push the already verified GH-61
+  scope, open a draft PR, inspect final-head GitHub CI and review, remediate
+  valid findings, merge only when green, and synchronize issue/roadmap/Bridge.
+- **Definition of Ready:** branch HEAD and `origin/main` both equal
+  `8c0c55574389210162db59c2c1103bb2d99e2691`; authenticated `gh` targets
+  `NeaBouli/TrueRepublic`; the complete dirty tree is the documented GH-61
+  implementation with no unrelated user changes.
+- **Acceptance:** intentional commit contains only GH-61; remote branch and PR
+  target `main`; all required final-head checks and actionable review are
+  resolved; merge and GH-61/GH-29/project status are synchronized with exact
+  evidence.
+- **Risk:** High — publishes and merges consensus/genesis migration code.
+  Codex Sol owns staging, external writes, review, CI inspection, remediation,
+  merge, and closure.
+- **Non-goals:** no deployment, public-network launch, mainnet or live
+  migration ceremony, server/IAM/secret/wallet action, force-push, GH61-SB-002
+  implementation, or unrelated follow-up.
+- **Current evidence:** local focused tests, `make verify`, docs consistency,
+  formatting/diff checks, exact-binding Kimi review, and the historical
+  four-validator migration/rollback drill are green.
+- **Next:** stage the explicit verified file set, review the staged diff,
+  commit, push, and open the draft PR.
+
+---
+
+## 2026-07-29 02:06 EEST GH-61 PR #69 → Draft / CI
+
+- **Commit:** `432156fe9090b1f2711461d0a135715b572fd8bb`
+  (`feat(migration): recover legacy validator authorities`), one intentional
+  26-file GH-61 commit; staged secret-pattern and diff checks were clean.
+- **Remote:** `origin/feature/GH-61-legacy-authority-migration` tracks the
+  pushed branch; no force-push was used.
+- **Pull request:** [PR #69](https://github.com/NeaBouli/TrueRepublic/pull/69)
+  is a draft against exact base
+  `8c0c55574389210162db59c2c1103bb2d99e2691` on `main`, links GH-61, and
+  records implementation, root cause, local evidence, security limits, and
+  unsupported production boundaries.
+- **Initial GitHub state:** mergeable; Go, Docker, docs, and security jobs
+  started. DeepScan is green. CodeRabbit correctly skipped the draft and will
+  be triggered after required CI is green and the PR becomes ready for review.
+- **Next:** commit this PR pointer, observe only the new final head, inspect
+  every failed check/review thread, and do not merge until all required
+  evidence is green and actionable review is resolved.
+
+---
+
+## 2026-07-29 02:09 EEST PR #69 go-vuln → Changes Required
+
+- **Failed check:** final-head Security Scan `go-vuln` on
+  `59884edde7637d9bce315618c2b0e5b7bcc2cb48`, run
+  [30361942572](https://github.com/NeaBouli/TrueRepublic/actions/runs/30361942572).
+- **Root cause:** the current vulnerability database added reachable
+  GO-2026-6061 in `google.golang.org/grpc@v1.79.3`; the scanner reports
+  `v1.82.1` as the fixed version. Four other reachable upstream findings still
+  report `Fixed in: N/A` and remain tracked.
+- **Approved remediation scope:** update only gRPC to the scanner-named fixed
+  version plus unavoidable module metadata, review the dependency diff, rerun
+  the exact vulnerability gate, `make verify`, and the complete
+  multi-validator process matrix because gRPC is network-transport critical.
+- **Non-goals:** no GH61-SB-002 work, application/API redesign, unrelated
+  dependency modernization, production action, or merge before the new final
+  head is green.
+- **Next:** inspect the module graph, apply the minimal version update, and run
+  the complete local gate before pushing.
+
+---
+
+## 2026-07-29 02:29 EEST PR #69 GO-2026-6061 remediation → Local PASS
+
+- **Dependency fix:** `google.golang.org/grpc` upgraded from `v1.79.3` to the
+  scanner-named fixed `v1.82.1`. `go mod tidy` updated only the required
+  gRPC/xDS/Genproto/Telemetry support graph and promoted already directly
+  imported `cosmossdk.io/core`; no TrueRepublic source/API/consensus behavior
+  was changed.
+- **Security evidence:** current `govulncheck ./...` no longer reports
+  GO-2026-6061 and reports no reachable vulnerability with an available fix.
+  The remaining four reachable findings are unchanged and all state
+  `Fixed in: N/A`.
+- **Module/docs gates:** `go mod verify`, docs consistency, `git diff --check`,
+  repository package selection, build, and vet PASS.
+- **Race/Coverage:** `make verify` PASS: root 65.266s/69.4%, migration
+  4.081s/82.5%, token 4.007s/92.6%, treasury 5.337s/97.0%, DEX
+  5.639s/45.3%, truedemocracy 53.976s/62.2%.
+- **Full network/process matrix:** all eight gated scenarios PASS in 940.823s:
+  legacy migration/rollback 124.35s, consensus recovery 72.32s, trusted
+  state-sync 125.42s, backup/restore/export/import 79.44s, persisted binary
+  upgrade/rollback 208.71s, cold failover 59.63s, consensus-key rotation
+  92.73s, and consensus slashing 175.71s.
+- **Next:** commit and push the exact module/Bridge remediation, update PR #69,
+  and evaluate only the new final-head GitHub runs.
+
+---
+
+## 2026-07-29 03:08 EEST PR #69 Final Head → CI PASS / Review Recovery
+
+- **Final head:** `a28f5654390f58feecfd86afeeb4d7f74e204341`
+  (`fix(deps): update grpc for GO-2026-6061`) is pushed without force.
+- **GitHub evidence:** docs consistency, Go build/race/coverage,
+  multi-validator recovery, Docker restart, Go/Rust/maintained-client and
+  informational legacy-client security scans, and DeepScan all PASS. DeepScan
+  reports zero new issues.
+- **Review state:** PR #69 is ready for review and mergeable. CodeRabbit's
+  status remained `Review in progress` on an unchanged timestamp for about ten
+  hours, with no review or inline thread emitted. A bounded
+  `@coderabbitai review` command was acknowledged but reused the stale run.
+  Converting the PR to draft and immediately back to ready also preserved the
+  stale status.
+- **Recovery action:** this append-only coordination update will create a
+  fresh final head so GitHub and CodeRabbit receive a new commit event without
+  changing migration, consensus, API, or dependency behavior.
+- **Safety boundary:** no review requirement is bypassed and no merge,
+  deployment, public-network, secret, wallet, or production action occurs
+  while the independent review check is pending.
+- **Next:** commit/push this documentation-only recovery head, evaluate every
+  check and review thread on that exact head, then merge only after required
+  final-head evidence is terminal and acceptable.
+
+---
+
+## 2026-07-29 03:14 EEST PR #69 CodeRabbit → Changes Required
+
+- **Recovered review:** CodeRabbit completed its full review of implementation
+  head `a28f5654390f58feecfd86afeeb4d7f74e204341`. The apparent long-running
+  status was an external completion-display delay; the fresh Bridge commit
+  exposed the finished review and produced a new incremental event.
+- **Actionable inline threads (6):** portable repository instructions; halt
+  guidance without validator-set mutation; atomic/fail-closed source export;
+  reject empty Comet validator state when active application validators exist;
+  replace deprecated `authtypes.ModuleAccountI`; and make the supply snapshot
+  independent instead of slice-aliased.
+- **Review-body findings (7):** re-evaluate the eight-harness timeout margin;
+  check every legacy operator in the process drill; capture stderr for
+  stdout-sensitive subprocesses; document the ephemeral test-only key copy;
+  cover foreign account-prefix rejection; decode mappings once before sorting;
+  and consolidate duplicated consensus-key traversal.
+- **Assessment:** all findings are within GH-61 review-remediation scope. The
+  docstring-coverage warning is repository-wide/informational and is not a
+  migration correctness gate.
+- **Kimi assignment:** Kimi K3 receives the bounded, secret-free Go/test/CI
+  remediation block. Sol owns the runbook/instruction fixes, integration,
+  security review, full tests, GitHub replies/resolution, final-head CI, and
+  merge. Delegated agents may not perform external writes or start agents.
+- **Review service:** the subsequent documentation-only incremental review is
+  temporarily rate-limited; the completed full implementation review and all
+  its findings remain available and must be resolved before merge.
+- **Next:** implement and review every valid finding, run focused and full
+  local gates, commit/push one reviewed remediation, resolve threads with
+  evidence, and wait for terminal final-head GitHub checks.
+
+---
+
+## 2026-07-29 03:33 EEST PR #69 Review Remediation → Integration Correction
+
+- **Kimi contribution:** Kimi K3 implemented the bounded Go/test/CI review
+  block without external writes. Focused migration tests and root/migration vet
+  passed. Sol reviewed every delegated diff and corrected the test-only key-copy
+  wording before integration.
+- **Accepted fixes:** repository-path portability; non-mutating halt guidance;
+  atomic private source export; independent bank-supply snapshot; current SDK
+  module-account interface; all-operator process assertion; stderr diagnostics;
+  explicit ephemeral-key warning; foreign-prefix and malformed-key regressions;
+  single five-collection consensus-key traversal; decode-once mapping sort; and
+  coherent 1500-second test / 30-minute CI timeout budgets.
+- **Focused/full unit evidence:** docs consistency, diff check, migration tests,
+  root migration-command tests, vet, and `make verify` PASS. Race/Coverage:
+  root 69.4%, migration 85.0%, token 92.6%, treasury 97.0%, DEX 45.3%, and
+  truedemocracy 62.2%.
+- **Integration finding:** the real historical process drill correctly proved
+  that a halted Cosmos SDK running-chain export omits
+  `consensus.validators` while retaining four active truedemocracy validators.
+  The review suggestion to reject that canonical shape caused the transform to
+  fail and was therefore invalid for GH-61.
+- **Correction:** restored acceptance of an empty exported Comet validator list
+  after validating the consensus envelope; retained strict reconciliation when
+  a list is present; added a regression and runbook/code explanation that
+  truedemocracy supplies target InitChain validator updates. The interrupted
+  first matrix run is recorded as FAIL evidence, not hidden.
+- **Next:** rerun focused gates, then the complete eight-scenario process matrix
+  from a clean test invocation before any commit or push.
+
+---
+
+## 2026-07-29 03:53 EEST PR #69 Review Remediation → Full Matrix PASS
+
+- **Corrected focused gates:** migration tests PASS in 2.231s; documentation
+  consistency and `git diff --check` PASS.
+- **Historical migration/rollback:** PASS in 196.40s with the canonical empty
+  exported Comet validator list, four active application validators, exact
+  transform, target convergence, export/reimport, and untouched source rollback.
+- **Complete real process matrix:** 8/8 PASS in 1169.685s: consensus recovery
+  119.13s, trusted state sync 145.57s, backup/restore/export/import 90.99s,
+  persisted binary upgrade/rollback 223.52s, cold failover 87.03s,
+  consensus-key rotation 88.48s, and consensus slashing 215.28s in addition to
+  the GH-61 drill.
+- **Timeout evidence:** the prior 1200-second Go test limit would have left only
+  about 30 seconds of local margin. The reviewed 1500-second test cap and
+  30-minute job cap are therefore required, coherent, and not a convenience
+  relaxation.
+- **Review disposition:** the empty-consensus rejection is rejected with direct
+  integration evidence; all other CodeRabbit findings are remediated. No
+  review thread is resolved until the final diff and final local gate are
+  committed and pushed.
+- **Next:** rerun `make verify` on the final code, inspect/stage the exact diff,
+  commit/push, respond to and resolve review threads with evidence, then require
+  terminal final-head GitHub CI before merge.
+
+---
+
+## 2026-07-29 03:58 EEST PR #69 Final Remediation Diff → Local PASS
+
+- **Final `make verify`:** repository selector, build, vet, and Race/Coverage
+  PASS: root 109.768s/69.4%, migration 9.775s/84.6%, token 5.440s/92.6%,
+  treasury 3.564s/97.0%, DEX 11.708s/45.3%, and truedemocracy
+  95.818s/62.2%.
+- **Complete evidence:** final focused tests/docs plus 8/8 real process
+  scenarios are green on the corrected review-remediation worktree.
+- **Next:** stage only the documented review-remediation files, inspect the
+  staged diff and secret patterns, commit/push without force, then resolve PR
+  feedback only with exact final-head evidence.
+
+---

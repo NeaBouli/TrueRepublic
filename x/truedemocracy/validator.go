@@ -128,7 +128,7 @@ func (k Keeper) RegisterValidator(ctx sdk.Context, operatorAddr string, pubKeyBy
 	store.Set(validatorKey(operatorAddr), valBz)
 	store.Set(valPubKeyKey(pubKeyBytes), []byte(operatorAddr))
 	store.Set(consensusAuthorityIndexKey(consensusKeyDerivedOperator(pubKeyBytes)), []byte(operatorAddr))
-	k.registerConsensusKeyRecord(ctx, pubKeyBytes, operatorAddr, initialConsensusActivationHeight(ctx))
+	k.registerConsensusKeyRecord(ctx, pubKeyBytes, operatorAddr, validatorUpdateActivationHeight(ctx))
 
 	return nil
 }

@@ -41,11 +41,18 @@ func consensusAddressFromPubKey(pubKey []byte) []byte {
 	return append([]byte(nil), cmted25519.PubKey(pubKey).Address()...)
 }
 
-func initialConsensusActivationHeight(ctx sdk.Context) int64 {
+func validatorUpdateActivationHeight(ctx sdk.Context) int64 {
 	if ctx.BlockHeight() <= 0 {
 		return 1
 	}
 	return ctx.BlockHeight() + sdk.ValidatorUpdateDelay + 1
+}
+
+func genesisConsensusActivationHeight(ctx sdk.Context) int64 {
+	if ctx.BlockHeight() <= 0 {
+		return 1
+	}
+	return ctx.BlockHeight()
 }
 
 func (k Keeper) setConsensusKeyRecord(ctx sdk.Context, record ConsensusKeyRecord) {
