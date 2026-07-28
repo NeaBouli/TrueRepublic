@@ -1491,3 +1491,24 @@ Go/Rust/Node security, docs, DeepScan, and CodeRabbit. GH-51 is closed.
   commit, push, and open the draft PR.
 
 ---
+
+## 2026-07-29 02:06 EEST GH-61 PR #69 → Draft / CI
+
+- **Commit:** `432156fe9090b1f2711461d0a135715b572fd8bb`
+  (`feat(migration): recover legacy validator authorities`), one intentional
+  26-file GH-61 commit; staged secret-pattern and diff checks were clean.
+- **Remote:** `origin/feature/GH-61-legacy-authority-migration` tracks the
+  pushed branch; no force-push was used.
+- **Pull request:** [PR #69](https://github.com/NeaBouli/TrueRepublic/pull/69)
+  is a draft against exact base
+  `8c0c55574389210162db59c2c1103bb2d99e2691` on `main`, links GH-61, and
+  records implementation, root cause, local evidence, security limits, and
+  unsupported production boundaries.
+- **Initial GitHub state:** mergeable; Go, Docker, docs, and security jobs
+  started. DeepScan is green. CodeRabbit correctly skipped the draft and will
+  be triggered after required CI is green and the PR becomes ready for review.
+- **Next:** commit this PR pointer, observe only the new final head, inspect
+  every failed check/review thread, and do not merge until all required
+  evidence is green and actionable review is resolved.
+
+---

@@ -1246,3 +1246,17 @@
   reached about 1.75 GiB maximum resident memory and 33.51s in the focused
   transform path. No push, PR, merge, deployment, or follow-up remediation was
   authorized or performed in this task.
+
+## 2026-07-29 02:06 EEST - GH-61 publication started
+
+- Froze and staged exactly the 26 documented GH-61 files. The staged diff and
+  secret-pattern scan were clean; no unrelated user changes were present.
+- Created commit `432156fe9090b1f2711461d0a135715b572fd8bb` and pushed
+  `feature/GH-61-legacy-authority-migration` to `origin` without force.
+- Opened draft PR #69 against exact `main` base
+  `8c0c55574389210162db59c2c1103bb2d99e2691`. The description closes GH-61
+  only on merge and records the honest fresh-genesis boundary, real local
+  evidence, unsupported production claims, and GH61-SB-002 residual risk.
+- Initial GitHub checks started; DeepScan is green and CodeRabbit skipped the
+  draft as configured. The PR remains draft until required final-head checks
+  pass, after which review must be triggered and resolved before merge.
