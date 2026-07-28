@@ -33,6 +33,26 @@ if [ "${1:-}" = "start" ] && [ ! -f "${node_home}/config/genesis.json" ]; then
     --home "${node_home}"
 fi
 
+if [ "${1:-}" = "start" ] && [ -f "${node_home}/config/config.toml" ]; then
+  case "${PROMETHEUS_ENABLED:-false}" in
+    true|1)
+      sed -i.bak 's/^prometheus = false/prometheus = true/' \
+        "${node_home}/config/config.toml"
+      ;;
+    false|0|"")
+      sed -i.bak 's/^prometheus = true/prometheus = false/' \
+        "${node_home}/config/config.toml"
+      ;;
+    *)
+      echo "Error: PROMETHEUS_ENABLED must be true, false, 1, or 0." >&2
+      exit 1
+      ;;
+  esac
+  sed -i.bak 's|^[[:space:]]*prometheus_listen_addr = ".*"|prometheus_listen_addr = "127.0.0.1:26660"|' \
+    "${node_home}/config/config.toml"
+  rm -f "${node_home}/config/config.toml.bak"
+fi
+
 if [ "${explicit_home}" = true ]; then
   exec truerepublicd "$@"
 fi

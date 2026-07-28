@@ -6,7 +6,7 @@ scrape_configs:
   # CometBFT node metrics (port 26660 when prometheus=true in config.toml)
   - job_name: 'truerepublic-node'
     static_configs:
-      - targets: ['truerepublic-node:26660']
+      - targets: ['127.0.0.1:26660']
         labels:
           chain_id: 'truerepublic-1'
 

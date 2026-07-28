@@ -118,7 +118,8 @@ full validator home. For planned validator failover, custody
 ### Security
 
 - Run behind a firewall (UFW recommended)
-- Only expose P2P (26656) and optionally RPC (26657) publicly
+- Expose no validator port publicly; allow P2P only from named sentries
+- Keep RPC, REST, gRPC, gRPC-web, metrics, and profiling on loopback or disabled
 - Use a sentry node architecture for DDoS protection
 - Keep the consensus key and current signer state together in encrypted offline custody
 - Never run two copies of one consensus identity or restore stale signer state
@@ -126,9 +127,14 @@ full validator home. For planned validator failover, custody
 ### Firewall Rules
 
 ```bash
-sudo ufw allow 26656/tcp   # P2P (required)
-sudo ufw allow 26657/tcp   # RPC (optional, for queries)
+sudo ufw allow from <sentry-address> to any port 26656 proto tcp
+sudo ufw deny 26657/tcp   # RPC (loopback/reverse proxy only)
 sudo ufw deny 1317/tcp     # LCD (internal only)
 sudo ufw deny 9090/tcp     # gRPC (internal only)
 sudo ufw enable
 ```
+
+Before a rollout review, run the
+[role-based network-policy validator](node-operators/configuration/network-policy.md)
+against the initialized validator home. Replace placeholders only from the
+reviewed topology; never paste real addresses or keys into tickets or docs.

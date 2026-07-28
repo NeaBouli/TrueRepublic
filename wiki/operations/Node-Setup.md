@@ -278,7 +278,8 @@ Key settings:
 
 ```toml
 [p2p]
-# Your node's external address
+# Public seed/sentry/RPC roles use one explicit interface and advertised address.
+laddr = "tcp://YOUR_INTERFACE_IP:26656"
 external_address = "tcp://YOUR_IP:26656"
 
 # Seed nodes (initial peers)
@@ -302,12 +303,15 @@ cache_size = 10000
 
 [rpc]
 # Enable RPC
-laddr = "tcp://0.0.0.0:26657"
+laddr = "tcp://127.0.0.1:26657"
+unsafe = false
+cors_allowed_origins = []
+pprof_laddr = ""
 
 [instrumentation]
 # Enable Prometheus metrics
 prometheus = true
-prometheus_listen_addr = ":26660"
+prometheus_listen_addr = "127.0.0.1:26660"
 ```
 
 Edit `app.toml`:
@@ -322,12 +326,13 @@ Key settings:
 [api]
 # Enable REST API
 enable = true
-address = "tcp://0.0.0.0:1317"
+address = "tcp://127.0.0.1:1317"
+enabled-unsafe-cors = false
 
 [grpc]
 # Enable gRPC
 enable = true
-address = "0.0.0.0:9090"
+address = "127.0.0.1:9090"
 
 [state-sync]
 # Snapshots for state sync
@@ -446,14 +451,13 @@ Open required ports:
 # P2P
 sudo ufw allow 26656/tcp
 
-# RPC (if needed publicly)
-sudo ufw allow 26657/tcp
+# Reviewed TLS query proxy
+sudo ufw allow 443/tcp
 
-# REST API (if needed publicly)
-sudo ufw allow 1317/tcp
-
-# gRPC (if needed publicly)
-sudo ufw allow 9090/tcp
+# Direct client listeners stay private
+sudo ufw deny 26657/tcp
+sudo ufw deny 1317/tcp
+sudo ufw deny 9090/tcp
 
 # Prometheus (local only)
 sudo ufw allow from 127.0.0.1 to any port 26660
@@ -461,6 +465,10 @@ sudo ufw allow from 127.0.0.1 to any port 26660
 # Enable firewall
 sudo ufw enable
 ```
+
+Run the
+[role-based network-policy validator](../../docs/node-operators/configuration/network-policy.md)
+before treating this configuration as rollout evidence.
 
 ---
 

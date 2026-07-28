@@ -16,8 +16,9 @@ All configuration is stored in `~/.truerepublic/config/`:
 
 ```toml
 [p2p]
-# Listen address for peer connections
-laddr = "tcp://0.0.0.0:26656"
+# Public seed/sentry/RPC roles bind one explicit interface and advertise it.
+laddr = "tcp://YOUR_INTERFACE_IP:26656"
+external_address = "tcp://YOUR_PUBLIC_ADDRESS:26656"
 
 # Seeds for initial peer discovery
 seeds = "node-id@seed1.truerepublic.network:26656"
@@ -33,15 +34,19 @@ max_num_outbound_peers = 10
 pex = true
 ```
 
+Validator and private roles instead use `laddr = "tcp://127.0.0.1:26656"`,
+leave `external_address` empty, disable PEX, and dial only reviewed persistent
+peers. Validate the complete role profile before startup.
+
 ### RPC Configuration
 
 ```toml
 [rpc]
 # RPC listen address
 laddr = "tcp://127.0.0.1:26657"
-
-# For public RPC, use:
-# laddr = "tcp://0.0.0.0:26657"
+unsafe = false
+cors_allowed_origins = []
+pprof_laddr = ""
 
 # Maximum number of open connections
 max_open_connections = 900
@@ -70,7 +75,7 @@ timeout_commit = "5s"
 prometheus = true
 
 # Metrics listen address
-prometheus_listen_addr = ":26660"
+prometheus_listen_addr = "127.0.0.1:26660"
 ```
 
 ## Key app.toml Settings
@@ -90,15 +95,21 @@ minimum-gas-prices = "1000upnyx"
 enable = true
 
 # REST API address
-address = "tcp://0.0.0.0:1317"
+address = "tcp://127.0.0.1:1317"
+enabled-unsafe-cors = false
 
 [grpc]
 # Enable gRPC
 enable = true
 
 # gRPC address
-address = "0.0.0.0:9090"
+address = "127.0.0.1:9090"
 ```
+
+Client-facing listeners stay on loopback. A deliberately public query role
+must use a separately reviewed TLS reverse proxy and pass the
+[role-based network-policy validator](network-policy.md); never bind RPC, REST,
+gRPC, gRPC-web, pprof, or metrics directly to a public/wildcard interface.
 
 ### Pruning
 
@@ -154,5 +165,6 @@ pruning = "nothing"           # Keep all historical state
 ## Next Steps
 
 - [Network Configuration](network-config.md)
+- [Role-Based Network Policy](network-policy.md)
 - [Genesis Parameters](genesis-params.md)
 - [Monitoring](../operations/monitoring.md)

@@ -160,3 +160,20 @@
   recovery task, not the production boundary: the path still requires a new
   chain ID and empty CosmWasm state and does not provide an in-place migration,
   retroactive governance authorization, or public-network approval.
+
+## 2026-07-29 - GH-71 role-based network boundary
+
+- Seed, sentry, validator, RPC/API, and private roles now fail closed around
+  canonical peers, PEX, discovery seeds, persistent/private/unconditional IDs,
+  public P2P intent, and client/metrics listener exposure.
+- Validators dial at least two sentries outbound with no public P2P listener,
+  PEX, seeds, or inbound capacity. Sentries protect validator IDs through
+  private and unconditional lists without requiring a dial-out validator peer.
+- RPC, REST, gRPC, gRPC-web, pprof, and metrics remain loopback-only; public
+  query traffic terminates at a separately reviewed TLS proxy. Unsafe RPC,
+  wildcard CORS, public client listeners, and environment-injected topology
+  are rejected.
+- The repository does not mutate provider/host firewalls or authorize any real
+  topology. The local Compose profile is loopback recovery/development only;
+  final-head container runtime evidence and all production rollout decisions
+  remain external gates.

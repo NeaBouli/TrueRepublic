@@ -61,9 +61,9 @@ truerepublicd genesis add-genesis-account validator-b 10000000pnyx --keyring-bac
 
 # Start chain B (offset ports to avoid conflicts)
 truerepublicd start --home ~/.truerepublic-b \
-  --rpc.laddr tcp://0.0.0.0:26658 \
-  --grpc.address 0.0.0.0:9091 \
-  --p2p.laddr tcp://0.0.0.0:26656
+  --rpc.laddr tcp://127.0.0.1:26658 \
+  --grpc.address 127.0.0.1:9091 \
+  --p2p.laddr tcp://127.0.0.1:26656
 ```
 
 ### Hermes Configuration

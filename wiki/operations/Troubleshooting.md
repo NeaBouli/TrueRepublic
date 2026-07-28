@@ -204,11 +204,16 @@ nano ~/.truerepublic/config/app.toml
 # Enable API:
 [api]
 enable = true
-address = "tcp://0.0.0.0:1317"
+address = "tcp://127.0.0.1:1317"
+enabled-unsafe-cors = false
 
 # Restart
 sudo systemctl restart truerepublicd
 ```
+
+Do not solve an API problem by creating a public listener. Use the
+[role-based network policy](../../docs/node-operators/configuration/network-policy.md)
+and a reviewed loopback reverse proxy.
 
 ### Error: "unauthorized"
 

@@ -1,6 +1,7 @@
 # Docker Setup
 
-The recommended way to run a TrueRepublic node. Uses multi-service Docker Compose with built-in monitoring.
+This Compose stack is a loopback-bound recovery/development setup with built-in
+monitoring. It is not a production or public-network topology.
 
 ## Prerequisites
 
@@ -22,15 +23,10 @@ Edit `.env` with your settings:
 CHAIN_ID=truerepublic-1
 MONIKER=my-truerepublic-node    # Your node's public name
 
-# Network (leave empty for fresh chain, add for joining existing)
-SEEDS=
-PERSISTENT_PEERS=
+# Network topology is edited in the initialized config.toml and then validated.
 
-# Ports (defaults shown)
+# Local-only P2P host port
 P2P_PORT=26656
-RPC_PORT=26657
-LCD_PORT=1317
-GRPC_PORT=9090
 
 # Gas
 MIN_GAS_PRICE=1000upnyx
@@ -39,8 +35,6 @@ MIN_GAS_PRICE=1000upnyx
 PROMETHEUS_ENABLED=true
 GRAFANA_PASSWORD=your-secure-password
 
-# Web wallet
-RPC_URL=http://truerepublic-node:26657
 ```
 
 ## Step 2: Build
@@ -63,20 +57,20 @@ This starts all services:
 
 | Service | Port | Description |
 |---------|------|-------------|
-| truerepublic-node | 26656, 26657, 1317, 9090 | Blockchain node |
-| web-wallet | 3001 | React frontend |
-| nginx | 80, 443 | Reverse proxy |
-| prometheus | 9091 | Metrics collection |
-| grafana | 3000 | Dashboards (admin / your-password) |
+| truerepublic-node | 127.0.0.1:26656 and proxy port 8080 | Local blockchain node |
+| web-wallet | 127.0.0.1:3001 | Deprecated local frontend |
+| nginx | 127.0.0.1:8080 | Local HTTP reverse proxy; not a TLS rollout proxy |
+| prometheus | 127.0.0.1:9091 | Same-namespace local metrics collection |
+| grafana | 127.0.0.1:3000 | Local dashboards |
 
 ## Step 4: Verify
 
 ```bash
 # Check node status
-curl http://localhost:26657/status | jq .result.sync_info
+curl http://localhost:8080/rpc/status | jq .result.sync_info
 
 # Check if node is syncing
-curl http://localhost:26657/status | jq .result.sync_info.catching_up
+curl http://localhost:8080/rpc/status | jq .result.sync_info.catching_up
 
 # Check web wallet
 curl -s http://localhost:3001 | head -5
@@ -99,10 +93,8 @@ make docker-down
 truerepublic-node:
   build: .
   ports:
-    - "${P2P_PORT}:26656"
-    - "${RPC_PORT}:26657"
-    - "${LCD_PORT}:1317"
-    - "${GRPC_PORT}:9090"
+    - "127.0.0.1:${P2P_PORT}:26656"
+    - "127.0.0.1:8080:80"
   volumes:
     - node-data:/root/.truerepublic
   environment:
@@ -110,6 +102,15 @@ truerepublic-node:
     - CHAIN_ID=${CHAIN_ID}
     - MIN_GAS_PRICE=${MIN_GAS_PRICE}
 ```
+
+Do not change these mappings to wildcard/public bindings. A rollout candidate
+must use an explicit node role, pass the
+[network-policy validator](../configuration/network-policy.md), and place any
+public query traffic behind the reviewed TLS/rate-limit boundary.
+
+The native `scripts/start-node.sh` wrapper requires `NETWORK_ROLE` and rejects
+`SEEDS`/`PERSISTENT_PEERS` environment substitution. This prevents shell data
+from silently rewriting reviewed TOML.
 
 ### Data Persistence
 
@@ -132,20 +133,22 @@ To join an existing TrueRepublic network:
 
 1. Get the **genesis file** from the network coordinator
 2. Get **seed node** addresses
-3. Update `.env`:
+3. Stop the node and edit the initialized
+   `/home/truerepublic/.truerepublic/config/config.toml` in the named volume
+   through the reviewed offline change procedure:
 
-```bash
-SEEDS=node-id@seed1.truerepublic.network:26656
-PERSISTENT_PEERS=node-id@peer1.truerepublic.network:26656
+```toml
+seeds = "<canonical-seed-endpoints>"
+persistent_peers = "<canonical-persistent-peer-endpoints>"
 ```
 
-4. Replace the genesis file:
+4. Install the checksum-verified genesis artifact into that same stopped volume
+   without changing the non-root ownership or permissions.
+5. Validate the selected role with `truerepublicd network-policy validate`
+   against the candidate home before restart.
 
-```bash
-# Copy genesis into the container
-docker cp genesis.json truerepublic-node:/root/.truerepublic/config/genesis.json
-docker restart truerepublic-node
-```
+Do not inject peer topology through `.env`, copy a genesis over a running
+container, or use the obsolete `/root/.truerepublic` path.
 
 ## Troubleshooting
 

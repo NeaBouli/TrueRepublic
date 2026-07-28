@@ -22,8 +22,7 @@ Already included in docker-compose.yml:
 ```yaml
 prometheus:
   image: prom/prometheus:latest
-  ports:
-    - "9090:9090"
+  network_mode: "service:truerepublic-node"
   volumes:
     - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml
 ```
@@ -40,7 +39,7 @@ global:
 scrape_configs:
   - job_name: 'truerepublic-node'
     static_configs:
-      - targets: ['truerepublic-node:26660']
+      - targets: ['127.0.0.1:26660']
         labels:
           instance: 'node-1'
           type: 'validator'
@@ -103,16 +102,16 @@ curl localhost:9090/api/v1/query?query=increase(tendermint_consensus_validators_
 ### Access Grafana
 
 ```
-URL: http://your-server-ip:3000
+URL: http://127.0.0.1:3000
 Username: admin
-Password: admin (change on first login!)
+Password: the required `GRAFANA_PASSWORD` value
 ```
 
 ### Add Prometheus Data Source
 
 1. Settings -> Data Sources
 2. Add data source -> Prometheus
-3. URL: `http://prometheus:9090`
+3. URL: `http://truerepublic-node:9090`
 4. Save & Test
 
 ### Import Dashboard

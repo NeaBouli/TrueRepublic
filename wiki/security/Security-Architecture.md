@@ -174,7 +174,8 @@ max_packet_msg_payload_size = 1024
 ```bash
 # Allow only necessary ports
 sudo ufw allow 26656/tcp  # P2P
-sudo ufw allow 26657/tcp  # RPC (optional, local only recommended)
+sudo ufw allow 443/tcp    # Reviewed TLS query proxy
+sudo ufw deny 26657/tcp   # Direct RPC is forbidden
 
 # Block everything else
 sudo ufw default deny incoming

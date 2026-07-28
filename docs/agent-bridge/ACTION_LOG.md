@@ -1387,3 +1387,28 @@
   ready-for-review/manual request; the independent Kimi review is retained as
   fallback evidence. Final merge still requires Sol diff review, green
   final-head checks, and zero unresolved threads.
+
+## 2026-07-29 12:24 EEST - GH-71 locally verified and independently reviewed
+
+- Implemented deterministic seed, sentry, validator, RPC/API, and private node
+  policies with canonical peer validation, validator-initiated sentry
+  isolation, listener/CORS/unsafe/metrics controls, fail-closed startup, safe
+  Docker/nginx defaults, and an operator runbook.
+- Kimi K3 implemented the bounded policy core and later completed an
+  independent read-only review. Sol reviewed every diff, corrected topology,
+  path-safety, P2P, metrics, Docker, documentation, and test gaps, and retained
+  all external/GitHub authority.
+- `make verify` passes on the final tree. Coverage is root 69.5%, migration
+  84.6%, network policy 95.5%, token 92.6%, treasury 97.0%, DEX 45.3%, and
+  governance 62.2%.
+- Reproduced 952 Go cases: root 69, migration 82, network policy 126, token 12,
+  treasury 36, DEX 116, governance 511. Together with 26 Rust and eight client
+  cases, the public branch total is 986.
+- Seven process scenarios passed in the combined run; concurrent load exhausted
+  its 1500-second global limit during slashing. The isolated slashing rerun
+  passed in 303.98 seconds. Exact final-head combined evidence remains a GitHub
+  merge gate.
+- Local Docker is unavailable. CI now runs the complete Compose stack and
+  requires loopback proxy RPC, wallet routing, healthy node metrics, and
+  Grafana health before merge.
+- Structured audit: `GH71_AUDIT.md`. No P0/P1 or scope blocker remains.
