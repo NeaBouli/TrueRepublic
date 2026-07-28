@@ -133,3 +133,9 @@
   a literal canonical-string sweep; alternate textual encodings of the same
   address are outside that sweep. Typed Auth, Bank, DEX, and truedemocracy
   fields remain structurally decoded and reconciled.
+- PR #69's first final-head scan surfaced newly published reachable
+  GO-2026-6061 in gRPC `v1.79.3`. Upgrading to the scanner-named fixed
+  `v1.82.1` removes that finding; current local `govulncheck` reports no
+  reachable vulnerability with an available fix. The complete Race/Coverage
+  gate and all eight real multi-validator process scenarios pass with the new
+  transport dependency graph.

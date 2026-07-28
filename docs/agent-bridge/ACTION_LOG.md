@@ -1260,3 +1260,29 @@
 - Initial GitHub checks started; DeepScan is green and CodeRabbit skipped the
   draft as configured. The PR remains draft until required final-head checks
   pass, after which review must be triggered and resolved before merge.
+
+## 2026-07-29 02:09 EEST - PR #69 current-database gRPC finding
+
+- Final-head Security Scan run 30361942572 failed only `go-vuln`: reachable
+  GO-2026-6061 affects `google.golang.org/grpc@v1.79.3`, with `v1.82.1`
+  reported as fixed. The four other reachable upstream findings remain `N/A`.
+- This is a vulnerability-database/dependency gate change, not a GH-61
+  transform regression. The bounded remediation is the scanner-named gRPC
+  update plus unavoidable module metadata and full vulnerability, Race, and
+  network-process verification before another push.
+
+## 2026-07-29 02:29 EEST - GO-2026-6061 remediation locally verified
+
+- Upgraded direct `google.golang.org/grpc` from `v1.79.3` to fixed `v1.82.1`.
+  The required xDS, Genproto, Envoy validation, and GCP detector support graph
+  followed; `go mod tidy` also classified already directly imported
+  `cosmossdk.io/core` correctly. No application source changed.
+- Current `govulncheck` removes GO-2026-6061 and shows zero reachable finding
+  with an available fix. Four existing reachable `N/A` findings remain
+  visible and tracked.
+- `go mod verify`, docs consistency, diff check, package selector, build, vet,
+  and full Race/Coverage PASS. Root/migration coverage remains 69.4%/82.5%.
+- The complete eight-scenario real process matrix passes in 940.823s under the
+  new transport graph, including GH-61 migration/rollback, recovery,
+  state-sync, backup/restore, binary rollback, cold failover, key rotation,
+  and slashing.

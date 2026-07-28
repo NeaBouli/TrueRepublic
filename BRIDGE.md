@@ -1512,3 +1512,50 @@ Go/Rust/Node security, docs, DeepScan, and CodeRabbit. GH-51 is closed.
   evidence is green and actionable review is resolved.
 
 ---
+
+## 2026-07-29 02:09 EEST PR #69 go-vuln → Changes Required
+
+- **Failed check:** final-head Security Scan `go-vuln` on
+  `59884edde7637d9bce315618c2b0e5b7bcc2cb48`, run
+  [30361942572](https://github.com/NeaBouli/TrueRepublic/actions/runs/30361942572).
+- **Root cause:** the current vulnerability database added reachable
+  GO-2026-6061 in `google.golang.org/grpc@v1.79.3`; the scanner reports
+  `v1.82.1` as the fixed version. Four other reachable upstream findings still
+  report `Fixed in: N/A` and remain tracked.
+- **Approved remediation scope:** update only gRPC to the scanner-named fixed
+  version plus unavoidable module metadata, review the dependency diff, rerun
+  the exact vulnerability gate, `make verify`, and the complete
+  multi-validator process matrix because gRPC is network-transport critical.
+- **Non-goals:** no GH61-SB-002 work, application/API redesign, unrelated
+  dependency modernization, production action, or merge before the new final
+  head is green.
+- **Next:** inspect the module graph, apply the minimal version update, and run
+  the complete local gate before pushing.
+
+---
+
+## 2026-07-29 02:29 EEST PR #69 GO-2026-6061 remediation → Local PASS
+
+- **Dependency fix:** `google.golang.org/grpc` upgraded from `v1.79.3` to the
+  scanner-named fixed `v1.82.1`. `go mod tidy` updated only the required
+  gRPC/xDS/Genproto/Telemetry support graph and promoted already directly
+  imported `cosmossdk.io/core`; no TrueRepublic source/API/consensus behavior
+  was changed.
+- **Security evidence:** current `govulncheck ./...` no longer reports
+  GO-2026-6061 and reports no reachable vulnerability with an available fix.
+  The remaining four reachable findings are unchanged and all state
+  `Fixed in: N/A`.
+- **Module/docs gates:** `go mod verify`, docs consistency, `git diff --check`,
+  repository package selection, build, and vet PASS.
+- **Race/Coverage:** `make verify` PASS: root 65.266s/69.4%, migration
+  4.081s/82.5%, token 4.007s/92.6%, treasury 5.337s/97.0%, DEX
+  5.639s/45.3%, truedemocracy 53.976s/62.2%.
+- **Full network/process matrix:** all eight gated scenarios PASS in 940.823s:
+  legacy migration/rollback 124.35s, consensus recovery 72.32s, trusted
+  state-sync 125.42s, backup/restore/export/import 79.44s, persisted binary
+  upgrade/rollback 208.71s, cold failover 59.63s, consensus-key rotation
+  92.73s, and consensus slashing 175.71s.
+- **Next:** commit and push the exact module/Bridge remediation, update PR #69,
+  and evaluate only the new final-head GitHub runs.
+
+---
