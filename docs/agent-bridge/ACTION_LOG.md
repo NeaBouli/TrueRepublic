@@ -1025,3 +1025,224 @@
 - GH-29, the roadmap, Bridge, audit, security notes, TODO, and project state
   are synchronized in the closure branch. GH-61 is the next bounded
   consensus-state task; no deployment or production rollout is approved.
+
+## 2026-07-26 21:56 EEST - GH-61 legacy authority migration start
+
+- Reconstructed GH-61 from clean `origin/main` at `8c0c555`, the closed GH-60
+  chain, GH-56's coupled-authority boundary, GH-29, and the 72-item rollout
+  roadmap (11 complete, 61 open).
+- The migration must be a deterministic halt/export/re-import ceremony, not a
+  compatible binary replacement. It must authenticate every replacement
+  operator independently from all consensus keys and preserve exact validator,
+  consensus, domain, escrow, auth-account, revocation, liveness, infraction,
+  pending-exit, and supply state.
+- Created `feature/GH-61-legacy-authority-migration`; no unrelated user changes
+  are present.
+- Sol owns architecture, security, integration, external writes, complete
+  verification, and closure. Kimi K3 receives one bounded secret-free
+  architecture/development block and may not delegate.
+- No GH-61 verification has run. Next: define the canonical plan/proof and
+  atomic fail-closed rewrite, then add unit, genesis-integration, rollback, and
+  real multi-validator migration evidence.
+
+## 2026-07-26 22:09 EEST - GH-61 architecture security review
+
+- Kimi's read-only review mapped the complete rewrite graph and confirmed that
+  an offline atomic halt/export/transform/re-import boundary is smaller and
+  more honest than claiming nonexistent `x/gov` or `x/upgrade` support.
+- Sol rejected the review's proposed legacy-consent and >2/3 validator
+  signatures because they were verified with the legacy consensus keys. That
+  would reintroduce exactly the consensus-derived authority GH-61 must remove.
+- No implementation was accepted or written. The remaining architecture
+  question is whether pre-GH-56 state contains any independently controlled
+  governance anchor. If not, GH-61 must introduce and authenticate one
+  explicitly or keep the reviewed fresh-genesis path as the only supported
+  transition.
+- Next: run a bounded adversarial authorization review, record the decision,
+  then delegate only the approved migration core.
+
+## 2026-07-26 22:20 EEST - GH-61 authorization-anchor decision
+
+- Kimi completed a bounded read-only adversarial audit of every plausible
+  pre-GH-56 authorization anchor. No independently controlled signer with
+  protocol-granted authority over validator identity exists.
+- `x/gov` and `x/upgrade` are absent; module accounts cannot sign; the legacy
+  validator operators and bootstrap domain admin are consensus-key-derived;
+  domain permission/ZKP keys and arbitrary user accounts carry no chain
+  migration authority.
+- Sol therefore rejects retroactive “governance approval.” The only honest
+  one-time recovery boundary is a reviewed, state-preserving fresh-genesis
+  ceremony bound to the exact halt height and source app hash, with
+  proof-of-possession from every fresh independent replacement operator.
+- A new consensus-independent governance commitment may be introduced in the
+  migrated genesis for future decisions, but cannot be presented as authority
+  for the initial rewrite.
+- No implementation or test run occurred during this review. Next: synchronize
+  the finding to GH-61, narrow its acceptance boundary, and implement the
+  canonical descriptor/proof verifier plus deterministic transformer and
+  recovery drill.
+
+## 2026-07-26 22:38 EEST - GH-61 canonical descriptor and fresh-key proofs
+
+- Added `migration/legacy_authority.go` and its test suite. Descriptor v1 binds
+  both chain IDs, halt height, source app hash, transform ID, and the complete
+  mapping; each fresh ed25519/secp256k1 operator key signs the same
+  domain-separated canonical bytes.
+- Verification rejects malformed/mixed-prefix addresses, wrong key derivation
+  or proof, descriptor mutation/replay, duplicates, unsorted mappings,
+  old/new cross-coupling, malformed consensus-key input, and replacement
+  addresses derived from any supplied legacy consensus key.
+- Kimi implemented only this bounded package and its tests. Its first test run
+  caught a stale-index sorting comparator; Kimi corrected it before handoff.
+- Sol reviewed the complete diff, added stable JSON tags and exact account-size
+  checks at canonical-encoding time, then independently reran the gate.
+- `gofmt -l migration` and `git diff --check` are clean; `go vet ./migration`
+  passes; uncached package tests pass in 0.946s; the race run passes in 2.578s.
+- Remaining boundary: the future transformer must supply the complete exported
+  consensus-key set and reconcile every typed reference. No CLI, transformer,
+  integration drill, repository-wide gate, commit, push, or PR exists yet.
+
+## 2026-07-26 22:59 EEST - GH-61 transformer threat-review refinement
+
+- Enforced distinct source/target chain IDs in descriptor verification and
+  added the negative regression, preventing legacy account-transaction replay
+  on the reviewed fresh-genesis chain.
+- Independent field review identified two additional fail-closed requirements:
+  nonempty CosmWasm contract state needs a separately reviewed contract-aware
+  migration adapter, and auth account numbers must remain globally unique so
+  SDK import cannot silently renumber signer identities.
+- The generic transformer must repack only mapped `BaseAccount` records with the
+  fresh public key and unchanged account number/sequence, rejecting mapped
+  module or unknown account types.
+- A second Kimi block completed the detailed typed-transform design but was
+  stopped before file writes after exceeding its bounded planning window. No
+  partial transformer code was accepted.
+- Uncached migration tests pass in 1.334s after the chain-ID change and
+  `git diff --check` is clean. The transformer, CLI, integration/process drill,
+  repo-wide verification, commit, push, PR, and merge remain open.
+
+## 2026-07-27 00:09 EEST - GH-61 truedemocracy transform core
+
+- Added the state-derived transform core and focused regressions. It inventories
+  active, historical, revoked, pending-rotation, and pending-removal consensus
+  keys directly from the export before verifying any descriptor proof.
+- Exact mapping completeness, replacement collision, invalid proof, malformed
+  export, atomic failure, input/descriptor immutability, post-transform genesis
+  validation, and old-literal removal are covered.
+- Spark's first draft was not accepted as written: Sol's gate found duplicate
+  test symbols, incorrect secp256k1 address derivation, a short app hash, and an
+  invalid fixture. Sol replaced the faulty tests and hardened SDK-prefix and
+  domain-admin decoding before rerunning the complete package gate.
+- `gofmt -l migration` and `git diff --check` are clean; `go vet ./migration`
+  passes; uncached tests pass in 3.726s; race tests pass in 3.617s.
+- Auth/Bank/DEX reconciliation, the explicit Wasm gate, outer genesis binding,
+  CLI, process drills, repo-wide verification, and GitHub publication remain
+  open.
+
+## 2026-07-27 00:24 EEST - GH-61 full app-state reconciliation
+
+- Added `migration/app_state.go` and focused application-genesis regressions.
+  The atomic transformer now binds outer chain ID and halt successor height,
+  repacks mapped BaseAccounts with fresh keys while preserving account
+  identity counters, moves Bank and DEX ownership, and validates each typed
+  module before returning output.
+- Duplicate auth addresses/account numbers, unsupported mapped account types,
+  pre-existing replacement ownership, invalid source/post state, stale legacy
+  address literals, and descriptor proof failures all fail without output or
+  input mutation.
+- Generic migration now refuses nonempty CosmWasm code/contract state. Unknown
+  modules remain preserved and are included in the stale-address gate.
+- The earlier independent review supplied the critical Auth/Wasm and
+  custom-module boundary requirements. Sol owned implementation, complete diff
+  review, fixture corrections, and final verification for this slice.
+- `gofmt -l migration` and `git diff --check` are clean; `go vet ./migration`
+  passes; uncached migration tests pass in 2.177s; race tests pass in 6.398s.
+- Remaining: trusted-header app-hash CLI verification, atomic file output,
+  operator docs, export/transform/re-import and rollback drills, full repository
+  gates, GitHub publication, commit, push, PR, review, and merge.
+
+## 2026-07-27 00:54 EEST - GH-61 canonical offline CLI and re-import
+
+- Added `truerepublicd migration legacy-authority` with strict descriptor
+  decoding, explicit trusted source-app-hash comparison, bounded regular-file
+  reads, input/output identity checks, no-overwrite private atomic output, and
+  content-free success reporting.
+- Added the missing App/Comet validator reconciliation: a populated consensus
+  set must exactly match active application consensus keys and power; empty
+  export validators remain valid for application `InitChain` reconstruction.
+  Fresh target genesis rejects an embedded prior app hash.
+- The CLI performs the existing exact cross-module ledger validation before
+  creating output. The new end-to-end command regression transforms a valid
+  legacy-coupled full genesis and reimports it into a fresh application.
+- Kimi supplied a detailed bounded file-safety design but produced no write
+  diff before Sol stopped the overlong planning run. Sol implemented, reviewed,
+  hardened, and verified the complete slice.
+- `gofmt -l` and `git diff --check` are clean; `go vet ./migration .` passes;
+  uncached package/root tests pass in 3.951s/141.937s; focused race tests pass
+  in 13.865s/13.296s; the canonical roundtrip passes again in 12.041s; daemon
+  build/help smoke exposes the new command.
+- Remaining: operator runbook, real pinned pre-GH-56 four-validator
+  halt/export/transform/import and rollback drill, full repository gates,
+  independent final security review, GitHub publication, commit, push, PR,
+  review, and merge.
+
+## 2026-07-27 01:34 EEST - GH-61 historical migration and rollback drill
+
+- Added a gated four-validator harness that builds pinned pre-GH-56 revision
+  `0e51a05b008f395e3f7391358e117f0817d4eb39`, runs a real coupled-authority
+  source chain, establishes a stable no-quorum halt/app hash, exports and
+  transforms through the current CLI, starts a distinct-ID target chain,
+  verifies app-hash/key/power convergence and export/reimport, stops all target
+  signers, and resumes the untouched historical source as rollback.
+- The first target rehearsal discovered a real initial-height defect:
+  genesis-restored consensus keys used runtime H+2 activation and rejected the
+  first decided commit when initial height was greater than one. Split genesis
+  activation (actual initial height) from runtime activation (H+2) and added a
+  focused height 0/1/4 regression without weakening rotation semantics.
+- Final live drill passes in 249.13s. The focused activation suite passes in
+  3.588s; post-documentation truedemocracy/migration/root checks pass in
+  2.537s/5.105s/3.688s; docs consistency, vet, formatting, and diff checks pass.
+- Added the operator migration runbook and synchronized the operator index,
+  upgrade boundary, rollout roadmap, and limitations. The procedure explicitly
+  records that fresh-key proofs prove possession, not retroactive governance,
+  and that source/target signers may never run concurrently.
+- Remaining: full repository and security matrices, independent final
+  adversarial review and remediation, commit/push/PR, final-head GitHub
+  workflows/review, merge, and issue/roadmap closure.
+
+## 2026-07-28 20:49 EEST - GH-61 exact export binding and local final gate
+
+- Confirmed GH61-SB-001 in a disposable pre-fix CLI reproduction: a valid
+  export could be changed after fresh operators signed the descriptor, and the
+  changed governance state was transformed and re-imported because only the
+  source header app hash was bound.
+- Added `source_genesis_sha256` to descriptor v1 canonical signing bytes and
+  require exactly 32 bytes in encoding and verification. The transform hashes
+  the exact raw byte slice before JSON parsing and compares it in constant time,
+  so direct package callers and the CLI share one fail-closed boundary.
+- Updated descriptor, transform, full-application, CLI, and historical-process
+  fixtures to sign the exact artifact. Raw-mutating negative fixtures recompute
+  and re-sign their commitment so they still exercise the intended deeper
+  Auth/Bank/DEX/Wasm/Comet and mapping controls.
+- Added the project-local `AGENTS.md` required by the refreshed Bridge workflow
+  and synchronized the operator runbook with exact-byte freeze/hash/sign
+  ordering. Reformatting the export after signing is now explicitly forbidden.
+- Kimi performed an independent secret-free read-only review and made no file
+  changes. It found no P0/P1/P2 issue. Sol accepted and fixed one P3 test-
+  attribution observation by sorting an added mapping before testing signature
+  invalidation; the separate canonical-string sweep boundary remains recorded
+  as P3 without expanding this task.
+- Focused migration/root regressions pass (`migration` 3.318s, root 6.837s).
+  `make verify` passes: repository selector, build, vet, and Race/Coverage for
+  root 193.441s/69.4%, migration 18.935s/82.5%, token 5.397s/92.6%, treasury
+  9.157s/97.0%, DEX 23.969s/45.3%, and truedemocracy 172.168s/62.2%.
+  Documentation consistency, `gofmt -l`, and `git diff --check` pass.
+- The exact real historical
+  `TestMultiValidatorLegacyAuthorityMigrationRollback` drill passes again in
+  174.82s (178.949s package): four-validator halt/export, exact-bound
+  transform, distinct target convergence, export/re-import, complete target
+  signer shutdown, and untouched source rollback all remain proven.
+- GH61-SB-002 remains open but out of scope: a measured 64 MiB padded artifact
+  reached about 1.75 GiB maximum resident memory and 33.51s in the focused
+  transform path. No push, PR, merge, deployment, or follow-up remediation was
+  authorized or performed in this task.

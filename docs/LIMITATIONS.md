@@ -51,7 +51,9 @@ state migrations and IBC client upgrades are unsupported
 bounded four-validator failure/restart/catch-up, partition recovery, trusted
 snapshot state-sync, sanitized backup/restore/export/import, compatible binary
 replacement, fail-before-open rollback, and authenticated validator-key
-rotation/revocation harnesses.
+rotation/revocation harnesses. GH-61 adds a bounded reviewed-fresh-genesis
+legacy-authority transformer and real historical four-validator
+halt/export/transform/start/rollback drill; final review and merge remain open.
 Independent operations review remains pending.
 **Current:** The standard `truerepublicd init --bootstrap-operator` command
 binds an independently controlled account authority to the generated CometBFT
@@ -72,11 +74,12 @@ app-hash agreement, one-validator failure, continued quorum, restart/catch-up,
 partition recovery, trusted snapshot state sync, sanitized backup/restore,
 restored export/re-import, compatible binary replacement/rollback, and
 single-signer validator-identity cold failover, plus authenticated atomic
-rotation with permanent revocation. Do not claim public-network readiness until
-consensus-breaking state migration, partially applied migration recovery,
-legacy authority migration, round-trip-safe inactive-validator export,
-network policy, load, topology, independent ABCI++ slashing/security review,
-and independent operations review pass.
+rotation with permanent revocation. The GH-61 path is intentionally limited to
+empty CosmWasm state and a new chain ID; it is not an in-place upgrade or a
+generic governance migration. Do not claim public-network readiness until
+generic consensus-breaking state migration, partially applied in-place
+migration recovery, network policy, load, topology, independent GH-61/ABCI++
+slashing security review, and independent operations review pass.
 
 Partial validator stake withdrawals are disabled until generalized slashable
 unbonding can retain the withdrawn claim through the CometBFT evidence window.

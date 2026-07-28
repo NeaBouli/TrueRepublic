@@ -38,6 +38,27 @@ func validatorVote(pubKey []byte, flag cmtproto.BlockIDFlag) abci.VoteInfo {
 	}
 }
 
+func TestConsensusActivationHeightsSeparateGenesisFromRuntimeUpdates(t *testing.T) {
+	_, ctx := setupKeeper(t)
+	for _, test := range []struct {
+		height      int64
+		wantGenesis int64
+		wantRuntime int64
+	}{
+		{height: 0, wantGenesis: 1, wantRuntime: 1},
+		{height: 1, wantGenesis: 1, wantRuntime: 3},
+		{height: 4, wantGenesis: 4, wantRuntime: 6},
+	} {
+		blockCtx := ctx.WithBlockHeight(test.height)
+		if got := genesisConsensusActivationHeight(blockCtx); got != test.wantGenesis {
+			t.Fatalf("genesis activation at height %d = %d, want %d", test.height, got, test.wantGenesis)
+		}
+		if got := validatorUpdateActivationHeight(blockCtx); got != test.wantRuntime {
+			t.Fatalf("runtime activation at height %d = %d, want %d", test.height, got, test.wantRuntime)
+		}
+	}
+}
+
 func TestProcessConsensusSignalsSlashesDelayedRotatedKeyExactlyOnce(t *testing.T) {
 	k, ctx := setupKeeper(t)
 	operator, before := setupRotationValidator(t, k, ctx)

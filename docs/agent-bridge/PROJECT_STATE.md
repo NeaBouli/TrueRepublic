@@ -1,6 +1,6 @@
 # Project State
 
-Updated: 2026-07-26 08:40 UTC
+Updated: 2026-07-28 17:49 UTC
 
 ## Repository
 
@@ -23,8 +23,15 @@ Updated: 2026-07-26 08:40 UTC
   compatibility, complete domains, exact stake/jail/missed-block/power
   recovery, fail-closed malformed resurrection, and the real four-process
   export/import drill pass locally and on the final GitHub head. GH-61 legacy
-  authority migration remains the next bounded consensus-state task. GH-29
-  remains open as the
+  authority migration is now locally implemented and process-proven on
+  `feature/GH-61-legacy-authority-migration`: canonical fresh-key proofs, exact
+  raw-export binding, typed state/Comet reconciliation, atomic trusted-hash
+  CLI, historical pre-GH-56 four-validator migration/rollback, and the operator
+  runbook pass. Full local Race/Coverage, docs, historical process evidence,
+  and independent artifact-binding review are green. Publication, final-head
+  GitHub CI/review, merge, and issue closure remain open and were not authorized
+  by the bounded 2026-07-28 local security task.
+  GH-29 remains open as the
   rollout execution tracker. GH-32 and
   PR #33 close its first Phase 1 gate with local and GitHub evidence. GH-39 is
   now merged via PR #40 with green GitHub CI for validator

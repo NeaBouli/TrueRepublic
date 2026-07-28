@@ -211,7 +211,7 @@ func newRootCmd() *cobra.Command {
 	txCmd.AddCommand(truedemocracy.GetTxCmd(), dex.GetTxCmd())
 	queryCmd := &cobra.Command{Use: "query", Aliases: []string{"q"}, Short: "Query commands", RunE: client.ValidateCmd}
 	queryCmd.AddCommand(truedemocracy.GetQueryCmd(legacyAmino), dex.GetQueryCmd(legacyAmino))
-	rootCmd.AddCommand(txCmd, queryCmd, keys.Commands(), server.StatusCommand())
+	rootCmd.AddCommand(txCmd, queryCmd, keys.Commands(), server.StatusCommand(), newMigrationCmd(appCodec))
 	return rootCmd
 }
 

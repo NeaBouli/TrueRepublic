@@ -49,8 +49,10 @@ approval.
   revocation, and bootstrap operator-authority separation
   ([GH-56](https://github.com/NeaBouli/TrueRepublic/issues/56)).
 - [ ] Define seed, persistent-peer, RPC, API, firewall, and rate-limit policy.
-- [ ] Implement a governance-controlled migration for pre-GH-56 coupled
-  validator authorities; binary replacement alone is not a migration
+- [ ] Complete final review and merge of the reviewed fresh-genesis migration
+  for pre-GH-56 coupled validator authorities; no independent legacy
+  governance anchor exists, so this must not be described as retroactive
+  governance authorization
   ([GH-61](https://github.com/NeaBouli/TrueRepublic/issues/61)).
 - [x] Preserve inactive, excluded, jailed, and under-staked validator claims in
   round-trip-safe export/import state
