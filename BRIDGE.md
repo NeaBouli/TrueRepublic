@@ -1585,3 +1585,106 @@ Go/Rust/Node security, docs, DeepScan, and CodeRabbit. GH-51 is closed.
   final-head evidence is terminal and acceptable.
 
 ---
+
+## 2026-07-29 03:14 EEST PR #69 CodeRabbit → Changes Required
+
+- **Recovered review:** CodeRabbit completed its full review of implementation
+  head `a28f5654390f58feecfd86afeeb4d7f74e204341`. The apparent long-running
+  status was an external completion-display delay; the fresh Bridge commit
+  exposed the finished review and produced a new incremental event.
+- **Actionable inline threads (6):** portable repository instructions; halt
+  guidance without validator-set mutation; atomic/fail-closed source export;
+  reject empty Comet validator state when active application validators exist;
+  replace deprecated `authtypes.ModuleAccountI`; and make the supply snapshot
+  independent instead of slice-aliased.
+- **Review-body findings (7):** re-evaluate the eight-harness timeout margin;
+  check every legacy operator in the process drill; capture stderr for
+  stdout-sensitive subprocesses; document the ephemeral test-only key copy;
+  cover foreign account-prefix rejection; decode mappings once before sorting;
+  and consolidate duplicated consensus-key traversal.
+- **Assessment:** all findings are within GH-61 review-remediation scope. The
+  docstring-coverage warning is repository-wide/informational and is not a
+  migration correctness gate.
+- **Kimi assignment:** Kimi K3 receives the bounded, secret-free Go/test/CI
+  remediation block. Sol owns the runbook/instruction fixes, integration,
+  security review, full tests, GitHub replies/resolution, final-head CI, and
+  merge. Delegated agents may not perform external writes or start agents.
+- **Review service:** the subsequent documentation-only incremental review is
+  temporarily rate-limited; the completed full implementation review and all
+  its findings remain available and must be resolved before merge.
+- **Next:** implement and review every valid finding, run focused and full
+  local gates, commit/push one reviewed remediation, resolve threads with
+  evidence, and wait for terminal final-head GitHub checks.
+
+---
+
+## 2026-07-29 03:33 EEST PR #69 Review Remediation → Integration Correction
+
+- **Kimi contribution:** Kimi K3 implemented the bounded Go/test/CI review
+  block without external writes. Focused migration tests and root/migration vet
+  passed. Sol reviewed every delegated diff and corrected the test-only key-copy
+  wording before integration.
+- **Accepted fixes:** repository-path portability; non-mutating halt guidance;
+  atomic private source export; independent bank-supply snapshot; current SDK
+  module-account interface; all-operator process assertion; stderr diagnostics;
+  explicit ephemeral-key warning; foreign-prefix and malformed-key regressions;
+  single five-collection consensus-key traversal; decode-once mapping sort; and
+  coherent 1500-second test / 30-minute CI timeout budgets.
+- **Focused/full unit evidence:** docs consistency, diff check, migration tests,
+  root migration-command tests, vet, and `make verify` PASS. Race/Coverage:
+  root 69.4%, migration 85.0%, token 92.6%, treasury 97.0%, DEX 45.3%, and
+  truedemocracy 62.2%.
+- **Integration finding:** the real historical process drill correctly proved
+  that a halted Cosmos SDK running-chain export omits
+  `consensus.validators` while retaining four active truedemocracy validators.
+  The review suggestion to reject that canonical shape caused the transform to
+  fail and was therefore invalid for GH-61.
+- **Correction:** restored acceptance of an empty exported Comet validator list
+  after validating the consensus envelope; retained strict reconciliation when
+  a list is present; added a regression and runbook/code explanation that
+  truedemocracy supplies target InitChain validator updates. The interrupted
+  first matrix run is recorded as FAIL evidence, not hidden.
+- **Next:** rerun focused gates, then the complete eight-scenario process matrix
+  from a clean test invocation before any commit or push.
+
+---
+
+## 2026-07-29 03:53 EEST PR #69 Review Remediation → Full Matrix PASS
+
+- **Corrected focused gates:** migration tests PASS in 2.231s; documentation
+  consistency and `git diff --check` PASS.
+- **Historical migration/rollback:** PASS in 196.40s with the canonical empty
+  exported Comet validator list, four active application validators, exact
+  transform, target convergence, export/reimport, and untouched source rollback.
+- **Complete real process matrix:** 8/8 PASS in 1169.685s: consensus recovery
+  119.13s, trusted state sync 145.57s, backup/restore/export/import 90.99s,
+  persisted binary upgrade/rollback 223.52s, cold failover 87.03s,
+  consensus-key rotation 88.48s, and consensus slashing 215.28s in addition to
+  the GH-61 drill.
+- **Timeout evidence:** the prior 1200-second Go test limit would have left only
+  about 30 seconds of local margin. The reviewed 1500-second test cap and
+  30-minute job cap are therefore required, coherent, and not a convenience
+  relaxation.
+- **Review disposition:** the empty-consensus rejection is rejected with direct
+  integration evidence; all other CodeRabbit findings are remediated. No
+  review thread is resolved until the final diff and final local gate are
+  committed and pushed.
+- **Next:** rerun `make verify` on the final code, inspect/stage the exact diff,
+  commit/push, respond to and resolve review threads with evidence, then require
+  terminal final-head GitHub CI before merge.
+
+---
+
+## 2026-07-29 03:58 EEST PR #69 Final Remediation Diff → Local PASS
+
+- **Final `make verify`:** repository selector, build, vet, and Race/Coverage
+  PASS: root 109.768s/69.4%, migration 9.775s/84.6%, token 5.440s/92.6%,
+  treasury 3.564s/97.0%, DEX 11.708s/45.3%, and truedemocracy
+  95.818s/62.2%.
+- **Complete evidence:** final focused tests/docs plus 8/8 real process
+  scenarios are green on the corrected review-remediation worktree.
+- **Next:** stage only the documented review-remediation files, inspect the
+  staged diff and secret patterns, commit/push without force, then resolve PR
+  feedback only with exact final-head evidence.
+
+---

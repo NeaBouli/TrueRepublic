@@ -1299,3 +1299,51 @@
   documentation-only commit is intended to produce a fresh final head and bot
   event. No implementation/dependency behavior changes and no review bypass,
   merge, deployment, or production action were made.
+
+## 2026-07-29 03:14 EEST - PR #69 review findings accepted for remediation
+
+- CodeRabbit's full review of `a28f565` completed with six unresolved inline
+  threads and seven additional review-body findings. The findings cover
+  runbook atomicity/halt integrity, genesis consistency, deprecated SDK use,
+  test diagnostics/coverage, mapping-sort efficiency, shared key traversal,
+  and CI timeout margin.
+- Accepted all findings as in-scope review remediation; the repository-wide
+  docstring percentage remains informational.
+- Assigned the bounded secret-free Go/test/CI block to Kimi K3. Sol retained
+  documentation, architecture/security decisions, diff review, complete local
+  and GitHub validation, thread resolution, external writes, and merge.
+
+## 2026-07-29 03:33 EEST - Review remediation integration correction
+
+- Kimi completed the bounded Go/test/CI patch; Sol reviewed the full diff.
+  Focused tests/vet and `make verify` passed, raising migration coverage to
+  85.0%.
+- The first full process-matrix attempt failed in the historical GH-61 drill:
+  a real halted running-chain export had an empty Comet validator list and four
+  active truedemocracy validators. This proved CodeRabbit's proposed rejection
+  incompatible with the supported Cosmos SDK export shape.
+- Stopped the remaining matrix, restored canonical empty-consensus-export
+  acceptance, added a direct regression plus code/runbook rationale, and kept
+  strict reconciliation for non-empty consensus lists. A fresh complete matrix
+  is required before publication.
+
+## 2026-07-29 03:53 EEST - Corrected full process matrix passes
+
+- Corrected migration tests and docs/diff gates passed.
+- All eight real process scenarios passed in 1169.685s. The GH-61 historical
+  migration/rollback slice passed in 196.40s; consensus recovery 119.13s; state
+  sync 145.57s; backup/restore 90.99s; binary upgrade/rollback 223.52s; cold
+  failover 87.03s; key rotation 88.48s; slashing 215.28s.
+- The observed total leaves only about 30 seconds under the former 1200-second
+  limit, validating the reviewed 1500-second test and 30-minute job budgets.
+- The empty-consensus review suggestion is rejected with direct process
+  evidence; every other review finding remains implemented pending final-head
+  publication and thread resolution.
+
+## 2026-07-29 03:58 EEST - Final review-remediation local gate passes
+
+- Final `make verify` passed package selection, build, vet, and Race/Coverage:
+  root 69.4%, migration 84.6%, token 92.6%, treasury 97.0%, DEX 45.3%, and
+  truedemocracy 62.2%.
+- Together with the corrected 8/8 process matrix and docs checks, the final
+  local remediation diff is ready for staged review and publication.

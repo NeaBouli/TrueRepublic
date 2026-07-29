@@ -667,8 +667,14 @@ func TestSortMappings(t *testing.T) {
 	}
 
 	shuffled[0].OldOperator = "not-bech32"
+	beforeError := append([]migration.OperatorMapping(nil), shuffled...)
 	if err := migration.SortMappings(shuffled); err == nil {
 		t.Fatal("SortMappings accepted a malformed operator address")
+	}
+	for i := range shuffled {
+		if shuffled[i].OldOperator != beforeError[i].OldOperator {
+			t.Fatal("SortMappings reordered the input despite a validation error")
+		}
 	}
 }
 

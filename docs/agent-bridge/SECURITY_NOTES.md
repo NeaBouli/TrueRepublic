@@ -139,3 +139,19 @@
   reachable vulnerability with an available fix. The complete Race/Coverage
   gate and all eight real multi-validator process scenarios pass with the new
   transport dependency graph.
+- PR #69 review remediation makes the offline ceremony fail closed around the
+  operator procedure: validators are stopped/isolated without changing the
+  source validator set, and the exact source export is written privately to a
+  same-directory temporary file before an atomic no-overwrite publication.
+- A proposed rejection of active application validators when the exported
+  Comet validator list is empty was disproved by the real historical process
+  drill: canonical Cosmos SDK running-chain exports omit that list and rely on
+  validated application state for InitChain validator updates. The transform
+  therefore accepts the empty canonical export form but continues exact
+  key/power reconciliation whenever a Comet list is present.
+- All other review findings are implemented, including independent supply
+  snapshotting, complete legacy-address assertions, stderr-safe subprocess
+  diagnostics, foreign-prefix and malformed-key regressions, one shared
+  traversal of every consensus-key-bearing collection, and a decode-once
+  canonical mapping sort. The corrected eight-scenario matrix passes in
+  1169.685s; the prior 1200-second cap had only about 30 seconds of margin.

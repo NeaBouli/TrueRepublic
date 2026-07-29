@@ -99,44 +99,52 @@ func TransformTrueDemocracy(desc *Descriptor, raw json.RawMessage) (json.RawMess
 }
 
 func collectConsensusInventory(state truedemocracy.GenesisState) ([][]byte, error) {
-	keys := make([][]byte, 0)
-	appendKey := func(p []byte) error {
-		if len(p) != 32 {
-			return fmt.Errorf("migration: consensus key must be 32 bytes, got %d", len(p))
+	refs := consensusKeyRefs(state)
+	keys := make([][]byte, 0, len(refs))
+	for _, ref := range refs {
+		if len(ref.key) != 32 {
+			return nil, fmt.Errorf(
+				"migration: %s: %w",
+				ref.label,
+				fmt.Errorf("migration: consensus key must be 32 bytes, got %d", len(ref.key)),
+			)
 		}
-		keys = append(keys, append([]byte(nil), p...))
-		return nil
-	}
-
-	for i, v := range state.Validators {
-		if err := appendKey(v.PubKey); err != nil {
-			return nil, fmt.Errorf("migration: validator[%d].pub_key: %w", i, err)
-		}
-	}
-	for i, v := range state.RevokedValidatorKeys {
-		if err := appendKey(v.PubKey); err != nil {
-			return nil, fmt.Errorf("migration: revoked_validator_keys[%d].pub_key: %w", i, err)
-		}
-	}
-	for i, v := range state.ConsensusKeyHistory {
-		if err := appendKey(v.PubKey); err != nil {
-			return nil, fmt.Errorf("migration: consensus_key_history[%d].pub_key: %w", i, err)
-		}
-	}
-	for i, v := range state.PendingValidatorRotations {
-		if err := appendKey(v.OldPubKey); err != nil {
-			return nil, fmt.Errorf("migration: pending_validator_rotations[%d].old_pub_key: %w", i, err)
-		}
-		if err := appendKey(v.NewPubKey); err != nil {
-			return nil, fmt.Errorf("migration: pending_validator_rotations[%d].new_pub_key: %w", i, err)
-		}
-	}
-	for i, v := range state.PendingValidatorRemovals {
-		if err := appendKey(v.Validator.PubKey); err != nil {
-			return nil, fmt.Errorf("migration: pending_validator_removals[%d].validator.pub_key: %w", i, err)
-		}
+		keys = append(keys, append([]byte(nil), ref.key...))
 	}
 	return keys, nil
+}
+
+// consensusKeyRef pairs a raw consensus public key with the exact state field
+// it was read from, so validation diagnostics can name the offending field.
+type consensusKeyRef struct {
+	label string
+	key   []byte
+}
+
+// consensusKeyRefs is the single traversal over every consensus public key
+// collection in the truedemocracy state: validators, revoked validator keys,
+// consensus key history, pending validator rotations (old and new keys), and
+// pending validator removals. Both consensus inventory collectors share it so
+// the covered collections and their order can never drift apart.
+func consensusKeyRefs(state truedemocracy.GenesisState) []consensusKeyRef {
+	refs := make([]consensusKeyRef, 0)
+	for i, v := range state.Validators {
+		refs = append(refs, consensusKeyRef{fmt.Sprintf("validator[%d].pub_key", i), v.PubKey})
+	}
+	for i, v := range state.RevokedValidatorKeys {
+		refs = append(refs, consensusKeyRef{fmt.Sprintf("revoked_validator_keys[%d].pub_key", i), v.PubKey})
+	}
+	for i, v := range state.ConsensusKeyHistory {
+		refs = append(refs, consensusKeyRef{fmt.Sprintf("consensus_key_history[%d].pub_key", i), v.PubKey})
+	}
+	for i, v := range state.PendingValidatorRotations {
+		refs = append(refs, consensusKeyRef{fmt.Sprintf("pending_validator_rotations[%d].old_pub_key", i), v.OldPubKey})
+		refs = append(refs, consensusKeyRef{fmt.Sprintf("pending_validator_rotations[%d].new_pub_key", i), v.NewPubKey})
+	}
+	for i, v := range state.PendingValidatorRemovals {
+		refs = append(refs, consensusKeyRef{fmt.Sprintf("pending_validator_removals[%d].validator.pub_key", i), v.Validator.PubKey})
+	}
+	return refs
 }
 
 func rewriteTrueDemocracy(state truedemocracy.GenesisState, mappings []OperatorMapping) (truedemocracy.GenesisState, error) {
@@ -317,21 +325,10 @@ func collectOperatorOccurrences(state truedemocracy.GenesisState) map[string]int
 }
 
 func collectConsensusKeysRaw(state truedemocracy.GenesisState) [][]byte {
-	out := make([][]byte, 0)
-	for _, v := range state.Validators {
-		out = append(out, append([]byte(nil), v.PubKey...))
-	}
-	for _, v := range state.RevokedValidatorKeys {
-		out = append(out, append([]byte(nil), v.PubKey...))
-	}
-	for _, v := range state.ConsensusKeyHistory {
-		out = append(out, append([]byte(nil), v.PubKey...))
-	}
-	for _, v := range state.PendingValidatorRotations {
-		out = append(out, append([]byte(nil), v.OldPubKey...), append([]byte(nil), v.NewPubKey...))
-	}
-	for _, v := range state.PendingValidatorRemovals {
-		out = append(out, append([]byte(nil), v.Validator.PubKey...))
+	refs := consensusKeyRefs(state)
+	out := make([][]byte, 0, len(refs))
+	for _, ref := range refs {
+		out = append(out, append([]byte(nil), ref.key...))
 	}
 	return out
 }

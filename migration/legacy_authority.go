@@ -406,17 +406,24 @@ func consensusDerivedAddresses(consensusPubKeys [][]byte) (map[string]struct{}, 
 // address bytes, as required by the canonical encoding. It is a convenience
 // for descriptor construction; Verify rejects unsorted input.
 func SortMappings(mappings []OperatorMapping) error {
+	type decodedMapping struct {
+		mapping OperatorMapping
+		oldAddr []byte
+	}
+	decoded := make([]decodedMapping, len(mappings))
 	for i, m := range mappings {
-		if _, _, err := sdkbech32.DecodeAndConvert(m.OldOperator); err != nil {
+		_, oldAddr, err := sdkbech32.DecodeAndConvert(m.OldOperator)
+		if err != nil {
 			return fmt.Errorf("migration: mapping %d old operator: %w", i, err)
 		}
+		decoded[i] = decodedMapping{mapping: m, oldAddr: oldAddr}
 	}
-	sort.SliceStable(mappings, func(a, b int) bool {
-		// Both addresses were validated above, so decoding cannot fail here.
-		_, addrA, _ := sdkbech32.DecodeAndConvert(mappings[a].OldOperator)
-		_, addrB, _ := sdkbech32.DecodeAndConvert(mappings[b].OldOperator)
-		return bytes.Compare(addrA, addrB) < 0
+	sort.SliceStable(decoded, func(a, b int) bool {
+		return bytes.Compare(decoded[a].oldAddr, decoded[b].oldAddr) < 0
 	})
+	for i := range decoded {
+		mappings[i] = decoded[i].mapping
+	}
 	return nil
 }
 

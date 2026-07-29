@@ -115,7 +115,9 @@ digest, and the complete state-derived consensus-key inventory.
 ## Halt and export
 
 1. Stop transaction submission and announce the fixed halt height.
-2. At the halt, remove enough validators to prevent another commit.
+2. After the halt block is observed, stop and isolate enough source validators
+   to prevent another commit. Do not submit validator-set changes; preserve the
+   state and app hash observed at the migration boundary.
 3. Require trusted RPC observers to agree on the exact height and app hash:
 
    ```bash
@@ -133,14 +135,32 @@ digest, and the complete state-derived consensus-key inventory.
 5. Export from a halted source home:
 
    ```bash
-   truerepublicd export \
-     --home /isolated/source-home \
-     > /offline/artifacts/source-export.json
+   set -euo pipefail
+   umask 077
+
+   output=/offline/artifacts/source-export.json
+   test ! -e "$output"
+   tmp="$(mktemp "${output}.tmp.XXXXXX")"
+   trap 'rm -f "$tmp"' EXIT
+
+   truerepublicd export --home /isolated/source-home >"$tmp"
+   mv -T --no-clobber "$tmp" "$output"
+   test ! -e "$tmp"
+   trap - EXIT
    ```
+
+   The temporary file is created in the destination directory so the final
+   no-clobber rename is atomic. If a destination appears concurrently, the
+   remaining temporary path makes the step fail and the trap removes it. A
+   failed export leaves no destination artifact, and the exact successful byte
+   stream becomes the file hashed and signed below.
 
 6. Verify that `initial_height` equals `HALT_HEIGHT + 1`, `chain_id` equals the
    descriptor source chain ID, and the independently observed app hash equals
-   the descriptor hash. The export's embedded `app_hash` must be empty.
+   the descriptor hash. The export's embedded `app_hash` must be empty. A
+   running-chain Cosmos SDK export may also omit `consensus.validators`; in that
+   canonical form, the validated truedemocracy state remains the source of the
+   target's InitChain validator updates.
 7. Compute SHA-256 of the exact export file, place its raw 32-byte value in
    `source_genesis_sha256`, obtain every fresh-key signature over the completed
    descriptor, and independently verify those signatures. Do not reformat or

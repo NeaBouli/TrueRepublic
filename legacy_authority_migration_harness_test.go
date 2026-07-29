@@ -114,9 +114,11 @@ func TestMultiValidatorLegacyAuthorityMigrationRollback(t *testing.T) {
 	}
 
 	exportCommand := exec.CommandContext(ctx, legacyBinary, "export", "--home", source[0].home)
+	var exportStderr bytes.Buffer
+	exportCommand.Stderr = &exportStderr
 	sourceExport, err := exportCommand.Output()
 	if err != nil {
-		t.Fatalf("export halted legacy chain: %v", err)
+		t.Fatalf("export halted legacy chain: %v\nstderr: %s", err, exportStderr.String())
 	}
 	var exported struct {
 		ChainID       string `json:"chain_id"`
@@ -180,8 +182,10 @@ func TestMultiValidatorLegacyAuthorityMigrationRollback(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if bytes.Contains(targetGenesis, []byte(source[0].operatorAddr)) {
-		t.Fatal("target genesis retains a legacy operator address")
+	for _, sourceValidator := range source {
+		if bytes.Contains(targetGenesis, []byte(sourceValidator.operatorAddr)) {
+			t.Fatalf("target genesis retains legacy operator address %s", sourceValidator.operatorAddr)
+		}
 	}
 
 	for i, sourceValidator := range source {
@@ -333,9 +337,11 @@ func initLegacySmokeValidator(
 		tmhash.SumTruncated(validator.pubKey),
 	)
 	nodeIDCommand := exec.CommandContext(ctx, binary, "comet", "show-node-id", "--home", validator.home)
+	var nodeIDStderr bytes.Buffer
+	nodeIDCommand.Stderr = &nodeIDStderr
 	nodeID, err := nodeIDCommand.Output()
 	if err != nil {
-		t.Fatalf("read legacy %s node ID: %v", validator.name, err)
+		t.Fatalf("read legacy %s node ID: %v\nstderr: %s", validator.name, err, nodeIDStderr.String())
 	}
 	validator.nodeID = strings.TrimSpace(string(nodeID))
 }
@@ -532,6 +538,11 @@ func buildLegacyAuthorityDescriptor(
 	return descriptor, originalOrder
 }
 
+// copyPrivateValidatorKey copies ephemeral consensus key material strictly
+// between isolated t.TempDir test homes created by this harness. It exists only
+// so the throwaway target validators can continue the throwaway source
+// consensus identity; it must never be used with real or production validator
+// homes, keys, or signer state.
 func copyPrivateValidatorKey(t *testing.T, sourceHome, targetHome string) {
 	t.Helper()
 	sourcePath := filepath.Join(sourceHome, "config", "priv_validator_key.json")

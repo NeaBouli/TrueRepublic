@@ -285,6 +285,20 @@ func TestTransformApplicationGenesisFailsClosed(t *testing.T) {
 	}
 }
 
+// TestTransformApplicationGenesisAllowsCanonicalExportWithoutConsensusValidators
+// pins the canonical Cosmos SDK export form: a halted running-chain export
+// omits CometBFT validators while truedemocracy retains the active application
+// validator inventory used to emit InitChain validator updates.
+func TestTransformApplicationGenesisAllowsCanonicalExportWithoutConsensusValidators(t *testing.T) {
+	fixture := newApplicationFixture(t)
+	mutateConsensus(t, fixture, func(state *genutiltypes.ConsensusGenesis) {
+		state.Validators = nil
+	})
+	if _, err := migration.TransformApplicationGenesis(fixture.core.desc, fixture.raw, fixture.cdc); err != nil {
+		t.Fatalf("TransformApplicationGenesis rejected canonical running-chain export: %v", err)
+	}
+}
+
 func newApplicationFixture(t *testing.T) *applicationFixture {
 	t.Helper()
 	core := newCoreFixture(t, 2)

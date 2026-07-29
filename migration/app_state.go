@@ -171,6 +171,10 @@ func validateConsensusGenesis(
 	if err := consensusCopy.ValidateAndComplete(); err != nil {
 		return fmt.Errorf("migration: invalid consensus genesis: %w", err)
 	}
+	// Cosmos SDK exports from a halted running chain omit the CometBFT
+	// validator list. In that canonical export form, truedemocracy remains the
+	// already-validated source of InitChain validator updates, so there is no
+	// second validator set to reconcile here.
 	if len(consensus.Validators) == 0 {
 		return nil
 	}
@@ -274,7 +278,7 @@ func reconcileAuth(
 		if _, target := targets[address]; target {
 			return nil, nil, fmt.Errorf("migration: replacement auth account %q already exists", address)
 		}
-		if _, module := account.(authtypes.ModuleAccountI); module {
+		if _, module := account.(sdk.ModuleAccountI); module {
 			moduleAccounts[address] = nil
 		}
 	}
@@ -358,7 +362,7 @@ func reconcileBank(
 	if err := state.Validate(); err != nil {
 		return nil, fmt.Errorf("migration: source bank genesis invalid: %w", err)
 	}
-	sourceSupply := state.Supply
+	sourceSupply := sdk.NewCoins(state.Supply...)
 	sourceModuleBalances := make(map[string]sdk.Coins, len(moduleAccounts))
 	for i := range state.Balances {
 		balance := &state.Balances[i]

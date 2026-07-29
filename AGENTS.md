@@ -2,9 +2,10 @@
 
 This file supplements, but does not duplicate or weaken:
 
-- `/Users/gio/AGENTS.md`
-- `/Users/gio/WORKFLOW_INDEX.md`
-- this repository's `BRIDGE.md` and `docs/agent-bridge/`
+- this repository's `BRIDGE.md` and `docs/agent-bridge/`; and
+- when present in the local operator environment, the optional external
+  coordination files `/Users/gio/AGENTS.md` and
+  `/Users/gio/WORKFLOW_INDEX.md`.
 
 The project-local files are authoritative for TrueRepublic task state,
 evidence, security boundaries, and handoffs.
@@ -51,7 +52,7 @@ multi-validator matrix is:
 ```bash
 TRUEREPUBLIC_MULTI_VALIDATOR_SMOKE=1 go test . \
   -run '^(TestMultiValidatorConsensusRecovery|TestMultiValidatorLegacyAuthorityMigrationRollback|TestMultiValidatorConsensusSlashing|TestMultiValidatorConsensusKeyRotation|TestMultiValidatorTrustedSnapshotStateSync|TestMultiValidatorBackupRestoreExportImport|TestMultiValidatorPersistedBinaryUpgradeRollback|TestValidatorIdentityColdFailover)$' \
-  -count=1 -timeout=1200s -v
+  -count=1 -timeout=1500s -v
 ```
 
 For client or contract changes, use the exact lockfile-driven commands and CI

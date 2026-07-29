@@ -126,6 +126,25 @@ func TestTransformTrueDemocracyFailsClosed(t *testing.T) {
 				addHistoryOnlyCoupledOperator(t, f)
 			},
 		},
+		{
+			name: "foreign account prefix",
+			mutate: func(t *testing.T, f *coreFixture) {
+				for i := range f.desc.Mappings {
+					f.desc.Mappings[i].OldOperator = reencodeAddress(t, f.desc.Mappings[i].OldOperator, "foreign")
+					f.desc.Mappings[i].NewOperator = reencodeAddress(t, f.desc.Mappings[i].NewOperator, "foreign")
+				}
+				sortCoreMappingsAndKeys(t, f.desc.Mappings, f.fresh)
+				signCoreDescriptor(t, f.desc, f.fresh)
+			},
+		},
+		{
+			name: "malformed consensus key in state",
+			mutate: func(t *testing.T, f *coreFixture) {
+				state := decodeTransformedState(t, f.raw)
+				state.Validators[0].PubKey = state.Validators[0].PubKey[:31]
+				replaceState(t, f, state)
+			},
+		},
 	}
 
 	for _, tc := range tests {
@@ -277,6 +296,21 @@ func signCoreFixtureExport(t *testing.T, fixture *coreFixture) {
 func accountAddress(t *testing.T, address []byte) string {
 	t.Helper()
 	out, err := sdkbech32.ConvertAndEncode(sdk.GetConfig().GetBech32AccountAddrPrefix(), address)
+	if err != nil {
+		t.Fatal(err)
+	}
+	return out
+}
+
+// reencodeAddress re-encodes a bech32 address under a different human-readable
+// prefix while keeping the decoded payload bytes identical.
+func reencodeAddress(t *testing.T, address string, hrp string) string {
+	t.Helper()
+	_, decoded, err := sdkbech32.DecodeAndConvert(address)
+	if err != nil {
+		t.Fatal(err)
+	}
+	out, err := sdkbech32.ConvertAndEncode(hrp, decoded)
 	if err != nil {
 		t.Fatal(err)
 	}
