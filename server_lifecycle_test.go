@@ -34,7 +34,7 @@ func TestRootUsesStandardCosmosServerCommands(t *testing.T) {
 	if sdkversion.Name != "TrueRepublic" || sdkversion.AppName != "truerepublicd" || sdkversion.Version != version {
 		t.Fatalf("SDK version metadata = (%q, %q, %q), want TrueRepublic/truerepublicd/%s", sdkversion.Name, sdkversion.AppName, sdkversion.Version, version)
 	}
-	for _, path := range []string{"init", "start", "export", "comet", "keys"} {
+	for _, path := range []string{"init", "start", "export", "comet", "keys", "healthcheck"} {
 		cmd, _, err := root.Find([]string{path})
 		if err != nil || cmd == root {
 			t.Fatalf("standard server command %q is not registered", path)

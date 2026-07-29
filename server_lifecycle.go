@@ -45,6 +45,7 @@ import (
 	genutilcli "github.com/cosmos/cosmos-sdk/x/genutil/client/cli"
 	genutiltypes "github.com/cosmos/cosmos-sdk/x/genutil/types"
 
+	"truerepublic/healthcheck"
 	"truerepublic/networkpolicy"
 	"truerepublic/token"
 	"truerepublic/x/dex"
@@ -182,7 +183,7 @@ func newRootCmd() *cobra.Command {
 		Version:       version,
 		SilenceErrors: true,
 		PersistentPreRunE: func(cmd *cobra.Command, _ []string) error {
-			if isNetworkPolicyCommand(cmd) {
+			if isConfigIndependentCommand(cmd) {
 				return nil
 			}
 			cmd.SetOut(cmd.OutOrStdout())
@@ -215,13 +216,22 @@ func newRootCmd() *cobra.Command {
 	txCmd.AddCommand(truedemocracy.GetTxCmd(), dex.GetTxCmd())
 	queryCmd := &cobra.Command{Use: "query", Aliases: []string{"q"}, Short: "Query commands", RunE: client.ValidateCmd}
 	queryCmd.AddCommand(truedemocracy.GetQueryCmd(legacyAmino), dex.GetQueryCmd(legacyAmino))
-	rootCmd.AddCommand(txCmd, queryCmd, keys.Commands(), server.StatusCommand(), newMigrationCmd(appCodec), networkpolicy.NewCommand())
+	rootCmd.AddCommand(
+		txCmd,
+		queryCmd,
+		keys.Commands(),
+		server.StatusCommand(),
+		newMigrationCmd(appCodec),
+		networkpolicy.NewCommand(),
+		healthcheck.NewCommand(),
+	)
 	return rootCmd
 }
 
-func isNetworkPolicyCommand(cmd *cobra.Command) bool {
+func isConfigIndependentCommand(cmd *cobra.Command) bool {
 	for current := cmd; current != nil; current = current.Parent() {
-		if current.Name() == "network-policy" {
+		switch current.Name() {
+		case "network-policy", "healthcheck":
 			return true
 		}
 	}

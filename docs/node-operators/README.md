@@ -42,6 +42,13 @@ make docker-up
 Verify the local Compose proxy:
 `curl http://localhost:8080/rpc/status`
 
+Verify the distinct local operation signals:
+
+```bash
+docker compose exec -T truerepublic-node truerepublicd healthcheck live
+docker compose exec -T truerepublic-node truerepublicd healthcheck ready
+```
+
 ### Native Build
 
 ```bash

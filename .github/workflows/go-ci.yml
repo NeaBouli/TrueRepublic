@@ -100,14 +100,27 @@ jobs:
           -e BOOTSTRAP_OPERATOR=truerepublic13hgqwy9986x5nk6jt23ns5v7j0acs8qmhchhtw
           truerepublic-node:ci
 
+      - name: Wait for node liveness
+        run: |
+          for attempt in $(seq 1 60); do
+            if docker exec truerepublic-node-ci truerepublicd healthcheck live --timeout 2s; then
+              exit 0
+            fi
+            sleep 2
+          done
+          docker logs truerepublic-node-ci
+          exit 1
+
       - name: Wait for first committed block
         id: first
         run: |
           for attempt in $(seq 1 60); do
-            height=$(docker exec truerepublic-node-ci wget -qO- http://127.0.0.1:26657/status | jq -r '.result.sync_info.latest_block_height // 0' || true)
-            if [ "${height:-0}" -ge 1 ]; then
-              echo "height=${height}" >> "$GITHUB_OUTPUT"
-              exit 0
+            if docker exec truerepublic-node-ci truerepublicd healthcheck ready --timeout 2s; then
+              height=$(docker exec truerepublic-node-ci wget -qO- http://127.0.0.1:26657/status | jq -r '.result.sync_info.latest_block_height // 0' || true)
+              if [ "${height:-0}" -ge 1 ]; then
+                echo "height=${height}" >> "$GITHUB_OUTPUT"
+                exit 0
+              fi
             fi
             sleep 2
           done
@@ -122,8 +135,13 @@ jobs:
           FIRST_HEIGHT: ${{ steps.first.outputs.height }}
         run: |
           for attempt in $(seq 1 60); do
-            height=$(docker exec truerepublic-node-ci wget -qO- http://127.0.0.1:26657/status | jq -r '.result.sync_info.latest_block_height // 0' || true)
-            if [ "${height:-0}" -gt "$FIRST_HEIGHT" ]; then
+            if docker exec truerepublic-node-ci truerepublicd healthcheck live --timeout 2s &&
+              docker exec truerepublic-node-ci truerepublicd healthcheck ready --timeout 2s; then
+              height=$(docker exec truerepublic-node-ci wget -qO- http://127.0.0.1:26657/status | jq -r '.result.sync_info.latest_block_height // 0' || true)
+            else
+              height=0
+            fi
+            if [ "${height:-0}" -gt "${FIRST_HEIGHT:-0}" ]; then
               exit 0
             fi
             sleep 2
@@ -155,8 +173,14 @@ jobs:
             wallet_ok=false
             metrics_ok=false
             grafana_ok=false
+            live_ok=false
+            ready_ok=false
             curl --fail --silent http://127.0.0.1:8080/rpc/status >/dev/null && rpc_ok=true
             curl --fail --silent http://127.0.0.1:8080/ >/dev/null && wallet_ok=true
+            docker compose exec -T truerepublic-node truerepublicd healthcheck live --timeout 2s &&
+              live_ok=true
+            docker compose exec -T truerepublic-node truerepublicd healthcheck ready --timeout 2s &&
+              ready_ok=true
             if curl --fail --silent http://127.0.0.1:9091/api/v1/targets |
               jq -e '.data.activeTargets[] | select(.labels.job == "truerepublic-node" and .health == "up")' >/dev/null; then
               metrics_ok=true
@@ -164,6 +188,7 @@ jobs:
             curl --fail --silent http://127.0.0.1:3000/api/health |
               jq -e '.database == "ok"' >/dev/null && grafana_ok=true
             if [ "$rpc_ok" = true ] && [ "$wallet_ok" = true ] &&
+              [ "$live_ok" = true ] && [ "$ready_ok" = true ] &&
               [ "$metrics_ok" = true ] && [ "$grafana_ok" = true ]; then
               exit 0
             fi

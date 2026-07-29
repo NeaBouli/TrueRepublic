@@ -2,6 +2,22 @@
 
 Complete monitoring setup for TrueRepublic nodes.
 
+## Node Health Signals
+
+Use separate local exec probes:
+
+```bash
+truerepublicd healthcheck live
+truerepublicd healthcheck ready
+```
+
+`live` proves that loopback CometBFT RPC responds and intentionally remains
+successful while the node synchronizes. `ready` additionally requires a
+positive block height and `catching_up=false`; use it before routing query
+traffic. The Docker image uses `live` for restart decisions. These signals do
+not replace peer, validator-signing, invariant, resource, or production
+rollout monitoring.
+
 ## Table of Contents
 
 1. [Prometheus Setup](#prometheus-setup)

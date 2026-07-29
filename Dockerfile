@@ -57,7 +57,7 @@ EXPOSE 26656
 VOLUME ["/home/truerepublic/.truerepublic"]
 
 HEALTHCHECK --interval=15s --timeout=3s --start-period=20s --retries=5 \
-  CMD wget -qO- http://127.0.0.1:26657/status >/dev/null || exit 1
+  CMD ["truerepublicd", "healthcheck", "live", "--timeout", "2s"]
 
 ENTRYPOINT ["docker-entrypoint.sh"]
 CMD ["start", "--rpc.laddr=tcp://127.0.0.1:26657", "--grpc.enable=false", "--api.enable=false", "--minimum-gas-prices=1000upnyx"]

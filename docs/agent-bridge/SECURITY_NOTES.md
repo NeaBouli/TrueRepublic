@@ -22,8 +22,12 @@
   permanent old-key revocation, separate operator authority, and a stopped old
   signer. GH-59 wires automatic ABCI++ evidence to slashing, and merged GH-60
   proves complete inactive-validator export/import locally and on its final
-  GitHub head. Consensus-breaking migration recovery, network policy, IBC,
-  load/topology, and independent operations review remain pending;
+  GitHub head. GH-71 adds deterministic role-based network policy and safe
+  local/container listener defaults. GH-74 locally adds separate bounded
+  liveness and synchronization-aware readiness probes; final-head GitHub
+  runtime evidence is still pending. Consensus-breaking migration recovery,
+  IBC, structured logging, broader metrics/alerting, load/capacity/topology,
+  and independent operations review remain pending;
   IBC staking/upgrade and
   standard CosmWasm staking/distribution stay explicit stubs.
 - The v0.4 client production bundle is 1.68 MB (309 kB gzip); route-level code

@@ -17,6 +17,7 @@ Canonical coordination lives in [`docs/agent-bridge/`](docs/agent-bridge/README.
 - GH-32 multi-validator audit: [`GH32_AUDIT.md`](docs/agent-bridge/GH32_AUDIT.md)
 - GH-55 validator identity recovery audit: [`GH55_AUDIT.md`](docs/agent-bridge/GH55_AUDIT.md)
 - GH-56 consensus-key rotation audit: [`GH56_AUDIT.md`](docs/agent-bridge/GH56_AUDIT.md)
+- GH-74 node health audit: [`GH74_AUDIT.md`](docs/agent-bridge/GH74_AUDIT.md)
 - Decisions: [`DECISIONS.md`](docs/agent-bridge/DECISIONS.md)
 - Security: [`SECURITY_NOTES.md`](docs/agent-bridge/SECURITY_NOTES.md)
 
@@ -1871,5 +1872,95 @@ Go/Rust/Node security, docs, DeepScan, and CodeRabbit. GH-51 is closed.
 - **Remaining parent work:** GH-29 stays open for later rollout phases.
 - **Next:** publish this documentation-only closure synchronization, require
   its final-head docs/static gates, merge, update GH-29, and stop GH-71.
+
+---
+
+## 2026-07-29 17:22 EEST GH-74 Node Health Signals → In Progress
+
+- **Branch:** `feature/GH-74-node-health`
+- **Issue:** [GH-74](https://github.com/NeaBouli/TrueRepublic/issues/74);
+  parent [GH-29](https://github.com/NeaBouli/TrueRepublic/issues/29).
+- **Scope:** add distinct dependency-free local `live` and `ready` probes,
+  strict timeout/response handling, Docker and real-container CI integration,
+  focused/process regressions, and operator guidance.
+- **Semantics:** liveness proves only that local CometBFT RPC responds;
+  readiness additionally requires valid status, positive block height, and
+  `catching_up=false`. Synchronization must not become a restart condition.
+- **Risk:** Medium. Incorrect probe semantics can cause restart loops or route
+  traffic to an unsynchronized node; consensus and transaction behavior remain
+  unchanged.
+- **Safety boundary:** repository code/tests/docs and GitHub CI only. No
+  production, server, firewall, DNS, deployment, real topology, key, secret,
+  credential, mainnet, or public-network action.
+- **Baseline:** exact clean `origin/main`
+  `71164459eecfff12de8671d8d3220cc0c3fb1181`; no open PR at task start.
+- **Delegation:** Kimi K3 receives one bounded, secret-free implementation
+  block for the probe package/CLI/focused tests. Sol retains architecture,
+  security, Docker/CI/docs integration, complete diff review, full tests,
+  GitHub writes, and closure.
+- **Next:** freeze the probe API and failure taxonomy, then run the bounded
+  implementation while Sol independently designs integration and policy gates.
+
+---
+
+## 2026-07-29 17:45 EEST GH-74 Local Verification Milestone
+
+- **Implementation:** `truerepublicd healthcheck live|ready` now separates
+  restart-worthy local RPC failure from synchronization-aware readiness.
+- **Security:** probe targets are literal loopback plain HTTP only; userinfo,
+  query, fragment, non-root paths, redirects, environment proxies, oversized
+  bodies, invalid JSON-RPC, and unbounded timeouts fail closed with safe errors.
+- **Integration:** Docker uses liveness only. GitHub container/Compose gates
+  require live, ready, and post-restart height progress. Operator guidance uses
+  separate Kubernetes exec probes.
+- **Kimi contribution:** bounded probe package, CLI, and focused tests. Sol
+  reviewed every write and corrected redirect/proxy handling, strict JSON-RPC
+  validation, test portability, and race-safety.
+- **Tests:** focused health race tests PASS twice; focused root/config tests
+  PASS; both focused and root vet PASS; `make verify` PASS. Authoritative local
+  count is 1,009 Go plus 26 Rust and eight maintained-client cases = 1,043.
+- **Coverage:** root 69.5%, healthcheck 97.2%, migration 84.6%, network policy
+  95.5%, token 92.6%, treasury 97.0%, DEX 45.3%, governance 62.2%.
+- **Audit:** `docs/agent-bridge/GH74_AUDIT.md` records 0 FAIL / 1 WARN /
+  12 PASS.
+- **Independent review:** Kimi K3 found no P0/P1/P2. Sol remediated the one
+  actionable P3 by refusing to publish or compare an empty separately fetched
+  block height; duplicated timeout wording and the standard released-port test
+  idiom remain non-blocking P3 observations.
+- **Remaining gate:** Docker is unavailable locally; exact final-head GitHub
+  Docker/Compose evidence remains mandatory.
+- **Safety boundary:** no production, server, firewall, DNS, deployment, real
+  topology, secret, credential, key, mainnet, or public-network action.
+- **Next:** freeze the local diff, complete the independent review and final
+  local gates, then publish a draft PR for exact final-head CI.
+
+---
+
+## 2026-07-29 18:22 EEST GH-74 Published as Draft PR #75
+
+- **Commit/head:** `6de3bb1311593fa143ebcfc3bcd603948d6ffcc9`
+  on `feature/GH-74-node-health`.
+- **PR:** [#75](https://github.com/NeaBouli/TrueRepublic/pull/75), draft
+  against `main`; `Closes #74` applies only when merged.
+- **Independent review:** 0 P0/P1/P2. The one actionable P3 was remediated and
+  the exact follow-up diff was independently approved; no review-authoring
+  agent changed repository files.
+- **Local final tree:** `make verify`, focused health Race, root/config/policy,
+  vet, docs consistency, shell syntax, JSON/YAML parse, formatting, and diff
+  gates PASS.
+- **State:** final-head GitHub CI/security/static/external review and real
+  Docker/Compose runtime evidence are now pending. No merge readiness is
+  claimed.
+- **First published-head evidence:** build/race/coverage PASS 7m25s;
+  Docker/Compose PASS 7m27s; complete recovery matrix PASS 13m58s; docs,
+  Go/Rust/Node security, and DeepScan PASS.
+- **External review:** CodeRabbit opened six actionable threads. Sol accepted
+  all six for minimal remediation: preserve the key-compromise runbook gate,
+  correct migration wording, make the deployment curl fail closed, correct
+  Docker unhealthy/restart semantics, use context-aware ephemeral listening in
+  the test, and match documentation totals only as complete numbers.
+- **Next:** run focused local verification, commit/push the six review
+  remediations, require refreshed exact-head CI/review, resolve every confirmed
+  thread, and merge only with zero unresolved actionable findings.
 
 ---

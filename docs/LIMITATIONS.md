@@ -78,9 +78,9 @@ rotation with permanent revocation. The GH-61 path is intentionally limited to
 empty CosmWasm state and a new chain ID; it is not an in-place upgrade or a
 generic governance migration. Do not claim public-network readiness until
 generic consensus-breaking state migration, partially applied in-place
-migration recovery, network policy, load, topology, broader independent
-migration/ABCI++ slashing security review, and independent operations review
-pass.
+migration recovery, structured logging, broader metrics/alerting,
+load/capacity/topology qualification, broader independent migration/ABCI++
+slashing security review, and independent operations review pass.
 
 Partial validator stake withdrawals are disabled until generalized slashable
 unbonding can retain the withdrawn claim through the CometBFT evidence window.

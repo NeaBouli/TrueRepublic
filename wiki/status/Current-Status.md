@@ -18,7 +18,7 @@
   failure/restart/catch-up, partition-recovery, trusted state-sync, and
   sanitized backup/restore, compatible binary replacement/rollback, and
   single-signer validator-identity failover harness.
-- 986 recovery-verified tests: 952 Go, 26 Rust, and 8 maintained-client.
+- 1,043 recovery-verified tests: 1,009 Go, 26 Rust, and 8 maintained-client.
 
 ## Recovery sequence
 
@@ -32,9 +32,9 @@ reviewed, verified, and merged to `main` in this order.
 - Release qualification and independent security review.
 - Compatible real Groth16 client prover and external circuit/ceremony review.
 - Privacy-preserving anonymous reward recipient binding.
-- IBC/consensus-breaking migration recovery, authenticated consensus-key
-  rotation, compromised consensus-key eviction/recovery, network policy,
-  monitoring, load, topology, and independent operations evidence.
+- IBC/consensus-breaking migration recovery, structured logging, broader
+  metrics/alerting, load/capacity/topology qualification, and independent
+  operations evidence.
 - Migration or removal of the deprecated legacy web/mobile clients.
 
 See [Issue #4](https://github.com/NeaBouli/TrueRepublic/issues/4),

@@ -18,6 +18,43 @@ node endpoint on loopback and Prometheus shares that network namespace.
 Prometheus scrapes CometBFT metrics from port 26660. Check target health at:
 `http://localhost:9091/targets`
 
+## Liveness and Readiness
+
+The daemon exposes two local, fail-closed CLI probes:
+
+```bash
+truerepublicd healthcheck live
+truerepublicd healthcheck ready
+```
+
+- `live` calls the loopback CometBFT `/health` endpoint and succeeds when the
+  local RPC process returns a valid JSON-RPC response. It deliberately ignores
+  synchronization so an orchestrator does not restart a healthy syncing node.
+- `ready` calls `/status` and succeeds only when the response is valid, the
+  latest block height is positive, and `catching_up` is false. Use it to decide
+  whether the node may receive query traffic.
+
+Both probes accept `--timeout` from greater than zero through 10 seconds and a
+plain-HTTP `--rpc-url` with a literal loopback address only. They reject
+userinfo, redirects, proxies, queries, fragments, and non-root paths, and never
+include response bodies or URLs in errors.
+
+The container image uses `live` for its Docker `HEALTHCHECK`. For Kubernetes,
+keep the RPC listener private and use separate exec probes:
+
+```yaml
+livenessProbe:
+  exec:
+    command: ["/usr/local/bin/truerepublicd", "healthcheck", "live", "--timeout", "2s"]
+readinessProbe:
+  exec:
+    command: ["/usr/local/bin/truerepublicd", "healthcheck", "ready", "--timeout", "2s"]
+```
+
+These signals prove local process/synchronization state only. They do not prove
+validator signing, peer diversity, application invariants, or production
+rollout readiness.
+
 ## Key Metrics
 
 ### Block Production

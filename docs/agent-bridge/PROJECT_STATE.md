@@ -1,6 +1,6 @@
 # Project State
 
-Updated: 2026-07-29 09:52 UTC
+Updated: 2026-07-29 14:45 UTC
 
 ## Repository
 
@@ -103,17 +103,24 @@ Updated: 2026-07-29 09:52 UTC
 - Recovery worktree: `/Users/gio/Desktop/repos/TrueRepublic-recovery`
 - Legacy local checkout: preserved at `/Users/gio/Desktop/repos/TrueRepublic`
 - GitHub epic: #4
-- Current open GitHub issue set after GH-71 closure: #4 recovery epic, #7
-  audit/review parent, and #29 rollout tracker.
+- Current open GitHub issue set at GH-74 start: #4 recovery epic, #7
+  audit/review parent, #29 rollout tracker, and #74 node health signals.
 
 ## Verified state
 
+- GH-74 locally adds dependency-free `healthcheck live|ready` commands with
+  literal-loopback-only RPC targets, bounded time/body handling, no environment
+  proxy or redirects, strict JSON-RPC validation, and distinct restart versus
+  synchronization semantics. Docker, CI, operator guidance, and repository
+  policy tests use the same commands. The local branch records 1,043 cases:
+  1,009 Go, 26 Rust, and eight maintained-client tests; final-head GitHub
+  runtime evidence remains pending.
 - GH-71 merged a deterministic read-only network-policy command for seed,
   sentry, validator, RPC/API, and private roles; fail-closed startup integration;
   canonical peer/topology checks; loopback-only client, profiling, and metrics
   listeners; explicit public P2P interfaces; safe Docker/nginx defaults; and
-  operator firewall/rate-limit guidance. Merged `main` records 986
-  cases: 952 Go, 26 Rust, and eight maintained-client tests. Production
+  operator firewall/rate-limit guidance. Its merged `main` baseline recorded
+  986 cases: 952 Go, 26 Rust, and eight maintained-client tests. Production
   topology, firewall, DNS, server, and deployment actions remain unexecuted.
 - GH-14 local documentation consistency script: PASS.
 - GH-14 local Rust workspace: 26 tests PASS; Clippy PASS.
@@ -314,9 +321,10 @@ close bounded four-validator failure/restart/catch-up, partition-recovery,
 trusted state-sync, sanitized backup/restore/export/import, compatible binary
 replacement, fail-before-open rollback, and validator identity cold-failover
 slices. Consensus-breaking state migration, partially applied migration
-recovery, authenticated consensus-key rotation, compromised consensus-key
-eviction/recovery, network policy, load, topology, IBC, and independent
-operations review remain open.
+recovery, structured logging, broader metrics/alerting,
+load/capacity/topology qualification, IBC, and independent operations review
+remain open. Authenticated consensus-key rotation, compromised-key eviction,
+and deterministic network policy are closed by GH-56 and GH-71.
 
 GH-11 implements the canonical denomination metadata (`upnyx`, six decimal
 places, 21,000,000,000,000 base-unit cap) and pre-init bank-genesis cap checks.
