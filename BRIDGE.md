@@ -1833,3 +1833,20 @@ Go/Rust/Node security, docs, DeepScan, and CodeRabbit. GH-51 is closed.
   any valid finding, merge, and synchronize GH-71/GH-29/public closure state.
 
 ---
+
+## 2026-07-29 12:28 EEST GH-71 Published as Draft PR #72
+
+- **Commit/head:** `3e0a9f521e9a7d3c623d6417922f0b63559c3028`
+  on `feature/GH-71-network-policy`.
+- **PR:** [#72](https://github.com/NeaBouli/TrueRepublic/pull/72), draft
+  against `main`; `Closes #71` is declared only for merge.
+- **State:** exact final-head GitHub CI and external review are running/pending.
+  No merge readiness is claimed.
+- **Hard gates:** complete eight-scenario process matrix, Go
+  build/vet/Race/coverage, full Docker/Compose runtime smoke, docs/static/
+  security checks, review, and zero unresolved actionable threads.
+- **Next:** push this append-only publication record, monitor the new exact
+  head, remediate valid failures/findings, then mark ready/merge only when all
+  gates are green.
+
+---
