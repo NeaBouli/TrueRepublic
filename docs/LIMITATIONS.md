@@ -62,10 +62,13 @@ Same-key, cross-validator, revoked-key, and reserved module-account authority
 collisions are rejected. Initialization
 rejects canonical supply above the 21,000,000 PNYX cap. A real native process
 produces blocks, shuts down on SIGINT, restarts from the same home, advances
-height, preserves invariants, and exports state. The non-root Debian/glibc
-container has a blocking restart gate. GH-53 additionally proves compatible
-rolling replacement on the same homes, deterministic failure before state is
-opened, full return to the baseline binary, unchanged identity keys,
+height, preserves invariants, and exports state. GH-77 makes the supported
+native/container start path emit structured JSON through one defensively
+redacting SDK/CometBFT logger boundary; raw KV trace stores are rejected.
+Redaction remains defense in depth rather than general DLP. The non-root
+Debian/glibc container has a blocking restart gate. GH-53 additionally proves
+compatible rolling replacement on the same homes, deterministic failure before
+state is opened, full return to the baseline binary, unchanged identity keys,
 non-regressing signer state, app-hash agreement, and ledger-valid export/import.
 **Impact:** `scripts/init-node.sh` delegates exclusively to the supported daemon
 init boundary and never creates staking gentxs or extra accounts. The Docker
@@ -78,7 +81,7 @@ rotation with permanent revocation. The GH-61 path is intentionally limited to
 empty CosmWasm state and a new chain ID; it is not an in-place upgrade or a
 generic governance migration. Do not claim public-network readiness until
 generic consensus-breaking state migration, partially applied in-place
-migration recovery, structured logging, broader metrics/alerting,
+migration recovery, broader metrics/alerting,
 load/capacity/topology qualification, broader independent migration/ABCI++
 slashing security review, and independent operations review pass.
 

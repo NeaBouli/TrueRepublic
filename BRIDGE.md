@@ -2144,3 +2144,47 @@ Go/Rust/Node security, docs, DeepScan, and CodeRabbit. GH-51 is closed.
   exact-head CI/review cycle before merge.
 
 ---
+
+## 2026-07-30 07:16 EEST GH-77 Implementation Merged → Closure Sync
+
+- **Merge:** [PR #78](https://github.com/NeaBouli/TrueRepublic/pull/78)
+  squash-merged to `main` as
+  `133fb3be9b2a1c571d14b8b2847670d653c43f61`; GH-77 closed automatically.
+- **Exact verified head:** `fd8378c3e58a273e69e4a2d752d3b1f41c4a80ac`.
+  All 11 checks PASS: build/vet/race/coverage 7m16s, recovery matrix 14m10s,
+  Docker/Compose with post-restart structured JSONL 6m57s, docs, Go/Rust/Node
+  security, DeepScan, and CodeRabbit.
+- **Review:** both CodeRabbit threads were answered and resolved; the bot
+  confirmed the `json.Number` fix and withdrew its UTC/EEST false positive.
+  Independent Kimi full and exact incremental reviews found no P0/P1/P2.
+- **Merge decision:** owner-authorized admin squash bypassed only the formal
+  self-approval requirement. No failed technical gate or unresolved actionable
+  finding was bypassed.
+- **Closure scope:** branch `docs/GH-77-closure` updates the Phase-6 roadmap,
+  public status/limitations, exact test count, GH-29 checklist, TODO/ACTION_LOG,
+  audit conclusion, and Bridge. No runtime code or production action.
+- **Next:** calculate the merged authoritative test count, publish and verify
+  the documentation-only closure PR, merge it, update GH-29, and stop GH-77.
+
+---
+
+## 2026-07-30 GH-77 Closure Documentation → Locally Verified
+
+- **Authoritative count:** fresh package-scoped `go test -json` evidence records
+  1,058 Go cases: root 79, healthcheck 55, migration 82, network policy 126,
+  observability 41, token 12, treasury 36, DEX 116, and governance 511.
+  Combined public total is 1,092 with 26 Rust and eight maintained-client cases.
+- **Synchronization:** README/badge, CLAUDE guide, machine status/modules,
+  landing page, rollout roadmap, limitations, wiki home/current/testing,
+  PROJECT_STATE, SECURITY_NOTES, TODO, action log, and the final 0 FAIL /
+  1 WARN / 16 PASS GH-77 audit now reflect the merged structured-logging gate.
+- **Remaining Phase 6 work:** broader metrics, dashboards/alerts/objectives,
+  production topology/abuse protection, rehearsed runbooks, and sustained
+  capacity/retention evidence. Secret-safe structured logging is complete but
+  remains defense in depth, not general DLP or rollout approval.
+- **Local checks:** documentation consistency PASS, JSON parse PASS, audit
+  arithmetic 16 PASS / 1 WARN, and `git diff --check` PASS.
+- **Next:** publish a documentation-only closure PR, require exact-head
+  docs/static/security review, merge, update GH-29, and synchronize local main.
+
+---

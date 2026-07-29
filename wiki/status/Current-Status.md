@@ -17,8 +17,10 @@
   genesis, native/Docker restart evidence, and a bounded four-validator
   failure/restart/catch-up, partition-recovery, trusted state-sync, and
   sanitized backup/restore, compatible binary replacement/rollback, and
-  single-signer validator-identity failover harness.
-- 1,043 recovery-verified tests: 1,009 Go, 26 Rust, and 8 maintained-client.
+  single-signer validator-identity failover harness. Supported node operation
+  emits secret-minimized structured JSON logs through the central SDK/CometBFT
+  logger boundary.
+- 1,092 recovery-verified tests: 1,058 Go, 26 Rust, and 8 maintained-client.
 
 ## Recovery sequence
 
@@ -32,8 +34,8 @@ reviewed, verified, and merged to `main` in this order.
 - Release qualification and independent security review.
 - Compatible real Groth16 client prover and external circuit/ceremony review.
 - Privacy-preserving anonymous reward recipient binding.
-- IBC/consensus-breaking migration recovery, structured logging, broader
-  metrics/alerting, load/capacity/topology qualification, and independent
+- IBC/consensus-breaking migration recovery, broader metrics/alerting,
+  load/capacity/topology qualification, and independent
   operations evidence.
 - Migration or removal of the deprecated legacy web/mobile clients.
 

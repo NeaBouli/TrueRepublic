@@ -1586,3 +1586,30 @@
   the documented events, despite GitHub displaying the prior UTC date.
 - Next: publish, respond/resolve with evidence, and require all refreshed
   exact-head checks.
+
+## 2026-07-30 07:16 EEST - GH-77 implementation merged
+
+- PR #78 exact head `fd8378c` passed all 11 checks: Go 7m16s, recovery 14m10s,
+  Docker/Compose with post-restart JSONL 6m57s, docs, Go/Rust/Node security,
+  DeepScan, and CodeRabbit.
+- Both CodeRabbit threads are resolved. The bot confirmed the `json.Number`
+  remediation and withdrew its UTC/EEST finding. Kimi full and incremental
+  reviews found no P0/P1/P2.
+- Owner-authorized admin squash bypassed only formal self-approval; PR #78
+  merged as `133fb3b` and GH-77 closed automatically.
+- Created `docs/GH-77-closure` for documentation/public-status/parent-tracker
+  synchronization only. No runtime code or production action is included.
+
+## 2026-07-30 - GH-77 closure documentation locally verified
+
+- Fresh package-scoped JSON output records 1,058 Go cases: root 79,
+  healthcheck 55, migration 82, network policy 126, observability 41, token 12,
+  treasury 36, DEX 116, and governance 511. Public total: 1,092 with 26 Rust
+  and eight maintained-client cases.
+- Synchronized all public status/count surfaces, Phase-6 roadmap, limitations,
+  machine state, wiki, agent state/notes/TODO, and finalized GH77_AUDIT at
+  0 FAIL / 1 WARN / 16 PASS.
+- Documentation consistency, JSON parsing, audit arithmetic, and diff hygiene
+  pass locally. Runtime code is unchanged from merged implementation PR #78.
+- Next: publish and verify the documentation-only closure PR, merge it, update
+  GH-29, and synchronize clean local main.
