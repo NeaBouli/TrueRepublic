@@ -1,6 +1,6 @@
 # GH-74 Node Health Signals Audit
 
-Status: locally verified; final-head GitHub runtime evidence pending  
+Status: merged and closed through PR #75 (`468a43a`)
 Issue: [GH-74](https://github.com/NeaBouli/TrueRepublic/issues/74)  
 Parent: [GH-29](https://github.com/NeaBouli/TrueRepublic/issues/29)
 
@@ -13,7 +13,8 @@ transactions, application state, or production infrastructure:
   `/health` with HTTP 200 and a JSON-RPC 2.0 result object.
 - `truerepublicd healthcheck ready` checks `/status`, a positive committed
   height, and `catching_up=false`.
-- Docker uses only liveness as its restart signal. Kubernetes guidance uses
+- Docker health status uses only liveness; the engine does not restart an
+  unhealthy process without separate automation. Kubernetes guidance uses
   distinct exec probes so synchronization cannot cause a restart loop.
 - GitHub container gates require both signals and post-restart height progress.
 
@@ -61,21 +62,40 @@ GitHub writes, and closure remain with Sol.
 ## Audit result
 
 - FAIL: 0
-- WARN: 1
-- PASS: 12
+- WARN: 0
+- PASS: 13
 
-The warning is evidence-related, not an identified implementation defect:
-Docker is unavailable in the local environment, so the real image/Compose
-liveness and readiness paths must pass on the exact final GitHub head before
-merge.
+PASS basis:
+
+1. Literal-loopback URL policy.
+2. Bounded timeout handling.
+3. Bounded response-body handling.
+4. Redirect and environment-proxy rejection.
+5. Strict JSON-RPC 2.0/result validation.
+6. Synchronization-independent liveness.
+7. Positive-height, non-catching-up readiness.
+8. Operator-safe error and output behavior.
+9. Config-independent, non-mutating root CLI integration.
+10. Docker liveness and Kubernetes live/ready semantics.
+11. Final-head container restart/height and Compose runtime evidence.
+12. Local race/vet/coverage/count/docs consistency evidence.
+13. Independent review, six remediated CodeRabbit findings, and zero
+    unresolved threads.
+
+Exact remediation head `e02104452fe2ddd201045c0ea0bb9651c053c417`
+passed build/vet/race/coverage in 6m39s, the complete recovery matrix in
+13m54s, and the real Docker/Compose runtime in 7m27s. Docs, Go/Rust/Node
+security scans, and DeepScan passed.
 
 CodeRabbit's final-head review opened six actionable threads. Sol retained the
 compromised-key runbook rehearsal boundary, corrected the migration-focused
 harness wording, made the deployment curl fail on HTTP errors, corrected the
 Docker unhealthy-versus-restart semantics, used context-aware ephemeral
 listening in the test, and bounded documentation total matches against adjacent
-digits/commas. All six require focused local verification, refreshed exact-head
-CI, and resolved GitHub threads before merge.
+digits/commas. Focused local verification passed, the refreshed exact-head
+gates passed, and all six GitHub threads were answered and resolved. The
+incremental CodeRabbit follow-up was rate-limited but returned a passing status
+without a new unresolved thread.
 
 ## Non-claims
 

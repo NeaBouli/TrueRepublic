@@ -1,6 +1,6 @@
 # Project State
 
-Updated: 2026-07-29 14:45 UTC
+Updated: 2026-07-29 16:02 UTC
 
 ## Repository
 
@@ -103,18 +103,20 @@ Updated: 2026-07-29 14:45 UTC
 - Recovery worktree: `/Users/gio/Desktop/repos/TrueRepublic-recovery`
 - Legacy local checkout: preserved at `/Users/gio/Desktop/repos/TrueRepublic`
 - GitHub epic: #4
-- Current open GitHub issue set at GH-74 start: #4 recovery epic, #7
-  audit/review parent, #29 rollout tracker, and #74 node health signals.
+- Current open GitHub issue set after GH-74 closure: #4 recovery epic, #7
+  audit/review parent, and #29 rollout tracker.
 
 ## Verified state
 
-- GH-74 locally adds dependency-free `healthcheck live|ready` commands with
+- GH-74 is closed through merged PR #75 (`468a43a`). It adds dependency-free
+  `healthcheck live|ready` commands with
   literal-loopback-only RPC targets, bounded time/body handling, no environment
   proxy or redirects, strict JSON-RPC validation, and distinct restart versus
   synchronization semantics. Docker, CI, operator guidance, and repository
-  policy tests use the same commands. The local branch records 1,043 cases:
-  1,009 Go, 26 Rust, and eight maintained-client tests; final-head GitHub
-  runtime evidence remains pending.
+  policy tests use the same commands. Merged `main` records 1,043 cases:
+  1,009 Go, 26 Rust, and eight maintained-client tests. Exact final head
+  `e021044` passed all technical gates; all six CodeRabbit threads were
+  remediated and resolved.
 - GH-71 merged a deterministic read-only network-policy command for seed,
   sentry, validator, RPC/API, and private roles; fail-closed startup integration;
   canonical peer/topology checks; loopback-only client, profiling, and metrics

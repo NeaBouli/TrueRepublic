@@ -1470,3 +1470,25 @@
   complete-number documentation matching.
 - No production, server, firewall, DNS, deployment, real topology, secret,
   credential, key, mainnet, or public-network action was performed.
+
+## 2026-07-29 19:02 EEST - GH-74 merged and closed
+
+- PR #75 exact remediation head
+  `e02104452fe2ddd201045c0ea0bb9651c053c417` passed build/vet/race/coverage
+  in 6m39s, the complete recovery matrix in 13m54s, Docker/Compose liveness,
+  readiness, persistent restart, proxy, wallet, metrics, and Grafana in 7m27s,
+  plus docs, Go/Rust/Node security, and DeepScan.
+- CodeRabbit produced six actionable threads. All six were remediated in
+  `e021044`, answered with evidence, and resolved. Its incremental follow-up
+  was rate-limited but returned PASS with no new unresolved thread. Independent
+  Kimi review recorded 0 P0/P1/P2.
+- Owner-authorized admin squash merge bypassed only the repository's
+  self-approval requirement; no failed technical or unresolved review gate was
+  bypassed.
+- PR #75 merged to `main` as `468a43a6cf4a3ed6cc76524a2de212b4fcf7052a`;
+  GH-74 closed automatically. GH-29 remains open for later rollout phases.
+- Correction to the earlier local milestone wording: Docker `HEALTHCHECK`
+  records unhealthy state; `restart: unless-stopped` does not restart an
+  unhealthy main process without explicit external automation.
+- No production, server, firewall, DNS, deployment, real topology, secret,
+  credential, key, mainnet, or public-network action was performed.
