@@ -1935,3 +1935,24 @@ Go/Rust/Node security, docs, DeepScan, and CodeRabbit. GH-51 is closed.
   local gates, then publish a draft PR for exact final-head CI.
 
 ---
+
+## 2026-07-29 18:22 EEST GH-74 Published as Draft PR #75
+
+- **Commit/head:** `6de3bb1311593fa143ebcfc3bcd603948d6ffcc9`
+  on `feature/GH-74-node-health`.
+- **PR:** [#75](https://github.com/NeaBouli/TrueRepublic/pull/75), draft
+  against `main`; `Closes #74` applies only when merged.
+- **Independent review:** 0 P0/P1/P2. The one actionable P3 was remediated and
+  the exact follow-up diff was independently approved; no review-authoring
+  agent changed repository files.
+- **Local final tree:** `make verify`, focused health Race, root/config/policy,
+  vet, docs consistency, shell syntax, JSON/YAML parse, formatting, and diff
+  gates PASS.
+- **State:** final-head GitHub CI/security/static/external review and real
+  Docker/Compose runtime evidence are now pending. No merge readiness is
+  claimed.
+- **Next:** push this append-only publication record, monitor the exact new
+  head, remediate valid failures/findings, then mark ready and merge only after
+  all technical gates pass with zero unresolved actionable threads.
+
+---
