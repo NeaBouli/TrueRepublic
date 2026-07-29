@@ -28,6 +28,12 @@
 - [x] GH-71: publish the reviewed branch, obtain green final-head GitHub
   build/race/coverage, process, Docker, docs, static/security, and independent
   review evidence; merge through PR #72, close, and synchronize GH-29/Bridge.
+- [x] GH-74: locally implement and verify separate bounded node liveness and
+  synchronization-aware readiness commands, Docker/CI integration, repository
+  policy coverage, and operator guidance.
+- [ ] GH-74: publish the reviewed branch, obtain green final-head GitHub
+  build/race/coverage, process, Docker/Compose, docs, static/security, and
+  independent review evidence; merge, close, and synchronize GH-29/Bridge.
 
 ## P1 - consensus and wallet audit
 

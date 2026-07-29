@@ -66,6 +66,12 @@ This starts all services:
 ## Step 4: Verify
 
 ```bash
+# Process is alive even while the node is still syncing
+docker compose exec -T truerepublic-node truerepublicd healthcheck live
+
+# Node has committed a block and is no longer catching up
+docker compose exec -T truerepublic-node truerepublicd healthcheck ready
+
 # Check node status
 curl http://localhost:8080/rpc/status | jq .result.sync_info
 
@@ -78,6 +84,9 @@ curl -s http://localhost:3001 | head -5
 # Check Grafana
 open http://localhost:3000
 ```
+
+Docker restarts the container only when `live` fails. Route traffic only after
+`ready` succeeds; a syncing node is live but intentionally not ready.
 
 ## Step 5: Stop
 

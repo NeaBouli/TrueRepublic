@@ -1430,3 +1430,36 @@
 - No server, firewall, DNS, production topology, deployment, key, credential,
   mainnet, or public-network action was performed. GH-29 remains the rollout
   tracker.
+
+## 2026-07-29 17:45 EEST - GH-74 locally verified
+
+- Added dependency-free `truerepublicd healthcheck live|ready` commands.
+  Liveness checks only local RPC responsiveness; readiness additionally
+  requires a positive committed height and `catching_up=false`.
+- Hardened probes to literal-loopback plain HTTP, positive timeout at most ten
+  seconds, 64 KiB responses, no userinfo/query/fragment/non-root path, no
+  redirects or environment proxy, strict JSON-RPC 2.0, and stable
+  operator-safe errors.
+- Docker now uses liveness for its restart signal. GitHub container and
+  Compose gates require liveness, readiness, and post-restart height progress.
+  Operator documentation includes distinct Kubernetes exec probes.
+- Kimi K3 implemented the bounded probe package/CLI/focused tests. Sol reviewed
+  the complete write diff and corrected redirect/proxy handling, JSON-RPC
+  version validation, an environment-sensitive port test, and race-safety.
+- Local evidence: focused race tests PASS twice; focused root/config tests
+  PASS; `go vet ./healthcheck` and `go vet .` PASS; `make verify` PASS.
+  Package-scoped JSON evidence records 1,009 Go cases: root 71, healthcheck 55,
+  migration 82, network policy 126, token 12, treasury 36, DEX 116, and
+  governance 511. Public total: 1,043 with 26 Rust and eight maintained-client
+  cases.
+- Coverage: root 69.5%, healthcheck 97.2%, migration 84.6%, network policy
+  95.5%, token 92.6%, treasury 97.0%, DEX 45.3%, and governance 62.2%.
+- Docker is unavailable locally. Exact final-head GitHub image/Compose runtime
+  evidence, independent review, and merge remain hard gates.
+- Structured audit: `GH74_AUDIT.md`; current result 0 FAIL / 1 WARN / 12 PASS.
+- Final independent Kimi review found no P0/P1/P2. Sol remediated its
+  actionable P3 by validating the separately read block height before
+  publishing or comparing the restart baseline. The duplicated timeout wording
+  and standard released-port test idiom remain non-blocking P3 observations.
+- No production, server, firewall, DNS, deployment, real topology, secret,
+  credential, key, mainnet, or public-network action was performed.

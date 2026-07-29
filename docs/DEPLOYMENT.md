@@ -40,8 +40,12 @@ make docker-up
 ### 3. Verify
 
 ```bash
-# Check node status
-curl http://localhost:26657/status
+# Process liveness and traffic readiness
+docker compose exec -T truerepublic-node truerepublicd healthcheck live
+docker compose exec -T truerepublic-node truerepublicd healthcheck ready
+
+# Check node status through the loopback proxy
+curl http://localhost:8080/rpc/status
 
 # Check web wallet
 curl http://localhost:3001

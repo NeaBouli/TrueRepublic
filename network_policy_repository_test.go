@@ -17,6 +17,7 @@ func TestContainerNetworkDefaultsFailClosed(t *testing.T) {
 		"--rpc.laddr=tcp://127.0.0.1:26657",
 		"--grpc.enable=false",
 		"--api.enable=false",
+		`CMD ["truerepublicd", "healthcheck", "live", "--timeout", "2s"]`,
 	} {
 		if !strings.Contains(dockerfile, required) {
 			t.Fatalf("Dockerfile must contain %q", required)
@@ -87,10 +88,10 @@ func TestContainerNetworkDefaultsFailClosed(t *testing.T) {
 	if strings.Contains(workflow, "--publish") {
 		t.Fatal("Docker smoke must not publish a host RPC port")
 	}
-	if !strings.Contains(workflow, "docker exec truerepublic-node-ci wget -qO- http://127.0.0.1:26657/status") {
-		t.Fatal("Docker smoke must verify RPC only from inside the container")
-	}
 	for _, required := range []string{
+		"truerepublicd healthcheck live --timeout 2s",
+		"truerepublicd healthcheck ready --timeout 2s",
+		"docker exec truerepublic-node-ci wget -qO- http://127.0.0.1:26657/status",
 		"docker compose up --detach --build truerepublic-node web-wallet nginx prometheus grafana",
 		"http://127.0.0.1:8080/rpc/status",
 		`select(.labels.job == "truerepublic-node" and .health == "up")`,
@@ -101,30 +102,70 @@ func TestContainerNetworkDefaultsFailClosed(t *testing.T) {
 			t.Fatalf("Docker smoke must exercise the loopback Compose stack with %q", required)
 		}
 	}
+
+	monitoring := readRepositoryFile(t, "docs/node-operators/operations/monitoring.md")
+	for _, required := range []string{
+		"truerepublicd healthcheck live",
+		"truerepublicd healthcheck ready",
+		"does not restart a healthy syncing node",
+		"literal loopback address only",
+	} {
+		if !strings.Contains(monitoring, required) {
+			t.Fatalf("operator monitoring guide must explain health semantics with %q", required)
+		}
+	}
+	deploymentWiki := readRepositoryFile(t, "wiki/operations/Deployment-Options.md")
+	if !strings.Contains(deploymentWiki, "- healthcheck\n            - live") ||
+		!strings.Contains(deploymentWiki, "- healthcheck\n            - ready") {
+		t.Fatal("Kubernetes example must use distinct exec liveness/readiness probes")
+	}
 }
 
-func TestNetworkPolicyRootCommandDoesNotInitializeHome(t *testing.T) {
+func TestConfigIndependentRootCommandsDoNotInitializeHome(t *testing.T) {
 	t.Parallel()
 
-	home := filepath.Join(t.TempDir(), "must-remain-absent")
-	root := newRootCmd()
-	output := new(bytes.Buffer)
-	root.SetOut(output)
-	root.SetErr(output)
-	root.SetArgs([]string{
-		"network-policy", "validate",
-		"--role", "validator",
-		"--home", home,
-		"--output", "json",
-	})
-	if err := root.Execute(); err == nil {
-		t.Fatal("uninitialized node home unexpectedly passed policy validation")
+	type testCase struct {
+		home string
+		args []string
 	}
-	if _, err := os.Stat(home); !os.IsNotExist(err) {
-		t.Fatalf("read-only policy command created or touched its target home: %v", err)
+	policyHome := filepath.Join(t.TempDir(), "policy-home")
+	healthHome := filepath.Join(t.TempDir(), "health-home")
+	tests := map[string]testCase{
+		"network policy": {
+			home: policyHome,
+			args: []string{
+				"network-policy", "validate",
+				"--role", "validator",
+				"--home", policyHome,
+				"--output", "json",
+			},
+		},
+		"healthcheck": {
+			home: healthHome,
+			args: []string{
+				"--home", healthHome,
+				"healthcheck", "live",
+				"--rpc-url", "https://127.0.0.1:26657",
+			},
+		},
 	}
-	if strings.Contains(output.String(), home) {
-		t.Fatalf("policy output leaked the local home path: %s", output)
+	for name, tc := range tests {
+		t.Run(name, func(t *testing.T) {
+			root := newRootCmd()
+			output := new(bytes.Buffer)
+			root.SetOut(output)
+			root.SetErr(output)
+			root.SetArgs(tc.args)
+			if err := root.Execute(); err == nil {
+				t.Fatal("invalid read-only command unexpectedly succeeded")
+			}
+			if _, err := os.Stat(tc.home); !os.IsNotExist(err) {
+				t.Fatalf("read-only command created or touched its target home: %v", err)
+			}
+			if strings.Contains(output.String(), tc.home) {
+				t.Fatalf("command output leaked the local home path: %s", output)
+			}
+		})
 	}
 }
 

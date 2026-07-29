@@ -292,15 +292,23 @@ spec:
             cpu: 4
             memory: 8Gi
         livenessProbe:
-          httpGet:
-            path: /health
-            port: 26657
+          exec:
+            command:
+            - /usr/local/bin/truerepublicd
+            - healthcheck
+            - live
+            - --timeout
+            - 2s
           initialDelaySeconds: 60
           periodSeconds: 30
         readinessProbe:
-          httpGet:
-            path: /health
-            port: 26657
+          exec:
+            command:
+            - /usr/local/bin/truerepublicd
+            - healthcheck
+            - ready
+            - --timeout
+            - 2s
           initialDelaySeconds: 30
           periodSeconds: 10
       volumes:

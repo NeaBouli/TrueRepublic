@@ -16,7 +16,11 @@ make docker-up
 
 **Verify:**
 ```bash
-curl http://localhost:26657/status          # Node
+docker compose exec -T truerepublic-node \
+  truerepublicd healthcheck live             # Process liveness
+docker compose exec -T truerepublic-node \
+  truerepublicd healthcheck ready            # Synced traffic readiness
+curl http://localhost:8080/rpc/status        # Node status through local proxy
 open http://localhost:3001                   # Web Wallet
 open http://localhost:3000                   # Grafana (admin / your-password)
 ```

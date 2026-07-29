@@ -24,6 +24,18 @@ MODULE_TESTS=$(jq '[.modules[]] | add' "$STATUS_FILE")
 BASE_CAP=$(jq -r '.token.max_supply_base_units' "$STATUS_FILE")
 DECIMALS=$(jq -r '.token.decimals' "$STATUS_FILE")
 
+format_integer() {
+  local remaining="$1"
+  local formatted=""
+  while [ "${#remaining}" -gt 3 ]; do
+    formatted=",${remaining: -3}${formatted}"
+    remaining="${remaining:0:${#remaining}-3}"
+  done
+  printf '%s%s' "$remaining" "$formatted"
+}
+
+FORMATTED_TESTS=$(format_integer "$TESTS")
+
 echo "Source of Truth (status.json):"
 echo "  Version: $VERSION"
 echo "  Tests: $TESTS"
@@ -57,7 +69,12 @@ check_file() {
 
   echo "Checking $label ($file)..."
   grep -Fq "$VERSION" "$file" && echo "  OK Version" || { echo "  FAIL Version ($VERSION not found)"; ERRORS=$((ERRORS+1)); }
-  grep -Fq "$TESTS" "$file" && echo "  OK Tests" || { echo "  FAIL Tests ($TESTS not found)"; ERRORS=$((ERRORS+1)); }
+  if grep -Fq "$TESTS" "$file" || grep -Fq "$FORMATTED_TESTS" "$file"; then
+    echo "  OK Tests"
+  else
+    echo "  FAIL Tests ($TESTS or $FORMATTED_TESTS not found)"
+    ERRORS=$((ERRORS+1))
+  fi
   echo ""
 }
 

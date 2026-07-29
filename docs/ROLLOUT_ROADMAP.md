@@ -14,7 +14,7 @@ parent recovery record remains
 
 - The ordered recovery merge chain is on `main`.
 - The maximum supply is fixed at 21,000,000 PNYX.
-- The source of truth records 986 recovery-verified tests: 952 Go, 26 Rust,
+- The source of truth records 1,043 recovery-verified tests: 1,009 Go, 26 Rust,
   and 8 maintained-client tests.
 - Ledger, escrow, issuance, DEX custody, genesis, runtime invariants, ZKP
   statement binding, node persistence, and the safe operator-init boundary
@@ -138,7 +138,8 @@ defensible coverage, and no unresolved critical/high security finding remains.
 
 ## Phase 6 — Operations and observability
 
-- [ ] Add separate liveness and readiness signals for node operation.
+- [x] Add separate liveness and readiness signals for node operation
+  ([GH-74](https://github.com/NeaBouli/TrueRepublic/issues/74)).
 - [ ] Define structured logs without secrets, mnemonic material, or private
   transaction data.
 - [ ] Export consensus, peer, block, transaction, invariant, resource, and
