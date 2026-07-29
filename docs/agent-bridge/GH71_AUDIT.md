@@ -2,8 +2,8 @@
 
 > Scope: `networkpolicy/`, daemon/startup integration, Docker/Compose/nginx/
 > monitoring defaults, CI smoke evidence, operator documentation, and public
-> status synchronization · Date: 2026-07-29 · Local result: 0 FAIL / 2 WARN /
-> 12 PASS
+> status synchronization · Date: 2026-07-29 · Final result: 0 FAIL / 1 WARN /
+> 13 PASS
 
 ## Boundary
 
@@ -19,12 +19,7 @@ None.
 
 ### WARN
 
-1. **Final-head container evidence remains external.** Docker is unavailable in
-   the local environment. The workflow now starts the complete loopback Compose
-   stack and verifies RPC through nginx, wallet routing, a healthy same-
-   namespace node-metrics target, and Grafana health. That exact gate must pass
-   on GitHub before merge.
-2. **Compose is a recovery/development profile, not a rollout role.** Native
+1. **Compose is a recovery/development profile, not a rollout role.** Native
    `scripts/start-node.sh` requires role validation before startup. The
    deliberately isolated single-node Compose profile uses safe loopback
    defaults but does not claim to satisfy a seed/sentry/validator/RPC/private
@@ -58,6 +53,8 @@ None.
 12. The authoritative current count reproduces as 952 Go cases (root 69,
     migration 82, network policy 126, token 12, treasury 36, DEX 116,
     governance 511), plus 26 Rust and eight maintained-client cases = 986.
+13. PR #72 exact final head passed the complete GitHub Compose smoke: RPC
+    through nginx, wallet routing, healthy node metrics, and Grafana health.
 
 ## Local evidence
 
@@ -67,7 +64,7 @@ None.
 - Process evidence: seven scenarios passed in the combined matrix; concurrent
   review/test load exhausted the global 1500-second budget during the eighth
   slashing scenario. The isolated slashing rerun then passed in 303.98 seconds.
-  GitHub must still pass the exact final-head eight-scenario matrix in one job.
+  GitHub exact final-head eight-scenario matrix passed in one 14m29s job.
 - Focused startup/container/policy tests, shell syntax, YAML parsing,
   documentation consistency, JSON validation, gofmt, and `git diff --check`:
   PASS.
@@ -81,8 +78,14 @@ peer controls, secret/path safety, and exact case arithmetic. Sol corrected the
 review's remaining P3 documentation/test observations and added the complete
 Compose CI smoke. No independent-review blocker remains.
 
-## Merge gate
+## Merge evidence
 
-Do not merge until the exact PR head passes Go build/vet/Race/coverage, the
-eight-scenario process matrix, full Docker/Compose runtime smoke, docs/static/
-security checks, review, and zero unresolved actionable threads.
+PR #72 exact head `83ffaad86274efdf3d2bb54dfff6ce8a625d5dee`
+passed Go build/vet/Race/coverage, the eight-scenario process matrix, full
+Docker/Compose runtime smoke, docs/static/security checks, and DeepScan. There
+were zero review findings and zero unresolved threads. CodeRabbit remained
+stuck in `Review in progress` for about ten hours without emitting a result;
+the stale external status was documented on the PR and bypassed under owner
+authorization after the independent review and every technical gate passed.
+PR #72 squash-merged as
+`9c369ac0d589f749e055af33a03f5f4981020101` and closed GH-71.

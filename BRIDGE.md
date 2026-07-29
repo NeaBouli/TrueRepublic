@@ -1850,3 +1850,26 @@ Go/Rust/Node security, docs, DeepScan, and CodeRabbit. GH-51 is closed.
   gates are green.
 
 ---
+
+## 2026-07-29 12:52 EEST GH-71 → Done / Target Stop
+
+- **Status:** Done. [PR #72](https://github.com/NeaBouli/TrueRepublic/pull/72)
+  squash-merged to `main` as
+  `9c369ac0d589f749e055af33a03f5f4981020101`; GH-71 closed automatically.
+- **Exact verified head:** `83ffaad86274efdf3d2bb54dfff6ce8a625d5dee`.
+- **GitHub evidence:** build/race/coverage PASS 6m03s; complete recovery matrix
+  PASS 14m29s; Docker/Compose restart, proxy, wallet, metrics, and Grafana smoke
+  PASS 7m04s; docs, Go/Rust/Node security scans, and DeepScan PASS.
+- **Review:** independent Kimi K3 review found no P0/P1 and Sol remediated all
+  lower-severity observations before final CI. CodeRabbit remained stuck for
+  about ten hours without a review, finding, or thread; the infrastructure
+  condition was documented on the PR. Zero unresolved review threads existed.
+- **Merge decision:** owner-authorized admin squash merge bypassed only the
+  stale external-bot status; no failed technical gate was bypassed.
+- **Safety boundary:** no server, firewall, DNS, deployment, real topology,
+  secret, key, credential, production, mainnet, or public-network action.
+- **Remaining parent work:** GH-29 stays open for later rollout phases.
+- **Next:** publish this documentation-only closure synchronization, require
+  its final-head docs/static gates, merge, update GH-29, and stop GH-71.
+
+---

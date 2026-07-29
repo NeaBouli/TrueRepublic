@@ -1412,3 +1412,21 @@
   requires loopback proxy RPC, wallet routing, healthy node metrics, and
   Grafana health before merge.
 - Structured audit: `GH71_AUDIT.md`. No P0/P1 or scope blocker remains.
+
+## 2026-07-29 12:52 EEST - GH-71 merged and closed
+
+- PR #72 exact final head `83ffaad86274efdf3d2bb54dfff6ce8a625d5dee`
+  passed Go build/race/coverage (6m03s), the complete recovery matrix (14m29s),
+  Docker/Compose restart and routing smoke (7m04s), docs, Go/Rust/Node security
+  scans, and DeepScan with zero new findings.
+- CodeRabbit remained in `Review in progress` for about ten hours without
+  producing a review, finding, or thread. The stale external-bot condition was
+  recorded on the PR; zero unresolved review threads existed. Independent Kimi
+  review had already found no P0/P1, and every lower-severity observation was
+  remediated before the exact final-head CI run.
+- Under the repository owner's standing merge authorization, Sol used an admin
+  squash merge only to bypass the stale bot status. PR #72 merged to `main` as
+  `9c369ac0d589f749e055af33a03f5f4981020101`; GH-71 closed automatically.
+- No server, firewall, DNS, production topology, deployment, key, credential,
+  mainnet, or public-network action was performed. GH-29 remains the rollout
+  tracker.

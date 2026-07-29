@@ -1,6 +1,6 @@
 # Project State
 
-Updated: 2026-07-29 01:16 UTC
+Updated: 2026-07-29 09:52 UTC
 
 ## Repository
 
@@ -17,7 +17,7 @@ Updated: 2026-07-29 01:16 UTC
   documentation-only merges.
 - Merged recovery PRs: #9, #15, #16, #17, #18, #19, #22, #23, #24, #27,
   #28, #30, #31, #33, #34, #35, #40, #42, #44, #46, #49, #52, #54, #57,
-  #58, #62, #65, #67, and #69.
+  #58, #62, #65, #67, #69, and #72.
 - Current work: GH-60 inactive validator claim round-trip is closed through
   merged PR #67 (`c5a3d38`). Explicit active/inactive representation, legacy
   compatibility, complete domains, exact stake/jail/missed-block/power
@@ -29,7 +29,15 @@ Updated: 2026-07-29 01:16 UTC
   binding, typed state/Comet reconciliation, an atomic trusted-hash CLI, the
   historical pre-GH-56 four-validator migration/rollback drill, and the
   operator runbook. Final-head GitHub CI passed all 11 checks and all review
-  threads are resolved. GH-29 remains open as the rollout execution tracker.
+  threads are resolved. GH-71 is closed through merged PR #72
+  (`9c369ac0d589f749e055af33a03f5f4981020101`): deterministic role-based
+  node policy, fail-closed startup, safe container/proxy/monitoring defaults,
+  and the operator runbook are now on `main`. Its exact final head passed Go
+  build/race/coverage, the complete recovery matrix, full Compose runtime,
+  docs, security scans, and DeepScan. CodeRabbit remained stuck without a
+  finding or review thread for about ten hours; the independent Kimi review
+  found no P0/P1 and all lower-severity observations were remediated before
+  the final green run. GH-29 remains open as the rollout execution tracker.
   GH-32 and
   PR #33 close its first Phase 1 gate with local and GitHub evidence. GH-39 is
   now merged via PR #40 with green GitHub CI for validator
@@ -95,16 +103,16 @@ Updated: 2026-07-29 01:16 UTC
 - Recovery worktree: `/Users/gio/Desktop/repos/TrueRepublic-recovery`
 - Legacy local checkout: preserved at `/Users/gio/Desktop/repos/TrueRepublic`
 - GitHub epic: #4
-- Current open GitHub issue set after GH-61 closure: #4 recovery epic, #7
+- Current open GitHub issue set after GH-71 closure: #4 recovery epic, #7
   audit/review parent, and #29 rollout tracker.
 
 ## Verified state
 
-- GH-71 adds a deterministic read-only network-policy command for seed,
+- GH-71 merged a deterministic read-only network-policy command for seed,
   sentry, validator, RPC/API, and private roles; fail-closed startup integration;
   canonical peer/topology checks; loopback-only client, profiling, and metrics
   listeners; explicit public P2P interfaces; safe Docker/nginx defaults; and
-  operator firewall/rate-limit guidance. The current GH-71 branch records 986
+  operator firewall/rate-limit guidance. Merged `main` records 986
   cases: 952 Go, 26 Rust, and eight maintained-client tests. Production
   topology, firewall, DNS, server, and deployment actions remain unexecuted.
 - GH-14 local documentation consistency script: PASS.

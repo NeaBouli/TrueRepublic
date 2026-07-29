@@ -175,5 +175,5 @@
   are rejected.
 - The repository does not mutate provider/host firewalls or authorize any real
   topology. The local Compose profile is loopback recovery/development only;
-  final-head container runtime evidence and all production rollout decisions
-  remain external gates.
+  PR #72 final-head container runtime evidence passed on GitHub. All production
+  rollout decisions remain external gates.
