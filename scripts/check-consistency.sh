@@ -69,7 +69,7 @@ check_file() {
 
   echo "Checking $label ($file)..."
   grep -Fq "$VERSION" "$file" && echo "  OK Version" || { echo "  FAIL Version ($VERSION not found)"; ERRORS=$((ERRORS+1)); }
-  if grep -Fq "$TESTS" "$file" || grep -Fq "$FORMATTED_TESTS" "$file"; then
+  if grep -Eq "(^|[^[:digit:],])(${TESTS}|${FORMATTED_TESTS})([^[:digit:],]|$)" "$file"; then
     echo "  OK Tests"
   else
     echo "  FAIL Tests ($TESTS or $FORMATTED_TESTS not found)"

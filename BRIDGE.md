@@ -1951,8 +1951,16 @@ Go/Rust/Node security, docs, DeepScan, and CodeRabbit. GH-51 is closed.
 - **State:** final-head GitHub CI/security/static/external review and real
   Docker/Compose runtime evidence are now pending. No merge readiness is
   claimed.
-- **Next:** push this append-only publication record, monitor the exact new
-  head, remediate valid failures/findings, then mark ready and merge only after
-  all technical gates pass with zero unresolved actionable threads.
+- **First published-head evidence:** build/race/coverage PASS 7m25s;
+  Docker/Compose PASS 7m27s; complete recovery matrix PASS 13m58s; docs,
+  Go/Rust/Node security, and DeepScan PASS.
+- **External review:** CodeRabbit opened six actionable threads. Sol accepted
+  all six for minimal remediation: preserve the key-compromise runbook gate,
+  correct migration wording, make the deployment curl fail closed, correct
+  Docker unhealthy/restart semantics, use context-aware ephemeral listening in
+  the test, and match documentation totals only as complete numbers.
+- **Next:** run focused local verification, commit/push the six review
+  remediations, require refreshed exact-head CI/review, resolve every confirmed
+  thread, and merge only with zero unresolved actionable findings.
 
 ---

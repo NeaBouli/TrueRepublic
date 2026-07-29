@@ -136,7 +136,8 @@ func TestTimeoutBounds(t *testing.T) {
 
 func TestUnreachable(t *testing.T) {
 	// Bind and immediately release a port so nothing listens on it.
-	ln, err := net.Listen("tcp", "127.0.0.1:0")
+	var listenConfig net.ListenConfig
+	ln, err := listenConfig.Listen(context.Background(), "tcp", "127.0.0.1:0")
 	if err != nil {
 		t.Fatalf("listen: %v", err)
 	}

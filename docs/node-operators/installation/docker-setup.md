@@ -85,8 +85,11 @@ curl -s http://localhost:3001 | head -5
 open http://localhost:3000
 ```
 
-Docker restarts the container only when `live` fails. Route traffic only after
-`ready` succeeds; a syncing node is live but intentionally not ready.
+Docker records the container as unhealthy when `live` fails; `restart:
+unless-stopped` acts only when the main process exits and does not restart an
+unhealthy process by itself. Route traffic only after `ready` succeeds; a
+syncing node is live but intentionally not ready. Production automation must
+define an explicit unhealthy-container replacement policy.
 
 ## Step 5: Stop
 

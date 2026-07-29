@@ -1461,5 +1461,12 @@
   actionable P3 by validating the separately read block height before
   publishing or comparing the restart baseline. The duplicated timeout wording
   and standard released-port test idiom remain non-blocking P3 observations.
+- PR #75 final-head technical gates passed before external review:
+  build/race/coverage 7m25s, Docker/Compose 7m27s, complete recovery matrix
+  13m58s, docs, Go/Rust/Node security scans, and DeepScan. CodeRabbit then
+  opened six actionable threads; all six were accepted for minimal remediation:
+  key-compromise runbook boundary, migration wording, fail-closed deployment
+  curl, accurate Docker restart semantics, context-aware test listener, and
+  complete-number documentation matching.
 - No production, server, firewall, DNS, deployment, real topology, secret,
   credential, key, mainnet, or public-network action was performed.

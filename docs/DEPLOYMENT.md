@@ -45,7 +45,7 @@ docker compose exec -T truerepublic-node truerepublicd healthcheck live
 docker compose exec -T truerepublic-node truerepublicd healthcheck ready
 
 # Check node status through the loopback proxy
-curl http://localhost:8080/rpc/status
+curl --fail --silent --show-error http://localhost:8080/rpc/status
 
 # Check web wallet
 curl http://localhost:3001

@@ -69,6 +69,14 @@ Docker is unavailable in the local environment, so the real image/Compose
 liveness and readiness paths must pass on the exact final GitHub head before
 merge.
 
+CodeRabbit's final-head review opened six actionable threads. Sol retained the
+compromised-key runbook rehearsal boundary, corrected the migration-focused
+harness wording, made the deployment curl fail on HTTP errors, corrected the
+Docker unhealthy-versus-restart semantics, used context-aware ephemeral
+listening in the test, and bounded documentation total matches against adjacent
+digits/commas. All six require focused local verification, refreshed exact-head
+CI, and resolved GitHub threads before merge.
+
 ## Non-claims
 
 This task does not deploy a node, configure a server, firewall, DNS, or real

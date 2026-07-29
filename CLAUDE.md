@@ -170,6 +170,7 @@ Recovery testnet functionality is not a mainnet approval. GH-53 proves only
 compatible persisted-state binary replacement and fail-before-open rollback.
 Remaining gates include consensus-breaking state migration and partially
 applied migration recovery, IBC/load/capacity/topology evidence, structured
-logging, broader metrics/alerting, independent consensus/
-cryptographic/operations review, real client proof generation, and a formal
-release process.
+logging, broader metrics/alerting, compromised-key incident and recovery
+runbook rehearsal (rotation and revocation are implemented), independent
+consensus/cryptographic/operations review, real client proof generation, and
+a formal release process.
