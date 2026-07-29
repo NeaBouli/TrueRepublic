@@ -1559,3 +1559,29 @@ Go/Rust/Node security, docs, DeepScan, and CodeRabbit. GH-51 is closed.
   and evaluate only the new final-head GitHub runs.
 
 ---
+
+## 2026-07-29 03:08 EEST PR #69 Final Head → CI PASS / Review Recovery
+
+- **Final head:** `a28f5654390f58feecfd86afeeb4d7f74e204341`
+  (`fix(deps): update grpc for GO-2026-6061`) is pushed without force.
+- **GitHub evidence:** docs consistency, Go build/race/coverage,
+  multi-validator recovery, Docker restart, Go/Rust/maintained-client and
+  informational legacy-client security scans, and DeepScan all PASS. DeepScan
+  reports zero new issues.
+- **Review state:** PR #69 is ready for review and mergeable. CodeRabbit's
+  status remained `Review in progress` on an unchanged timestamp for about ten
+  hours, with no review or inline thread emitted. A bounded
+  `@coderabbitai review` command was acknowledged but reused the stale run.
+  Converting the PR to draft and immediately back to ready also preserved the
+  stale status.
+- **Recovery action:** this append-only coordination update will create a
+  fresh final head so GitHub and CodeRabbit receive a new commit event without
+  changing migration, consensus, API, or dependency behavior.
+- **Safety boundary:** no review requirement is bypassed and no merge,
+  deployment, public-network, secret, wallet, or production action occurs
+  while the independent review check is pending.
+- **Next:** commit/push this documentation-only recovery head, evaluate every
+  check and review thread on that exact head, then merge only after required
+  final-head evidence is terminal and acceptable.
+
+---

@@ -1286,3 +1286,16 @@
   new transport graph, including GH-61 migration/rollback, recovery,
   state-sync, backup/restore, binary rollback, cold failover, key rotation,
   and slashing.
+
+## 2026-07-29 03:08 EEST - PR #69 final-head CI green; review recovery
+
+- Exact head `a28f5654390f58feecfd86afeeb4d7f74e204341` passed docs, Go,
+  full multi-validator recovery, Docker restart, Go/Rust/Node security, and
+  DeepScan checks; DeepScan reported zero new issues.
+- CodeRabbit remained pending for about ten hours without a review or inline
+  thread. Its explicit review command was acknowledged but did not replace the
+  stale run; a draft/ready transition also left the same pending context.
+- Recorded the external-review recovery state append-only. This
+  documentation-only commit is intended to produce a fresh final head and bot
+  event. No implementation/dependency behavior changes and no review bypass,
+  merge, deployment, or production action were made.
