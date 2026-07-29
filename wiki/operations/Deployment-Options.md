@@ -77,17 +77,18 @@ services:
     container_name: truerepublic-node
     restart: unless-stopped
     ports:
-      - "26656:26656"  # P2P
-      - "26657:26657"  # RPC
-      - "1317:1317"    # REST
-      - "9090:9090"    # gRPC
+      - "127.0.0.1:26656:26656"  # local-development P2P
     volumes:
       - ./data:/root/.truerepublic
       - ./config:/config
     environment:
       - MONIKER=${MONIKER}
       - CHAIN_ID=${CHAIN_ID}
-    command: start
+    command:
+      - start
+      - --rpc.laddr=tcp://127.0.0.1:26657
+      - --grpc.enable=false
+      - --api.enable=false
     networks:
       - truerepublic-net
 
@@ -96,7 +97,7 @@ services:
     container_name: prometheus
     restart: unless-stopped
     ports:
-      - "9091:9090"
+      - "127.0.0.1:9091:9090"
     volumes:
       - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml
       - prometheus-data:/prometheus
@@ -116,7 +117,7 @@ services:
       - ./monitoring/grafana/provisioning:/etc/grafana/provisioning
       - grafana-data:/var/lib/grafana
     environment:
-      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASSWORD:-admin}
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASSWORD:?set GRAFANA_PASSWORD}
       - GF_USERS_ALLOW_SIGN_UP=false
     networks:
       - truerepublic-net
@@ -218,7 +219,8 @@ data:
   config.toml: |
     # CometBFT configuration
     [p2p]
-    external_address = "tcp://0.0.0.0:26656"
+    laddr = "tcp://PUBLIC_ROLE_INTERFACE:26656"
+    external_address = "tcp://PUBLIC_ROLE_ADDRESS:26656"
     max_num_inbound_peers = 40
     max_num_outbound_peers = 10
 
@@ -226,18 +228,25 @@ data:
     timeout_commit = "5s"
 
     [rpc]
-    laddr = "tcp://0.0.0.0:26657"
+    laddr = "tcp://127.0.0.1:26657"
+    unsafe = false
 
   app.toml: |
     # Application configuration
     [api]
     enable = true
-    address = "tcp://0.0.0.0:1317"
+    address = "tcp://127.0.0.1:1317"
+    enabled-unsafe-cors = false
 
     [grpc]
     enable = true
-    address = "0.0.0.0:9090"
+    address = "127.0.0.1:9090"
 ```
+
+These loopback listeners require a reviewed same-pod proxy sidecar. Validate
+the rendered node home against the
+[role-based network policy](../../docs/node-operators/configuration/network-policy.md);
+never publish the upstream ports directly.
 
 **StatefulSet:**
 

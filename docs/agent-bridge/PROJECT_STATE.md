@@ -100,6 +100,13 @@ Updated: 2026-07-29 01:16 UTC
 
 ## Verified state
 
+- GH-71 adds a deterministic read-only network-policy command for seed,
+  sentry, validator, RPC/API, and private roles; fail-closed startup integration;
+  canonical peer/topology checks; loopback-only client, profiling, and metrics
+  listeners; explicit public P2P interfaces; safe Docker/nginx defaults; and
+  operator firewall/rate-limit guidance. The current GH-71 branch records 986
+  cases: 952 Go, 26 Rust, and eight maintained-client tests. Production
+  topology, firewall, DNS, server, and deployment actions remain unexecuted.
 - GH-14 local documentation consistency script: PASS.
 - GH-14 local Rust workspace: 26 tests PASS; Clippy PASS.
 - GH-14 local Rust audit: no blocking advisory; six allowed transitive
@@ -112,7 +119,7 @@ Updated: 2026-07-29 01:16 UTC
   maintained-client tests. Four focused legacy-web ZKP regressions pass
   separately and are not included in that authoritative total. The prior 577
   figure is retained only as historical.
-- Current main count is 853: 819 Go, 26 Rust, and eight maintained-client
+- The pre-GH-71 main count is 853: 819 Go, 26 Rust, and eight maintained-client
   tests. Separately gated process harnesses are tracked only after they pass
   explicitly and are never added to that arithmetic total. The latest
   hardened four-validator run requires new post-rejoin blocks and passed in

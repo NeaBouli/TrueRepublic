@@ -65,12 +65,16 @@ npm start
 
 | Service | Port | URL |
 |---------|------|-----|
-| Blockchain Node | 26656 (P2P), 26657 (RPC) | `http://localhost:26657` |
+| Local reverse proxy | 8080 | `http://localhost:8080` |
+| Blockchain P2P (local development) | 26656 | `tcp://127.0.0.1:26656` |
 | Web Wallet | 3001 | `http://localhost:3001` |
 | Grafana | 3000 | `http://localhost:3000` |
 | Prometheus | 9091 | `http://localhost:9091` |
-| REST API | 1317 | `http://localhost:1317` |
-| gRPC | 9090 | `localhost:9090` |
+
+RPC and REST stay inside the node container on loopback and are reached
+through the local reverse proxy. gRPC is disabled by the default Compose
+profile. Production role exposure must follow the
+[network policy](docs/node-operators/configuration/network-policy.md).
 
 ### Native Build
 

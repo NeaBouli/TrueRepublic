@@ -18,7 +18,7 @@
   failure/restart/catch-up, partition-recovery, trusted state-sync, and
   sanitized backup/restore, compatible binary replacement/rollback, and
   single-signer validator-identity failover harness.
-- 853 recovery-verified tests: 819 Go, 26 Rust, and 8 maintained-client.
+- 986 recovery-verified tests: 952 Go, 26 Rust, and 8 maintained-client.
 
 ## Recovery sequence
 

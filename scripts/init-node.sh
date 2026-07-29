@@ -41,6 +41,8 @@ fi
 if [ -f "${CHAIN_HOME}/config/config.toml" ]; then
     sed -i.bak 's/prometheus = false/prometheus = true/' \
         "${CHAIN_HOME}/config/config.toml"
+    sed -i.bak 's/prometheus_listen_addr = ":[0-9][0-9]*"/prometheus_listen_addr = "127.0.0.1:26660"/' \
+        "${CHAIN_HOME}/config/config.toml"
 fi
 
 echo ""

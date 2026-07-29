@@ -4,8 +4,8 @@
   "release_date": "2026-03-04",
   "tests": {
     "status": "recovery_verified_locally",
-    "total": 853,
-    "go": 819,
+    "total": 986,
+    "go": 952,
     "rust": 26,
     "frontend": 8,
     "historical_total": 577
@@ -30,8 +30,9 @@
     }
   },
   "modules": {
-    "root": 62,
+    "root": 69,
     "migration": 82,
+    "networkpolicy": 126,
     "token": 12,
     "treasury": 36,
     "dex": 116,
@@ -104,6 +105,13 @@
       "consensus_key_rotation": "authenticated_atomic_h_plus_2_rotation_permanent_revocation_and_separate_operator_authority_merged_on_gh56",
       "consensus_slashing": "abci_plus_plus_equivocation_downtime_replay_exit_hold_and_four_process_recovery_merged_on_gh59",
       "inactive_validator_genesis": "explicit_active_inactive_claims_exact_export_import_and_four_process_recovery_locally_verified_on_gh60"
+    },
+    "network_policy": {
+      "status": "recovery_verified_locally_on_gh71",
+      "roles": "seed_sentry_validator_rpc_private",
+      "listeners": "client_and_metrics_loopback_only_public_p2p_explicit_interface",
+      "topology": "canonical_peer_ids_validator_two_sentries_sentry_identity_privacy",
+      "production_deployment": false
     },
     "web_client": {
       "status": "recovery_verified_locally",

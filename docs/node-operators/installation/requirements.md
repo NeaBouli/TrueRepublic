@@ -31,11 +31,14 @@
 
 | Port | Direction | Required | Purpose |
 |------|-----------|----------|---------|
-| 26656/tcp | Inbound + Outbound | Yes | P2P peer communication |
-| 26657/tcp | Inbound | Optional | RPC endpoint for clients |
+| 26656/tcp | Inbound + Outbound | Role-specific | Public on seed/sentry/RPC roles; named sentries only on validators |
+| 26657/tcp | Local only | Yes | RPC upstream for a reviewed TLS reverse proxy |
 | 1317/tcp | Inbound | No | REST API (keep internal) |
 | 9090/tcp | Inbound | No | gRPC (keep internal) |
 | 26660/tcp | Inbound | No | Prometheus metrics (internal) |
+
+The exact role matrix and machine validation command are defined in the
+[Role-Based Network Policy](../configuration/network-policy.md).
 
 ### Bandwidth
 

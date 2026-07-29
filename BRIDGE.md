@@ -1745,3 +1745,91 @@ Go/Rust/Node security, docs, DeepScan, and CodeRabbit. GH-51 is closed.
   and zero unresolved threads before merge.
 
 ---
+
+## 2026-07-29 10:40 EEST GH-71 Role-Based Network Policy → In Progress
+
+- **Branch:** `feature/GH-71-network-policy`
+- **Issue:** [GH-71](https://github.com/NeaBouli/TrueRepublic/issues/71);
+  parent rollout tracker
+  [GH-29](https://github.com/NeaBouli/TrueRepublic/issues/29).
+- **Scope:** define and validate fail-closed seed, sentry, validator, RPC/API,
+  and private-operator profiles covering canonical peer endpoints, PEX and
+  private/unconditional peers, listener exposure, unsafe RPC/CORS/profiling,
+  least-privilege firewall ports, and reverse-proxy rate-limit requirements.
+  Add deterministic repository tooling, regression/process evidence, and an
+  operator runbook.
+- **Risk:** High. Incorrect peer or listener policy can expose validator
+  identities, privileged RPC, profiling, or denial-of-service surface.
+- **Safety boundary:** repository code/tests/fixtures/docs only. No server
+  access, real topology, firewall/DNS mutation, deployment, production,
+  mainnet, credentials, secrets, keys, or public-network launch.
+- **Current evidence:** exact clean `origin/main`
+  `35827e48c733ba931601aa14cc4ea31d1a14ba4d`; GH-71 is the last unchecked
+  Phase-1 network/disaster-recovery item in GH-29.
+- **Delegation:** Kimi K3 will receive one bounded, secret-free
+  implementation/analysis block. Sol retains architecture, security, complete
+  diff review, tests, GitHub writes, and closure.
+- **Next:** inspect the node configuration lifecycle and existing Docker/
+  operator documentation; freeze the typed profile schema and test plan before
+  implementation.
+
+---
+
+## 2026-07-29 11:20 EEST GH-71 Implementation Milestone
+
+- **Status:** In Progress.
+- **Kimi K3 contribution:** implemented the bounded `networkpolicy/`
+  validation core, CLI registration, and focused unit/CLI tests; no external
+  writes or delegated agents.
+- **Sol integration/review:** removed any operator-accessible local-peer
+  bypass, made validation output path/content-safe, corrected validator/sentry
+  trust relationships, added external-address and Prometheus checks, tightened
+  the RPC role, and integrated fail-closed startup/Docker/nginx defaults.
+- **Documentation:** role profiles, listener boundaries, PEX/topology rules,
+  reverse-proxy guidance, firewall/rate-limit guidance, and local-only
+  monitoring exposure are being synchronized across operator docs and wiki.
+- **Verified so far:** focused network-policy tests PASS; root startup/init/
+  repository policy tests PASS; `go vet` for root and networkpolicy PASS; shell
+  syntax PASS; YAML parse PASS; `git diff --check` PASS.
+- **Environment limitation:** Docker is not installed locally, so the
+  repository Docker/Compose smoke test remains delegated to GitHub Actions
+  rather than being claimed locally.
+- **Risks/blockers:** no scope blocker. Full repository gates, eight-scenario
+  process matrix, independent Kimi review, GitHub CI, and final closure sync
+  remain pending.
+- **Next:** complete the documentation safety scan, run full local verification
+  and process evidence, then review/publish/merge only on green evidence.
+
+---
+
+## 2026-07-29 12:24 EEST GH-71 Local Gates and Review → Green
+
+- **Status:** In Progress; ready for publication and final-head GitHub gates.
+- **Implementation:** five deterministic node roles, canonical peer/topology
+  validation, validator-initiated sentry isolation, loopback-only client/
+  profiling/metrics listeners, fail-closed native startup, safe local Docker/
+  nginx/monitoring defaults, CI Compose runtime evidence, and operator runbook.
+- **Kimi K3:** bounded implementation contribution plus a later independent
+  read-only security/integration review. No P0/P1 or review blocker; no files
+  changed by the review. Sol remediated every remaining P3 observation.
+- **Final local Go gate:** `make verify` PASS. Coverage: root 69.5%, migration
+  84.6%, network policy 95.5%, token 92.6%, treasury 97.0%, DEX 45.3%,
+  governance 62.2%.
+- **Counts:** 952 Go cases (69 + 82 + 126 + 12 + 36 + 116 + 511), plus 26
+  Rust and eight maintained-client cases = 986 authoritative branch cases.
+- **Process evidence:** seven scenarios PASS in the combined run; concurrent
+  review/test load exhausted the 1500-second global limit during slashing.
+  The isolated slashing rerun PASS in 303.98s. The exact final-head combined
+  matrix remains mandatory on GitHub.
+- **Other gates:** focused tests, shell syntax, YAML/JSON parsing, gofmt, docs
+  consistency, and `git diff --check` PASS.
+- **Docker boundary:** Docker unavailable locally; CI now starts node, nginx,
+  wallet, Prometheus, and Grafana and requires proxy RPC, wallet routing,
+  healthy node metrics, and Grafana health.
+- **Audit:** `docs/agent-bridge/GH71_AUDIT.md`.
+- **No production action:** no server, firewall, DNS, deployment, real
+  topology, key, credential, mainnet, or public-network change.
+- **Next:** commit/push, open PR, require exact final-head CI/review, remediate
+  any valid finding, merge, and synchronize GH-71/GH-29/public closure state.
+
+---

@@ -36,10 +36,20 @@ sudo systemctl restart sshd
 sudo ufw default deny incoming
 sudo ufw default allow outgoing
 sudo ufw allow ssh
-sudo ufw allow 26656/tcp    # P2P (required)
-sudo ufw allow 26657/tcp    # RPC (only if public)
+sudo ufw allow 26656/tcp    # P2P on seed/sentry/RPC roles only
+sudo ufw allow 443/tcp      # Reviewed TLS query proxy only
+sudo ufw deny 26657/tcp     # Never expose CometBFT RPC directly
+sudo ufw deny 1317/tcp      # Never expose REST directly
+sudo ufw deny 9090/tcp      # Never expose gRPC directly
+sudo ufw deny 9091/tcp      # Never expose gRPC-web directly
+sudo ufw deny 26660/tcp     # Never expose metrics directly
 sudo ufw enable
 ```
+
+Validators use named sentry addresses only and expose no public port. Validate
+the initialized home against the
+[role-based network policy](../configuration/network-policy.md) before any
+operator treats firewall or listener configuration as rollout evidence.
 
 ### Automatic Updates
 
@@ -156,6 +166,7 @@ sudo systemctl enable fail2ban
 - [ ] Monitoring and alerting configured
 - [ ] TLS for public endpoints
 - [ ] Sentry node architecture (validators)
+- [ ] Role-based network-policy validation passes
 - [ ] Regular backup schedule
 
 ## Next Steps

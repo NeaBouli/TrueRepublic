@@ -209,11 +209,17 @@ sudo journalctl -u truerepublicd -f
 ### Firewall (UFW)
 
 ```bash
-sudo ufw allow 26656/tcp  # P2P
-sudo ufw allow 26657/tcp  # RPC (restrict to trusted IPs in production)
-sudo ufw allow 443/tcp    # HTTPS
+sudo ufw allow 26656/tcp  # Public seed/sentry/RPC roles only
+sudo ufw allow 443/tcp    # Reviewed TLS query proxy
+sudo ufw deny 26657/tcp   # RPC remains loopback-only
+sudo ufw deny 1317/tcp    # REST remains loopback-only
+sudo ufw deny 9090/tcp    # gRPC remains loopback-only
 sudo ufw enable
 ```
+
+Apply the role matrix and validator from
+[`docs/node-operators/configuration/network-policy.md`](node-operators/configuration/network-policy.md)
+before any rollout review.
 
 ### Non-Root User
 

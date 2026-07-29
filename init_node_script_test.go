@@ -20,7 +20,7 @@ set -eu
 printf '%s\n' "$*" >> "$INVOCATIONS"
 mkdir -p "$FAKE_HOME/config"
 printf 'minimum-gas-prices = ""\n' > "$FAKE_HOME/config/app.toml"
-printf 'prometheus = false\n' > "$FAKE_HOME/config/config.toml"
+printf 'prometheus = false\nprometheus_listen_addr = ":26660"\n' > "$FAKE_HOME/config/config.toml"
 `
 	if err := os.WriteFile(fakeBinary, []byte(fake), 0o700); err != nil {
 		t.Fatal(err)
@@ -72,6 +72,9 @@ printf 'prometheus = false\n' > "$FAKE_HOME/config/config.toml"
 	if !strings.Contains(string(cometConfig), "prometheus = true") {
 		t.Fatalf("Prometheus was not enabled: %s", cometConfig)
 	}
+	if !strings.Contains(string(cometConfig), `prometheus_listen_addr = "127.0.0.1:26660"`) {
+		t.Fatalf("Prometheus was not bound to loopback: %s", cometConfig)
+	}
 	if !strings.Contains(string(output), "bank-backed PoD genesis") {
 		t.Fatalf("wrapper did not report the supported bootstrap path: %s", output)
 	}
@@ -93,23 +96,25 @@ printf '%s\n' "$*" >> "$INVOCATIONS"
 if [ "${1:-}" = "init" ]; then
   mkdir -p "$HOME/.truerepublic/config"
   printf '{}\n' > "$HOME/.truerepublic/config/genesis.json"
+  printf 'prometheus = false\nprometheus_listen_addr = ":26660"\n' > "$HOME/.truerepublic/config/config.toml"
 fi
 `
 	if err := os.WriteFile(fakeBinary, []byte(fake), 0o700); err != nil {
 		t.Fatal(err)
 	}
 
-	run := func(operator string) ([]byte, error) {
+	run := func(operator, prometheus string) ([]byte, error) {
 		cmd := exec.Command("sh", "scripts/docker-entrypoint.sh", "start")
 		cmd.Env = append(os.Environ(),
 			"HOME="+tempDir,
 			"PATH="+binDir+":"+os.Getenv("PATH"),
 			"INVOCATIONS="+invocations,
 			"BOOTSTRAP_OPERATOR="+operator,
+			"PROMETHEUS_ENABLED="+prometheus,
 		)
 		return cmd.CombinedOutput()
 	}
-	if output, err := run(""); err == nil || !strings.Contains(string(output), "BOOTSTRAP_OPERATOR is required") {
+	if output, err := run("", "true"); err == nil || !strings.Contains(string(output), "BOOTSTRAP_OPERATOR is required") {
 		t.Fatalf("fresh-home entrypoint did not fail closed: err=%v output=%s", err, output)
 	}
 	if _, err := os.Stat(invocations); !os.IsNotExist(err) {
@@ -117,7 +122,7 @@ fi
 	}
 
 	operator := "truerepublic13hgqwy9986x5nk6jt23ns5v7j0acs8qmhchhtw"
-	if output, err := run(operator); err != nil {
+	if output, err := run(operator, "true"); err != nil {
 		t.Fatalf("entrypoint with operator failed: %v\n%s", err, output)
 	}
 	called, err := os.ReadFile(invocations)
@@ -128,11 +133,26 @@ fi
 	if string(called) != want {
 		t.Fatalf("unexpected entrypoint commands:\n got: %q\nwant: %q", called, want)
 	}
+	cometConfig, err := os.ReadFile(filepath.Join(tempDir, ".truerepublic", "config", "config.toml"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !strings.Contains(string(cometConfig), "prometheus = true") ||
+		!strings.Contains(string(cometConfig), `prometheus_listen_addr = "127.0.0.1:26660"`) {
+		t.Fatalf("entrypoint did not configure loopback-only metrics: %s", cometConfig)
+	}
+	if err := os.WriteFile(
+		filepath.Join(tempDir, ".truerepublic", "config", "config.toml"),
+		[]byte("prometheus = true\nprometheus_listen_addr = \":26660\"\n"),
+		0o600,
+	); err != nil {
+		t.Fatal(err)
+	}
 
 	if err := os.WriteFile(invocations, nil, 0o600); err != nil {
 		t.Fatal(err)
 	}
-	if output, err := run(""); err != nil {
+	if output, err := run("", "true"); err != nil {
 		t.Fatalf("initialized home unexpectedly required operator: %v\n%s", err, output)
 	}
 	called, err = os.ReadFile(invocations)
@@ -142,5 +162,27 @@ fi
 	want = "start --home " + filepath.Join(tempDir, ".truerepublic") + "\n"
 	if string(called) != want {
 		t.Fatalf("initialized-home entrypoint commands:\n got: %q\nwant: %q", called, want)
+	}
+	cometConfig, err = os.ReadFile(filepath.Join(tempDir, ".truerepublic", "config", "config.toml"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !strings.Contains(string(cometConfig), `prometheus_listen_addr = "127.0.0.1:26660"`) {
+		t.Fatalf("initialized-home restart retained a wildcard metrics listener: %s", cometConfig)
+	}
+
+	if err := os.WriteFile(invocations, nil, 0o600); err != nil {
+		t.Fatal(err)
+	}
+	if output, err := run("", "sometimes"); err == nil ||
+		!strings.Contains(string(output), "PROMETHEUS_ENABLED must be") {
+		t.Fatalf("invalid metrics setting did not fail closed: err=%v output=%s", err, output)
+	}
+	called, err = os.ReadFile(invocations)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(called) != 0 {
+		t.Fatalf("invalid metrics setting invoked the daemon: %q", called)
 	}
 }

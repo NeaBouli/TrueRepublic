@@ -2,21 +2,26 @@
 
 ## Connecting to a Network
 
-### Mainnet
+### Candidate network
 
 ```bash
-# In .env or config.toml
-CHAIN_ID=truerepublic-1
-SEEDS=<mainnet-seed-nodes>
-PERSISTENT_PEERS=<mainnet-peers>
+# Set CHAIN_ID in .env. Set peer topology only in config.toml.
+CHAIN_ID=<reviewed-chain-id>
+# config.toml:
+seeds = "<canonical-seed-node-endpoints>"
+persistent_peers = "<canonical-persistent-peer-endpoints>"
 ```
 
 ### Testnet
 
 ```bash
 CHAIN_ID=truerepublic-testnet-1
-SEEDS=<testnet-seed-nodes>
+# config.toml: seeds = "<testnet-seed-nodes>"
 ```
+
+`scripts/start-node.sh` deliberately rejects `SEEDS` and `PERSISTENT_PEERS`
+environment variables. Peer topology is reviewed persistent state, not an
+environment-substitution boundary.
 
 ## Peer Discovery
 
@@ -47,15 +52,19 @@ Your full peer address: `<node-id>@<your-ip>:26656`
 ### UFW (Ubuntu/Debian)
 
 ```bash
-# P2P - Required for all nodes
+# P2P - public seed/sentry/RPC roles only
 sudo ufw allow 26656/tcp
+# Validator/private roles instead deny public P2P; permit only reviewed
+# sentry paths if the host design requires inbound P2P.
 
-# RPC - Only if serving queries publicly
-sudo ufw allow 26657/tcp
+# Public query traffic terminates at a reviewed TLS reverse proxy
+sudo ufw allow 443/tcp
 
-# Block internal services from public access
+# Block direct client and internal services from public access
+sudo ufw deny 26657/tcp   # CometBFT RPC
 sudo ufw deny 1317/tcp    # REST/LCD
 sudo ufw deny 9090/tcp    # gRPC
+sudo ufw deny 9091/tcp    # gRPC-web
 sudo ufw deny 26660/tcp   # Prometheus
 
 sudo ufw enable
@@ -64,13 +73,14 @@ sudo ufw enable
 ### iptables
 
 ```bash
-# Allow P2P
+# Allow P2P only on public seed/sentry/RPC roles
 iptables -A INPUT -p tcp --dport 26656 -j ACCEPT
 
-# Allow RPC (optional)
-iptables -A INPUT -p tcp --dport 26657 -j ACCEPT
+# Public query traffic terminates at the reviewed TLS reverse proxy
+iptables -A INPUT -p tcp --dport 443 -j ACCEPT
 
-# Block internal services
+# Block direct client and internal services
+iptables -A INPUT -p tcp --dport 26657 -j DROP
 iptables -A INPUT -p tcp --dport 1317 -j DROP
 iptables -A INPUT -p tcp --dport 9090 -j DROP
 ```
@@ -100,8 +110,10 @@ For validators, use sentry nodes to protect against DDoS:
 ```toml
 [p2p]
 pex = false                              # Disable peer exchange
-persistent_peers = "sentry1,sentry2,sentry3"
-addr_book_strict = false
+persistent_peers = "<sentry-id>@<sentry-host>:26656,..."
+unconditional_peer_ids = "<sentry-node-ids>"
+max_num_inbound_peers = 0
+addr_book_strict = true
 ```
 
 ### Sentry config.toml
@@ -109,8 +121,10 @@ addr_book_strict = false
 ```toml
 [p2p]
 pex = true
-persistent_peers = "validator-id@validator-private-ip:26656"
-private_peer_ids = "validator-node-id"   # Don't share validator's address
+external_address = "<sentry-public-host>:26656"
+persistent_peers = "<upstream-sentry-or-seed-id>@<host>:26656,..."
+private_peer_ids = "<validator-node-id>"   # Do not gossip validator identity
+unconditional_peer_ids = "<validator-node-id>"
 ```
 
 ## Reverse Proxy (nginx)
@@ -139,5 +153,6 @@ server {
 
 ## Next Steps
 
+- [Role-Based Network Policy](network-policy.md)
 - [Genesis Parameters](genesis-params.md)
 - [Security Hardening](../operations/security.md)

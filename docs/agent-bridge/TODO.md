@@ -22,6 +22,12 @@
 - [x] GH-6: v0.4 client lint, tests, build, exact amount handling, maintained
   wallet crypto, npm audit, and GitHub CI are green.
 - [x] GH-8: reproduce legacy web wallet and mobile wallet CI/security state.
+- [x] GH-71: locally implement and verify deterministic role-based network
+  policy, safe listener/container defaults, startup validation, regression
+  coverage, and operator guidance without touching production infrastructure.
+- [ ] GH-71: publish the reviewed branch, obtain green final-head GitHub
+  build/race/coverage, process, Docker, docs, static/security, and independent
+  review evidence; merge, close, and synchronize GH-29/Bridge.
 
 ## P1 - consensus and wallet audit
 

@@ -3,6 +3,8 @@
 ## Built-in Monitoring Stack
 
 TrueRepublic's Docker Compose includes Prometheus and Grafana pre-configured.
+Set `PROMETHEUS_ENABLED=true` in the local `.env`; the entrypoint keeps the
+node endpoint on loopback and Prometheus shares that network namespace.
 
 ### Accessing Dashboards
 

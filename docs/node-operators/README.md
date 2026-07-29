@@ -1,6 +1,7 @@
 # Node Operators Guide
 
-This guide covers everything you need to run a TrueRepublic node, from initial setup to production operations.
+This guide covers recovery and pre-rollout node operation. It is not a
+production or public-network approval.
 
 ## Table of Contents
 
@@ -12,6 +13,7 @@ This guide covers everything you need to run a TrueRepublic node, from initial s
 ### Configuration
 - [Node Configuration](configuration/node-config.md)
 - [Network Configuration](configuration/network-config.md)
+- [Role-Based Network Policy](configuration/network-policy.md)
 - [Genesis & Chain Parameters](configuration/genesis-params.md)
 
 ### Operations
@@ -37,7 +39,8 @@ make docker-build
 make docker-up
 ```
 
-Verify: `curl http://localhost:26657/status`
+Verify the local Compose proxy:
+`curl http://localhost:8080/rpc/status`
 
 ### Native Build
 
@@ -68,8 +71,8 @@ make build
 
 | Port | Protocol | Service | Expose Publicly? |
 |------|----------|---------|------------------|
-| 26656 | TCP | P2P networking | Yes (required) |
-| 26657 | TCP | CometBFT RPC | Optional (for queries) |
+| 26656 | TCP | P2P networking | Seed/sentry/RPC roles; named sentries only for validators |
+| 26657 | TCP | CometBFT RPC | No; loopback behind a TLS proxy |
 | 1317 | TCP | REST/LCD API | No (internal only) |
 | 9090 | TCP | gRPC | No (internal only) |
 | 26660 | TCP | Prometheus metrics | No (internal only) |

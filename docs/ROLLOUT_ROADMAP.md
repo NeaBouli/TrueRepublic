@@ -14,7 +14,7 @@ parent recovery record remains
 
 - The ordered recovery merge chain is on `main`.
 - The maximum supply is fixed at 21,000,000 PNYX.
-- The source of truth records 853 recovery-verified tests: 819 Go, 26 Rust,
+- The source of truth records 986 recovery-verified tests: 952 Go, 26 Rust,
   and 8 maintained-client tests.
 - Ledger, escrow, issuance, DEX custody, genesis, runtime invariants, ZKP
   statement binding, node persistence, and the safe operator-init boundary
@@ -48,7 +48,9 @@ approval.
 - [x] Implement authenticated atomic consensus-key rotation, permanent old-key
   revocation, and bootstrap operator-authority separation
   ([GH-56](https://github.com/NeaBouli/TrueRepublic/issues/56)).
-- [ ] Define seed, persistent-peer, RPC, API, firewall, and rate-limit policy.
+- [x] Define and regression-test seed, sentry, validator, RPC/API, and private
+  node peer/listener/firewall/rate-limit policy
+  ([GH-71](https://github.com/NeaBouli/TrueRepublic/issues/71)).
 - [x] Complete final review and merge of the bounded fresh-genesis migration
   for pre-GH-56 coupled validator authorities through
   [PR #69](https://github.com/NeaBouli/TrueRepublic/pull/69); no independent

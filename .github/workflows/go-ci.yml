@@ -87,19 +87,24 @@ jobs:
           persist-credentials: false
 
       - name: Validate Compose configuration
+        env:
+          GRAFANA_PASSWORD: ci-compose-validation-only
         run: docker compose config --quiet
 
       - name: Build node image
         run: docker build --build-arg VERSION="${GITHUB_SHA}" --tag truerepublic-node:ci .
 
       - name: Start node container
-        run: docker run --detach --name truerepublic-node-ci --publish 37657:26657 -e BOOTSTRAP_OPERATOR=truerepublic13hgqwy9986x5nk6jt23ns5v7j0acs8qmhchhtw truerepublic-node:ci
+        run: >-
+          docker run --detach --name truerepublic-node-ci
+          -e BOOTSTRAP_OPERATOR=truerepublic13hgqwy9986x5nk6jt23ns5v7j0acs8qmhchhtw
+          truerepublic-node:ci
 
       - name: Wait for first committed block
         id: first
         run: |
           for attempt in $(seq 1 60); do
-            height=$(curl --fail --silent http://127.0.0.1:37657/status | jq -r '.result.sync_info.latest_block_height // 0' || true)
+            height=$(docker exec truerepublic-node-ci wget -qO- http://127.0.0.1:26657/status | jq -r '.result.sync_info.latest_block_height // 0' || true)
             if [ "${height:-0}" -ge 1 ]; then
               echo "height=${height}" >> "$GITHUB_OUTPUT"
               exit 0
@@ -117,7 +122,7 @@ jobs:
           FIRST_HEIGHT: ${{ steps.first.outputs.height }}
         run: |
           for attempt in $(seq 1 60); do
-            height=$(curl --fail --silent http://127.0.0.1:37657/status | jq -r '.result.sync_info.latest_block_height // 0' || true)
+            height=$(docker exec truerepublic-node-ci wget -qO- http://127.0.0.1:26657/status | jq -r '.result.sync_info.latest_block_height // 0' || true)
             if [ "${height:-0}" -gt "$FIRST_HEIGHT" ]; then
               exit 0
             fi
@@ -133,3 +138,43 @@ jobs:
       - name: Remove node container
         if: always()
         run: docker rm --force truerepublic-node-ci || true
+
+      - name: Start loopback Compose stack
+        env:
+          BOOTSTRAP_OPERATOR: truerepublic13hgqwy9986x5nk6jt23ns5v7j0acs8qmhchhtw
+          GRAFANA_PASSWORD: ci-compose-validation-only
+          PROMETHEUS_ENABLED: 'true'
+        run: docker compose up --detach --build truerepublic-node web-wallet nginx prometheus grafana
+
+      - name: Verify proxy and same-namespace metrics
+        env:
+          GRAFANA_PASSWORD: ci-compose-validation-only
+        run: |
+          for attempt in $(seq 1 90); do
+            rpc_ok=false
+            wallet_ok=false
+            metrics_ok=false
+            grafana_ok=false
+            curl --fail --silent http://127.0.0.1:8080/rpc/status >/dev/null && rpc_ok=true
+            curl --fail --silent http://127.0.0.1:8080/ >/dev/null && wallet_ok=true
+            if curl --fail --silent http://127.0.0.1:9091/api/v1/targets |
+              jq -e '.data.activeTargets[] | select(.labels.job == "truerepublic-node" and .health == "up")' >/dev/null; then
+              metrics_ok=true
+            fi
+            curl --fail --silent http://127.0.0.1:3000/api/health |
+              jq -e '.database == "ok"' >/dev/null && grafana_ok=true
+            if [ "$rpc_ok" = true ] && [ "$wallet_ok" = true ] &&
+              [ "$metrics_ok" = true ] && [ "$grafana_ok" = true ]; then
+              exit 0
+            fi
+            sleep 2
+          done
+          docker compose ps
+          docker compose logs
+          exit 1
+
+      - name: Stop Compose stack
+        if: always()
+        env:
+          GRAFANA_PASSWORD: ci-compose-validation-only
+        run: docker compose down --volumes --remove-orphans

@@ -38,8 +38,8 @@ CI ensures that every code change triggers automated tests and checks to catch e
 #### 3. API Monitoring with Prometheus & Grafana
 - Setup:
   ```bash
-  docker run -d --name prometheus -p 9090:9090 prom/prometheus
-  docker run -d --name grafana -p 3000:3000 grafana/grafana
+  docker run -d --name prometheus -p 127.0.0.1:9090:9090 prom/prometheus
+  docker run -d --name grafana -p 127.0.0.1:3000:3000 grafana/grafana
 
 - Integration in `blockchain/app.go`:
   ```go
@@ -68,8 +68,9 @@ CI ensures that every code change triggers automated tests and checks to catch e
 - UFW setup:
   ```bash
   sudo ufw allow 26656  # Tendermint P2P
-  sudo ufw allow 26657  # RPC-Server
-  sudo ufw allow 9090   # Prometheus Monitoring
+  sudo ufw deny 26657   # RPC stays on loopback behind the HTTPS proxy
+  sudo ufw deny 9090    # gRPC stays private
+  sudo ufw deny 26660   # Prometheus stays private
   sudo ufw allow 443/tcp  # HTTPS for API
   sudo ufw enable
 
