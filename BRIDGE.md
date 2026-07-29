@@ -1964,3 +1964,32 @@ Go/Rust/Node security, docs, DeepScan, and CodeRabbit. GH-51 is closed.
   thread, and merge only with zero unresolved actionable findings.
 
 ---
+
+## 2026-07-29 19:02 EEST GH-74 → Done / Target Stop
+
+- **Status:** Done. [PR #75](https://github.com/NeaBouli/TrueRepublic/pull/75)
+  squash-merged to `main` as
+  `468a43a6cf4a3ed6cc76524a2de212b4fcf7052a`; GH-74 closed automatically.
+- **Exact verified head:** `e02104452fe2ddd201045c0ea0bb9651c053c417`.
+- **GitHub evidence:** build/vet/race/coverage PASS 6m39s; complete recovery
+  matrix PASS 13m54s; Docker/Compose live, ready, persistent restart, proxy,
+  wallet, metrics, and Grafana PASS 7m27s; docs, Go/Rust/Node security, and
+  DeepScan PASS.
+- **Review:** independent Kimi review found no P0/P1/P2. All six CodeRabbit
+  findings were remediated, answered, and resolved; incremental follow-up was
+  rate-limited but passed with zero new unresolved threads. The independent
+  documentation-only closure review also approved with no P0/P1/P2; its
+  audit-count traceability P3 was remediated by enumerating all 13 PASS items.
+- **Merge decision:** owner-authorized admin squash merge bypassed only the
+  formal self-approval requirement. No failed technical gate or unresolved
+  actionable finding was bypassed.
+- **Semantic correction:** Docker health status uses liveness, but
+  `restart: unless-stopped` does not restart an unhealthy process without
+  explicit external automation. Readiness remains traffic-routing only.
+- **Safety boundary:** no production, server, firewall, DNS, deployment, real
+  topology, secret, key, credential, mainnet, or public-network action.
+- **Remaining parent work:** GH-29 stays open for later rollout phases.
+- **Next:** publish this documentation-only closure synchronization, require
+  its final-head docs/static checks, merge, update GH-29, and stop GH-74.
+
+---
