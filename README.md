@@ -266,7 +266,7 @@ The checklist below records implemented surface area, not a production security
 approval. Current evidence, risks, and commands are maintained in
 [`BRIDGE.md`](BRIDGE.md) and [GitHub issue #4](https://github.com/NeaBouli/TrueRepublic/issues/4).
 
-- 🟡 853 tests recovery-verified locally (819 Go + 26 Rust + 8 maintained-client), including the separately verified GH-56 rotation, GH-59 slashing, GH-60 inactive-validator genesis, and GH-61 legacy-authority migration harnesses
+- 🟡 853 tests recovery-verified locally (819 Go + 26 Rust + 8 maintained-client), plus separately gated GH-56 rotation, GH-59 slashing, GH-60 inactive-validator genesis, and GH-61 legacy-authority migration process harnesses
 - ✅ Core blockchain compiles and runs
 - 🟡 Tokenomics, exact custom genesis, and every-block ledger invariants are recovery-verified and merged through PR #19
 - 🟡 Governance escrow/auth recovery is verified and merged; independent release review remains open

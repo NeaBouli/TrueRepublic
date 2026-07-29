@@ -113,8 +113,8 @@ Updated: 2026-07-29 01:16 UTC
   separately and are not included in that authoritative total. The prior 577
   figure is retained only as historical.
 - Current main count is 853: 819 Go, 26 Rust, and eight maintained-client
-  tests. The separately gated process harness is counted only after it passes
-  explicitly and is not added again to that arithmetic total. The latest
+  tests. Separately gated process harnesses are tracked only after they pass
+  explicitly and are never added to that arithmetic total. The latest
   hardened four-validator run requires new post-rejoin blocks and passed in
   68.90 seconds. Full Go race/coverage passes with root/application coverage at
   65.9% on PR #40.
