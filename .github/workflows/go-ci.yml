@@ -128,7 +128,10 @@ jobs:
           exit 1
 
       - name: Restart persistent container
-        run: docker restart truerepublic-node-ci
+        id: restart
+        run: |
+          echo "since=$(date -u +%Y-%m-%dT%H:%M:%SZ)" >> "$GITHUB_OUTPUT"
+          docker restart truerepublic-node-ci
 
       - name: Verify height advances after restart
         env:
@@ -148,6 +151,19 @@ jobs:
           done
           docker logs truerepublic-node-ci
           exit 1
+
+      - name: Verify structured logs after restart
+        env:
+          LOGS_SINCE: ${{ steps.restart.outputs.since }}
+        run: |
+          docker logs --since "$LOGS_SINCE" truerepublic-node-ci > node-logs.jsonl 2>&1
+          test -s node-logs.jsonl
+          while IFS= read -r line; do
+            printf '%s\n' "$line" |
+              jq -e 'type == "object" and
+                (.level | type == "string") and
+                (.message | type == "string")' >/dev/null
+          done < node-logs.jsonl
 
       - name: Show node logs on failure
         if: failure()

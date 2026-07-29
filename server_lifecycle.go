@@ -8,6 +8,7 @@ import (
 	"io"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"cosmossdk.io/log"
 	wasm "github.com/CosmWasm/wasmd/x/wasm"
@@ -47,12 +48,14 @@ import (
 
 	"truerepublic/healthcheck"
 	"truerepublic/networkpolicy"
+	"truerepublic/observability"
 	"truerepublic/token"
 	"truerepublic/x/dex"
 	"truerepublic/x/truedemocracy"
 )
 
 const envPrefix = "TRUEREPUBLIC"
+const traceStoreFlag = "trace-store"
 
 var defaultNodeHome = filepath.Join(userHomeDir(), ".truerepublic")
 
@@ -186,6 +189,9 @@ func newRootCmd() *cobra.Command {
 			if isConfigIndependentCommand(cmd) {
 				return nil
 			}
+			if err := requireStructuredStartLogging(cmd); err != nil {
+				return err
+			}
 			cmd.SetOut(cmd.OutOrStdout())
 			cmd.SetErr(cmd.ErrOrStderr())
 			var err error
@@ -202,7 +208,24 @@ func newRootCmd() *cobra.Command {
 				return err
 			}
 			template, config := initAppConfig()
-			return server.InterceptConfigsPreRunHandler(cmd, template, config, cmtcfg.DefaultConfig())
+			if err := server.InterceptConfigsPreRunHandler(cmd, template, config, cmtcfg.DefaultConfig()); err != nil {
+				return err
+			}
+			serverCtx := server.GetServerContextFromCmd(cmd)
+			if err := validateStructuredStartLogFormat(
+				cmd,
+				serverCtx.Viper.GetString(flags.FlagLogFormat),
+			); err != nil {
+				return err
+			}
+			if err := validateStructuredStartTraceStore(
+				cmd,
+				serverCtx.Viper.GetString(traceStoreFlag),
+			); err != nil {
+				return err
+			}
+			serverCtx.Logger = observability.Wrap(serverCtx.Logger)
+			return server.SetCmdServerContext(cmd, serverCtx)
 		},
 	}
 
@@ -226,6 +249,76 @@ func newRootCmd() *cobra.Command {
 		healthcheck.NewCommand(),
 	)
 	return rootCmd
+}
+
+func requireStructuredStartLogging(cmd *cobra.Command) error {
+	if cmd.Name() != "start" {
+		return nil
+	}
+	logFormat := cmd.Flags().Lookup(flags.FlagLogFormat)
+	if logFormat == nil {
+		return errors.New("start command is missing the SDK log-format flag")
+	}
+	if !logFormat.Changed {
+		for _, environmentName := range structuredLogEnvironmentNames() {
+			if environmentValue, exists := os.LookupEnv(environmentName); exists &&
+				environmentValue != "" &&
+				environmentValue != flags.OutputFormatJSON {
+				return fmt.Errorf(
+					"unsupported %s=%q: node operation requires %q structured logs",
+					environmentName,
+					environmentValue,
+					flags.OutputFormatJSON,
+				)
+			}
+		}
+		if err := cmd.Flags().Set(flags.FlagLogFormat, flags.OutputFormatJSON); err != nil {
+			return fmt.Errorf("set structured logging default: %w", err)
+		}
+	}
+	if logFormat.Value.String() != flags.OutputFormatJSON {
+		return fmt.Errorf(
+			"unsupported --%s %q: node operation requires %q structured logs",
+			flags.FlagLogFormat,
+			logFormat.Value.String(),
+			flags.OutputFormatJSON,
+		)
+	}
+	if traceStore := cmd.Flags().Lookup(traceStoreFlag); traceStore != nil &&
+		traceStore.Value.String() != "" {
+		return validateStructuredStartTraceStore(cmd, traceStore.Value.String())
+	}
+	return nil
+}
+
+func validateStructuredStartTraceStore(cmd *cobra.Command, path string) error {
+	if cmd.Name() != "start" || path == "" {
+		return nil
+	}
+	return fmt.Errorf(
+		"unsupported --%s: raw KV tracing bypasses the structured logging boundary",
+		traceStoreFlag,
+	)
+}
+
+func structuredLogEnvironmentNames() []string {
+	return []string{
+		envPrefix + "_LOG_FORMAT",
+		sdkversion.AppName + "_LOG_FORMAT",
+		strings.ToUpper(sdkversion.AppName) + "_LOG_FORMAT",
+	}
+}
+
+func validateStructuredStartLogFormat(cmd *cobra.Command, format string) error {
+	if cmd.Name() != "start" || format == flags.OutputFormatJSON {
+		return nil
+	}
+	return fmt.Errorf(
+		"unsupported --%s %q: node operation requires %q structured logs",
+		flags.FlagLogFormat,
+		format,
+		flags.OutputFormatJSON,
+	)
 }
 
 func isConfigIndependentCommand(cmd *cobra.Command) bool {

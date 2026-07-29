@@ -18,6 +18,8 @@ Canonical coordination lives in [`docs/agent-bridge/`](docs/agent-bridge/README.
 - GH-55 validator identity recovery audit: [`GH55_AUDIT.md`](docs/agent-bridge/GH55_AUDIT.md)
 - GH-56 consensus-key rotation audit: [`GH56_AUDIT.md`](docs/agent-bridge/GH56_AUDIT.md)
 - GH-74 node health audit: [`GH74_AUDIT.md`](docs/agent-bridge/GH74_AUDIT.md)
+- GH-77 structured logging audit:
+  [`GH77_AUDIT.md`](docs/agent-bridge/GH77_AUDIT.md)
 - Decisions: [`DECISIONS.md`](docs/agent-bridge/DECISIONS.md)
 - Security: [`SECURITY_NOTES.md`](docs/agent-bridge/SECURITY_NOTES.md)
 
@@ -1991,5 +1993,154 @@ Go/Rust/Node security, docs, DeepScan, and CodeRabbit. GH-51 is closed.
 - **Remaining parent work:** GH-29 stays open for later rollout phases.
 - **Next:** publish this documentation-only closure synchronization, require
   its final-head docs/static checks, merge, update GH-29, and stop GH-74.
+
+---
+
+## 2026-07-30 05:28 EEST GH-77 Secret-Safe Structured Logging → In Progress
+
+- **Issue/branch:** [GH-77](https://github.com/NeaBouli/TrueRepublic/issues/77),
+  `feature/GH-77-structured-logging`; parent rollout tracker
+  [GH-29](https://github.com/NeaBouli/TrueRepublic/issues/29).
+- **Scope:** make the supported daemon-operation path emit structured JSON and
+  sanitize SDK/CometBFT messages and fields at the central logger boundary.
+  Preserve safe operational metadata while redacting credentials, mnemonic and
+  private-key material, raw transactions, proofs, signatures, and other
+  private transaction data.
+- **Planned evidence:** focused unit and real-process redaction/structure
+  regressions, full Go build/vet/race/coverage, repository consistency,
+  recovery matrix, Docker/Compose, docs/security gates, and independent Kimi
+  review on the exact final head.
+- **Safety boundary:** repository code, tests, and documentation only. No
+  consensus/state change, production-log inspection, collector deployment,
+  server, credential, key, mainnet, or public-network action.
+- **Owner:** Codex Sol; Kimi K3 receives one bounded secret-free
+  implementation/review block. Sol retains architecture, security, integration,
+  GitHub writes, complete verification, and merge responsibility.
+- **Next:** map the SDK logger construction and sensitive field surface,
+  delegate the bounded logging core, review the full diff, and run focused
+  gates before broader integration.
+
+---
+
+## 2026-07-30 06:17 EEST GH-77 Local Implementation Review → In Progress
+
+- **Implementation:** the supported `start` path now enforces JSON at the
+  SDK/CometBFT logger boundary, wraps every logger level and child context with
+  bounded defensive sanitization, rejects raw `--trace-store` output, and keeps
+  health/network-policy commands config-independent. Script, image, Compose,
+  CI policy, regression tests, operator guidance, and the 0 FAIL / 2 WARN /
+  14 PASS audit were updated in the same bounded scope.
+- **Kimi contribution:** the initial bounded implementation attempt produced
+  design analysis but no file diff and was stopped. Sol implemented and
+  integrated the design. A fresh read-only Kimi K3 adversarial review of the
+  resulting tree found no P0, P1, or must-fix P2; its P3 residuals are
+  fail-safe over-redaction, heuristic-not-DLP limits, caller-side concurrent
+  map mutation, and documented unstructured Go crash output.
+- **Focused evidence:** `go vet ./observability .` PASS;
+  `go test ./observability -count=1` PASS; `go test -race ./observability
+  -count=1` PASS; focused start/script/network policy tests PASS; real compiled
+  daemon start/stop/restart PASS in 59.78s with CLI/environment plain formats
+  and CLI/environment trace stores rejected, height advancement preserved, and
+  every captured normal-operation line valid JSON with string `level` and
+  `message`.
+- **Risk/blocker:** no code blocker. Docker is not installed locally, so the
+  exact image/Compose runtime remains a mandatory GitHub CI gate. Redaction is
+  defensive minimization, not a substitute for forbidding secrets at call
+  sites or treating retained logs as sensitive.
+- **Safety boundary:** no production log, collector, server, deployment,
+  credential, key, mainnet, consensus/state, or public-network action.
+- **Next:** run the repository's complete local verification and recovery
+  matrix, publish the reviewed head, require every exact-head GitHub gate and
+  actionable review thread to pass, then merge and synchronize GH-29/docs.
+
+---
+
+## 2026-07-30 06:42 EEST GH-77 Complete Local Gates → Ready for PR
+
+- **Go:** `make verify` PASS across the authoritative nine-package selector:
+  build, vet, race, and coverage all green; root 68.9%, observability 77.3%,
+  healthcheck 97.2%, migration 84.6%, network policy 95.5%, token 92.6%,
+  treasury keeper 97.0%, DEX 45.3%, and truedemocracy 62.2%.
+- **Recovery:** all eight multi-validator scenarios PASS in 1161.044s:
+  migration rollback, consensus recovery, trusted snapshot state sync,
+  backup/restore/export/import, persisted binary upgrade rollback, validator
+  cold failover, key rotation, and slashing.
+- **Repository/integration:** documentation consistency, `git diff --check`,
+  shell syntax, workflow/Compose YAML parsing, Rust format/clippy/build/tests,
+  Cargo audit, and active web-client lint/8 tests/build/high-severity audit
+  PASS. Cargo audit reported six allowed transitive maintenance/unsoundness
+  warnings without a failing advisory.
+- **Existing out-of-scope debt:** the legacy mobile audit reports 51 dependency
+  findings (7 low, 16 moderate, 24 high, 4 critical); its official workflow is
+  explicitly informational and the unchanged legacy client is outside GH-77.
+  `govulncheck` is not installed locally; the exact-head GitHub Security Scan
+  remains mandatory and fails on reachable fixable Go vulnerabilities.
+- **Blocker:** none for publication. Docker is not installed locally, so image,
+  Compose, and post-restart two-stream JSONL evidence must pass on GitHub.
+- **Safety boundary:** no production log, collector, server, deployment,
+  credential, key, mainnet, consensus/state, or public-network action.
+- **Next:** freeze and publish this reviewed tree, open the GH-77 PR, require all
+  exact-head CI/security/review gates, remediate findings, then merge.
+
+---
+
+## 2026-07-30 06:44 EEST GH-77 Published → PR #78 In Review
+
+- **Published implementation:** commit `ed4fb0700d415990eb79dd8e6f1c8b0104327165`
+  is on `origin/feature/GH-77-structured-logging`; draft
+  [PR #78](https://github.com/NeaBouli/TrueRepublic/pull/78) targets `main` and
+  closes GH-77.
+- **Initial GitHub state:** PR is mergeable; Docs Consistency and the recovery
+  matrix started, remaining Go/Security/Docker jobs queued or running.
+  CodeRabbit and DeepScan initially report success; exact final-head evidence
+  is still required after this append-only coordination update.
+- **Local evidence:** all previously recorded complete gates remain green; this
+  update changes coordination documentation only.
+- **Risk/blocker:** no implementation blocker. Do not merge until the final
+  published head has green build/race/coverage, recovery, Docker/Compose
+  structured-log, docs, static/security, and review evidence with zero
+  unresolved actionable thread.
+- **Next:** publish this coordination-only follow-up, monitor exact-head checks,
+  address findings, mark ready, and merge only after every technical gate is
+  green.
+
+---
+
+## 2026-07-30 06:54 EEST GH-77 Review Remediation → In Progress
+
+- **Exact reviewed head:** `b97c527cfc9ccfcf1be3ea85c6e214e3d1643a69`;
+  10 checks green and only the recovery matrix still running when remediation
+  began. Build/race/coverage passed in 7m00s and Docker/Compose, including
+  post-restart structured JSONL, passed in 7m09s.
+- **CodeRabbit:** two unresolved threads. The valid minor finding is that
+  `json.Number` implements `fmt.Stringer`, making the numeric-preservation case
+  unreachable; reorder the cases and add a numeric-type regression. The
+  Bridge/audit “future date” finding is invalid: every entry explicitly uses
+  local `EEST` (`UTC+03:00`), and at review time the verified local clock was
+  `2026-07-30 06:54:04 EEST` while GitHub displayed July 29 UTC.
+- **Scope:** minimal sanitizer/test correction plus append-only evidence.
+  Re-run focused and authoritative local gates, publish a new exact head, reply
+  to both threads with evidence, and require refreshed CI/review.
+- **Safety boundary:** unchanged; no production, server, collector, deployment,
+  credential, key, mainnet, consensus/state, or public-network action.
+
+---
+
+## 2026-07-30 06:59 EEST GH-77 Review Remediation → Locally Verified
+
+- **Correction:** `json.Number` now precedes `fmt.Stringer` at the sanitizer
+  type boundary. `TestSanitizeValuePreservesJSONNumber` proves the reviewed
+  value reaches the underlying SDK logger without being converted by the
+  sanitizer. The SDK logger itself serializes `json.Number` as a string, so the
+  regression intentionally does not overclaim end-to-end numeric JSON typing.
+- **Verification:** focused observability normal/race tests and vet PASS;
+  repository consistency and diff checks PASS; refreshed `make verify` PASS
+  across all nine packages with observability coverage increased to 77.8%.
+- **Review handling:** publish the minimal correction, respond to the valid
+  CodeRabbit thread with the test evidence, answer the EEST/UTC false positive
+  with the verified local timestamp, and resolve both only after the new head
+  is visible.
+- **Next:** push the remediation head and require a complete refreshed
+  exact-head CI/review cycle before merge.
 
 ---

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bufio"
 	"bytes"
 	"encoding/json"
 	"fmt"
@@ -10,17 +11,20 @@ import (
 	"os/exec"
 	"path/filepath"
 	"strconv"
+	"strings"
 	"testing"
 	"time"
 
 	cmted25519 "github.com/cometbft/cometbft/crypto/ed25519"
 	cmttypes "github.com/cometbft/cometbft/types"
+	"github.com/cosmos/cosmos-sdk/client/flags"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkversion "github.com/cosmos/cosmos-sdk/version"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	crisistypes "github.com/cosmos/cosmos-sdk/x/crisis/types"
 	genutiltypes "github.com/cosmos/cosmos-sdk/x/genutil/types"
+	"github.com/spf13/cobra"
 
 	"truerepublic/token"
 	"truerepublic/x/truedemocracy"
@@ -61,14 +65,139 @@ func TestRootUsesStandardCosmosServerCommands(t *testing.T) {
 	}
 }
 
+func TestStartRequiresStructuredLogFormat(t *testing.T) {
+	for _, environmentName := range structuredLogEnvironmentNames() {
+		t.Setenv(environmentName, "")
+	}
+
+	t.Run("default becomes JSON", func(t *testing.T) {
+		cmd := &cobra.Command{Use: "start"}
+		cmd.Flags().String(flags.FlagLogFormat, "plain", "")
+		if err := requireStructuredStartLogging(cmd); err != nil {
+			t.Fatal(err)
+		}
+		if got, err := cmd.Flags().GetString(flags.FlagLogFormat); err != nil || got != flags.OutputFormatJSON {
+			t.Fatalf("log format = %q, %v; want %q", got, err, flags.OutputFormatJSON)
+		}
+	})
+
+	t.Run("explicit plain fails closed", func(t *testing.T) {
+		cmd := &cobra.Command{Use: "start"}
+		cmd.Flags().String(flags.FlagLogFormat, "plain", "")
+		if err := cmd.Flags().Set(flags.FlagLogFormat, "plain"); err != nil {
+			t.Fatal(err)
+		}
+		err := requireStructuredStartLogging(cmd)
+		if err == nil || !strings.Contains(err.Error(), `requires "json" structured logs`) {
+			t.Fatalf("plain log format error = %v", err)
+		}
+	})
+
+	t.Run("effective environment format fails closed", func(t *testing.T) {
+		cmd := &cobra.Command{Use: "start"}
+		err := validateStructuredStartLogFormat(cmd, "plain")
+		if err == nil || !strings.Contains(err.Error(), `requires "json" structured logs`) {
+			t.Fatalf("effective plain log format error = %v", err)
+		}
+	})
+
+	t.Run("plain environment override fails closed", func(t *testing.T) {
+		t.Setenv(envPrefix+"_LOG_FORMAT", "plain")
+		cmd := &cobra.Command{Use: "start"}
+		cmd.Flags().String(flags.FlagLogFormat, "plain", "")
+		err := requireStructuredStartLogging(cmd)
+		if err == nil || !strings.Contains(err.Error(), envPrefix+"_LOG_FORMAT") {
+			t.Fatalf("environment log format error = %v", err)
+		}
+	})
+
+	t.Run("raw trace store fails closed", func(t *testing.T) {
+		cmd := &cobra.Command{Use: "start"}
+		cmd.Flags().String(flags.FlagLogFormat, "plain", "")
+		cmd.Flags().String(traceStoreFlag, "", "")
+		if err := cmd.Flags().Set(traceStoreFlag, "/tmp/raw-kv.log"); err != nil {
+			t.Fatal(err)
+		}
+		err := requireStructuredStartLogging(cmd)
+		if err == nil || !strings.Contains(err.Error(), "bypasses the structured logging boundary") {
+			t.Fatalf("trace-store error = %v", err)
+		}
+	})
+
+	t.Run("effective raw trace store fails closed", func(t *testing.T) {
+		cmd := &cobra.Command{Use: "start"}
+		err := validateStructuredStartTraceStore(cmd, "/tmp/raw-kv.log")
+		if err == nil || !strings.Contains(err.Error(), "bypasses the structured logging boundary") {
+			t.Fatalf("effective trace-store error = %v", err)
+		}
+	})
+
+	t.Run("non-start command is unchanged", func(t *testing.T) {
+		cmd := &cobra.Command{Use: "export"}
+		if err := requireStructuredStartLogging(cmd); err != nil {
+			t.Fatal(err)
+		}
+	})
+}
+
 func TestNodeStartsStopsAndRestartsFromPersistentHome(t *testing.T) {
+	for _, environmentName := range structuredLogEnvironmentNames() {
+		t.Setenv(environmentName, "")
+	}
+	t.Setenv("TRUEREPUBLICD_TRACE_STORE", "")
+	t.Setenv("truerepublicd_TRACE_STORE", "")
+
 	binary := filepath.Join(t.TempDir(), "truerepublicd")
 	build := exec.Command("go", "build", "-o", binary, ".")
 	if output, err := build.CombinedOutput(); err != nil {
 		t.Fatalf("build daemon: %v\n%s", err, output)
 	}
 	home := filepath.Join(t.TempDir(), "node")
-	operatorAddr := sdk.AccAddress(bytes.Repeat([]byte{0x23}, 20)).String()
+	for _, test := range []struct {
+		name        string
+		command     *exec.Cmd
+		wantMessage string
+	}{
+		{
+			name:        "explicit plain",
+			command:     exec.Command(binary, "start", "--home", home, "--log_format=plain"),
+			wantMessage: `requires "json" structured logs`,
+		},
+		{
+			name: "environment plain",
+			command: func() *exec.Cmd {
+				cmd := exec.Command(binary, "start", "--home", home)
+				cmd.Env = append(os.Environ(), "TRUEREPUBLIC_LOG_FORMAT=plain")
+				return cmd
+			}(),
+			wantMessage: `requires "json" structured logs`,
+		},
+		{
+			name: "raw trace store",
+			command: exec.Command(
+				binary,
+				"start",
+				"--home", home,
+				"--trace-store", filepath.Join(t.TempDir(), "raw-kv.log"),
+			),
+			wantMessage: "bypasses the structured logging boundary",
+		},
+		{
+			name: "environment raw trace store",
+			command: func() *exec.Cmd {
+				cmd := exec.Command(binary, "start", "--home", home)
+				cmd.Env = append(os.Environ(), "TRUEREPUBLICD_TRACE_STORE="+filepath.Join(t.TempDir(), "raw-kv.log"))
+				return cmd
+			}(),
+			wantMessage: "bypasses the structured logging boundary",
+		},
+	} {
+		output, err := test.command.CombinedOutput()
+		if err == nil || !strings.Contains(string(output), test.wantMessage) {
+			t.Fatalf("%s start was not rejected before opening state: err=%v\n%s", test.name, err, output)
+		}
+	}
+	operatorAddr := "truerepublic13hgqwy9986x5nk6jt23ns5v7j0acs8qmhchhtw"
 	initCmd := exec.Command(binary, "init", "restart-node", "--chain-id", "truerepublic-restart-1", "--home", home, "--bootstrap-operator", operatorAddr)
 	if output, err := initCmd.CombinedOutput(); err != nil {
 		t.Fatalf("init node: %v\n%s", err, output)
@@ -143,11 +272,15 @@ func TestNodeStartsStopsAndRestartsFromPersistentHome(t *testing.T) {
 
 	first, firstLog := start()
 	firstHeight := waitForNodeHeight(t, rpcURL, 1, first, firstLog)
+	firstLogPath := firstLog.Name()
 	stop(first, firstLog)
+	assertStructuredNodeLogs(t, firstLogPath)
 
 	second, secondLog := start()
 	secondHeight := waitForNodeHeight(t, rpcURL, firstHeight+1, second, secondLog)
+	secondLogPath := secondLog.Name()
 	stop(second, secondLog)
+	assertStructuredNodeLogs(t, secondLogPath)
 	if secondHeight <= firstHeight {
 		t.Fatalf("restart did not advance height: first=%d second=%d", firstHeight, secondHeight)
 	}
@@ -168,6 +301,39 @@ func TestNodeStartsStopsAndRestartsFromPersistentHome(t *testing.T) {
 	}
 	if exportedGenesis.AppState[truedemocracy.ModuleName] == nil {
 		t.Fatal("exported persistent state is missing truedemocracy genesis")
+	}
+}
+
+func assertStructuredNodeLogs(t *testing.T, path string) {
+	t.Helper()
+	logFile, err := os.Open(path)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer logFile.Close()
+
+	scanner := bufio.NewScanner(logFile)
+	scanner.Buffer(make([]byte, 64*1024), 1024*1024)
+	lines := 0
+	for scanner.Scan() {
+		line := bytes.TrimSpace(scanner.Bytes())
+		if len(line) == 0 {
+			continue
+		}
+		lines++
+		var event map[string]any
+		if err := json.Unmarshal(line, &event); err != nil {
+			t.Fatalf("node log line %d is not structured JSON: %v\n%s", lines, err, line)
+		}
+		if event["level"] == nil || event["message"] == nil {
+			t.Fatalf("node log line %d lacks level/message fields: %s", lines, line)
+		}
+	}
+	if err := scanner.Err(); err != nil {
+		t.Fatal(err)
+	}
+	if lines == 0 {
+		t.Fatal("node emitted no structured log lines")
 	}
 }
 

@@ -22,6 +22,7 @@ services:
       - PROMETHEUS_ENABLED=${PROMETHEUS_ENABLED:-false}
     command:
       - start
+      - --log_format=json
       - --rpc.laddr=tcp://127.0.0.1:26657
       - --grpc.enable=false
       - --api.enable=true

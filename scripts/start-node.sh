@@ -33,4 +33,5 @@ echo "  Role:      ${NETWORK_ROLE}"
 
 exec "${BINARY}" start \
     --home "$CHAIN_HOME" \
-    --log_level "$LOG_LEVEL"
+    --log_level "$LOG_LEVEL" \
+    --log_format json
