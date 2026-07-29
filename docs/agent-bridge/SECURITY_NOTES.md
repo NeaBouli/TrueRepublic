@@ -155,3 +155,8 @@
   traversal of every consensus-key-bearing collection, and a decode-once
   canonical mapping sort. The corrected eight-scenario matrix passes in
   1169.685s; the prior 1200-second cap had only about 30 seconds of margin.
+- PR #69 final head passed all 11 GitHub checks and merged as `264ab7c`; GH-61
+  is closed with zero unresolved review threads. This closes the bounded
+  recovery task, not the production boundary: the path still requires a new
+  chain ID and empty CosmWasm state and does not provide an in-place migration,
+  retroactive governance authorization, or public-network approval.
