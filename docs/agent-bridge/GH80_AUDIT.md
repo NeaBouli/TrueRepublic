@@ -1,7 +1,7 @@
 # TrueRepublic GH-80 Metrics Baseline — Audit
 > Scope: application collectors, EndBlock integration, telemetry configuration,
 > private scrape topology, process/Compose evidence, and operator claims  ·
-> Date: 2026-07-30  ·  Result: 0 FAIL / 3 WARN / 10 PASS
+> Date: 2026-07-30  ·  Result: 0 FAIL / 2 WARN / 11 PASS
 
 ## Summary
 
@@ -9,12 +9,12 @@ GH-80 adds a bounded two-source baseline without widening the existing
 loopback-only listener policy. CometBFT remains the source for consensus,
 peer, and block signals; the Cosmos SDK API endpoint supplies recent SDK,
 Go/process, and five fixed-cardinality TrueRepublic application/invariant
-series. Successful local process evidence covers start, persistent restart,
-metric progression, exact PNYX cap arithmetic, and disabled-route 404
-semantics at the nginx boundary plus disabled SDK-route `501 Not Implemented`
-semantics. The slice is locally reviewable but not ready to merge until the
-complete repository, recovery, Docker/Compose, security, and independent
-review gates pass.
+series. Successful local and exact-head process/container evidence covers
+start, persistent restart, metric progression, exact PNYX cap arithmetic,
+disabled-route 404 semantics at the nginx boundary plus disabled SDK-route
+`501 Not Implemented` semantics. PR #81 passed the complete repository,
+recovery, Docker/Compose, security, DeepScan, and review gates and merged as
+`e629374`.
 
 ## Findings by domain
 
@@ -26,7 +26,7 @@ review gates pass.
   - What: Both scrape targets remain literal loopback endpoints in the node's
     shared network namespace.
   - Path: Prometheus reaches `127.0.0.1:26660` and `127.0.0.1:1317`; nginx does
-    not publish raw metrics (`/api/metrics` returns 404), and no
+    not publish raw metrics (`/api/metrics` and descendants return 404), and no
     host/server/firewall action exists.
   - Fix: None in GH-80; retain the role-policy and production deployment gate.
 
@@ -122,16 +122,16 @@ review gates pass.
     Go/process and TrueRepublic collectors.
   - Fix: None.
 
-### Compose and exact container evidence — WARN
+### Compose and exact container evidence — PASS
 
-- **[MEDIUM] Local Docker is unavailable** —
+- **[LOW] Exact-head Docker/Compose proves the private runtime contract** —
   `.github/workflows/go-ci.yml`, `docker-compose.yml`
-  - What: CI now requires both scrape targets, all category families, cap
-    arithmetic, and post-restart progression, but this environment cannot run
-    the container stack.
-  - Path: A namespace, image, Prometheus, or restart integration error can be
-    detected only on the exact published GitHub head.
-  - Fix: Do not merge until the Docker/Compose job is green.
+  - What: Final head `4b880b4` requires both scrape targets, exact emitted
+    families, cap arithmetic, public-proxy denial, and post-restart
+    progression.
+  - Path: GitHub job `90743893853` passed the complete stack in 7m43s before
+    PR #81 merged.
+  - Fix: None. Keep this gate mandatory for affected paths.
 
 ### CI policy — PASS
 
@@ -180,8 +180,7 @@ None.
 
 ### 🟡 MEDIUM
 
-1. Require exact-head Docker/Compose runtime evidence before merge.
-2. Keep generic SDK query telemetry private and capacity-qualify its
+1. Keep generic SDK query telemetry private and capacity-qualify its
    query-path cardinality before production use.
 
 ### 🟢 LOW

@@ -258,11 +258,15 @@ sudo su - truerepublic
 
 ## Monitoring
 
-- **Prometheus** scrapes CometBFT metrics from port 26660
-- **Grafana** dashboard at `http://localhost:3000` shows:
-  - Block height, connected peers, mempool size
-  - Consensus rounds, transactions per block
-  - Block interval, missing validators
+- **Prometheus** privately scrapes CometBFT at `127.0.0.1:26660` and
+  SDK/application metrics at `127.0.0.1:1317`.
+- **Grafana** container and datasource health are CI-verified at
+  `http://localhost:3000`.
+- The legacy dashboard definition targets block height, connected peers,
+  mempool size, consensus rounds, transactions, block interval, and validator
+  signals. Successful dashboard provisioning, panel-query rendering,
+  application panels, alert rules, objectives, and escalation ownership remain
+  separate rollout gates.
 - Configuration: `monitoring/prometheus.yml`, `monitoring/grafana/`
 
 ---

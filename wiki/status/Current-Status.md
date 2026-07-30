@@ -19,8 +19,9 @@
   sanitized backup/restore, compatible binary replacement/rollback, and
   single-signer validator-identity failover harness. Supported node operation
   emits secret-minimized structured JSON logs through the central SDK/CometBFT
-  logger boundary.
-- 1,092 recovery-verified tests: 1,058 Go, 26 Rust, and 8 maintained-client.
+  logger boundary and exposes a private two-source CometBFT plus
+  SDK/application metrics baseline.
+- 1,104 recovery-verified tests: 1,070 Go, 26 Rust, and 8 maintained-client.
 
 ## Recovery sequence
 
@@ -34,9 +35,9 @@ reviewed, verified, and merged to `main` in this order.
 - Release qualification and independent security review.
 - Compatible real Groth16 client prover and external circuit/ceremony review.
 - Privacy-preserving anonymous reward recipient binding.
-- IBC/consensus-breaking migration recovery, broader metrics/alerting,
-  load/capacity/topology qualification, and independent
-  operations evidence.
+- IBC/consensus-breaking migration recovery, dashboard/application-panel
+  runtime evidence, alert rules/objectives/ownership, load/capacity/topology
+  qualification, and independent operations evidence.
 - Migration or removal of the deprecated legacy web/mobile clients.
 
 See [Issue #4](https://github.com/NeaBouli/TrueRepublic/issues/4),

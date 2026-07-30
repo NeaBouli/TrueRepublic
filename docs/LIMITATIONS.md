@@ -65,6 +65,9 @@ produces blocks, shuts down on SIGINT, restarts from the same home, advances
 height, preserves invariants, and exports state. GH-77 makes the supported
 native/container start path emit structured JSON through one defensively
 redacting SDK/CometBFT logger boundary; raw KV trace stores are rejected.
+GH-80 adds a private two-source CometBFT plus SDK/application metrics baseline
+with bounded TrueRepublic collectors, persistent-restart progression, and
+disabled-route evidence.
 Redaction remains defense in depth rather than general DLP. The non-root
 Debian/glibc container has a blocking restart gate. GH-53 additionally proves
 compatible rolling replacement on the same homes, deterministic failure before
@@ -81,9 +84,10 @@ rotation with permanent revocation. The GH-61 path is intentionally limited to
 empty CosmWasm state and a new chain ID; it is not an in-place upgrade or a
 generic governance migration. Do not claim public-network readiness until
 generic consensus-breaking state migration, partially applied in-place
-migration recovery, broader metrics/alerting,
-load/capacity/topology qualification, broader independent migration/ABCI++
-slashing security review, and independent operations review pass.
+migration recovery, dashboard/application-panel runtime evidence, alert
+rules/objectives/escalation ownership, load/capacity/topology qualification,
+broader independent migration/ABCI++ slashing security review, and independent
+operations review pass.
 
 Partial validator stake withdrawals are disabled until generalized slashable
 unbonding can retain the withdrawn claim through the CometBFT evidence window.
