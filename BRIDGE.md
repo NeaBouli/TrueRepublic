@@ -2546,3 +2546,17 @@ Go/Rust/Node security, docs, DeepScan, and CodeRabbit. GH-51 is closed.
 - **Ready for:** Sol publication and final GitHub verification.
 
 ---
+
+## 2026-07-30 21:58 EEST GH-29 GitHub Page rollout status → Review
+
+- **PR:** [#83](https://github.com/NeaBouli/TrueRepublic/pull/83)
+- **Published implementation:** `e8251b2` on
+  `docs/GH-29-github-page-status`.
+- **State:** documentation-only draft PR is open. This append-only handoff
+  becomes the replacement exact head after push.
+- **Remaining gates:** exact-head docs/static/security checks, review-thread
+  reconciliation, merge, clean-main synchronization, and verification of the
+  deployed GitHub Page.
+- **Boundary:** no production deployment or runtime code change.
+
+---

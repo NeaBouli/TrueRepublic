@@ -1786,3 +1786,14 @@
   has no horizontal overflow.
 - No runtime code, production infrastructure, deployment, consensus, token,
   wallet, key, mainnet, or public-network action was performed.
+
+## 2026-07-30 21:58 EEST - GH-29 GitHub Page update published as PR #83
+
+- Published implementation commit `e8251b2` on
+  `docs/GH-29-github-page-status` and opened documentation-only draft PR #83
+  against `main`.
+- PR scope and body link the canonical GH-29 counts, local consistency and
+  responsive-browser evidence, and the unchanged non-production boundary.
+- This append-only publication handoff becomes the replacement exact head.
+  Pages, security, docs/static checks, review status, merge, and deployed-page
+  verification remain pending.
