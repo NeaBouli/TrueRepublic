@@ -1822,3 +1822,168 @@
   verified.
 - This append-only handoff becomes the replacement exact head. Fresh docs,
   security, static/review checks and merge remain required.
+
+## 2026-07-30 22:23 EEST - Phase 6 observability operations started
+
+- Reconciled clean local `main` with exact `origin/main` `844c498`; no open PR
+  exists and the latest main Pages and Security workflows pass.
+- Inspected Prometheus, Grafana, Compose, CI, application metrics, operator
+  documentation, rollout tracker, TODO, and security boundaries.
+- Confirmed the next bounded gap: the dashboard is stored in an API-wrapper
+  shape unsuitable for Grafana file provisioning; CI does not prove the
+  dashboard, panel expressions, loaded rules, or alert behavior; no rule file,
+  service objectives, or escalation ownership is shipped.
+- Chosen boundary: repository-only dashboards, rules, objectives, role-based
+  ownership, tests, CI, and docs. External paging and production deployment
+  remain explicitly excluded.
+- Next: create the GitHub child issue and issue branch, assign a bounded
+  secret-free implementation block to Kimi K3, and retain architecture,
+  security, integration, GitHub, and final verification with Sol.
+
+## 2026-07-30 22:25 EEST - GH-85 ticket and branch created
+
+- Created GH-85 with explicit acceptance, verification, risk, and
+  non-production boundaries.
+- Created `feature/GH-85-observability-operations` from exact main `844c498`.
+- The task will treat dashboard provisioning, panel queries, loaded rules, and
+  selected alert transitions as runtime/test contracts rather than
+  documentation-only claims.
+- Next: publish the initial Bridge handoff, delegate the bounded dashboard/rule
+  implementation, and build the independent repository/CI validation path.
+
+## 2026-07-30 22:49 EEST - GH-85 focused implementation checks pass
+
+- Replaced the invalid Grafana API wrapper with a native immutable dashboard
+  and stable provisioned datasource; added reviewed CometBFT, application,
+  invariant, supply/headroom, and runtime panels.
+- Added ten explicit Prometheus alerts, synthetic promtool transitions,
+  recovery/testnet objectives, role-based escalation, bounded response
+  guidance, Compose integration, repository tests, and GitHub runtime
+  dashboard/rule/query evidence.
+- The bounded Kimi implementation invocation produced useful independent
+  design analysis but remained in planning and emitted no file write before
+  being stopped. Sol authored the resulting diff; a separate Kimi read-only
+  finished-diff review remains required.
+- PASS: JSON/YAML/workflow parsing; focused repository tests; Prometheus
+  3.13.1 config syntax; ten-rule validation; all promtool rule tests; every
+  dashboard/objective PromQL parse; docs consistency; diff check.
+- Docker is not installed locally. Exact Grafana provisioning and live
+  Prometheus API/query evidence remain delegated to the GitHub Compose job.
+- Next: full local verification and independent finished-diff review.
+
+## 2026-07-30 23:09 EEST - GH-85 review findings remediated
+
+- Kimi's independent moving-tree review reported 0 P0, 0 P1, one P2, and five
+  P3 items. The P2 identified cross-instance aggregation that could pair
+  signals from different validators during the stated testnet window.
+- Replaced cross-instance invariant and PNYX arithmetic with per-instance
+  vector matching; added one bounded static `node` label to pair the local
+  CometBFT/application sources for divergence without user-derived labels.
+- Added exact 16-panel/17-target runtime gates, exact eleven-rule contracts,
+  missing-family recovery evidence, pinned upstream monitoring image digests,
+  Grafana datasource UID/proxy-query proof, and corrected pin wording.
+- Reconciled stale wiki deployment/monitoring examples with the supported
+  `cometbft_*`/`truerepublic_*` contract and removed invented Alertmanager
+  destinations.
+- PASS: current Prometheus config syntax, all eleven rules, all deterministic
+  rule tests, and PromQL parsing. Earlier ten-rule log entries are retained as
+  historical snapshots and superseded here.
+- Next: complete the recovery matrix, full exact-worktree gates, focused Kimi
+  remediation recheck, and final audit.
+
+## 2026-07-30 23:22 EEST - GH-85 exact local gates and audit pass
+
+- All eight maintained multi-validator scenarios pass, including the final
+  consensus-slashing process case; the complete matrix ran in 1,208.218s.
+- `make build` and `make verify` pass on the remediated tree. Race/coverage is
+  green across all nine supported packages with root 69.1%, health 97.2%,
+  migration 84.6%, network policy 95.5%, observability 80.3%, token 92.6%,
+  treasury 97.0%, DEX 45.3%, and governance 62.2%.
+- Prometheus 3.13.1 validates the configuration and all eleven rules; every
+  deterministic rule fixture, dashboard expression, and objective query
+  passes. JSON/YAML, focused contracts, docs consistency, and diff hygiene
+  pass.
+- Measured package-scoped JSON output contains 1,071 Go cases. Together with
+  the unchanged 26 Rust and eight maintained-client cases, GH-85 will raise
+  the public merged total from 1,104 to 1,105 after merge.
+- Kimi's focused remediation recheck marks all seven reviewed areas PASS with
+  no new P0/P1/P2. Sol added the optional static contract for both bounded
+  `node: 'local'` labels and `on (node)` pairing.
+- Added `docs/agent-bridge/GH85_AUDIT.md`: 0 FAIL / 0 WARN / 7 PASS. Local
+  Docker remains unavailable; exact pinned Compose runtime proof is required
+  on GitHub before merge.
+- Next: publish the implementation PR, collect exact-head GitHub CI/review,
+  remediate if necessary, merge, then publish the separate post-merge
+  tracker/status synchronization.
+
+## 2026-07-30 23:28 EEST - GH-85 draft PR #86 published
+
+- Pushed reviewed implementation commit `1c44b2f` and opened draft PR #86
+  against `main`.
+- PR #86 documents the native dashboard, eleven alerts, objective/ownership
+  contract, local verification, independent review, and the explicit
+  non-production boundary.
+- Posted evidence and PR linkage to GH-85 and the GH-29 rollout tracker.
+- The tracker/public page remains unchanged until the implementation is
+  merged; this prevents an unmerged branch from being reported as delivered.
+- Next: push this append-only handoff, require exact-head GitHub checks and
+  review, remediate findings, and merge only when green.
+
+## 2026-07-30 23:38 EEST - PR #86 Docker query gate hardened
+
+- Exact head `67d5d4c` passed Go build/race/coverage, docs, DeepScan, and all
+  completed Go/Rust/Node security jobs.
+- Docker proved config, pinned promtool rules/tests, stack startup, readiness,
+  both targets, and Grafana health, then failed the new combined assertion
+  step with all `jq` results suppressed.
+- Kimi's focused read-only diagnosis identified the gap between target-up and
+  lazy application-series readiness, plus first rule evaluation timing, as the
+  likely race class.
+- Added bounded retries for the Grafana-proxied application height, eleven
+  healthy rules, and all four core app/supply series. Every assertion now
+  reports a secret-free identity/count/error summary and the exact failing
+  expression instead of an opaque exit code.
+- Structural mismatch and invalid PromQL remain fail-fast; the change does not
+  weaken any count, identity, health, or cardinality assertion.
+- Next: validate and push replacement head, then rerun the complete exact-head
+  GitHub matrix.
+
+## 2026-07-30 23:45 EEST - GH-85 retry shell edge closed
+
+- Kimi completed the bounded CI diagnosis: static dashboard/rule cardinalities
+  and the focused repository test pass; first rule evaluation remains the most
+  likely original one-shot race.
+- Remediated its low-risk observation that GitHub `bash -e` could abort a
+  retrying command substitution on a transient HTTP failure. Retryable curl
+  assignments now execute as explicit conditions with initialized safe
+  summaries.
+- Workflow YAML, focused repository contract, and diff hygiene pass.
+- Next: publish replacement head and require its complete GitHub matrix.
+
+## 2026-07-30 23:48 EEST - PR #86 review findings fixed
+
+- Thread-aware CodeRabbit read identified three actionable issues: Markdown
+  table delimiter parsing, an application/divergence panel overlap, and
+  missing low-peer recovery evidence.
+- Escaped the regex delimiter in the objective table, removed the panel
+  overlap, added deterministic low-peer recovery at three peers, and extended
+  the repository contract to reject invalid grid bounds or any pairwise
+  overlap.
+- Promtool tests, dashboard JSON, focused Go contract, docs consistency, and
+  diff hygiene pass.
+- Next: commit/push, reply to and resolve all three threads, then require the
+  complete replacement-head GitHub matrix.
+
+## 2026-07-30 23:58 EEST - Docker cardinality root cause fixed
+
+- Exact head `513a122` passed Go build/race/coverage and every completed
+  docs/static/security gate. Docker reached the new diagnostic assertion and
+  reported `result_count: 2` for the unscoped application-height query.
+- The process legitimately exports registered application metrics on both
+  monitored surfaces. The last four-series presence loop alone omitted the
+  canonical `job="truerepublic-app"` selector used everywhere else.
+- Added the explicit app-job selector to all four required-series checks while
+  retaining the exact-one cardinality requirement.
+- Workflow YAML, selector PromQL, focused Go contract, and diff hygiene pass.
+- Next: publish and require a complete replacement-head GitHub matrix; Docker
+  and recovery remain mandatory.

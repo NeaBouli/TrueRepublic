@@ -64,10 +64,14 @@ func TestContainerNetworkDefaultsFailClosed(t *testing.T) {
 		"metrics_path: '/metrics'",
 		"format: ['prometheus']",
 		"targets: ['127.0.0.1:1317']",
+		"node: 'local'",
 	} {
 		if !strings.Contains(prometheus, required) {
 			t.Fatalf("Prometheus application scrape must contain %q", required)
 		}
+	}
+	if strings.Count(prometheus, "node: 'local'") != 2 {
+		t.Fatal("both local Prometheus targets must share exactly one bounded node pairing label")
 	}
 	if strings.Contains(prometheus, "chain_id: 'truerepublic-1'") {
 		t.Fatal("Prometheus must not attach a false static chain ID to operator-selected chains")
@@ -160,8 +164,11 @@ func TestContainerNetworkDefaultsFailClosed(t *testing.T) {
 		"`truerepublic-app`",
 		"`truerepublic_app_last_successful_invariant_cycle_height`",
 		"`truerepublic_token_pnyx_supply_headroom_base_units`",
-		"do not treat this baseline as",
-		"an active production monitoring program",
+		"does not prove a production topology",
+		"Initial Service Objectives",
+		"Escalation Ownership",
+		"does not configure email, chat, webhook, PagerDuty",
+		"not a production SLO commitment",
 		"Every supported node log line is JSON",
 		"[REDACTED]",
 		"rejects `--trace-store`",

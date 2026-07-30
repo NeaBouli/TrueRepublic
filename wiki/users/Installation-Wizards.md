@@ -264,38 +264,19 @@ truerepublicd query slashing signing-info <validator-consensus-address>
 
 ### Step 7: Configure Monitoring Alerts (10 min)
 
-Edit `monitoring/prometheus.yml`:
+Use the repository-owned `monitoring/prometheus-alerts.yml`; do not create a
+second local rule file or copy legacy `tendermint_*` examples. The shipped
+rules use the verified `cometbft_*` and `truerepublic_*` families and include
+deterministic Promtool tests.
 
-```yaml
-alerting:
-  alertmanagers:
-    - static_configs:
-        - targets:
-          - localhost:9093
+Review the [supported monitoring guide](../operations/Monitoring) and map each
+role label to a primary and secondary operator. The repository intentionally
+does not configure an external Alertmanager destination. External paging must
+remain off until a separately approved end-to-end delivery and
+acknowledgement drill passes.
 
-rule_files:
-  - "alerts.yml"
-```
-
-Create `monitoring/alerts.yml`:
-
-```yaml
-groups:
-  - name: validator_alerts
-    rules:
-      - alert: ValidatorDown
-        expr: up{job="validator"} == 0
-        for: 5m
-        annotations:
-          summary: "Validator is down"
-
-      - alert: MissedBlocks
-        expr: increase(tendermint_consensus_validators_missed_blocks[1h]) > 10
-        annotations:
-          summary: "Validator missing blocks"
-```
-
-**Done! You're a validator.**
+**The local recovery/testnet monitoring profile is now configured.** This does
+not by itself qualify a production validator or authorize real funds.
 
 **Next Steps:**
 - [Validator Guide](../operations/Validator-Guide) -- Daily maintenance

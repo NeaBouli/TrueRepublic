@@ -2,11 +2,16 @@ global:
   scrape_interval: 15s
   evaluation_interval: 15s
 
+rule_files:
+  - /etc/prometheus/prometheus-alerts.yml
+
 scrape_configs:
   # CometBFT node metrics (port 26660 when prometheus=true in config.toml)
   - job_name: 'truerepublic-node'
     static_configs:
       - targets: ['127.0.0.1:26660']
+        labels:
+          node: 'local'
 
   # Cosmos SDK/runtime and bounded TrueRepublic application metrics.
   - job_name: 'truerepublic-app'
@@ -15,6 +20,8 @@ scrape_configs:
       format: ['prometheus']
     static_configs:
       - targets: ['127.0.0.1:1317']
+        labels:
+          node: 'local'
 
   # Prometheus self-monitoring
   - job_name: 'prometheus'
