@@ -2774,3 +2774,20 @@ Go/Rust/Node security, docs, DeepScan, and CodeRabbit. GH-51 is closed.
   head, and require the complete GitHub matrix again.
 
 ---
+
+## 2026-07-30 23:45 EEST GH-85 bounded retry review → Hardened
+
+- Kimi's completed focused review confirmed 16 panels, 17 targets, eleven
+  alerts, and the repository contract test, and ranked first rule evaluation
+  as the most likely original runtime race.
+- It identified one remaining low-risk shell edge: under GitHub's `bash -e`,
+  a transient HTTP failure inside command substitution could bypass the new
+  retry loop before a JSON response existed.
+- Sol remediated the edge by placing each retryable curl assignment inside an
+  explicit conditional and initializing a bounded unavailable response.
+  Transient HTTP failures now retry; structural or PromQL failures remain
+  strict and diagnostic.
+- **Next:** publish the hardened replacement head and use only its complete
+  GitHub matrix as merge evidence.
+
+---

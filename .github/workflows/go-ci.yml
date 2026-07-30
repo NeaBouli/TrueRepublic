@@ -292,11 +292,15 @@ jobs:
           fi
 
           proxy_ok=false
+          proxy_result='{"status":"unavailable"}'
           for _ in $(seq 1 15); do
-            proxy_result=$(curl --fail --silent --show-error --get \
+            if ! proxy_result=$(curl --fail --silent --show-error --get \
               --user "admin:${GRAFANA_PASSWORD}" \
               --data-urlencode 'query=truerepublic_app_last_successful_block_height{job="truerepublic-app"}' \
-              http://127.0.0.1:3000/api/datasources/proxy/uid/truerepublic-prometheus/api/v1/query)
+              http://127.0.0.1:3000/api/datasources/proxy/uid/truerepublic-prometheus/api/v1/query); then
+              sleep 2
+              continue
+            fi
             if printf '%s\n' "$proxy_result" |
               jq -e '.status == "success" and (.data.result | length == 1)' >/dev/null; then
               proxy_ok=true
@@ -312,9 +316,13 @@ jobs:
           fi
 
           rules_ok=false
+          rules='{"status":"unavailable","data":{"groups":[]}}'
           for _ in $(seq 1 15); do
-            rules=$(curl --fail --silent --show-error \
-              'http://127.0.0.1:9091/api/v1/rules?type=alert')
+            if ! rules=$(curl --fail --silent --show-error \
+              'http://127.0.0.1:9091/api/v1/rules?type=alert'); then
+              sleep 2
+              continue
+            fi
             if printf '%s\n' "$rules" |
               jq -e '
                 .status == "success" and
@@ -382,10 +390,14 @@ jobs:
             'truerepublic_token_pnyx_supply_base_units' \
             'truerepublic_token_pnyx_supply_headroom_base_units'; do
             metric_ok=false
+            query_result='{"status":"unavailable"}'
             for _ in $(seq 1 15); do
-              query_result=$(curl --fail --silent --show-error --get \
+              if ! query_result=$(curl --fail --silent --show-error --get \
                 --data-urlencode "query=${expression}" \
-                http://127.0.0.1:9091/api/v1/query)
+                http://127.0.0.1:9091/api/v1/query); then
+                sleep 2
+                continue
+              fi
               if printf '%s\n' "$query_result" |
                 jq -e '.status == "success" and (.data.result | length == 1)' >/dev/null; then
                 metric_ok=true

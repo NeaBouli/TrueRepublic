@@ -1947,3 +1947,15 @@
   weaken any count, identity, health, or cardinality assertion.
 - Next: validate and push replacement head, then rerun the complete exact-head
   GitHub matrix.
+
+## 2026-07-30 23:45 EEST - GH-85 retry shell edge closed
+
+- Kimi completed the bounded CI diagnosis: static dashboard/rule cardinalities
+  and the focused repository test pass; first rule evaluation remains the most
+  likely original one-shot race.
+- Remediated its low-risk observation that GitHub `bash -e` could abort a
+  retrying command substitution on a transient HTTP failure. Retryable curl
+  assignments now execute as explicit conditions with initialized safe
+  summaries.
+- Workflow YAML, focused repository contract, and diff hygiene pass.
+- Next: publish replacement head and require its complete GitHub matrix.
