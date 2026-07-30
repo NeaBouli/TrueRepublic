@@ -14,6 +14,23 @@ if [ ! -f "$STATUS_FILE" ]; then
   exit 1
 fi
 
+if ! jq -e '
+  def nonnegative_integer:
+    if type == "number" then (. >= 0 and floor == .) else false end;
+  def positive_integer:
+    if type == "number" then (. > 0 and floor == .) else false end;
+  .rollout as $rollout |
+  ($rollout.completed | nonnegative_integer) and
+  ($rollout.total | positive_integer) and
+  ($rollout.phase_work_completed | nonnegative_integer) and
+  ($rollout.phase_work_total | positive_integer) and
+  ($rollout.phase_6_completed | nonnegative_integer) and
+  ($rollout.phase_6_total | positive_integer)
+' "$STATUS_FILE" >/dev/null; then
+  echo "FAIL Rollout counts must be nonnegative integers and totals must be positive integers"
+  exit 1
+fi
+
 VERSION=$(jq -r '.version' "$STATUS_FILE")
 TESTS=$(jq -r '.tests.total' "$STATUS_FILE")
 SUPPLY=$(jq -r '.token.max_supply' "$STATUS_FILE")
