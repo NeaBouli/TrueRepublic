@@ -295,3 +295,26 @@ tests:
               summary: "TrueRepublic peer count is below the recovery/testnet default"
               description: "The node has fewer than three peers or the peer gauge has not yet been instantiated."
               runbook_url: "https://github.com/NeaBouli/TrueRepublic/blob/main/docs/node-operators/operations/monitoring.md#validator-peer-or-mempool-degradation"
+
+  - name: low peer count fires and recovers at the recovery testnet threshold
+    interval: 1m
+    input_series:
+      - series: 'cometbft_p2p_peers{job="truerepublic-node"}'
+        values: '0x11 3x3'
+    alert_rule_test:
+      - eval_time: 9m
+        alertname: TrueRepublicLowPeerCount
+        exp_alerts: []
+      - eval_time: 10m
+        alertname: TrueRepublicLowPeerCount
+        exp_alerts:
+          - exp_labels:
+              owner: network-operator
+              severity: warning
+            exp_annotations:
+              summary: "TrueRepublic peer count is below the recovery/testnet default"
+              description: "The node has fewer than three peers or the peer gauge has not yet been instantiated."
+              runbook_url: "https://github.com/NeaBouli/TrueRepublic/blob/main/docs/node-operators/operations/monitoring.md#validator-peer-or-mempool-degradation"
+      - eval_time: 12m
+        alertname: TrueRepublicLowPeerCount
+        exp_alerts: []

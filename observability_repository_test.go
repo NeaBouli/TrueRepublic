@@ -30,9 +30,15 @@ func TestMonitoringArtifactsAreProvisionedAndBounded(t *testing.T) {
 		Version       int    `json:"version"`
 		Editable      bool   `json:"editable"`
 		Panels        []struct {
-			ID         int    `json:"id"`
-			Title      string `json:"title"`
-			Type       string `json:"type"`
+			ID      int    `json:"id"`
+			Title   string `json:"title"`
+			Type    string `json:"type"`
+			GridPos struct {
+				Height int `json:"h"`
+				Width  int `json:"w"`
+				X      int `json:"x"`
+				Y      int `json:"y"`
+			} `json:"gridPos"`
 			Datasource struct {
 				UID string `json:"uid"`
 			} `json:"datasource"`
@@ -67,6 +73,11 @@ func TestMonitoringArtifactsAreProvisionedAndBounded(t *testing.T) {
 		if panel.ID <= 0 || panel.Title == "" || panel.Type == "" {
 			t.Fatalf("panel has incomplete identity: %+v", panel)
 		}
+		if panel.GridPos.Height <= 0 || panel.GridPos.Width <= 0 ||
+			panel.GridPos.X < 0 || panel.GridPos.Y < 0 ||
+			panel.GridPos.X+panel.GridPos.Width > 24 {
+			t.Fatalf("panel %q has invalid grid position: %+v", panel.Title, panel.GridPos)
+		}
 		if prior, exists := panelIDs[panel.ID]; exists {
 			t.Fatalf("panels %q and %q reuse id %d", prior, panel.Title, panel.ID)
 		}
@@ -94,6 +105,17 @@ func TestMonitoringArtifactsAreProvisionedAndBounded(t *testing.T) {
 				t.Fatalf("panel %q target %q uses datasource %q", panel.Title, target.RefID, datasourceUID)
 			}
 			fmt.Fprintln(&expressions, target.Expression)
+		}
+	}
+	for i, left := range dashboard.Panels {
+		for _, right := range dashboard.Panels[i+1:] {
+			horizontalOverlap := left.GridPos.X < right.GridPos.X+right.GridPos.Width &&
+				right.GridPos.X < left.GridPos.X+left.GridPos.Width
+			verticalOverlap := left.GridPos.Y < right.GridPos.Y+right.GridPos.Height &&
+				right.GridPos.Y < left.GridPos.Y+left.GridPos.Height
+			if horizontalOverlap && verticalOverlap {
+				t.Fatalf("dashboard panels %q and %q overlap", left.Title, right.Title)
+			}
 		}
 	}
 

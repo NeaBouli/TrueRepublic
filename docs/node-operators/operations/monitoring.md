@@ -231,7 +231,7 @@ unavailable; never omit an outage from the record.
 
 | Objective | Prometheus measurement | Initial target |
 |-----------|------------------------|----------------|
-| Private target availability | `avg_over_time(up{job=~"truerepublic-(node|app)"}[7d])` per target | at least 99.5% |
+| Private target availability | `avg_over_time(up{job=~"truerepublic-(node\|app)"}[7d])` per target | at least 99.5% |
 | Consensus progress | `avg_over_time((changes(cometbft_consensus_height{job="truerepublic-node"}[5m]) > bool 0)[7d:5m])` | at least 99% of five-minute windows |
 | Application progress | `avg_over_time((increase(truerepublic_app_completed_blocks_total{job="truerepublic-app"}[5m]) > bool 0)[7d:5m])` | at least 99% of five-minute windows |
 | Invariant alignment | `avg_over_time((truerepublic_app_last_successful_invariant_cycle_height{job="truerepublic-app"} == bool truerepublic_app_last_successful_block_height{job="truerepublic-app"})[7d:1m])` | 100%; any lag is a critical event |

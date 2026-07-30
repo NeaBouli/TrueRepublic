@@ -1959,3 +1959,17 @@
   summaries.
 - Workflow YAML, focused repository contract, and diff hygiene pass.
 - Next: publish replacement head and require its complete GitHub matrix.
+
+## 2026-07-30 23:48 EEST - PR #86 review findings fixed
+
+- Thread-aware CodeRabbit read identified three actionable issues: Markdown
+  table delimiter parsing, an application/divergence panel overlap, and
+  missing low-peer recovery evidence.
+- Escaped the regex delimiter in the objective table, removed the panel
+  overlap, added deterministic low-peer recovery at three peers, and extended
+  the repository contract to reject invalid grid bounds or any pairwise
+  overlap.
+- Promtool tests, dashboard JSON, focused Go contract, docs consistency, and
+  diff hygiene pass.
+- Next: commit/push, reply to and resolve all three threads, then require the
+  complete replacement-head GitHub matrix.

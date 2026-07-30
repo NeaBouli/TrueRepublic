@@ -2791,3 +2791,23 @@ Go/Rust/Node security, docs, DeepScan, and CodeRabbit. GH-51 is closed.
   GitHub matrix as merge evidence.
 
 ---
+
+## 2026-07-30 23:48 EEST PR #86 CodeRabbit findings → Remediated
+
+- Thread-aware review found three valid issues on the implementation diff:
+  an unescaped regex pipe breaking the three-column objectives table, a
+  four-row overlap between application-rate and divergence panels, and no
+  explicit recovery transition for the low-peer rule.
+- **Fixed:** escaped the Markdown table delimiter without changing the rendered
+  PromQL; reduced panel 9 to the intended four-row height; added a low-peer
+  firing/recovery fixture at the three-peer threshold.
+- **Prevented:** the repository dashboard contract now validates bounded
+  24-column grid positions and rejects every pairwise panel overlap.
+- **PASS:** dashboard JSON; promtool rule suite including the new recovery
+  transition; focused repository contract; docs consistency; and diff hygiene.
+- **Review state:** all three threads are technically addressed locally; reply
+  and resolution follow after publication.
+- **Next:** publish the replacement head, reply/resolve the exact threads, and
+  require its full GitHub matrix.
+
+---

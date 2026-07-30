@@ -286,7 +286,7 @@
       "title": "Application Block Rate",
       "type": "timeseries",
       "datasource": {"type": "prometheus", "uid": "truerepublic-prometheus"},
-      "gridPos": {"h": 8, "w": 9, "x": 6, "y": 12},
+      "gridPos": {"h": 4, "w": 9, "x": 6, "y": 12},
       "targets": [
         {
           "datasource": {"type": "prometheus", "uid": "truerepublic-prometheus"},
