@@ -2188,3 +2188,29 @@ Go/Rust/Node security, docs, DeepScan, and CodeRabbit. GH-51 is closed.
   docs/static/security review, merge, update GH-29, and synchronize local main.
 
 ---
+
+## 2026-07-30 GH-77 → Done / Target Stop
+
+- **Implementation:** PR #78 merged as `133fb3b`; GH-77 closed automatically.
+  Exact implementation head `fd8378c` passed all 11 checks, including Go
+  build/vet/race/coverage, the complete recovery matrix, Docker/Compose
+  post-restart structured JSONL, docs/security/static analysis, and review.
+- **Closure:** documentation-only PR #79 exact head `3d3eb5a` passed all eight
+  applicable docs/security/static checks and merged as `69dee43`.
+- **Review:** both CodeRabbit threads are resolved and acknowledged; independent
+  Kimi full, incremental, and closure reviews found no P0/P1/P2. The final audit
+  records 0 FAIL / 1 WARN / 16 PASS.
+- **Public state:** 1,092 authoritative cases (1,058 Go, 26 Rust, eight
+  maintained-client). Roadmap, status JSON, README, landing page, wiki,
+  limitations, agent state, TODO, audit, and GH-29 are synchronized. GH-29
+  remains open for the unfinished rollout gates.
+- **Safety boundary:** secret-safe structured logging is defensive minimization,
+  not general DLP, production approval, or public-network authorization. No
+  production, server, collector, deployment, credential, key, mainnet,
+  consensus/state, or public-network action occurred.
+- **Next project work:** continue GH-29 Phase 6 with broader consensus/peer/block/
+  invariant/resource/application metrics and their operator evidence.
+
+`TASK COMPLETE — TARGET STOP ACTIVE`
+
+---

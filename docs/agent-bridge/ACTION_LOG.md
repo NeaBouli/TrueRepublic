@@ -1613,3 +1613,17 @@
   pass locally. Runtime code is unchanged from merged implementation PR #78.
 - Next: publish and verify the documentation-only closure PR, merge it, update
   GH-29, and synchronize clean local main.
+
+## 2026-07-30 - GH-77 closed and synchronized
+
+- Documentation-only PR #79 exact head `3d3eb5a` passed all eight applicable
+  docs/security/static checks and merged as `69dee43`.
+- GH-29 now marks GH-71 network policy, GH-74 liveness/readiness, and GH-77
+  secret-safe structured logs complete while remaining open for unfinished
+  rollout work. No pull request remains open.
+- Public and durable state agrees on 1,092 cases and a final GH-77 audit of
+  0 FAIL / 1 WARN / 16 PASS.
+- GH-77 is Done / Target Stop. Next Phase-6 work is broader node/application
+  metrics and operator evidence, not production deployment.
+- No production, server, collector, deployment, credential, key, mainnet,
+  consensus/state, or public-network action was performed.
