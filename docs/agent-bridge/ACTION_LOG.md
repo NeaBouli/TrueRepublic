@@ -1987,3 +1987,40 @@
 - Workflow YAML, selector PromQL, focused Go contract, and diff hygiene pass.
 - Next: publish and require a complete replacement-head GitHub matrix; Docker
   and recovery remain mandatory.
+
+## 2026-07-31 00:15 EEST - GH-85 implementation merged
+
+- Exact PR head `021d5c5` passed every required check, including the 13m47s
+  eight-scenario recovery matrix and the 7m35s Docker observability proof.
+- Confirmed zero unresolved review threads after all three CodeRabbit findings
+  were fixed and resolved.
+- Squash-merged PR #86 as `cd44fec`; GH-85 closed automatically.
+- Post-merge Go CI, Security Scan, and Pages deployment are in progress.
+- Next: require the exact merged-main checks to pass, then publish the
+  documentation-only rollout/status closure and verify the deployed page.
+
+## 2026-07-31 00:30 EEST - Closure synchronization locally green
+
+- Exact merged-main `cd44fec` passed Go CI, Docker, all recovery scenarios,
+  Security Scan, and Pages deployment.
+- Fresh local JSON evidence counts 1,071 passing Go tests; the canonical public
+  total is now 1,105 with 26 Rust and eight maintained-client tests.
+- Updated GH-29's combined GH-85 checkbox. The live tracker now has 11/59
+  complete, 11/51 phase work, and Phase 6 at 4/7.
+- Spark completed a read-only stale-status scan. Kimi independently verified
+  the test and percentage arithmetic and identified the pending live tracker
+  write; Sol performed and re-read that write.
+- Documentation consistency, JSON validation, and diff hygiene pass.
+- Next: publish the documentation-only branch, require exact-head GitHub
+  checks, merge, and verify the public Pages deployment.
+
+## 2026-07-31 00:38 EEST - PR #87 review findings fixed
+
+- CodeRabbit correctly identified that public-status publication remains
+  branch-local until PR #87 merges and that its completion checkbox was
+  premature.
+- Reworded the evidence around merged implementation `cd44fec`, reopened the
+  publication checkbox through merge and deployed-page verification, and
+  aligned the roadmap date with the GitHub publication date.
+- Next: validate, publish the corrected head, resolve both threads, and require
+  the complete replacement-head GitHub matrix.

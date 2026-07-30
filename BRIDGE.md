@@ -22,6 +22,8 @@ Canonical coordination lives in [`docs/agent-bridge/`](docs/agent-bridge/README.
   [`GH77_AUDIT.md`](docs/agent-bridge/GH77_AUDIT.md)
 - GH-80 metrics baseline audit:
   [`GH80_AUDIT.md`](docs/agent-bridge/GH80_AUDIT.md)
+- GH-85 observability operations audit:
+  [`GH85_AUDIT.md`](docs/agent-bridge/GH85_AUDIT.md)
 - Decisions: [`DECISIONS.md`](docs/agent-bridge/DECISIONS.md)
 - Security: [`SECURITY_NOTES.md`](docs/agent-bridge/SECURITY_NOTES.md)
 
@@ -477,6 +479,57 @@ gate pointed at a nonexistent wiki directory. Those findings are remediated.
 All modernized Action majors now pass on GitHub. PR #25 remains a separate
 default-branch visibility track and must not bypass the vulnerable current
 `main` or the ordered recovery stack.
+
+---
+
+## 2026-07-31 00:15 EEST PR #86 merged; GH-85 closed
+
+- Exact head `021d5c5` passed the complete GitHub matrix: build/race/coverage,
+  Docker observability runtime proof, all eight multi-validator recovery
+  scenarios, docs consistency, Go/Rust/Node security gates, and DeepScan.
+- Thread-aware review reported zero unresolved threads; all three CodeRabbit
+  findings were fixed, replied to, and resolved.
+- Owner-authorized admin squash merged PR #86 as `cd44fec`; GitHub
+  automatically closed GH-85.
+- Post-merge `main` Go CI, Security Scan, and Pages deployment are running.
+- **Next:** require those exact-main checks to pass, then publish the
+  documentation-only closure update for GH-29, rollout counts, test counts,
+  Bridge, and the public GitHub Pages status.
+
+---
+
+## 2026-07-31 00:30 EEST GH-85 closure synchronization → Locally green
+
+- Exact merged-main `cd44fec` passed post-merge Go CI, including Docker and all
+  recovery scenarios, plus Security Scan and GitHub Pages deployment.
+- Fresh local JSON output confirms 1,071 passing Go tests; with 26 Rust and
+  eight maintained-client tests, the public total is 1,105.
+- Canonical GH-29 now records 11/59 complete, 11/51 phase work, and Phase 6
+  4/7; the GH-85 combined checkbox links GH-85/PR #86.
+- Public status sources now use 19%, 22%, and 57% respectively and retain the
+  explicit recovery-only, no-production-SLO, and no-external-paging boundary.
+- **Independent review:** Spark identified every current/public stale count
+  without touching historical logs; Kimi verified the arithmetic and found the
+  then-pending GH-29 synchronization, which is now resolved.
+- **PASS:** documentation consistency, JSON validation, diff hygiene, and the
+  1,071-case local Go suite.
+- **Next:** publish this documentation-only closure branch, require its exact
+  GitHub checks, merge, and verify the deployed public page.
+
+---
+
+## 2026-07-31 00:38 EEST PR #87 review findings → Fixed
+
+- CodeRabbit identified two valid publication-state issues on exact head
+  `f600cf7`: the current-state wording could imply the 1,105 public status was
+  already merged, and the publication checkbox was prematurely complete.
+- Reworded the evidence as fresh tests against merged implementation
+  `cd44fec`, explicitly branch-local until PR #87 merges, and reopened the
+  publication checkbox through exact-head merge and deployed-page verification.
+- Aligned the roadmap update date with the GitHub publication date
+  `2026-07-30`.
+- **Next:** publish the corrected head, resolve both review threads, and require
+  its full GitHub matrix.
 
 ---
 

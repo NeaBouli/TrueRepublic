@@ -20,8 +20,10 @@
   single-signer validator-identity failover harness. Supported node operation
   emits secret-minimized structured JSON logs through the central SDK/CometBFT
   logger boundary and exposes a private two-source CometBFT plus
-  SDK/application metrics baseline.
-- 1,104 recovery-verified tests: 1,070 Go, 26 Rust, and 8 maintained-client.
+  SDK/application metrics baseline. GH-85 adds an immutable Grafana dashboard,
+  eleven deterministically tested Prometheus rules, recovery/testnet
+  objectives, role ownership, and CI runtime query proof.
+- 1,105 recovery-verified tests: 1,071 Go, 26 Rust, and 8 maintained-client.
 
 ## Recovery sequence
 
@@ -35,9 +37,8 @@ reviewed, verified, and merged to `main` in this order.
 - Release qualification and independent security review.
 - Compatible real Groth16 client prover and external circuit/ceremony review.
 - Privacy-preserving anonymous reward recipient binding.
-- IBC/consensus-breaking migration recovery, dashboard/application-panel
-  runtime evidence, alert rules/objectives/ownership, load/capacity/topology
-  qualification, and independent operations evidence.
+- IBC/consensus-breaking migration recovery, external paging drills,
+  load/capacity/topology qualification, and independent operations evidence.
 - Migration or removal of the deprecated legacy web/mobile clients.
 
 See [Issue #4](https://github.com/NeaBouli/TrueRepublic/issues/4),
