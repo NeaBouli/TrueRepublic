@@ -2337,3 +2337,21 @@ Go/Rust/Node security, docs, DeepScan, and CodeRabbit. GH-51 is closed.
   Docker/Compose metrics/restart evidence, before merge.
 
 ---
+
+## 2026-07-30 12:15 EEST GH-80 Exact-Head CI Fix → In Progress
+
+- **Publication:** implementation commit `ea6adc6` is pushed and draft
+  [PR #81](https://github.com/NeaBouli/TrueRepublic/pull/81) targets `main`.
+- **Green exact-head checks:** build/test, docs consistency, Go vulnerability,
+  Rust audit, maintained-client audit, both informational legacy-wallet audit
+  jobs, and DeepScan.
+- **Reproduced failure:** Docker reached the new metrics-contract step after
+  the loopback stack became ready, then Compose interpolation rejected the
+  missing required `GRAFANA_PASSWORD` before any metric assertion executed.
+- **Focused fix:** the contract step now carries the same CI-only Grafana
+  password and bootstrap operator as the stack-start step. YAML parse, static
+  network policy, consistency, and diff checks PASS locally.
+- **Remaining:** push the focused fix, require the rerun Docker metrics/restart
+  step and the still-running recovery matrix to pass, then enable full review.
+
+---

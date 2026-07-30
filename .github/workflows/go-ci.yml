@@ -232,6 +232,9 @@ jobs:
           exit 1
 
       - name: Verify metrics contract and restart progression
+        env:
+          BOOTSTRAP_OPERATOR: truerepublic13hgqwy9986x5nk6jt23ns5v7j0acs8qmhchhtw
+          GRAFANA_PASSWORD: ci-compose-validation-only
         run: |
           docker compose exec -T truerepublic-node \
             wget -qO- http://127.0.0.1:26660/metrics > comet-metrics.prom

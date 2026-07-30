@@ -1705,3 +1705,13 @@
 - Docker is unavailable locally. GH-80 is ready for branch publication but
   remains In Progress until exact-head GitHub Docker/Compose and all other
   required checks pass.
+
+## 2026-07-30 12:15 EEST - GH-80 exact-head Compose interpolation fix
+
+- Published implementation commit `ea6adc6` in draft PR #81. All completed
+  non-Docker checks are green.
+- Docker reached the metrics-contract step but Compose rejected its missing
+  required `GRAFANA_PASSWORD` before metrics were read.
+- Added the same CI-only Grafana password and bootstrap operator environment to
+  the contract step. YAML, static policy, consistency, and diff checks pass.
+- Push/rerun and exact-head Docker/recovery evidence remain pending.
