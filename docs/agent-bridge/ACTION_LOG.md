@@ -1715,3 +1715,11 @@
 - Added the same CI-only Grafana password and bootstrap operator environment to
   the contract step. YAML, static policy, consistency, and diff checks pass.
 - Push/rerun and exact-head Docker/recovery evidence remain pending.
+
+## 2026-07-30 12:24 EEST - GH-80 metrics contract made fail-loud
+
+- The environment fix passed both target/proxy gates. The contract still exited
+  before restart on a silent family/value assertion.
+- Added explicit missing-family diagnostics and public value logging without
+  changing any acceptance rule. YAML, policy, and diff checks pass.
+- Next exact-head run will identify the precise assertion for focused repair.

@@ -236,13 +236,25 @@ jobs:
           BOOTSTRAP_OPERATOR: truerepublic13hgqwy9986x5nk6jt23ns5v7j0acs8qmhchhtw
           GRAFANA_PASSWORD: ci-compose-validation-only
         run: |
+          require_metric() {
+            file="$1"
+            metric="$2"
+            if grep -q "^${metric}" "$file"; then
+              return 0
+            fi
+            echo "::error::required metric ${metric} is missing from ${file}"
+            awk '!/^#/ && NF >= 2 { name=$1; sub(/\{.*/, "", name); print name }' "$file" |
+              sort -u
+            return 1
+          }
+
           docker compose exec -T truerepublic-node \
             wget -qO- http://127.0.0.1:26660/metrics > comet-metrics.prom
           for metric in \
             cometbft_consensus_height \
             cometbft_p2p_peers \
             cometbft_consensus_block_interval_seconds; do
-            grep -q "^${metric}" comet-metrics.prom
+            require_metric comet-metrics.prom "$metric"
           done
 
           docker compose exec -T truerepublic-node \
@@ -255,13 +267,14 @@ jobs:
             truerepublic_app_last_successful_invariant_cycle_height \
             truerepublic_token_pnyx_supply_base_units \
             truerepublic_token_pnyx_supply_headroom_base_units; do
-            grep -q "^${metric}" app-metrics-before.prom
+            require_metric app-metrics-before.prom "$metric"
           done
 
           first_height=$(awk '$1 == "truerepublic_app_last_successful_block_height" { print $2; exit }' app-metrics-before.prom)
           first_invariant=$(awk '$1 == "truerepublic_app_last_successful_invariant_cycle_height" { print $2; exit }' app-metrics-before.prom)
           supply=$(awk '$1 == "truerepublic_token_pnyx_supply_base_units" { print $2; exit }' app-metrics-before.prom)
           headroom=$(awk '$1 == "truerepublic_token_pnyx_supply_headroom_base_units" { print $2; exit }' app-metrics-before.prom)
+          echo "metrics contract: height=${first_height} invariant=${first_invariant} supply=${supply} headroom=${headroom}"
           awk -v height="$first_height" -v invariant="$first_invariant" \
             'BEGIN { exit !(height >= 1 && invariant == height) }'
           awk -v supply="$supply" -v headroom="$headroom" \

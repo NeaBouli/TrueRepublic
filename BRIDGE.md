@@ -2355,3 +2355,20 @@ Go/Rust/Node security, docs, DeepScan, and CodeRabbit. GH-51 is closed.
   step and the still-running recovery matrix to pass, then enable full review.
 
 ---
+
+## 2026-07-30 12:24 EEST GH-80 Metrics Contract Diagnostics → In Progress
+
+- **Second exact-head result:** Compose environment and both Prometheus targets
+  now pass. The contract exits inside its pre-restart family/value assertions,
+  but GitHub's default `bash -e` log does not reveal the silent failing
+  `grep`/`awk`.
+- **Diagnostic hardening:** required-family checks now emit the missing family
+  plus the available public metric names; the exact height/invariant/supply/
+  headroom values are logged before arithmetic assertions. Acceptance rules
+  are unchanged.
+- **Local evidence:** workflow YAML parse, static network-policy test, and diff
+  check PASS.
+- **Next:** publish the fail-loud workflow and use its exact-head evidence to
+  fix the concrete family/value mismatch without weakening the contract.
+
+---
