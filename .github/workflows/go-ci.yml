@@ -252,7 +252,7 @@ jobs:
             wget -qO- http://127.0.0.1:26660/metrics > comet-metrics.prom
           for metric in \
             cometbft_consensus_height \
-            cometbft_p2p_peers \
+            cometbft_mempool_size \
             cometbft_consensus_block_interval_seconds; do
             require_metric comet-metrics.prom "$metric"
           done

@@ -1723,3 +1723,16 @@
 - Added explicit missing-family diagnostics and public value logging without
   changing any acceptance rule. YAML, policy, and diff checks pass.
 - Next exact-head run will identify the precise assertion for focused repair.
+
+## 2026-07-30 12:39 EEST - GH-80 zero-peer contract corrected
+
+- Exact-head diagnostics identified `cometbft_p2p_peers` as the sole missing
+  family after every preceding Docker/Compose gate passed.
+- CometBFT does not instantiate its peer gauge before the first peer event, so
+  the singleton CI topology legitimately omits it.
+- CI now requires the present `cometbft_mempool_size` family. The production
+  peer dashboard and documented alert coalesce the absent series to zero.
+- Workflow YAML, dashboard JSON, focused network policy, documentation
+  consistency, and diff checks pass locally.
+- Reconciled GitHub's stale in-progress status against the completed runner
+  log: all eight recovery scenarios pass in 666.955s; cleanup also completed.

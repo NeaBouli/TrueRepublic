@@ -2372,3 +2372,51 @@ Go/Rust/Node security, docs, DeepScan, and CodeRabbit. GH-51 is closed.
   fix the concrete family/value mismatch without weakening the contract.
 
 ---
+
+## 2026-07-30 12:39 EEST GH-80 Zero-Peer Semantics → Fix In Progress
+
+- **Exact evidence:** run `30499586251`, job `90736070552`, passed the image,
+  persistent-restart, loopback stack, proxy, and both private target gates.
+  The contract then reported only `cometbft_p2p_peers` missing.
+- **Root cause:** CometBFT instantiates that gauge on the first peer
+  add/remove event. A deliberate single-validator stack with zero peers omits
+  the series rather than exporting a zero sample.
+- **Focused repair:** the singleton CI contract now requires the proven
+  always-instantiated `cometbft_mempool_size` family. Production peer
+  observability is retained, while its dashboard and documented alert use
+  `or vector(0)` so an absent zero-peer series is treated as zero.
+- **Acceptance remains strict:** no endpoint, restart, progression,
+  application, supply, or headroom assertion is weakened.
+- **Next:** run focused policy/docs/JSON validation, publish, and require a
+  fully green new exact-head Docker and Recovery result.
+
+---
+
+## 2026-07-30 12:42 EEST GH-80 Zero-Peer Repair → Locally Verified
+
+- Workflow YAML and Grafana dashboard JSON parse PASS.
+- `TestContainerNetworkDefaultsFailClosed` PASS in 3.131s.
+- Documentation consistency and `git diff --check` PASS.
+- The current exact-head Go root suite and eight-scenario recovery matrix are
+  still running independently; their result will be recorded before replacing
+  that head with the focused repair.
+- **Next:** commit and push the five-file repair, then require all checks on the
+  replacement exact head.
+
+---
+
+## 2026-07-30 12:47 EEST GH-80 Recovery Evidence Reconciled
+
+- GitHub's status API still labels recovery job `90736070604` in progress, but
+  its completed runner log is authoritative: all eight named scenarios PASS in
+  666.955s, followed by normal cache and checkout cleanup.
+- The same head's root build/test job and all security jobs pass. Its sole
+  product-relevant failure remains the now-understood zero-peer family
+  assumption in Docker.
+- No recovery timeout defect exists: the command already enforces Go's
+  1500-second test timeout. The stale job state is a GitHub control-plane
+  reporting lag, not a hanging TrueRepublic process.
+- **Next:** publish the locally verified zero-peer repair and verify a new
+  exact head end to end.
+
+---

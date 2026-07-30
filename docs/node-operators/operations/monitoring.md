@@ -91,6 +91,13 @@ carry no user, address, transaction, request-path, peer, or deployment labels.
 | `cometbft_mempool_size` | Pending transactions | > 1000 may need attention |
 | `cometbft_mempool_tx_size_bytes` | Mempool size in bytes | Monitor for growth |
 
+CometBFT creates the peer gauge only after the first peer connection, so a
+standalone or fully disconnected node can omit `cometbft_p2p_peers` instead of
+exporting zero. Use `cometbft_p2p_peers or vector(0)` for dashboards and
+low-peer alerts. The single-validator Compose gate verifies
+`cometbft_mempool_size` as its always-instantiated network-health family; peer
+connectivity remains a production-network check.
+
 ### Validator Health
 
 | Metric | Description | Alert Threshold |
@@ -199,7 +206,7 @@ groups:
           severity: critical
 
       - alert: LowPeerCount
-        expr: cometbft_p2p_peers < 3
+        expr: (cometbft_p2p_peers or vector(0)) < 3
         for: 5m
         labels:
           severity: warning
