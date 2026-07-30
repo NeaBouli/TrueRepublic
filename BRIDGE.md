@@ -2595,3 +2595,16 @@ Go/Rust/Node security, docs, DeepScan, and CodeRabbit. GH-51 is closed.
   and fresh exact-head verification.
 
 ---
+
+## 2026-07-30 22:09 EEST GH-29 PR #83 review follow-up → Review
+
+- **PR:** [#84](https://github.com/NeaBouli/TrueRepublic/pull/84)
+- **Published fix:** `323abad` on
+  `fix/GH-29-page-review-followup`.
+- Both PR #83 threads have evidence-backed replies linking the follow-up; they
+  remain open until the correction is merged.
+- This append-only handoff becomes the replacement exact head.
+- **Remaining:** fresh exact-head checks/review, merge, resolve both source
+  threads, synchronize clean main, and verify deployed Pages.
+
+---

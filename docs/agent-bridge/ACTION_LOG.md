@@ -1812,3 +1812,13 @@
 - Both post-merge PR #83 threads are technically addressed. Publication,
   exact-head checks, thread replies/resolution, merge, and deployed-page
   verification remain.
+
+## 2026-07-30 22:09 EEST - GH-29 review follow-up published as PR #84
+
+- Published `323abad` on `fix/GH-29-page-review-followup` and opened draft
+  PR #84 against merged `main`.
+- Replied to both unresolved PR #83 threads with the follow-up PR and concrete
+  correction evidence. Threads remain open until the fix is merged and
+  verified.
+- This append-only handoff becomes the replacement exact head. Fresh docs,
+  security, static/review checks and merge remain required.
