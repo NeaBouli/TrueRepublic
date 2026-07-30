@@ -112,9 +112,10 @@ Updated: 2026-07-30 21:30 UTC
   observability stack now provides an immutable 16-panel Grafana dashboard,
   eleven actionable and deterministically tested Prometheus rules,
   recovery/testnet objectives, role-based escalation ownership, and CI runtime
-  proof of every required query. Merged `main` records 1,105 cases: 1,071 Go,
-  26 Rust, and eight maintained-client tests. External paging, production SLOs,
-  and deployment remain outside this evidence.
+  proof of every required query. Fresh tests against merged implementation
+  `cd44fec` record 1,105 cases: 1,071 Go, 26 Rust, and eight maintained-client
+  tests; publication of that status remains branch-local until PR #87 merges.
+  External paging, production SLOs, and deployment remain outside this evidence.
 - GH-80 is closed through merged PR #81 (`e629374`). The supported node now
   exposes a private two-source CometBFT plus SDK/application metrics baseline,
   fixed-cardinality TrueRepublic EndBlock/invariant/supply signals, exact

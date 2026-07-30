@@ -518,6 +518,21 @@ default-branch visibility track and must not bypass the vulnerable current
 
 ---
 
+## 2026-07-31 00:38 EEST PR #87 review findings → Fixed
+
+- CodeRabbit identified two valid publication-state issues on exact head
+  `f600cf7`: the current-state wording could imply the 1,105 public status was
+  already merged, and the publication checkbox was prematurely complete.
+- Reworded the evidence as fresh tests against merged implementation
+  `cd44fec`, explicitly branch-local until PR #87 merges, and reopened the
+  publication checkbox through exact-head merge and deployed-page verification.
+- Aligned the roadmap update date with the GitHub publication date
+  `2026-07-30`.
+- **Next:** publish the corrected head, resolve both review threads, and require
+  its full GitHub matrix.
+
+---
+
 ## 2026-07-12 11:41 EEST GH-21 node lifecycle → GitHub green
 
 - **Branch:** `fix/GH-21-node-lifecycle`

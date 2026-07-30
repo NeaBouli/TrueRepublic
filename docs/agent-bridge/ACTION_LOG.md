@@ -2013,3 +2013,14 @@
 - Documentation consistency, JSON validation, and diff hygiene pass.
 - Next: publish the documentation-only branch, require exact-head GitHub
   checks, merge, and verify the public Pages deployment.
+
+## 2026-07-31 00:38 EEST - PR #87 review findings fixed
+
+- CodeRabbit correctly identified that public-status publication remains
+  branch-local until PR #87 merges and that its completion checkbox was
+  premature.
+- Reworded the evidence around merged implementation `cd44fec`, reopened the
+  publication checkbox through merge and deployed-page verification, and
+  aligned the roadmap date with the GitHub publication date.
+- Next: validate, publish the corrected head, resolve both threads, and require
+  the complete replacement-head GitHub matrix.
