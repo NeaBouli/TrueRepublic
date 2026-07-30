@@ -87,6 +87,26 @@ prometheus_listen_addr = "127.0.0.1:26660"
 minimum-gas-prices = "1000upnyx"
 ```
 
+### Application Telemetry
+
+The supported initialization wrapper enables the private Cosmos SDK
+Prometheus sink alongside CometBFT metrics:
+
+```toml
+[telemetry]
+service-name = "truerepublic"
+enabled = true
+enable-hostname = false
+enable-hostname-label = false
+enable-service-label = false
+prometheus-retention-time = 60
+```
+
+The endpoint is served only when the loopback API is also enabled. Keep
+`[api].address` on `127.0.0.1`; never publish `/metrics` through the public
+query proxy. The container entrypoint maps `PROMETHEUS_ENABLED=true|false`
+fail-closed to both the CometBFT and SDK telemetry settings.
+
 ### API Configuration
 
 ```toml

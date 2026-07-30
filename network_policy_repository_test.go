@@ -59,6 +59,34 @@ func TestContainerNetworkDefaultsFailClosed(t *testing.T) {
 	if !strings.Contains(prometheus, "targets: ['127.0.0.1:26660']") {
 		t.Fatal("Prometheus must scrape the node's loopback metrics listener from the shared namespace")
 	}
+	for _, required := range []string{
+		"job_name: 'truerepublic-app'",
+		"metrics_path: '/metrics'",
+		"format: ['prometheus']",
+		"targets: ['127.0.0.1:1317']",
+	} {
+		if !strings.Contains(prometheus, required) {
+			t.Fatalf("Prometheus application scrape must contain %q", required)
+		}
+	}
+	if strings.Contains(prometheus, "chain_id: 'truerepublic-1'") {
+		t.Fatal("Prometheus must not attach a false static chain ID to operator-selected chains")
+	}
+	entrypoint := readRepositoryFile(t, "scripts/docker-entrypoint.sh")
+	for _, required := range []string{
+		"TRUEREPUBLICD_TELEMETRY_ENABLED=true",
+		"TRUEREPUBLICD_TELEMETRY_ENABLED=false",
+		"TRUEREPUBLICD_TELEMETRY_PROMETHEUS_RETENTION_TIME=60",
+		"TRUEREPUBLICD_TELEMETRY_PROMETHEUS_RETENTION_TIME=0",
+		"TRUEREPUBLICD_TELEMETRY_SERVICE_NAME=truerepublic",
+		"TRUEREPUBLICD_TELEMETRY_ENABLE_HOSTNAME=false",
+		"TRUEREPUBLICD_TELEMETRY_ENABLE_HOSTNAME_LABEL=false",
+		"TRUEREPUBLICD_TELEMETRY_ENABLE_SERVICE_LABEL=false",
+	} {
+		if !strings.Contains(entrypoint, required) {
+			t.Fatalf("container telemetry policy must contain %q", required)
+		}
+	}
 	datasource := readRepositoryFile(t, "monitoring/grafana/provisioning/datasources/datasource.yml")
 	if !strings.Contains(datasource, "url: http://truerepublic-node:9090") {
 		t.Fatal("Grafana must reach Prometheus through the node's shared network endpoint")
@@ -76,6 +104,8 @@ func TestContainerNetworkDefaultsFailClosed(t *testing.T) {
 	for _, required := range []string{
 		"limit_req zone=rpc burst=20 nodelay",
 		"limit_req zone=api burst=50 nodelay",
+		"location = /api/metrics",
+		"return 404",
 		"client_max_body_size 1m",
 		"proxy_connect_timeout 5s",
 		"server 127.0.0.1:26657",
@@ -96,8 +126,17 @@ func TestContainerNetworkDefaultsFailClosed(t *testing.T) {
 		"docker exec truerepublic-node-ci wget -qO- http://127.0.0.1:26657/status",
 		"Verify structured logs after restart",
 		"docker compose up --detach --build truerepublic-node web-wallet nginx prometheus grafana",
+		"- 'nginx/**'",
 		"http://127.0.0.1:8080/rpc/status",
 		`select(.labels.job == "truerepublic-node" and .health == "up")`,
+		`select(.labels.job == "truerepublic-app" and .health == "up")`,
+		"http://127.0.0.1:8080/api/metrics?format=prometheus",
+		`metrics_proxy_blocked=true`,
+		"Verify metrics contract and restart progression",
+		"truerepublic_app_last_successful_block_height",
+		"truerepublic_app_last_successful_invariant_cycle_height",
+		"truerepublic_token_pnyx_supply_base_units",
+		"truerepublic_token_pnyx_supply_headroom_base_units",
 		"http://127.0.0.1:3000/api/health",
 		"docker compose down --volumes --remove-orphans",
 	} {
@@ -112,6 +151,12 @@ func TestContainerNetworkDefaultsFailClosed(t *testing.T) {
 		"truerepublicd healthcheck ready",
 		"does not restart a healthy syncing node",
 		"literal loopback address only",
+		"`truerepublic-node`",
+		"`truerepublic-app`",
+		"`truerepublic_app_last_successful_invariant_cycle_height`",
+		"`truerepublic_token_pnyx_supply_headroom_base_units`",
+		"do not treat this baseline as",
+		"an active production monitoring program",
 		"Every supported node log line is JSON",
 		"[REDACTED]",
 		"rejects `--trace-store`",

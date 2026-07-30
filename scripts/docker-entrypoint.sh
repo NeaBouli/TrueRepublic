@@ -38,10 +38,14 @@ if [ "${1:-}" = "start" ] && [ -f "${node_home}/config/config.toml" ]; then
     true|1)
       sed -i.bak 's/^prometheus = false/prometheus = true/' \
         "${node_home}/config/config.toml"
+      export TRUEREPUBLICD_TELEMETRY_ENABLED=true
+      export TRUEREPUBLICD_TELEMETRY_PROMETHEUS_RETENTION_TIME=60
       ;;
     false|0|"")
       sed -i.bak 's/^prometheus = true/prometheus = false/' \
         "${node_home}/config/config.toml"
+      export TRUEREPUBLICD_TELEMETRY_ENABLED=false
+      export TRUEREPUBLICD_TELEMETRY_PROMETHEUS_RETENTION_TIME=0
       ;;
     *)
       echo "Error: PROMETHEUS_ENABLED must be true, false, 1, or 0." >&2
@@ -50,6 +54,10 @@ if [ "${1:-}" = "start" ] && [ -f "${node_home}/config/config.toml" ]; then
   esac
   sed -i.bak 's|^[[:space:]]*prometheus_listen_addr = ".*"|prometheus_listen_addr = "127.0.0.1:26660"|' \
     "${node_home}/config/config.toml"
+  export TRUEREPUBLICD_TELEMETRY_SERVICE_NAME=truerepublic
+  export TRUEREPUBLICD_TELEMETRY_ENABLE_HOSTNAME=false
+  export TRUEREPUBLICD_TELEMETRY_ENABLE_HOSTNAME_LABEL=false
+  export TRUEREPUBLICD_TELEMETRY_ENABLE_SERVICE_LABEL=false
   rm -f "${node_home}/config/config.toml.bak"
 fi
 

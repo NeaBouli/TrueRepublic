@@ -35,6 +35,35 @@ fi
 if [ -f "${CHAIN_HOME}/config/app.toml" ]; then
     sed -i.bak "s/minimum-gas-prices = \"\"/minimum-gas-prices = \"1000${DENOM}\"/" \
         "${CHAIN_HOME}/config/app.toml"
+    # Application metrics share the existing loopback API listener. Hostname
+    # and service labels stay disabled so node identity and deployment topology
+    # do not become metric cardinality.
+    sed -i.bak \
+        -e '/^\[telemetry\]/,/^\[/{s/^service-name = .*/service-name = "truerepublic"/;}' \
+        -e '/^\[telemetry\]/,/^\[/{s/^enabled = .*/enabled = true/;}' \
+        -e '/^\[telemetry\]/,/^\[/{s/^enable-hostname = .*/enable-hostname = false/;}' \
+        -e '/^\[telemetry\]/,/^\[/{s/^enable-hostname-label = .*/enable-hostname-label = false/;}' \
+        -e '/^\[telemetry\]/,/^\[/{s/^enable-service-label = .*/enable-service-label = false/;}' \
+        -e '/^\[telemetry\]/,/^\[/{s/^prometheus-retention-time = .*/prometheus-retention-time = 60/;}' \
+        "${CHAIN_HOME}/config/app.toml"
+    if ! awk '
+        $0 == "[telemetry]" { in_telemetry = 1; next }
+        in_telemetry && /^\[/ { in_telemetry = 0 }
+        in_telemetry && $0 == "service-name = \"truerepublic\"" { service_name = 1 }
+        in_telemetry && $0 == "enabled = true" { enabled = 1 }
+        in_telemetry && $0 == "enable-hostname = false" { hostname = 1 }
+        in_telemetry && $0 == "enable-hostname-label = false" { hostname_label = 1 }
+        in_telemetry && $0 == "enable-service-label = false" { service_label = 1 }
+        in_telemetry && $0 == "prometheus-retention-time = 60" { retention = 1 }
+        END {
+            exit !(service_name && enabled && hostname && hostname_label &&
+                service_label && retention)
+        }
+    ' "${CHAIN_HOME}/config/app.toml"; then
+        echo "Error: failed to configure the complete application telemetry block." >&2
+        exit 1
+    fi
+    rm -f "${CHAIN_HOME}/config/app.toml.bak"
 fi
 
 # Enable Prometheus metrics in config.toml

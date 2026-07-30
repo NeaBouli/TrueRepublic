@@ -7,8 +7,14 @@ scrape_configs:
   - job_name: 'truerepublic-node'
     static_configs:
       - targets: ['127.0.0.1:26660']
-        labels:
-          chain_id: 'truerepublic-1'
+
+  # Cosmos SDK/runtime and bounded TrueRepublic application metrics.
+  - job_name: 'truerepublic-app'
+    metrics_path: '/metrics'
+    params:
+      format: ['prometheus']
+    static_configs:
+      - targets: ['127.0.0.1:1317']
 
   # Prometheus self-monitoring
   - job_name: 'prometheus'

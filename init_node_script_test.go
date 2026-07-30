@@ -19,7 +19,7 @@ func TestInitNodeScriptUsesOnlyPoDBootstrap(t *testing.T) {
 set -eu
 printf '%s\n' "$*" >> "$INVOCATIONS"
 mkdir -p "$FAKE_HOME/config"
-printf 'minimum-gas-prices = ""\n' > "$FAKE_HOME/config/app.toml"
+printf 'minimum-gas-prices = ""\n[telemetry]\nservice-name = ""\nenabled = false\nenable-hostname = false\nenable-hostname-label = false\nenable-service-label = false\nprometheus-retention-time = 0\n[api]\nenable = false\n' > "$FAKE_HOME/config/app.toml"
 printf 'prometheus = false\nprometheus_listen_addr = ":26660"\n' > "$FAKE_HOME/config/config.toml"
 `
 	if err := os.WriteFile(fakeBinary, []byte(fake), 0o700); err != nil {
@@ -65,6 +65,21 @@ printf 'prometheus = false\nprometheus_listen_addr = ":26660"\n' > "$FAKE_HOME/c
 	if !strings.Contains(string(appConfig), `minimum-gas-prices = "1000upnyx"`) {
 		t.Fatalf("minimum gas price was not configured: %s", appConfig)
 	}
+	for _, telemetrySetting := range []string{
+		`service-name = "truerepublic"`,
+		"enabled = true",
+		"enable-hostname = false",
+		"enable-hostname-label = false",
+		"enable-service-label = false",
+		"prometheus-retention-time = 60",
+	} {
+		if !strings.Contains(string(appConfig), telemetrySetting) {
+			t.Fatalf("application telemetry setting %q was not configured: %s", telemetrySetting, appConfig)
+		}
+	}
+	if !strings.Contains(string(appConfig), "[api]\nenable = false") {
+		t.Fatalf("telemetry configuration changed the API enable boundary: %s", appConfig)
+	}
 	cometConfig, err := os.ReadFile(filepath.Join(home, "config", "config.toml"))
 	if err != nil {
 		t.Fatal(err)
@@ -77,6 +92,43 @@ printf 'prometheus = false\nprometheus_listen_addr = ":26660"\n' > "$FAKE_HOME/c
 	}
 	if !strings.Contains(string(output), "bank-backed PoD genesis") {
 		t.Fatalf("wrapper did not report the supported bootstrap path: %s", output)
+	}
+}
+
+func TestInitNodeScriptFailsClosedWhenTelemetryTemplateDrifts(t *testing.T) {
+	t.Parallel()
+
+	tempDir := t.TempDir()
+	home := filepath.Join(tempDir, "node-home")
+	fakeBinary := filepath.Join(tempDir, "truerepublicd")
+	// Deliberately omit enable-service-label. A template drift must stop the
+	// wrapper instead of silently producing a partially configured sink.
+	fake := `#!/bin/sh
+set -eu
+mkdir -p "$FAKE_HOME/config"
+printf 'minimum-gas-prices = ""\n[telemetry]\nservice-name = ""\nenabled = false\nenable-hostname = false\nenable-hostname-label = false\nprometheus-retention-time = 0\n[api]\nenable = false\n' > "$FAKE_HOME/config/app.toml"
+printf 'prometheus = false\nprometheus_listen_addr = ":26660"\n' > "$FAKE_HOME/config/config.toml"
+`
+	if err := os.WriteFile(fakeBinary, []byte(fake), 0o700); err != nil {
+		t.Fatal(err)
+	}
+
+	cmd := exec.Command("bash", "scripts/init-node.sh")
+	cmd.Env = append(os.Environ(),
+		"BINARY="+fakeBinary,
+		"CHAIN_HOME="+home,
+		"BOOTSTRAP_OPERATOR=truerepublic13hgqwy9986x5nk6jt23ns5v7j0acs8qmhchhtw",
+		"FAKE_HOME="+home,
+	)
+	output, err := cmd.CombinedOutput()
+	if err == nil {
+		t.Fatalf("telemetry template drift did not fail closed:\n%s", output)
+	}
+	if !strings.Contains(string(output), "failed to configure the complete application telemetry block") {
+		t.Fatalf("unexpected telemetry template failure: %v\n%s", err, output)
+	}
+	if _, statErr := os.Stat(filepath.Join(home, "config", "app.toml.bak")); statErr != nil {
+		t.Fatalf("failed configuration did not retain its app.toml backup: %v", statErr)
 	}
 }
 
@@ -96,7 +148,17 @@ printf '%s\n' "$*" >> "$INVOCATIONS"
 if [ "${1:-}" = "init" ]; then
   mkdir -p "$HOME/.truerepublic/config"
   printf '{}\n' > "$HOME/.truerepublic/config/genesis.json"
+  printf '[telemetry]\nenabled = false\nprometheus-retention-time = 0\n' > "$HOME/.truerepublic/config/app.toml"
   printf 'prometheus = false\nprometheus_listen_addr = ":26660"\n' > "$HOME/.truerepublic/config/config.toml"
+fi
+if [ "${1:-}" = "start" ]; then
+  printf 'telemetry_enabled=%s\ntelemetry_retention=%s\ntelemetry_service=%s\ntelemetry_hostname=%s\ntelemetry_hostname_label=%s\ntelemetry_service_label=%s\n' \
+    "${TRUEREPUBLICD_TELEMETRY_ENABLED:-}" \
+    "${TRUEREPUBLICD_TELEMETRY_PROMETHEUS_RETENTION_TIME:-}" \
+    "${TRUEREPUBLICD_TELEMETRY_SERVICE_NAME:-}" \
+    "${TRUEREPUBLICD_TELEMETRY_ENABLE_HOSTNAME:-}" \
+    "${TRUEREPUBLICD_TELEMETRY_ENABLE_HOSTNAME_LABEL:-}" \
+    "${TRUEREPUBLICD_TELEMETRY_ENABLE_SERVICE_LABEL:-}" >> "$INVOCATIONS"
 fi
 `
 	if err := os.WriteFile(fakeBinary, []byte(fake), 0o700); err != nil {
@@ -129,7 +191,9 @@ fi
 	if err != nil {
 		t.Fatal(err)
 	}
-	want := "init truerepublic-node --chain-id truerepublic-1 --bootstrap-operator " + operator + " --home " + filepath.Join(tempDir, ".truerepublic") + "\nstart --home " + filepath.Join(tempDir, ".truerepublic") + "\n"
+	want := "init truerepublic-node --chain-id truerepublic-1 --bootstrap-operator " + operator + " --home " + filepath.Join(tempDir, ".truerepublic") +
+		"\nstart --home " + filepath.Join(tempDir, ".truerepublic") +
+		"\ntelemetry_enabled=true\ntelemetry_retention=60\ntelemetry_service=truerepublic\ntelemetry_hostname=false\ntelemetry_hostname_label=false\ntelemetry_service_label=false\n"
 	if string(called) != want {
 		t.Fatalf("unexpected entrypoint commands:\n got: %q\nwant: %q", called, want)
 	}
@@ -159,7 +223,8 @@ fi
 	if err != nil {
 		t.Fatal(err)
 	}
-	want = "start --home " + filepath.Join(tempDir, ".truerepublic") + "\n"
+	want = "start --home " + filepath.Join(tempDir, ".truerepublic") +
+		"\ntelemetry_enabled=true\ntelemetry_retention=60\ntelemetry_service=truerepublic\ntelemetry_hostname=false\ntelemetry_hostname_label=false\ntelemetry_service_label=false\n"
 	if string(called) != want {
 		t.Fatalf("initialized-home entrypoint commands:\n got: %q\nwant: %q", called, want)
 	}
@@ -169,6 +234,29 @@ fi
 	}
 	if !strings.Contains(string(cometConfig), `prometheus_listen_addr = "127.0.0.1:26660"`) {
 		t.Fatalf("initialized-home restart retained a wildcard metrics listener: %s", cometConfig)
+	}
+
+	if err := os.WriteFile(invocations, nil, 0o600); err != nil {
+		t.Fatal(err)
+	}
+	if output, err := run("", "false"); err != nil {
+		t.Fatalf("disabled metrics setting failed: %v\n%s", err, output)
+	}
+	called, err = os.ReadFile(invocations)
+	if err != nil {
+		t.Fatal(err)
+	}
+	want = "start --home " + filepath.Join(tempDir, ".truerepublic") +
+		"\ntelemetry_enabled=false\ntelemetry_retention=0\ntelemetry_service=truerepublic\ntelemetry_hostname=false\ntelemetry_hostname_label=false\ntelemetry_service_label=false\n"
+	if string(called) != want {
+		t.Fatalf("disabled-metrics entrypoint commands:\n got: %q\nwant: %q", called, want)
+	}
+	cometConfig, err = os.ReadFile(filepath.Join(tempDir, ".truerepublic", "config", "config.toml"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !strings.Contains(string(cometConfig), "prometheus = false") {
+		t.Fatalf("disabled metrics setting retained CometBFT telemetry: %s", cometConfig)
 	}
 
 	if err := os.WriteFile(invocations, nil, 0o600); err != nil {

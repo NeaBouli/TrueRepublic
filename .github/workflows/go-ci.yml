@@ -13,9 +13,12 @@ on:
       - '.dockerignore'
       - '.github/workflows/go-ci.yml'
       - 'docker-compose.yml'
+      - 'monitoring/**'
+      - 'nginx/**'
       - 'scripts/backup.sh'
       - 'scripts/docker-entrypoint.sh'
       - 'scripts/go-packages.sh'
+      - 'scripts/init-node.sh'
       - 'scripts/restore.sh'
       - 'scripts/test-go-packages.sh'
   pull_request:
@@ -27,9 +30,12 @@ on:
       - '.dockerignore'
       - '.github/workflows/go-ci.yml'
       - 'docker-compose.yml'
+      - 'monitoring/**'
+      - 'nginx/**'
       - 'scripts/backup.sh'
       - 'scripts/docker-entrypoint.sh'
       - 'scripts/go-packages.sh'
+      - 'scripts/init-node.sh'
       - 'scripts/restore.sh'
       - 'scripts/test-go-packages.sh'
 
@@ -188,9 +194,11 @@ jobs:
             rpc_ok=false
             wallet_ok=false
             metrics_ok=false
+            app_metrics_ok=false
             grafana_ok=false
             live_ok=false
             ready_ok=false
+            metrics_proxy_blocked=false
             curl --fail --silent http://127.0.0.1:8080/rpc/status >/dev/null && rpc_ok=true
             curl --fail --silent http://127.0.0.1:8080/ >/dev/null && wallet_ok=true
             docker compose exec -T truerepublic-node truerepublicd healthcheck live --timeout 2s &&
@@ -201,12 +209,73 @@ jobs:
               jq -e '.data.activeTargets[] | select(.labels.job == "truerepublic-node" and .health == "up")' >/dev/null; then
               metrics_ok=true
             fi
+            if curl --fail --silent http://127.0.0.1:9091/api/v1/targets |
+              jq -e '.data.activeTargets[] | select(.labels.job == "truerepublic-app" and .health == "up")' >/dev/null; then
+              app_metrics_ok=true
+            fi
             curl --fail --silent http://127.0.0.1:3000/api/health |
               jq -e '.database == "ok"' >/dev/null && grafana_ok=true
+            if [ "$(curl --silent --output /dev/null --write-out '%{http_code}' \
+              http://127.0.0.1:8080/api/metrics?format=prometheus)" = "404" ]; then
+              metrics_proxy_blocked=true
+            fi
             if [ "$rpc_ok" = true ] && [ "$wallet_ok" = true ] &&
               [ "$live_ok" = true ] && [ "$ready_ok" = true ] &&
-              [ "$metrics_ok" = true ] && [ "$grafana_ok" = true ]; then
+              [ "$metrics_ok" = true ] && [ "$app_metrics_ok" = true ] &&
+              [ "$grafana_ok" = true ] && [ "$metrics_proxy_blocked" = true ]; then
               exit 0
+            fi
+            sleep 2
+          done
+          docker compose ps
+          docker compose logs
+          exit 1
+
+      - name: Verify metrics contract and restart progression
+        run: |
+          docker compose exec -T truerepublic-node \
+            wget -qO- http://127.0.0.1:26660/metrics > comet-metrics.prom
+          for metric in \
+            cometbft_consensus_height \
+            cometbft_p2p_peers \
+            cometbft_consensus_block_interval_seconds; do
+            grep -q "^${metric}" comet-metrics.prom
+          done
+
+          docker compose exec -T truerepublic-node \
+            wget -qO- 'http://127.0.0.1:1317/metrics?format=prometheus' > app-metrics-before.prom
+          for metric in \
+            go_goroutines \
+            process_resident_memory_bytes \
+            truerepublic_app_last_successful_block_height \
+            truerepublic_app_completed_blocks_total \
+            truerepublic_app_last_successful_invariant_cycle_height \
+            truerepublic_token_pnyx_supply_base_units \
+            truerepublic_token_pnyx_supply_headroom_base_units; do
+            grep -q "^${metric}" app-metrics-before.prom
+          done
+
+          first_height=$(awk '$1 == "truerepublic_app_last_successful_block_height" { print $2; exit }' app-metrics-before.prom)
+          first_invariant=$(awk '$1 == "truerepublic_app_last_successful_invariant_cycle_height" { print $2; exit }' app-metrics-before.prom)
+          supply=$(awk '$1 == "truerepublic_token_pnyx_supply_base_units" { print $2; exit }' app-metrics-before.prom)
+          headroom=$(awk '$1 == "truerepublic_token_pnyx_supply_headroom_base_units" { print $2; exit }' app-metrics-before.prom)
+          awk -v height="$first_height" -v invariant="$first_invariant" \
+            'BEGIN { exit !(height >= 1 && invariant == height) }'
+          awk -v supply="$supply" -v headroom="$headroom" \
+            'BEGIN { exit !(supply >= 0 && headroom >= 0 && supply + headroom == 21000000000000) }'
+
+          docker compose restart truerepublic-node
+          for attempt in $(seq 1 90); do
+            if docker compose exec -T truerepublic-node \
+              truerepublicd healthcheck ready --timeout 2s &&
+              docker compose exec -T truerepublic-node \
+              wget -qO- 'http://127.0.0.1:1317/metrics?format=prometheus' > app-metrics-after.prom; then
+              next_height=$(awk '$1 == "truerepublic_app_last_successful_block_height" { print $2; exit }' app-metrics-after.prom)
+              next_invariant=$(awk '$1 == "truerepublic_app_last_successful_invariant_cycle_height" { print $2; exit }' app-metrics-after.prom)
+              if awk -v before="$first_height" -v after="$next_height" -v invariant="$next_invariant" \
+                'BEGIN { exit !(after > before && invariant == after) }'; then
+                exit 0
+              fi
             fi
             sleep 2
           done

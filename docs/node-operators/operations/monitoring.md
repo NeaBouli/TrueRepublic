@@ -4,7 +4,11 @@
 
 TrueRepublic's Docker Compose includes Prometheus and Grafana pre-configured.
 Set `PROMETHEUS_ENABLED=true` in the local `.env`; the entrypoint keeps the
-node endpoint on loopback and Prometheus shares that network namespace.
+two node endpoints on loopback and Prometheus shares that network namespace.
+The same switch enables CometBFT instrumentation and the Cosmos SDK Prometheus
+sink. When it is false, CometBFT instrumentation is disabled and the
+application `/metrics` route is not registered; the Cosmos SDK gateway
+fallback returns `501 Not Implemented`.
 
 ### Accessing Dashboards
 
@@ -15,8 +19,16 @@ node endpoint on loopback and Prometheus shares that network namespace.
 
 ### Prometheus Targets
 
-Prometheus scrapes CometBFT metrics from port 26660. Check target health at:
-`http://localhost:9091/targets`
+Prometheus scrapes two private targets:
+
+| Job | Private endpoint | Evidence |
+|-----|------------------|----------|
+| `truerepublic-node` | `127.0.0.1:26660/metrics` | CometBFT consensus, block, peer, and mempool signals |
+| `truerepublic-app` | `127.0.0.1:1317/metrics?format=prometheus` | Cosmos SDK, Go/process, and bounded TrueRepublic application signals |
+
+Check both targets at `http://localhost:9091/targets`. They must remain
+same-host/private. Nginx returns 404 for `/api/metrics`, so the SDK endpoint
+cannot leak through the query proxy.
 
 ## Liveness and Readiness
 
@@ -55,7 +67,13 @@ These signals prove local process/synchronization state only. They do not prove
 validator signing, peer diversity, application invariants, or production
 rollout readiness.
 
-## Key Metrics
+## Verified Metrics Baseline
+
+The repository's process and Compose gates require the stable categories and
+custom metric families below. The upstream `truerepublic_server_info` signal is
+informational near startup and is not a durable gate because it legitimately
+expires with the SDK retention window. The custom `truerepublic_*` collectors
+carry no user, address, transaction, request-path, peer, or deployment labels.
 
 ### Block Production
 
@@ -81,9 +99,40 @@ rollout readiness.
 | `cometbft_consensus_byzantine_validators` | Misbehaving validators | Should be 0 |
 | `cometbft_consensus_validators` | Total active validators | Should match expected |
 
+### Runtime and Application
+
+| Metric | Source | Meaning |
+|--------|--------|---------|
+| `go_goroutines` | Go runtime | Current goroutine count |
+| `process_resident_memory_bytes` | Process collector | Resident memory used by the daemon |
+| `truerepublic_server_info` | Cosmos SDK | Recent SDK/build identity signal |
+| `truerepublic_app_last_successful_block_height` | TrueRepublic | Latest height whose full application EndBlock returned successfully |
+| `truerepublic_app_completed_blocks_total` | TrueRepublic | Successful application EndBlock cycles in this process |
+| `truerepublic_app_last_successful_invariant_cycle_height` | TrueRepublic | Latest height at which every registered crisis invariant passed |
+| `truerepublic_token_pnyx_supply_base_units` | TrueRepublic bank state | Canonical PNYX supply in `upnyx` |
+| `truerepublic_token_pnyx_supply_headroom_base_units` | TrueRepublic bank state | Remaining distance to the fixed 21,000,000 PNYX cap |
+
+The invariant metric is valid because the crisis module is last in the
+EndBlock order and its check period is one. A broken invariant panics before
+EndBlock can return success. The two application heights are EndBlock-success
+signals, not a substitute for independently observing a durable CometBFT
+commit; compare them with `cometbft_consensus_height`.
+
+The SDK Prometheus sink uses a 60-second retention window to limit stale or
+high-cardinality SDK series. The fixed TrueRepublic collectors and Go/process
+collectors do not depend on that recent-activity window. Keep both endpoints
+private even with retention enabled: telemetry is operational evidence, not an
+authorization or data-loss-prevention boundary. Cosmos SDK query telemetry can
+derive recent series names from query paths; the short retention, private
+listener, and reviewed proxy/rate-limit boundary reduce but do not eliminate
+cardinality pressure. Production exposure and capacity qualification therefore
+remain blocked.
+
 ## Grafana Dashboard
 
-The pre-configured dashboard (`monitoring/grafana/dashboards/`) shows:
+The repository's current dashboard definition
+(`monitoring/grafana/dashboards/blockchain.json`) targets this CometBFT
+baseline:
 
 - **Block height** over time
 - **Connected peers** gauge
@@ -92,6 +141,12 @@ The pre-configured dashboard (`monitoring/grafana/dashboards/`) shows:
 - **Block interval** average
 - **Missing validators** counter
 - **Transactions per block** rate
+
+GH-80 proves Grafana process health, not successful dashboard provisioning or
+panel-query rendering. Application panels, reviewed alert rules, objectives,
+escalation ownership, paging integration, and dashboard runtime evidence are
+not shipped. They remain the next Phase-6 gate; do not treat this baseline as
+an active production monitoring program.
 
 ## Manual Monitoring
 
@@ -123,7 +178,9 @@ truerepublicd query truedemocracy validators
 
 ### Prometheus Alert Rules
 
-Create alert rules in `monitoring/prometheus-alerts.yml`:
+The following is an illustrative starting point only. The repository does not
+currently ship `monitoring/prometheus-alerts.yml`, Alertmanager routing,
+objectives, or an on-call owner:
 
 ```yaml
 groups:

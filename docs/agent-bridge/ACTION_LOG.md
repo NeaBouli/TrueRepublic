@@ -1627,3 +1627,81 @@
   metrics and operator evidence, not production deployment.
 - No production, server, collector, deployment, credential, key, mainnet,
   consensus/state, or public-network action was performed.
+
+## 2026-07-30 09:50 EEST - GH-80 node/application metrics baseline started
+
+- Opened GH-80 under rollout tracker GH-29 and created
+  `feature/GH-80-metrics-baseline` from clean, synchronized `main` at
+  `ed9c971`.
+- Existing evidence covers a loopback-only CometBFT Prometheus target and
+  verifies target health, but application telemetry is disabled and runtime
+  evidence does not require Cosmos SDK, Go/process, TrueRepublic application,
+  or invariant-success metric families.
+- Scope is a private two-source baseline: retain CometBFT consensus/peer/block
+  metrics, opt in to Cosmos SDK Prometheus telemetry through the existing
+  loopback API surface, add bounded public-chain-safe TrueRepublic metrics, and
+  prove required families and progression through repository tests and
+  Docker/Compose CI.
+- Dashboards, alerts, objectives, escalation ownership, capacity, retention,
+  and production collector/topology deployment remain separate rollout gates.
+- No production, server, collector, deployment, credential, key, mainnet,
+  consensus/state, or public-network action is authorized.
+- Next: delegate one bounded secret-free implementation block to Kimi K3 while
+  Sol owns the metric contract, network/security boundary, integration,
+  complete verification, GitHub writes, and closure.
+
+## 2026-07-30 10:20 EEST - GH-80 local implementation and audit complete
+
+- Kimi K3 implemented the bounded label-free application collector core,
+  collision-safe singleton registration, app EndBlock integration, invariant
+  coupling guard, and focused tests. Sol reviewed the complete write diff and
+  integrated opt-in/opt-out configuration, private two-source scraping,
+  native process/restart/disabled evidence, Compose CI assertions, operator
+  guidance, and the structured GH80 audit.
+- Five custom families cover last successful application height, completed
+  application blocks in the process, last successful invariant-cycle height,
+  canonical PNYX supply, and exact fixed-cap headroom. No custom label is
+  derived from user, address, transaction, request, peer, hostname, service,
+  or deployment input.
+- Focused build/vet/unit/race/root/process/wrapper/policy/YAML/shell/docs/diff
+  checks pass. The initial full root run exposed Sol's concurrent nonportable
+  BSD `sed` expression; replacing it with portable range expressions fixed the
+  real failure, and the wrapper plus repeated full root suite pass.
+- Audit result is 0 FAIL / 3 WARN / 10 PASS. Generic SDK query-path
+  cardinality stays private and 60-second retained; EndBlock height is not a
+  committed-height claim; exact-head Docker/Compose remains mandatory because
+  Docker is unavailable locally.
+- Next: independent full-diff review, any remediation, complete local
+  `make verify` and recovery matrix, then a reviewed draft PR.
+
+## 2026-07-30 11:22 EEST - GH-80 review findings remediated
+
+- Kimi's independent full-diff review reproduced a policy-string mismatch, the
+  Cosmos SDK gateway's raw disabled-route `501 Not Implemented` behavior, and
+  the 60-second expiry of the one-shot `truerepublic_server_info` series.
+- Sol fixed the policy guard, pinned the verified 501 fail-closed lifecycle,
+  removed the expiring SDK series from the durable Compose contract, blocked
+  exact `/api/metrics` at nginx with 404, and added `nginx/**` workflow
+  triggers.
+- Fresh policy/coupling tests and the compiled daemon
+  start/restart/progression/disabled lifecycle pass. This supersedes the
+  earlier intermediate-tree `404-disable` and complete-root PASS wording.
+- The eight-scenario recovery matrix and remaining complete repository gates
+  are still running; GH-80 is not Done and has not been published.
+
+## 2026-07-30 12:04 EEST - GH-80 complete local gates pass
+
+- Kimi full and incremental reviews have zero open P0/P1. Sol removed the
+  expiring SDK startup series from process assertions and added a portable,
+  fail-loud `[telemetry]` postcondition with backup preservation.
+- `make verify` passes the exact package selector, build, vet, race, and
+  coverage; root is 69.1% covered. All eight required recovery scenarios pass
+  in 1155.6 seconds.
+- Rust format/clippy/build, 26 tests, audit, and the maintained client-web
+  install/lint/eight tests/build/high-audit pass.
+- Legacy web/mobile wallet audits remain informationally red with inherited
+  high/critical dependency advisories; their existing workflows use
+  `|| true`, and GH-80 does not alter those dependencies.
+- Docker is unavailable locally. GH-80 is ready for branch publication but
+  remains In Progress until exact-head GitHub Docker/Compose and all other
+  required checks pass.
