@@ -1822,3 +1822,31 @@
   verified.
 - This append-only handoff becomes the replacement exact head. Fresh docs,
   security, static/review checks and merge remain required.
+
+## 2026-07-30 22:23 EEST - Phase 6 observability operations started
+
+- Reconciled clean local `main` with exact `origin/main` `844c498`; no open PR
+  exists and the latest main Pages and Security workflows pass.
+- Inspected Prometheus, Grafana, Compose, CI, application metrics, operator
+  documentation, rollout tracker, TODO, and security boundaries.
+- Confirmed the next bounded gap: the dashboard is stored in an API-wrapper
+  shape unsuitable for Grafana file provisioning; CI does not prove the
+  dashboard, panel expressions, loaded rules, or alert behavior; no rule file,
+  service objectives, or escalation ownership is shipped.
+- Chosen boundary: repository-only dashboards, rules, objectives, role-based
+  ownership, tests, CI, and docs. External paging and production deployment
+  remain explicitly excluded.
+- Next: create the GitHub child issue and issue branch, assign a bounded
+  secret-free implementation block to Kimi K3, and retain architecture,
+  security, integration, GitHub, and final verification with Sol.
+
+## 2026-07-30 22:25 EEST - GH-85 ticket and branch created
+
+- Created GH-85 with explicit acceptance, verification, risk, and
+  non-production boundaries.
+- Created `feature/GH-85-observability-operations` from exact main `844c498`.
+- The task will treat dashboard provisioning, panel queries, loaded rules, and
+  selected alert transitions as runtime/test contracts rather than
+  documentation-only claims.
+- Next: publish the initial Bridge handoff, delegate the bounded dashboard/rule
+  implementation, and build the independent repository/CI validation path.

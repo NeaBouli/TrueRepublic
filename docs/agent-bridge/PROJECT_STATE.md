@@ -104,7 +104,8 @@ Updated: 2026-07-30 10:37 UTC
 - Legacy local checkout: preserved at `/Users/gio/Desktop/repos/TrueRepublic`
 - GitHub epic: #4
 - Current open GitHub issue set after GH-80 closure: #4 recovery epic, #7
-  audit/review parent, and #29 rollout tracker.
+  audit/review parent, #29 rollout tracker, and #85 for the active bounded
+  dashboard/alerts/objectives/escalation-ownership implementation.
 
 ## Verified state
 

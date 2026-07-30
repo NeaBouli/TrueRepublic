@@ -2608,3 +2608,45 @@ Go/Rust/Node security, docs, DeepScan, and CodeRabbit. GH-51 is closed.
   threads, synchronize clean main, and verify deployed Pages.
 
 ---
+
+## 2026-07-30 22:23 EEST Phase 6 dashboards, alerts, objectives, and ownership → In Progress
+
+- **Baseline:** clean `main` equals `origin/main` at `844c498`; the latest
+  Pages and Security workflows are green, no pull request is open, and GH-29
+  remains the canonical rollout tracker.
+- **Scope:** ship a provisioned Grafana dashboard with CometBFT plus bounded
+  application panels, reviewed Prometheus alert rules, recovery/testnet
+  service objectives, role-based escalation ownership, deterministic
+  validation, operator guidance, and GitHub runtime evidence.
+- **Finding:** the existing dashboard file uses Grafana's API wrapper shape
+  while file provisioning expects a native dashboard document. Current CI
+  proves only Grafana health and the datasource, not dashboard provisioning,
+  panel expressions, loaded rules, or alert behavior.
+- **Boundary:** repository configuration, tests, CI, and documentation only.
+  No Alertmanager destination, external paging, production topology, server,
+  deployment, IAM, credentials, keys, mainnet, or public-network mutation.
+- **Risk:** medium. Incorrect queries or thresholds can create silent gaps or
+  alert noise; file provisioning and rule evaluation therefore require
+  machine-checked and Compose runtime evidence.
+- **Next:** create one bounded GitHub child issue, branch from this exact
+  baseline, delegate the dashboard/rule implementation block to Kimi K3, then
+  have Sol review, integrate, and run focused plus complete verification.
+
+---
+
+## 2026-07-30 22:25 EEST GH-85 observability operations → In Progress
+
+- **Issue:** [GH-85](https://github.com/NeaBouli/TrueRepublic/issues/85)
+- **Branch:** `feature/GH-85-observability-operations` from exact clean main
+  `844c498`.
+- Acceptance criteria cover native dashboard provisioning, reviewed
+  CometBFT/application panels, Prometheus rule loading and deterministic rule
+  tests, recovery/testnet objectives, role-based escalation ownership,
+  Compose API/query evidence, documentation, and final GitHub verification.
+- External notification routing, production deployment, and production SLO
+  approval are explicitly excluded.
+- **Next:** record the queue/state transition, publish this initial handoff,
+  then assign the bounded dashboard/rule file implementation to Kimi K3 while
+  Sol owns validation architecture, CI integration, documentation, and review.
+
+---
