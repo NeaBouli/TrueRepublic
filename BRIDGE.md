@@ -2420,3 +2420,41 @@ Go/Rust/Node security, docs, DeepScan, and CodeRabbit. GH-51 is closed.
   exact head end to end.
 
 ---
+
+## 2026-07-30 13:10 EEST GH-80 External Review → Fixes In Progress
+
+- Exact head `24e00eb` passed Docker/Compose, root build/test, all eight
+  recovery scenarios, docs, security, DeepScan, and CodeRabbit's status gate.
+- CodeRabbit completed its first non-draft review with three unresolved,
+  independently verified findings:
+  1. prefix/substring metric checks could accept a sibling sample or HELP line;
+  2. the fail-closed init subprocess lacked a local timeout;
+  3. nginx blocked `/api/metrics` but not its descendant paths.
+- All three are within GH-80's fail-closed observability scope. Minimal fixes
+  will use exact sample parsing, a bounded command context, and a descendant-
+  aware 404 rule with runtime coverage.
+- The generic docstring-coverage warning is not a changed-code defect or a
+  repository-required gate and will not trigger unrelated repo-wide churn.
+- **Next:** validate the focused review fixes, publish them, resolve only the
+  supported threads, and require the replacement exact head to pass.
+
+---
+
+## 2026-07-30 13:18 EEST GH-80 Review Fixes → Locally Verified
+
+- Exact Prometheus parsing now rejects HELP text and sibling names; histogram
+  `_sum` and `_count` samples are required explicitly.
+- Both init-script subprocess tests use 10-second command contexts.
+- Nginx denies `/api/metrics` and every descendant path; CI now proves both the
+  query-string form and `/api/metrics/` return 404.
+- Focused four-test set PASS in 4.719s; the false-positive parser regression,
+  standalone exact-sample shell proof, workflow YAML, `go vet .`, docs
+  consistency, and diff checks PASS.
+- Full `make verify` PASS: build, vet, race, coverage, and all nine repository
+  packages; root coverage remains 69.1%.
+- Local nginx binary remains unavailable. Exact syntax/runtime proof is
+  delegated to the mandatory Docker/Compose gate on the replacement head.
+- **Next:** publish the review-fix commit, await all exact-head gates and the
+  incremental CodeRabbit review, then resolve supported threads.
+
+---

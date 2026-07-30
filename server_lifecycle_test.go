@@ -388,14 +388,6 @@ func waitForApplicationMetrics(
 }
 
 func parseApplicationMetrics(body string) (applicationMetricsSnapshot, error) {
-	for _, required := range []string{
-		"go_goroutines ",
-		"process_resident_memory_bytes ",
-	} {
-		if !strings.Contains(body, required) {
-			return applicationMetricsSnapshot{}, fmt.Errorf("required SDK/runtime metric %q is missing", required)
-		}
-	}
 	read := func(name string) (float64, error) {
 		scanner := bufio.NewScanner(strings.NewReader(body))
 		for scanner.Scan() {
@@ -408,6 +400,14 @@ func parseApplicationMetrics(body string) (applicationMetricsSnapshot, error) {
 			return 0, err
 		}
 		return 0, fmt.Errorf("metric %s is missing", name)
+	}
+	for _, required := range []string{
+		"go_goroutines",
+		"process_resident_memory_bytes",
+	} {
+		if _, err := read(required); err != nil {
+			return applicationMetricsSnapshot{}, fmt.Errorf("required SDK/runtime metric: %w", err)
+		}
 	}
 	var snapshot applicationMetricsSnapshot
 	values := []struct {
@@ -428,6 +428,21 @@ func parseApplicationMetrics(body string) (applicationMetricsSnapshot, error) {
 		*value.target = parsed
 	}
 	return snapshot, nil
+}
+
+func TestParseApplicationMetricsRequiresExactRuntimeSamples(t *testing.T) {
+	body := `# HELP go_goroutines Number of goroutines.
+go_goroutines_extra 7
+process_resident_memory_bytes_total 1024
+truerepublic_app_last_successful_block_height 1
+truerepublic_app_last_successful_invariant_cycle_height 1
+truerepublic_app_completed_blocks_total 1
+truerepublic_token_pnyx_supply_base_units 0
+truerepublic_token_pnyx_supply_headroom_base_units 21000000000000
+`
+	if _, err := parseApplicationMetrics(body); err == nil {
+		t.Fatal("metric comments and sibling names must not satisfy exact runtime samples")
+	}
 }
 
 func waitForApplicationMetricsDisabled(t *testing.T, url string, cmd *exec.Cmd, logFile *os.File) {

@@ -1,11 +1,13 @@
 package main
 
 import (
+	"context"
 	"os"
 	"os/exec"
 	"path/filepath"
 	"strings"
 	"testing"
+	"time"
 )
 
 func TestInitNodeScriptUsesOnlyPoDBootstrap(t *testing.T) {
@@ -26,7 +28,9 @@ printf 'prometheus = false\nprometheus_listen_addr = ":26660"\n' > "$FAKE_HOME/c
 		t.Fatal(err)
 	}
 
-	cmd := exec.Command("bash", "scripts/init-node.sh")
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+	cmd := exec.CommandContext(ctx, "bash", "scripts/init-node.sh")
 	cmd.Env = append(os.Environ(),
 		"BINARY="+fakeBinary,
 		"CHAIN_ID=truerepublic-wrapper-test",
@@ -113,7 +117,9 @@ printf 'prometheus = false\nprometheus_listen_addr = ":26660"\n' > "$FAKE_HOME/c
 		t.Fatal(err)
 	}
 
-	cmd := exec.Command("bash", "scripts/init-node.sh")
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+	cmd := exec.CommandContext(ctx, "bash", "scripts/init-node.sh")
 	cmd.Env = append(os.Environ(),
 		"BINARY="+fakeBinary,
 		"CHAIN_HOME="+home,

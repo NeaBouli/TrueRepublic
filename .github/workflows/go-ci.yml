@@ -199,6 +199,7 @@ jobs:
             live_ok=false
             ready_ok=false
             metrics_proxy_blocked=false
+            metrics_descendant_proxy_blocked=false
             curl --fail --silent http://127.0.0.1:8080/rpc/status >/dev/null && rpc_ok=true
             curl --fail --silent http://127.0.0.1:8080/ >/dev/null && wallet_ok=true
             docker compose exec -T truerepublic-node truerepublicd healthcheck live --timeout 2s &&
@@ -219,10 +220,15 @@ jobs:
               http://127.0.0.1:8080/api/metrics?format=prometheus)" = "404" ]; then
               metrics_proxy_blocked=true
             fi
+            if [ "$(curl --silent --output /dev/null --write-out '%{http_code}' \
+              http://127.0.0.1:8080/api/metrics/)" = "404" ]; then
+              metrics_descendant_proxy_blocked=true
+            fi
             if [ "$rpc_ok" = true ] && [ "$wallet_ok" = true ] &&
               [ "$live_ok" = true ] && [ "$ready_ok" = true ] &&
               [ "$metrics_ok" = true ] && [ "$app_metrics_ok" = true ] &&
-              [ "$grafana_ok" = true ] && [ "$metrics_proxy_blocked" = true ]; then
+              [ "$grafana_ok" = true ] && [ "$metrics_proxy_blocked" = true ] &&
+              [ "$metrics_descendant_proxy_blocked" = true ]; then
               exit 0
             fi
             sleep 2
@@ -239,7 +245,15 @@ jobs:
           require_metric() {
             file="$1"
             metric="$2"
-            if grep -q "^${metric}" "$file"; then
+            if awk -v metric="$metric" \
+              '!/^#/ && NF >= 2 {
+                name=$1
+                sub(/\{.*/, "", name)
+                if (name == metric) {
+                  found=1
+                }
+              }
+              END { exit !found }' "$file"; then
               return 0
             fi
             echo "::error::required metric ${metric} is missing from ${file}"
@@ -253,7 +267,8 @@ jobs:
           for metric in \
             cometbft_consensus_height \
             cometbft_mempool_size \
-            cometbft_consensus_block_interval_seconds; do
+            cometbft_consensus_block_interval_seconds_sum \
+            cometbft_consensus_block_interval_seconds_count; do
             require_metric comet-metrics.prom "$metric"
           done
 

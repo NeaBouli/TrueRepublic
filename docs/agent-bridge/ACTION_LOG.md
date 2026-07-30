@@ -1736,3 +1736,12 @@
   consistency, and diff checks pass locally.
 - Reconciled GitHub's stale in-progress status against the completed runner
   log: all eight recovery scenarios pass in 666.955s; cleanup also completed.
+
+## 2026-07-30 13:10 EEST - GH-80 CodeRabbit review fixes started
+
+- Exact head `24e00eb` is fully green across GitHub checks.
+- Verified all three actionable review threads: exact metric samples, bounded
+  init subprocess execution, and descendant metrics-path denial.
+- Applying the minimal fixes with focused tests before publication.
+- All focused checks plus full `make verify` now pass; root coverage is 69.1%.
+  Nginx syntax/runtime remains an exact-head Docker requirement.
