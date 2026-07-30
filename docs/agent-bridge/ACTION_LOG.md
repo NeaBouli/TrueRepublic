@@ -1973,3 +1973,17 @@
   diff hygiene pass.
 - Next: commit/push, reply to and resolve all three threads, then require the
   complete replacement-head GitHub matrix.
+
+## 2026-07-30 23:58 EEST - Docker cardinality root cause fixed
+
+- Exact head `513a122` passed Go build/race/coverage and every completed
+  docs/static/security gate. Docker reached the new diagnostic assertion and
+  reported `result_count: 2` for the unscoped application-height query.
+- The process legitimately exports registered application metrics on both
+  monitored surfaces. The last four-series presence loop alone omitted the
+  canonical `job="truerepublic-app"` selector used everywhere else.
+- Added the explicit app-job selector to all four required-series checks while
+  retaining the exact-one cardinality requirement.
+- Workflow YAML, selector PromQL, focused Go contract, and diff hygiene pass.
+- Next: publish and require a complete replacement-head GitHub matrix; Docker
+  and recovery remain mandatory.

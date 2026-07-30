@@ -2811,3 +2811,24 @@ Go/Rust/Node security, docs, DeepScan, and CodeRabbit. GH-51 is closed.
   require its full GitHub matrix.
 
 ---
+
+## 2026-07-30 23:58 EEST PR #86 Docker cardinality root cause → Fixed
+
+- Exact review head `513a122` passed Go build/race/coverage in 7m28s and all
+  completed docs/static/security gates. Docker reached the fully diagnostic
+  observability assertion and reported two results for an unscoped
+  application-height query.
+- **Root cause:** the final four-series presence loop omitted the canonical
+  `job="truerepublic-app"` selector. The running process legitimately exposes
+  the registered application metrics through both monitored surfaces, so an
+  unscoped query returns two series. This was a deterministic CI assertion
+  error, not missing telemetry and not a relaxed cardinality boundary.
+- **Fix:** all four final required-series queries now use the same explicit
+  `truerepublic-app` job selector as the dashboard, alerts, objectives, and
+  Grafana proxy proof. The gate still requires exactly one canonical series.
+- **PASS:** workflow YAML, all four selector PromQL expressions, focused
+  repository contract, and diff hygiene.
+- **Next:** publish the corrected head and require the complete GitHub matrix
+  once more; no merge until Docker and recovery both pass.
+
+---

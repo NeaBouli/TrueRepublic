@@ -385,10 +385,10 @@ jobs:
           done
 
           for expression in \
-            'truerepublic_app_last_successful_block_height' \
-            'truerepublic_app_last_successful_invariant_cycle_height' \
-            'truerepublic_token_pnyx_supply_base_units' \
-            'truerepublic_token_pnyx_supply_headroom_base_units'; do
+            'truerepublic_app_last_successful_block_height{job="truerepublic-app"}' \
+            'truerepublic_app_last_successful_invariant_cycle_height{job="truerepublic-app"}' \
+            'truerepublic_token_pnyx_supply_base_units{job="truerepublic-app"}' \
+            'truerepublic_token_pnyx_supply_headroom_base_units{job="truerepublic-app"}'; do
             metric_ok=false
             query_result='{"status":"unavailable"}'
             for _ in $(seq 1 15); do
