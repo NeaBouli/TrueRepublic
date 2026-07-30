@@ -1,6 +1,6 @@
 # Project State
 
-Updated: 2026-07-29 16:02 UTC
+Updated: 2026-07-30 04:16 UTC
 
 ## Repository
 
@@ -103,11 +103,17 @@ Updated: 2026-07-29 16:02 UTC
 - Recovery worktree: `/Users/gio/Desktop/repos/TrueRepublic-recovery`
 - Legacy local checkout: preserved at `/Users/gio/Desktop/repos/TrueRepublic`
 - GitHub epic: #4
-- Current open GitHub issue set after GH-74 closure: #4 recovery epic, #7
+- Current open GitHub issue set after GH-77 closure: #4 recovery epic, #7
   audit/review parent, and #29 rollout tracker.
 
 ## Verified state
 
+- GH-77 is closed through merged PR #78 (`133fb3b`). Supported daemon
+  operation now enforces structured JSON at the central SDK/CometBFT logger,
+  defensively redacts reviewed credential/key/private-transaction patterns,
+  rejects raw KV trace stores, and validates normal native/container output.
+  Merged `main` records 1,092 cases: 1,058 Go, 26 Rust, and eight
+  maintained-client tests.
 - GH-74 is closed through merged PR #75 (`468a43a`). It adds dependency-free
   `healthcheck live|ready` commands with
   literal-loopback-only RPC targets, bounded time/body handling, no environment
@@ -323,7 +329,7 @@ close bounded four-validator failure/restart/catch-up, partition-recovery,
 trusted state-sync, sanitized backup/restore/export/import, compatible binary
 replacement, fail-before-open rollback, and validator identity cold-failover
 slices. Consensus-breaking state migration, partially applied migration
-recovery, structured logging, broader metrics/alerting,
+recovery, broader metrics/alerting,
 load/capacity/topology qualification, IBC, and independent operations review
 remain open. Authenticated consensus-key rotation, compromised-key eviction,
 and deterministic network policy are closed by GH-56 and GH-71.

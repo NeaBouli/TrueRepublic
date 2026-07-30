@@ -38,7 +38,7 @@
 - [x] GH-77: implement and locally verify structured JSON daemon logging with
   central secret/private-transaction redaction, focused unit and real-process
   regressions, safe operator defaults, and documentation.
-- [ ] GH-77: publish the reviewed branch, obtain green exact-head GitHub
+- [x] GH-77: publish the reviewed branch, obtain green exact-head GitHub
   build/race/coverage, recovery, Docker/Compose, docs/static/security, and
   independent review evidence; merge, close, and synchronize GH-29/Bridge.
 

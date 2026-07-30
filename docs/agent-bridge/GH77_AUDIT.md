@@ -1,7 +1,7 @@
 # TrueRepublic GH-77 — Secret-Safe Structured Logging Audit
 > Scope: `observability/`, daemon logger interception, native/container start
 > paths, Docker log CI, operator guidance, and GH-77 coordination · Date:
-> 2026-07-30 · Result: 0 FAIL / 2 WARN / 15 PASS
+> 2026-07-30 · Result: 0 FAIL / 1 WARN / 16 PASS
 
 ## Summary
 
@@ -11,8 +11,8 @@ credential, key, signer, transaction, proof, and signature data. Native start,
 restart, explicit/environment log-format overrides, raw trace-store refusal,
 and the logger's adversarial value surface have focused regression evidence.
 No consensus, application state, production collector, server, or public
-network is changed. The code is locally reviewable, but exact final-head
-Docker/Compose and complete CI evidence remain required before merge.
+network is changed. Exact head `fd8378c` passed all 11 GitHub checks and merged
+through PR #78 as `133fb3b`; both review threads are resolved.
 
 ## Findings by domain
 
@@ -151,13 +151,14 @@ Docker/Compose and complete CI evidence remain required before merge.
     job.
   - Fix: none.
 
-- **[MEDIUM] Exact container and Compose runtime remain CI-only evidence** —
+- **[PASS] Exact container and Compose runtime evidence is green** —
   `.github/workflows/go-ci.yml`
-  - What: Docker is unavailable in the local environment.
-  - Path: an image/entrypoint/runner-only difference can only be disproved on
-    the exact published head.
-  - Fix: keep Docker/Compose, security, and complete recovery jobs as mandatory
-    merge gates.
+  - What: exact head `fd8378c` built the image, started and restarted a
+    persistent node, advanced height, validated both log streams as structured
+    JSON Lines, and passed the full loopback Compose stack in 6m57s.
+  - Path: the GitHub runner disproves image, entrypoint, restart, and
+    Compose-only regressions that could not be tested without local Docker.
+  - Fix: none.
 
 ### Operator boundary — PASS
 
@@ -182,7 +183,7 @@ None.
 
 ### 🟡 MEDIUM
 
-1. Require exact-head GitHub Docker/Compose evidence before merge.
+None.
 
 ### 🟢 LOW
 
