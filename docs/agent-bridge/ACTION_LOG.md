@@ -2024,3 +2024,14 @@
   aligned the roadmap date with the GitHub publication date.
 - Next: validate, publish the corrected head, resolve both threads, and require
   the complete replacement-head GitHub matrix.
+
+## 2026-07-31 00:46 EEST - GH-85 public closure complete
+
+- PR #87 exact head `3ace039` passed all docs/static/security/review gates with
+  zero unresolved threads and merged as `0aaba4b`.
+- Post-merge Security Scan and GitHub Pages deployment pass.
+- The live public page returns HTTP 200 with 1,105 tests, 11/59 overall, 11/51
+  phase work, Phase 6 at 4/7, production topology as next, and the
+  non-production boundary.
+- Marked the GH-85 publication handoff complete. External paging, production
+  SLOs/infrastructure, and rollout approval remain separate.

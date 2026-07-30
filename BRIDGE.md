@@ -533,6 +533,23 @@ default-branch visibility track and must not bypass the vulnerable current
 
 ---
 
+## 2026-07-31 00:46 EEST GH-85 public closure → Done
+
+- Documentation PR #87 passed its exact-head docs, DeepScan, CodeRabbit,
+  Go/Rust/Node security, and review gates with zero unresolved threads.
+- Owner-authorized squash merge published it as `0aaba4b` on `main`.
+- Exact merged-main Security Scan and GitHub Pages deployment pass.
+- Live `https://neabouli.github.io/TrueRepublic/` returns HTTP 200 and shows
+  1,105 tests, 11/59 full rollout (19%), 11/51 phase work (22%), Phase 6 at
+  4/7 (57%), production topology as next, and the explicit non-production
+  boundary.
+- GH-29 remains synchronized at 11/59 with its GH-85/PR #86 checkbox complete.
+- **Status:** GH-85 implementation and public closure are complete; external
+  paging, production SLOs, production infrastructure, and rollout approval
+  remain outside the completed scope.
+
+---
+
 ## 2026-07-12 11:41 EEST GH-21 node lifecycle → GitHub green
 
 - **Branch:** `fix/GH-21-node-lifecycle`
