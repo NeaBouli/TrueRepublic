@@ -64,17 +64,18 @@ services:
 
   # ---- Prometheus ----
   prometheus:
-    image: prom/prometheus:latest
+    image: prom/prometheus:v3.13.1@sha256:3c42b892cf723fa54d2f262c37a0e1f80aa8c8ddb1da7b9b0df9455a35a7f893
     container_name: truerepublic-prometheus
     restart: unless-stopped
     volumes:
       - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ./monitoring/prometheus-alerts.yml:/etc/prometheus/prometheus-alerts.yml:ro
       - prometheus-data:/prometheus
     network_mode: "service:truerepublic-node"
 
   # ---- Grafana ----
   grafana:
-    image: grafana/grafana:latest
+    image: grafana/grafana:13.1.1@sha256:7cb8c64c4d57a57e734073f3cc94620adb24a0acb929bd80ba9f14017e3a975b
     container_name: truerepublic-grafana
     restart: unless-stopped
     ports:
@@ -83,8 +84,8 @@ services:
       - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASSWORD:?set GRAFANA_PASSWORD}
     volumes:
       - grafana-data:/var/lib/grafana
-      - ./monitoring/grafana/dashboards:/var/lib/grafana/dashboards
-      - ./monitoring/grafana/provisioning:/etc/grafana/provisioning
+      - ./monitoring/grafana/dashboards:/var/lib/grafana/dashboards:ro
+      - ./monitoring/grafana/provisioning:/etc/grafana/provisioning:ro
     depends_on:
       - prometheus
     networks:

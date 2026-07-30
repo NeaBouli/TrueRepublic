@@ -1,473 +1,148 @@
 # Monitoring & Maintenance
 
-Complete monitoring setup for TrueRepublic nodes.
+> Recovery/testnet scope only. The canonical, tested operator guide is
+> [`docs/node-operators/operations/monitoring.md`](../../docs/node-operators/operations/monitoring.md).
+> This page summarizes that repository-owned contract. It does not authorize a
+> production topology, public metrics, real-funds operation, or mainnet.
 
-## Node Health Signals
+## Supported Stack
 
-Use separate local exec probes:
+The local Compose profile pins:
+
+- Prometheus 3.13.1, sharing the node network namespace;
+- Grafana 13.1.1, exposed on host loopback only; and
+- the immutable `TrueRepublic Blockchain Operations` dashboard with UID
+  `truerepublic-blockchain`.
+
+Set `PROMETHEUS_ENABLED=true` and provide a non-default `GRAFANA_PASSWORD`.
+Prometheus remains on `http://127.0.0.1:9091`; Grafana remains on
+`http://127.0.0.1:3000`.
+
+## Health Signals
+
+Use the separate local probes:
 
 ```bash
 truerepublicd healthcheck live
 truerepublicd healthcheck ready
 ```
 
-`live` proves that loopback CometBFT RPC responds and intentionally remains
+`live` proves that loopback CometBFT RPC responds and intentionally stays
 successful while the node synchronizes. `ready` additionally requires a
-positive block height and `catching_up=false`; use it before routing query
-traffic. The Docker image uses `live` for restart decisions. These signals do
-not replace peer, validator-signing, invariant, resource, or production
-rollout monitoring.
+positive height and `catching_up=false`; use it before routing query traffic.
+Neither probe proves validator signing, peer diversity, application
+invariants, or rollout readiness.
 
-## Table of Contents
+## Private Metrics Targets
 
-1. [Prometheus Setup](#prometheus-setup)
-2. [Grafana Dashboards](#grafana-dashboards)
-3. [Key Metrics](#key-metrics)
-4. [Alerting](#alerting)
-5. [Log Management](#log-management)
-6. [Maintenance Tasks](#maintenance-tasks)
+| Job | Endpoint | Signals |
+|-----|----------|---------|
+| `truerepublic-node` | `127.0.0.1:26660/metrics` | CometBFT consensus, height, peer, mempool, validator, and block timing |
+| `truerepublic-app` | `127.0.0.1:1317/metrics?format=prometheus` | SDK/runtime plus bounded application, invariant, supply, and cap-headroom signals |
 
----
+The SDK/API metrics route and every descendant remain blocked by the public
+query proxy. Do not bind either metrics listener publicly.
 
-## Prometheus Setup
+## Dashboard
 
-### Installation (Docker)
+The provisioned dashboard covers:
 
-Already included in docker-compose.yml:
+- consensus height, rounds, transactions, and block interval;
+- peer count, mempool pressure, and missing validators;
+- successful application height/rate and consensus/application divergence;
+- last successful invariant height and invariant lag;
+- canonical PNYX supply and fixed-cap headroom in base units; and
+- Go goroutines and resident memory.
 
-```yaml
-prometheus:
-  image: prom/prometheus:latest
-  network_mode: "service:truerepublic-node"
-  volumes:
-    - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml
-```
+Repository tests reject the former Grafana HTTP API wrapper shape and enforce
+stable panel IDs, datasource UIDs, required metric families, and valid PromQL.
+GitHub Compose CI must fetch the provisioned dashboard through Grafana and
+submit every panel expression to Prometheus.
 
-### Configuration
+## Alert Rules
 
-**File: monitoring/prometheus.yml**
-
-```yaml
-global:
-  scrape_interval: 15s
-  evaluation_interval: 15s
-
-scrape_configs:
-  - job_name: 'truerepublic-node'
-    static_configs:
-      - targets: ['127.0.0.1:26660']
-        labels:
-          instance: 'node-1'
-          type: 'validator'
-
-  - job_name: 'prometheus'
-    static_configs:
-      - targets: ['localhost:9090']
-
-alerting:
-  alertmanagers:
-    - static_configs:
-        - targets: ['alertmanager:9093']
-
-rule_files:
-  - 'alerts.yml'
-```
-
-### Metrics Exposed
-
-**CometBFT metrics (port 26660):**
-
-```
-# Consensus
-tendermint_consensus_height
-tendermint_consensus_validators
-tendermint_consensus_validators_power
-tendermint_consensus_missing_validators
-tendermint_consensus_byzantine_validators
-
-# P2P
-tendermint_p2p_peers
-tendermint_p2p_message_send_bytes_total
-tendermint_p2p_message_receive_bytes_total
-
-# Mempool
-tendermint_mempool_size
-tendermint_mempool_tx_size_bytes
-
-# State
-tendermint_state_block_processing_time
-```
-
-### Querying Metrics
-
-```bash
-# Current block height
-curl localhost:9090/api/v1/query?query=tendermint_consensus_height
-
-# Number of peers
-curl localhost:9090/api/v1/query?query=tendermint_p2p_peers
-
-# Missed blocks (last hour)
-curl localhost:9090/api/v1/query?query=increase(tendermint_consensus_validators_missed_blocks[1h])
-```
-
----
-
-## Grafana Dashboards
-
-### Access Grafana
-
-```
-URL: http://127.0.0.1:3000
-Username: admin
-Password: the required `GRAFANA_PASSWORD` value
-```
-
-### Add Prometheus Data Source
-
-1. Settings -> Data Sources
-2. Add data source -> Prometheus
-3. URL: `http://truerepublic-node:9090`
-4. Save & Test
-
-### Import Dashboard
-
-**File: monitoring/grafana/dashboards/truerepublic.json**
-
-```json
-{
-  "dashboard": {
-    "title": "TrueRepublic Node",
-    "panels": [
-      {
-        "title": "Block Height",
-        "targets": [
-          {
-            "expr": "tendermint_consensus_height"
-          }
-        ]
-      },
-      {
-        "title": "Peers",
-        "targets": [
-          {
-            "expr": "tendermint_p2p_peers"
-          }
-        ]
-      },
-      {
-        "title": "Missed Blocks",
-        "targets": [
-          {
-            "expr": "increase(tendermint_consensus_validators_missed_blocks[1h])"
-          }
-        ]
-      }
-    ]
-  }
-}
-```
-
-**Import:**
+Prometheus loads `monitoring/prometheus-alerts.yml`. The eleven reviewed rules
+cover:
 
-1. Dashboards -> Import
-2. Upload JSON file
-3. Select Prometheus data source
-4. Import
+- both scrape targets and missing required metric families;
+- consensus and application progress stalls;
+- consensus/application divergence and invariant lag;
+- missing validators, low/absent peers, and mempool pressure; and
+- exact 21,000,000 PNYX cap/headroom integrity.
 
-### Key Dashboard Panels
+Every alert includes a bounded activation window, severity, role owner,
+description, and runbook URL. `monitoring/prometheus-alerts.test.yml` provides
+deterministic Promtool cases for all eleven rules, including firing and
+recovery behavior across the availability, progress, and integrity groups.
 
-**1. Node Status**
-- Block height (current)
-- Sync status (catching up?)
-- Uptime
+The low-peer fallback treats CometBFT's not-yet-created peer gauge as zero.
+Other required metric families are never silently replaced with constants;
+their absence raises a critical contract alert.
 
-**2. Network**
-- Peer count
-- Inbound/outbound connections
-- Network traffic
-
-**3. Consensus**
-- Block time
-- Validator set size
-- Missed blocks
-- Voting power
-
-**4. Performance**
-- Block processing time
-- Transaction throughput
-- Mempool size
-
-**5. Resources**
-- CPU usage
-- RAM usage
-- Disk usage
-- Disk I/O
-
----
-
-## Key Metrics
-
-### Critical Metrics (Monitor 24/7)
-
-**1. Missed Blocks**
-
-```promql
-increase(tendermint_consensus_validators_missed_blocks[5m]) > 10
-```
-
-- Alert when: >10 missed blocks in 5 minutes
-- Action: Check node health immediately
-
-**2. Peer Count**
-
-```promql
-tendermint_p2p_peers < 5
-```
-
-- Alert when: <5 peers
-- Action: Check network, firewall, seeds
-
-**3. Block Height**
-
-```promql
-increase(tendermint_consensus_height[5m]) == 0
-```
-
-- Alert when: No new blocks in 5 minutes
-- Action: Node is stuck or offline
-
-**4. Disk Space**
-
-```promql
-node_filesystem_free_bytes{mountpoint="/"} / node_filesystem_size_bytes < 0.1
-```
-
-- Alert when: <10% disk free
-- Action: Clean up or add storage
-
-### Important Metrics (Check Daily)
-
-**Block Processing Time:**
-
-```promql
-tendermint_state_block_processing_time
-```
-
-**Mempool Size:**
-
-```promql
-tendermint_mempool_size
-```
-
-**Network Traffic:**
-
-```promql
-rate(tendermint_p2p_message_send_bytes_total[5m])
-```
-
----
-
-## Alerting
-
-### Alert Rules
-
-**File: monitoring/alerts.yml**
-
-```yaml
-groups:
-  - name: validator_alerts
-    interval: 30s
-    rules:
-      - alert: ValidatorDown
-        expr: up{job="truerepublic-node"} == 0
-        for: 2m
-        labels:
-          severity: critical
-        annotations:
-          summary: "Validator is down"
-          description: "Validator {{ $labels.instance }} has been down for 2 minutes"
-
-      - alert: HighMissedBlocks
-        expr: increase(tendermint_consensus_validators_missed_blocks[10m]) > 50
-        for: 5m
-        labels:
-          severity: warning
-        annotations:
-          summary: "High missed blocks"
-          description: "Validator missed {{ $value }} blocks in last 10 minutes"
-
-      - alert: LowPeerCount
-        expr: tendermint_p2p_peers < 5
-        for: 5m
-        labels:
-          severity: warning
-        annotations:
-          summary: "Low peer count"
-          description: "Only {{ $value }} peers connected"
-
-      - alert: NodeNotSyncing
-        expr: increase(tendermint_consensus_height[5m]) == 0
-        for: 5m
-        labels:
-          severity: critical
-        annotations:
-          summary: "Node stopped syncing"
-          description: "No new blocks in 5 minutes"
-
-      - alert: DiskSpaceLow
-        expr: node_filesystem_free_bytes{mountpoint="/"} / node_filesystem_size_bytes < 0.15
-        for: 10m
-        labels:
-          severity: warning
-        annotations:
-          summary: "Disk space low"
-          description: "Only {{ $value | humanizePercentage }} disk space remaining"
-```
-
-### Alertmanager Setup
-
-**File: monitoring/alertmanager.yml**
-
-```yaml
-global:
-  resolve_timeout: 5m
-
-route:
-  group_by: ['alertname', 'instance']
-  group_wait: 10s
-  group_interval: 10s
-  repeat_interval: 12h
-  receiver: 'telegram'
-
-receivers:
-  - name: 'telegram'
-    telegram_configs:
-      - bot_token: 'YOUR_BOT_TOKEN'
-        chat_id: YOUR_CHAT_ID
-        parse_mode: 'HTML'
-        message: '{{ range .Alerts }}{{ .Annotations.summary }}{{ end }}'
-
-  - name: 'email'
-    email_configs:
-      - to: 'alerts@example.com'
-        from: 'alertmanager@truerepublic.network'
-        smarthost: 'smtp.gmail.com:587'
-        auth_username: 'your-email@gmail.com'
-        auth_password: 'your-app-password'
-
-  - name: 'slack'
-    slack_configs:
-      - api_url: 'YOUR_SLACK_WEBHOOK'
-        channel: '#validator-alerts'
-        title: 'TrueRepublic Alert'
-        text: '{{ range .Alerts }}{{ .Annotations.description }}{{ end }}'
-```
-
----
-
-## Log Management
-
-### View Logs
-
-**Docker:**
-
-```bash
-docker-compose logs -f truerepublic-node
-docker-compose logs --tail=100 truerepublic-node
-```
-
-**Systemd:**
-
-```bash
-sudo journalctl -u truerepublicd -f
-sudo journalctl -u truerepublicd --since "1 hour ago"
-```
-
-### Log Levels
-
-Edit `app.toml`:
-
-```toml
-[telemetry]
-# Options: trace, debug, info, warn, error
-log_level = "info"
-```
-
-**Levels:**
-- `error` -- Only errors (production)
-- `warn` -- Warnings + errors (production)
-- `info` -- General info (default)
-- `debug` -- Detailed logs (troubleshooting)
-- `trace` -- Everything (development only)
-
-### Log Rotation
-
-**Logrotate config:**
-
-```bash
-sudo nano /etc/logrotate.d/truerepublic
-```
-
-```
-/var/log/truerepublic/*.log {
-    daily
-    rotate 7
-    compress
-    delaycompress
-    missingok
-    notifempty
-    create 0640 truerepublic truerepublic
-}
-```
-
----
-
-## Maintenance Tasks
-
-### Daily
-
-Automated monitoring checks:
-
-```bash
-#!/bin/bash
-# Check missed blocks
-MISSED=$(curl -s localhost:26657/status | jq '.result.validator_info.missed_blocks_counter')
-if [ "$MISSED" -gt 10 ]; then
-    echo "WARNING: $MISSED missed blocks"
-fi
-
-# Check disk space
-DISK=$(df -h / | awk 'NR==2 {print $5}' | sed 's/%//')
-if [ "$DISK" -gt 80 ]; then
-    echo "WARNING: Disk at $DISK%"
-fi
-
-# Check peer count
-PEERS=$(curl -s localhost:26657/net_info | jq '.result.n_peers')
-if [ "$PEERS" -lt 5 ]; then
-    echo "WARNING: Only $PEERS peers"
-fi
-```
-
-### Weekly
-
-1. Review Grafana dashboards
-2. Check for software updates
-3. Verify backups
-4. Check alert history
-
-### Monthly
-
-1. Security audit
-2. Performance review
-3. Capacity planning
-4. Key rotation (if applicable)
-
----
+## Initial Recovery/Testnet Objectives
+
+Measure seven continuous days on a private multi-validator testnet:
+
+| Objective | Initial target |
+|-----------|----------------|
+| Private node/application scrape availability | at least 99.5% per target |
+| Consensus progress | progress in at least 99% of five-minute windows |
+| Application progress | progress in at least 99% of five-minute windows |
+| Invariant alignment | 100%; any lag is critical |
+| PNYX fixed-cap integrity | 100%; supply never exceeds 21,000,000,000,000 base units and headroom never becomes negative |
+
+Restart the qualification window after a monitoring configuration change.
+Count unplanned telemetry loss as unavailable. These targets are not a
+production SLO commitment.
+
+## Escalation Ownership
+
+Rule labels assign roles rather than personal data:
+
+| Severity | Acknowledge target | Escalation |
+|----------|--------------------|------------|
+| `critical` | 5 minutes | primary role owner, secondary operator, then protocol/security and release/governance owners as applicable |
+| `warning` | 30 minutes | primary role owner, then secondary operator if the condition persists or threatens an objective |
+
+Before any controlled canary, the release owner must map every role to a
+primary and secondary human and test the complete delivery/acknowledgement
+path. The repository intentionally ships no email, Telegram, Slack, webhook,
+PagerDuty, or other Alertmanager destination.
+
+## First Response
+
+1. Confirm both private scrape targets and the separate liveness/readiness
+   probes.
+2. Compare consensus height, application height, invariant height, peers,
+   missing validators, mempool, PNYX supply, and cap headroom.
+3. Preserve structured logs and state evidence before a restart.
+4. Never restore stale validator signing state, run two copies of one
+   consensus key, expose private listeners, suppress an integrity alert, or
+   rewrite chain state as an ad-hoc repair.
+5. Follow the detailed response sections in the
+   [canonical guide](../../docs/node-operators/operations/monitoring.md#alert-response-runbook).
+
+## Routine Checks
+
+Daily:
+
+- verify both scrape targets and alert-rule health;
+- review critical/warning states and structured error logs;
+- confirm consensus/application/invariant height alignment; and
+- confirm supply plus headroom equals exactly 21,000,000,000,000 base units.
+
+Weekly:
+
+- review objective measurements and alert history;
+- verify backup evidence and operator-role assignments; and
+- record threshold changes with a new qualification window.
+
+Capacity, disk growth, retention, production topology, external paging, and
+end-to-end incident rehearsal remain separate rollout gates.
 
 ## Next Steps
 
-- [Troubleshooting](Troubleshooting) -- Common issues
-- [Validator Guide](Validator-Guide) -- Validator operations
-- [Node Setup](Node-Setup) -- Advanced configuration
+- [Canonical monitoring guide](../../docs/node-operators/operations/monitoring.md)
+- [Troubleshooting](Troubleshooting)
+- [Validator guide](Validator-Guide)
+- [Backup and recovery](../../docs/node-operators/operations/backup-recovery.md)

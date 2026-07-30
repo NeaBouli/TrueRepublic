@@ -78,6 +78,7 @@ services:
     restart: unless-stopped
     ports:
       - "127.0.0.1:26656:26656"  # local-development P2P
+      - "127.0.0.1:9091:9090"    # Prometheus through the shared namespace
     volumes:
       - ./data:/root/.truerepublic
       - ./config:/config
@@ -93,29 +94,25 @@ services:
       - truerepublic-net
 
   prometheus:
-    image: prom/prometheus:latest
+    image: prom/prometheus:v3.13.1@sha256:3c42b892cf723fa54d2f262c37a0e1f80aa8c8ddb1da7b9b0df9455a35a7f893
     container_name: prometheus
     restart: unless-stopped
-    ports:
-      - "127.0.0.1:9091:9090"
     volumes:
-      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ./monitoring/prometheus-alerts.yml:/etc/prometheus/prometheus-alerts.yml:ro
       - prometheus-data:/prometheus
-    command:
-      - '--config.file=/etc/prometheus/prometheus.yml'
-      - '--storage.tsdb.path=/prometheus'
-    networks:
-      - truerepublic-net
+    network_mode: "service:truerepublic-node"
 
   grafana:
-    image: grafana/grafana:latest
+    image: grafana/grafana:13.1.1@sha256:7cb8c64c4d57a57e734073f3cc94620adb24a0acb929bd80ba9f14017e3a975b
     container_name: grafana
     restart: unless-stopped
     ports:
-      - "3000:3000"
+      - "127.0.0.1:3000:3000"
     volumes:
-      - ./monitoring/grafana/provisioning:/etc/grafana/provisioning
       - grafana-data:/var/lib/grafana
+      - ./monitoring/grafana/dashboards:/var/lib/grafana/dashboards:ro
+      - ./monitoring/grafana/provisioning:/etc/grafana/provisioning:ro
     environment:
       - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASSWORD:?set GRAFANA_PASSWORD}
       - GF_USERS_ALLOW_SIGN_UP=false

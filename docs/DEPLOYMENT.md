@@ -260,13 +260,18 @@ sudo su - truerepublic
 
 - **Prometheus** privately scrapes CometBFT at `127.0.0.1:26660` and
   SDK/application metrics at `127.0.0.1:1317`.
-- **Grafana** container and datasource health are CI-verified at
-  `http://localhost:3000`.
-- The legacy dashboard definition targets block height, connected peers,
-  mempool size, consensus rounds, transactions, block interval, and validator
-  signals. Successful dashboard provisioning, panel-query rendering,
-  application panels, alert rules, objectives, and escalation ownership remain
-  separate rollout gates.
+- Prometheus 3.13.1 and Grafana 13.1.1 are pinned by tag plus multi-architecture
+  digest in the local Compose profile.
+- **Grafana** health, native dashboard provisioning, datasource UID and proxy
+  query execution, every panel expression, Prometheus rule loading, and
+  synthetic alert behavior are CI-verified at `http://localhost:3000`.
+- The dashboard covers CometBFT, application success/invariant, PNYX
+  supply/headroom, and runtime signals. Eleven recovery/testnet rules,
+  measurable initial objectives, role ownership, and first-response guidance
+  are shipped.
+- External paging, production topology, capacity/retention qualification,
+  named on-call assignment, and end-to-end incident rehearsal remain separate
+  rollout gates.
 - Configuration: `monitoring/prometheus.yml`, `monitoring/grafana/`
 
 ---

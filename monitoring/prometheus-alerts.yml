@@ -1,0 +1,129 @@
+groups:
+  - name: truerepublic-availability
+    rules:
+      - alert: TrueRepublicNodeTargetDown
+        expr: up{job="truerepublic-node"} == 0
+        for: 2m
+        labels:
+          severity: critical
+          owner: node-operator
+        annotations:
+          summary: "TrueRepublic CometBFT metrics target is unavailable"
+          description: "Prometheus cannot scrape the private CometBFT metrics target."
+          runbook_url: "https://github.com/NeaBouli/TrueRepublic/blob/main/docs/node-operators/operations/monitoring.md#target-unavailable"
+
+      - alert: TrueRepublicApplicationTargetDown
+        expr: up{job="truerepublic-app"} == 0
+        for: 2m
+        labels:
+          severity: critical
+          owner: protocol-operator
+        annotations:
+          summary: "TrueRepublic application metrics target is unavailable"
+          description: "Prometheus cannot scrape the private SDK and application metrics target."
+          runbook_url: "https://github.com/NeaBouli/TrueRepublic/blob/main/docs/node-operators/operations/monitoring.md#target-unavailable"
+
+      - alert: TrueRepublicRequiredMetricMissing
+        expr: absent(cometbft_consensus_height{job="truerepublic-node"}) or absent(cometbft_mempool_size{job="truerepublic-node"}) or absent(cometbft_consensus_missing_validators{job="truerepublic-node"}) or absent(truerepublic_app_last_successful_block_height{job="truerepublic-app"}) or absent(truerepublic_app_completed_blocks_total{job="truerepublic-app"}) or absent(truerepublic_app_last_successful_invariant_cycle_height{job="truerepublic-app"}) or absent(truerepublic_token_pnyx_supply_base_units{job="truerepublic-app"}) or absent(truerepublic_token_pnyx_supply_headroom_base_units{job="truerepublic-app"})
+        for: 2m
+        labels:
+          severity: critical
+          owner: observability-operator
+        annotations:
+          summary: "TrueRepublic required metrics contract is incomplete"
+          description: "At least one required CometBFT or application metric family is absent even if its scrape target remains reachable."
+          runbook_url: "https://github.com/NeaBouli/TrueRepublic/blob/main/docs/node-operators/operations/monitoring.md#required-metric-missing"
+
+  - name: truerepublic-progress
+    rules:
+      - alert: TrueRepublicConsensusStalled
+        expr: changes(cometbft_consensus_height{job="truerepublic-node"}[5m]) == 0
+        for: 2m
+        labels:
+          severity: critical
+          owner: validator-operator
+        annotations:
+          summary: "TrueRepublic consensus height is not advancing"
+          description: "The observed consensus height has not changed for the configured recovery/testnet window."
+          runbook_url: "https://github.com/NeaBouli/TrueRepublic/blob/main/docs/node-operators/operations/monitoring.md#consensus-or-application-progress-stalled"
+
+      - alert: TrueRepublicApplicationStalled
+        expr: increase(truerepublic_app_completed_blocks_total{job="truerepublic-app"}[5m]) == 0
+        for: 2m
+        labels:
+          severity: critical
+          owner: protocol-operator
+        annotations:
+          summary: "TrueRepublic application EndBlock progress is stalled"
+          description: "The successful application block counter has not changed for the configured recovery/testnet window."
+          runbook_url: "https://github.com/NeaBouli/TrueRepublic/blob/main/docs/node-operators/operations/monitoring.md#consensus-or-application-progress-stalled"
+
+      - alert: TrueRepublicApplicationConsensusDivergence
+        expr: abs(max by (node) (cometbft_consensus_height{job="truerepublic-node"}) - on (node) max by (node) (truerepublic_app_last_successful_block_height{job="truerepublic-app"})) > 5
+        for: 5m
+        labels:
+          severity: warning
+          owner: protocol-operator
+        annotations:
+          summary: "TrueRepublic consensus and application heights diverge"
+          description: "The private CometBFT and application height signals differ by more than five blocks."
+          runbook_url: "https://github.com/NeaBouli/TrueRepublic/blob/main/docs/node-operators/operations/monitoring.md#application-divergence-or-invariant-lag"
+
+      - alert: TrueRepublicInvariantLag
+        expr: truerepublic_app_last_successful_block_height{job="truerepublic-app"} - truerepublic_app_last_successful_invariant_cycle_height{job="truerepublic-app"} > 0
+        for: 1m
+        labels:
+          severity: critical
+          owner: protocol-security
+        annotations:
+          summary: "TrueRepublic invariant cycle lags application progress"
+          description: "The last successful invariant-cycle height is behind the last successful application height."
+          runbook_url: "https://github.com/NeaBouli/TrueRepublic/blob/main/docs/node-operators/operations/monitoring.md#application-divergence-or-invariant-lag"
+
+  - name: truerepublic-network
+    rules:
+      - alert: TrueRepublicMissingValidators
+        expr: cometbft_consensus_missing_validators{job="truerepublic-node"} > 0
+        for: 2m
+        labels:
+          severity: critical
+          owner: validator-operator
+        annotations:
+          summary: "TrueRepublic reports missing validators"
+          description: "CometBFT reports at least one validator missing from consensus participation."
+          runbook_url: "https://github.com/NeaBouli/TrueRepublic/blob/main/docs/node-operators/operations/monitoring.md#validator-peer-or-mempool-degradation"
+
+      - alert: TrueRepublicLowPeerCount
+        expr: (max(cometbft_p2p_peers{job="truerepublic-node"}) or vector(0)) < 3
+        for: 10m
+        labels:
+          severity: warning
+          owner: network-operator
+        annotations:
+          summary: "TrueRepublic peer count is below the recovery/testnet default"
+          description: "The node has fewer than three peers or the peer gauge has not yet been instantiated."
+          runbook_url: "https://github.com/NeaBouli/TrueRepublic/blob/main/docs/node-operators/operations/monitoring.md#validator-peer-or-mempool-degradation"
+
+      - alert: TrueRepublicMempoolPressure
+        expr: cometbft_mempool_size{job="truerepublic-node"} > 1000
+        for: 10m
+        labels:
+          severity: warning
+          owner: node-operator
+        annotations:
+          summary: "TrueRepublic mempool pressure is sustained"
+          description: "The CometBFT mempool has remained above 1000 transactions."
+          runbook_url: "https://github.com/NeaBouli/TrueRepublic/blob/main/docs/node-operators/operations/monitoring.md#validator-peer-or-mempool-degradation"
+
+  - name: truerepublic-token-integrity
+    rules:
+      - alert: TrueRepublicPNYXCapIntegrityBreach
+        expr: truerepublic_token_pnyx_supply_base_units{job="truerepublic-app"} > 21000000000000 or truerepublic_token_pnyx_supply_headroom_base_units{job="truerepublic-app"} < 0 or truerepublic_token_pnyx_supply_base_units{job="truerepublic-app"} + truerepublic_token_pnyx_supply_headroom_base_units{job="truerepublic-app"} != 21000000000000
+        for: 1m
+        labels:
+          severity: critical
+          owner: protocol-security
+        annotations:
+          summary: "TrueRepublic PNYX fixed-cap integrity is breached"
+          description: "Canonical PNYX supply exceeds the cap, headroom is negative, or supply plus headroom no longer equals the exact cap."
+          runbook_url: "https://github.com/NeaBouli/TrueRepublic/blob/main/docs/node-operators/operations/monitoring.md#pnyx-cap-or-headroom-breach"

@@ -1,92 +1,525 @@
 {
-  "dashboard": {
-    "id": null,
-    "uid": "truerepublic-blockchain",
-    "title": "TrueRepublic Blockchain",
-    "tags": ["truerepublic", "cosmos", "blockchain"],
-    "timezone": "browser",
-    "refresh": "10s",
-    "time": {
-      "from": "now-1h",
-      "to": "now"
-    },
-    "panels": [
-      {
-        "id": 1,
-        "title": "Block Height",
-        "type": "stat",
-        "gridPos": { "h": 4, "w": 6, "x": 0, "y": 0 },
-        "targets": [
-          { "expr": "cometbft_consensus_height", "legendFormat": "Height" }
-        ],
-        "fieldConfig": {
-          "defaults": { "unit": "none", "thresholds": { "mode": "absolute", "steps": [{ "color": "green", "value": null }] } }
-        }
-      },
-      {
-        "id": 2,
-        "title": "Connected Peers",
-        "type": "gauge",
-        "gridPos": { "h": 4, "w": 6, "x": 6, "y": 0 },
-        "targets": [
-          { "expr": "cometbft_p2p_peers or vector(0)", "legendFormat": "Peers" }
-        ],
-        "fieldConfig": {
-          "defaults": { "min": 0, "max": 50, "thresholds": { "mode": "absolute", "steps": [{ "color": "red", "value": 0 }, { "color": "yellow", "value": 2 }, { "color": "green", "value": 5 }] } }
-        }
-      },
-      {
-        "id": 3,
-        "title": "Mempool Size",
-        "type": "stat",
-        "gridPos": { "h": 4, "w": 6, "x": 12, "y": 0 },
-        "targets": [
-          { "expr": "cometbft_mempool_size", "legendFormat": "Txs" }
-        ],
-        "fieldConfig": {
-          "defaults": { "unit": "none", "thresholds": { "mode": "absolute", "steps": [{ "color": "green", "value": null }, { "color": "yellow", "value": 100 }, { "color": "red", "value": 500 }] } }
-        }
-      },
-      {
-        "id": 4,
-        "title": "Missing Validators",
-        "type": "stat",
-        "gridPos": { "h": 4, "w": 6, "x": 18, "y": 0 },
-        "targets": [
-          { "expr": "cometbft_consensus_missing_validators", "legendFormat": "Missing" }
-        ],
-        "fieldConfig": {
-          "defaults": { "unit": "none", "thresholds": { "mode": "absolute", "steps": [{ "color": "green", "value": null }, { "color": "red", "value": 1 }] } }
-        }
-      },
-      {
-        "id": 5,
-        "title": "Consensus Rounds",
-        "type": "timeseries",
-        "gridPos": { "h": 8, "w": 12, "x": 0, "y": 4 },
-        "targets": [
-          { "expr": "cometbft_consensus_rounds", "legendFormat": "Rounds" }
-        ]
-      },
-      {
-        "id": 6,
-        "title": "Transactions per Block",
-        "type": "timeseries",
-        "gridPos": { "h": 8, "w": 12, "x": 12, "y": 4 },
-        "targets": [
-          { "expr": "cometbft_consensus_num_txs", "legendFormat": "Txs/Block" }
-        ]
-      },
-      {
-        "id": 7,
-        "title": "Block Interval (seconds)",
-        "type": "timeseries",
-        "gridPos": { "h": 8, "w": 24, "x": 0, "y": 12 },
-        "targets": [
-          { "expr": "rate(cometbft_consensus_block_interval_seconds_sum[5m]) / rate(cometbft_consensus_block_interval_seconds_count[5m])", "legendFormat": "Avg Block Time" }
-        ]
-      }
-    ]
+  "id": null,
+  "uid": "truerepublic-blockchain",
+  "title": "TrueRepublic Blockchain Operations",
+  "description": "Recovery/testnet dashboard for private TrueRepublic node and application metrics.",
+  "tags": ["truerepublic", "cosmos", "operations"],
+  "timezone": "browser",
+  "editable": false,
+  "graphTooltip": 1,
+  "refresh": "15s",
+  "schemaVersion": 39,
+  "version": 1,
+  "time": {
+    "from": "now-1h",
+    "to": "now"
   },
-  "overwrite": true
+  "timepicker": {},
+  "templating": {
+    "list": []
+  },
+  "annotations": {
+    "list": []
+  },
+  "links": [],
+  "panels": [
+    {
+      "id": 1,
+      "title": "Block Height",
+      "type": "stat",
+      "datasource": {"type": "prometheus", "uid": "truerepublic-prometheus"},
+      "gridPos": {"h": 4, "w": 6, "x": 0, "y": 0},
+      "targets": [
+        {
+          "datasource": {"type": "prometheus", "uid": "truerepublic-prometheus"},
+          "expr": "cometbft_consensus_height{job=\"truerepublic-node\"}",
+          "instant": true,
+          "legendFormat": "Consensus height",
+          "range": false,
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "decimals": 0,
+          "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": null}]},
+          "unit": "none"
+        },
+        "overrides": []
+      },
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {"calcs": ["lastNotNull"], "fields": "", "values": false},
+        "textMode": "auto",
+        "wideLayout": true
+      }
+    },
+    {
+      "id": 2,
+      "title": "Connected Peers",
+      "type": "gauge",
+      "datasource": {"type": "prometheus", "uid": "truerepublic-prometheus"},
+      "gridPos": {"h": 4, "w": 6, "x": 6, "y": 0},
+      "targets": [
+        {
+          "datasource": {"type": "prometheus", "uid": "truerepublic-prometheus"},
+          "expr": "cometbft_p2p_peers{job=\"truerepublic-node\"} or vector(0)",
+          "instant": true,
+          "legendFormat": "Peers",
+          "range": false,
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "decimals": 0,
+          "max": 20,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {"color": "red", "value": null},
+              {"color": "yellow", "value": 2},
+              {"color": "green", "value": 3}
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": []
+      },
+      "options": {
+        "orientation": "auto",
+        "reduceOptions": {"calcs": ["lastNotNull"], "fields": "", "values": false},
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true
+      }
+    },
+    {
+      "id": 3,
+      "title": "Mempool Size",
+      "type": "stat",
+      "datasource": {"type": "prometheus", "uid": "truerepublic-prometheus"},
+      "gridPos": {"h": 4, "w": 6, "x": 12, "y": 0},
+      "targets": [
+        {
+          "datasource": {"type": "prometheus", "uid": "truerepublic-prometheus"},
+          "expr": "cometbft_mempool_size{job=\"truerepublic-node\"}",
+          "instant": true,
+          "legendFormat": "Transactions",
+          "range": false,
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "decimals": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {"color": "green", "value": null},
+              {"color": "yellow", "value": 500},
+              {"color": "red", "value": 1000}
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": []
+      },
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {"calcs": ["lastNotNull"], "fields": "", "values": false},
+        "textMode": "auto",
+        "wideLayout": true
+      }
+    },
+    {
+      "id": 4,
+      "title": "Missing Validators",
+      "type": "stat",
+      "datasource": {"type": "prometheus", "uid": "truerepublic-prometheus"},
+      "gridPos": {"h": 4, "w": 6, "x": 18, "y": 0},
+      "targets": [
+        {
+          "datasource": {"type": "prometheus", "uid": "truerepublic-prometheus"},
+          "expr": "cometbft_consensus_missing_validators{job=\"truerepublic-node\"}",
+          "instant": true,
+          "legendFormat": "Missing",
+          "range": false,
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "decimals": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [{"color": "green", "value": null}, {"color": "red", "value": 1}]
+          },
+          "unit": "none"
+        },
+        "overrides": []
+      },
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {"calcs": ["lastNotNull"], "fields": "", "values": false},
+        "textMode": "auto",
+        "wideLayout": true
+      }
+    },
+    {
+      "id": 5,
+      "title": "Consensus Rounds",
+      "type": "timeseries",
+      "datasource": {"type": "prometheus", "uid": "truerepublic-prometheus"},
+      "gridPos": {"h": 8, "w": 8, "x": 0, "y": 4},
+      "targets": [
+        {
+          "datasource": {"type": "prometheus", "uid": "truerepublic-prometheus"},
+          "expr": "cometbft_consensus_rounds{job=\"truerepublic-node\"}",
+          "legendFormat": "Rounds",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {"decimals": 0, "unit": "none"},
+        "overrides": []
+      },
+      "options": {
+        "legend": {"calcs": [], "displayMode": "list", "placement": "bottom", "showLegend": true},
+        "tooltip": {"mode": "single", "sort": "none"}
+      }
+    },
+    {
+      "id": 6,
+      "title": "Transactions per Block",
+      "type": "timeseries",
+      "datasource": {"type": "prometheus", "uid": "truerepublic-prometheus"},
+      "gridPos": {"h": 8, "w": 8, "x": 8, "y": 4},
+      "targets": [
+        {
+          "datasource": {"type": "prometheus", "uid": "truerepublic-prometheus"},
+          "expr": "cometbft_consensus_num_txs{job=\"truerepublic-node\"}",
+          "legendFormat": "Transactions",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {"decimals": 0, "unit": "none"},
+        "overrides": []
+      },
+      "options": {
+        "legend": {"calcs": [], "displayMode": "list", "placement": "bottom", "showLegend": true},
+        "tooltip": {"mode": "single", "sort": "none"}
+      }
+    },
+    {
+      "id": 7,
+      "title": "Block Interval",
+      "type": "timeseries",
+      "datasource": {"type": "prometheus", "uid": "truerepublic-prometheus"},
+      "gridPos": {"h": 8, "w": 8, "x": 16, "y": 4},
+      "targets": [
+        {
+          "datasource": {"type": "prometheus", "uid": "truerepublic-prometheus"},
+          "expr": "rate(cometbft_consensus_block_interval_seconds_sum{job=\"truerepublic-node\"}[5m]) / rate(cometbft_consensus_block_interval_seconds_count{job=\"truerepublic-node\"}[5m])",
+          "legendFormat": "Average",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {"decimals": 2, "unit": "s"},
+        "overrides": []
+      },
+      "options": {
+        "legend": {"calcs": [], "displayMode": "list", "placement": "bottom", "showLegend": true},
+        "tooltip": {"mode": "single", "sort": "none"}
+      }
+    },
+    {
+      "id": 8,
+      "title": "Last Successful Application Height",
+      "type": "stat",
+      "datasource": {"type": "prometheus", "uid": "truerepublic-prometheus"},
+      "gridPos": {"h": 4, "w": 6, "x": 0, "y": 12},
+      "targets": [
+        {
+          "datasource": {"type": "prometheus", "uid": "truerepublic-prometheus"},
+          "expr": "truerepublic_app_last_successful_block_height{job=\"truerepublic-app\"}",
+          "instant": true,
+          "legendFormat": "Application height",
+          "range": false,
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "decimals": 0,
+          "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": null}]},
+          "unit": "none"
+        },
+        "overrides": []
+      },
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {"calcs": ["lastNotNull"], "fields": "", "values": false},
+        "textMode": "auto",
+        "wideLayout": true
+      }
+    },
+    {
+      "id": 9,
+      "title": "Application Block Rate",
+      "type": "timeseries",
+      "datasource": {"type": "prometheus", "uid": "truerepublic-prometheus"},
+      "gridPos": {"h": 8, "w": 9, "x": 6, "y": 12},
+      "targets": [
+        {
+          "datasource": {"type": "prometheus", "uid": "truerepublic-prometheus"},
+          "expr": "rate(truerepublic_app_completed_blocks_total{job=\"truerepublic-app\"}[5m])",
+          "legendFormat": "Blocks/second",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {"decimals": 3, "unit": "ops"},
+        "overrides": []
+      },
+      "options": {
+        "legend": {"calcs": [], "displayMode": "list", "placement": "bottom", "showLegend": true},
+        "tooltip": {"mode": "single", "sort": "none"}
+      }
+    },
+    {
+      "id": 10,
+      "title": "Last Successful Invariant Height",
+      "type": "stat",
+      "datasource": {"type": "prometheus", "uid": "truerepublic-prometheus"},
+      "gridPos": {"h": 4, "w": 9, "x": 15, "y": 12},
+      "targets": [
+        {
+          "datasource": {"type": "prometheus", "uid": "truerepublic-prometheus"},
+          "expr": "truerepublic_app_last_successful_invariant_cycle_height{job=\"truerepublic-app\"}",
+          "instant": true,
+          "legendFormat": "Invariant height",
+          "range": false,
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "decimals": 0,
+          "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": null}]},
+          "unit": "none"
+        },
+        "overrides": []
+      },
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {"calcs": ["lastNotNull"], "fields": "", "values": false},
+        "textMode": "auto",
+        "wideLayout": true
+      }
+    },
+    {
+      "id": 11,
+      "title": "Invariant Lag",
+      "type": "stat",
+      "datasource": {"type": "prometheus", "uid": "truerepublic-prometheus"},
+      "gridPos": {"h": 4, "w": 6, "x": 0, "y": 16},
+      "targets": [
+        {
+          "datasource": {"type": "prometheus", "uid": "truerepublic-prometheus"},
+          "expr": "truerepublic_app_last_successful_block_height{job=\"truerepublic-app\"} - truerepublic_app_last_successful_invariant_cycle_height{job=\"truerepublic-app\"}",
+          "instant": true,
+          "legendFormat": "Blocks",
+          "range": false,
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "decimals": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [{"color": "green", "value": null}, {"color": "red", "value": 1}]
+          },
+          "unit": "none"
+        },
+        "overrides": []
+      },
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {"calcs": ["lastNotNull"], "fields": "", "values": false},
+        "textMode": "auto",
+        "wideLayout": true
+      }
+    },
+    {
+      "id": 12,
+      "title": "Consensus vs Application Height",
+      "type": "timeseries",
+      "datasource": {"type": "prometheus", "uid": "truerepublic-prometheus"},
+      "gridPos": {"h": 8, "w": 18, "x": 6, "y": 16},
+      "targets": [
+        {
+          "datasource": {"type": "prometheus", "uid": "truerepublic-prometheus"},
+          "expr": "cometbft_consensus_height{job=\"truerepublic-node\"}",
+          "legendFormat": "Consensus",
+          "range": true,
+          "refId": "A"
+        },
+        {
+          "datasource": {"type": "prometheus", "uid": "truerepublic-prometheus"},
+          "expr": "truerepublic_app_last_successful_block_height{job=\"truerepublic-app\"}",
+          "legendFormat": "Application",
+          "range": true,
+          "refId": "B"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {"decimals": 0, "unit": "none"},
+        "overrides": []
+      },
+      "options": {
+        "legend": {"calcs": [], "displayMode": "list", "placement": "bottom", "showLegend": true},
+        "tooltip": {"mode": "multi", "sort": "none"}
+      }
+    },
+    {
+      "id": 13,
+      "title": "Canonical PNYX Supply",
+      "type": "timeseries",
+      "datasource": {"type": "prometheus", "uid": "truerepublic-prometheus"},
+      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 24},
+      "targets": [
+        {
+          "datasource": {"type": "prometheus", "uid": "truerepublic-prometheus"},
+          "expr": "truerepublic_token_pnyx_supply_base_units{job=\"truerepublic-app\"}",
+          "legendFormat": "Supply (upnyx)",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "decimals": 0,
+          "max": 21000000000000,
+          "min": 0,
+          "unit": "none"
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {"calcs": ["lastNotNull"], "displayMode": "list", "placement": "bottom", "showLegend": true},
+        "tooltip": {"mode": "single", "sort": "none"}
+      }
+    },
+    {
+      "id": 14,
+      "title": "PNYX Cap Headroom",
+      "type": "stat",
+      "datasource": {"type": "prometheus", "uid": "truerepublic-prometheus"},
+      "gridPos": {"h": 8, "w": 12, "x": 12, "y": 24},
+      "targets": [
+        {
+          "datasource": {"type": "prometheus", "uid": "truerepublic-prometheus"},
+          "expr": "truerepublic_token_pnyx_supply_headroom_base_units{job=\"truerepublic-app\"}",
+          "instant": true,
+          "legendFormat": "Headroom (upnyx)",
+          "range": false,
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "decimals": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [{"color": "red", "value": null}, {"color": "green", "value": 0}]
+          },
+          "unit": "none"
+        },
+        "overrides": []
+      },
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {"calcs": ["lastNotNull"], "fields": "", "values": false},
+        "textMode": "auto",
+        "wideLayout": true
+      }
+    },
+    {
+      "id": 15,
+      "title": "Go Goroutines",
+      "type": "timeseries",
+      "datasource": {"type": "prometheus", "uid": "truerepublic-prometheus"},
+      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 32},
+      "targets": [
+        {
+          "datasource": {"type": "prometheus", "uid": "truerepublic-prometheus"},
+          "expr": "go_goroutines{job=\"truerepublic-app\"}",
+          "legendFormat": "Goroutines",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {"decimals": 0, "unit": "none"},
+        "overrides": []
+      },
+      "options": {
+        "legend": {"calcs": [], "displayMode": "list", "placement": "bottom", "showLegend": true},
+        "tooltip": {"mode": "single", "sort": "none"}
+      }
+    },
+    {
+      "id": 16,
+      "title": "Resident Memory",
+      "type": "timeseries",
+      "datasource": {"type": "prometheus", "uid": "truerepublic-prometheus"},
+      "gridPos": {"h": 8, "w": 12, "x": 12, "y": 32},
+      "targets": [
+        {
+          "datasource": {"type": "prometheus", "uid": "truerepublic-prometheus"},
+          "expr": "process_resident_memory_bytes{job=\"truerepublic-app\"}",
+          "legendFormat": "Resident memory",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {"decimals": 0, "unit": "bytes"},
+        "overrides": []
+      },
+      "options": {
+        "legend": {"calcs": [], "displayMode": "list", "placement": "bottom", "showLegend": true},
+        "tooltip": {"mode": "single", "sort": "none"}
+      }
+    }
+  ]
 }

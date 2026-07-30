@@ -1850,3 +1850,68 @@
   documentation-only claims.
 - Next: publish the initial Bridge handoff, delegate the bounded dashboard/rule
   implementation, and build the independent repository/CI validation path.
+
+## 2026-07-30 22:49 EEST - GH-85 focused implementation checks pass
+
+- Replaced the invalid Grafana API wrapper with a native immutable dashboard
+  and stable provisioned datasource; added reviewed CometBFT, application,
+  invariant, supply/headroom, and runtime panels.
+- Added ten explicit Prometheus alerts, synthetic promtool transitions,
+  recovery/testnet objectives, role-based escalation, bounded response
+  guidance, Compose integration, repository tests, and GitHub runtime
+  dashboard/rule/query evidence.
+- The bounded Kimi implementation invocation produced useful independent
+  design analysis but remained in planning and emitted no file write before
+  being stopped. Sol authored the resulting diff; a separate Kimi read-only
+  finished-diff review remains required.
+- PASS: JSON/YAML/workflow parsing; focused repository tests; Prometheus
+  3.13.1 config syntax; ten-rule validation; all promtool rule tests; every
+  dashboard/objective PromQL parse; docs consistency; diff check.
+- Docker is not installed locally. Exact Grafana provisioning and live
+  Prometheus API/query evidence remain delegated to the GitHub Compose job.
+- Next: full local verification and independent finished-diff review.
+
+## 2026-07-30 23:09 EEST - GH-85 review findings remediated
+
+- Kimi's independent moving-tree review reported 0 P0, 0 P1, one P2, and five
+  P3 items. The P2 identified cross-instance aggregation that could pair
+  signals from different validators during the stated testnet window.
+- Replaced cross-instance invariant and PNYX arithmetic with per-instance
+  vector matching; added one bounded static `node` label to pair the local
+  CometBFT/application sources for divergence without user-derived labels.
+- Added exact 16-panel/17-target runtime gates, exact eleven-rule contracts,
+  missing-family recovery evidence, pinned upstream monitoring image digests,
+  Grafana datasource UID/proxy-query proof, and corrected pin wording.
+- Reconciled stale wiki deployment/monitoring examples with the supported
+  `cometbft_*`/`truerepublic_*` contract and removed invented Alertmanager
+  destinations.
+- PASS: current Prometheus config syntax, all eleven rules, all deterministic
+  rule tests, and PromQL parsing. Earlier ten-rule log entries are retained as
+  historical snapshots and superseded here.
+- Next: complete the recovery matrix, full exact-worktree gates, focused Kimi
+  remediation recheck, and final audit.
+
+## 2026-07-30 23:22 EEST - GH-85 exact local gates and audit pass
+
+- All eight maintained multi-validator scenarios pass, including the final
+  consensus-slashing process case; the complete matrix ran in 1,208.218s.
+- `make build` and `make verify` pass on the remediated tree. Race/coverage is
+  green across all nine supported packages with root 69.1%, health 97.2%,
+  migration 84.6%, network policy 95.5%, observability 80.3%, token 92.6%,
+  treasury 97.0%, DEX 45.3%, and governance 62.2%.
+- Prometheus 3.13.1 validates the configuration and all eleven rules; every
+  deterministic rule fixture, dashboard expression, and objective query
+  passes. JSON/YAML, focused contracts, docs consistency, and diff hygiene
+  pass.
+- Measured package-scoped JSON output contains 1,071 Go cases. Together with
+  the unchanged 26 Rust and eight maintained-client cases, GH-85 will raise
+  the public merged total from 1,104 to 1,105 after merge.
+- Kimi's focused remediation recheck marks all seven reviewed areas PASS with
+  no new P0/P1/P2. Sol added the optional static contract for both bounded
+  `node: 'local'` labels and `on (node)` pairing.
+- Added `docs/agent-bridge/GH85_AUDIT.md`: 0 FAIL / 0 WARN / 7 PASS. Local
+  Docker remains unavailable; exact pinned Compose runtime proof is required
+  on GitHub before merge.
+- Next: publish the implementation PR, collect exact-head GitHub CI/review,
+  remediate if necessary, merge, then publish the separate post-merge
+  tracker/status synchronization.
