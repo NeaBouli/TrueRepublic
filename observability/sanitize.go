@@ -257,12 +257,12 @@ func walkValue(value reflect.Value, key string, depth int, seen map[visit]struct
 		switch typed := value.Interface().(type) {
 		case string:
 			return Sanitize(typed)
+		case json.Number:
+			return typed
 		case error:
 			return Sanitize(safeError(typed))
 		case fmt.Stringer:
 			return Sanitize(safeString(typed))
-		case json.Number:
-			return typed
 		}
 	}
 

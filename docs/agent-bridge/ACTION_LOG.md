@@ -1559,3 +1559,30 @@
   change. Its follow-up commit must become the exact head before CI/review
   evidence is accepted.
 - No merge or production/server/deployment/public-network action was performed.
+
+## 2026-07-30 06:54 EEST - GH-77 review remediation started
+
+- Exact head `b97c527` reached 10 green checks; only recovery remained running.
+  Go build/race/coverage passed in 7m00s and Docker/Compose with the new
+  post-restart structured JSONL assertion passed in 7m09s.
+- CodeRabbit opened two threads. Its `json.Number`/`fmt.Stringer` ordering
+  finding is valid and will receive a minimal code/test fix. Its future-date
+  finding is invalid because the records explicitly use EEST and the verified
+  local clock was `2026-07-30 06:54:04 EEST +0300`; GitHub's July 29 display is
+  UTC.
+- Refreshed focused/full local checks and exact-head GitHub evidence remain
+  required after the correction.
+
+## 2026-07-30 06:59 EEST - GH-77 review remediation locally verified
+
+- Reordered `json.Number` before `fmt.Stringer` and added a sanitizer-boundary
+  regression. The underlying SDK logger serializes `json.Number` as a string,
+  so the test accurately verifies sanitizer preservation without making a false
+  end-to-end numeric JSON promise.
+- Focused normal/race/vet, consistency, diff checks, and refreshed `make verify`
+  all pass; observability coverage is now 77.8%.
+- No code change is appropriate for the timestamp thread: the records are
+  explicitly EEST and the local clock evidence proves they were written after
+  the documented events, despite GitHub displaying the prior UTC date.
+- Next: publish, respond/resolve with evidence, and require all refreshed
+  exact-head checks.

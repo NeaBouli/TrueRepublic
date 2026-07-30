@@ -2105,3 +2105,42 @@ Go/Rust/Node security, docs, DeepScan, and CodeRabbit. GH-51 is closed.
   green.
 
 ---
+
+## 2026-07-30 06:54 EEST GH-77 Review Remediation → In Progress
+
+- **Exact reviewed head:** `b97c527cfc9ccfcf1be3ea85c6e214e3d1643a69`;
+  10 checks green and only the recovery matrix still running when remediation
+  began. Build/race/coverage passed in 7m00s and Docker/Compose, including
+  post-restart structured JSONL, passed in 7m09s.
+- **CodeRabbit:** two unresolved threads. The valid minor finding is that
+  `json.Number` implements `fmt.Stringer`, making the numeric-preservation case
+  unreachable; reorder the cases and add a numeric-type regression. The
+  Bridge/audit “future date” finding is invalid: every entry explicitly uses
+  local `EEST` (`UTC+03:00`), and at review time the verified local clock was
+  `2026-07-30 06:54:04 EEST` while GitHub displayed July 29 UTC.
+- **Scope:** minimal sanitizer/test correction plus append-only evidence.
+  Re-run focused and authoritative local gates, publish a new exact head, reply
+  to both threads with evidence, and require refreshed CI/review.
+- **Safety boundary:** unchanged; no production, server, collector, deployment,
+  credential, key, mainnet, consensus/state, or public-network action.
+
+---
+
+## 2026-07-30 06:59 EEST GH-77 Review Remediation → Locally Verified
+
+- **Correction:** `json.Number` now precedes `fmt.Stringer` at the sanitizer
+  type boundary. `TestSanitizeValuePreservesJSONNumber` proves the reviewed
+  value reaches the underlying SDK logger without being converted by the
+  sanitizer. The SDK logger itself serializes `json.Number` as a string, so the
+  regression intentionally does not overclaim end-to-end numeric JSON typing.
+- **Verification:** focused observability normal/race tests and vet PASS;
+  repository consistency and diff checks PASS; refreshed `make verify` PASS
+  across all nine packages with observability coverage increased to 77.8%.
+- **Review handling:** publish the minimal correction, respond to the valid
+  CodeRabbit thread with the test evidence, answer the EEST/UTC false positive
+  with the verified local timestamp, and resolve both only after the new head
+  is visible.
+- **Next:** push the remediation head and require a complete refreshed
+  exact-head CI/review cycle before merge.
+
+---

@@ -73,6 +73,13 @@ func TestWrappedLoggerPreservesConfiguredLevel(t *testing.T) {
 	}
 }
 
+func TestSanitizeValuePreservesJSONNumber(t *testing.T) {
+	input := json.Number("42.5")
+	if output, ok := sanitizeValue(input, "voting_power").(json.Number); !ok || output != input {
+		t.Fatalf("sanitized number = %#v, want json.Number(%q)", output, input)
+	}
+}
+
 func TestWrappedLoggerRedactsNestedPrivateDataWithoutMutation(t *testing.T) {
 	type nested struct {
 		Height       int               `json:"height"`
