@@ -41,10 +41,10 @@
 - [x] GH-77: publish the reviewed branch, obtain green exact-head GitHub
   build/race/coverage, recovery, Docker/Compose, docs/static/security, and
   independent review evidence; merge, close, and synchronize GH-29/Bridge.
-- [ ] GH-80: implement and locally verify a two-source metrics baseline for
+- [x] GH-80: implement and locally verify a two-source metrics baseline for
   CometBFT consensus/peer/block signals plus Cosmos SDK/runtime and bounded
   TrueRepublic application/invariant-success signals.
-- [ ] GH-80: publish the reviewed branch, obtain green exact-head GitHub
+- [x] GH-80: publish the reviewed branch, obtain green exact-head GitHub
   build/race/coverage, recovery, Docker/Compose metrics, docs/static/security,
   and independent review evidence; merge, close, and synchronize GH-29/Bridge.
 

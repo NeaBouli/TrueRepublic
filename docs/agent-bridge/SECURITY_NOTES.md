@@ -26,8 +26,11 @@
   local/container listener defaults. GH-74 adds separate bounded liveness and
   synchronization-aware readiness probes. GH-77 adds secret-minimized
   structured JSON logs through the central SDK/CometBFT logger boundary.
-  Consensus-breaking migration recovery, IBC, broader metrics/alerting,
-  load/capacity/topology, and independent operations review remain pending;
+  GH-80 adds a private CometBFT plus SDK/application metrics baseline with
+  bounded custom families and fail-closed public-proxy denial.
+  Consensus-breaking migration recovery, IBC, dashboard/application-panel
+  runtime evidence, alert rules/objectives/ownership, load/capacity/topology,
+  and independent operations review remain pending;
   IBC staking/upgrade and
   standard CosmWasm staking/distribution stay explicit stubs.
 - The v0.4 client production bundle is 1.68 MB (309 kB gzip); route-level code

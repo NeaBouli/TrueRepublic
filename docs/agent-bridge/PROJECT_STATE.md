@@ -1,6 +1,6 @@
 # Project State
 
-Updated: 2026-07-30 04:16 UTC
+Updated: 2026-07-30 10:37 UTC
 
 ## Repository
 
@@ -103,11 +103,17 @@ Updated: 2026-07-30 04:16 UTC
 - Recovery worktree: `/Users/gio/Desktop/repos/TrueRepublic-recovery`
 - Legacy local checkout: preserved at `/Users/gio/Desktop/repos/TrueRepublic`
 - GitHub epic: #4
-- Current open GitHub issue set after GH-77 closure: #4 recovery epic, #7
+- Current open GitHub issue set after GH-80 closure: #4 recovery epic, #7
   audit/review parent, and #29 rollout tracker.
 
 ## Verified state
 
+- GH-80 is closed through merged PR #81 (`e629374`). The supported node now
+  exposes a private two-source CometBFT plus SDK/application metrics baseline,
+  fixed-cardinality TrueRepublic EndBlock/invariant/supply signals, exact
+  start/restart/disable behavior, and fail-closed public-proxy denial.
+  Merged `main` records 1,104 cases: 1,070 Go, 26 Rust, and eight
+  maintained-client tests.
 - GH-77 is closed through merged PR #78 (`133fb3b`). Supported daemon
   operation now enforces structured JSON at the central SDK/CometBFT logger,
   defensively redacts reviewed credential/key/private-transaction patterns,
@@ -329,10 +335,11 @@ close bounded four-validator failure/restart/catch-up, partition-recovery,
 trusted state-sync, sanitized backup/restore/export/import, compatible binary
 replacement, fail-before-open rollback, and validator identity cold-failover
 slices. Consensus-breaking state migration, partially applied migration
-recovery, broader metrics/alerting,
-load/capacity/topology qualification, IBC, and independent operations review
-remain open. Authenticated consensus-key rotation, compromised-key eviction,
-and deterministic network policy are closed by GH-56 and GH-71.
+recovery, dashboard/application-panel runtime qualification, alert
+rules/objectives/escalation ownership, load/capacity/topology qualification,
+IBC, and independent operations review remain open. Authenticated
+consensus-key rotation, compromised-key eviction, and deterministic network
+policy are closed by GH-56 and GH-71.
 
 GH-11 implements the canonical denomination metadata (`upnyx`, six decimal
 places, 21,000,000,000,000 base-unit cap) and pre-init bank-genesis cap checks.

@@ -1745,3 +1745,22 @@
 - Applying the minimal fixes with focused tests before publication.
 - All focused checks plus full `make verify` now pass; root coverage is 69.1%.
   Nginx syntax/runtime remains an exact-head Docker requirement.
+
+## 2026-07-30 13:37 EEST - GH-80 implementation merged
+
+- Exact head `4b880b4` passed all GitHub gates; three actionable CodeRabbit
+  threads were fixed, answered, and resolved.
+- Owner-authorized admin squash bypassed only the formal self-approval rule.
+  PR #81 merged as `e629374` and GH-80 closed.
+- Fresh merged-main JSON output records 1,070 Go / 1,104 total cases.
+- Started documentation-only branch `docs/GH-80-metrics-closure`; merged-main
+  Security, Pages, and graph jobs pass while post-merge Go CI continues.
+
+## 2026-07-30 13:49 EEST - GH-80 closure locally verified
+
+- Post-merge main Go CI is fully green.
+- Kimi independently reproduced 1,070 Go / 1,104 total cases, coverage,
+  PR/job evidence, and audit arithmetic with no P0/P1.
+- Remediated its one P2 by correcting the stale dashboard-rendering claim in
+  `docs/DEPLOYMENT.md`.
+- Documentation consistency, JSON, audit arithmetic, and diff checks pass.

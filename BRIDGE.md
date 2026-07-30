@@ -2458,3 +2458,51 @@ Go/Rust/Node security, docs, DeepScan, and CodeRabbit. GH-51 is closed.
   incremental CodeRabbit review, then resolve supported threads.
 
 ---
+
+## 2026-07-30 13:37 EEST GH-80 Implementation Merged → Closure In Progress
+
+- **Merge:** PR #81 exact head `4b880b4` passed all checks and squash-merged to
+  `main` as `e629374`; GH-80 closed automatically and its remote branch was
+  deleted.
+- **Exact-head evidence:** root build/test 7m32s, Docker/Compose 7m43s, all
+  eight recovery scenarios 14m09s, docs, Go/Rust/Node security, DeepScan, and
+  CodeRabbit status PASS. All three actionable review threads were remediated,
+  answered, and resolved.
+- **Merged-main evidence:** Security Scan, Pages, and dependency graph PASS;
+  post-merge Go CI is still running and remains a closure gate.
+- **Authoritative count:** fresh package-scoped JSON output on merged main
+  records 1,070 Go cases: root 82, healthcheck 55, migration 82, network policy
+  126, observability 50, token 12, treasury 36, DEX 116, governance 511. With
+  26 Rust and eight maintained-client cases, the public total is 1,104.
+- **Closure branch:** `docs/GH-80-metrics-closure` from `origin/main`.
+  Documentation-only synchronization covers counts, Phase 6, limitations,
+  machine status, wiki, audit, TODO, Project State, Bridge, and GH-29.
+- **Safety boundary:** dashboards/application panels, alert rules, objectives,
+  escalation ownership, capacity/topology, runbooks, and production deployment
+  remain open. No production action occurred.
+- **Next:** finish consistency/audit validation, await post-merge Go CI, publish
+  the closure PR, verify it, merge, and synchronize GH-29/main.
+
+---
+
+## 2026-07-30 13:49 EEST GH-80 Closure → Locally Verified
+
+- **Post-merge main:** Go CI is fully green on `e629374`: build/test, complete
+  eight-scenario recovery matrix, and Docker/Compose. Security, Pages, and
+  dependency graph are also green.
+- **Independent review:** Kimi K3 reproduced all 1,070 Go cases and coverage,
+  confirmed 1,104 total arithmetic, PR/job evidence, audit arithmetic, and the
+  non-production boundary. Result: no P0/P1; one pre-existing P2.
+- **P2 remediation:** `docs/DEPLOYMENT.md` no longer claims rendered Grafana
+  panels. It now distinguishes verified container/datasource health and private
+  scrape targets from still-open provisioning, panel, alert, objective, and
+  ownership gates.
+- **Local closure checks:** package-scoped JSON count PASS; documentation
+  consistency PASS; status JSON parse PASS; audit arithmetic 0 FAIL / 2 WARN /
+  11 PASS; diff check PASS. The diff is documentation/status only.
+- **GH-29:** Phase 6 metrics checkbox now links GH-80 / PR #81; dashboard,
+  alert, objective, and ownership work remains unchecked.
+- **Next:** commit/push, open documentation-only closure PR, require all
+  applicable exact-head checks, merge, and synchronize clean `main`.
+
+---
