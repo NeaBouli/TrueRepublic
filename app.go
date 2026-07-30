@@ -55,6 +55,7 @@ import (
 	ibcexported "github.com/cosmos/ibc-go/v8/modules/core/exported"
 	ibckeeper "github.com/cosmos/ibc-go/v8/modules/core/keeper"
 
+	"truerepublic/observability"
 	"truerepublic/token"
 	"truerepublic/x/dex"
 	"truerepublic/x/truedemocracy"
@@ -150,6 +151,7 @@ type TrueRepublicApp struct {
 	dexKeeper       dex.Keeper
 	tdModule        truedemocracy.AppModule
 	dexModule       dex.AppModule
+	appMetrics      *observability.AppMetrics
 }
 
 func NewTrueRepublicApp(logger log.Logger, db dbm.DB, homeDir string, baseAppOptions ...func(*baseapp.BaseApp)) *TrueRepublicApp {
@@ -186,6 +188,9 @@ func NewTrueRepublicApp(logger log.Logger, db dbm.DB, homeDir string, baseAppOpt
 		tkeys:    tkeys,
 		memKeys:  memKeys,
 	}
+	// The shared process-wide collectors keep repeated app construction in the
+	// test suite free of duplicate-registration panics.
+	app.appMetrics = observability.DefaultAppMetrics()
 
 	// Set the shared interface registry on BaseApp and its routers so tx
 	// decoding, message routing, event generation, and gRPC all use the same
@@ -498,7 +503,20 @@ func (app *TrueRepublicApp) BeginBlocker(ctx sdk.Context) (sdk.BeginBlock, error
 
 // EndBlocker runs end-block logic (staking rewards, PoD enforcement, governance).
 func (app *TrueRepublicApp) EndBlocker(ctx sdk.Context) (sdk.EndBlock, error) {
-	return app.mm.EndBlock(ctx)
+	endBlock, err := app.mm.EndBlock(ctx)
+	if err != nil {
+		// Never record success on error.
+		return endBlock, err
+	}
+	// Metrics run only after a fully successful module EndBlock and read only
+	// public on-chain aggregates; they cannot change state or the ABCI
+	// response. The invariant-cycle signal is valid because crisis is the
+	// last EndBlocker (SetOrderEndBlockers above) and its check period is one
+	// block, so a success return proves the crisis AssertInvariants run at
+	// this height did not panic.
+	supply := app.bankKeeper.GetSupply(ctx, token.BaseDenom).Amount
+	app.appMetrics.RecordSuccessfulEndBlock(ctx.BlockHeight(), supply.Int64())
+	return endBlock, nil
 }
 
 // makeAminoCodec creates and configures the amino codec for CLI operations.

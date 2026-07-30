@@ -20,6 +20,8 @@ Canonical coordination lives in [`docs/agent-bridge/`](docs/agent-bridge/README.
 - GH-74 node health audit: [`GH74_AUDIT.md`](docs/agent-bridge/GH74_AUDIT.md)
 - GH-77 structured logging audit:
   [`GH77_AUDIT.md`](docs/agent-bridge/GH77_AUDIT.md)
+- GH-80 metrics baseline audit:
+  [`GH80_AUDIT.md`](docs/agent-bridge/GH80_AUDIT.md)
 - Decisions: [`DECISIONS.md`](docs/agent-bridge/DECISIONS.md)
 - Security: [`SECURITY_NOTES.md`](docs/agent-bridge/SECURITY_NOTES.md)
 
@@ -2212,5 +2214,247 @@ Go/Rust/Node security, docs, DeepScan, and CodeRabbit. GH-51 is closed.
   invariant/resource/application metrics and their operator evidence.
 
 `TASK COMPLETE — TARGET STOP ACTIVE`
+
+---
+
+## 2026-07-30 09:50 EEST GH-80 Node/Application Metrics Baseline → In Progress
+
+- **Issue/branch:** [GH-80](https://github.com/NeaBouli/TrueRepublic/issues/80),
+  `feature/GH-80-metrics-baseline`; parent rollout tracker
+  [GH-29](https://github.com/NeaBouli/TrueRepublic/issues/29).
+- **Baseline:** clean synchronized `main`/`origin/main` at `ed9c971`; no open
+  PR and current main Security Scan green.
+- **Verified gap:** CometBFT already exposes loopback-only Prometheus metrics,
+  but Cosmos SDK application telemetry is disabled. Existing Compose evidence
+  checks only target health and does not require SDK/runtime, TrueRepublic
+  application, or successful invariant-cycle families.
+- **Scope:** retain the private CometBFT consensus/peer/block source; add an
+  opt-in loopback-only SDK/application source, bounded custom metrics without
+  user/transaction/address/peer-derived labels, and real runtime assertions
+  including post-restart progression.
+- **Boundary:** repository code, tests, local recovery Compose configuration,
+  documentation, and CI evidence only. Dashboards/alerts/objectives/ownership,
+  production collectors/topology, capacity, and retention remain separate.
+- **Owner:** Codex Sol + Kimi K3. Kimi receives one bounded secret-free local
+  implementation block; Sol retains architecture, security, integration,
+  full tests, GitHub writes, review, and closure.
+- **Next:** freeze the metric contract and telemetry enable/disable semantics,
+  review Kimi's diff, integrate repository/process/Compose evidence, then run
+  the complete relevant gate chain.
+
+---
+
+## 2026-07-30 10:20 EEST GH-80 Local Implementation and Audit → In Progress
+
+- **Implementation:** retained the private CometBFT source and added an opt-in
+  loopback SDK/application scrape source. Five fixed, label-free
+  `truerepublic_*` families expose successful EndBlock/invariant heights,
+  process-local completed blocks, canonical `upnyx` supply, and exact
+  21-million-PNYX headroom.
+- **Semantics:** custom collectors update only after successful module
+  EndBlock. Crisis is last with check period one, so invariant success is
+  mechanically coupled and regression-guarded. Application height is not
+  overclaimed as durable commit height.
+- **Kimi contribution:** Kimi K3 implemented the bounded collector/registration
+  core, app wiring, coupling guard, and focused tests. Sol reviewed every line,
+  corrected the portable native telemetry configuration, added real-process
+  enable/restart/disable evidence, private scrape/CI integration, documentation,
+  and the structured audit.
+- **Focused evidence:** build/vet, observability normal/race tests, full root
+  tests, wrapper/policy tests, real compiled daemon start/restart/404-disable
+  path, YAML/shell parsing, docs consistency, and diff checks PASS. The first
+  root run correctly exposed a nonportable BSD `sed` expression in Sol's
+  concurrent script work; the portable correction passes in isolation and in
+  the repeated full root run.
+- **Audit:** `docs/agent-bridge/GH80_AUDIT.md` records 0 FAIL / 3 WARN /
+  10 PASS. Residuals are private generic SDK query-path cardinality, EndBlock
+  versus committed-height interpretation, and Docker/Compose evidence pending
+  because Docker is unavailable locally.
+- **Boundary:** dashboard provisioning/panels, alerts, objectives, paging,
+  ownership, production collectors/topology, capacity, and retention remain
+  separate Phase-6 gates.
+- **Next:** obtain a fresh independent full-diff Kimi review, remediate valid
+  findings, then run the complete local repository/recovery gate chain before
+  publication.
+
+---
+
+## 2026-07-30 11:22 EEST GH-80 Independent Review Corrections → In Progress
+
+- **Kimi review:** the fresh read-only full-diff review reproduced two local
+  gate failures and one CI flake risk in the moving working tree. Sol
+  independently verified each path before changing files.
+- **Corrections:** the documentation policy guard now matches the actual
+  baseline disclaimer; the disabled raw SDK route is correctly pinned to the
+  SDK gateway's fail-closed `501 Not Implemented` response; the durable
+  Compose contract no longer requires the one-shot
+  `truerepublic_server_info` series after its 60-second retention window.
+- **Security:** nginx now explicitly returns 404 for exact
+  `/api/metrics`, `nginx/**` triggers the runtime workflow, and the CI wait
+  proves that the query proxy does not expose raw metrics.
+- **Fresh evidence:** policy/coupling tests PASS; the real compiled daemon
+  start, persistent restart, metric progression, exact cap arithmetic, and
+  disabled-501 lifecycle PASS (`ok truerepublic 71.676s`);
+  observability race and diff checks remain PASS.
+- **Correction to 10:20 entry:** its `404-disable` wording and complete-root
+  PASS claim described an intermediate tree and are superseded here. The raw
+  SDK fallback is 501; nginx's public proxy boundary is 404. Full final gates
+  are still running, so GH-80 remains In Progress.
+- **Next:** complete the already-running eight-scenario recovery matrix, obtain
+  Kimi's final severity report against the corrected diff, then run the
+  complete repository verification chain before publication.
+
+---
+
+## 2026-07-30 12:04 EEST GH-80 Complete Local Gates → Ready for Publication
+
+- **Review:** Kimi's full and incremental read-only reviews now report zero
+  open P0/P1. Sol remediated both P2 findings: the process contract no longer
+  depends on expiring `truerepublic_server_info`, and native telemetry
+  configuration validates the complete real `[telemetry]` postcondition
+  fail-loud while preserving its backup on failure.
+- **Go evidence:** `make verify` PASS across the exact nine-package selector:
+  manifest, build, vet, race, and coverage. Root PASS in `138.814s` at 69.1%
+  coverage; the eight-scenario recovery matrix PASS in `1155.6s`.
+- **Runtime/security evidence:** compiled daemon start, persistent restart,
+  application/invariant progression, exact 21-trillion-`upnyx` reconciliation,
+  and raw disabled SDK `501 Not Implemented` PASS. Exact nginx query-proxy
+  boundary remains `404`.
+- **Rust/client evidence:** Rust format/clippy/build, 26 tests, and audit PASS
+  with six allowed warnings. Maintained `client-web` install/lint/eight tests/
+  build/high-audit PASS; two moderate React Router advisories and the existing
+  bundle-size warning remain non-blocking.
+- **Inherited debt:** informational legacy `web-wallet` and `mobile-wallet`
+  audits still report high/critical dependency advisories and exit non-zero,
+  exactly as their existing Security Scan steps tolerate with `|| true`.
+  GH-80 changes none of those dependency trees; remediation is a separate
+  rollout/security task, not hidden as a metrics change.
+- **Environment:** a disk-full false failure was traced to the regenerable
+  9.6-GiB Go build cache. `go clean -cache` restored capacity; the cold full
+  root suite and official verify gate then passed.
+- **Remaining GH-80 gate:** Docker is unavailable locally. Publish the reviewed
+  branch and require every exact-head GitHub check, especially
+  Docker/Compose metrics/restart evidence, before merge.
+
+---
+
+## 2026-07-30 12:15 EEST GH-80 Exact-Head CI Fix → In Progress
+
+- **Publication:** implementation commit `ea6adc6` is pushed and draft
+  [PR #81](https://github.com/NeaBouli/TrueRepublic/pull/81) targets `main`.
+- **Green exact-head checks:** build/test, docs consistency, Go vulnerability,
+  Rust audit, maintained-client audit, both informational legacy-wallet audit
+  jobs, and DeepScan.
+- **Reproduced failure:** Docker reached the new metrics-contract step after
+  the loopback stack became ready, then Compose interpolation rejected the
+  missing required `GRAFANA_PASSWORD` before any metric assertion executed.
+- **Focused fix:** the contract step now carries the same CI-only Grafana
+  password and bootstrap operator as the stack-start step. YAML parse, static
+  network policy, consistency, and diff checks PASS locally.
+- **Remaining:** push the focused fix, require the rerun Docker metrics/restart
+  step and the still-running recovery matrix to pass, then enable full review.
+
+---
+
+## 2026-07-30 12:24 EEST GH-80 Metrics Contract Diagnostics → In Progress
+
+- **Second exact-head result:** Compose environment and both Prometheus targets
+  now pass. The contract exits inside its pre-restart family/value assertions,
+  but GitHub's default `bash -e` log does not reveal the silent failing
+  `grep`/`awk`.
+- **Diagnostic hardening:** required-family checks now emit the missing family
+  plus the available public metric names; the exact height/invariant/supply/
+  headroom values are logged before arithmetic assertions. Acceptance rules
+  are unchanged.
+- **Local evidence:** workflow YAML parse, static network-policy test, and diff
+  check PASS.
+- **Next:** publish the fail-loud workflow and use its exact-head evidence to
+  fix the concrete family/value mismatch without weakening the contract.
+
+---
+
+## 2026-07-30 12:39 EEST GH-80 Zero-Peer Semantics → Fix In Progress
+
+- **Exact evidence:** run `30499586251`, job `90736070552`, passed the image,
+  persistent-restart, loopback stack, proxy, and both private target gates.
+  The contract then reported only `cometbft_p2p_peers` missing.
+- **Root cause:** CometBFT instantiates that gauge on the first peer
+  add/remove event. A deliberate single-validator stack with zero peers omits
+  the series rather than exporting a zero sample.
+- **Focused repair:** the singleton CI contract now requires the proven
+  always-instantiated `cometbft_mempool_size` family. Production peer
+  observability is retained, while its dashboard and documented alert use
+  `or vector(0)` so an absent zero-peer series is treated as zero.
+- **Acceptance remains strict:** no endpoint, restart, progression,
+  application, supply, or headroom assertion is weakened.
+- **Next:** run focused policy/docs/JSON validation, publish, and require a
+  fully green new exact-head Docker and Recovery result.
+
+---
+
+## 2026-07-30 12:42 EEST GH-80 Zero-Peer Repair → Locally Verified
+
+- Workflow YAML and Grafana dashboard JSON parse PASS.
+- `TestContainerNetworkDefaultsFailClosed` PASS in 3.131s.
+- Documentation consistency and `git diff --check` PASS.
+- The current exact-head Go root suite and eight-scenario recovery matrix are
+  still running independently; their result will be recorded before replacing
+  that head with the focused repair.
+- **Next:** commit and push the five-file repair, then require all checks on the
+  replacement exact head.
+
+---
+
+## 2026-07-30 12:47 EEST GH-80 Recovery Evidence Reconciled
+
+- GitHub's status API still labels recovery job `90736070604` in progress, but
+  its completed runner log is authoritative: all eight named scenarios PASS in
+  666.955s, followed by normal cache and checkout cleanup.
+- The same head's root build/test job and all security jobs pass. Its sole
+  product-relevant failure remains the now-understood zero-peer family
+  assumption in Docker.
+- No recovery timeout defect exists: the command already enforces Go's
+  1500-second test timeout. The stale job state is a GitHub control-plane
+  reporting lag, not a hanging TrueRepublic process.
+- **Next:** publish the locally verified zero-peer repair and verify a new
+  exact head end to end.
+
+---
+
+## 2026-07-30 13:10 EEST GH-80 External Review → Fixes In Progress
+
+- Exact head `24e00eb` passed Docker/Compose, root build/test, all eight
+  recovery scenarios, docs, security, DeepScan, and CodeRabbit's status gate.
+- CodeRabbit completed its first non-draft review with three unresolved,
+  independently verified findings:
+  1. prefix/substring metric checks could accept a sibling sample or HELP line;
+  2. the fail-closed init subprocess lacked a local timeout;
+  3. nginx blocked `/api/metrics` but not its descendant paths.
+- All three are within GH-80's fail-closed observability scope. Minimal fixes
+  will use exact sample parsing, a bounded command context, and a descendant-
+  aware 404 rule with runtime coverage.
+- The generic docstring-coverage warning is not a changed-code defect or a
+  repository-required gate and will not trigger unrelated repo-wide churn.
+- **Next:** validate the focused review fixes, publish them, resolve only the
+  supported threads, and require the replacement exact head to pass.
+
+---
+
+## 2026-07-30 13:18 EEST GH-80 Review Fixes → Locally Verified
+
+- Exact Prometheus parsing now rejects HELP text and sibling names; histogram
+  `_sum` and `_count` samples are required explicitly.
+- Both init-script subprocess tests use 10-second command contexts.
+- Nginx denies `/api/metrics` and every descendant path; CI now proves both the
+  query-string form and `/api/metrics/` return 404.
+- Focused four-test set PASS in 4.719s; the false-positive parser regression,
+  standalone exact-sample shell proof, workflow YAML, `go vet .`, docs
+  consistency, and diff checks PASS.
+- Full `make verify` PASS: build, vet, race, coverage, and all nine repository
+  packages; root coverage remains 69.1%.
+- Local nginx binary remains unavailable. Exact syntax/runtime proof is
+  delegated to the mandatory Docker/Compose gate on the replacement head.
+- **Next:** publish the review-fix commit, await all exact-head gates and the
+  incremental CodeRabbit review, then resolve supported threads.
 
 ---

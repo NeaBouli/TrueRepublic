@@ -5,6 +5,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"io"
 	"net"
 	"net/http"
 	"os"
@@ -224,8 +225,10 @@ func TestNodeStartsStopsAndRestartsFromPersistentHome(t *testing.T) {
 
 	rpcPort := freeTCPPort(t)
 	p2pPort := freeTCPPort(t)
+	apiPort := freeTCPPort(t)
 	rpcURL := fmt.Sprintf("http://127.0.0.1:%d/status", rpcPort)
-	start := func() (*exec.Cmd, *os.File) {
+	metricsURL := fmt.Sprintf("http://127.0.0.1:%d/metrics?format=prometheus", apiPort)
+	start := func(telemetryEnabled bool) (*exec.Cmd, *os.File) {
 		t.Helper()
 		logFile, err := os.CreateTemp(t.TempDir(), "node-*.log")
 		if err != nil {
@@ -237,8 +240,22 @@ func TestNodeStartsStopsAndRestartsFromPersistentHome(t *testing.T) {
 			"--rpc.laddr", fmt.Sprintf("tcp://127.0.0.1:%d", rpcPort),
 			"--p2p.laddr", fmt.Sprintf("tcp://127.0.0.1:%d", p2pPort),
 			"--grpc.enable=false",
-			"--api.enable=false",
+			"--api.enable=true",
+			"--api.address", fmt.Sprintf("tcp://127.0.0.1:%d", apiPort),
 			"--minimum-gas-prices", "0"+token.BaseDenom,
+		)
+		telemetryValue := strconv.FormatBool(telemetryEnabled)
+		retention := "0"
+		if telemetryEnabled {
+			retention = "60"
+		}
+		cmd.Env = append(os.Environ(),
+			"TRUEREPUBLICD_TELEMETRY_ENABLED="+telemetryValue,
+			"TRUEREPUBLICD_TELEMETRY_PROMETHEUS_RETENTION_TIME="+retention,
+			"TRUEREPUBLICD_TELEMETRY_SERVICE_NAME=truerepublic",
+			"TRUEREPUBLICD_TELEMETRY_ENABLE_HOSTNAME=false",
+			"TRUEREPUBLICD_TELEMETRY_ENABLE_HOSTNAME_LABEL=false",
+			"TRUEREPUBLICD_TELEMETRY_ENABLE_SERVICE_LABEL=false",
 		)
 		cmd.Stdout = logFile
 		cmd.Stderr = logFile
@@ -270,20 +287,37 @@ func TestNodeStartsStopsAndRestartsFromPersistentHome(t *testing.T) {
 		_ = logFile.Close()
 	}
 
-	first, firstLog := start()
+	first, firstLog := start(true)
 	firstHeight := waitForNodeHeight(t, rpcURL, 1, first, firstLog)
+	firstMetrics := waitForApplicationMetrics(t, metricsURL, firstHeight, first, firstLog)
 	firstLogPath := firstLog.Name()
 	stop(first, firstLog)
 	assertStructuredNodeLogs(t, firstLogPath)
 
-	second, secondLog := start()
+	second, secondLog := start(true)
 	secondHeight := waitForNodeHeight(t, rpcURL, firstHeight+1, second, secondLog)
+	secondMetrics := waitForApplicationMetrics(t, metricsURL, secondHeight, second, secondLog)
 	secondLogPath := secondLog.Name()
 	stop(second, secondLog)
 	assertStructuredNodeLogs(t, secondLogPath)
 	if secondHeight <= firstHeight {
 		t.Fatalf("restart did not advance height: first=%d second=%d", firstHeight, secondHeight)
 	}
+	if secondMetrics.blockHeight <= firstMetrics.blockHeight {
+		t.Fatalf(
+			"application metrics did not advance after restart: first=%v second=%v",
+			firstMetrics.blockHeight,
+			secondMetrics.blockHeight,
+		)
+	}
+
+	disabled, disabledLog := start(false)
+	disabledHeight := waitForNodeHeight(t, rpcURL, secondHeight+1, disabled, disabledLog)
+	waitForApplicationMetricsDisabled(t, metricsURL, disabled, disabledLog)
+	disabledLogPath := disabledLog.Name()
+	stop(disabled, disabledLog)
+	assertStructuredNodeLogs(t, disabledLogPath)
+
 	exportCmd := exec.Command(binary, "export", "--home", home)
 	exported, err := exportCmd.Output()
 	if err != nil {
@@ -296,12 +330,163 @@ func TestNodeStartsStopsAndRestartsFromPersistentHome(t *testing.T) {
 	if err := json.Unmarshal(exported, &exportedGenesis); err != nil {
 		t.Fatalf("decode exported genesis: %v", err)
 	}
-	if exportedGenesis.InitialHeight <= secondHeight {
-		t.Fatalf("exported initial height = %d, want greater than committed height %d", exportedGenesis.InitialHeight, secondHeight)
+	if exportedGenesis.InitialHeight <= disabledHeight {
+		t.Fatalf("exported initial height = %d, want greater than committed height %d", exportedGenesis.InitialHeight, disabledHeight)
 	}
 	if exportedGenesis.AppState[truedemocracy.ModuleName] == nil {
 		t.Fatal("exported persistent state is missing truedemocracy genesis")
 	}
+}
+
+type applicationMetricsSnapshot struct {
+	blockHeight     float64
+	invariantHeight float64
+	completedBlocks float64
+	supply          float64
+	headroom        float64
+}
+
+func waitForApplicationMetrics(
+	t *testing.T,
+	url string,
+	minimumHeight int64,
+	cmd *exec.Cmd,
+	logFile *os.File,
+) applicationMetricsSnapshot {
+	t.Helper()
+	client := &http.Client{Timeout: time.Second}
+	deadline := time.Now().Add(15 * time.Second)
+	for time.Now().Before(deadline) {
+		response, err := client.Get(url)
+		if err == nil {
+			body, readErr := io.ReadAll(io.LimitReader(response.Body, 2<<20))
+			_ = response.Body.Close()
+			if response.StatusCode == http.StatusOK && readErr == nil {
+				snapshot, parseErr := parseApplicationMetrics(string(body))
+				if parseErr == nil &&
+					snapshot.blockHeight >= float64(minimumHeight) &&
+					snapshot.invariantHeight == snapshot.blockHeight &&
+					snapshot.completedBlocks >= 1 &&
+					snapshot.supply >= 0 &&
+					snapshot.headroom >= 0 &&
+					snapshot.supply+snapshot.headroom == float64(token.MaxSupplyBaseUnits) {
+					return snapshot
+				}
+			}
+		}
+		if cmd.ProcessState != nil && cmd.ProcessState.Exited() {
+			break
+		}
+		time.Sleep(250 * time.Millisecond)
+	}
+	_ = cmd.Process.Kill()
+	_ = cmd.Wait()
+	_ = logFile.Close()
+	content, _ := os.ReadFile(logFile.Name())
+	t.Fatalf("application metrics did not reach height %d\n%s", minimumHeight, content)
+	return applicationMetricsSnapshot{}
+}
+
+func parseApplicationMetrics(body string) (applicationMetricsSnapshot, error) {
+	read := func(name string) (float64, error) {
+		scanner := bufio.NewScanner(strings.NewReader(body))
+		for scanner.Scan() {
+			fields := strings.Fields(scanner.Text())
+			if len(fields) == 2 && fields[0] == name {
+				return strconv.ParseFloat(fields[1], 64)
+			}
+		}
+		if err := scanner.Err(); err != nil {
+			return 0, err
+		}
+		return 0, fmt.Errorf("metric %s is missing", name)
+	}
+	for _, required := range []string{
+		"go_goroutines",
+		"process_resident_memory_bytes",
+	} {
+		if _, err := read(required); err != nil {
+			return applicationMetricsSnapshot{}, fmt.Errorf("required SDK/runtime metric: %w", err)
+		}
+	}
+	var snapshot applicationMetricsSnapshot
+	values := []struct {
+		name   string
+		target *float64
+	}{
+		{"truerepublic_app_last_successful_block_height", &snapshot.blockHeight},
+		{"truerepublic_app_last_successful_invariant_cycle_height", &snapshot.invariantHeight},
+		{"truerepublic_app_completed_blocks_total", &snapshot.completedBlocks},
+		{"truerepublic_token_pnyx_supply_base_units", &snapshot.supply},
+		{"truerepublic_token_pnyx_supply_headroom_base_units", &snapshot.headroom},
+	}
+	for _, value := range values {
+		parsed, err := read(value.name)
+		if err != nil {
+			return applicationMetricsSnapshot{}, err
+		}
+		*value.target = parsed
+	}
+	return snapshot, nil
+}
+
+func TestParseApplicationMetricsRequiresExactRuntimeSamples(t *testing.T) {
+	body := `# HELP go_goroutines Number of goroutines.
+go_goroutines_extra 7
+process_resident_memory_bytes_total 1024
+truerepublic_app_last_successful_block_height 1
+truerepublic_app_last_successful_invariant_cycle_height 1
+truerepublic_app_completed_blocks_total 1
+truerepublic_token_pnyx_supply_base_units 0
+truerepublic_token_pnyx_supply_headroom_base_units 21000000000000
+`
+	if _, err := parseApplicationMetrics(body); err == nil {
+		t.Fatal("metric comments and sibling names must not satisfy exact runtime samples")
+	}
+}
+
+func waitForApplicationMetricsDisabled(t *testing.T, url string, cmd *exec.Cmd, logFile *os.File) {
+	t.Helper()
+	client := &http.Client{Timeout: time.Second}
+	deadline := time.Now().Add(10 * time.Second)
+	exposed := false
+	lastStatus := 0
+	var lastErr error
+	for time.Now().Before(deadline) {
+		response, err := client.Get(url)
+		if err == nil {
+			lastStatus = response.StatusCode
+			lastErr = nil
+			_, _ = io.Copy(io.Discard, io.LimitReader(response.Body, 64<<10))
+			_ = response.Body.Close()
+			if response.StatusCode == http.StatusNotImplemented {
+				return
+			}
+			if response.StatusCode == http.StatusOK {
+				exposed = true
+				break
+			}
+		} else {
+			lastErr = err
+		}
+		if cmd.ProcessState != nil && cmd.ProcessState.Exited() {
+			break
+		}
+		time.Sleep(250 * time.Millisecond)
+	}
+	_ = cmd.Process.Kill()
+	_ = cmd.Wait()
+	_ = logFile.Close()
+	content, _ := os.ReadFile(logFile.Name())
+	if exposed {
+		t.Fatalf("disabled application telemetry exposed the metrics endpoint\n%s", content)
+	}
+	t.Fatalf(
+		"disabled application telemetry did not settle on a 501 endpoint (last status=%d, last error=%v)\n%s",
+		lastStatus,
+		lastErr,
+		content,
+	)
 }
 
 func assertStructuredNodeLogs(t *testing.T, path string) {
