@@ -47,11 +47,11 @@
 - [x] GH-80: publish the reviewed branch, obtain green exact-head GitHub
   build/race/coverage, recovery, Docker/Compose metrics, docs/static/security,
   and independent review evidence; merge, close, and synchronize GH-29/Bridge.
-- [ ] GH-85: implement and locally verify a file-provisioned CometBFT plus
+- [x] GH-85: implement and locally verify a file-provisioned CometBFT plus
   application dashboard, actionable Prometheus rules, recovery/testnet
   objectives, role-based escalation ownership, and deterministic rule/query
   evidence without external paging or production deployment.
-- [ ] GH-85: publish the reviewed branch, obtain green exact-head GitHub
+- [x] GH-85: publish the reviewed branch, obtain green exact-head GitHub
   build/race/coverage, recovery, Docker/Compose dashboard/rule/query,
   docs/static/security, and independent review evidence; merge, close, and
   synchronize GH-29, public status, and Bridge.

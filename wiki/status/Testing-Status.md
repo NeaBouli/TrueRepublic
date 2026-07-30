@@ -1,10 +1,10 @@
 # Testing Status
 
-The current **v0.4.0 recovery** source of truth records **1,104 verified cases**.
+The current **v0.4.0 recovery** source of truth records **1,105 verified cases**.
 
 | Suite | Passing cases |
 |---|---:|
-| Go root/application | 82 |
+| Go root/application | 83 |
 | Go health checks | 55 |
 | Go migration | 82 |
 | Go network policy | 126 |
@@ -15,7 +15,7 @@ The current **v0.4.0 recovery** source of truth records **1,104 verified cases**
 | Go governance | 511 |
 | Rust/CosmWasm | 26 |
 | Maintained client | 8 |
-| **Total** | **1,104** |
+| **Total** | **1,105** |
 
 ## Current Go coverage
 
@@ -54,9 +54,8 @@ replacement/rollback, single-signer identity failover, authenticated
 consensus-key rotation, inactive-validator genesis round-trip,
 legacy-authority migration/rollback, and common-height app-hash tests. They do
 not replace the remaining
-consensus-breaking migration, dashboard/application-panel runtime evidence,
-alert rules/objectives/ownership, load/capacity/topology, or independent
-operations gates.
+consensus-breaking migration, external paging drills, load/capacity/topology,
+or independent operations gates.
 
 Green tests are recovery evidence, not an external security or production
 approval. See [Current Status](Current-Status) for remaining gates.

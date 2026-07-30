@@ -27,10 +27,12 @@
   synchronization-aware readiness probes. GH-77 adds secret-minimized
   structured JSON logs through the central SDK/CometBFT logger boundary.
   GH-80 adds a private CometBFT plus SDK/application metrics baseline with
-  bounded custom families and fail-closed public-proxy denial.
-  Consensus-breaking migration recovery, IBC, dashboard/application-panel
-  runtime evidence, alert rules/objectives/ownership, load/capacity/topology,
-  and independent operations review remain pending;
+  bounded custom families and fail-closed public-proxy denial. GH-85 adds the
+  immutable operations dashboard, eleven deterministic alert rules,
+  recovery/testnet objectives, role ownership, and runtime query proof without
+  claiming external paging or production SLOs. Consensus-breaking migration
+  recovery, IBC, paging drills, load/capacity/topology, and independent
+  operations review remain pending;
   IBC staking/upgrade and
   standard CosmWasm staking/distribution stay explicit stubs.
 - The v0.4 client production bundle is 1.68 MB (309 kB gzip); route-level code

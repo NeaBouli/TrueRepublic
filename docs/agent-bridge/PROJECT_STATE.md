@@ -1,6 +1,6 @@
 # Project State
 
-Updated: 2026-07-30 10:37 UTC
+Updated: 2026-07-30 21:30 UTC
 
 ## Repository
 
@@ -103,12 +103,18 @@ Updated: 2026-07-30 10:37 UTC
 - Recovery worktree: `/Users/gio/Desktop/repos/TrueRepublic-recovery`
 - Legacy local checkout: preserved at `/Users/gio/Desktop/repos/TrueRepublic`
 - GitHub epic: #4
-- Current open GitHub issue set after GH-80 closure: #4 recovery epic, #7
-  audit/review parent, #29 rollout tracker, and #85 for the active bounded
-  dashboard/alerts/objectives/escalation-ownership implementation.
+- Current open GitHub issue set after GH-85 closure: #4 recovery epic, #7
+  audit/review parent, and #29 rollout tracker.
 
 ## Verified state
 
+- GH-85 is closed through merged PR #86 (`cd44fec`). The supported private
+  observability stack now provides an immutable 16-panel Grafana dashboard,
+  eleven actionable and deterministically tested Prometheus rules,
+  recovery/testnet objectives, role-based escalation ownership, and CI runtime
+  proof of every required query. Merged `main` records 1,105 cases: 1,071 Go,
+  26 Rust, and eight maintained-client tests. External paging, production SLOs,
+  and deployment remain outside this evidence.
 - GH-80 is closed through merged PR #81 (`e629374`). The supported node now
   exposes a private two-source CometBFT plus SDK/application metrics baseline,
   fixed-cardinality TrueRepublic EndBlock/invariant/supply signals, exact
@@ -336,9 +342,8 @@ close bounded four-validator failure/restart/catch-up, partition-recovery,
 trusted state-sync, sanitized backup/restore/export/import, compatible binary
 replacement, fail-before-open rollback, and validator identity cold-failover
 slices. Consensus-breaking state migration, partially applied migration
-recovery, dashboard/application-panel runtime qualification, alert
-rules/objectives/escalation ownership, load/capacity/topology qualification,
-IBC, and independent operations review remain open. Authenticated
+recovery, paging drills, load/capacity/topology qualification, IBC, and
+independent operations review remain open. Authenticated
 consensus-key rotation, compromised-key eviction, and deterministic network
 policy are closed by GH-56 and GH-71.
 

@@ -1,6 +1,6 @@
 # TrueRepublic Road to Rollout
 
-Updated: 2026-07-30
+Updated: 2026-07-31
 
 TrueRepublic has a recovered and CI-verified v0.4 engineering foundation. It
 is **not production-ready, mainnet-ready, or approved for real funds or keys**.
@@ -10,11 +10,16 @@ controlled rollout. Progress is tracked in
 parent recovery record remains
 [issue #4](https://github.com/NeaBouli/TrueRepublic/issues/4).
 
+Published progress arithmetic follows the canonical issue #29 tracker. This
+detailed roadmap splits its combined dashboard/alerts/objectives/ownership
+item into two evidence bullets, so raw checkbox counts in this file are
+intentionally more granular than the public 59-item tracker.
+
 ## Current baseline
 
 - The ordered recovery merge chain is on `main`.
 - The maximum supply is fixed at 21,000,000 PNYX.
-- The source of truth records 1,104 recovery-verified tests: 1,070 Go, 26 Rust,
+- The source of truth records 1,105 recovery-verified tests: 1,071 Go, 26 Rust,
   and 8 maintained-client tests.
 - Ledger, escrow, issuance, DEX custody, genesis, runtime invariants, ZKP
   statement binding, node persistence, and the safe operator-init boundary
@@ -146,8 +151,13 @@ defensible coverage, and no unresolved critical/high security finding remains.
 - [x] Export consensus, peer, block, transaction, invariant, resource, and
   application metrics through a private two-source baseline
   ([GH-80](https://github.com/NeaBouli/TrueRepublic/issues/80)).
-- [ ] Provide dashboards and actionable alert thresholds.
-- [ ] Define service objectives and escalation ownership.
+- [x] Provide dashboards and actionable alert thresholds
+  ([GH-85](https://github.com/NeaBouli/TrueRepublic/issues/85),
+  [PR #86](https://github.com/NeaBouli/TrueRepublic/pull/86)).
+- [x] Define recovery/testnet service objectives and role-based escalation
+  ownership
+  ([GH-85](https://github.com/NeaBouli/TrueRepublic/issues/85),
+  [PR #86](https://github.com/NeaBouli/TrueRepublic/pull/86)).
 - [ ] Deploy the intended production topology, including seed nodes, sentries,
   validator isolation, RPC exposure, firewalling, and abuse protection.
 - [ ] Write and rehearse incident, validator failure, key compromise, backup,
