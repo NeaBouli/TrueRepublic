@@ -257,48 +257,104 @@ jobs:
           dashboard=$(curl --fail --silent --show-error \
             --user "admin:${GRAFANA_PASSWORD}" \
             http://127.0.0.1:3000/api/dashboards/uid/truerepublic-blockchain)
-          printf '%s\n' "$dashboard" |
+          if ! printf '%s\n' "$dashboard" |
             jq -e '
               .dashboard.uid == "truerepublic-blockchain" and
               .meta.folderTitle == "TrueRepublic" and
               (.dashboard.panels | length == 16) and
               ([.dashboard.panels[].targets[]?.expr] | length == 17)
-            ' >/dev/null
+            ' >/dev/null; then
+            printf '%s\n' "$dashboard" |
+              jq -c '{
+                uid: .dashboard.uid,
+                folder: .meta.folderTitle,
+                panels: (.dashboard.panels | length),
+                targets: ([.dashboard.panels[].targets[]?.expr] | length)
+              }'
+            echo "::error title=Grafana dashboard contract::Unexpected provisioned dashboard identity or shape"
+            exit 1
+          fi
 
           datasource=$(curl --fail --silent --show-error \
             --user "admin:${GRAFANA_PASSWORD}" \
             http://127.0.0.1:3000/api/datasources/uid/truerepublic-prometheus)
-          printf '%s\n' "$datasource" |
+          if ! printf '%s\n' "$datasource" |
             jq -e '
               .uid == "truerepublic-prometheus" and
               .name == "Prometheus" and
               .type == "prometheus" and
               .url == "http://truerepublic-node:9090"
-            ' >/dev/null
-          curl --fail --silent --show-error --get \
-            --user "admin:${GRAFANA_PASSWORD}" \
-            --data-urlencode 'query=truerepublic_app_last_successful_block_height{job="truerepublic-app"}' \
-            http://127.0.0.1:3000/api/datasources/proxy/uid/truerepublic-prometheus/api/v1/query |
-            jq -e '.status == "success" and (.data.result | length == 1)' >/dev/null
+            ' >/dev/null; then
+            printf '%s\n' "$datasource" |
+              jq -c '{uid, name, type, url}'
+            echo "::error title=Grafana datasource contract::Unexpected provisioned datasource identity or URL"
+            exit 1
+          fi
 
-          rules=$(curl --fail --silent --show-error \
-            'http://127.0.0.1:9091/api/v1/rules?type=alert')
-          printf '%s\n' "$rules" |
-            jq -e '
-              .status == "success" and
-              ([.data.groups[].rules[] |
-                select(.type == "alerting" and .health == "ok")] |
-                length == 11)
-            ' >/dev/null
+          proxy_ok=false
+          for _ in $(seq 1 15); do
+            proxy_result=$(curl --fail --silent --show-error --get \
+              --user "admin:${GRAFANA_PASSWORD}" \
+              --data-urlencode 'query=truerepublic_app_last_successful_block_height{job="truerepublic-app"}' \
+              http://127.0.0.1:3000/api/datasources/proxy/uid/truerepublic-prometheus/api/v1/query)
+            if printf '%s\n' "$proxy_result" |
+              jq -e '.status == "success" and (.data.result | length == 1)' >/dev/null; then
+              proxy_ok=true
+              break
+            fi
+            sleep 2
+          done
+          if [ "$proxy_ok" != true ]; then
+            printf '%s\n' "$proxy_result" |
+              jq -c '{status, errorType, error, result_count: (.data.result | length?)}'
+            echo "::error title=Grafana datasource query::Expected one application-height series through the datasource proxy"
+            exit 1
+          fi
+
+          rules_ok=false
+          for _ in $(seq 1 15); do
+            rules=$(curl --fail --silent --show-error \
+              'http://127.0.0.1:9091/api/v1/rules?type=alert')
+            if printf '%s\n' "$rules" |
+              jq -e '
+                .status == "success" and
+                ([.data.groups[].rules[] |
+                  select(.type == "alerting" and .health == "ok")] |
+                  length == 11)
+              ' >/dev/null; then
+              rules_ok=true
+              break
+            fi
+            sleep 2
+          done
+          if [ "$rules_ok" != true ]; then
+            printf '%s\n' "$rules" |
+              jq -c '{
+                status,
+                alerting: ([.data.groups[].rules[] | select(.type == "alerting")] | length),
+                healthy: ([.data.groups[].rules[] | select(.type == "alerting" and .health == "ok")] | length),
+                unhealthy: [.data.groups[].rules[] |
+                  select(.type == "alerting" and .health != "ok") |
+                  {name, health, lastError}]
+              }'
+            echo "::error title=Prometheus alert contract::Expected eleven healthy alerting rules"
+            exit 1
+          fi
 
           printf '%s\n' "$dashboard" |
             jq -r '.dashboard.panels[].targets[]?.expr' |
             while IFS= read -r expression; do
               test -n "$expression"
-              curl --fail --silent --show-error --get \
+              query_result=$(curl --fail --silent --show-error --get \
                 --data-urlencode "query=${expression}" \
-                http://127.0.0.1:9091/api/v1/query |
-                jq -e '.status == "success"' >/dev/null
+                http://127.0.0.1:9091/api/v1/query)
+              if ! printf '%s\n' "$query_result" |
+                jq -e '.status == "success"' >/dev/null; then
+                printf '%s\n' "$query_result" |
+                  jq -c '{status, errorType, error}'
+                echo "::error title=Dashboard PromQL::Query failed: ${expression}"
+                exit 1
+              fi
             done
 
           for expression in \
@@ -308,10 +364,16 @@ jobs:
             'avg_over_time((truerepublic_app_last_successful_invariant_cycle_height{job="truerepublic-app"} == bool truerepublic_app_last_successful_block_height{job="truerepublic-app"})[7d:1m])' \
             'min_over_time(truerepublic_token_pnyx_supply_headroom_base_units{job="truerepublic-app"}[7d]) >= 0' \
             'max_over_time(truerepublic_token_pnyx_supply_base_units{job="truerepublic-app"}[7d]) <= 21000000000000'; do
-            curl --fail --silent --show-error --get \
+            query_result=$(curl --fail --silent --show-error --get \
               --data-urlencode "query=${expression}" \
-              http://127.0.0.1:9091/api/v1/query |
-              jq -e '.status == "success"' >/dev/null
+              http://127.0.0.1:9091/api/v1/query)
+            if ! printf '%s\n' "$query_result" |
+              jq -e '.status == "success"' >/dev/null; then
+              printf '%s\n' "$query_result" |
+                jq -c '{status, errorType, error}'
+              echo "::error title=Service-objective PromQL::Query failed: ${expression}"
+              exit 1
+            fi
           done
 
           for expression in \
@@ -319,10 +381,24 @@ jobs:
             'truerepublic_app_last_successful_invariant_cycle_height' \
             'truerepublic_token_pnyx_supply_base_units' \
             'truerepublic_token_pnyx_supply_headroom_base_units'; do
-            curl --fail --silent --show-error --get \
-              --data-urlencode "query=${expression}" \
-              http://127.0.0.1:9091/api/v1/query |
-              jq -e '.status == "success" and (.data.result | length == 1)' >/dev/null
+            metric_ok=false
+            for _ in $(seq 1 15); do
+              query_result=$(curl --fail --silent --show-error --get \
+                --data-urlencode "query=${expression}" \
+                http://127.0.0.1:9091/api/v1/query)
+              if printf '%s\n' "$query_result" |
+                jq -e '.status == "success" and (.data.result | length == 1)' >/dev/null; then
+                metric_ok=true
+                break
+              fi
+              sleep 2
+            done
+            if [ "$metric_ok" != true ]; then
+              printf '%s\n' "$query_result" |
+                jq -c '{status, errorType, error, result_count: (.data.result | length?)}'
+              echo "::error title=Application metric contract::Expected one series for ${expression}"
+              exit 1
+            fi
           done
 
       - name: Verify metrics contract and restart progression

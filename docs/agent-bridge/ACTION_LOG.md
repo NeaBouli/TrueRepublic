@@ -1928,3 +1928,22 @@
   merged; this prevents an unmerged branch from being reported as delivered.
 - Next: push this append-only handoff, require exact-head GitHub checks and
   review, remediate findings, and merge only when green.
+
+## 2026-07-30 23:38 EEST - PR #86 Docker query gate hardened
+
+- Exact head `67d5d4c` passed Go build/race/coverage, docs, DeepScan, and all
+  completed Go/Rust/Node security jobs.
+- Docker proved config, pinned promtool rules/tests, stack startup, readiness,
+  both targets, and Grafana health, then failed the new combined assertion
+  step with all `jq` results suppressed.
+- Kimi's focused read-only diagnosis identified the gap between target-up and
+  lazy application-series readiness, plus first rule evaluation timing, as the
+  likely race class.
+- Added bounded retries for the Grafana-proxied application height, eleven
+  healthy rules, and all four core app/supply series. Every assertion now
+  reports a secret-free identity/count/error summary and the exact failing
+  expression instead of an opaque exit code.
+- Structural mismatch and invalid PromQL remain fail-fast; the change does not
+  weaken any count, identity, health, or cardinality assertion.
+- Next: validate and push replacement head, then rerun the complete exact-head
+  GitHub matrix.

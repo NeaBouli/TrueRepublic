@@ -2748,3 +2748,29 @@ Go/Rust/Node security, docs, DeepScan, and CodeRabbit. GH-51 is closed.
   monitor every GitHub check/review; fix valid findings before merge.
 
 ---
+
+## 2026-07-30 23:38 EEST PR #86 Docker runtime finding → Fix In Progress
+
+- Exact head `67d5d4c` passed Go build/race/coverage in 7m26s, docs,
+  DeepScan, Go/Rust/maintained-client/legacy-client security, while recovery
+  and CodeRabbit continued.
+- The Docker job passed Compose config, pinned Prometheus config, eleven-rule
+  validation and rule tests, image builds, node readiness, both scrape targets,
+  and Grafana health. Its new combined dashboard/rule/query assertion then
+  exited without identifying which suppressed `jq` cardinality check failed.
+- **Root risk:** target health does not prove that a lazily initialized
+  application series or first rule evaluation is already queryable. The
+  original one-shot assertions also discarded the safe response summary
+  needed to distinguish timing from a real provisioning mismatch.
+- **Fix:** dashboard/datasource/rule/query contracts now emit bounded,
+  secret-free failure summaries. Datasource application-height, rule-health,
+  and all four required application-series assertions retry for up to 30
+  seconds; structural dashboard/datasource contracts and every PromQL query
+  still fail immediately on a real mismatch.
+- **Kimi:** focused read-only diagnosis independently identified the
+  target-up-versus-series-ready race and first-evaluation timing as the likely
+  failure class; Sol owns and validates the workflow change.
+- **Next:** run local workflow/repository contracts, publish a replacement
+  head, and require the complete GitHub matrix again.
+
+---
