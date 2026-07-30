@@ -2506,3 +2506,57 @@ Go/Rust/Node security, docs, DeepScan, and CodeRabbit. GH-51 is closed.
   applicable exact-head checks, merge, and synchronize clean `main`.
 
 ---
+
+## 2026-07-30 21:52 EEST GH-29 GitHub Page rollout status → In Progress
+
+- **Branch:** `docs/GH-29-github-page-status`
+- **Issue:** [GH-29](https://github.com/NeaBouli/TrueRepublic/issues/29)
+- **Scope:** update the public GitHub Page to show the canonical tracker
+  progress (10/59, approximately 17%), Phase 6 progress (3/7), current green
+  engineering baseline, and the next operations milestone.
+- **Correction:** Phase 1 still presents validator-key rotation and compromise
+  response as open even though GH-55/GH-56 are merged. The page will
+  distinguish that completed evidence from the still-open consensus-breaking
+  migration gate.
+- **Risk:** Low. Documentation-only public status update; no runtime,
+  consensus, token, wallet, infrastructure, or production mutation.
+- **Tests required:** documentation consistency, HTML/status assertions, diff
+  hygiene, exact-head Pages/security CI, and deployed-page verification.
+- **Next:** implement the bounded page change, validate locally, publish a
+  reviewable PR, merge only after green exact-head checks, then verify the
+  deployed GitHub Page and synchronize GH-29/Bridge.
+
+---
+
+## 2026-07-30 21:56 EEST GH-29 GitHub Page rollout status → Review
+
+- **Changed:** `docs/index.html`, `docs/status.json`,
+  `scripts/check-consistency.sh`, `BRIDGE.md`, and
+  `docs/agent-bridge/ACTION_LOG.md`.
+- **Public result:** the landing page now exposes 10/59 (17%) full rollout,
+  10/51 (20%) phase work, 3/7 (43%) Phase 6, 1,104 verified cases, green
+  CI/security, the 21M cap, and the next dashboards/alerts milestone.
+- **Correction:** completed validator custody/failover/rotation/revocation and
+  network-policy evidence no longer appears open in Phase 1.
+- **Tests:** consistency PASS; shell syntax PASS; status JSON PASS; diff check
+  PASS; desktop 1280 and mobile 390 browser/DOM rendering PASS with no mobile
+  horizontal overflow.
+- **Risk:** Low, documentation-only. Exact-head Pages/security checks and the
+  deployed GitHub Page remain required before Done.
+- **Ready for:** Sol publication and final GitHub verification.
+
+---
+
+## 2026-07-30 21:58 EEST GH-29 GitHub Page rollout status → Review
+
+- **PR:** [#83](https://github.com/NeaBouli/TrueRepublic/pull/83)
+- **Published implementation:** `e8251b2` on
+  `docs/GH-29-github-page-status`.
+- **State:** documentation-only draft PR is open. This append-only handoff
+  becomes the replacement exact head after push.
+- **Remaining gates:** exact-head docs/static/security checks, review-thread
+  reconciliation, merge, clean-main synchronization, and verification of the
+  deployed GitHub Page.
+- **Boundary:** no production deployment or runtime code change.
+
+---

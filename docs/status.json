@@ -29,6 +29,18 @@
       "mobile-wallet": "deprecated_security_migration_required"
     }
   },
+  "rollout": {
+    "status": "engineering_in_progress",
+    "tracker_scope": "github_issue_29",
+    "github_issue": 29,
+    "completed": 10,
+    "total": 59,
+    "phase_work_completed": 10,
+    "phase_work_total": 51,
+    "phase_6_completed": 3,
+    "phase_6_total": 7,
+    "production_ready": false
+  },
   "modules": {
     "root": 82,
     "healthcheck": 55,
