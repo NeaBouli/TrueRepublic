@@ -1764,3 +1764,25 @@
 - Remediated its one P2 by correcting the stale dashboard-rendering claim in
   `docs/DEPLOYMENT.md`.
 - Documentation consistency, JSON, audit arithmetic, and diff checks pass.
+
+## 2026-07-30 21:56 EEST - GH-29 public rollout status locally verified
+
+- Updated the GitHub Pages landing source with the canonical GH-29 tracker
+  progress: 10/59 full checklist (17%), 10/51 phase work (20%), and 3/7
+  Phase 6 operations work (43%).
+- Replaced the stale active-reverification banner with the evidence-backed
+  recovery baseline and unchanged non-production boundary. The public status
+  strip now shows the 21M cap, 1,104 verified cases, rollout progress, green CI
+  and security state, and v0.4.0 recovery baseline.
+- Corrected Phase 1 to mark validator-key custody, single-signer failover,
+  authenticated rotation, permanent revocation, and deterministic network
+  policy as merged while leaving consensus-breaking migration recovery open.
+- Added the rollout counts to `docs/status.json` and extended the repository
+  consistency gate so landing-page counts and rounded percentages cannot drift
+  silently.
+- PASS: `./scripts/check-consistency.sh`, shell syntax, JSON parse, and
+  `git diff --check`. Browser DOM and visual checks pass at the default
+  1280-pixel desktop viewport and a 390-pixel mobile viewport; the mobile page
+  has no horizontal overflow.
+- No runtime code, production infrastructure, deployment, consensus, token,
+  wallet, key, mainnet, or public-network action was performed.

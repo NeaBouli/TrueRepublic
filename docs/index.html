@@ -184,6 +184,27 @@
             color: rgba(255,255,255,0.78);
             font-size: 1.08rem;
         }
+        .rollout-summary {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1rem;
+            margin: 0 auto 2rem;
+        }
+        .rollout-metric {
+            padding: 1.25rem;
+            text-align: center;
+            background: rgba(255,255,255,0.08);
+            border: 1px solid rgba(255,255,255,0.18);
+            border-radius: 6px;
+        }
+        .rollout-metric-value {
+            color: #ffd27a;
+            font-size: 2rem;
+            font-weight: 800;
+            line-height: 1.2;
+        }
+        .rollout-metric h3 { margin: 0.45rem 0 0.3rem; font-size: 1rem; }
+        .rollout-metric p { color: rgba(255,255,255,0.72); font-size: 0.92rem; }
         .rollout-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -286,10 +307,11 @@
     <section class="hero">
         <div class="container">
             <div style="margin: 0 auto 2rem; max-width: 860px; padding: 1rem 1.25rem; border-radius: 8px; background: #fff3cd; border: 1px solid #ffc107; color: #664d03;">
-                <strong>Recovery audit active:</strong> v0.4.0 is being re-verified
-                for security and reproducibility and is not approved for production
-                or real funds. Follow
-                <a href="https://github.com/NeaBouli/TrueRepublic/issues/4">GitHub issue #4</a>.
+                <strong>Recovery-verified engineering baseline:</strong> v0.4.0
+                has green recovery, CI, and security evidence, but rollout gates
+                remain open. It is not approved for production or real funds.
+                Follow <a href="https://github.com/NeaBouli/TrueRepublic/issues/29">the rollout tracker</a>
+                and <a href="https://github.com/NeaBouli/TrueRepublic/issues/4">recovery epic #4</a>.
             </div>
             <img src="https://raw.githubusercontent.com/NeaBouli/TrueRepublic/main/assets/pnx_logo.png" alt="PNYX Coin" style="width: 120px; height: 120px; margin: 0 auto 2rem; display: block; border-radius: 50%;">
             <h1>Democracy, Reimagined</h1>
@@ -437,16 +459,20 @@
                     <div class="stat-label">Max PNYX Supply</div>
                 </div>
                 <div class="stat">
-                    <div class="stat-number">Active</div>
-                    <div class="stat-label">Recovery Audit</div>
+                    <div class="stat-number">1,104</div>
+                    <div class="stat-label">Recovery-Verified Tests</div>
                 </div>
                 <div class="stat">
-                    <div class="stat-number">20+</div>
-                    <div class="stat-label">Web Components</div>
+                    <div class="stat-number">17%</div>
+                    <div class="stat-label">Rollout Checklist</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-number">Green</div>
+                    <div class="stat-label">CI &amp; Security</div>
                 </div>
                 <div class="stat">
                     <div class="stat-number">v0.4.0</div>
-                    <div class="stat-label">Latest Release</div>
+                    <div class="stat-label">Recovery Baseline</div>
                 </div>
             </div>
         </div>
@@ -476,6 +502,23 @@
         <div class="container">
             <h2 class="section-title">Road to Rollout</h2>
             <p class="rollout-intro">The recovered v0.4 foundation is ready for continued engineering, not for production. These are the remaining blocking workstreams before any public-network rollout.</p>
+            <div class="rollout-summary" aria-label="Rollout progress">
+                <article class="rollout-metric">
+                    <div class="rollout-metric-value">17%</div>
+                    <h3>Full rollout checklist</h3>
+                    <p>10 of 59 tracked items complete, including final exit gates.</p>
+                </article>
+                <article class="rollout-metric">
+                    <div class="rollout-metric-value">20%</div>
+                    <h3>Seven-phase work</h3>
+                    <p>10 of 51 phase tasks complete before the final go/no-go gates.</p>
+                </article>
+                <article class="rollout-metric">
+                    <div class="rollout-metric-value">43%</div>
+                    <h3>Phase 6: Operations</h3>
+                    <p>3 of 7 tasks complete; dashboards and alert ownership are next.</p>
+                </article>
+            </div>
             <div class="rollout-grid">
                 <article class="rollout-card">
                     <div class="rollout-phase">Phase 1</div>
@@ -483,8 +526,8 @@
                     <ul>
                         <li><strong>Verified and merged:</strong> failure, restart, catch-up, partitions, delayed peers, state sync, backup/restore, export/import, and app-hash agreement</li>
                         <li><strong>Verified and merged:</strong> compatible binary replacement and fail-before-open rollback</li>
+                        <li><strong>Verified and merged:</strong> validator-key custody, single-signer failover, authenticated rotation, permanent revocation, and deterministic network policy</li>
                         <li>Governance-controlled state migration and partially applied migration recovery</li>
-                        <li>Validator-key rotation and compromise response</li>
                     </ul>
                 </article>
                 <article class="rollout-card">
@@ -532,9 +575,9 @@
                     <div class="rollout-phase">Phase 6</div>
                     <h3>Operations</h3>
                     <ul>
-                        <li>Completed: liveness, readiness, secret-safe structured JSON logs, and a private two-source metrics baseline</li>
-                        <li>Open: dashboard/application-panel runtime evidence, alerts, objectives, and ownership</li>
-                        <li>Seed/sentry topology, RPC policy, and abuse protection</li>
+                        <li><strong>3 of 7 complete:</strong> liveness/readiness, secret-safe structured JSON logs, and a private two-source metrics baseline</li>
+                        <li><strong>Next:</strong> dashboard/application-panel runtime evidence, alerts, objectives, and escalation ownership</li>
+                        <li>Production seed/sentry topology, RPC exposure, and abuse protection</li>
                         <li>Incident, halt, key, backup, and rollback runbooks</li>
                         <li>Capacity, disk-growth, and sustained-load evidence</li>
                     </ul>

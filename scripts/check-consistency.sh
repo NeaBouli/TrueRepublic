@@ -23,6 +23,15 @@ FRONTEND_TESTS=$(jq -r '.tests.frontend' "$STATUS_FILE")
 MODULE_TESTS=$(jq '[.modules[]] | add' "$STATUS_FILE")
 BASE_CAP=$(jq -r '.token.max_supply_base_units' "$STATUS_FILE")
 DECIMALS=$(jq -r '.token.decimals' "$STATUS_FILE")
+ROLLOUT_COMPLETED=$(jq -r '.rollout.completed' "$STATUS_FILE")
+ROLLOUT_TOTAL=$(jq -r '.rollout.total' "$STATUS_FILE")
+ROLLOUT_PHASE_WORK_COMPLETED=$(jq -r '.rollout.phase_work_completed' "$STATUS_FILE")
+ROLLOUT_PHASE_WORK_TOTAL=$(jq -r '.rollout.phase_work_total' "$STATUS_FILE")
+ROLLOUT_PHASE_6_COMPLETED=$(jq -r '.rollout.phase_6_completed' "$STATUS_FILE")
+ROLLOUT_PHASE_6_TOTAL=$(jq -r '.rollout.phase_6_total' "$STATUS_FILE")
+ROLLOUT_PERCENT=$(((ROLLOUT_COMPLETED * 100 + ROLLOUT_TOTAL / 2) / ROLLOUT_TOTAL))
+ROLLOUT_PHASE_WORK_PERCENT=$(((ROLLOUT_PHASE_WORK_COMPLETED * 100 + ROLLOUT_PHASE_WORK_TOTAL / 2) / ROLLOUT_PHASE_WORK_TOTAL))
+ROLLOUT_PHASE_6_PERCENT=$(((ROLLOUT_PHASE_6_COMPLETED * 100 + ROLLOUT_PHASE_6_TOTAL / 2) / ROLLOUT_PHASE_6_TOTAL))
 
 format_integer() {
   local remaining="$1"
@@ -56,6 +65,12 @@ if [ $((SUPPLY * 10 ** DECIMALS)) -ne "$BASE_CAP" ]; then
   echo "FAIL Display supply/decimals do not match base-unit cap"
   ERRORS=$((ERRORS+1))
 fi
+if [ "$ROLLOUT_COMPLETED" -gt "$ROLLOUT_TOTAL" ] ||
+   [ "$ROLLOUT_PHASE_WORK_COMPLETED" -gt "$ROLLOUT_PHASE_WORK_TOTAL" ] ||
+   [ "$ROLLOUT_PHASE_6_COMPLETED" -gt "$ROLLOUT_PHASE_6_TOTAL" ]; then
+  echo "FAIL Rollout completed counts exceed their totals"
+  ERRORS=$((ERRORS+1))
+fi
 
 check_file() {
   local file="$1"
@@ -84,6 +99,27 @@ check_file "docs/index.html" "Landing Page"
 check_file "wiki/Home.md" "Wiki Home"
 check_file "wiki/status/Current-Status.md" "Wiki Current Status"
 check_file "wiki/status/Testing-Status.md" "Wiki Testing Status"
+
+echo "Checking rollout status (docs/index.html)..."
+grep -Fq "${ROLLOUT_COMPLETED} of ${ROLLOUT_TOTAL}" docs/index.html &&
+  echo "  OK Full checklist" ||
+  { echo "  FAIL Full checklist"; ERRORS=$((ERRORS+1)); }
+grep -Fq "${ROLLOUT_PHASE_WORK_COMPLETED} of ${ROLLOUT_PHASE_WORK_TOTAL}" docs/index.html &&
+  echo "  OK Phase work" ||
+  { echo "  FAIL Phase work"; ERRORS=$((ERRORS+1)); }
+grep -Fq "${ROLLOUT_PHASE_6_COMPLETED} of ${ROLLOUT_PHASE_6_TOTAL}" docs/index.html &&
+  echo "  OK Phase 6" ||
+  { echo "  FAIL Phase 6"; ERRORS=$((ERRORS+1)); }
+grep -Fq "${ROLLOUT_PERCENT}%" docs/index.html &&
+  echo "  OK Rounded rollout percentage" ||
+  { echo "  FAIL Rounded rollout percentage"; ERRORS=$((ERRORS+1)); }
+grep -Fq "${ROLLOUT_PHASE_WORK_PERCENT}%" docs/index.html &&
+  echo "  OK Rounded phase-work percentage" ||
+  { echo "  FAIL Rounded phase-work percentage"; ERRORS=$((ERRORS+1)); }
+grep -Fq "${ROLLOUT_PHASE_6_PERCENT}%" docs/index.html &&
+  echo "  OK Rounded Phase 6 percentage" ||
+  { echo "  FAIL Rounded Phase 6 percentage"; ERRORS=$((ERRORS+1)); }
+echo ""
 
 if [ "$ERRORS" -gt 0 ]; then
   echo "FAILED: $ERRORS inconsistencies found"
