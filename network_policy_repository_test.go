@@ -17,6 +17,7 @@ func TestContainerNetworkDefaultsFailClosed(t *testing.T) {
 		"--rpc.laddr=tcp://127.0.0.1:26657",
 		"--grpc.enable=false",
 		"--api.enable=false",
+		"--log_format=json",
 		`CMD ["truerepublicd", "healthcheck", "live", "--timeout", "2s"]`,
 	} {
 		if !strings.Contains(dockerfile, required) {
@@ -42,6 +43,7 @@ func TestContainerNetworkDefaultsFailClosed(t *testing.T) {
 		"--rpc.laddr=tcp://127.0.0.1:26657",
 		"--api.address=tcp://127.0.0.1:1317",
 		"--grpc.enable=false",
+		"--log_format=json",
 		`network_mode: "service:truerepublic-node"`,
 		"PROMETHEUS_ENABLED=${PROMETHEUS_ENABLED:-false}",
 		"${GRAFANA_PASSWORD:?set GRAFANA_PASSWORD}",
@@ -92,6 +94,7 @@ func TestContainerNetworkDefaultsFailClosed(t *testing.T) {
 		"truerepublicd healthcheck live --timeout 2s",
 		"truerepublicd healthcheck ready --timeout 2s",
 		"docker exec truerepublic-node-ci wget -qO- http://127.0.0.1:26657/status",
+		"Verify structured logs after restart",
 		"docker compose up --detach --build truerepublic-node web-wallet nginx prometheus grafana",
 		"http://127.0.0.1:8080/rpc/status",
 		`select(.labels.job == "truerepublic-node" and .health == "up")`,
@@ -109,6 +112,9 @@ func TestContainerNetworkDefaultsFailClosed(t *testing.T) {
 		"truerepublicd healthcheck ready",
 		"does not restart a healthy syncing node",
 		"literal loopback address only",
+		"Every supported node log line is JSON",
+		"[REDACTED]",
+		"rejects `--trace-store`",
 	} {
 		if !strings.Contains(monitoring, required) {
 			t.Fatalf("operator monitoring guide must explain health semantics with %q", required)

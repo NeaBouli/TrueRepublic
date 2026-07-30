@@ -1492,3 +1492,58 @@
   unhealthy main process without explicit external automation.
 - No production, server, firewall, DNS, deployment, real topology, secret,
   credential, key, mainnet, or public-network action was performed.
+
+## 2026-07-30 05:28 EEST - GH-77 secret-safe structured logging started
+
+- Opened GH-77 under rollout tracker GH-29 and created
+  `feature/GH-77-structured-logging` from clean, synchronized `main` at
+  `2435335`.
+- Bounded the task to repository code, tests, operator documentation, and CI
+  evidence. Consensus/application state and production infrastructure remain
+  outside scope.
+- The central SDK/CometBFT logger construction is the integration boundary.
+  The supported node-operation path will use JSON while sanitization preserves
+  safe operational metadata and redacts credentials, mnemonic/private-key
+  material, raw transactions, proofs, signatures, and private payloads.
+- Initial GitHub state: GH-77 is open; GH-4, GH-7, and GH-29 are the only
+  other open issues; no pull request is open.
+- Next: delegate the bounded logging core to Kimi K3, review its write diff,
+  integrate process/policy tests and operator guidance, then run the complete
+  relevant verification chain.
+
+## 2026-07-30 06:17 EEST - GH-77 implementation and adversarial review complete
+
+- Added the central structured/redacting logger boundary, JSON-only supported
+  node start, raw trace-store refusal, explicit script/image/Compose defaults,
+  container JSONL CI evidence, adversarial unit/process/policy tests, operator
+  guidance, and `GH77_AUDIT.md`.
+- The bounded Kimi implementation attempt returned design analysis but no
+  writable diff and was stopped; Sol implemented and integrated the work.
+  Kimi then independently reviewed the current tree read-only and reported
+  PASS with no P0/P1/must-fix P2.
+- Focused evidence is green: vet; normal and race observability tests; start,
+  script, and network policy tests; and a 59.78s compiled daemon
+  start/stop/restart test covering fail-closed plain/trace-store inputs,
+  persistent height advancement, export compatibility, and JSON
+  `level`/`message` on every normal-operation log line.
+- Docker is unavailable locally. Exact image/Compose evidence and all complete
+  repository/security/recovery gates remain required on the published head.
+- No production log, collector, server, deployment, credential, key, mainnet,
+  consensus/state, or public-network action was performed.
+
+## 2026-07-30 06:42 EEST - GH-77 complete local gates pass
+
+- `make verify` passed build, vet, race, and coverage across the authoritative
+  nine Go packages; observability coverage is 77.3%.
+- The complete eight-scenario multi-validator recovery matrix passed in
+  1161.044s. Documentation consistency, diff/shell/YAML checks, Rust
+  format/clippy/build/tests, Cargo audit, and active web-client
+  lint/8 tests/build/high-severity audit also passed.
+- Docker and `govulncheck` are unavailable locally and remain mandatory
+  exact-head GitHub gates. Cargo audit emitted six allowed transitive warnings.
+  The unchanged legacy mobile audit's 51 dependency findings remain
+  out-of-scope debt under its existing informational workflow.
+- GH-77 local implementation TODO is complete; publication, exact-head CI,
+  review remediation, merge, and parent/public-status synchronization remain.
+- No production log, collector, server, deployment, credential, key, mainnet,
+  consensus/state, or public-network action was performed.

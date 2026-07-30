@@ -162,6 +162,42 @@ groups:
 
 ## Log Monitoring
 
+The supported daemon-operation path uses structured JSON at every log level.
+`scripts/start-node.sh`, the container image, and the Compose profile pass
+`--log_format=json`; direct `truerepublicd start` also refuses an unstructured
+format. Every supported node log line is JSON with stable `level`, `message`,
+and component fields supplied by the SDK and CometBFT.
+
+The central logger replaces sensitive values with `[REDACTED]`. This includes
+credentials and authorization headers, cookies and session values, mnemonics,
+private or validator keys and signer state, keyrings, passwords/passphrases,
+raw transaction bytes or payloads, proofs, and signatures. Public hashes,
+heights, durations, module names, peer counts, and public keys remain usable
+for diagnosis.
+
+Redaction is defense in depth, not permission to put secrets into log calls,
+command lines, environment variables, tickets, or support bundles. Never
+enable a bypassing logger, paste a mnemonic/private key into a field with an
+invented name, or treat retained logs as public. Apply host access control,
+rotation, retention, encryption, and incident handling separately; their
+production values remain rollout gates.
+
+`truerepublicd start` rejects `--trace-store` because raw SDK KV tracing bypasses
+this logger. Go runtime panic/crash output is not a structured logger event and
+must be handled as sensitive incident evidence rather than ingested as trusted
+JSON.
+
+Parse and filter logs structurally rather than grepping free-form text:
+
+```bash
+docker compose logs --no-log-prefix truerepublic-node |
+  jq -c 'select(.level == "error") | {time, level, module, message, height}'
+```
+
+Container `json-file` rotation is bounded to three 50 MiB files in the local
+Compose profile. That recovery/development setting is not a production
+retention policy.
+
 ### Docker logs
 
 ```bash

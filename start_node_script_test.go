@@ -45,6 +45,7 @@ func TestStartNodeScriptRequiresValidatedRole(t *testing.T) {
 				"network-policy validate --role validator --home ",
 				"start --home ",
 				"--log_level info",
+				"--log_format json",
 			},
 		},
 	}
