@@ -1797,3 +1797,28 @@
 - This append-only publication handoff becomes the replacement exact head.
   Pages, security, docs/static checks, review status, merge, and deployed-page
   verification remain pending.
+
+## 2026-07-30 22:08 EEST - GH-29 PR #83 review findings remediated
+
+- Clarified that the final exit gates are included in the 59-item total but
+  remain open; the 10 completed items no longer read as if they include those
+  gates.
+- The docs consistency gate now rejects missing, nonnumeric, fractional, and
+  negative rollout counts plus zero/nonpositive totals before any percentage
+  division.
+- PASS: complete docs consistency, shell syntax, status JSON, diff hygiene,
+  positive integer fixtures, and rejection fixtures for negative, fractional,
+  string, null, and zero-total inputs.
+- Both post-merge PR #83 threads are technically addressed. Publication,
+  exact-head checks, thread replies/resolution, merge, and deployed-page
+  verification remain.
+
+## 2026-07-30 22:09 EEST - GH-29 review follow-up published as PR #84
+
+- Published `323abad` on `fix/GH-29-page-review-followup` and opened draft
+  PR #84 against merged `main`.
+- Replied to both unresolved PR #83 threads with the follow-up PR and concrete
+  correction evidence. Threads remain open until the fix is merged and
+  verified.
+- This append-only handoff becomes the replacement exact head. Fresh docs,
+  security, static/review checks and merge remain required.

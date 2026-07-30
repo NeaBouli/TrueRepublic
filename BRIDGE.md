@@ -2560,3 +2560,51 @@ Go/Rust/Node security, docs, DeepScan, and CodeRabbit. GH-51 is closed.
 - **Boundary:** no production deployment or runtime code change.
 
 ---
+
+## 2026-07-30 22:06 EEST GH-29 PR #83 review follow-up → In Progress
+
+- **Source PR:** [#83](https://github.com/NeaBouli/TrueRepublic/pull/83),
+  merged as `4546906`.
+- **Finding:** the rate-limited full review returned green but created two
+  unresolved minor threads immediately before merge. Both are valid:
+  1. clarify that exit gates are counted in 59 but remain open;
+  2. validate rollout integers and positive totals before division.
+- **Branch:** `fix/GH-29-page-review-followup` from merged `origin/main`.
+- **Scope:** minimal page wording and fail-closed consistency-script
+  validation, targeted regression checks, thread replies/resolution, and a
+  follow-up PR.
+- **Risk:** Low, documentation and docs-gate hardening only. No runtime or
+  production change.
+- **Next:** implement both review corrections, prove malformed/negative/zero
+  status input fails safely, publish, and require fresh exact-head checks.
+
+---
+
+## 2026-07-30 22:08 EEST GH-29 PR #83 review follow-up → Review
+
+- **Changed:** `docs/index.html`, `scripts/check-consistency.sh`,
+  `BRIDGE.md`, and `docs/agent-bridge/ACTION_LOG.md`.
+- **Finding 1:** wording now says exit gates are included in the 59 total but
+  remain open.
+- **Finding 2:** all six rollout fields are type/range validated before the
+  first division; totals must be positive integers and completed counts must be
+  nonnegative integers.
+- **Tests:** full consistency PASS; shell/JSON/diff PASS; valid integer fixtures
+  PASS; negative, fractional, string, null, and zero-total rejection PASS.
+- **Risk:** Low, documentation/docs-gate only. Ready for a focused follow-up PR
+  and fresh exact-head verification.
+
+---
+
+## 2026-07-30 22:09 EEST GH-29 PR #83 review follow-up → Review
+
+- **PR:** [#84](https://github.com/NeaBouli/TrueRepublic/pull/84)
+- **Published fix:** `323abad` on
+  `fix/GH-29-page-review-followup`.
+- Both PR #83 threads have evidence-backed replies linking the follow-up; they
+  remain open until the correction is merged.
+- This append-only handoff becomes the replacement exact head.
+- **Remaining:** fresh exact-head checks/review, merge, resolve both source
+  threads, synchronize clean main, and verify deployed Pages.
+
+---
