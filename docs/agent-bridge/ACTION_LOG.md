@@ -1915,3 +1915,16 @@
 - Next: publish the implementation PR, collect exact-head GitHub CI/review,
   remediate if necessary, merge, then publish the separate post-merge
   tracker/status synchronization.
+
+## 2026-07-30 23:28 EEST - GH-85 draft PR #86 published
+
+- Pushed reviewed implementation commit `1c44b2f` and opened draft PR #86
+  against `main`.
+- PR #86 documents the native dashboard, eleven alerts, objective/ownership
+  contract, local verification, independent review, and the explicit
+  non-production boundary.
+- Posted evidence and PR linkage to GH-85 and the GH-29 rollout tracker.
+- The tracker/public page remains unchanged until the implementation is
+  merged; this prevents an unmerged branch from being reported as delivered.
+- Next: push this append-only handoff, require exact-head GitHub checks and
+  review, remediate findings, and merge only when green.

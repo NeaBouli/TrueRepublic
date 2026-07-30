@@ -2732,3 +2732,19 @@ Go/Rust/Node security, docs, DeepScan, and CodeRabbit. GH-51 is closed.
   merge and synchronize GH-29, public rollout status, test counts, and Bridge.
 
 ---
+
+## 2026-07-30 23:28 EEST GH-85 published as draft PR #86
+
+- **Commit:** `1c44b2f` (`feat: add observability operations baseline`) is
+  pushed on `feature/GH-85-observability-operations`.
+- **PR:** [#86](https://github.com/NeaBouli/TrueRepublic/pull/86) targets
+  `main`, closes GH-85 after merge, and carries the implementation, risk
+  boundary, local evidence, and mandatory GitHub runtime checks.
+- GH-85 and GH-29 now link the PR and record that rollout/public status stays
+  open until exact-head checks pass and the implementation merges.
+- **State:** review in progress. No production, server, mainnet, IAM, paging,
+  or notification action occurred.
+- **Next:** publish this append-only PR handoff as the replacement head and
+  monitor every GitHub check/review; fix valid findings before merge.
+
+---
