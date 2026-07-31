@@ -3073,3 +3073,20 @@ Go/Rust/Node security, docs, DeepScan, and CodeRabbit. GH-51 is closed.
   replacement-head status/security/review checks before merge.
 
 ---
+
+## 2026-07-31 15:02 EEST GH-89 → Done
+
+- PR #91 corrected head `3a07fa4` passed all docs/static/security/review gates
+  with its only finding fixed and zero unresolved threads; it merged as
+  `69e498f`.
+- Exact merged implementation `2f2acdd` has green Go build/test, all eight
+  recovery drills, Docker/Compose, Security Scan, and Pages. Exact merged
+  status `69e498f` has green Security Scan and Pages.
+- Live Pages and status JSON return 1,164 cases, 11/59 overall, 11/51 phase
+  work, Phase 6 4/7, `production_ready=false`, and
+  `topology_policy.production_deployment=false`.
+- GH-89 acceptance criteria are checked and the issue is closed. GH-29's real
+  topology/deployment item remains unchecked. No production mutation occurred.
+- **Status:** Done; final append-only handoff publication only.
+
+---

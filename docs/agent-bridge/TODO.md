@@ -60,7 +60,7 @@
   seed/sentry/validator/RPC relationships, validator isolation, deny-by-default
   flows, and bounded public-ingress abuse protection without deploying
   production infrastructure.
-- [ ] GH-89: publish the reviewed branch, obtain green exact-head GitHub
+- [x] GH-89: publish the reviewed branch, obtain green exact-head GitHub
   build/race/coverage, recovery, Docker/Compose, docs/static/security, and
   independent review evidence; merge and synchronize GH-29, public status,
   audit, and Bridge while leaving live production deployment open.

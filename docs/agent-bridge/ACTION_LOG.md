@@ -2110,3 +2110,15 @@
   It was corrected before publication to preserve one consistent method.
 - GH-29 rollout counts remain 11/59 overall, 11/51 phase work, and Phase 6 at
   4/7 because no real production topology was deployed.
+
+## 2026-07-31 15:02 EEST - GH-89 public closure complete
+
+- PR #91 replacement head `3a07fa4` passed docs consistency, all security
+  scans, DeepScan, and review after its stale `726` total was corrected to the
+  reproduced 1,164-case figure; the thread was resolved and the PR merged as
+  `69e498f`.
+- Post-merge Security Scan and GitHub Pages deployment pass. The live page and
+  status JSON return 1,164 cases, 11/59 overall, 11/51 phase work, Phase 6 at
+  4/7, `production_ready=false`, and topology `production_deployment=false`.
+- GH-89 acceptance criteria are checked and the issue is closed. GH-29 remains
+  open with its real production-topology checkbox unchecked.
