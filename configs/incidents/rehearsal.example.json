@@ -1,0 +1,167 @@
+{
+  "version": "truerepublic.incident-rehearsal/v1",
+  "exercise_id": "phase-6-operations-rehearsal",
+  "chain_id": "truerepublic-rehearsal-1",
+  "environment": "synthetic-rehearsal",
+  "defaults": {
+    "secrets": "forbidden",
+    "artifacts": "references-only",
+    "live_actions": "forbidden",
+    "source_target_concurrency": "forbidden"
+  },
+  "roles": [
+    {"name": "incident-commander", "primary": "incident-primary", "secondary": "incident-secondary"},
+    {"name": "protocol-owner", "primary": "protocol-primary", "secondary": "protocol-secondary"},
+    {"name": "security-owner", "primary": "security-primary", "secondary": "security-secondary"},
+    {"name": "validator-operator", "primary": "validator-primary", "secondary": "validator-secondary"},
+    {"name": "evidence-custodian", "primary": "evidence-primary", "secondary": "evidence-secondary"},
+    {"name": "communications-owner", "primary": "communications-primary", "secondary": "communications-secondary"},
+    {"name": "release-owner", "primary": "release-primary", "secondary": "release-secondary"}
+  ],
+  "scenarios": [
+    {
+      "id": "chain-halt-rehearsal",
+      "kind": "chain-halt",
+      "severity": "critical",
+      "authority": "coordinated-protocol-release",
+      "runbook": "docs/node-operators/operations/incident-command.md",
+      "outcome": "service-restored",
+      "phases": [
+        {"name": "detect", "owner": "incident-commander", "actions": ["classify-incident"], "evidence": ["incident-start", "alert-snapshot", "chain-id"], "approvals": []},
+        {"name": "contain", "owner": "security-owner", "actions": ["freeze-changes", "declare-chain-halt", "disable-automatic-restart"], "evidence": ["signer-isolation", "restart-disabled", "validator-power"], "approvals": []},
+        {"name": "preserve", "owner": "evidence-custodian", "actions": ["preserve-evidence"], "evidence": ["logs", "trusted-height", "trusted-app-hash"], "approvals": []},
+        {"name": "decide", "owner": "incident-commander", "actions": ["record-decision"], "evidence": ["approval-record", "decision-deadline", "communication-channel"], "approvals": ["incident-commander", "security-owner", "protocol-owner"]},
+        {"name": "recover", "owner": "protocol-owner", "actions": ["coordinate-restart"], "evidence": [], "approvals": []},
+        {"name": "validate", "owner": "protocol-owner", "actions": ["validate-recovery"], "evidence": ["common-app-hash", "height-progress", "ledger-invariants"], "approvals": ["protocol-owner", "security-owner"]},
+        {"name": "close", "owner": "incident-commander", "actions": ["close-incident"], "evidence": ["postmortem"], "approvals": ["incident-commander"]}
+      ],
+      "abort_conditions": ["evidence-incomplete", "invariant-failure", "quorum-unsafe", "trusted-hash-disagreement", "signer-isolation-unproven", "second-signer-detected"]
+    },
+    {
+      "id": "validator-failure-rehearsal",
+      "kind": "validator-failure",
+      "severity": "high",
+      "authority": "operator",
+      "runbook": "docs/node-operators/operations/validator-identity-recovery.md",
+      "outcome": "service-restored",
+      "phases": [
+        {"name": "detect", "owner": "incident-commander", "actions": ["classify-incident"], "evidence": ["incident-start", "alert-snapshot", "chain-id"], "approvals": []},
+        {"name": "contain", "owner": "security-owner", "actions": ["freeze-changes", "isolate-affected-signer", "disable-automatic-restart"], "evidence": ["signer-isolation", "restart-disabled"], "approvals": []},
+        {"name": "preserve", "owner": "evidence-custodian", "actions": ["preserve-evidence"], "evidence": ["logs", "trusted-height", "trusted-app-hash"], "approvals": []},
+        {"name": "decide", "owner": "incident-commander", "actions": ["record-decision"], "evidence": ["approval-record", "decision-deadline", "communication-channel"], "approvals": ["incident-commander"]},
+        {"name": "recover", "owner": "validator-operator", "actions": ["repair-or-recover-validator"], "evidence": [], "approvals": []},
+        {"name": "validate", "owner": "protocol-owner", "actions": ["validate-recovery"], "evidence": ["common-app-hash", "height-progress", "ledger-invariants", "signer-state-monotonic", "one-active-signer", "validator-power"], "approvals": ["protocol-owner", "security-owner"]},
+        {"name": "close", "owner": "incident-commander", "actions": ["close-incident"], "evidence": ["postmortem"], "approvals": ["incident-commander"]}
+      ],
+      "abort_conditions": ["evidence-incomplete", "invariant-failure", "signer-isolation-unproven", "signer-state-stale", "second-signer-detected"]
+    },
+    {
+      "id": "validator-slashing-rehearsal",
+      "kind": "validator-slashing",
+      "severity": "critical",
+      "authority": "operator",
+      "runbook": "docs/node-operators/operations/validator-slashing.md",
+      "outcome": "service-restored",
+      "phases": [
+        {"name": "detect", "owner": "incident-commander", "actions": ["classify-incident"], "evidence": ["incident-start", "alert-snapshot", "chain-id"], "approvals": []},
+        {"name": "contain", "owner": "security-owner", "actions": ["freeze-changes", "isolate-affected-signer", "disable-automatic-restart"], "evidence": ["signer-isolation", "restart-disabled"], "approvals": []},
+        {"name": "preserve", "owner": "evidence-custodian", "actions": ["preserve-evidence"], "evidence": ["logs", "trusted-height", "trusted-app-hash", "offense-height", "evidence-hash", "stake-and-supply"], "approvals": []},
+        {"name": "decide", "owner": "incident-commander", "actions": ["record-decision", "evaluate-slashing-recovery"], "evidence": ["approval-record", "decision-deadline", "communication-channel"], "approvals": ["incident-commander", "security-owner", "protocol-owner"]},
+        {"name": "recover", "owner": "validator-operator", "actions": ["repair-or-rotate-validator"], "evidence": [], "approvals": []},
+        {"name": "validate", "owner": "protocol-owner", "actions": ["validate-recovery"], "evidence": ["common-app-hash", "height-progress", "ledger-invariants", "one-active-signer", "validator-power", "stake-and-supply"], "approvals": ["protocol-owner", "security-owner"]},
+        {"name": "close", "owner": "incident-commander", "actions": ["close-incident"], "evidence": ["postmortem"], "approvals": ["incident-commander"]}
+      ],
+      "abort_conditions": ["evidence-incomplete", "invariant-failure", "signer-isolation-unproven", "signer-state-stale", "second-signer-detected"]
+    },
+    {
+      "id": "consensus-key-compromise-rehearsal",
+      "kind": "consensus-key-compromise",
+      "severity": "critical",
+      "authority": "operator",
+      "runbook": "docs/node-operators/operations/validator-key-rotation.md",
+      "outcome": "service-restored",
+      "phases": [
+        {"name": "detect", "owner": "incident-commander", "actions": ["classify-incident"], "evidence": ["incident-start", "alert-snapshot", "chain-id"], "approvals": []},
+        {"name": "contain", "owner": "security-owner", "actions": ["freeze-changes", "isolate-affected-signer", "disable-automatic-restart"], "evidence": ["signer-isolation", "restart-disabled"], "approvals": []},
+        {"name": "preserve", "owner": "evidence-custodian", "actions": ["preserve-evidence"], "evidence": ["logs", "trusted-height", "trusted-app-hash"], "approvals": []},
+        {"name": "decide", "owner": "incident-commander", "actions": ["record-decision"], "evidence": ["approval-record", "decision-deadline", "communication-channel"], "approvals": ["incident-commander", "security-owner", "protocol-owner"]},
+        {"name": "recover", "owner": "validator-operator", "actions": ["rotate-consensus-key"], "evidence": [], "approvals": []},
+        {"name": "validate", "owner": "protocol-owner", "actions": ["validate-recovery"], "evidence": ["common-app-hash", "height-progress", "ledger-invariants", "old-key-revoked", "rotation-activation-height", "one-active-signer", "signer-state-monotonic"], "approvals": ["protocol-owner", "security-owner"]},
+        {"name": "close", "owner": "incident-commander", "actions": ["close-incident"], "evidence": ["postmortem"], "approvals": ["incident-commander"]}
+      ],
+      "abort_conditions": ["evidence-incomplete", "invariant-failure", "operator-authority-uncertain", "signer-isolation-unproven", "second-signer-detected", "replacement-key-unavailable"]
+    },
+    {
+      "id": "operator-authority-compromise-rehearsal",
+      "kind": "operator-authority-compromise",
+      "severity": "critical",
+      "authority": "manual-governance",
+      "runbook": "docs/node-operators/operations/incident-command.md",
+      "outcome": "safe-stopped",
+      "phases": [
+        {"name": "detect", "owner": "incident-commander", "actions": ["classify-incident"], "evidence": ["incident-start", "alert-snapshot", "chain-id"], "approvals": []},
+        {"name": "contain", "owner": "security-owner", "actions": ["freeze-changes", "isolate-affected-signer", "disable-automatic-restart", "freeze-authority-actions"], "evidence": ["signer-isolation", "restart-disabled", "authority-isolation"], "approvals": []},
+        {"name": "preserve", "owner": "evidence-custodian", "actions": ["preserve-evidence"], "evidence": ["logs", "trusted-height", "trusted-app-hash"], "approvals": []},
+        {"name": "decide", "owner": "incident-commander", "actions": ["record-decision"], "evidence": ["approval-record", "decision-deadline", "communication-channel"], "approvals": ["incident-commander", "security-owner", "protocol-owner", "release-owner"]},
+        {"name": "recover", "owner": "security-owner", "actions": ["coordinate-manual-recovery"], "evidence": [], "approvals": []},
+        {"name": "validate", "owner": "protocol-owner", "actions": ["validate-recovery"], "evidence": ["safe-stopped", "signer-isolation", "restart-disabled", "governance-decision", "authority-isolation"], "approvals": ["protocol-owner", "security-owner"]},
+        {"name": "close", "owner": "incident-commander", "actions": ["close-incident"], "evidence": ["postmortem"], "approvals": ["incident-commander"]}
+      ],
+      "abort_conditions": ["evidence-incomplete", "invariant-failure", "authority-still-active", "signer-isolation-unproven", "second-signer-detected", "unauthorized-rotation-attempt"]
+    },
+    {
+      "id": "backup-restore-rehearsal",
+      "kind": "backup-restore",
+      "severity": "high",
+      "authority": "operator",
+      "runbook": "docs/node-operators/operations/backup-recovery.md",
+      "outcome": "service-restored",
+      "phases": [
+        {"name": "detect", "owner": "incident-commander", "actions": ["classify-incident"], "evidence": ["incident-start", "alert-snapshot", "chain-id"], "approvals": []},
+        {"name": "contain", "owner": "security-owner", "actions": ["freeze-changes", "stop-backup-source"], "evidence": ["restart-disabled"], "approvals": []},
+        {"name": "preserve", "owner": "evidence-custodian", "actions": ["preserve-evidence"], "evidence": ["logs", "trusted-height", "trusted-app-hash", "backup-sha256", "backup-excludes-keys"], "approvals": []},
+        {"name": "decide", "owner": "incident-commander", "actions": ["record-decision"], "evidence": ["approval-record", "decision-deadline", "communication-channel"], "approvals": ["incident-commander"]},
+        {"name": "recover", "owner": "validator-operator", "actions": ["create-sanitized-backup", "restore-fresh-full-node"], "evidence": [], "approvals": []},
+        {"name": "validate", "owner": "protocol-owner", "actions": ["validate-recovery"], "evidence": ["common-app-hash", "height-progress", "ledger-invariants", "backup-excludes-keys", "fresh-node-identity", "genesis-sha256"], "approvals": ["protocol-owner", "security-owner"]},
+        {"name": "close", "owner": "incident-commander", "actions": ["close-incident"], "evidence": ["postmortem"], "approvals": ["incident-commander"]}
+      ],
+      "abort_conditions": ["evidence-incomplete", "invariant-failure", "secret-material-detected", "artifact-mismatch", "restore-target-not-fresh"]
+    },
+    {
+      "id": "compatible-binary-upgrade-rehearsal",
+      "kind": "compatible-binary-upgrade",
+      "severity": "high",
+      "authority": "coordinated-protocol-release",
+      "runbook": "docs/node-operators/operations/upgrades.md",
+      "outcome": "service-restored",
+      "phases": [
+        {"name": "detect", "owner": "incident-commander", "actions": ["classify-incident"], "evidence": ["incident-start", "alert-snapshot", "chain-id"], "approvals": []},
+        {"name": "contain", "owner": "security-owner", "actions": ["freeze-changes", "stop-upgrade-node", "disable-automatic-restart"], "evidence": ["restart-disabled"], "approvals": []},
+        {"name": "preserve", "owner": "evidence-custodian", "actions": ["preserve-evidence"], "evidence": ["logs", "trusted-height", "trusted-app-hash", "binary-sha256", "backup-sha256", "backup-excludes-keys", "signer-state-monotonic"], "approvals": []},
+        {"name": "decide", "owner": "incident-commander", "actions": ["record-decision"], "evidence": ["approval-record", "decision-deadline", "communication-channel"], "approvals": ["incident-commander"]},
+        {"name": "recover", "owner": "release-owner", "actions": ["install-compatible-binary", "rollback-before-state-open"], "evidence": ["candidate-state-unopened"], "approvals": []},
+        {"name": "validate", "owner": "protocol-owner", "actions": ["validate-recovery"], "evidence": ["common-app-hash", "height-progress", "ledger-invariants", "signer-state-monotonic", "one-active-signer", "validator-power"], "approvals": ["protocol-owner", "security-owner"]},
+        {"name": "close", "owner": "incident-commander", "actions": ["close-incident"], "evidence": ["postmortem"], "approvals": ["incident-commander"]}
+      ],
+      "abort_conditions": ["evidence-incomplete", "invariant-failure", "candidate-opened-state", "signer-state-stale", "second-signer-detected", "trusted-hash-disagreement"]
+    },
+    {
+      "id": "legacy-authority-migration-rehearsal",
+      "kind": "legacy-authority-migration",
+      "severity": "critical",
+      "authority": "manual-governance",
+      "runbook": "docs/node-operators/operations/legacy-authority-migration.md",
+      "outcome": "service-restored",
+      "phases": [
+        {"name": "detect", "owner": "incident-commander", "actions": ["classify-incident"], "evidence": ["incident-start", "alert-snapshot", "chain-id"], "approvals": []},
+        {"name": "contain", "owner": "security-owner", "actions": ["freeze-changes", "halt-source-chain", "disable-automatic-restart"], "evidence": ["source-target-isolation", "restart-disabled"], "approvals": []},
+        {"name": "preserve", "owner": "evidence-custodian", "actions": ["preserve-evidence"], "evidence": ["logs", "trusted-height", "trusted-app-hash", "raw-export-sha256", "distinct-chain-ids", "source-target-isolation"], "approvals": []},
+        {"name": "decide", "owner": "incident-commander", "actions": ["record-decision"], "evidence": ["approval-record", "decision-deadline", "communication-channel"], "approvals": ["incident-commander", "security-owner", "protocol-owner", "release-owner"]},
+        {"name": "recover", "owner": "protocol-owner", "actions": ["transform-fresh-genesis", "start-isolated-target", "stop-target-chain", "rollback-separate-chain", "restart-untouched-source"], "evidence": ["target-stopped"], "approvals": []},
+        {"name": "validate", "owner": "protocol-owner", "actions": ["validate-recovery"], "evidence": ["common-app-hash", "height-progress", "ledger-invariants", "distinct-chain-ids", "source-target-isolation", "fresh-operator-proofs", "empty-wasm-state", "target-stopped"], "approvals": ["protocol-owner", "security-owner"]},
+        {"name": "close", "owner": "incident-commander", "actions": ["close-incident"], "evidence": ["postmortem"], "approvals": ["incident-commander"]}
+      ],
+      "abort_conditions": ["evidence-incomplete", "invariant-failure", "source-target-concurrency", "source-target-state-mixing", "target-still-active", "second-signer-detected", "artifact-mismatch", "cosmwasm-state-present", "trusted-hash-disagreement"]
+    }
+  ]
+}

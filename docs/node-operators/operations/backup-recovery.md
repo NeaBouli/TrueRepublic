@@ -8,6 +8,10 @@ TrueRepublic uses two deliberately separate recovery paths:
 Never put consensus keys, signer state, node keys, or account keyrings in a
 routine archive or remote backup.
 
+Coordinate an incident or rehearsal through
+[Incident Command and Rehearsal](incident-command.md); this page remains the
+authoritative storage and signer-state boundary.
+
 ## Identity and Data Boundaries
 
 | Item | Location | Recovery rule |
@@ -122,6 +126,7 @@ backup of a compromised key is also compromised.
 
 ## Next Steps
 
+- [Incident Command and Rehearsal](incident-command.md)
 - [Validator Identity Custody and Recovery](validator-identity-recovery.md)
 - [Upgrades](upgrades.md)
 - [Security Hardening](security.md)

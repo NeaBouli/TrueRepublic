@@ -47,6 +47,7 @@ import (
 	genutiltypes "github.com/cosmos/cosmos-sdk/x/genutil/types"
 
 	"truerepublic/healthcheck"
+	"truerepublic/incidentpolicy"
 	"truerepublic/networkpolicy"
 	"truerepublic/observability"
 	"truerepublic/token"
@@ -250,6 +251,7 @@ func newRootCmd() *cobra.Command {
 		newMigrationCmd(appCodec),
 		networkpolicy.NewCommand(),
 		topologypolicy.NewCommand(),
+		incidentpolicy.NewCommand(),
 		healthcheck.NewCommand(),
 	)
 	return rootCmd
@@ -328,7 +330,7 @@ func validateStructuredStartLogFormat(cmd *cobra.Command, format string) error {
 func isConfigIndependentCommand(cmd *cobra.Command) bool {
 	for current := cmd; current != nil; current = current.Parent() {
 		switch current.Name() {
-		case "network-policy", "topology-policy", "healthcheck":
+		case "network-policy", "topology-policy", "incident-rehearsal", "healthcheck":
 			return true
 		}
 	}

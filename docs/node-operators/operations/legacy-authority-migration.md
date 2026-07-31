@@ -3,6 +3,9 @@
 Status: recovery-stage procedure for GH-61. This is not a production rollout
 approval and is not a general-purpose `x/upgrade` or governance migration.
 
+Use [Incident Command and Rehearsal](incident-command.md) for the accountable
+halt, approval, evidence, target validation, and rollback decision record.
+
 This runbook covers the one-time transition from pre-GH-56 state, where
 validator operator account addresses were derived from CometBFT consensus keys,
 to a reviewed fresh genesis with independently controlled operator accounts.

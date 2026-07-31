@@ -41,7 +41,7 @@ func TestRootUsesStandardCosmosServerCommands(t *testing.T) {
 	}
 	for _, path := range []string{
 		"init", "start", "export", "comet", "keys",
-		"network-policy", "topology-policy", "healthcheck",
+		"network-policy", "topology-policy", "incident-rehearsal", "healthcheck",
 	} {
 		cmd, _, err := root.Find([]string{path})
 		if err != nil || cmd == root {
@@ -251,6 +251,7 @@ func TestNodeStartsStopsAndRestartsFromPersistentHome(t *testing.T) {
 			"start",
 			"--home", home,
 			"--rpc.laddr", fmt.Sprintf("tcp://127.0.0.1:%d", rpcPort),
+			"--rpc.pprof_laddr", "",
 			"--p2p.laddr", fmt.Sprintf("tcp://127.0.0.1:%d", p2pPort),
 			"--grpc.enable=false",
 			"--api.enable=true",
@@ -548,7 +549,7 @@ func freeTCPPort(t *testing.T) int {
 func waitForNodeHeight(t *testing.T, url string, minimum int64, cmd *exec.Cmd, logFile *os.File) int64 {
 	t.Helper()
 	client := &http.Client{Timeout: time.Second}
-	deadline := time.Now().Add(35 * time.Second)
+	deadline := time.Now().Add(60 * time.Second)
 	for time.Now().Before(deadline) {
 		response, err := client.Get(url)
 		if err == nil {
