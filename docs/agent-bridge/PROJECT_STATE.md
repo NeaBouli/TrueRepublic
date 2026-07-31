@@ -110,8 +110,8 @@ Updated: 2026-07-31 11:45 UTC
 - Recovery worktree: `/Users/gio/Desktop/repos/TrueRepublic-recovery`
 - Legacy local checkout: preserved at `/Users/gio/Desktop/repos/TrueRepublic`
 - GitHub epic: #4
-- Current open GitHub issue set during GH-89 publication closure: #4 recovery epic, #7
-  audit/review parent, #29 rollout tracker, and #89 topology qualification.
+- Current open GitHub issue set after GH-89 closure: #4 recovery epic, #7
+  audit/review parent, and #29 rollout tracker.
 
 ## Verified state
 
@@ -123,7 +123,9 @@ Updated: 2026-07-31 11:45 UTC
   reproduces 1,164 passing cases: 1,130 Go, 26 Rust, and eight
   maintained-client tests.
   Production inventory, firewall/TLS/DNS, live deployment, and GH-29 rollout
-  approval remain unexecuted.
+  approval remain unexecuted. Public status PR #91 merged as `69e498f`; its
+  post-merge Security Scan and Pages deployment pass, the live page publishes
+  1,164 cases with unchanged rollout arithmetic, and GH-89 is closed.
 - GH-85 is closed through merged PR #86 (`cd44fec`). The supported private
   observability stack now provides an immutable 16-panel Grafana dashboard,
   eleven actionable and deterministically tested Prometheus rules,
