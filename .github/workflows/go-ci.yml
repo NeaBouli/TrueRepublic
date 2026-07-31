@@ -13,6 +13,7 @@ on:
       - '.dockerignore'
       - '.github/workflows/go-ci.yml'
       - 'docker-compose.yml'
+      - 'configs/topology/**'
       - 'monitoring/**'
       - 'nginx/**'
       - 'scripts/backup.sh'
@@ -30,6 +31,7 @@ on:
       - '.dockerignore'
       - '.github/workflows/go-ci.yml'
       - 'docker-compose.yml'
+      - 'configs/topology/**'
       - 'monitoring/**'
       - 'nginx/**'
       - 'scripts/backup.sh'
@@ -60,6 +62,14 @@ jobs:
 
       - name: Build
         run: CGO_ENABLED=1 ./scripts/go-packages.sh go build
+
+      - name: Validate maintained topology qualification contract
+        run: >-
+          go run . topology-policy validate
+          --file configs/topology/qualification.example.json
+          --output json |
+          jq -e '.valid == true and .node_count == 5 and
+          (.violations | type == "array" and length == 0)'
 
       - name: Vet
         run: ./scripts/go-packages.sh go vet

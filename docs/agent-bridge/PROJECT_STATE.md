@@ -1,6 +1,6 @@
 # Project State
 
-Updated: 2026-07-30 21:46 UTC
+Updated: 2026-07-31 09:15 UTC
 
 ## Repository
 
@@ -15,6 +15,13 @@ Updated: 2026-07-30 21:46 UTC
 - Baseline: canonical `origin/main`; exact implementation and evidence commits
   are recorded in `ACTION_LOG.md` so this live state does not self-expire after
   documentation-only merges.
+- Active work: GH-89 on
+  `feature/GH-89-topology-abuse-qualification` adds a strict, versioned,
+  secret-free cross-node topology qualification contract above the merged
+  GH-71 per-home role policy. It validates reciprocal sentry protection,
+  distinct sentry zones, explicit deny-by-default flows, and bounded
+  method/route/query ingress. This is repository evidence only; GH-29's actual
+  production-deployment checkbox remains open.
 - Merged recovery PRs: #9, #15, #16, #17, #18, #19, #22, #23, #24, #27,
   #28, #30, #31, #33, #34, #35, #40, #42, #44, #46, #49, #52, #54, #57,
   #58, #62, #65, #67, #69, and #72.
@@ -103,8 +110,8 @@ Updated: 2026-07-30 21:46 UTC
 - Recovery worktree: `/Users/gio/Desktop/repos/TrueRepublic-recovery`
 - Legacy local checkout: preserved at `/Users/gio/Desktop/repos/TrueRepublic`
 - GitHub epic: #4
-- Current open GitHub issue set after GH-85 closure: #4 recovery epic, #7
-  audit/review parent, and #29 rollout tracker.
+- Current open GitHub issue set after GH-89 creation: #4 recovery epic, #7
+  audit/review parent, #29 rollout tracker, and #89 topology qualification.
 
 ## Verified state
 

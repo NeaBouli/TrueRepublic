@@ -50,6 +50,7 @@ import (
 	"truerepublic/networkpolicy"
 	"truerepublic/observability"
 	"truerepublic/token"
+	"truerepublic/topologypolicy"
 	"truerepublic/x/dex"
 	"truerepublic/x/truedemocracy"
 )
@@ -246,6 +247,7 @@ func newRootCmd() *cobra.Command {
 		server.StatusCommand(),
 		newMigrationCmd(appCodec),
 		networkpolicy.NewCommand(),
+		topologypolicy.NewCommand(),
 		healthcheck.NewCommand(),
 	)
 	return rootCmd
@@ -324,7 +326,7 @@ func validateStructuredStartLogFormat(cmd *cobra.Command, format string) error {
 func isConfigIndependentCommand(cmd *cobra.Command) bool {
 	for current := cmd; current != nil; current = current.Parent() {
 		switch current.Name() {
-		case "network-policy", "healthcheck":
+		case "network-policy", "topology-policy", "healthcheck":
 			return true
 		}
 	}

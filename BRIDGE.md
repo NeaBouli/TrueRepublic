@@ -24,6 +24,8 @@ Canonical coordination lives in [`docs/agent-bridge/`](docs/agent-bridge/README.
   [`GH80_AUDIT.md`](docs/agent-bridge/GH80_AUDIT.md)
 - GH-85 observability operations audit:
   [`GH85_AUDIT.md`](docs/agent-bridge/GH85_AUDIT.md)
+- GH-89 topology qualification audit:
+  [`GH89_AUDIT.md`](docs/agent-bridge/GH89_AUDIT.md)
 - Decisions: [`DECISIONS.md`](docs/agent-bridge/DECISIONS.md)
 - Security: [`SECURITY_NOTES.md`](docs/agent-bridge/SECURITY_NOTES.md)
 
@@ -2900,5 +2902,83 @@ Go/Rust/Node security, docs, DeepScan, and CodeRabbit. GH-51 is closed.
   repository contract, and diff hygiene.
 - **Next:** publish the corrected head and require the complete GitHub matrix
   once more; no merge until Docker and recovery both pass.
+
+---
+
+## 2026-07-31 11:37 EEST Phase 6 topology qualification → In Progress
+
+- **Owner:** Codex Sol + Kimi K3; **Ticket:** `GIO-20260731-TR-033`.
+- **Issue/branch:** [GH-89](https://github.com/NeaBouli/TrueRepublic/issues/89),
+  `feature/GH-89-topology-abuse-qualification`.
+- **Baseline:** clean `main` at `fcf8428`; GH-71 already provides fail-closed
+  validation for each individual seed, sentry, validator, RPC, and private-node
+  home. GH-85 observability is complete.
+- **Gap:** the repository does not yet define or validate one coherent
+  multi-node deployment inventory, role relationships, validator isolation,
+  public RPC ingress, firewall flow matrix, or aggregate abuse-protection
+  contract.
+- **Scope:** introduce a secret-free example topology schema and deterministic
+  validator, negative/positive regressions, CI/repository contracts, and an
+  operator qualification/rollback procedure that composes the existing GH-71
+  role policy without duplicating it.
+- **Safety boundary:** repository artifacts only. No production/server/cloud,
+  DNS, firewall, IAM, real host/IP, deployment, mainnet, key, credential, or
+  external-network change. The GH-29 production-deployment checkbox stays
+  unchecked until separately authorized live deployment evidence exists.
+- **Next:** obtain a bounded secret-free Kimi topology review, then implement
+  under Sol architecture,
+  security, integration, testing, GitHub, and closure ownership.
+
+---
+
+## 2026-07-31 11:42 EEST GH-89 architecture review → Core implementation
+
+- **Kimi review:** read-only gap analysis confirmed GH-71 is strictly
+  per-initialized-home and cannot prove reciprocal sentry protection, unique
+  identities, failure-domain diversity, aggregate flow denial, or public
+  ingress controls across one intended topology.
+- **Accepted design:** a separate versioned, strict JSON topology-policy
+  package; synthetic committed example; deterministic reports; explicit
+  deny-by-default flows; abuse-control ceilings; no DNS lookup or environment
+  expansion. The package composes GH-71 concepts and does not replace its
+  effective-home validation.
+- **Privacy correction:** a real contract containing validator public node IDs
+  is operator-private evidence. Only synthetic IDs and `.invalid` hosts may be
+  committed, preventing the public repository from defeating sentry identity
+  privacy.
+- **Delegation:** Kimi owns only the new core package and synthetic fixture,
+  may not delegate, and has no production/external authority. Sol owns every
+  existing-file edit, CLI/docs/CI integration, diff review, complete tests,
+  GitHub publication, and closure.
+- **External sync:** GH-89 and parent GH-29 contain the active scope and
+  explicit statement that the production-deployment checkbox remains open.
+
+---
+
+## 2026-07-31 13:02 EEST GH-89 local implementation → Review Ready
+
+- **Implemented:** strict `truerepublic.topology/v1` contract parser,
+  deterministic cross-node validator, offline `topology-policy validate` CLI,
+  five-node synthetic example, explicit CI command, repository contracts, and
+  operator qualification/rollback guidance.
+- **Review remediated:** reserved external-principal collision, trailing-value
+  reflection, non-public special addresses, IPv6 endpoint aliases,
+  percent/escape-ambiguous routes, stale disabled ingress, and the initial
+  Cosmos config-interceptor panic all have regressions.
+- **Full PASS:** package selection, build, vet, race/coverage across ten Go
+  packages; topology policy 86.2%, root/application 69.1%; docs consistency,
+  JSON/YAML, real CLI, and diff hygiene.
+- **Process PASS:** all eight maintained recovery scenarios passed across two
+  unchanged sequential runs. Four passed before the first run's 25-minute
+  global budget was consumed by local linker contention; the remaining four
+  then passed explicitly.
+- **Candidate arithmetic:** 1,079 Go + 26 Rust + eight maintained-client =
+  1,113 top-level cases. Public status remains at 1,105 until merged-main
+  reproduction and the closure sync.
+- **Boundary:** local Docker is unavailable, so GitHub Docker/Compose,
+  exact-head security/static checks, review, and zero unresolved threads remain
+  mandatory before merge. GH-29's real production deployment stays open.
+- **Next:** commit/push the implementation, open the review PR, and require
+  every exact-head GitHub gate before merge.
 
 ---

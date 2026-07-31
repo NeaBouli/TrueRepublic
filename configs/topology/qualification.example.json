@@ -1,0 +1,243 @@
+{
+  "version": "truerepublic.topology/v1",
+  "chain_id": "truerepublic-qualification-1",
+  "defaults": {
+    "inbound": "deny",
+    "outbound": "deny"
+  },
+  "nodes": [
+    {
+      "name": "seed-1",
+      "role": "seed",
+      "zone": "zone-a",
+      "node_id": "0123456789abcdef0123456789abcdef01234561",
+      "public_p2p": {
+        "host": "seed-1.truerepublic.invalid",
+        "port": 26656
+      },
+      "peers": [
+        "sentry-1"
+      ],
+      "protects": []
+    },
+    {
+      "name": "sentry-1",
+      "role": "sentry",
+      "zone": "zone-a",
+      "node_id": "0123456789abcdef0123456789abcdef01234562",
+      "public_p2p": {
+        "host": "sentry-1.truerepublic.invalid",
+        "port": 26656
+      },
+      "peers": [
+        "seed-1",
+        "sentry-2"
+      ],
+      "protects": [
+        "validator-1"
+      ]
+    },
+    {
+      "name": "sentry-2",
+      "role": "sentry",
+      "zone": "zone-b",
+      "node_id": "0123456789abcdef0123456789abcdef01234563",
+      "public_p2p": {
+        "host": "sentry-2.truerepublic.invalid",
+        "port": 26656
+      },
+      "peers": [
+        "seed-1",
+        "sentry-1"
+      ],
+      "protects": [
+        "validator-1"
+      ]
+    },
+    {
+      "name": "validator-1",
+      "role": "validator",
+      "zone": "zone-c",
+      "node_id": "0123456789abcdef0123456789abcdef01234564",
+      "peers": [
+        "sentry-1",
+        "sentry-2"
+      ],
+      "protects": []
+    },
+    {
+      "name": "rpc-1",
+      "role": "rpc",
+      "zone": "zone-c",
+      "node_id": "0123456789abcdef0123456789abcdef01234565",
+      "public_p2p": {
+        "host": "rpc-1.truerepublic.invalid",
+        "port": 26656
+      },
+      "peers": [
+        "sentry-1",
+        "sentry-2"
+      ],
+      "protects": []
+    }
+  ],
+  "flows": [
+    {
+      "from": "seed-1",
+      "to": "sentry-1",
+      "services": [
+        "p2p"
+      ]
+    },
+    {
+      "from": "sentry-1",
+      "to": "seed-1",
+      "services": [
+        "p2p"
+      ]
+    },
+    {
+      "from": "sentry-1",
+      "to": "sentry-2",
+      "services": [
+        "p2p"
+      ]
+    },
+    {
+      "from": "sentry-2",
+      "to": "seed-1",
+      "services": [
+        "p2p"
+      ]
+    },
+    {
+      "from": "sentry-2",
+      "to": "sentry-1",
+      "services": [
+        "p2p"
+      ]
+    },
+    {
+      "from": "validator-1",
+      "to": "sentry-1",
+      "services": [
+        "p2p"
+      ]
+    },
+    {
+      "from": "validator-1",
+      "to": "sentry-2",
+      "services": [
+        "p2p"
+      ]
+    },
+    {
+      "from": "sentry-1",
+      "to": "validator-1",
+      "services": [
+        "p2p"
+      ]
+    },
+    {
+      "from": "sentry-2",
+      "to": "validator-1",
+      "services": [
+        "p2p"
+      ]
+    },
+    {
+      "from": "rpc-1",
+      "to": "sentry-1",
+      "services": [
+        "p2p"
+      ]
+    },
+    {
+      "from": "rpc-1",
+      "to": "sentry-2",
+      "services": [
+        "p2p"
+      ]
+    },
+    {
+      "from": "internet",
+      "to": "seed-1",
+      "services": [
+        "p2p"
+      ]
+    },
+    {
+      "from": "internet",
+      "to": "sentry-1",
+      "services": [
+        "p2p"
+      ]
+    },
+    {
+      "from": "internet",
+      "to": "sentry-2",
+      "services": [
+        "p2p"
+      ]
+    },
+    {
+      "from": "internet",
+      "to": "rpc-1",
+      "services": [
+        "p2p",
+        "rpc",
+        "api"
+      ]
+    }
+  ],
+  "ingress": {
+    "rpc": {
+      "enabled": true,
+      "tls_only": true,
+      "proxy_only": true,
+      "rate_per_second": 10,
+      "burst": 20,
+      "max_body_bytes": 1048576,
+      "timeout_seconds": 30,
+      "max_concurrent": 64,
+      "allowed_methods": [
+        "GET",
+        "POST"
+      ],
+      "allowed_routes": [
+        "/status",
+        "/block",
+        "/block_results",
+        "/validators",
+        "/websocket"
+      ],
+      "websocket_route": "/websocket",
+      "metrics_enabled": false,
+      "admin_enabled": false,
+      "unsafe_enabled": false
+    },
+    "api": {
+      "enabled": true,
+      "tls_only": true,
+      "proxy_only": true,
+      "rate_per_second": 30,
+      "burst": 50,
+      "max_body_bytes": 1048576,
+      "timeout_seconds": 30,
+      "max_concurrent": 128,
+      "allowed_methods": [
+        "GET",
+        "POST",
+        "OPTIONS"
+      ],
+      "allowed_routes": [
+        "/cosmos",
+        "/truerepublic"
+      ],
+      "websocket_route": "",
+      "metrics_enabled": false,
+      "admin_enabled": false,
+      "unsafe_enabled": false
+    }
+  }
+}

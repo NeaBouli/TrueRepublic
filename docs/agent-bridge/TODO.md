@@ -55,6 +55,15 @@
   build/race/coverage, recovery, Docker/Compose dashboard/rule/query,
   docs/static/security, and independent review evidence; merge, close, and
   synchronize GH-29, public status, and Bridge.
+- [x] GH-89: define and locally verify a versioned, secret-free multi-node
+  topology contract that composes GH-71 role policies into explicit
+  seed/sentry/validator/RPC relationships, validator isolation, deny-by-default
+  flows, and bounded public-ingress abuse protection without deploying
+  production infrastructure.
+- [ ] GH-89: publish the reviewed branch, obtain green exact-head GitHub
+  build/race/coverage, recovery, Docker/Compose, docs/static/security, and
+  independent review evidence; merge and synchronize GH-29, public status,
+  audit, and Bridge while leaving live production deployment open.
 
 ## P1 - consensus and wallet audit
 
