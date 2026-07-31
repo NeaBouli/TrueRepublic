@@ -1,6 +1,6 @@
 # TrueRepublic Road to Rollout
 
-Updated: 2026-07-30
+Updated: 2026-07-31
 
 TrueRepublic has a recovered and CI-verified v0.4 engineering foundation. It
 is **not production-ready, mainnet-ready, or approved for real funds or keys**.
@@ -19,11 +19,13 @@ intentionally more granular than the public 59-item tracker.
 
 - The ordered recovery merge chain is on `main`.
 - The maximum supply is fixed at 21,000,000 PNYX.
-- The source of truth records 1,105 recovery-verified tests: 1,071 Go, 26 Rust,
+- The source of truth records 1,164 recovery-verified tests: 1,130 Go, 26 Rust,
   and 8 maintained-client tests.
 - Ledger, escrow, issuance, DEX custody, genesis, runtime invariants, ZKP
   statement binding, node persistence, and the safe operator-init boundary
   have CI-backed recovery evidence.
+- GH-89/PR #90 add repository-owned cross-node topology and abuse-control
+  qualification evidence; real private deployment remains open.
 - GitHub Pages, security scans, and the current CI matrix are green.
 
 The baseline is suitable for continued engineering. It is not a rollout
@@ -160,6 +162,8 @@ defensible coverage, and no unresolved critical/high security finding remains.
   [PR #86](https://github.com/NeaBouli/TrueRepublic/pull/86)).
 - [ ] Deploy the intended production topology, including seed nodes, sentries,
   validator isolation, RPC exposure, firewalling, and abuse protection.
+  GH-89/PR #90 provide the strict synthetic qualification contract and CI
+  validator; real private inventory and deployment evidence remain required.
 - [ ] Write and rehearse incident, validator failure, key compromise, backup,
   restore, upgrade, rollback, and chain-halt runbooks.
 - [ ] Validate resource limits, disk growth, log retention, and capacity

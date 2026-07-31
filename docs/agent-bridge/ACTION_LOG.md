@@ -2091,3 +2091,22 @@
   merges and a separate evidence sync verifies the new main.
 - GH89_AUDIT records 0 open FAIL / 0 open WARN / 7 PASS. No production or
   external infrastructure action occurred.
+
+## 2026-07-31 14:40 EEST - GH-89 implementation merged
+
+- PR #90 merged as `2f2acdd` after exact final head `cb14829` passed all
+  11 GitHub checks: Go build/vet/race/coverage, eight multi-validator recovery
+  drills, Docker/Compose restart and monitoring, docs, Go/Rust/Node security,
+  DeepScan, and CodeRabbit status.
+- The first CI head exposed machine-readable JSON on stderr; root streams were
+  corrected and the exact Linux pipeline then passed. CodeRabbit's two valid
+  close-error/API-label findings were fixed, answered, and resolved.
+- Fresh package-scoped JSON evidence reproduces 1,130 Go passing cases: root
+  86, healthcheck 55, migration 82, networkpolicy 126, observability 50, token
+  12, topologypolicy 56, treasury 36, DEX 116, and governance 511. With
+  26 Rust and eight maintained-client cases the merged total is 1,164.
+- The earlier 1,113 candidate counted the new topology package by test
+  functions while the historical public baseline counted passing subtests.
+  It was corrected before publication to preserve one consistent method.
+- GH-29 rollout counts remain 11/59 overall, 11/51 phase work, and Phase 6 at
+  4/7 because no real production topology was deployed.

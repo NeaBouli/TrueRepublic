@@ -4,8 +4,8 @@
   "release_date": "2026-03-04",
   "tests": {
     "status": "recovery_verified_locally",
-    "total": 1105,
-    "go": 1071,
+    "total": 1164,
+    "go": 1130,
     "rust": 26,
     "frontend": 8,
     "historical_total": 577
@@ -42,12 +42,13 @@
     "production_ready": false
   },
   "modules": {
-    "root": 83,
+    "root": 86,
     "healthcheck": 55,
     "migration": 82,
     "networkpolicy": 126,
     "observability": 50,
     "token": 12,
+    "topologypolicy": 56,
     "treasury": 36,
     "dex": 116,
     "truedemocracy": 511
@@ -119,6 +120,7 @@
       "structured_logging": "secret_minimized_json_sdk_cometbft_boundary_merged_on_gh77",
       "metrics_baseline": "private_cometbft_plus_sdk_application_metrics_start_restart_disable_and_progression_merged_on_gh80",
       "observability_operations": "immutable_dashboard_eleven_actionable_rules_testnet_objectives_role_ownership_and_runtime_query_proof_merged_on_gh85",
+      "topology_qualification": "strict_secret_free_cross_node_contract_validator_isolation_deny_by_default_flows_and_bounded_public_ingress_merged_on_gh89",
       "multi_validator_recovery": "failure_restart_catchup_partition_state_sync_backup_restore_export_import_compatible_binary_upgrade_fail_before_open_rollback_and_app_hash_agreement_merged_on_gh32_gh41_gh43_gh45_gh53",
       "consensus_key_rotation": "authenticated_atomic_h_plus_2_rotation_permanent_revocation_and_separate_operator_authority_merged_on_gh56",
       "consensus_slashing": "abci_plus_plus_equivocation_downtime_replay_exit_hold_and_four_process_recovery_merged_on_gh59",
@@ -129,6 +131,16 @@
       "roles": "seed_sentry_validator_rpc_private",
       "listeners": "client_and_metrics_loopback_only_public_p2p_explicit_interface",
       "topology": "canonical_peer_ids_validator_two_sentries_sentry_identity_privacy",
+      "production_deployment": false
+    },
+    "topology_policy": {
+      "status": "repository_qualification_verified_and_merged_on_gh89",
+      "contract": "truerepublic.topology/v1",
+      "roles": "seed_sentry_validator_rpc",
+      "validator_isolation": "two_sentries_in_distinct_zones_with_no_public_validator_listener",
+      "flows": "explicit_relationship_backed_deny_by_default",
+      "public_ingress": "tls_proxy_allowlist_rate_burst_body_timeout_concurrency_bounded",
+      "real_inventory_committed": false,
       "production_deployment": false
     },
     "web_client": {
