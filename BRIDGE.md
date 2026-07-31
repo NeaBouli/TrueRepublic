@@ -3061,3 +3061,15 @@ Go/Rust/Node security, docs, DeepScan, and CodeRabbit. GH-51 is closed.
   GH-29's live deployment item remains unchecked; no production action occurred.
 
 ---
+
+## 2026-07-31 14:55 EEST PR #91 review finding → Remediated
+
+- CodeRabbit found one stale `726` public-status sentence inside the historical
+  Project State section. It conflicted with the reproduced 1,164-case status.
+- The sentence now preserves historical 577 explicitly while naming 1,164 as
+  the active passing-case total. Documentation consistency, JSON/module/
+  rollout arithmetic, and diff hygiene pass.
+- **Next:** publish the correction, resolve the thread, and require the
+  replacement-head status/security/review checks before merge.
+
+---

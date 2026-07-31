@@ -343,7 +343,7 @@ Updated: 2026-07-31 11:45 UTC
 ## Public-status warning
 
 `docs/status.json`, README, limitations, and the landing page now mark recovery
-as active and separate 726 verified tests from the historical 577 figure.
+as active and separate 1,164 verified cases from the historical 577 figure.
 `CLAUDE.md`, install guidance, FAQ, landing page, wiki, and the root audit are
 reconciled with the merged recovery foundation while retaining the explicit
 non-production boundary.
