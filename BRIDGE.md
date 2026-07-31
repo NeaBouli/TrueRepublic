@@ -2982,3 +2982,18 @@ Go/Rust/Node security, docs, DeepScan, and CodeRabbit. GH-51 is closed.
   every exact-head GitHub gate before merge.
 
 ---
+
+## 2026-07-31 13:10 EEST GH-89 published as draft PR #90
+
+- **Commit:** `035993c` is pushed on
+  `feature/GH-89-topology-abuse-qualification`.
+- **PR:** [#90](https://github.com/NeaBouli/TrueRepublic/pull/90) targets
+  `main`, closes GH-89 only after merge, and carries the complete local
+  evidence and unchanged production boundary.
+- GH-89 and parent GH-29 now link PR #90. The production-deployment checkbox,
+  rollout counts, and public Pages test count remain unchanged until verified
+  merged-main evidence exists.
+- **State:** exact-head GitHub build/recovery/Docker/docs/security/review gates
+  are running. No production or external infrastructure action occurred.
+
+---
