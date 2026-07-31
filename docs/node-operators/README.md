@@ -14,6 +14,7 @@ production or public-network approval.
 - [Node Configuration](configuration/node-config.md)
 - [Network Configuration](configuration/network-config.md)
 - [Role-Based Network Policy](configuration/network-policy.md)
+- [Multi-Node Topology Qualification](configuration/topology-contract.md)
 - [Genesis & Chain Parameters](configuration/genesis-params.md)
 
 ### Operations

@@ -2035,3 +2035,59 @@
   non-production boundary.
 - Marked the GH-85 publication handoff complete. External paging, production
   SLOs/infrastructure, and rollout approval remain separate.
+
+## 2026-07-31 12:15 EEST - GH-89 topology qualification implemented locally
+
+- Created GH-89 and branch `feature/GH-89-topology-abuse-qualification` from
+  clean merged `main` `fcf8428`; parent GH-29 records the repository-only
+  boundary and unchanged production-deployment gate.
+- Added a strict 256 KiB versioned JSON contract parser with duplicate-key,
+  unknown-field, trailing-data, and depth rejection; no environment expansion,
+  DNS resolution, node-home read, or external mutation exists.
+- Added cross-node validation for synthetic public node identities, seed/
+  sentry/validator/RPC composition, reciprocal sentry protection, distinct
+  validator sentry zones, unique public endpoints, and explicit
+  deny-by-default flow coverage.
+- Added TLS/proxy-only public ingress ceilings, explicit HTTP method and route
+  allowlists, bounded rate/burst/body/timeout/concurrency, RPC-only WebSocket
+  routing, and fail-closed metrics/admin/unsafe/debug/peer-dial denial.
+- The offline root command initially reached the Cosmos config interceptor.
+  A new regression reproduced the empty-home panic; config-independent routing
+  now includes `topology-policy`, and the focused root integration suite passes.
+- Spark added the bounded parser/graph/ingress regression matrix. Kimi supplied
+  the initial read-only architecture/security analysis; its attempted isolated
+  write remained diff-free and was stopped, so Sol implemented and reviewed
+  the code. A final Kimi read-only diff review is in progress.
+- Current focused evidence: topology package race/coverage PASS at 84.8%;
+  root command registration/config independence/repository contract PASS;
+  workflow YAML and diff hygiene PASS.
+- The committed example uses only synthetic node IDs and `.invalid` hosts.
+  Real topology contracts and validator identity correlations remain
+  operator-private. No production, server, cloud, DNS, firewall, IAM,
+  deployment, key, credential, mainnet, or public-network action occurred.
+
+## 2026-07-31 13:02 EEST - GH-89 complete local verification green
+
+- `make verify` passes on the remediated diff: repository package selection,
+  build, vet, and race/coverage across all ten Go packages. Root/application
+  coverage is 69.1%; topology policy coverage is 86.2%.
+- All eight maintained process drills pass. The first bounded run proved
+  legacy-authority migration/rollback (631.94s), consensus recovery (228.45s),
+  trusted snapshot state sync (225.85s), and backup/restore/export/import
+  (199.36s). Its 25-minute global budget then ended during a linker-bound
+  upgrade build, not an assertion.
+- An unchanged second run proved persisted binary upgrade/rollback (368.21s),
+  validator identity cold failover (218.53s), consensus-key rotation (204.70s),
+  and consensus slashing/recovery (288.51s).
+- Documentation consistency, contract/status JSON, workflow YAML, real daemon
+  CLI validation, focused command/path-secrecy regressions, and diff hygiene
+  pass. Local Docker is unavailable; exact-head GitHub Docker/Compose remains
+  mandatory.
+- Branch arithmetic before merge is 1,079 Go top-level cases: root 84,
+  healthcheck 55, migration 82, networkpolicy 126, observability 50, token 12,
+  topologypolicy 7, treasury 36, DEX 116, governance 511. With 26 Rust and
+  eight maintained-client cases, the post-merge candidate total is 1,113.
+  Public status remains at the merged 1,105 baseline until implementation
+  merges and a separate evidence sync verifies the new main.
+- GH89_AUDIT records 0 open FAIL / 0 open WARN / 7 PASS. No production or
+  external infrastructure action occurred.

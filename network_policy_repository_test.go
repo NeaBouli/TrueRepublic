@@ -192,6 +192,7 @@ func TestConfigIndependentRootCommandsDoNotInitializeHome(t *testing.T) {
 		args []string
 	}
 	policyHome := filepath.Join(t.TempDir(), "policy-home")
+	topologyFile := filepath.Join(t.TempDir(), "topology-private.json")
 	healthHome := filepath.Join(t.TempDir(), "health-home")
 	tests := map[string]testCase{
 		"network policy": {
@@ -200,6 +201,14 @@ func TestConfigIndependentRootCommandsDoNotInitializeHome(t *testing.T) {
 				"network-policy", "validate",
 				"--role", "validator",
 				"--home", policyHome,
+				"--output", "json",
+			},
+		},
+		"topology policy": {
+			home: topologyFile,
+			args: []string{
+				"topology-policy", "validate",
+				"--file", topologyFile,
 				"--output", "json",
 			},
 		},
@@ -229,6 +238,37 @@ func TestConfigIndependentRootCommandsDoNotInitializeHome(t *testing.T) {
 				t.Fatalf("command output leaked the local home path: %s", output)
 			}
 		})
+	}
+}
+
+func TestTopologyQualificationRepositoryContract(t *testing.T) {
+	t.Parallel()
+
+	workflow := readRepositoryFile(t, ".github/workflows/go-ci.yml")
+	for _, required := range []string{
+		"'configs/topology/**'",
+		"Validate maintained topology qualification contract",
+		"--file configs/topology/qualification.example.json",
+		`.valid == true and .node_count == 5`,
+	} {
+		if !strings.Contains(workflow, required) {
+			t.Fatalf("Go CI must contain topology qualification contract %q", required)
+		}
+	}
+
+	guide := readRepositoryFile(t, "docs/node-operators/configuration/topology-contract.md")
+	for _, required := range []string{
+		"operator-controlled evidence store outside the public repository",
+		"never resolved",
+		"truerepublicd topology-policy validate",
+		"reciprocally declares",
+		"request bodies between 1 byte and 1 MiB",
+		"does not prove actual host placement",
+		"checkbox remains open",
+	} {
+		if !strings.Contains(guide, required) {
+			t.Fatalf("topology qualification guide must explain %q", required)
+		}
 	}
 }
 

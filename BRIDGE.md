@@ -24,6 +24,8 @@ Canonical coordination lives in [`docs/agent-bridge/`](docs/agent-bridge/README.
   [`GH80_AUDIT.md`](docs/agent-bridge/GH80_AUDIT.md)
 - GH-85 observability operations audit:
   [`GH85_AUDIT.md`](docs/agent-bridge/GH85_AUDIT.md)
+- GH-89 topology qualification audit:
+  [`GH89_AUDIT.md`](docs/agent-bridge/GH89_AUDIT.md)
 - Decisions: [`DECISIONS.md`](docs/agent-bridge/DECISIONS.md)
 - Security: [`SECURITY_NOTES.md`](docs/agent-bridge/SECURITY_NOTES.md)
 
@@ -2900,5 +2902,145 @@ Go/Rust/Node security, docs, DeepScan, and CodeRabbit. GH-51 is closed.
   repository contract, and diff hygiene.
 - **Next:** publish the corrected head and require the complete GitHub matrix
   once more; no merge until Docker and recovery both pass.
+
+---
+
+## 2026-07-31 11:37 EEST Phase 6 topology qualification → In Progress
+
+- **Owner:** Codex Sol + Kimi K3; **Ticket:** `GIO-20260731-TR-033`.
+- **Issue/branch:** [GH-89](https://github.com/NeaBouli/TrueRepublic/issues/89),
+  `feature/GH-89-topology-abuse-qualification`.
+- **Baseline:** clean `main` at `fcf8428`; GH-71 already provides fail-closed
+  validation for each individual seed, sentry, validator, RPC, and private-node
+  home. GH-85 observability is complete.
+- **Gap:** the repository does not yet define or validate one coherent
+  multi-node deployment inventory, role relationships, validator isolation,
+  public RPC ingress, firewall flow matrix, or aggregate abuse-protection
+  contract.
+- **Scope:** introduce a secret-free example topology schema and deterministic
+  validator, negative/positive regressions, CI/repository contracts, and an
+  operator qualification/rollback procedure that composes the existing GH-71
+  role policy without duplicating it.
+- **Safety boundary:** repository artifacts only. No production/server/cloud,
+  DNS, firewall, IAM, real host/IP, deployment, mainnet, key, credential, or
+  external-network change. The GH-29 production-deployment checkbox stays
+  unchecked until separately authorized live deployment evidence exists.
+- **Next:** obtain a bounded secret-free Kimi topology review, then implement
+  under Sol architecture,
+  security, integration, testing, GitHub, and closure ownership.
+
+---
+
+## 2026-07-31 11:42 EEST GH-89 architecture review → Core implementation
+
+- **Kimi review:** read-only gap analysis confirmed GH-71 is strictly
+  per-initialized-home and cannot prove reciprocal sentry protection, unique
+  identities, failure-domain diversity, aggregate flow denial, or public
+  ingress controls across one intended topology.
+- **Accepted design:** a separate versioned, strict JSON topology-policy
+  package; synthetic committed example; deterministic reports; explicit
+  deny-by-default flows; abuse-control ceilings; no DNS lookup or environment
+  expansion. The package composes GH-71 concepts and does not replace its
+  effective-home validation.
+- **Privacy correction:** a real contract containing validator public node IDs
+  is operator-private evidence. Only synthetic IDs and `.invalid` hosts may be
+  committed, preventing the public repository from defeating sentry identity
+  privacy.
+- **Delegation:** Kimi owns only the new core package and synthetic fixture,
+  may not delegate, and has no production/external authority. Sol owns every
+  existing-file edit, CLI/docs/CI integration, diff review, complete tests,
+  GitHub publication, and closure.
+- **External sync:** GH-89 and parent GH-29 contain the active scope and
+  explicit statement that the production-deployment checkbox remains open.
+
+---
+
+## 2026-07-31 13:02 EEST GH-89 local implementation → Review Ready
+
+- **Implemented:** strict `truerepublic.topology/v1` contract parser,
+  deterministic cross-node validator, offline `topology-policy validate` CLI,
+  five-node synthetic example, explicit CI command, repository contracts, and
+  operator qualification/rollback guidance.
+- **Review remediated:** reserved external-principal collision, trailing-value
+  reflection, non-public special addresses, IPv6 endpoint aliases,
+  percent/escape-ambiguous routes, stale disabled ingress, and the initial
+  Cosmos config-interceptor panic all have regressions.
+- **Full PASS:** package selection, build, vet, race/coverage across ten Go
+  packages; topology policy 86.2%, root/application 69.1%; docs consistency,
+  JSON/YAML, real CLI, and diff hygiene.
+- **Process PASS:** all eight maintained recovery scenarios passed across two
+  unchanged sequential runs. Four passed before the first run's 25-minute
+  global budget was consumed by local linker contention; the remaining four
+  then passed explicitly.
+- **Candidate arithmetic:** 1,079 Go + 26 Rust + eight maintained-client =
+  1,113 top-level cases. Public status remains at 1,105 until merged-main
+  reproduction and the closure sync.
+- **Boundary:** local Docker is unavailable, so GitHub Docker/Compose,
+  exact-head security/static checks, review, and zero unresolved threads remain
+  mandatory before merge. GH-29's real production deployment stays open.
+- **Next:** commit/push the implementation, open the review PR, and require
+  every exact-head GitHub gate before merge.
+
+---
+
+## 2026-07-31 13:10 EEST GH-89 published as draft PR #90
+
+- **Commit:** `035993c` is pushed on
+  `feature/GH-89-topology-abuse-qualification`.
+- **PR:** [#90](https://github.com/NeaBouli/TrueRepublic/pull/90) targets
+  `main`, closes GH-89 only after merge, and carries the complete local
+  evidence and unchanged production boundary.
+- GH-89 and parent GH-29 now link PR #90. The production-deployment checkbox,
+  rollout counts, and public Pages test count remain unchanged until verified
+  merged-main evidence exists.
+- **State:** exact-head GitHub build/recovery/Docker/docs/security/review gates
+  are running. No production or external infrastructure action occurred.
+
+---
+
+## 2026-07-31 14:01 EEST PR #90 exact-head CI remediation → Revalidation
+
+- **Observed:** the first exact-head `build-and-test` run failed only at the
+  maintained topology JSON assertion. The validator produced
+  `valid=true`, five nodes, and an empty violation list, but the daemon root
+  routed the report to stderr, so `jq` received no document (exit 4).
+- **Fix:** `server_lifecycle.go` now binds normal root-command output to stdout
+  and errors to stderr. `server_lifecycle_test.go` adds the regression; the
+  GH-89 audit records the evidence.
+- **Local PASS:** formatting/diff hygiene, focused root stream and command
+  registration tests, and the exact real-daemon CI pipeline returning `true`.
+- **GitHub PASS on prior head:** docs consistency, Go vulnerability scan, all
+  three Node audits, Rust audit, DeepScan, CodeRabbit with zero review
+  threads, Docker/restart smoke, and all eight multi-validator recovery drills.
+- **State:** the corrected head still requires the complete exact-head GitHub
+  matrix. No production action occurred, rollout counts remain unchanged, and
+  GH-29's real deployment checkbox remains open.
+
+---
+
+## 2026-07-31 14:21 EEST PR #90 corrected-head local gate → PASS
+
+- Documentation/rollout consistency, package selection, full build, vet, and
+  complete ten-package race/coverage suite all pass after the stream fix.
+- Coverage remains root/application 69.1%, topology policy 86.2%, healthcheck
+  97.2%, migration 84.6%, network policy 95.5%, observability 80.3%, token
+  92.6%, treasury 97.0%, DEX 45.3%, and governance 62.2%.
+- The real daemon pipeline returns `true`; diff hygiene passes.
+- **Next:** commit and push the correction, then require every check and zero
+  unresolved review threads on that exact new head before merge.
+
+---
+
+## 2026-07-31 14:23 EEST PR #90 CodeRabbit findings → Remediated
+
+- CodeRabbit reported two valid minor findings on corrected head `a0b3a3b`:
+  unchecked contract-file close handling and an API evidence message that said
+  RPC.
+- `Load` now preserves parse failures and fails closed with an operator-safe
+  generic error on a later close failure. The API branch reports
+  `internet-to-API`, with an exact regression.
+- Focused topology vet and race/coverage PASS (85.8%); diff hygiene PASS.
+- **Next:** publish the reviewed fix, reply to and resolve both threads, then
+  require the complete exact-head GitHub matrix again.
 
 ---

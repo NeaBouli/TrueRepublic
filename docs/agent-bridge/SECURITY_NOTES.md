@@ -186,3 +186,22 @@
   topology. The local Compose profile is loopback recovery/development only;
   PR #72 final-head container runtime evidence passed on GitHub. All production
   rollout decisions remain external gates.
+
+## 2026-07-31 - GH-89 cross-node topology qualification
+
+- The versioned contract composes, but does not replace, GH-71: effective node
+  homes still require the per-role validator before start.
+- Committed topology data is synthetic-only. A real contract correlating
+  validator public P2P identity with sentries remains operator-private because
+  public correlation would weaken identity hiding even though it is not a
+  private key.
+- Parser and report boundaries reject ambiguous structure and never reflect a
+  trailing value, local contract path, or rejected value in command output.
+- The external `internet` principal is reserved; public endpoints are unique
+  after IP canonicalization and exclude local/private/special address classes.
+- Every relationship and flow is explicit under inbound/outbound deny defaults.
+  Encoded or ambiguous routes, unsafe/admin/metrics/debug/peer-dial surfaces,
+  and non-empty disabled ingress fail closed.
+- Passing this validator does not prove an applied firewall, proxy/TLS/DNS
+  configuration, real provider separation, DDoS resistance, capacity, or
+  production deployment. Those remain GH-29 rollout gates.
