@@ -390,7 +390,7 @@ func (v *validator) checkFlows(contract Contract) {
 		v.fail("ingress.rpc", "enabled RPC ingress lacks an explicit internet-to-RPC flow")
 	}
 	if contract.Ingress.API.Enabled && !v.hasInternetQueryFlow("api") {
-		v.fail("ingress.api", "enabled API ingress lacks an explicit internet-to-RPC flow")
+		v.fail("ingress.api", "enabled API ingress lacks an explicit internet-to-API flow")
 	}
 }
 

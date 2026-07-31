@@ -93,6 +93,10 @@ capacity, DDoS resistance, production readiness, or rollout approval.
     without an input document.
   - The root now binds normal output to stdout and errors to stderr explicitly.
     A root-stream regression and the exact CI pipeline both pass locally.
+- **[🟡 MEDIUM, remediated] Contract file close failures fail closed.**
+  - Exact-head review identified an unchecked `Close` result. `Load` now
+    preserves parse errors and returns an operator-safe generic error if a
+    successful parse is followed by a close failure.
 - The Go workflow triggers on contract-only changes and executes the maintained
   contract through the real daemon command with exact JSON shape checks.
 
@@ -103,6 +107,9 @@ capacity, DDoS resistance, production readiness, or rollout approval.
   principal, trailing-value, and special-address findings; all were fixed.
 - A separate Terra remediation review confirmed those three fixes and found
   the IPv6 alias, encoded-route, and disabled-ingress cases; all were fixed.
+- CodeRabbit's corrected-head review found the contract-file close handling and
+  an RPC/API label mismatch in API qualification evidence; both were fixed,
+  and the API branch now has an exact message regression.
 - Spark added the bounded positive/negative test matrix. Sol reviewed all
   delegated output, found and removed one vet-invalid test-helper statement,
   and owns the final integration and complete gates.

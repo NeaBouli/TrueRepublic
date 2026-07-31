@@ -10,7 +10,7 @@ import (
 
 const maxJSONDepth = 32
 
-func Load(path string) (Contract, error) {
+func Load(path string) (contract Contract, err error) {
 	file, err := os.Open(path)
 	if err != nil {
 		if os.IsNotExist(err) {
@@ -18,7 +18,12 @@ func Load(path string) (Contract, error) {
 		}
 		return Contract{}, fmt.Errorf("open topology contract: file is unavailable")
 	}
-	defer file.Close()
+	defer func() {
+		if closeErr := file.Close(); err == nil && closeErr != nil {
+			contract = Contract{}
+			err = fmt.Errorf("close topology contract: file is unavailable")
+		}
+	}()
 	return Parse(file)
 }
 

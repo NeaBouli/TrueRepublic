@@ -348,6 +348,19 @@ func TestValidate(t *testing.T) {
 			fragments: []string{"internet must never reach a validator"},
 		},
 		{
+			name: "API ingress requires API flow",
+			mutate: func(c Contract) Contract {
+				for i, flow := range c.Flows {
+					if flow.From == "internet" && flow.To == "rpc-1" {
+						c.Flows[i].Services = []string{"rpc"}
+					}
+				}
+				return c
+			},
+			wantValid: false,
+			fragments: []string{"enabled API ingress lacks an explicit internet-to-API flow"},
+		},
+		{
 			name: "ingress tls", mutate: func(c Contract) Contract { c.Ingress.RPC.TLSOnly = false; return c }, wantValid: false, fragments: []string{"ingress.rpc.tls_only"},
 		},
 		{

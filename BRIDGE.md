@@ -3030,3 +3030,17 @@ Go/Rust/Node security, docs, DeepScan, and CodeRabbit. GH-51 is closed.
   unresolved review threads on that exact new head before merge.
 
 ---
+
+## 2026-07-31 14:23 EEST PR #90 CodeRabbit findings → Remediated
+
+- CodeRabbit reported two valid minor findings on corrected head `a0b3a3b`:
+  unchecked contract-file close handling and an API evidence message that said
+  RPC.
+- `Load` now preserves parse failures and fails closed with an operator-safe
+  generic error on a later close failure. The API branch reports
+  `internet-to-API`, with an exact regression.
+- Focused topology vet and race/coverage PASS (85.8%); diff hygiene PASS.
+- **Next:** publish the reviewed fix, reply to and resolve both threads, then
+  require the complete exact-head GitHub matrix again.
+
+---
