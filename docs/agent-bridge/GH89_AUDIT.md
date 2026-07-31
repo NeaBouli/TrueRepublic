@@ -85,8 +85,14 @@ capacity, DDoS resistance, production readiness, or rollout approval.
   - The first root integration regression reproduced an empty-home Cosmos
     interceptor panic.
   - `topology-policy` is now explicitly config-independent; tests prove it
-    creates no home and does not print the operator-private file path or
-    rejected value.
+  creates no home and does not print the operator-private file path or
+  rejected value.
+- **[🟠 HIGH, remediated] Machine-readable output reaches stdout.**
+  - The first exact-head GitHub run proved that the validator returned a valid
+    five-node report, but the daemon root emitted it on stderr, leaving `jq`
+    without an input document.
+  - The root now binds normal output to stdout and errors to stderr explicitly.
+    A root-stream regression and the exact CI pipeline both pass locally.
 - The Go workflow triggers on contract-only changes and executes the maintained
   contract through the real daemon command with exact JSON shape checks.
 
@@ -117,6 +123,8 @@ capacity, DDoS resistance, production readiness, or rollout approval.
 - Workflow YAML, example CLI JSON contract, and diff hygiene: PASS.
 - Complete repository package selection, build, vet, race, and coverage: PASS.
   Coverage includes root/application 69.1% and topology policy 86.2%.
+- Root stream regression and exact
+  `topology-policy validate ... --output json | jq -e ...` pipeline: PASS.
 - All eight maintained multi-validator process scenarios: PASS across two
   sequential runs. The first run's 25-minute global budget expired only after
   four PASS results while the heavily loaded linker was building the fifth;

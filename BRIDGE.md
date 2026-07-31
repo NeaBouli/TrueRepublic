@@ -2997,3 +2997,36 @@ Go/Rust/Node security, docs, DeepScan, and CodeRabbit. GH-51 is closed.
   are running. No production or external infrastructure action occurred.
 
 ---
+
+## 2026-07-31 14:01 EEST PR #90 exact-head CI remediation → Revalidation
+
+- **Observed:** the first exact-head `build-and-test` run failed only at the
+  maintained topology JSON assertion. The validator produced
+  `valid=true`, five nodes, and an empty violation list, but the daemon root
+  routed the report to stderr, so `jq` received no document (exit 4).
+- **Fix:** `server_lifecycle.go` now binds normal root-command output to stdout
+  and errors to stderr. `server_lifecycle_test.go` adds the regression; the
+  GH-89 audit records the evidence.
+- **Local PASS:** formatting/diff hygiene, focused root stream and command
+  registration tests, and the exact real-daemon CI pipeline returning `true`.
+- **GitHub PASS on prior head:** docs consistency, Go vulnerability scan, all
+  three Node audits, Rust audit, DeepScan, CodeRabbit with zero review
+  threads, Docker/restart smoke, and all eight multi-validator recovery drills.
+- **State:** the corrected head still requires the complete exact-head GitHub
+  matrix. No production action occurred, rollout counts remain unchanged, and
+  GH-29's real deployment checkbox remains open.
+
+---
+
+## 2026-07-31 14:21 EEST PR #90 corrected-head local gate → PASS
+
+- Documentation/rollout consistency, package selection, full build, vet, and
+  complete ten-package race/coverage suite all pass after the stream fix.
+- Coverage remains root/application 69.1%, topology policy 86.2%, healthcheck
+  97.2%, migration 84.6%, network policy 95.5%, observability 80.3%, token
+  92.6%, treasury 97.0%, DEX 45.3%, and governance 62.2%.
+- The real daemon pipeline returns `true`; diff hygiene passes.
+- **Next:** commit and push the correction, then require every check and zero
+  unresolved review threads on that exact new head before merge.
+
+---

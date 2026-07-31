@@ -69,6 +69,16 @@ func TestRootUsesStandardCosmosServerCommands(t *testing.T) {
 	}
 }
 
+func TestRootUsesProcessOutputStreams(t *testing.T) {
+	root := newRootCmd()
+	if root.OutOrStdout() != os.Stdout {
+		t.Fatal("root command output must use stdout for machine-readable pipelines")
+	}
+	if root.ErrOrStderr() != os.Stderr {
+		t.Fatal("root command errors must use stderr")
+	}
+}
+
 func TestStartRequiresStructuredLogFormat(t *testing.T) {
 	for _, environmentName := range structuredLogEnvironmentNames() {
 		t.Setenv(environmentName, "")

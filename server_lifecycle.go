@@ -229,6 +229,8 @@ func newRootCmd() *cobra.Command {
 			return server.SetCmdServerContext(cmd, serverCtx)
 		},
 	}
+	rootCmd.SetOut(os.Stdout)
+	rootCmd.SetErr(os.Stderr)
 
 	rootCmd.AddCommand(initNodeCmd(ModuleBasics, defaultNodeHome))
 	server.AddCommands(rootCmd, defaultNodeHome, newApp, appExport, func(startCmd *cobra.Command) {
