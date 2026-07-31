@@ -1,6 +1,6 @@
 # Project State
 
-Updated: 2026-07-31 09:15 UTC
+Updated: 2026-07-31 11:45 UTC
 
 ## Repository
 
@@ -15,16 +15,16 @@ Updated: 2026-07-31 09:15 UTC
 - Baseline: canonical `origin/main`; exact implementation and evidence commits
   are recorded in `ACTION_LOG.md` so this live state does not self-expire after
   documentation-only merges.
-- Active work: GH-89 on
-  `feature/GH-89-topology-abuse-qualification` adds a strict, versioned,
-  secret-free cross-node topology qualification contract above the merged
-  GH-71 per-home role policy. It validates reciprocal sentry protection,
-  distinct sentry zones, explicit deny-by-default flows, and bounded
-  method/route/query ingress. This is repository evidence only; GH-29's actual
-  production-deployment checkbox remains open.
+- GH-89 implementation is merged through PR #90 (`2f2acdd`). The strict,
+  versioned, secret-free cross-node topology qualification contract composes
+  GH-71 per-home role policy and validates reciprocal sentry protection,
+  distinct sentry zones, validator isolation, relationship-backed
+  deny-by-default flows, and bounded method/route/query ingress. The current
+  docs branch publishes the merged 1,164-case status. This is repository
+  evidence only; GH-29's actual production-deployment checkbox remains open.
 - Merged recovery PRs: #9, #15, #16, #17, #18, #19, #22, #23, #24, #27,
   #28, #30, #31, #33, #34, #35, #40, #42, #44, #46, #49, #52, #54, #57,
-  #58, #62, #65, #67, #69, and #72.
+  #58, #62, #65, #67, #69, #72, #75, #78, #81, #86, #87, #88, and #90.
 - Current work: GH-60 inactive validator claim round-trip is closed through
   merged PR #67 (`c5a3d38`). Explicit active/inactive representation, legacy
   compatibility, complete domains, exact stake/jail/missed-block/power
@@ -110,11 +110,20 @@ Updated: 2026-07-31 09:15 UTC
 - Recovery worktree: `/Users/gio/Desktop/repos/TrueRepublic-recovery`
 - Legacy local checkout: preserved at `/Users/gio/Desktop/repos/TrueRepublic`
 - GitHub epic: #4
-- Current open GitHub issue set after GH-89 creation: #4 recovery epic, #7
+- Current open GitHub issue set during GH-89 publication closure: #4 recovery epic, #7
   audit/review parent, #29 rollout tracker, and #89 topology qualification.
 
 ## Verified state
 
+- GH-89 is implemented through merged PR #90 (`2f2acdd`). Final head
+  `cb14829` passed Go build/vet/race/coverage, the strict real-daemon topology
+  JSON pipeline, all eight recovery drills, Docker/Compose restart and
+  monitoring, docs, Go/Rust/Node security scans, DeepScan, and review with both
+  findings remediated and zero unresolved threads. Package-scoped JSON output
+  reproduces 1,164 passing cases: 1,130 Go, 26 Rust, and eight
+  maintained-client tests.
+  Production inventory, firewall/TLS/DNS, live deployment, and GH-29 rollout
+  approval remain unexecuted.
 - GH-85 is closed through merged PR #86 (`cd44fec`). The supported private
   observability stack now provides an immutable 16-panel Grafana dashboard,
   eleven actionable and deterministically tested Prometheus rules,
@@ -334,7 +343,7 @@ Updated: 2026-07-31 09:15 UTC
 ## Public-status warning
 
 `docs/status.json`, README, limitations, and the landing page now mark recovery
-as active and separate 726 verified tests from the historical 577 figure.
+as active and separate 1,164 verified cases from the historical 577 figure.
 `CLAUDE.md`, install guidance, FAQ, landing page, wiki, and the root audit are
 reconciled with the merged recovery foundation while retaining the explicit
 non-production boundary.
@@ -350,8 +359,8 @@ close bounded four-validator failure/restart/catch-up, partition-recovery,
 trusted state-sync, sanitized backup/restore/export/import, compatible binary
 replacement, fail-before-open rollback, and validator identity cold-failover
 slices. Consensus-breaking state migration, partially applied migration
-recovery, paging drills, load/capacity/topology qualification, IBC, and
-independent operations review remain open. Authenticated
+recovery, paging drills, load/capacity evidence, live topology deployment,
+IBC, and independent operations review remain open. Authenticated
 consensus-key rotation, compromised-key eviction, and deterministic network
 policy are closed by GH-56 and GH-71.
 

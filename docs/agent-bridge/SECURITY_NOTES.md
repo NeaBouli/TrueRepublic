@@ -205,3 +205,13 @@
 - Passing this validator does not prove an applied firewall, proxy/TLS/DNS
   configuration, real provider separation, DDoS resistance, capacity, or
   production deployment. Those remain GH-29 rollout gates.
+
+### Merged evidence
+
+- PR #90 merged as `2f2acdd` after final head `cb14829` passed the complete
+  Go, recovery, Docker/Compose, docs, dependency/security, static-analysis, and
+  review gates with zero unresolved threads.
+- Review additionally forced operator-safe contract-file close failures and
+  exact API-versus-RPC evidence labels. The repository still contains only the
+  synthetic `.invalid` inventory; no production address, node ID, credential,
+  firewall rule, DNS name, or private validator correlation was published.

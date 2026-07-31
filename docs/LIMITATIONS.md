@@ -84,11 +84,14 @@ rotation with permanent revocation. The GH-61 path is intentionally limited to
 empty CosmWasm state and a new chain ID; it is not an in-place upgrade or a
 generic governance migration. Do not claim public-network readiness until
 generic consensus-breaking state migration, partially applied in-place
-migration recovery, external paging drills, load/capacity/topology
-qualification, broader independent migration/ABCI++ slashing security review,
-and independent operations review pass. GH-85 supplies the repository-owned
-dashboard, alert rules, recovery/testnet objectives, and role ownership; it
-does not configure a production paging destination or claim a production SLO.
+migration recovery, external paging drills, load/capacity evidence, real
+topology deployment, broader independent migration/ABCI++ slashing security
+review, and independent operations review pass. GH-85 supplies the
+repository-owned dashboard, alert rules, recovery/testnet objectives, and role
+ownership; it does not configure a production paging destination or claim a
+production SLO. GH-89 supplies a strict synthetic multi-node qualification
+contract and CI validator; it does not commit the private operator inventory or
+deploy firewall, TLS, DNS, seed, sentry, validator, or RPC infrastructure.
 
 Partial validator stake withdrawals are disabled until generalized slashable
 unbonding can retain the withdrawn claim through the CometBFT evidence window.

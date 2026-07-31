@@ -22,8 +22,11 @@
   logger boundary and exposes a private two-source CometBFT plus
   SDK/application metrics baseline. GH-85 adds an immutable Grafana dashboard,
   eleven deterministically tested Prometheus rules, recovery/testnet
-  objectives, role ownership, and CI runtime query proof.
-- 1,105 recovery-verified tests: 1,071 Go, 26 Rust, and 8 maintained-client.
+  objectives, role ownership, and CI runtime query proof. GH-89 adds a strict
+  synthetic cross-node contract that verifies sentry diversity, validator
+  isolation, relationship-backed deny-by-default flows, and bounded public
+  query ingress without publishing or deploying a real operator inventory.
+- 1,164 recovery-verified tests: 1,130 Go, 26 Rust, and 8 maintained-client.
 
 ## Recovery sequence
 
@@ -38,7 +41,7 @@ reviewed, verified, and merged to `main` in this order.
 - Compatible real Groth16 client prover and external circuit/ceremony review.
 - Privacy-preserving anonymous reward recipient binding.
 - IBC/consensus-breaking migration recovery, external paging drills,
-  load/capacity/topology qualification, and independent operations evidence.
+  load/capacity/live-topology deployment, and independent operations evidence.
 - Migration or removal of the deprecated legacy web/mobile clients.
 
 See [Issue #4](https://github.com/NeaBouli/TrueRepublic/issues/4),

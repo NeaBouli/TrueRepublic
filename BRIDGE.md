@@ -3044,3 +3044,32 @@ Go/Rust/Node security, docs, DeepScan, and CodeRabbit. GH-51 is closed.
   require the complete exact-head GitHub matrix again.
 
 ---
+
+## 2026-07-31 14:40 EEST PR #90 → Merged; public closure started
+
+- Final head `cb14829` passed all 11 checks: build/vet/race/coverage, eight
+  recovery drills (14m59s), Docker/Compose (7m52s), docs, all dependency/
+  security scans, DeepScan, and CodeRabbit status. Both valid review findings
+  were fixed, answered, and resolved; unresolved threads: zero.
+- PR #90 merged to `main` as `2f2acdd`. Package-scoped JSON evidence reproduces
+  1,130 Go + 26 Rust + eight maintained-client = 1,164 passing cases. The
+  earlier 1,113 candidate mixed test-function and historical subtest counting
+  and was corrected before publication.
+- Branch `docs/GH-89-rollout-status` now synchronizes the public status,
+  roadmap, wiki, audit, TODO, and Bridge from merged evidence.
+- Rollout arithmetic remains 11/59 overall, 11/51 phase work, and Phase 6 4/7.
+  GH-29's live deployment item remains unchecked; no production action occurred.
+
+---
+
+## 2026-07-31 14:55 EEST PR #91 review finding → Remediated
+
+- CodeRabbit found one stale `726` public-status sentence inside the historical
+  Project State section. It conflicted with the reproduced 1,164-case status.
+- The sentence now preserves historical 577 explicitly while naming 1,164 as
+  the active passing-case total. Documentation consistency, JSON/module/
+  rollout arithmetic, and diff hygiene pass.
+- **Next:** publish the correction, resolve the thread, and require the
+  replacement-head status/security/review checks before merge.
+
+---
