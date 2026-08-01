@@ -3422,4 +3422,14 @@ Pending.
 - **Next:** verify, publish, and merge this documentation-only exact-head PR;
   then update GH-29, GH-97, live Pages, and the final Bridge handoff.
 
+### 2026-08-02 01:20 EEST public status PR checkpoint
+
+- [PR #99](https://github.com/NeaBouli/TrueRepublic/pull/99) is open from
+  `docs/GH-97-rollout-status`. Documentation consistency, full package-scoped
+  1,244-Go-case recount, arithmetic checks, diff hygiene, and two independent
+  read-only reviews pass with no P0/P1/P2 finding.
+- The authoritative candidate is 1,278 total cases, 13/59 overall, 13/51 phase
+  work, and Phase 6 at 6/7. PR #99 exact-head security/review checks and merge
+  remain pending; no production or live-environment action occurred.
+
 ---

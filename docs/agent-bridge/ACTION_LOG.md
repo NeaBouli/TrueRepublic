@@ -2334,3 +2334,14 @@
   status, roadmap, landing page, wiki, TODO, project state, and Bridge are now
   synchronized locally; exact-head docs validation, PR, merge, and live Pages
   readback remain pending.
+
+## 2026-08-02 01:20 EEST - GH-97 public status PR opened
+
+- Opened PR #99 from `docs/GH-97-rollout-status`. A complete package-scoped
+  JSON recount passed with 1,244 Go cases (root 98, capacity-policy 48, all
+  remaining module counts unchanged), correcting the earlier focused-delta
+  candidate before publication to 1,278 total cases.
+- Documentation consistency, JSON arithmetic, stale-count scan, and diff
+  hygiene pass. Terra's read-only delta recheck reports no P0/P1/P2 and confirms
+  the non-production claim boundaries. Exact-head GitHub gates and merge remain
+  pending.
