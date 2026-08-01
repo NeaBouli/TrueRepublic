@@ -2304,3 +2304,14 @@
   run. Exact GitHub CI remains the canonical clean-runner confirmation.
 - Marked the local GH-97 implementation/review TODO complete. Publication,
   final-head CI, merge, issue closure, and status synchronization remain open.
+
+## 2026-08-02 00:57 EEST - PR #98 review findings remediated
+
+- CodeRabbit completed with one minor `noctx` finding and one trivial test-name
+  and coverage observation. Threaded the Go test context into RSS sampling and
+  changed the external `ps` fallback to `exec.CommandContext`.
+- Renamed the non-overflow supply-cap test and added a separate
+  `math.MaxInt64 + 1` supply-addition overflow regression.
+- `go test ./capacitypolicy`, focused capacity root tests, `go vet
+  ./capacitypolicy`, `go vet .`, gofmt, and `git diff --check` pass. The updated
+  head must rerun GitHub checks before merge.

@@ -376,7 +376,7 @@ func sampleCapacityNode(t *testing.T, validator *smokeValidator, measurement *ca
 	if validator.command == nil || validator.command.Process == nil {
 		return
 	}
-	rss, err := processRSSBytes(validator.command.Process.Pid)
+	rss, err := processRSSBytes(t.Context(), validator.command.Process.Pid)
 	if err != nil {
 		t.Fatalf("sample %s resident memory: %v", validator.name, err)
 	}
@@ -421,7 +421,7 @@ func regularFileBytes(t *testing.T, path string) int64 {
 	return info.Size()
 }
 
-func processRSSBytes(pid int) (int64, error) {
+func processRSSBytes(ctx context.Context, pid int) (int64, error) {
 	if runtime.GOOS == "linux" {
 		content, err := os.ReadFile(fmt.Sprintf("/proc/%d/status", pid))
 		if err != nil {
@@ -440,7 +440,7 @@ func processRSSBytes(pid int) (int64, error) {
 		}
 		return 0, fmt.Errorf("resident-memory sample is missing")
 	}
-	output, err := exec.Command("ps", "-o", "rss=", "-p", strconv.Itoa(pid)).Output()
+	output, err := exec.CommandContext(ctx, "ps", "-o", "rss=", "-p", strconv.Itoa(pid)).Output()
 	if err != nil {
 		return 0, err
 	}

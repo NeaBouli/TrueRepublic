@@ -526,6 +526,20 @@ default-branch visibility track and must not bypass the vulnerable current
   PR, exact-head GitHub checks, merge, issue closure, and public-status sync are
   next. Production and live rollout gates remain open.
 
+### 2026-08-02 00:57 EEST PR #98 review remediation
+
+- Exact-head GitHub capacity qualification passed in 6m09s; build/race/coverage
+  passed in 7m29s; Docker/Compose/monitoring passed in 7m15s; docs, Go/Rust/Node
+  security, and DeepScan also passed before the review update.
+- CodeRabbit raised one minor inline finding and one trivial test observation.
+  Sol verified both: the macOS RSS `ps` fallback now inherits `t.Context()` via
+  `exec.CommandContext`, and the supply-cap mismatch test is correctly named
+  while a distinct `math.MaxInt64 + 1` case covers the checked-add overflow
+  branch.
+- Focused policy/root tests, package/root Vet, formatting, and diff checks pass.
+  A small remediation commit and a fresh exact-head GitHub run are next; the
+  prior independent audit result remains unchanged after fixing both findings.
+
 ## 2026-07-31 00:15 EEST PR #86 merged; GH-85 closed
 
 - Exact head `021d5c5` passed the complete GitHub matrix: build/race/coverage,

@@ -241,13 +241,23 @@ func TestValidateContractAndEvidence_GatedFields(t *testing.T) {
 		}
 	})
 
-	t.Run("checked overflow", func(t *testing.T) {
+	t.Run("supply cap mismatch", func(t *testing.T) {
 		overflowEvidence := cloneEvidence(evidence)
 		overflowEvidence.Metrics.SupplyBaseUnits = maxSupplyBaseUnits
 		overflowEvidence.Metrics.SupplyHeadroomUnits = maxSupplyBaseUnits
 		report := ValidateEvidence(contract, overflowEvidence)
 		if report.Valid || !containsCheck(report.Violations, "metrics.supply") {
-			t.Fatalf("expected checked overflow rejection: %+v", report)
+			t.Fatalf("expected supply cap mismatch rejection: %+v", report)
+		}
+	})
+
+	t.Run("supply addition overflow", func(t *testing.T) {
+		overflowEvidence := cloneEvidence(evidence)
+		overflowEvidence.Metrics.SupplyBaseUnits = math.MaxInt64
+		overflowEvidence.Metrics.SupplyHeadroomUnits = 1
+		report := ValidateEvidence(contract, overflowEvidence)
+		if report.Valid || !containsCheck(report.Violations, "metrics.supply") {
+			t.Fatalf("expected checked addition overflow rejection: %+v", report)
 		}
 	})
 }
