@@ -2177,3 +2177,9 @@
 - The new non-reflection regression raises the candidate to 1,186 Go cases and
   1,220 combined cases. This supersedes the earlier 1,219 candidate; public
   status correctly remains 1,164 until merge and independent status sync.
+
+## 2026-08-01 12:40 EEST - GH-93 PR published
+
+- Pushed reviewed implementation `e03823b` and opened PR #94 against `main`.
+- The PR closes GH-93 on merge and preserves the no-production/live-rehearsal
+  boundary. Exact-head GitHub CI, review, and unresolved-thread gates remain.

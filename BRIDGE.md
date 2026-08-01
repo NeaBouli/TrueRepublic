@@ -3205,4 +3205,13 @@ Go/Rust/Node security, docs, DeepScan, and CodeRabbit. GH-51 is closed.
   The earlier 1,219 candidate is superseded; public status remains 1,164 until
   merge and the separate verified status sync.
 
+### 2026-08-01 12:40 EEST GitHub publication
+
+- Reviewed implementation commit `e03823b` is pushed and PR
+  [#94](https://github.com/NeaBouli/TrueRepublic/pull/94) is open against
+  `main`, closing GH-93 on merge.
+- PR body records the synthetic/repository-only boundary and the complete local
+  gate. Exact-head GitHub CI, review, and unresolved-thread checks are now the
+  remaining merge conditions.
+
 ---
