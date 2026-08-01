@@ -3244,4 +3244,27 @@ Go/Rust/Node security, docs, DeepScan, and CodeRabbit. GH-51 is closed.
 - `check-consistency.sh`, status JSON parsing/arithmetic, repository contracts,
   stale-value scan, and diff hygiene PASS. Next: commit and protected docs PR.
 
+### 2026-08-01 13:08 EEST GH-93 merged-main and public handoff verified
+
+- Implementation PR [#94](https://github.com/NeaBouli/TrueRepublic/pull/94)
+  merged exact head `d3f627d` as `b6e7c29` after all 11 required checks passed.
+  Status PR [#95](https://github.com/NeaBouli/TrueRepublic/pull/95) merged exact
+  head `b278a45` as `1a850d0` after all eight required checks passed.
+- Exact merged-main Security Scan
+  [30674576743](https://github.com/NeaBouli/TrueRepublic/actions/runs/30674576743)
+  and Pages deployment
+  [30674575864](https://github.com/NeaBouli/TrueRepublic/actions/runs/30674575864)
+  both PASS on `1a850d0`; live Pages and `status.json` publish 1,220 verified
+  cases, 12/59 overall, 12/51 phase work, and Phase 6 at 5/7.
+- GH-93 is closed with every acceptance criterion checked. GH-29 marks only
+  the incident/runbook gate complete; production topology and sustained-load
+  capacity evidence remain open. `production_ready=false` and
+  `production_deployment=false` remain explicit.
+- This documentation-only branch publishes the final append-only handoff. No
+  production infrastructure, live rehearsal, paging, identity, key, or chain
+  mutation occurred.
+- **Status:** Done after this protected handoff PR merges with exact-head gates
+  green; the next repository-side Phase 6 task is capacity, disk-growth,
+  retention, and sustained-load evidence.
+
 ---
