@@ -270,8 +270,8 @@ sudo su - truerepublic
   measurable initial objectives, role ownership, and first-response guidance
   are shipped.
 - External paging, production topology, capacity/retention qualification,
-  named on-call assignment, and end-to-end incident rehearsal remain separate
-  rollout gates.
+  named on-call assignment, and private live operator rehearsal remain separate
+  rollout gates. GH-93 verifies only the repository-owned synthetic rehearsal.
 - Configuration: `monitoring/prometheus.yml`, `monitoring/grafana/`
 
 ---

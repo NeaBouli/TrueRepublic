@@ -1,6 +1,6 @@
 # TrueRepublic Road to Rollout
 
-Updated: 2026-07-31
+Updated: 2026-08-01
 
 TrueRepublic has a recovered and CI-verified v0.4 engineering foundation. It
 is **not production-ready, mainnet-ready, or approved for real funds or keys**.
@@ -19,13 +19,15 @@ intentionally more granular than the public 59-item tracker.
 
 - The ordered recovery merge chain is on `main`.
 - The maximum supply is fixed at 21,000,000 PNYX.
-- The source of truth records 1,164 recovery-verified tests: 1,130 Go, 26 Rust,
+- The source of truth records 1,220 recovery-verified tests: 1,186 Go, 26 Rust,
   and 8 maintained-client tests.
 - Ledger, escrow, issuance, DEX custody, genesis, runtime invariants, ZKP
   statement binding, node persistence, and the safe operator-init boundary
   have CI-backed recovery evidence.
 - GH-89/PR #90 add repository-owned cross-node topology and abuse-control
   qualification evidence; real private deployment remains open.
+- GH-93/PR #94 add a strict secret-free incident-command and eight-scenario
+  rehearsal contract; private live operator rehearsal remains open.
 - GitHub Pages, security scans, and the current CI matrix are green.
 
 The baseline is suitable for continued engineering. It is not a rollout
@@ -164,8 +166,11 @@ defensible coverage, and no unresolved critical/high security finding remains.
   validator isolation, RPC exposure, firewalling, and abuse protection.
   GH-89/PR #90 provide the strict synthetic qualification contract and CI
   validator; real private inventory and deployment evidence remain required.
-- [ ] Write and rehearse incident, validator failure, key compromise, backup,
-  restore, upgrade, rollback, and chain-halt runbooks.
+- [x] Write and synthetically rehearse incident, validator failure, key
+  compromise, backup, restore, upgrade, rollback, and chain-halt runbooks
+  ([GH-93](https://github.com/NeaBouli/TrueRepublic/issues/93),
+  [PR #94](https://github.com/NeaBouli/TrueRepublic/pull/94)); private live
+  operator rehearsal remains part of deployment and final exit evidence.
 - [ ] Validate resource limits, disk growth, log retention, and capacity
   assumptions under sustained load.
 

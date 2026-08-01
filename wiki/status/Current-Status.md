@@ -26,7 +26,10 @@
   synthetic cross-node contract that verifies sentry diversity, validator
   isolation, relationship-backed deny-by-default flows, and bounded public
   query ingress without publishing or deploying a real operator inventory.
-- 1,164 recovery-verified tests: 1,130 Go, 26 Rust, and 8 maintained-client.
+  GH-93 adds a strict secret-free incident-command contract and eight synthetic
+  halt, validator, key, backup/restore, upgrade/rollback, and migration
+  rehearsals without claiming a private live operator drill.
+- 1,220 recovery-verified tests: 1,186 Go, 26 Rust, and 8 maintained-client.
 
 ## Recovery sequence
 
@@ -41,7 +44,8 @@ reviewed, verified, and merged to `main` in this order.
 - Compatible real Groth16 client prover and external circuit/ceremony review.
 - Privacy-preserving anonymous reward recipient binding.
 - IBC/consensus-breaking migration recovery, external paging drills,
-  load/capacity/live-topology deployment, and independent operations evidence.
+  load/capacity/live-topology deployment, private live rehearsal, and
+  independent live operations evidence.
 - Migration or removal of the deprecated legacy web/mobile clients.
 
 See [Issue #4](https://github.com/NeaBouli/TrueRepublic/issues/4),

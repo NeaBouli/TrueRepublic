@@ -3214,4 +3214,34 @@ Go/Rust/Node security, docs, DeepScan, and CodeRabbit. GH-51 is closed.
   gate. Exact-head GitHub CI, review, and unresolved-thread checks are now the
   remaining merge conditions.
 
+### 2026-08-01 12:57 EEST implementation merged; public sync in progress
+
+- Exact PR #94 head `d3f627d` passed all 11 GitHub status gates: docs,
+  build/vet/race/coverage with the real incident CLI pipeline, all eight
+  recovery harnesses, Docker/Compose, Go/Rust/Node security scans, DeepScan,
+  and CodeRabbit status. CodeRabbit was rate-limited and produced no content;
+  the independent final Terra review recorded 0 open P0/P1 and GitHub had zero
+  review threads.
+- PR #94 merged as `b6e7c29`; GH-93 closed automatically. No production or
+  live incident action occurred.
+- Created `docs/GH-93-rollout-status` from exact merged main. Candidate public
+  state is 1,220 verified cases, 12/59 overall, 12/51 phase work, and Phase 6
+  5/7, while `production_ready=false` and real topology/live rehearsal/capacity
+  gates remain open.
+- **Status:** In Progress; verify the documentation diff, update GH-29, publish
+  a separate status PR, check exact-head CI, merge, and verify Pages/main.
+
+### 2026-08-01 13:00 EEST public status candidate locally green
+
+- GH-29 now checks the GH-93/PR #94 runbook item while production topology and
+  capacity remain unchecked.
+- Public source of truth, README, landing page, rollout roadmap, wiki, agent
+  state, quickstart, FAQ, and deployment boundaries consistently publish 1,220
+  cases (1,186 Go + 26 Rust + eight maintained-client), 12/59 overall, 12/51
+  phase work, and Phase 6 at 5/7.
+- `production_ready=false`; no live rehearsal, deployment, topology, paging,
+  or capacity claim was added.
+- `check-consistency.sh`, status JSON parsing/arithmetic, repository contracts,
+  stale-value scan, and diff hygiene PASS. Next: commit and protected docs PR.
+
 ---
