@@ -1,0 +1,55 @@
+{
+  "version": "truerepublic.capacity-qualification/v1",
+  "qualification_id": "phase-6-capacity-qualification",
+  "environment": "synthetic-loopback",
+  "workload": {
+    "validator_count": 4,
+    "transaction_count": 96,
+    "minimum_block_delta": 24,
+    "maximum_duration_seconds": 600,
+    "maximum_commit_latency_ms": 60000
+  },
+  "storage": {
+    "pruning": "default",
+    "snapshot_interval": 2,
+    "snapshot_keep_recent": 3,
+    "projection_blocks": 1000000,
+    "max_node_data_growth_bytes": 268435456
+  },
+  "telemetry": {
+    "enabled": true,
+    "bind": "127.0.0.1",
+    "prometheus_retention_seconds": 60,
+    "required_metrics": [
+      "process_resident_memory_bytes",
+      "go_goroutines",
+      "cometbft_consensus_height",
+      "truerepublic_app_last_successful_block_height",
+      "truerepublic_app_last_successful_invariant_cycle_height",
+      "truerepublic_app_completed_blocks_total",
+      "truerepublic_token_pnyx_supply_base_units",
+      "truerepublic_token_pnyx_supply_headroom_base_units"
+    ]
+  },
+  "logging": {
+    "driver": "json-file",
+    "max_size_bytes": 52428800,
+    "max_files": 3
+  },
+  "limits": {
+    "max_log_growth_bytes_per_node": 52428800,
+    "max_rss_bytes_per_node": 2147483648,
+    "max_goroutines": 8192
+  },
+  "abort_conditions": [
+    "transaction-failure",
+    "consensus-progress-stalled",
+    "app-hash-divergence",
+    "validator-power-divergence",
+    "ledger-invariant-failure",
+    "resource-envelope-breach",
+    "retention-unbounded",
+    "measurement-overflow",
+    "secret-material-detected"
+  ]
+}

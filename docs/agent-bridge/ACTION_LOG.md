@@ -2220,3 +2220,98 @@
   incident action was performed.
 - This branch contains only the final append-only handoff; protected PR checks
   and merge are the remaining publication step.
+
+## 2026-08-01 21:30 EEST - GH-97 capacity qualification started
+
+- Opened GH-97 under GH-29 for the remaining repository-side Phase 6 capacity,
+  disk-growth, retention, and sustained-load evidence gate.
+- Created `feature/GH-97-capacity-sustained-load` from clean exact `main`
+  `fce724e`.
+- Scope is limited to strict secret-free evidence, bounded loopback temporary
+  node workloads, tests, CI, and operator documentation. Production sizing,
+  live infrastructure, public load, real identities/keys/funds, and rollout
+  approval remain excluded.
+- Next: inspect the existing lifecycle/metrics/pruning/retention paths, obtain a
+  bounded Kimi architecture review, and define the smallest credible real-
+  process qualification slice before implementation.
+
+## 2026-08-01 22:11 EEST - GH-97 local implementation checkpoint
+
+- Kimi's secret-free read-only review returned provider HTTP 403 quota and no
+  diff. Terra supplied the independent architecture review. Spark added only
+  the focused `capacitypolicy` test file; Sol reviewed it, fixed its premature
+  command-output read, and tightened the resulting assertions.
+- Implemented the strict capacity contract/parser/verifier/CLI, maintained
+  fixture, root lifecycle wiring, repository/CI contracts, operator guidance,
+  and real four-validator 24-transaction evidence harness.
+- `go test ./capacitypolicy -count=1` passed before the final hardening edits.
+  The first process run found and led to a fix for the CometBFT instrumentation
+  section selector. A local cache-space failure was remediated only by clearing
+  Go build/test caches; the current clean retry has entered test execution.
+- No production system, public endpoint, real key/identity/funds, deployment,
+  paging, or rollout state was changed.
+
+## 2026-08-01 22:47 EEST - GH-97 independent-review remediation
+
+- Removed self-attested Docker/telemetry retention values from runtime
+  evidence; scoped static Compose YAML verification to `truerepublic-node` and
+  preserved actual runtime-retention as an explicit limitation.
+- Expanded the workload from 24 sequential transactions to 96 authenticated
+  transactions across 24 consecutive four-signer waves. Added checked
+  milli-TPS and average-block-time fields plus transaction-specific concurrent
+  delivery latency measurement.
+- Fixed fail-closed divide-by-zero handling for stalled evidence and the
+  snapshot-pruning filesystem race. Added explicit failed-transaction,
+  stalled-progress, throughput, block-time, exact metric, and response-size
+  regressions.
+- A first standard-bank attempt failed safely because that CLI module is not
+  registered. The corrected run uses four independently administered synthetic
+  domains and concurrent authorized membership transactions. Kimi's second
+  review attempt remained provider quota-blocked (HTTP 403, no diff); Terra's
+  findings were reviewed and remediated by Sol.
+
+## 2026-08-01 23:43 EEST - GH-97 real qualification passed
+
+- Reproduced the complete four-validator sustained-load harness: 96 submitted,
+  96 committed, zero failed, 24 workload blocks, restart/app-hash/power/ledger
+  checks green, and all required metrics present.
+- The generated evidence measured 727 milli-TPS, 5,496 ms average block time,
+  5,893 ms p95 and 6,599 ms maximum commit latency. Maximum observed node data
+  growth was 1,222,727 bytes; maximum log growth was 137,971 bytes; maximum RSS
+  was 154,902,528 bytes.
+- Two earlier real runs showed that the harness's assumed HTTP `/snapshots`
+  endpoint was not part of this CometBFT RPC surface. Replaced that ineffective
+  check with strict local snapshot-store height counting after consensus is
+  paused; observed retention was exactly three. Added focused fail-closed store
+  counting coverage.
+- `capacity-policy verify` accepted the produced evidence as valid with 96
+  committed transactions and no violations. Full repository gates, audit, PR,
+  exact-head CI, and merge are next.
+
+## 2026-08-02 00:42 EEST - GH-97 local gates and audit complete
+
+- Added `GH97_AUDIT.md`: 0 FAIL, 0 WARN, 7 PASS. Terra's final independent
+  review has no remaining P0/P1/P2 finding; Kimi remained unavailable due to
+  provider HTTP 403 quota and made no change.
+- Passed package selection, documentation consistency, YAML parse, strict
+  contract CLI/JQ assertion, diff check, CGO build, Vet, focused regressions,
+  and the complete normal repository Go suite.
+- Race/Coverage passed for all non-root packages. The combined local run's root
+  package failed only because the almost-full local volume could not link the
+  daemon built inside `TestNodeStartsStopsAndRestartsFromPersistentHome`.
+  After Go-cache cleanup, the same race-instrumented test binary passed that
+  exact test in 374.08 seconds; all other root tests had passed in the combined
+  run. Exact GitHub CI remains the canonical clean-runner confirmation.
+- Marked the local GH-97 implementation/review TODO complete. Publication,
+  final-head CI, merge, issue closure, and status synchronization remain open.
+
+## 2026-08-02 00:57 EEST - PR #98 review findings remediated
+
+- CodeRabbit completed with one minor `noctx` finding and one trivial test-name
+  and coverage observation. Threaded the Go test context into RSS sampling and
+  changed the external `ps` fallback to `exec.CommandContext`.
+- Renamed the non-overflow supply-cap test and added a separate
+  `math.MaxInt64 + 1` supply-addition overflow regression.
+- `go test ./capacitypolicy`, focused capacity root tests, `go vet
+  ./capacitypolicy`, `go vet .`, gofmt, and `git diff --check` pass. The updated
+  head must rerun GitHub checks before merge.

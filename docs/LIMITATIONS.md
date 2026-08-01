@@ -92,6 +92,12 @@ ownership; it does not configure a production paging destination or claim a
 production SLO. GH-89 supplies a strict synthetic multi-node qualification
 contract and CI validator; it does not commit the private operator inventory or
 deploy firewall, TLS, DNS, seed, sentry, validator, or RPC infrastructure.
+GH-97 adds a bounded four-validator, 24-wave/96-transaction regression with
+parallel signers, throughput/latency, disk/log growth, RSS, metrics,
+snapshot-retention, restart, and ledger evidence plus static finite
+log/telemetry configuration checks. It does not prove multi-day soak behavior,
+actual Docker/Prometheus retention, production traffic, hardware sizing,
+bandwidth, cost, or public topology.
 
 Partial validator stake withdrawals are disabled until generalized slashable
 unbonding can retain the withdrawn claim through the CometBFT evidence window.

@@ -1,6 +1,6 @@
 # Project State
 
-Updated: 2026-08-01 09:57 UTC
+Updated: 2026-08-01 21:42 UTC
 
 ## Repository
 
@@ -28,6 +28,13 @@ Updated: 2026-08-01 09:57 UTC
   non-reflecting diagnostics passed all exact-head checks. The current docs
   branch publishes 1,220 cases and 12/59 rollout progress. Private live
   operator rehearsal, production topology, paging, and capacity remain open.
+- GH-97 is active on `feature/GH-97-capacity-sustained-load`. The candidate
+  adds a strict secret-free capacity contract, real temporary four-validator
+  workload and restart harness, bounded resource/retention evidence, a
+  fail-closed verifier, CI gate, and operator guide. Its real 96-transaction
+  qualification, full normal suite, Build, Vet, Race/Coverage, consistency,
+  and 0 FAIL / 0 WARN audit pass locally. It remains unmerged and does not
+  establish production sizing or deployment readiness.
 - Merged recovery PRs: #9, #15, #16, #17, #18, #19, #22, #23, #24, #27,
   #28, #30, #31, #33, #34, #35, #40, #42, #44, #46, #49, #52, #54, #57,
   #58, #62, #65, #67, #69, #72, #75, #78, #81, #86, #87, #88, #90, and #94.

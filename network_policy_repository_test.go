@@ -194,6 +194,7 @@ func TestConfigIndependentRootCommandsDoNotInitializeHome(t *testing.T) {
 	policyHome := filepath.Join(t.TempDir(), "policy-home")
 	topologyFile := filepath.Join(t.TempDir(), "topology-private.json")
 	incidentFile := filepath.Join(t.TempDir(), "incident-private.json")
+	capacityFile := filepath.Join(t.TempDir(), "capacity-private.json")
 	healthHome := filepath.Join(t.TempDir(), "health-home")
 	tests := map[string]testCase{
 		"network policy": {
@@ -218,6 +219,14 @@ func TestConfigIndependentRootCommandsDoNotInitializeHome(t *testing.T) {
 			args: []string{
 				"incident-rehearsal", "validate",
 				"--file", incidentFile,
+				"--output", "json",
+			},
+		},
+		"capacity policy": {
+			home: capacityFile,
+			args: []string{
+				"capacity-policy", "validate",
+				"--file", capacityFile,
 				"--output", "json",
 			},
 		},
