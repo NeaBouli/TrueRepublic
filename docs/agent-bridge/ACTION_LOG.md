@@ -2204,3 +2204,19 @@
   production-ready state or claiming a live operator rehearsal.
 - Documentation consistency, JSON arithmetic, repository contracts,
   stale-value scan, and diff hygiene PASS on `docs/GH-93-rollout-status`.
+
+## 2026-08-01 13:08 EEST - GH-93 exact-main handoff verified
+
+- PR #94 merged exact implementation head `d3f627d` as `b6e7c29` after 11/11
+  gates passed; PR #95 merged exact status head `b278a45` as `1a850d0` after
+  8/8 gates passed. Both PRs had zero unresolved review threads.
+- Exact `main` Security Scan run `30674576743` and Pages run `30674575864`
+  completed successfully on `1a850d0`.
+- Live public status was independently read back: 1,220 verified cases,
+  rollout 12/59 overall, 12/51 phase work, Phase 6 5/7, with production
+  readiness and deployment both false.
+- GH-93 is closed and all acceptance criteria are checked. GH-29 keeps the
+  real production-topology and capacity/load gates open. No production or live
+  incident action was performed.
+- This branch contains only the final append-only handoff; protected PR checks
+  and merge are the remaining publication step.
