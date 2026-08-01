@@ -29,7 +29,10 @@
   GH-93 adds a strict secret-free incident-command contract and eight synthetic
   halt, validator, key, backup/restore, upgrade/rollback, and migration
   rehearsals without claiming a private live operator drill.
-- 1,220 recovery-verified tests: 1,186 Go, 26 Rust, and 8 maintained-client.
+  GH-97 adds a bounded four-validator sustained-load contract with 96 committed
+  transactions plus resource, retention, restart, and ledger evidence without
+  claiming production sizing or multi-day soak behavior.
+- 1,278 recovery-verified tests: 1,244 Go, 26 Rust, and 8 maintained-client.
 
 ## Recovery sequence
 
@@ -44,7 +47,7 @@ reviewed, verified, and merged to `main` in this order.
 - Compatible real Groth16 client prover and external circuit/ceremony review.
 - Privacy-preserving anonymous reward recipient binding.
 - IBC/consensus-breaking migration recovery, external paging drills,
-  load/capacity/live-topology deployment, private live rehearsal, and
+  private-live-capacity/live-topology deployment, private live rehearsal, and
   independent live operations evidence.
 - Migration or removal of the deprecated legacy web/mobile clients.
 

@@ -1,10 +1,11 @@
 # Testing Status
 
-The current **v0.4.0 recovery** source of truth records **1,220 verified cases**.
+The current **v0.4.0 recovery** source of truth records **1,278 verified cases**.
 
 | Suite | Passing cases |
 |---|---:|
-| Go root/application | 88 |
+| Go root/application | 98 |
+| Go capacity policy | 48 |
 | Go health checks | 55 |
 | Go incident policy | 54 |
 | Go migration | 82 |
@@ -17,13 +18,14 @@ The current **v0.4.0 recovery** source of truth records **1,220 verified cases**
 | Go governance | 511 |
 | Rust/CosmWasm | 26 |
 | Maintained client | 8 |
-| **Total** | **1,220** |
+| **Total** | **1,278** |
 
 ## Current Go coverage
 
 | Package | Statements |
 |---|---:|
 | root/application | 69.1% |
+| capacity policy | 85.5% |
 | health checks | 97.2% |
 | incident policy | 90.7% |
 | migration | 84.6% |
@@ -51,16 +53,16 @@ The maintained client is verified with `npm ci`, lint, 8 tests, production
 build, and audit. The CosmWasm workspace is verified with tests, formatting,
 Clippy, build, and audit.
 
-GH-32/GH-41/GH-43/GH-45/GH-53/GH-55/GH-56/GH-60/GH-61/GH-93 add the separately gated
+GH-32/GH-41/GH-43/GH-45/GH-53/GH-55/GH-56/GH-60/GH-61/GH-93/GH-97 add the separately gated
 multi-validator failure/restart/catch-up, partition-recovery, trusted
 state-sync, sanitized backup/restore/export/import, compatible binary
 replacement/rollback, single-signer identity failover, authenticated
 consensus-key rotation, inactive-validator genesis round-trip,
-legacy-authority migration/rollback, secret-free incident rehearsal, and
-common-height app-hash tests. They do
+legacy-authority migration/rollback, secret-free incident rehearsal, bounded
+sustained-load qualification, and common-height app-hash tests. They do
 not replace the remaining
-consensus-breaking migration, external paging drills, load/capacity/live
-topology, private live rehearsal, or independent live operations gates.
+consensus-breaking migration, external paging drills, production sizing or
+soak, live topology, private live rehearsal, or independent operations gates.
 
 Green tests are recovery evidence, not an external security or production
 approval. See [Current Status](Current-Status) for remaining gates.

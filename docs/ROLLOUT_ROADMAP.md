@@ -19,7 +19,7 @@ intentionally more granular than the public 59-item tracker.
 
 - The ordered recovery merge chain is on `main`.
 - The maximum supply is fixed at 21,000,000 PNYX.
-- The source of truth records 1,220 recovery-verified tests: 1,186 Go, 26 Rust,
+- The source of truth records 1,278 recovery-verified tests: 1,244 Go, 26 Rust,
   and 8 maintained-client tests.
 - Ledger, escrow, issuance, DEX custody, genesis, runtime invariants, ZKP
   statement binding, node persistence, and the safe operator-init boundary
@@ -28,6 +28,8 @@ intentionally more granular than the public 59-item tracker.
   qualification evidence; real private deployment remains open.
 - GH-93/PR #94 add a strict secret-free incident-command and eight-scenario
   rehearsal contract; private live operator rehearsal remains open.
+- GH-97/PR #98 add bounded four-validator sustained-load, resource, retention,
+  restart, and ledger evidence; private-environment sizing and soak remain open.
 - GitHub Pages, security scans, and the current CI matrix are green.
 
 The baseline is suitable for continued engineering. It is not a rollout
@@ -171,8 +173,11 @@ defensible coverage, and no unresolved critical/high security finding remains.
   ([GH-93](https://github.com/NeaBouli/TrueRepublic/issues/93),
   [PR #94](https://github.com/NeaBouli/TrueRepublic/pull/94)); private live
   operator rehearsal remains part of deployment and final exit evidence.
-- [ ] Validate resource limits, disk growth, log retention, and capacity
-  assumptions under sustained load.
+- [x] Validate repository-side resource limits, disk growth, log retention,
+  and capacity assumptions under bounded sustained load
+  ([GH-97](https://github.com/NeaBouli/TrueRepublic/issues/97),
+  [PR #98](https://github.com/NeaBouli/TrueRepublic/pull/98)); production sizing,
+  multi-day soak, and private-environment evidence remain rollout exit work.
 
 **Exit gate:** operators can detect, diagnose, contain, recover, and document a
 failure using the published runbooks and telemetry.

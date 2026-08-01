@@ -137,9 +137,10 @@ Weekly:
 - verify backup evidence and operator-role assignments; and
 - record threshold changes with a new qualification window.
 
-Capacity, disk growth, retention, production topology, external paging, and
-private live operator rehearsal remain separate rollout gates. GH-93 provides
-the repository-owned synthetic incident rehearsal and runbook evidence only.
+Production sizing, multi-day soak, private-environment capacity/retention,
+production topology, external paging, and private live operator rehearsal
+remain separate rollout gates. GH-93 provides repository-owned synthetic
+incident rehearsal evidence; GH-97 provides bounded loopback capacity evidence.
 
 ## Next Steps
 

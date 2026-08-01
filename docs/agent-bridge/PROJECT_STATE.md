@@ -1,6 +1,6 @@
 # Project State
 
-Updated: 2026-08-01 21:42 UTC
+Updated: 2026-08-01 22:15 UTC
 
 ## Repository
 
@@ -28,16 +28,17 @@ Updated: 2026-08-01 21:42 UTC
   non-reflecting diagnostics passed all exact-head checks. The current docs
   branch publishes 1,220 cases and 12/59 rollout progress. Private live
   operator rehearsal, production topology, paging, and capacity remain open.
-- GH-97 is active on `feature/GH-97-capacity-sustained-load`. The candidate
-  adds a strict secret-free capacity contract, real temporary four-validator
-  workload and restart harness, bounded resource/retention evidence, a
-  fail-closed verifier, CI gate, and operator guide. Its real 96-transaction
-  qualification, full normal suite, Build, Vet, Race/Coverage, consistency,
-  and 0 FAIL / 0 WARN audit pass locally. It remains unmerged and does not
-  establish production sizing or deployment readiness.
+- GH-97 is merged through PR #98 (`23e0915`). Its strict secret-free capacity
+  contract, real temporary four-validator 96-transaction workload, bounded
+  resource/retention evidence, restart and ledger checks, fail-closed verifier,
+  CI gate, and operator guide passed local and exact-head GitHub verification.
+  The public status branch records 1,278 cases and 13/59 rollout progress while
+  preserving production sizing, multi-day soak, private-environment evidence,
+  and deployment as open boundaries.
 - Merged recovery PRs: #9, #15, #16, #17, #18, #19, #22, #23, #24, #27,
   #28, #30, #31, #33, #34, #35, #40, #42, #44, #46, #49, #52, #54, #57,
-  #58, #62, #65, #67, #69, #72, #75, #78, #81, #86, #87, #88, #90, and #94.
+  #58, #62, #65, #67, #69, #72, #75, #78, #81, #86, #87, #88, #90, #94,
+  and #98.
 - Current work: GH-60 inactive validator claim round-trip is closed through
   merged PR #67 (`c5a3d38`). Explicit active/inactive representation, legacy
   compatibility, complete domains, exact stake/jail/missed-block/power

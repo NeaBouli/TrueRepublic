@@ -3400,3 +3400,26 @@ Pending.
   pass; the corrected real 96-transaction run is in progress.
 
 ---
+
+## 2026-08-02 01:15 EEST GH-97 implementation merged → Status Sync
+
+- **Merged:** [PR #98](https://github.com/NeaBouli/TrueRepublic/pull/98) as
+  `23e0915` after every exact-head GitHub build, race/coverage, recovery,
+  capacity, Docker, documentation, security, static-analysis, and review check
+  passed; zero review threads remained. GH-97 closed automatically.
+- **Evidence:** 96/96 authenticated transactions committed across 24 workload
+  blocks on four temporary validators, with resource, retention, restart,
+  app-hash, validator-power, metrics, snapshot, and bank-ledger checks green.
+  Audit: 0 FAIL / 0 WARN / 7 PASS.
+- **Public candidate:** `docs/GH-97-rollout-status` publishes 1,278 verified
+  cases (1,244 Go + 26 Rust + 8 maintained-client), 13/59 overall, 13/51 phase
+  work, and Phase 6 at 6/7. The 58-case increase is 48 capacity-policy and ten
+  root cases; the real process harness remains a separate gate.
+- **Boundary:** `production_ready=false`. Production sizing, multi-day soak,
+  actual Docker/Prometheus retention, private-environment capacity evidence,
+  live topology/deployment, external paging, and independent live operations
+  remain open.
+- **Next:** verify, publish, and merge this documentation-only exact-head PR;
+  then update GH-29, GH-97, live Pages, and the final Bridge handoff.
+
+---

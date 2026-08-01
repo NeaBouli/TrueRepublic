@@ -269,9 +269,10 @@ sudo su - truerepublic
   supply/headroom, and runtime signals. Eleven recovery/testnet rules,
   measurable initial objectives, role ownership, and first-response guidance
   are shipped.
-- External paging, production topology, capacity/retention qualification,
-  named on-call assignment, and private live operator rehearsal remain separate
-  rollout gates. GH-93 verifies only the repository-owned synthetic rehearsal.
+- External paging, production topology, private-environment capacity/retention
+  qualification, named on-call assignment, and private live operator rehearsal
+  remain separate rollout gates. GH-93 verifies only the repository-owned
+  synthetic rehearsal; GH-97 verifies only bounded loopback capacity evidence.
 - Configuration: `monitoring/prometheus.yml`, `monitoring/grafana/`
 
 ---

@@ -459,11 +459,11 @@
                     <div class="stat-label">Max PNYX Supply</div>
                 </div>
                 <div class="stat">
-                    <div class="stat-number">1,220</div>
+                    <div class="stat-number">1,278</div>
                     <div class="stat-label">Recovery-Verified Tests</div>
                 </div>
                 <div class="stat">
-                    <div class="stat-number">20%</div>
+                    <div class="stat-number">22%</div>
                     <div class="stat-label">Rollout Checklist</div>
                 </div>
                 <div class="stat">
@@ -493,7 +493,7 @@
                 <span class="tech-badge">TailwindCSS 3.4</span>
                 <span class="tech-badge">Go 1.26.5</span>
                 <span class="tech-badge">Rust</span>
-                <span class="tech-badge">1,220 recovery-verified tests</span>
+                <span class="tech-badge">1,278 recovery-verified tests</span>
             </div>
         </div>
     </section>
@@ -504,19 +504,19 @@
             <p class="rollout-intro">The recovered v0.4 foundation is ready for continued engineering, not for production. These are the remaining blocking workstreams before any public-network rollout.</p>
             <div class="rollout-summary" aria-label="Rollout progress">
                 <article class="rollout-metric">
-                    <div class="rollout-metric-value">20%</div>
+                    <div class="rollout-metric-value">22%</div>
                     <h3>Full rollout checklist</h3>
-                    <p>12 of 59 tracked items complete. The total includes the final exit gates, which remain open.</p>
+                    <p>13 of 59 tracked items complete. The total includes the final exit gates, which remain open.</p>
                 </article>
                 <article class="rollout-metric">
-                    <div class="rollout-metric-value">24%</div>
+                    <div class="rollout-metric-value">25%</div>
                     <h3>Seven-phase work</h3>
-                    <p>12 of 51 phase tasks complete before the final go/no-go gates.</p>
+                    <p>13 of 51 phase tasks complete before the final go/no-go gates.</p>
                 </article>
                 <article class="rollout-metric">
-                    <div class="rollout-metric-value">71%</div>
+                    <div class="rollout-metric-value">86%</div>
                     <h3>Phase 6: Operations</h3>
-                    <p>5 of 7 tasks complete; production topology and sustained-load evidence remain.</p>
+                    <p>6 of 7 tasks complete; production topology and private live evidence remain.</p>
                 </article>
             </div>
             <div class="rollout-grid">
@@ -575,11 +575,12 @@
                     <div class="rollout-phase">Phase 6</div>
                     <h3>Operations</h3>
                     <ul>
-                        <li><strong>5 of 7 complete:</strong> liveness/readiness, secret-safe structured JSON logs, private metrics, an immutable dashboard with eleven tested alerts plus recovery/testnet objectives and role ownership, and a strict synthetic incident rehearsal</li>
+                        <li><strong>6 of 7 complete:</strong> liveness/readiness, secret-safe structured JSON logs, private metrics, an immutable dashboard with eleven tested alerts plus recovery/testnet objectives and role ownership, a strict synthetic incident rehearsal, and bounded four-validator capacity evidence</li>
                         <li><strong>Qualified:</strong> strict synthetic topology and abuse-control contract (GH-89)</li>
                         <li><strong>Verified and merged:</strong> incident, halt, validator, key, backup, restore, upgrade, and rollback runbook contract (GH-93)</li>
+                        <li><strong>Verified and merged:</strong> 96-transaction sustained-load, disk/log/RSS, retention, restart, and ledger contract (GH-97)</li>
                         <li><strong>Next:</strong> private production deployment and live operator evidence</li>
-                        <li>Capacity, disk-growth, and sustained-load evidence</li>
+                        <li>Production sizing, multi-day soak, and private-environment capacity evidence remain exit work</li>
                     </ul>
                 </article>
                 <article class="rollout-card">
