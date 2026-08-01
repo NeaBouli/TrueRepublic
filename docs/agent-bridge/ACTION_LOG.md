@@ -2183,3 +2183,24 @@
 - Pushed reviewed implementation `e03823b` and opened PR #94 against `main`.
 - The PR closes GH-93 on merge and preserves the no-production/live-rehearsal
   boundary. Exact-head GitHub CI, review, and unresolved-thread gates remain.
+
+## 2026-08-01 12:57 EEST - GH-93 implementation merged
+
+- Exact head `d3f627d` passed all 11 status gates, including Go
+  build/vet/race/coverage, the real incident-validator pipeline, eight recovery
+  harnesses, Docker/Compose, docs, security, DeepScan, and CodeRabbit status.
+- CodeRabbit was rate-limited without content. Independent final Terra review
+  reported 0 P0/P1 and GitHub reported zero review threads.
+- PR #94 merged as `b6e7c29` and closed GH-93. A separate status branch now
+  prepares 1,220 cases and rollout counts 12/59, 12/51, and Phase 6 5/7 while
+  retaining `production_ready=false` and every live/production boundary.
+
+## 2026-08-01 13:00 EEST - GH-93 public status candidate green
+
+- GH-29 now marks only the merged runbook item complete; topology and capacity
+  remain open.
+- Synchronized source of truth and public surfaces to 1,220 cases, 12/59
+  overall, 12/51 phase work, and Phase 6 5/7 without changing the false
+  production-ready state or claiming a live operator rehearsal.
+- Documentation consistency, JSON arithmetic, repository contracts,
+  stale-value scan, and diff hygiene PASS on `docs/GH-93-rollout-status`.

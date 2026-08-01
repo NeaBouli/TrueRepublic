@@ -1,6 +1,6 @@
 # Project State
 
-Updated: 2026-07-31 11:45 UTC
+Updated: 2026-08-01 09:57 UTC
 
 ## Repository
 
@@ -22,9 +22,15 @@ Updated: 2026-07-31 11:45 UTC
   deny-by-default flows, and bounded method/route/query ingress. The current
   docs branch publishes the merged 1,164-case status. This is repository
   evidence only; GH-29's actual production-deployment checkbox remains open.
+- GH-93 implementation is merged through PR #94 (`b6e7c29`). The strict
+  secret-free incident-command contract, offline validator, eight synthetic
+  rehearsal scenarios, specialist runbook links, repository/CI gates, and
+  non-reflecting diagnostics passed all exact-head checks. The current docs
+  branch publishes 1,220 cases and 12/59 rollout progress. Private live
+  operator rehearsal, production topology, paging, and capacity remain open.
 - Merged recovery PRs: #9, #15, #16, #17, #18, #19, #22, #23, #24, #27,
   #28, #30, #31, #33, #34, #35, #40, #42, #44, #46, #49, #52, #54, #57,
-  #58, #62, #65, #67, #69, #72, #75, #78, #81, #86, #87, #88, and #90.
+  #58, #62, #65, #67, #69, #72, #75, #78, #81, #86, #87, #88, #90, and #94.
 - Current work: GH-60 inactive validator claim round-trip is closed through
   merged PR #67 (`c5a3d38`). Explicit active/inactive representation, legacy
   compatibility, complete domains, exact stake/jail/missed-block/power

@@ -138,7 +138,8 @@ Weekly:
 - record threshold changes with a new qualification window.
 
 Capacity, disk growth, retention, production topology, external paging, and
-end-to-end incident rehearsal remain separate rollout gates.
+private live operator rehearsal remain separate rollout gates. GH-93 provides
+the repository-owned synthetic incident rehearsal and runbook evidence only.
 
 ## Next Steps
 
