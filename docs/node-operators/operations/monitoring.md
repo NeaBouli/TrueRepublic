@@ -367,5 +367,6 @@ sudo journalctl -u truerepublicd --since "1 hour ago"
 
 ## Next Steps
 
+- [Incident Command and Rehearsal](incident-command.md)
 - [Backup & Recovery](backup-recovery.md)
 - [Security Hardening](security.md)

@@ -4,6 +4,9 @@ Status: protocol-supported after GH-56, but still a rollout-stage procedure.
 Use temporary or approved testnet keys only until the rollout checklist grants
 an explicit production go/no-go decision.
 
+Use [Incident Command and Rehearsal](incident-command.md) for compromise
+classification, containment, approvals, evidence, and closure.
+
 ## Security Model
 
 The validator operator account and the CometBFT Ed25519 consensus key are
@@ -130,7 +133,8 @@ TRUEREPUBLIC_MULTI_VALIDATOR_SMOKE=1 \
 
 This procedure does not replace HSM/remote-signer integration, governance
 emergency recovery, custody review, or the final production rollout decision.
-The application currently does not feed CometBFT ABCI++ misbehavior and
-last-commit data into its economic slashing handlers. Revocation and historical
-ownership are consensus state, but automatic equivocation/downtime penalties
-remain a separate rollout blocker; do not claim operational slashing coverage.
+TrueRepublic does feed CometBFT ABCI++ misbehavior and decided-last-commit data
+into its replay-safe equivocation and downtime handlers. Follow
+[Validator Slashing and Recovery](validator-slashing.md) for offense evidence,
+burns, jail state, and unjail boundaries; do not treat key rotation alone as
+incident closure.

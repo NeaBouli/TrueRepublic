@@ -5,6 +5,9 @@ state. For replacing a consensus key, use the separate
 [validator key-rotation procedure](validator-key-rotation.md). Neither path
 authorizes production keys or real funds before rollout approval.
 
+Use [Incident Command and Rehearsal](incident-command.md) for severity,
+containment, evidence, decision authority, and closure.
+
 ## The Safety Unit
 
 A TrueRepublic validator has three different local identities:

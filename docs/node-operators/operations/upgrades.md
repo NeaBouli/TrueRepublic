@@ -10,6 +10,9 @@ Do not use this procedure for a release that changes stores, consensus rules,
 or persisted-state encoding. Such a release requires the unfinished protocol
 upgrade work and dedicated migration evidence.
 
+Coordinate every rehearsal, abort, or rollback decision through
+[Incident Command and Rehearsal](incident-command.md).
+
 ## Safety rules
 
 - Rehearse the exact old and new artifacts on a private network first.
@@ -182,6 +185,7 @@ in-place binary upgrade.
 
 ## Next steps
 
+- [Incident Command and Rehearsal](incident-command.md)
 - [Backup & Recovery](backup-recovery.md)
 - [Security Hardening](security.md)
 - [Road to Rollout](../../ROLLOUT_ROADMAP.md)

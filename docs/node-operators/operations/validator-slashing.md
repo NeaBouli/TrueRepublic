@@ -4,6 +4,9 @@ TrueRepublic consumes CometBFT ABCI++ misbehavior and decided-last-commit data
 before transactions execute. Slashing, replay markers, liveness state,
 validator power changes, and PNYX burns are committed atomically.
 
+Use [Incident Command and Rehearsal](incident-command.md) to coordinate the
+response without skipping containment, evidence, approval, or closure gates.
+
 ## Penalties
 
 | Condition | Economic penalty | Consensus action | Recovery |

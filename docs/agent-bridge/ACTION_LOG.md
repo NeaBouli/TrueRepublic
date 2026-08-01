@@ -2122,3 +2122,58 @@
   4/7, `production_ready=false`, and topology `production_deployment=false`.
 - GH-89 acceptance criteria are checked and the issue is closed. GH-29 remains
   open with its real production-topology checkbox unchecked.
+
+## 2026-08-01 11:02 EEST - GH-93 incident rehearsal implementation focused green
+
+- Created GH-93 and branch `feature/GH-93-operations-runbook-rehearsal` from
+  clean merged `main` `ed1b6bf`; production and live-incident actions remain
+  excluded.
+- Added a strict secret-free eight-scenario incident rehearsal contract,
+  offline root command, synthetic fixture, CI gate, canonical incident-command
+  runbook, specialist cross-links, and repository regressions.
+- Fixed the stale key-rotation statement that contradicted merged ABCI++
+  slashing behavior. Clarified that generic firewall/proxy snippets are
+  incomplete non-production examples governed by the strict network/topology
+  policies.
+- Kimi review was unavailable due provider quota and produced no diff. Terra's
+  independent read-only review supplied the accepted safety findings; Spark
+  owned only the focused package tests; Sol reviewed and hardened all output.
+- Focused incident-policy tests pass. Complete build/vet/race/coverage,
+  documentation consistency, recovery-process, and review gates remain before
+  publication or completion.
+
+## 2026-08-01 12:19 EEST - GH-93 local release gate complete
+
+- Closed all final independent-review findings with exact synthetic role
+  seats, complete second-signer abort coverage, a rehearsal chain-ID namespace,
+  and additional secret-leak, slashing, key-compromise, and upgrade-order
+  negative tests. Terra final review: 0 open P0/P1.
+- Diagnosed one loaded-host lifecycle-test failure. A separate existing
+  TrueRepublic process held the inherited pprof port and heavy compilation
+  exhausted the 35-second first-block window; no foreign process was changed.
+  The harness now disables pprof and uses a 60-second readiness budget.
+- Focused lifecycle race PASS (98.573s). Final `make verify` PASS across all 11
+  maintained packages: selection, build, vet, race, and coverage. Incident
+  policy coverage is 87.9%; root remains 69.1%.
+- Documentation consistency, fixture/CLI JSON validation, repository contracts,
+  and diff hygiene PASS. `GH93_AUDIT.md` records 0 FAIL / 0 WARN / 7 PASS.
+- Docker is unavailable locally; exact-head GitHub recovery, Docker/Compose,
+  security, docs, review, and unresolved-thread gates remain mandatory before
+  merge. No production mutation or live rehearsal occurred.
+- Fresh package-scoped JSON counting reports 1,185 Go cases; combined with the
+  unchanged 26 Rust and eight maintained-client cases, the candidate total is
+  1,219. Public documentation remains at the merged 1,164 baseline until main
+  contains the implementation and a separate status sync is verified.
+
+## 2026-08-01 12:36 EEST - GH-93 pre-ship reflection audit closed
+
+- Sol found and removed rejected JSON/enum reflection. Terra independently
+  identified and verified closure of positional-argument, flag, and
+  input-derived scenario-count reflection. Reports now expose only fixed
+  synthetic metadata and generic diagnostic categories. Final review: 0 P0/P1.
+- Final focused incident-policy race/coverage PASS at 90.7%; final complete
+  `make verify`, documentation consistency, exact CLI/JSON gate, and diff
+  hygiene PASS.
+- The new non-reflection regression raises the candidate to 1,186 Go cases and
+  1,220 combined cases. This supersedes the earlier 1,219 candidate; public
+  status correctly remains 1,164 until merge and independent status sync.

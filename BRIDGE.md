@@ -3090,3 +3090,119 @@ Go/Rust/Node security, docs, DeepScan, and CodeRabbit. GH-51 is closed.
 - **Status:** Done; final append-only handoff publication only.
 
 ---
+
+## 2026-08-01 10:29 EEST GH-93 operations runbook rehearsal → In Progress
+
+- **Owner:** Codex Sol + bounded Kimi K3 review; global ticket
+  `GIO-20260801-TR-034`.
+- **Branch:** `feature/GH-93-operations-runbook-rehearsal` from clean,
+  synchronized `origin/main` `ed1b6bf`.
+- **Issue:** [GH-93](https://github.com/NeaBouli/TrueRepublic/issues/93), child
+  of the rollout tracker GH-29.
+- **Scope:** compose the existing specialist procedures into a strict,
+  secret-free incident-command and rehearsal contract covering halt,
+  validator/slashing failure, consensus-key or operator-authority compromise,
+  sanitized backup/restore, compatible binary upgrade/rollback, and the
+  separately bounded legacy migration path.
+- **Acceptance:** deterministic offline validation, synthetic positive and
+  negative scenarios, phase/authority/evidence/abort gates, repository and CI
+  tests, canonical operator runbook, audit, independent review, and complete
+  relevant verification.
+- **Risk:** high in subject matter because incorrect recovery guidance can
+  cause double signing, stale signer-state restoration, divergent restart, or
+  evidence loss; execution risk is bounded to repository artifacts only.
+- **Safety boundary:** no production/server/cloud/IAM/DNS/firewall mutation,
+  no real topology, keys, signer state, identities, paging destinations,
+  deployment, mainnet, or external incident action. Repository rehearsal is
+  not evidence that a live production process is active.
+- **Next:** inventory the existing procedures, obtain a secret-free Kimi gap
+  review, specify the minimal contract, then implement focused tests before
+  integration.
+
+### 2026-08-01 10:34 EEST delegation update
+
+- Kimi K3 `review` was invoked with the bounded secret-free GH-93 scope but
+  returned provider HTTP 403 because its billing-cycle quota is exhausted.
+  It produced no findings, writes, or repository diff.
+- This is not a project blocker. Sol retains the task; a bounded Terra
+  read-only review covers the independent gap analysis while Sol continues
+  architecture and implementation.
+
+### 2026-08-01 11:02 EEST architecture and focused implementation
+
+- Added strict version `truerepublic.incident-rehearsal/v1`, an offline
+  `incident-rehearsal validate` command, and one synthetic eight-scenario
+  fixture with seven forward-only phases per scenario.
+- The schema permits controlled enums and logical rehearsal-seat aliases only;
+  real evidence values, hosts, URLs, commands, paths outside exact maintained
+  runbooks, identities, contacts, and secrets have no schema field.
+- Scenario gates cover chain halt, validator failure/slashing, consensus-key
+  compromise, operator-authority compromise, sanitized backup/restore,
+  compatible binary upgrade/rollback, and legacy fresh-genesis migration.
+  Cross-scenario actions are rejected; critical approval, single-signer,
+  signer-state freshness, fail-before-state-open, source/target isolation,
+  target-stop-before-source-restart, invariant, and safe-stop boundaries are
+  mandatory.
+- Terra's independent read-only review found one P0 documentation conflict:
+  the key-rotation guide still claimed ABCI++ slashing was unwired despite the
+  merged GH-59 implementation. The claim now matches code and the slashing
+  runbook, and a repository regression prevents recurrence. Its network-guide
+  exposure warning finding is also remediated without changing infrastructure.
+- Spark added only focused `incidentpolicy` tests. Sol reviewed and hardened
+  that suite with cross-role alias, wrong-scenario action, command non-leak,
+  upgrade, and source/target rollback ordering cases.
+- Focused `go test ./incidentpolicy -count=1` PASS; maintained fixture validates
+  eight scenarios with an empty violation array. Root/repository and complete
+  verification continue next.
+
+### 2026-08-01 12:19 EEST final local verification and review
+
+- Hardened the final contract after independent review: every role now uses an
+  exact synthetic seat alias, every signer-relevant scenario requires the
+  second-signer abort, the rehearsal chain ID is namespaced, and negative tests
+  pin secret-like aliases plus upgrade, slashing, and key-compromise failures.
+- Terra's final read-only review reports 0 open P0/P1 findings. Kimi remained
+  unavailable because of its provider quota and produced no diff; Spark's
+  bounded test contribution was fully reviewed and integrated by Sol.
+- The first complete rerun exposed one local lifecycle-harness isolation issue
+  under simultaneous heavy compilation: an unrelated TrueRepublic process was
+  already using pprof port 6060 and the first-block window was only 35 seconds.
+  The harness now disables pprof and uses a 60-second window. The foreign
+  process was not touched; the focused race regression passes in 98.573s.
+- Final `make verify` PASS: package selection, complete build, vet, race, and
+  coverage across all 11 maintained Go packages. Relevant coverage is root
+  69.1%, incident policy 87.9%, network policy 95.5%, topology policy 85.8%,
+  and governance 62.2%.
+- Documentation consistency, strict JSON fixture validation, `git diff
+  --check`, root/repository tests, and the real CLI-to-`jq` pipeline PASS.
+  `GH93_AUDIT.md` records 0 open FAIL / 0 open WARN / 7 PASS.
+- Local Docker is unavailable. Exact-head GitHub Linux, eight-scenario
+  recovery, Docker/Compose, docs/static/security, review, and thread gates are
+  mandatory before merge. No production or external incident action occurred.
+- **Status:** In Progress; next is reviewed commit, PR publication, exact-head
+  GitHub gates, merge, and separate public rollout/status synchronization.
+
+### 2026-08-01 12:23 EEST reproducible candidate count
+
+- Fresh package-scoped JSON evidence reports 1,185 passing Go cases: root 88,
+  healthcheck 55, incident policy 53, migration 82, network policy 126,
+  observability 50, token 12, topology policy 56, treasury 36, DEX 116, and
+  governance 511. With the unchanged 26 Rust and eight maintained-client cases,
+  the post-merge candidate is 1,219. Public status remains 1,164 until the
+  implementation is merged and main is independently synchronized.
+
+### 2026-08-01 12:36 EEST pre-ship non-reflection closure
+
+- Sol's structured pre-ship audit found that rejected JSON keys and enum values
+  could be reflected in diagnostics. Terra then found the same class in Cobra
+  positional/flag errors and input-derived scenario counts. All paths now use
+  generic errors and fixed synthetic report metadata; broad sentinel tests pass.
+- Final independent re-review reports 0 open P0/P1. Focused incident-policy
+  race/coverage PASS at 90.7%; the final complete `make verify` rerun PASS across
+  all 11 packages, followed by docs consistency, CLI/JSON, and diff checks.
+- Corrected fresh candidate count after the added regression: 1,186 Go cases
+  (incident policy 54), plus 26 Rust and eight maintained-client cases = 1,220.
+  The earlier 1,219 candidate is superseded; public status remains 1,164 until
+  merge and the separate verified status sync.
+
+---

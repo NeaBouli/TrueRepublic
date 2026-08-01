@@ -18,6 +18,7 @@ production or public-network approval.
 - [Genesis & Chain Parameters](configuration/genesis-params.md)
 
 ### Operations
+- [Incident Command and Rehearsal](operations/incident-command.md)
 - [Monitoring](operations/monitoring.md)
 - [Backup & Recovery](operations/backup-recovery.md)
 - [Validator Identity Custody and Recovery](operations/validator-identity-recovery.md)

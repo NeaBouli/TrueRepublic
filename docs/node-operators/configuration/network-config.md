@@ -72,6 +72,12 @@ sudo ufw enable
 
 ### iptables
 
+The following commands are illustrative host-local deny defaults, not a
+production firewall policy. Apply the role-specific allowlist generated from
+[Role-Based Network Policy](network-policy.md) and the reviewed
+[Multi-Node Topology Qualification](topology-contract.md); never apply the P2P
+accept rule to a private validator interface or an unrestricted source range.
+
 ```bash
 # Allow P2P only on public seed/sentry/RPC roles
 iptables -A INPUT -p tcp --dport 26656 -j ACCEPT
@@ -129,7 +135,15 @@ unconditional_peer_ids = "<validator-node-id>"
 
 ## Reverse Proxy (nginx)
 
-For public RPC access behind nginx:
+The minimal snippet below is intentionally incomplete and must not be deployed
+as a public proxy. The maintained policy requires explicit route/method
+allowlists, TLS termination, request rate/burst/body/timeout/concurrency
+limits, WebSocket only on `/websocket`, and denial of metrics, admin, unsafe,
+debug, and peer-dial surfaces. Use
+[Role-Based Network Policy](network-policy.md) and validate the complete
+[topology contract](topology-contract.md) before any exposure.
+
+Illustrative upstream wiring only:
 
 ```nginx
 server {
