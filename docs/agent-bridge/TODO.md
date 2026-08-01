@@ -69,7 +69,7 @@
   transaction waves,
   disk/log/RSS growth, finite retention, metrics, restart, ledger invariants,
   and checked projection without making production-sizing claims.
-- [ ] GH-97: publish through a protected exact-head PR, close only after all
+- [x] GH-97: publish through a protected exact-head PR, close only after all
   required checks pass, then synchronize GH-29, public status, audit, and
   Bridge while leaving production topology and live deployment open.
 

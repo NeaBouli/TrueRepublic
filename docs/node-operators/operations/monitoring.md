@@ -169,8 +169,8 @@ series.
 
 This proves repository provisioning and query compatibility in the bounded
 single-node Compose environment. It does not prove a production topology,
-capacity qualification, long-term retention, external notification delivery,
-or that every threshold is calibrated for a real validator set.
+production capacity, long-term retention, external notification delivery, or
+that every threshold is calibrated for a real validator set.
 
 The separate [Capacity Qualification](capacity-qualification.md) exercises a
 strict synthetic four-validator workload and records bounded disk, log,

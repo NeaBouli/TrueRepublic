@@ -12,7 +12,7 @@ source of current security or production-readiness claims.
 - Recovery epic: GitHub issue #4
 - Continuous handoff: `BRIDGE.md` and `docs/agent-bridge/`
 - Authoritative machine-readable status: `docs/status.json`
-- Verified recovery total: 1,220 cases (1,186 Go, 26 Rust, eight maintained-client)
+- Verified recovery total: 1,278 cases (1,244 Go, 26 Rust, eight maintained-client)
 - PNYX cap: 21,000,000 PNYX = 21,000,000,000,000 `upnyx`
 
 The recovery foundation was reviewed and merged to `main` through this ordered
@@ -169,8 +169,8 @@ unchanged. Recovery worktrees are based on current GitHub state.
 Recovery testnet functionality is not a mainnet approval. GH-53 proves only
 compatible persisted-state binary replacement and fail-before-open rollback.
 Remaining gates include consensus-breaking state migration and partially
-applied migration recovery, IBC/load/capacity/live-topology evidence, external
-live paging drills, private operator incident rehearsal
+applied migration recovery, IBC/private-live-capacity/live-topology evidence,
+external live paging drills, private operator incident rehearsal
 (rotation and revocation are implemented), independent
 consensus/cryptographic/operations review, real client proof generation, and a
 formal release process. GH-85 closes the repository dashboard, rules,

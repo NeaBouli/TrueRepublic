@@ -2315,3 +2315,33 @@
 - `go test ./capacitypolicy`, focused capacity root tests, `go vet
   ./capacitypolicy`, `go vet .`, gofmt, and `git diff --check` pass. The updated
   head must rerun GitHub checks before merge.
+
+## 2026-08-02 01:15 EEST - GH-97 implementation merged; public sync prepared
+
+- PR #98 exact head `2722e4c` passed all GitHub checks, including the combined
+  recovery matrix and the dedicated capacity qualification. No unresolved
+  review thread remained; the owner-author review rule was satisfied through
+  the authorized admin merge. PR #98 merged as `23e0915` and closed GH-97.
+- Reproduced the established full package-scoped JSON passing-case count:
+  GH-97 adds 48 capacity-policy and ten root cases. The public candidate
+  therefore records 1,278 total cases (1,244 Go + 26 Rust + eight
+  maintained-client).
+- Marked the repository-side Phase 6 capacity task complete: rollout progress
+  becomes 13/59 overall, 13/51 phase work, and 6/7 in Phase 6. Production
+  readiness remains false; production sizing/soak, actual runtime retention,
+  private-environment evidence, and live deployment remain explicit blockers.
+- Created `docs/GH-97-rollout-status` from exact merged `origin/main`. Public
+  status, roadmap, landing page, wiki, TODO, project state, and Bridge are now
+  synchronized locally; exact-head docs validation, PR, merge, and live Pages
+  readback remain pending.
+
+## 2026-08-02 01:20 EEST - GH-97 public status PR opened
+
+- Opened PR #99 from `docs/GH-97-rollout-status`. A complete package-scoped
+  JSON recount passed with 1,244 Go cases (root 98, capacity-policy 48, all
+  remaining module counts unchanged), correcting the earlier focused-delta
+  candidate before publication to 1,278 total cases.
+- Documentation consistency, JSON arithmetic, stale-count scan, and diff
+  hygiene pass. Terra's read-only delta recheck reports no P0/P1/P2 and confirms
+  the non-production claim boundaries. Exact-head GitHub gates and merge remain
+  pending.
