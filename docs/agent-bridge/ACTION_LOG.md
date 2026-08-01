@@ -2345,3 +2345,18 @@
   hygiene pass. Terra's read-only delta recheck reports no P0/P1/P2 and confirms
   the non-production claim boundaries. Exact-head GitHub gates and merge remain
   pending.
+
+## 2026-08-02 01:31 EEST - GH-97 public status complete
+
+- PR #99 exact head `047f6e1` passed all applicable GitHub documentation,
+  security, static-analysis, and review checks with no unresolved thread; it
+  merged as `fe6e693`.
+- Updated closed GH-97 so every acceptance criterion is checked and updated
+  open parent GH-29 so the bounded repository-side capacity item links GH-97
+  and PR #98 while preserving production sizing/soak/runtime-retention/private-
+  environment work as exit gates.
+- GitHub Pages deployment `30699752124` passed. Live `status.json` and landing
+  page readback confirmed 1,278 cases, 13/59 overall, 13/51 phase work, Phase 6
+  at 6/7, the GH-97 capacity marker, and `production_ready=false`.
+- GH-97 is Done. No production, deployment, key, identity, fund, paging, or
+  infrastructure mutation occurred.
