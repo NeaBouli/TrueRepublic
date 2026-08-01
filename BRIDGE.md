@@ -3432,4 +3432,22 @@ Pending.
   work, and Phase 6 at 6/7. PR #99 exact-head security/review checks and merge
   remain pending; no production or live-environment action occurred.
 
+### 2026-08-02 01:31 EEST GH-97 final handoff → Done
+
+- PR #99 exact head `047f6e1` passed documentation consistency, Go/Rust/Node
+  security, DeepScan, CodeRabbit, and independent read-only review with no open
+  thread or P0/P1/P2 finding. It merged as `fe6e693`.
+- GH-97 is closed with every acceptance criterion checked. GH-29 records the
+  repository-side capacity gate complete and remains open for later rollout
+  work. The merged status is 1,278 cases, 13/59 overall, 13/51 phase work, and
+  Phase 6 at 6/7; `production_ready=false` remains unchanged.
+- GitHub Pages deployment `30699752124` passed. Live `status.json` and the
+  landing page were read back successfully with the exact merged totals,
+  percentages, capacity marker, and false production-ready flag.
+- Production sizing, multi-day soak, actual Docker/Prometheus runtime
+  retention, private-environment capacity evidence, live topology/deployment,
+  external paging, and independent live operations remain open. No production,
+  deployment, key, identity, fund, or infrastructure action occurred.
+- **Status:** Done. The foundation is clean for the next bounded GH-29 task.
+
 ---
