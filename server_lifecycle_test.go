@@ -41,7 +41,7 @@ func TestRootUsesStandardCosmosServerCommands(t *testing.T) {
 	}
 	for _, path := range []string{
 		"init", "start", "export", "comet", "keys",
-		"network-policy", "topology-policy", "incident-rehearsal", "healthcheck",
+		"network-policy", "topology-policy", "incident-rehearsal", "capacity-policy", "healthcheck",
 	} {
 		cmd, _, err := root.Find([]string{path})
 		if err != nil || cmd == root {

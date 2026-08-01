@@ -172,6 +172,12 @@ single-node Compose environment. It does not prove a production topology,
 capacity qualification, long-term retention, external notification delivery,
 or that every threshold is calibrated for a real validator set.
 
+The separate [Capacity Qualification](capacity-qualification.md) exercises a
+strict synthetic four-validator workload and records bounded disk, log,
+process, metric, snapshot, restart, and ledger evidence. Its 24 consecutive
+four-signer waves are still a short loopback regression and must not be used as
+production-sizing, long-soak, or runtime-retention proof.
+
 ## Manual Monitoring
 
 ### Check Node Status

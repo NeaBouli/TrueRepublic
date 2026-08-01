@@ -64,6 +64,14 @@
   build/race/coverage, recovery, Docker/Compose, docs/static/security, and
   independent review evidence; merge and synchronize GH-29, public status,
   audit, and Bridge while leaving live production deployment open.
+- [x] GH-97: implement, independently review, and verify a strict synthetic
+  four-validator capacity qualification covering sustained multi-block
+  transaction waves,
+  disk/log/RSS growth, finite retention, metrics, restart, ledger invariants,
+  and checked projection without making production-sizing claims.
+- [ ] GH-97: publish through a protected exact-head PR, close only after all
+  required checks pass, then synchronize GH-29, public status, audit, and
+  Bridge while leaving production topology and live deployment open.
 
 ## P1 - consensus and wallet audit
 

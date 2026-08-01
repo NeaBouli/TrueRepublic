@@ -484,6 +484,48 @@ default-branch visibility track and must not bypass the vulnerable current
 
 ---
 
+### 2026-08-01 23:43 EEST real capacity qualification checkpoint
+
+- The maintained four-validator loopback qualification passed with 96/96
+  authenticated transactions committed in 24 consecutive four-signer waves,
+  zero transaction failures, and an exact 24-block workload delta.
+- Observed evidence: 131,924 ms workload duration, 727 milli-TPS, 5,496 ms
+  average block time, 5,893 ms p95 commit latency, 6,599 ms maximum commit
+  latency, maximum node data growth 1,222,727 bytes, maximum log growth
+  137,971 bytes, and maximum RSS 154,902,528 bytes.
+- Restart, common app hash, equal validator power, ledger validation, required
+  app/Comet metrics, and runtime snapshot retention all passed. The settled
+  snapshot store contained exactly three retained heights.
+- The separate strict CLI verifier accepted the generated evidence with
+  `valid: true`, `committed_count: 96`, and no violations.
+- Two preceding real runs exposed a harness defect rather than a chain defect:
+  an assumed public `/snapshots` RPC route does not exist in this CometBFT
+  surface. Sol replaced it with a fail-closed count of the real local snapshot
+  height directories after halting new commits, and added a focused regression
+  test. Full repository gates and publication remain pending.
+
+### 2026-08-02 00:42 EEST local completion and audit checkpoint
+
+- Final implementation review is complete. `docs/agent-bridge/GH97_AUDIT.md`
+  records `0 FAIL / 0 WARN / 7 PASS`; Terra's independent final review found no
+  remaining P0/P1/P2 issue. Both bounded Kimi attempts remained provider-quota
+  blocked with HTTP 403 and produced no output or diff.
+- PASS: package-selector contract, documentation consistency, workflow YAML,
+  maintained contract CLI/JQ contract, `git diff --check`, full CGO build, full
+  Vet, focused policy/repository/metrics/snapshot tests, and the complete normal
+  Go suite over every repository-owned package.
+- PASS: all non-root packages under Race/Coverage and every root test under the
+  same instrumentation. The first combined local Race command exhausted the
+  nearly-full workstation volume while the existing lifecycle test performed
+  its nested daemon build; after safe Go-cache cleanup, the race-instrumented
+  lifecycle test passed separately in 374.08 seconds. This was an environment
+  capacity failure, not a test assertion or data race; GitHub will rerun the
+  canonical combined command on its clean runner.
+- The maintained real capacity run remains PASS with 96/96 commits and strict
+  CLI evidence verification. Local implementation/review is Done; protected
+  PR, exact-head GitHub checks, merge, issue closure, and public-status sync are
+  next. Production and live rollout gates remain open.
+
 ## 2026-07-31 00:15 EEST PR #86 merged; GH-85 closed
 
 - Exact head `021d5c5` passed the complete GitHub matrix: build/race/coverage,
@@ -3266,5 +3308,81 @@ Go/Rust/Node security, docs, DeepScan, and CodeRabbit. GH-51 is closed.
 - **Status:** Done after this protected handoff PR merges with exact-head gates
   green; the next repository-side Phase 6 task is capacity, disk-growth,
   retention, and sustained-load evidence.
+
+---
+
+## 2026-08-01 21:30 EEST GH-97 capacity qualification → In Progress
+
+- **Branch:** `feature/GH-97-capacity-sustained-load`
+- **Issue:** [GH-97](https://github.com/NeaBouli/TrueRepublic/issues/97)
+- **Changed:**
+  - `BRIDGE.md` / `docs/agent-bridge/ACTION_LOG.md` — task ownership and
+    recovery-only scope recorded before implementation.
+- **Tests:** baseline `main` `fce724e` is clean and exact with `origin/main`;
+  focused and complete gates have not yet run on this new branch.
+- **Risk:** Medium — the task exercises real temporary local validators and
+  resource measurements, but may not alter consensus, production systems,
+  real identities, keys, funds, topology, or rollout readiness.
+- **Ready for:** bounded architecture analysis and Kimi review, then Sol-owned
+  implementation/integration.
+
+### Delegate notes
+
+Kimi receives a secret-free read-only architecture review. Sol retains the
+evidence contract, security boundaries, GitHub writes, diff review, complete
+tests, and merge. Repository measurements must be reproducible mechanics and
+regression evidence, never production sizing claims.
+
+### Sol review feedback
+
+Pending.
+
+### 2026-08-01 22:11 EEST implementation checkpoint
+
+- Kimi K3's bounded read-only review was attempted first but the provider
+  returned HTTP 403 quota exhaustion; it produced no output or file change.
+  Terra independently reviewed the design and recommended the implemented
+  four-validator, 24-transaction, resource/retention/restart/ledger slice.
+- Spark contributed only `capacitypolicy/capacitypolicy_test.go`; its focused
+  package test passed. Sol reviewed that diff, fixed the command helper's
+  premature buffer read, and tightened the output assertions.
+- The strict contract/parser/verifier/CLI, maintained synthetic fixture,
+  lifecycle registration, repository contract, CI job, operator guide, and
+  real-process capacity harness now exist locally. The first real run exposed
+  a CometBFT TOML section-name mismatch; Sol fixed it. A second attempt was
+  blocked before execution by an exhausted local Go build cache, which was
+  safely cleared without deleting repository or user data.
+- The third real four-validator run has reached test execution. Focused policy
+  tests passed before the final hardening edits; the full clean gates remain
+  pending after the process harness finishes.
+- **Risk/claim boundary:** candidate evidence is synthetic loopback regression
+  data only. It proves neither multi-day soak nor Docker/Prometheus retention,
+  production sizing, public topology, live infrastructure, or rollout
+  readiness.
+
+### 2026-08-01 22:47 EEST review remediation and load expansion
+
+- Terra's final read-only review found that copied log/telemetry settings were
+  configuration, not runtime-retention evidence; the evidence schema no longer
+  carries those self-attested fields. The repository contract now parses
+  Compose YAML and verifies finite `truerepublic-node` log settings exactly.
+  Actual Docker/Prometheus retention remains explicitly open.
+- The original 24 sequential transactions did not satisfy GH-97's sustained
+  load criterion. The maintained candidate now defines 24 consecutive waves,
+  four independent authenticated signers per wave, and 96 transactions total,
+  with exact checked milli-TPS and average-block-time evidence.
+- Negative tests exposed and Sol fixed a divide-by-zero panic for stalled
+  manipulated evidence. Snapshot measurement now tolerates only the expected
+  child-disappearance race caused by active retention while keeping root and
+  other filesystem failures strict.
+- Terra also found cumulative wave latency; Sol replaced it with per-submit
+  timers and concurrent per-hash delivery observation. The first parallel
+  attempt correctly failed before evidence because standard bank transactions
+  are not registered in this app's root CLI. The corrected harness creates one
+  synthetic domain per signer during setup and submits four concurrent
+  authorized `add-member` transactions per workload wave.
+- Kimi was retried after the expansion and again returned provider HTTP 403
+  quota with no output or diff. Focused policy/root/repository/Vet/diff gates
+  pass; the corrected real 96-transaction run is in progress.
 
 ---

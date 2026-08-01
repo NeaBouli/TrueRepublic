@@ -15,6 +15,7 @@ on:
       - 'docker-compose.yml'
       - 'configs/topology/**'
       - 'configs/incidents/**'
+      - 'configs/capacity/**'
       - 'monitoring/**'
       - 'nginx/**'
       - 'scripts/backup.sh'
@@ -34,6 +35,7 @@ on:
       - 'docker-compose.yml'
       - 'configs/topology/**'
       - 'configs/incidents/**'
+      - 'configs/capacity/**'
       - 'monitoring/**'
       - 'nginx/**'
       - 'scripts/backup.sh'
@@ -81,6 +83,15 @@ jobs:
           jq -e '.valid == true and .scenario_count == 8 and
           (.violations | type == "array" and length == 0)'
 
+      - name: Validate maintained capacity qualification contract
+        run: >-
+          go run . capacity-policy validate
+          --file configs/capacity/qualification.example.json
+          --output json |
+          jq -e '.valid == true and .validator_count == 4 and
+          .transaction_count == 96 and
+          (.violations | type == "array" and length == 0)'
+
       - name: Vet
         run: ./scripts/go-packages.sh go vet
 
@@ -104,6 +115,33 @@ jobs:
         env:
           TRUEREPUBLIC_MULTI_VALIDATOR_SMOKE: '1'
         run: go test . -run '^(TestMultiValidatorConsensusRecovery|TestMultiValidatorLegacyAuthorityMigrationRollback|TestMultiValidatorConsensusSlashing|TestMultiValidatorConsensusKeyRotation|TestMultiValidatorTrustedSnapshotStateSync|TestMultiValidatorBackupRestoreExportImport|TestMultiValidatorPersistedBinaryUpgradeRollback|TestValidatorIdentityColdFailover)$' -count=1 -timeout=1500s -v
+
+  capacity-qualification:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-go@v6
+        with:
+          go-version: '1.26.5'
+
+      - name: Run bounded four-validator capacity qualification
+        env:
+          TRUEREPUBLIC_MULTI_VALIDATOR_SMOKE: '1'
+        run: |
+          evidence="${RUNNER_TEMP}/capacity-evidence.json"
+          TRUEREPUBLIC_CAPACITY_EVIDENCE_OUT="$evidence" \
+            go test . -run '^TestMultiValidatorCapacitySustainedLoad$' \
+            -count=1 -timeout=900s -v
+          go run . capacity-policy verify \
+            --contract configs/capacity/qualification.example.json \
+            --evidence "$evidence" --output json |
+            jq -e '.valid == true and .validator_count == 4 and
+              .committed_count == 96 and
+              (.violations | type == "array" and length == 0)'
 
   docker-restart-smoke:
     runs-on: ubuntu-latest
