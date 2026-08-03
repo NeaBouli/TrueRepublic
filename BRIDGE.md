@@ -484,6 +484,26 @@ default-branch visibility track and must not bypass the vulnerable current
 
 ---
 
+## 2026-08-04 12:08 EEST GH-102 maintained-client audit unblock → In Progress
+
+- **Branch:** `fix/GH-102-maintained-client-audit`
+- **Issue:** [GH-102](https://github.com/NeaBouli/TrueRepublic/issues/102)
+- **Trigger:** GH-101 PR #103 exact head is blocked by the required
+  `node-audit-client` check on newly published dependency advisories in the
+  unchanged maintained client.
+- **Scope:** first bounded remediation slice: remove every high/critical
+  maintained-client audit finding with the smallest compatible lock/package
+  update, preserving lint, eight tests, production build, routing behavior, and
+  exact security workflow. Mobile legacy advisories stay explicitly open in
+  GH-102 for a later reviewed migration.
+- **Boundary:** repository dependency metadata/tests only. No wallet key,
+  signing, broadcast, funds, server, deployment, app-store, or production
+  action.
+- **Ready for:** exact dependency-tree analysis, minimal update, focused client
+  gates, review, protected PR, merge, then GH-101 rebase.
+
+---
+
 ### 2026-08-01 23:43 EEST real capacity qualification checkpoint
 
 - The maintained four-validator loopback qualification passed with 96/96
@@ -3449,5 +3469,32 @@ Pending.
   external paging, and independent live operations remain open. No production,
   deployment, key, identity, fund, or infrastructure action occurred.
 - **Status:** Done. The foundation is clean for the next bounded GH-29 task.
+
+---
+
+## 2026-08-04 12:25 EEST GH-102 maintained-client high audit gate → Local Pass
+
+- **Changed:** only `client-web/package.json` and its lockfile update the
+  pre-existing `brace-expansion` override from 5.0.8 to compatible patch 5.0.9.
+- **Root cause:** all eleven high findings cascaded through the dev-only
+  ESLint/TypeScript-ESLint/minimatch tree from that vulnerable override.
+- **Passed:** clean `npm ci`, lint, eight Vitest cases, production build, and
+  required `npm audit --audit-level=high` (exit 0). Only two moderate React
+  Router advisories remain; their offered fix is a separately reviewed major
+  v6→v7 migration, not a forced audit rewrite.
+- **Boundary:** no runtime source, routing, wallet, signing, network, key, fund,
+  server, deployment, or production change. Mobile legacy advisories stay open
+  under GH-102.
+- **Next:** independent read-only review, commit/protected PR/CI/merge, then
+  rebase and rerun GH-101 PR #103.
+
+### Independent review
+
+- Kimi K3: APPROVED; no P0/P1 finding and no blocking diff defect. Lock
+  integrity, dev-only dependency closure, minimal 5.0.9 patch, live high-level
+  audit exit 0, lint, and 8/8 tests were independently confirmed.
+- Review note: do not use `npm audit --offline` as release evidence because
+  pruned advisory-cache bodies can yield a false empty result. Repository CI
+  already uses the required live audit, unchanged.
 
 ---
