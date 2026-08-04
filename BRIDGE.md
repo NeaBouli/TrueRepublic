@@ -3566,3 +3566,26 @@ exclusion, CI wiring, and documentation boundaries.
   Rollout remains 13/59 and Phase 6 remains 6/7.
 
 ---
+
+## 2026-08-04 12:47 EEST GH-101 exact-head review remediation → In Progress
+
+- **Review:** two CodeRabbit threads were verified against exact head
+  `7c8f087`. The CI-ordering finding was valid; the date finding was not,
+  because the audit was performed on 4 August in the documented EEST project
+  timezone while GitHub still displayed 3 August UTC.
+- **Changed:** `.github/workflows/go-ci.yml` now derives
+  `./deploymentevidence` from `scripts/go-packages.sh` and runs its focused
+  tests immediately before the maintained manifest gate.
+- **Tests:** focused package test PASS, workflow YAML parse PASS, and
+  `git diff --check` PASS.
+- **Claude contribution:** Claude Code received this small, bounded one-file
+  task but its OAuth session remained expired; it produced no output or diff.
+  Sol applied and verified the minimal fix under the documented fallback.
+- **Risk/blocker:** no implementation blocker. Exact-head CI must restart for
+  the new commit, and both review threads must be answered/resolved before
+  merge. No live or production action occurred.
+- **Next:** commit/push the remediation, resolve the verified review threads,
+  pass the refreshed exact-head checks, merge PR #103, and synchronize public
+  rollout status without closing the live Phase 6 topology checkbox.
+
+---

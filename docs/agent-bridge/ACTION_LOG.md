@@ -2449,3 +2449,16 @@
 - GH-101 is locally complete. Protected PR, exact-head GitHub CI/review, merge,
   issue closure, and final Bridge/GH-29 synchronization remain open. Phase 6
   remains 6/7; no live or production action occurred.
+
+## 2026-08-04 12:47 EEST - GH-101 review remediation
+
+- Verified two exact-head CodeRabbit threads. Added the valid focused
+  `deploymentevidence` package test before the workflow manifest gate; retained
+  the correct 4 August EEST audit date and will document that timezone in the
+  review response.
+- Focused package test, workflow YAML parsing, and diff hygiene pass.
+- Claude Code was assigned the small one-file patch but its expired OAuth
+  session still could not refresh, producing no output or diff. Sol completed
+  and verified the bounded fallback.
+- Refreshed exact-head CI, review-thread resolution, merge, and public status
+  synchronization remain open.

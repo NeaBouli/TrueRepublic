@@ -77,6 +77,11 @@ jobs:
           jq -e '.valid == true and .node_count == 5 and
           (.violations | type == "array" and length == 0)'
 
+      - name: Test deployment evidence verifier
+        run: |
+          package=$(./scripts/go-packages.sh --list | grep -Fx './deploymentevidence')
+          CGO_ENABLED=1 go test "$package" -count=1
+
       - name: Verify maintained deployment evidence manifest
         run: >-
           go run . deployment-evidence verify
