@@ -3766,3 +3766,14 @@ exclusion, CI wiring, and documentation boundaries.
 - Kimi's focused final review approved the exact final script/test state with no
   blocking finding. Sol reran policy tests 6/6, Vitest 40/40, lint, build, live
   guarded audit, documentation consistency, and diff hygiene successfully.
+
+### 2026-08-04 14:36 EEST PR #107 review remediation
+
+- Exact head `3b5d47e` passed Client Web CI, Docs, DeepScan, Go/Rust security,
+  and all Node audit jobs. CodeRabbit raised one valid boundary finding: a
+  variable-backed dynamic module import could evade static module attribution.
+- The gate now rejects every computed `import()`/`require()` specifier before
+  module classification, with a regression case in the six-test policy suite.
+  Lint, policy tests 6/6, Vitest 40/40, production build, guarded live audit,
+  docs consistency, and diff hygiene pass after the patch. Refreshed exact-head
+  CI/review and thread resolution remain pending.

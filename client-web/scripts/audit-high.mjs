@@ -97,29 +97,34 @@ export function evaluateRouterBoundary(files) {
 
       if (
         ts.isCallExpression(node) &&
-        node.arguments.length === 1 &&
-        (ts.isStringLiteral(node.arguments[0]) ||
-          ts.isNoSubstitutionTemplateLiteral(node.arguments[0])) &&
         (node.expression.kind === ts.SyntaxKind.ImportKeyword ||
           (ts.isIdentifier(node.expression) && node.expression.text === 'require'))
       ) {
-        const moduleName = node.arguments[0].text;
-        if (checkModule(moduleName)) {
-          const declaration = node.parent?.parent;
-          if (
-            node.expression.kind !== ts.SyntaxKind.ImportKeyword ||
-            !ts.isAwaitExpression(node.parent) ||
-            !declaration ||
-            !ts.isVariableDeclaration(declaration) ||
-            !ts.isObjectBindingPattern(declaration.name)
-          ) {
-            violations.push(`${path}: router dynamic imports must use reviewed named APIs`);
-          } else {
-            checkNames(
-              declaration.name.elements.map((element) =>
-                (element.propertyName ?? element.name).getText(sourceFile)
-              )
-            );
+        if (
+          node.arguments.length !== 1 ||
+          (!ts.isStringLiteral(node.arguments[0]) &&
+            !ts.isNoSubstitutionTemplateLiteral(node.arguments[0]))
+        ) {
+          violations.push(`${path}: computed module imports are disallowed`);
+        } else {
+          const moduleName = node.arguments[0].text;
+          if (checkModule(moduleName)) {
+            const declaration = node.parent?.parent;
+            if (
+              node.expression.kind !== ts.SyntaxKind.ImportKeyword ||
+              !ts.isAwaitExpression(node.parent) ||
+              !declaration ||
+              !ts.isVariableDeclaration(declaration) ||
+              !ts.isObjectBindingPattern(declaration.name)
+            ) {
+              violations.push(`${path}: router dynamic imports must use reviewed named APIs`);
+            } else {
+              checkNames(
+                declaration.name.elements.map((element) =>
+                  (element.propertyName ?? element.name).getText(sourceFile)
+                )
+              );
+            }
           }
         }
       }

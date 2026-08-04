@@ -100,6 +100,10 @@ test('rejects data-router, RSC-capable, and alternate router imports', () => {
         path: 'template.ts',
         source: 'const Router = await import(`react-router-dom`);',
       },
+      {
+        path: 'computed.ts',
+        source: "const moduleName = 'react-router-dom'; const Router = await import(moduleName);",
+      },
     ]),
     [
       'data-router.tsx: disallowed router API RouterProvider',
@@ -108,6 +112,7 @@ test('rejects data-router, RSC-capable, and alternate router imports', () => {
       'dynamic.ts: router dynamic imports must use reviewed named APIs',
       'barrel.ts: disallowed router API RouterProvider',
       'template.ts: router dynamic imports must use reviewed named APIs',
+      'computed.ts: computed module imports are disallowed',
     ]
   );
 });
