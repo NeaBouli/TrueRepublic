@@ -72,6 +72,9 @@
 - [x] GH-97: publish through a protected exact-head PR, close only after all
   required checks pass, then synchronize GH-29, public status, audit, and
   Bridge while leaving production topology and live deployment open.
+- [ ] GH-102: remove the maintained client's current high/critical dependency
+  audit findings with compatible updates, preserving lint, tests, build, and
+  routing behavior; merge before rebasing blocked GH-101 PR #103.
 
 ## P1 - consensus and wallet audit
 

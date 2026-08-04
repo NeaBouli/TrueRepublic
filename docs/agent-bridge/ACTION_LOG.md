@@ -2360,3 +2360,41 @@
   at 6/7, the GH-97 capacity marker, and `production_ready=false`.
 - GH-97 is Done. No production, deployment, key, identity, fund, paging, or
   infrastructure mutation occurred.
+
+## 2026-08-04 12:08 EEST - GH-102 maintained-client audit unblock started
+
+- PR #103 exposed a current required `node-audit-client` failure unrelated to
+  its GH-101 Go/docs diff. Local reproduction found high advisories in the
+  maintained client's `brace-expansion`/`minimatch` dependency chain plus
+  moderate React Router advisories.
+- Created `fix/GH-102-maintained-client-audit` from exact `origin/main` for the
+  smallest compatible maintained-client remediation. This slice will not use
+  forced breaking upgrades or alter wallet/signing/network behavior.
+- Mobile legacy dependency advisories remain separately open under GH-102; its
+  current security job is informational (`|| true`) and will not be hidden by
+  weakening CI.
+
+## 2026-08-04 12:25 EEST - GH-102 maintained-client high findings remediated locally
+
+- Updated only the existing `brace-expansion` override and resolved lock entry
+  from 5.0.8 to compatible patch 5.0.9. This removes the eleven cascading high
+  ESLint/TypeScript-ESLint/minimatch audit findings without a direct dependency,
+  runtime source, or major-version change.
+- Exact clean-install gate passes: `npm ci`, lint, eight tests, production
+  build, and `npm audit --audit-level=high` exit 0. Two moderate React Router
+  findings remain and require a deliberate v7 migration; `npm audit fix --force`
+  was not used.
+- Independent review and GitHub publication remain open. GH-101 PR #103 stays
+  blocked until this protected fix merges and its head is rebased.
+
+## 2026-08-04 12:32 EEST - GH-102 independent review approved
+
+- Kimi read-only review confirms the 5.0.9 override is the smallest compatible
+  5.x patch, the lock integrity matches the official cached registry record,
+  and the dependency is dev-only through minimatch/ESLint. No runtime source,
+  route, wallet, workflow, or signing behavior changes.
+- Live `npm audit --audit-level=high` exits 0 with only the two documented
+  moderate React Router findings; Kimi independently reran lint and 8/8 tests.
+- Non-blocking process note: offline npm audit may falsely return an empty
+  result when advisory cache bodies are absent. Only live CI audit evidence is
+  accepted. Protected PR and exact-head checks are next.
