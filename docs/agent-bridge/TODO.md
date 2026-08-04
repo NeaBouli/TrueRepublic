@@ -80,7 +80,7 @@
   topology deployment-evidence manifest/verifier bound to the exact GH-89
   contract, with synthetic fixtures, repository/CLI/no-reflection tests, CI,
   and operator procedure; do not inspect or deploy real infrastructure.
-- [ ] GH-101: publish through a protected exact-head PR, close only after all
+- [x] GH-101: publish through a protected exact-head PR, close only after all
   relevant gates pass, and synchronize Bridge/GH-29 while leaving the live
   production-topology checkbox open for separately authorized evidence.
 

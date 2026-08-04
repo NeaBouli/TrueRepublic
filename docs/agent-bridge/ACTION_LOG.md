@@ -2508,3 +2508,13 @@
 - Hardened docs consistency, shell syntax, and diff hygiene pass. GH-29 is
   synchronized with the repository evidence link while its live topology item
   remains open; refreshed exact-head checks and merge remain pending.
+
+## 2026-08-04 13:37 EEST - PR #105 ready-to-merge checkpoint
+
+- Exact head `1c7e34c` passed every applicable GitHub check with zero pending
+  or failed status and zero unresolved review threads.
+- GH-29 and Bridge are synchronized while the live topology checkbox remains
+  open. The GH-101 publish/sync TODO is marked complete only after these
+  conditions passed.
+- A final exact-head rerun for this bookkeeping commit, merge, Pages readback,
+  and post-merge handoff remain.
