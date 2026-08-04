@@ -120,7 +120,7 @@ GitHub verification; this is not an external audit or production approval.
 
 - **[PASS] Double-vote state and mock-client boundaries survive lifecycle changes** — `x/truedemocracy/module.go`, `client-web/src/services/zkp.ts`, `web-wallet/src/services/api.js`
   - What: Export/import preserves the exact active nullifier records and heights without resurrecting values cleared by Big Purge. Both web clients reject mock proof submission.
-  - Evidence: Nullifier round-trip/purge regressions, 8 maintained-client tests, and 4 focused legacy-client tests pass; both clients build and audit cleanly.
+  - Evidence: Nullifier round-trip/purge regressions, 46 maintained-client tests, and 4 focused legacy-client tests pass; both clients build and audit through their documented gates.
   - Fix: Keep anonymous rewards deferred and submission disabled until a compatible real prover and recipient-binding design pass independent review.
 
 ### Persistent node lifecycle — PASS
@@ -160,7 +160,7 @@ GitHub verification; this is not an external audit or production approval.
   - Fix: Keep local and CI root-module verification on `scripts/go-packages.sh`; use `--list` when auditing the selected directories.
 
 - **[LOW] Maintained-client bundle remains large** — `client-web/src`, `docs/status.json`
-  - What: The verified production build emits a 1,678.30 kB main chunk (309.01 kB gzip) and triggers the bundler's 500 kB warning.
+  - What: The verified production build emits a 1,700.52 kB main chunk (317.94 kB gzip) and triggers the bundler's 500 kB warning.
   - Path: Low-bandwidth and mobile users download the full client bundle before route-specific code is needed.
   - Fix: Add route-level code splitting and a measured bundle budget before rollout UX approval.
 

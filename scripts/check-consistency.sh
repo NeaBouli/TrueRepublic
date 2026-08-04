@@ -31,6 +31,14 @@ if ! jq -e '
   exit 1
 fi
 
+if ! jq -e '
+  [.web_client.components, .web_client.routes, .web_client.stores, .web_client.services] |
+  all(type == "number" and . > 0 and floor == .)
+' "$STATUS_FILE" >/dev/null; then
+  echo "FAIL Maintained-client inventory counts must be positive integers"
+  exit 1
+fi
+
 VERSION=$(jq -r '.version' "$STATUS_FILE")
 TESTS=$(jq -r '.tests.total' "$STATUS_FILE")
 SUPPLY=$(jq -r '.token.max_supply' "$STATUS_FILE")
@@ -62,6 +70,12 @@ format_integer() {
 
 FORMATTED_TESTS=$(format_integer "$TESTS")
 FORMATTED_GO_TESTS=$(format_integer "$GO_TESTS")
+FORMATTED_FRONTEND_TESTS=$(format_integer "$FRONTEND_TESTS")
+WEB_COMPONENTS=$(jq -r '.web_client.components' "$STATUS_FILE")
+WEB_ROUTES=$(jq -r '.web_client.routes' "$STATUS_FILE")
+WEB_STORES=$(jq -r '.web_client.stores' "$STATUS_FILE")
+WEB_SERVICES=$(jq -r '.web_client.services' "$STATUS_FILE")
+WEB_BUILD_SIZE_GZIP=$(jq -r '.web_client.build_size_gzip' "$STATUS_FILE")
 
 echo "Source of Truth (status.json):"
 echo "  Version: $VERSION"
@@ -148,6 +162,31 @@ check_count_file "docs/QUICKSTART.md" "Quickstart Go total" "All Go tests" "$GO_
 check_count_file "docs/ROLLOUT_ROADMAP.md" "Rollout roadmap total" "The source of truth records" "$TESTS" "$FORMATTED_TESTS"
 check_count_file "docs/ROLLOUT_ROADMAP.md" "Rollout roadmap Go breakdown" "The source of truth records" "$GO_TESTS" "$FORMATTED_GO_TESTS"
 check_count_file "wiki/develop/Architecture-Overview.md" "Architecture Go total" "| **Test** |" "$GO_TESTS" "$FORMATTED_GO_TESTS"
+check_count_file "README.md" "README client breakdown" "tests recovery-verified locally" "$FRONTEND_TESTS" "$FORMATTED_FRONTEND_TESTS"
+check_count_file "wiki/status/Testing-Status.md" "Wiki client breakdown" "| Maintained client |" "$FRONTEND_TESTS" "$FORMATTED_FRONTEND_TESTS"
+
+echo "Checking maintained-client inventory..."
+ACTUAL_COMPONENTS=$(find client-web/src/components -type f -name '*.tsx' | wc -l | tr -d ' ')
+ACTUAL_ROUTES=$(grep -c '^  { path:' client-web/src/routes.tsx || true)
+ACTUAL_STORES=$(find client-web/src/stores -type f -name '*.ts' ! -name '*.test.ts' | wc -l | tr -d ' ')
+ACTUAL_SERVICES=$(find client-web/src/services -type f -name '*.ts' ! -name '*.test.ts' | wc -l | tr -d ' ')
+for item in \
+  "components:$WEB_COMPONENTS:$ACTUAL_COMPONENTS" \
+  "routes:$WEB_ROUTES:$ACTUAL_ROUTES" \
+  "stores:$WEB_STORES:$ACTUAL_STORES" \
+  "services:$WEB_SERVICES:$ACTUAL_SERVICES"; do
+  IFS=: read -r label expected actual <<<"$item"
+  if [ "$expected" -eq "$actual" ]; then
+    echo "  OK $label"
+  else
+    echo "  FAIL $label (status $expected, source $actual)"
+    ERRORS=$((ERRORS+1))
+  fi
+done
+grep -Fq "$WEB_BUILD_SIZE_GZIP" docs/agent-bridge/SECURITY_NOTES.md &&
+  echo "  OK build gzip" ||
+  { echo "  FAIL build gzip ($WEB_BUILD_SIZE_GZIP not documented)"; ERRORS=$((ERRORS+1)); }
+echo ""
 
 echo "Checking wiki module table (wiki/status/Testing-Status.md)..."
 while IFS='|' read -r module label; do
