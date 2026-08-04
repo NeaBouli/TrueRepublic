@@ -1,6 +1,6 @@
 # Project State
 
-Updated: 2026-08-04 10:46 UTC
+Updated: 2026-08-04 11:43 UTC
 
 ## Repository
 
@@ -41,13 +41,20 @@ Updated: 2026-08-04 10:46 UTC
   and exact-head GitHub verification. Public status records 1,350 cases while
   rollout remains 13/59 overall and Phase 6 remains 6/7 because no private live
   deployment or infrastructure evidence was produced.
-- GH-102's first maintained-client audit slice is merged through PR #104
-  (`91ee957`). The high-severity dev-only dependency chain is cleared; two
-  moderate React Router advisories and legacy mobile remediation remain open.
+- GH-102's maintained-client dependency slices are merged through PR #104
+  (`91ee957`) and PR #107 (`06f1125`). The high-severity dev-only chain and both
+  prior moderate React Router advisories are cleared; the exact 21-route
+  contract, 40 Vitest cases, six audit-policy cases, and guarded live audit pass.
+  A time-boxed exception for the later RSC-only `GHSA-qwww-vcr4-c8h2` is bound
+  to the BrowserRouter-only architecture through 2026-09-04 or pre-rollout.
+  Public status now records 1,388 cases (1,316 Go + 26 Rust + 46 maintained
+  client). Its production inventory is 42 component files, 21 routes, eight
+  stores, and 11 services. Legacy mobile remediation or retirement remains open
+  under GH-102.
 - Merged evidence and recovery PRs: #9, #15, #16, #17, #18, #19, #22, #23, #24, #27,
   #28, #30, #31, #33, #34, #35, #40, #42, #44, #46, #49, #52, #54, #57,
   #58, #62, #65, #67, #69, #72, #75, #78, #81, #86, #87, #88, #90, #94,
-  #98, #103, and #104.
+  #98, #103, #104, and #107.
 - Current work: GH-60 inactive validator claim round-trip is closed through
   merged PR #67 (`c5a3d38`). Explicit active/inactive representation, legacy
   compatibility, complete domains, exact stake/jail/missed-block/power
@@ -337,7 +344,7 @@ Updated: 2026-08-04 10:46 UTC
   SHA-256, BN254/public-input shape, and canonical bytes; recomputes identity
   roots; and round-trips exact active nullifiers without undoing Big Purges.
   Both web clients now reject mock proof submission. Local Go build/vet/643
-  cases/race/coverage, Rust 26 tests/audit, maintained-client lint/8 tests/build/
+  cases/race/coverage, Rust 26 tests/audit, maintained-client lint/46 tests/build/
   audit, four focused legacy tests/build/audit, module integrity, and diff
   checks pass; see `PR22_AUDIT.md`.
 - GH-21 was rebased without implementation drift onto PR #22 head `0c72ad0`.
@@ -368,7 +375,7 @@ Updated: 2026-08-04 10:46 UTC
 ## Public-status warning
 
 `docs/status.json`, README, limitations, and the landing page now mark recovery
-as active and separate 1,350 verified cases from the historical 577 figure.
+as active and separate 1,388 verified cases from the historical 577 figure.
 `CLAUDE.md`, install guidance, FAQ, landing page, wiki, and the root audit are
 reconciled with the merged recovery foundation while retaining the explicit
 non-production boundary.

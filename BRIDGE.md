@@ -3777,3 +3777,30 @@ exclusion, CI wiring, and documentation boundaries.
   Lint, policy tests 6/6, Vitest 40/40, production build, guarded live audit,
   docs consistency, and diff hygiene pass after the patch. Refreshed exact-head
   CI/review and thread resolution remain pending.
+
+## 2026-08-04 14:43 EEST GH-102 maintained-client router slice → Merged
+
+- PR #107 final head `694c976` passed every applicable GitHub check with its
+  sole review thread resolved and merged as `06f1125`.
+- GH-102 and its issue evidence now show both maintained-client slices complete;
+  the issue remains open only for legacy mobile migration/retirement and final
+  repository-wide closure.
+- Public recovery evidence is synchronized to 1,388 cases (1,316 Go + 26 Rust +
+  46 maintained client). Source-backed client inventory is 42 component files,
+  21 routes, eight production stores, 11 production services, and a 317.94 kB
+  gzip bundle. Rollout stays
+  13/59 overall, 13/51 phase work, Phase 6 6/7, `production_ready=false`.
+- Final handoff branch updates status/docs/Bridge only. No production, mobile
+  release, wallet, signing, broadcast, fund, or infrastructure action occurred.
+
+### 2026-08-04 14:50 EEST handoff review remediation
+
+- Kimi independently reproduced 1,316 + 26 + 46 = 1,388, Vitest 40/40,
+  audit-policy 6/6, 42 component files, 21 routes, and the unchanged rollout
+  boundary. Its semantic inventory finding was corrected by excluding test files:
+  eight production stores and 11 production services.
+- Root audit bundle/test claims are synchronized. Client inventory fields now
+  require positive integers, and a zero-route result reports a controlled
+  fail-closed inconsistency instead of aborting before the summary.
+
+---

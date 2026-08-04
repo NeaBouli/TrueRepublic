@@ -35,7 +35,7 @@
   operations review remain pending;
   IBC staking/upgrade and
   standard CosmWasm staking/distribution stay explicit stubs.
-- The v0.4 client production bundle is 1.68 MB (309 kB gzip); route-level code
+- The v0.4 client production bundle is 1.70 MB (317.94 kB gzip); route-level code
   splitting is recommended before treating low-bandwidth/mobile UX as ready.
 
 ## Resolved during recovery

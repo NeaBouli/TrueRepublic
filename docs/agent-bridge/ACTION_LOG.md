@@ -2549,3 +2549,20 @@
   state synchronization remain pending. Mobile remediation remains a separate
   GH-102 slice; no wallet, signing, broadcast, fund, deployment, or production
   action occurred.
+
+## 2026-08-04 14:43 EEST - GH-102 maintained-client router slice merged
+
+- PR #107 final head `694c976` passed Client Web CI, Docs Consistency, DeepScan,
+  Go/Rust security, every Node audit job, and CodeRabbit. Its sole actionable
+  review found a computed dynamic-import attribution gap; the final patch rejects
+  every computed `import()`/`require()` specifier and the thread is resolved.
+- PR #107 merged as `06f1125`. GH-102 now records both maintained-client slices
+  as complete while remaining open for legacy mobile migration or retirement.
+- Reproduced the current public count as 1,388 cases: 1,316 Go + 26 Rust + 40
+  Vitest + six audit-policy cases. Corrected the maintained-client inventory to
+  42 component files, 21 routes, eight production stores, 11 production
+  services, and 317.94 kB gzip;
+  extended documentation CI to compare those source counts to `status.json`.
+- Rollout remains 13/59 overall, 13/51 phase work, Phase 6 6/7, and
+  `production_ready=false`. No wallet, key, signing, broadcast, funds, mobile
+  release, deployment, infrastructure, or production mutation occurred.

@@ -19,8 +19,8 @@ intentionally more granular than the public 59-item tracker.
 
 - The ordered recovery merge chain is on `main`.
 - The maximum supply is fixed at 21,000,000 PNYX.
-- The source of truth records 1,350 recovery-verified tests: 1,316 Go, 26 Rust,
-  and 8 maintained-client tests.
+- The source of truth records 1,388 recovery-verified tests: 1,316 Go, 26 Rust,
+  and 46 maintained-client tests.
 - Ledger, escrow, issuance, DEX custody, genesis, runtime invariants, ZKP
   statement binding, node persistence, and the safe operator-init boundary
   have CI-backed recovery evidence.

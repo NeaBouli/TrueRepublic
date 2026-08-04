@@ -4,20 +4,20 @@
   "release_date": "2026-03-04",
   "tests": {
     "status": "recovery_verified_locally",
-    "total": 1350,
+    "total": 1388,
     "go": 1316,
     "rust": 26,
-    "frontend": 8,
+    "frontend": 46,
     "historical_total": 577
   },
   "web_client": {
     "version": "v0.4.0",
     "framework": "React 18.2 + TypeScript 5.9 + Vite 8.1",
-    "components": 20,
-    "routes": 22,
-    "stores": 7,
-    "services": 10,
-    "build_size_gzip": "309.01 kB"
+    "components": 42,
+    "routes": 21,
+    "stores": 8,
+    "services": 11,
+    "build_size_gzip": "317.94 kB"
   },
   "recovery": {
     "status": "active",
