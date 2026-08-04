@@ -3666,3 +3666,27 @@ exclusion, CI wiring, and documentation boundaries.
   #105, verify Pages/live status, and record the post-merge handoff.
 
 ---
+
+## 2026-08-04 13:46 EEST GH-101 public synchronization → Done
+
+- **Merged:** implementation PR #103 as `7924792`; public status PR #105 as
+  `26cd19e`. GH-101 is closed with every acceptance criterion checked, and
+  GH-29 links the repository evidence while its live topology item stays open.
+- **GitHub evidence:** both PRs passed their exact-head required checks with
+  zero unresolved review threads. Post-merge Security Scan `30866462881` and
+  Pages deployment `30866461897` pass.
+- **Live readback:** GitHub Pages publishes 1,350 cases (1,316 Go + 26 Rust +
+  8 maintained-client), rollout 13/59, phase work 13/51, Phase 6 6/7,
+  `production_ready=false`, and the GH-101 offline evidence-gate marker.
+- **Review/delegation:** Kimi's independent census, count reproduction, and
+  final review findings were integrated and reverified. Claude Code received
+  two small bounded assignments but remained OAuth-unavailable and produced no
+  output or diff.
+- **Residual:** GH-102 remains open for two moderate React Router advisories and
+  legacy mobile migration/retirement. Real private topology deployment,
+  inventory, DNS/TLS, firewall, provider, and live evidence remain separately
+  authorized work.
+- **Status:** Done. No infrastructure, key, identity, fund, deployment, or
+  production mutation occurred.
+
+---
