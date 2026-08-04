@@ -2566,3 +2566,15 @@
 - Rollout remains 13/59 overall, 13/51 phase work, Phase 6 6/7, and
   `production_ready=false`. No wallet, key, signing, broadcast, funds, mobile
   release, deployment, infrastructure, or production mutation occurred.
+
+## 2026-08-04 14:56 EEST - GH-102 public router handoff complete
+
+- PR #108 final head `4402577` passed every applicable exact-head check with no
+  review thread and merged as `d1783ec`.
+- Post-merge Pages `30870238036` and Security Scan `30870238562` pass. Live
+  readback matches 1,388 total cases, the 46-case maintained-client breakdown,
+  source-backed 42/21/8/11 client inventory, 317.94 kB gzip, 13/59 rollout,
+  Phase 6 6/7, and `production_ready=false`.
+- Maintained-client GH-102 work and public handoff are Done. Legacy mobile stays
+  open; no production, mobile release, wallet, signing, broadcast, funds,
+  infrastructure, or deployment action occurred.
