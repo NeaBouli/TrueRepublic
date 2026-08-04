@@ -72,9 +72,10 @@
 - [x] GH-97: publish through a protected exact-head PR, close only after all
   required checks pass, then synchronize GH-29, public status, audit, and
   Bridge while leaving production topology and live deployment open.
-- [ ] GH-102: remove the maintained client's current high/critical dependency
-  audit findings with compatible updates, preserving lint, tests, build, and
-  routing behavior; merge before rebasing blocked GH-101 PR #103.
+- [ ] GH-102: continue after merged PR #104 cleared the maintained client's
+  high-severity dev-only dependency chain; review the two moderate React Router
+  advisories and migrate or retire the advisory-heavy legacy mobile client
+  without weakening lint, tests, build, wallet, signing, or routing behavior.
 - [x] GH-101: implement and independently review a strict secret-free private
   topology deployment-evidence manifest/verifier bound to the exact GH-89
   contract, with synthetic fixtures, repository/CLI/no-reflection tests, CI,

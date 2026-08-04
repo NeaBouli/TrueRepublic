@@ -2462,3 +2462,37 @@
   and verified the bounded fallback.
 - Refreshed exact-head CI, review-thread resolution, merge, and public status
   synchronization remain open.
+
+## 2026-08-04 13:15 EEST - GH-101 merged; public status prepared
+
+- PR #103 exact head `e7d016a` passed all required GitHub checks: full Go
+  build/Vet/race/coverage, the complete multi-validator recovery matrix,
+  capacity qualification, Docker restart/monitoring, docs, Go/Rust/Node
+  security, DeepScan, and review status. Both review threads were resolved.
+- PR #103 merged as `7924792`; GH-101 closed automatically. No infrastructure,
+  inventory, provider, DNS/TLS, firewall, key, fund, or production action
+  occurred.
+- Reproduced public arithmetic: GH-101 contributes 71 `deploymentevidence`
+  cases plus one root repository-contract case, moving the source of truth to
+  1,350 total (1,316 Go + 26 Rust + eight maintained-client).
+- Kimi's independent read-only claim census confirmed all gated and non-gated
+  status surfaces and the unchanged rollout boundary. Claude Code remained
+  unavailable because its OAuth session could not refresh and produced no diff.
+- Created `docs/GH-101-rollout-status` from exact merged `origin/main`. Rollout
+  remains 13/59 overall, 13/51 phase work, Phase 6 6/7, and
+  `production_ready=false`; docs verification, protected PR, merge, GH-29, and
+  live Pages readback remain pending.
+
+## 2026-08-04 13:26 EEST - GH-101 public status local pass
+
+- Synchronized 1,350 total cases (1,316 Go + 26 Rust + eight client), root 99,
+  and `deploymentevidence` 71 across every current public/status surface while
+  preserving 13/59, 13/51, Phase 6 6/7, and `production_ready=false`.
+- Kimi independently reproduced the new case counts and 90.8% package coverage,
+  approved the production boundary, and found one premature completion box
+  plus two lower-severity consistency gaps. All were remediated: the final
+  publish/sync item stays open, count-bearing docs and every wiki module row are
+  now CI-gated, and the merged-PR list label is accurate.
+- Final local checks pass: documentation consistency, exact JSON arithmetic,
+  shell syntax, and diff hygiene. Protected PR, GH-29 synchronization, merge,
+  Pages readback, and final handoff remain pending.

@@ -1,11 +1,12 @@
 # Testing Status
 
-The current **v0.4.0 recovery** source of truth records **1,278 verified cases**.
+The current **v0.4.0 recovery** source of truth records **1,350 verified cases**.
 
 | Suite | Passing cases |
 |---|---:|
-| Go root/application | 98 |
+| Go root/application | 99 |
 | Go capacity policy | 48 |
+| Go deployment evidence | 71 |
 | Go health checks | 55 |
 | Go incident policy | 54 |
 | Go migration | 82 |
@@ -18,7 +19,7 @@ The current **v0.4.0 recovery** source of truth records **1,278 verified cases**
 | Go governance | 511 |
 | Rust/CosmWasm | 26 |
 | Maintained client | 8 |
-| **Total** | **1,278** |
+| **Total** | **1,350** |
 
 ## Current Go coverage
 
@@ -26,6 +27,7 @@ The current **v0.4.0 recovery** source of truth records **1,278 verified cases**
 |---|---:|
 | root/application | 69.1% |
 | capacity policy | 85.5% |
+| deployment evidence | 90.8% |
 | health checks | 97.2% |
 | incident policy | 90.7% |
 | migration | 84.6% |
@@ -63,6 +65,10 @@ sustained-load qualification, and common-height app-hash tests. They do
 not replace the remaining
 consensus-breaking migration, external paging drills, production sizing or
 soak, live topology, private live rehearsal, or independent operations gates.
+
+GH-101 adds the strict offline deployment-evidence parser, verifier, repository
+contract, and CI manifest gate. It validates only a synthetic secret-free
+envelope and does not replace live topology or private deployment evidence.
 
 Green tests are recovery evidence, not an external security or production
 approval. See [Current Status](Current-Status) for remaining gates.

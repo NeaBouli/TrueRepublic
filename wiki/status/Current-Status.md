@@ -32,7 +32,9 @@
   GH-97 adds a bounded four-validator sustained-load contract with 96 committed
   transactions plus resource, retention, restart, and ledger evidence without
   claiming production sizing or multi-day soak behavior.
-- 1,278 recovery-verified tests: 1,244 Go, 26 Rust, and 8 maintained-client.
+  GH-101 adds a strict secret-free digest-bound deployment-evidence envelope
+  and offline verifier without claiming or performing a live deployment.
+- 1,350 recovery-verified tests: 1,316 Go, 26 Rust, and 8 maintained-client.
 
 ## Recovery sequence
 

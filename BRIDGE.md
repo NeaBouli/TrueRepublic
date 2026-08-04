@@ -3589,3 +3589,48 @@ exclusion, CI wiring, and documentation boundaries.
   rollout status without closing the live Phase 6 topology checkbox.
 
 ---
+
+## 2026-08-04 13:15 EEST GH-101 implementation merged → Status Sync
+
+- **Merged:** [PR #103](https://github.com/NeaBouli/TrueRepublic/pull/103) as
+  `7924792`; GH-101 closed automatically. Exact head `e7d016a` passed every
+  required build, full/race test, recovery, capacity, Docker, docs, dependency,
+  static-analysis, and review status, with zero unresolved review threads.
+- **Public candidate:** `docs/GH-101-rollout-status` starts from exact merged
+  `origin/main` and will publish 1,350 verified cases (1,316 Go + 26 Rust + 8
+  maintained-client). GH-101 contributes 71 `deploymentevidence` cases and one
+  root repository-contract case.
+- **Kimi contribution:** independent read-only claim census and arithmetic
+  review identified every gated and non-gated public surface; no file was
+  changed by Kimi. Claude Code remained OAuth-unavailable and produced no diff.
+- **Boundary:** rollout stays 13/59 overall, 13/51 phase work, Phase 6 at 6/7,
+  and `production_ready=false`. The verifier proves only a secret-free evidence
+  envelope; no private/live deployment or infrastructure evidence exists.
+- **Next:** synchronize repository/public status and GH-29, validate exact
+  arithmetic and docs, publish/merge the protected docs PR, verify Pages
+  readback, then append the final handoff.
+
+---
+
+## 2026-08-04 13:26 EEST GH-101 public sync → Local Pass
+
+- **Changed:** public totals are synchronized at 1,350 (1,316 Go + 26 Rust +
+  8 maintained-client), with root 99 and `deploymentevidence` 71. README,
+  status JSON, landing page, roadmap, FAQ, quickstart, wiki, project state,
+  TODO, action log, and the consistency gate now agree.
+- **Kimi review:** found one premature GH-101 completion checkbox and two P2
+  consistency/document-label gaps. Sol reopened the pending publish/sync item,
+  extended the gate across all current count surfaces and every wiki module
+  row, and renamed the mixed PR list accurately.
+- **Tests:** docs consistency PASS; status/module/rollout arithmetic PASS;
+  shell syntax PASS; diff hygiene PASS. Kimi independently reproduced 99 root
+  and 71 deployment-evidence passing cases, 90.8% deployment-evidence
+  coverage, eight client cases, and the two remaining moderate React Router
+  advisories with zero high/critical maintained-client finding.
+- **Boundary:** rollout remains 13/59, phase work 13/51, Phase 6 6/7, and
+  `production_ready=false`; live topology and deployment evidence remain open.
+- **Next:** commit/push the docs candidate, open and verify the protected PR,
+  synchronize GH-29, then mark the still-open publish/sync checkbox complete
+  only when its conditions are actually satisfied.
+
+---
