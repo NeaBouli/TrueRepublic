@@ -3589,3 +3589,80 @@ exclusion, CI wiring, and documentation boundaries.
   rollout status without closing the live Phase 6 topology checkbox.
 
 ---
+
+## 2026-08-04 13:15 EEST GH-101 implementation merged → Status Sync
+
+- **Merged:** [PR #103](https://github.com/NeaBouli/TrueRepublic/pull/103) as
+  `7924792`; GH-101 closed automatically. Exact head `e7d016a` passed every
+  required build, full/race test, recovery, capacity, Docker, docs, dependency,
+  static-analysis, and review status, with zero unresolved review threads.
+- **Public candidate:** `docs/GH-101-rollout-status` starts from exact merged
+  `origin/main` and will publish 1,350 verified cases (1,316 Go + 26 Rust + 8
+  maintained-client). GH-101 contributes 71 `deploymentevidence` cases and one
+  root repository-contract case.
+- **Kimi contribution:** independent read-only claim census and arithmetic
+  review identified every gated and non-gated public surface; no file was
+  changed by Kimi. Claude Code remained OAuth-unavailable and produced no diff.
+- **Boundary:** rollout stays 13/59 overall, 13/51 phase work, Phase 6 at 6/7,
+  and `production_ready=false`. The verifier proves only a secret-free evidence
+  envelope; no private/live deployment or infrastructure evidence exists.
+- **Next:** synchronize repository/public status and GH-29, validate exact
+  arithmetic and docs, publish/merge the protected docs PR, verify Pages
+  readback, then append the final handoff.
+
+---
+
+## 2026-08-04 13:26 EEST GH-101 public sync → Local Pass
+
+- **Changed:** public totals are synchronized at 1,350 (1,316 Go + 26 Rust +
+  8 maintained-client), with root 99 and `deploymentevidence` 71. README,
+  status JSON, landing page, roadmap, FAQ, quickstart, wiki, project state,
+  TODO, action log, and the consistency gate now agree.
+- **Kimi review:** found one premature GH-101 completion checkbox and two P2
+  consistency/document-label gaps. Sol reopened the pending publish/sync item,
+  extended the gate across all current count surfaces and every wiki module
+  row, and renamed the mixed PR list accurately.
+- **Tests:** docs consistency PASS; status/module/rollout arithmetic PASS;
+  shell syntax PASS; diff hygiene PASS. Kimi independently reproduced 99 root
+  and 71 deployment-evidence passing cases, 90.8% deployment-evidence
+  coverage, eight client cases, and the two remaining moderate React Router
+  advisories with zero high/critical maintained-client finding.
+- **Boundary:** rollout remains 13/59, phase work 13/51, Phase 6 6/7, and
+  `production_ready=false`; live topology and deployment evidence remain open.
+- **Next:** commit/push the docs candidate, open and verify the protected PR,
+  synchronize GH-29, then mark the still-open publish/sync checkbox complete
+  only when its conditions are actually satisfied.
+
+---
+
+## 2026-08-04 13:32 EEST PR #105 review remediation → In Progress
+
+- **GitHub:** first exact head `3981193` passed docs, Go/Rust/Node security,
+  DeepScan, and maintained-client high-level audit gates. GH-29 now links
+  GH-101/PR #103 while its production-topology checkbox remains open.
+- **Review:** CodeRabbit's two valid minor findings were remediated: project
+  state now carries the real post-sync UTC timestamp, and each added count
+  check is tied to its specific documentation field rather than any matching
+  historical number elsewhere in the file.
+- **Tests:** hardened documentation consistency PASS, shell syntax PASS, and
+  diff hygiene PASS.
+- **Next:** push the remediation, resolve both threads, rerun the exact-head
+  checks, then complete the still-open publish/sync item and merge only after
+  the refreshed head is fully green.
+
+---
+
+## 2026-08-04 13:37 EEST PR #105 exact head → Ready to Merge
+
+- **Head:** `1c7e34c` passed every applicable docs, Go/Rust/Node security,
+  maintained-client audit, DeepScan, and review status. Both CodeRabbit threads
+  are resolved; zero failed or pending checks remain.
+- **Synchronization:** GH-29 links GH-101/PR #103, the project handoff is
+  current through this checkpoint, and the live production-topology item
+  remains unchecked. The GH-101 publish/sync TODO is now complete.
+- **Boundary:** 1,350 verified cases; rollout 13/59, phase work 13/51, Phase 6
+  6/7, and `production_ready=false` remain exact.
+- **Next:** run this final bookkeeping head through its exact checks, merge PR
+  #105, verify Pages/live status, and record the post-merge handoff.
+
+---

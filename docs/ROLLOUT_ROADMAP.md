@@ -1,6 +1,6 @@
 # TrueRepublic Road to Rollout
 
-Updated: 2026-08-01
+Updated: 2026-08-04
 
 TrueRepublic has a recovered and CI-verified v0.4 engineering foundation. It
 is **not production-ready, mainnet-ready, or approved for real funds or keys**.
@@ -19,7 +19,7 @@ intentionally more granular than the public 59-item tracker.
 
 - The ordered recovery merge chain is on `main`.
 - The maximum supply is fixed at 21,000,000 PNYX.
-- The source of truth records 1,278 recovery-verified tests: 1,244 Go, 26 Rust,
+- The source of truth records 1,350 recovery-verified tests: 1,316 Go, 26 Rust,
   and 8 maintained-client tests.
 - Ledger, escrow, issuance, DEX custody, genesis, runtime invariants, ZKP
   statement binding, node persistence, and the safe operator-init boundary
@@ -30,6 +30,8 @@ intentionally more granular than the public 59-item tracker.
   rehearsal contract; private live operator rehearsal remains open.
 - GH-97/PR #98 add bounded four-validator sustained-load, resource, retention,
   restart, and ledger evidence; private-environment sizing and soak remain open.
+- GH-101/PR #103 add a strict secret-free digest-bound deployment-evidence
+  envelope and offline verifier; private live deployment evidence remains open.
 - GitHub Pages, security scans, and the current CI matrix are green.
 
 The baseline is suitable for continued engineering. It is not a rollout
@@ -167,7 +169,9 @@ defensible coverage, and no unresolved critical/high security finding remains.
 - [ ] Deploy the intended production topology, including seed nodes, sentries,
   validator isolation, RPC exposure, firewalling, and abuse protection.
   GH-89/PR #90 provide the strict synthetic qualification contract and CI
-  validator; real private inventory and deployment evidence remain required.
+  validator. GH-101/PR #103 provide the strict offline deployment-evidence
+  envelope and verifier; real private inventory and deployment evidence remain
+  required.
 - [x] Write and synthetically rehearse incident, validator failure, key
   compromise, backup, restore, upgrade, rollback, and chain-halt runbooks
   ([GH-93](https://github.com/NeaBouli/TrueRepublic/issues/93),

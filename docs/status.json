@@ -4,8 +4,8 @@
   "release_date": "2026-03-04",
   "tests": {
     "status": "recovery_verified_locally",
-    "total": 1278,
-    "go": 1244,
+    "total": 1350,
+    "go": 1316,
     "rust": 26,
     "frontend": 8,
     "historical_total": 577
@@ -42,8 +42,9 @@
     "production_ready": false
   },
   "modules": {
-    "root": 98,
+    "root": 99,
     "capacitypolicy": 48,
+    "deploymentevidence": 71,
     "healthcheck": 55,
     "incidentpolicy": 54,
     "migration": 82,
@@ -125,6 +126,7 @@
       "topology_qualification": "strict_secret_free_cross_node_contract_validator_isolation_deny_by_default_flows_and_bounded_public_ingress_merged_on_gh89",
       "incident_rehearsal": "strict_secret_free_eight_scenario_incident_command_contract_offline_validator_and_runbook_gate_merged_on_gh93",
       "capacity_qualification": "bounded_four_validator_ninety_six_transaction_resource_retention_restart_and_ledger_evidence_merged_on_gh97",
+      "deployment_evidence": "strict_secret_free_digest_bound_offline_envelope_and_verifier_merged_on_gh101",
       "multi_validator_recovery": "failure_restart_catchup_partition_state_sync_backup_restore_export_import_compatible_binary_upgrade_fail_before_open_rollback_and_app_hash_agreement_merged_on_gh32_gh41_gh43_gh45_gh53",
       "consensus_key_rotation": "authenticated_atomic_h_plus_2_rotation_permanent_revocation_and_separate_operator_authority_merged_on_gh56",
       "consensus_slashing": "abci_plus_plus_equivocation_downtime_replay_exit_hold_and_four_process_recovery_merged_on_gh59",

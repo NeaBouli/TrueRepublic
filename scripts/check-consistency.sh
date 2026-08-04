@@ -61,6 +61,7 @@ format_integer() {
 }
 
 FORMATTED_TESTS=$(format_integer "$TESTS")
+FORMATTED_GO_TESTS=$(format_integer "$GO_TESTS")
 
 echo "Source of Truth (status.json):"
 echo "  Version: $VERSION"
@@ -116,6 +117,63 @@ check_file "docs/index.html" "Landing Page"
 check_file "wiki/Home.md" "Wiki Home"
 check_file "wiki/status/Current-Status.md" "Wiki Current Status"
 check_file "wiki/status/Testing-Status.md" "Wiki Testing Status"
+
+check_count_file() {
+  local file="$1"
+  local label="$2"
+  local field="$3"
+  local count="$4"
+  local formatted="$5"
+
+  if [ ! -f "$file" ]; then
+    echo "FAIL: required file $file not found"
+    ERRORS=$((ERRORS+1))
+    return
+  fi
+
+  echo "Checking $label ($file)..."
+  if grep -F "$field" "$file" |
+    grep -Eq "(^|[^[:digit:],])(${count}|${formatted})([^[:digit:],]|$)"; then
+    echo "  OK Count"
+  else
+    echo "  FAIL Count ($count or $formatted not found beside '$field')"
+    ERRORS=$((ERRORS+1))
+  fi
+  echo ""
+}
+
+check_count_file "docs/FAQ.md" "FAQ total" "The recovery baseline has" "$TESTS" "$FORMATTED_TESTS"
+check_count_file "docs/FAQ.md" "FAQ Go breakdown" "The recovery baseline has" "$GO_TESTS" "$FORMATTED_GO_TESTS"
+check_count_file "docs/QUICKSTART.md" "Quickstart Go total" "All Go tests" "$GO_TESTS" "$FORMATTED_GO_TESTS"
+check_count_file "docs/ROLLOUT_ROADMAP.md" "Rollout roadmap total" "The source of truth records" "$TESTS" "$FORMATTED_TESTS"
+check_count_file "docs/ROLLOUT_ROADMAP.md" "Rollout roadmap Go breakdown" "The source of truth records" "$GO_TESTS" "$FORMATTED_GO_TESTS"
+check_count_file "wiki/develop/Architecture-Overview.md" "Architecture Go total" "| **Test** |" "$GO_TESTS" "$FORMATTED_GO_TESTS"
+
+echo "Checking wiki module table (wiki/status/Testing-Status.md)..."
+while IFS='|' read -r module label; do
+  expected=$(jq -r --arg module "$module" '.modules[$module]' "$STATUS_FILE")
+  if grep -Fq "| Go $label | $expected |" wiki/status/Testing-Status.md; then
+    echo "  OK $module"
+  else
+    echo "  FAIL $module ($expected not found)"
+    ERRORS=$((ERRORS+1))
+  fi
+done <<'MODULES'
+root|root/application
+capacitypolicy|capacity policy
+deploymentevidence|deployment evidence
+healthcheck|health checks
+incidentpolicy|incident policy
+migration|migration
+networkpolicy|network policy
+observability|observability
+token|token
+topologypolicy|topology policy
+treasury|treasury
+dex|DEX
+truedemocracy|governance
+MODULES
+echo ""
 
 echo "Checking rollout status (docs/index.html)..."
 grep -Fq "${ROLLOUT_COMPLETED} of ${ROLLOUT_TOTAL}" docs/index.html &&

@@ -1,6 +1,6 @@
 # Project State
 
-Updated: 2026-08-01 22:15 UTC
+Updated: 2026-08-04 10:37 UTC
 
 ## Repository
 
@@ -32,13 +32,22 @@ Updated: 2026-08-01 22:15 UTC
   contract, real temporary four-validator 96-transaction workload, bounded
   resource/retention evidence, restart and ledger checks, fail-closed verifier,
   CI gate, and operator guide passed local and exact-head GitHub verification.
-  The public status branch records 1,278 cases and 13/59 rollout progress while
+  Its GH-97 status sync recorded 1,278 cases and 13/59 rollout progress while
   preserving production sizing, multi-day soak, private-environment evidence,
   and deployment as open boundaries.
-- Merged recovery PRs: #9, #15, #16, #17, #18, #19, #22, #23, #24, #27,
+- GH-101 is merged through PR #103 (`7924792`). Its strict secret-free,
+  digest-bound deployment-evidence envelope, offline verifier, synthetic
+  fixture, CI gate, operator procedure, and 0 FAIL / 0 WARN audit passed local
+  and exact-head GitHub verification. Public status records 1,350 cases while
+  rollout remains 13/59 overall and Phase 6 remains 6/7 because no private live
+  deployment or infrastructure evidence was produced.
+- GH-102's first maintained-client audit slice is merged through PR #104
+  (`91ee957`). The high-severity dev-only dependency chain is cleared; two
+  moderate React Router advisories and legacy mobile remediation remain open.
+- Merged evidence and recovery PRs: #9, #15, #16, #17, #18, #19, #22, #23, #24, #27,
   #28, #30, #31, #33, #34, #35, #40, #42, #44, #46, #49, #52, #54, #57,
   #58, #62, #65, #67, #69, #72, #75, #78, #81, #86, #87, #88, #90, #94,
-  and #98.
+  #98, #103, and #104.
 - Current work: GH-60 inactive validator claim round-trip is closed through
   merged PR #67 (`c5a3d38`). Explicit active/inactive representation, legacy
   compatibility, complete domains, exact stake/jail/missed-block/power
@@ -359,7 +368,7 @@ Updated: 2026-08-01 22:15 UTC
 ## Public-status warning
 
 `docs/status.json`, README, limitations, and the landing page now mark recovery
-as active and separate 1,164 verified cases from the historical 577 figure.
+as active and separate 1,350 verified cases from the historical 577 figure.
 `CLAUDE.md`, install guidance, FAQ, landing page, wiki, and the root audit are
 reconciled with the merged recovery foundation while retaining the explicit
 non-production boundary.
