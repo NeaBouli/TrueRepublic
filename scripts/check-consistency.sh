@@ -121,8 +121,9 @@ check_file "wiki/status/Testing-Status.md" "Wiki Testing Status"
 check_count_file() {
   local file="$1"
   local label="$2"
-  local count="$3"
-  local formatted="$4"
+  local field="$3"
+  local count="$4"
+  local formatted="$5"
 
   if [ ! -f "$file" ]; then
     echo "FAIL: required file $file not found"
@@ -131,21 +132,22 @@ check_count_file() {
   fi
 
   echo "Checking $label ($file)..."
-  if grep -Eq "(^|[^[:digit:],])(${count}|${formatted})([^[:digit:],]|$)" "$file"; then
+  if grep -F "$field" "$file" |
+    grep -Eq "(^|[^[:digit:],])(${count}|${formatted})([^[:digit:],]|$)"; then
     echo "  OK Count"
   else
-    echo "  FAIL Count ($count or $formatted not found)"
+    echo "  FAIL Count ($count or $formatted not found beside '$field')"
     ERRORS=$((ERRORS+1))
   fi
   echo ""
 }
 
-check_count_file "docs/FAQ.md" "FAQ total" "$TESTS" "$FORMATTED_TESTS"
-check_count_file "docs/FAQ.md" "FAQ Go breakdown" "$GO_TESTS" "$FORMATTED_GO_TESTS"
-check_count_file "docs/QUICKSTART.md" "Quickstart Go total" "$GO_TESTS" "$FORMATTED_GO_TESTS"
-check_count_file "docs/ROLLOUT_ROADMAP.md" "Rollout roadmap total" "$TESTS" "$FORMATTED_TESTS"
-check_count_file "docs/ROLLOUT_ROADMAP.md" "Rollout roadmap Go breakdown" "$GO_TESTS" "$FORMATTED_GO_TESTS"
-check_count_file "wiki/develop/Architecture-Overview.md" "Architecture Go total" "$GO_TESTS" "$FORMATTED_GO_TESTS"
+check_count_file "docs/FAQ.md" "FAQ total" "The recovery baseline has" "$TESTS" "$FORMATTED_TESTS"
+check_count_file "docs/FAQ.md" "FAQ Go breakdown" "The recovery baseline has" "$GO_TESTS" "$FORMATTED_GO_TESTS"
+check_count_file "docs/QUICKSTART.md" "Quickstart Go total" "All Go tests" "$GO_TESTS" "$FORMATTED_GO_TESTS"
+check_count_file "docs/ROLLOUT_ROADMAP.md" "Rollout roadmap total" "The source of truth records" "$TESTS" "$FORMATTED_TESTS"
+check_count_file "docs/ROLLOUT_ROADMAP.md" "Rollout roadmap Go breakdown" "The source of truth records" "$GO_TESTS" "$FORMATTED_GO_TESTS"
+check_count_file "wiki/develop/Architecture-Overview.md" "Architecture Go total" "| **Test** |" "$GO_TESTS" "$FORMATTED_GO_TESTS"
 
 echo "Checking wiki module table (wiki/status/Testing-Status.md)..."
 while IFS='|' read -r module label; do

@@ -2496,3 +2496,15 @@
 - Final local checks pass: documentation consistency, exact JSON arithmetic,
   shell syntax, and diff hygiene. Protected PR, GH-29 synchronization, merge,
   Pages readback, and final handoff remain pending.
+
+## 2026-08-04 13:32 EEST - PR #105 review findings remediated
+
+- First exact head `3981193` passed every applicable docs/security/static
+  check; CodeRabbit reported two valid minor findings and no higher-severity
+  issue.
+- Refreshed the project-state timestamp and bound each new count check to the
+  precise current documentation field, preventing an unrelated or historical
+  occurrence from masking stale status text.
+- Hardened docs consistency, shell syntax, and diff hygiene pass. GH-29 is
+  synchronized with the repository evidence link while its live topology item
+  remains open; refreshed exact-head checks and merge remain pending.

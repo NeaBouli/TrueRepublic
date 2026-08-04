@@ -3634,3 +3634,20 @@ exclusion, CI wiring, and documentation boundaries.
   only when its conditions are actually satisfied.
 
 ---
+
+## 2026-08-04 13:32 EEST PR #105 review remediation → In Progress
+
+- **GitHub:** first exact head `3981193` passed docs, Go/Rust/Node security,
+  DeepScan, and maintained-client high-level audit gates. GH-29 now links
+  GH-101/PR #103 while its production-topology checkbox remains open.
+- **Review:** CodeRabbit's two valid minor findings were remediated: project
+  state now carries the real post-sync UTC timestamp, and each added count
+  check is tied to its specific documentation field rather than any matching
+  historical number elsewhere in the file.
+- **Tests:** hardened documentation consistency PASS, shell syntax PASS, and
+  diff hygiene PASS.
+- **Next:** push the remediation, resolve both threads, rerun the exact-head
+  checks, then complete the still-open publish/sync item and merge only after
+  the refreshed head is fully green.
+
+---
