@@ -15,6 +15,7 @@ production or public-network approval.
 - [Network Configuration](configuration/network-config.md)
 - [Role-Based Network Policy](configuration/network-policy.md)
 - [Multi-Node Topology Qualification](configuration/topology-contract.md)
+- [Private Deployment Evidence Gate](operations/deployment-evidence.md)
 - [Genesis & Chain Parameters](configuration/genesis-params.md)
 
 ### Operations

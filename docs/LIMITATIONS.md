@@ -98,6 +98,12 @@ snapshot-retention, restart, and ledger evidence plus static finite
 log/telemetry configuration checks. It does not prove multi-day soak behavior,
 actual Docker/Prometheus retention, production traffic, hardware sizing,
 bandwidth, cost, or public topology.
+GH-101 adds only an offline, digest-bound deployment-evidence envelope for a
+private GH-89 contract. A passing report proves strict structure, contract
+binding, freshness, complete gate names, and claimed two-seat approval
+separation. It cannot prove that referenced artifacts exist, that observations
+were honestly collected, that seats are distinct humans, or that any real
+infrastructure is deployed. The Phase 6 production-topology gate remains open.
 
 Partial validator stake withdrawals are disabled until generalized slashable
 unbonding can retain the withdrawn claim through the CometBFT evidence window.

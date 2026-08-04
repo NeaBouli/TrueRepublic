@@ -16,6 +16,7 @@ on:
       - 'configs/topology/**'
       - 'configs/incidents/**'
       - 'configs/capacity/**'
+      - 'configs/deployment/**'
       - 'monitoring/**'
       - 'nginx/**'
       - 'scripts/backup.sh'
@@ -36,6 +37,7 @@ on:
       - 'configs/topology/**'
       - 'configs/incidents/**'
       - 'configs/capacity/**'
+      - 'configs/deployment/**'
       - 'monitoring/**'
       - 'nginx/**'
       - 'scripts/backup.sh'
@@ -73,6 +75,17 @@ jobs:
           --file configs/topology/qualification.example.json
           --output json |
           jq -e '.valid == true and .node_count == 5 and
+          (.violations | type == "array" and length == 0)'
+
+      - name: Verify maintained deployment evidence manifest
+        run: >-
+          go run . deployment-evidence verify
+          --contract configs/topology/qualification.example.json
+          --manifest configs/deployment/evidence.example.json
+          --at 2026-08-01T12:00:00Z
+          --output json |
+          jq -e '.valid == true and .node_count == 5 and
+          .gate_count == 11 and
           (.violations | type == "array" and length == 0)'
 
       - name: Validate maintained incident rehearsal contract
