@@ -2398,3 +2398,67 @@
 - Non-blocking process note: offline npm audit may falsely return an empty
   result when advisory cache bodies are absent. Only live CI audit evidence is
   accepted. Protected PR and exact-head checks are next.
+
+## 2026-08-04 10:20 EEST - GH-101 private topology evidence gate started
+
+- Re-read global/project agent rules, project Bridge/state/TODO/security notes,
+  current GH-29, and exact Git/GitHub status. `origin/main` remains `3f1edd1`,
+  no PR is open, and latest scheduled Security Scan `30790264230` passes.
+- Opened GH-101 under GH-29 and created
+  `feature/GH-101-private-topology-evidence` from exact clean `origin/main`.
+- Scope is a strict secret-free offline evidence manifest/verifier, synthetic
+  fixtures, tests, CI, audit, and operator documentation only. No real host,
+  inventory, provider, firewall, DNS/TLS, production probe, deployment, key,
+  identity, fund, or rollout action is authorized or performed.
+- GH-29's production-topology checkbox intentionally remains open. Next: Kimi
+  architecture review, then Sol-owned implementation and complete verification.
+
+## 2026-08-04 10:47 EEST - GH-101 implementation integrated
+
+- Kimi supplied a bounded secret-free implementation for the strict offline
+  deployment-evidence parser, verifier, CLI, fixture, and package tests. Sol
+  reviewed all files and changed report counts to use trusted canonical/topology
+  values rather than rejected manifest declarations.
+- Sol integrated the root command, config-independent lifecycle boundary, CI
+  path/verification gate, operator documentation, limitations, and a repository
+  contract test that rejects secret/inventory markers in the maintained fixture.
+- Package tests/Vet, focused root/repository tests, root Vet, the maintained
+  CLI/JQ assertion, workflow YAML parsing, gofmt, and diff hygiene pass.
+- Full repository verification, independent final review, audit, protected PR,
+  and exact-head GitHub checks remain open. No infrastructure was probed or
+  mutated, and GH-29 Phase 6 remains 6/7.
+
+## 2026-08-04 12:02 EEST - GH-101 local verification and review complete
+
+- `make verify` passes all 13 Go packages with Race/Coverage; root coverage is
+  69.1% and `deploymentevidence` is 90.8%. Build, Vet, package selection,
+  documentation consistency, workflow YAML, maintained CLI/JQ, formatting, and
+  diff hygiene pass.
+- Rust format, Clippy with warnings denied, workspace build, and all 26 tests
+  pass. Maintained client lint, eight tests, and build pass; mobile CI's
+  pass-with-no-tests contract passes.
+- Kimi's read-only final review is APPROVED with no P0/P1/P2 finding. Formal
+  audit `GH101_AUDIT.md`: 0 FAIL / 0 WARN / 7 PASS.
+- Claude Code was invoked for a small read-only independent test-count/status
+  arithmetic check, but its OAuth session was expired and could not refresh;
+  it produced no output or diff. Sol's `go test -json` recount confirms 71 new
+  package cases plus one root repository case (72 new Go cases).
+- A repository-wide extra check found dependency advisories in unchanged web
+  and mobile lockfiles. Opened GH-102 for separate remediation; no lockfile or
+  client code was changed here.
+- GH-101 is locally complete. Protected PR, exact-head GitHub CI/review, merge,
+  issue closure, and final Bridge/GH-29 synchronization remain open. Phase 6
+  remains 6/7; no live or production action occurred.
+
+## 2026-08-04 12:47 EEST - GH-101 review remediation
+
+- Verified two exact-head CodeRabbit threads. Added the valid focused
+  `deploymentevidence` package test before the workflow manifest gate; retained
+  the correct 4 August EEST audit date and will document that timezone in the
+  review response.
+- Focused package test, workflow YAML parsing, and diff hygiene pass.
+- Claude Code was assigned the small one-file patch but its expired OAuth
+  session still could not refresh, producing no output or diff. Sol completed
+  and verified the bounded fallback.
+- Refreshed exact-head CI, review-thread resolution, merge, and public status
+  synchronization remain open.

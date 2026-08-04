@@ -125,6 +125,10 @@ remain separately reviewed rollout gates.
 7. Treat any mismatch, missing evidence, weak ingress value, or unexpected
    listener as a failed rollout gate.
 
+The follow-on [Private Deployment Evidence Gate](../operations/deployment-evidence.md)
+binds digests of those operator-private observations to the exact contract. It
+validates the evidence envelope only and never proves or deploys infrastructure.
+
 ## Change, rollback, and isolation
 
 Topology changes require a new contract version or checksum and a complete

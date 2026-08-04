@@ -3498,3 +3498,94 @@ Pending.
   already uses the required live audit, unchanged.
 
 ---
+
+## 2026-08-04 10:20 EEST GH-101 private topology evidence gate → In Progress
+
+- **Branch:** `feature/GH-101-private-topology-evidence`
+- **Issue:** [GH-101](https://github.com/NeaBouli/TrueRepublic/issues/101)
+- **Changed:** task and non-production scope recorded before implementation.
+- **Tests:** baseline `origin/main` is exact at `3f1edd1`; latest scheduled
+  Security Scan `30790264230` passed. Focused GH-101 gates have not run yet.
+- **Risk:** Medium — the package will validate deployment evidence and may
+  affect future rollout decisions, but this task is repository-only and may
+  not inspect or mutate any real infrastructure, inventory, identity, key,
+  firewall, DNS, TLS, provider, funds, or production state.
+- **Ready for:** bounded Kimi architecture review, Sol implementation and
+  integration, focused/full verification, independent review, PR, and merge.
+
+### Delegate notes
+
+Kimi receives only the public repository and a secret-free bounded request.
+The evidence verifier must bind a private topology contract by digest and
+cross-check it only when supplied locally; public reports may contain counts,
+gate names, digests, time bounds, and pass/fail state, never inventory values.
+Passing the repository fixture must not close GH-29's live Phase 6 checkbox.
+
+### Sol review feedback
+
+Kimi's implementation was reviewed line by line. Sol changed report counters to
+derive from trusted policy and topology rather than untrusted manifest values,
+then added a repository contract test covering fixture binding, secret/inventory
+exclusion, CI wiring, and documentation boundaries.
+
+### 2026-08-04 10:47 EEST implementation checkpoint
+
+- **Changed:** strict `deploymentevidence` parser/verifier/CLI, synthetic
+  digest-bound fixture, root-command and CI integration, operator guide,
+  limitations, and repository contract coverage.
+- **Kimi contribution:** secret-free architecture review and bounded package
+  implementation. Kimi made no commit or external change; Sol owns and reviewed
+  every diff.
+- **Passed:** package tests, package Vet, focused root/repository tests, root
+  Vet, maintained CLI/JQ verification, workflow YAML parsing, gofmt, and diff
+  hygiene.
+- **Boundary:** the verifier proves envelope structure, freshness, digest
+  binding, and claimed logical-seat separation only. It does not inspect source
+  artifacts or prove real infrastructure, operators, observations, or rollout.
+  Phase 6 remains 6/7 and overall rollout remains 13/59.
+- **Next:** full repository verification, independent final review, audit,
+  exact-head PR/CI, merge, and public handoff.
+
+### 2026-08-04 12:02 EEST local release gate
+
+- Full Go build/Vet and all 13 packages with Race/Coverage pass; root is 69.1%
+  and `deploymentevidence` is 90.8%. Docs consistency, deterministic CLI/JQ,
+  workflow YAML, formatting, and diff checks pass.
+- Rust format/Clippy/build and 26 tests pass. Web lint/eight tests/build and the
+  mobile pass-with-no-tests workflow contract pass.
+- Kimi final read-only review: APPROVED, no P0/P1/P2. Audit: 0 FAIL / 0 WARN /
+  7 PASS in `docs/agent-bridge/GH101_AUDIT.md`.
+- Claude Code was assigned the small read-only test-count/status-arithmetic
+  cross-check requested by Gio, but its local OAuth session had expired and
+  could not refresh; it produced no output or diff. Sol's measured JSON recount
+  is 71 new package cases plus one root case, or 72 new Go cases total.
+- Separate observation: current unchanged client dependencies expose audit
+  advisories; [GH-102](https://github.com/NeaBouli/TrueRepublic/issues/102)
+  tracks the dedicated remediation and is not folded into GH-101.
+- **Status:** locally complete; protected PR/exact-head CI/merge pending.
+  Rollout remains 13/59 and Phase 6 remains 6/7.
+
+---
+
+## 2026-08-04 12:47 EEST GH-101 exact-head review remediation → In Progress
+
+- **Review:** two CodeRabbit threads were verified against exact head
+  `7c8f087`. The CI-ordering finding was valid; the date finding was not,
+  because the audit was performed on 4 August in the documented EEST project
+  timezone while GitHub still displayed 3 August UTC.
+- **Changed:** `.github/workflows/go-ci.yml` now derives
+  `./deploymentevidence` from `scripts/go-packages.sh` and runs its focused
+  tests immediately before the maintained manifest gate.
+- **Tests:** focused package test PASS, workflow YAML parse PASS, and
+  `git diff --check` PASS.
+- **Claude contribution:** Claude Code received this small, bounded one-file
+  task but its OAuth session remained expired; it produced no output or diff.
+  Sol applied and verified the minimal fix under the documented fallback.
+- **Risk/blocker:** no implementation blocker. Exact-head CI must restart for
+  the new commit, and both review threads must be answered/resolved before
+  merge. No live or production action occurred.
+- **Next:** commit/push the remediation, resolve the verified review threads,
+  pass the refreshed exact-head checks, merge PR #103, and synchronize public
+  rollout status without closing the live Phase 6 topology checkbox.
+
+---

@@ -1,0 +1,107 @@
+{
+  "version": "truerepublic.deployment-evidence/v1",
+  "chain_id": "truerepublic-qualification-1",
+  "topology_sha256": "248bebb2701f048112775f4345a6dbb14f559c8dfbfe5f019117da3f7a4df489",
+  "node_count": 5,
+  "role_counts": {
+    "seed": 1,
+    "sentry": 2,
+    "validator": 1,
+    "rpc": 1
+  },
+  "prepared_by": "release-operator-a",
+  "prepared_at": "2026-07-31T09:00:00Z",
+  "gates": [
+    {
+      "id": "role-policy",
+      "result": "passed",
+      "started_at": "2026-07-30T08:00:00Z",
+      "completed_at": "2026-07-30T08:25:00Z",
+      "evidence_sha256": "0a353b990f5428e82f495763f6d330ede9c34c0fd6ab2dab443360678534860e"
+    },
+    {
+      "id": "provider-separation",
+      "result": "passed",
+      "started_at": "2026-07-30T08:30:00Z",
+      "completed_at": "2026-07-30T08:55:00Z",
+      "evidence_sha256": "b3e105430e475cc15e5645372dcaaff4325103a6b13703094ecf12c8fa8351f5"
+    },
+    {
+      "id": "dns-tls",
+      "result": "passed",
+      "started_at": "2026-07-30T09:00:00Z",
+      "completed_at": "2026-07-30T09:25:00Z",
+      "evidence_sha256": "594f3a115a861fb7033659b59a44d134f374f6dd2db12cdae86c24c83510b37f"
+    },
+    {
+      "id": "provider-firewall",
+      "result": "passed",
+      "started_at": "2026-07-30T09:30:00Z",
+      "completed_at": "2026-07-30T09:55:00Z",
+      "evidence_sha256": "805db31d4eb3e23d03aeaf1203779dc5ce3a7fc2866fb942bf676fc504152aed"
+    },
+    {
+      "id": "host-firewall",
+      "result": "passed",
+      "started_at": "2026-07-30T10:00:00Z",
+      "completed_at": "2026-07-30T10:25:00Z",
+      "evidence_sha256": "0506e666d07b2355d3952ae29a740369f50a34a4b8ff4880dc301f2a58d8f774"
+    },
+    {
+      "id": "listener-exposure",
+      "result": "passed",
+      "started_at": "2026-07-30T10:30:00Z",
+      "completed_at": "2026-07-30T10:55:00Z",
+      "evidence_sha256": "a4a9df548a1ede7055947d993ac6727e6c3778c827288f8e8ac31e34e8756291"
+    },
+    {
+      "id": "proxy-abuse-controls",
+      "result": "passed",
+      "started_at": "2026-07-30T11:00:00Z",
+      "completed_at": "2026-07-30T11:25:00Z",
+      "evidence_sha256": "2be2927003d4de31250ac6765dd86d9f58404796d5527cb63d376a9f8cf43b58"
+    },
+    {
+      "id": "telemetry",
+      "result": "passed",
+      "started_at": "2026-07-30T11:30:00Z",
+      "completed_at": "2026-07-30T11:55:00Z",
+      "evidence_sha256": "a9f812d4ccc87cb7a28c72ebde47ac409da60b45cea0325bac202bb5882273ea"
+    },
+    {
+      "id": "capacity",
+      "result": "passed",
+      "started_at": "2026-07-30T12:00:00Z",
+      "completed_at": "2026-07-30T12:25:00Z",
+      "evidence_sha256": "7c4dcc2384ddba690882293197621191a415c33ef2d859d1dfce2d9f7fd14f00"
+    },
+    {
+      "id": "incident-rehearsal",
+      "result": "passed",
+      "started_at": "2026-07-30T12:30:00Z",
+      "completed_at": "2026-07-30T12:55:00Z",
+      "evidence_sha256": "21692337e1f2ee587f1bb1beb72ec4f4e742bdc88ea127e43d41ad0989402387"
+    },
+    {
+      "id": "two-person-review",
+      "result": "passed",
+      "started_at": "2026-07-30T13:00:00Z",
+      "completed_at": "2026-07-30T13:25:00Z",
+      "evidence_sha256": "d860c56fe3f0b67403d9bcee233d52d0745f586727c74640dc20144152970b67"
+    }
+  ],
+  "approvals": [
+    {
+      "seat": "release-operator-b",
+      "role": "operator",
+      "approved_at": "2026-07-31T10:00:00Z",
+      "topology_sha256": "248bebb2701f048112775f4345a6dbb14f559c8dfbfe5f019117da3f7a4df489"
+    },
+    {
+      "seat": "release-reviewer-a",
+      "role": "independent-reviewer",
+      "approved_at": "2026-07-31T11:00:00Z",
+      "topology_sha256": "248bebb2701f048112775f4345a6dbb14f559c8dfbfe5f019117da3f7a4df489"
+    }
+  ]
+}
