@@ -17,6 +17,7 @@ Technical documentation for developers building on or contributing to TrueRepubl
 - [Web Wallet Integration](integration-guide/web-wallet.md) -- React + Keplr + CosmJS
 - [Mobile Integration](integration-guide/mobile.md) -- React Native + Expo
 - [CosmJS Examples](integration-guide/cosmjs-examples.md) -- Code examples for common operations
+- [Dependency Risk Acceptance](DEPENDENCY_RISK_ACCEPTANCE.md) -- Time-boxed dependency exceptions and removal conditions
 
 ### Smart Contracts
 - [CosmWasm Contracts](smart-contracts/cosmwasm.md) -- Governance and treasury contracts

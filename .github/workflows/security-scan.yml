@@ -76,7 +76,7 @@ jobs:
         run: npm ci
 
       - name: Run npm audit
-        run: npm audit --audit-level=high
+        run: npm run audit:high
 
   node-audit-legacy-web:
     runs-on: ubuntu-latest

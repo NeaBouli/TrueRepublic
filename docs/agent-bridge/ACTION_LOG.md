@@ -2529,3 +2529,23 @@
 - GH-101 acceptance criteria and GH-29 handoff are synchronized. GH-101 is
   Done; live private topology/deployment remains open and no production action
   occurred.
+
+## 2026-08-04 14:15 EEST - GH-102 React Router migration independently approved
+
+- Migrated maintained `client-web` routing from 6.30.4 to 7.18.2 and preserved
+  the exact 21-route contract. Added focused redirect, static/parameterized,
+  search-parameter, and backslash-input coverage without loading page wallet,
+  signing, store, or network behavior.
+- The two prior moderate advisories are removed. The live database now reports
+  only the later RSC-specific `GHSA-qwww-vcr4-c8h2`; patched router 8.3.0
+  requires React 19.2.7+, so Sol approved a documented temporary exception for
+  this BrowserRouter-only SPA through 2026-09-04 or pre-rollout.
+- The replacement audit gate binds the exception to the exact advisory and
+  package, rejects non-declarative router APIs, and fails every other
+  high/critical, malformed, cyclic, or unresolved result. Independent Kimi
+  review found no high or medium issue and reproduced lint, policy tests,
+  Vitest, build, live audit, and diff hygiene.
+- Protected PR CI, review, merge, issue checkpoint, and final Bridge/project
+  state synchronization remain pending. Mobile remediation remains a separate
+  GH-102 slice; no wallet, signing, broadcast, fund, deployment, or production
+  action occurred.
