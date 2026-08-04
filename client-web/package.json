@@ -10,10 +10,11 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "preview": "vite preview",
-    "test": "vitest",
+    "test": "node --test scripts/audit-high.node-test.mjs && vitest",
     "test:ui": "vitest --ui",
     "test:coverage": "vitest --coverage",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "audit:high": "node scripts/audit-high.mjs"
   },
   "dependencies": {
     "@cosmjs/amino": "^0.39.0",
@@ -28,7 +29,7 @@
     "postcss": "^8.5.23",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-router-dom": "^6.30.4",
+    "react-router-dom": "^7.18.2",
     "tailwindcss": "^3.4.1",
     "zustand": "^4.5.0"
   },

@@ -3690,3 +3690,90 @@ exclusion, CI wiring, and documentation boundaries.
   production mutation occurred.
 
 ---
+
+## 2026-08-04 13:55 EEST GH-102 React Router remediation → In Progress
+
+- **Branch:** `fix/GH-102-react-router-v7` from exact clean `origin/main`
+  `fe2ed26`; issue [GH-102](https://github.com/NeaBouli/TrueRepublic/issues/102).
+- **Scope:** maintained `client-web` only for this slice: classify and remove
+  the two remaining moderate React Router advisories through a reviewed v7
+  migration, preserve routes/navigation/wallet/signing/chain behavior, add
+  focused router coverage, and pass clean install/lint/tests/build/live audit.
+- **Delegation:** Kimi receives a bounded secret-free implementation block.
+  Sol retains architecture, diff review, security, integration, complete tests,
+  GitHub actions, and closure. Claude Code may receive only a small focused
+  helper check if its expired OAuth session becomes available.
+- **Boundary:** repository code/dependency/test/docs only. No wallet key,
+  account, signing, broadcast, funds, mobile release, deployment, or production
+  action. Legacy mobile remediation remains a separate GH-102 slice.
+- **Status:** baseline and migration review pending; no file changed yet.
+
+---
+
+## 2026-08-04 14:12 EEST GH-102 React Router migration → Verification
+
+- **Kimi contribution:** migrated `client-web` from React Router 6.30.4 to
+  7.18.2, extracted the exact 21-route contract, and added focused coverage for
+  redirects, static/parameterized routes, search parameters, and backslash-shaped
+  navigation input. Kimi did not touch Bridge, GitHub, wallet/signing code, or
+  external systems.
+- **Live advisory change:** `npm audit` now reports only
+  `GHSA-qwww-vcr4-c8h2`, published 2026-07-24 after the original 7.18.2 target
+  was selected. The patched `react-router` 8.3.0 requires React/React DOM
+  19.2.7+ and `react-router-dom` has no v8 release, so no React-18-compatible
+  patched version exists.
+- **Sol decision:** accept this single advisory temporarily for the client-only
+  BrowserRouter SPA because it has no RSC, server actions, route actions, data
+  router, or server runtime. Added a fail-closed audit gate that accepts only the
+  exact advisory and fails every other high/critical or malformed result. Owner,
+  deadline (2026-09-04 or pre-rollout), rationale, and removal condition are in
+  `docs/developers/DEPENDENCY_RISK_ACCEPTANCE.md`.
+- **Changed files:** `client-web/package{,-lock}.json`, `client-web/src/App.tsx`,
+  new `client-web/src/routes.tsx` and `routes.test.tsx`, new audit policy and Node
+  policy tests under `client-web/scripts/`, both client audit workflow steps,
+  and the dependency-risk record.
+- **Verification:** `npm run lint` passed; Node policy tests 6/6 passed; Vitest
+  40/40 passed across 5 files; `npm run build` passed; `npm run audit:high`
+  passed with only the exact documented RSC advisory accepted; `git diff
+  --check` passed. Independent review, protected PR CI, and GitHub/Bridge
+  publication remain pending.
+
+---
+
+## 2026-08-04 14:19 EEST GH-102 review remediation → PR Ready
+
+- Kimi's independent review found no high or medium issue and approved the
+  migration after protected PR gates. Sol resolved its process and hardening
+  observations before publication: added the ACTION_LOG entry and developer-doc
+  index link, clarified the affected dependency chain, bound the exception to
+  the `react-router` package, and made CI reject router APIs outside the reviewed
+  declarative SPA surface.
+- **Final local results:** audit-policy/boundary tests 6/6, Vitest 40/40 across
+  five files, lint PASS, TypeScript/Vite production build PASS, guarded live npm
+  audit PASS with only `GHSA-qwww-vcr4-c8h2`, and diff hygiene PASS.
+- Protected PR exact-head CI/review, merge, GH-102 checkpoint, and final
+  Bridge/project-state synchronization remain. Legacy mobile remediation stays
+  open as the next separate GH-102 slice.
+
+---
+
+### 2026-08-04 14:27 EEST final audit-boundary hardening
+
+- Replaced the provisional text matcher with the installed TypeScript parser.
+  The gate now covers named/default/namespace imports, router re-exports,
+  wildcard exports, static/dynamic imports, and CommonJS `require`, while
+  allowing only the reviewed declarative-SPA API set.
+- Kimi's focused final review approved the exact final script/test state with no
+  blocking finding. Sol reran policy tests 6/6, Vitest 40/40, lint, build, live
+  guarded audit, documentation consistency, and diff hygiene successfully.
+
+### 2026-08-04 14:36 EEST PR #107 review remediation
+
+- Exact head `3b5d47e` passed Client Web CI, Docs, DeepScan, Go/Rust security,
+  and all Node audit jobs. CodeRabbit raised one valid boundary finding: a
+  variable-backed dynamic module import could evade static module attribution.
+- The gate now rejects every computed `import()`/`require()` specifier before
+  module classification, with a regression case in the six-test policy suite.
+  Lint, policy tests 6/6, Vitest 40/40, production build, guarded live audit,
+  docs consistency, and diff hygiene pass after the patch. Refreshed exact-head
+  CI/review and thread resolution remain pending.
