@@ -107,15 +107,12 @@ rustup target add wasm32-unknown-unknown
 cargo build --release --target wasm32-unknown-unknown
 ```
 
-## Building Mobile Wallet
+## Mobile Wallet
 
-```bash
-cd mobile-wallet
-npm install
-npm start           # Start Expo dev server
-npm run android     # Build for Android
-npm run ios         # Build for iOS
-```
+The former Expo prototype was retired and removed under GH-102. It was not safe
+for real keys, had no meaningful tests, and could not produce a current Android
+bundle. There is no supported mobile build target; use `client-web` until a new
+mobile client is designed and independently reviewed.
 
 ## Next Steps
 

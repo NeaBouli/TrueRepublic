@@ -87,8 +87,9 @@ cryptographic review exist.
 ### Which wallets are supported?
 - `client-web` is the only maintained client during recovery and integrates
   browser-wallet/CosmJS flows.
-- `web-wallet` and `mobile-wallet` are deprecated legacy clients and must not be
-  used for real keys or funds.
+- `web-wallet` is a deprecated legacy client and must not be used for real keys
+  or funds. The former mobile prototype was retired and removed under GH-102;
+  there is no supported native mobile client.
 
 ### How long do transactions take?
 Approximately **5 seconds** (one block confirmation).
@@ -133,7 +134,8 @@ Validator stake withdrawals are capped at **10% of the domain's total payouts**.
 ### What is the tech stack?
 Go 1.26.5, Cosmos SDK v0.50.14, CometBFT v0.38.22, React 18.2 +
 TypeScript/Vite for the maintained web client, and Rust/CosmWasm for contracts.
-The Expo/React Native client is deprecated and security-blocked.
+The former Expo/React Native prototype was retired and removed under GH-102.
+There is no supported native mobile client.
 
 ### How do I contribute?
 Fork the repo, create a branch, write tests, and submit a PR. See [Developer Docs](developers/README.md).

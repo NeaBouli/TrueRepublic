@@ -13,7 +13,7 @@ A clear and concise description of the bug.
 - [ ] Blockchain (Go modules)
 - [ ] Smart Contracts (Rust/CosmWasm)
 - [ ] Web Wallet (React)
-- [ ] Mobile Wallet (React Native)
+- [ ] Planned native mobile client / retirement documentation
 - [ ] Infrastructure / CI
 
 ## Steps to Reproduce

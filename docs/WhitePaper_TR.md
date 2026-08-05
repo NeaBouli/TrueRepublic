@@ -43,7 +43,9 @@ Alle Vorschläge, Bewertungen und Abstimmungen erfolgen offen, überprüfbar und
 
 ### 4.3 Wallets
 - **Web Wallet (React):** Browserbasiert, Keplr-Integration
-- **Mobile Wallet (React Native):** iOS & Android, Key-Backup & E2E-Verschlüsselung
+- **Mobile Client (geplant):** Ein neuer iOS-/Android-Client benötigt vor einer
+  Veröffentlichung sichere Schlüsselverwahrung und ein unabhängiges Wallet-/Krypto-Review;
+  der frühere Prototyp wurde unter GH-102 stillgelegt.
 
 ---
 
@@ -79,7 +81,7 @@ Alle Vorschläge, Bewertungen und Abstimmungen erfolgen offen, überprüfbar und
 
 ### Phase 2
 - CosmWasm Contracts für Governance
-- Mobile Wallet (Beta, React Native)
+- Sicherer Mobile-Client (Neuimplementierung; früherer Prototyp unter GH-102 stillgelegt)
 - DEX (PNYX/ATOM, Slippage-Schutz)
 
 ### Phase 3

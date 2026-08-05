@@ -112,8 +112,8 @@ recovery tests; unsupported surfaces are absent or unmistakably disabled.
 ## Phase 4 — Canonical client and legacy retirement
 
 - [ ] Keep `client-web` as the single canonical public client.
-- [ ] Migrate or archive `web-wallet` and `mobile-wallet`; remove them from
-  public release paths.
+- [ ] Migrate or archive `web-wallet` under GH-112; keep the GH-102-retired
+  mobile prototype absent from public release paths.
 - [ ] Complete transaction history with pagination and failure handling.
 - [ ] Complete IBC transfer UX, status tracking, timeout handling, and recovery
   messaging.

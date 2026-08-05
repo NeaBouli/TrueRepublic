@@ -110,13 +110,18 @@
 ## Legacy client blockers
 
 - `web-wallet`: obsolete CosmJS crypto, legacy Create React App toolchain, and
-  extensive source-map warnings. Current npm audit is clear, but the dependency
-  architecture is not approved for production keys.
-- `mobile-wallet`: 51 npm advisories (22 high, 3 critical), obsolete CosmJS
-  crypto, Expo 51 / React Native 0.74, and no test files.
-- Both clients are now labeled deprecated in public status. Do not use them for
-  real keys or production funds until a dedicated migration or removal task is
-  implemented and independently verified.
+  extensive source-map warnings. Focused tests and the production build pass,
+  but a live audit on 2026-08-06 reports 70 advisories (18 low, 20 moderate,
+  29 high, 3 critical). The dependency architecture is not approved for
+  production keys or funds; GH-112 tracks migration or explicit retirement.
+- The former `mobile-wallet` final baseline reproduced 51 npm advisories
+  (7 low, 16 moderate, 24 high, 4 critical), obsolete CosmJS crypto, Expo 51 /
+  React Native 0.74, no tests, a broken Android bundle, unsafe mnemonic-in-UI
+  handling, and obsolete governance/DEX queries. GH-102 retires and removes it;
+  Git history is audit-only and must not be recovered for real keys or funds.
+- `web-wallet` remains deprecated and unapproved. A future native client is a
+  separate high-risk implementation requiring secure custody, current chain
+  compatibility, real tests/builds, and independent wallet/crypto review.
 
 ## GH-61 exact source-export binding
 

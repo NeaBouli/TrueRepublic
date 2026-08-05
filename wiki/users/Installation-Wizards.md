@@ -356,9 +356,7 @@ cd web-wallet
 npm install
 npm run build
 
-# Mobile wallet (optional)
-cd ../mobile-wallet
-npm install
+# No native mobile build target exists; the former prototype was retired under GH-102.
 ```
 
 ### Step 5: Run Local Testnet (5 min)

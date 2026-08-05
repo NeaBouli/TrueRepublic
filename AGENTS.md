@@ -15,8 +15,9 @@ evidence, security boundaries, and handoffs.
 - Go 1.26.5, Cosmos SDK, CometBFT, and Wasmd implement the node and
   consensus-critical modules.
 - Rust/CosmWasm sources live under `contracts/`.
-- The maintained TypeScript client lives under `client-web/`; `web-wallet/`
-  and `mobile-wallet/` are deprecated and are not approved for real keys.
+- The maintained TypeScript client lives under `client-web/`; `web-wallet/` is
+  deprecated and is not approved for real keys. The former `mobile-wallet/`
+  prototype was retired and removed under GH-102 and exists only in Git history.
 - GitHub `NeaBouli/TrueRepublic` and canonical `origin/main` are the repository
   baseline. The preserved legacy checkout is never a merge source.
 

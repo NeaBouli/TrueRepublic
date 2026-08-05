@@ -32,10 +32,11 @@ reward recipient binding are still required.
 ## Legacy client blockers
 
 - `web-wallet` uses an obsolete client/toolchain architecture and is preserved
-  only for migration/reference.
-- `mobile-wallet` has unresolved high/critical dependency advisories and no
-  meaningful test suite.
-- Neither legacy client is approved for real keys or funds.
+  only for migration/reference. GH-112 tracks migration or explicit retirement.
+- The former `mobile-wallet` prototype had high/critical dependency advisories,
+  no meaningful tests, unsafe mnemonic handling, and a broken Android bundle.
+  It was retired and removed under GH-102 and must not be recovered for real keys.
+- No legacy or retired client is approved for real keys or funds.
 
 ## Review boundaries
 

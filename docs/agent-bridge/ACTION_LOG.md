@@ -2598,3 +2598,71 @@
   build, all 26 tests, and live `cargo audit`. The three blocking `rkyv`
   findings are cleared; five known warning-only advisories remain reported.
 - Next: protected PR checks and merge, then rebase and resume GH-102.
+
+## 2026-08-06 01:09 EEST - GH-102 legacy mobile dependency block started
+
+- Reconstructed canonical GitHub and Bridge state after the interrupted app
+  session. Exact `origin/main` is `d6ebdf5`, no PR is open, and final-main Pages
+  `30870685980` plus Security Scan `30870686809` pass.
+- Created clean branch `fix/GH-102-legacy-mobile` from that exact main. Scope is
+  limited to reproducible dependency/advisory classification and an
+  evidence-backed migration-or-retirement implementation for deprecated
+  `mobile-wallet`.
+- No mobile source or dependency file has changed yet. No key, mnemonic,
+  account, signing, broadcast, fund, app-store, deployment, infrastructure, or
+  production action is in scope.
+
+## 2026-08-06 01:31 EEST - GH-102 legacy mobile retirement implemented
+
+- Exact clean baseline: `npm ci` installed 1,282 packages and reproduced 51
+  advisories (7 low, 16 moderate, 24 high, 4 critical); `npm test --
+  --runInBand` passed only because no tests exist; Expo Doctor failed two of 17
+  checks; Android export failed because Metro cannot resolve Node `crypto` from
+  `@cosmjs/crypto`.
+- Source review found a real mnemonic-derived signing/broadcast path against a
+  production-looking RPC, plaintext mnemonic retention in React state, obsolete
+  `custom/...` governance/DEX queries, and a swap UI stub. Material fixes require
+  major Expo/RN/React/Navigation/CosmJS migrations plus a custody/query/test
+  rewrite, not a safe lockfile upgrade.
+- Kimi's independent read-only review recommends explicit retirement and found
+  no P0 because the client has no release path; it records three P1 and three P2
+  findings around signing/key handling, dependency exposure, dead query paths,
+  zero-test CI, and documentation drift. Claude Code was assigned a small
+  read-only documentation census but did not return output and was stopped; it
+  made no diff.
+- Removed the prototype and its obsolete workflow, replaced the non-blocking
+  legacy audit with a retirement contract, and synchronized current public,
+  developer, installation, roadmap, whitepaper, wiki, security, and agent
+  guidance. Git history remains available for audit only.
+- Local retirement/CI/docs/security/full repository verification and independent
+  final review are pending. No key, signing, broadcast, fund, app-store,
+  deployment, infrastructure, or production action occurred.
+
+## 2026-08-06 01:50 EEST - GH-102 local verification complete
+
+- PASS: mobile retirement contract, docs consistency, workflow YAML and status
+  JSON parsing, shell syntax, and `git diff --check`.
+- PASS: full Go `make build && make verify`; maintained `client-web` clean
+  install, lint, six audit-policy tests, 40 Vitest cases, production build, and
+  guarded live audit; Rust format, all-target clippy with warnings denied,
+  workspace build, and all 26 tests.
+- A refreshed RustSec audit found three new inherited `rkyv` vulnerabilities.
+  GH-110/PR #111 isolated the ten-line compatible lockfile repair to 0.8.17;
+  local and protected gates passed and it merged as `002299e` before GH-102.
+- Kimi's final read-only diff review found no blocking/P0-P2 issue. Removed its
+  obsolete `.gitignore` P3 and re-ran focused checks.
+- Legacy `web-wallet` separately passes 18 focused tests and its build, but the
+  live audit reports 70 advisories (18 low, 20 moderate, 29 high, 3 critical).
+  Corrected stale status claims and opened GH-112 for migration or retirement.
+- GH-102 is locally complete. Protected PR checks, merge, final issue/status
+  synchronization, and final-main verification remain. No key, signing,
+  broadcast, funds, app-store, deployment, infrastructure, or production action.
+
+## 2026-08-06 01:54 EEST - GH-102 rebased and reverified
+
+- Rebased cleanly onto GH-110 merge `002299e`, resolving only the append-only
+  Bridge/ACTION_LOG overlap and preserving both histories.
+- PASS after rebase: main ancestry, diff check, retirement and documentation
+  contracts, workflow YAML/status JSON parsing, shell syntax, and live Rust
+  audit with no vulnerabilities.
+- Ready for protected GH-102 PR checks and merge.

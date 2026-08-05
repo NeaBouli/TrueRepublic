@@ -21,7 +21,7 @@ Complete architectural documentation of TrueRepublic/PNYX blockchain.
 ```
 CLIENT LAYER
 ├── Web Wallet (React 18 + Keplr + CosmJS + Tailwind)
-├── Mobile Wallet (React Native + Expo + CosmJS)
+├── Native Mobile Client (retired; replacement pending)
 └── CLI (truerepublicd, Cobra-based)
     ↓
 API LAYER
@@ -102,13 +102,11 @@ STORAGE LAYER
 
 ### Frontend: React 18
 
-| Aspect | Web | Mobile |
-|--------|-----|--------|
-| **Framework** | React 18 | React Native 0.74 + Expo 51 |
-| **Styling** | Tailwind CSS 3.4 | React Native StyleSheet |
-| **Navigation** | React Router 6 | React Navigation 6.5 |
-| **Wallet** | Keplr browser extension | In-app key management |
-| **Blockchain** | CosmJS 0.32-0.38 | CosmJS 0.32-0.38 |
+| Aspect | Maintained web | Native mobile |
+|--------|----------------|---------------|
+| **Status** | Recovery-verified client | No supported client; former prototype retired under GH-102 |
+| **Wallet** | Reviewed browser/CosmJS boundary | New secure-custody design required |
+| **Blockchain** | Current maintained CosmJS line | Current chain compatibility must be proven before release |
 
 ---
 

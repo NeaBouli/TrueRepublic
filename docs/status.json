@@ -26,7 +26,7 @@
     "canonical_web_client": "client-web",
     "legacy_clients": {
       "web-wallet": "deprecated_security_migration_required",
-      "mobile-wallet": "deprecated_security_migration_required"
+      "mobile-wallet": "retired_removed_on_gh102_git_history_only"
     }
   },
   "rollout": {

@@ -182,7 +182,7 @@ Domain C Key (unlinkable)
 
 **Tools:**
 - Web wallet (browser)
-- Mobile wallet (iOS/Android)
+- Native mobile client (planned replacement; former prototype retired under GH-102)
 
 ### Node Operators
 
@@ -236,7 +236,7 @@ Domain C Key (unlinkable)
 
 **Frontend:**
 - Web: React + Tailwind CSS
-- Mobile: React Native
+- Mobile: no supported native client; replacement architecture pending review
 - Wallet: Keplr integration
 
 **Infrastructure:**
@@ -298,5 +298,5 @@ Domain C Key (unlinkable)
 
 - [How It Works](How-It-Works) -- Detailed mechanics
 - [User Manuals](User-Manuals) -- Complete guides
-- [Frontend Guide](Frontend-Guide) -- Web/mobile wallets
+- [Frontend Guide](Frontend-Guide) -- Maintained web client
 - [FAQ](FAQ) -- Common questions

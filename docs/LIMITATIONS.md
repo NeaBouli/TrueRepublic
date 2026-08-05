@@ -10,9 +10,15 @@ approved for production or real funds during this audit.
   dependency, lint, test, and production-build recovery checks.
 - `web-wallet` is legacy and still uses obsolete CosmJS cryptography and Create
   React App. Its mock ZKP submission path is disabled and its focused tests,
-  build, and current npm audit pass, but it is not approved for real keys.
-- `mobile-wallet` is legacy and currently has unresolved high/critical Expo,
-  React Native, Axios, protobuf, XML, and CosmJS dependency advisories.
+  and production build pass, but a live audit on 2026-08-06 reports 70
+  advisories (18 low, 20 moderate, 29 high, 3 critical). It is not approved for
+  real keys or funds; migration or retirement is tracked in
+  [GH-112](https://github.com/NeaBouli/TrueRepublic/issues/112).
+- The former `mobile-wallet` prototype was retired and removed under GH-102. It
+  had no meaningful tests, could not produce an Android bundle, handled a
+  mnemonic in UI memory, and carried high/critical Expo, React Native, Axios,
+  protobuf, XML, and obsolete CosmJS dependency exposure. There is currently no
+  supported native mobile client.
 - Client-side ZKP generation remains a mock, not real Groth16 proof generation.
   Both web clients now fail closed and cannot submit mock proofs.
 

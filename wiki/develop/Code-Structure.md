@@ -91,15 +91,6 @@ TrueRepublic/
 │   ├── Dockerfile                  #   Multi-stage React build → nginx
 │   └── nginx.conf                  #   SPA fallback routing
 │
-├── mobile-wallet/                  # React Native / Expo
-│   ├── src/
-│   │   └── screens/
-│   │       ├── WalletScreen.js     #   Balance + send
-│   │       ├── GovernanceScreen.js #   Domains + voting
-│   │       └── DexScreen.js        #   Token swaps
-│   ├── app.json                    #   Expo configuration
-│   └── package.json                #   Dependencies
-│
 ├── scripts/                        # Operational scripts
 │   ├── init-node.sh                #   Initialize node (~/.truerepublic)
 │   ├── start-node.sh               #   Start the node
@@ -132,8 +123,7 @@ TrueRepublic/
     └── workflows/
         ├── go-ci.yml               #   Go build + test
         ├── rust-ci.yml             #   Rust/CosmWasm build
-        ├── react-ci.yml            #   Web wallet build
-        └── react-native-ci.yml     #   Mobile wallet build
+        └── react-ci.yml            #   Web wallet build
 ```
 
 ---
