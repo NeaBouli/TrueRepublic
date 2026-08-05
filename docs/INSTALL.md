@@ -12,8 +12,9 @@
 - optional: Node.js 22+ und npm für `client-web/`
 - optional: Docker 24+ mit Compose v2
 
-Die veralteten Verzeichnisse `web-wallet` und `mobile-wallet` sind keine
-Installationsziele für reale Schlüssel.
+Das veraltete Verzeichnis `web-wallet` ist kein Installationsziel für reale
+Schlüssel. Der frühere Mobile-Prototyp wurde unter GH-102 vollständig stillgelegt
+und aus dem aktuellen Quellbaum entfernt.
 
 ## Quellcode und Tests
 

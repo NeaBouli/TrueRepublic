@@ -19,7 +19,7 @@
 | Node | Restart, four-validator recovery, state sync, sanitized backup/restore, compatible binary rollback, cold identity failover, secret-safe JSON logs, private metrics, and the GH-85 dashboard/alert/objective baseline verified |
 | ZKP client | Mock generation/submission disabled; real prover pending |
 | Maintained client | `client-web` |
-| Legacy clients | `web-wallet` and `mobile-wallet`; not approved for real keys |
+| Legacy clients | `web-wallet` is not approved for real keys; the former mobile prototype was retired and removed under GH-102 |
 
 Authoritative machine status: [`docs/status.json`](https://github.com/NeaBouli/TrueRepublic/blob/main/docs/status.json).
 Recovery tracking: [Issue #4](https://github.com/NeaBouli/TrueRepublic/issues/4).

@@ -76,7 +76,7 @@
   #107, preserve all 21 routes, remove both prior moderate advisories, and bind
   the temporary RSC-only exception to the exact package, architecture, owner,
   deadline, tests, and protected CI.
-- [ ] GH-102: reproduce and classify the legacy mobile dependency inventory,
+- [x] GH-102: reproduce and classify the legacy mobile dependency inventory,
   then migrate or explicitly retire that client without weakening wallet,
   signing, chain compatibility, or rollout boundaries.
 - [x] GH-101: implement and independently review a strict secret-free private

@@ -10,7 +10,7 @@ CI ensures that every code change triggers automated tests and checks to catch e
   - Blockchain (Go): `blockchain/.github/workflows/go-ci.yml`
   - Smart Contracts (Rust): `contracts/.github/workflows/rust-ci.yml`
   - Web Wallet (React): `web-wallet/.github/workflows/react-ci.yml`
-  - Mobile Wallet (React Native): `mobile-wallet/.github/workflows/react-native-ci.yml`
+  - Retired Mobile Client: repository retirement contract and Security Scan
 - Automated builds & error checking
 
 #### 2. Continuous Deployment (CD)
@@ -18,7 +18,7 @@ CI ensures that every code change triggers automated tests and checks to catch e
   - Blockchain: `blockchain/.github/workflows/blockchain-cd.yml`
   - Smart Contracts: `contracts/.github/workflows/contracts-cd.yml`
   - Web Wallet: `web-wallet/.github/workflows/web-cd.yml`
-  - Mobile Wallet: `mobile-wallet/.github/workflows/mobile-cd.yml`
+  - Mobile Wallet: no deployment target; the prototype was removed under GH-102
 
 ### Security Measures (Audits & API Monitoring)
 
@@ -121,12 +121,13 @@ bash
 psql truerepublic_db < ~/backup/api_backup_LATEST.sql
 
 
-#### 3. Web & Mobile Wallet Backup
+#### 3. Web Wallet Backup
 - Web Wallet rollback (Vercel):
   ```bash
   npx vercel rollback --to=previous --token=${{ secrets.VERCEL_TOKEN }}
 
-Mobile Wallet rollback: Use Google Play Console or App Store Connect to revert to the previous version.
+There is no mobile deployment or rollback target; the former prototype was
+retired and removed under GH-102.
 
 #### 4. Monitoring
 - UptimeRobot: Add `https://api.truerepublic.network` with Telegram alerts.

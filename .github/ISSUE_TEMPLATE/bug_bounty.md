@@ -26,7 +26,7 @@
 - [ ] Blockchain  
 - [ ] API  
 - [ ] Web Wallet  
-- [ ] Mobile Wallet  
+- [ ] Planned native mobile client / retirement boundary
 
 **🔹 Contact Details (for Reward):**  
 BTC or PNYX address:  

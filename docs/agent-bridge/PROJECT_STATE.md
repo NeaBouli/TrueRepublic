@@ -1,6 +1,6 @@
 # Project State
 
-Updated: 2026-08-04 11:43 UTC
+Updated: 2026-08-05 22:35 UTC
 
 ## Repository
 
@@ -265,11 +265,16 @@ Updated: 2026-08-04 11:43 UTC
   Coverage: root 10.2%, token 93.5%, treasury 97.0%, DEX 34.2%, governance 55.8%.
 - Go vulnerability gate: no reachable finding with an available fix remains;
   four upstream `N/A` findings are tracked for import-path reduction.
-- Legacy `web-wallet`: focused ZKP tests, build, and current npm audit pass, but
-  obsolete CosmJS crypto/Create React App and source-map warnings remain; mock
-  proof submission is disabled and it is not approved for keys or funds.
-- Legacy `mobile-wallet`: no tests exist and 51 advisories remain (22 high,
-  3 critical); not approved for keys or funds.
+- Legacy `web-wallet`: focused ZKP tests and the production build pass, but a
+  live audit on 2026-08-06 reports 70 advisories (18 low, 20 moderate, 29 high,
+  3 critical). Obsolete CosmJS crypto/Create React App and source-map warnings
+  remain; mock proof submission is disabled and it is not approved for keys or
+  funds. GH-112 tracks migration or explicit retirement.
+- Former `mobile-wallet`: retired and removed under GH-102 after the final
+  baseline reproduced 51 advisories (7 low, 16 moderate, 24 high, 4 critical),
+  no tests, a broken Android bundle, obsolete chain queries, and unsafe
+  mnemonic-in-UI handling. Git history is audit-only; there is no supported
+  native mobile client.
 - Public README, status JSON, limitations, and GitHub Pages source now display
   an active recovery warning and link to GH-4.
 - Public GitHub Pages is configured from `main:/docs`. The latest source update

@@ -8,7 +8,11 @@ on:
       - 'CLAUDE.md'
       - 'docs/**'
       - 'scripts/check-consistency.sh'
+      - 'scripts/check-mobile-retirement.sh'
+      - 'mobile-wallet/**'
       - '.github/workflows/docs-check.yml'
+      - '.github/workflows/react-native-ci.yml'
+      - '.github/workflows/security-scan.yml'
       - 'wiki/**'
 
 permissions:
@@ -23,3 +27,5 @@ jobs:
           persist-credentials: false
       - name: Check Consistency
         run: ./scripts/check-consistency.sh
+      - name: Check Mobile Retirement
+        run: ./scripts/check-mobile-retirement.sh

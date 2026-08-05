@@ -164,3 +164,22 @@
 - Claude Code and `spark_worker` remain limited to small, clearly bounded
   helper work. Delegation never grants production, deployment, IAM, payment,
   authentication, migration, publishing, deletion, or secret access.
+
+## 2026-08-06 - Retire the legacy native mobile prototype
+
+- GH-102 retires and removes the former `mobile-wallet` source and its cosmetic
+  pass-with-no-tests CI. Git history remains the audit record; it is not a
+  supported build or migration source and must not be used with real keys.
+- The final baseline reproduced 51 advisories (7 low, 16 moderate, 24 high,
+  4 critical), no tests, two Expo Doctor failures, and an Android bundle failure
+  at CosmJS' Node `crypto` import. The code retained a mnemonic in ordinary UI
+  state and contained a real signing/broadcast path, while governance/DEX used
+  obsolete query paths and the swap action was a stub.
+- Clearing the material findings would require coordinated major migrations
+  across Expo, React Native, React, React Navigation, and CosmJS plus new secure
+  key custody, chain queries, tests, and physical-device evidence. That is a new
+  high-risk product, not a safe dependency upgrade.
+- Any replacement native client requires a separate approved issue, maintained
+  dependencies, platform-backed key custody, deterministic signing/chain tests,
+  blocking audit/build gates, physical-device evidence, and independent wallet/
+  cryptography review before keys, signing, funds, app-store, or rollout use.

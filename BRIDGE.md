@@ -3847,3 +3847,71 @@ exclusion, CI wiring, and documentation boundaries.
   Protected GitHub PR checks and merge remain before GH-102 resumes.
 
 ---
+
+## 2026-08-06 01:09 EEST GH-102 legacy mobile dependency block → In Progress
+
+- **Branch:** `fix/GH-102-legacy-mobile` from exact clean `origin/main`
+  `d6ebdf5`; issue [GH-102](https://github.com/NeaBouli/TrueRepublic/issues/102).
+- **Scope:** reproduce and classify the current `mobile-wallet` dependency and
+  advisory inventory, then choose the smallest evidence-backed safe outcome:
+  a compatible migration or explicit retirement. Preserve all maintained-client,
+  wallet/signing, chain/API, and rollout boundaries.
+- **Baseline:** no open PR; latest `main` Pages `30870685980` and Security Scan
+  `30870686809` pass. The issue remains open only for this legacy-mobile slice
+  and final repository-wide closure.
+- **Delegation:** Kimi K3 receives one bounded, secret-free repo analysis or
+  implementation block after the baseline is reproduced. Claude Code may receive
+  only a small focused helper check if its authentication is available. Sol owns
+  architecture, security judgment, all diffs, complete verification, GitHub
+  writes, merge, and closure.
+- **Boundary:** repository code, dependencies, tests, CI, and documentation only.
+  No keys, mnemonics, accounts, signing, broadcast, funds, app-store action,
+  deployment, infrastructure, or production mutation.
+- **Next:** reproduce exact clean-install/audit/build behavior; inventory mobile
+  imports, crypto/key storage, testability, Expo/CosmJS compatibility, and CI;
+  then record the migration-versus-retirement decision before implementation.
+
+---
+
+## 2026-08-06 01:50 EEST GH-102 legacy mobile retirement → Locally Complete
+
+- **Decision:** explicitly retired and removed the unsafe prototype and its
+  pass-with-no-tests workflow. A blocking CI retirement contract keeps the
+  source, workflow, stale status, and run instructions absent; Git history is
+  audit-only. Any future native client is a separately reviewed rebuild.
+- **Baseline evidence:** 51 advisories (7 low, 16 moderate, 24 high, 4 critical),
+  no tests, two Expo Doctor failures, Android bundle failure at CosmJS Node
+  `crypto`, mnemonic retained in UI state, live signing/broadcast code, obsolete
+  governance/DEX queries, and a swap stub.
+- **Verification:** mobile retirement contract, documentation consistency,
+  workflow YAML/status JSON parsing, shell syntax, and diff checks pass. Full Go
+  `make build && make verify` passes; maintained `client-web` lint, 6 audit-policy
+  tests, 40 Vitest cases, build, and guarded live audit pass; Rust format, clippy,
+  build, and all 26 tests pass.
+- **Security prerequisite:** the refreshed RustSec database exposed three new
+  transitive `rkyv` findings. GH-110/PR #111 updated only the compatible lockfile
+  line to 0.8.17; all protected checks passed and it merged as `002299e`.
+- **Independent review:** Kimi found no P0-P2 or blocking issue. Its single dead
+  `.gitignore` P3 was removed and rechecked. Claude Code's bounded documentation
+  census returned no output, was stopped, and made no diff.
+- **Separate inherited debt:** legacy `web-wallet` tests/build pass, while the
+  live audit reports 70 advisories (18 low, 20 moderate, 29 high, 3 critical).
+  GH-112 tracks migration or retirement; this does not weaken or block the
+  mobile-retirement decision.
+- **Boundary:** no key, mnemonic, account, signing, broadcast, fund, app-store,
+  deployment, infrastructure, or production action occurred. Protected GH-102
+  PR checks, merge, final issue/status sync, and final-main verification remain.
+
+---
+
+## 2026-08-06 01:54 EEST GH-102 exact-head preparation → Complete
+
+- Rebased the retirement commit onto merged prerequisite main `002299e` and
+  preserved both append-only GH-110 and GH-102 Bridge histories.
+- Post-rebase PASS: main ancestry, clean diff, retirement contract, docs
+  consistency, workflow YAML/status JSON parsing, shell syntax, and live Rust
+  audit with zero vulnerabilities and five visible warning-only advisories.
+- Branch is ready for push and protected PR checks. No runtime, deployment,
+  infrastructure, wallet, key, signing, broadcast, fund, or production action.
+
+---

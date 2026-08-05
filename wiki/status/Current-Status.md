@@ -51,7 +51,8 @@ reviewed, verified, and merged to `main` in this order.
 - IBC/consensus-breaking migration recovery, external paging drills,
   private-live-capacity/live-topology deployment, private live rehearsal, and
   independent live operations evidence.
-- Migration or removal of the deprecated legacy web/mobile clients.
+- Migration or removal of the deprecated legacy web client. The former mobile
+  prototype was retired and removed under GH-102.
 
 See [Issue #4](https://github.com/NeaBouli/TrueRepublic/issues/4),
 [`BRIDGE.md`](https://github.com/NeaBouli/TrueRepublic/blob/main/BRIDGE.md),

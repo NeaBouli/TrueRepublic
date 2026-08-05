@@ -15,7 +15,6 @@ contracts/target/
 # Node.js
 node_modules/
 web-wallet/build/
-mobile-wallet/.expo/
 npm-debug.log*
 yarn-error.log*
 

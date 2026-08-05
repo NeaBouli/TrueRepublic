@@ -28,7 +28,6 @@
   <a href="https://github.com/NeaBouli/TrueRepublic/actions/workflows/go-ci.yml"><img src="https://github.com/NeaBouli/TrueRepublic/actions/workflows/go-ci.yml/badge.svg" alt="Go CI"/></a>
   <a href="https://github.com/NeaBouli/TrueRepublic/actions/workflows/rust-ci.yml"><img src="https://github.com/NeaBouli/TrueRepublic/actions/workflows/rust-ci.yml/badge.svg" alt="Rust CI"/></a>
   <a href="https://github.com/NeaBouli/TrueRepublic/actions/workflows/react-ci.yml"><img src="https://github.com/NeaBouli/TrueRepublic/actions/workflows/react-ci.yml/badge.svg" alt="Web CI"/></a>
-  <a href="https://github.com/NeaBouli/TrueRepublic/actions/workflows/react-native-ci.yml"><img src="https://github.com/NeaBouli/TrueRepublic/actions/workflows/react-native-ci.yml/badge.svg" alt="Mobile CI"/></a>
 </p>
 
 <p align="center">
@@ -43,9 +42,10 @@
 > [!WARNING]
 > **Recovery audit active:** v0.4.0 functionality exists, but production-readiness
 > claims are being re-verified in [GitHub issue #4](https://github.com/NeaBouli/TrueRepublic/issues/4).
-> `client-web` is the maintained web client. `web-wallet` and `mobile-wallet`
-> are legacy clients with unresolved high/critical dependency advisories and
-> must not be used for real keys or production funds.
+> `client-web` is the maintained web client. `web-wallet` is a deprecated legacy
+> client and must not be used for real keys or production funds. The unsafe,
+> untested `mobile-wallet` prototype was retired and removed under GH-102; Git
+> history preserves it for audit only.
 
 ## What is TrueRepublic?
 
@@ -171,7 +171,6 @@ TrueRepublic/
 │   └── examples/               governance-dao, dex-bot, zkp-aggregator, token-vesting
 ├── client-web/                 React 18 + TypeScript + Vite + CosmJS (v0.4.0)
 ├── web-wallet/                 React 18 + Tailwind + Keplr + CosmJS
-├── mobile-wallet/              React Native + Expo
 ├── docs/
 │   ├── getting-started/        Quick start guides
 │   ├── user-manual/            End-user documentation (7 guides)
@@ -217,7 +216,7 @@ TrueRepublic/
 | CosmWasm Contracts (7 crates) | ✅ | `contracts/` (workspace) |
 | Maintained Web Client | 🟡 Recovery verified | `client-web/` |
 | Legacy Web Wallet | 🔴 Deprecated / vulnerable dependencies | `web-wallet/` |
-| Legacy Mobile Wallet | 🔴 Deprecated / vulnerable dependencies | `mobile-wallet/` |
+| Legacy Mobile Wallet | ⚫ Retired and removed under GH-102 | Git history only |
 | CI/CD Workflows | ✅ | `.github/workflows/` |
 
 ---
@@ -251,7 +250,7 @@ cd client-web && npm ci && npm run lint && npm test -- --run && npm run build
 | Go | 1.26.5 | Recovery verified |
 | Rust | 1.75+ | Contracts |
 | React | 18.2 | Maintained v0.4 client |
-| React Native + Expo | 0.74 / 51.0 | Legacy; security migration required |
+| Native mobile client | — | Retired under GH-102; replacement pending |
 | Keplr + CosmJS | 0.39 | Maintained v0.4 client |
 
 **Known Limitations:** IBC staking/upgrade remains stubbed (PoD is used instead), a real ZKP prover/ceremony review is pending, and the migration-focused harness proves compatible binary replacement and fail-before-open rollback—not consensus-breaking state migration. GH-93 provides a strict synthetic incident-command and rehearsal contract, but a private live operator rehearsal remains pending. GH-85 provides dashboard/application runtime evidence, alert rules, recovery/testnet objectives, and role ownership. GH-89 adds a strict synthetic topology qualification contract. GH-97 adds bounded four-validator load, resource, retention, restart, and ledger evidence; it does not establish production sizing or multi-day soak behavior. GH-101 adds a digest-bound offline deployment-evidence envelope and verifier; it does not prove or perform a live deployment. Real seed/sentry/validator/RPC deployment, firewall/TLS/DNS evidence, external paging drills, private-environment capacity evidence, and independent live operations review remain open. See [LIMITATIONS.md](docs/LIMITATIONS.md).
@@ -287,7 +286,7 @@ approval. Current evidence, risks, and commands are maintained in
 - ✅ Developer Tooling: 4 CosmWasm example contracts, shared bindings, testing utils
 - 🟡 DEX burns reduce canonical bank supply via merged PR #18
 - ✅ Canonical v0.4 web client with 3-column governance UI
-- 🔴 Legacy mobile wallet is deprecated and security-blocked
+- ⚫ Legacy mobile wallet retired and removed under GH-102
 - ✅ Comprehensive documentation (30+ guides)
 
 ### Roadmap

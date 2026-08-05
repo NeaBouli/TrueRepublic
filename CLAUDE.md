@@ -43,7 +43,8 @@ TrueRepublic is a multi-project repository rather than a single-package app:
 - `treasury/keeper` — deterministic reward equations
 - `contracts` — Rust/CosmWasm workspace
 - `client-web` — maintained React/Vite client
-- `web-wallet`, `mobile-wallet` — deprecated legacy clients
+- `web-wallet` — deprecated legacy client; the former `mobile-wallet` prototype
+  was retired and removed under GH-102
 - `docs` — public and operator documentation
 
 It is not a Go workspace with multiple Go modules. The root Go module contains
@@ -143,8 +144,9 @@ payout recipient.
 ## Client policy
 
 - `client-web` is the only maintained client.
-- `web-wallet` and `mobile-wallet` remain preserved for migration/reference.
-- Never recommend legacy clients for real keys or funds.
+- `web-wallet` remains preserved for migration/reference; the retired mobile
+  prototype remains available only through Git history.
+- Never recommend legacy or retired clients for real keys or funds.
 - Never silently copy legacy checkout changes into recovery branches.
 
 The divergent checkout at `/Users/gio/Desktop/repos/TrueRepublic` is preserved

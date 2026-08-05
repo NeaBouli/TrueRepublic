@@ -1,119 +1,42 @@
-# Mobile Wallet Integration
+# Retired Mobile Client
 
-Guide to the TrueRepublic React Native mobile wallet.
+TrueRepublic currently has no supported native mobile client. The former Expo
+51 / React Native 0.74 prototype was retired and removed under GH-102; its source
+remains available only in Git history for audit purposes.
 
-## Tech Stack
+## Why it was retired
 
-| Technology | Version | Purpose |
-|-----------|---------|---------|
-| React Native | 0.74 | Mobile framework |
-| Expo | 51.0 | Build toolchain |
-| React | 18.2 | UI framework |
-| React Navigation | 6.5 | Navigation (bottom tabs) |
-| CosmJS | 0.32-0.38 | Blockchain interaction |
+The final clean baseline reproduced all of the following:
 
-## Project Structure
+- 51 dependency advisories: 7 low, 16 moderate, 24 high, and 4 critical;
+- obsolete CosmJS 0.32 cryptography on the mnemonic/signing path;
+- an Android bundle failure because Metro could not resolve Node `crypto`;
+- two failed Expo Doctor checks for invalid icon configuration and incompatible
+  package versions;
+- no test files, while CI passed through `--passWithNoTests`;
+- plaintext mnemonic entry retained in React component memory; and
+- governance/DEX calls built on obsolete query paths, with swap remaining a UI
+  stub.
 
-```
-mobile-wallet/
-├── src/
-│   └── screens/
-│       ├── WalletScreen.js       # Balance + send PNYX
-│       ├── GovernanceScreen.js   # Domains + voting
-│       └── DexScreen.js          # Token swaps
-├── App.js                        # Navigation setup
-├── app.json                      # Expo configuration
-└── package.json                  # Dependencies
-```
+A secure upgrade would have required coordinated major migrations across Expo,
+React Native, React, React Navigation, and CosmJS plus a rewrite of key custody,
+queries, tests, and chain integration. That is a new high-risk product, not a
+dependency patch.
 
-## Running the App
+## Replacement requirements
 
-```bash
-cd mobile-wallet
-npm install
+Any future native mobile client needs its own reviewed issue and must, before it
+is offered to users:
 
-# Start Expo dev server
-npm start
+1. use maintained Expo/React Native and CosmJS versions with a blocking audit;
+2. keep mnemonics and private keys out of ordinary UI/application memory and use
+   platform-backed secure storage with a documented recovery model;
+3. test derivation, signing bytes, fees, broadcast failure, chain ID, address
+   prefix, and current gRPC/query compatibility against deterministic fixtures;
+4. pass real unit, integration, Android bundle, iOS bundle, and physical-device
+   checks without `--passWithNoTests` or advisory bypasses; and
+5. receive independent wallet/cryptography review before any release, keys,
+   signing, funds, app-store action, or rollout approval.
 
-# Platform-specific
-npm run android
-npm run ios
-```
-
-## Navigation
-
-The app uses a bottom-tab navigator:
-
-```
-┌──────────────────────────────┐
-│                              │
-│        Screen Content        │
-│                              │
-├──────────────────────────────┤
-│  Wallet  │ Governance │ DEX  │
-└──────────────────────────────┘
-```
-
-## Screens
-
-### WalletScreen
-- Connect wallet
-- Display balance
-- Send PNYX transactions
-
-### GovernanceScreen
-- Browse domains
-- View issues and suggestions
-- Submit proposals and vote
-
-### DexScreen
-- View liquidity pools
-- Swap tokens
-
-## CosmJS Integration
-
-The mobile wallet uses the same CosmJS libraries as the web wallet:
-
-```javascript
-import { SigningStargateClient } from "@cosmjs/stargate";
-
-const RPC_ENDPOINT = "https://rpc.truerepublic.network";
-
-// Connect to chain
-const client = await SigningStargateClient.connect(RPC_ENDPOINT);
-
-// Query balance
-const balance = await client.getBalance(address, "upnyx");
-```
-
-## Building for Production
-
-### Android
-
-```bash
-# Build APK
-npx expo build:android
-
-# Or EAS Build
-npx eas build --platform android
-```
-
-### iOS
-
-```bash
-# Build IPA
-npx expo build:ios
-
-# Or EAS Build
-npx eas build --platform ios
-```
-
-## Differences from Web Wallet
-
-| Feature | Web | Mobile |
-|---------|-----|--------|
-| Wallet | Keplr browser extension | In-app key management |
-| Layout | Three-column desktop | Single-column with tabs |
-| Styling | Tailwind CSS | React Native StyleSheet |
-| Navigation | React Router | React Navigation |
-| Build | Webpack (react-scripts) | Metro (Expo) |
+Until then, `client-web` is the only maintained client. Do not retrieve or run
+the retired prototype with real keys or funds.

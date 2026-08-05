@@ -6,7 +6,7 @@
 ┌─────────────────────────────────────────────────────┐
 │  Client Layer                                        │
 │  Web Wallet (React 18 + Keplr + CosmJS)             │
-│  Mobile Wallet (Expo / React Native + CosmJS)       │
+│  Native Mobile Client (retired; replacement pending)│
 │  CLI (truerepublicd tx/query)                       │
 ├─────────────────────────────────────────────────────┤
 │  Smart Contract Layer (CosmWasm)                     │

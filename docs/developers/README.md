@@ -15,7 +15,8 @@ Technical documentation for developers building on or contributing to TrueRepubl
 
 ### Integration
 - [Web Wallet Integration](integration-guide/web-wallet.md) -- React + Keplr + CosmJS
-- [Mobile Integration](integration-guide/mobile.md) -- React Native + Expo
+- [Retired Mobile Client](integration-guide/mobile.md) -- GH-102 retirement and
+  replacement requirements
 - [CosmJS Examples](integration-guide/cosmjs-examples.md) -- Code examples for common operations
 - [Dependency Risk Acceptance](DEPENDENCY_RISK_ACCEPTANCE.md) -- Time-boxed dependency exceptions and removal conditions
 
@@ -31,7 +32,6 @@ Technical documentation for developers building on or contributing to TrueRepubl
 | Language | Go | 1.23.5 |
 | Smart Contracts | CosmWasm | cosmwasm-std 3 |
 | Web Frontend | React | 18.2 |
-| Mobile | React Native / Expo | 0.74 / 51.0 |
 | Blockchain Client | CosmJS | 0.32-0.38 |
 | CSS Framework | Tailwind CSS | 3.4 |
 
@@ -52,7 +52,6 @@ TrueRepublic/
 │       └── rewards.go      # Tokenomics equations 1-5
 ├── contracts/              # CosmWasm smart contracts (Rust)
 ├── web-wallet/             # React web frontend
-├── mobile-wallet/          # React Native mobile app
 ├── docs/                   # Documentation
 └── .github/                # CI/CD workflows
 ```
