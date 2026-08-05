@@ -3820,3 +3820,30 @@ exclusion, CI wiring, and documentation boundaries.
   deployment, infrastructure, or provider mutation occurred.
 
 ---
+
+## 2026-08-06 01:38 EEST GH-110 RustSec rkyv unblock → In Progress
+
+- **Branch:** `fix/GH-110-rkyv` from exact `origin/main` `d6ebdf5`; issue
+  [GH-110](https://github.com/NeaBouli/TrueRepublic/issues/110).
+- **Trigger:** GH-102 full verification passed Rust format, clippy, build, and
+  all 26 workspace tests, then the refreshed RustSec database rejected
+  transitive `rkyv` 0.8.15 for RUSTSEC-2026-0233, -0234, and -0235.
+- **Scope:** smallest compatible lockfile-only update to the patched `rkyv`
+  line, full Rust verification, protected PR, and merge before GH-102 resumes.
+- **Boundary:** no contract behavior, source API, keys, signing, funds,
+  deployment, infrastructure, or production action.
+
+---
+
+## 2026-08-06 01:43 EEST GH-110 local verification → Complete
+
+- Updated only the compatible lockfile line: `rkyv` and `rkyv_derive` 0.8.15 →
+  0.8.17. No Rust source, contract API, or behavior changed.
+- PASS: `cargo fmt --all -- --check`, workspace clippy for all targets with
+  warnings denied, workspace build, all 26 workspace tests, and `cargo audit`.
+  The three `rkyv` vulnerabilities are gone; five pre-existing allowed
+  unmaintained/unsound warnings remain visible.
+- Diff is limited to ten lockfile lines plus append-only Bridge evidence.
+  Protected GitHub PR checks and merge remain before GH-102 resumes.
+
+---

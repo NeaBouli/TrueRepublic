@@ -2578,3 +2578,23 @@
 - Maintained-client GH-102 work and public handoff are Done. Legacy mobile stays
   open; no production, mobile release, wallet, signing, broadcast, funds,
   infrastructure, or deployment action occurred.
+
+## 2026-08-06 01:38 EEST - GH-110 RustSec prerequisite started
+
+- GH-102 full verification exposed three newly published RustSec findings in
+  transitive `rkyv` 0.8.15 after format, clippy, build, and all 26 Rust tests
+  passed. The finding is inherited dependency drift, not caused by GH-102.
+- Opened GH-110 and created clean branch `fix/GH-110-rkyv` from exact main
+  `d6ebdf5` for the smallest compatible lockfile-only repair before resuming
+  GH-102 publication.
+- No contract source, behavior, API, key, signing, fund, deployment,
+  infrastructure, or production action is in scope.
+
+## 2026-08-06 01:43 EEST - GH-110 local repair verified
+
+- Updated `rkyv` and `rkyv_derive` from 0.8.15 to patched 0.8.17 in
+  `contracts/Cargo.lock`; the update changed ten lockfile lines and no source.
+- PASS: format, all-target workspace clippy with warnings denied, workspace
+  build, all 26 tests, and live `cargo audit`. The three blocking `rkyv`
+  findings are cleared; five known warning-only advisories remain reported.
+- Next: protected PR checks and merge, then rebase and resume GH-102.
