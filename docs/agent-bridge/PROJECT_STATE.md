@@ -1,9 +1,13 @@
 # Project State
 
-Updated: 2026-08-05 22:35 UTC
+Updated: 2026-08-05 23:01 UTC
 
 ## Repository
 
+- GH-102 is closed through merged PR #113 (`d621ff9`). The unsupported native
+  prototype and pass-with-no-tests CI are removed, a blocking retirement
+  contract keeps them absent, and final-main Pages `31054458625` plus Security
+  Scan `31054461930` pass. GH-112 separately tracks deprecated `web-wallet`.
 - GH-56 is closed through merged PR #62 (`80ab674`). Authenticated atomic
   consensus-key rotation, permanent revocation, separate bootstrap operator
   authority, deterministic CometBFT H+2 activation, and real five-process

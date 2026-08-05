@@ -2666,3 +2666,14 @@
   contracts, workflow YAML/status JSON parsing, shell syntax, and live Rust
   audit with no vulnerabilities.
 - Ready for protected GH-102 PR checks and merge.
+
+## 2026-08-06 02:01 EEST - GH-102 merged and final-main verified
+
+- PR #113 exact head `e606db9` passed every applicable protected check with no
+  review thread and merged as `d621ff9`; GH-102 closed automatically.
+- Final-main Pages `31054458625` and Security Scan `31054461930` pass. Live
+  status readback confirms the retired mobile state, 1,388 tests, 13/59 rollout,
+  Phase 6 6/7, and `production_ready=false`.
+- GH-112 remains open only for the separate deprecated legacy-web client.
+  GH-102 is complete; no key, signing, broadcast, funds, app-store, deployment,
+  infrastructure, or production action occurred.
