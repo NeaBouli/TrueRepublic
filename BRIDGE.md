@@ -3915,3 +3915,21 @@ exclusion, CI wiring, and documentation boundaries.
   infrastructure, wallet, key, signing, broadcast, fund, or production action.
 
 ---
+
+## 2026-08-06 02:01 EEST GH-102 legacy mobile retirement → Complete
+
+- PR [#113](https://github.com/NeaBouli/TrueRepublic/pull/113) exact head
+  `e606db9` passed docs consistency, mobile retirement, Go/Rust security,
+  maintained-client and legacy-web audit jobs, DeepScan, and the available
+  CodeRabbit gate with no review thread. It merged as `d621ff9`; GH-102 closed.
+- Final-main Pages `31054458625` and Security Scan `31054461930` pass. Live
+  `status.json` confirms 1,388 cases, rollout 13/59, Phase 6 6/7,
+  `production_ready=false`, maintained `client-web`, deprecated `web-wallet`,
+  and retired/removed `mobile-wallet` with Git-history-only status.
+- GH-112 separately tracks the inherited legacy-web migration/retirement debt.
+  There is no supported native mobile client; any replacement is a separately
+  reviewed high-risk implementation.
+- No key, signing, broadcast, fund, app-store, deployment, infrastructure, or
+  production action occurred. GH-102 is Done.
+
+---
