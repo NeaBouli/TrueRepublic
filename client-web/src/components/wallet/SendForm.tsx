@@ -6,6 +6,7 @@ import { Input } from '@/components/common/Input';
 import { Card } from '@/components/common/Card';
 import { formatPnyx, parsePnyx } from '@/utils/format';
 import { DEFAULT_CHAIN } from '@/config/chains';
+import { fromBech32 } from '@cosmjs/encoding';
 import { ArrowLeftIcon, CheckCircleIcon } from '@heroicons/react/24/outline';
 
 export function SendForm() {
@@ -28,8 +29,18 @@ export function SendForm() {
 
     if (!recipient) {
       newErrors.recipient = 'Recipient address is required';
-    } else if (!recipient.startsWith('true1')) {
-      newErrors.recipient = 'Invalid address (must start with true1)';
+    } else {
+      try {
+        const decoded = fromBech32(recipient);
+        if (
+          decoded.prefix !== DEFAULT_CHAIN.bech32Prefix ||
+          decoded.data.length !== 20
+        ) {
+          throw new Error('wrong address network or length');
+        }
+      } catch {
+        newErrors.recipient = `Invalid address (must be ${DEFAULT_CHAIN.bech32Prefix}1...)`;
+      }
     }
 
     if (!amount || parseFloat(amount) <= 0) {
@@ -139,7 +150,7 @@ export function SendForm() {
               label="Recipient Address"
               value={recipient}
               onChange={(e) => setRecipient(e.target.value)}
-              placeholder="true1..."
+              placeholder={`${DEFAULT_CHAIN.bech32Prefix}1...`}
               error={errors.recipient}
             />
 

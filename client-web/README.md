@@ -90,7 +90,7 @@ src/
 The development defaults point directly to a local node:
 - RPC: `http://localhost:26657`
 - REST: `http://localhost:1317`
-- Bech32: `true1...`
+- Bech32: `truerepublic1...`
 - Base denom: `upnyx`; display denom: `PNYX` (6 decimals)
 
 The production container sets `VITE_TRUEREPUBLIC_RPC=/rpc` and
@@ -98,10 +98,41 @@ The production container sets `VITE_TRUEREPUBLIC_RPC=/rpc` and
 proxy reaches the loopback-only node APIs through the shared Compose network
 namespace, so ports 26657 and 1317 remain unexposed.
 
+## Supported transaction boundary
+
+Every signing path uses the single fail-closed registry in
+`src/services/txRegistry.ts` and the simulate/sign/broadcast boundary in
+`src/services/signingClient.ts`. In addition to CosmJS' standard messages, the
+maintained client supports exactly these custom message identities:
+
+- `truedemocracy`: `MsgCreateDomain`, `MsgSubmitProposal`,
+  `MsgPlaceStoneOnSuggestion`, `MsgPlaceStoneOnIssue`,
+  `MsgApproveOnboarding`, `MsgAddMember`, `MsgOnboardToDomain`, and
+  `MsgRegisterIdentity`
+- `dex`: `MsgAddLiquidity`, `MsgRemoveLiquidity`, and `MsgSwapExact`
+
+Unknown, legacy, or mismatched type URLs are rejected before signing. Integer
+token amounts remain decimal strings until protobuf encoding. Anonymous proof
+generation remains disabled as described above.
+
+Run the deterministic registry tests with `npm test -- --run`. The secret-free
+local chain proof uses generated, disposable accounts in a temporary genesis:
+
+```bash
+make build
+cd client-web
+TRUEREPUBLIC_CLIENT_CHAIN_INTEGRATION=1 npm run test:chain
+```
+
+The canonical Bech32 prefix is `truerepublic`. Wallets created by an older
+preview with the incorrect `true` prefix must be re-imported so the maintained
+client derives and displays the canonical address; never send funds to an
+address solely because an obsolete preview displayed it.
+
 ## Build Output
 
 Current recovery build (`npm run build`):
-- Main JavaScript: 1,700.78 kB; 318.02 kB gzip
+- Main JavaScript: 1,708.29 kB; 319.32 kB gzip
 - CSS: 22.25 kB; 4.84 kB gzip
 - Vite still warns that the main chunk exceeds 500 kB; bundle splitting and a performance budget remain open rollout work.
 

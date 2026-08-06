@@ -104,6 +104,18 @@ export interface RemoveLiquidityParams {
   shares: string;
 }
 
+/**
+ * Params for MsgSwapExact (Go: swap_exact).
+ * Amounts are base-unit positive signed-int64 decimal strings; min_output is
+ * the on-chain slippage bound enforced by the chain.
+ */
+export interface SwapExactParams {
+  input_denom: string;
+  input_amt: string;
+  output_denom: string;
+  min_output: string;
+}
+
 /** Extended LP position detail for the management UI */
 export interface LPPositionDetail {
   asset_denom: string;

@@ -19,8 +19,9 @@ intentionally more granular than the public 59-item tracker.
 
 - The ordered recovery merge chain is on `main`.
 - The maximum supply is fixed at 21,000,000 PNYX.
-- The source of truth records 1,389 recovery-verified tests: 1,316 Go, 26 Rust,
-  and 47 maintained-client tests.
+- The source of truth records 1,443 recovery-verified tests: 1,329 Go, 26 Rust,
+  and 88 maintained-client tests. GH-115's real local client-chain delivery
+  case is separately gated and excluded from this arithmetic.
 - Ledger, escrow, issuance, DEX custody, genesis, runtime invariants, ZKP
   statement binding, node persistence, and the safe operator-init boundary
   have CI-backed recovery evidence.
@@ -111,7 +112,9 @@ recovery tests; unsupported surfaces are absent or unmistakably disabled.
 
 ## Phase 4 — Canonical client and legacy retirement
 
-- [ ] Keep `client-web` as the single canonical public client.
+- [x] Keep `client-web` as the single canonical public client, with one exact
+  fail-closed custom transaction registry and local client-to-chain proof
+  ([GH-115](https://github.com/NeaBouli/TrueRepublic/issues/115)).
 - [x] Retire and remove `web-wallet` under GH-112; keep the GH-102-retired
   mobile prototype absent from public release paths.
 - [ ] Complete transaction history with pagination and failure handling.
@@ -131,8 +134,10 @@ software.
 
 - [ ] Raise critical-path coverage for the root package, DEX, and governance
   modules, prioritizing rollback, authorization, arithmetic, and failure paths.
-- [ ] Add end-to-end tests from wallet/client actions through committed chain
-  state and query results.
+- [x] Add end-to-end tests from maintained-client signing actions through
+  committed local-chain delivery for the supported transaction families
+  ([GH-115](https://github.com/NeaBouli/TrueRepublic/issues/115)); expanded
+  state/query assertions remain future depth work.
 - [ ] Add property, fuzz, invariant, and malformed-genesis tests where they
   provide stronger guarantees than example tests.
 - [ ] Test concurrent submissions, duplicate messages, replay attempts, and

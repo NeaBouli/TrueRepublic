@@ -8,6 +8,7 @@ describe('PNYX chain metadata', () => {
     expect(DEFAULT_CHAIN.coinDecimals).toBe(6);
     expect(DEFAULT_CHAIN.gasPrice.endsWith('upnyx')).toBe(true);
     expect(DEFAULT_CHAIN.gasPrice).toBe('25000upnyx');
+    expect(DEFAULT_CHAIN.bech32Prefix).toBe('truerepublic');
   });
 
   it('resolves same-origin proxy paths for container builds', () => {

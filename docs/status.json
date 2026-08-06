@@ -4,10 +4,10 @@
   "release_date": "2026-03-04",
   "tests": {
     "status": "recovery_verified_locally",
-    "total": 1389,
-    "go": 1316,
+    "total": 1443,
+    "go": 1329,
     "rust": 26,
-    "frontend": 47,
+    "frontend": 88,
     "historical_total": 577
   },
   "web_client": {
@@ -16,8 +16,8 @@
     "components": 42,
     "routes": 21,
     "stores": 8,
-    "services": 11,
-    "build_size_gzip": "318.02 kB"
+    "services": 13,
+    "build_size_gzip": "319.32 kB"
   },
   "recovery": {
     "status": "active",
@@ -33,16 +33,16 @@
     "status": "engineering_in_progress",
     "tracker_scope": "github_issue_29",
     "github_issue": 29,
-    "completed": 14,
+    "completed": 16,
     "total": 59,
-    "phase_work_completed": 14,
+    "phase_work_completed": 16,
     "phase_work_total": 51,
     "phase_6_completed": 6,
     "phase_6_total": 7,
     "production_ready": false
   },
   "modules": {
-    "root": 99,
+    "root": 111,
     "capacitypolicy": 48,
     "deploymentevidence": 71,
     "healthcheck": 55,
@@ -53,7 +53,7 @@
     "token": 12,
     "topologypolicy": 56,
     "treasury": 36,
-    "dex": 116,
+    "dex": 117,
     "truedemocracy": 511
   },
   "token": {
@@ -89,7 +89,7 @@
       "note": "Mock proof submission is disabled in maintained and legacy web clients. Real compatible prover and external ceremony/circuit review remain required."
     },
     "cosmwasm": {
-      "status": "recovery_verified_locally",
+      "status": "canonical_registry_and_local_chain_delivery_verified",
       "version": "v0.53.3"
     },
     "ibc": {
@@ -160,7 +160,9 @@
         "domain_membership",
         "admin_dashboard",
         "network_explorer"
-      ]
+      ],
+      "custom_transaction_registry": "exact_fail_closed_type_urls_on_gh115",
+      "local_chain_delivery": "ephemeral_bank_governance_membership_identity_and_dex_on_gh115"
     }
   },
   "limitations": {

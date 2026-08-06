@@ -1,8 +1,14 @@
-import { SigningStargateClient, GasPrice } from '@cosmjs/stargate';
+import { fromBech32 } from '@cosmjs/encoding';
 import type { DirectSecp256k1HdWallet } from '@cosmjs/proto-signing';
 import type { ChainConfig } from '@/types/chain';
-import type { AddLiquidityParams, RemoveLiquidityParams } from '@/types/dex';
+import type {
+  AddLiquidityParams,
+  RemoveLiquidityParams,
+  SwapExactParams,
+} from '@/types/dex';
 import type { TransactionResult } from '@/types/transaction';
+import { connectSigningClient, deliverMessages } from './signingClient';
+import { assertPositiveInt64Decimal } from './txRegistry';
 
 export class DEXTxService {
   private config: ChainConfig;
@@ -21,60 +27,34 @@ export class DEXTxService {
   ): Promise<TransactionResult> {
     const [account] = await wallet.getAccounts();
 
-    const client = await SigningStargateClient.connectWithSigner(
-      this.config.rpc,
-      wallet,
-      { gasPrice: GasPrice.fromString(this.config.gasPrice) }
-    );
+    const client = await connectSigningClient(this.config, wallet);
 
     try {
       const msg = {
         typeUrl: '/dex.MsgAddLiquidity',
         value: {
-          sender: account.address,
-          asset_denom: params.asset_denom,
-          pnyx_amt: parseInt(params.pnyx_amt, 10),
-          asset_amt: parseInt(params.asset_amt, 10),
+          sender: fromBech32(account.address).data,
+          assetDenom: params.asset_denom,
+          pnyxAmt: assertPositiveInt64Decimal(params.pnyx_amt, 'pnyx_amt'),
+          assetAmt: assertPositiveInt64Decimal(params.asset_amt, 'asset_amt'),
         },
       };
 
-      const gasEstimate = await client.simulate(account.address, [msg], '');
-      const gas = Math.ceil(gasEstimate * 1.3);
-
-      const result = await client.signAndBroadcast(
+      return await deliverMessages(
+        client,
         account.address,
         [msg],
-        {
-          amount: [
-            {
-              denom: this.config.coinMinimalDenom,
-              amount: '5000',
-            },
-          ],
-          gas: gas.toString(),
-        },
-        ''
+        this.config.gasPrice
       );
-
-      client.disconnect();
-
-      if (result.code !== 0) {
-        throw new Error(result.rawLog || 'Add liquidity failed');
-      }
-
-      return {
-        hash: result.transactionHash,
-        height: result.height,
-        success: true,
-      };
     } catch (err: unknown) {
-      client.disconnect();
       return {
         hash: '',
         height: 0,
         success: false,
         error: err instanceof Error ? err.message : 'Add liquidity failed',
       };
+    } finally {
+      client.disconnect();
     }
   }
 
@@ -88,53 +68,25 @@ export class DEXTxService {
   ): Promise<TransactionResult> {
     const [account] = await wallet.getAccounts();
 
-    const client = await SigningStargateClient.connectWithSigner(
-      this.config.rpc,
-      wallet,
-      { gasPrice: GasPrice.fromString(this.config.gasPrice) }
-    );
+    const client = await connectSigningClient(this.config, wallet);
 
     try {
       const msg = {
         typeUrl: '/dex.MsgRemoveLiquidity',
         value: {
-          sender: account.address,
-          asset_denom: params.asset_denom,
-          shares: parseInt(params.shares, 10),
+          sender: fromBech32(account.address).data,
+          assetDenom: params.asset_denom,
+          shares: assertPositiveInt64Decimal(params.shares, 'shares'),
         },
       };
 
-      const gasEstimate = await client.simulate(account.address, [msg], '');
-      const gas = Math.ceil(gasEstimate * 1.3);
-
-      const result = await client.signAndBroadcast(
+      return await deliverMessages(
+        client,
         account.address,
         [msg],
-        {
-          amount: [
-            {
-              denom: this.config.coinMinimalDenom,
-              amount: '5000',
-            },
-          ],
-          gas: gas.toString(),
-        },
-        ''
+        this.config.gasPrice
       );
-
-      client.disconnect();
-
-      if (result.code !== 0) {
-        throw new Error(result.rawLog || 'Remove liquidity failed');
-      }
-
-      return {
-        hash: result.transactionHash,
-        height: result.height,
-        success: true,
-      };
     } catch (err: unknown) {
-      client.disconnect();
       return {
         hash: '',
         height: 0,
@@ -142,6 +94,57 @@ export class DEXTxService {
         error:
           err instanceof Error ? err.message : 'Remove liquidity failed',
       };
+    } finally {
+      client.disconnect();
+    }
+  }
+
+  /**
+   * Execute a slippage-protected swap.
+   * Go: MsgSwapExact { sender, input_denom, input_amt, output_denom, min_output }
+   * min_output is the on-chain slippage bound and must be positive.
+   */
+  async swapExact(
+    wallet: DirectSecp256k1HdWallet,
+    params: SwapExactParams
+  ): Promise<TransactionResult> {
+    const [account] = await wallet.getAccounts();
+
+    const client = await connectSigningClient(this.config, wallet);
+
+    try {
+      const msg = {
+        typeUrl: '/dex.MsgSwapExact',
+        value: {
+          sender: fromBech32(account.address).data,
+          inputDenom: params.input_denom,
+          inputAmt: assertPositiveInt64Decimal(
+            params.input_amt,
+            'input_amt'
+          ),
+          outputDenom: params.output_denom,
+          minOutput: assertPositiveInt64Decimal(
+            params.min_output,
+            'min_output'
+          ),
+        },
+      };
+
+      return await deliverMessages(
+        client,
+        account.address,
+        [msg],
+        this.config.gasPrice
+      );
+    } catch (err: unknown) {
+      return {
+        hash: '',
+        height: 0,
+        success: false,
+        error: err instanceof Error ? err.message : 'Swap failed',
+      };
+    } finally {
+      client.disconnect();
     }
   }
 }

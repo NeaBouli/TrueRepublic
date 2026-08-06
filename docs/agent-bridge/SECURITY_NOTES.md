@@ -111,7 +111,7 @@
 
 - GH-112 local replacement check: maintained `client-web` passes lint, six
   audit-policy cases, 41 Vitest cases, production build, and guarded live audit.
-  The Vite 8.1 build reporter records the current main bundle as 318.02 kB
+  The Vite 8.1 build reporter records the current main bundle as 319.32 kB
   gzip; the existing oversized-bundle rollout item remains open and this task
   does not claim performance closure.
 

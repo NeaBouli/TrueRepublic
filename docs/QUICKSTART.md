@@ -103,7 +103,7 @@ cargo wasm
 ## Run Tests
 
 ```bash
-# All Go tests (1,316 passing cases)
+# All Go tests (1,329 passing cases)
 ./scripts/go-packages.sh go test -timeout=600s
 
 # Specific module

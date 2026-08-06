@@ -46,3 +46,33 @@ jobs:
 
       - name: Audit dependencies
         run: npm run audit:high
+
+  client-chain-integration:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-go@v6
+        with:
+          go-version: '1.26.5'
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '22'
+          package-manager-cache: false
+
+      - name: Install maintained-client dependencies
+        working-directory: client-web
+        run: npm ci
+
+      - name: Build local test-only chain binary
+        run: make build
+
+      - name: Prove canonical client-to-chain delivery
+        working-directory: client-web
+        env:
+          TRUEREPUBLIC_CLIENT_CHAIN_INTEGRATION: '1'
+        run: npm run test:chain

@@ -2759,3 +2759,58 @@
 - Live Pages readback confirms 1,389 tests, rollout 14/59, Phase 6 6/7,
   318.02 kB gzip, and `production_ready=false`.
 - GH-115 is next; GH-116 remains open. No production or real-funds action.
+
+## 2026-08-06 12:10 EEST - GH-115 started
+
+- Created `feature/GH-115-custom-tx` from exact clean `origin/main` `05fb5b7`.
+- Confirmed GH-115 is open, no PR is open, and the worktree is clean.
+- Scope is the maintained-client custom protobuf registry and secret-free local
+  client-to-chain encode/simulate/delivery evidence only.
+- Risk is high because wallet signing and custom chain messages are involved.
+  No real keys, accounts, signing, broadcast, funds, deployment,
+  infrastructure, mainnet, or production action is in scope.
+
+## 2026-08-06 13:18 EEST - GH-115 local implementation verified
+
+- Reconciled all 11 maintained custom message identities and encodings against
+  Go, centralized every signing path, corrected the canonical Bech32 prefix,
+  and made DEX integer validation fail closed inside the registry boundary.
+- The real ephemeral local-node gate delivered bank, governance, membership,
+  identity, and slippage-bounded DEX transactions; it also proved expected
+  authorization failure and rejection of the legacy DEX swap. Debugging this
+  gate exposed and fixed missing DEX descriptors, dynamic-message signer
+  extraction, first-block readiness, CORS test-environment, and gas-margin gaps.
+- PASS: 1,329 package-scoped Go cases; full Go build/vet/race/coverage; 82
+  Vitest plus six audit-policy cases; lint; Vite build at 319.32 kB gzip;
+  guarded Node audit; separately gated local client-chain test; Rust format,
+  strict clippy, build, 26 tests, and live audit with five allowed warnings;
+  docs, retirement, JSON/YAML, and diff consistency.
+- Public branch state records 1,443 standard cases and 16/59 rollout progress;
+  the real client-chain case remains separately gated and excluded from the
+  test arithmetic. Phase 6 remains 6/7 and `production_ready=false`.
+- Kimi supplied the bounded registry/service implementation and is performing
+  the independent final read-only review. Sol reviewed every write, added the
+  chain parity/delivery evidence, and reran the full gates. Two bounded Claude
+  Code census attempts were unavailable due their configured budget and made
+  no diff.
+- Protected PR checks, review closure, merge, issue/GH-29 synchronization,
+  Pages readback, and final-main verification remain pending. No real key,
+  account, fund, public broadcast, deployment, infrastructure, or production
+  action occurred.
+
+## 2026-08-06 13:31 EEST - GH-115 independent review remediated
+
+- Kimi's deep read-only working-tree review reproduced the exact registry/wire
+  tests, DEX signer test, full maintained-client suite, lint/typecheck, focused
+  Go DEX checks, and the 70-second real local client-chain delivery proof. It
+  found no P0/P1/P2 and recommended approval after two P3 corrections.
+- Synchronized the standard maintained-client arithmetic to 82 always-run
+  Vitest plus six audit-policy cases (88), excluding the separately gated real
+  chain case: 1,443 total. Rebuilt at the recorded 319.32 kB gzip.
+- Hardened setup-error cleanup in the integration harness. Removed two stale
+  GH-115 temporary homes from early failed debugging attempts, reran the full
+  successful delivery gate, and separately forced an init failure; both paths
+  leave zero GH-115 homes and zero node processes.
+- Kimi was stopped after its substantive review and remediation verdict because
+  it continued re-reading files that Sol was actively updating; no Kimi write
+  occurred during the read-only review. Protected publication remains next.

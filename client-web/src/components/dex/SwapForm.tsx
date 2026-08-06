@@ -1,9 +1,9 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { SigningStargateClient, GasPrice } from '@cosmjs/stargate';
 import { useWalletStore } from '@/stores/walletStore';
 import { useDEXStore } from '@/stores/dexStore';
 import { WalletService } from '@/services/wallet';
+import { DEXTxService } from '@/services/dexTx';
 import { Card } from '@/components/common/Card';
 import { Button } from '@/components/common/Button';
 import { AssetSelector } from './AssetSelector';
@@ -101,54 +101,19 @@ export function SwapForm() {
         password
       );
 
-      const [account] = await signingWallet.getAccounts();
+      const service = new DEXTxService(DEFAULT_CHAIN);
+      const result = await service.swapExact(signingWallet, {
+        input_denom: inputDenom,
+        input_amt: parsePnyx(inputAmount),
+        output_denom: outputDenom,
+        min_output: calculateMinOutput(),
+      });
 
-      const client = await SigningStargateClient.connectWithSigner(
-        DEFAULT_CHAIN.rpc,
-        signingWallet,
-        { gasPrice: GasPrice.fromString(DEFAULT_CHAIN.gasPrice) }
-      );
-
-      const inputAmtMicro = parsePnyx(inputAmount);
-      const minOutput = calculateMinOutput();
-
-      const msg = {
-        typeUrl: '/dex.MsgSwapExact',
-        value: {
-          sender: account.address,
-          inputDenom,
-          inputAmt: parseInt(inputAmtMicro, 10),
-          outputDenom,
-          minOutput: parseInt(minOutput, 10),
-        },
-      };
-
-      const gasEstimate = await client
-        .simulate(account.address, [msg], '')
-        .catch(() => 200000);
-      const gas = Math.ceil(
-        (typeof gasEstimate === 'number' ? gasEstimate : 200000) * 1.3
-      );
-
-      const result = await client.signAndBroadcast(
-        account.address,
-        [msg],
-        {
-          amount: [
-            { denom: DEFAULT_CHAIN.coinMinimalDenom, amount: '5000' },
-          ],
-          gas: gas.toString(),
-        },
-        ''
-      );
-
-      client.disconnect();
-
-      if (result.code !== 0) {
-        throw new Error(result.rawLog || 'Swap failed');
+      if (!result.success) {
+        throw new Error(result.error || 'Swap failed');
       }
 
-      setTxHash(result.transactionHash);
+      setTxHash(result.hash);
       await refreshBalance();
     } catch (err: unknown) {
       const message =

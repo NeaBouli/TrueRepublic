@@ -1,8 +1,9 @@
-import { SigningStargateClient, GasPrice } from '@cosmjs/stargate';
+import { fromBech32 } from '@cosmjs/encoding';
 import type { DirectSecp256k1HdWallet } from '@cosmjs/proto-signing';
 import type { ChainConfig } from '@/types/chain';
 import type { PayToPutCalculation } from '@/types/governance';
 import type { TransactionResult } from '@/types/transaction';
+import { connectSigningClient, deliverMessages } from './signingClient';
 
 export class GovernanceTxService {
   private config: ChainConfig;
@@ -58,63 +59,37 @@ export class GovernanceTxService {
   ): Promise<TransactionResult> {
     const [account] = await wallet.getAccounts();
 
-    const client = await SigningStargateClient.connectWithSigner(
-      this.config.rpc,
-      wallet,
-      { gasPrice: GasPrice.fromString(this.config.gasPrice) }
-    );
+    const client = await connectSigningClient(this.config, wallet);
 
     try {
       const msg = {
-        typeUrl: '/truerepublic.truedemocracy.MsgSubmitProposal',
+        typeUrl: '/truedemocracy.MsgSubmitProposal',
         value: {
-          sender: account.address,
-          domain_name: domainName,
-          issue_name: issueName,
-          suggestion_name: suggestionName,
+          sender: fromBech32(account.address).data,
+          domainName,
+          issueName,
+          suggestionName,
           creator: account.address,
           fee,
-          external_link: externalLink || '',
+          externalLink: externalLink || '',
         },
       };
 
-      const gasEstimate = await client.simulate(account.address, [msg], '');
-      const gas = Math.ceil(gasEstimate * 1.3);
-
-      const result = await client.signAndBroadcast(
+      return await deliverMessages(
+        client,
         account.address,
         [msg],
-        {
-          amount: [
-            {
-              denom: this.config.coinMinimalDenom,
-              amount: '5000',
-            },
-          ],
-          gas: gas.toString(),
-        },
-        ''
+        this.config.gasPrice
       );
-
-      client.disconnect();
-
-      if (result.code !== 0) {
-        throw new Error(result.rawLog || 'Suggestion creation failed');
-      }
-
-      return {
-        hash: result.transactionHash,
-        height: result.height,
-        success: true,
-      };
     } catch (err: unknown) {
-      client.disconnect();
       return {
         hash: '',
         height: 0,
         success: false,
         error: err instanceof Error ? err.message : 'Suggestion creation failed',
       };
+    } finally {
+      client.disconnect();
     }
   }
 
@@ -131,61 +106,35 @@ export class GovernanceTxService {
   ): Promise<TransactionResult> {
     const [account] = await wallet.getAccounts();
 
-    const client = await SigningStargateClient.connectWithSigner(
-      this.config.rpc,
-      wallet,
-      { gasPrice: GasPrice.fromString(this.config.gasPrice) }
-    );
+    const client = await connectSigningClient(this.config, wallet);
 
     try {
       const msg = {
-        typeUrl: '/truerepublic.truedemocracy.MsgPlaceStoneOnSuggestion',
+        typeUrl: '/truedemocracy.MsgPlaceStoneOnSuggestion',
         value: {
-          sender: account.address,
-          domain_name: domainName,
-          issue_name: issueName,
-          suggestion_name: suggestionName,
-          member_addr: account.address,
+          sender: fromBech32(account.address).data,
+          domainName,
+          issueName,
+          suggestionName,
+          memberAddr: account.address,
         },
       };
 
-      const gasEstimate = await client.simulate(account.address, [msg], '');
-      const gas = Math.ceil(gasEstimate * 1.3);
-
-      const result = await client.signAndBroadcast(
+      return await deliverMessages(
+        client,
         account.address,
         [msg],
-        {
-          amount: [
-            {
-              denom: this.config.coinMinimalDenom,
-              amount: '5000',
-            },
-          ],
-          gas: gas.toString(),
-        },
-        ''
+        this.config.gasPrice
       );
-
-      client.disconnect();
-
-      if (result.code !== 0) {
-        throw new Error(result.rawLog || 'Stone placement failed');
-      }
-
-      return {
-        hash: result.transactionHash,
-        height: result.height,
-        success: true,
-      };
     } catch (err: unknown) {
-      client.disconnect();
       return {
         hash: '',
         height: 0,
         success: false,
         error: err instanceof Error ? err.message : 'Stone placement failed',
       };
+    } finally {
+      client.disconnect();
     }
   }
 
@@ -200,60 +149,34 @@ export class GovernanceTxService {
   ): Promise<TransactionResult> {
     const [account] = await wallet.getAccounts();
 
-    const client = await SigningStargateClient.connectWithSigner(
-      this.config.rpc,
-      wallet,
-      { gasPrice: GasPrice.fromString(this.config.gasPrice) }
-    );
+    const client = await connectSigningClient(this.config, wallet);
 
     try {
       const msg = {
-        typeUrl: '/truerepublic.truedemocracy.MsgPlaceStoneOnIssue',
+        typeUrl: '/truedemocracy.MsgPlaceStoneOnIssue',
         value: {
-          sender: account.address,
-          domain_name: domainName,
-          issue_name: issueName,
-          member_addr: account.address,
+          sender: fromBech32(account.address).data,
+          domainName,
+          issueName,
+          memberAddr: account.address,
         },
       };
 
-      const gasEstimate = await client.simulate(account.address, [msg], '');
-      const gas = Math.ceil(gasEstimate * 1.3);
-
-      const result = await client.signAndBroadcast(
+      return await deliverMessages(
+        client,
         account.address,
         [msg],
-        {
-          amount: [
-            {
-              denom: this.config.coinMinimalDenom,
-              amount: '5000',
-            },
-          ],
-          gas: gas.toString(),
-        },
-        ''
+        this.config.gasPrice
       );
-
-      client.disconnect();
-
-      if (result.code !== 0) {
-        throw new Error(result.rawLog || 'Stone placement failed');
-      }
-
-      return {
-        hash: result.transactionHash,
-        height: result.height,
-        success: true,
-      };
     } catch (err: unknown) {
-      client.disconnect();
       return {
         hash: '',
         height: 0,
         success: false,
         error: err instanceof Error ? err.message : 'Stone placement failed',
       };
+    } finally {
+      client.disconnect();
     }
   }
 }

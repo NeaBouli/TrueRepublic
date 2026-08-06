@@ -99,7 +99,7 @@ export function MemberManagement() {
             label="Member Address"
             value={newMemberAddress}
             onChange={(e) => setNewMemberAddress(e.target.value)}
-            placeholder="true1..."
+            placeholder={`${DEFAULT_CHAIN.bech32Prefix}1...`}
           />
 
           <Button

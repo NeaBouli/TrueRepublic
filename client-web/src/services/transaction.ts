@@ -1,7 +1,8 @@
-import { SigningStargateClient, GasPrice } from '@cosmjs/stargate';
+import { SigningStargateClient } from '@cosmjs/stargate';
 import type { DirectSecp256k1HdWallet } from '@cosmjs/proto-signing';
 import type { ChainConfig } from '@/types/chain';
 import type { SendParams, TransactionResult, Transaction } from '@/types/transaction';
+import { connectSigningClient, deliverMessages } from './signingClient';
 
 export class TransactionService {
   private config: ChainConfig;
@@ -11,7 +12,8 @@ export class TransactionService {
   }
 
   /**
-   * Send tokens
+   * Send tokens via the standard bank message retained through the canonical
+   * registry's default types.
    */
   async send(
     wallet: DirectSecp256k1HdWallet,
@@ -19,13 +21,7 @@ export class TransactionService {
   ): Promise<TransactionResult> {
     const [account] = await wallet.getAccounts();
 
-    const client = await SigningStargateClient.connectWithSigner(
-      this.config.rpc,
-      wallet,
-      {
-        gasPrice: GasPrice.fromString(this.config.gasPrice),
-      }
-    );
+    const client = await connectSigningClient(this.config, wallet);
 
     try {
       const msg = {
@@ -42,41 +38,14 @@ export class TransactionService {
         },
       };
 
-      const gasEstimate = await client.simulate(
+      return await deliverMessages(
+        client,
         account.address,
         [msg],
-        params.memo
-      );
-      const gas = Math.ceil(gasEstimate * 1.3);
-
-      const result = await client.signAndBroadcast(
-        account.address,
-        [msg],
-        {
-          amount: [
-            {
-              denom: this.config.coinMinimalDenom,
-              amount: '5000',
-            },
-          ],
-          gas: gas.toString(),
-        },
+        this.config.gasPrice,
         params.memo || ''
       );
-
-      client.disconnect();
-
-      if (result.code !== 0) {
-        throw new Error(result.rawLog || 'Transaction failed');
-      }
-
-      return {
-        hash: result.transactionHash,
-        height: result.height,
-        success: true,
-      };
     } catch (error: unknown) {
-      client.disconnect();
       const message =
         error instanceof Error ? error.message : 'Transaction failed';
       return {
@@ -85,18 +54,19 @@ export class TransactionService {
         success: false,
         error: message,
       };
+    } finally {
+      client.disconnect();
     }
   }
 
   /**
-   * Get transaction by hash
+   * Get transaction by hash (read-only connection).
    */
   async getTransaction(hash: string): Promise<Transaction | null> {
     const client = await SigningStargateClient.connect(this.config.rpc);
 
     try {
       const tx = await client.getTx(hash);
-      client.disconnect();
 
       if (!tx) return null;
 
@@ -110,8 +80,9 @@ export class TransactionService {
         status: tx.code === 0 ? 'success' : 'failed',
       };
     } catch {
-      client.disconnect();
       return null;
+    } finally {
+      client.disconnect();
     }
   }
 }

@@ -1,5 +1,6 @@
 import { DirectSecp256k1HdWallet } from '@cosmjs/proto-signing';
 import { stringToPath } from '@cosmjs/crypto';
+import { DEFAULT_CHAIN } from '@/config/chains';
 import type { Wallet, CreateWalletParams, ImportWalletParams } from '@/types/wallet';
 
 const DERIVATION_PATH = "m/44'/118'/0'/0/0"; // Cosmos standard
@@ -11,7 +12,7 @@ export class WalletService {
    */
   static async createWallet(params: CreateWalletParams): Promise<Wallet> {
     const wallet = await DirectSecp256k1HdWallet.generate(24, {
-      prefix: 'true',
+      prefix: DEFAULT_CHAIN.bech32Prefix,
       hdPaths: [stringToPath(DERIVATION_PATH)],
     });
 
@@ -42,7 +43,7 @@ export class WalletService {
     const wallet = await DirectSecp256k1HdWallet.fromMnemonic(
       params.mnemonic,
       {
-        prefix: 'true',
+        prefix: DEFAULT_CHAIN.bech32Prefix,
         hdPaths: [stringToPath(DERIVATION_PATH)],
       }
     );
@@ -75,7 +76,7 @@ export class WalletService {
     }
 
     return DirectSecp256k1HdWallet.fromMnemonic(wallet.mnemonic, {
-      prefix: 'true',
+      prefix: DEFAULT_CHAIN.bech32Prefix,
       hdPaths: [stringToPath(DERIVATION_PATH)],
     });
   }

@@ -1,16 +1,19 @@
 # Project State
 
-Updated: 2026-08-06 00:31 UTC
+Updated: 2026-08-06 10:18 UTC
 
 ## Repository
 
-- GH-102 is closed through merged PR #113 (`d621ff9`). GH-112 is locally
-  implemented on `fix/GH-112-legacy-web`: the duplicate web prototype is
-  removed, `client-web` replaces it in Compose/nginx, and blocking retirement,
-  docs, and security gates are under final verification before publication.
-  GH-115 separately tracks the maintained-client custom transaction registry
-  and client-to-chain delivery gap found during independent review; GH-116
-  tracks the retired client's now-consumerless legacy `custom/...` query shim.
+- GH-102 is closed through merged PR #113 (`d621ff9`), and GH-112 is closed
+  through merged PR #117 (`2d776b5`): both legacy clients are removed and
+  maintained `client-web` is the sole web client. GH-115 is locally implemented
+  on `feature/GH-115-custom-tx`: one exact fail-closed registry, centralized
+  simulate/sign/deliver path, canonical `truerepublic` addresses, DEX message
+  descriptors/signers, cross-language wire vectors, and an ephemeral local
+  client-chain delivery gate pass. Independent review found no P0/P1/P2 and its
+  two P3 observations were remediated; protected publication remains pending.
+  GH-116 tracks the retired client's now-consumerless legacy
+  `custom/...` query shim.
 - GH-56 is closed through merged PR #62 (`80ab674`). Authenticated atomic
   consensus-key rotation, permanent revocation, separate bootstrap operator
   authority, deterministic CometBFT H+2 activation, and real five-process

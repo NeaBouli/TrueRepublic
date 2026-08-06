@@ -105,6 +105,7 @@ func makeInterfaceRegistry() codectypes.InterfaceRegistry {
 		panic(err)
 	}
 	truedemocracy.RegisterCustomGetSigners(signingOptions)
+	dex.RegisterCustomGetSigners(signingOptions)
 
 	interfaceRegistry, err := codectypes.NewInterfaceRegistryWithOptions(codectypes.InterfaceRegistryOptions{
 		ProtoFiles:     gogoproto.HybridResolver,
