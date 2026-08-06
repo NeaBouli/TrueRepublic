@@ -162,13 +162,13 @@ cargo test -- --nocapture
 ### Frontend Tests
 
 ```bash
-cd web-wallet
+cd client-web
 
-# Run tests
-npm test
-
-# Run with coverage
-npm test -- --coverage
+# Install and run the maintained-client checks
+npm ci
+npm run lint
+npm test -- --run
+npm run build
 ```
 
 ---

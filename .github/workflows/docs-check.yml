@@ -9,7 +9,9 @@ on:
       - 'docs/**'
       - 'scripts/check-consistency.sh'
       - 'scripts/check-mobile-retirement.sh'
+      - 'scripts/check-web-wallet-retirement.sh'
       - 'mobile-wallet/**'
+      - 'web-wallet/**'
       - '.github/workflows/docs-check.yml'
       - '.github/workflows/react-native-ci.yml'
       - '.github/workflows/security-scan.yml'
@@ -29,3 +31,5 @@ jobs:
         run: ./scripts/check-consistency.sh
       - name: Check Mobile Retirement
         run: ./scripts/check-mobile-retirement.sh
+      - name: Check Legacy Web Retirement
+        run: ./scripts/check-web-wallet-retirement.sh

@@ -3933,3 +3933,105 @@ exclusion, CI wiring, and documentation boundaries.
   production action occurred. GH-102 is Done.
 
 ---
+
+## 2026-08-06 03:14 EEST GH-112 legacy web wallet → In Progress
+
+- **Branch:** `fix/GH-112-legacy-web` from exact clean `origin/main` `1a92f0a`.
+- **Issue:** [GH-112](https://github.com/NeaBouli/TrueRepublic/issues/112).
+- **Scope:** reproduce and classify the deprecated `web-wallet` dependency,
+  crypto/key/signing, chain-query, build, test, and release surfaces; then
+  migrate only if it can meet the canonical-client security boundary, otherwise
+  explicitly retire and remove it with a blocking absence contract.
+- **Risk:** High because the tree contains wallet/cryptography code. Repository
+  evidence only: no real keys, accounts, signing, broadcast, funds, deployment,
+  infrastructure, or production action.
+- **Delegation:** Kimi K3 receives a bounded secret-free deep analysis. Claude
+  Code may receive one small helper census if available. Sol owns the decision,
+  every diff, complete verification, GitHub writes, merge, and closure.
+- **Baseline:** no open PR; final-main Pages `31054970470` and Security Scan
+  `31054971793` pass. `client-web` remains the sole maintained client.
+- **Next:** reproduce exact clean install, tests, build, live audit, dependency
+  paths, wallet/key behavior, chain compatibility, CI, and public references.
+
+---
+
+## 2026-08-06 03:49 EEST GH-112 legacy web retirement → Locally Complete
+
+- **Decision/evidence:** explicit retirement selected. The final clean legacy
+  baseline installed 1,426 packages, reproduced 70 advisories (18 low, 20
+  moderate, 29 high, 3 critical), passed 18 API-isolated tests, and built with
+  extensive source-map warnings. Review proved broken `queryAbci` calls,
+  unregistered/nonexistent custom messages, a chain-rejected unsafe legacy swap,
+  and a functional bank-send path.
+- **Implementation:** removed the complete `web-wallet` tree and non-blocking
+  audit; added a blocking retirement contract; containerized maintained
+  `client-web` with non-root nginx; moved Compose/root-nginx/CI to the canonical
+  client; and added same-origin loopback-only RPC/REST proxy configuration plus
+  a repository policy regression.
+- **Public state:** synchronized current install, developer, user, operator,
+  security, wiki, roadmap, agent, status, and Pages sources. The verified total
+  is 1,389 (1,316 Go + 26 Rust + 47 maintained-client), rollout is 14/59 and
+  Phase 6 correctly remains 6/7, `production_ready=false`, and current bundle
+  size is 318.01 kB gzip.
+- **Verification PASS:** maintained-client lint, 6 audit-policy tests, 41
+  Vitest cases, production build, and guarded live audit; web/mobile retirement
+  contracts; docs consistency; JSON/YAML/shell/diff checks; focused container
+  policy test; complete `make build && make verify`; Rust format, all-target
+  clippy with warnings denied, workspace build, all 26 tests, and live audit
+  with five visible warning-only advisories.
+- **Delegation:** Kimi supplied the independent baseline/security review and the
+  bounded container/Compose/nginx/CI implementation; Sol reviewed and extended
+  every diff and reran all gates. Claude Code's small read-only census identified
+  the exact runtime/CI/docs retirement surfaces and made no diff.
+- **Follow-ups:** [GH-115](https://github.com/NeaBouli/TrueRepublic/issues/115)
+  tracks maintained-client custom transaction registration/delivery; [GH-116](https://github.com/NeaBouli/TrueRepublic/issues/116)
+  tracks the now-consumerless legacy `custom/...` query shim.
+- **Pending:** independent final diff review, protected PR Docker/runtime and
+  exact-head checks, merge, issue/status closure, and final-main verification.
+  Local Docker/nginx binaries were unavailable, so no local image/runtime claim
+  is made.
+- **Safety:** no real key, mnemonic, account, signing, broadcast, funds,
+  deployment, infrastructure, or production action occurred.
+
+---
+
+## 2026-08-06 03:55 EEST GH-112 legacy web retirement → Review Complete / PR Ready
+
+- **Independent review:** Kimi's fresh read-only diff review found no P0/P1 and
+  no blocking defect. The stale Keplr-only user path it identified was removed
+  from current user, wiki, architecture, and integration guidance; reference
+  examples are now explicitly local/test-only.
+- **Hardening:** the direct loopback client proxy now applies the same bounded
+  RPC/REST request rates and metrics denial as the root proxy. The repository
+  policy test asserts these controls.
+- **Reverification PASS:** focused container-network policy test, both client
+  retirement contracts, documentation consistency, workflow YAML parse, shell
+  syntax, and diff integrity. The earlier complete Go, Rust, and maintained
+  client gates remain valid; later changes were limited to documentation, nginx
+  policy, and its focused Go regression.
+- **Remaining external gate:** Docker is unavailable locally, so the client
+  image and shared-namespace runtime must be proven by the protected GitHub
+  Compose job. No production or external runtime action occurred.
+- **Next:** commit, publish the ready PR, wait for exact-head protected checks,
+  merge, and verify final-main status.
+
+---
+
+## 2026-08-06 04:14 EEST GH-112 PR #117 → Review Remediation
+
+- **Protected first head:** all 13 checks passed on `e8f92fb`, including the
+  previously unavailable Docker/Compose runtime, client image, direct RPC/REST
+  probes, complete Go/recovery/capacity jobs, security scans, DeepScan, and
+  CodeRabbit.
+- **Review handling:** verified and addressed all nine CodeRabbit inline
+  findings: absolute endpoint normalization, non-watch contributor command,
+  recovery-only signer language, fail-closed ZKP status, completed retirement
+  state, executable local routes/setup, and Markdown fence hygiene.
+- **Local revalidation PASS:** 41 Vitest plus six audit-policy cases, lint,
+  Vite build, guarded audit, focused Go policy, both retirement contracts,
+  documentation consistency, YAML/shell, and diff integrity. Vite now reports
+  the current main bundle as 318.02 kB gzip; no test-count change.
+- **Next:** publish the review commit and require the complete exact-head check
+  set to return green before merge.
+
+---

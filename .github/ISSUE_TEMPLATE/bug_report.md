@@ -12,7 +12,7 @@ A clear and concise description of the bug.
 ## Component
 - [ ] Blockchain (Go modules)
 - [ ] Smart Contracts (Rust/CosmWasm)
-- [ ] Web Wallet (React)
+- [ ] Maintained Web Client (`client-web`)
 - [ ] Planned native mobile client / retirement documentation
 - [ ] Infrastructure / CI
 

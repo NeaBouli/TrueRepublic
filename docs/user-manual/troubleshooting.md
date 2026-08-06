@@ -4,34 +4,32 @@ Common issues and solutions for TrueRepublic users.
 
 ## Wallet Connection Issues
 
-### "Keplr Wallet not installed"
+### Local wallet cannot be opened
 
-**Problem:** The web wallet can't detect Keplr.
-
-**Solutions:**
-1. Install Keplr from [keplr.app](https://www.keplr.app/)
-2. Make sure Keplr is enabled for this site (check extension settings)
-3. Refresh the page after installing
-4. Try a different browser (Chrome, Brave, Firefox)
-5. Disable other wallet extensions that might conflict
-
-### Keplr popup doesn't appear
+**Problem:** The maintained web client cannot open or unlock the local wallet.
 
 **Solutions:**
-1. Check if Keplr icon shows a notification badge -- click it
-2. Look for a popup that may have opened behind the current window
-3. Unlock Keplr if it's locked (enter your password)
-4. Disable popup blockers for the site
-5. Try disconnecting and reconnecting
+1. Confirm that the wallet password is correct.
+2. Confirm that this browser profile still contains the encrypted local wallet.
+3. Use the original mnemonic to import the wallet again if the local entry was removed.
+4. Do not enter a real mnemonic while recovery status remains active; use local or explicitly approved test credentials only.
 
-### "Failed to suggest chain"
-
-**Problem:** Keplr can't add the TrueRepublic chain.
+### Wallet action does not continue
 
 **Solutions:**
-1. Update Keplr to the latest version
-2. Clear Keplr cache: Settings > Advanced > Clear Cache
-3. Manually add the chain in Keplr (see [Web Wallet Guide](web-wallet-guide.md))
+1. Re-open the wallet with its password.
+2. Confirm that the configured local/test node is reachable.
+3. Refresh the page and retry only in the approved test environment.
+4. Record the browser console error when reporting a reproducible defect.
+
+### Chain connection fails
+
+**Problem:** The maintained client cannot reach the configured TrueRepublic chain.
+
+**Solutions:**
+1. Confirm that the local/test node is running and synchronized.
+2. Re-check the configured RPC and REST endpoints in the
+   [Maintained Web Client Guide](web-wallet-guide.md)
 
 ## Balance Issues
 
@@ -61,8 +59,8 @@ Common issues and solutions for TrueRepublic users.
 |-------|-------|-----|
 | "insufficient funds" | Not enough PNYX for amount + gas | Reduce amount or get more PNYX |
 | "account sequence mismatch" | Pending transaction | Wait for pending tx to confirm, then retry |
-| "out of gas" | Transaction needs more gas | Keplr auto-calculates, but try increasing gas limit |
-| "signature verification failed" | Key mismatch | Ensure correct account is selected in Keplr |
+| "out of gas" | Transaction needs more gas | Review the test transaction's gas limit |
+| "signature verification failed" | Key mismatch | Re-open the correct local test wallet |
 | "unauthorized" | Wrong sender | Check you're using the correct account |
 
 ### Transaction stuck / pending
@@ -102,7 +100,7 @@ Common issues and solutions for TrueRepublic users.
 ### Vote not recording
 
 **Solutions:**
-1. Ensure transaction was approved in Keplr
+1. Ensure the local test wallet was opened and the transaction was submitted
 2. Check that you received a transaction hash
 3. Refresh to see updated counts
 4. You may be trying to vote on your own proposal (check domain rules)

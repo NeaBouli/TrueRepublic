@@ -160,7 +160,7 @@ Stones affect ranking in lists.
 
 **Solution:** Dual-key system
 ```
-Master Key (Keplr wallet)
+Master Key (configured test-wallet signer)
     ↓
 Domain A Key (unlinkable)
 Domain B Key (unlinkable)
@@ -181,7 +181,7 @@ Domain C Key (unlinkable)
 - Earn VoteToEarn rewards
 
 **Tools:**
-- Web wallet (browser)
+- Maintained `client-web` browser client
 - Native mobile client (planned replacement; former prototype retired under GH-102)
 
 ### Node Operators
@@ -237,7 +237,7 @@ Domain C Key (unlinkable)
 **Frontend:**
 - Web: React + Tailwind CSS
 - Mobile: no supported native client; replacement architecture pending review
-- Wallet: Keplr integration
+- Wallet: local encrypted test-wallet flow; production signer review remains open
 
 **Infrastructure:**
 - Docker (deployment)

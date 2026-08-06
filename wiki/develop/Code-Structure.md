@@ -11,7 +11,7 @@ TrueRepublic/
 ├── go.mod / go.sum                 # Go module: SDK v0.50.14, CometBFT v0.38.22
 ├── Makefile                        # Build: build, install, test, lint, docker-*
 ├── Dockerfile                      # Multi-stage: Go 1.26.5 Bookworm → non-root Debian Bookworm slim
-├── docker-compose.yml              # Full stack: node, web-wallet, nginx, prometheus, grafana
+├── docker-compose.yml              # Full stack: node, client-web, nginx, prometheus, grafana
 ├── .env.example                    # Environment template
 ├── README.md                       # Project overview + feature matrix
 ├── INSTALLATION.md                 # Quick install guide
@@ -62,34 +62,13 @@ TrueRepublic/
 │       ├── governance.rs           #   On-chain proposals, systemic consensing
 │       └── treasury.rs             #   Deposit/withdraw treasury operations
 │
-├── web-wallet/                     # React frontend
-│   ├── public/
-│   │   ├── index.html              #   SPA entry point
-│   │   └── logo.svg                #   TrueRepublic logo
-│   ├── src/
-│   │   ├── index.js                #   Entry point, React Router setup
-│   │   ├── index.css               #   Tailwind directives + globals
-│   │   ├── App.js                  #   Main governance layout (ThreeColumnLayout)
-│   │   ├── components/
-│   │   │   ├── ThreeColumnLayout.js  # Responsive 3-column layout
-│   │   │   ├── Header.js             # Navigation + wallet connection
-│   │   │   ├── DomainList.js          # Left sidebar: domain list
-│   │   │   ├── ProposalFeed.js        # Center: issues + suggestions + voting
-│   │   │   └── DomainInfo.js          # Right sidebar: stats + proposal form
-│   │   ├── pages/
-│   │   │   ├── Wallet.js             # Send/receive PNYX
-│   │   │   ├── Dex.js                # Token swaps + pool view
-│   │   │   └── Governance.js         # Redirect to / (governance is home)
-│   │   ├── hooks/
-│   │   │   └── useWallet.js           # Keplr connection, balance, account changes
-│   │   └── services/
-│   │       └── api.js                 # Chain config, API functions, message builders
-│   ├── config-overrides.js         #   Webpack Node.js polyfills for CosmJS
-│   ├── tailwind.config.js          #   Custom republic + dark color palettes
-│   ├── postcss.config.js           #   Tailwind + Autoprefixer
-│   ├── package.json                #   Dependencies and scripts
-│   ├── Dockerfile                  #   Multi-stage React build → nginx
-│   └── nginx.conf                  #   SPA fallback routing
+├── client-web/                     # Maintained React/TypeScript/Vite client
+│   ├── src/components/             # Wallet, governance, DEX, ZKP and network UI
+│   ├── src/services/               # Typed chain query and transaction boundaries
+│   ├── src/config/chains.ts        # Canonical chain metadata
+│   ├── package.json                # Lockfile-driven lint/test/build scripts
+│   ├── Dockerfile                 # Production build served by nginx
+│   └── nginx.conf                  # SPA fallback and security headers
 │
 ├── scripts/                        # Operational scripts
 │   ├── init-node.sh                #   Initialize node (~/.truerepublic)
@@ -123,7 +102,7 @@ TrueRepublic/
     └── workflows/
         ├── go-ci.yml               #   Go build + test
         ├── rust-ci.yml             #   Rust/CosmWasm build
-        └── react-ci.yml            #   Web wallet build
+        └── react-ci.yml            #   Maintained web-client checks
 ```
 
 ---
@@ -154,12 +133,11 @@ TrueRepublic/
 | CLI commands (governance) | `x/truedemocracy/cli.go` |
 | CLI commands (DEX) | `x/dex/cli.go` |
 | ABCI query routes | `x/truedemocracy/querier.go`, `x/dex/querier.go` |
-| Web wallet API layer | `web-wallet/src/services/api.js` |
-| Keplr wallet hook | `web-wallet/src/hooks/useWallet.js` |
-| Governance UI | `web-wallet/src/components/ProposalFeed.js` |
-| Domain list UI | `web-wallet/src/components/DomainList.js` |
-| 3-column layout | `web-wallet/src/components/ThreeColumnLayout.js` |
-| Chain configuration | `web-wallet/src/services/api.js` → `chainConfig` |
+| Web-client services | `client-web/src/services/` |
+| Wallet state | `client-web/src/stores/walletStore.ts` |
+| Governance UI | `client-web/src/components/governance/` |
+| DEX UI | `client-web/src/components/dex/` |
+| Chain configuration | `client-web/src/config/chains.ts` |
 | Docker configuration | `docker-compose.yml` |
 | CI/CD pipelines | `.github/workflows/*.yml` |
 | Monitoring config | `monitoring/prometheus.yml` |
@@ -260,9 +238,9 @@ import { fetchDomains, submitProposal } from "../services/api";
 
 **Step 3: Frontend**
 ```
-→ web-wallet/src/services/api.js  Add editProposal() function
-→ web-wallet/src/components/      Add UI for editing
-→ Run: cd web-wallet && npm run build
+→ client-web/src/services/        Add the typed transaction boundary
+→ client-web/src/components/      Add UI with focused tests
+→ Run: cd client-web && npm ci && npm run lint && npm test && npm run build
 ```
 
 **Step 4: Documentation**
@@ -277,8 +255,8 @@ import { fetchDomains, submitProposal } from "../services/api";
 1. git checkout -b feature/edit-proposal
 2. Implement backend (msgs → handler → keeper → CLI)
 3. Write tests (go test ./x/truedemocracy/... -v)
-4. Implement frontend (api.js → component)
-5. Build (make build && cd web-wallet && npm run build)
+4. Implement frontend (typed service → component)
+5. Build (make build && cd client-web && npm ci && npm run build)
 6. Full test (make test)
 7. git add . && git commit -m "Add edit proposal feature"
 8. git push origin feature/edit-proposal
@@ -302,13 +280,14 @@ import { fetchDomains, submitProposal } from "../services/api";
 | `docker-up` | `docker compose up -d` | Start full stack |
 | `docker-down` | `docker compose down` | Stop full stack |
 
-### Web Wallet Scripts
+### Maintained Web Client Scripts
 
 | Script | Command | Description |
 |--------|---------|-------------|
-| `start` | `react-app-rewired start` | Dev server (port 3000) |
-| `build` | `react-app-rewired build` | Production build |
-| `test` | `react-app-rewired test` | Run Jest tests |
+| `dev` | `vite` | Dev server (port 3001) |
+| `build` | `tsc -b && vite build` | Production build |
+| `test` | audit policy tests + `vitest` | Run maintained-client tests |
+| `lint` | `eslint .` | Static checks |
 
 ---
 

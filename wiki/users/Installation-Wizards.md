@@ -2,6 +2,9 @@
 
 Step-by-step guides to get started with TrueRepublic.
 
+> Recovery is active. There is no approved production/mainnet client or fund
+> flow. Use only local or explicitly approved test environments.
+
 ## Choose Your Path
 
 ### I want to use TrueRepublic
@@ -23,16 +26,14 @@ Step-by-step guides to get started with TrueRepublic.
 **Time:** 5 minutes
 **Requirements:** Chrome/Firefox/Brave browser
 
-### Step 1: Install Keplr Wallet (2 min)
+### Step 1: Open the maintained client (2 min)
 
-1. Visit https://www.keplr.app/
-2. Click "Install Keplr"
-3. Add to browser
-4. Click Keplr icon in toolbar
-5. Choose "Create new wallet"
-6. **CRITICAL:** Write down 24-word seed phrase
-7. Store seed phrase securely (paper, safe)
-8. Never share seed phrase with anyone
+1. Follow the [canonical Docker setup](/docs/node-operators/installation/docker-setup.md)
+   and run `make docker-build` followed by `make docker-up`.
+2. Open the loopback-only maintained client at `http://localhost:3001`.
+3. Create or import a test-only local wallet.
+4. Never enter a real mnemonic while recovery status remains active.
+5. Keep any test mnemonic isolated from real funds and production accounts.
 
 **Seed Phrase Example:**
 ```
@@ -51,18 +52,13 @@ word19 word20 word21 word22 word23 word24
 3. Type: `/faucet <your-address>`
 4. Receive 10,000 PNYX
 
-**Mainnet:**
-
-1. Buy on exchange
-2. Withdraw to your Keplr address
+There is no approved mainnet or real-funds flow during recovery.
 
 ### Step 3: Connect to TrueRepublic (1 min)
 
-1. Visit https://truerepublic.app
-2. Click "Connect Keplr Wallet"
-3. Keplr popup appears
-4. Click "Approve"
-5. See your balance in top-right
+1. Confirm that the configured local/test node is reachable.
+2. Open the local test wallet in the maintained client.
+3. Confirm the test address and balance.
 
 **Done! You're ready to participate.**
 
@@ -351,9 +347,11 @@ make build
 ### Step 4: Build Frontend (10 min)
 
 ```bash
-# Web wallet
-cd web-wallet
-npm install
+# Maintained web client
+cd client-web
+npm ci
+npm run lint
+npm test
 npm run build
 
 # No native mobile build target exists; the former prototype was retired under GH-102.
@@ -403,13 +401,13 @@ cd ..
 
 ## Troubleshooting
 
-### Keplr won't connect
+### Local test wallet will not open
 
 **Solution:**
-1. Refresh page
-2. Unlock Keplr
-3. Clear browser cache
-4. Try different browser
+1. Confirm the test-wallet password.
+2. Confirm that the browser profile still contains the encrypted wallet entry.
+3. Re-import only the isolated test mnemonic when necessary.
+4. Record the browser error before clearing storage.
 
 ### Node won't sync
 

@@ -11,7 +11,7 @@ or release-security review.
 
 ### Anonymous voting is not client-ready
 
-Both web clients reject mock proof generation/submission. A compatible real
+The maintained web client rejects mock proof generation/submission. A compatible real
 prover, trusted-setup/circuit review, privacy analysis, and safe anonymous
 reward recipient binding are still required.
 
@@ -31,8 +31,8 @@ reward recipient binding are still required.
 
 ## Legacy client blockers
 
-- `web-wallet` uses an obsolete client/toolchain architecture and is preserved
-  only for migration/reference. GH-112 tracks migration or explicit retirement.
+- `web-wallet` carried 70 dependency advisories plus broken/obsolete
+  transaction and query paths. It was retired and removed under GH-112.
 - The former `mobile-wallet` prototype had high/critical dependency advisories,
   no meaningful tests, unsafe mnemonic handling, and a broken Android bundle.
   It was retired and removed under GH-102 and must not be recovered for real keys.

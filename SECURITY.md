@@ -7,18 +7,16 @@ CI ensures that every code change triggers automated tests and checks to catch e
 
 #### 1. CI with GitHub Actions
 - Automated tests for:
-  - Blockchain (Go): `blockchain/.github/workflows/go-ci.yml`
-  - Smart Contracts (Rust): `contracts/.github/workflows/rust-ci.yml`
-  - Web Wallet (React): `web-wallet/.github/workflows/react-ci.yml`
-  - Retired Mobile Client: repository retirement contract and Security Scan
+  - Blockchain (Go): `.github/workflows/go-ci.yml`
+  - Smart Contracts (Rust): `.github/workflows/rust-ci.yml`
+  - Maintained Web Client: `.github/workflows/react-ci.yml`
+  - Retired legacy clients: repository retirement contracts and Security Scan
 - Automated builds & error checking
 
 #### 2. Continuous Deployment (CD)
-- Automated deployments for:
-  - Blockchain: `blockchain/.github/workflows/blockchain-cd.yml`
-  - Smart Contracts: `contracts/.github/workflows/contracts-cd.yml`
-  - Web Wallet: `web-wallet/.github/workflows/web-cd.yml`
-  - Mobile Wallet: no deployment target; the prototype was removed under GH-102
+- This recovery repository does not define an approved production deployment
+  workflow. The maintained web client is `client-web`; the legacy web and
+  mobile prototypes have no deployment target and exist only in Git history.
 
 ### Security Measures (Audits & API Monitoring)
 
@@ -121,13 +119,11 @@ bash
 psql truerepublic_db < ~/backup/api_backup_LATEST.sql
 
 
-#### 3. Web Wallet Backup
-- Web Wallet rollback (Vercel):
-  ```bash
-  npx vercel rollback --to=previous --token=${{ secrets.VERCEL_TOKEN }}
+#### 3. Client rollback
 
-There is no mobile deployment or rollback target; the former prototype was
-retired and removed under GH-102.
+No production client deployment or rollback path is approved during recovery.
+The maintained source is `client-web`; both legacy client prototypes are
+retired and available only through Git history.
 
 #### 4. Monitoring
 - UptimeRobot: Add `https://api.truerepublic.network` with Telegram alerts.

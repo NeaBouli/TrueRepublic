@@ -9,7 +9,7 @@ and summarized in [Testing Status](../status/Testing-Status).
 - Go: 656 passing cases across root/application, token, treasury, DEX, and
   governance packages.
 - Rust/CosmWasm: 26 passing cases.
-- Maintained `client-web`: 46 passing cases (40 Vitest plus six audit-policy)
+- Maintained `client-web`: 47 passing cases (41 Vitest plus six audit-policy)
   plus lint, build, and guarded live audit.
 - Legacy clients are not counted in the authoritative total; focused legacy
   checks do not make them safe for real keys or funds.

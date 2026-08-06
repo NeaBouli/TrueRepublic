@@ -273,7 +273,7 @@ jobs:
           BOOTSTRAP_OPERATOR: truerepublic13hgqwy9986x5nk6jt23ns5v7j0acs8qmhchhtw
           GRAFANA_PASSWORD: ci-compose-validation-only
           PROMETHEUS_ENABLED: 'true'
-        run: docker compose up --detach --build truerepublic-node web-wallet nginx prometheus grafana
+        run: docker compose up --detach --build truerepublic-node client-web nginx prometheus grafana
 
       - name: Verify proxy and same-namespace metrics
         env:
@@ -281,7 +281,9 @@ jobs:
         run: |
           for attempt in $(seq 1 90); do
             rpc_ok=false
-            wallet_ok=false
+            frontend_ok=false
+            client_rpc_ok=false
+            client_rest_ok=false
             metrics_ok=false
             app_metrics_ok=false
             grafana_ok=false
@@ -290,7 +292,9 @@ jobs:
             metrics_proxy_blocked=false
             metrics_descendant_proxy_blocked=false
             curl --fail --silent http://127.0.0.1:8080/rpc/status >/dev/null && rpc_ok=true
-            curl --fail --silent http://127.0.0.1:8080/ >/dev/null && wallet_ok=true
+            curl --fail --silent http://127.0.0.1:8080/ >/dev/null && frontend_ok=true
+            curl --fail --silent http://127.0.0.1:3001/rpc/status >/dev/null && client_rpc_ok=true
+            curl --fail --silent http://127.0.0.1:3001/api/cosmos/base/tendermint/v1beta1/node_info >/dev/null && client_rest_ok=true
             docker compose exec -T truerepublic-node truerepublicd healthcheck live --timeout 2s &&
               live_ok=true
             docker compose exec -T truerepublic-node truerepublicd healthcheck ready --timeout 2s &&
@@ -313,7 +317,8 @@ jobs:
               http://127.0.0.1:8080/api/metrics/)" = "404" ]; then
               metrics_descendant_proxy_blocked=true
             fi
-            if [ "$rpc_ok" = true ] && [ "$wallet_ok" = true ] &&
+            if [ "$rpc_ok" = true ] && [ "$frontend_ok" = true ] &&
+              [ "$client_rpc_ok" = true ] && [ "$client_rest_ok" = true ] &&
               [ "$live_ok" = true ] && [ "$ready_ok" = true ] &&
               [ "$metrics_ok" = true ] && [ "$app_metrics_ok" = true ] &&
               [ "$grafana_ok" = true ] && [ "$metrics_proxy_blocked" = true ] &&

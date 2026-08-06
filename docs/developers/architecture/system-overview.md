@@ -5,7 +5,7 @@
 ```
 ┌─────────────────────────────────────────────────────┐
 │  Client Layer                                        │
-│  Web Wallet (React 18 + Keplr + CosmJS)             │
+│  Maintained client-web (React + TypeScript + CosmJS)│
 │  Native Mobile Client (retired; replacement pending)│
 │  CLI (truerepublicd tx/query)                       │
 ├─────────────────────────────────────────────────────┤
@@ -28,7 +28,7 @@
 ### Transaction Flow
 
 ```
-User → Wallet (Keplr/CosmJS) → Sign Transaction
+User → Recovery-approved local/test wallet (CosmJS; production signing disabled) → Sign Transaction
   → CometBFT RPC (port 26657) → Mempool
   → Block Proposal → ABCI DeliverTx
   → Cosmos SDK Router → Module Message Handler

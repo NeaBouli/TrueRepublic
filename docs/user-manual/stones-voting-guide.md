@@ -23,7 +23,7 @@ A **stone** is a vote you place on an issue, suggestion, or member to signal tha
 | **Suggestion** | `place-stone-suggestion` | Supports good solutions |
 | **Member** | `place-stone-member` | Admin election (WP S3.6) |
 
-## Placing Stones via Web Wallet
+## Placing Stones via the Maintained Web Client
 
 ### On an Issue
 

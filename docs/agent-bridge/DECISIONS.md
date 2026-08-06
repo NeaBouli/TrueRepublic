@@ -183,3 +183,23 @@
   dependencies, platform-backed key custody, deterministic signing/chain tests,
   blocking audit/build gates, physical-device evidence, and independent wallet/
   cryptography review before keys, signing, funds, app-store, or rollout use.
+
+## 2026-08-06 - Retire the duplicate legacy web client
+
+- GH-112 removes `web-wallet` instead of migrating it into a second canonical
+  browser client. Git history remains the audit record; `client-web` is the
+  only maintained implementation and now owns the Compose/nginx frontend path.
+- The clean baseline reproduced 70 advisories (18 low, 20 moderate, 29 high,
+  3 critical). Its 18 component tests and production build passed, but no test
+  exercised the real query/signing boundary: `queryAbci` was called on the
+  wrong CosmJS client surface, custom messages were unregistered or nonexistent,
+  the legacy DEX swap is rejected on-chain, and bank send could still broadcast.
+- A safe migration would require a CRA/Vite and CosmJS major rewrite plus new
+  query, registry, transaction, DEX, security, and integration tests, duplicating
+  the maintained client. Retirement is therefore the smaller secure boundary.
+- `scripts/check-web-wallet-retirement.sh` blocks source, runtime wiring,
+  non-blocking legacy audit, status, and operational install regressions.
+- Removing or time-bounding the now-unused chain-side legacy `custom/...`
+  compatibility shim is tracked in GH-116. Maintained-client custom transaction
+  registration and client-to-chain delivery are tracked explicitly in GH-115;
+  neither is silently folded into GH-112.

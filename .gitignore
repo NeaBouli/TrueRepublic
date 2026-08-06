@@ -14,7 +14,6 @@ contracts/target/
 
 # Node.js
 node_modules/
-web-wallet/build/
 npm-debug.log*
 yarn-error.log*
 

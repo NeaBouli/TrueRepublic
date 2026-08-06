@@ -14,12 +14,12 @@
 | Item | Verified state |
 |---|---|
 | Version label | v0.4.0 recovery |
-| Tests | 1,388 total: 1,316 Go, 26 Rust, 46 maintained-client |
+| Tests | 1,389 total: 1,316 Go, 26 Rust, 47 maintained-client |
 | PNYX cap | 21,000,000 PNYX = 21,000,000,000,000 `upnyx` |
 | Node | Restart, four-validator recovery, state sync, sanitized backup/restore, compatible binary rollback, cold identity failover, secret-safe JSON logs, private metrics, and the GH-85 dashboard/alert/objective baseline verified |
 | ZKP client | Mock generation/submission disabled; real prover pending |
 | Maintained client | `client-web` |
-| Legacy clients | `web-wallet` is not approved for real keys; the former mobile prototype was retired and removed under GH-102 |
+| Legacy clients | Web and mobile prototypes retired under GH-112/GH-102; Git history only |
 
 Authoritative machine status: [`docs/status.json`](https://github.com/NeaBouli/TrueRepublic/blob/main/docs/status.json).
 Recovery tracking: [Issue #4](https://github.com/NeaBouli/TrueRepublic/issues/4).

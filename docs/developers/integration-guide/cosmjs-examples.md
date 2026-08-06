@@ -2,6 +2,10 @@
 
 Code examples for common blockchain operations using CosmJS.
 
+> Recovery note: these are reference-only integration examples, not the
+> maintained `client-web` implementation. Use only isolated local/test keys and
+> endpoints; no production signer or real-funds flow is approved.
+
 ## Setup
 
 ```bash
@@ -13,7 +17,7 @@ npm install @cosmjs/stargate @cosmjs/proto-signing @cosmjs/amino @cosmjs/encodin
 ```javascript
 import { SigningStargateClient } from "@cosmjs/stargate";
 
-const RPC_ENDPOINT = "https://rpc.truerepublic.network";
+const RPC_ENDPOINT = "http://127.0.0.1:26657";
 
 async function connect() {
     const client = await SigningStargateClient.connect(RPC_ENDPOINT);
@@ -31,8 +35,8 @@ const CHAIN_ID = "truerepublic-1";
 const chainConfig = {
     chainId: CHAIN_ID,
     chainName: "TrueRepublic",
-    rpc: "https://rpc.truerepublic.network",
-    rest: "https://lcd.truerepublic.network",
+    rpc: "http://127.0.0.1:26657",
+    rest: "http://127.0.0.1:1317",
     bip44: { coinType: 118 },
     bech32Config: {
         bech32PrefixAccAddr: "truerepublic",
@@ -72,7 +76,7 @@ async function connectWithKeplr() {
     const address = accounts[0].address;
 
     const client = await SigningStargateClient.connectWithSigner(
-        "https://rpc.truerepublic.network",
+        "http://127.0.0.1:26657",
         offlineSigner
     );
 

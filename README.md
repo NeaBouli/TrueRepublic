@@ -16,7 +16,7 @@
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/tests-1388%20recovery--verified-orange" alt="Recovery-verified tests"/>
+  <img src="https://img.shields.io/badge/tests-1389%20recovery--verified-orange" alt="Recovery-verified tests"/>
   <img src="https://img.shields.io/badge/version-v0.4.0-blue" alt="Version"/>
   <img src="https://img.shields.io/badge/recovery-active-orange" alt="Recovery active"/>
   <img src="https://img.shields.io/badge/Go-1.26.5-00ADD8?logo=go" alt="Go"/>
@@ -42,10 +42,9 @@
 > [!WARNING]
 > **Recovery audit active:** v0.4.0 functionality exists, but production-readiness
 > claims are being re-verified in [GitHub issue #4](https://github.com/NeaBouli/TrueRepublic/issues/4).
-> `client-web` is the maintained web client. `web-wallet` is a deprecated legacy
-> client and must not be used for real keys or production funds. The unsafe,
-> untested `mobile-wallet` prototype was retired and removed under GH-102; Git
-> history preserves it for audit only.
+> `client-web` is the sole maintained web client. The legacy `web-wallet`
+> and `mobile-wallet` prototypes were retired and removed under GH-112 and
+> GH-102; Git history preserves them for audit only.
 
 ## What is TrueRepublic?
 
@@ -84,7 +83,7 @@ The native token **PNYX** -- named after the hill in Athens where citizens gathe
 | Guide | Audience | Description |
 |-------|----------|-------------|
 | **[Getting Started](docs/getting-started/README.md)** | Everyone | Choose your path: user, operator, validator, or developer |
-| **[Installation](INSTALLATION.md)** | Everyone | Quick install guide (Docker / native / web wallet) |
+| **[Installation](INSTALLATION.md)** | Everyone | Quick install guide (Docker / native / maintained web client) |
 | **[User Manual](docs/user-manual/README.md)** | End Users | Wallet, governance, voting, DEX trading |
 | **[Node Operators](docs/node-operators/README.md)** | Operators | Setup, configuration, monitoring, backup |
 | **[Validator Guide](docs/validators/README.md)** | Validators | PoD consensus, staking, slashing, operations |
@@ -170,7 +169,6 @@ TrueRepublic/
 │   ├── packages/testing-utils/ Mock querier, AMM pool, fixtures
 │   └── examples/               governance-dao, dex-bot, zkp-aggregator, token-vesting
 ├── client-web/                 React 18 + TypeScript + Vite + CosmJS (v0.4.0)
-├── web-wallet/                 React 18 + Tailwind + Keplr + CosmJS
 ├── docs/
 │   ├── getting-started/        Quick start guides
 │   ├── user-manual/            End-user documentation (7 guides)
@@ -215,7 +213,7 @@ TrueRepublic/
 | DEX CLI (6 tx + 4 query) | ✅ | `x/dex/cli.go` |
 | CosmWasm Contracts (7 crates) | ✅ | `contracts/` (workspace) |
 | Maintained Web Client | 🟡 Recovery verified | `client-web/` |
-| Legacy Web Wallet | 🔴 Deprecated / vulnerable dependencies | `web-wallet/` |
+| Legacy Web Wallet | ⚫ Retired and removed under GH-112 | Git history only |
 | Legacy Mobile Wallet | ⚫ Retired and removed under GH-102 | Git history only |
 | CI/CD Workflows | ✅ | `.github/workflows/` |
 
@@ -251,7 +249,7 @@ cd client-web && npm ci && npm run lint && npm test -- --run && npm run build
 | Rust | 1.75+ | Contracts |
 | React | 18.2 | Maintained v0.4 client |
 | Native mobile client | — | Retired under GH-102; replacement pending |
-| Keplr + CosmJS | 0.39 | Maintained v0.4 client |
+| Local encrypted test wallet + CosmJS | 0.39 | Maintained v0.4 client |
 
 **Known Limitations:** IBC staking/upgrade remains stubbed (PoD is used instead), a real ZKP prover/ceremony review is pending, and the migration-focused harness proves compatible binary replacement and fail-before-open rollback—not consensus-breaking state migration. GH-93 provides a strict synthetic incident-command and rehearsal contract, but a private live operator rehearsal remains pending. GH-85 provides dashboard/application runtime evidence, alert rules, recovery/testnet objectives, and role ownership. GH-89 adds a strict synthetic topology qualification contract. GH-97 adds bounded four-validator load, resource, retention, restart, and ledger evidence; it does not establish production sizing or multi-day soak behavior. GH-101 adds a digest-bound offline deployment-evidence envelope and verifier; it does not prove or perform a live deployment. Real seed/sentry/validator/RPC deployment, firewall/TLS/DNS evidence, external paging drills, private-environment capacity evidence, and independent live operations review remain open. See [LIMITATIONS.md](docs/LIMITATIONS.md).
 
@@ -265,7 +263,7 @@ The checklist below records implemented surface area, not a production security
 approval. Current evidence, risks, and commands are maintained in
 [`BRIDGE.md`](BRIDGE.md) and [GitHub issue #4](https://github.com/NeaBouli/TrueRepublic/issues/4).
 
-- 🟡 1,388 tests recovery-verified locally and in CI (1,316 Go + 26 Rust + 46 maintained-client), plus separately gated GH-56 rotation, GH-59 slashing, GH-60 inactive-validator genesis, GH-61 legacy-authority migration, GH-93 incident rehearsal, and GH-97 sustained-load process harnesses
+- 🟡 1,389 tests recovery-verified locally and in CI (1,316 Go + 26 Rust + 47 maintained-client), plus separately gated GH-56 rotation, GH-59 slashing, GH-60 inactive-validator genesis, GH-61 legacy-authority migration, GH-93 incident rehearsal, and GH-97 sustained-load process harnesses
 - ✅ Core blockchain compiles and runs
 - 🟡 Tokenomics, exact custom genesis, and every-block ledger invariants are recovery-verified and merged through PR #19
 - 🟡 Governance escrow/auth recovery is verified and merged; independent release review remains open
@@ -314,8 +312,8 @@ approval. Current evidence, risks, and commands are maintained in
 - 📋 **v0.5.0 (Q3 2026):** Native Apps (iOS/Android)
 - 🎯 **v1.0.0 (Q4 2026):** Production Release — External audit, mainnet launch
 
-> Historical test count: 577. The authoritative recovery-verified total is 1,388
-> (1,316 Go + 26 Rust + 46 maintained-client), reproduced from package-scoped
+> Historical test count: 577. The authoritative recovery-verified total is 1,389
+> (1,316 Go + 26 Rust + 47 maintained-client), reproduced from package-scoped
 > JSON output on merged GH-101 and GH-102 router evidence using the established
 > passing-case method.
 

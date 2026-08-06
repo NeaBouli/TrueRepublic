@@ -23,7 +23,7 @@
 
 ### Optional
 - Rust 1.75+ (for CosmWasm contracts)
-- Node.js 20+ (for web wallet development)
+- Node.js 22+ (for maintained web-client development)
 
 ## Network Requirements
 

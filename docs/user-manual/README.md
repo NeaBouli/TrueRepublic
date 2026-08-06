@@ -4,7 +4,7 @@ Welcome to the TrueRepublic User Manual. This guide helps you use TrueRepublic's
 
 ## Table of Contents
 
-1. [Web Wallet Guide](web-wallet-guide.md) -- Managing your PNYX tokens
+1. [Maintained Web Client Guide](web-wallet-guide.md) -- Recovery-safe client boundary
 2. [Governance Tutorial](governance-tutorial.md) -- Participating in domains
 3. [Systemic Consensing Explained](systemic-consensing-explained.md) -- Understanding the rating system
 4. [Stones Voting Guide](stones-voting-guide.md) -- Using stones to influence rankings
@@ -13,9 +13,9 @@ Welcome to the TrueRepublic User Manual. This guide helps you use TrueRepublic's
 
 ## Quick Start
 
-1. **Install Keplr Wallet** -- Browser extension for managing your account
-2. **Get PNYX Tokens** -- From faucet (testnet) or exchange (mainnet)
-3. **Connect Wallet** -- Open the web wallet and click "Connect Wallet"
+1. **Open the maintained client** -- use only a local or explicitly approved test environment
+2. **Create or import a test wallet** -- never enter a real mnemonic while recovery is active
+3. **Use test PNYX** -- obtain tokens only through the approved test fixture or faucet
 4. **Join a Domain** -- Browse domains and join communities that interest you
 5. **Start Participating** -- Submit proposals, vote, and place stones
 

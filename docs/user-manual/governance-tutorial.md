@@ -36,7 +36,7 @@ Domains can be configured with:
 
 ## Browsing Domains
 
-1. Open the web wallet (Governance is the home page)
+1. Open `http://localhost:3001/governance` in the approved local test environment
 2. The **left sidebar** shows all available domains
 3. Click a domain to select it
 4. The **center panel** shows issues and suggestions
@@ -78,7 +78,7 @@ Suggestions move through three color-coded zones:
 4. Enter the **Issue Name** (the problem)
 5. Enter the **Suggestion** (your proposed solution)
 6. Click **"Submit Proposal"**
-7. Approve the transaction in Keplr
+7. Submit the transaction with the opened local test wallet
 
 ### PayToPut Fee
 

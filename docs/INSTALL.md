@@ -12,9 +12,9 @@
 - optional: Node.js 22+ und npm für `client-web/`
 - optional: Docker 24+ mit Compose v2
 
-Das veraltete Verzeichnis `web-wallet` ist kein Installationsziel für reale
-Schlüssel. Der frühere Mobile-Prototyp wurde unter GH-102 vollständig stillgelegt
-und aus dem aktuellen Quellbaum entfernt.
+Die früheren Prototypen `web-wallet` und `mobile-wallet` wurden unter GH-112
+und GH-102 stillgelegt und aus dem aktuellen Quellbaum entfernt. Sie bleiben
+nur in der Git-Historie für Auditzwecke erhalten.
 
 ## Quellcode und Tests
 
@@ -77,8 +77,9 @@ npm test -- --run
 npm run dev
 ```
 
-Die ZKP-Erzeugung im Web Client ist weiterhin ein Mock und nicht für echte
-anonyme Abstimmungen freigegeben.
+Der gepflegte Web Client lehnt Mock-Proof-Erzeugung und -Übermittlung
+fail-closed ab. Anonyme Abstimmungen bleiben bis zur Integration und Prüfung
+eines echten Provers deaktiviert.
 
 ## CosmWasm-Verträge
 
