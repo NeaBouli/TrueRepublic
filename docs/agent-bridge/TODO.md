@@ -44,9 +44,9 @@
   module REST aliases with one explicitly supported query transport, reject
   unavailable data instead of silently returning empty state, and prove the
   boundary against a disposable chain.
-- [ ] GH-122: merge the isolated patched `js-yaml` lock resolution after its
-  final exact-head security and maintained-client checks pass; do not weaken
-  the live High audit policy.
+- [x] GH-122: merge the isolated patched `js-yaml` lock resolution through PR
+  #123 after final exact-head security and maintained-client checks pass;
+  preserve the fail-closed live High audit policy.
 - [x] GH-71: locally implement and verify deterministic role-based network
   policy, safe listener/container defaults, startup validation, regression
   coverage, and operator guidance without touching production infrastructure.

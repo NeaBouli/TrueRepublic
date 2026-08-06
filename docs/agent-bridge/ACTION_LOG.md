@@ -1,5 +1,28 @@
 # Action Log
 
+## 2026-08-07 01:50 EEST - GH-116 locally verified on patched main
+
+- Removed the consumerless custom ABCI routing override and dead module
+  queriers while preserving all 17 protobuf gRPC Query routes and proving live
+  governance/DEX execution through ABCI. Retired paths fail closed.
+- Kimi's bounded independent census found no legacy maintained consumer and no
+  P0; DEX coverage and every active API claim were migrated. GH-121 now owns
+  the separate pre-existing browser REST transport defect.
+- PASS: full Go build/vet/race/coverage (1,333 cases), four focused persistence/
+  restart/export/import tests, Rust fmt/clippy/build/test (26 cases) and audit,
+  maintained-client install/lint/91 tests/build/live High audit, documentation,
+  retirement, shell, workflow YAML, JSON, and diff contracts.
+- Rebased onto GH-122 / PR #123 merge `1257484`; protected GH-116 review and
+  merge remain. No production or secret-bearing action occurred.
+
+## 2026-08-07 01:45 EEST - GH-122 prerequisite merged
+
+- PR #123 merged as `1257484` after exact-head Client Web CI `31129152758` and
+  Security Scan `31129153109` passed; its single chronology review thread was
+  corrected and resolved.
+- The patched `js-yaml` development-tool lock resolution is now on `main`
+  without audit-policy or application behavior changes.
+
 ## 2026-08-07 01:32 EEST - GH-122 local repair verified
 
 - Updated only the transitive `js-yaml` lock resolution from vulnerable 4.3.0
