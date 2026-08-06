@@ -1,157 +1,83 @@
-# ABCI Queries
+# Module Queries (gRPC)
 
-All module queries use the legacy ABCI querier pattern via CometBFT RPC.
+TrueRepublic supports custom-module reads through the `truerepublicd query`
+commands and the protobuf gRPC services registered on the private operator gRPC
+listener. The CLI uses the same gRPC query clients.
 
-## Query Path Format
+## Supported clients
 
-```
-/custom/{module}/{route}/{params...}
-```
+- `truerepublicd query truedemocracy ...`
+- `truerepublicd query dex ...`
+- protobuf gRPC clients using the exact service methods below
+- in-process Go integrations using `truedemocracy.NewQueryClient` or
+  `dex.NewQueryClient`
 
-## truedemocracy Queries
+The maintained `client-web` does not consume the retired legacy query surface.
+Its existing custom-module read services still target unregistered HTTP aliases;
+that pre-existing fail-soft compatibility gap is tracked separately in
+[GH-121](https://github.com/NeaBouli/TrueRepublic/issues/121). Those aliases are
+not a supported API and must not be treated as authoritative chain reads.
 
-| Route | Parameters | Returns |
-|-------|-----------|---------|
-| `custom/truedemocracy/domain/{name}` | Domain name | Single Domain JSON |
-| `custom/truedemocracy/domains` | None | Array of all domains |
-| `custom/truedemocracy/validator/{addr}` | Operator address | Single Validator JSON |
-| `custom/truedemocracy/validators` | None | Array of all validators |
+## truedemocracy service
 
-### Domain Response
+Service: `truedemocracy.Query`
 
-```json
-{
-  "name": "Climate",
-  "admin": "truerepublic1abc...",
-  "members": ["truerepublic1abc...", "truerepublic1def..."],
-  "treasury": [{"denom": "upnyx", "amount": "500000"}],
-  "issues": [
-    {
-      "name": "Carbon Reporting",
-      "stones": 5,
-      "creation_date": 1700000000,
-      "last_activity_at": 1700100000,
-      "external_link": "https://example.com",
-      "suggestions": [
-        {
-          "name": "Quarterly Reports",
-          "creator": "truerepublic1abc...",
-          "stones": 3,
-          "color": "green",
-          "dwell_time": 86400,
-          "creation_date": 1700000000,
-          "ratings": [
-            {"domain_pub_key_hex": "abcdef...", "value": 4},
-            {"domain_pub_key_hex": "123456...", "value": -1}
-          ],
-          "delete_votes": 0
-        }
-      ]
-    }
-  ],
-  "options": {
-    "admin_electable": true,
-    "anyone_can_join": true,
-    "only_admin_issues": false,
-    "coin_burn_required": false,
-    "approval_threshold": 500,
-    "default_dwell_time": 86400
-  },
-  "total_payouts": 50000,
-  "transferred_stake": 5000
-}
-```
+| Method path | Request fields | Result |
+|-------------|----------------|--------|
+| `/truedemocracy.Query/Domain` | `name` | One domain as JSON bytes |
+| `/truedemocracy.Query/Domains` | none | All domains as JSON bytes |
+| `/truedemocracy.Query/Validator` | `operator_addr` | One validator as JSON bytes |
+| `/truedemocracy.Query/Validators` | none | All validators as JSON bytes |
+| `/truedemocracy.Query/Nullifier` | `domain_name`, `nullifier_hash` | Nullifier-use result as JSON bytes |
+| `/truedemocracy.Query/PurgeSchedule` | `domain_name` | Purge schedule as JSON bytes |
+| `/truedemocracy.Query/ZKPState` | `domain_name` | ZKP domain state as JSON bytes |
 
-### Validator Response
-
-```json
-{
-  "operator_address": "truerepublic1abc...",
-  "pub_key": "abcdef1234567890...",
-  "stake": [{"denom": "upnyx", "amount": "150000"}],
-  "domains": ["Climate", "Tech"],
-  "power": 1,
-  "jailed": false,
-  "jailed_until": 0,
-  "missed_blocks": 0
-}
-```
-
-## dex Queries
-
-| Route | Parameters | Returns |
-|-------|-----------|---------|
-| `custom/dex/pool/{denom}` | Asset denomination | Single Pool JSON |
-| `custom/dex/pools` | None | Array of all pools |
-
-### Pool Response
-
-```json
-{
-  "asset_denom": "atom",
-  "pnyx_reserve": "1000000",
-  "asset_reserve": "500000",
-  "total_shares": "707106",
-  "total_burned": "5000"
-}
-```
-
-## Querying via RPC
-
-### Using curl
+CLI examples:
 
 ```bash
-# Query all domains
-curl -s 'http://localhost:26657/abci_query?path="custom/truedemocracy/domains"' \
-    | jq -r '.result.response.value' | base64 -d | jq
-
-# Query specific domain
-curl -s 'http://localhost:26657/abci_query?path="custom/truedemocracy/domain/Climate"' \
-    | jq -r '.result.response.value' | base64 -d | jq
-
-# Query all pools
-curl -s 'http://localhost:26657/abci_query?path="custom/dex/pools"' \
-    | jq -r '.result.response.value' | base64 -d | jq
+truerepublicd query truedemocracy domains
+truerepublicd query truedemocracy domain Climate
+truerepublicd query truedemocracy validator truerepublic1...
+truerepublicd query truedemocracy nullifier Climate <hash>
 ```
 
-### Using CosmJS
+## DEX service
 
-```javascript
-import { SigningStargateClient } from "@cosmjs/stargate";
+Service: `dex.Query`
 
-const client = await SigningStargateClient.connect("http://localhost:26657");
+| Method path | Request fields | Result |
+|-------------|----------------|--------|
+| `/dex.Query/Pool` | `asset_denom` | One pool as JSON bytes |
+| `/dex.Query/Pools` | none | All pools as JSON bytes |
+| `/dex.Query/RegisteredAssets` | none | Registered assets as JSON bytes |
+| `/dex.Query/AssetByDenom` | `ibc_denom` | One asset as JSON bytes |
+| `/dex.Query/AssetBySymbol` | `symbol` | One asset as JSON bytes |
+| `/dex.Query/EstimateSwap` | `input_denom`, `input_amt`, `output_denom` | Route and expected output as JSON bytes |
+| `/dex.Query/PoolStats` | `asset_denom` | Pool statistics as JSON bytes |
+| `/dex.Query/SpotPrice` | `input_denom`, `output_denom` | Price and route as JSON bytes |
+| `/dex.Query/LiquidityDepth` | `input_denom`, `output_denom` | Slippage-depth levels as JSON bytes |
+| `/dex.Query/LPPosition` | `asset_denom`, `shares` | Underlying LP values as JSON bytes |
 
-// Query domains
-const result = await client.queryAbci(
-    "custom/truedemocracy/domains",
-    new Uint8Array()
-);
-const domains = JSON.parse(new TextDecoder().decode(result.value));
+CLI examples:
+
+```bash
+truerepublicd query dex pools
+truerepublicd query dex pool atom
+truerepublicd query dex registered-assets
+truerepublicd query dex estimate-swap upnyx 1000000 atom
 ```
 
-## REST/LCD Endpoints (Port 1317)
+## HTTP and legacy compatibility boundary
 
-Standard Cosmos SDK REST endpoints:
+grpc-gateway HTTP routes are not registered for custom modules. Port 1317
+exposes the registered standard Cosmos SDK gateway routes, not HTTP aliases for
+the services above.
 
-| Endpoint | Description |
-|----------|-------------|
-| `GET /cosmos/bank/v1beta1/balances/{address}` | Account balances |
-| `GET /cosmos/staking/v1beta1/validators` | Validator set |
-| `POST /cosmos/tx/v1beta1/txs` | Broadcast transaction |
-| `GET /cosmos/tx/v1beta1/txs/{hash}` | Transaction by hash |
-| `GET /node_info` | Node information |
-| `GET /syncing` | Sync status |
+The compatibility-only legacy `custom/...` ABCI surface was removed under
+GH-116 after both prototype clients that referenced it were retired. It is not
+versioned or supported, and calls fail closed through the normal Cosmos SDK
+unknown-query response. Integrations must use the CLI or protobuf gRPC methods.
 
-## CometBFT RPC Endpoints (Port 26657)
-
-| Endpoint | Description |
-|----------|-------------|
-| `GET /status` | Node status and sync info |
-| `GET /block` | Latest block |
-| `GET /block?height=N` | Block at specific height |
-| `GET /validators` | Current validator set |
-| `GET /net_info` | Network information |
-| `POST /broadcast_tx_sync` | Broadcast transaction (sync) |
-| `POST /broadcast_tx_async` | Broadcast transaction (async) |
-| `GET /tx?hash=0x...` | Transaction by hash |
-| `GET /abci_query?path=...` | Custom ABCI query |
+The generic CometBFT `/abci_query` transport remains part of the node, including
+for SDK gRPC routing, but hand-building protobuf request bytes over that transport
+is not the supported external integration contract.

@@ -97,3 +97,13 @@ jobs:
 
       - name: Verify retired mobile client stays absent
         run: ./scripts/check-mobile-retirement.sh
+
+  custom-query-retirement:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+
+      - name: Verify retired custom query surface stays absent
+        run: ./scripts/check-custom-query-retirement.sh

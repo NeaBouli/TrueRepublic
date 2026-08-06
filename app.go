@@ -1,9 +1,7 @@
 package main
 
 import (
-	"context"
 	"encoding/json"
-	"strings"
 	"sync"
 
 	"cosmossdk.io/log"
@@ -420,36 +418,6 @@ func NewTrueRepublicApp(logger log.Logger, db dbm.DB, homeDir string, baseAppOpt
 	}
 
 	return app
-}
-
-// Query intercepts ABCI queries to support legacy "custom/" paths that were
-// removed in Cosmos SDK v0.50. All other queries fall through to BaseApp.
-func (app *TrueRepublicApp) Query(ctx context.Context, req *abci.RequestQuery) (*abci.ResponseQuery, error) {
-	path := strings.Split(strings.TrimPrefix(req.Path, "/"), "/")
-	if len(path) >= 2 && path[0] == "custom" {
-		sdkCtx, err := app.CreateQueryContext(req.Height, false)
-		if err != nil {
-			return nil, err
-		}
-
-		switch path[1] {
-		case truedemocracy.ModuleName:
-			querier := truedemocracy.NewQuerier(app.tdKeeper, app.cdc)
-			bz, err := querier(sdkCtx, path[2:], *req)
-			if err != nil {
-				return nil, err
-			}
-			return &abci.ResponseQuery{Value: bz}, nil
-		case dex.ModuleName:
-			querier := dex.NewQuerier(app.dexKeeper, app.cdc)
-			bz, err := querier(sdkCtx, path[2:], *req)
-			if err != nil {
-				return nil, err
-			}
-			return &abci.ResponseQuery{Value: bz}, nil
-		}
-	}
-	return app.BaseApp.Query(ctx, req)
 }
 
 // InitChainer initializes the chain from genesis state.

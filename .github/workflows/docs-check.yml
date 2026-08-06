@@ -10,6 +10,7 @@ on:
       - 'scripts/check-consistency.sh'
       - 'scripts/check-mobile-retirement.sh'
       - 'scripts/check-web-wallet-retirement.sh'
+      - 'scripts/check-custom-query-retirement.sh'
       - 'mobile-wallet/**'
       - 'web-wallet/**'
       - '.github/workflows/docs-check.yml'
@@ -33,3 +34,5 @@ jobs:
         run: ./scripts/check-mobile-retirement.sh
       - name: Check Legacy Web Retirement
         run: ./scripts/check-web-wallet-retirement.sh
+      - name: Check Legacy Custom Query Retirement
+        run: ./scripts/check-custom-query-retirement.sh

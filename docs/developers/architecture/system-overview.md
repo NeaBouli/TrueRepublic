@@ -40,10 +40,10 @@ User → Recovery-approved local/test wallet (CosmJS; production signing disable
 ### Query Flow
 
 ```
-Client → ABCI Query (RPC port 26657)
-  → /custom/{module}/{route}/{params}
-  → Querier → Keeper → KV Store (read)
-  → JSON Response
+CLI or protobuf client → gRPC query (private port 9090)
+  → registered truedemocracy.Query or dex.Query method
+  → QueryServer → Keeper → KV Store (read)
+  → protobuf response containing JSON result bytes
 ```
 
 ## Application Entry Point
@@ -67,7 +67,7 @@ type TrueRepublicApp struct {
 | Function | Purpose |
 |----------|---------|
 | `NewTrueRepublicApp()` | Initialize app, register modules, set up genesis |
-| `Query()` | Custom ABCI query interceptor for `custom/` paths |
+| `GRPCQueryRouter()` | Registered protobuf query services for custom modules |
 | `InitChainer()` | Process genesis state, create initial validators |
 | `EndBlocker()` | Run end-of-block logic for all modules |
 
@@ -98,7 +98,7 @@ The core governance module implementing the whitepaper specification.
 | `governance.go` | Admin election, member exclusion (2/3 vote), inactivity cleanup |
 | `msgs.go` | 13 SDK message types with validation |
 | `cli.go` | CLI transaction and query commands |
-| `querier.go` | ABCI query route handler |
+| `query_server.go` | Registered protobuf query handlers |
 | `types.go` | Data structures: Domain, Validator, Issue, Suggestion, Rating |
 | `module.go` | SDK module wiring, InitGenesis, EndBlock |
 | `tree.go` | Hierarchical node tree for vote propagation |

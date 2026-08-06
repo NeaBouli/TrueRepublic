@@ -18,6 +18,19 @@
 - No application source, audit weakening, deployment, production, key,
   signing, broadcast, account, or fund action is in scope.
 
+## 2026-08-07 01:08 EEST - GH-116 started
+
+- Created clean branch `refactor/GH-116-retire-custom-query` from exact
+  `origin/main` `aa3ffa6` after confirming GH-116 is open, no PR is open, and
+  the latest main Security Scan and Pages workflows pass.
+- Scope is limited to an evidence-backed decision on the retired clients'
+  `custom/truedemocracy/...` and `custom/dex/...` ABCI compatibility shim,
+  preserving supported gRPC/gateway query behavior.
+- Kimi will independently inventory consumers and compatibility risks; Sol
+  owns the final diff, tests, publication, merge, and handoff.
+- No deployment, infrastructure, production, key, signing, broadcast,
+  account, or fund action is in scope.
+
 ## 2026-07-23 19:40 EEST - GH-59 ABCI++ validator slashing
 
 - Wired BaseApp's deterministic BeginBlock ABCI++ boundary to CometBFT

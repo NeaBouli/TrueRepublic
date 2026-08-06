@@ -63,6 +63,32 @@ Approved locally after exact lockfile diff review and clean reproduction.
 
 ---
 
+## 2026-08-07 01:08 EEST GH-116 retired custom ABCI query shim → In Progress
+
+- **Branch:** `refactor/GH-116-retire-custom-query`
+- **Issue:** [GH-116](https://github.com/NeaBouli/TrueRepublic/issues/116)
+- **Baseline:** exact clean `origin/main` `aa3ffa6`; no open pull request;
+  current main Security Scan and Pages workflows pass.
+- **Scope:** inventory every maintained repository consumer and compatibility
+  claim for `custom/truedemocracy/...` and `custom/dex/...`; remove only the
+  consumerless legacy application shim and dead module queriers if current
+  gRPC/gateway behavior is preserved; document and test the supported query
+  boundary.
+- **Risk:** Medium. This intentionally removes a legacy protocol surface, so
+  consumer absence, modern-route preservation, restart/export/import, and
+  protected exact-head checks are mandatory.
+- **Delegation:** Kimi K3 receives a bounded, secret-free independent census
+  and compatibility review. Sol retains design, security, implementation
+  review, complete verification, GitHub writes, merge, and closure.
+- **Safety:** no deployment, infrastructure, production, key, signing,
+  broadcast, account, or fund action.
+
+### Sol review feedback
+
+Pending inventory, implementation, complete local gates, and protected review.
+
+---
+
 ## 2026-07-23 03:10 EEST GH-56 authenticated consensus-key rotation → Done
 
 - **Issue/PR:** [GH-56](https://github.com/NeaBouli/TrueRepublic/issues/56),

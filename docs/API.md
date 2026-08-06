@@ -31,45 +31,42 @@
 
 ## CLI Query Commands
 
-### truedemocracy module (4 commands)
+### truedemocracy module (7 commands)
 
-| Command | Usage | ABCI Path |
-|---------|-------|-----------|
-| domain | `truerepublicd query truedemocracy domain [name]` | `custom/truedemocracy/domain/{name}` |
-| domains | `truerepublicd query truedemocracy domains` | `custom/truedemocracy/domains` |
-| validator | `truerepublicd query truedemocracy validator [addr]` | `custom/truedemocracy/validator/{addr}` |
-| validators | `truerepublicd query truedemocracy validators` | `custom/truedemocracy/validators` |
+| Command | Usage | gRPC method |
+|---------|-------|-------------|
+| domain | `truerepublicd query truedemocracy domain [name]` | `/truedemocracy.Query/Domain` |
+| domains | `truerepublicd query truedemocracy domains` | `/truedemocracy.Query/Domains` |
+| validator | `truerepublicd query truedemocracy validator [addr]` | `/truedemocracy.Query/Validator` |
+| validators | `truerepublicd query truedemocracy validators` | `/truedemocracy.Query/Validators` |
+| nullifier | `truerepublicd query truedemocracy nullifier [domain] [hash]` | `/truedemocracy.Query/Nullifier` |
+| purge-schedule | `truerepublicd query truedemocracy purge-schedule [domain]` | `/truedemocracy.Query/PurgeSchedule` |
+| zkp-state | `truerepublicd query truedemocracy zkp-state [domain]` | `/truedemocracy.Query/ZKPState` |
 
-### dex module (2 commands)
+### dex module (9 commands)
 
-| Command | Usage | ABCI Path |
-|---------|-------|-----------|
-| pool | `truerepublicd query dex pool [asset-denom]` | `custom/dex/pool/{denom}` |
-| pools | `truerepublicd query dex pools` | `custom/dex/pools` |
+| Command | Usage | gRPC method |
+|---------|-------|-------------|
+| pool | `truerepublicd query dex pool [asset-denom]` | `/dex.Query/Pool` |
+| pools | `truerepublicd query dex pools` | `/dex.Query/Pools` |
+| registered-assets | `truerepublicd query dex registered-assets` | `/dex.Query/RegisteredAssets` |
+| asset | `truerepublicd query dex asset [denom-or-symbol]` | `/dex.Query/AssetByDenom` or `/dex.Query/AssetBySymbol` |
+| estimate-swap | `truerepublicd query dex estimate-swap [input] [amount] [output]` | `/dex.Query/EstimateSwap` |
+| pool-stats | `truerepublicd query dex pool-stats [asset]` | `/dex.Query/PoolStats` |
+| spot-price | `truerepublicd query dex spot-price [input] [output]` | `/dex.Query/SpotPrice` |
+| liquidity-depth | `truerepublicd query dex liquidity-depth [input] [output]` | `/dex.Query/LiquidityDepth` |
+| lp-position | `truerepublicd query dex lp-position [asset] [shares]` | `/dex.Query/LPPosition` |
 
-## ABCI Query Paths
+## Supported module query boundary
 
-All module queries use the legacy ABCI querier pattern:
+The supported public interfaces for custom-module reads are the daemon CLI and
+the protobuf gRPC services on the private operator gRPC listener. The former
+compatibility-only custom ABCI paths were retired under GH-116 after their last
+clients were removed. They are not a supported API.
 
-```
-/custom/{module}/{route}/{params...}
-```
-
-### truedemocracy routes
-
-| Route | Parameters | Returns |
-|-------|-----------|---------|
-| `domain/{name}` | Domain name | Single Domain JSON |
-| `domains` | None | Array of all domains |
-| `validator/{addr}` | Operator address | Single Validator JSON |
-| `validators` | None | Array of all validators |
-
-### dex routes
-
-| Route | Parameters | Returns |
-|-------|-----------|---------|
-| `pool/{denom}` | Asset denomination | Single Pool JSON |
-| `pools` | None | Array of all pools |
+TrueRepublic does not currently register grpc-gateway HTTP routes for its two
+custom modules. Port 1317 continues to expose the registered standard Cosmos
+SDK routes only. See the [module query reference](developers/api-reference/abci-queries.md).
 
 ## REST/LCD Endpoints (port 1317)
 
@@ -93,7 +90,7 @@ Standard CometBFT RPC:
 | `/block` | Latest block |
 | `/block?height=N` | Block at height N |
 | `/validators` | Current validator set |
-| `/abci_query?path=...&data=...` | Custom ABCI query |
+| `/abci_query?path=...&data=...` | SDK/gRPC query transport; use documented protobuf services, not retired compatibility paths |
 | `/broadcast_tx_sync` | Broadcast transaction |
 | `/tx?hash=0x...` | Transaction by hash |
 

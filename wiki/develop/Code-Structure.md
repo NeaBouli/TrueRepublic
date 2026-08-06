@@ -18,7 +18,7 @@ TrueRepublic/
 ├── SECURITY.md                     # Security policy
 │
 ├── x/                              # Custom Cosmos SDK modules
-│   ├── truedemocracy/              # Core governance (23 msg types, 446 recovery cases)
+│   ├── truedemocracy/              # Core governance (23 msg types, 505 recovery cases)
 │   │   ├── keeper.go               #   Domain CRUD, proposals, anonymous ratings
 │   │   ├── anonymity.go            #   Permission register, domain key pairs (WP S4)
 │   │   ├── stones.go               #   VoteToEarn, stone voting, list sorting (WP S3.1)
@@ -30,7 +30,6 @@ TrueRepublic/
 │   │   ├── msgs.go                 #   13 SDK message types with validation
 │   │   ├── msg_server.go           #   gRPC message handlers (all 13)
 │   │   ├── cli.go                  #   13 tx + 4 query CLI commands
-│   │   ├── querier.go              #   Legacy ABCI query routes
 │   │   ├── query_server.go         #   gRPC query handlers
 │   │   ├── tree.go                 #   Hierarchical node tree for vote propagation
 │   │   ├── module.go               #   SDK module wiring, InitGenesis, EndBlock
@@ -41,13 +40,12 @@ TrueRepublic/
 │   │   ├── validator_test.go       #   26 validator/PoD/transfer limit tests
 │   │   └── slashing_test.go        #   6 slashing tests
 │   │
-│   └── dex/                        # DEX module (7 msg types, 116 recovery cases)
+│   └── dex/                        # DEX module (7 msg types, 124 recovery cases)
 │       ├── keeper.go               #   CreatePool, Swap (x*y=k), Add/RemoveLiquidity
 │       ├── types.go                #   Pool type, SwapFeeBps=30, BurnBps=100
 │       ├── msgs.go                 #   4 SDK message types
 │       ├── msg_server.go           #   gRPC message handlers
 │       ├── cli.go                  #   4 tx + 2 query CLI commands
-│       ├── querier.go              #   Legacy ABCI query routes
 │       ├── query_server.go         #   gRPC query handlers
 │       ├── module.go               #   SDK module wiring
 │       └── keeper_test.go          #   24 DEX tests (swap, liquidity, fees, burn)
@@ -132,7 +130,7 @@ TrueRepublic/
 | Tokenomics equations | `treasury/keeper/rewards.go` |
 | CLI commands (governance) | `x/truedemocracy/cli.go` |
 | CLI commands (DEX) | `x/dex/cli.go` |
-| ABCI query routes | `x/truedemocracy/querier.go`, `x/dex/querier.go` |
+| Custom-module query services | `x/truedemocracy/query_server.go`, `x/dex/query_server.go` |
 | Web-client services | `client-web/src/services/` |
 | Wallet state | `client-web/src/stores/walletStore.ts` |
 | Governance UI | `client-web/src/components/governance/` |
@@ -160,7 +158,6 @@ types.go            # Data structures
 msgs.go             # SDK message types
 msg_server.go       # gRPC message handlers
 cli.go              # CLI commands
-querier.go          # ABCI query routes
 query_server.go     # gRPC query handlers
 module.go           # Module registration + EndBlock
 *_test.go           # Tests (co-located with source)

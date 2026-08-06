@@ -229,3 +229,17 @@
   exact API-versus-RPC evidence labels. The repository still contains only the
   synthetic `.invalid` inventory; no production address, node ID, credential,
   firewall rule, DNS name, or private validator correlation was published.
+
+## 2026-08-07 - GH-116 query protocol boundary
+
+- The removed custom ABCI queriers had no authentication or authorization
+  role and no maintained consumer. Removing them reduces duplicate parsing and
+  routing surface; unknown legacy paths fail closed at the application query
+  boundary.
+- The retained protobuf gRPC QueryServers are read-only and covered by route-
+  registration plus live gRPC-over-ABCI execution tests. No grpc-gateway route
+  is registered for either custom module.
+- GH-121 records the maintained browser client's unsupported HTTP aliases and
+  fail-soft empty-state behavior as an explicit rollout blocker. GH-116 makes
+  no production, deployment, key, signing, broadcast, account, fund, or
+  anonymous-proof change.

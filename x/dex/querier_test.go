@@ -5,30 +5,24 @@ import (
 	"testing"
 
 	"cosmossdk.io/math"
-	abci "github.com/cometbft/cometbft/abci/types"
-	"github.com/cosmos/cosmos-sdk/codec"
 )
 
 // ---------- Pool Stats ----------
 
-func TestQuerierPoolStats(t *testing.T) {
+func TestQueryServerPoolStats(t *testing.T) {
 	k, ctx := setupKeeperWithDefaults(t)
 	err := k.CreatePool(ctx, "atom", math.NewInt(1_000_000), math.NewInt(1_000_000))
 	if err != nil {
 		t.Fatalf("CreatePool: %v", err)
 	}
 
-	cdc := codec.NewLegacyAmino()
-	RegisterCodec(cdc)
-	querier := NewQuerier(k, cdc)
-
-	bz, err := querier(ctx, []string{"pool_stats", "atom"}, abci.RequestQuery{})
+	resp, err := k.PoolStats(ctx, &QueryPoolStatsRequest{AssetDenom: "atom"})
 	if err != nil {
-		t.Fatalf("querier returned error: %v", err)
+		t.Fatalf("query server returned error: %v", err)
 	}
 
 	var result map[string]interface{}
-	if err := json.Unmarshal(bz, &result); err != nil {
+	if err := json.Unmarshal(resp.Result, &result); err != nil {
 		t.Fatalf("unmarshal: %v", err)
 	}
 
@@ -55,24 +49,20 @@ func TestQuerierPoolStats(t *testing.T) {
 
 // ---------- Spot Price ----------
 
-func TestQuerierSpotPrice(t *testing.T) {
+func TestQueryServerSpotPrice(t *testing.T) {
 	k, ctx := setupKeeperWithDefaults(t)
 	err := k.CreatePool(ctx, "atom", math.NewInt(1_000_000), math.NewInt(1_000_000))
 	if err != nil {
 		t.Fatalf("CreatePool: %v", err)
 	}
 
-	cdc := codec.NewLegacyAmino()
-	RegisterCodec(cdc)
-	querier := NewQuerier(k, cdc)
-
-	bz, err := querier(ctx, []string{"spot_price", pnyxDenom, "atom"}, abci.RequestQuery{})
+	resp, err := k.SpotPrice(ctx, &QuerySpotPriceRequest{InputDenom: pnyxDenom, OutputDenom: "atom"})
 	if err != nil {
-		t.Fatalf("querier returned error: %v", err)
+		t.Fatalf("query server returned error: %v", err)
 	}
 
 	var result map[string]interface{}
-	if err := json.Unmarshal(bz, &result); err != nil {
+	if err := json.Unmarshal(resp.Result, &result); err != nil {
 		t.Fatalf("unmarshal: %v", err)
 	}
 
@@ -105,24 +95,20 @@ func TestQuerierSpotPrice(t *testing.T) {
 
 // ---------- Liquidity Depth ----------
 
-func TestQuerierLiquidityDepth(t *testing.T) {
+func TestQueryServerLiquidityDepth(t *testing.T) {
 	k, ctx := setupKeeperWithDefaults(t)
 	err := k.CreatePool(ctx, "atom", math.NewInt(1_000_000), math.NewInt(1_000_000))
 	if err != nil {
 		t.Fatalf("CreatePool: %v", err)
 	}
 
-	cdc := codec.NewLegacyAmino()
-	RegisterCodec(cdc)
-	querier := NewQuerier(k, cdc)
-
-	bz, err := querier(ctx, []string{"liquidity_depth", pnyxDenom, "atom"}, abci.RequestQuery{})
+	resp, err := k.LiquidityDepth(ctx, &QueryLiquidityDepthRequest{InputDenom: pnyxDenom, OutputDenom: "atom"})
 	if err != nil {
-		t.Fatalf("querier returned error: %v", err)
+		t.Fatalf("query server returned error: %v", err)
 	}
 
 	var result map[string]interface{}
-	if err := json.Unmarshal(bz, &result); err != nil {
+	if err := json.Unmarshal(resp.Result, &result); err != nil {
 		t.Fatalf("unmarshal: %v", err)
 	}
 
@@ -141,25 +127,21 @@ func TestQuerierLiquidityDepth(t *testing.T) {
 
 // ---------- LP Position ----------
 
-func TestQuerierLPPosition(t *testing.T) {
+func TestQueryServerLPPosition(t *testing.T) {
 	k, ctx := setupKeeperWithDefaults(t)
 	err := k.CreatePool(ctx, "atom", math.NewInt(1_000_000), math.NewInt(1_000_000))
 	if err != nil {
 		t.Fatalf("CreatePool: %v", err)
 	}
 
-	cdc := codec.NewLegacyAmino()
-	RegisterCodec(cdc)
-	querier := NewQuerier(k, cdc)
-
 	// Query for half the pool's shares (500000 for a 1M/1M pool with TotalShares=1000000).
-	bz, err := querier(ctx, []string{"lp_position", "atom", "500000"}, abci.RequestQuery{})
+	resp, err := k.LPPosition(ctx, &QueryLPPositionRequest{AssetDenom: "atom", Shares: 500000})
 	if err != nil {
-		t.Fatalf("querier returned error: %v", err)
+		t.Fatalf("query server returned error: %v", err)
 	}
 
 	var result map[string]interface{}
-	if err := json.Unmarshal(bz, &result); err != nil {
+	if err := json.Unmarshal(resp.Result, &result); err != nil {
 		t.Fatalf("unmarshal: %v", err)
 	}
 
@@ -190,24 +172,20 @@ func TestQuerierLPPosition(t *testing.T) {
 
 // ---------- Estimate Swap ----------
 
-func TestQuerierEstimateSwap(t *testing.T) {
+func TestQueryServerEstimateSwap(t *testing.T) {
 	k, ctx := setupKeeperWithDefaults(t)
 	err := k.CreatePool(ctx, "atom", math.NewInt(1_000_000), math.NewInt(1_000_000))
 	if err != nil {
 		t.Fatalf("CreatePool: %v", err)
 	}
 
-	cdc := codec.NewLegacyAmino()
-	RegisterCodec(cdc)
-	querier := NewQuerier(k, cdc)
-
-	bz, err := querier(ctx, []string{"estimate_swap", pnyxDenom, "1000", "atom"}, abci.RequestQuery{})
+	resp, err := k.EstimateSwap(ctx, &QueryEstimateSwapRequest{InputDenom: pnyxDenom, InputAmt: 1000, OutputDenom: "atom"})
 	if err != nil {
-		t.Fatalf("querier returned error: %v", err)
+		t.Fatalf("query server returned error: %v", err)
 	}
 
 	var result map[string]interface{}
-	if err := json.Unmarshal(bz, &result); err != nil {
+	if err := json.Unmarshal(resp.Result, &result); err != nil {
 		t.Fatalf("unmarshal: %v", err)
 	}
 
@@ -245,42 +223,28 @@ func TestQuerierEstimateSwap(t *testing.T) {
 
 // ---------- Error Cases ----------
 
-func TestQuerierPoolStatsMissingArgs(t *testing.T) {
+func TestQueryServerPoolStatsMissingRequest(t *testing.T) {
 	k, ctx := setupKeeperWithDefaults(t)
 
-	cdc := codec.NewLegacyAmino()
-	RegisterCodec(cdc)
-	querier := NewQuerier(k, cdc)
-
-	// Call pool_stats without the asset denom argument.
-	_, err := querier(ctx, []string{"pool_stats"}, abci.RequestQuery{})
+	_, err := k.PoolStats(ctx, &QueryPoolStatsRequest{})
 	if err == nil {
-		t.Fatal("expected error for missing path args")
+		t.Fatal("expected error for missing asset denom")
 	}
 }
 
-func TestQuerierUnknownPath(t *testing.T) {
+func TestQueryServerEstimateSwapRejectsInvalidRequest(t *testing.T) {
 	k, ctx := setupKeeperWithDefaults(t)
 
-	cdc := codec.NewLegacyAmino()
-	RegisterCodec(cdc)
-	querier := NewQuerier(k, cdc)
-
-	_, err := querier(ctx, []string{"nonexistent_route"}, abci.RequestQuery{})
+	_, err := k.EstimateSwap(ctx, &QueryEstimateSwapRequest{InputDenom: pnyxDenom, OutputDenom: "atom"})
 	if err == nil {
-		t.Fatal("expected error for unknown query path")
+		t.Fatal("expected error for non-positive input amount")
 	}
 }
 
-func TestQuerierPoolNotFound(t *testing.T) {
+func TestQueryServerPoolStatsNotFound(t *testing.T) {
 	k, ctx := setupKeeperWithDefaults(t)
 
-	cdc := codec.NewLegacyAmino()
-	RegisterCodec(cdc)
-	querier := NewQuerier(k, cdc)
-
-	// Query pool_stats for a pool that does not exist.
-	_, err := querier(ctx, []string{"pool_stats", "nonexistent"}, abci.RequestQuery{})
+	_, err := k.PoolStats(ctx, &QueryPoolStatsRequest{AssetDenom: "nonexistent"})
 	if err == nil {
 		t.Fatal("expected error for nonexistent pool")
 	}
