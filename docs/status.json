@@ -4,8 +4,8 @@
   "release_date": "2026-03-04",
   "tests": {
     "status": "recovery_verified_locally",
-    "total": 1446,
-    "go": 1329,
+    "total": 1450,
+    "go": 1333,
     "rust": 26,
     "frontend": 91,
     "historical_total": 577
@@ -42,7 +42,7 @@
     "production_ready": false
   },
   "modules": {
-    "root": 111,
+    "root": 114,
     "capacitypolicy": 48,
     "deploymentevidence": 71,
     "healthcheck": 55,
@@ -53,8 +53,8 @@
     "token": 12,
     "topologypolicy": 56,
     "treasury": 36,
-    "dex": 117,
-    "truedemocracy": 511
+    "dex": 124,
+    "truedemocracy": 505
   },
   "token": {
     "symbol": "PNYX",
@@ -163,6 +163,12 @@
       ],
       "custom_transaction_registry": "exact_fail_closed_type_urls_on_gh115",
       "local_chain_delivery": "ephemeral_bank_governance_membership_identity_and_dex_on_gh115"
+    },
+    "module_queries": {
+      "status": "legacy_custom_abci_removed_on_gh116",
+      "supported_clients": "daemon_cli_and_protobuf_grpc",
+      "grpc_gateway_custom_modules": false,
+      "maintained_client_gateway_gap": "tracked_on_gh121"
     }
   },
   "limitations": {

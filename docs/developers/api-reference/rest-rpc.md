@@ -69,15 +69,11 @@ curl http://localhost:26657/validators
 GET /validators?height=100
 ```
 
-### ABCI Queries
+### Module queries
 
-```bash
-# Custom module query
-GET /abci_query?path="custom/truedemocracy/domains"
-
-# With hex-encoded data parameter
-GET /abci_query?path="custom/truedemocracy/domain/Climate"&data=0x...
-```
+Custom-module reads use the daemon CLI or the protobuf gRPC services documented
+in [Module Queries](abci-queries.md). The retired compatibility-only custom
+ABCI routes are not supported.
 
 ## REST/LCD API (Port 1317)
 
@@ -138,7 +134,9 @@ GET /cosmos/base/tendermint/v1beta1/blocks/{height}
 
 ## gRPC (Port 9090)
 
-gRPC endpoints mirror the REST API. Use `grpcurl` for testing:
+Standard gRPC endpoints mirror their registered REST routes. TrueRepublic's
+custom modules expose protobuf gRPC services without grpc-gateway HTTP aliases.
+Use `grpcurl` for discovery and testing:
 
 ```bash
 # List available services
@@ -147,6 +145,10 @@ grpcurl -plaintext localhost:9090 list
 # Query bank balance
 grpcurl -plaintext -d '{"address": "truerepublic1abc..."}' \
     localhost:9090 cosmos.bank.v1beta1.Query/Balance
+
+# Discover the custom module services
+grpcurl -plaintext localhost:9090 list truedemocracy.Query
+grpcurl -plaintext localhost:9090 list dex.Query
 ```
 
 ## WebSocket (Port 26657)

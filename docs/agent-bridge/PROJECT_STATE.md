@@ -1,9 +1,21 @@
 # Project State
 
-Updated: 2026-08-06 11:46 UTC
+Updated: 2026-08-06 22:40 UTC
 
 ## Repository
 
+- GH-116 is locally implemented and verified on
+  `refactor/GH-116-retire-custom-query`: the consumerless legacy
+  `custom/truedemocracy/...` and `custom/dex/...` ABCI shim is removed, all 17
+  supported module query methods remain registered through protobuf gRPC, and
+  protocol-boundary tests prove both live gRPC-over-ABCI execution and
+  fail-closed retired paths. The fresh baseline is 1,450 cases (1,333 Go, 26
+  Rust, 91 maintained client). Browser REST aliases for these custom modules
+  were never registered and remain a separately bounded compatibility defect
+  in GH-121; production readiness remains false. The newly published
+  GHSA-5p4m-2wfm-xmqj prerequisite is separately fixed by merged GH-122 / PR
+  #123 (`1257484`), and this branch is rebased on that patched main. Protected
+  PR verification and merge remain before GH-116 is Done.
 - GH-102 is closed through merged PR #113 (`d621ff9`), GH-112 is closed
   through merged PR #117 (`2d776b5`), and GH-115 is closed through merged PR
   #119 (`5d9e946`): both legacy clients are removed, maintained `client-web` is

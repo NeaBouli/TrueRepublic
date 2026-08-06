@@ -31,6 +31,58 @@ Canonical coordination lives in [`docs/agent-bridge/`](docs/agent-bridge/README.
 
 GitHub recovery epic: [#4](https://github.com/NeaBouli/TrueRepublic/issues/4)
 
+## 2026-08-07 01:50 EEST GH-116 retired custom ABCI query shim → Review
+
+- **Changed:** removed the application `Query` override plus both dead legacy
+  module queriers; ported DEX compatibility tests to the supported QueryServer;
+  added registration, live gRPC-over-ABCI, retired-path, documentation, and CI
+  contracts; documented the exact seven-governance/ten-DEX gRPC method
+  boundary and the intentional absence of custom grpc-gateway routes.
+- **Consumer census:** no maintained source uses `custom/truedemocracy/...` or
+  `custom/dex/...`. The maintained browser client's separate unregistered
+  `/truerepublic/...` REST aliases are explicitly isolated in GH-121 and remain
+  a rollout blocker, not a reason to retain this unrelated shim.
+- **Kimi contribution:** bounded secret-free independent review found no P0
+  and confirmed removal is safe; its valid P1 recommendations (port the DEX
+  tests and correct every active API document) are implemented. The
+  pre-existing browser transport defect became GH-121. A final read-only
+  implementation-head re-review independently reproduced the route census,
+  focused tests, counts, build, vet, and contracts with 0 P0 / 0 P1 / 0 P2.
+- **Tests:** `make verify` PASS (build, vet, race/coverage, 1,333 Go cases);
+  focused restart/export/import PASS including the real 47.09-second node
+  restart; Rust fmt/clippy/build/test PASS (26 cases), `cargo audit` PASS with
+  five existing warning-only advisories; maintained-client clean install,
+  lint, 85 Vitest + six audit-policy cases, build at 318.91 kB gzip, and live
+  High audit PASS; consistency, both client-retirement contracts, custom-query
+  retirement, shell syntax, workflow YAML, status JSON, and diff checks PASS.
+- **Prerequisite:** GH-122 / PR #123 merged as `1257484`; this branch is
+  rebased on the patched main and its client/security exact-head runs pass.
+- **Risk:** Medium protocol cleanup, locally mitigated. Production readiness
+  remains false; no deployment, infrastructure, production, key, signing,
+  broadcast, account, fund, or proof-system action occurred.
+- **Ready for:** protected PR checks, review remediation if any, Sol merge,
+  issue/Bridge/GH-29 synchronization, and final-main readback.
+- **Documentation reconciliation:** final Sol review also corrected the stale
+  CLI inventories to the real 24 governance tx + 7 query and 7 DEX tx + 9
+  query commands.
+
+### Sol review feedback
+
+Approved locally after complete rebased diff review and full relevant gates.
+
+---
+
+## 2026-08-07 01:45 EEST GH-122 js-yaml advisory prerequisite → Done
+
+- **Issue/PR:** GH-122, PR #123; merged to `main` as `1257484`.
+- **GitHub evidence:** Client Web CI `31129152758` PASS; Security Scan
+  `31129153109` PASS; CodeRabbit and DeepScan PASS; the only review thread is
+  resolved.
+- **Boundary:** compatible dev-tool lock resolution only; audit policy remains
+  fail closed.
+
+---
+
 ## 2026-08-07 01:32 EEST GH-122 js-yaml advisory prerequisite → Review
 
 - **Changed:** `client-web/package-lock.json` resolves transitive dev-only
@@ -60,6 +112,32 @@ Approved locally after exact lockfile diff review and clean reproduction.
 - **Risk:** Low. Development-tooling transitive only; no application source,
   audit policy, runtime behavior, deployment, production, key, signing,
   broadcast, account, or fund action.
+
+---
+
+## 2026-08-07 01:08 EEST GH-116 retired custom ABCI query shim → In Progress
+
+- **Branch:** `refactor/GH-116-retire-custom-query`
+- **Issue:** [GH-116](https://github.com/NeaBouli/TrueRepublic/issues/116)
+- **Baseline:** exact clean `origin/main` `aa3ffa6`; no open pull request;
+  current main Security Scan and Pages workflows pass.
+- **Scope:** inventory every maintained repository consumer and compatibility
+  claim for `custom/truedemocracy/...` and `custom/dex/...`; remove only the
+  consumerless legacy application shim and dead module queriers if current
+  gRPC/gateway behavior is preserved; document and test the supported query
+  boundary.
+- **Risk:** Medium. This intentionally removes a legacy protocol surface, so
+  consumer absence, modern-route preservation, restart/export/import, and
+  protected exact-head checks are mandatory.
+- **Delegation:** Kimi K3 receives a bounded, secret-free independent census
+  and compatibility review. Sol retains design, security, implementation
+  review, complete verification, GitHub writes, merge, and closure.
+- **Safety:** no deployment, infrastructure, production, key, signing,
+  broadcast, account, or fund action.
+
+### Sol review feedback
+
+Pending inventory, implementation, complete local gates, and protected review.
 
 ---
 

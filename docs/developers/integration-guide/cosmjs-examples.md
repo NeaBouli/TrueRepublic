@@ -113,27 +113,13 @@ async function sendPnyx(senderAddress, recipientAddress, amount) {
 }
 ```
 
-## Query Domains (ABCI)
+## Query custom modules
 
-```javascript
-async function fetchDomains() {
-    const client = await SigningStargateClient.connect(RPC_ENDPOINT);
-    const result = await client.queryAbci(
-        "custom/truedemocracy/domains",
-        new Uint8Array()
-    );
-    return JSON.parse(new TextDecoder().decode(result.value));
-}
-
-async function fetchDomain(name) {
-    const client = await SigningStargateClient.connect(RPC_ENDPOINT);
-    const result = await client.queryAbci(
-        `custom/truedemocracy/domain/${name}`,
-        new Uint8Array()
-    );
-    return JSON.parse(new TextDecoder().decode(result.value));
-}
-```
+The compatibility-only custom ABCI query shim is retired. Maintained
+integrations must use the daemon CLI or generated protobuf clients for the
+`truedemocracy.Query` and `dex.Query` gRPC services. Do not hand-build raw
+ABCI query paths in CosmJS. See the [module query reference](../api-reference/abci-queries.md)
+for the supported service methods.
 
 ## Submit Governance Proposal
 
@@ -202,16 +188,6 @@ async function placeStoneOnSuggestion(domain, issue, suggestion) {
 ## DEX Operations
 
 ```javascript
-// Query pools
-async function fetchPools() {
-    const client = await SigningStargateClient.connect(RPC_ENDPOINT);
-    const result = await client.queryAbci(
-        "custom/dex/pools",
-        new Uint8Array()
-    );
-    return JSON.parse(new TextDecoder().decode(result.value));
-}
-
 // Swap tokens
 async function swap(inputDenom, inputAmount, outputDenom) {
     const { client, address } = await connectWithKeplr();

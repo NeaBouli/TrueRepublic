@@ -1,5 +1,32 @@
 # Action Log
 
+## 2026-08-07 01:50 EEST - GH-116 locally verified on patched main
+
+- Removed the consumerless custom ABCI routing override and dead module
+  queriers while preserving all 17 protobuf gRPC Query routes and proving live
+  governance/DEX execution through ABCI. Retired paths fail closed.
+- Kimi's bounded independent census found no legacy maintained consumer and no
+  P0; DEX coverage and every active API claim were migrated. GH-121 now owns
+  the separate pre-existing browser REST transport defect. Its final read-only
+  implementation-head review reproduced the route census, build, vet, focused
+  tests, exact module counts, and contracts with 0 P0 / 0 P1 / 0 P2.
+- PASS: full Go build/vet/race/coverage (1,333 cases), four focused persistence/
+  restart/export/import tests, Rust fmt/clippy/build/test (26 cases) and audit,
+  maintained-client install/lint/91 tests/build/live High audit, documentation,
+  retirement, shell, workflow YAML, JSON, and diff contracts.
+- Rebased onto GH-122 / PR #123 merge `1257484`; protected GH-116 review and
+  merge remain. No production or secret-bearing action occurred.
+- Final Sol documentation reconciliation corrected stale CLI inventories to
+  24 governance tx + 7 query and 7 DEX tx + 9 query commands.
+
+## 2026-08-07 01:45 EEST - GH-122 prerequisite merged
+
+- PR #123 merged as `1257484` after exact-head Client Web CI `31129152758` and
+  Security Scan `31129153109` passed; its single chronology review thread was
+  corrected and resolved.
+- The patched `js-yaml` development-tool lock resolution is now on `main`
+  without audit-policy or application behavior changes.
+
 ## 2026-08-07 01:32 EEST - GH-122 local repair verified
 
 - Updated only the transitive `js-yaml` lock resolution from vulnerable 4.3.0
@@ -17,6 +44,19 @@
   compatible lockfile-only repair before GH-116 publication.
 - No application source, audit weakening, deployment, production, key,
   signing, broadcast, account, or fund action is in scope.
+
+## 2026-08-07 01:08 EEST - GH-116 started
+
+- Created clean branch `refactor/GH-116-retire-custom-query` from exact
+  `origin/main` `aa3ffa6` after confirming GH-116 is open, no PR is open, and
+  the latest main Security Scan and Pages workflows pass.
+- Scope is limited to an evidence-backed decision on the retired clients'
+  `custom/truedemocracy/...` and `custom/dex/...` ABCI compatibility shim,
+  preserving supported gRPC/gateway query behavior.
+- Kimi will independently inventory consumers and compatibility risks; Sol
+  owns the final diff, tests, publication, merge, and handoff.
+- No deployment, infrastructure, production, key, signing, broadcast,
+  account, or fund action is in scope.
 
 ## 2026-07-23 19:40 EEST - GH-59 ABCI++ validator slashing
 

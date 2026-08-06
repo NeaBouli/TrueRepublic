@@ -28,11 +28,11 @@ API LAYER
 ├── CometBFT RPC (port 26657) ← Primary query/broadcast interface
 ├── REST/LCD API (port 1317) ← Standard Cosmos REST
 ├── gRPC API (port 9090) ← Protobuf RPC
-├── ABCI Queries ← Custom module queries via /custom/{module}/...
+├── Module gRPC queries ← Registered truedemocracy.Query and dex.Query services
 └── WebSocket (port 26657/websocket) ← Real-time events
     ↓
 APPLICATION LAYER (Cosmos SDK v0.50.14)
-├── x/truedemocracy ← Core governance (23 msg types, 446 recovery cases)
+├── x/truedemocracy ← Core governance (23 msg types, 505 recovery cases)
 │   ├── keeper.go ← Domain CRUD, proposals, ratings
 │   ├── anonymity.go ← Permission register, domain key pairs (WP S4)
 │   ├── stones.go ← VoteToEarn, stone voting, list sorting (WP S3.1)
@@ -40,7 +40,7 @@ APPLICATION LAYER (Cosmos SDK v0.50.14)
 │   ├── governance.go ← Admin election, exclusion, cleanup (WP S3.6)
 │   ├── validator.go ← Proof of Domain, staking, transfer limits
 │   └── slashing.go ← Double-sign (5%), downtime (1%)
-├── x/dex ← AMM exchange (7 msg types, 116 recovery cases)
+├── x/dex ← AMM exchange (7 msg types, 124 recovery cases)
 │   └── keeper.go ← CreatePool, Swap (x*y=k), Add/RemoveLiquidity
 ├── treasury/keeper ← Tokenomics equations 1-5 (31 tests)
 │   └── rewards.go ← Domain interest, staking rewards, decay
@@ -72,7 +72,7 @@ STORAGE LAYER
 | **Why Go?** | Cosmos SDK requirement, excellent performance, strong concurrency |
 | **Key Libraries** | Cosmos SDK, CometBFT, Cobra CLI, LevelDB |
 | **Build** | `make build` produces `truerepublicd` binary |
-| **Test** | `./scripts/go-packages.sh go test -race -cover -count=1 -timeout=600s` (1,329 Go passing cases) |
+| **Test** | `./scripts/go-packages.sh go test -race -cover -count=1 -timeout=600s` (1,333 Go passing cases) |
 
 ### Framework: Cosmos SDK v0.50.14
 
@@ -170,7 +170,7 @@ STORAGE LAYER
 
 ### x/truedemocracy -- Core Governance
 
-**23 message types, 446 recovery cases**
+**23 message types, 505 recovery cases**
 
 ```
 x/truedemocracy/
@@ -183,8 +183,7 @@ x/truedemocracy/
 ├── slashing.go       ← Double-sign (5%), downtime (1%), jailing
 ├── msgs.go           ← 13 SDK message types with validation
 ├── msg_server.go     ← gRPC message handlers
-├── cli.go            ← 13 tx + 4 query CLI commands
-├── querier.go        ← Legacy ABCI query routes
+├── cli.go            ← 24 tx + 7 query CLI commands
 ├── query_server.go   ← gRPC query handlers
 ├── types.go          ← Domain, Validator, Issue, Suggestion, Rating
 ├── tree.go           ← Hierarchical node tree for vote propagation
@@ -202,15 +201,14 @@ x/truedemocracy/
 
 ### x/dex -- Decentralized Exchange
 
-**7 message types, 116 recovery cases**
+**7 message types, 124 recovery cases**
 
 ```
 x/dex/
 ├── keeper.go         ← CreatePool, Swap (x*y=k), AddLiquidity, RemoveLiquidity
 ├── msgs.go           ← 4 message types
 ├── msg_server.go     ← gRPC message handlers
-├── cli.go            ← 4 tx + 2 query CLI commands
-├── querier.go        ← Legacy ABCI query routes
+├── cli.go            ← 7 tx + 9 query CLI commands
 ├── query_server.go   ← gRPC query handlers
 ├── types.go          ← Pool type, fee constants (SwapFeeBps=30, BurnBps=100)
 ├── module.go         ← SDK module wiring

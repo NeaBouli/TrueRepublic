@@ -242,17 +242,17 @@ let cosmos_msg: CosmosMsg<TrueRepublicMsg> = msg.into();
 
 ---
 
-## REST API Examples
+## Query API Examples
 
 ```bash
-# Query domain
-curl http://localhost:1317/truerepublic/truedemocracy/domain/my-domain
+# Query a domain through the supported CLI/gRPC client
+truerepublicd query truedemocracy domain my-domain
 
-# Query pool
-curl http://localhost:1317/truerepublic/dex/pool/pool-0
+# Query a DEX pool through the supported CLI/gRPC client
+truerepublicd query dex pool atom
 
-# Query registered assets
-curl http://localhost:1317/truerepublic/dex/registered-assets
+# Query registered assets through the supported CLI/gRPC client
+truerepublicd query dex registered-assets
 
 # Node status
 curl http://localhost:26657/status
@@ -260,6 +260,10 @@ curl http://localhost:26657/status
 # Latest block
 curl http://localhost:26657/block
 ```
+
+TrueRepublic does not currently register custom-module grpc-gateway HTTP
+aliases on port 1317. The maintained client's remaining assumptions about such
+aliases are tracked by GH-121 and are not a supported integration boundary.
 
 ---
 

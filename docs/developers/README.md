@@ -10,7 +10,7 @@ Technical documentation for developers building on or contributing to TrueRepubl
 
 ### API Reference
 - [CLI Commands](api-reference/cli-commands.md) -- All transaction and query commands
-- [ABCI Queries](api-reference/abci-queries.md) -- Query paths and data types
+- [Module Queries](api-reference/abci-queries.md) -- Supported CLI and protobuf gRPC boundary
 - [REST & RPC Endpoints](api-reference/rest-rpc.md) -- HTTP API reference
 
 ### Integration

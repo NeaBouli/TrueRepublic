@@ -334,12 +334,12 @@ Implemented in `x/truedemocracy/anonymity.go`.
 
 ### truedemocracy Query Endpoints
 
-| Route | ABCI Path | Returns |
-|-------|-----------|---------|
-| Domain | `custom/truedemocracy/domain/{name}` | Single Domain JSON |
-| Domains | `custom/truedemocracy/domains` | Array of all domains |
-| Validator | `custom/truedemocracy/validator/{addr}` | Single Validator JSON |
-| Validators | `custom/truedemocracy/validators` | Array of all validators |
+| Route | gRPC method | Returns |
+|-------|-------------|---------|
+| Domain | `/truedemocracy.Query/Domain` | Single Domain JSON bytes |
+| Domains | `/truedemocracy.Query/Domains` | Array of all domains as JSON bytes |
+| Validator | `/truedemocracy.Query/Validator` | Single Validator JSON bytes |
+| Validators | `/truedemocracy.Query/Validators` | Array of all validators as JSON bytes |
 
 **CLI:**
 ```bash
@@ -486,10 +486,10 @@ asset_out = asset_reserve * shares / total_shares
 
 ### DEX Query Endpoints
 
-| Route | ABCI Path | Returns |
-|-------|-----------|---------|
-| Pool | `custom/dex/pool/{denom}` | Single Pool JSON |
-| Pools | `custom/dex/pools` | Array of all pools |
+| Route | gRPC method | Returns |
+|-------|-------------|---------|
+| Pool | `/dex.Query/Pool` | Single Pool JSON bytes |
+| Pools | `/dex.Query/Pools` | Array of all pools as JSON bytes |
 
 ---
 

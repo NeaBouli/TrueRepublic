@@ -203,3 +203,18 @@
   compatibility shim is tracked in GH-116. Maintained-client custom transaction
   registration and client-to-chain delivery are tracked explicitly in GH-115;
   neither is silently folded into GH-112.
+
+## 2026-08-07 - Retire the consumerless custom ABCI query shim
+
+- GH-116 removes the application-level `custom/truedemocracy/...` and
+  `custom/dex/...` routing override and both module queriers. No maintained
+  consumer uses this legacy protocol, and retired paths now fail closed.
+- The supported custom-module query contract is the generated CLI and
+  protobuf gRPC Query service: seven governance methods and ten DEX methods,
+  all registered and exercised through the application query boundary.
+- The modules intentionally register no grpc-gateway handlers. Documentation
+  must not imply that `/truerepublic/...` HTTP aliases are supported.
+- The maintained browser client still calls those unregistered aliases. That
+  pre-existing fail-soft compatibility defect is isolated in GH-121 and must
+  be resolved before any rollout claim; it does not justify retaining an
+  unrelated legacy `custom/...` shim.
