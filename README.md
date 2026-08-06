@@ -210,7 +210,7 @@ TrueRepublic/
 | Member Exclusion (2/3 vote) | ✅ | `x/truedemocracy/governance.go` |
 | PoD Transfer Limit (10%, WP S7) | ✅ | `x/truedemocracy/validator.go` |
 | CLI Commands (24 tx + 7 query) | ✅ | `x/truedemocracy/cli.go` |
-| DEX CLI (6 tx + 4 query) | ✅ | `x/dex/cli.go` |
+| DEX CLI (7 tx + 9 query) | ✅ | `x/dex/cli.go` |
 | CosmWasm Contracts (7 crates) | ✅ | `contracts/` (workspace) |
 | Maintained Web Client | 🟡 Recovery verified | `client-web/` |
 | Legacy Web Wallet | ⚫ Retired and removed under GH-112 | Git history only |

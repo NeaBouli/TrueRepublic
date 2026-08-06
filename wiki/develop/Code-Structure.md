@@ -29,7 +29,7 @@ TrueRepublic/
 │   │   ├── types.go                #   Domain, Validator, Issue, Suggestion, Rating types
 │   │   ├── msgs.go                 #   13 SDK message types with validation
 │   │   ├── msg_server.go           #   gRPC message handlers (all 13)
-│   │   ├── cli.go                  #   13 tx + 4 query CLI commands
+│   │   ├── cli.go                  #   24 tx + 7 query CLI commands
 │   │   ├── query_server.go         #   gRPC query handlers
 │   │   ├── tree.go                 #   Hierarchical node tree for vote propagation
 │   │   ├── module.go               #   SDK module wiring, InitGenesis, EndBlock
@@ -45,7 +45,7 @@ TrueRepublic/
 │       ├── types.go                #   Pool type, SwapFeeBps=30, BurnBps=100
 │       ├── msgs.go                 #   4 SDK message types
 │       ├── msg_server.go           #   gRPC message handlers
-│       ├── cli.go                  #   4 tx + 2 query CLI commands
+│       ├── cli.go                  #   7 tx + 9 query CLI commands
 │       ├── query_server.go         #   gRPC query handlers
 │       ├── module.go               #   SDK module wiring
 │       └── keeper_test.go          #   24 DEX tests (swap, liquidity, fees, burn)

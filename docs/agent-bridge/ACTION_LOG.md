@@ -7,13 +7,17 @@
   governance/DEX execution through ABCI. Retired paths fail closed.
 - Kimi's bounded independent census found no legacy maintained consumer and no
   P0; DEX coverage and every active API claim were migrated. GH-121 now owns
-  the separate pre-existing browser REST transport defect.
+  the separate pre-existing browser REST transport defect. Its final read-only
+  implementation-head review reproduced the route census, build, vet, focused
+  tests, exact module counts, and contracts with 0 P0 / 0 P1 / 0 P2.
 - PASS: full Go build/vet/race/coverage (1,333 cases), four focused persistence/
   restart/export/import tests, Rust fmt/clippy/build/test (26 cases) and audit,
   maintained-client install/lint/91 tests/build/live High audit, documentation,
   retirement, shell, workflow YAML, JSON, and diff contracts.
 - Rebased onto GH-122 / PR #123 merge `1257484`; protected GH-116 review and
   merge remain. No production or secret-bearing action occurred.
+- Final Sol documentation reconciliation corrected stale CLI inventories to
+  24 governance tx + 7 query and 7 DEX tx + 9 query commands.
 
 ## 2026-08-07 01:45 EEST - GH-122 prerequisite merged
 

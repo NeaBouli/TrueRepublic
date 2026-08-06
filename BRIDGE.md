@@ -45,7 +45,9 @@ GitHub recovery epic: [#4](https://github.com/NeaBouli/TrueRepublic/issues/4)
 - **Kimi contribution:** bounded secret-free independent review found no P0
   and confirmed removal is safe; its valid P1 recommendations (port the DEX
   tests and correct every active API document) are implemented. The
-  pre-existing browser transport defect became GH-121.
+  pre-existing browser transport defect became GH-121. A final read-only
+  implementation-head re-review independently reproduced the route census,
+  focused tests, counts, build, vet, and contracts with 0 P0 / 0 P1 / 0 P2.
 - **Tests:** `make verify` PASS (build, vet, race/coverage, 1,333 Go cases);
   focused restart/export/import PASS including the real 47.09-second node
   restart; Rust fmt/clippy/build/test PASS (26 cases), `cargo audit` PASS with
@@ -60,6 +62,9 @@ GitHub recovery epic: [#4](https://github.com/NeaBouli/TrueRepublic/issues/4)
   broadcast, account, fund, or proof-system action occurred.
 - **Ready for:** protected PR checks, review remediation if any, Sol merge,
   issue/Bridge/GH-29 synchronization, and final-main readback.
+- **Documentation reconciliation:** final Sol review also corrected the stale
+  CLI inventories to the real 24 governance tx + 7 query and 7 DEX tx + 9
+  query commands.
 
 ### Sol review feedback
 

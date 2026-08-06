@@ -183,7 +183,7 @@ x/truedemocracy/
 ├── slashing.go       ← Double-sign (5%), downtime (1%), jailing
 ├── msgs.go           ← 13 SDK message types with validation
 ├── msg_server.go     ← gRPC message handlers
-├── cli.go            ← 13 tx + 4 query CLI commands
+├── cli.go            ← 24 tx + 7 query CLI commands
 ├── query_server.go   ← gRPC query handlers
 ├── types.go          ← Domain, Validator, Issue, Suggestion, Rating
 ├── tree.go           ← Hierarchical node tree for vote propagation
@@ -208,7 +208,7 @@ x/dex/
 ├── keeper.go         ← CreatePool, Swap (x*y=k), AddLiquidity, RemoveLiquidity
 ├── msgs.go           ← 4 message types
 ├── msg_server.go     ← gRPC message handlers
-├── cli.go            ← 4 tx + 2 query CLI commands
+├── cli.go            ← 7 tx + 9 query CLI commands
 ├── query_server.go   ← gRPC query handlers
 ├── types.go          ← Pool type, fee constants (SwapFeeBps=30, BurnBps=100)
 ├── module.go         ← SDK module wiring
