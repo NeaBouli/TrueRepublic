@@ -101,7 +101,7 @@ namespace, so ports 26657 and 1317 remain unexposed.
 ## Build Output
 
 Current recovery build (`npm run build`):
-- Main JavaScript: 1,700.76 kB; 318.01 kB gzip
+- Main JavaScript: 1,700.78 kB; 318.02 kB gzip
 - CSS: 22.25 kB; 4.84 kB gzip
 - Vite still warns that the main chunk exceeds 500 kB; bundle splitting and a performance budget remain open rollout work.
 

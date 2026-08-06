@@ -27,7 +27,7 @@ The TrueRepublic DEX uses an **Automated Market Maker (AMM)** model based on the
 ### Via the Maintained Web Client
 
 1. Navigate to the **DEX** page
-2. Connect your wallet
+2. Connect your local test wallet in the approved test environment
 3. Select **From** token (e.g., PNYX)
 4. Select **To** token (e.g., ATOM)
 5. Enter the amount to swap

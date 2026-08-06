@@ -5,7 +5,7 @@ export function resolveChainEndpoint(configured: string | undefined, fallback: s
   if (endpoint.startsWith('/') && typeof window !== 'undefined') {
     return new URL(endpoint, window.location.origin).toString().replace(/\/$/, '');
   }
-  return endpoint;
+  return endpoint.replace(/\/$/, '');
 }
 
 export const TRUEREPUBLIC_MAINNET: ChainConfig = {

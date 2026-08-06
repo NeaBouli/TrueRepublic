@@ -28,8 +28,9 @@ Step-by-step guides to get started with TrueRepublic.
 
 ### Step 1: Open the maintained client (2 min)
 
-1. Start the repository's local recovery stack.
-2. Open the loopback-only maintained client URL.
+1. Follow the [canonical Docker setup](/docs/node-operators/installation/docker-setup.md)
+   and run `make docker-build` followed by `make docker-up`.
+2. Open the loopback-only maintained client at `http://localhost:3001`.
 3. Create or import a test-only local wallet.
 4. Never enter a real mnemonic while recovery status remains active.
 5. Keep any test mnemonic isolated from real funds and production accounts.

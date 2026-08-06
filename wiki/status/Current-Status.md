@@ -12,7 +12,8 @@
   reconciliation, and every-block supply/custody invariants on the ordered
   recovery stack.
 - Chain/proposal/rating-bound ZKP statement and pinned genesis verification-key
-  identity; both public web clients reject mock proof submission.
+  identity; the maintained web client rejects mock proof generation and
+  submission fail-closed.
 - Persistent Cosmos/Comet lifecycle with generated-key, bank-backed PoD
   genesis, native/Docker restart evidence, and a bounded four-validator
   failure/restart/catch-up, partition-recovery, trusted state-sync, and
@@ -51,8 +52,8 @@ reviewed, verified, and merged to `main` in this order.
 - IBC/consensus-breaking migration recovery, external paging drills,
   private-live-capacity/live-topology deployment, private live rehearsal, and
   independent live operations evidence.
-- Migration or removal of the deprecated legacy web client. The former mobile
-  prototype was retired and removed under GH-102.
+- The deprecated legacy web client was retired and removed under GH-112; the
+  former mobile prototype was retired and removed under GH-102.
 
 See [Issue #4](https://github.com/NeaBouli/TrueRepublic/issues/4),
 [`BRIDGE.md`](https://github.com/NeaBouli/TrueRepublic/blob/main/BRIDGE.md),

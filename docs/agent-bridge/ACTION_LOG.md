@@ -2738,3 +2738,14 @@
   consistency, workflow YAML parse, shell syntax, and diff integrity.
 - Docker remains unavailable locally; the protected GitHub Compose job is the
   required runtime gate before merge.
+
+## 2026-08-06 04:14 EEST - GH-112 PR #117 review remediation
+
+- First protected head `e8f92fb` passed all 13 checks, including Docker/Compose
+  runtime and all long Go/recovery/security jobs.
+- Verified and fixed all nine CodeRabbit inline findings without expanding the
+  rollout scope or test count.
+- PASS: maintained-client lint, 41 Vitest plus six policy cases, build, guarded
+  audit, focused Go policy, retirement contracts, docs consistency, workflow
+  YAML, shell, and diff checks.
+- Updated the measured Vite main-bundle value to 318.02 kB gzip.

@@ -36,7 +36,7 @@ Domains can be configured with:
 
 ## Browsing Domains
 
-1. Open the maintained `client-web` governance route in an approved test environment
+1. Open `http://localhost:3001/governance` in the approved local test environment
 2. The **left sidebar** shows all available domains
 3. Click a domain to select it
 4. The **center panel** shows issues and suggestions

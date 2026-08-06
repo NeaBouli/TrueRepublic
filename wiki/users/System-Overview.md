@@ -160,7 +160,7 @@ Stones affect ranking in lists.
 
 **Solution:** Dual-key system
 ```
-Master Key (approved wallet signer)
+Master Key (configured test-wallet signer)
     ↓
 Domain A Key (unlinkable)
 Domain B Key (unlinkable)

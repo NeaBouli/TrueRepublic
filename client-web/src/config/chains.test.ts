@@ -17,5 +17,8 @@ describe('PNYX chain metadata', () => {
     expect(resolveChainEndpoint('/api', 'http://localhost:1317')).toBe(
       `${window.location.origin}/api`
     );
+    expect(resolveChainEndpoint('https://rpc.example/', 'http://localhost:26657')).toBe(
+      'https://rpc.example'
+    );
   });
 });

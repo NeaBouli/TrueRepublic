@@ -167,7 +167,7 @@ cd client-web
 # Install and run the maintained-client checks
 npm ci
 npm run lint
-npm test
+npm test -- --run
 npm run build
 ```
 

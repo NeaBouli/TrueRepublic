@@ -4016,3 +4016,22 @@ exclusion, CI wiring, and documentation boundaries.
   merge, and verify final-main status.
 
 ---
+
+## 2026-08-06 04:14 EEST GH-112 PR #117 → Review Remediation
+
+- **Protected first head:** all 13 checks passed on `e8f92fb`, including the
+  previously unavailable Docker/Compose runtime, client image, direct RPC/REST
+  probes, complete Go/recovery/capacity jobs, security scans, DeepScan, and
+  CodeRabbit.
+- **Review handling:** verified and addressed all nine CodeRabbit inline
+  findings: absolute endpoint normalization, non-watch contributor command,
+  recovery-only signer language, fail-closed ZKP status, completed retirement
+  state, executable local routes/setup, and Markdown fence hygiene.
+- **Local revalidation PASS:** 41 Vitest plus six audit-policy cases, lint,
+  Vite build, guarded audit, focused Go policy, both retirement contracts,
+  documentation consistency, YAML/shell, and diff integrity. Vite now reports
+  the current main bundle as 318.02 kB gzip; no test-count change.
+- **Next:** publish the review commit and require the complete exact-head check
+  set to return green before merge.
+
+---

@@ -259,10 +259,10 @@ treasury/keeper/
 
 ### DEX Swap Flow
 
-```
+```text
 1. User enters swap amount on DEX page
 2. The maintained client builds a slippage-bounded `MsgSwapExact`
-3. The approved wallet flow signs the transaction
+3. The configured recovery test wallet signs the transaction
 4. Transaction broadcast and included in block
 5. x/dex msg_server processes:
    a. Validate pool exists

@@ -77,7 +77,8 @@ Alle Vorschläge, Bewertungen und Abstimmungen erfolgen offen, überprüfbar und
 ### Phase 1 (MVP)
 - Blockchain (Cosmos SDK, v0.50.13)
 - Basis-Module: Democracy, Treasury
-- gepflegter Web-Client mit geprüftem Wallet- und Transaktionspfad
+- gepflegter Web-Client mit recovery-getestetem lokalem Wallet- und
+  Transaktionspfad; die Prüfung eines Produktions-Signers bleibt offen
 
 ### Phase 2
 - CosmWasm Contracts für Governance

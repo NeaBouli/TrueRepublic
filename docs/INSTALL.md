@@ -77,8 +77,9 @@ npm test -- --run
 npm run dev
 ```
 
-Die ZKP-Erzeugung im Web Client ist weiterhin ein Mock und nicht für echte
-anonyme Abstimmungen freigegeben.
+Der gepflegte Web Client lehnt Mock-Proof-Erzeugung und -Übermittlung
+fail-closed ab. Anonyme Abstimmungen bleiben bis zur Integration und Prüfung
+eines echten Provers deaktiviert.
 
 ## CosmWasm-Verträge
 

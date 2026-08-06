@@ -28,7 +28,7 @@
 ### Transaction Flow
 
 ```
-User → Approved wallet signer (CosmJS) → Sign Transaction
+User → Recovery-approved local/test wallet (CosmJS; production signing disabled) → Sign Transaction
   → CometBFT RPC (port 26657) → Mempool
   → Block Proposal → ABCI DeliverTx
   → Cosmos SDK Router → Module Message Handler
