@@ -42,7 +42,7 @@ Alle Vorschläge, Bewertungen und Abstimmungen erfolgen offen, überprüfbar und
 - Erweiterungen für neue Features ohne Chain-Upgrade
 
 ### 4.3 Wallets
-- **Web Wallet (React):** Browserbasiert, Keplr-Integration
+- **Web Client (React):** gepflegter Browser-Client unter `client-web`
 - **Mobile Client (geplant):** Ein neuer iOS-/Android-Client benötigt vor einer
   Veröffentlichung sichere Schlüsselverwahrung und ein unabhängiges Wallet-/Krypto-Review;
   der frühere Prototyp wurde unter GH-102 stillgelegt.
@@ -77,7 +77,7 @@ Alle Vorschläge, Bewertungen und Abstimmungen erfolgen offen, überprüfbar und
 ### Phase 1 (MVP)
 - Blockchain (Cosmos SDK, v0.50.13)
 - Basis-Module: Democracy, Treasury
-- Web Wallet mit Keplr-Anbindung
+- gepflegter Web-Client mit geprüftem Wallet- und Transaktionspfad
 
 ### Phase 2
 - CosmWasm Contracts für Governance

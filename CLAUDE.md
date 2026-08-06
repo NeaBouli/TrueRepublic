@@ -12,7 +12,7 @@ source of current security or production-readiness claims.
 - Recovery epic: GitHub issue #4
 - Continuous handoff: `BRIDGE.md` and `docs/agent-bridge/`
 - Authoritative machine-readable status: `docs/status.json`
-- Verified recovery total: 1,388 cases (1,316 Go, 26 Rust, 46 maintained-client)
+- Verified recovery total: 1,389 cases (1,316 Go, 26 Rust, 47 maintained-client)
 - PNYX cap: 21,000,000 PNYX = 21,000,000,000,000 `upnyx`
 
 The recovery foundation was reviewed and merged to `main` through this ordered
@@ -43,8 +43,7 @@ TrueRepublic is a multi-project repository rather than a single-package app:
 - `treasury/keeper` — deterministic reward equations
 - `contracts` — Rust/CosmWasm workspace
 - `client-web` — maintained React/Vite client
-- `web-wallet` — deprecated legacy client; the former `mobile-wallet` prototype
-  was retired and removed under GH-102
+- retired `web-wallet` and `mobile-wallet` prototypes — Git history only
 - `docs` — public and operator documentation
 
 It is not a Go workspace with multiple Go modules. The root Go module contains
@@ -144,8 +143,7 @@ payout recipient.
 ## Client policy
 
 - `client-web` is the only maintained client.
-- `web-wallet` remains preserved for migration/reference; the retired mobile
-  prototype remains available only through Git history.
+- `web-wallet` and `mobile-wallet` remain available only through Git history.
 - Never recommend legacy or retired clients for real keys or funds.
 - Never silently copy legacy checkout changes into recovery branches.
 

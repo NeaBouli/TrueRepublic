@@ -24,7 +24,7 @@ The TrueRepublic DEX uses an **Automated Market Maker (AMM)** model based on the
 
 ## Swapping Tokens
 
-### Via Web Wallet
+### Via the Maintained Web Client
 
 1. Navigate to the **DEX** page
 2. Connect your wallet
@@ -32,7 +32,7 @@ The TrueRepublic DEX uses an **Automated Market Maker (AMM)** model based on the
 4. Select **To** token (e.g., ATOM)
 5. Enter the amount to swap
 6. Click **"Swap"**
-7. Approve the transaction in Keplr
+7. Submit the transaction with the opened local test wallet
 
 ### Via CLI
 
@@ -88,7 +88,7 @@ This creates deflationary pressure on PNYX supply over time, benefiting all PNYX
 
 ## Viewing Pools
 
-### Web Wallet
+### Maintained Web Client
 
 The DEX page shows all active liquidity pools with:
 - Pool pair (e.g., PNYX / ATOM)
@@ -190,6 +190,6 @@ This loss is "impermanent" because it reverses if the price returns to the origi
 
 ## Next Steps
 
-- [Web Wallet Guide](web-wallet-guide.md) -- Managing your PNYX
+- [Maintained Web Client Guide](web-wallet-guide.md) -- recovery-safe client boundary
 - [Governance Tutorial](governance-tutorial.md) -- Participating in governance
 - [Troubleshooting](troubleshooting.md) -- Common issues

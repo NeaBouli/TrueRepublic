@@ -40,7 +40,7 @@ Security recommendations for all TrueRepublic stakeholders.
    - Check gas fees
 
 5. **Keep Software Updated**
-   - Update Keplr wallet
+   - Update approved wallet software
    - Update browser
    - Update OS
 
@@ -53,7 +53,7 @@ Security recommendations for all TrueRepublic stakeholders.
    - Not in messages
 
 2. **Use Same Password**
-   - Unique password for Keplr
+   - Unique password for the approved wallet
    - Not reused from other sites
 
 3. **Trust Blindly**

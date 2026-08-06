@@ -7,8 +7,8 @@ Welcome to TrueRepublic! Choose your path:
 ### Use TrueRepublic (End User)
 Participate in governance, vote on proposals, and manage PNYX tokens.
 
-1. [Install Keplr Wallet](../user-manual/web-wallet-guide.md)
-2. [Connect to TrueRepublic](../user-manual/web-wallet-guide.md#step-2-connect-to-truerepublic)
+1. Review the [maintained web client guide](../user-manual/web-wallet-guide.md)
+2. Use only the recovery-approved `client-web` path
 3. [Join a Domain](../user-manual/governance-tutorial.md#joining-a-domain)
 4. [Start Voting](../user-manual/governance-tutorial.md#rating-suggestions-systemic-consensing)
 
@@ -60,8 +60,8 @@ make docker-build && make docker-up
 make build
 ./build/truerepublicd start
 
-# Option C: Web wallet development
-cd web-wallet && npm install && npm start
+# Option C: Maintained web-client development
+cd client-web && npm ci && npm run dev
 ```
 
 ## Documentation Map

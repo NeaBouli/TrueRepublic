@@ -2677,3 +2677,64 @@
 - GH-112 remains open only for the separate deprecated legacy-web client.
   GH-102 is complete; no key, signing, broadcast, funds, app-store, deployment,
   infrastructure, or production action occurred.
+
+## 2026-08-06 03:14 EEST - GH-112 legacy web assessment started
+
+- Created clean branch `fix/GH-112-legacy-web` from exact main `1a92f0a` after
+  confirming no open PR and green final-main Pages `31054970470` plus Security
+  Scan `31054971793`.
+- Scope is the deprecated `web-wallet` only: reproduce dependencies, audit,
+  tests/build, wallet/key/signing, queries, CI, and release references before an
+  evidence-backed migration-versus-retirement decision.
+- No key, account, signing, broadcast, funds, deployment, infrastructure, or
+  production action is in scope.
+
+## 2026-08-06 03:17 EEST - GH-112 retirement decision recorded
+
+- Clean install reproduced 70 advisories across 1,426 installed packages (18
+  low, 20 moderate, 29 high, 3 critical); all 18 focused tests pass.
+- Source and chain review found real Keplr signing/broadcast functions without
+  a custom message registry, a chain-rejected unsafe legacy DEX swap, and a
+  chain compatibility shim retained for the client's legacy query paths.
+- Selected explicit removal instead of migrating a second canonical client.
+  Maintained `client-web` will replace it in the local Compose/nginx path, and a
+  blocking retirement contract plus current-documentation synchronization will
+  prevent accidental restoration.
+- No key, account, signing, broadcast, funds, deployment, infrastructure, or
+  production action occurred.
+
+## 2026-08-06 03:49 EEST - GH-112 local implementation verified
+
+- Removed the complete legacy web tree and replaced its non-blocking audit with
+  a fail-closed retirement contract. Maintained `client-web` now owns the
+  Compose/nginx route through a non-root container and loopback-only same-origin
+  RPC/REST proxies.
+- PASS: maintained-client lint, 6 audit-policy tests, 41 Vitest cases, build,
+  and guarded audit; both retirement contracts; docs consistency; JSON/YAML,
+  shell, and diff checks; focused container policy; complete Go build/verify;
+  Rust format, strict clippy, build, 26 tests, and live audit with five
+  warning-only advisories.
+- Public state now records 1,389 cases, 14/59 rollout, Phase 6 6/7,
+  `production_ready=false`, and the 318.01 kB gzip maintained-client bundle.
+- Kimi completed the deep baseline review and bounded runtime integration;
+  Claude Code completed a small read-only reference census. Sol reviewed every
+  diff and fixed the stale Go repository contract plus one transient CI curl
+  construction defect before rerunning the gates.
+- Opened GH-115 for the maintained-client custom transaction registry/delivery
+  gap and GH-116 for the retired legacy ABCI query shim decision. Protected
+  Docker/runtime checks, final review, PR, merge, and final-main verification
+  remain.
+- No key, account, signing, broadcast, funds, deployment, infrastructure, or
+  production action occurred.
+
+## 2026-08-06 03:55 EEST - GH-112 independent review closed
+
+- Kimi's final read-only review found no P0/P1 or blocking issue.
+- Removed the remaining Keplr-only instructions from current user and wiki
+  flows because maintained `client-web` uses a local encrypted test wallet.
+- Added matching RPC/REST rate limits and metrics denial to the loopback client
+  proxy, with repository-policy assertions.
+- PASS: focused container policy, both retirement contracts, documentation
+  consistency, workflow YAML parse, shell syntax, and diff integrity.
+- Docker remains unavailable locally; the protected GitHub Compose job is the
+  required runtime gate before merge.

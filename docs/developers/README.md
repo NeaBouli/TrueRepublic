@@ -14,7 +14,8 @@ Technical documentation for developers building on or contributing to TrueRepubl
 - [REST & RPC Endpoints](api-reference/rest-rpc.md) -- HTTP API reference
 
 ### Integration
-- [Web Wallet Integration](integration-guide/web-wallet.md) -- React + Keplr + CosmJS
+- [Web Client Integration](integration-guide/web-wallet.md) -- canonical
+  `client-web` boundary and legacy retirement record
 - [Retired Mobile Client](integration-guide/mobile.md) -- GH-102 retirement and
   replacement requirements
 - [CosmJS Examples](integration-guide/cosmjs-examples.md) -- Code examples for common operations
@@ -51,7 +52,7 @@ TrueRepublic/
 │   └── keeper/
 │       └── rewards.go      # Tokenomics equations 1-5
 ├── contracts/              # CosmWasm smart contracts (Rust)
-├── web-wallet/             # React web frontend
+├── client-web/             # Maintained React/TypeScript/Vite frontend
 ├── docs/                   # Documentation
 └── .github/                # CI/CD workflows
 ```
@@ -68,12 +69,12 @@ make build
 make test    # Run 182 tests
 ```
 
-### Run the Web Wallet
+### Run the Maintained Web Client
 
 ```bash
-cd web-wallet
-npm install
-npm start    # Development server on port 3000
+cd client-web
+npm ci
+npm run dev    # Development server on port 3001
 ```
 
 ### Build Smart Contracts

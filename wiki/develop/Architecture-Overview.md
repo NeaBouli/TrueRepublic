@@ -20,8 +20,8 @@ Complete architectural documentation of TrueRepublic/PNYX blockchain.
 
 ```
 CLIENT LAYER
-├── Web Wallet (React 18 + Keplr + CosmJS + Tailwind)
-├── Native Mobile Client (retired; replacement pending)
+├── Maintained client-web (React + TypeScript + CosmJS)
+├── Legacy web/mobile clients (retired; Git history only)
 └── CLI (truerepublicd, Cobra-based)
     ↓
 API LAYER
@@ -238,9 +238,9 @@ treasury/keeper/
 ### Proposal Submission Flow
 
 ```
-1. User fills form in Web Wallet (right panel)
-2. Web Wallet builds message via services/api.js
-3. Keplr signs transaction (Ed25519)
+1. User fills the maintained web-client form
+2. A typed `client-web/src/services/` boundary builds the message
+3. The approved wallet flow signs the transaction
 4. Transaction broadcast to CometBFT RPC (port 26657)
 5. CometBFT adds to mempool
 6. Validator includes in next block (~5s)
@@ -254,15 +254,15 @@ treasury/keeper/
    f. Store in KV store
 9. State committed to IAVL tree
 10. Block finalized (instant finality)
-11. Web Wallet polls/refreshes to see new proposal
+11. The maintained client refreshes the proposal
 ```
 
 ### DEX Swap Flow
 
 ```
 1. User enters swap amount on DEX page
-2. Web Wallet calls swapTokens() from services/api.js
-3. Keplr signs MsgSwap transaction
+2. The maintained client builds a slippage-bounded `MsgSwapExact`
+3. The approved wallet flow signs the transaction
 4. Transaction broadcast and included in block
 5. x/dex msg_server processes:
    a. Validate pool exists
@@ -280,7 +280,7 @@ treasury/keeper/
 
 ```
 1. User clicks vote on an issue/suggestion
-2. Web Wallet builds MsgPlaceStoneOnIssue/Suggestion
+2. The maintained client builds MsgPlaceStoneOnIssue/Suggestion
 3. Transaction processed by x/truedemocracy:
    a. Verify sender is domain member
    b. Remove sender's previous stone (if any)
@@ -299,7 +299,7 @@ treasury/keeper/
 
 | Layer | Mechanism |
 |-------|-----------|
-| Transaction signing | secp256k1 / Ed25519 via Keplr |
+| Transaction signing | secp256k1 / Ed25519 via an approved wallet signer |
 | On-chain verification | Cosmos SDK `GetSigners()` per message |
 | Domain membership | Keeper checks `domain.Members` |
 | Admin actions | Keeper checks `domain.Admin` |
@@ -308,7 +308,7 @@ treasury/keeper/
 ### Anonymous Voting (WP S4)
 
 ```
-Master Key (Keplr wallet)
+Master Key (approved wallet signer)
     │
     ├── Domain A Key (Ed25519, unlinkable)
     ├── Domain B Key (Ed25519, unlinkable)

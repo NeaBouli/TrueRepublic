@@ -4,8 +4,8 @@ Complete guides for using TrueRepublic.
 
 ## Available Manuals
 
-### Web Wallet
-- [Web Wallet Guide](/docs/user-manual/web-wallet-guide.md) -- Managing PNYX tokens
+### Maintained Web Client
+- [Web Client Guide](/docs/user-manual/web-wallet-guide.md) -- Recovery-safe client boundary
 - Sending and receiving
 - Balance checking
 - Security best practices
@@ -43,9 +43,9 @@ Complete guides for using TrueRepublic.
 ## Quick Links
 
 **Getting Started:**
-1. Install Keplr -- [Installation Wizards](Installation-Wizards)
-2. Get PNYX -- [Installation Wizards](Installation-Wizards#step-2-get-upnyx-tokens)
-3. Connect wallet -- [Web Wallet Guide](/docs/user-manual/web-wallet-guide.md)
+1. Review the recovery boundary -- [Installation Wizards](Installation-Wizards)
+2. Create or import a test-only local wallet -- [Web Client Guide](/docs/user-manual/web-wallet-guide.md)
+3. Use only approved test PNYX -- [Web Client Guide](/docs/user-manual/web-wallet-guide.md)
 
 **First Actions:**
 1. Join a domain -- [Governance Tutorial](/docs/user-manual/governance-tutorial.md#joining-a-domain)

@@ -25,7 +25,7 @@
 **🔹 Affected Systems:**  
 - [ ] Blockchain  
 - [ ] API  
-- [ ] Web Wallet  
+- [ ] Maintained Web Client (`client-web`)
 - [ ] Planned native mobile client / retirement boundary
 
 **🔹 Contact Details (for Reward):**  

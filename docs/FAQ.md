@@ -56,7 +56,7 @@ truerepublicd tx truedemocracy create-domain [name] [initial-coins]upnyx \
 ```
 
 ### How do I submit a proposal?
-Via the web wallet (Governance page, right panel) or CLI:
+Use the maintained `client-web` flow in an approved test environment or CLI:
 ```bash
 truerepublicd tx truedemocracy submit-proposal [domain] [issue] [suggestion] [fee]upnyx "" \
     --from mykey --chain-id truerepublic-1
@@ -77,8 +77,8 @@ Yes, by **2/3 majority vote** of domain members. Any member can initiate a vote-
 
 ### Is voting anonymous?
 The on-chain recovery design supports domain-scoped anonymous ratings and binds
-proofs to the chain, proposal, and rating. However, both web clients currently
-reject mock proof generation/submission. Anonymous voting is therefore not
+proofs to the chain, proposal, and rating. However, the maintained web client
+rejects mock proof generation/submission. Anonymous voting is therefore not
 available for production use until a compatible real prover and independent
 cryptographic review exist.
 
@@ -87,9 +87,8 @@ cryptographic review exist.
 ### Which wallets are supported?
 - `client-web` is the only maintained client during recovery and integrates
   browser-wallet/CosmJS flows.
-- `web-wallet` is a deprecated legacy client and must not be used for real keys
-  or funds. The former mobile prototype was retired and removed under GH-102;
-  there is no supported native mobile client.
+- The former web and mobile prototypes were retired and removed under GH-112
+  and GH-102; there is no supported legacy or native mobile client.
 
 ### How long do transactions take?
 Approximately **5 seconds** (one block confirmation).
@@ -141,7 +140,7 @@ There is no supported native mobile client.
 Fork the repo, create a branch, write tests, and submit a PR. See [Developer Docs](developers/README.md).
 
 ### Where are the tests?
-The recovery baseline has 1,388 verified cases: 1,316 Go, 26 Rust, and 46
+The recovery baseline has 1,389 verified cases: 1,316 Go, 26 Rust, and 47
 maintained-client tests. Run `./scripts/go-packages.sh go test -race -cover -count=1` and see
 `docs/status.json` for the authoritative breakdown.
 

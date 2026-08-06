@@ -4,7 +4,8 @@
 
 ### Option A: Docker (Recommended)
 
-Run the complete TrueRepublic stack (node + web wallet + monitoring) with Docker:
+Run the complete TrueRepublic stack (node + maintained web client + monitoring)
+with Docker:
 
 ```bash
 git clone https://github.com/NeaBouli/TrueRepublic.git
@@ -21,7 +22,7 @@ docker compose exec -T truerepublic-node \
 docker compose exec -T truerepublic-node \
   truerepublicd healthcheck ready            # Synced traffic readiness
 curl http://localhost:8080/rpc/status        # Node status through local proxy
-open http://localhost:3001                   # Web Wallet
+open http://localhost:3001                   # Maintained web client
 open http://localhost:3000                   # Grafana (admin / your-password)
 ```
 
@@ -40,18 +41,18 @@ make build                    # Binary: ./build/truerepublicd
 # Start node
 ./build/truerepublicd start
 
-# Build web wallet (separate terminal)
-cd web-wallet
-npm install
-npm start                     # Development server: http://localhost:3000
+# Build maintained web client (separate terminal)
+cd client-web
+npm ci
+npm run dev                   # Development server: http://localhost:3001
 ```
 
-### Option C: Web Wallet Only
+### Option C: Maintained Web Client Only
 
 ```bash
-cd web-wallet
-npm install
-npm start
+cd client-web
+npm ci
+npm run dev
 ```
 
 ## Prerequisites
@@ -60,7 +61,7 @@ npm start
 |-----------|-------------|-------|
 | **Docker** (Option A) | Docker 24.0+, Compose v2.20+ | `docker --version` |
 | **Go** (Option B) | Go 1.23.5+ | `go version` |
-| **Node.js** (web wallet) | Node.js 20+ | `node --version` |
+| **Node.js** (web client) | Node.js 22+ | `node --version` |
 | **Rust** (smart contracts) | Rust 1.75+ | `rustc --version` |
 
 ## What Gets Installed
@@ -71,7 +72,7 @@ npm start
 |---------|------|-----|
 | Local reverse proxy | 8080 | `http://localhost:8080` |
 | Blockchain P2P (local development) | 26656 | `tcp://127.0.0.1:26656` |
-| Web Wallet | 3001 | `http://localhost:3001` |
+| Maintained Web Client | 3001 | `http://localhost:3001` |
 | Grafana | 3000 | `http://localhost:3000` |
 | Prometheus | 9091 | `http://localhost:9091` |
 
@@ -113,6 +114,13 @@ The former Expo prototype was retired and removed under GH-102. It was not safe
 for real keys, had no meaningful tests, and could not produce a current Android
 bundle. There is no supported mobile build target; use `client-web` until a new
 mobile client is designed and independently reviewed.
+
+## Retired Legacy Web Wallet
+
+The former Create React App prototype was retired and removed under GH-112.
+It carried 70 dependency advisories, broken custom-query calls, obsolete custom
+transaction paths, and a real bank-send path. Git history preserves it for
+audit only; use `client-web` for all current development.
 
 ## Next Steps
 

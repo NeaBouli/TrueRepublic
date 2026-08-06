@@ -1,6 +1,6 @@
 # Testing Status
 
-The current **v0.4.0 recovery** source of truth records **1,388 verified cases**.
+The current **v0.4.0 recovery** source of truth records **1,389 verified cases**.
 
 | Suite | Passing cases |
 |---|---:|
@@ -18,8 +18,8 @@ The current **v0.4.0 recovery** source of truth records **1,388 verified cases**
 | Go DEX | 116 |
 | Go governance | 511 |
 | Rust/CosmWasm | 26 |
-| Maintained client | 46 |
-| **Total** | **1,388** |
+| Maintained client | 47 |
+| **Total** | **1,389** |
 
 ## Current Go coverage
 
@@ -51,7 +51,7 @@ CGO_ENABLED=1 ./scripts/go-packages.sh go build
 ./scripts/check-consistency.sh
 ```
 
-The maintained client is verified with `npm ci`, lint, 46 tests (40 Vitest plus
+The maintained client is verified with `npm ci`, lint, 47 tests (41 Vitest plus
 six audit-policy cases), production build, and guarded live audit. The CosmWasm workspace is verified with tests, formatting,
 Clippy, build, and audit.
 

@@ -4,10 +4,10 @@
   "release_date": "2026-03-04",
   "tests": {
     "status": "recovery_verified_locally",
-    "total": 1388,
+    "total": 1389,
     "go": 1316,
     "rust": 26,
-    "frontend": 46,
+    "frontend": 47,
     "historical_total": 577
   },
   "web_client": {
@@ -17,7 +17,7 @@
     "routes": 21,
     "stores": 8,
     "services": 11,
-    "build_size_gzip": "317.94 kB"
+    "build_size_gzip": "318.01 kB"
   },
   "recovery": {
     "status": "active",
@@ -25,7 +25,7 @@
     "production_ready": false,
     "canonical_web_client": "client-web",
     "legacy_clients": {
-      "web-wallet": "deprecated_security_migration_required",
+      "web-wallet": "retired_removed_on_gh112_git_history_only",
       "mobile-wallet": "retired_removed_on_gh102_git_history_only"
     }
   },
@@ -33,9 +33,9 @@
     "status": "engineering_in_progress",
     "tracker_scope": "github_issue_29",
     "github_issue": 29,
-    "completed": 13,
+    "completed": 14,
     "total": 59,
-    "phase_work_completed": 13,
+    "phase_work_completed": 14,
     "phase_work_total": 51,
     "phase_6_completed": 6,
     "phase_6_total": 7,

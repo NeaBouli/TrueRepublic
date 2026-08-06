@@ -40,6 +40,9 @@ func TestContainerNetworkDefaultsFailClosed(t *testing.T) {
 		"127.0.0.1:8080:80",
 		"127.0.0.1:9091:9090",
 		"127.0.0.1:3000:3000",
+		"127.0.0.1:3001:8080",
+		"context: ./client-web",
+		"container_name: truerepublic-client-web",
 		"--rpc.laddr=tcp://127.0.0.1:26657",
 		"--api.address=tcp://127.0.0.1:1317",
 		"--grpc.enable=false",
@@ -120,6 +123,23 @@ func TestContainerNetworkDefaultsFailClosed(t *testing.T) {
 		}
 	}
 
+	clientNginx := readRepositoryFile(t, "client-web/nginx.conf")
+	for _, required := range []string{
+		"listen 8080",
+		"limit_req zone=client_rpc burst=20 nodelay",
+		"limit_req zone=client_api burst=50 nodelay",
+		"location ~ ^/api/metrics(?:/|$)",
+		"location ^~ /rpc/",
+		"proxy_pass http://127.0.0.1:26657",
+		"location ^~ /api/",
+		"proxy_pass http://127.0.0.1:1317",
+		"try_files $uri $uri/ /index.html",
+	} {
+		if !strings.Contains(clientNginx, required) {
+			t.Fatalf("maintained client nginx configuration must contain %q", required)
+		}
+	}
+
 	workflow := readRepositoryFile(t, ".github/workflows/go-ci.yml")
 	if strings.Contains(workflow, "--publish") {
 		t.Fatal("Docker smoke must not publish a host RPC port")
@@ -129,9 +149,11 @@ func TestContainerNetworkDefaultsFailClosed(t *testing.T) {
 		"truerepublicd healthcheck ready --timeout 2s",
 		"docker exec truerepublic-node-ci wget -qO- http://127.0.0.1:26657/status",
 		"Verify structured logs after restart",
-		"docker compose up --detach --build truerepublic-node web-wallet nginx prometheus grafana",
+		"docker compose up --detach --build truerepublic-node client-web nginx prometheus grafana",
 		"- 'nginx/**'",
 		"http://127.0.0.1:8080/rpc/status",
+		"http://127.0.0.1:3001/rpc/status",
+		"http://127.0.0.1:3001/api/cosmos/base/tendermint/v1beta1/node_info",
 		`select(.labels.job == "truerepublic-node" and .health == "up")`,
 		`select(.labels.job == "truerepublic-app" and .health == "up")`,
 		"http://127.0.0.1:8080/api/metrics?format=prometheus",

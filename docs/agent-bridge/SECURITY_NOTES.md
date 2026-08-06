@@ -109,19 +109,25 @@
 
 ## Legacy client blockers
 
-- `web-wallet`: obsolete CosmJS crypto, legacy Create React App toolchain, and
-  extensive source-map warnings. Focused tests and the production build pass,
-  but a live audit on 2026-08-06 reports 70 advisories (18 low, 20 moderate,
-  29 high, 3 critical). The dependency architecture is not approved for
-  production keys or funds; GH-112 tracks migration or explicit retirement.
+- GH-112 local replacement check: maintained `client-web` passes lint, six
+  audit-policy cases, 41 Vitest cases, production build, and guarded live audit.
+  The Vite 8.1 build reporter records the current main bundle as 318.01 kB
+  gzip; the existing oversized-bundle rollout item remains open and this task
+  does not claim performance closure.
+
+- Former `web-wallet`: retired and removed under GH-112. The final baseline
+  reproduced 70 advisories (18 low, 20 moderate, 29 high, 3 critical), broken
+  CosmJS custom queries, unregistered/nonexistent custom messages, a
+  chain-rejected unsafe legacy swap, and a functional bank-send path.
 - The former `mobile-wallet` final baseline reproduced 51 npm advisories
   (7 low, 16 moderate, 24 high, 4 critical), obsolete CosmJS crypto, Expo 51 /
   React Native 0.74, no tests, a broken Android bundle, unsafe mnemonic-in-UI
   handling, and obsolete governance/DEX queries. GH-102 retires and removes it;
   Git history is audit-only and must not be recovered for real keys or funds.
-- `web-wallet` remains deprecated and unapproved. A future native client is a
-  separate high-risk implementation requiring secure custody, current chain
-  compatibility, real tests/builds, and independent wallet/crypto review.
+- Both former client prototypes are Git-history-only. A future native or
+  alternate client is a separate high-risk implementation requiring secure
+  custody, current chain compatibility, real tests/builds, and independent
+  wallet/crypto review.
 
 ## GH-61 exact source-export binding
 

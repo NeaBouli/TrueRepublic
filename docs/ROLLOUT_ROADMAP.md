@@ -19,8 +19,8 @@ intentionally more granular than the public 59-item tracker.
 
 - The ordered recovery merge chain is on `main`.
 - The maximum supply is fixed at 21,000,000 PNYX.
-- The source of truth records 1,388 recovery-verified tests: 1,316 Go, 26 Rust,
-  and 46 maintained-client tests.
+- The source of truth records 1,389 recovery-verified tests: 1,316 Go, 26 Rust,
+  and 47 maintained-client tests.
 - Ledger, escrow, issuance, DEX custody, genesis, runtime invariants, ZKP
   statement binding, node persistence, and the safe operator-init boundary
   have CI-backed recovery evidence.
@@ -112,7 +112,7 @@ recovery tests; unsupported surfaces are absent or unmistakably disabled.
 ## Phase 4 — Canonical client and legacy retirement
 
 - [ ] Keep `client-web` as the single canonical public client.
-- [ ] Migrate or archive `web-wallet` under GH-112; keep the GH-102-retired
+- [x] Retire and remove `web-wallet` under GH-112; keep the GH-102-retired
   mobile prototype absent from public release paths.
 - [ ] Complete transaction history with pagination and failure handling.
 - [ ] Complete IBC transfer UX, status tracking, timeout handling, and recovery

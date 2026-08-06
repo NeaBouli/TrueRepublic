@@ -45,7 +45,7 @@ make docker-build
 
 This builds:
 - **truerepublic-node** -- Multi-stage Go build (golang:1.23-alpine -> alpine:3.19)
-- **web-wallet** -- React build served by nginx
+- **client-web** -- maintained React/Vite build served by nginx
 
 ## Step 3: Start
 
@@ -58,7 +58,7 @@ This starts all services:
 | Service | Port | Description |
 |---------|------|-------------|
 | truerepublic-node | 127.0.0.1:26656 and proxy port 8080 | Local blockchain node |
-| web-wallet | 127.0.0.1:3001 | Deprecated local frontend |
+| client-web | 127.0.0.1:3001 | Maintained local frontend |
 | nginx | 127.0.0.1:8080 | Local HTTP reverse proxy; not a TLS rollout proxy |
 | prometheus | 127.0.0.1:9091 | Same-namespace local metrics collection |
 | grafana | 127.0.0.1:3000 | Local dashboards |
@@ -78,7 +78,7 @@ curl http://localhost:8080/rpc/status | jq .result.sync_info
 # Check if node is syncing
 curl http://localhost:8080/rpc/status | jq .result.sync_info.catching_up
 
-# Check web wallet
+# Check maintained web client
 curl -s http://localhost:3001 | head -5
 
 # Check Grafana

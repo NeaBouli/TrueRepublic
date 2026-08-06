@@ -12,6 +12,7 @@ services:
       - "127.0.0.1:${P2P_PORT:-26656}:26656"
       - "127.0.0.1:8080:80"
       - "127.0.0.1:9091:9090"
+      - "127.0.0.1:3001:8080"
     volumes:
       - node-data:/home/truerepublic/.truerepublic
     environment:
@@ -36,19 +37,16 @@ services:
         max-size: "50m"
         max-file: "3"
 
-  # ---- Web Wallet ----
-  web-wallet:
+  # ---- Client Web (maintained frontend) ----
+  client-web:
     build:
-      context: ./web-wallet
+      context: ./client-web
       dockerfile: Dockerfile
-    container_name: truerepublic-web-wallet
+    container_name: truerepublic-client-web
     restart: unless-stopped
-    ports:
-      - "127.0.0.1:3001:80"
     depends_on:
       - truerepublic-node
-    networks:
-      - truerepublic-net
+    network_mode: "service:truerepublic-node"
 
   # ---- Nginx Reverse Proxy ----
   nginx:
@@ -59,7 +57,7 @@ services:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
     depends_on:
       - truerepublic-node
-      - web-wallet
+      - client-web
     network_mode: "service:truerepublic-node"
 
   # ---- Prometheus ----

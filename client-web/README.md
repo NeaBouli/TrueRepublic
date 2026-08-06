@@ -5,19 +5,19 @@ React-based web client for the TrueRepublic/PNYX blockchain.
 ## Quick Start
 
 ```bash
-npm install
-npm run dev      # Development server (http://localhost:5173)
+npm ci
+npm run dev      # Development server (http://localhost:3001)
 npm run build    # Production build
 ```
 
 ## Tech Stack
 
 - **React 18** + TypeScript 5.9
-- **Vite 7.3** (build tooling)
-- **CosmJS 0.32.4** (blockchain interaction)
+- **Vite 8.1** (build tooling)
+- **CosmJS 0.39** (blockchain interaction)
 - **Zustand 4.5** (state management)
 - **TailwindCSS 3.4** (styling)
-- **React Router v6** (routing)
+- **React Router v7** (declarative SPA routing)
 - **Heroicons** (icons)
 
 ## Architecture
@@ -66,10 +66,11 @@ src/
 
 ## ZKP Implementation
 
-**v0.4.0**: Mock implementation with SHA-256
-- 2-second simulated proof generation
-- Identity commitment creation/export/import
-- Placeholder for real gnark-wasm
+**v0.4.0**: Preview helpers with fail-closed proof submission
+- Local identity commitment creation/export/import remains preview-only
+- `initialize()` and `generateProof()` reject because no compatible real
+  prover is installed
+- Mock-derived values are never submitted as Groth16 proofs
 
 **v0.4.1 (Planned)**: Real ZKP
 - gnark-wasm compilation from Go circuit
@@ -86,18 +87,23 @@ src/
 
 ## Chain Configuration
 
-Default chain config points to local node:
+The development defaults point directly to a local node:
 - RPC: `http://localhost:26657`
 - REST: `http://localhost:1317`
 - Bech32: `true1...`
 - Base denom: `upnyx`; display denom: `PNYX` (6 decimals)
 
+The production container sets `VITE_TRUEREPUBLIC_RPC=/rpc` and
+`VITE_TRUEREPUBLIC_REST=/api`, resolved against the browser origin. Its nginx
+proxy reaches the loopback-only node APIs through the shared Compose network
+namespace, so ports 26657 and 1317 remain unexposed.
+
 ## Build Output
 
-Production build (~3 MB):
-- Main bundle: ~2.9 MB (CosmJS + protobuf)
-- CSS: ~22 kB (TailwindCSS, purged)
-- Gzip: ~690 kB
+Current recovery build (`npm run build`):
+- Main JavaScript: 1,700.76 kB; 318.01 kB gzip
+- CSS: 22.25 kB; 4.84 kB gzip
+- Vite still warns that the main chunk exceeds 500 kB; bundle splitting and a performance budget remain open rollout work.
 
 ## License
 

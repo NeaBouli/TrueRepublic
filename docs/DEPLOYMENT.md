@@ -7,7 +7,7 @@
 - Go 1.24+ (for native build)
 - Docker and Docker Compose (for containerized deployment)
 - Rust toolchain (for CosmWasm contracts)
-- Node.js 20+ (for web wallet)
+- Node.js 22+ (for the maintained web client)
 
 ## System Requirements
 
@@ -47,7 +47,7 @@ docker compose exec -T truerepublic-node truerepublicd healthcheck ready
 # Check node status through the loopback proxy
 curl --fail --silent --show-error http://localhost:8080/rpc/status
 
-# Check web wallet
+# Check maintained web client
 curl http://localhost:3001
 
 # Check Grafana
@@ -249,7 +249,7 @@ sudo su - truerepublic
 | Node LCD | 1317 | REST API |
 | Node gRPC | 9090 | gRPC endpoint |
 | Node Metrics | 26660 | Prometheus metrics |
-| Web Wallet | 3001 | React frontend |
+| Maintained Web Client | 3001 | React/Vite frontend |
 | Nginx | 80/443 | Reverse proxy |
 | Prometheus | 9091 | Metrics collection |
 | Grafana | 3000 | Dashboards |

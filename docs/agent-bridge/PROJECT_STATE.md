@@ -1,13 +1,16 @@
 # Project State
 
-Updated: 2026-08-05 23:01 UTC
+Updated: 2026-08-06 00:31 UTC
 
 ## Repository
 
-- GH-102 is closed through merged PR #113 (`d621ff9`). The unsupported native
-  prototype and pass-with-no-tests CI are removed, a blocking retirement
-  contract keeps them absent, and final-main Pages `31054458625` plus Security
-  Scan `31054461930` pass. GH-112 separately tracks deprecated `web-wallet`.
+- GH-102 is closed through merged PR #113 (`d621ff9`). GH-112 is locally
+  implemented on `fix/GH-112-legacy-web`: the duplicate web prototype is
+  removed, `client-web` replaces it in Compose/nginx, and blocking retirement,
+  docs, and security gates are under final verification before publication.
+  GH-115 separately tracks the maintained-client custom transaction registry
+  and client-to-chain delivery gap found during independent review; GH-116
+  tracks the retired client's now-consumerless legacy `custom/...` query shim.
 - GH-56 is closed through merged PR #62 (`80ab674`). Authenticated atomic
   consensus-key rotation, permanent revocation, separate bootstrap operator
   authority, deterministic CometBFT H+2 activation, and real five-process
@@ -269,11 +272,10 @@ Updated: 2026-08-05 23:01 UTC
   Coverage: root 10.2%, token 93.5%, treasury 97.0%, DEX 34.2%, governance 55.8%.
 - Go vulnerability gate: no reachable finding with an available fix remains;
   four upstream `N/A` findings are tracked for import-path reduction.
-- Legacy `web-wallet`: focused ZKP tests and the production build pass, but a
-  live audit on 2026-08-06 reports 70 advisories (18 low, 20 moderate, 29 high,
-  3 critical). Obsolete CosmJS crypto/Create React App and source-map warnings
-  remain; mock proof submission is disabled and it is not approved for keys or
-  funds. GH-112 tracks migration or explicit retirement.
+- Former `web-wallet`: locally retired and removed under GH-112 after the
+  final baseline reproduced 70 advisories, 18 passing but API-isolated tests, a
+  warning-heavy build, broken custom-query calls, obsolete/unregistered custom
+  transaction paths, and a real bank-send path. Git history is audit-only.
 - Former `mobile-wallet`: retired and removed under GH-102 after the final
   baseline reproduced 51 advisories (7 low, 16 moderate, 24 high, 4 critical),
   no tests, a broken Android bundle, obsolete chain queries, and unsafe
