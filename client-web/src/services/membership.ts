@@ -1,4 +1,5 @@
 import { fromBech32 } from '@cosmjs/encoding';
+import type { SigningStargateClient } from '@cosmjs/stargate';
 import type { DirectSecp256k1HdWallet } from '@cosmjs/proto-signing';
 import type { ChainConfig } from '@/types/chain';
 import type { DomainInvite, MembershipStatus } from '@/types/membership';
@@ -91,9 +92,10 @@ export class MembershipService {
   ): Promise<TransactionResult> {
     const [account] = await wallet.getAccounts();
 
-    const client = await connectSigningClient(this.config, wallet);
+    let client: SigningStargateClient | undefined;
 
     try {
+      client = await connectSigningClient(this.config, wallet);
       const msg = {
         typeUrl: '/truedemocracy.MsgOnboardToDomain',
         value: {
@@ -119,7 +121,7 @@ export class MembershipService {
         error: err instanceof Error ? err.message : 'Onboarding failed',
       };
     } finally {
-      client.disconnect();
+      client?.disconnect();
     }
   }
 
@@ -135,9 +137,10 @@ export class MembershipService {
   ): Promise<TransactionResult> {
     const [account] = await wallet.getAccounts();
 
-    const client = await connectSigningClient(this.config, wallet);
+    let client: SigningStargateClient | undefined;
 
     try {
+      client = await connectSigningClient(this.config, wallet);
       const msg = {
         typeUrl: '/truedemocracy.MsgRegisterIdentity',
         value: {
@@ -164,7 +167,7 @@ export class MembershipService {
             : 'Identity registration failed',
       };
     } finally {
-      client.disconnect();
+      client?.disconnect();
     }
   }
 

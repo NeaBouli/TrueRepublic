@@ -1,4 +1,4 @@
-import { SigningStargateClient } from '@cosmjs/stargate';
+import { StargateClient, type SigningStargateClient } from '@cosmjs/stargate';
 import type { DirectSecp256k1HdWallet } from '@cosmjs/proto-signing';
 import type { ChainConfig } from '@/types/chain';
 import type { SendParams, TransactionResult, Transaction } from '@/types/transaction';
@@ -21,9 +21,10 @@ export class TransactionService {
   ): Promise<TransactionResult> {
     const [account] = await wallet.getAccounts();
 
-    const client = await connectSigningClient(this.config, wallet);
+    let client: SigningStargateClient | undefined;
 
     try {
+      client = await connectSigningClient(this.config, wallet);
       const msg = {
         typeUrl: '/cosmos.bank.v1beta1.MsgSend',
         value: {
@@ -55,7 +56,7 @@ export class TransactionService {
         error: message,
       };
     } finally {
-      client.disconnect();
+      client?.disconnect();
     }
   }
 
@@ -63,7 +64,7 @@ export class TransactionService {
    * Get transaction by hash (read-only connection).
    */
   async getTransaction(hash: string): Promise<Transaction | null> {
-    const client = await SigningStargateClient.connect(this.config.rpc);
+    const client = await StargateClient.connect(this.config.rpc);
 
     try {
       const tx = await client.getTx(hash);

@@ -35,7 +35,6 @@ export async function connectSigningClient(
 ): Promise<SigningStargateClient> {
   return SigningStargateClient.connectWithSigner(config.rpc, signer, {
     registry: createTxRegistry(),
-    gasPrice: GasPrice.fromString(config.gasPrice),
   });
 }
 
@@ -43,8 +42,8 @@ export async function connectSigningClient(
  * Simulate, sign, and broadcast messages. Simulation failure aborts the
  * delivery — there is deliberately no fallback gas that would mask it. The
  * fee stays derived from the configured gas price. A non-zero delivery code
- * throws with the chain's raw log. The caller owns `client.disconnect()`
- * (finally).
+ * throws with the chain's raw log, or with the code itself when the log is
+ * empty. The caller owns `client.disconnect()` (finally).
  */
 export async function deliverMessages(
   client: SigningStargateClient,
@@ -64,7 +63,9 @@ export async function deliverMessages(
   );
 
   if (result.code !== 0) {
-    throw new Error(result.rawLog || 'Transaction failed');
+    throw new Error(
+      result.rawLog || `Transaction failed with code ${result.code}`
+    );
   }
 
   return {

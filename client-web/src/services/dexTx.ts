@@ -1,4 +1,5 @@
 import { fromBech32 } from '@cosmjs/encoding';
+import type { SigningStargateClient } from '@cosmjs/stargate';
 import type { DirectSecp256k1HdWallet } from '@cosmjs/proto-signing';
 import type { ChainConfig } from '@/types/chain';
 import type {
@@ -27,9 +28,10 @@ export class DEXTxService {
   ): Promise<TransactionResult> {
     const [account] = await wallet.getAccounts();
 
-    const client = await connectSigningClient(this.config, wallet);
+    let client: SigningStargateClient | undefined;
 
     try {
+      client = await connectSigningClient(this.config, wallet);
       const msg = {
         typeUrl: '/dex.MsgAddLiquidity',
         value: {
@@ -54,7 +56,7 @@ export class DEXTxService {
         error: err instanceof Error ? err.message : 'Add liquidity failed',
       };
     } finally {
-      client.disconnect();
+      client?.disconnect();
     }
   }
 
@@ -68,9 +70,10 @@ export class DEXTxService {
   ): Promise<TransactionResult> {
     const [account] = await wallet.getAccounts();
 
-    const client = await connectSigningClient(this.config, wallet);
+    let client: SigningStargateClient | undefined;
 
     try {
+      client = await connectSigningClient(this.config, wallet);
       const msg = {
         typeUrl: '/dex.MsgRemoveLiquidity',
         value: {
@@ -95,7 +98,7 @@ export class DEXTxService {
           err instanceof Error ? err.message : 'Remove liquidity failed',
       };
     } finally {
-      client.disconnect();
+      client?.disconnect();
     }
   }
 
@@ -110,9 +113,10 @@ export class DEXTxService {
   ): Promise<TransactionResult> {
     const [account] = await wallet.getAccounts();
 
-    const client = await connectSigningClient(this.config, wallet);
+    let client: SigningStargateClient | undefined;
 
     try {
+      client = await connectSigningClient(this.config, wallet);
       const msg = {
         typeUrl: '/dex.MsgSwapExact',
         value: {
@@ -144,7 +148,7 @@ export class DEXTxService {
         error: err instanceof Error ? err.message : 'Swap failed',
       };
     } finally {
-      client.disconnect();
+      client?.disconnect();
     }
   }
 }

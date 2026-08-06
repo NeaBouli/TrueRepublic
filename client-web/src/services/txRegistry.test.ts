@@ -231,7 +231,19 @@ describe('assertPositiveInt64Decimal', () => {
 describe('canonical transaction registry', () => {
   it('registers every custom type identity', () => {
     const registry = createTxRegistry();
-    expect(customRegistryTypes).toHaveLength(11);
+    expect(customRegistryTypes.map(([typeUrl]) => typeUrl)).toEqual([
+      '/truedemocracy.MsgCreateDomain',
+      '/truedemocracy.MsgSubmitProposal',
+      '/truedemocracy.MsgPlaceStoneOnSuggestion',
+      '/truedemocracy.MsgPlaceStoneOnIssue',
+      '/truedemocracy.MsgApproveOnboarding',
+      '/truedemocracy.MsgAddMember',
+      '/truedemocracy.MsgOnboardToDomain',
+      '/truedemocracy.MsgRegisterIdentity',
+      '/dex.MsgAddLiquidity',
+      '/dex.MsgRemoveLiquidity',
+      '/dex.MsgSwapExact',
+    ]);
     for (const [typeUrl] of customRegistryTypes) {
       expect(registry.lookupType(typeUrl)).toBeDefined();
     }

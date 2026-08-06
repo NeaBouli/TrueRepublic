@@ -2814,3 +2814,30 @@
 - Kimi was stopped after its substantive review and remediation verdict because
   it continued re-reading files that Sol was actively updating; no Kimi write
   occurred during the read-only review. Protected publication remains next.
+
+## 2026-08-06 14:13 EEST - GH-115 protected review remediation verified
+
+- PR #119 was published at `15c9829`; every protected exact-head workflow
+  passed before CodeRabbit opened 16 review threads.
+- Remediated every valid finding: legacy `true` wallet addresses now migrate
+  without touching encrypted payloads; RPC and signing connections fail
+  boundedly; empty delivery logs retain the chain code; read-only transaction
+  lookup uses `StargateClient`; custom type URLs derive from their codecs; all
+  seven DEX signer contracts and protobuf wire tags are enforced and tested;
+  documentation/status drift is corrected.
+- Four comments were rejected with code evidence: onboarding/member addresses
+  are Go strings, strict amount re-encoding is the intended fail-closed
+  boundary, generated test mnemonics remain local disposable fixtures, and the
+  earlier exact head had already passed CI.
+- PASS: `make verify` (build/vet/race/coverage and all 1,329 standard Go
+  cases), 85 Vitest plus six audit-policy cases, client lint/build at 318.91 kB
+  gzip, guarded audit, exact local client-chain delivery in 70.81 seconds,
+  docs consistency, both retirement contracts, JSON and diff checks. Cleanup
+  leaves zero GH-115 temporary homes.
+- Kimi independently rechecked the remediation and found no P0/P1/P2. Its
+  status, wording, and rejection-assertion observations were corrected during
+  review; no Kimi write occurred.
+- Standard status is now 1,446 cases (1,329 Go + 26 Rust + 91 maintained
+  client), rollout 16/59, Phase 6 6/7, and `production_ready=false`. Review
+  commit, protected rerun, thread resolution, merge, issue synchronization,
+  Pages readback, and final-main verification remain pending.

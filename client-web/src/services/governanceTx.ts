@@ -1,4 +1,5 @@
 import { fromBech32 } from '@cosmjs/encoding';
+import type { SigningStargateClient } from '@cosmjs/stargate';
 import type { DirectSecp256k1HdWallet } from '@cosmjs/proto-signing';
 import type { ChainConfig } from '@/types/chain';
 import type { PayToPutCalculation } from '@/types/governance';
@@ -59,9 +60,10 @@ export class GovernanceTxService {
   ): Promise<TransactionResult> {
     const [account] = await wallet.getAccounts();
 
-    const client = await connectSigningClient(this.config, wallet);
+    let client: SigningStargateClient | undefined;
 
     try {
+      client = await connectSigningClient(this.config, wallet);
       const msg = {
         typeUrl: '/truedemocracy.MsgSubmitProposal',
         value: {
@@ -89,7 +91,7 @@ export class GovernanceTxService {
         error: err instanceof Error ? err.message : 'Suggestion creation failed',
       };
     } finally {
-      client.disconnect();
+      client?.disconnect();
     }
   }
 
@@ -106,9 +108,10 @@ export class GovernanceTxService {
   ): Promise<TransactionResult> {
     const [account] = await wallet.getAccounts();
 
-    const client = await connectSigningClient(this.config, wallet);
+    let client: SigningStargateClient | undefined;
 
     try {
+      client = await connectSigningClient(this.config, wallet);
       const msg = {
         typeUrl: '/truedemocracy.MsgPlaceStoneOnSuggestion',
         value: {
@@ -134,7 +137,7 @@ export class GovernanceTxService {
         error: err instanceof Error ? err.message : 'Stone placement failed',
       };
     } finally {
-      client.disconnect();
+      client?.disconnect();
     }
   }
 
@@ -149,9 +152,10 @@ export class GovernanceTxService {
   ): Promise<TransactionResult> {
     const [account] = await wallet.getAccounts();
 
-    const client = await connectSigningClient(this.config, wallet);
+    let client: SigningStargateClient | undefined;
 
     try {
+      client = await connectSigningClient(this.config, wallet);
       const msg = {
         typeUrl: '/truedemocracy.MsgPlaceStoneOnIssue',
         value: {
@@ -176,7 +180,7 @@ export class GovernanceTxService {
         error: err instanceof Error ? err.message : 'Stone placement failed',
       };
     } finally {
-      client.disconnect();
+      client?.disconnect();
     }
   }
 }

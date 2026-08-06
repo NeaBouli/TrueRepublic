@@ -14,24 +14,32 @@ func TestCustomGetSignersSupportsDynamicMessages(t *testing.T) {
 	options := &txsigning.Options{}
 	RegisterCustomGetSigners(options)
 
-	descriptor, err := gogoproto.HybridResolver.FindDescriptorByName("dex.MsgCreatePool")
-	require.NoError(t, err)
-	msgDescriptor, ok := descriptor.(protoreflect.MessageDescriptor)
-	require.True(t, ok)
-	msg := dynamicpb.NewMessage(msgDescriptor)
-	senderField := msg.Descriptor().Fields().ByName("sender")
-	require.NotNil(t, senderField)
-	expected := []byte("twenty-byte-address!")
-	msg.Set(senderField, protoreflect.ValueOfBytes(expected))
+	for msgType, signerFieldName := range msgSignerFields() {
+		msgType := msgType
+		signerFieldName := signerFieldName
+		t.Run(msgType.Elem().Name(), func(t *testing.T) {
+			descriptor, err := gogoproto.HybridResolver.FindDescriptorByName(protoreflect.FullName("dex." + msgType.Elem().Name()))
+			require.NoError(t, err)
+			msgDescriptor, ok := descriptor.(protoreflect.MessageDescriptor)
+			require.True(t, ok)
+			msg := dynamicpb.NewMessage(msgDescriptor)
+			signerField := msg.Descriptor().Fields().ByName(protoreflect.Name(signerFieldName))
+			require.NotNil(t, signerField)
+			require.Equal(t, protoreflect.BytesKind, signerField.Kind())
+			expected := []byte("twenty-byte-address!")
+			msg.Set(signerField, protoreflect.ValueOfBytes(expected))
 
-	getSigners := options.CustomGetSigners[msg.Descriptor().FullName()]
-	require.NotNil(t, getSigners)
-	signers, err := getSigners(msg)
-	require.NoError(t, err)
-	require.Equal(t, [][]byte{expected}, signers)
+			getSigners := options.CustomGetSigners[msg.Descriptor().FullName()]
+			require.NotNil(t, getSigners)
+			signers, err := getSigners(msg)
+			require.NoError(t, err)
+			require.Equal(t, [][]byte{expected}, signers)
 
-	// The resolver must return an owned copy rather than the dynamic message's
-	// mutable backing storage.
-	expected[0] = 'X'
-	require.Equal(t, byte('t'), signers[0][0])
+			// The resolver must return an owned copy rather than the dynamic
+			// message's mutable backing storage.
+			expected[0] = 'X'
+			require.Equal(t, byte('t'), signers[0][0])
+		})
+	}
+	require.Len(t, msgSignerFields(), len(msgTypesForDescriptor()))
 }

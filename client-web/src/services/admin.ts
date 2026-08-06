@@ -1,4 +1,5 @@
 import { fromBech32 } from '@cosmjs/encoding';
+import type { SigningStargateClient } from '@cosmjs/stargate';
 import type { DirectSecp256k1HdWallet } from '@cosmjs/proto-signing';
 import type { ChainConfig } from '@/types/chain';
 import type {
@@ -127,9 +128,10 @@ export class AdminService {
   ): Promise<TransactionResult> {
     const [account] = await wallet.getAccounts();
 
-    const client = await connectSigningClient(this.config, wallet);
+    let client: SigningStargateClient | undefined;
 
     try {
+      client = await connectSigningClient(this.config, wallet);
       const msg = {
         typeUrl: '/truedemocracy.MsgApproveOnboarding',
         value: {
@@ -154,7 +156,7 @@ export class AdminService {
           err instanceof Error ? err.message : 'Approve onboarding failed',
       };
     } finally {
-      client.disconnect();
+      client?.disconnect();
     }
   }
 
@@ -168,9 +170,10 @@ export class AdminService {
   ): Promise<TransactionResult> {
     const [account] = await wallet.getAccounts();
 
-    const client = await connectSigningClient(this.config, wallet);
+    let client: SigningStargateClient | undefined;
 
     try {
+      client = await connectSigningClient(this.config, wallet);
       const msg = {
         typeUrl: '/truedemocracy.MsgAddMember',
         value: {
@@ -194,7 +197,7 @@ export class AdminService {
         error: err instanceof Error ? err.message : 'Add member failed',
       };
     } finally {
-      client.disconnect();
+      client?.disconnect();
     }
   }
 
@@ -208,9 +211,10 @@ export class AdminService {
   ): Promise<TransactionResult> {
     const [account] = await wallet.getAccounts();
 
-    const client = await connectSigningClient(this.config, wallet);
+    let client: SigningStargateClient | undefined;
 
     try {
+      client = await connectSigningClient(this.config, wallet);
       const msg = {
         typeUrl: '/truedemocracy.MsgCreateDomain',
         value: {
@@ -239,7 +243,7 @@ export class AdminService {
         error: err instanceof Error ? err.message : 'Domain creation failed',
       };
     } finally {
-      client.disconnect();
+      client?.disconnect();
     }
   }
 }

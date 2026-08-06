@@ -4129,3 +4129,24 @@ exclusion, CI wiring, and documentation boundaries.
   final-main verification remain before Done. Production remains false.
 
 ---
+
+## 2026-08-06 14:13 EEST GH-115 → PR Review Remediation Verified
+
+- **PR state:** PR #119 is published. Its original exact head passed every
+  protected workflow; 16 subsequent CodeRabbit review threads were triaged.
+- **Valid fixes:** lossless legacy-prefix wallet migration, bounded RPC
+  readiness, connection-error result handling, delivery-code fallback,
+  read-only query client, codec-owned type URLs, explicit seven-message DEX
+  signer contracts, protobuf wire-tag validation, and synchronized status/docs.
+- **Evidence:** `make verify` PASS (1,329 Go cases plus build/vet/race/coverage),
+  85 Vitest + six audit cases, lint/build/audit PASS, real disposable-chain
+  delivery PASS in 70.81 seconds, docs/retirement/JSON/diff checks PASS, and
+  zero leaked GH-115 temporary homes.
+- **Independent review:** Kimi found no P0/P1/P2. Sol corrected all remaining
+  P3/P4 status, wording, and assertion observations; Kimi made no write.
+- **Status:** 1,446 standard cases, rollout 16/59, phase work 16/51, Phase 6
+  6/7, `production_ready=false`. Next: commit/push remediation, respond to and
+  resolve all 16 threads, await exact-head CI, merge, close GH-115, update
+  GH-29, verify Pages and final `main`.
+
+---

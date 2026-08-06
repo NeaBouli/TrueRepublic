@@ -70,4 +70,19 @@ describe('canonical transaction delivery', () => {
       deliverMessages(client, 'truerepublic1sender', [], '0.025upnyx')
     ).rejects.toThrow('chain rejected message');
   });
+
+  it('retains the delivery code when the chain returns no raw log', async () => {
+    const client = mockClient({
+      signAndBroadcast: vi.fn().mockResolvedValue({
+        code: 9,
+        transactionHash: 'FAILED',
+        height: 8,
+        rawLog: '',
+      }),
+    });
+
+    await expect(
+      deliverMessages(client, 'truerepublic1sender', [], '0.025upnyx')
+    ).rejects.toThrow('Transaction failed with code 9');
+  });
 });

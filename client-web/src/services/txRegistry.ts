@@ -908,17 +908,17 @@ export const MsgSwapExact = {
  * type URL fails closed in the registry.
  */
 export const customRegistryTypes: ReadonlyArray<[string, GeneratedType]> = [
-  ['/truedemocracy.MsgCreateDomain', MsgCreateDomain],
-  ['/truedemocracy.MsgSubmitProposal', MsgSubmitProposal],
-  ['/truedemocracy.MsgPlaceStoneOnSuggestion', MsgPlaceStoneOnSuggestion],
-  ['/truedemocracy.MsgPlaceStoneOnIssue', MsgPlaceStoneOnIssue],
-  ['/truedemocracy.MsgApproveOnboarding', MsgApproveOnboarding],
-  ['/truedemocracy.MsgAddMember', MsgAddMember],
-  ['/truedemocracy.MsgOnboardToDomain', MsgOnboardToDomain],
-  ['/truedemocracy.MsgRegisterIdentity', MsgRegisterIdentity],
-  ['/dex.MsgAddLiquidity', MsgAddLiquidity],
-  ['/dex.MsgRemoveLiquidity', MsgRemoveLiquidity],
-  ['/dex.MsgSwapExact', MsgSwapExact],
+  [MsgCreateDomain.typeUrl, MsgCreateDomain],
+  [MsgSubmitProposal.typeUrl, MsgSubmitProposal],
+  [MsgPlaceStoneOnSuggestion.typeUrl, MsgPlaceStoneOnSuggestion],
+  [MsgPlaceStoneOnIssue.typeUrl, MsgPlaceStoneOnIssue],
+  [MsgApproveOnboarding.typeUrl, MsgApproveOnboarding],
+  [MsgAddMember.typeUrl, MsgAddMember],
+  [MsgOnboardToDomain.typeUrl, MsgOnboardToDomain],
+  [MsgRegisterIdentity.typeUrl, MsgRegisterIdentity],
+  [MsgAddLiquidity.typeUrl, MsgAddLiquidity],
+  [MsgRemoveLiquidity.typeUrl, MsgRemoveLiquidity],
+  [MsgSwapExact.typeUrl, MsgSwapExact],
 ];
 
 /**

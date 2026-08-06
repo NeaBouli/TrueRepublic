@@ -125,14 +125,14 @@ TRUEREPUBLIC_CLIENT_CHAIN_INTEGRATION=1 npm run test:chain
 ```
 
 The canonical Bech32 prefix is `truerepublic`. Wallets created by an older
-preview with the incorrect `true` prefix must be re-imported so the maintained
-client derives and displays the canonical address; never send funds to an
-address solely because an obsolete preview displayed it.
+preview with the incorrect `true` prefix are migrated locally to the canonical
+`truerepublic` address without changing its encrypted wallet payload; never
+send funds to an address solely because an obsolete preview displayed it.
 
 ## Build Output
 
 Current recovery build (`npm run build`):
-- Main JavaScript: 1,708.29 kB; 319.32 kB gzip
+- Main JavaScript: 1,708.31 kB; 318.91 kB gzip
 - CSS: 22.25 kB; 4.84 kB gzip
 - Vite still warns that the main chunk exceeds 500 kB; bundle splitting and a performance budget remain open rollout work.
 

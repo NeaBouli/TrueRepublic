@@ -14,8 +14,7 @@ npm run build
 For the ephemeral local client-to-chain delivery gate:
 
 ```bash
-make build
-cd client-web
+make -C .. build
 TRUEREPUBLIC_CLIENT_CHAIN_INTEGRATION=1 npm run test:chain
 ```
 

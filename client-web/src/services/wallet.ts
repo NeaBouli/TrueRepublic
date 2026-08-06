@@ -1,10 +1,27 @@
 import { DirectSecp256k1HdWallet } from '@cosmjs/proto-signing';
 import { stringToPath } from '@cosmjs/crypto';
+import { fromBech32, toBech32 } from '@cosmjs/encoding';
 import { DEFAULT_CHAIN } from '@/config/chains';
 import type { Wallet, CreateWalletParams, ImportWalletParams } from '@/types/wallet';
 
 const DERIVATION_PATH = "m/44'/118'/0'/0/0"; // Cosmos standard
 const STORAGE_KEY = 'truerepublic_wallets';
+const LEGACY_BECH32_PREFIX = 'true';
+
+function migrateStoredAddress(wallet: Wallet): Wallet {
+  try {
+    const decoded = fromBech32(wallet.address);
+    if (decoded.prefix !== LEGACY_BECH32_PREFIX) return wallet;
+    return {
+      ...wallet,
+      address: toBech32(DEFAULT_CHAIN.bech32Prefix, decoded.data),
+    };
+  } catch {
+    // Preserve malformed historical records so users can still explicitly
+    // delete them; address migration must never destroy encrypted custody data.
+    return wallet;
+  }
+}
 
 export class WalletService {
   /**
@@ -106,7 +123,13 @@ export class WalletService {
    */
   static loadWallets(): Wallet[] {
     const stored = localStorage.getItem(STORAGE_KEY);
-    return stored ? JSON.parse(stored) : [];
+    if (!stored) return [];
+
+    const wallets = (JSON.parse(stored) as Wallet[]).map(migrateStoredAddress);
+    if (JSON.stringify(wallets) !== stored) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(wallets));
+    }
+    return wallets;
   }
 
   /**

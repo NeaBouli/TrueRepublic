@@ -75,6 +75,9 @@ async function waitForRpc(rpcUrl: string): Promise<void> {
             );
           });
           request.once('error', reject);
+          request.setTimeout(2_000, () => {
+            request.destroy(new Error('RPC readiness request timed out'));
+          });
         }
       );
       if (status.code >= 200 && status.code < 300) {
@@ -433,7 +436,7 @@ describe.skipIf(!enabled)('canonical client-to-chain delivery', () => {
           ],
           ''
         )
-      ).rejects.toThrow();
+      ).rejects.toThrow(/onboarding request not found/i);
 
       await expect(
         deliver('/dex.MsgAddLiquidity', {

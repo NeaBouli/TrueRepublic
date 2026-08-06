@@ -4,10 +4,10 @@
   "release_date": "2026-03-04",
   "tests": {
     "status": "recovery_verified_locally",
-    "total": 1443,
+    "total": 1446,
     "go": 1329,
     "rust": 26,
-    "frontend": 88,
+    "frontend": 91,
     "historical_total": 577
   },
   "web_client": {
@@ -17,7 +17,7 @@
     "routes": 21,
     "stores": 8,
     "services": 13,
-    "build_size_gzip": "319.32 kB"
+    "build_size_gzip": "318.91 kB"
   },
   "recovery": {
     "status": "active",
@@ -89,7 +89,7 @@
       "note": "Mock proof submission is disabled in maintained and legacy web clients. Real compatible prover and external ceremony/circuit review remain required."
     },
     "cosmwasm": {
-      "status": "canonical_registry_and_local_chain_delivery_verified",
+      "status": "recovery_verified_locally",
       "version": "v0.53.3"
     },
     "ibc": {
@@ -150,7 +150,7 @@
       "production_deployment": false
     },
     "web_client": {
-      "status": "recovery_verified_locally",
+      "status": "canonical_registry_and_local_chain_delivery_verified_local_and_ci",
       "features": [
         "wallet_create_import_unlock",
         "send_transactions",

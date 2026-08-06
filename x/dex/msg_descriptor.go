@@ -90,6 +90,22 @@ func msgTypesForDescriptor() []reflect.Type {
 	}
 }
 
+// msgSignerFields is the explicit signing contract for every hand-written DEX
+// message registered with the SDK. Keeping it separate from descriptor
+// discovery prevents a descriptor-only message from silently inheriting a
+// hard-coded signer assumption.
+func msgSignerFields() map[reflect.Type]string {
+	return map[reflect.Type]string{
+		reflect.TypeOf((*MsgCreatePool)(nil)):        "sender",
+		reflect.TypeOf((*MsgSwap)(nil)):              "sender",
+		reflect.TypeOf((*MsgAddLiquidity)(nil)):      "sender",
+		reflect.TypeOf((*MsgRemoveLiquidity)(nil)):   "sender",
+		reflect.TypeOf((*MsgRegisterAsset)(nil)):     "sender",
+		reflect.TypeOf((*MsgUpdateAssetStatus)(nil)): "sender",
+		reflect.TypeOf((*MsgSwapExact)(nil)):         "sender",
+	}
+}
+
 func msgResponseTypesForDescriptor() []string {
 	return []string{
 		"MsgCreatePoolResponse",
@@ -143,6 +159,13 @@ func buildFieldDescriptor(field reflect.StructField, tag string) *descriptorpb.F
 		label = descriptorpb.FieldDescriptorProto_LABEL_REPEATED
 	}
 	fieldType := descriptorTypeForGoField(field.Type)
+	expectedWireType := "varint"
+	if fieldType == descriptorpb.FieldDescriptorProto_TYPE_BYTES || fieldType == descriptorpb.FieldDescriptorProto_TYPE_STRING {
+		expectedWireType = "bytes"
+	}
+	if parts[0] != expectedWireType {
+		panic("protobuf wire type " + parts[0] + " does not match " + expectedWireType + " for " + field.Name)
+	}
 	return &descriptorpb.FieldDescriptorProto{
 		Name: proto2.String(protoName), Number: proto2.Int32(int32(number)), Label: &label, Type: &fieldType,
 	}
