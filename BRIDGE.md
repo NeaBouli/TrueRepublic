@@ -31,6 +31,38 @@ Canonical coordination lives in [`docs/agent-bridge/`](docs/agent-bridge/README.
 
 GitHub recovery epic: [#4](https://github.com/NeaBouli/TrueRepublic/issues/4)
 
+## 2026-08-07 01:32 EEST GH-122 js-yaml advisory prerequisite → Review
+
+- **Changed:** `client-web/package-lock.json` resolves transitive dev-only
+  `js-yaml` 4.3.1 instead of vulnerable 4.3.0; no application source or audit
+  policy changed.
+- **Tests:** `npm ci` PASS; `npm run lint` PASS; `npm test -- --run` PASS
+  (85 Vitest + six audit-policy cases); `npm run build` PASS at 318.91 kB gzip;
+  `npm run audit:high` PASS with only the existing exact BrowserRouter-bound
+  advisory exception.
+- **Risk:** Low. One compatible transitive development-tooling lock resolution.
+- **Ready for:** protected PR checks and Sol merge.
+
+### Sol review feedback
+
+Approved locally after exact lockfile diff review and clean reproduction.
+
+---
+
+## 2026-08-07 01:30 EEST GH-122 js-yaml advisory prerequisite → In Progress
+
+- **Branch:** `fix/GH-122-js-yaml`
+- **Issue:** [GH-122](https://github.com/NeaBouli/TrueRepublic/issues/122)
+- **Cause:** live npm audit now reports High GHSA-5p4m-2wfm-xmqj against
+  transitive `js-yaml` 4.3.0 through ESLint; GH-116 did not introduce it.
+- **Scope:** compatible lockfile-only update to patched `js-yaml`, followed by
+  clean install, lint, 91 tests, build, live audit, and protected CI.
+- **Risk:** Low. Development-tooling transitive only; no application source,
+  audit policy, runtime behavior, deployment, production, key, signing,
+  broadcast, account, or fund action.
+
+---
+
 ## 2026-07-23 03:10 EEST GH-56 authenticated consensus-key rotation → Done
 
 - **Issue/PR:** [GH-56](https://github.com/NeaBouli/TrueRepublic/issues/56),
