@@ -4035,3 +4035,23 @@ exclusion, CI wiring, and documentation boundaries.
   set to return green before merge.
 
 ---
+
+## 2026-08-06 04:44 EEST GH-112 legacy web retirement → Complete
+
+- **GitHub:** PR [#117](https://github.com/NeaBouli/TrueRepublic/pull/117)
+  merged as `2d776b5369882a0e180a7ef0dad187016efc7d33`; GH-112 closed and its
+  feature branch was removed. All nine review threads are resolved.
+- **Final-main PASS:** Go CI `31062895318`, Client Web CI `31062895236`,
+  Security Scan `31062895275`, and Pages `31062894585` all completed
+  successfully on the merge commit.
+- **Published state verified:** live Pages reports 1,389 recovery tests, rollout
+  14/59, Phase 6 6/7, maintained-client bundle 318.02 kB gzip, and
+  `production_ready=false`.
+- **Outcome:** unsafe legacy `web-wallet` is absent and guarded by a blocking
+  retirement contract; maintained `client-web` is the sole repository web
+  client and its loopback container/proxy path passed protected runtime CI.
+- **Next:** GH-115 is the next implementation target; GH-116 remains the
+  protocol-cleanup decision. No production action or real signing/funds flow
+  occurred.
+
+---

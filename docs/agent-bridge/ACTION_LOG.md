@@ -2749,3 +2749,13 @@
   audit, focused Go policy, retirement contracts, docs consistency, workflow
   YAML, shell, and diff checks.
 - Updated the measured Vite main-bundle value to 318.02 kB gzip.
+
+## 2026-08-06 04:44 EEST - GH-112 merged and final-main verified
+
+- PR #117 merged as `2d776b5369882a0e180a7ef0dad187016efc7d33`; issue
+  GH-112 closed and the feature branch was removed.
+- PASS on merge commit: Go CI `31062895318`, Client Web CI `31062895236`,
+  Security Scan `31062895275`, and Pages `31062894585`.
+- Live Pages readback confirms 1,389 tests, rollout 14/59, Phase 6 6/7,
+  318.02 kB gzip, and `production_ready=false`.
+- GH-115 is next; GH-116 remains open. No production or real-funds action.
