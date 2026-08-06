@@ -1,8 +1,10 @@
-import { SigningStargateClient, GasPrice } from '@cosmjs/stargate';
+import { fromBech32 } from '@cosmjs/encoding';
+import type { SigningStargateClient } from '@cosmjs/stargate';
 import type { DirectSecp256k1HdWallet } from '@cosmjs/proto-signing';
 import type { ChainConfig } from '@/types/chain';
 import type { DomainInvite, MembershipStatus } from '@/types/membership';
 import type { TransactionResult } from '@/types/transaction';
+import { connectSigningClient, deliverMessages } from './signingClient';
 
 export class MembershipService {
   private config: ChainConfig;
@@ -90,61 +92,36 @@ export class MembershipService {
   ): Promise<TransactionResult> {
     const [account] = await wallet.getAccounts();
 
-    const client = await SigningStargateClient.connectWithSigner(
-      this.config.rpc,
-      wallet,
-      { gasPrice: GasPrice.fromString(this.config.gasPrice) }
-    );
+    let client: SigningStargateClient | undefined;
 
     try {
+      client = await connectSigningClient(this.config, wallet);
       const msg = {
-        typeUrl: '/truerepublic.truedemocracy.MsgOnboardToDomain',
+        typeUrl: '/truedemocracy.MsgOnboardToDomain',
         value: {
-          sender: account.address,
-          domain_name: domainName,
-          domain_pub_key_hex: domainPubKeyHex,
-          global_pub_key_hex: globalPubKeyHex,
-          signature_hex: signatureHex,
+          sender: fromBech32(account.address).data,
+          domainName,
+          domainPubKeyHex,
+          globalPubKeyHex,
+          signatureHex,
         },
       };
 
-      const gasEstimate = await client.simulate(account.address, [msg], '');
-      const gas = Math.ceil(gasEstimate * 1.3);
-
-      const result = await client.signAndBroadcast(
+      return await deliverMessages(
+        client,
         account.address,
         [msg],
-        {
-          amount: [
-            {
-              denom: this.config.coinMinimalDenom,
-              amount: '5000',
-            },
-          ],
-          gas: gas.toString(),
-        },
-        ''
+        this.config.gasPrice
       );
-
-      client.disconnect();
-
-      if (result.code !== 0) {
-        throw new Error(result.rawLog || 'Onboarding request failed');
-      }
-
-      return {
-        hash: result.transactionHash,
-        height: result.height,
-        success: true,
-      };
     } catch (err: unknown) {
-      client.disconnect();
       return {
         hash: '',
         height: 0,
         success: false,
         error: err instanceof Error ? err.message : 'Onboarding failed',
       };
+    } finally {
+      client?.disconnect();
     }
   }
 
@@ -160,55 +137,26 @@ export class MembershipService {
   ): Promise<TransactionResult> {
     const [account] = await wallet.getAccounts();
 
-    const client = await SigningStargateClient.connectWithSigner(
-      this.config.rpc,
-      wallet,
-      { gasPrice: GasPrice.fromString(this.config.gasPrice) }
-    );
+    let client: SigningStargateClient | undefined;
 
     try {
+      client = await connectSigningClient(this.config, wallet);
       const msg = {
-        typeUrl: '/truerepublic.truedemocracy.MsgRegisterIdentity',
+        typeUrl: '/truedemocracy.MsgRegisterIdentity',
         value: {
-          sender: account.address,
-          domain_name: domainName,
+          sender: fromBech32(account.address).data,
+          domainName,
           commitment,
         },
       };
 
-      const gasEstimate = await client.simulate(account.address, [msg], '');
-      const gas = Math.ceil(gasEstimate * 1.3);
-
-      const result = await client.signAndBroadcast(
+      return await deliverMessages(
+        client,
         account.address,
         [msg],
-        {
-          amount: [
-            {
-              denom: this.config.coinMinimalDenom,
-              amount: '5000',
-            },
-          ],
-          gas: gas.toString(),
-        },
-        ''
+        this.config.gasPrice
       );
-
-      client.disconnect();
-
-      if (result.code !== 0) {
-        throw new Error(
-          result.rawLog || 'Identity commitment registration failed'
-        );
-      }
-
-      return {
-        hash: result.transactionHash,
-        height: result.height,
-        success: true,
-      };
     } catch (err: unknown) {
-      client.disconnect();
       return {
         hash: '',
         height: 0,
@@ -218,6 +166,8 @@ export class MembershipService {
             ? err.message
             : 'Identity registration failed',
       };
+    } finally {
+      client?.disconnect();
     }
   }
 

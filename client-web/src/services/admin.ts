@@ -1,4 +1,5 @@
-import { SigningStargateClient, GasPrice } from '@cosmjs/stargate';
+import { fromBech32 } from '@cosmjs/encoding';
+import type { SigningStargateClient } from '@cosmjs/stargate';
 import type { DirectSecp256k1HdWallet } from '@cosmjs/proto-signing';
 import type { ChainConfig } from '@/types/chain';
 import type {
@@ -9,6 +10,7 @@ import type {
   AddMemberParams,
 } from '@/types/admin';
 import type { TransactionResult } from '@/types/transaction';
+import { connectSigningClient, deliverMessages } from './signingClient';
 
 export class AdminService {
   private config: ChainConfig;
@@ -126,53 +128,26 @@ export class AdminService {
   ): Promise<TransactionResult> {
     const [account] = await wallet.getAccounts();
 
-    const client = await SigningStargateClient.connectWithSigner(
-      this.config.rpc,
-      wallet,
-      { gasPrice: GasPrice.fromString(this.config.gasPrice) }
-    );
+    let client: SigningStargateClient | undefined;
 
     try {
+      client = await connectSigningClient(this.config, wallet);
       const msg = {
-        typeUrl: '/truerepublic.truedemocracy.MsgApproveOnboarding',
+        typeUrl: '/truedemocracy.MsgApproveOnboarding',
         value: {
-          sender: account.address,
-          domain_name: params.domain_name,
-          requester_addr: params.requester_addr,
+          sender: fromBech32(account.address).data,
+          domainName: params.domain_name,
+          requesterAddr: params.requester_addr,
         },
       };
 
-      const gasEstimate = await client.simulate(account.address, [msg], '');
-      const gas = Math.ceil(gasEstimate * 1.3);
-
-      const result = await client.signAndBroadcast(
+      return await deliverMessages(
+        client,
         account.address,
         [msg],
-        {
-          amount: [
-            {
-              denom: this.config.coinMinimalDenom,
-              amount: '5000',
-            },
-          ],
-          gas: gas.toString(),
-        },
-        ''
+        this.config.gasPrice
       );
-
-      client.disconnect();
-
-      if (result.code !== 0) {
-        throw new Error(result.rawLog || 'Approve onboarding failed');
-      }
-
-      return {
-        hash: result.transactionHash,
-        height: result.height,
-        success: true,
-      };
     } catch (err: unknown) {
-      client.disconnect();
       return {
         hash: '',
         height: 0,
@@ -180,6 +155,8 @@ export class AdminService {
         error:
           err instanceof Error ? err.message : 'Approve onboarding failed',
       };
+    } finally {
+      client?.disconnect();
     }
   }
 
@@ -193,59 +170,34 @@ export class AdminService {
   ): Promise<TransactionResult> {
     const [account] = await wallet.getAccounts();
 
-    const client = await SigningStargateClient.connectWithSigner(
-      this.config.rpc,
-      wallet,
-      { gasPrice: GasPrice.fromString(this.config.gasPrice) }
-    );
+    let client: SigningStargateClient | undefined;
 
     try {
+      client = await connectSigningClient(this.config, wallet);
       const msg = {
-        typeUrl: '/truerepublic.truedemocracy.MsgAddMember',
+        typeUrl: '/truedemocracy.MsgAddMember',
         value: {
-          sender: account.address,
-          domain_name: params.domain_name,
-          new_member: params.new_member,
+          sender: fromBech32(account.address).data,
+          domainName: params.domain_name,
+          newMember: params.new_member,
         },
       };
 
-      const gasEstimate = await client.simulate(account.address, [msg], '');
-      const gas = Math.ceil(gasEstimate * 1.3);
-
-      const result = await client.signAndBroadcast(
+      return await deliverMessages(
+        client,
         account.address,
         [msg],
-        {
-          amount: [
-            {
-              denom: this.config.coinMinimalDenom,
-              amount: '5000',
-            },
-          ],
-          gas: gas.toString(),
-        },
-        ''
+        this.config.gasPrice
       );
-
-      client.disconnect();
-
-      if (result.code !== 0) {
-        throw new Error(result.rawLog || 'Add member failed');
-      }
-
-      return {
-        hash: result.transactionHash,
-        height: result.height,
-        success: true,
-      };
     } catch (err: unknown) {
-      client.disconnect();
       return {
         hash: '',
         height: 0,
         success: false,
         error: err instanceof Error ? err.message : 'Add member failed',
       };
+    } finally {
+      client?.disconnect();
     }
   }
 
@@ -259,19 +211,16 @@ export class AdminService {
   ): Promise<TransactionResult> {
     const [account] = await wallet.getAccounts();
 
-    const client = await SigningStargateClient.connectWithSigner(
-      this.config.rpc,
-      wallet,
-      { gasPrice: GasPrice.fromString(this.config.gasPrice) }
-    );
+    let client: SigningStargateClient | undefined;
 
     try {
+      client = await connectSigningClient(this.config, wallet);
       const msg = {
-        typeUrl: '/truerepublic.truedemocracy.MsgCreateDomain',
+        typeUrl: '/truedemocracy.MsgCreateDomain',
         value: {
           name: params.name,
-          admin: account.address,
-          initial_coins: [
+          admin: fromBech32(account.address).data,
+          initialCoins: [
             {
               denom: this.config.coinMinimalDenom,
               amount: params.initial_coins,
@@ -280,43 +229,21 @@ export class AdminService {
         },
       };
 
-      const gasEstimate = await client.simulate(account.address, [msg], '');
-      const gas = Math.ceil(gasEstimate * 1.3);
-
-      const result = await client.signAndBroadcast(
+      return await deliverMessages(
+        client,
         account.address,
         [msg],
-        {
-          amount: [
-            {
-              denom: this.config.coinMinimalDenom,
-              amount: '5000',
-            },
-          ],
-          gas: gas.toString(),
-        },
-        ''
+        this.config.gasPrice
       );
-
-      client.disconnect();
-
-      if (result.code !== 0) {
-        throw new Error(result.rawLog || 'Domain creation failed');
-      }
-
-      return {
-        hash: result.transactionHash,
-        height: result.height,
-        success: true,
-      };
     } catch (err: unknown) {
-      client.disconnect();
       return {
         hash: '',
         height: 0,
         success: false,
         error: err instanceof Error ? err.message : 'Domain creation failed',
       };
+    } finally {
+      client?.disconnect();
     }
   }
 }

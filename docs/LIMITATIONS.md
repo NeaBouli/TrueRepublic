@@ -18,6 +18,11 @@ approved for production or real funds during this audit.
   supported native mobile client.
 - Client-side ZKP generation remains a preview, not real Groth16 proof
   generation. The maintained client fails closed and cannot submit mock proofs.
+- GH-115 gives the maintained client one exact custom protobuf registry and a
+  secret-free local simulate/sign/deliver proof for bank, governance,
+  membership, identity, and slippage-bounded DEX flows. Unknown and legacy
+  custom messages fail closed. This is local test evidence, not approval for
+  real keys, public RPCs, production broadcasts, or funds.
 
 ## IBC Modules (Stubbed)
 

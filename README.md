@@ -16,7 +16,7 @@
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/tests-1389%20recovery--verified-orange" alt="Recovery-verified tests"/>
+  <img src="https://img.shields.io/badge/tests-1446%20recovery--verified-orange" alt="Recovery-verified tests"/>
   <img src="https://img.shields.io/badge/version-v0.4.0-blue" alt="Version"/>
   <img src="https://img.shields.io/badge/recovery-active-orange" alt="Recovery active"/>
   <img src="https://img.shields.io/badge/Go-1.26.5-00ADD8?logo=go" alt="Go"/>
@@ -225,7 +225,7 @@ TrueRepublic/
 # Blockchain
 go mod tidy
 ./scripts/go-packages.sh go build
-./scripts/go-packages.sh go test -race -cover -count=1 -timeout=600s    # 1,316 Go cases
+./scripts/go-packages.sh go test -race -cover -count=1 -timeout=600s    # 1,329 Go cases
 
 # Smart contracts
 cd contracts && cargo test --workspace       # 26 tests
@@ -263,7 +263,7 @@ The checklist below records implemented surface area, not a production security
 approval. Current evidence, risks, and commands are maintained in
 [`BRIDGE.md`](BRIDGE.md) and [GitHub issue #4](https://github.com/NeaBouli/TrueRepublic/issues/4).
 
-- 🟡 1,389 tests recovery-verified locally and in CI (1,316 Go + 26 Rust + 47 maintained-client), plus separately gated GH-56 rotation, GH-59 slashing, GH-60 inactive-validator genesis, GH-61 legacy-authority migration, GH-93 incident rehearsal, and GH-97 sustained-load process harnesses
+- 🟡 1,446 tests recovery-verified locally and in CI (1,329 Go + 26 Rust + 91 maintained-client), plus the separately gated GH-115 local client-chain delivery proof and GH-56 rotation, GH-59 slashing, GH-60 inactive-validator genesis, GH-61 legacy-authority migration, GH-93 incident rehearsal, and GH-97 sustained-load process harnesses
 - ✅ Core blockchain compiles and runs
 - 🟡 Tokenomics, exact custom genesis, and every-block ledger invariants are recovery-verified and merged through PR #19
 - 🟡 Governance escrow/auth recovery is verified and merged; independent release review remains open
@@ -312,9 +312,9 @@ approval. Current evidence, risks, and commands are maintained in
 - 📋 **v0.5.0 (Q3 2026):** Native Apps (iOS/Android)
 - 🎯 **v1.0.0 (Q4 2026):** Production Release — External audit, mainnet launch
 
-> Historical test count: 577. The authoritative recovery-verified total is 1,389
-> (1,316 Go + 26 Rust + 47 maintained-client), reproduced from package-scoped
-> JSON output on merged GH-101 and GH-102 router evidence using the established
+> Historical test count: 577. The authoritative recovery-verified total is 1,446
+> (1,329 Go + 26 Rust + 91 maintained-client), reproduced from package-scoped
+> JSON output on GH-115 plus merged GH-101/GH-102 evidence using the established
 > passing-case method.
 
 ---

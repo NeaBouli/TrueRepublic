@@ -35,7 +35,7 @@
   claiming production sizing or multi-day soak behavior.
   GH-101 adds a strict secret-free digest-bound deployment-evidence envelope
   and offline verifier without claiming or performing a live deployment.
-- 1,389 recovery-verified tests: 1,316 Go, 26 Rust, and 47 maintained-client.
+- 1,446 recovery-verified tests: 1,329 Go, 26 Rust, and 91 maintained-client.
 
 ## Recovery sequence
 

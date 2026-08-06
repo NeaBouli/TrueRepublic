@@ -35,8 +35,10 @@
   operations review remain pending;
   IBC staking/upgrade and
   standard CosmWasm staking/distribution stay explicit stubs.
-- The v0.4 client production bundle is 1.70 MB (317.94 kB gzip); route-level code
-  splitting is recommended before treating low-bandwidth/mobile UX as ready.
+- Historical pre-GH-115 measurement: the v0.4 client production bundle was
+  1.70 MB (317.94 kB gzip). The current GH-115 measurement is 318.91 kB gzip;
+  route-level code splitting remains recommended before treating
+  low-bandwidth/mobile UX as ready.
 
 ## Resolved during recovery
 
@@ -109,9 +111,10 @@
 
 ## Legacy client blockers
 
-- GH-112 local replacement check: maintained `client-web` passes lint, six
-  audit-policy cases, 41 Vitest cases, production build, and guarded live audit.
-  The Vite 8.1 build reporter records the current main bundle as 318.02 kB
+- Historical GH-112 replacement check: maintained `client-web` passed lint,
+  six audit-policy cases, 41 Vitest cases, production build, and guarded live
+  audit. GH-115 now records 85 Vitest plus six audit-policy cases.
+  The Vite 8.1 build reporter records the current branch bundle as 318.91 kB
   gzip; the existing oversized-bundle rollout item remains open and this task
   does not claim performance closure.
 

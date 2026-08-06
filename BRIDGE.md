@@ -4055,3 +4055,98 @@ exclusion, CI wiring, and documentation boundaries.
   occurred.
 
 ---
+
+## 2026-08-06 12:10 EEST GH-115 canonical custom transactions → In Progress
+
+- **Branch:** `feature/GH-115-custom-tx` from exact `origin/main` `05fb5b7`.
+- **Issue:** [GH-115](https://github.com/NeaBouli/TrueRepublic/issues/115).
+- **Scope:** inventory and reconcile every maintained-client custom transaction
+  with the chain's registered protobuf identity and field encoding; introduce
+  one fail-closed registry/client boundary; and add deterministic encoding plus
+  secret-free local delivery evidence for supported transaction families.
+- **Risk:** High. This touches wallet signing, custom protobuf messages, DEX
+  amounts/slippage, membership/governance/admin authority, and chain delivery.
+  Sol owns architecture, security, every diff, external writes, and closure.
+- **Delegation:** Kimi K3 receives one bounded secret-free implementation block
+  after Sol completes the source/type inventory. Kimi may not delegate, access
+  external systems, or use real keys/accounts. Claude Code remains limited to a
+  later small helper test/docs census if useful.
+- **Safety boundary:** repository and ephemeral local-test work only. No real
+  key, mnemonic, account, signing, broadcast, funds, deployment,
+  infrastructure, mainnet, or production action is authorized or performed.
+- **Next:** map all client `typeUrl` values to Go message registration and
+  existing tx harnesses, then freeze the canonical registry design before code.
+
+---
+
+## 2026-08-06 13:18 EEST GH-115 canonical custom transactions → Local Verification Complete
+
+- **Implementation:** one exact registry now owns all 11 maintained custom
+  messages; all signing paths share fail-closed simulation, conservative
+  config-priced fees, and delivery handling. Canonical addresses use
+  `truerepublic`, and DEX amounts are validated as positive signed-int64 decimal
+  strings inside the registry encoder.
+- **Chain compatibility:** added Go/TypeScript byte-for-byte vectors, complete
+  hand-written DEX protobuf descriptors, and dynamic-message signer extraction
+  required by Cosmos SDK v0.50 transaction decoding.
+- **Real local evidence PASS:** a temporary loopback-only chain with generated
+  disposable accounts simulated, signed, delivered, and committed bank,
+  governance, membership, identity, and slippage-bounded DEX flows. Expected
+  approval failure and unsupported legacy swap paths fail closed; all temporary
+  state is removed.
+- **Full gates PASS:** 1,329 Go cases with build/vet/race/coverage; 82 Vitest +
+  six audit-policy cases; lint; build (319.32 kB gzip); guarded audit; Rust
+  format/clippy/build/26 tests/audit; docs/retirement/JSON/YAML/diff checks.
+- **Status:** 1,443 standard cases, rollout 16/59, phase work 16/51, Phase 6
+  6/7, `production_ready=false`. The real client-chain case is separately gated
+  and not added to the standard arithmetic.
+- **Delegation:** Kimi implemented the bounded registry/service block and is
+  completing a read-only final review. Sol reviewed and extended every diff.
+  Claude Code was attempted twice for a small read-only census but its budget
+  prevented execution; no output or diff resulted.
+- **Pending:** final independent review, protected PR checks, merge, GH-115 and
+  GH-29 synchronization, Pages readback, and final-main verification. No real
+  keys/accounts/funds, public broadcast, deployment, infrastructure, or
+  production action occurred.
+
+---
+
+## 2026-08-06 13:31 EEST GH-115 canonical custom transactions → Review Complete / PR Ready
+
+- **Independent review:** Kimi reproduced registry/wire, signer, client, lint,
+  typecheck, focused Go, and real local-chain evidence. No P0/P1/P2 was found;
+  approval was recommended after correcting two P3 observations.
+- **P3 remediation:** public arithmetic now exactly records 82 standard Vitest
+  plus six audit-policy cases (88 maintained-client; 1,443 overall), while the
+  real chain case remains separately gated. The latest production bundle is
+  319.32 kB gzip.
+- **Cleanup hardening:** setup failures now terminate any started node and
+  remove the temporary home before rethrowing. A successful full delivery run
+  and a deliberately failed `/bin/false` init both leave zero GH-115 temporary
+  directories and zero node processes.
+- **Status:** local implementation and review are complete. Protected PR CI,
+  review threads, merge, GH-115/GH-29 synchronization, Pages readback, and
+  final-main verification remain before Done. Production remains false.
+
+---
+
+## 2026-08-06 14:13 EEST GH-115 → PR Review Remediation Verified
+
+- **PR state:** PR #119 is published. Its original exact head passed every
+  protected workflow; 16 subsequent CodeRabbit review threads were triaged.
+- **Valid fixes:** lossless legacy-prefix wallet migration, bounded RPC
+  readiness, connection-error result handling, delivery-code fallback,
+  read-only query client, codec-owned type URLs, explicit seven-message DEX
+  signer contracts, protobuf wire-tag validation, and synchronized status/docs.
+- **Evidence:** `make verify` PASS (1,329 Go cases plus build/vet/race/coverage),
+  85 Vitest + six audit cases, lint/build/audit PASS, real disposable-chain
+  delivery PASS in 70.81 seconds, docs/retirement/JSON/diff checks PASS, and
+  zero leaked GH-115 temporary homes.
+- **Independent review:** Kimi found no P0/P1/P2. Sol corrected all remaining
+  P3/P4 status, wording, and assertion observations; Kimi made no write.
+- **Status:** 1,446 standard cases, rollout 16/59, phase work 16/51, Phase 6
+  6/7, `production_ready=false`. Next: commit/push remediation, respond to and
+  resolve all 16 threads, await exact-head CI, merge, close GH-115, update
+  GH-29, verify Pages and final `main`.
+
+---

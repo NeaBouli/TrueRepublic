@@ -24,7 +24,16 @@
 - [x] GH-8: reproduce legacy web wallet and mobile wallet CI/security state.
 - [x] GH-112: reproduce and explicitly retire the deprecated legacy web client;
   replace its Compose/nginx route with maintained `client-web` and add a
-  blocking absence contract. Protected publication remains pending.
+  blocking absence contract; published through merged PR #117.
+- [x] GH-115: implement one exact maintained-client custom transaction
+  registry, centralized fail-closed simulate/sign/deliver behavior, canonical
+  address handling, chain-side DEX descriptor/signer compatibility, wire
+  vectors, and ephemeral local client-chain evidence.
+- [x] GH-115: complete independent final review and remediate its test-count
+  and interrupted-setup cleanup observations with fresh evidence.
+- [ ] GH-115: complete protected exact-head CI, merge, issue closure, GH-29
+  synchronization, Pages readback, and final-main verification before marking
+  the ticket Done.
 - [x] GH-71: locally implement and verify deterministic role-based network
   policy, safe listener/container defaults, startup validation, regression
   coverage, and operator guidance without touching production infrastructure.
