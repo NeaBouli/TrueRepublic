@@ -4150,3 +4150,18 @@ exclusion, CI wiring, and documentation boundaries.
   GH-29, verify Pages and final `main`.
 
 ---
+
+## 2026-08-06 14:46 EEST GH-115 → Merged / Final Main Green / Done
+
+- **Merge:** PR #119 merged as `5d9e946`; GH-115 is closed. All 16 review
+  threads were resolved before the authorized administrative merge.
+- **Final `main`:** Client Web CI `31097605393`, Go CI `31097605358`, Security
+  Scan `31097605349`, and Pages `31097604652` pass. The merge-commit recovery
+  matrix completes in 13m54s.
+- **Public readback:** Pages publishes 1,446 cases, 318.91 kB gzip, rollout
+  16/59 (31%), phase work 16/51, Phase 6 6/7 (86%), and production false.
+- **Tracker:** GH-29 is synchronized at exactly 16/59. No production, real
+  account, real key, fund, deployment, or infrastructure action occurred.
+- **Next:** GH-116 is the next bounded cleanup. GH-115 is Done.
+
+---
