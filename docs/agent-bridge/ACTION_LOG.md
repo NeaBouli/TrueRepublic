@@ -1,5 +1,23 @@
 # Action Log
 
+## 2026-08-07 01:33 EEST - GH-122 prerequisite started
+
+- GH-116 full client verification reproduced new live High advisory
+  GHSA-5p4m-2wfm-xmqj in unchanged transitive `js-yaml` 4.3.0 through ESLint.
+- Created clean `fix/GH-122-js-yaml` from exact `origin/main` `aa3ffa6` for a
+  compatible lockfile-only repair before GH-116 publication.
+- No application source, audit weakening, deployment, production, key,
+  signing, broadcast, account, or fund action is in scope.
+
+## 2026-08-07 01:32 EEST - GH-122 local repair verified
+
+- Updated only the transitive `js-yaml` lock resolution from vulnerable 4.3.0
+  to patched 4.3.1; the application and fail-closed audit policy are unchanged.
+- PASS: clean install, lint, 85 Vitest plus six audit-policy cases, production
+  build at 318.91 kB gzip, and live High audit. Only the exact existing
+  BrowserRouter-bound React Router exception remains accepted.
+- Protected PR checks and merge remain before GH-116 can resume publication.
+
 ## 2026-07-23 19:40 EEST - GH-59 ABCI++ validator slashing
 
 - Wired BaseApp's deterministic BeginBlock ABCI++ boundary to CometBFT
