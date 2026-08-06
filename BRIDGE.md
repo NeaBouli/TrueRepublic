@@ -31,20 +31,6 @@ Canonical coordination lives in [`docs/agent-bridge/`](docs/agent-bridge/README.
 
 GitHub recovery epic: [#4](https://github.com/NeaBouli/TrueRepublic/issues/4)
 
-## 2026-08-07 01:33 EEST GH-122 js-yaml advisory prerequisite → In Progress
-
-- **Branch:** `fix/GH-122-js-yaml`
-- **Issue:** [GH-122](https://github.com/NeaBouli/TrueRepublic/issues/122)
-- **Cause:** live npm audit now reports High GHSA-5p4m-2wfm-xmqj against
-  transitive `js-yaml` 4.3.0 through ESLint; GH-116 did not introduce it.
-- **Scope:** compatible lockfile-only update to patched `js-yaml`, followed by
-  clean install, lint, 91 tests, build, live audit, and protected CI.
-- **Risk:** Low. Development-tooling transitive only; no application source,
-  audit policy, runtime behavior, deployment, production, key, signing,
-  broadcast, account, or fund action.
-
----
-
 ## 2026-08-07 01:32 EEST GH-122 js-yaml advisory prerequisite → Review
 
 - **Changed:** `client-web/package-lock.json` resolves transitive dev-only
@@ -60,6 +46,20 @@ GitHub recovery epic: [#4](https://github.com/NeaBouli/TrueRepublic/issues/4)
 ### Sol review feedback
 
 Approved locally after exact lockfile diff review and clean reproduction.
+
+---
+
+## 2026-08-07 01:30 EEST GH-122 js-yaml advisory prerequisite → In Progress
+
+- **Branch:** `fix/GH-122-js-yaml`
+- **Issue:** [GH-122](https://github.com/NeaBouli/TrueRepublic/issues/122)
+- **Cause:** live npm audit now reports High GHSA-5p4m-2wfm-xmqj against
+  transitive `js-yaml` 4.3.0 through ESLint; GH-116 did not introduce it.
+- **Scope:** compatible lockfile-only update to patched `js-yaml`, followed by
+  clean install, lint, 91 tests, build, live audit, and protected CI.
+- **Risk:** Low. Development-tooling transitive only; no application source,
+  audit policy, runtime behavior, deployment, production, key, signing,
+  broadcast, account, or fund action.
 
 ---
 
