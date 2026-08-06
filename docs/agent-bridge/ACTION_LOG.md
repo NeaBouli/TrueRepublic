@@ -2841,3 +2841,22 @@
   client), rollout 16/59, Phase 6 6/7, and `production_ready=false`. Review
   commit, protected rerun, thread resolution, merge, issue synchronization,
   Pages readback, and final-main verification remain pending.
+
+## 2026-08-06 14:46 EEST - GH-115 merged and final-main verified
+
+- Review commit `b6ff9e2` passed every protected exact-head check; all 16
+  review threads were answered with evidence and resolved.
+- PR #119 merged administratively as
+  `5d9e946e2356d2e6ec08cc3b95c1b471b5cc4fb9` because the only remaining block
+  was the repository's formal review requirement. GH-115 closed automatically.
+- GH-29's three corresponding checkboxes now produce exactly 16/59 overall;
+  its comment records 16/51 phase work, Phase 6 at 6/7, and production false.
+- PASS on merge commit: Client Web CI `31097605393`, Go CI `31097605358`
+  (capacity 5m31s, build/test 6m05s, Docker 6m23s, recovery 13m54s), Security
+  Scan `31097605349`, and Pages `31097604652`.
+- Live Pages readback publishes 1,446 cases (1,329 Go + 26 Rust + 91 client),
+  318.91 kB gzip, rollout 16/59 (31%), Phase 6 6/7 (86%), and
+  `production_ready=false`.
+- GH-115 is Done. GH-116 is the next bounded cleanup; transaction history,
+  IBC, real ZKP, wallet custody review, accessibility/performance, broader
+  quality/security depth, external audit, and staged rollout remain open.

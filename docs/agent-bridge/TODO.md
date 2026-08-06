@@ -31,7 +31,7 @@
   vectors, and ephemeral local client-chain evidence.
 - [x] GH-115: complete independent final review and remediate its test-count
   and interrupted-setup cleanup observations with fresh evidence.
-- [ ] GH-115: complete protected exact-head CI, merge, issue closure, GH-29
+- [x] GH-115: complete protected exact-head CI, merge, issue closure, GH-29
   synchronization, Pages readback, and final-main verification before marking
   the ticket Done.
 - [x] GH-71: locally implement and verify deterministic role-based network
