@@ -1,5 +1,23 @@
 # Action Log
 
+## 2026-08-07 02:30 EEST - GH-116 merged and closed
+
+- PR #124 final head `df465e8` passed PR-native Go CI `31130371098`, Docs
+  `31130368575`, Security `31130368777`, DeepScan, and all exact-head manual
+  Client/Rust/Docs/Security/Go runs. No review thread remained.
+- CodeRabbit was temporarily rate-limited and performed no substantive review;
+  two Kimi read-only reviews plus Sol review found 0 P0 / 0 P1 / 0 P2.
+- Administratively squash-merged as `5dc4487` because only the formal one-
+  review rule remained. GH-116 closed automatically.
+- Final main passed Go `31131404107` attempt 2, Docs `31131405747`, Client
+  `31131407330`, Rust `31131408773`, Security `31131410151`, and Pages
+  `31131318674`. Go attempt 1 exposed one transient legacy-migration P2P
+  startup miss; the unchanged commit passed all eight recovery harnesses on
+  the controlled rerun, so no runtime patch was justified.
+- Public arithmetic is 1,450 cases, rollout 16/59, Phase 6 6/7, production
+  false. GH-121 remains the browser query-transport blocker. No production or
+  secret-bearing action occurred.
+
 ## 2026-08-07 01:50 EEST - GH-116 locally verified on patched main
 
 - Removed the consumerless custom ABCI routing override and dead module

@@ -1,11 +1,10 @@
 # Project State
 
-Updated: 2026-08-06 22:40 UTC
+Updated: 2026-08-07 00:02 UTC
 
 ## Repository
 
-- GH-116 is locally implemented and verified on
-  `refactor/GH-116-retire-custom-query`: the consumerless legacy
+- GH-116 is closed through merged PR #124 (`5dc4487`): the consumerless legacy
   `custom/truedemocracy/...` and `custom/dex/...` ABCI shim is removed, all 17
   supported module query methods remain registered through protobuf gRPC, and
   protocol-boundary tests prove both live gRPC-over-ABCI execution and
@@ -14,18 +13,22 @@ Updated: 2026-08-06 22:40 UTC
   were never registered and remain a separately bounded compatibility defect
   in GH-121; production readiness remains false. The newly published
   GHSA-5p4m-2wfm-xmqj prerequisite is separately fixed by merged GH-122 / PR
-  #123 (`1257484`), and this branch is rebased on that patched main. Protected
-  PR verification and merge remain before GH-116 is Done.
+  #123 (`1257484`). Final head `df465e8` passed PR-native Go, Docs, Security,
+  DeepScan, independent review, and exact-head Client/Rust verification with
+  zero review threads. Merge commit `5dc4487` then passed final-main Go
+  `31131404107` attempt 2, Docs `31131405747`, Client `31131407330`, Rust
+  `31131408773`, Security `31131410151`, and Pages `31131318674`. Rollout
+  remains 16/59 and production readiness false.
 - GH-102 is closed through merged PR #113 (`d621ff9`), GH-112 is closed
   through merged PR #117 (`2d776b5`), and GH-115 is closed through merged PR
   #119 (`5d9e946`): both legacy clients are removed, maintained `client-web` is
   the sole public client, and its exact fail-closed registry plus centralized
   simulate/sign/deliver boundary are proved against a disposable chain. All 16
   review threads are resolved, exact-head and merge-commit workflows pass, and
-  live Pages publishes 1,446 standard cases with rollout 16/59. Independent
+  its GH-115 merge published 1,446 standard cases with rollout 16/59. Independent
   review found no P0/P1/P2. Production readiness remains false.
-  GH-116 tracks the retired client's now-consumerless legacy
-  `custom/...` query shim.
+  GH-116 subsequently removed the retired client's consumerless legacy
+  `custom/...` query shim through PR #124.
 - GH-56 is closed through merged PR #62 (`80ab674`). Authenticated atomic
   consensus-key rotation, permanent revocation, separate bootstrap operator
   authority, deterministic CometBFT H+2 activation, and real five-process
