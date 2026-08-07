@@ -31,6 +31,40 @@ Canonical coordination lives in [`docs/agent-bridge/`](docs/agent-bridge/README.
 
 GitHub recovery epic: [#4](https://github.com/NeaBouli/TrueRepublic/issues/4)
 
+## 2026-08-07 02:30 EEST GH-116 retired custom ABCI query shim → Done
+
+- **Issue/PR:** GH-116, PR #124; administratively squash-merged to `main` as
+  `5dc4487` after the only remaining block was the formal one-review rule.
+- **Final head:** `df465e8`; mergeable; 0 unresolved review threads; DeepScan
+  PASS. CodeRabbit did not run a substantive review because its temporary
+  project limit was active; two independent Kimi read-only reviews found no
+  P0/P1/P2 and Sol completed the final diff review.
+- **Protected exact-head evidence:** PR-native Go CI `31130371098`, Docs
+  `31130368575`, and Security Scan `31130368777` PASS. Exact-head manual Client
+  `31129653076`, Rust `31129654208`, Docs `31129651938`, Security
+  `31129655164`, and Go `31129650918` also PASS.
+- **Final-main evidence:** on merge commit `5dc4487`, Go CI `31131404107`
+  attempt 2, Docs `31131405747`, Client `31131407330`, Rust `31131408773`,
+  Security `31131410151`, and Pages `31131318674` PASS. Go attempt 1 had one
+  transient legacy-migration P2P startup miss while its other jobs and seven
+  later recovery harnesses passed; the unchanged commit then passed all eight
+  recovery harnesses on the controlled rerun.
+- **Result:** legacy `custom/truedemocracy/...` and `custom/dex/...` routing is
+  removed and fail closed; all 17 protobuf gRPC Query methods remain supported
+  and tested; custom grpc-gateway routes remain intentionally unregistered.
+- **Public state:** 1,450 standard cases (1,333 Go + 26 Rust + 91 maintained
+  client), rollout 16/59 overall, Phase 6 at 6/7, and production readiness
+  false. GH-121 remains the explicit browser query-transport rollout blocker.
+- **Safety:** no deployment, infrastructure, production, key, signing,
+  broadcast, account, fund, or proof-system action occurred.
+
+### Sol review feedback
+
+Approved and merged after complete local, independent, exact-head, and
+PR-native verification.
+
+---
+
 ## 2026-08-07 01:50 EEST GH-116 retired custom ABCI query shim → Review
 
 - **Changed:** removed the application `Query` override plus both dead legacy

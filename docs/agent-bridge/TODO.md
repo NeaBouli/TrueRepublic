@@ -38,7 +38,7 @@
   query shim, port DEX query coverage to the supported gRPC QueryServer, and
   document the exact CLI/protobuf gRPC boundary without advertising an
   unregistered HTTP gateway.
-- [ ] GH-116: complete protected exact-head CI, review, merge, issue closure,
+- [x] GH-116: complete protected exact-head CI, review, merge, issue closure,
   Bridge synchronization, and final-main verification.
 - [ ] GH-121: replace the maintained browser client's unregistered custom-
   module REST aliases with one explicitly supported query transport, reject
