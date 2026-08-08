@@ -110,6 +110,27 @@ GitHub recovery epic: [#4](https://github.com/NeaBouli/TrueRepublic/issues/4)
 - **Status:** protected exact-head Client, real client-chain, Docs, security,
   and review checks are pending. No merge or rollout closure is claimed yet.
 
+### 2026-08-08 14:50 EEST closure
+
+- **Merge/issue:** PR #129 exact head `dcc1113` passed every required check and
+  was squash-merged as `47f8c08`; GH-128 closed automatically. GH-29 now marks
+  the route-splitting and bundle-budget item complete.
+- **Exact-head evidence:** Client build and disposable-chain integration, Docs,
+  Go vulnerability, Rust audit, Node audit, all three retirement contracts,
+  DeepScan, and formal review statuses passed. No review thread remains.
+- **Final-main evidence:** Client Web CI
+  [`31255695662`](https://github.com/NeaBouli/TrueRepublic/actions/runs/31255695662),
+  Security Scan
+  [`31255695671`](https://github.com/NeaBouli/TrueRepublic/actions/runs/31255695671),
+  and Pages
+  [`31255695086`](https://github.com/NeaBouli/TrueRepublic/actions/runs/31255695086)
+  passed on exact merge commit `47f8c08`.
+- **Live readback:** GitHub Pages exposes 1,482 recovery-verified cases, 17 of
+  59 rollout items complete, and the 19-route deterministic bundle-budget
+  evidence. Phase 6 remains 6/7 and `production_ready=false`.
+- **Status/blockers:** GH-128 is Done with no blocker. No deployment,
+  production, key, account, signing, broadcast, or fund action occurred.
+
 ---
 
 ## 2026-08-08 11:22 EEST GH-121 browser query transport → Review

@@ -1,17 +1,19 @@
 # Project State
 
-Updated: 2026-08-08 11:25 UTC
+Updated: 2026-08-08 11:50 UTC
 
 ## Repository
 
-- GH-128 is locally complete pending protected publication: all 19 page routes
+- GH-128 is closed through merged PR #129 (`47f8c08`): all 19 page routes
   are lazy entries, the eager MobileNav-to-CosmJS dependency chain is broken,
   and chunk rejection reaches the application error boundary. The initial
   entry falls from 322.63 kB gzip to a deterministic 75.79 kB gzip; raw/gzip
   entry, route, chunk, and total budgets now fail the build on regressions. The
   fresh local baseline is 1,482 cases (1,352 Go, 26 Rust, 104 maintained
-  client). Rollout publication is staged at 17/59; production readiness remains
-  false until exact-head GitHub checks and merge complete.
+  client). Exact-head checks passed without an unresolved review thread; final-
+  main Client `31255695662`, Security `31255695671`, and Pages `31255695086`
+  pass on merge commit `47f8c08`. Live Pages confirms rollout 17/59 and the
+  bundle evidence. Phase 6 remains 6/7 and production readiness remains false.
 - GH-121 is closed through merged PR #126 (`239e6c3`): all 23
   maintained-browser consumers of
   18 unregistered custom-module REST aliases now use one fail-closed registered
