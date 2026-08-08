@@ -116,6 +116,25 @@ GitHub recovery epic: [#4](https://github.com/NeaBouli/TrueRepublic/issues/4)
   gates, commit/push, protected exact-head CI, merge, GH-29 closure sync,
   public readback, and final-main evidence remain before Done.
 
+### 2026-08-08 19:08 EEST PR #137 / Kimi final review → remediation
+
+- **Protected first head:** `c166df7` passes browser quality (2m04s), client
+  build (34s), both real client-chain cases (3m55s), docs, Go/Rust/Node
+  security, all retirement contracts, DeepScan, and review statuses.
+- **Independent Kimi review:** no P0/P1/P2. Kimi independently reproduced 10/10
+  Node, 131 Vitest plus two skips, lint, exact bundle budgets, docs consistency,
+  and both real-chain cases (74.40s), and reverified SDK v0.50.14 plus CometBFT
+  v0.38.22 semantics from pinned source.
+- **P3 remediation:** source inventory now excludes `*.test.tsx` and records 43
+  actual components instead of counting the component test as runtime surface.
+  The store now passes a caller abort signal and cancels superseded, lock, and
+  wallet-change history requests in addition to generation invalidation.
+- **Accepted P3:** the second disposable-chain case intentionally shares the
+  first case's established delivery corpus in the standard sequential file run;
+  a filtered single-test invocation is not a supported acceptance command.
+- **Status/blockers:** remediation verification and one final protected rerun
+  remain; no blocker. Production remains false.
+
 ## 2026-08-08 18:01 EEST GH-132 client browser qualification → In Progress
 
 - **Branch:** `test/GH-132-client-browser-quality` after the shared Bridge

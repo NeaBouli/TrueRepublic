@@ -13,7 +13,7 @@
   "web_client": {
     "version": "v0.4.0",
     "framework": "React 18.2 + TypeScript 5.9 + Vite 8.1",
-    "components": 44,
+    "components": 43,
     "routes": 21,
     "stores": 8,
     "services": 14,

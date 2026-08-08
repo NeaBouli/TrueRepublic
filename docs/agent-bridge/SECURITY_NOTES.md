@@ -10,9 +10,10 @@
   message, fee, hash, height, code, and response-count shapes fail closed into
   typed unavailable, timeout, protocol, or decode states. Chain failure logs
   are stripped of control characters and capped at 200 characters.
-- Wallet lock/switch/create/import invalidates in-flight generations and clears
-  prior rows. A history refresh can never change an already committed send into
-  a reported send failure. The configured REST provider remains trusted for
+- Wallet lock/switch/create/import aborts in-flight requests, invalidates their
+  generations, and clears prior rows. A history refresh can never change an
+  already committed send into a reported send failure. The configured REST
+  provider remains trusted for
   completeness; a browser light client or participant index is outside scope.
 - The combined production build remains within policy at 76.29 kB gzip initial
   entry, 5.03 kB maximum lazy route, and 353.44 kB total JavaScript gzip.

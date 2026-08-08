@@ -7,7 +7,8 @@
   protection, and an accessible explicit incoming-exclusion UI.
 - Kimi implemented the bounded block. Sol independently corrected deprecated
   request semantics, cache/abort/count boundaries, wallet-change clearing,
-  retry/stale-row behavior, and committed-send reporting. Independent review
+  request cancellation, retry/stale-row behavior, component inventory, and
+  committed-send reporting. Independent review
   found no P0-P2 after remediation.
 - Ten Node policy cases, 131 standard Vitest cases, two separately gated real
   disposable-chain cases, lint, build/budgets, and guarded audit pass. Public

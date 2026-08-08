@@ -166,7 +166,7 @@ check_count_file "README.md" "README client breakdown" "tests recovery-verified 
 check_count_file "wiki/status/Testing-Status.md" "Wiki client breakdown" "| Maintained client |" "$FRONTEND_TESTS" "$FORMATTED_FRONTEND_TESTS"
 
 echo "Checking maintained-client inventory..."
-ACTUAL_COMPONENTS=$(find client-web/src/components -type f -name '*.tsx' | wc -l | tr -d ' ')
+ACTUAL_COMPONENTS=$(find client-web/src/components -type f -name '*.tsx' ! -name '*.test.tsx' | wc -l | tr -d ' ')
 ACTUAL_ROUTES=$(grep -c '^  { path:' client-web/src/routes.tsx || true)
 ACTUAL_STORES=$(find client-web/src/stores -type f -name '*.ts' ! -name '*.test.ts' | wc -l | tr -d ' ')
 ACTUAL_SERVICES=$(find client-web/src/services -type f -name '*.ts' ! -name '*.test.ts' | wc -l | tr -d ' ')

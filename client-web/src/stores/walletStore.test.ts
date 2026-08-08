@@ -122,7 +122,12 @@ describe('wallet store submitted-transaction history', () => {
     await useWalletStore.getState().loadHistoryPage(1);
 
     const state = useWalletStore.getState();
-    expect(serviceMocks.getSubmittedTransactions).toHaveBeenCalledWith(ADDRESS, 1);
+    expect(serviceMocks.getSubmittedTransactions).toHaveBeenCalledWith(
+      ADDRESS,
+      1,
+      undefined,
+      expect.any(AbortSignal)
+    );
     expect(state.historyStatus).toBe('ready');
     expect(state.historyFailure).toBeNull();
     expect(state.historyAddress).toBe(ADDRESS);
@@ -186,10 +191,17 @@ describe('wallet store submitted-transaction history', () => {
 
   it('ignores a stale response superseded by a newer page load', async () => {
     let resolveFirst: (value: SubmittedTransactionsPage) => void = () => {};
+    let firstSignal: AbortSignal | undefined;
     serviceMocks.getSubmittedTransactions
       .mockImplementationOnce(
-        () =>
+        (
+          _address: string,
+          _page: number,
+          _pageSize: number | undefined,
+          signal: AbortSignal | undefined
+        ) =>
           new Promise<SubmittedTransactionsPage>((resolve) => {
+            firstSignal = signal;
             resolveFirst = resolve;
           })
       )
@@ -201,15 +213,23 @@ describe('wallet store submitted-transaction history', () => {
     await first;
 
     const state = useWalletStore.getState();
+    expect(firstSignal?.aborted).toBe(true);
     expect(state.historyPage).toBe(2);
     expect(state.historyStatus).toBe('ready');
   });
 
   it('ignores a response that arrives after lock', async () => {
     let resolveLoad: (value: SubmittedTransactionsPage) => void = () => {};
+    let requestSignal: AbortSignal | undefined;
     serviceMocks.getSubmittedTransactions.mockImplementation(
-      () =>
+      (
+        _address: string,
+        _page: number,
+        _pageSize: number | undefined,
+        signal: AbortSignal | undefined
+      ) =>
         new Promise<SubmittedTransactionsPage>((resolve) => {
+          requestSignal = signal;
           resolveLoad = resolve;
         })
     );
@@ -222,6 +242,7 @@ describe('wallet store submitted-transaction history', () => {
     await pending;
 
     const state = useWalletStore.getState();
+    expect(requestSignal?.aborted).toBe(true);
     expect(state.historyStatus).toBe('idle');
     expect(state.historyTransactions).toEqual([]);
     expect(state.historyAddress).toBeNull();
@@ -330,7 +351,12 @@ describe('wallet store submitted-transaction history', () => {
     });
 
     expect(result.success).toBe(true);
-    expect(serviceMocks.getSubmittedTransactions).toHaveBeenCalledWith(ADDRESS, 1);
+    expect(serviceMocks.getSubmittedTransactions).toHaveBeenCalledWith(
+      ADDRESS,
+      1,
+      undefined,
+      expect.any(AbortSignal)
+    );
     expect(useWalletStore.getState().historyStatus).toBe('ready');
   });
 

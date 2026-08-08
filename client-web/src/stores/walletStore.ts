@@ -53,6 +53,7 @@ interface WalletStore {
 let blockchainService: Promise<import('@/services/blockchain').BlockchainService> | null = null;
 let transactionModule: Promise<typeof import('@/services/transaction')> | null = null;
 let transactionService: Promise<import('@/services/transaction').TransactionService> | null = null;
+let historyAbortController: AbortController | null = null;
 
 function getBlockchainService() {
   if (!blockchainService) {
@@ -286,6 +287,9 @@ export const useWalletStore = create<WalletStore>()(
 
         const address = currentWallet.address;
         const requestedPage = Number.isSafeInteger(page) && page >= 1 ? page : 1;
+        historyAbortController?.abort();
+        const controller = new AbortController();
+        historyAbortController = controller;
         const generation = get().historyGeneration + 1;
         set({
           historyGeneration: generation,
@@ -312,7 +316,9 @@ export const useWalletStore = create<WalletStore>()(
           const service = await getTransactionService();
           const result = await service.getSubmittedTransactions(
             address,
-            requestedPage
+            requestedPage,
+            undefined,
+            controller.signal
           );
           if (isStale()) return;
 
@@ -345,6 +351,10 @@ export const useWalletStore = create<WalletStore>()(
             historyError: message,
             historyAddress: address,
           });
+        } finally {
+          if (historyAbortController === controller) {
+            historyAbortController = null;
+          }
         }
       },
 
@@ -367,6 +377,8 @@ export const useWalletStore = create<WalletStore>()(
       clearHistory: () => {
         // Bumping the generation invalidates every in-flight page load so a
         // stale response can never overwrite the cleared or reloaded state.
+        historyAbortController?.abort();
+        historyAbortController = null;
         set((state) => ({
           ...emptyHistory,
           historyGeneration: state.historyGeneration + 1,
