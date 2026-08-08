@@ -8,7 +8,7 @@
 - [x] GH-139: implement and locally verify bounded root/application, DEX, and
   governance critical-path coverage regression gates with meaningful rollback,
   authority, custody, slippage, escrow, reward, and withdrawal tests.
-- [ ] GH-139: publish through a protected exact-head PR, merge only after all
+- [x] GH-139: publish through a protected exact-head PR, merge only after all
   relevant workflows pass, synchronize GH-29/public status/Bridge, and verify
   final `main` plus Pages before marking Done.
 - [x] GH-141: copy the maintained-client build scripts into its Docker builder,

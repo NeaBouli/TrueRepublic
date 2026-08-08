@@ -172,6 +172,26 @@ GitHub recovery epic: [#4](https://github.com/NeaBouli/TrueRepublic/issues/4)
   protected exact-head CI, merge, tracker synchronization, Pages readback, and
   final-main verification remain before GH-139 is Done.
 
+### 2026-08-08 23:50 EEST GH-139 critical-path coverage → Done
+
+- **Merge:** [PR #140](https://github.com/NeaBouli/TrueRepublic/pull/140)
+  passed every protected exact-head check with no unresolved review thread and
+  squash-merged as `1b6ccef`; GH-139 closed automatically.
+- **Exact-head evidence:** Go build/test including the new coverage gate passed
+  in 8m32s; Docker restart 7m07s; capacity 5m58s; multi-validator recovery
+  14m04s; Linux AMD64/ARM64, docs, Go/Rust/Node security, retirement,
+  DeepScan, and review gates all passed.
+- **Final-main evidence:** on exact merge commit `1b6ccef`, Go CI
+  `31277242596` passed build/test (9m12s), capacity (6m11s), Docker restart
+  (7m12s), and multi-validator recovery (13m04s); Security Scan `31277242587`
+  and Pages `31277242292` passed.
+- **Public/tracker readback:** GH-29 marks its Phase 5 critical-path coverage
+  item complete. Live Pages reports 1,535 cases (1,368 Go + 26 Rust + 141
+  maintained client), rollout 20/59 overall and 20/51 phase work, Phase 6 6/7,
+  and `production_ready=false`.
+- **Boundary/blockers:** Done with no blocker. This block strengthens tests,
+  CI, and evidence; it is not production, mainnet, or real-funds approval.
+
 ## 2026-08-08 18:01 EEST GH-131 submitted transaction history → In Progress
 
 - **Branch:** `feature/GH-131-transaction-history` after the shared Bridge
