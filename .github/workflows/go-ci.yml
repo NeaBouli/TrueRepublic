@@ -25,6 +25,7 @@ on:
       - 'scripts/go-packages.sh'
       - 'scripts/init-node.sh'
       - 'scripts/check-critical-coverage.sh'
+      - 'scripts/check-generative-quality.sh'
       - 'scripts/restore.sh'
       - 'scripts/test-go-packages.sh'
   pull_request:
@@ -48,6 +49,7 @@ on:
       - 'scripts/go-packages.sh'
       - 'scripts/init-node.sh'
       - 'scripts/check-critical-coverage.sh'
+      - 'scripts/check-generative-quality.sh'
       - 'scripts/restore.sh'
       - 'scripts/test-go-packages.sh'
 
@@ -55,6 +57,21 @@ permissions:
   contents: read
 
 jobs:
+  quality-depth:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-go@v6
+        with:
+          go-version: '1.26.5'
+
+      - name: Run bounded property, fuzz, replay, malformed-genesis, and race gate
+        run: ./scripts/check-generative-quality.sh
+
   build-and-test:
     runs-on: ubuntu-latest
     timeout-minutes: 20

@@ -35,6 +35,70 @@ Canonical coordination lives in [`docs/agent-bridge/`](docs/agent-bridge/README.
 
 GitHub recovery epic: [#4](https://github.com/NeaBouli/TrueRepublic/issues/4)
 
+## 2026-08-09 00:14 EEST GH-145 generative quality depth → In Progress
+
+- **Branch:** `test/GH-145-quality-depth` from clean `origin/main` `9481b87`.
+- **Issue:** [GH-145](https://github.com/NeaBouli/TrueRepublic/issues/145)
+- **Scope:** deterministic DEX constant-product properties, generative PNYX
+  21,000,000 supply/malformed-genesis validation, governance replay safety,
+  and bounded protected fuzz/race execution.
+- **Delegation:** Kimi K3 owns only the three new secret-free Go test files.
+  Sol owns architecture, CI contract, public arithmetic, security/integration
+  review, all external writes, complete verification, and closure.
+- **Boundary/risk:** Medium, tests/CI/evidence only. No production behavior,
+  consensus transition, accounting or DEX formula, governance authority,
+  wallet/key/signing, deployment, network, or real-funds change. A property
+  failure becomes a separately scoped finding rather than an in-scope code fix.
+- **Status/blockers:** In Progress; no blocker. Rollout remains 20/59 overall,
+  20/51 phase work, Phase 6 6/7, and `production_ready=false`.
+
+### 2026-08-09 00:24 EEST implementation integrated → full gates running
+
+- **Kimi contribution:** added only the three assigned test files: deterministic
+  and fuzzed DEX swap properties, PNYX cap/canonical-supply/malformed-genesis
+  properties, and governance replay/no-drift properties. Sol reviewed every
+  line, corrected the CI target names, kept fuzzing bounded, and added explicit
+  invalid-address and supply/balance-mismatch genesis cases.
+- **Focused evidence:** package tests, focused Race execution, the repository
+  contract, and a one-second integrated campaign for each real fuzz target pass.
+  Kimi's separate 20-second campaigns pass with 40,317 DEX and 25,524 token
+  executions and no crasher.
+- **Authoritative recount:** package-scoped `go test -json` records 1,406
+  standard Go cases: root 120, token 37, DEX 138, governance 533, and unchanged
+  remaining modules. Candidate public arithmetic is 1,573 total (1,406 Go + 26
+  Rust + 141 maintained client), rollout 21/59 overall and 21/51 phase work;
+  Phase 6 remains 6/7 and production remains false.
+- **Pending:** full repository verification, critical coverage, documentation
+  consistency, independent final review, protected exact-head PR checks,
+  merge, GH-29 synchronization, final-main checks, and Pages readback.
+
+### 2026-08-09 00:31 EEST full local verification → review ready
+
+- **Full Go:** `make verify` passes package selection, build, vet, and all
+  1,406 standard cases under Race/Coverage. Coverage is root 71.9%, token
+  95.6%, DEX 51.1%, and governance 63.8%.
+- **Quality gate:** the protected-equivalent 10-second campaigns pass with
+  12,694 DEX and 11,537 token executions; focused deterministic tests remain
+  under Race. Critical coverage, documentation arithmetic/inventory/rollout,
+  JSON, workflow YAML, shell syntax, and diff checks pass.
+- **Status:** local implementation and integration are complete with no
+  production-code diff and no blocker. Independent final review is running;
+  protected publication and post-merge evidence still gate Done.
+
+### 2026-08-09 00:38 EEST independent review → approved
+
+- **Verdict:** Kimi's read-only full-diff review independently reproduced the
+  properties, replay-conflict semantics, package counts, token coverage,
+  10-second fuzz gate, documentation arithmetic, vet, YAML/shell, and diff
+  hygiene. Findings: 0 P0, 0 P1, 0 P2; no file was changed by the reviewer.
+- **P3 handling:** increased only the outer GitHub job timeout from 10 to 15
+  minutes for cold-cache compile headroom; the deterministic run and each fuzz
+  campaign retain their 180-second and 1–60-second hard bounds. Staged rollout
+  arithmetic remains explicitly conditional on protected merge, and observed
+  fuzz execution counts remain run evidence rather than fixed thresholds.
+- **Next:** rerun the affected repository/YAML/docs contracts, then publish the
+  protected PR and require exact-head CI plus review closure before merge.
+
 ## 2026-08-08 19:46 EEST GH-139 critical-path coverage → In Progress
 
 - **Branch:** `test/GH-139-critical-coverage` from clean `origin/main`

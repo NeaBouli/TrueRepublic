@@ -4,8 +4,8 @@
   "release_date": "2026-03-04",
   "tests": {
     "status": "recovery_verified_locally",
-    "total": 1535,
-    "go": 1368,
+    "total": 1573,
+    "go": 1406,
     "rust": 26,
     "frontend": 141,
     "historical_total": 577
@@ -37,16 +37,16 @@
     "status": "engineering_in_progress",
     "tracker_scope": "github_issue_29",
     "github_issue": 29,
-    "completed": 20,
+    "completed": 21,
     "total": 59,
-    "phase_work_completed": 20,
+    "phase_work_completed": 21,
     "phase_work_total": 51,
     "phase_6_completed": 6,
     "phase_6_total": 7,
     "production_ready": false
   },
   "modules": {
-    "root": 119,
+    "root": 120,
     "capacitypolicy": 48,
     "deploymentevidence": 71,
     "healthcheck": 55,
@@ -54,11 +54,11 @@
     "migration": 82,
     "networkpolicy": 126,
     "observability": 50,
-    "token": 12,
+    "token": 37,
     "topologypolicy": 56,
     "treasury": 36,
-    "dex": 130,
-    "truedemocracy": 529
+    "dex": 138,
+    "truedemocracy": 533
   },
   "token": {
     "symbol": "PNYX",

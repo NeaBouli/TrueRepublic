@@ -6,7 +6,7 @@ DETERMINISTIC_TARGET ?= linux-amd64
 SOURCE_REF           ?= $(shell git rev-parse HEAD)
 DETERMINISTIC_OUT    ?= $(BUILD_DIR)/deterministic/$(DETERMINISTIC_TARGET)
 
-.PHONY: build critical-coverage deterministic-linux-daemon deterministic-build-contract-test install verify test lint clean docker-build docker-up docker-down proto-gen
+.PHONY: build critical-coverage quality-depth deterministic-linux-daemon deterministic-build-contract-test install verify test lint clean docker-build docker-up docker-down proto-gen
 
 build:
 	@echo "Building $(BINARY)..."
@@ -15,6 +15,9 @@ build:
 
 critical-coverage:
 	./scripts/check-critical-coverage.sh
+
+quality-depth:
+	./scripts/check-generative-quality.sh
 
 deterministic-linux-daemon:
 	./scripts/build-deterministic-daemon.sh \

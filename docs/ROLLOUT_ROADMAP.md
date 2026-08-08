@@ -1,6 +1,6 @@
 # TrueRepublic Road to Rollout
 
-Updated: 2026-08-04
+Updated: 2026-08-08
 
 TrueRepublic has a recovered and CI-verified v0.4 engineering foundation. It
 is **not production-ready, mainnet-ready, or approved for real funds or keys**.
@@ -19,7 +19,7 @@ intentionally more granular than the public 59-item tracker.
 
 - The ordered recovery merge chain is on `main`.
 - The maximum supply is fixed at 21,000,000 PNYX.
-- The source of truth records 1,535 recovery-verified tests: 1,368 Go, 26 Rust,
+- The source of truth records 1,573 recovery-verified tests: 1,406 Go, 26 Rust,
   and 141 maintained-client tests. GH-121's real registered browser-query
   boundary and GH-115's local client-chain delivery
   case is separately gated and excluded from this arithmetic.
@@ -150,8 +150,9 @@ software.
   committed local-chain delivery for the supported transaction families
   ([GH-115](https://github.com/NeaBouli/TrueRepublic/issues/115)); expanded
   state/query assertions remain future depth work.
-- [ ] Add property, fuzz, invariant, and malformed-genesis tests where they
-  provide stronger guarantees than example tests.
+- [x] Add property, fuzz, invariant, replay, malformed-genesis, and focused
+  race tests where they provide stronger guarantees than example tests
+  ([GH-145](https://github.com/NeaBouli/TrueRepublic/issues/145)).
 - [ ] Test concurrent submissions, duplicate messages, replay attempts, and
   deterministic restart behavior.
 - [x] Wire ABCI++ misbehavior and last-commit data into the economic slashing
