@@ -168,6 +168,24 @@ GitHub recovery epic: [#4](https://github.com/NeaBouli/TrueRepublic/issues/4)
   full sequential chain evidence pass. Exact-head protected CI is next; no
   blocker and production remains false.
 
+### 2026-08-08 19:32 EEST merge and final-main verification → Done
+
+- **Merge/tracker:** PR #137 exact head `cc1e3dd` passed every protected check;
+  all four review threads were answered and resolved. The authorized squash
+  merge produced `7c751b2`; GH-131 closed automatically and GH-29 now checks
+  the transaction-history item at exactly 19/59 overall and 19/51 phase work.
+- **Final `main` PASS:** Client Web CI `31266901488` (build 31s, protected
+  Chromium/Firefox/WebKit browser quality 1m53s, two-case disposable-chain
+  integration 4m06s), Security Scan `31266901498`, and Pages
+  `31266901092` all pass on `7c751b2`.
+- **Public readback:** live GitHub Pages publishes 1,519 standard cases, 19 of
+  59 rollout items (32%), 19 of 51 phase-work items (37%), Phase 6 at 6/7,
+  and `production_ready=false`.
+- **Closure:** GH-131 is Done with no blocker. Submitted-only history remains
+  intentionally distinct from incoming participant history, and configured
+  REST-provider trust remains documented. No production, deployment, real
+  key/account/fund, or infrastructure action occurred.
+
 ## 2026-08-08 18:01 EEST GH-132 client browser qualification → In Progress
 
 - **Branch:** `test/GH-132-client-browser-quality` after the shared Bridge
