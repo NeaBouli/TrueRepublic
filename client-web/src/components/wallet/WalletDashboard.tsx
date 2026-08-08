@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useWalletStore } from '@/stores/walletStore';
 import { AccountInfo } from './AccountInfo';
 import { BalanceCard } from './BalanceCard';
+import { TransactionHistory } from './TransactionHistory';
 import { Button } from '@/components/common/Button';
 import {
   PaperAirplaneIcon,
@@ -112,6 +113,11 @@ export function WalletDashboard() {
                 <div className="text-sm font-medium text-gray-900">DEX</div>
                 <div className="text-xs text-primary-600 mt-1">Trade Now</div>
               </button>
+            </div>
+
+            {/* Submitted transaction history */}
+            <div className="mt-6">
+              <TransactionHistory />
             </div>
           </div>
         </div>

@@ -10,13 +10,14 @@ import { tmpdir } from 'node:os';
 import { resolve } from 'node:path';
 import { DirectSecp256k1HdWallet } from '@cosmjs/proto-signing';
 import { fromBech32 } from '@cosmjs/encoding';
-import { StargateClient } from '@cosmjs/stargate';
+import { calculateFee, GasPrice, StargateClient } from '@cosmjs/stargate';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { connectSigningClient, deliverMessages } from './signingClient';
 import { createTxRegistry } from './txRegistry';
 import { DEXService } from './dex';
 import { GovernanceService } from './governance';
 import { GovernanceTxService } from './governanceTx';
+import { TransactionService } from './transaction';
 import { ZKPService } from './zkp';
 import { ModuleQueryError } from './moduleQuery';
 import type { ChainConfig } from '@/types/chain';
@@ -130,6 +131,7 @@ function rawEd25519PublicKey(publicKey: ReturnType<typeof generateKeyPairSync>['
 describe.skipIf(!enabled)('canonical client-to-chain delivery', () => {
   let home = '';
   let rpcUrl = '';
+  let apiUrl = '';
   let node: ChildProcess | undefined;
   let nodeLogs = '';
   let signerWallet: DirectSecp256k1HdWallet;
@@ -231,6 +233,7 @@ describe.skipIf(!enabled)('canonical client-to-chain delivery', () => {
     const grpcPort = await freePort();
     const apiPort = await freePort();
     rpcUrl = `http://127.0.0.1:${rpcPort}`;
+    apiUrl = `http://127.0.0.1:${apiPort}`;
     node = spawn(binary, [
       'start',
       '--home',
@@ -245,6 +248,8 @@ describe.skipIf(!enabled)('canonical client-to-chain delivery', () => {
       `127.0.0.1:${grpcPort}`,
       '--api.address',
       `tcp://127.0.0.1:${apiPort}`,
+      '--api.enable',
+      'true',
       '--log_level',
       'error',
     ]);
@@ -518,6 +523,107 @@ describe.skipIf(!enabled)('canonical client-to-chain delivery', () => {
       );
     } finally {
       client.disconnect();
+    }
+  }, 120_000);
+
+  // GH-131: real newest-first REST pagination evidence for the submitted
+  // transaction history against the same disposable chain.
+  it('serves newest-first paginated submitted history over REST', async () => {
+    const [account] = await signerWallet.getAccounts();
+    const historyConfig: ChainConfig = {
+      chainId,
+      chainName: 'GH-131 local integration',
+      rpc: rpcUrl,
+      rest: apiUrl,
+      bech32Prefix: 'truerepublic',
+      coinDenom: 'PNYX',
+      coinMinimalDenom: 'upnyx',
+      coinDecimals: 6,
+      gasPrice,
+    };
+
+    // Commit a real DeliverTx failure (slippage-bound swap) so the indexed
+    // history must preserve it with its code and bounded chain log.
+    let failedHash = '';
+    const client = await connectSigningClient(historyConfig, signerWallet);
+    try {
+      const failed = await client.signAndBroadcast(
+        account.address,
+        [
+          {
+            typeUrl: '/dex.MsgSwapExact',
+            value: {
+              sender: fromBech32(account.address).data,
+              inputDenom: 'upnyx',
+              inputAmt: '1000',
+              outputDenom: 'atom',
+              minOutput: '999999999999999',
+            },
+          },
+        ],
+        calculateFee(500_000, GasPrice.fromString(gasPrice)),
+        'gh131 committed failure'
+      );
+      expect(failed.code).not.toBe(0);
+      failedHash = failed.transactionHash;
+    } finally {
+      client.disconnect();
+    }
+
+    const history = new TransactionService(historyConfig);
+    try {
+      const page1 = await history.getSubmittedTransactions(account.address, 1, 5);
+      // 11 browser deliveries + 1 CLI pool creation from the first test plus
+      // the committed failure above are all signed by this address.
+      expect(page1.total).toBeGreaterThanOrEqual(13);
+      expect(page1.transactions).toHaveLength(5);
+      expect(page1.page).toBe(1);
+      expect(page1.pageSize).toBe(5);
+      expect(page1.hasMore).toBe(true);
+
+      const newest = page1.transactions[0];
+      expect(newest.hash).toBe(failedHash);
+      expect(newest.status).toBe('failed');
+      expect(newest.code).not.toBe(0);
+      expect(newest.error).toBeTruthy();
+      expect(newest.error?.length ?? 0).toBeLessThanOrEqual(200);
+      expect(newest.memo).toBe('gh131 committed failure');
+      expect(newest.timestamp).toMatch(
+        /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/
+      );
+      expect(newest.fee).toEqual([{ denom: 'upnyx', amount: '12500' }]);
+      expect(newest.messages[0]?.typeUrl).toBe('/dex.MsgSwapExact');
+
+      for (let index = 1; index < page1.transactions.length; index++) {
+        expect(page1.transactions[index - 1].height).toBeGreaterThanOrEqual(
+          page1.transactions[index].height
+        );
+        expect(page1.transactions[index].hash).toMatch(/^[0-9A-Fa-f]{64}$/);
+        expect(page1.transactions[index].timestamp).toMatch(
+          /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/
+        );
+      }
+
+      const page2 = await history.getSubmittedTransactions(account.address, 2, 5);
+      expect(page2.transactions).toHaveLength(5);
+      const page1Hashes = new Set(page1.transactions.map((tx) => tx.hash));
+      expect(page2.transactions.some((tx) => page1Hashes.has(tx.hash))).toBe(
+        false
+      );
+      expect(page1.transactions[4].height).toBeGreaterThanOrEqual(
+        page2.transactions[0].height
+      );
+
+      // The receiver only ever received funds: its submitted history is an
+      // authoritative empty page, not an error.
+      const empty = await history.getSubmittedTransactions(receiverAddress, 1);
+      expect(empty.total).toBe(0);
+      expect(empty.transactions).toEqual([]);
+      expect(empty.hasMore).toBe(false);
+    } catch (error) {
+      throw new Error(
+        `${error instanceof Error ? error.message : String(error)}\nLocal node logs:\n${nodeLogs}`
+      );
     }
   }, 120_000);
 });

@@ -52,6 +52,49 @@ GitHub recovery epic: [#4](https://github.com/NeaBouli/TrueRepublic/issues/4)
 - **Status/blockers:** In Progress; no blocker. GH-29 remains 17/59 and
   `production_ready=false`.
 
+### 2026-08-08 18:49 EEST implementation and real-chain proof → Sol review
+
+- **Changed:** Cosmos SDK v0.50 `query/page/limit/order_by` submitted-history
+  service with typed failures and strict decoding; dedicated stale-safe wallet
+  history state; accessible newest-first paginated UI; service/store/component
+  tests; and a second case in the existing disposable-chain integration.
+- **Real evidence:** the first attempt exposed that SDK v0.50 ignores deprecated
+  `events/pagination` fields. The corrected live REST contract returns top-level
+  `total`; both disposable-chain cases pass in 75.58s. Page 1 begins with a
+  real committed slippage failure preserving code, bounded log, timestamp,
+  memo, and exact fee; page 2 is disjoint; a receiver-only address is an
+  authoritative empty submitted-history result.
+- **Delegation/review:** Kimi K3 implemented the bounded block and ran its full
+  client gates. Sol reviewed every changed file and corrected service caching,
+  caller-abort handling during decode, malformed response-count rejection,
+  wallet-create history clearing, failed-page retry state, stale-row rendering,
+  and the committed-send/history-refresh failure boundary. Independent Spark
+  review found no P0-P2 and identified the latter two P3 UX risks before fix.
+- **Current PASS:** lint and 37/37 focused service/store/component cases after
+  Sol remediation. Kimi's prior full gate passed ten Node policy cases, 129
+  Vitest cases with two gated skips, production build/budgets, guarded audit,
+  diff check, and both real-chain cases. Full post-remediation rerun remains.
+- **Boundary:** incoming-only transfers remain explicitly excluded; configured
+  REST-provider trust remains unchanged. No real account/key/fund, public
+  broadcast, listener, deployment, or production action occurred.
+- **Status/blockers:** Review; no blocker. Full Sol rerun, public status/rollout
+  synchronization after the preceding GH-132 merge, protected PR CI, merge,
+  and final-main evidence remain before Done.
+
+### 2026-08-08 18:51 EEST full post-remediation verification → PASS
+
+- **Client gates:** ten Node policy/budget cases and 131 Vitest cases pass;
+  two real-chain cases remain gated from standard arithmetic and also pass in
+  76.88s. Lint, TypeScript build, production bundle budgets, guarded High
+  audit, focused 37/37, and diff check pass.
+- **Bundle:** 76,219-byte gzip initial entry, 19 lazy routes, 5,028-byte gzip
+  maximum direct route, and 353,061-byte gzip total JavaScript on the GH-131
+  branch before incorporating GH-132. Final combined metrics will be recorded
+  after merging exact `main`.
+- **Status/blockers:** Implementation, independent review, Sol remediation, and
+  local integration are complete; no blocker. Incorporate GH-132 final main,
+  synchronize 19/59 public status, rerun combined gates, then publish PR.
+
 ## 2026-08-08 18:01 EEST GH-132 client browser qualification → In Progress
 
 - **Branch:** `test/GH-132-client-browser-quality` after the shared Bridge
