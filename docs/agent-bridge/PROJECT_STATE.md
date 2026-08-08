@@ -1,9 +1,16 @@
 # Project State
 
-Updated: 2026-08-08 20:50 UTC
+Updated: 2026-08-08 21:24 UTC
 
 ## Repository
 
+- GH-145 is locally integrated on clean base `9481b87`. Two real seeded fuzz
+  targets plus deterministic DEX, PNYX cap/malformed-genesis, governance
+  replay/no-drift, and focused Race evidence pass their integration gates.
+  Fresh standard arithmetic is 1,573 cases (1,406 Go, 26 Rust, 141 maintained
+  client), staging rollout at 21/59 overall and 21/51 phase work. Phase 6 stays
+  6/7 and production false. Full local, protected exact-head, merge,
+  final-main, tracker, and Pages evidence remain before Done.
 - GH-141 is closed through merged PR #142 (`11ef2f6`) after every protected
   exact-head gate passed, including the authoritative Docker image/restart
   smoke. The maintained-client Docker builder now includes its required build

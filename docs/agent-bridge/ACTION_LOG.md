@@ -1,5 +1,68 @@
 # Action Log
 
+## 2026-08-09 — GH-145 generative quality-depth inventory
+
+- Confirmed zero existing Go fuzz targets and zero generative property-test
+  harnesses. Existing invariant, malformed-genesis, replay, and global race
+  evidence is substantial but primarily example-driven.
+- Scoped GH-145 to DEX constant-product properties, PNYX cap/bank-genesis
+  validation, governance replay safety, and bounded CI fuzz/race execution.
+- Kimi K3 performs the bounded three-test-file implementation; Sol retains CI,
+  security, integration, complete gates, GitHub, and closure. No production or
+  real-funds action is in scope.
+
+## 2026-08-09 — GH-145 implementation integrated
+
+- Added two real seeded Go fuzz targets plus deterministic DEX arithmetic,
+  PNYX supply/genesis, and consensus-slashing replay properties. Malformed
+  genesis cases cover legacy denomination, duplicates, negatives, invalid
+  address, mismatched supply, and over-cap structures without production edits.
+- Added a bounded repository/CI quality-depth gate: the deterministic critical
+  tests run under Race and each fuzz target runs for a configurable 1–60
+  seconds with one worker. Repository contract, shell syntax, focused Race,
+  and one-second integrated campaigns pass.
+- Kimi's independent implementation verification passed full affected-package
+  suites, focused Race, vet, and separate 20-second fuzz campaigns with 40,317
+  DEX and 25,524 token executions. Sol reviewed and integrated every write.
+- Fresh package-scoped JSON arithmetic is 1,406 Go cases, making the candidate
+  total 1,573 with unchanged Rust/client counts. Staged rollout is 21/59
+  overall and 21/51 phase work; Phase 6 is 6/7 and production remains false.
+- Full gates, independent final review, protected CI, merge, GH-29, final-main,
+  and Pages evidence remain pending.
+
+## 2026-08-09 — GH-145 full local gates pass
+
+- `make verify` passes package selection, build, vet, and all 1,406 Go cases
+  under Race/Coverage. Critical coverage remains above its protected floors;
+  token coverage rises to 95.6% while root is 71.9%, DEX 51.1%, and governance
+  63.8%.
+- The protected-equivalent quality gate passes 10-second campaigns with 12,694
+  DEX and 11,537 token executions. Documentation consistency, status/module/
+  rollout arithmetic, JSON, workflow YAML, shell syntax, and diff hygiene pass.
+- Local implementation is complete without production-code changes or blocker.
+  Independent final review and the complete GitHub/merge/final-main/Pages chain
+  remain mandatory before Done.
+
+## 2026-08-09 — GH-145 independent review approved
+
+- Kimi's read-only full-diff review reports 0 P0/P1/P2 and independently
+  reproduces property validity, replay conflict semantics, package counts,
+  token coverage, the 10-second fuzz gate, documentation arithmetic, vet,
+  workflow/shell parsing, and diff hygiene. It changed no file.
+- Remediated its only technical P3 by increasing the outer quality-depth job
+  timeout from 10 to 15 minutes for cold-cache compile headroom. Per-command
+  180-second timeouts, 1–60-second fuzz bounds, and single-worker execution
+  remain unchanged. The other observations are accurately staged status and
+  machine-dependent per-run execution evidence, not defects.
+
+## 2026-08-09 — GH-145 protected PR published
+
+- Published locally verified commit `d4aaa77` through PR #146; the PR links
+  `Closes #145` and preserves the tests/CI/docs-only boundary.
+- Exact-head protected workflows and review are running. Merge, GH-29 tracker
+  synchronization, final-main checks, Pages readback, and final Bridge closure
+  remain mandatory before Done.
+
 ## 2026-08-08 — GH-139 critical-path coverage locally verified
 
 - Added a repository-owned three-package coverage contract and protected Go CI

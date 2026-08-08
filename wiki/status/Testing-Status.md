@@ -1,10 +1,10 @@
 # Testing Status
 
-The current **v0.4.0 recovery** source of truth records **1,535 verified cases**.
+The current **v0.4.0 recovery** source of truth records **1,573 verified cases**.
 
 | Suite | Passing cases |
 |---|---:|
-| Go root/application | 119 |
+| Go root/application | 120 |
 | Go capacity policy | 48 |
 | Go deployment evidence | 71 |
 | Go health checks | 55 |
@@ -12,14 +12,14 @@ The current **v0.4.0 recovery** source of truth records **1,535 verified cases**
 | Go migration | 82 |
 | Go network policy | 126 |
 | Go observability | 50 |
-| Go token | 12 |
+| Go token | 37 |
 | Go topology policy | 56 |
 | Go treasury | 36 |
-| Go DEX | 130 |
-| Go governance | 529 |
+| Go DEX | 138 |
+| Go governance | 533 |
 | Rust/CosmWasm | 26 |
 | Maintained client | 141 |
-| **Total** | **1,535** |
+| **Total** | **1,573** |
 
 ## Current Go coverage
 
@@ -33,7 +33,7 @@ The current **v0.4.0 recovery** source of truth records **1,535 verified cases**
 | migration | 84.6% |
 | network policy | 95.5% |
 | observability | 80.3% |
-| token | 92.6% |
+| token | 95.6% |
 | topology policy | 85.8% |
 | treasury | 97.0% |
 | DEX | 51.1% |
