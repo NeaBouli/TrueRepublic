@@ -5,12 +5,24 @@ import type { ChainConfig } from '@/types/chain';
 import type { PayToPutCalculation } from '@/types/governance';
 import type { TransactionResult } from '@/types/transaction';
 import { connectSigningClient, deliverMessages } from './signingClient';
+import type { ChainPayToPut } from '@/types/chainData';
+import {
+  expectQueryNumber,
+  expectQueryRecord,
+  expectQueryString,
+  ModuleQueryError,
+  ModuleQueryClient,
+  QUERY_PATHS,
+} from './moduleQuery';
 
 export class GovernanceTxService {
-  private config: ChainConfig;
+  private readonly queries: ModuleQueryClient;
 
-  constructor(config: ChainConfig) {
-    this.config = config;
+  constructor(
+    private readonly config: ChainConfig,
+    queries = new ModuleQueryClient(config)
+  ) {
+    this.queries = queries;
   }
 
   /**
@@ -20,28 +32,53 @@ export class GovernanceTxService {
   async calculatePayToPut(
     domainName: string
   ): Promise<PayToPutCalculation> {
-    try {
-      const response = await fetch(
-        `${this.config.rest}/truerepublic/truedemocracy/paytoput/${domainName}`
+    const value = await this.queries.query<unknown>(
+      QUERY_PATHS.truedemocracy.payToPut,
+      [{ number: 1, type: 'string', value: domainName }]
+    );
+    const result = expectQueryRecord(
+      QUERY_PATHS.truedemocracy.payToPut,
+      value
+    );
+    const calculation: ChainPayToPut = {
+      base_cost: expectQueryString(
+        QUERY_PATHS.truedemocracy.payToPut,
+        'base_cost',
+        result.base_cost
+      ),
+      domain_multiplier: expectQueryNumber(
+        QUERY_PATHS.truedemocracy.payToPut,
+        'domain_multiplier',
+        result.domain_multiplier
+      ),
+      final_cost: expectQueryString(
+        QUERY_PATHS.truedemocracy.payToPut,
+        'final_cost',
+        result.final_cost
+      ),
+      formula: expectQueryString(
+        QUERY_PATHS.truedemocracy.payToPut,
+        'formula',
+        result.formula
+      ),
+    };
+    if (
+      !Number.isSafeInteger(calculation.domain_multiplier) ||
+      calculation.domain_multiplier < 0 ||
+      !/^\d+$/.test(calculation.base_cost) ||
+      !/^\d+$/.test(calculation.final_cost)
+    ) {
+      throw new ModuleQueryError(
+        QUERY_PATHS.truedemocracy.payToPut,
+        'decode',
+        'numeric fields must be unsigned safe integers'
       );
-
-      if (!response.ok) {
-        return this.defaultPayToPut();
-      }
-
-      const data = await response.json();
-      return data.calculation || this.defaultPayToPut();
-    } catch {
-      return this.defaultPayToPut();
     }
-  }
-
-  private defaultPayToPut(): PayToPutCalculation {
     return {
-      baseCost: '1000000',
-      domainMultiplier: 1,
-      finalCost: '1000000',
-      formula: 'Base: 1 PNYX',
+      baseCost: calculation.base_cost,
+      domainMultiplier: calculation.domain_multiplier,
+      finalCost: calculation.final_cost,
+      formula: calculation.formula,
     };
   }
 

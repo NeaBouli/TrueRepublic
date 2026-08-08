@@ -41,6 +41,7 @@ User → Recovery-approved local/test wallet (CosmJS; production signing disable
 
 ```
 CLI or protobuf client → gRPC query (private port 9090)
+Maintained browser → existing RPC proxy → JSON-RPC abci_query
   → registered truedemocracy.Query or dex.Query method
   → QueryServer → Keeper → KV Store (read)
   → protobuf response containing JSON result bytes

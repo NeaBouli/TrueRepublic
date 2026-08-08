@@ -1,5 +1,23 @@
 # Decisions
 
+## 2026-08-08 - Maintained browser module-query transport
+
+- The maintained browser uses registered protobuf gRPC query paths through the
+  already configured CometBFT JSON-RPC `abci_query` endpoint. It does not
+  revive the removed `custom/...` shim, invent REST aliases, add a public
+  listener, or advertise unregistered grpc-gateway routes.
+- One client boundary encodes protobuf requests, decodes the module's typed
+  `Result` envelope, validates runtime response structure, and classifies
+  transport, remote, protocol, and decode failures explicitly. Failure is
+  never converted into an authoritative empty list, false nullifier, or
+  fabricated economic value.
+- Merkle proof and Pay-to-Put are canonical registered read methods. Merkle
+  responses bind the stored domain root and exact commitment and return the
+  depth-20 MiMC path; Pay-to-Put calls the chain's existing treasury formula.
+- This browser transport trusts the configured RPC endpoint. Browser-side
+  light-client verification, production RPC deployment, public ingress, and
+  rollout approval remain separate tasks.
+
 ## 2026-07-11 - Recovery baseline
 
 - Current GitHub `main`, not the divergent old local checkout, is the source baseline.

@@ -36,6 +36,7 @@ export function VotingPanel({
     message: 'Real Groth16 prover not installed',
   });
   const [alreadyVoted, setAlreadyVoted] = useState(false);
+  const [voteStatusError, setVoteStatusError] = useState<string | null>(null);
   const [showIdentitySetup, setShowIdentitySetup] = useState(false);
 
   useEffect(() => {
@@ -44,6 +45,7 @@ export function VotingPanel({
     let cancelled = false;
     const checkVoteStatus = async () => {
       try {
+        setVoteStatusError(null);
         const extNullifier = zkpService.computeExternalNullifier(
           domainId,
           issueName,
@@ -57,8 +59,14 @@ export function VotingPanel({
         if (!cancelled) {
           setAlreadyVoted(used);
         }
-      } catch {
-        // Best-effort check; node may be offline.
+      } catch (queryError: unknown) {
+        if (!cancelled) {
+          setVoteStatusError(
+            queryError instanceof Error
+              ? queryError.message
+              : 'Unable to verify whether this nullifier was already used'
+          );
+        }
       }
     };
 
@@ -231,6 +239,12 @@ export function VotingPanel({
           </p>
         </div>
       </div>
+
+      {voteStatusError && (
+        <div className="bg-red-50 border border-red-300 rounded-lg p-4 mb-6 text-sm text-red-900">
+          Nullifier status unavailable: {voteStatusError}
+        </div>
+      )}
 
       <Button
         onClick={handleVote}

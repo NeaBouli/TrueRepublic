@@ -26,10 +26,84 @@ Canonical coordination lives in [`docs/agent-bridge/`](docs/agent-bridge/README.
   [`GH85_AUDIT.md`](docs/agent-bridge/GH85_AUDIT.md)
 - GH-89 topology qualification audit:
   [`GH89_AUDIT.md`](docs/agent-bridge/GH89_AUDIT.md)
+- GH-121 browser query transport audit:
+  [`GH121_AUDIT.md`](docs/agent-bridge/GH121_AUDIT.md)
 - Decisions: [`DECISIONS.md`](docs/agent-bridge/DECISIONS.md)
 - Security: [`SECURITY_NOTES.md`](docs/agent-bridge/SECURITY_NOTES.md)
 
 GitHub recovery epic: [#4](https://github.com/NeaBouli/TrueRepublic/issues/4)
+
+## 2026-08-08 11:22 EEST GH-121 browser query transport → Review
+
+- **Branch:** `fix/GH-121-browser-query-transport`
+- **Issue:** [GH-121](https://github.com/NeaBouli/TrueRepublic/issues/121)
+- **Baseline:** exact clean `origin/main` `2ec713c`; no open pull request;
+  latest final-main Docs, Security, and Pages workflows pass.
+- **Scope:** inventory every maintained-browser custom-module read, reproduce
+  the unsupported REST-alias and fail-soft behavior, select one registered
+  typed transport, implement it without widening public listeners, and prove
+  governance/validator/DEX/membership-admin/ZKP reads plus unavailable and
+  empty-state behavior against a disposable chain.
+- **Risk:** High client/chain compatibility boundary. A transport failure must
+  never become authoritative empty chain state, and query-only work must not
+  weaken signing, broadcast, listener, identity, or production safeguards.
+- **Delegation:** Kimi K3 receives one bounded secret-free repository analysis
+  and implementation-design block. Sol owns architecture, security, every
+  external write, diff review, full verification, publication, and closure.
+- **Safety:** no deployment, infrastructure, production, key, signing,
+  broadcast, account, fund, or proof-system action.
+
+### 2026-08-08 11:41 EEST progress
+
+- **Inventory:** 18 unique unsupported custom-module HTTP aliases across 23
+  maintained-browser call sites. Five governance subresources are derived from
+  the canonical Domain response; every DEX read maps directly to a registered
+  query. Merkle proof and Pay-to-Put required two new registered read methods.
+- **Implemented:** centralized protobuf/JSON `ModuleQueryClient` over the
+  existing CometBFT JSON-RPC endpoint; all maintained custom-module reads now
+  use registered `truedemocracy.Query/*` or `dex.Query/*` paths. Unavailable,
+  non-zero ABCI, malformed protobuf, and malformed JSON remain explicit errors.
+- **Kimi contribution:** bounded Go ownership added `MerkleProof` and
+  `PayToPut`, CLI commands, service handlers/clients, protocol route/execution
+  checks, and focused fail-closed tests. Sol reviewed the complete diff and
+  independently reran focused tests.
+- **Evidence so far:** client production build PASS; ESLint PASS; six focused
+  transport/ZKP cases PASS; all 13 new Go query cases PASS; route registration
+  and live in-process gRPC-over-ABCI tests PASS. Full repository gates and the
+  real disposable-process client-chain test remain pending.
+- **Helper status:** bounded Claude Code documentation review exhausted its
+  budget without a usable result; Sol owns the documentation reconciliation.
+- **Blockers:** none. Rollout remains 16/59 and production readiness false.
+
+### 2026-08-08 12:04 EEST local verification
+
+- **Result:** all maintained custom-module reads use registered protobuf
+  gRPC-over-ABCI paths; nested governance, DEX, Merkle, nullifier, and economic
+  payloads fail closed. The compatible `nanoid` 3.3.18 lock resolution clears
+  the newly published live High advisory.
+- **Evidence:** Go build/vet/race/coverage and 1,352 cases PASS; Rust
+  fmt/clippy/build/26 tests/audit PASS; maintained client clean install,
+  lint/98 tests/build at 322.29 kB gzip/live High audit PASS; the real
+  disposable-chain browser query test PASS.
+- **Audit:** 0 FAIL, 2 documented WARN (configured-RPC trust and existing
+  bundle/large-domain scalability), 6 PASS. No blocking implementation finding.
+- **Independent review:** Kimi found no P0/P1/P2. Sol remediated all four
+  substantive P3 observations: strict fixed-width protobuf bounds, per-field
+  validator validation, and visible rejection handling in both direct LP-query
+  consumers. Cosmetic legacy nullable signatures are non-behavioral.
+- **Status:** implementation is locally complete; independent final-head
+  review, protected GitHub checks, merge, issue closure, and final-main
+  verification remain. Rollout stays 16/59 and production readiness false.
+
+### Sol review feedback
+
+Approved for protected review. Kimi's initial implementation review found no
+P0/P1/P2; all four substantive P3 observations were remediated and its focused
+re-review found no new P0/P1/P2/P3. Sol reviewed the full diff and reproduced
+all complete local gates. Merge and Done remain conditional on protected
+exact-head and final-main verification.
+
+---
 
 ## 2026-08-07 02:30 EEST GH-116 retired custom ABCI query shim → Done
 

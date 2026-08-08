@@ -14,6 +14,12 @@ import { StargateClient } from '@cosmjs/stargate';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { connectSigningClient, deliverMessages } from './signingClient';
 import { createTxRegistry } from './txRegistry';
+import { DEXService } from './dex';
+import { GovernanceService } from './governance';
+import { GovernanceTxService } from './governanceTx';
+import { ZKPService } from './zkp';
+import { ModuleQueryError } from './moduleQuery';
+import type { ChainConfig } from '@/types/chain';
 
 const enabled = process.env.TRUEREPUBLIC_CLIENT_CHAIN_INTEGRATION === '1';
 const binary = resolve(
@@ -301,20 +307,18 @@ describe.skipIf(!enabled)('canonical client-to-chain delivery', () => {
   it('simulates, signs, and delivers every maintained transaction family', async () => {
     const [account] = await signerWallet.getAccounts();
     const sender = fromBech32(account.address).data;
-    const client = await connectSigningClient(
-      {
-        chainId,
-        chainName: 'GH-115 local integration',
-        rpc: rpcUrl,
-        rest: '',
-        bech32Prefix: 'truerepublic',
-        coinDenom: 'PNYX',
-        coinMinimalDenom: 'upnyx',
-        coinDecimals: 6,
-        gasPrice,
-      },
-      signerWallet
-    );
+    const runtimeConfig: ChainConfig = {
+      chainId,
+      chainName: 'GH-121 local integration',
+      rpc: rpcUrl,
+      rest: '',
+      bech32Prefix: 'truerepublic',
+      coinDenom: 'PNYX',
+      coinMinimalDenom: 'upnyx',
+      coinDecimals: 6,
+      gasPrice,
+    };
+    const client = await connectSigningClient(runtimeConfig, signerWallet);
     const deliver = async (typeUrl: string, value: object) => {
       try {
         return await deliverMessages(
@@ -413,11 +417,12 @@ describe.skipIf(!enabled)('canonical client-to-chain delivery', () => {
         })
       ).resolves.toMatchObject({ success: true });
 
+      const identityCommitment = `${'0'.repeat(63)}1`;
       await expect(
         deliver('/truedemocracy.MsgRegisterIdentity', {
           sender,
           domainName: 'GH115',
-          commitment: `${'0'.repeat(63)}1`,
+          commitment: identityCommitment,
         })
       ).resolves.toMatchObject({ success: true });
 
@@ -464,6 +469,45 @@ describe.skipIf(!enabled)('canonical client-to-chain delivery', () => {
           shares: '1',
         })
       ).resolves.toMatchObject({ success: true });
+
+      const governance = new GovernanceService(runtimeConfig);
+      const governanceTx = new GovernanceTxService(runtimeConfig);
+      const dex = new DEXService(runtimeConfig);
+      const zkp = new ZKPService(runtimeConfig);
+
+      await expect(governance.listDomains()).resolves.toContainEqual(
+        expect.objectContaining({ domainId: 'GH115', memberCount: 2 })
+      );
+      await expect(
+        governance.listSuggestions('GH115', 'Registry')
+      ).resolves.toContainEqual(
+        expect.objectContaining({ suggestionId: 'Canonical' })
+      );
+      await expect(dex.listPools()).resolves.toContainEqual(
+        expect.objectContaining({ asset_denom: 'atom' })
+      );
+      await expect(dex.getPoolStats('atom')).resolves.toMatchObject({
+        asset_denom: 'atom',
+      });
+      await expect(
+        dex.estimateSwap('upnyx', '1000', 'atom')
+      ).resolves.toMatchObject({ hops: 1 });
+      await expect(
+        governanceTx.calculatePayToPut('GH115')
+      ).resolves.toMatchObject({ domainMultiplier: 2 });
+      const merkleProof = await zkp.fetchMerkleProof(
+        'GH115',
+        identityCommitment
+      );
+      expect(merkleProof).toMatchObject({
+        root: expect.any(String),
+        leaf: identityCommitment,
+      });
+      expect(merkleProof.pathIndices).toHaveLength(20);
+      expect(merkleProof.pathElements).toHaveLength(20);
+      await expect(dex.getPool('missing-denom')).rejects.toBeInstanceOf(
+        ModuleQueryError
+      );
 
       expect(() =>
         createTxRegistry().encode({ typeUrl: '/dex.MsgSwap', value: {} })

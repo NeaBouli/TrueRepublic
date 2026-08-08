@@ -69,6 +69,8 @@ func GetQueryCmd(cdc *codec.LegacyAmino) *cobra.Command {
 		CmdQueryNullifier(cdc),
 		CmdQueryPurgeSchedule(cdc),
 		CmdQueryZKPState(cdc),
+		CmdQueryMerkleProof(cdc),
+		CmdQueryPayToPut(cdc),
 	)
 	return queryCmd
 }
@@ -840,6 +842,55 @@ func CmdQueryZKPState(cdc *codec.LegacyAmino) *cobra.Command {
 			}
 			queryClient := NewQueryClient(clientCtx)
 			resp, err := queryClient.ZKPState(cmd.Context(), &QueryZKPStateRequest{
+				DomainName: args[0],
+			})
+			if err != nil {
+				return err
+			}
+			return clientCtx.PrintObjectLegacy(json.RawMessage(resp.Result))
+		},
+	}
+	flags.AddQueryFlagsToCmd(cmd)
+	return cmd
+}
+
+func CmdQueryMerkleProof(cdc *codec.LegacyAmino) *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "merkle-proof [domain] [commitment-hex]",
+		Short: "Query a Merkle membership proof for an identity commitment",
+		Args:  cobra.ExactArgs(2),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			clientCtx, err := client.GetClientQueryContext(cmd)
+			if err != nil {
+				return err
+			}
+			queryClient := NewQueryClient(clientCtx)
+			resp, err := queryClient.MerkleProof(cmd.Context(), &QueryMerkleProofRequest{
+				DomainName: args[0],
+				Commitment: args[1],
+			})
+			if err != nil {
+				return err
+			}
+			return clientCtx.PrintObjectLegacy(json.RawMessage(resp.Result))
+		},
+	}
+	flags.AddQueryFlagsToCmd(cmd)
+	return cmd
+}
+
+func CmdQueryPayToPut(cdc *codec.LegacyAmino) *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "pay-to-put [domain]",
+		Short: "Query the current PayToPut proposal fee for a domain (eq.3)",
+		Args:  cobra.ExactArgs(1),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			clientCtx, err := client.GetClientQueryContext(cmd)
+			if err != nil {
+				return err
+			}
+			queryClient := NewQueryClient(clientCtx)
+			resp, err := queryClient.PayToPut(cmd.Context(), &QueryPayToPutRequest{
 				DomainName: args[0],
 			})
 			if err != nil {

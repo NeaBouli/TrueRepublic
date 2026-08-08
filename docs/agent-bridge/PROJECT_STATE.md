@@ -1,9 +1,19 @@
 # Project State
 
-Updated: 2026-08-07 00:02 UTC
+Updated: 2026-08-08 09:04 UTC
 
 ## Repository
 
+- GH-121 is implemented and locally verified on
+  `fix/GH-121-browser-query-transport`: all 23 maintained-browser consumers of
+  18 unregistered custom-module REST aliases now use one fail-closed registered
+  protobuf gRPC-over-CometBFT-ABCI JSON-RPC transport. Two missing canonical
+  reads, Merkle proof and Pay-to-Put, are registered without adding a listener
+  or grpc-gateway route. The disposable-chain browser test proves governance,
+  membership, identity, DEX, Merkle, Pay-to-Put, and unavailable-pool behavior.
+  The fresh local baseline is 1,476 cases (1,352 Go, 26 Rust, 98 maintained
+  client). Protected review, merge, issue closure, and final-main verification
+  remain; rollout is still 16/59 and production readiness remains false.
 - GH-116 is closed through merged PR #124 (`5dc4487`): the consumerless legacy
   `custom/truedemocracy/...` and `custom/dex/...` ABCI shim is removed, all 17
   supported module query methods remain registered through protobuf gRPC, and

@@ -1,5 +1,31 @@
 # Action Log
 
+## 2026-08-08 12:04 EEST - GH-121 locally verified
+
+- Replaced all 23 maintained-browser call sites for 18 unregistered
+  custom-module REST aliases with one registered protobuf gRPC-over-CometBFT
+  ABCI JSON-RPC client. Canonical Domain data now drives governance projections;
+  DEX and validator/domain payloads are validated at runtime and all failures
+  remain explicit.
+- Added registered MerkleProof and PayToPut query methods, CLI support,
+  deterministic/fail-closed handler tests, route execution contracts, and one
+  real disposable-chain browser integration test. No listener, gateway,
+  signing, broadcast, deployment, account, key, or fund behavior was widened.
+- Kimi K3 independently inventoried the broken boundary and implemented the
+  bounded Go query block. Sol reviewed its full write diff, integrated every
+  browser consumer, hardened response validation, and reran the complete gates.
+  A bounded Claude Code docs attempt exceeded its small budget without usable
+  output; Sol completed documentation.
+- PASS so far: full Go build/vet/race/coverage with 1,352 cases, Rust
+  fmt/clippy/build/26 tests/audit, maintained-client clean install/lint/98
+  tests/build at 322.29 kB gzip/live High audit, and real client-chain query
+  delivery. Independent final-head review and protected GitHub checks remain.
+- Kimi's final read-only review found no P0/P1/P2. Sol remediated its four
+  substantive P3 observations: fixed32/fixed64 decoder bounds, validator item
+  validation, and explicit error UI for both direct LP-position consumers.
+- Public arithmetic is 1,476 cases; rollout remains 16/59 overall and Phase 6
+  remains 6/7 because GH-121 does not satisfy a production rollout exit.
+
 ## 2026-08-07 02:30 EEST - GH-116 merged and closed
 
 - PR #124 final head `df465e8` passed PR-native Go CI `31130371098`, Docs

@@ -116,10 +116,13 @@ async function sendPnyx(senderAddress, recipientAddress, amount) {
 ## Query custom modules
 
 The compatibility-only custom ABCI query shim is retired. Maintained
-integrations must use the daemon CLI or generated protobuf clients for the
-`truedemocracy.Query` and `dex.Query` gRPC services. Do not hand-build raw
-ABCI query paths in CosmJS. See the [module query reference](../api-reference/abci-queries.md)
-for the supported service methods.
+integrations use the daemon CLI or registered protobuf methods from
+`truedemocracy.Query` and `dex.Query`. The browser's centralized
+`ModuleQueryClient` encodes only those documented request messages and carries
+them through CometBFT JSON-RPC `abci_query` on the existing RPC proxy; do not
+reintroduce `/custom/...` or `/truerepublic/...` aliases. See the
+[module query reference](../api-reference/abci-queries.md) for the supported
+methods and failure semantics.
 
 ## Submit Governance Proposal
 

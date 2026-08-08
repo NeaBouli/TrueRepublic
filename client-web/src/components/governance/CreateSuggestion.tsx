@@ -37,9 +37,19 @@ export function CreateSuggestion() {
   useEffect(() => {
     if (domainId) {
       const service = new GovernanceTxService(DEFAULT_CHAIN);
-      service.calculatePayToPut(domainId).then((calc) => {
-        setPayToPut(calc.finalCost);
-      });
+      service
+        .calculatePayToPut(domainId)
+        .then((calc) => {
+          setPayToPut(calc.finalCost);
+        })
+        .catch((queryError: unknown) => {
+          setPayToPut(null);
+          setError(
+            queryError instanceof Error
+              ? queryError.message
+              : 'Failed to load the current Pay-to-Put price'
+          );
+        });
     }
   }, [domainId]);
 
@@ -56,9 +66,12 @@ export function CreateSuggestion() {
         password
       );
 
-      const fee = payToPut
-        ? [{ denom: DEFAULT_CHAIN.coinMinimalDenom, amount: payToPut }]
-        : [];
+      if (payToPut === null) {
+        throw new Error('The current Pay-to-Put price is unavailable');
+      }
+      const fee = [
+        { denom: DEFAULT_CHAIN.coinMinimalDenom, amount: payToPut },
+      ];
 
       const result = await service.createSuggestion(
         wallet,

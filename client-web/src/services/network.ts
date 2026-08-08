@@ -5,12 +5,42 @@ import type {
   Block,
   IBCChannel,
 } from '@/types/network';
+import {
+  expectQueryArray,
+  expectQueryBoolean,
+  expectQueryNumber,
+  expectQueryRecord,
+  expectQueryString,
+  expectQueryStringArray,
+  ModuleQueryClient,
+  QUERY_PATHS,
+} from './moduleQuery';
+
+function expectValidator(value: unknown): Validator {
+  const path = QUERY_PATHS.truedemocracy.validators;
+  const validator = expectQueryRecord(path, value);
+  expectQueryString(path, 'operator_addr', validator.operator_addr);
+  expectQueryStringArray(path, 'domains', validator.domains);
+  expectQueryNumber(path, 'power', validator.power);
+  expectQueryBoolean(path, 'jailed', validator.jailed);
+  expectQueryNumber(path, 'jailed_until', validator.jailed_until);
+  expectQueryNumber(path, 'missed_blocks', validator.missed_blocks);
+  for (const [index, value] of expectQueryArray<unknown>(path, validator.stake).entries()) {
+    const coin = expectQueryRecord(path, value);
+    expectQueryString(path, `stake[${index}].denom`, coin.denom);
+    expectQueryString(path, `stake[${index}].amount`, coin.amount);
+  }
+  return validator as unknown as Validator;
+}
 
 export class NetworkService {
-  private config: ChainConfig;
+  private readonly queries: ModuleQueryClient;
 
-  constructor(config: ChainConfig) {
-    this.config = config;
+  constructor(
+    private readonly config: ChainConfig,
+    queries = new ModuleQueryClient(config)
+  ) {
+    this.queries = queries;
   }
 
   /**
@@ -47,26 +77,17 @@ export class NetworkService {
   /**
    * Get validators from truedemocracy module.
    * No cosmos/staking module — validators are Proof-of-Domain.
-   * REST path: /truerepublic/truedemocracy/validators
+   * Uses the registered truedemocracy gRPC method over ABCI query RPC.
    */
   async getValidators(): Promise<Validator[]> {
-    try {
-      const response = await fetch(
-        `${this.config.rest}/truerepublic/truedemocracy/validators`
-      );
-
-      if (!response.ok) return [];
-
-      const data = await response.json();
-      // gRPC query returns JSON bytes in result field
-      const validators: Validator[] = data.result
-        ? JSON.parse(atob(data.result))
-        : data.validators || data || [];
-
-      return validators.sort((a, b) => b.power - a.power);
-    } catch {
-      return [];
-    }
+    const result = await this.queries.query<unknown>(
+      QUERY_PATHS.truedemocracy.validators
+    );
+    const validators = expectQueryArray<unknown>(
+      QUERY_PATHS.truedemocracy.validators,
+      result
+    ).map(expectValidator);
+    return validators.sort((a, b) => b.power - a.power);
   }
 
   /**

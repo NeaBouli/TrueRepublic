@@ -5,12 +5,21 @@ import type { ChainConfig } from '@/types/chain';
 import type { DomainInvite, MembershipStatus } from '@/types/membership';
 import type { TransactionResult } from '@/types/transaction';
 import { connectSigningClient, deliverMessages } from './signingClient';
+import {
+  expectChainDomain,
+  expectChainMerkleProof,
+  ModuleQueryClient,
+  QUERY_PATHS,
+} from './moduleQuery';
 
 export class MembershipService {
-  private config: ChainConfig;
+  private readonly queries: ModuleQueryClient;
 
-  constructor(config: ChainConfig) {
-    this.config = config;
+  constructor(
+    private readonly config: ChainConfig,
+    queries = new ModuleQueryClient(config)
+  ) {
+    this.queries = queries;
   }
 
   /**
@@ -49,33 +58,26 @@ export class MembershipService {
     domainId: string,
     address: string
   ): Promise<MembershipStatus | null> {
-    try {
-      const response = await fetch(
-        `${this.config.rest}/truerepublic/truedemocracy/domain/${domainId}`
-      );
-
-      if (!response.ok) return null;
-
-      const data = await response.json();
-      const domain = data.domain;
-      if (!domain) return null;
-
-      const members: string[] = domain.members || [];
-      const identityCommits: string[] = domain.identity_commits || [];
-      const isMember = members.includes(address);
-
-      return {
-        domainId,
-        address,
-        isMember,
-        hasIdentityCommitment: identityCommits.length > 0 && isMember,
-        inMerkleTree: !!domain.merkle_root && isMember,
-        step1Complete: isMember,
-        step2Complete: isMember,
-      };
-    } catch {
-      return null;
-    }
+    const value = await this.queries.query<unknown>(
+      QUERY_PATHS.truedemocracy.domain,
+      [{ number: 1, type: 'string', value: domainId }]
+    );
+    const domain = expectChainDomain(
+      QUERY_PATHS.truedemocracy.domain,
+      value
+    );
+    const members = domain.members ?? [];
+    const identityCommits = domain.identity_commits ?? [];
+    const isMember = members.includes(address);
+    return {
+      domainId,
+      address,
+      isMember,
+      hasIdentityCommitment: identityCommits.length > 0 && isMember,
+      inMerkleTree: !!domain.merkle_root && isMember,
+      step1Complete: isMember,
+      step2Complete: isMember,
+    };
   }
 
   /**
@@ -189,18 +191,22 @@ export class MembershipService {
   async fetchMerkleProof(
     domainId: string,
     identityCommitment: string
-  ): Promise<{ root: string; pathIndices: number[]; pathElements: string[] } | null> {
-    try {
-      const response = await fetch(
-        `${this.config.rest}/truerepublic/truedemocracy/merkle_proof/${domainId}/${identityCommitment}`
-      );
-
-      if (!response.ok) return null;
-
-      const data = await response.json();
-      return data.proof || null;
-    } catch {
-      return null;
-    }
+  ): Promise<{ root: string; pathIndices: number[]; pathElements: string[] }> {
+    const value = await this.queries.query<unknown>(
+      QUERY_PATHS.truedemocracy.merkleProof,
+      [
+        { number: 1, type: 'string', value: domainId },
+        { number: 2, type: 'string', value: identityCommitment },
+      ]
+    );
+    const proof = expectChainMerkleProof(
+      QUERY_PATHS.truedemocracy.merkleProof,
+      value
+    );
+    return {
+      root: proof.root,
+      pathIndices: proof.path_indices,
+      pathElements: proof.path_elements,
+    };
   }
 }

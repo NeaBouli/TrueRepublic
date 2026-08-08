@@ -19,8 +19,9 @@ intentionally more granular than the public 59-item tracker.
 
 - The ordered recovery merge chain is on `main`.
 - The maximum supply is fixed at 21,000,000 PNYX.
-- The source of truth records 1,450 recovery-verified tests: 1,333 Go, 26 Rust,
-  and 91 maintained-client tests. GH-115's real local client-chain delivery
+- The source of truth records 1,476 recovery-verified tests: 1,352 Go, 26 Rust,
+  and 98 maintained-client tests. GH-121's real registered browser-query
+  boundary and GH-115's local client-chain delivery
   case is separately gated and excluded from this arithmetic.
 - Ledger, escrow, issuance, DEX custody, genesis, runtime invariants, ZKP
   statement binding, node persistence, and the safe operator-init boundary
