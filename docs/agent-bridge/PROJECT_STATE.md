@@ -1,13 +1,22 @@
 # Project State
 
-Updated: 2026-08-08 15:44 UTC
+Updated: 2026-08-08 15:54 UTC
 
 ## Repository
 
+- GH-131 is PR-ready after full local review: the maintained client now exposes
+  an honestly labelled newest-first submitted-transaction history over the
+  Cosmos SDK v0.50 `query/page/limit/total` contract, with typed failures,
+  stale-wallet protection, committed-failure preservation, and accessible
+  pagination. Both disposable-chain cases pass; the standard baseline is
+  1,519 cases (1,352 Go, 26 Rust, 141 maintained client). The combined GH-132/
+  GH-131 build is 76.29 kB gzip initial, 5.03 kB maximum lazy route, and
+  353.44 kB total JavaScript gzip. Staged rollout is 19/59 (19/51 phase work),
+  Phase 6 remains 6/7, and production readiness remains false.
 - GH-128 is closed through merged PR #129 (`47f8c08`): all 19 page routes
   are lazy entries, the eager MobileNav-to-CosmJS dependency chain is broken,
   and chunk rejection reaches the application error boundary. The initial
-  entry falls from 322.63 kB gzip to a deterministic 75.86 kB gzip; raw/gzip
+  entry falls from 322.63 kB gzip to a deterministic 75.79 kB gzip; raw/gzip
   entry, route, chunk, and total budgets now fail the build on regressions. The
   fresh local baseline is 1,482 cases (1,352 Go, 26 Rust, 104 maintained
   client). Exact-head checks passed without an unresolved review thread; final-
@@ -15,7 +24,7 @@ Updated: 2026-08-08 15:44 UTC
   pass on merge commit `47f8c08`. GH-132 adds a pinned protected
   Chromium/Firefox/WebKit accessibility, responsive, delayed-loading, and
   third-party-request matrix for safe unauthenticated routes; exact PR #136
-  CI is green. The staged rollout state is 18/59. Phase 6 remains 6/7 and
+  CI is green. The GH-132 rollout state is 18/59. Phase 6 remains 6/7 and
   production readiness remains false.
 - GH-121 is closed through merged PR #126 (`239e6c3`): all 23
   maintained-browser consumers of

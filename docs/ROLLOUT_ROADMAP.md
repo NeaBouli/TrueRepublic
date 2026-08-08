@@ -19,8 +19,8 @@ intentionally more granular than the public 59-item tracker.
 
 - The ordered recovery merge chain is on `main`.
 - The maximum supply is fixed at 21,000,000 PNYX.
-- The source of truth records 1,482 recovery-verified tests: 1,352 Go, 26 Rust,
-  and 104 maintained-client tests. GH-121's real registered browser-query
+- The source of truth records 1,519 recovery-verified tests: 1,352 Go, 26 Rust,
+  and 141 maintained-client tests. GH-121's real registered browser-query
   boundary and GH-115's local client-chain delivery
   case is separately gated and excluded from this arithmetic.
 - Ledger, escrow, issuance, DEX custody, genesis, runtime invariants, ZKP
@@ -118,7 +118,12 @@ recovery tests; unsupported surfaces are absent or unmistakably disabled.
   ([GH-115](https://github.com/NeaBouli/TrueRepublic/issues/115)).
 - [x] Retire and remove `web-wallet` under GH-112; keep the GH-102-retired
   mobile prototype absent from public release paths.
-- [ ] Complete transaction history with pagination and failure handling.
+- [x] Complete newest-first submitted-transaction history with server
+  pagination, committed-failure preservation, typed unavailable/timeout/
+  protocol/decode handling, stale-wallet protection, and real disposable-chain
+  evidence ([GH-131](https://github.com/NeaBouli/TrueRepublic/issues/131)).
+  Incoming-only activity remains explicitly outside this submitted-history
+  boundary.
 - [ ] Complete IBC transfer UX, status tracking, timeout handling, and recovery
   messaging.
 - [ ] Connect the real audited ZKP prover and remove preview-only dead paths.
