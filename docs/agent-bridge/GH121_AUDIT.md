@@ -116,7 +116,8 @@ result is locally release-verifiable but is not production rollout approval.
   High audit: PASS.
 - Real disposable-chain browser query delivery and explicit missing-pool
   failure: PASS.
-- Mandatory before merge: independent final-head review and all protected
-  exact-head GitHub checks.
+- Merge evidence: independent final-head review found no open P0/P1/P2, all
+  eight review threads were resolved, and every protected exact-head check
+  passed before PR #126 was squash-merged as `239e6c3`.
 - Mandatory before rollout: separate production infrastructure, ingress,
   trusted-RPC/light-client, performance, and operations evidence.

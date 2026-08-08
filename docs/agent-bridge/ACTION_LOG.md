@@ -1,5 +1,21 @@
 # Action Log
 
+## 2026-08-08 13:13 EEST - GH-121 merged and closed
+
+- PR #126 exact head `d7a41b0` passed Client, real client-chain integration,
+  Docs, Go build/test, capacity, Docker restart, multi-validator recovery,
+  Security, DeepScan, and CodeRabbit status checks.
+- All eight CodeRabbit review findings were answered and resolved. Independent
+  Kimi review found no open P0/P1/P2; both final P3 observations were fixed and
+  regression-tested by Sol.
+- Administratively squash-merged as `239e6c3` after only the formal one-review
+  requirement remained. GH-121 closed automatically. Final-main Client
+  `31252288314`, Security `31252288325`, Go `31252288303`, and Pages
+  `31252287866` all passed.
+- Public arithmetic remains 1,476 cases, rollout 16/59, Phase 6 6/7, and
+  `production_ready=false`. No production, deployment, key, account, signing,
+  broadcast, or fund action occurred.
+
 ## 2026-08-08 12:04 EEST - GH-121 locally verified
 
 - Replaced all 23 maintained-browser call sites for 18 unregistered
