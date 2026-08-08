@@ -1,0 +1,43 @@
+{
+  "schema": "truerepublic.daemon-build/v1",
+  "binary": "truerepublicd",
+  "main_package": ".",
+  "go_version": "1.26.5",
+  "cgo_enabled": "1",
+  "source_ref": {
+    "kind": "git-commit",
+    "pattern": "^[0-9a-f]{40}$"
+  },
+  "build_flags": {
+    "trimpath": true,
+    "buildvcs": false,
+    "mod": "readonly",
+    "ldflags": [
+      "-s",
+      "-w",
+      "-buildid=",
+      "-X",
+      "main.version={{source_ref}}",
+      "-linkmode=external",
+      "-extldflags=-Wl,--build-id=none"
+    ]
+  },
+  "targets": [
+    {
+      "id": "linux-amd64",
+      "goos": "linux",
+      "goarch": "amd64",
+      "ci_runner": "ubuntu-24.04",
+      "runner_arch": "x86_64",
+      "artifact": "truerepublicd-linux-amd64"
+    },
+    {
+      "id": "linux-arm64",
+      "goos": "linux",
+      "goarch": "arm64",
+      "ci_runner": "ubuntu-24.04-arm",
+      "runner_arch": "aarch64",
+      "artifact": "truerepublicd-linux-arm64"
+    }
+  ]
+}

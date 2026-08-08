@@ -2,13 +2,26 @@ BINARY      := truerepublicd
 VERSION     := $(shell git describe --tags --always 2>/dev/null || echo "dev")
 LDFLAGS     := -s -w -X main.version=$(VERSION)
 BUILD_DIR   := ./build
+DETERMINISTIC_TARGET ?= linux-amd64
+SOURCE_REF           ?= $(shell git rev-parse HEAD)
+DETERMINISTIC_OUT    ?= $(BUILD_DIR)/deterministic/$(DETERMINISTIC_TARGET)
 
-.PHONY: build install verify test lint clean docker-build docker-up docker-down proto-gen
+.PHONY: build deterministic-linux-daemon deterministic-build-contract-test install verify test lint clean docker-build docker-up docker-down proto-gen
 
 build:
 	@echo "Building $(BINARY)..."
 	@mkdir -p $(BUILD_DIR)
 	go build -ldflags="$(LDFLAGS)" -o $(BUILD_DIR)/$(BINARY) ./
+
+deterministic-linux-daemon:
+	./scripts/build-deterministic-daemon.sh \
+		--contract configs/build/deterministic-linux-daemon.json \
+		--target "$(DETERMINISTIC_TARGET)" \
+		--source-ref "$(SOURCE_REF)" \
+		--output-dir "$(DETERMINISTIC_OUT)"
+
+deterministic-build-contract-test:
+	./scripts/test-deterministic-daemon.sh
 
 install:
 	@echo "Installing $(BINARY)..."
