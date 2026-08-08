@@ -10,7 +10,9 @@
 
 @layer components {
   .btn {
-    @apply px-4 py-2 rounded-lg font-medium transition-colors;
+    @apply px-4 py-2 rounded-lg font-medium transition-colors
+           focus-visible:outline-none focus-visible:ring-2
+           focus-visible:ring-primary-500 focus-visible:ring-offset-2;
   }
 
   .btn-primary {
@@ -25,11 +27,20 @@
 
   .input {
     @apply w-full px-4 py-2 border border-gray-300 rounded-lg
-           focus:ring-2 focus:ring-primary-500 focus:border-transparent
+           focus-visible:outline-none focus-visible:ring-2
+           focus-visible:ring-primary-500 focus-visible:border-transparent
            disabled:bg-gray-100 disabled:cursor-not-allowed;
   }
 
   .card {
     @apply bg-white rounded-xl shadow-sm border border-gray-200 p-6;
+  }
+}
+
+@layer base {
+  a,
+  button:not(.btn) {
+    @apply focus-visible:outline-none focus-visible:ring-2
+           focus-visible:ring-primary-500 focus-visible:ring-offset-2;
   }
 }

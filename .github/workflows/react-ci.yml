@@ -47,6 +47,31 @@ jobs:
       - name: Audit dependencies
         run: npm run audit:high
 
+  browser-quality:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: client-web
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '22'
+          package-manager-cache: false
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install browser engines
+        run: npx playwright install --with-deps chromium firefox webkit
+
+      - name: Qualify maintained browser surfaces
+        run: npm run test:browser
+
   client-chain-integration:
     runs-on: ubuntu-latest
     timeout-minutes: 15
