@@ -126,6 +126,21 @@ re-review found no new P0/P1/P2/P3. Sol reviewed the full diff and reproduced
 all complete local gates. Merge and Done remain conditional on protected
 exact-head and final-main verification.
 
+### 2026-08-08 13:27 EEST merge handoff → Done
+
+- **PR/merge:** PR #126 exact head `d7a41b0` passed every protected check and
+  was administratively squash-merged as `239e6c3`; GH-121 closed automatically.
+- **Review:** all eight CodeRabbit threads were answered and resolved; DeepScan
+  reports zero new and eight fixed issues; independent Kimi review leaves no
+  open P0/P1/P2 finding.
+- **Final main:** merge commit `239e6c3` passed Client `31252288314`, Security
+  `31252288325`, Go `31252288303`, and Pages `31252287866`.
+- **Status:** implementation, protected publication, issue closure, final-main
+  workflows, and Pages are complete. GH-29 receives the unchanged rollout
+  evidence; no rollout exit was claimed.
+- **Rollout:** unchanged at 16/59 overall and Phase 6 at 6/7; production remains
+  false and no production-affecting action occurred.
+
 ---
 
 ## 2026-08-07 02:30 EEST GH-116 retired custom ABCI query shim → Done
