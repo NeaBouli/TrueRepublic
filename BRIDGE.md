@@ -111,6 +111,72 @@ GitHub recovery epic: [#4](https://github.com/NeaBouli/TrueRepublic/issues/4)
 - **Status/blockers:** In Progress; no blocker. This block does not claim the
   deeper authenticated Phase-4 exit.
 
+### 2026-08-08 18:38 EEST local implementation → Sol review
+
+- **Changed:** pinned Playwright/axe tooling; five desktop/mobile browser
+  profiles; protected browser-quality CI; serious/critical accessibility,
+  keyboard/focus, viewport-overflow, delayed-lazy-route, and third-party
+  request tests; minimal shared label/error/loading/live-region/focus fixes;
+  and an explicit browser-support boundary.
+- **Local PASS:** clean install with zero vulnerabilities; lint; 94 Vitest and
+  ten Node policy/budget cases (one pre-existing skip); production build and
+  budgets (75,861-byte gzip entry, 19 lazy routes, 349,730-byte total JS);
+  guarded high-severity audit; Chromium desktop 9/9, Firefox desktop 9/9,
+  Chromium mobile 8/8 plus one intentional physical-keyboard skip; workflow
+  parsing and diff check.
+- **Review:** bounded worker implemented the block. Sol reviewed the complete
+  diff. Independent Spark review found no P0-P2; its documentation-clarity P3
+  was corrected by explicitly distinguishing desktop physical-keyboard checks
+  from mobile profiles. The stable Vite component chunk-name intercept remains
+  a non-blocking maintenance sensitivity.
+- **Risk/boundary:** The secure pinned Playwright 1.55.1 WebKit cannot run on
+  the frozen local macOS-12 runner. Downgrading to a locally compatible release
+  was rejected because it has two High advisories. Protected Ubuntu CI is the
+  mandatory full Chromium/Firefox/WebKit acceptance gate.
+- **Status/blockers:** Review; no product blocker. Sol rerun, commit, protected
+  full browser CI, merge, and final-main evidence remain before Done.
+
+### 2026-08-08 18:42 EEST Sol rerun → PASS / PR ready
+
+- **Sol PASS:** fresh `npm ci` (389 packages audited, zero vulnerabilities),
+  lint, ten Node policy/budget cases, 94 Vitest cases plus one pre-existing
+  skip, production build/budgets, guarded high-severity audit, Chromium
+  desktop 9/9, Firefox desktop 9/9, and Chromium mobile 8/8 plus the documented
+  physical-keyboard skip. Documentation consistency, all retirement contracts,
+  workflow YAML parsing, and diff check also pass.
+- **Status/blockers:** Local implementation and review are complete; no
+  product blocker. Protected Ubuntu full-matrix CI, merge, and final-main
+  evidence remain before Done.
+
+### 2026-08-08 18:44 EEST PR #136 exact-head CI → PASS
+
+- **Protected evidence:** exact head `2ce1b59` passes the complete pinned
+  Chromium/Firefox/WebKit desktop/mobile browser-quality matrix in 2m02s,
+  client build in 25s, disposable client-chain integration in 3m41s,
+  Go/Rust/Node security, all retirement contracts, docs consistency,
+  DeepScan, and review statuses.
+- **Boundary confirmed:** Browser tests exercised only the documented safe
+  unauthenticated surfaces and made no wallet, signing, broadcast, deployment,
+  or production action. The protected Linux WebKit gate removes the local host
+  limitation without weakening the dependency-security floor.
+- **Status/blockers:** PR #136 is technically green; repository review policy
+  requires the already authorized administrative merge. Merge, final-main
+  workflows, and final Bridge closure remain before Done.
+
+### 2026-08-08 18:47 EEST public rollout synchronization staged
+
+- **Public state:** the completed Phase-4 browser/accessibility checklist item
+  is linked to GH-132/PR #136; staged arithmetic advances from 17/59 to 18/59
+  overall and from 17/51 to 18/51 phase work. Phase 6 stays 6/7 and
+  `production_ready=false`.
+- **Build evidence:** exact current client output is 75.86 kB gzip initial,
+  5.03 kB maximum lazy route, and 349.73 kB total JavaScript gzip. Status,
+  roadmap, landing page, project state, security notes, and action log agree;
+  documentation consistency passes.
+- **Boundary:** this closes only the safe unauthenticated browser-quality item.
+  Authenticated wallet/key/signing checks, real ZKP, IBC UX, deployment, real
+  funds, and production approval remain open.
+
 ## 2026-08-08 18:01 EEST GH-133 deterministic Linux daemon build → In Progress
 
 - **Branch:** `build/GH-133-deterministic-linux-daemon` after the shared Bridge
@@ -126,6 +192,57 @@ GitHub recovery epic: [#4](https://github.com/NeaBouli/TrueRepublic/issues/4)
   diff review, full gates, GitHub writes, and closure.
 - **Status/blockers:** In Progress; no blocker. Container reproducibility and
   signed/SBOM/provenance artifacts remain separate GH-29 work.
+
+### 2026-08-08 18:25 EEST local implementation → Sol review
+
+- **Changed:** tracked `truerepublic.daemon-build/v1` contract; deterministic
+  build, verifier, and negative-test scripts; Make targets; native Linux
+  amd64/arm64 PR workflow; narrowly bounded operator documentation.
+- **Evidence:** two clean-cache builds per native architecture use Go 1.26.5,
+  CGO, readonly modules, `-trimpath`, disabled VCS/build IDs, and exact
+  `main.version=<40-char commit>`. Verification requires identical SHA-256,
+  native ELF architecture, embedded Go version, and exact CLI version before
+  emitting checksums/metadata. CI uploads no binary.
+- **Local PASS:** contract success/hash/version/contract/ref/target tests;
+  shell syntax; JSON and workflow YAML parsing; focused root-command Go test;
+  diff check. A platform-equivalent macOS double build was byte-identical;
+  exact Linux evidence intentionally belongs to the protected PR matrix.
+- **Delegation/review:** bounded worker implemented the isolated block. Spark
+  found no P0-P2. Its P3 notes that unit negatives mock binary inspection;
+  accepted because the immediately following matrix step executes the exact
+  full binary double-build/inspection path on both Linux architectures.
+- **Risk/boundary:** Low/Medium CI evidence. ARM uses GitHub's public-preview
+  native runner. This proves same-run repeatability, not cross-environment
+  provenance. No tag, release, binary upload, registry, signature, SBOM,
+  provenance, deployment, production artifact, or rollout approval.
+- **Status/blockers:** Review; no blocker. Full local Go verification, commit,
+  protected CI, merge, and final-main evidence remain.
+
+### 2026-08-08 18:34 EEST full local verification → PASS / PR ready
+
+- **Full gate:** `make verify` passes, including package-selection policy,
+  CGO build, vet, and race/coverage tests (root 70.8%; maintained policy
+  packages 80.3–97.2%; DEX 49.1%; truedemocracy 63.0%).
+- **Additional gates:** documentation consistency, all three retirement
+  contracts, shell syntax, JSON/workflow parsing, the deterministic-build
+  contract suite, focused root-command test, and `git diff --check` pass.
+- **Status/blockers:** Local review is complete and no blocker is known.
+  Exact native Linux amd64/arm64 repeatability remains the protected PR-CI
+  acceptance gate; merge and final-main evidence remain before Done.
+
+### 2026-08-08 18:37 EEST PR #135 exact-head CI → PASS
+
+- **Protected evidence:** exact head `f3f60b6` passes native Linux amd64
+  (4m53s) and arm64 (3m29s) double-build/hash/version verification in run
+  `31264671102`. Docs, Go/Rust/Node security, all retirement contracts,
+  DeepScan, and review statuses also pass.
+- **Artifact boundary:** both matrix jobs upload only repository evidence
+  checksums and metadata; no daemon binary, release, tag, signature, registry,
+  deployment, or production artifact/action is produced.
+- **Status/blockers:** PR #135 is technically green; repository review policy
+  still requires the already authorized administrative merge. Merge,
+  final-main workflows, public tracker synchronization, and final Bridge
+  closure remain before Done.
 
 ## 2026-08-08 14:15 EEST GH-128 client route splitting → In Progress
 

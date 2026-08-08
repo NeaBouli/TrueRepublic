@@ -1,5 +1,20 @@
 # Security Notes
 
+## GH-132 maintained-browser quality boundary
+
+- The protected Ubuntu matrix pins Playwright 1.55.1 and exercises Chromium,
+  Firefox, and WebKit desktop/mobile profiles on `/unlock`, `/create`, and
+  `/import`. Serious/critical axe findings, desktop physical-keyboard focus,
+  responsive overflow, delayed lazy loading, and third-party requests are
+  fail-closed.
+- Tests never submit create/import forms, unlock stored material, enter seed
+  phrases, sign, broadcast, or mutate a chain. Authenticated wallet flows and
+  production custody remain separate rollout gates.
+- The production build remains within policy at 75.86 kB gzip initial entry,
+  5.03 kB maximum lazy route, and 349.73 kB total JavaScript gzip. The secure
+  pinned WebKit matrix is authoritative on protected Linux CI; an unsupported
+  frozen local host does not justify a dependency downgrade or gate waiver.
+
 ## GH-121 registered browser query boundary
 
 - The maintained browser no longer calls unregistered custom-module REST
@@ -19,9 +34,9 @@
   compatible lock-only resolution is now 3.3.18 and the unchanged fail-closed
   audit policy passes with no live High advisory.
 - GH-128 splits all 19 page routes, defers signing/protobuf dependencies, and
-  enforces a deterministic build budget. The initial entry is 75.79 kB gzip,
+  enforces a deterministic build budget. The initial entry is 75.86 kB gzip,
   the largest direct lazy route is 5.03 kB gzip, and the complete deferred
-  JavaScript set is 349.42 kB total JavaScript gzip. Budgets cover raw and gzip
+  JavaScript set is 349.73 kB total JavaScript gzip. Budgets cover raw and gzip
   entry, route, individual chunk, and total sizes; chunk-import failure reaches
   the existing fail-closed application error boundary.
 
@@ -63,7 +78,7 @@
 - Historical pre-GH-128 measurement: the v0.4 client shipped one 1.72 MB
   JavaScript entry (322.63 kB by Vite's reporter). GH-128 replaces that
   ambiguous one-file figure with pinned Node-zlib measurements and a 234.32 kB
-  raw / 75.79 kB gzip initial entry. Broader low-bandwidth and browser
+  raw / 75.86 kB gzip initial entry. Broader authenticated low-bandwidth and browser
   qualification remain open.
 
 ## Resolved during recovery

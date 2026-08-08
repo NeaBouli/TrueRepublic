@@ -123,8 +123,11 @@ recovery tests; unsupported surfaces are absent or unmistakably disabled.
   messaging.
 - [ ] Connect the real audited ZKP prover and remove preview-only dead paths.
 - [ ] Verify wallet creation, import, locking, signing, and key-storage safety.
-- [ ] Add accessibility, responsive-layout, low-bandwidth, and browser support
-  checks.
+- [x] Add accessibility, responsive-layout, low-bandwidth, and browser support
+  checks for the safe unauthenticated maintained-client surfaces, with a pinned
+  protected Chromium/Firefox/WebKit matrix and explicit authenticated-flow
+  boundary ([GH-132](https://github.com/NeaBouli/TrueRepublic/issues/132),
+  [PR #136](https://github.com/NeaBouli/TrueRepublic/pull/136)).
 - [x] Split all 19 page routes and enforce raw/gzip entry, route, chunk, and
   total-JavaScript budgets during every maintained-client build
   ([GH-128](https://github.com/NeaBouli/TrueRepublic/issues/128)).

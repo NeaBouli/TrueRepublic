@@ -25,13 +25,20 @@ export function ToastContainer() {
   const { toasts, removeToast } = useToastStore();
 
   return (
-    <div className="fixed top-4 right-4 z-50 space-y-2 max-w-sm">
+    <div
+      className="fixed top-4 left-4 right-4 sm:left-auto z-50 space-y-2 sm:w-full max-w-sm"
+      aria-live="polite"
+      aria-relevant="additions removals"
+    >
       {toasts.map((toast) => (
         <div
           key={toast.id}
+          role={toast.type === 'error' ? 'alert' : 'status'}
           className={`flex items-start gap-3 p-4 rounded-lg border shadow-lg animate-slide-in ${colorMap[toast.type]}`}
         >
-          <div className="flex-shrink-0">{iconMap[toast.type]}</div>
+          <div className="flex-shrink-0" aria-hidden="true">
+            {iconMap[toast.type]}
+          </div>
           <p className="flex-1 text-sm font-medium">{toast.message}</p>
           <button
             onClick={() => removeToast(toast.id)}
