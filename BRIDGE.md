@@ -105,6 +105,21 @@ GitHub recovery epic: [#4](https://github.com/NeaBouli/TrueRepublic/issues/4)
   product blocker. Protected Ubuntu full-matrix CI, merge, and final-main
   evidence remain before Done.
 
+### 2026-08-08 18:44 EEST PR #136 exact-head CI → PASS
+
+- **Protected evidence:** exact head `2ce1b59` passes the complete pinned
+  Chromium/Firefox/WebKit desktop/mobile browser-quality matrix in 2m02s,
+  client build in 25s, disposable client-chain integration in 3m41s,
+  Go/Rust/Node security, all retirement contracts, docs consistency,
+  DeepScan, and review statuses.
+- **Boundary confirmed:** Browser tests exercised only the documented safe
+  unauthenticated surfaces and made no wallet, signing, broadcast, deployment,
+  or production action. The protected Linux WebKit gate removes the local host
+  limitation without weakening the dependency-security floor.
+- **Status/blockers:** PR #136 is technically green; repository review policy
+  requires the already authorized administrative merge. Merge, final-main
+  workflows, and final Bridge closure remain before Done.
+
 ## 2026-08-08 18:01 EEST GH-133 deterministic Linux daemon build → In Progress
 
 - **Branch:** `build/GH-133-deterministic-linux-daemon` after the shared Bridge
