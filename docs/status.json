@@ -4,8 +4,8 @@
   "release_date": "2026-03-04",
   "tests": {
     "status": "recovery_verified_locally",
-    "total": 1519,
-    "go": 1352,
+    "total": 1520,
+    "go": 1353,
     "rust": 26,
     "frontend": 141,
     "historical_total": 577
@@ -46,7 +46,7 @@
     "production_ready": false
   },
   "modules": {
-    "root": 114,
+    "root": 115,
     "capacitypolicy": 48,
     "deploymentevidence": 71,
     "healthcheck": 55,

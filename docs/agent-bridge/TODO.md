@@ -5,6 +5,11 @@
 - [ ] GH-4: keep the recovery epic and acceptance criteria current.
 - [ ] GH-29: complete the seven-phase production-readiness roadmap and attach
   evidence for every rollout exit gate before any public-network launch.
+- [x] GH-141: copy the maintained-client build scripts into its Docker builder,
+  pin copy-before-build plus bundle-budget invocation in a repository contract,
+  and verify the direct package build locally.
+- [ ] GH-141: publish and require protected Docker image/restart evidence before
+  merge; then refresh GH-140 on the repaired base.
 - [x] GH-29: reopen the issue as the execution tracker; PR #31 completed only
   the roadmap handoff, not the rollout phases.
 - [x] GH-5: Go/Rust toolchains, tests, static checks, vulnerability gates, and
