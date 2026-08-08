@@ -66,7 +66,10 @@ function getBlockchainService() {
 
 function getTransactionModule() {
   if (!transactionModule) {
-    transactionModule = import('@/services/transaction');
+    transactionModule = import('@/services/transaction').catch((error) => {
+      transactionModule = null;
+      throw error;
+    });
   }
   return transactionModule;
 }
@@ -75,9 +78,27 @@ function getTransactionService() {
   if (!transactionService) {
     transactionService = getTransactionModule().then(
       ({ TransactionService }) => new TransactionService(DEFAULT_CHAIN)
-    );
+    ).catch((error) => {
+      transactionService = null;
+      throw error;
+    });
   }
   return transactionService;
+}
+
+function historyFailureFrom(error: unknown): TransactionHistoryFailure {
+  if (
+    error instanceof Error &&
+    error.name === 'TransactionHistoryError' &&
+    'failure' in error &&
+    (error.failure === 'unavailable' ||
+      error.failure === 'timeout' ||
+      error.failure === 'protocol' ||
+      error.failure === 'decode')
+  ) {
+    return error.failure;
+  }
+  return 'unavailable';
 }
 
 const emptyHistory = {
@@ -336,11 +357,7 @@ export const useWalletStore = create<WalletStore>()(
         } catch (error: unknown) {
           if (isStale()) return;
 
-          const { TransactionHistoryError } = await getTransactionModule();
-          const failure: TransactionHistoryFailure =
-            error instanceof TransactionHistoryError
-              ? error.failure
-              : 'unavailable';
+          const failure = historyFailureFrom(error);
           const message =
             error instanceof Error
               ? error.message

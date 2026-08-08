@@ -41,7 +41,7 @@ function messageLabel(typeUrl: string): string {
 function formatTimestamp(timestamp: string | null): string {
   if (timestamp === null) return 'Time unavailable';
   const parsed = new Date(timestamp);
-  if (Number.isNaN(parsed.getTime())) return timestamp;
+  if (Number.isNaN(parsed.getTime())) return 'Time unavailable';
   return parsed.toLocaleString();
 }
 

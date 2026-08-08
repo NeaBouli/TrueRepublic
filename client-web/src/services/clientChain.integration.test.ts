@@ -542,11 +542,31 @@ describe.skipIf(!enabled)('canonical client-to-chain delivery', () => {
       gasPrice,
     };
 
-    // Commit a real DeliverTx failure (slippage-bound swap) so the indexed
-    // history must preserve it with its code and bounded chain log.
+    // Build a self-contained three-transaction corpus. The two successful
+    // sends make two pages independently of every other test, then the failed
+    // swap is committed last so it must be the newest indexed transaction.
     let failedHash = '';
     const client = await connectSigningClient(historyConfig, signerWallet);
     try {
+      for (let index = 1; index <= 2; index++) {
+        const sent = await client.signAndBroadcast(
+          account.address,
+          [
+            {
+              typeUrl: '/cosmos.bank.v1beta1.MsgSend',
+              value: {
+                fromAddress: account.address,
+                toAddress: receiverAddress,
+                amount: [{ denom: 'upnyx', amount: '1' }],
+              },
+            },
+          ],
+          calculateFee(100_000, GasPrice.fromString(gasPrice)),
+          `gh131 pagination fixture ${index}`
+        );
+        expect(sent.code).toBe(0);
+      }
+
       const failed = await client.signAndBroadcast(
         account.address,
         [
@@ -572,13 +592,11 @@ describe.skipIf(!enabled)('canonical client-to-chain delivery', () => {
 
     const history = new TransactionService(historyConfig);
     try {
-      const page1 = await history.getSubmittedTransactions(account.address, 1, 5);
-      // 11 browser deliveries + 1 CLI pool creation from the first test plus
-      // the committed failure above are all signed by this address.
-      expect(page1.total).toBeGreaterThanOrEqual(13);
-      expect(page1.transactions).toHaveLength(5);
+      const page1 = await history.getSubmittedTransactions(account.address, 1, 2);
+      expect(page1.total).toBeGreaterThanOrEqual(3);
+      expect(page1.transactions).toHaveLength(2);
       expect(page1.page).toBe(1);
-      expect(page1.pageSize).toBe(5);
+      expect(page1.pageSize).toBe(2);
       expect(page1.hasMore).toBe(true);
 
       const newest = page1.transactions[0];
@@ -604,13 +622,13 @@ describe.skipIf(!enabled)('canonical client-to-chain delivery', () => {
         );
       }
 
-      const page2 = await history.getSubmittedTransactions(account.address, 2, 5);
-      expect(page2.transactions).toHaveLength(5);
+      const page2 = await history.getSubmittedTransactions(account.address, 2, 2);
+      expect(page2.transactions.length).toBeGreaterThan(0);
       const page1Hashes = new Set(page1.transactions.map((tx) => tx.hash));
       expect(page2.transactions.some((tx) => page1Hashes.has(tx.hash))).toBe(
         false
       );
-      expect(page1.transactions[4].height).toBeGreaterThanOrEqual(
+      expect(page1.transactions[1].height).toBeGreaterThanOrEqual(
         page2.transactions[0].height
       );
 

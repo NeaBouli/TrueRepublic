@@ -135,6 +135,39 @@ GitHub recovery epic: [#4](https://github.com/NeaBouli/TrueRepublic/issues/4)
 - **Status/blockers:** remediation verification and one final protected rerun
   remain; no blocker. Production remains false.
 
+### 2026-08-08 19:20 EEST external review remediation → locally verified
+
+- **Review triage:** all four actionable CodeRabbit findings were valid and
+  corrected. The default browser fetch preserves its global receiver; rejected
+  transaction-module/service imports are no longer cached and the history
+  action records a retryable typed error without a second dynamic import;
+  invalid timestamps use the bounded unavailable fallback; and the wiki client
+  arithmetic now matches the canonical 141-case total.
+- **Independent chain fixture:** the pagination case now commits its own two
+  successful sends followed by the expected failed swap. It no longer depends
+  on a preceding test and passes alone in 27.13s with one test pass and the
+  unrelated delivery case skipped.
+- **Verification PASS:** lint, 37/37 focused service/store/component cases,
+  TypeScript production build, bundle budgets (76,401-byte gzip entry, 19 lazy
+  routes, 5,028-byte maximum route, 353,562-byte total JavaScript), and diff
+  check. The default-fetch receiver path has explicit regression coverage
+  without changing the standard case count.
+- **Status/blockers:** local review remediation is complete; no blocker. The
+  full sequential real-chain file, protected exact-head rerun, review-thread
+  resolution, merge, tracker sync, Pages readback, and final-main evidence
+  remain before Done. Production remains false.
+
+### 2026-08-08 19:22 EEST final local review gate → PASS
+
+- **Full real-chain file:** both sequential disposable-chain cases pass in
+  84.53s: canonical maintained transaction delivery in 57.36s and the now
+  self-contained submitted-history pagination case in 15.11s.
+- **Final local state:** all external findings are fixed; lint, focused 37/37,
+  complete standard client tests, production build/budgets, documentation,
+  retirement contracts, diff check, standalone history-chain evidence, and
+  full sequential chain evidence pass. Exact-head protected CI is next; no
+  blocker and production remains false.
+
 ## 2026-08-08 18:01 EEST GH-132 client browser qualification → In Progress
 
 - **Branch:** `test/GH-132-client-browser-quality` after the shared Bridge

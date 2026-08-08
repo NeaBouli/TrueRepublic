@@ -227,7 +227,7 @@ export class TransactionService {
 
   constructor(
     private readonly config: ChainConfig,
-    fetchImpl: Fetch = globalThis.fetch,
+    fetchImpl: Fetch = (input, init) => globalThis.fetch(input, init),
     private readonly historyTimeoutMs: number = HISTORY_TIMEOUT_MS
   ) {
     if (

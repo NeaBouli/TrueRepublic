@@ -99,6 +99,20 @@ describe('TransactionService.getSubmittedTransactions', () => {
     );
     expect(url.searchParams.get('order_by')).toBe('ORDER_BY_DESC');
     expect(init?.signal).toBeInstanceOf(AbortSignal);
+
+    const globalFetch = vi
+      .spyOn(globalThis, 'fetch')
+      .mockImplementation(async function (this: unknown) {
+        expect(this).toBe(globalThis);
+        return Response.json(envelope([], '0'));
+      });
+    try {
+      await new TransactionService(DEFAULT_CHAIN).getSubmittedTransactions(
+        ADDRESS
+      );
+    } finally {
+      globalFetch.mockRestore();
+    }
   });
 
   it('maps pages to server page numbers and clamps the page size to the maximum', async () => {
