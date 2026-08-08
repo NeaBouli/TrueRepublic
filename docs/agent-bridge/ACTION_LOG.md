@@ -20,6 +20,11 @@
   37/37, lint/build/budgets, diff check, and the standalone real-chain history
   case pass. The complete sequential disposable-chain file also passes 2/2 in
   84.53s; the protected rerun and merge remain.
+- PR #137 merged as `7c751b2` after exact-head CI passed and all four review
+  threads were resolved. GH-131 is closed; GH-29 is synchronized at 19/59.
+  Final-main Client Web CI `31266901488`, Security `31266901498`, and Pages
+  `31266901092` pass; live Pages reads back 1,519 cases, 19/59 overall, 19/51
+  phase work, Phase 6 at 6/7, and production false. GH-131 is Done.
 
 ## 2026-08-08 — GH-132 protected browser qualification
 
