@@ -25,7 +25,10 @@ export function CreateSuggestion() {
 
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
-  const [payToPut, setPayToPut] = useState<string | null>(null);
+  const [payToPutQuote, setPayToPutQuote] = useState<{
+    domainId: string;
+    finalCost: string;
+  } | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [txHash, setTxHash] = useState('');
   const [error, setError] = useState('');
@@ -33,24 +36,36 @@ export function CreateSuggestion() {
   const pnyxBalance = balances.find(
     (balance) => balance.denom === DEFAULT_CHAIN.coinMinimalDenom
   );
+  const payToPut =
+    payToPutQuote && payToPutQuote.domainId === domainId
+      ? payToPutQuote.finalCost
+      : null;
 
   useEffect(() => {
-    if (domainId) {
-      const service = new GovernanceTxService(DEFAULT_CHAIN);
-      service
-        .calculatePayToPut(domainId)
-        .then((calc) => {
-          setPayToPut(calc.finalCost);
-        })
-        .catch((queryError: unknown) => {
-          setPayToPut(null);
-          setError(
-            queryError instanceof Error
-              ? queryError.message
-              : 'Failed to load the current Pay-to-Put price'
-          );
-        });
-    }
+    if (!domainId) return;
+
+    let cancelled = false;
+    const service = new GovernanceTxService(DEFAULT_CHAIN);
+    service
+      .calculatePayToPut(domainId)
+      .then((calc) => {
+        if (!cancelled) {
+          setPayToPutQuote({ domainId, finalCost: calc.finalCost });
+        }
+      })
+      .catch((queryError: unknown) => {
+        if (cancelled) return;
+        setPayToPutQuote(null);
+        setError(
+          queryError instanceof Error
+            ? queryError.message
+            : 'Failed to load the current Pay-to-Put price'
+        );
+      });
+
+    return () => {
+      cancelled = true;
+    };
   }, [domainId]);
 
   const handleSubmit = async () => {

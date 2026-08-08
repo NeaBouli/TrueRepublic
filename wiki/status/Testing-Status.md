@@ -51,7 +51,7 @@ CGO_ENABLED=1 ./scripts/go-packages.sh go build
 ./scripts/check-consistency.sh
 ```
 
-The maintained client is verified with `npm ci`, lint, 91 cases (85 Vitest plus
+The maintained client is verified with `npm ci`, lint, 98 cases (92 Vitest plus
 six audit-policy cases), production build, and guarded live audit. The CosmWasm workspace is verified with tests, formatting,
 Clippy, build, and audit.
 

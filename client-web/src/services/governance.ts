@@ -14,7 +14,9 @@ import {
 } from './moduleQuery';
 
 function timestamp(seconds: number): string {
-  return seconds > 0 ? new Date(seconds * 1_000).toISOString() : '';
+  if (seconds <= 0) return '';
+  const date = new Date(seconds * 1_000);
+  return Number.isNaN(date.getTime()) ? '' : date.toISOString();
 }
 
 function treasuryAmount(coins: ChainCoin[] | null, denom: string): string {

@@ -3,8 +3,10 @@ import { Buffer } from 'node:buffer';
 import { describe, expect, it, vi } from 'vitest';
 import { DEFAULT_CHAIN } from '@/config/chains';
 import { DEXService } from './dex';
+import { AdminService } from './admin';
 import { GovernanceService } from './governance';
 import { GovernanceTxService } from './governanceTx';
+import { MembershipService } from './membership';
 import { NetworkService } from './network';
 import { ZKPService } from './zkp';
 import {
@@ -79,6 +81,70 @@ describe('ModuleQueryClient', () => {
     await expect(service.listPools()).rejects.toMatchObject({
       name: 'ModuleQueryError',
       failure: 'remote',
+    });
+
+    const httpClient = new ModuleQueryClient(
+      DEFAULT_CHAIN,
+      vi.fn<TestFetch>(async () => new Response('', { status: 503 }))
+    );
+    await expect(httpClient.query('/dex.Query/Pools')).rejects.toMatchObject({
+      name: 'ModuleQueryError',
+      failure: 'transport',
+    });
+
+    const rpcClient = new ModuleQueryClient(
+      DEFAULT_CHAIN,
+      vi.fn<TestFetch>(async () =>
+        Response.json({ error: { code: -32603, message: 'RPC unavailable' } })
+      )
+    );
+    await expect(rpcClient.query('/dex.Query/Pools')).rejects.toMatchObject({
+      name: 'ModuleQueryError',
+      failure: 'remote',
+    });
+
+    const timeoutFetch = vi.fn<TestFetch>(
+      async (_input, init) =>
+        await new Promise<Response>((_resolve, reject) => {
+          init?.signal?.addEventListener(
+            'abort',
+            () => reject(init.signal?.reason),
+            { once: true }
+          );
+        })
+    );
+    const timeoutClient = new ModuleQueryClient(
+      DEFAULT_CHAIN,
+      timeoutFetch,
+      1
+    );
+    await expect(timeoutClient.query('/dex.Query/Pools')).rejects.toMatchObject({
+      name: 'ModuleQueryError',
+      failure: 'transport',
+      message: expect.stringContaining('timed out'),
+    });
+
+    const bodyTimeoutFetch = vi.fn<TestFetch>(async (_input, init) =>
+      Object.assign(new Response(), {
+        json: async () =>
+          await new Promise<never>((_resolve, reject) => {
+            init?.signal?.addEventListener(
+              'abort',
+              () => reject(init.signal?.reason),
+              { once: true }
+            );
+          }),
+      })
+    );
+    const bodyTimeoutClient = new ModuleQueryClient(
+      DEFAULT_CHAIN,
+      bodyTimeoutFetch,
+      1
+    );
+    await expect(bodyTimeoutClient.query('/dex.Query/Pools')).rejects.toMatchObject({
+      name: 'ModuleQueryError',
+      failure: 'transport',
+      message: expect.stringContaining('timed out'),
     });
   });
 
@@ -170,7 +236,7 @@ describe('registered module query services', () => {
                 stones: 3,
                 ratings: [{ value: 4 }, { value: 2 }],
                 color: 'green',
-                creation_date: 11,
+                creation_date: Number.MAX_VALUE,
                 external_link: '',
               },
             ],
@@ -193,6 +259,32 @@ describe('registered module query services', () => {
     ]);
     const body = JSON.parse(String(fetchImpl.mock.calls[0][1]?.body));
     expect(body.params.path).toBe('/truedemocracy.Query/Domain');
+
+    const membership = new MembershipService(DEFAULT_CHAIN, client);
+    await expect(
+      membership.getMembershipStatus('Citizen', 'truerepublic1admin')
+    ).resolves.toMatchObject({
+      isMember: true,
+      hasIdentityCommitment: null,
+      inMerkleTree: null,
+    });
+    await expect(
+      membership.getMembershipStatus(
+        'Citizen',
+        'truerepublic1admin',
+        'ff'.repeat(32)
+      )
+    ).resolves.toMatchObject({ hasIdentityCommitment: false });
+
+    await expect(
+      new AdminService(DEFAULT_CHAIN, client).getDomainMembers('Citizen')
+    ).resolves.toEqual([
+      {
+        address: 'truerepublic1admin',
+        hasIdentityCommitment: null,
+        inPermissionReg: null,
+      },
+    ]);
   });
 
   it('rejects malformed nullifier and economic payloads instead of defaulting', async () => {

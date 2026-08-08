@@ -30,7 +30,10 @@ export function RemoveLiquidity() {
     key: string;
     position: LPPosition | null;
   } | null>(null);
-  const [previewError, setPreviewError] = useState('');
+  const [previewError, setPreviewError] = useState<{
+    key: string;
+    message: string;
+  } | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [txHash, setTxHash] = useState('');
   const [error, setError] = useState('');
@@ -61,11 +64,13 @@ export function RemoveLiquidity() {
       .catch((queryError: unknown) => {
         if (!cancelled) {
           setPositionResult(null);
-          setPreviewError(
-            queryError instanceof Error
-              ? queryError.message
-              : 'Unable to load the current LP position'
-          );
+          setPreviewError({
+            key: requestKey,
+            message:
+              queryError instanceof Error
+                ? queryError.message
+                : 'Unable to load the current LP position',
+          });
         }
       });
 
@@ -77,6 +82,10 @@ export function RemoveLiquidity() {
   const positionPreview =
     positionResult?.key === `${assetDenom}:${shares}`
       ? positionResult.position
+      : null;
+  const currentPreviewError =
+    previewError?.key === `${assetDenom}:${shares}`
+      ? previewError.message
       : null;
 
   const handleRemoveLiquidity = async () => {
@@ -207,16 +216,18 @@ export function RemoveLiquidity() {
               value={shares}
               onChange={(e) => {
                 setShares(e.target.value);
-                setPreviewError('');
               }}
               placeholder="Enter number of shares"
             />
           </div>
 
           {/* Preview Output */}
-          {previewError && (
-            <div className="bg-red-50 border border-red-200 rounded-lg p-3 mb-4">
-              <p className="text-sm text-red-800">{previewError}</p>
+          {currentPreviewError && (
+            <div
+              role="alert"
+              className="bg-red-50 border border-red-200 rounded-lg p-3 mb-4"
+            >
+              <p className="text-sm text-red-800">{currentPreviewError}</p>
             </div>
           )}
 

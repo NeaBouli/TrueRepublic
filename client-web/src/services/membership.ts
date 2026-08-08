@@ -56,8 +56,9 @@ export class MembershipService {
    */
   async getMembershipStatus(
     domainId: string,
-    address: string
-  ): Promise<MembershipStatus | null> {
+    address: string,
+    locallyOwnedCommitment?: string
+  ): Promise<MembershipStatus> {
     const value = await this.queries.query<unknown>(
       QUERY_PATHS.truedemocracy.domain,
       [{ number: 1, type: 'string', value: domainId }]
@@ -69,12 +70,19 @@ export class MembershipService {
     const members = domain.members ?? [];
     const identityCommits = domain.identity_commits ?? [];
     const isMember = members.includes(address);
+    const canonicalCommitment = locallyOwnedCommitment?.toLowerCase();
+    const hasIdentityCommitment = canonicalCommitment
+      ? identityCommits.includes(canonicalCommitment)
+      : null;
     return {
       domainId,
       address,
       isMember,
-      hasIdentityCommitment: identityCommits.length > 0 && isMember,
-      inMerkleTree: !!domain.merkle_root && isMember,
+      hasIdentityCommitment,
+      inMerkleTree:
+        hasIdentityCommitment === null
+          ? null
+          : hasIdentityCommitment && domain.merkle_root !== '',
       step1Complete: isMember,
       step2Complete: isMember,
     };
@@ -182,7 +190,7 @@ export class MembershipService {
     address: string
   ): Promise<boolean> {
     const status = await this.getMembershipStatus(domainId, address);
-    return status?.step2Complete ?? false;
+    return status.step2Complete;
   }
 
   /**

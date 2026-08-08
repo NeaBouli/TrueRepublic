@@ -248,7 +248,7 @@ export function VotingPanel({
 
       <Button
         onClick={handleVote}
-        disabled={!zkpService.isSubmittable}
+        disabled={!zkpService.isSubmittable || voteStatusError !== null}
         className="w-full flex items-center justify-center gap-2"
       >
         <ShieldCheckIcon className="h-5 w-5" />

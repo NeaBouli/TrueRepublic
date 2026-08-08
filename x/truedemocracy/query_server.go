@@ -5,6 +5,7 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
+	"strings"
 
 	errorsmod "cosmossdk.io/errors"
 	gogogrpc "github.com/cosmos/gogoproto/grpc"
@@ -360,6 +361,7 @@ func (k Keeper) MerkleProof(goCtx context.Context, req *QueryMerkleProofRequest)
 	if _, err := hex.DecodeString(req.Commitment); err != nil {
 		return nil, errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "commitment must be valid hex")
 	}
+	requestedCommitment := strings.ToLower(req.Commitment)
 	ctx := sdk.UnwrapSDKContext(goCtx)
 	domain, found := k.GetDomain(ctx, req.DomainName)
 	if !found {
@@ -370,7 +372,7 @@ func (k Keeper) MerkleProof(goCtx context.Context, req *QueryMerkleProofRequest)
 	}
 	leafIndex := -1
 	for i, commitment := range domain.IdentityCommits {
-		if commitment != req.Commitment {
+		if commitment != requestedCommitment {
 			continue
 		}
 		if leafIndex >= 0 {
@@ -409,7 +411,7 @@ func (k Keeper) MerkleProof(goCtx context.Context, req *QueryMerkleProofRequest)
 	}
 	result := MerkleProofResult{
 		DomainName:   domain.Name,
-		Commitment:   req.Commitment,
+		Commitment:   domain.IdentityCommits[leafIndex],
 		Root:         domain.MerkleRoot,
 		PathIndices:  pathIndices,
 		PathElements: pathElements,

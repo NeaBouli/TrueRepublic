@@ -59,14 +59,10 @@ export const useAdminStore = create<AdminStore>((set) => ({
     try {
       set({ isLoading: true, error: null });
       const stats = await adminService.getDomainStats(domainName);
-      if (stats) {
-        set((state) => ({
-          domainStats: { ...state.domainStats, [domainName]: stats },
-          isLoading: false,
-        }));
-      } else {
-        set({ isLoading: false });
-      }
+      set((state) => ({
+        domainStats: { ...state.domainStats, [domainName]: stats },
+        isLoading: false,
+      }));
     } catch (err: unknown) {
       set({
         error: err instanceof Error ? err.message : 'Failed to load stats',

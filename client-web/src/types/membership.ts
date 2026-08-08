@@ -10,8 +10,10 @@ export interface MembershipStatus {
   domainId: string;
   address: string;
   isMember: boolean;
-  hasIdentityCommitment: boolean;
-  inMerkleTree: boolean;
+  /** Null when no locally owned commitment is available to check. */
+  hasIdentityCommitment: boolean | null;
+  /** Null when membership in the anonymous set cannot be attributed locally. */
+  inMerkleTree: boolean | null;
   /** Step 1: MsgOnboardToDomain submitted (domain key registration) */
   step1Complete: boolean;
   /** Step 2: MsgApproveOnboarding by admin */

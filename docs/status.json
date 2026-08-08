@@ -17,7 +17,7 @@
     "routes": 21,
     "stores": 8,
     "services": 14,
-    "build_size_gzip": "322.29 kB"
+    "build_size_gzip": "322.63 kB"
   },
   "recovery": {
     "status": "active",

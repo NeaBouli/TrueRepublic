@@ -83,7 +83,7 @@ GitHub recovery epic: [#4](https://github.com/NeaBouli/TrueRepublic/issues/4)
   the newly published live High advisory.
 - **Evidence:** Go build/vet/race/coverage and 1,352 cases PASS; Rust
   fmt/clippy/build/26 tests/audit PASS; maintained client clean install,
-  lint/98 tests/build at 322.29 kB gzip/live High audit PASS; the real
+  lint/98 tests/build at 322.63 kB gzip/live High audit PASS; the real
   disposable-chain browser query test PASS.
 - **Audit:** 0 FAIL, 2 documented WARN (configured-RPC trust and existing
   bundle/large-domain scalability), 6 PASS. No blocking implementation finding.
@@ -91,9 +91,32 @@ GitHub recovery epic: [#4](https://github.com/NeaBouli/TrueRepublic/issues/4)
   substantive P3 observations: strict fixed-width protobuf bounds, per-field
   validator validation, and visible rejection handling in both direct LP-query
   consumers. Cosmetic legacy nullable signatures are non-behavioral.
+- **Protected review:** PR #126 exact head passed every workflow. CodeRabbit's
+  eight inline findings are being remediated before merge: stale pricing race,
+  unbound member-state claims, bounded RPC timeout, timestamp/depth/hex
+  normalization, one documentation boundary, and one stale count.
 - **Status:** implementation is locally complete; independent final-head
   review, protected GitHub checks, merge, issue closure, and final-main
   verification remain. Rollout stays 16/59 and production readiness false.
+
+### 2026-08-08 12:56 EEST protected-review remediation
+
+- **Status:** all eight CodeRabbit findings and both final Kimi P3 findings are
+  remediated locally; no P0/P1/P2 finding remains.
+- **Changed:** Pay-to-Put quotes and LP errors are request-keyed; anonymous
+  identity state is no longer attributed to member addresses; query timeout,
+  timestamp, protobuf, Merkle depth/canonical hex, fail-closed voting, response
+  errors, documentation, and published arithmetic are hardened.
+- **Kimi contribution:** independent read-only review found only response-body
+  timeout classification and one stale privacy comment at P3. Sol corrected
+  both and added the body-read timeout regression case.
+- **Tests:** `make verify` PASS (1,352 Go cases plus Rust fmt/clippy/build/26
+  tests/audit); maintained-client 98 tests, lint, 322.63 kB gzip build, and live
+  High audit PASS; real disposable-chain integration PASS; consistency,
+  retirement, shell, JSON, workflow-YAML, and diff checks PASS.
+- **Risk/blockers:** no implementation blocker; configured-RPC trust and bundle/
+  whole-domain scalability remain documented rollout risks. Exact-head CI,
+  thread resolution, merge, issue closure, and final-main proof remain.
 
 ### Sol review feedback
 

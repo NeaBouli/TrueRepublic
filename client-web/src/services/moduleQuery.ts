@@ -1,6 +1,7 @@
 import type { ChainConfig } from '@/types/chain';
 import type { ChainDomain } from '@/types/chainData';
 import type { ChainMerkleProof } from '@/types/chainData';
+import { MERKLE_TREE_DEPTH } from '@/types/zkp';
 
 export const QUERY_PATHS = {
   truedemocracy: {
@@ -238,19 +239,23 @@ export function expectChainMerkleProof(
     );
   }
   if (
-    proof.path_indices.length !== 20 ||
+    proof.path_indices.length !== MERKLE_TREE_DEPTH ||
     !proof.path_indices.every((index) => Number.isInteger(index) && (index === 0 || index === 1))
   ) {
-    throw new ModuleQueryError(path, 'decode', 'path_indices must contain 20 binary indices');
+    throw new ModuleQueryError(
+      path,
+      'decode',
+      `path_indices must contain ${MERKLE_TREE_DEPTH} binary indices`
+    );
   }
   if (
-    proof.path_elements.length !== 20 ||
+    proof.path_elements.length !== MERKLE_TREE_DEPTH ||
     !proof.path_elements.every((element) => /^[0-9a-f]{64}$/.test(element))
   ) {
     throw new ModuleQueryError(
       path,
       'decode',
-      'path_elements must contain 20 lowercase 32-byte hashes'
+      `path_elements must contain ${MERKLE_TREE_DEPTH} lowercase 32-byte hashes`
     );
   }
   return proof;
@@ -287,12 +292,17 @@ function encodeVarint(value: bigint): number[] {
 function encodeRequest(fields: ModuleQueryField[]): Uint8Array {
   const encoded: number[] = [];
   for (const field of fields) {
-    if (!Number.isInteger(field.number) || field.number < 1) {
+    if (
+      !Number.isInteger(field.number) ||
+      field.number < 1 ||
+      field.number > 536_870_911 ||
+      (field.number >= 19_000 && field.number <= 19_999)
+    ) {
       throw new Error(`invalid protobuf field number ${field.number}`);
     }
     if (field.type === 'string') {
       const value = new TextEncoder().encode(field.value);
-      encoded.push(...encodeVarint(BigInt((field.number << 3) | 2)));
+      encoded.push(...encodeVarint(BigInt(field.number) * 8n + 2n));
       encoded.push(...encodeVarint(BigInt(value.length)), ...value);
       continue;
     }
@@ -303,7 +313,7 @@ function encodeRequest(fields: ModuleQueryField[]): Uint8Array {
     if (value > 9_223_372_036_854_775_807n) {
       throw new Error(`field ${field.number} exceeds signed int64`);
     }
-    encoded.push(...encodeVarint(BigInt(field.number << 3)));
+    encoded.push(...encodeVarint(BigInt(field.number) * 8n));
     encoded.push(...encodeVarint(value));
   }
   return Uint8Array.from(encoded);
@@ -363,13 +373,26 @@ function base64ToBytes(value: string): Uint8Array {
   return Uint8Array.from(decoded, (char) => char.charCodeAt(0));
 }
 
+function isTimeoutError(error: unknown, signal: AbortSignal): boolean {
+  if (!signal.aborted) return false;
+  if (error === signal.reason) return true;
+  return (
+    error instanceof DOMException &&
+    (error.name === 'TimeoutError' || error.name === 'AbortError')
+  );
+}
+
 export class ModuleQueryClient {
   private readonly fetchImpl: Fetch;
 
   constructor(
     private readonly config: Pick<ChainConfig, 'rpc'>,
-    fetchImpl: Fetch = globalThis.fetch
+    fetchImpl: Fetch = globalThis.fetch,
+    private readonly timeoutMs: number = 15_000
   ) {
+    if (!Number.isSafeInteger(timeoutMs) || timeoutMs <= 0) {
+      throw new Error('module query timeout must be a positive safe integer');
+    }
     this.fetchImpl = fetchImpl;
   }
 
@@ -382,10 +405,12 @@ export class ModuleQueryClient {
     }
 
     let response: Response;
+    const signal = AbortSignal.timeout(this.timeoutMs);
     try {
       response = await this.fetchImpl(`${this.config.rpc}/`, {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
+        signal,
         body: JSON.stringify({
           jsonrpc: '2.0',
           id: 1,
@@ -394,6 +419,14 @@ export class ModuleQueryClient {
         }),
       });
     } catch (error) {
+      if (isTimeoutError(error, signal)) {
+        throw new ModuleQueryError(
+          path,
+          'transport',
+          `RPC request timed out after ${this.timeoutMs} ms`,
+          error
+        );
+      }
       throw new ModuleQueryError(path, 'transport', 'RPC request failed', error);
     }
     if (!response.ok) {
@@ -408,6 +441,14 @@ export class ModuleQueryClient {
     try {
       envelope = (await response.json()) as RPCEnvelope;
     } catch (error) {
+      if (isTimeoutError(error, signal)) {
+        throw new ModuleQueryError(
+          path,
+          'transport',
+          `RPC request timed out after ${this.timeoutMs} ms`,
+          error
+        );
+      }
       throw new ModuleQueryError(path, 'decode', 'RPC response is not JSON', error);
     }
     if (envelope.error) {

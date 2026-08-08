@@ -74,6 +74,9 @@ result is locally release-verifiable but is not production rollout approval.
   observations were remediated before publication: strict fixed-width protobuf
   bounds, per-item validator validation, and visible rejection handling in both
   direct LP-position consumers.
+- Its post-CodeRabbit remediation review again found no P0/P1/P2. The only two
+  P3 findings—response-body timeout classification and a stale privacy comment—
+  were corrected and regression-tested before the final local rerun.
 - Full Go, Rust, maintained-client, security, build, and real disposable-chain
   gates pass locally. Protected exact-head GitHub review and final-main checks
   remain mandatory before closure.
@@ -88,7 +91,7 @@ result is locally release-verifiable but is not production rollout approval.
 
 ### Client bundle scalability — WARN (MEDIUM)
 
-- The production build is 322.29 kB gzip and still reports one minified chunk
+- The production build is 322.63 kB gzip and still reports one minified chunk
   above 500 kB. Canonical Domain queries also return the complete nested domain
   until pagination-specific registered methods exist.
 - Route-level splitting and large-state pagination remain separate rollout

@@ -38,18 +38,16 @@ export class AdminService {
   }
 
   /**
-   * Get domain members with their identity/permission status.
-   * Derived from the Domain query (members, identity_commits, permission_reg).
+   * Get domain member addresses without attributing anonymous identity or
+   * permission-register entries to individual members.
    */
   async getDomainMembers(domainName: string): Promise<DomainMember[]> {
     const domain = await this.getDomain(domainName);
     const members = domain.members ?? [];
-    const identityCommits = domain.identity_commits ?? [];
-    const permissionReg = domain.permission_reg ?? [];
     return members.map((address) => ({
       address,
-      hasIdentityCommitment: identityCommits.length > 0,
-      inPermissionReg: permissionReg.length > 0,
+      hasIdentityCommitment: null,
+      inPermissionReg: null,
     }));
   }
 
@@ -57,7 +55,7 @@ export class AdminService {
    * Compute domain statistics from available query data.
    * No dedicated domain_stats endpoint exists — derived from domain query.
    */
-  async getDomainStats(domainName: string): Promise<DomainStats | null> {
+  async getDomainStats(domainName: string): Promise<DomainStats> {
     const domain = await this.getDomain(domainName);
     const members = domain.members ?? [];
     const issues = domain.issues ?? [];

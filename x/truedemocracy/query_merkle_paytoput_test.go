@@ -3,6 +3,7 @@ package truedemocracy
 import (
 	"encoding/hex"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"math/big"
 	"strings"
@@ -10,6 +11,7 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
 	rewards "truerepublic/treasury/keeper"
 )
@@ -73,6 +75,20 @@ func TestQueryMerkleProof(t *testing.T) {
 	}
 	if proof.Commitment != commits[1] {
 		t.Fatalf("expected commitment %s, got %s", commits[1], proof.Commitment)
+	}
+	uppercaseResp, err := k.MerkleProof(ctx, &QueryMerkleProofRequest{
+		DomainName: "ProofDomain",
+		Commitment: strings.ToUpper(commits[1]),
+	})
+	if err != nil {
+		t.Fatalf("uppercase commitment query failed: %v", err)
+	}
+	var uppercaseProof MerkleProofResult
+	if err := json.Unmarshal(uppercaseResp.Result, &uppercaseProof); err != nil {
+		t.Fatalf("unmarshal uppercase query: %v", err)
+	}
+	if uppercaseProof.Commitment != commits[1] {
+		t.Fatalf("expected canonical commitment %s, got %s", commits[1], uppercaseProof.Commitment)
 	}
 	domain, found := k.GetDomain(ctx, "ProofDomain")
 	if !found {
@@ -141,18 +157,20 @@ func TestQueryMerkleProofInvalidRequest(t *testing.T) {
 	cases := []struct {
 		name string
 		req  *QueryMerkleProofRequest
+		want error
 	}{
-		{"empty domain name", &QueryMerkleProofRequest{DomainName: "", Commitment: commits[0]}},
-		{"missing domain", &QueryMerkleProofRequest{DomainName: "NoDomain", Commitment: commits[0]}},
-		{"empty commitment", &QueryMerkleProofRequest{DomainName: "ProofDomain", Commitment: ""}},
-		{"short commitment", &QueryMerkleProofRequest{DomainName: "ProofDomain", Commitment: "aabb"}},
-		{"non-hex commitment", &QueryMerkleProofRequest{DomainName: "ProofDomain", Commitment: strings.Repeat("zz", 32)}},
-		{"unknown commitment", &QueryMerkleProofRequest{DomainName: "ProofDomain", Commitment: hex.EncodeToString(make([]byte, 32))}},
+		{"empty domain name", &QueryMerkleProofRequest{DomainName: "", Commitment: commits[0]}, sdkerrors.ErrInvalidRequest},
+		{"missing domain", &QueryMerkleProofRequest{DomainName: "NoDomain", Commitment: commits[0]}, sdkerrors.ErrKeyNotFound},
+		{"empty commitment", &QueryMerkleProofRequest{DomainName: "ProofDomain", Commitment: ""}, sdkerrors.ErrInvalidRequest},
+		{"short commitment", &QueryMerkleProofRequest{DomainName: "ProofDomain", Commitment: "aabb"}, sdkerrors.ErrInvalidRequest},
+		{"non-hex commitment", &QueryMerkleProofRequest{DomainName: "ProofDomain", Commitment: strings.Repeat("zz", 32)}, sdkerrors.ErrInvalidRequest},
+		{"unknown commitment", &QueryMerkleProofRequest{DomainName: "ProofDomain", Commitment: hex.EncodeToString(make([]byte, 32))}, sdkerrors.ErrKeyNotFound},
 	}
 	for _, tc := range cases {
 		t.Run(tc.name, func(t *testing.T) {
-			if _, err := k.MerkleProof(ctx, tc.req); err == nil {
-				t.Fatal("expected error")
+			_, err := k.MerkleProof(ctx, tc.req)
+			if !errors.Is(err, tc.want) {
+				t.Fatalf("expected %v, got %v", tc.want, err)
 			}
 		})
 	}

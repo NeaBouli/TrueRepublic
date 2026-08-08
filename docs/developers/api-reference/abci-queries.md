@@ -81,8 +81,10 @@ the services above.
 The compatibility-only legacy `custom/...` ABCI surface was removed under
 GH-116 after both prototype clients that referenced it were retired. It is not
 versioned or supported, and calls fail closed through the normal Cosmos SDK
-unknown-query response. Integrations must use the CLI or registered protobuf
-gRPC methods.
+unknown-query response. Integrations must use the CLI, registered protobuf gRPC
+methods, or the maintained browser's `ModuleQueryClient`, which sends those
+same typed requests through the supported CometBFT JSON-RPC `abci_query`
+transport.
 
 The browser boundary sends protobuf request bytes for the registered methods
 above through CometBFT JSON-RPC `abci_query` on the configured RPC endpoint. The

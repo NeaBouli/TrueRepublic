@@ -190,7 +190,10 @@ export function LPPositions() {
                 </div>
 
                 {positionError && (
-                  <div className="mt-4 bg-red-50 border border-red-200 rounded-lg p-3 text-sm text-red-800">
+                  <div
+                    role="alert"
+                    className="mt-4 bg-red-50 border border-red-200 rounded-lg p-3 text-sm text-red-800"
+                  >
                     {positionError}
                   </div>
                 )}

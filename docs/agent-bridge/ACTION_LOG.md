@@ -18,11 +18,20 @@
   output; Sol completed documentation.
 - PASS so far: full Go build/vet/race/coverage with 1,352 cases, Rust
   fmt/clippy/build/26 tests/audit, maintained-client clean install/lint/98
-  tests/build at 322.29 kB gzip/live High audit, and real client-chain query
+  tests/build at 322.63 kB gzip/live High audit, and real client-chain query
   delivery. Independent final-head review and protected GitHub checks remain.
 - Kimi's final read-only review found no P0/P1/P2. Sol remediated its four
   substantive P3 observations: fixed32/fixed64 decoder bounds, validator item
   validation, and explicit error UI for both direct LP-position consumers.
+- PR #126's first protected head passed all workflows. CodeRabbit then reported
+  eight valid inline findings; remediation preserves address-unbound anonymous
+  chain state, binds UI identity status only to the locally owned commitment,
+  prevents stale Pay-to-Put quotes, bounds RPC waits, and aligns validation,
+  canonical hex, documentation, and published arithmetic. Rerun pending.
+- Final Kimi review found no P0/P1/P2 and two P3s. Sol fixed response-body
+  timeout classification plus the stale privacy comment, added regression
+  coverage, and reran every local gate successfully. Protected exact-head CI,
+  review-thread resolution, merge, and final-main evidence remain.
 - Public arithmetic is 1,476 cases; rollout remains 16/59 overall and Phase 6
   remains 6/7 because GH-121 does not satisfy a production rollout exit.
 

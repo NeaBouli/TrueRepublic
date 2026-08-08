@@ -18,7 +18,7 @@
 - A new live High npm audit found `nanoid` below 3.3.17 in the lockfile. The
   compatible lock-only resolution is now 3.3.18 and the unchanged fail-closed
   audit policy passes with no live High advisory.
-- The current bundle is 322.29 kB gzip and still emits the existing >500 kB
+- The current bundle is 322.63 kB gzip and still emits the existing >500 kB
   minified-chunk warning. Route-level splitting remains an open rollout task.
 
 ## Open
