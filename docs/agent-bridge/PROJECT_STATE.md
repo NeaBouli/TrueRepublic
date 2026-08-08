@@ -1,8 +1,16 @@
 # Project State
 
-Updated: 2026-08-08 15:54 UTC
+Updated: 2026-08-08 18:08 UTC
 
 ## Repository
+
+- GH-141 is locally PR-ready after PR #140 exposed that the maintained-client
+  Docker builder omitted the scripts required by its package build. The builder
+  now copies `scripts/` before `npm run build`, and a repository test prevents
+  recurrence. Clean install, 10 Node policy cases, 131 Vitest cases, build, and
+  bundle budget pass; real image/restart proof remains protected-CI-only because
+  local Docker is unavailable. Staged status is 1,520 cases (1,353 Go, 26 Rust,
+  141 maintained client), rollout 19/59, production false.
 
 - GH-131 is PR-ready after full local review: the maintained client now exposes
   an honestly labelled newest-first submitted-transaction history over the

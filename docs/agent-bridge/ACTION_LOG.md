@@ -1,5 +1,21 @@
 # Action Log
 
+## 2026-08-08 — GH-141 client Docker build-context repair
+
+- PR #140 Docker smoke exposed a pre-existing maintained-client image defect:
+  `npm run build` requires `scripts/bundle-budget.mjs`, but the builder copied
+  only config and `src`.
+- The builder now copies `scripts/` before build, and a repository contract pins
+  the copy order plus continued budget invocation. Clean install, 10 Node
+  policy cases, 131 Vitest cases, build, and bundle budget pass locally.
+- Full `make verify` passes all 1,353 Go cases under race/coverage; client lint,
+  docs consistency, and diff checks also pass.
+- Commit `14d6851` is published through PR #142. Independent read-only review
+  found no functional P0/P1/P2; protected container evidence remains.
+- Local Docker CLI is unavailable; protected Docker image/restart CI remains
+  the real container proof. Staged status is 1,520 cases; rollout stays 19/59
+  and production false.
+
 ## 2026-08-08 — GH-131 submitted-history implementation verified
 
 - Replaced the placeholder wallet history with newest-first submitted-only
