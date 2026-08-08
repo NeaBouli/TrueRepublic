@@ -79,6 +79,16 @@ GitHub recovery epic: [#4](https://github.com/NeaBouli/TrueRepublic/issues/4)
   limitation, not a code failure; protected image/restart CI is the remaining
   acceptance evidence.
 
+### 2026-08-08 21:20 EEST PR #142 published
+
+- **Commit/PR:** `14d6851` is pushed through
+  [PR #142](https://github.com/NeaBouli/TrueRepublic/pull/142). Independent
+  read-only review found no functional P0/P1/P2; its untracked-file process
+  observation was resolved by the committed regression test.
+- **Status/blockers:** protected Docker image/restart and exact-head checks are
+  pending; no blocker. After merge, GH-140 must incorporate repaired `main` and
+  synchronize its +15-case arithmetic on top of the 1,520-case base.
+
 ## 2026-08-08 18:01 EEST GH-131 submitted transaction history → In Progress
 
 - **Branch:** `feature/GH-131-transaction-history` after the shared Bridge
