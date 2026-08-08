@@ -16,6 +16,8 @@
 - Public docs stage 1,482 cases and rollout 17/59 after GH-128 publication;
   Phase 6 remains 6/7 and production readiness false. Protected PR checks,
   review, merge, GH-29 synchronization, Pages, and final-main evidence remain.
+- Exact implementation commit `b026739` is published through PR #129; all three
+  new files called out by final review are included. Exact-head checks remain.
 
 ## 2026-08-08 13:13 EEST - GH-121 merged and closed
 

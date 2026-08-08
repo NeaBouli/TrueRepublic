@@ -98,6 +98,18 @@ GitHub recovery epic: [#4](https://github.com/NeaBouli/TrueRepublic/issues/4)
   `package.json`, and exited ENOENT. The corrected command ran from `client-web`
   and passed; this was an invocation-path error, not a product failure.
 
+### 2026-08-08 14:39 EEST publication
+
+- **Commit/PR:** exact implementation commit `b026739` pushed on
+  `perf/GH-128-client-route-splitting`; protected
+  [PR #129](https://github.com/NeaBouli/TrueRepublic/pull/129) opened against the
+  unchanged exact `origin/main` `e7a6aa6` and links `Closes #128`.
+- **Review:** final Kimi review reports no P0/P2 code finding after the cached-
+  Promise remediation. Its only P1 handoff was to include the three new budget/
+  audit files; commit `b026739` includes all three.
+- **Status:** protected exact-head Client, real client-chain, Docs, security,
+  and review checks are pending. No merge or rollout closure is claimed yet.
+
 ---
 
 ## 2026-08-08 11:22 EEST GH-121 browser query transport → Review
