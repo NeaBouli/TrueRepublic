@@ -8,7 +8,7 @@
 - [x] GH-145: implement deterministic property, fuzz, invariant, replay,
   malformed-genesis, and focused race evidence for critical Go paths without
   changing production behavior.
-- [ ] GH-145: pass complete local and protected exact-head gates, merge,
+- [x] GH-145: pass complete local and protected exact-head gates, merge,
   synchronize GH-29/public status/Bridge, and verify final `main` plus Pages.
 - [x] GH-139: implement and locally verify bounded root/application, DEX, and
   governance critical-path coverage regression gates with meaningful rollback,
