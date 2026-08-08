@@ -120,6 +120,20 @@ GitHub recovery epic: [#4](https://github.com/NeaBouli/TrueRepublic/issues/4)
   requires the already authorized administrative merge. Merge, final-main
   workflows, and final Bridge closure remain before Done.
 
+### 2026-08-08 18:47 EEST public rollout synchronization staged
+
+- **Public state:** the completed Phase-4 browser/accessibility checklist item
+  is linked to GH-132/PR #136; staged arithmetic advances from 17/59 to 18/59
+  overall and from 17/51 to 18/51 phase work. Phase 6 stays 6/7 and
+  `production_ready=false`.
+- **Build evidence:** exact current client output is 75.86 kB gzip initial,
+  5.03 kB maximum lazy route, and 349.73 kB total JavaScript gzip. Status,
+  roadmap, landing page, project state, security notes, and action log agree;
+  documentation consistency passes.
+- **Boundary:** this closes only the safe unauthenticated browser-quality item.
+  Authenticated wallet/key/signing checks, real ZKP, IBC UX, deployment, real
+  funds, and production approval remain open.
+
 ## 2026-08-08 18:01 EEST GH-133 deterministic Linux daemon build → In Progress
 
 - **Branch:** `build/GH-133-deterministic-linux-daemon` after the shared Bridge

@@ -1,5 +1,16 @@
 # Action Log
 
+## 2026-08-08 — GH-132 protected browser qualification
+
+- Added pinned Chromium, Firefox, and WebKit desktop/mobile qualification for
+  the safe unauthenticated maintained-client routes, with serious/critical
+  accessibility, desktop keyboard/focus, responsive overflow, delayed lazy
+  loading, and third-party-request assertions.
+- Exact PR #136 CI passes browser quality, client build, disposable-chain
+  integration, docs, security, retirement, and independent review gates.
+- Rollout advances to 18/59 (18/51 phase tasks). Authenticated wallet/key,
+  signing, real-fund, deployment, and production gates remain open.
+
 ## 2026-08-08 14:50 EEST - GH-128 merged and closed
 
 - PR #129 exact head `dcc1113` passed Client build, real disposable-chain
