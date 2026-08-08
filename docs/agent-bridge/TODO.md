@@ -49,7 +49,7 @@
 - [x] GH-128: locally split all 19 maintained-client page routes, break the
   eager CosmJS entry dependency, add accessible loading/error behavior, and
   enforce deterministic raw/gzip entry, route, chunk, and total budgets.
-- [ ] GH-128: publish the reviewed branch, pass protected exact-head Client,
+- [x] GH-128: publish the reviewed branch, pass protected exact-head Client,
   Docs, and security checks, merge, close, synchronize GH-29, and verify final
   main plus Pages before marking the Bridge ticket Done.
 - [x] GH-122: merge the isolated patched `js-yaml` lock resolution through PR

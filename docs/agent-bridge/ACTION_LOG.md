@@ -1,5 +1,18 @@
 # Action Log
 
+## 2026-08-08 14:50 EEST - GH-128 merged and closed
+
+- PR #129 exact head `dcc1113` passed Client build, real disposable-chain
+  client integration, Docs, Go/Rust/Node security, all retirement contracts,
+  DeepScan, and formal review statuses with no unresolved review thread.
+- Squash merge `47f8c08` closed GH-128. GH-29 now marks route splitting and
+  its deterministic bundle-performance budget complete.
+- Final-main Client Web CI `31255695662`, Security Scan `31255695671`, and
+  Pages `31255695086` passed on exact merge commit `47f8c08`.
+- Live Pages readback confirms 1,482 recovery-verified cases, rollout 17/59,
+  and 19 lazy routes with deterministic budgets. Phase 6 remains 6/7 and
+  production readiness remains false.
+
 ## 2026-08-08 14:27 EEST - GH-128 locally verified
 
 - Split all 19 maintained-client page routes while preserving the exact
