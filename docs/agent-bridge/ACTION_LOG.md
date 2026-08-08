@@ -20,6 +20,8 @@
   coverage. Independent Kimi review reports no P0/P1/P2 and independently
   reproduces the 15 focused race cases, exact full-suite count, coverage
   contract, vet, docs consistency, and workflow parsing. Publication remains.
+- Commit `a2b8473` is published through PR #140. Protected exact-head checks,
+  merge, tracker synchronization, Pages, and final-main verification remain.
 
 ## 2026-08-08 — GH-131 submitted-history implementation verified
 

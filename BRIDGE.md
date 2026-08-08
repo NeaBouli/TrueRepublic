@@ -96,6 +96,15 @@ GitHub recovery epic: [#4](https://github.com/NeaBouli/TrueRepublic/issues/4)
   Protected exact-head CI, merge, tracker/Bridge/public synchronization, Pages,
   and final-main evidence remain before Done.
 
+### 2026-08-08 20:49 EEST PR #140 published
+
+- **Commit/PR:** implementation commit `a2b8473` is pushed through
+  [PR #140](https://github.com/NeaBouli/TrueRepublic/pull/140), closing GH-139
+  after merge.
+- **Status/blockers:** protected exact-head workflows and review are pending;
+  no local blocker. Merge, GH-29/public synchronization, Pages, and final-main
+  evidence remain before Done.
+
 ## 2026-08-08 18:01 EEST GH-131 submitted transaction history → In Progress
 
 - **Branch:** `feature/GH-131-transaction-history` after the shared Bridge
