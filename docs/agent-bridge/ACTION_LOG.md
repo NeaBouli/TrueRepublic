@@ -55,6 +55,14 @@
   remain unchanged. The other observations are accurately staged status and
   machine-dependent per-run execution evidence, not defects.
 
+## 2026-08-09 — GH-145 protected PR published
+
+- Published locally verified commit `d4aaa77` through PR #146; the PR links
+  `Closes #145` and preserves the tests/CI/docs-only boundary.
+- Exact-head protected workflows and review are running. Merge, GH-29 tracker
+  synchronization, final-main checks, Pages readback, and final Bridge closure
+  remain mandatory before Done.
+
 ## 2026-08-08 — GH-139 critical-path coverage locally verified
 
 - Added a repository-owned three-package coverage contract and protected Go CI

@@ -99,6 +99,16 @@ GitHub recovery epic: [#4](https://github.com/NeaBouli/TrueRepublic/issues/4)
 - **Next:** rerun the affected repository/YAML/docs contracts, then publish the
   protected PR and require exact-head CI plus review closure before merge.
 
+### 2026-08-09 00:41 EEST protected PR published
+
+- **GitHub:** commit `d4aaa77` is pushed on
+  `test/GH-145-quality-depth`; PR
+  [#146](https://github.com/NeaBouli/TrueRepublic/pull/146) links and closes
+  GH-145 only after merge.
+- **Status:** exact-head protected workflows and review are running. No local
+  or GitHub gate has been bypassed; merge, GH-29 synchronization, final-main
+  checks, Pages readback, and final Bridge closeout remain before Done.
+
 ## 2026-08-08 19:46 EEST GH-139 critical-path coverage → In Progress
 
 - **Branch:** `test/GH-139-critical-coverage` from clean `origin/main`
