@@ -11,6 +11,12 @@
 - [ ] GH-139: publish through a protected exact-head PR, merge only after all
   relevant workflows pass, synchronize GH-29/public status/Bridge, and verify
   final `main` plus Pages before marking Done.
+- [x] GH-141: copy the maintained-client build scripts into its Docker builder,
+  pin copy-before-build plus bundle-budget invocation in a repository contract,
+  and verify the direct package build locally.
+- [x] GH-141: publish, pass protected Docker image/restart and exact-head
+  evidence, merge as `11ef2f6`, close the issue, and refresh GH-140 on the
+  repaired base.
 - [x] GH-29: reopen the issue as the execution tracker; PR #31 completed only
   the roadmap handoff, not the rollout phases.
 - [x] GH-5: Go/Rust toolchains, tests, static checks, vulnerability gates, and

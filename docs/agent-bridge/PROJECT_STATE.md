@@ -1,17 +1,22 @@
 # Project State
 
-Updated: 2026-08-08 17:28 UTC
+Updated: 2026-08-08 20:18 UTC
 
 ## Repository
 
-- GH-139 is locally PR-ready: a repository-owned coverage contract now guards
+- GH-141 is closed through merged PR #142 (`11ef2f6`) after every protected
+  exact-head gate passed, including the authoritative Docker image/restart
+  smoke. The maintained-client Docker builder now includes its required build
+  scripts and retains bundle-budget enforcement.
+- GH-139 is integrating that repaired base: a repository-owned coverage
+  contract guards
   root/application at 71.8%, DEX at 51.0%, and governance at 63.7%. Fresh
   results are 71.9%, 51.1%, and 63.8%, backed by 15 new standard Go cases for
   atomic rollback, DEX authority/custody/slippage, governance escrow/auth/reward
-  payout/withdrawal, and the repository contract. Staged public status is 1,534
-  cases (1,367 Go, 26 Rust, 141 maintained client), rollout 20/59 (20/51 phase
-  work), Phase 6 6/7, and production false. Protected publication and
-  final-main evidence remain.
+  payout/withdrawal, and the repository contract. Combined staged public status
+  is 1,535 cases (1,368 Go, 26 Rust, 141 maintained client), rollout 20/59
+  (20/51 phase work), Phase 6 6/7, and production false. Fresh combined local
+  gates, protected exact-head publication, and final-main evidence remain.
 
 - GH-131 is PR-ready after full local review: the maintained client now exposes
   an honestly labelled newest-first submitted-transaction history over the

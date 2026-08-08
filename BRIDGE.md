@@ -104,6 +104,73 @@ GitHub recovery epic: [#4](https://github.com/NeaBouli/TrueRepublic/issues/4)
 - **Status/blockers:** protected exact-head workflows and review are pending;
   no local blocker. Merge, GH-29/public synchronization, Pages, and final-main
   evidence remain before Done.
+## 2026-08-08 20:56 EEST GH-141 client Docker build scripts → In Progress
+
+- **Branch:** `fix/GH-141-client-docker-scripts` from clean `origin/main`
+  `be67d72`.
+- **Issue:** [GH-141](https://github.com/NeaBouli/TrueRepublic/issues/141)
+- **Trigger:** PR #140 protected Docker smoke exposed that
+  `client-web/Dockerfile` omits the `scripts/` directory while `npm run build`
+  requires `scripts/bundle-budget.mjs`.
+- **Scope:** copy the maintained-client build scripts into the Docker builder,
+  add a deterministic repository regression contract, and verify the direct
+  client image plus relevant repository gates.
+- **Boundary/risk:** Low/medium container-build repair only. No application
+  production logic, deployment, network, wallet/key/signing, account, or funds
+  action.
+- **Status/blockers:** In Progress; no blocker. This is separate from GH-139's
+  test/evidence scope and must merge independently before GH-140 is refreshed.
+
+### 2026-08-08 21:08 EEST root cause fixed → locally verified
+
+- **Fix:** `client-web/Dockerfile` now copies `scripts/` before
+  `npm run build`; a repository contract pins both the copy-before-build order
+  and continued bundle-budget invocation.
+- **PASS:** focused repository test; clean `npm ci` with zero vulnerabilities;
+  10 Node policy cases; 131 Vitest cases with two gated skips; TypeScript/Vite
+  production build; enforced bundle budget at 76,401-byte gzip entry, 19 lazy
+  routes, 5,028-byte maximum route, and 353,562-byte total JavaScript gzip.
+- **Environment limitation:** local Docker CLI is unavailable, so the actual
+  image/restart proof remains assigned to protected GitHub Docker CI. The
+  failing path's underlying command now passes directly.
+- **Staged status:** 1,520 standard cases (1,353 Go + 26 Rust + 141 maintained
+  client); rollout stays 19/59 and production stays false.
+- **Status/blockers:** locally PR-ready; no code blocker. Protected Docker image
+  and restart evidence remain before Done.
+
+### 2026-08-08 21:14 EEST complete local gates → PASS
+
+- **Go/repository:** `make verify` passes package selection, build, vet, and all
+  1,353 Go cases under race/coverage; docs consistency and diff checks pass.
+- **Client:** clean install/audit, lint, 10 Node policy cases, 131 Vitest cases,
+  TypeScript/Vite production build, and bundle budget pass.
+- **Status/blockers:** no local blocker. Docker CLI absence is an environment
+  limitation, not a code failure; protected image/restart CI is the remaining
+  acceptance evidence.
+
+### 2026-08-08 21:20 EEST PR #142 published
+
+- **Commit/PR:** `14d6851` is pushed through
+  [PR #142](https://github.com/NeaBouli/TrueRepublic/pull/142). Independent
+  read-only review found no functional P0/P1/P2; its untracked-file process
+  observation was resolved by the committed regression test.
+- **Status/blockers:** protected Docker image/restart and exact-head checks are
+  pending; no blocker. After merge, GH-140 must incorporate repaired `main` and
+  synchronize its +15-case arithmetic on top of the 1,520-case base.
+
+### 2026-08-08 23:18 EEST GH-141 merged; GH-139 base refresh in progress
+
+- **GH-141 closure:** PR #142 passed every protected exact-head gate, including
+  the authoritative Docker image/restart smoke (7m08s), complete Go build/test
+  (7m23s), and multi-validator recovery (14m06s), then squash-merged as
+  `11ef2f6`; GH-141 is closed.
+- **GH-139 integration:** repaired `origin/main` is being merged into PR #140.
+  The combined public arithmetic is 1,535 standard cases (1,368 Go + 26 Rust +
+  141 maintained client), rollout 20/59 overall and 20/51 phase work, Phase 6
+  6/7, with `production_ready=false`.
+- **Status/blockers:** no blocker. Conflict resolution, fresh full local gates,
+  protected exact-head CI, merge, tracker synchronization, Pages readback, and
+  final-main verification remain before GH-139 is Done.
 
 ## 2026-08-08 18:01 EEST GH-131 submitted transaction history → In Progress
 

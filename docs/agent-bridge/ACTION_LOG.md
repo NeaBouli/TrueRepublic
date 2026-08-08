@@ -23,6 +23,32 @@
 - Commit `a2b8473` is published through PR #140. Protected exact-head checks,
   merge, tracker synchronization, Pages, and final-main verification remain.
 
+## 2026-08-08 — GH-141 client Docker build-context repair
+
+- PR #140 Docker smoke exposed a pre-existing maintained-client image defect:
+  `npm run build` requires `scripts/bundle-budget.mjs`, but the builder copied
+  only config and `src`.
+- The builder now copies `scripts/` before build, and a repository contract pins
+  the copy order plus continued budget invocation. Clean install, 10 Node
+  policy cases, 131 Vitest cases, build, and bundle budget pass locally.
+- Full `make verify` passes all 1,353 Go cases under race/coverage; client lint,
+  docs consistency, and diff checks also pass.
+- Commit `14d6851` was published through PR #142. Independent read-only review
+  found no functional P0/P1/P2. All protected exact-head gates passed,
+  including the authoritative Docker image/restart smoke, and PR #142 merged
+  as `11ef2f6`; GH-141 is closed.
+- Local Docker CLI is unavailable; protected Docker image/restart CI remains
+  the real container proof. The merged base is 1,520 cases; rollout stays 19/59
+  and production false until GH-139 completes.
+
+## 2026-08-08 — GH-139 rebased on the Docker repair
+
+- Merged repaired `origin/main` (`11ef2f6`) into PR #140 and reconciled the
+  public count to 1,535 cases: 1,368 Go, 26 Rust, and 141 maintained client.
+- Rollout remains staged at 20/59 overall and 20/51 phase work, Phase 6 6/7,
+  production false. Fresh combined local and protected exact-head evidence is
+  required before merge.
+
 ## 2026-08-08 — GH-131 submitted-history implementation verified
 
 - Replaced the placeholder wallet history with newest-first submitted-only

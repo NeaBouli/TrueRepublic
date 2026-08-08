@@ -14,6 +14,16 @@
   deployments, networks, or real funds; independent release-security review
   remains required.
 
+## GH-141 maintained-client Docker build boundary
+
+- The client Docker builder now includes the same maintained scripts used by
+  the package build, preserving the enforced bundle budget inside container
+  builds rather than bypassing it.
+- This repairs build context only. It does not change runtime application code,
+  nginx policy, wallet/key/signing behavior, deployment, networks, or funds.
+- Local package verification is green; protected CI supplied the authoritative
+  image/restart proof because Docker is unavailable in the local environment.
+
 ## GH-131 submitted-transaction history boundary
 
 - The maintained client queries only transactions submitted by the validated

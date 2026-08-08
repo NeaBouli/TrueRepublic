@@ -19,7 +19,7 @@ intentionally more granular than the public 59-item tracker.
 
 - The ordered recovery merge chain is on `main`.
 - The maximum supply is fixed at 21,000,000 PNYX.
-- The source of truth records 1,534 recovery-verified tests: 1,367 Go, 26 Rust,
+- The source of truth records 1,535 recovery-verified tests: 1,368 Go, 26 Rust,
   and 141 maintained-client tests. GH-121's real registered browser-query
   boundary and GH-115's local client-chain delivery
   case is separately gated and excluded from this arithmetic.
