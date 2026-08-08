@@ -121,6 +121,20 @@ GitHub recovery epic: [#4](https://github.com/NeaBouli/TrueRepublic/issues/4)
   Exact native Linux amd64/arm64 repeatability remains the protected PR-CI
   acceptance gate; merge and final-main evidence remain before Done.
 
+### 2026-08-08 18:37 EEST PR #135 exact-head CI → PASS
+
+- **Protected evidence:** exact head `f3f60b6` passes native Linux amd64
+  (4m53s) and arm64 (3m29s) double-build/hash/version verification in run
+  `31264671102`. Docs, Go/Rust/Node security, all retirement contracts,
+  DeepScan, and review statuses also pass.
+- **Artifact boundary:** both matrix jobs upload only repository evidence
+  checksums and metadata; no daemon binary, release, tag, signature, registry,
+  deployment, or production artifact/action is produced.
+- **Status/blockers:** PR #135 is technically green; repository review policy
+  still requires the already authorized administrative merge. Merge,
+  final-main workflows, public tracker synchronization, and final Bridge
+  closure remain before Done.
+
 ## 2026-08-08 14:15 EEST GH-128 client route splitting → In Progress
 
 - **Branch:** `perf/GH-128-client-route-splitting`
