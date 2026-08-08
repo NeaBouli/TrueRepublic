@@ -1,24 +1,84 @@
+import { lazy } from 'react';
 import { Navigate } from 'react-router-dom';
 import type { RouteObject } from 'react-router-dom';
-import { CreateWallet } from '@/components/auth/CreateWallet';
-import { ImportWallet } from '@/components/auth/ImportWallet';
-import { UnlockWallet } from '@/components/auth/UnlockWallet';
-import { WalletDashboard } from '@/components/wallet/WalletDashboard';
-import { SendForm } from '@/components/wallet/SendForm';
-import { DomainBrowser } from '@/components/governance/DomainBrowser';
-import { IssueList } from '@/components/governance/IssueList';
-import { SuggestionList } from '@/components/governance/SuggestionList';
-import { CreateSuggestion } from '@/components/governance/CreateSuggestion';
-import { PoolList } from '@/components/dex/PoolList';
-import { SwapForm } from '@/components/dex/SwapForm';
-import { LPPositions } from '@/components/dex/LPPositions';
-import { AddLiquidity } from '@/components/dex/AddLiquidity';
-import { RemoveLiquidity } from '@/components/dex/RemoveLiquidity';
-import { AdminDashboard } from '@/components/admin/AdminDashboard';
-import { NetworkExplorer } from '@/components/network/NetworkExplorer';
-import { IdentityManager } from '@/components/zkp/IdentityManager';
-import { InviteHandler } from '@/components/membership/InviteHandler';
-import { OnboardingFlow } from '@/components/membership/OnboardingFlow';
+
+const CreateWallet = lazy(() =>
+  import('@/components/auth/CreateWallet').then(({ CreateWallet }) => ({ default: CreateWallet }))
+);
+const ImportWallet = lazy(() =>
+  import('@/components/auth/ImportWallet').then(({ ImportWallet }) => ({ default: ImportWallet }))
+);
+const UnlockWallet = lazy(() =>
+  import('@/components/auth/UnlockWallet').then(({ UnlockWallet }) => ({ default: UnlockWallet }))
+);
+const WalletDashboard = lazy(() =>
+  import('@/components/wallet/WalletDashboard').then(({ WalletDashboard }) => ({
+    default: WalletDashboard,
+  }))
+);
+const SendForm = lazy(() =>
+  import('@/components/wallet/SendForm').then(({ SendForm }) => ({ default: SendForm }))
+);
+const DomainBrowser = lazy(() =>
+  import('@/components/governance/DomainBrowser').then(({ DomainBrowser }) => ({
+    default: DomainBrowser,
+  }))
+);
+const IssueList = lazy(() =>
+  import('@/components/governance/IssueList').then(({ IssueList }) => ({ default: IssueList }))
+);
+const SuggestionList = lazy(() =>
+  import('@/components/governance/SuggestionList').then(({ SuggestionList }) => ({
+    default: SuggestionList,
+  }))
+);
+const CreateSuggestion = lazy(() =>
+  import('@/components/governance/CreateSuggestion').then(({ CreateSuggestion }) => ({
+    default: CreateSuggestion,
+  }))
+);
+const PoolList = lazy(() =>
+  import('@/components/dex/PoolList').then(({ PoolList }) => ({ default: PoolList }))
+);
+const SwapForm = lazy(() =>
+  import('@/components/dex/SwapForm').then(({ SwapForm }) => ({ default: SwapForm }))
+);
+const LPPositions = lazy(() =>
+  import('@/components/dex/LPPositions').then(({ LPPositions }) => ({ default: LPPositions }))
+);
+const AddLiquidity = lazy(() =>
+  import('@/components/dex/AddLiquidity').then(({ AddLiquidity }) => ({ default: AddLiquidity }))
+);
+const RemoveLiquidity = lazy(() =>
+  import('@/components/dex/RemoveLiquidity').then(({ RemoveLiquidity }) => ({
+    default: RemoveLiquidity,
+  }))
+);
+const AdminDashboard = lazy(() =>
+  import('@/components/admin/AdminDashboard').then(({ AdminDashboard }) => ({
+    default: AdminDashboard,
+  }))
+);
+const NetworkExplorer = lazy(() =>
+  import('@/components/network/NetworkExplorer').then(({ NetworkExplorer }) => ({
+    default: NetworkExplorer,
+  }))
+);
+const IdentityManager = lazy(() =>
+  import('@/components/zkp/IdentityManager').then(({ IdentityManager }) => ({
+    default: IdentityManager,
+  }))
+);
+const InviteHandler = lazy(() =>
+  import('@/components/membership/InviteHandler').then(({ InviteHandler }) => ({
+    default: InviteHandler,
+  }))
+);
+const OnboardingFlow = lazy(() =>
+  import('@/components/membership/OnboardingFlow').then(({ OnboardingFlow }) => ({
+    default: OnboardingFlow,
+  }))
+);
 
 /**
  * Single source of truth for the application route table. Keep the order

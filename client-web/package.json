@@ -8,9 +8,9 @@
   },
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build",
+    "build": "tsc -b && vite build && node scripts/bundle-budget.mjs",
     "preview": "vite preview",
-    "test": "node --test scripts/audit-high.node-test.mjs && vitest",
+    "test": "node --test scripts/*.node-test.mjs && vitest",
     "test:chain": "vitest run src/services/clientChain.integration.test.ts",
     "test:ui": "vitest --ui",
     "test:coverage": "vitest --coverage",

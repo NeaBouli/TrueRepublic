@@ -132,9 +132,13 @@ send funds to an address solely because an obsolete preview displayed it.
 ## Build Output
 
 Current recovery build (`npm run build`):
-- Main JavaScript: 1,708.31 kB; 318.91 kB gzip
-- CSS: 22.25 kB; 4.84 kB gzip
-- Vite still warns that the main chunk exceeds 500 kB; bundle splitting and a performance budget remain open rollout work.
+- Initial JavaScript entry: 234.32 kB raw; 75.79 kB gzip using the pinned
+  project measurement
+- 19 lazy page-route entries; largest direct route entry: 5.03 kB gzip
+- Total JavaScript: 1,733.60 kB raw; 349.42 kB gzip across all deferred chunks
+- CSS: 22.38 kB; 4.86 kB gzip
+- `npm run build` fails if the raw or gzip entry, route, chunk, or total budget
+  regresses. Signing and protobuf dependencies remain deferred until needed.
 
 ## License
 

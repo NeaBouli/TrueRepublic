@@ -1,7 +1,9 @@
 import { describe, expect, it, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { MemoryRouter, Route, Routes, matchRoutes } from 'react-router-dom';
+import { lazy, Suspense } from 'react';
 import type { ReactElement } from 'react';
+import { ErrorBoundary } from '@/components/common/ErrorBoundary';
 
 // The routing boundary is under test, not the pages. Page modules are stubbed
 // with markers so no wallet, signing, store, or network code is loaded. The
@@ -109,11 +111,13 @@ import { appRoutes } from '@/routes';
 const renderAt = (path: string): void => {
   render(
     <MemoryRouter initialEntries={[path]}>
-      <Routes>
-        {appRoutes.map((route) => (
-          <Route key={route.path} path={route.path} element={route.element} />
-        ))}
-      </Routes>
+      <Suspense fallback={<div role="status">Loading page…</div>}>
+        <Routes>
+          {appRoutes.map((route) => (
+            <Route key={route.path} path={route.path} element={route.element} />
+          ))}
+        </Routes>
+      </Suspense>
     </MemoryRouter>
   );
 };
@@ -163,14 +167,14 @@ describe('route contract', () => {
 });
 
 describe('redirects', () => {
-  it('redirects the root path to /unlock', () => {
+  it('redirects the root path to /unlock', async () => {
     renderAt('/');
-    expect(screen.getByTestId('page-unlock')).toBeInTheDocument();
+    expect(await screen.findByTestId('page-unlock')).toBeInTheDocument();
   });
 
-  it('redirects unknown paths to /unlock', () => {
+  it('redirects unknown paths to /unlock', async () => {
     renderAt('/no-such-page');
-    expect(screen.getByTestId('page-unlock')).toBeInTheDocument();
+    expect(await screen.findByTestId('page-unlock')).toBeInTheDocument();
   });
 
   it('matches unknown paths only through the catch-all route', () => {
@@ -192,9 +196,9 @@ describe('static routes', () => {
     ['/dex/positions', 'page-positions'],
     ['/network', 'page-network'],
     ['/identity', 'page-identity'],
-  ])('renders %s', (path, testId) => {
+  ])('renders %s', async (path, testId) => {
     renderAt(path);
-    expect(screen.getByTestId(testId)).toBeInTheDocument();
+    expect(await screen.findByTestId(testId)).toBeInTheDocument();
   });
 
   it('matches static routes without parameters', () => {
@@ -222,9 +226,9 @@ describe('parameterized routes', () => {
     ['/dex/pool/atom/remove', 'page-remove-liquidity', { assetDenom: 'atom' }],
     ['/admin/domain/validators', 'page-admin', { domainId: 'validators' }],
     ['/onboard/pnyx', 'page-onboard', { domainId: 'pnyx' }],
-  ])('renders %s with extracted params', (path, testId, params) => {
+  ])('renders %s with extracted params', async (path, testId, params) => {
     renderAt(path);
-    const page = screen.getByTestId(testId);
+    const page = await screen.findByTestId(testId);
     expect(page).toBeInTheDocument();
     expect(JSON.parse(page.getAttribute('data-params') ?? '{}')).toEqual(params);
   });
@@ -239,9 +243,9 @@ describe('parameterized routes', () => {
 });
 
 describe('search params', () => {
-  it('preserves the invite search param for the page', () => {
+  it('preserves the invite search param for the page', async () => {
     renderAt('/invite?code=abc123');
-    const page = screen.getByTestId('page-invite');
+    const page = await screen.findByTestId('page-invite');
     expect(page).toBeInTheDocument();
     expect(page.getAttribute('data-code')).toBe('abc123');
   });
@@ -267,8 +271,42 @@ describe('backslash-shaped navigation input', () => {
     }
   });
 
-  it('renders the safe /unlock fallback for a backslash-shaped path', () => {
+  it('renders the safe /unlock fallback for a backslash-shaped path', async () => {
     renderAt('/\\governance');
-    expect(screen.getByTestId('page-unlock')).toBeInTheDocument();
+    expect(await screen.findByTestId('page-unlock')).toBeInTheDocument();
+  });
+});
+
+describe('lazy route boundary', () => {
+  it('renders an accessible fallback while a route chunk is loading', () => {
+    const PendingPage = lazy(() => new Promise<never>(() => undefined));
+
+    render(
+      <Suspense fallback={<div role="status">Loading page…</div>}>
+        <PendingPage />
+      </Suspense>
+    );
+
+    expect(screen.getByRole('status')).toHaveTextContent('Loading page…');
+  });
+
+  it('passes a rejected route chunk to the application error boundary', async () => {
+    const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => undefined);
+    const FailedPage = lazy(() => Promise.reject(new Error('chunk load failed')));
+
+    try {
+      render(
+        <ErrorBoundary>
+          <Suspense fallback={<div role="status">Loading page…</div>}>
+            <FailedPage />
+          </Suspense>
+        </ErrorBoundary>
+      );
+
+      expect(await screen.findByText('Something went wrong')).toBeInTheDocument();
+      expect(screen.getByText('chunk load failed')).toBeInTheDocument();
+    } finally {
+      errorSpy.mockRestore();
+    }
   });
 });
