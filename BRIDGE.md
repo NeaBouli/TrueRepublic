@@ -35,6 +35,55 @@ Canonical coordination lives in [`docs/agent-bridge/`](docs/agent-bridge/README.
 
 GitHub recovery epic: [#4](https://github.com/NeaBouli/TrueRepublic/issues/4)
 
+## 2026-08-08 18:01 EEST GH-131 submitted transaction history → In Progress
+
+- **Branch:** `feature/GH-131-transaction-history` after the shared Bridge
+  baseline merges.
+- **Issue:** [GH-131](https://github.com/NeaBouli/TrueRepublic/issues/131)
+- **Scope:** bounded newest-first server-paginated history for transactions
+  submitted by the validated unlocked wallet; explicit unavailable, timeout,
+  protocol, decode, authoritative-empty, retry, and stale-wallet handling.
+- **Boundary:** this is honestly labelled submitted history. Incoming-only
+  account activity, a participant index, wallet/key/signing-policy changes,
+  deployment, production, and funds are out of scope.
+- **Risk/delegation:** Medium untrusted REST/UI boundary. Kimi K3 receives the
+  bounded implementation block; Sol owns query architecture, diff review,
+  disposable-chain evidence, full integration, GitHub writes, and closure.
+- **Status/blockers:** In Progress; no blocker. GH-29 remains 17/59 and
+  `production_ready=false`.
+
+## 2026-08-08 18:01 EEST GH-132 client browser qualification → In Progress
+
+- **Branch:** `test/GH-132-client-browser-quality` after the shared Bridge
+  baseline merges.
+- **Issue:** [GH-132](https://github.com/NeaBouli/TrueRepublic/issues/132)
+- **Scope:** real-browser accessibility, keyboard/focus, viewport-overflow,
+  delayed-lazy-loading, supported-browser, and low-bandwidth evidence for the
+  safe unauthenticated `/unlock`, `/create`, and `/import` surfaces.
+- **Boundary:** tests must not execute wallet creation/import, authenticated
+  wallet operations, signing, crypto, network mutation, or production actions.
+- **Risk/delegation:** Low/Medium client quality and dependency surface. A
+  bounded worker owns tests and minimal shared-control fixes; Sol owns tooling
+  approval, audit/budget review, complete gates, GitHub writes, and closure.
+- **Status/blockers:** In Progress; no blocker. This block does not claim the
+  deeper authenticated Phase-4 exit.
+
+## 2026-08-08 18:01 EEST GH-133 deterministic Linux daemon build → In Progress
+
+- **Branch:** `build/GH-133-deterministic-linux-daemon` after the shared Bridge
+  baseline merges.
+- **Issue:** [GH-133](https://github.com/NeaBouli/TrueRepublic/issues/133)
+- **Scope:** tracked Linux amd64/arm64 and Go 1.26.5 build contract,
+  deterministic double-build verification, version check, SHA-256 manifest,
+  focused tests, and CI-only artifact upload.
+- **Boundary:** no tag, GitHub Release, registry push, signing key, SBOM,
+  provenance, deployment, production, or rollout-approval claim/action.
+- **Risk/delegation:** Low/Medium release-engineering evidence. A bounded worker
+  owns the isolated build/scripts/workflow block; Sol owns claim boundaries,
+  diff review, full gates, GitHub writes, and closure.
+- **Status/blockers:** In Progress; no blocker. Container reproducibility and
+  signed/SBOM/provenance artifacts remain separate GH-29 work.
+
 ## 2026-08-08 14:15 EEST GH-128 client route splitting → In Progress
 
 - **Branch:** `perf/GH-128-client-route-splitting`
