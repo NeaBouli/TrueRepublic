@@ -77,13 +77,17 @@ export function UnlockWallet() {
         </div>
 
         {error && (
-          <div className="bg-red-50 border border-red-200 rounded-lg p-3 mb-4">
+          <div
+            className="bg-red-50 border border-red-200 rounded-lg p-3 mb-4"
+            role="alert"
+          >
             <p className="text-sm text-red-800">{error}</p>
           </div>
         )}
 
         <div className="mb-6">
           <Input
+            label="Password"
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
