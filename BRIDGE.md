@@ -84,6 +84,57 @@ GitHub recovery epic: [#4](https://github.com/NeaBouli/TrueRepublic/issues/4)
 - **Status/blockers:** In Progress; no blocker. Container reproducibility and
   signed/SBOM/provenance artifacts remain separate GH-29 work.
 
+### 2026-08-08 18:25 EEST local implementation → Sol review
+
+- **Changed:** tracked `truerepublic.daemon-build/v1` contract; deterministic
+  build, verifier, and negative-test scripts; Make targets; native Linux
+  amd64/arm64 PR workflow; narrowly bounded operator documentation.
+- **Evidence:** two clean-cache builds per native architecture use Go 1.26.5,
+  CGO, readonly modules, `-trimpath`, disabled VCS/build IDs, and exact
+  `main.version=<40-char commit>`. Verification requires identical SHA-256,
+  native ELF architecture, embedded Go version, and exact CLI version before
+  emitting checksums/metadata. CI uploads no binary.
+- **Local PASS:** contract success/hash/version/contract/ref/target tests;
+  shell syntax; JSON and workflow YAML parsing; focused root-command Go test;
+  diff check. A platform-equivalent macOS double build was byte-identical;
+  exact Linux evidence intentionally belongs to the protected PR matrix.
+- **Delegation/review:** bounded worker implemented the isolated block. Spark
+  found no P0-P2. Its P3 notes that unit negatives mock binary inspection;
+  accepted because the immediately following matrix step executes the exact
+  full binary double-build/inspection path on both Linux architectures.
+- **Risk/boundary:** Low/Medium CI evidence. ARM uses GitHub's public-preview
+  native runner. This proves same-run repeatability, not cross-environment
+  provenance. No tag, release, binary upload, registry, signature, SBOM,
+  provenance, deployment, production artifact, or rollout approval.
+- **Status/blockers:** Review; no blocker. Full local Go verification, commit,
+  protected CI, merge, and final-main evidence remain.
+
+### 2026-08-08 18:34 EEST full local verification → PASS / PR ready
+
+- **Full gate:** `make verify` passes, including package-selection policy,
+  CGO build, vet, and race/coverage tests (root 70.8%; maintained policy
+  packages 80.3–97.2%; DEX 49.1%; truedemocracy 63.0%).
+- **Additional gates:** documentation consistency, all three retirement
+  contracts, shell syntax, JSON/workflow parsing, the deterministic-build
+  contract suite, focused root-command test, and `git diff --check` pass.
+- **Status/blockers:** Local review is complete and no blocker is known.
+  Exact native Linux amd64/arm64 repeatability remains the protected PR-CI
+  acceptance gate; merge and final-main evidence remain before Done.
+
+### 2026-08-08 18:37 EEST PR #135 exact-head CI → PASS
+
+- **Protected evidence:** exact head `f3f60b6` passes native Linux amd64
+  (4m53s) and arm64 (3m29s) double-build/hash/version verification in run
+  `31264671102`. Docs, Go/Rust/Node security, all retirement contracts,
+  DeepScan, and review statuses also pass.
+- **Artifact boundary:** both matrix jobs upload only repository evidence
+  checksums and metadata; no daemon binary, release, tag, signature, registry,
+  deployment, or production artifact/action is produced.
+- **Status/blockers:** PR #135 is technically green; repository review policy
+  still requires the already authorized administrative merge. Merge,
+  final-main workflows, public tracker synchronization, and final Bridge
+  closure remain before Done.
+
 ## 2026-08-08 14:15 EEST GH-128 client route splitting → In Progress
 
 - **Branch:** `perf/GH-128-client-route-splitting`
