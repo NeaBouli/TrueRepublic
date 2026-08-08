@@ -1,0 +1,4 @@
+# label<TAB>package<TAB>minimum statement coverage percent
+root/application	.	71.8
+dex	./x/dex	51.0
+governance	./x/truedemocracy	63.7

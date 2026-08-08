@@ -1,5 +1,19 @@
 # Security Notes
 
+## GH-139 critical-path coverage boundary
+
+- Root/application, DEX, and governance statement coverage now have explicit
+  fail-closed repository floors of 71.8%, 51.0%, and 63.7%; fresh local totals
+  are 71.9%, 51.1%, and 63.8%.
+- New regressions exercise atomic rollback/error joining, DEX registry
+  authority and bank custody on failed/successful liquidity and swaps, legacy
+  slippage-free swap rejection, governance escrow and signer/admin boundaries,
+  VoteToEarn settlement, and covered withdrawals.
+- This block changes tests, CI, and evidence only. It does not change or claim
+  review of consensus, formulas, production configuration, wallet/key/signing,
+  deployments, networks, or real funds; independent release-security review
+  remains required.
+
 ## GH-141 maintained-client Docker build boundary
 
 - The client Docker builder now includes the same maintained scripts used by
@@ -7,7 +21,7 @@
   builds rather than bypassing it.
 - This repairs build context only. It does not change runtime application code,
   nginx policy, wallet/key/signing behavior, deployment, networks, or funds.
-- Local package verification is green; protected CI remains the authoritative
+- Local package verification is green; protected CI supplied the authoritative
   image/restart proof because Docker is unavailable in the local environment.
 
 ## GH-131 submitted-transaction history boundary

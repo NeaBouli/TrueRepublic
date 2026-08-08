@@ -16,7 +16,7 @@
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/tests-1520%20recovery--verified-orange" alt="Recovery-verified tests"/>
+  <img src="https://img.shields.io/badge/tests-1535%20recovery--verified-orange" alt="Recovery-verified tests"/>
   <img src="https://img.shields.io/badge/version-v0.4.0-blue" alt="Version"/>
   <img src="https://img.shields.io/badge/recovery-active-orange" alt="Recovery active"/>
   <img src="https://img.shields.io/badge/Go-1.26.5-00ADD8?logo=go" alt="Go"/>
@@ -225,7 +225,7 @@ TrueRepublic/
 # Blockchain
 go mod tidy
 ./scripts/go-packages.sh go build
-./scripts/go-packages.sh go test -race -cover -count=1 -timeout=600s    # 1,353 Go cases
+./scripts/go-packages.sh go test -race -cover -count=1 -timeout=600s    # 1,368 Go cases
 
 # Smart contracts
 cd contracts && cargo test --workspace       # 26 tests
@@ -263,7 +263,7 @@ The checklist below records implemented surface area, not a production security
 approval. Current evidence, risks, and commands are maintained in
 [`BRIDGE.md`](BRIDGE.md) and [GitHub issue #4](https://github.com/NeaBouli/TrueRepublic/issues/4).
 
-- 🟡 1,520 tests recovery-verified locally (1,353 Go + 26 Rust + 141 maintained-client), plus the separately gated GH-131 real submitted-history pagination proof, GH-121 real browser-query boundary, GH-115 local client-chain delivery proof, GH-56 rotation, GH-59 slashing, GH-60 inactive-validator genesis, GH-61 legacy-authority migration, GH-93 incident rehearsal, and GH-97 sustained-load process harnesses; protected publication and production rollout evidence remain required
+- 🟡 1,535 tests recovery-verified locally (1,368 Go + 26 Rust + 141 maintained-client), plus the separately gated GH-131 real submitted-history pagination proof, GH-121 real browser-query boundary, GH-115 local client-chain delivery proof, GH-56 rotation, GH-59 slashing, GH-60 inactive-validator genesis, GH-61 legacy-authority migration, GH-93 incident rehearsal, and GH-97 sustained-load process harnesses; protected publication and production rollout evidence remain required
 - ✅ Core blockchain compiles and runs
 - 🟡 Tokenomics, exact custom genesis, and every-block ledger invariants are recovery-verified and merged through PR #19
 - 🟡 Governance escrow/auth recovery is verified and merged; independent release review remains open
@@ -312,8 +312,8 @@ approval. Current evidence, risks, and commands are maintained in
 - 📋 **v0.5.0 (Q3 2026):** Native Apps (iOS/Android)
 - 🎯 **v1.0.0 (Q4 2026):** Production Release — External audit, mainnet launch
 
-> Historical test count: 577. The authoritative recovery-verified total is 1,520
-> (1,353 Go + 26 Rust + 141 maintained-client), reproduced from package-scoped
+> Historical test count: 577. The authoritative recovery-verified total is 1,535
+> (1,368 Go + 26 Rust + 141 maintained-client), reproduced from package-scoped
 > JSON output on GH-115 plus merged GH-101/GH-102 evidence using the established
 > passing-case method.
 

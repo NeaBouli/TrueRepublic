@@ -1,5 +1,28 @@
 # Action Log
 
+## 2026-08-08 — GH-139 critical-path coverage locally verified
+
+- Added a repository-owned three-package coverage contract and protected Go CI
+  gate with floors of 71.8% root/application, 51.0% DEX, and 63.7%
+  governance. Fresh measurements pass at 71.9%, 51.1%, and 63.8%.
+- Added 15 standard Go cases: atomic output rollback and error joining; DEX
+  authority, custody, liquidity, slippage, and legacy fail-closed boundaries;
+  governance escrow, signer/admin authorization, VoteToEarn payout, withdrawal;
+  and repository contract enforcement.
+- Kimi K3 implemented the bounded 14-case test block. Sol reviewed all writes,
+  hardened an event assertion against setup-event false positives, integrated
+  CI/docs, and reran focused and coverage verification.
+- Staged public arithmetic is 1,534 standard cases (1,367 Go, 26 Rust, 141
+  maintained client) and rollout 20/59 (20/51 phase work), Phase 6 6/7,
+  production false. Full repository gates, independent final review, protected
+  PR CI, merge, tracker synchronization, Pages, and final-main evidence remain.
+- Full `make verify` passes build, vet, and all 1,367 Go cases under race and
+  coverage. Independent Kimi review reports no P0/P1/P2 and independently
+  reproduces the 15 focused race cases, exact full-suite count, coverage
+  contract, vet, docs consistency, and workflow parsing. Publication remains.
+- Commit `a2b8473` is published through PR #140. Protected exact-head checks,
+  merge, tracker synchronization, Pages, and final-main verification remain.
+
 ## 2026-08-08 — GH-141 client Docker build-context repair
 
 - PR #140 Docker smoke exposed a pre-existing maintained-client image defect:
@@ -10,11 +33,21 @@
   policy cases, 131 Vitest cases, build, and bundle budget pass locally.
 - Full `make verify` passes all 1,353 Go cases under race/coverage; client lint,
   docs consistency, and diff checks also pass.
-- Commit `14d6851` is published through PR #142. Independent read-only review
-  found no functional P0/P1/P2; protected container evidence remains.
+- Commit `14d6851` was published through PR #142. Independent read-only review
+  found no functional P0/P1/P2. All protected exact-head gates passed,
+  including the authoritative Docker image/restart smoke, and PR #142 merged
+  as `11ef2f6`; GH-141 is closed.
 - Local Docker CLI is unavailable; protected Docker image/restart CI remains
-  the real container proof. Staged status is 1,520 cases; rollout stays 19/59
-  and production false.
+  the real container proof. The merged base is 1,520 cases; rollout stays 19/59
+  and production false until GH-139 completes.
+
+## 2026-08-08 — GH-139 rebased on the Docker repair
+
+- Merged repaired `origin/main` (`11ef2f6`) into PR #140 and reconciled the
+  public count to 1,535 cases: 1,368 Go, 26 Rust, and 141 maintained client.
+- Rollout remains staged at 20/59 overall and 20/51 phase work, Phase 6 6/7,
+  production false. Fresh combined local and protected exact-head evidence is
+  required before merge.
 
 ## 2026-08-08 — GH-131 submitted-history implementation verified
 

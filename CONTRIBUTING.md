@@ -122,6 +122,9 @@ go test ./x/dex/...
 # Run with coverage
 ./scripts/go-packages.sh go test -cover
 
+# Enforce the bounded root/application, DEX, and governance coverage floors
+make critical-coverage
+
 # Run with race detector
 ./scripts/go-packages.sh go test -race -cover -count=1 -timeout=600s
 ```

@@ -455,6 +455,70 @@ func TestRunLegacyAuthorityMigrationRejectsSameInputIdentity(t *testing.T) {
 	}
 }
 
+func TestRemoveAtomicOutputAfterErrorRollsBackOutput(t *testing.T) {
+	directory := t.TempDir()
+	output := filepath.Join(directory, "output.json")
+	if err := os.WriteFile(output, []byte("incomplete"), 0o600); err != nil {
+		t.Fatal(err)
+	}
+	cause := errors.New("directory sync failed")
+	err := removeAtomicOutputAfterError(output, directory, cause)
+	if !errors.Is(err, cause) {
+		t.Fatalf("rollback error lost the original cause: %v", err)
+	}
+	if _, statErr := os.Lstat(output); !errors.Is(statErr, os.ErrNotExist) {
+		t.Fatalf("incomplete output survived rollback: %v", statErr)
+	}
+	assertNoMigrationTempFiles(t, directory)
+}
+
+func TestRemoveAtomicOutputAfterErrorJoinsRemovalFailure(t *testing.T) {
+	directory := t.TempDir()
+	missing := filepath.Join(directory, "already-removed.json")
+	cause := errors.New("directory sync failed")
+	err := removeAtomicOutputAfterError(missing, directory, cause)
+	if err == nil {
+		t.Fatal("rollback of a missing output succeeded")
+	}
+	if !errors.Is(err, cause) {
+		t.Fatalf("joined error lost the original cause: %v", err)
+	}
+	if !errors.Is(err, os.ErrNotExist) {
+		t.Fatalf("joined error lost the removal failure: %v", err)
+	}
+	if !strings.Contains(err.Error(), "remove incomplete output") {
+		t.Fatalf("joined error lacks removal context: %v", err)
+	}
+}
+
+func TestRemoveAtomicOutputAfterErrorJoinsDirectoryOpenFailure(t *testing.T) {
+	directory := t.TempDir()
+	output := filepath.Join(directory, "output.json")
+	if err := os.WriteFile(output, []byte("incomplete"), 0o600); err != nil {
+		t.Fatal(err)
+	}
+	missingDirectory := filepath.Join(directory, "no-such-directory")
+	cause := errors.New("directory close failed")
+	err := removeAtomicOutputAfterError(output, missingDirectory, cause)
+	if err == nil {
+		t.Fatal("rollback with an unopenable directory succeeded")
+	}
+	if !errors.Is(err, cause) {
+		t.Fatalf("joined error lost the original cause: %v", err)
+	}
+	if !errors.Is(err, os.ErrNotExist) {
+		t.Fatalf("joined error lost the directory open failure: %v", err)
+	}
+	if !strings.Contains(err.Error(), "open output directory after rollback") {
+		t.Fatalf("joined error lacks directory context: %v", err)
+	}
+	// The incomplete output is still removed before the directory open is
+	// attempted.
+	if _, statErr := os.Lstat(output); !errors.Is(statErr, os.ErrNotExist) {
+		t.Fatalf("incomplete output survived rollback: %v", statErr)
+	}
+}
+
 func testDescriptorJSON(t *testing.T, hash, genesis []byte) []byte {
 	t.Helper()
 	sourceGenesisSHA256 := sha256.Sum256(genesis)
