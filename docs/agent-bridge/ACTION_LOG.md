@@ -1,5 +1,26 @@
 # Action Log
 
+## 2026-08-08 — GH-139 critical-path coverage locally verified
+
+- Added a repository-owned three-package coverage contract and protected Go CI
+  gate with floors of 71.8% root/application, 51.0% DEX, and 63.7%
+  governance. Fresh measurements pass at 71.9%, 51.1%, and 63.8%.
+- Added 15 standard Go cases: atomic output rollback and error joining; DEX
+  authority, custody, liquidity, slippage, and legacy fail-closed boundaries;
+  governance escrow, signer/admin authorization, VoteToEarn payout, withdrawal;
+  and repository contract enforcement.
+- Kimi K3 implemented the bounded 14-case test block. Sol reviewed all writes,
+  hardened an event assertion against setup-event false positives, integrated
+  CI/docs, and reran focused and coverage verification.
+- Staged public arithmetic is 1,534 standard cases (1,367 Go, 26 Rust, 141
+  maintained client) and rollout 20/59 (20/51 phase work), Phase 6 6/7,
+  production false. Full repository gates, independent final review, protected
+  PR CI, merge, tracker synchronization, Pages, and final-main evidence remain.
+- Full `make verify` passes build, vet, and all 1,367 Go cases under race and
+  coverage. Independent Kimi review reports no P0/P1/P2 and independently
+  reproduces the 15 focused race cases, exact full-suite count, coverage
+  contract, vet, docs consistency, and workflow parsing. Publication remains.
+
 ## 2026-08-08 — GH-131 submitted-history implementation verified
 
 - Replaced the placeholder wallet history with newest-first submitted-only

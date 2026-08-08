@@ -5,6 +5,12 @@
 - [ ] GH-4: keep the recovery epic and acceptance criteria current.
 - [ ] GH-29: complete the seven-phase production-readiness roadmap and attach
   evidence for every rollout exit gate before any public-network launch.
+- [x] GH-139: implement and locally verify bounded root/application, DEX, and
+  governance critical-path coverage regression gates with meaningful rollback,
+  authority, custody, slippage, escrow, reward, and withdrawal tests.
+- [ ] GH-139: publish through a protected exact-head PR, merge only after all
+  relevant workflows pass, synchronize GH-29/public status/Bridge, and verify
+  final `main` plus Pages before marking Done.
 - [x] GH-29: reopen the issue as the execution tracker; PR #31 completed only
   the roadmap handoff, not the rollout phases.
 - [x] GH-5: Go/Rust toolchains, tests, static checks, vulnerability gates, and

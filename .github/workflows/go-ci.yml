@@ -17,12 +17,14 @@ on:
       - 'configs/incidents/**'
       - 'configs/capacity/**'
       - 'configs/deployment/**'
+      - 'configs/quality/**'
       - 'monitoring/**'
       - 'nginx/**'
       - 'scripts/backup.sh'
       - 'scripts/docker-entrypoint.sh'
       - 'scripts/go-packages.sh'
       - 'scripts/init-node.sh'
+      - 'scripts/check-critical-coverage.sh'
       - 'scripts/restore.sh'
       - 'scripts/test-go-packages.sh'
   pull_request:
@@ -38,12 +40,14 @@ on:
       - 'configs/incidents/**'
       - 'configs/capacity/**'
       - 'configs/deployment/**'
+      - 'configs/quality/**'
       - 'monitoring/**'
       - 'nginx/**'
       - 'scripts/backup.sh'
       - 'scripts/docker-entrypoint.sh'
       - 'scripts/go-packages.sh'
       - 'scripts/init-node.sh'
+      - 'scripts/check-critical-coverage.sh'
       - 'scripts/restore.sh'
       - 'scripts/test-go-packages.sh'
 
@@ -112,6 +116,9 @@ jobs:
 
       - name: Vet
         run: ./scripts/go-packages.sh go vet
+
+      - name: Enforce critical package coverage floors
+        run: ./scripts/check-critical-coverage.sh
 
       - name: Test
         run: CGO_ENABLED=1 ./scripts/go-packages.sh go test -race -cover -count=1 -timeout=600s

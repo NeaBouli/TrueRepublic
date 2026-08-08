@@ -35,6 +35,67 @@ Canonical coordination lives in [`docs/agent-bridge/`](docs/agent-bridge/README.
 
 GitHub recovery epic: [#4](https://github.com/NeaBouli/TrueRepublic/issues/4)
 
+## 2026-08-08 19:46 EEST GH-139 critical-path coverage → In Progress
+
+- **Branch:** `test/GH-139-critical-coverage` from clean `origin/main`
+  `be67d72`.
+- **Issue:** [GH-139](https://github.com/NeaBouli/TrueRepublic/issues/139)
+- **Scope:** measure reproducible root/application, `x/dex`, and
+  `x/truedemocracy` coverage; add deterministic security/integrity regression
+  tests for meaningful uncovered paths; and establish a bounded repository
+  coverage-regression contract.
+- **Delegation:** Kimi K3 receives a bounded secret-free test implementation;
+  Sol owns path selection, architecture/security review, all external writes,
+  complete verification, and closure.
+- **Boundary/risk:** Medium, tests and evidence only. No production behavior,
+  consensus, accounting, DEX formula, governance authority, wallet/key,
+  deployment, network, or real-funds change. Any production defect is reported
+  and separately scoped.
+- **Status/blockers:** In Progress; no blocker. Rollout remains 19/59,
+  Phase 6 remains 6/7, and `production_ready=false`.
+
+### 2026-08-08 20:28 EEST implementation and local verification → PR ready
+
+- **Coverage contract:** the repository now enforces bounded statement floors
+  for root/application (71.8%), DEX (51.0%), and governance (63.7%) in local
+  development and Go CI. Fresh measured totals are 71.9%, 51.1%, and 63.8%,
+  improving the prior 70.8%, 49.1%, and 63.0% baselines.
+- **Critical regressions:** 15 standard Go cases cover atomic output rollback,
+  DEX authority/custody/slippage/fail-closed behavior, governance escrow,
+  authorization, reward payout, withdrawal, and the repository contract.
+- **Delegation/review:** Kimi K3 implemented the bounded 14-case root/DEX/
+  governance test block and passed focused plus race checks. Sol reviewed every
+  line, reset the DEX event manager to prevent a false-positive assertion,
+  integrated the coverage contract/CI/docs, and reran focused and coverage
+  gates.
+- **Public staged state:** 1,534 standard cases (1,367 Go + 26 Rust + 141
+  maintained client); 20/59 overall and 20/51 phase work; Phase 6 remains 6/7;
+  `production_ready=false`.
+- **Boundary:** no production code, consensus, accounting formula, governance
+  authority, wallet/key/signing, deployment, network, or real-funds behavior
+  changed. This proves bounded regression depth, not complete security review.
+- **Status/blockers:** PR ready after the remaining full repository gates and
+  independent final review; no blocker. Protected exact-head CI, merge,
+  GH-29/issue synchronization, Pages readback, and final-main verification
+  remain before Done.
+
+### 2026-08-08 20:42 EEST full gates and independent review → PASS
+
+- **Sol full gate:** `make verify` passes package selection, build, vet, and
+  the complete 1,367-case Go race/coverage suite. Root/application is 71.9%,
+  DEX 51.1%, governance 63.8%; all other package coverage remains green.
+- **Additional PASS:** coverage contract from repository and `/tmp`, focused
+  new tests, workflow YAML parse, documentation consistency, shell syntax,
+  formatting, and `git diff --check`.
+- **Independent Kimi review:** no P0/P1/P2 finding. Fresh read-only evidence
+  independently reproduces all 15 focused cases under race, 1,367 full-suite
+  passing cases with zero failures, exact module arithmetic, the three coverage
+  totals, vet, docs consistency, and YAML parsing. P3 notes are intentional
+  ratchet proximity, duplicate CI execution, and two-source floor pinning.
+- **Status/blockers:** locally complete and ready to publish; no blocker.
+  Protected exact-head CI, merge, tracker/Bridge/public synchronization, Pages,
+  and final-main evidence remain before Done.
+
 ## 2026-08-08 18:01 EEST GH-131 submitted transaction history → In Progress
 
 - **Branch:** `feature/GH-131-transaction-history` after the shared Bridge
