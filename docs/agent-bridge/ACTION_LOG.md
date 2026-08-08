@@ -49,6 +49,17 @@
   production false. Fresh combined local and protected exact-head evidence is
   required before merge.
 
+## 2026-08-08 — GH-139 merged and final-main verified
+
+- PR #140 passed all protected exact-head checks with no unresolved review
+  thread and merged as `1b6ccef`; GH-139 is closed.
+- Exact merge commit Go CI `31277242596`, Security `31277242587`, and Pages
+  `31277242292` pass. Live Pages reads back 1,535 total cases, 1,368 Go,
+  rollout 20/59 overall and 20/51 phase work, Phase 6 6/7, production false.
+- GH-29 now links GH-139/PR #140 and marks the Phase 5 critical-path coverage
+  item complete. GH-139 is Done; remaining rollout and release-security gates
+  stay open.
+
 ## 2026-08-08 — GH-131 submitted-history implementation verified
 
 - Replaced the placeholder wallet history with newest-first submitted-only
