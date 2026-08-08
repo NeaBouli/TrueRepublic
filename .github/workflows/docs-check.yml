@@ -6,6 +6,7 @@ on:
     paths:
       - 'README.md'
       - 'CLAUDE.md'
+      - 'client-web/**'
       - 'docs/**'
       - 'scripts/check-consistency.sh'
       - 'scripts/check-mobile-retirement.sh'

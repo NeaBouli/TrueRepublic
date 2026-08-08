@@ -19,8 +19,8 @@ intentionally more granular than the public 59-item tracker.
 
 - The ordered recovery merge chain is on `main`.
 - The maximum supply is fixed at 21,000,000 PNYX.
-- The source of truth records 1,476 recovery-verified tests: 1,352 Go, 26 Rust,
-  and 98 maintained-client tests. GH-121's real registered browser-query
+- The source of truth records 1,482 recovery-verified tests: 1,352 Go, 26 Rust,
+  and 104 maintained-client tests. GH-121's real registered browser-query
   boundary and GH-115's local client-chain delivery
   case is separately gated and excluded from this arithmetic.
 - Ledger, escrow, issuance, DEX custody, genesis, runtime invariants, ZKP
@@ -125,7 +125,9 @@ recovery tests; unsupported surfaces are absent or unmistakably disabled.
 - [ ] Verify wallet creation, import, locking, signing, and key-storage safety.
 - [ ] Add accessibility, responsive-layout, low-bandwidth, and browser support
   checks.
-- [ ] Split oversized routes and establish a bundle-performance budget.
+- [x] Split all 19 page routes and enforce raw/gzip entry, route, chunk, and
+  total-JavaScript budgets during every maintained-client build
+  ([GH-128](https://github.com/NeaBouli/TrueRepublic/issues/128)).
 
 **Exit gate:** one maintained client completes every supported critical flow
 against the rollout candidate; legacy clients cannot be mistaken for supported

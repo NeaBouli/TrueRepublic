@@ -1,5 +1,4 @@
-import { DirectSecp256k1HdWallet } from '@cosmjs/proto-signing';
-import { stringToPath } from '@cosmjs/crypto';
+import type { DirectSecp256k1HdWallet } from '@cosmjs/proto-signing';
 import { fromBech32, toBech32 } from '@cosmjs/encoding';
 import { DEFAULT_CHAIN } from '@/config/chains';
 import type { Wallet, CreateWalletParams, ImportWalletParams } from '@/types/wallet';
@@ -7,6 +6,14 @@ import type { Wallet, CreateWalletParams, ImportWalletParams } from '@/types/wal
 const DERIVATION_PATH = "m/44'/118'/0'/0/0"; // Cosmos standard
 const STORAGE_KEY = 'truerepublic_wallets';
 const LEGACY_BECH32_PREFIX = 'true';
+
+async function loadSigningDependencies() {
+  const [{ DirectSecp256k1HdWallet }, { stringToPath }] = await Promise.all([
+    import('@cosmjs/proto-signing'),
+    import('@cosmjs/crypto'),
+  ]);
+  return { DirectSecp256k1HdWallet, stringToPath };
+}
 
 function migrateStoredAddress(wallet: Wallet): Wallet {
   try {
@@ -28,6 +35,7 @@ export class WalletService {
    * Create a new wallet with random mnemonic
    */
   static async createWallet(params: CreateWalletParams): Promise<Wallet> {
+    const { DirectSecp256k1HdWallet, stringToPath } = await loadSigningDependencies();
     const wallet = await DirectSecp256k1HdWallet.generate(24, {
       prefix: DEFAULT_CHAIN.bech32Prefix,
       hdPaths: [stringToPath(DERIVATION_PATH)],
@@ -57,6 +65,7 @@ export class WalletService {
       throw new Error('Mnemonic must be 12 or 24 words');
     }
 
+    const { DirectSecp256k1HdWallet, stringToPath } = await loadSigningDependencies();
     const wallet = await DirectSecp256k1HdWallet.fromMnemonic(
       params.mnemonic,
       {
@@ -92,6 +101,7 @@ export class WalletService {
       throw new Error('Wallet mnemonic not found');
     }
 
+    const { DirectSecp256k1HdWallet, stringToPath } = await loadSigningDependencies();
     return DirectSecp256k1HdWallet.fromMnemonic(wallet.mnemonic, {
       prefix: DEFAULT_CHAIN.bech32Prefix,
       hdPaths: [stringToPath(DERIVATION_PATH)],

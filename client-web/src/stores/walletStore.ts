@@ -3,8 +3,6 @@ import { persist } from 'zustand/middleware';
 import type { Wallet, Balance } from '@/types/wallet';
 import type { Transaction, SendParams, TransactionResult } from '@/types/transaction';
 import { WalletService } from '@/services/wallet';
-import { BlockchainService } from '@/services/blockchain';
-import { TransactionService } from '@/services/transaction';
 import { DEFAULT_CHAIN } from '@/config/chains';
 
 interface WalletStore {
@@ -32,8 +30,26 @@ interface WalletStore {
   loadTransactions: () => Promise<void>;
 }
 
-const blockchainService = new BlockchainService(DEFAULT_CHAIN);
-const transactionService = new TransactionService(DEFAULT_CHAIN);
+let blockchainService: Promise<import('@/services/blockchain').BlockchainService> | null = null;
+let transactionService: Promise<import('@/services/transaction').TransactionService> | null = null;
+
+function getBlockchainService() {
+  if (!blockchainService) {
+    blockchainService = import('@/services/blockchain').then(
+      ({ BlockchainService }) => new BlockchainService(DEFAULT_CHAIN)
+    );
+  }
+  return blockchainService;
+}
+
+function getTransactionService() {
+  if (!transactionService) {
+    transactionService = import('@/services/transaction').then(
+      ({ TransactionService }) => new TransactionService(DEFAULT_CHAIN)
+    );
+  }
+  return transactionService;
+}
 
 export const useWalletStore = create<WalletStore>()(
   persist(
@@ -150,7 +166,8 @@ export const useWalletStore = create<WalletStore>()(
         if (!currentWallet) return;
 
         try {
-          const balances = await blockchainService.getBalance(currentWallet.address);
+          const service = await getBlockchainService();
+          const balances = await service.getBalance(currentWallet.address);
           set({ balances });
         } catch {
           // Balance refresh is best-effort; node may be offline
@@ -183,7 +200,8 @@ export const useWalletStore = create<WalletStore>()(
             password
           );
 
-          const result = await transactionService.send(signingWallet, params);
+          const service = await getTransactionService();
+          const result = await service.send(signingWallet, params);
 
           if (!result.success) {
             throw new Error(result.error || 'Transaction failed');

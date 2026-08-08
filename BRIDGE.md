@@ -28,10 +28,89 @@ Canonical coordination lives in [`docs/agent-bridge/`](docs/agent-bridge/README.
   [`GH89_AUDIT.md`](docs/agent-bridge/GH89_AUDIT.md)
 - GH-121 browser query transport audit:
   [`GH121_AUDIT.md`](docs/agent-bridge/GH121_AUDIT.md)
+- GH-128 client bundle audit:
+  [`GH128_AUDIT.md`](docs/agent-bridge/GH128_AUDIT.md)
 - Decisions: [`DECISIONS.md`](docs/agent-bridge/DECISIONS.md)
 - Security: [`SECURITY_NOTES.md`](docs/agent-bridge/SECURITY_NOTES.md)
 
 GitHub recovery epic: [#4](https://github.com/NeaBouli/TrueRepublic/issues/4)
+
+## 2026-08-08 14:15 EEST GH-128 client route splitting → In Progress
+
+- **Branch:** `perf/GH-128-client-route-splitting`
+- **Issue:** [GH-128](https://github.com/NeaBouli/TrueRepublic/issues/128)
+- **Baseline:** exact clean `origin/main` `e7a6aa6`; GH-121 and its handoff are
+  merged, final-main and Pages are green.
+- **Scope:** preserve all 21 maintained-client routes while loading non-entry
+  screens on demand; add a deterministic emitted-build budget and regression
+  coverage; publish measured before/after evidence.
+- **Risk:** Medium client architecture/performance. Wallet, signing, broadcast,
+  query semantics, chain protocol, and production configuration are out of
+  scope and must remain unchanged.
+- **Delegation:** Kimi K3 receives one bounded, secret-free, read-only route and
+  build-output analysis. Sol owns architecture, implementation integration,
+  full tests, GitHub writes, and closure.
+- **Status/blockers:** in progress; no blocker. Rollout remains 16/59, Phase 6
+  remains 6/7, and production readiness remains false.
+
+### 2026-08-08 14:27 EEST local verification
+
+- **Implementation:** all 19 page routes now use `React.lazy`; one accessible
+  `Suspense` boundary sits inside the existing application `ErrorBoundary`.
+  Wallet signing, chain-query, and transaction services load on demand, which
+  removes the eager `MobileNav → walletStore → CosmJS` entry dependency without
+  changing wallet, signing, registry, simulation, broadcast, or query behavior.
+- **Budget:** Vite emits a hash-independent manifest and `npm run build` now
+  enforces raw plus pinned Node-zlib gzip limits for the entry, every direct
+  route, every chunk, and total JavaScript. Measured initial entry: 234,322 raw
+  / 75,786 gzip bytes, down from 1,719,256 raw / 322.63 kB Vite gzip. Nineteen
+  lazy routes are present; max direct route is 5,031 gzip bytes; total deferred
+  JavaScript is 1,733,603 raw / 349,422 gzip bytes.
+- **Tests:** PASS `npm run lint`; PASS 104 maintained-client cases (94 Vitest +
+  10 Node policy/budget); PASS production build and budget; PASS live High
+  audit. Route order/params/redirects stay pinned; loading and rejected-chunk
+  behavior have regressions.
+- **Delegation/review:** Kimi K3 independently identified the eager CosmJS trap,
+  recommended service-level dynamic imports and hash-independent emitted-file
+  budgets, and found no P0. Spark independently confirmed the minimal lazy-route
+  fallback/error test boundary. Sol implemented, reviewed, and reran all gates.
+- **Files:** `client-web/src/{App.tsx,routes.tsx,routes.test.tsx}`, wallet
+  service/store, Vite/package/build-budget scripts, React/Docs CI trigger, public
+  status/roadmap/wiki, and agent-bridge evidence.
+- **Status/blockers:** local implementation is Review-ready with no blocker.
+  Protected PR checks, exact-head review, merge, GH-29 synchronization, Pages,
+  and final-main verification remain. Public rollout staging is 17/59 overall,
+  Phase 6 remains 6/7, and `production_ready=false`.
+
+### 2026-08-08 14:35 EEST integration follow-up
+
+- **Review remediation:** Kimi's final pass identified a possible duplicate
+  first-service construction under concurrent store calls. Both dynamic service
+  loaders now cache one shared Promise, preserving the original singleton
+  behavior without restoring the eager dependency.
+- **Fresh result:** PASS lint; PASS 104 client cases; PASS production build with
+  level-9 budget measurements (entry 234,322 raw / 75,786 gzip; max route 5,031
+  gzip; max chunk 1,057,764 raw / 134,769 gzip; total 1,733,603 raw / 349,422
+  gzip); PASS live High audit; PASS real disposable-chain client delivery (one
+  case, 69.84 seconds) on the final source state.
+- **Transparent failed invocation:** the preceding combined command successfully
+  built `truerepublicd` but then ran `npm` from the repository root, which has no
+  `package.json`, and exited ENOENT. The corrected command ran from `client-web`
+  and passed; this was an invocation-path error, not a product failure.
+
+### 2026-08-08 14:39 EEST publication
+
+- **Commit/PR:** exact implementation commit `b026739` pushed on
+  `perf/GH-128-client-route-splitting`; protected
+  [PR #129](https://github.com/NeaBouli/TrueRepublic/pull/129) opened against the
+  unchanged exact `origin/main` `e7a6aa6` and links `Closes #128`.
+- **Review:** final Kimi review reports no P0/P2 code finding after the cached-
+  Promise remediation. Its only P1 handoff was to include the three new budget/
+  audit files; commit `b026739` includes all three.
+- **Status:** protected exact-head Client, real client-chain, Docs, security,
+  and review checks are pending. No merge or rollout closure is claimed yet.
+
+---
 
 ## 2026-08-08 11:22 EEST GH-121 browser query transport → Review
 

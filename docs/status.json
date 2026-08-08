@@ -4,10 +4,10 @@
   "release_date": "2026-03-04",
   "tests": {
     "status": "recovery_verified_locally",
-    "total": 1476,
+    "total": 1482,
     "go": 1352,
     "rust": 26,
-    "frontend": 98,
+    "frontend": 104,
     "historical_total": 577
   },
   "web_client": {
@@ -17,7 +17,11 @@
     "routes": 21,
     "stores": 8,
     "services": 14,
-    "build_size_gzip": "322.63 kB"
+    "build_size_gzip": "349.42 kB total JavaScript",
+    "initial_entry_gzip": "75.79 kB",
+    "max_lazy_route_gzip": "5.03 kB",
+    "lazy_route_entries": 19,
+    "bundle_budget": "enforced_during_build"
   },
   "recovery": {
     "status": "active",
@@ -33,9 +37,9 @@
     "status": "engineering_in_progress",
     "tracker_scope": "github_issue_29",
     "github_issue": 29,
-    "completed": 16,
+    "completed": 17,
     "total": 59,
-    "phase_work_completed": 16,
+    "phase_work_completed": 17,
     "phase_work_total": 51,
     "phase_6_completed": 6,
     "phase_6_total": 7,

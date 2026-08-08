@@ -1,5 +1,24 @@
 # Action Log
 
+## 2026-08-08 14:27 EEST - GH-128 locally verified
+
+- Split all 19 maintained-client page routes while preserving the exact
+  21-route contract, added an accessible loading boundary and rejected-chunk
+  recovery regression, and deferred wallet signing/query/transaction stacks.
+- Reduced the deterministic initial JavaScript entry to 75.79 kB gzip from the
+  322.63 kB Vite baseline. The build now enforces raw/gzip entry, route, chunk,
+  and total budgets from a hash-independent Vite manifest.
+- PASS: lint, 104 client cases, TypeScript/Vite production build, budget gate,
+  live High audit, and final-state disposable-chain client delivery. Kimi
+  independently found the eager dependency trap, Docs CI gap, and a possible
+  concurrent first-service duplication; Sol fixed the latter with one cached
+  Promise per service. Spark independently reviewed the lazy-boundary test design.
+- Public docs stage 1,482 cases and rollout 17/59 after GH-128 publication;
+  Phase 6 remains 6/7 and production readiness false. Protected PR checks,
+  review, merge, GH-29 synchronization, Pages, and final-main evidence remain.
+- Exact implementation commit `b026739` is published through PR #129; all three
+  new files called out by final review are included. Exact-head checks remain.
+
 ## 2026-08-08 13:13 EEST - GH-121 merged and closed
 
 - PR #126 exact head `d7a41b0` passed Client, real client-chain integration,

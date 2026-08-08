@@ -18,8 +18,12 @@
 - A new live High npm audit found `nanoid` below 3.3.17 in the lockfile. The
   compatible lock-only resolution is now 3.3.18 and the unchanged fail-closed
   audit policy passes with no live High advisory.
-- The current bundle is 322.63 kB gzip and still emits the existing >500 kB
-  minified-chunk warning. Route-level splitting remains an open rollout task.
+- GH-128 splits all 19 page routes, defers signing/protobuf dependencies, and
+  enforces a deterministic build budget. The initial entry is 75.79 kB gzip,
+  the largest direct lazy route is 5.03 kB gzip, and the complete deferred
+  JavaScript set is 349.42 kB total JavaScript gzip. Budgets cover raw and gzip
+  entry, route, individual chunk, and total sizes; chunk-import failure reaches
+  the existing fail-closed application error boundary.
 
 ## Open
 
@@ -56,10 +60,11 @@
   operations review remain pending;
   IBC staking/upgrade and
   standard CosmWasm staking/distribution stay explicit stubs.
-- Historical pre-GH-115 measurement: the v0.4 client production bundle was
-  1.70 MB (317.94 kB gzip). The current GH-115 measurement is 318.91 kB gzip;
-  route-level code splitting remains recommended before treating
-  low-bandwidth/mobile UX as ready.
+- Historical pre-GH-128 measurement: the v0.4 client shipped one 1.72 MB
+  JavaScript entry (322.63 kB by Vite's reporter). GH-128 replaces that
+  ambiguous one-file figure with pinned Node-zlib measurements and a 234.32 kB
+  raw / 75.79 kB gzip initial entry. Broader low-bandwidth and browser
+  qualification remain open.
 
 ## Resolved during recovery
 
