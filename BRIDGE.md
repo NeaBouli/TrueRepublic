@@ -109,6 +109,31 @@ GitHub recovery epic: [#4](https://github.com/NeaBouli/TrueRepublic/issues/4)
   or GitHub gate has been bypassed; merge, GH-29 synchronization, final-main
   checks, Pages readback, and final Bridge closeout remain before Done.
 
+### 2026-08-09 01:11 EEST merged / final main and Pages green → Done
+
+- **Exact-head:** every protected PR #146 check passed on `76b5d80`, including
+  quality-depth 4m19s, build/Race/coverage 8m58s, Docker 6m46s, capacity 6m19s,
+  recovery 14m11s, both reproducible Linux builds, docs, security, DeepScan,
+  and retirement gates. GitHub had zero review thread; Kimi's fallback review
+  found 0 P0/P1/P2 because CodeRabbit was rate-limited.
+- **Merge/tracker:** authorized administrative squash bypassed only formal
+  self-approval. PR #146 merged as `50f18e0`; GH-145 closed and GH-29 now
+  records exactly 21/59 with GH-145/PR #146 evidence.
+- **Final main:** Go CI
+  [31280519207](https://github.com/NeaBouli/TrueRepublic/actions/runs/31280519207)
+  passes with quality-depth 4m31s, build 8m17s, Docker 7m10s, capacity 5m15s,
+  and recovery 14m00s. Security
+  [31280519224](https://github.com/NeaBouli/TrueRepublic/actions/runs/31280519224)
+  and Pages
+  [31280518754](https://github.com/NeaBouli/TrueRepublic/actions/runs/31280518754)
+  pass on the same merge commit.
+- **Live readback:** Pages publishes 1,573 cases (1,406 Go + 26 Rust + 141
+  maintained client), 21/59 overall, 21/51 phase work, Phase 6 6/7, and
+  `production_ready=false`.
+- **Boundary/status:** no production code, infrastructure, key, wallet,
+  account, deployment, network, or real-funds action occurred. GH-145 is Done;
+  remaining rollout/security work stays open.
+
 ## 2026-08-08 19:46 EEST GH-139 critical-path coverage → In Progress
 
 - **Branch:** `test/GH-139-critical-coverage` from clean `origin/main`

@@ -63,6 +63,18 @@
   synchronization, final-main checks, Pages readback, and final Bridge closure
   remain mandatory before Done.
 
+## 2026-08-09 — GH-145 merged and fully verified
+
+- Every protected exact-head check passed on `76b5d80`; PR #146 merged as
+  `50f18e0`, GH-145 closed, and GH-29 now records exactly 21/59 with linked
+  evidence. Authorized admin merge bypassed only formal self-approval.
+- Final-main Go CI `31280519207`, Security `31280519224`, and Pages
+  `31280518754` pass. Go CI includes quality-depth 4m31s, build/Race/coverage
+  8m17s, Docker 7m10s, capacity 5m15s, and recovery 14m00s.
+- Live Pages readback publishes 1,573 cases (1,406 Go, 26 Rust, 141 maintained
+  client), rollout 21/59 overall and 21/51 phase work, Phase 6 6/7, production
+  false. GH-145 is Done with no production or real-funds action.
+
 ## 2026-08-08 — GH-139 critical-path coverage locally verified
 
 - Added a repository-owned three-package coverage contract and protected Go CI
