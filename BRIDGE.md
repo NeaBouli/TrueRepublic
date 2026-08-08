@@ -95,6 +95,27 @@ GitHub recovery epic: [#4](https://github.com/NeaBouli/TrueRepublic/issues/4)
   local integration are complete; no blocker. Incorporate GH-132 final main,
   synchronize 19/59 public status, rerun combined gates, then publish PR.
 
+### 2026-08-08 18:55 EEST combined-main and public status → PR ready
+
+- **Predecessors:** GH-133 is merged as `53326d9` with native Linux evidence
+  and green final-main Security/Pages. GH-132 is merged as `795ebd2`; its final
+  combined head passed the full protected browser/client/security matrix,
+  GH-132 is closed, GH-29 records the completed item, and live Pages reads back
+  18/59 and 18/51.
+- **Combined GH-131 PASS:** fresh install (zero vulnerabilities), lint, ten Node
+  policy/budget cases, 131 standard Vitest cases with two gated skips,
+  TypeScript/production build, and guarded audit. The two gated disposable-
+  chain cases pass separately in 76.88s. Final combined bundle is 76,291-byte
+  gzip initial, 19 lazy routes, 5,027-byte maximum route, and 353,442-byte total
+  JavaScript gzip.
+- **Staged public state:** 1,519 standard cases (1,352 Go + 26 Rust + 141
+  maintained client); 19/59 overall and 19/51 phase work; Phase 6 stays 6/7;
+  `production_ready=false`. Roadmap, landing page, README, wiki, project state,
+  security notes, action log, and source-of-truth status are synchronized.
+- **Status/blockers:** PR ready; no blocker. Documentation/retirement/diff
+  gates, commit/push, protected exact-head CI, merge, GH-29 closure sync,
+  public readback, and final-main evidence remain before Done.
+
 ## 2026-08-08 18:01 EEST GH-132 client browser qualification → In Progress
 
 - **Branch:** `test/GH-132-client-browser-quality` after the shared Bridge

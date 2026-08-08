@@ -1,6 +1,6 @@
 # Testing Status
 
-The current **v0.4.0 recovery** source of truth records **1,482 verified cases**.
+The current **v0.4.0 recovery** source of truth records **1,519 verified cases**.
 
 | Suite | Passing cases |
 |---|---:|
@@ -18,8 +18,8 @@ The current **v0.4.0 recovery** source of truth records **1,482 verified cases**
 | Go DEX | 124 |
 | Go governance | 524 |
 | Rust/CosmWasm | 26 |
-| Maintained client | 104 |
-| **Total** | **1,482** |
+| Maintained client | 141 |
+| **Total** | **1,519** |
 
 ## Current Go coverage
 

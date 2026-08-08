@@ -1,5 +1,19 @@
 # Action Log
 
+## 2026-08-08 — GH-131 submitted-history implementation verified
+
+- Replaced the placeholder wallet history with newest-first submitted-only
+  Cosmos SDK v0.50 REST pagination, typed failure/decode handling, stale-wallet
+  protection, and an accessible explicit incoming-exclusion UI.
+- Kimi implemented the bounded block. Sol independently corrected deprecated
+  request semantics, cache/abort/count boundaries, wallet-change clearing,
+  retry/stale-row behavior, and committed-send reporting. Independent review
+  found no P0-P2 after remediation.
+- Ten Node policy cases, 131 standard Vitest cases, two separately gated real
+  disposable-chain cases, lint, build/budgets, and guarded audit pass. Public
+  status stages 1,519 standard cases and rollout 19/59; protected PR and final-
+  main evidence remain.
+
 ## 2026-08-08 — GH-132 protected browser qualification
 
 - Added pinned Chromium, Firefox, and WebKit desktop/mobile qualification for

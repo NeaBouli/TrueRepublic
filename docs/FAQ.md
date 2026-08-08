@@ -140,7 +140,7 @@ There is no supported native mobile client.
 Fork the repo, create a branch, write tests, and submit a PR. See [Developer Docs](developers/README.md).
 
 ### Where are the tests?
-The recovery baseline has 1,482 verified cases: 1,352 Go, 26 Rust, and 104
+The recovery baseline has 1,519 verified cases: 1,352 Go, 26 Rust, and 141
 maintained-client tests. Run `./scripts/go-packages.sh go test -race -cover -count=1` and see
 `docs/status.json` for the authoritative breakdown.
 
