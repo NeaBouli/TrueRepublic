@@ -71,9 +71,11 @@ GET /validators?height=100
 
 ### Module queries
 
-Custom-module reads use the daemon CLI or the protobuf gRPC services documented
-in [Module Queries](abci-queries.md). The retired compatibility-only custom
-ABCI routes are not supported.
+Custom-module reads use the daemon CLI or the registered protobuf gRPC services
+documented in [Module Queries](abci-queries.md). The maintained browser sends
+those typed requests through CometBFT JSON-RPC `abci_query` on the existing RPC
+proxy. The retired compatibility-only custom ABCI routes and unregistered HTTP
+aliases are not supported.
 
 ## REST/LCD API (Port 1317)
 

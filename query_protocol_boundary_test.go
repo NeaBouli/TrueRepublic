@@ -22,6 +22,8 @@ func TestSupportedModuleGRPCQueryRoutesAreRegistered(t *testing.T) {
 		"/truedemocracy.Query/Nullifier",
 		"/truedemocracy.Query/PurgeSchedule",
 		"/truedemocracy.Query/ZKPState",
+		"/truedemocracy.Query/MerkleProof",
+		"/truedemocracy.Query/PayToPut",
 		"/dex.Query/Pool",
 		"/dex.Query/Pools",
 		"/dex.Query/RegisteredAssets",
@@ -100,6 +102,54 @@ func TestSupportedModuleGRPCQueriesExecuteThroughABCI(t *testing.T) {
 	}
 	if len(domains) != 1 || domains[0].Name != "Test" {
 		t.Fatalf("unexpected domain query result: %+v", domains)
+	}
+
+	payToPutRequest, err := app.appCodec.Marshal(&truedemocracy.QueryPayToPutRequest{DomainName: "Test"})
+	if err != nil {
+		t.Fatal(err)
+	}
+	payToPutResponse, err := app.Query(context.Background(), &abci.RequestQuery{
+		Path: "/truedemocracy.Query/PayToPut",
+		Data: payToPutRequest,
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if payToPutResponse.Code != 0 {
+		t.Fatalf("PayToPut gRPC-over-ABCI query failed: code=%d log=%s", payToPutResponse.Code, payToPutResponse.Log)
+	}
+	var payToPutResult truedemocracy.QueryPayToPutResponse
+	if err := app.appCodec.Unmarshal(payToPutResponse.Value, &payToPutResult); err != nil {
+		t.Fatal(err)
+	}
+	var payToPut truedemocracy.PayToPutResult
+	if err := json.Unmarshal(payToPutResult.Result, &payToPut); err != nil {
+		t.Fatal(err)
+	}
+	// Genesis domain "Test": treasury 1000 upnyx, one member, so
+	// base = 1000/1000 = 1 and final = 1 * min(15, 1) = 1.
+	if payToPut.BaseCost != "1" || payToPut.FinalCost != "1" || payToPut.DomainMultiplier != 1 {
+		t.Fatalf("unexpected PayToPut query result: %+v", payToPut)
+	}
+
+	merkleProofRequest, err := app.appCodec.Marshal(&truedemocracy.QueryMerkleProofRequest{
+		DomainName: "Test",
+		Commitment: "0000000000000000000000000000000000000000000000000000000000000000",
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	merkleProofResponse, err := app.Query(context.Background(), &abci.RequestQuery{
+		Path: "/truedemocracy.Query/MerkleProof",
+		Data: merkleProofRequest,
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	// Genesis domain "Test" has no identity commitments, so the proof
+	// query must fail closed instead of fabricating a path.
+	if merkleProofResponse.Code == 0 {
+		t.Fatal("MerkleProof query unexpectedly succeeded for a domain without identity commitments")
 	}
 
 	dexRequest, err := app.appCodec.Marshal(&dex.QueryPoolsRequest{})

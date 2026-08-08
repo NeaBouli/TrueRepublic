@@ -12,7 +12,11 @@ interface MembershipState {
 
 interface MembershipStore extends MembershipState {
   parseInvite: (link: string) => boolean;
-  loadMembership: (domainId: string, address: string) => Promise<void>;
+  loadMembership: (
+    domainId: string,
+    address: string,
+    locallyOwnedCommitment?: string
+  ) => Promise<void>;
   clearInvite: () => void;
 }
 
@@ -36,19 +40,19 @@ export const useMembershipStore = create<MembershipStore>((set) => ({
     return true;
   },
 
-  loadMembership: async (domainId: string, address: string) => {
+  loadMembership: async (
+    domainId: string,
+    address: string,
+    locallyOwnedCommitment?: string
+  ) => {
     try {
       set({ isLoading: true, error: null });
 
       const status = await membershipService.getMembershipStatus(
         domainId,
-        address
+        address,
+        locallyOwnedCommitment
       );
-
-      if (!status) {
-        set({ isLoading: false });
-        return;
-      }
 
       set((state) => ({
         memberships: {

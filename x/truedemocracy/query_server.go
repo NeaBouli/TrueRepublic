@@ -2,7 +2,10 @@ package truedemocracy
 
 import (
 	"context"
+	"encoding/hex"
 	"encoding/json"
+	"fmt"
+	"strings"
 
 	errorsmod "cosmossdk.io/errors"
 	gogogrpc "github.com/cosmos/gogoproto/grpc"
@@ -11,6 +14,8 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"google.golang.org/grpc"
+
+	rewards "truerepublic/treasury/keeper"
 )
 
 // ---------------------------------------------------------------------------
@@ -126,6 +131,39 @@ func (*QueryZKPStateResponse) ProtoMessage()  {}
 func (*QueryZKPStateResponse) Reset()         {}
 func (*QueryZKPStateResponse) String() string { return "QueryZKPStateResponse" }
 
+type QueryMerkleProofRequest struct {
+	DomainName string `protobuf:"bytes,1,opt,name=domain_name,json=domainName,proto3" json:"domain_name"`
+	Commitment string `protobuf:"bytes,2,opt,name=commitment,proto3" json:"commitment"`
+}
+
+func (*QueryMerkleProofRequest) ProtoMessage()  {}
+func (*QueryMerkleProofRequest) Reset()         {}
+func (*QueryMerkleProofRequest) String() string { return "QueryMerkleProofRequest" }
+
+type QueryMerkleProofResponse struct {
+	Result []byte `protobuf:"bytes,1,opt,name=result,proto3" json:"result"`
+}
+
+func (*QueryMerkleProofResponse) ProtoMessage()  {}
+func (*QueryMerkleProofResponse) Reset()         {}
+func (*QueryMerkleProofResponse) String() string { return "QueryMerkleProofResponse" }
+
+type QueryPayToPutRequest struct {
+	DomainName string `protobuf:"bytes,1,opt,name=domain_name,json=domainName,proto3" json:"domain_name"`
+}
+
+func (*QueryPayToPutRequest) ProtoMessage()  {}
+func (*QueryPayToPutRequest) Reset()         {}
+func (*QueryPayToPutRequest) String() string { return "QueryPayToPutRequest" }
+
+type QueryPayToPutResponse struct {
+	Result []byte `protobuf:"bytes,1,opt,name=result,proto3" json:"result"`
+}
+
+func (*QueryPayToPutResponse) ProtoMessage()  {}
+func (*QueryPayToPutResponse) Reset()         {}
+func (*QueryPayToPutResponse) String() string { return "QueryPayToPutResponse" }
+
 // ---------------------------------------------------------------------------
 // Register query types with gogoproto
 // ---------------------------------------------------------------------------
@@ -146,6 +184,10 @@ func init() {
 	gogoproto.RegisterType((*QueryPurgeScheduleResponse)(nil), "truedemocracy.QueryPurgeScheduleResponse")
 	gogoproto.RegisterType((*QueryZKPStateRequest)(nil), "truedemocracy.QueryZKPStateRequest")
 	gogoproto.RegisterType((*QueryZKPStateResponse)(nil), "truedemocracy.QueryZKPStateResponse")
+	gogoproto.RegisterType((*QueryMerkleProofRequest)(nil), "truedemocracy.QueryMerkleProofRequest")
+	gogoproto.RegisterType((*QueryMerkleProofResponse)(nil), "truedemocracy.QueryMerkleProofResponse")
+	gogoproto.RegisterType((*QueryPayToPutRequest)(nil), "truedemocracy.QueryPayToPutRequest")
+	gogoproto.RegisterType((*QueryPayToPutResponse)(nil), "truedemocracy.QueryPayToPutResponse")
 }
 
 // ---------------------------------------------------------------------------
@@ -160,6 +202,8 @@ type QueryServer interface {
 	Nullifier(context.Context, *QueryNullifierRequest) (*QueryNullifierResponse, error)
 	PurgeSchedule(context.Context, *QueryPurgeScheduleRequest) (*QueryPurgeScheduleResponse, error)
 	ZKPState(context.Context, *QueryZKPStateRequest) (*QueryZKPStateResponse, error)
+	MerkleProof(context.Context, *QueryMerkleProofRequest) (*QueryMerkleProofResponse, error)
+	PayToPut(context.Context, *QueryPayToPutRequest) (*QueryPayToPutResponse, error)
 }
 
 var _ QueryServer = Keeper{}
@@ -296,6 +340,135 @@ func (k Keeper) ZKPState(goCtx context.Context, req *QueryZKPStateRequest) (*Que
 	return &QueryZKPStateResponse{Result: bz}, nil
 }
 
+// MerkleProofResult is the JSON payload returned by the MerkleProof query.
+// PathElements holds the hex-encoded sibling hashes, one per tree level, and
+// PathIndices marks 0 = current node is left child, 1 = right child.
+type MerkleProofResult struct {
+	DomainName   string   `json:"domain_name"`
+	Commitment   string   `json:"commitment"`
+	Root         string   `json:"root"`
+	PathIndices  []int    `json:"path_indices"`
+	PathElements []string `json:"path_elements"`
+}
+
+func (k Keeper) MerkleProof(goCtx context.Context, req *QueryMerkleProofRequest) (*QueryMerkleProofResponse, error) {
+	if req == nil || req.DomainName == "" {
+		return nil, errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "domain name is required")
+	}
+	if len(req.Commitment) != 64 {
+		return nil, errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "commitment must be 32 bytes hex-encoded (64 hex chars)")
+	}
+	if _, err := hex.DecodeString(req.Commitment); err != nil {
+		return nil, errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "commitment must be valid hex")
+	}
+	requestedCommitment := strings.ToLower(req.Commitment)
+	ctx := sdk.UnwrapSDKContext(goCtx)
+	domain, found := k.GetDomain(ctx, req.DomainName)
+	if !found {
+		return nil, errorsmod.Wrapf(sdkerrors.ErrKeyNotFound, "domain %s not found", req.DomainName)
+	}
+	if domain.MerkleRoot == "" {
+		return nil, errorsmod.Wrapf(sdkerrors.ErrInvalidRequest, "domain %s has no Merkle root", req.DomainName)
+	}
+	leafIndex := -1
+	for i, commitment := range domain.IdentityCommits {
+		if commitment != requestedCommitment {
+			continue
+		}
+		if leafIndex >= 0 {
+			return nil, errorsmod.Wrapf(sdkerrors.ErrInvalidRequest, "domain %s contains duplicate identity commitment", req.DomainName)
+		}
+		leafIndex = i
+	}
+	if leafIndex < 0 {
+		return nil, errorsmod.Wrapf(sdkerrors.ErrKeyNotFound, "commitment not found in domain %s", req.DomainName)
+	}
+	leaves := make([][]byte, len(domain.IdentityCommits))
+	for i, commitment := range domain.IdentityCommits {
+		if len(commitment) != 64 {
+			return nil, errorsmod.Wrapf(sdkerrors.ErrInvalidRequest, "domain %s contains malformed identity commitment at index %d", req.DomainName, i)
+		}
+		b, err := hex.DecodeString(commitment)
+		if err != nil {
+			return nil, errorsmod.Wrapf(sdkerrors.ErrInvalidRequest, "domain %s contains malformed identity commitment at index %d", req.DomainName, i)
+		}
+		leaves[i] = b
+	}
+	tree := NewMerkleTree(MerkleTreeDepth)
+	if err := tree.BuildFromLeaves(leaves); err != nil {
+		return nil, errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "failed to rebuild identity Merkle tree: "+err.Error())
+	}
+	if tree.GetRoot() != domain.MerkleRoot {
+		return nil, errorsmod.Wrapf(sdkerrors.ErrInvalidRequest, "domain %s stored Merkle root does not match identity commitments", req.DomainName)
+	}
+	siblings, pathIndices, err := tree.GenerateProof(leafIndex)
+	if err != nil {
+		return nil, errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "failed to generate Merkle proof: "+err.Error())
+	}
+	pathElements := make([]string, len(siblings))
+	for i, sibling := range siblings {
+		pathElements[i] = hex.EncodeToString(sibling)
+	}
+	result := MerkleProofResult{
+		DomainName:   domain.Name,
+		Commitment:   domain.IdentityCommits[leafIndex],
+		Root:         domain.MerkleRoot,
+		PathIndices:  pathIndices,
+		PathElements: pathElements,
+	}
+	bz, err := json.Marshal(result)
+	if err != nil {
+		return nil, err
+	}
+	return &QueryMerkleProofResponse{Result: bz}, nil
+}
+
+// PayToPutResult is the JSON payload returned by the PayToPut query. BaseCost
+// and FinalCost are decimal amounts in upnyx base units; DomainMultiplier is
+// the effective min(CPut, member count) factor of eq.3.
+type PayToPutResult struct {
+	DomainName       string `json:"domain_name"`
+	BaseCost         string `json:"base_cost"`
+	DomainMultiplier int64  `json:"domain_multiplier"`
+	FinalCost        string `json:"final_cost"`
+	Formula          string `json:"formula"`
+}
+
+func (k Keeper) PayToPut(goCtx context.Context, req *QueryPayToPutRequest) (*QueryPayToPutResponse, error) {
+	if req == nil || req.DomainName == "" {
+		return nil, errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "domain name is required")
+	}
+	ctx := sdk.UnwrapSDKContext(goCtx)
+	domain, found := k.GetDomain(ctx, req.DomainName)
+	if !found {
+		return nil, errorsmod.Wrapf(sdkerrors.ErrKeyNotFound, "domain %s not found", req.DomainName)
+	}
+	treasury := domain.Treasury.AmountOf(PNYXDenom)
+	memberCount := int64(len(domain.Members))
+	// Identical to Keeper.SubmitProposal: eq.2 base reward and eq.3 put price.
+	baseCost := rewards.CalcReward(treasury)
+	finalCost := rewards.CalcPutPrice(treasury, memberCount)
+	multiplier := memberCount
+	if multiplier > rewards.CPut {
+		multiplier = rewards.CPut
+	}
+	result := PayToPutResult{
+		DomainName:       domain.Name,
+		BaseCost:         baseCost.String(),
+		DomainMultiplier: multiplier,
+		FinalCost:        finalCost.String(),
+		Formula: fmt.Sprintf(
+			"final_cost = base_cost * domain_multiplier = min((treasury/CEarn)*CPut, (treasury/CEarn)*members); treasury=%s%s, CEarn=%d, CPut=%d, members=%d",
+			treasury.String(), PNYXDenom, rewards.CEarn, rewards.CPut, memberCount,
+		),
+	}
+	bz, err := json.Marshal(result)
+	if err != nil {
+		return nil, err
+	}
+	return &QueryPayToPutResponse{Result: bz}, nil
+}
+
 // ---------------------------------------------------------------------------
 // gRPC method handlers
 // ---------------------------------------------------------------------------
@@ -405,6 +578,36 @@ func _Query_ZKPState_Handler(srv interface{}, ctx context.Context, dec func(inte
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Query_MerkleProof_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(QueryMerkleProofRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QueryServer).MerkleProof(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{Server: srv, FullMethod: "/truedemocracy.Query/MerkleProof"}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QueryServer).MerkleProof(ctx, req.(*QueryMerkleProofRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Query_PayToPut_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(QueryPayToPutRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QueryServer).PayToPut(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{Server: srv, FullMethod: "/truedemocracy.Query/PayToPut"}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QueryServer).PayToPut(ctx, req.(*QueryPayToPutRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // ---------------------------------------------------------------------------
 // gRPC service registration
 // ---------------------------------------------------------------------------
@@ -424,6 +627,8 @@ var _Query_serviceDesc = grpc.ServiceDesc{
 		{MethodName: "Nullifier", Handler: _Query_Nullifier_Handler},
 		{MethodName: "PurgeSchedule", Handler: _Query_PurgeSchedule_Handler},
 		{MethodName: "ZKPState", Handler: _Query_ZKPState_Handler},
+		{MethodName: "MerkleProof", Handler: _Query_MerkleProof_Handler},
+		{MethodName: "PayToPut", Handler: _Query_PayToPut_Handler},
 	},
 	Streams:  []grpc.StreamDesc{},
 	Metadata: queryDescriptorFile,
@@ -498,6 +703,24 @@ func (c *queryClient) PurgeSchedule(ctx context.Context, in *QueryPurgeScheduleR
 func (c *queryClient) ZKPState(ctx context.Context, in *QueryZKPStateRequest) (*QueryZKPStateResponse, error) {
 	out := new(QueryZKPStateResponse)
 	err := c.cc.Invoke(ctx, "/truedemocracy.Query/ZKPState", in, out)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *queryClient) MerkleProof(ctx context.Context, in *QueryMerkleProofRequest) (*QueryMerkleProofResponse, error) {
+	out := new(QueryMerkleProofResponse)
+	err := c.cc.Invoke(ctx, "/truedemocracy.Query/MerkleProof", in, out)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *queryClient) PayToPut(ctx context.Context, in *QueryPayToPutRequest) (*QueryPayToPutResponse, error) {
+	out := new(QueryPayToPutResponse)
+	err := c.cc.Invoke(ctx, "/truedemocracy.Query/PayToPut", in, out)
 	if err != nil {
 		return nil, err
 	}

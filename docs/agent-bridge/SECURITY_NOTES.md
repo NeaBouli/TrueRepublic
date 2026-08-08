@@ -1,5 +1,26 @@
 # Security Notes
 
+## GH-121 registered browser query boundary
+
+- The maintained browser no longer calls unregistered custom-module REST
+  aliases. It sends protobuf requests only to registered gRPC method paths over
+  the existing configured CometBFT JSON-RPC endpoint; no new listener or public
+  gateway route is introduced.
+- RPC/ABCI/protobuf/JSON and nested response-shape failures remain explicit.
+  They cannot manufacture empty governance or DEX state, an unused nullifier,
+  a default Pay-to-Put price, or a malformed Merkle path.
+- Merkle proof queries require canonical 32-byte hex commitments, exact unique
+  stored membership, depth-20 MiMC paths, and agreement with the stored root.
+  Pay-to-Put uses the canonical treasury calculation and fails closed.
+- The browser still trusts the configured RPC provider; a browser light client
+  is outside GH-121. Production RPC exposure and ingress policy remain governed
+  by the existing rollout gates.
+- A new live High npm audit found `nanoid` below 3.3.17 in the lockfile. The
+  compatible lock-only resolution is now 3.3.18 and the unchanged fail-closed
+  audit policy passes with no live High advisory.
+- The current bundle is 322.63 kB gzip and still emits the existing >500 kB
+  minified-chunk warning. Route-level splitting remains an open rollout task.
+
 ## Open
 
 - The token/ledger recovery slice through GH-12 is merged to `main` after local

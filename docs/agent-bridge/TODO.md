@@ -40,10 +40,12 @@
   unregistered HTTP gateway.
 - [x] GH-116: complete protected exact-head CI, review, merge, issue closure,
   Bridge synchronization, and final-main verification.
-- [ ] GH-121: replace the maintained browser client's unregistered custom-
+- [x] GH-121: replace the maintained browser client's unregistered custom-
   module REST aliases with one explicitly supported query transport, reject
   unavailable data instead of silently returning empty state, and prove the
   boundary against a disposable chain.
+- [ ] GH-121: complete independent final review, protected exact-head CI,
+  merge, issue closure, Bridge synchronization, and final-main verification.
 - [x] GH-122: merge the isolated patched `js-yaml` lock resolution through PR
   #123 after final exact-head security and maintained-client checks pass;
   preserve the fail-closed live High audit policy.

@@ -23,6 +23,9 @@ export function LPPositions() {
     Record<string, LPPosition | null>
   >({});
   const [sharesInput, setSharesInput] = useState<Record<string, string>>({});
+  const [positionErrors, setPositionErrors] = useState<Record<string, string>>(
+    {}
+  );
 
   useEffect(() => {
     loadPools();
@@ -33,12 +36,23 @@ export function LPPositions() {
     if (!shares || parseInt(shares, 10) <= 0) return;
 
     const dexService = new DEXService(DEFAULT_CHAIN);
-    const position = await dexService.getLPPosition(assetDenom, shares);
-
-    setPositions((previous) => ({
-      ...previous,
-      [assetDenom]: position,
-    }));
+    setPositionErrors((previous) => ({ ...previous, [assetDenom]: '' }));
+    try {
+      const position = await dexService.getLPPosition(assetDenom, shares);
+      setPositions((previous) => ({
+        ...previous,
+        [assetDenom]: position,
+      }));
+    } catch (queryError: unknown) {
+      setPositions((previous) => ({ ...previous, [assetDenom]: null }));
+      setPositionErrors((previous) => ({
+        ...previous,
+        [assetDenom]:
+          queryError instanceof Error
+            ? queryError.message
+            : 'Unable to load the current LP position',
+      }));
+    }
   };
 
   return (
@@ -97,6 +111,7 @@ export function LPPositions() {
             const assetSymbol =
               pool.asset_symbol || pool.asset_denom.toUpperCase();
             const inputShares = sharesInput[pool.asset_denom] || '';
+            const positionError = positionErrors[pool.asset_denom];
 
             return (
               <Card key={pool.asset_denom}>
@@ -173,6 +188,15 @@ export function LPPositions() {
                     Check
                   </Button>
                 </div>
+
+                {positionError && (
+                  <div
+                    role="alert"
+                    className="mt-4 bg-red-50 border border-red-200 rounded-lg p-3 text-sm text-red-800"
+                  >
+                    {positionError}
+                  </div>
+                )}
 
                 {/* Position result */}
                 {position && (

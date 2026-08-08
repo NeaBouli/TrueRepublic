@@ -30,6 +30,10 @@ export function RemoveLiquidity() {
     key: string;
     position: LPPosition | null;
   } | null>(null);
+  const [previewError, setPreviewError] = useState<{
+    key: string;
+    message: string;
+  } | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [txHash, setTxHash] = useState('');
   const [error, setError] = useState('');
@@ -50,11 +54,25 @@ export function RemoveLiquidity() {
     let cancelled = false;
     const requestKey = `${assetDenom}:${shares}`;
     const dexService = new DEXService(DEFAULT_CHAIN);
-    void dexService.getLPPosition(assetDenom, shares).then((position) => {
-      if (!cancelled) {
-        setPositionResult({ key: requestKey, position });
-      }
-    });
+    void dexService
+      .getLPPosition(assetDenom, shares)
+      .then((position) => {
+        if (!cancelled) {
+          setPositionResult({ key: requestKey, position });
+        }
+      })
+      .catch((queryError: unknown) => {
+        if (!cancelled) {
+          setPositionResult(null);
+          setPreviewError({
+            key: requestKey,
+            message:
+              queryError instanceof Error
+                ? queryError.message
+                : 'Unable to load the current LP position',
+          });
+        }
+      });
 
     return () => {
       cancelled = true;
@@ -64,6 +82,10 @@ export function RemoveLiquidity() {
   const positionPreview =
     positionResult?.key === `${assetDenom}:${shares}`
       ? positionResult.position
+      : null;
+  const currentPreviewError =
+    previewError?.key === `${assetDenom}:${shares}`
+      ? previewError.message
       : null;
 
   const handleRemoveLiquidity = async () => {
@@ -192,12 +214,23 @@ export function RemoveLiquidity() {
             <Input
               type="number"
               value={shares}
-              onChange={(e) => setShares(e.target.value)}
+              onChange={(e) => {
+                setShares(e.target.value);
+              }}
               placeholder="Enter number of shares"
             />
           </div>
 
           {/* Preview Output */}
+          {currentPreviewError && (
+            <div
+              role="alert"
+              className="bg-red-50 border border-red-200 rounded-lg p-3 mb-4"
+            >
+              <p className="text-sm text-red-800">{currentPreviewError}</p>
+            </div>
+          )}
+
           {positionPreview && (
             <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
               <div className="flex items-start gap-2">

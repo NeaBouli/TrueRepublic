@@ -251,6 +251,10 @@ truerepublicd query truedemocracy domain my-domain
 # Query a DEX pool through the supported CLI/gRPC client
 truerepublicd query dex pool atom
 
+# Query the canonical proposal fee and one identity proof
+truerepublicd query truedemocracy pay-to-put my-domain
+truerepublicd query truedemocracy merkle-proof my-domain <commitment>
+
 # Query registered assets through the supported CLI/gRPC client
 truerepublicd query dex registered-assets
 
@@ -261,9 +265,10 @@ curl http://localhost:26657/status
 curl http://localhost:26657/block
 ```
 
-TrueRepublic does not currently register custom-module grpc-gateway HTTP
-aliases on port 1317. The maintained client's remaining assumptions about such
-aliases are tracked by GH-121 and are not a supported integration boundary.
+TrueRepublic does not register custom-module grpc-gateway HTTP aliases on port
+1317. The maintained browser uses the registered protobuf method paths through
+CometBFT JSON-RPC `abci_query` on its configured RPC endpoint. Query failures
+surface as unavailable/error state and never as fabricated empty chain state.
 
 ---
 

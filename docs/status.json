@@ -4,10 +4,10 @@
   "release_date": "2026-03-04",
   "tests": {
     "status": "recovery_verified_locally",
-    "total": 1450,
-    "go": 1333,
+    "total": 1476,
+    "go": 1352,
     "rust": 26,
-    "frontend": 91,
+    "frontend": 98,
     "historical_total": 577
   },
   "web_client": {
@@ -16,8 +16,8 @@
     "components": 42,
     "routes": 21,
     "stores": 8,
-    "services": 13,
-    "build_size_gzip": "318.91 kB"
+    "services": 14,
+    "build_size_gzip": "322.63 kB"
   },
   "recovery": {
     "status": "active",
@@ -54,7 +54,7 @@
     "topologypolicy": 56,
     "treasury": 36,
     "dex": 124,
-    "truedemocracy": 505
+    "truedemocracy": 524
   },
   "token": {
     "symbol": "PNYX",
@@ -150,7 +150,7 @@
       "production_deployment": false
     },
     "web_client": {
-      "status": "canonical_registry_and_local_chain_delivery_verified_local_and_ci",
+      "status": "canonical_registry_delivery_and_registered_query_transport_verified_locally",
       "features": [
         "wallet_create_import_unlock",
         "send_transactions",
@@ -162,13 +162,14 @@
         "network_explorer"
       ],
       "custom_transaction_registry": "exact_fail_closed_type_urls_on_gh115",
-      "local_chain_delivery": "ephemeral_bank_governance_membership_identity_and_dex_on_gh115"
+      "local_chain_delivery": "ephemeral_bank_governance_membership_identity_and_dex_on_gh115",
+      "module_query_transport": "registered_grpc_over_cometbft_abci_json_rpc_fail_closed_on_gh121"
     },
     "module_queries": {
-      "status": "legacy_custom_abci_removed_on_gh116",
-      "supported_clients": "daemon_cli_and_protobuf_grpc",
+      "status": "registered_grpc_over_abci_browser_transport_verified_locally_on_gh121",
+      "supported_clients": "daemon_cli_protobuf_grpc_and_browser_cometbft_abci_json_rpc",
       "grpc_gateway_custom_modules": false,
-      "maintained_client_gateway_gap": "tracked_on_gh121"
+      "maintained_client_gateway_gap": "closed_locally_by_registered_grpc_over_abci_transport_on_gh121"
     }
   },
   "limitations": {

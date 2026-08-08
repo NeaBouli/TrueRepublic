@@ -6,10 +6,10 @@
 /** Domain member from Domain.Members array */
 export interface DomainMember {
   address: string;
-  /** Whether the member has registered an identity commitment */
-  hasIdentityCommitment: boolean;
-  /** Whether the member's key is in the permission register */
-  inPermissionReg: boolean;
+  /** Unknown because on-chain commitments are intentionally address-unbound. */
+  hasIdentityCommitment: null;
+  /** Unknown because on-chain permission keys are intentionally address-unbound. */
+  inPermissionReg: null;
 }
 
 /** Domain statistics computed from domain query data */

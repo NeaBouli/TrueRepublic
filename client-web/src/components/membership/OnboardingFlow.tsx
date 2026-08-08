@@ -38,19 +38,19 @@ export function OnboardingFlow() {
 
   useEffect(() => {
     if (!domainId || !currentWallet) return;
-    loadMembership(domainId, currentWallet.address);
-  }, [domainId, currentWallet, loadMembership]);
+    loadMembership(domainId, currentWallet.address, identity?.commitment);
+  }, [domainId, currentWallet, identity?.commitment, loadMembership]);
 
   // Poll for membership approval
   useEffect(() => {
     if (step !== 'waiting' || !domainId || !currentWallet) return;
 
     const interval = setInterval(() => {
-      loadMembership(domainId, currentWallet.address);
+      loadMembership(domainId, currentWallet.address, identity?.commitment);
     }, 5000);
 
     return () => clearInterval(interval);
-  }, [step, domainId, currentWallet, loadMembership]);
+  }, [step, domainId, currentWallet, identity?.commitment, loadMembership]);
 
   const handleCreateIdentity = () => {
     createIdentity();
@@ -80,7 +80,11 @@ export function OnboardingFlow() {
       }
 
       setTxHash(result.hash);
-      await loadMembership(domainId, currentWallet.address);
+      await loadMembership(
+        domainId,
+        currentWallet.address,
+        identity.commitment
+      );
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : 'Registration failed');
     } finally {

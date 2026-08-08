@@ -31,7 +31,7 @@
 
 ## CLI Query Commands
 
-### truedemocracy module (7 commands)
+### truedemocracy module (9 commands)
 
 | Command | Usage | gRPC method |
 |---------|-------|-------------|
@@ -42,6 +42,8 @@
 | nullifier | `truerepublicd query truedemocracy nullifier [domain] [hash]` | `/truedemocracy.Query/Nullifier` |
 | purge-schedule | `truerepublicd query truedemocracy purge-schedule [domain]` | `/truedemocracy.Query/PurgeSchedule` |
 | zkp-state | `truerepublicd query truedemocracy zkp-state [domain]` | `/truedemocracy.Query/ZKPState` |
+| merkle-proof | `truerepublicd query truedemocracy merkle-proof [domain] [commitment]` | `/truedemocracy.Query/MerkleProof` |
+| pay-to-put | `truerepublicd query truedemocracy pay-to-put [domain]` | `/truedemocracy.Query/PayToPut` |
 
 ### dex module (9 commands)
 
@@ -59,8 +61,10 @@
 
 ## Supported module query boundary
 
-The supported public interfaces for custom-module reads are the daemon CLI and
-the protobuf gRPC services on the private operator gRPC listener. The former
+The supported interfaces for custom-module reads are the daemon CLI, the
+protobuf gRPC services on the private operator gRPC listener, and the maintained
+browser client's typed use of those registered methods through CometBFT
+`abci_query` on the existing RPC proxy. The former
 compatibility-only custom ABCI paths were retired under GH-116 after their last
 clients were removed. They are not a supported API.
 
@@ -90,7 +94,7 @@ Standard CometBFT RPC:
 | `/block` | Latest block |
 | `/block?height=N` | Block at height N |
 | `/validators` | Current validator set |
-| `/abci_query?path=...&data=...` | SDK/gRPC query transport; use documented protobuf services, not retired compatibility paths |
+| JSON-RPC `abci_query` with `path` and protobuf `data` | SDK/gRPC query transport used by the maintained browser; only documented registered methods are supported |
 | `/broadcast_tx_sync` | Broadcast transaction |
 | `/tx?hash=0x...` | Transaction by hash |
 

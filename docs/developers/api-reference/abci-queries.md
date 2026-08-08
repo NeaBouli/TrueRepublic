@@ -9,14 +9,15 @@ listener. The CLI uses the same gRPC query clients.
 - `truerepublicd query truedemocracy ...`
 - `truerepublicd query dex ...`
 - protobuf gRPC clients using the exact service methods below
+- maintained `client-web` services using typed protobuf requests through the
+  existing CometBFT JSON-RPC `abci_query` transport and `/rpc/` reverse proxy
 - in-process Go integrations using `truedemocracy.NewQueryClient` or
   `dex.NewQueryClient`
 
-The maintained `client-web` does not consume the retired legacy query surface.
-Its existing custom-module read services still target unregistered HTTP aliases;
-that pre-existing fail-soft compatibility gap is tracked separately in
-[GH-121](https://github.com/NeaBouli/TrueRepublic/issues/121). Those aliases are
-not a supported API and must not be treated as authoritative chain reads.
+The maintained browser client does not consume the retired legacy query surface
+or unregistered custom-module HTTP aliases. Module-query failures remain errors;
+they are not converted into empty lists, false authorization/nullifier state, or
+fallback economic parameters.
 
 ## truedemocracy service
 
@@ -31,6 +32,8 @@ Service: `truedemocracy.Query`
 | `/truedemocracy.Query/Nullifier` | `domain_name`, `nullifier_hash` | Nullifier-use result as JSON bytes |
 | `/truedemocracy.Query/PurgeSchedule` | `domain_name` | Purge schedule as JSON bytes |
 | `/truedemocracy.Query/ZKPState` | `domain_name` | ZKP domain state as JSON bytes |
+| `/truedemocracy.Query/MerkleProof` | `domain_name`, `commitment` | Verified Merkle membership path as JSON bytes |
+| `/truedemocracy.Query/PayToPut` | `domain_name` | Canonical current proposal fee calculation as JSON bytes |
 
 CLI examples:
 
@@ -39,6 +42,8 @@ truerepublicd query truedemocracy domains
 truerepublicd query truedemocracy domain Climate
 truerepublicd query truedemocracy validator truerepublic1...
 truerepublicd query truedemocracy nullifier Climate <hash>
+truerepublicd query truedemocracy merkle-proof Climate <commitment>
+truerepublicd query truedemocracy pay-to-put Climate
 ```
 
 ## DEX service
@@ -76,8 +81,17 @@ the services above.
 The compatibility-only legacy `custom/...` ABCI surface was removed under
 GH-116 after both prototype clients that referenced it were retired. It is not
 versioned or supported, and calls fail closed through the normal Cosmos SDK
-unknown-query response. Integrations must use the CLI or protobuf gRPC methods.
+unknown-query response. Integrations must use the CLI, registered protobuf gRPC
+methods, or the maintained browser's `ModuleQueryClient`, which sends those
+same typed requests through the supported CometBFT JSON-RPC `abci_query`
+transport.
 
-The generic CometBFT `/abci_query` transport remains part of the node, including
-for SDK gRPC routing, but hand-building protobuf request bytes over that transport
-is not the supported external integration contract.
+The browser boundary sends protobuf request bytes for the registered methods
+above through CometBFT JSON-RPC `abci_query` on the configured RPC endpoint. The
+response `result.response.value` is the base64 protobuf `Query*Response`; its
+field 1 contains the module's JSON result bytes. This reuses the existing
+same-origin `/rpc/` proxy and does not expose the private gRPC listener or add a
+custom grpc-gateway surface. A non-zero ABCI code, transport failure, or invalid
+protobuf/JSON response is an unavailable/error result, never an authoritative
+empty result. This is a trusted-RPC read boundary, not a browser light-client
+proof: operators and users must configure an RPC endpoint they trust.

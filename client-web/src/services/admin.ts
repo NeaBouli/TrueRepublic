@@ -11,12 +11,21 @@ import type {
 } from '@/types/admin';
 import type { TransactionResult } from '@/types/transaction';
 import { connectSigningClient, deliverMessages } from './signingClient';
+import type { ChainDomain } from '@/types/chainData';
+import {
+  expectChainDomain,
+  ModuleQueryClient,
+  QUERY_PATHS,
+} from './moduleQuery';
 
 export class AdminService {
-  private config: ChainConfig;
+  private readonly queries: ModuleQueryClient;
 
-  constructor(config: ChainConfig) {
-    this.config = config;
+  constructor(
+    private readonly config: ChainConfig,
+    queries = new ModuleQueryClient(config)
+  ) {
+    this.queries = queries;
   }
 
   /**
@@ -24,98 +33,67 @@ export class AdminService {
    * Go Domain has a single Admin field (not an admins list).
    */
   async isAdmin(domainName: string, address: string): Promise<boolean> {
-    try {
-      const response = await fetch(
-        `${this.config.rest}/truerepublic/truedemocracy/domain/${domainName}`
-      );
-
-      if (!response.ok) return false;
-
-      const data = await response.json();
-      const domain = data.domain || data;
-
-      return domain.admin === address;
-    } catch {
-      return false;
-    }
+    const domain = await this.getDomain(domainName);
+    return domain.admin === address;
   }
 
   /**
-   * Get domain members with their identity/permission status.
-   * Derived from the Domain query (members, identity_commits, permission_reg).
+   * Get domain member addresses without attributing anonymous identity or
+   * permission-register entries to individual members.
    */
   async getDomainMembers(domainName: string): Promise<DomainMember[]> {
-    try {
-      const response = await fetch(
-        `${this.config.rest}/truerepublic/truedemocracy/domain/${domainName}`
-      );
-
-      if (!response.ok) return [];
-
-      const data = await response.json();
-      const domain = data.domain || data;
-
-      const members: string[] = domain.members || [];
-      const identityCommits: string[] = domain.identity_commits || [];
-      const permissionReg: string[] = domain.permission_reg || [];
-
-      return members.map((address) => ({
-        address,
-        hasIdentityCommitment: identityCommits.length > 0,
-        inPermissionReg: permissionReg.length > 0,
-      }));
-    } catch {
-      return [];
-    }
+    const domain = await this.getDomain(domainName);
+    const members = domain.members ?? [];
+    return members.map((address) => ({
+      address,
+      hasIdentityCommitment: null,
+      inPermissionReg: null,
+    }));
   }
 
   /**
    * Compute domain statistics from available query data.
    * No dedicated domain_stats endpoint exists — derived from domain query.
    */
-  async getDomainStats(domainName: string): Promise<DomainStats | null> {
-    try {
-      const response = await fetch(
-        `${this.config.rest}/truerepublic/truedemocracy/domain/${domainName}`
-      );
-
-      if (!response.ok) return null;
-
-      const data = await response.json();
-      const domain = data.domain || data;
-
-      const members: string[] = domain.members || [];
-      const issues: unknown[] = domain.issues || [];
-      const identityCommits: string[] = domain.identity_commits || [];
-      const permissionReg: string[] = domain.permission_reg || [];
-      const treasury = domain.treasury || [];
+  async getDomainStats(domainName: string): Promise<DomainStats> {
+    const domain = await this.getDomain(domainName);
+    const members = domain.members ?? [];
+    const issues = domain.issues ?? [];
+    const identityCommits = domain.identity_commits ?? [];
+    const permissionReg = domain.permission_reg ?? [];
+    const treasury = domain.treasury ?? [];
 
       // Count suggestions across all issues
-      let totalSuggestions = 0;
-      for (const issue of issues) {
-        const iss = issue as { suggestions?: unknown[] };
-        totalSuggestions += iss.suggestions?.length || 0;
-      }
+    let totalSuggestions = 0;
+    for (const issue of issues) {
+      totalSuggestions += issue.suggestions?.length ?? 0;
+    }
 
       // Get PNYX balance from treasury coins
-      const pnyxCoin = treasury.find(
-        (coin: { denom: string; amount: string }) =>
-          coin.denom === this.config.coinMinimalDenom
-      );
+    const pnyxCoin = treasury.find(
+      (coin) => coin.denom === this.config.coinMinimalDenom
+    );
 
-      return {
-        domainName: domain.name,
-        totalMembers: members.length,
-        totalIssues: issues.length,
-        totalSuggestions,
-        treasuryBalance: pnyxCoin?.amount || '0',
-        identityCommitments: identityCommits.length,
-        permissionRegCount: permissionReg.length,
-        merkleRoot: domain.merkle_root || '',
-      };
-    } catch {
-      return null;
-    }
+    return {
+      domainName: domain.name,
+      totalMembers: members.length,
+      totalIssues: issues.length,
+      totalSuggestions,
+      treasuryBalance: pnyxCoin?.amount || '0',
+      identityCommitments: identityCommits.length,
+      permissionRegCount: permissionReg.length,
+      merkleRoot: domain.merkle_root || '',
+    };
+  }
+
+  private getDomain(domainName: string): Promise<ChainDomain> {
+    return this.queries
+      .query<unknown>(QUERY_PATHS.truedemocracy.domain, [
+        { number: 1, type: 'string', value: domainName },
+      ])
+      .then((value) =>
+        expectChainDomain(QUERY_PATHS.truedemocracy.domain, value)
+      );
   }
 
   /**

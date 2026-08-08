@@ -24,14 +24,21 @@ import type {
   MerkleProof,
 } from '@/types/zkp';
 import type { ChainConfig } from '@/types/chain';
+import {
+  expectChainMerkleProof,
+  expectQueryBoolean,
+  expectQueryRecord,
+  ModuleQueryClient,
+  QUERY_PATHS,
+} from './moduleQuery';
 
 export class ZKPService {
   private wasmLoaded = false;
   private statusCallback?: (status: ProofGenerationStatus) => void;
-  private config: ChainConfig;
+  private readonly queries: ModuleQueryClient;
 
-  constructor(config: ChainConfig) {
-    this.config = config;
+  constructor(config: ChainConfig, queries = new ModuleQueryClient(config)) {
+    this.queries = queries;
   }
 
   /**
@@ -79,19 +86,24 @@ export class ZKPService {
   async fetchMerkleProof(
     domainName: string,
     commitment: string
-  ): Promise<MerkleProof | null> {
-    try {
-      const response = await fetch(
-        `${this.config.rest}/truerepublic/truedemocracy/merkle_proof/${domainName}/${commitment}`
-      );
-
-      if (!response.ok) return null;
-
-      const data = await response.json();
-      return data.proof || null;
-    } catch {
-      return null;
-    }
+  ): Promise<MerkleProof> {
+    const value = await this.queries.query<unknown>(
+      QUERY_PATHS.truedemocracy.merkleProof,
+      [
+        { number: 1, type: 'string', value: domainName },
+        { number: 2, type: 'string', value: commitment },
+      ]
+    );
+    const proof = expectChainMerkleProof(
+      QUERY_PATHS.truedemocracy.merkleProof,
+      value
+    );
+    return {
+      root: proof.root,
+      pathIndices: proof.path_indices,
+      pathElements: proof.path_elements,
+      leaf: proof.commitment,
+    };
   }
 
   /**
@@ -126,18 +138,22 @@ export class ZKPService {
     domainName: string,
     nullifierHash: string
   ): Promise<boolean> {
-    try {
-      const response = await fetch(
-        `${this.config.rest}/truerepublic/truedemocracy/nullifier/${domainName}/${nullifierHash}`
-      );
-
-      if (!response.ok) return false;
-
-      const data = await response.json();
-      return data.used === true;
-    } catch {
-      return false;
-    }
+    const value = await this.queries.query<unknown>(
+      QUERY_PATHS.truedemocracy.nullifier,
+      [
+        { number: 1, type: 'string', value: domainName },
+        { number: 2, type: 'string', value: nullifierHash },
+      ]
+    );
+    const result = expectQueryRecord(
+      QUERY_PATHS.truedemocracy.nullifier,
+      value
+    );
+    return expectQueryBoolean(
+      QUERY_PATHS.truedemocracy.nullifier,
+      'used',
+      result.used
+    );
   }
 
   /**
