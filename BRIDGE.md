@@ -1,5 +1,14 @@
 # TrueRepublic Agent Bridge
 
+## 2026-08-10 01:45 EEST GH-172 → PR #173 Published
+
+- Commit `972e324` is pushed on `test/GH-172-concurrency-replay`; protected
+  [PR #173](https://github.com/NeaBouli/TrueRepublic/pull/173) targets `main`
+  and closes GH-172 on merge.
+- The PR contains only the reviewed GH-172 test/CI/evidence scope. Protected
+  exact-head workflows and review threads are now the active gate; no check
+  will be bypassed. Rollout remains 23/59 and production remains false.
+
 ## 2026-08-10 01:40 EEST GH-172 → Review Complete / PR Ready
 
 - **Independent review:** Kimi reproduced the real harness twice with opposite

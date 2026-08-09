@@ -1,5 +1,13 @@
 # Action Log
 
+## 2026-08-10 — GH-172 published as PR #173
+
+- Reviewed commit `972e324` is pushed and PR #173 targets protected `main`.
+  The PR closes GH-172 on merge and contains only the bounded test, CI,
+  evidence, audit, and status scope.
+- Protected exact-head workflows and review threads remain authoritative; no
+  technical gate is bypassed. Rollout and production status are unchanged.
+
 ## 2026-08-10 — GH-172 independent review remediated
 
 - Kimi independently reproduced two real harness runs with opposite contention
