@@ -1,5 +1,64 @@
 # TrueRepublic Agent Bridge
 
+## 2026-08-10 01:45 EEST GH-172 → PR #173 Published
+
+- Commit `972e324` is pushed on `test/GH-172-concurrency-replay`; protected
+  [PR #173](https://github.com/NeaBouli/TrueRepublic/pull/173) targets `main`
+  and closes GH-172 on merge.
+- The PR contains only the reviewed GH-172 test/CI/evidence scope. Protected
+  exact-head workflows and review threads are now the active gate; no check
+  will be bypassed. Rollout remains 23/59 and production remains false.
+
+## 2026-08-10 01:40 EEST GH-172 → Review Complete / PR Ready
+
+- **Independent review:** Kimi reproduced the real harness twice with opposite
+  contention winners and found no P0/P1/P2. Sol remediated its one P3 by
+  requiring post-restart Cosmos code 32 plus `account sequence mismatch`.
+- **Remediated evidence:** focused repository contract and the full real
+  harness pass; the latter completed in 90.93s with exact one-of-three duplicate
+  acceptance, unchanged state/economics and valid restart/export/reimport.
+- **Status:** no open local finding or blocker. Protected exact-head PR checks,
+  review-thread closure, merge, GH-29/public synchronization, final-main and
+  Pages remain before Done. Rollout remains 23/59; production remains false.
+
+## 2026-08-10 01:30 EEST GH-172 → Locally Verified / Review
+
+- **Implementation:** repository-owned opt-in harness proves single-winner
+  authenticated contention, exact signed-byte duplicate/replay rejection,
+  same-home restart persistence, historical app-hash stability, singular
+  state/economic effects, ledger reconciliation and export/reimport.
+- **Evidence:** focused contract, build, Vet, full Race/Coverage, generative
+  quality, security contract, pinned Staticcheck and Gitleaks, docs, JSON, YAML
+  and diff checks pass. The real harness passed in 145.38s; standard arithmetic
+  is 1,607 (1,440 Go + 26 Rust + 141 client), with the process gate separate.
+- **Roles:** Kimi produced the bounded initial harness; Sol reviewed every
+  write and corrected fatal test polling onto the main test goroutine. Claude's
+  small read-only census attempt exceeded its budget and made no diff. Kimi is
+  now performing the required independent read-only final review.
+- **Status/safety:** no blocker. Rollout stays 23/59 and production false;
+  protected PR/CI, review closure, merge, tracker synchronization, final-main
+  and Pages verification remain before Done. No production, deployment, public
+  network, real key/account/funds, migration or release action occurred.
+
+## 2026-08-10 00:47 EEST GH-172 concurrent/replay/restart evidence → In Progress
+
+- **Issue/branch:** [GH-172](https://github.com/NeaBouli/TrueRepublic/issues/172),
+  `test/GH-172-concurrency-replay` from exact `origin/main` `348d622`.
+- **Scope:** close the detailed Phase-5 evidence gap for shared-state concurrent
+  authenticated submissions, duplicate messages, exact replay attempts, and
+  deterministic persistence across restart/export-import with bounded,
+  repository-owned tests and ephemeral localhost evidence.
+- **Baseline:** no open PR; canonical main is green on Docs `31336988633`,
+  Security `31336988646`, and Pages `31336987812`. Existing GH-97 load uses
+  independent accounts and GH-145 adds focused replay/race properties, so
+  GH-172 must add non-duplicative shared-state and persistence assertions.
+- **Roles/safety:** Sol owns architecture, security, integration, every external
+  write, complete verification, merge, and closure. Kimi receives one bounded
+  secret-free implementation/review slice and may not delegate. No production,
+  deployment, public network, real keys/accounts/funds, wallet custody,
+  consensus migration, or release action is authorized.
+
+
 ## 2026-08-10 00:25 EEST GH-169 merged and final-main verified → Done
 
 - PR [#170](https://github.com/NeaBouli/TrueRepublic/pull/170) exact head

@@ -1,6 +1,6 @@
 # TrueRepublic Road to Rollout
 
-Updated: 2026-08-09
+Updated: 2026-08-10
 
 TrueRepublic has a recovered and CI-verified v0.4 engineering foundation. It
 is **not production-ready, mainnet-ready, or approved for real funds or keys**.
@@ -19,10 +19,11 @@ intentionally more granular than the public 59-item tracker.
 
 - The ordered recovery merge chain is on `main`.
 - The maximum supply is fixed at 21,000,000 PNYX.
-- The source of truth records 1,606 recovery-verified tests: 1,439 Go, 26 Rust,
+- The source of truth records 1,607 recovery-verified tests: 1,440 Go, 26 Rust,
   and 141 maintained-client tests. GH-121's real registered browser-query
   boundary and GH-115's local client-chain delivery
-  case is separately gated and excluded from this arithmetic.
+  case are separately gated and excluded from this arithmetic, as is GH-172's
+  real contention/replay/restart process harness.
 - Ledger, escrow, issuance, DEX custody, genesis, runtime invariants, ZKP
   statement binding, node persistence, and the safe operator-init boundary
   have CI-backed recovery evidence.
@@ -153,8 +154,11 @@ software.
 - [x] Add property, fuzz, invariant, replay, malformed-genesis, and focused
   race tests where they provide stronger guarantees than example tests
   ([GH-145](https://github.com/NeaBouli/TrueRepublic/issues/145)).
-- [ ] Test concurrent submissions, duplicate messages, replay attempts, and
-  deterministic restart behavior.
+- [x] Test concurrent submissions, duplicate messages, exact transaction
+  replay attempts, and deterministic same-home restart behavior
+  ([GH-172](https://github.com/NeaBouli/TrueRepublic/issues/172)). This
+  detailed evidence item remains folded into GH-29's canonical quality-depth
+  tracker item and therefore does not create a sixtieth rollout unit.
 - [x] Wire ABCI++ misbehavior and last-commit data into the economic slashing
   handlers and test evidence-window custody after validator removal
   ([GH-59](https://github.com/NeaBouli/TrueRepublic/issues/59)).
