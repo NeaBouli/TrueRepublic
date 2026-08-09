@@ -1,5 +1,25 @@
 # Action Log
 
+## 2026-08-09 — GH-161 merged and final-main verified
+
+- Policy PR #162 merged as `7b3f183`, compatible npm PR #163 as `3a3919c`,
+  and patch-only Go PR #164 as `62ad5e9`. Their final exact heads passed 18,
+  15, and 18 protected contexts respectively. Policy-generated patch PR #167
+  then passed independent Sol/Kimi review and 16 contexts before merging as
+  final code head `87c47c1`; zero open review threads remained.
+- Exact merged-main Go CI `31315620763`, reproducible Linux
+  `31315620777`, Security `31315620755`, Dependency Graph `31315623437`, and
+  Pages `31315620166` pass. Local composed-head Go and npm verification also
+  passed; Kimi independently approved the bounded policy and replacement
+  design after Sol resolved its Playwright-major finding, then separately
+  approved all five #167 patches and their sumdb-anchored module hashes.
+- Unsafe grouped npm #157 and Go #158 were closed with exact incompatibility
+  evidence and superseding links. Generated replacement attempts #165/#166
+  auto-closed as superseded; compatible Cargo #156 and policy-conforming Go
+  #167 were the generated groups merged directly. Rollout stays 22/59, phase
+  work 22/51, Phase 6 6/7, and production false; no rollout gate or production
+  action was claimed.
+
 ## 2026-08-09 — GH-161 dependency groups independently reconciled
 
 - Refreshed and merged Cargo PR #156 only after exact local Rust and ten-job
@@ -13,10 +33,10 @@
   policy. A four-direct-dependency patch replacement passes full `make verify`,
   module verification, staticcheck, govulncheck policy, and contract tests.
 - Added typed fail-closed Dependabot exceptions for Go patch-only maintenance,
-  npm compatibility pins, and ungrouped CosmWasm updates. Independent final
-  review approved the replacements and policy; Sol closed its Playwright-major
-  P2 by fully freezing that automatic pin. Protected publication remains; no
-  production action occurred.
+  npm compatibility pins, and ungrouped Cargo `cosmwasm-*` crate updates.
+  Independent final review approved the replacements and policy; Sol closed
+  its Playwright-major P2 by fully freezing that automatic pin. Protected
+  publication remains; no production action occurred.
 
 ## 2026-08-09 — GH-154 merged and final-main verified
 

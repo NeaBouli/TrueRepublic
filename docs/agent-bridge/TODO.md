@@ -24,7 +24,7 @@
   issue, and verify final-main Docs/Pages state.
 - [x] GH-161: classify all three bounded generated updates; refresh and merge
   only the fully green Cargo lockfile patch.
-- [ ] GH-161: publish the typed policy refinement and bounded npm/Go replacement
+- [x] GH-161: publish the typed policy refinement and bounded npm/Go replacement
   updates through independent review, protected CI, merge, final-main, Pages,
   issue, tracker, and Bridge closure.
 - [x] GH-145: implement deterministic property, fuzz, invariant, replay,
