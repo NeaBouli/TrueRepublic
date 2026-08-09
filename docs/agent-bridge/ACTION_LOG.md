@@ -1,5 +1,75 @@
 # Action Log
 
+## 2026-08-09 — GH-154 merged and final-main verified
+
+- PR #159 passed 11/11 protected exact-head checks on `46f687b` and was
+  squash-merged as `ac8fbbc`; issue #154 is closed and its remote task branch
+  is deleted.
+- Exact-main Docs `31310820782`, Security `31310820753`, and Pages
+  `31310820227` all pass on `ac8fbbc`. GH-154 is Done with no runtime,
+  dependency, workflow, production, chain, signing, key, or funds mutation.
+- The six intentionally preserved remote heads and six preserved historical or
+  closed-unmerged local worktrees remain explicit boundaries. Dependabot PRs
+  #156-#158 are separate follow-up maintenance and were not auto-merged.
+
+## 2026-08-09 — GH-154 exact remote cleanup / local cleanup in progress
+
+- Repeated the inventory against current GitHub state after GH-153 merged.
+  Exactly 31 current remote SHAs matched merged PR heads and had no open PR;
+  all 31 residue branches were deleted after immediate per-ref revalidation.
+- Final remote heads intentionally remain: `main`, active Dependabot PRs
+  #156-#158, closed-unmerged `agent/public-recovery-status`, and archival
+  `solana-archived`.
+- Seventeen local worktrees were clean exact merged-PR heads before removal.
+  Non-forced removal is still processing large ignored dependency/build trees.
+  Dirty, divergent, active, closed-unmerged, and ambiguous worktrees remain
+  preserved. No production, deployment, chain, key, signing, or funds action
+  occurred.
+
+## 2026-08-09 — GH-154 final local inventory verified
+
+- Removed 17 clean local worktrees only after their current HEAD exactly
+  matched a merged PR head; no forced removal was used. Final inventory has
+  seven worktrees: six preserved historical/active states and GH-154.
+- Preserved the dirty/divergent legacy checkout (18 status entries, 24 commits
+  outside origin/main), four clean but divergent historical worktrees (24, 28,
+  31, and 41 commits outside origin/main), closed-unmerged recovery status
+  (one), and active GH-154. No cleanup process remains.
+- Final fetch/prune confirms exactly six intentional remote heads and three
+  open PRs, #156-#158, each matching its active Dependabot branch. Docs
+  consistency and diff checks pass. Independent review and protected docs-only
+  publication remain before Done.
+
+## 2026-08-09 — GH-154 independent final review approved
+
+- Kimi returned APPROVE with no P0-P3 and no write. It reproduced six remote
+  heads, seven worktrees, exact dirty/divergence counts, closed-unmerged PR #25,
+  open PRs #156-#158, all cited main workflow results, docs consistency, and
+  diff cleanliness.
+- A probe across 91 distinct merged-PR head branch names found zero remaining
+  remote residue. The initial 16 exact worktrees plus completed GH-153 account
+  for the final 17 non-forced removals. Protected publication remains.
+
+## 2026-08-09 — GH-154 PR #159 documentation review remediated
+
+- Corrected project-state/TODO sequencing so independent review is complete
+  and only protected publication remains. Split remote and local inventories
+  into explicit lists without changing any verified count or preservation
+  boundary. No code, dependency, workflow, or runtime change occurred.
+
+## 2026-08-09 — GH-153 protected merge and exact-main checkpoint
+
+- PR #155 passed all 18 exact-head checks on `3f698a2`, then merged as
+  `8489d54`; GH-153 closed and its task branch was removed.
+- Exact-main Go `31309568219`, Security `31309568223`, reproducible Linux
+  `31309568233`, Docs `31309568209`, Dependency Graph `31309569964`, and Pages
+  `31309567545` pass, including bounded multi-validator recovery. GH-153 is
+  Done.
+- The bounded policy generated minor/patch PRs #156-#158. Cargo/Go generator
+  runs additionally expose updater/resolution failures for CosmWasm and an
+  incompatible Wasmd/SDK candidate; these remain explicit follow-up work and
+  no dependency update is auto-merged.
+
 ## 2026-08-09 — GH-153 bounded Dependabot maintenance started
 
 - GH-148 merged through PR #149 as `5baeea6`; its security, static, secret,
