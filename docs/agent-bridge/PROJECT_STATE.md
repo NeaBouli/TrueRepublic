@@ -1,8 +1,19 @@
 # Project State
 
-Updated: 2026-08-09 21:25 UTC
+Updated: 2026-08-09 22:30 UTC
 
 ## Repository
+
+- GH-172 is locally verified on `test/GH-172-concurrency-replay`. A real
+  disposable localhost validator proves exactly one committed mutation and
+  escrow effect under two-account contention, explicit rejection of concurrent
+  and post-commit exact-byte duplicates, sequence rejection after a clean
+  same-home restart, stable historical app hash, unchanged custody/balances,
+  and ledger-valid export/reimport. Standard arithmetic is 1,607 cases (1,440
+  Go, 26 Rust, 141 client); the gated process case is separate. Rollout remains
+  23/59 overall, 23/51 phase work, Phase 5 5/6 and Phase 6 6/7 because GH-172
+  deepens GH-29's existing quality item rather than creating a 60th unit.
+  Independent review and protected publication remain pending.
 
 - GH-169 is complete through PR #170. Exact reviewed head `620c41d` passed
   18/18 contexts with zero unresolved review threads and squash-merged as

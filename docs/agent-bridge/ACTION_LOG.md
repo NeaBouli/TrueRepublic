@@ -1,5 +1,51 @@
 # Action Log
 
+## 2026-08-10 — GH-172 independent review remediated
+
+- Kimi independently reproduced two real harness runs with opposite contention
+  winners, exact one-of-three duplicate acceptance, sequence rejection after
+  restart, stable app hashes, and valid export/reimport. It found no P0/P1/P2.
+- Sol implemented Kimi's P3 hardening: post-restart evidence must now contain
+  Cosmos code 32 and `account sequence mismatch`, and the repository contract
+  pins that assertion. The remediated focused contract and real 90.93s harness
+  pass; no review finding remains open.
+- Local review is complete and the tree is PR-ready. Protected exact-head CI,
+  merge, GH-29/public synchronization, final-main and Pages remain required.
+
+## 2026-08-10 — GH-172 local implementation verified
+
+- Added one opt-in real-process harness and a fail-closed repository/CI
+  contract. Two authenticated accounts contend for the same domain; exactly one
+  commits and exactly one escrow mutation occurs. The same signed bytes are
+  broadcast three times concurrently, after commit, and after a clean same-home
+  restart without producing a second state transition.
+- PASS: focused repository contract; build; Vet; full Race/Coverage across all
+  maintained Go packages; bounded generative/fuzz quality; security contract;
+  pinned Staticcheck v0.7.0; pinned Gitleaks v8.30.1 with no leak; docs, JSON,
+  YAML and diff integrity. The real process gate passed in 145.38s with stable
+  historical app hash and ledger-valid export/reimport.
+- Fresh standard arithmetic is 1,607 cases (1,440 Go, 26 Rust, 141 client).
+  The separately gated process case does not inflate that sum or GH-29's 23/59
+  rollout. Kimi implemented the bounded harness slice; Sol reviewed and fixed
+  test-goroutine safety. Claude's small read-only census attempt exceeded its
+  configured budget and produced no output or diff. Independent Kimi review is
+  running; protected PR/CI, merge and final-main/Pages evidence remain.
+
+## 2026-08-10 — GH-172 concurrent/replay/restart evidence started
+
+- Reconciled exact main, GH-29, the detailed roadmap, project/global Bridges,
+  open issues/PRs, and final-main workflows. GH-172 is the next internally
+  closable quality/security block; independent external review and production
+  topology remain separate external gates.
+- Created a clean exact-main worktree and bounded issue. The implementation is
+  test/evidence-first and must add shared-state contention, duplicate/exact
+  replay, persistence, ledger/invariant, race, and timeout evidence without
+  inflating existing GH-97/GH-145 coverage.
+- No runtime behavior, deployment, public network, key, wallet, signing, funds,
+  migration, or release action has occurred. Kimi receives one secret-free
+  bounded slice after Sol completes the source/test inventory.
+
+
 ## 2026-08-10 — GH-169 merged and final-main verified
 
 - PR #170 exact remediation head `620c41d` passed 18/18 contexts, all five

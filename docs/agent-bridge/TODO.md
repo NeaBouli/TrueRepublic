@@ -2,6 +2,12 @@
 
 ## P0 - security and reproducibility
 
+- [x] GH-172: implement and locally verify bounded concurrent shared-state,
+  exact signed-byte replay, clean same-home restart, app-hash, ledger, and
+  export/reimport evidence without changing production behavior.
+- [ ] GH-172: complete independent review, protected exact-head CI, merge,
+  GH-29/public-status synchronization, final-main and Pages verification.
+
 - [x] GH-169: implement and locally verify a versioned cross-system threat
   register plus fail-closed repository contract across all maintained domains.
 - [x] GH-169: publish through protected exact-head CI, merge, synchronize GH-29

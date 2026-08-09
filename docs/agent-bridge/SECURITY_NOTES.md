@@ -1,5 +1,23 @@
 # Security Notes
 
+## GH-172 concurrency, replay, and restart boundary
+
+- The opt-in process harness uses only generated disposable localhost accounts
+  and one ephemeral in-memory signing key. It never reads or emits a mnemonic,
+  private key, production endpoint, external account, or real funds.
+- Two distinct authenticated transactions contend for one canonical domain and
+  prove one successful mutation, one explicit duplicate-domain failure, and
+  one escrow effect. Three broadcasts reuse byte-for-byte identical signed
+  transaction bytes; duplicate-cache rejection is backed by committed-state,
+  balance, custody, object-count, and later account-sequence evidence.
+- A clean same-home restart preserves the historical app hash and rejects the
+  saved transaction again. Final export, ledger reconciliation, 21M cap check,
+  and reimport prove persisted state remains bank-backed and singular.
+- This is bounded repository evidence, not a claim about adversarial public
+  mempools, Byzantine consensus, production topology, wallet custody, real
+  keys/funds, deployment, release approval, or independent external audit.
+  `production_ready` remains false and rollout arithmetic is unchanged.
+
 ## GH-169 cross-system threat-model boundary
 
 - `configs/security/threat-model.json` is the canonical versioned register. It
