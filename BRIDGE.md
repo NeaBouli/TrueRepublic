@@ -40,6 +40,36 @@
   P2 by fully freezing automatic Playwright version updates. Protected
   publication remains.
 
+### 2026-08-09 16:46 EEST merge chain and final-main verified
+
+- Policy PR #162 passed all 18 exact-head contexts and merged as `7b3f183`.
+  The compatible npm replacement PR #163 was then rebased, passed all 15
+  exact-head contexts including browser and real client-chain integration, and
+  merged as `3a3919c`. Go replacement PR #164 passed all 18 contexts including
+  14m09s multi-validator recovery and merged as `62ad5e9`. The policy then
+  generated patch-only Go PR #167; independent Sol/Kimi review found no
+  P0/P1/P2, all 16 contexts passed, and it merged as final code head `87c47c1`.
+  No review thread remained open on any merged replacement.
+- Exact merged `main` is green: Go CI `31315620763`, reproducible Linux daemon
+  `31315620777`, Security Scan `31315620755`, Dependency Graph `31315623437`,
+  and Pages `31315620166`. Local composed-head Go build/vet/race/coverage,
+  module and sumdb verification, typed security contract, npm
+  install/lint/141 tests, build/budget, and audit also pass.
+- Closeout PR #168 failed closed once while RustSec's live advisory database had
+  a malformed `gettext-rs` path. Upstream corrected it as `e0bc1e8`; an
+  unchanged-head failed-job rerun then passed, without weakening the gate.
+- PRs #157 and #158 were closed with concrete incompatibility evidence and
+  links to #163/#164. The maintained policy now keeps Go automation patch-only,
+  freezes automatic Playwright movement, keeps React Refresh on compatible
+  patches, and removes Cargo `cosmwasm-*` crates from grouped maintenance.
+  Automatically superseded PRs #165/#166 closed without merge; only this
+  closeout PR remains open.
+- Rollout remains honestly unchanged at 22/59 overall, 22/51 phase work,
+  Phase 6 6/7, 1,579 recovery-verified cases, and `production_ready=false`.
+  GH-161 is complete after this docs-only closeout reaches protected `main`.
+  No production, deployment, mainnet, wallet, key, signing, migration, or
+  funds action occurred.
+
 ## 2026-08-09 14:32 EEST GH-154 protected publication → Done
 
 - PR #159 passed all 11 exact-head checks on

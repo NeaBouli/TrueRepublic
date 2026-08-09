@@ -1,17 +1,23 @@
 # Project State
 
-Updated: 2026-08-09 12:13 UTC
+Updated: 2026-08-09 13:46 UTC
 
 ## Repository
 
-- GH-161 is in progress. Safe Cargo maintenance PR #156 is merged as `4aeddc0`
-  after refreshed exact-head and local workspace evidence. Failing npm #157 and
-  Go #158 are classified as incompatible groups and remain unmerged. Bounded
-  replacement updates pass their full local client and Go gates; a typed policy
-  regression restricts Go automation to patches, preserves the Playwright and
-  React Refresh compatibility boundaries, and removes CosmWasm from grouping.
-  Independent review, protected replacement PRs, final-main, Pages, and Bridge
-  synchronization remain before Done.
+- GH-161 is complete. Safe Cargo PR #156 merged as `4aeddc0`; incompatible
+  grouped npm #157 and Go #158 were closed with concrete evidence and replaced
+  by bounded PRs #163 (`3a3919c`) and #164 (`62ad5e9`). Typed policy PR #162
+  merged as `7b3f183` and enforces Go patch-only maintenance, the Playwright and
+  React Refresh compatibility boundaries, and ungrouped Cargo `cosmwasm-*`
+  crate updates. Policy-generated Go patch PR #167 received separate Sol/Kimi
+  review and merged as final code head `87c47c1`; superseded generated PRs
+  #165/#166 auto-closed. Kimi approved the reviewed slices with no remaining
+  P0/P1/P2; every final exact-head context passed with no open review thread.
+  Exact merged-main Go `31315620763`, reproducible Linux `31315620777`,
+  Security `31315620755`, Dependency Graph `31315623437`, and Pages
+  `31315620166` pass. Public rollout arithmetic remains 1,579 cases, 22/59
+  overall, 22/51 phase work, Phase 6 6/7, and production false because
+  maintenance does not complete a rollout gate.
 
 - GH-148 is closed through merged PR #149 (`5baeea6`). All 35 third-party
   Action uses are immutable SHA pins; toolchains/scanners are centralized and
