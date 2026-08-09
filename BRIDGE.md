@@ -81,6 +81,16 @@
 - **Ready for:** commit, push, protected exact-head PR checks and merge. GH-153
   is not Done until final-main verification succeeds.
 
+### 2026-08-09 13:43 EEST PR #155 published
+
+- Commit `5f188e6` is pushed through
+  [PR #155](https://github.com/NeaBouli/TrueRepublic/pull/155), closing GH-153
+  only after merge. The PR records full local evidence and Kimi approval.
+- Exact-head protected workflows and review are now mandatory. No check is
+  bypassed; merge, final-main/Pages, issue closure, and Bridge synchronization
+  remain pending.
+
+
 
 
 Canonical coordination lives in [`docs/agent-bridge/`](docs/agent-bridge/README.md).

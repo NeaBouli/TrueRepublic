@@ -43,6 +43,12 @@
   secret negative fixtures and exact pinned staticcheck pass. Publication and
   protected/final-main evidence remain before Done.
 
+## 2026-08-09 — GH-153 PR #155 published
+
+- Pushed `5f188e6` and opened PR #155, linked to close GH-153 after merge.
+  Protected exact-head CI/review, merge, and final-main/Pages evidence remain.
+
+
 
 
 
