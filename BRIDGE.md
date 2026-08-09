@@ -1,5 +1,21 @@
 # TrueRepublic Agent Bridge
 
+## 2026-08-10 02:15 EEST GH-172 → Merged / Final Main Green / Done
+
+- **Merge:** PR [#173](https://github.com/NeaBouli/TrueRepublic/pull/173)
+  exact head `671ff37` passed all 18 contexts with zero open review threads and
+  squash-merged as `293ea35`. GH-172 is closed and the remote task branch is
+  deleted. Admin merge bypassed only formal self-review, never a technical gate.
+- **Final `main`:** Go CI `31340763723`, Security Scan `31340763717`,
+  reproducible Linux `31340763708`, Docs `31340763710`, and Pages
+  `31340763413` pass. The complete final-main Go job matrix is green.
+- **Public/tracker:** live Pages publishes 1,607 cases (1,440 Go, 26 Rust, 141
+  client), GH-172 evidence, 23/59 rollout, and `production_ready=false`. GH-29
+  links GH-172/PR #173 without creating a 60th tracker unit.
+- **Outcome:** bounded concurrent-submission, exact-replay and same-home
+  restart evidence is Done. No production, deployment, public network, real
+  key/account/funds, migration or release action occurred.
+
 ## 2026-08-10 01:45 EEST GH-172 → PR #173 Published
 
 - Commit `972e324` is pushed on `test/GH-172-concurrency-replay`; protected

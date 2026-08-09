@@ -6,10 +6,11 @@ Scope: repository tests, CI evidence, and status documentation only
 
 ## Verdict
 
-Approved for protected pull-request verification. Independent Kimi K3 review
-found no P0, P1, or P2 issue. Its one actionable P3 was remediated: the
-post-restart replay assertion now requires Cosmos code 32 and the explicit
-`account sequence mismatch` reason. The remediated real harness passes.
+Approved and merged after protected pull-request verification. Independent
+Kimi K3 review found no P0, P1, or P2 issue. Its one actionable P3 was
+remediated: the post-restart replay assertion now requires Cosmos code 32 and
+the explicit `account sequence mismatch` reason. The remediated real harness
+passes.
 
 ## Evidence reviewed
 
@@ -43,5 +44,7 @@ post-restart replay assertion now requires Cosmos code 32 and the explicit
 This does not test a hostile public mempool, Byzantine multi-node consensus,
 production topology, wallet custody, real keys or funds, deployment, release,
 or an independent external security audit. Protected exact-head CI and final
-merged-main evidence remain required before Done; production readiness remains
-false.
+merged-main evidence were required before Done and now pass; production
+readiness remains false. PR #173 exact head `671ff37` passed 18/18 contexts
+with zero open review threads and merged as `293ea35`; all final-main workflows
+and live Pages readback pass.
