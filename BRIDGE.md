@@ -689,6 +689,117 @@ GitHub recovery epic: [#4](https://github.com/NeaBouli/TrueRepublic/issues/4)
 
 ---
 
+## 2026-08-09 11:02 EEST GH-148 reproducible security gates → In Progress
+
+- **Issue/parent:** [GH-148](https://github.com/NeaBouli/TrueRepublic/issues/148)
+  closes the single open GH-29 Phase-5 checkbox for maintained dependency,
+  static-analysis, secret-scanning, and supply-chain gates.
+- **Branch/base:** `security/GH-148-reproducible-gates` from exact clean
+  `origin/main` `c1a0ed42c543c9a664f4e4fa3653fac406957c90`; no open PR and no
+  inherited working-tree change.
+- **Scope:** immutable Action/tool pins, blocking static and secret scanning,
+  repository-owned fail-closed policy tests, bounded dependency-update
+  automation, operator/contributor guidance, and complete local/protected-CI
+  evidence.
+- **Boundary:** runtime, protocol, consensus, wallet/signing, ZKP, release
+  signing, SBOM/provenance publishing, deployment, infrastructure, mainnet,
+  production keys/accounts/funds, and external-audit claims are excluded.
+- **Delegation:** Kimi K3 is performing a bounded secret-free read-only
+  baseline audit. Sol owns architecture, every write/diff, security decisions,
+  full verification, GitHub writes, merge, tracker/status, and closure. Kimi
+  may not delegate.
+- **Next:** reconcile Kimi findings with the source inventory, freeze exact
+  tool/action versions and the repository contract, then implement the
+  smallest coherent gate set with negative fixtures.
+
+### 2026-08-09 11:45 EEST implementation and focused verification
+
+- **Kimi audit reconciled:** its read-only report found the fail-open
+  govulncheck pipeline, mutable Action/scanner/toolchain inputs, absent secret
+  gate and update automation, optional staticcheck, incomplete Cargo locking,
+  trigger gaps, and missing job timeouts. Sol independently reproduced and
+  closed every in-scope P0-P2 repository finding; Kimi wrote no file.
+- **Implementation:** all 35 Action uses are approved SHA pins; one versioned
+  contract owns exact Go/Node/Rust and scanner versions; every job is bounded;
+  dependency/static/secret/lock and planted-failure gates block; weekly grouped
+  Dependabot updates cover Actions, Go, Cargo, and maintained npm.
+- **Focused PASS:** six repository contract cases, staticcheck after 14 minimal
+  baseline corrections, zero maintained-tree secret findings plus planted
+  credential rejection, govulncheck with four reachable no-fix entries,
+  cargo-audit with zero vulnerabilities/five warning-only advisories, npm with
+  zero high/critical advisories, client lint/141 cases/build/audit, ten-second
+  quality campaigns, docs/retirement/YAML/shell/JSON/diff checks.
+- **Candidate status:** 1,579 cases (1,412 Go + 26 Rust + 141 client), rollout
+  22/59, phase work 22/51, Phase 6 6/7, and production false. Fresh client
+  build is 76.40 kB gzip initial, 5.03 kB max route, 353.56 kB total.
+- **Running/pending:** complete Go/Rust gates are still running; then final Kimi
+  diff review, commit/push/PR, exact-head CI/review, merge, GH-29/Pages/final-main
+  closure, followed by the user-requested retroactive PR/branch/worktree audit.
+- **Boundary:** no deployment, release, production, mainnet, real key/account/
+  fund/signing, private infrastructure, or external-audit claim.
+
+### 2026-08-09 12:26 EEST final-review remediation
+
+- **Independent finding:** Kimi reproduced one P1: bare govulncheck exits 3 on
+  the four reachable no-fix findings, which would leave protected CI red. It
+  also found local gitleaks false positives in ignored Rust build artifacts.
+- **Repair:** the Go gate now parses JSON and permits only the exact four active
+  no-fix IDs in the central contract. Exceptions expire within 30 days; new,
+  fixable, missing, stale, expired, malformed, or scanner-error cases fail.
+  Secret scanning now selects tracked plus non-ignored changed files only.
+- **Reverification:** live Go policy gate PASS; allowed/unknown/fixable/expired/
+  scanner-error fixtures PASS; maintained-tree gitleaks PASS at 4.02 MB with
+  existing build outputs present; planted-secret failure PASS; repository
+  contract, staticcheck, docs, shell, JSON/YAML, and diff checks PASS.
+- **Next:** obtain independent re-review of the repaired diff, refresh full
+  relevant verification if required, then commit/push/PR/exact-head CI/merge and
+  final-main/Pages/GH-29 closure before retroactive cleanup.
+
+### 2026-08-09 12:37 EEST remediation re-review findings closed
+
+- **Re-review:** prior P1/P3 closed, but Kimi found three P2 edge cases: the
+  standalone Go wrapper did not itself validate real calendar dates or the
+  configured 30-day maximum, and the secret-tree process substitution could
+  hide a Git enumeration failure.
+- **Repair:** the Go wrapper now parses UTC dates, validates ID/reason/type,
+  rejects duplicates, and enforces the central integer 1..30-day maximum. Its
+  fixtures now cover over-long, malformed, stale, duplicate, expired, unknown,
+  fixable, scanner-error, and allowed cases. Secret enumeration is captured by
+  a checked command, requires at least one file, and has a dedicated failing-Git
+  fixture.
+- **PASS:** expanded Go/secret fixtures, repository contract, shell syntax,
+  maintained-tree gitleaks plus planted credential, diff check, and repeated
+  full `make verify` (build, vet, Race/Coverage across all 13 Go packages).
+- **Pending:** final independent approval of this second remediation, then
+  publish and complete protected CI/merge/final-main closure.
+
+### 2026-08-09 12:45 EEST final review approved and P3s closed
+
+- **Review:** Kimi returned APPROVE with no P0/P1/P2. It independently confirmed
+  the live JSON exit semantics, date/span/type/duplicate policy, Git enumeration
+  failure and empty-tree rejection, contract/workflow wiring, arithmetic, and
+  documentation consistency.
+- **P3 closure:** the wrapper now also requires canonical zero-padded ISO dates;
+  an invalid-ID fixture is committed; PROJECT_STATE timestamp and the second
+  hardening summary are current.
+- **Next:** final local sweep, commit/push/PR, exact-head CI/review, merge, and
+  final-main/Pages/GH-29 synchronization. Retroactive repository reconciliation
+  remains the immediately following block.
+
+### 2026-08-09 12:52 EEST PR #149 first exact-head CI correction
+
+- **Published:** commit `970a198`, PR #149. DeepScan and docs passed on the first
+  head; Rust CI failed immediately because the exact Rust 1.95.0 toolchain action
+  did not install `rustfmt` by default (`cargo-fmt is not installed`).
+- **Correction:** explicitly install the `rustfmt, clippy` components through the
+  same immutable toolchain action. No Rust source, lockfile, runtime, protocol,
+  or public status changed.
+- **Verification:** local Rust 1.95.0 fmt/clippy/build/test/audit had already
+  passed; workflow YAML, repository contract, and exact new-head CI are required
+  again before merge.
+
+---
+
 ## 2026-08-08 11:22 EEST GH-121 browser query transport → Review
 
 - **Branch:** `fix/GH-121-browser-query-transport`

@@ -5,6 +5,13 @@
 - [ ] GH-4: keep the recovery epic and acceptance criteria current.
 - [ ] GH-29: complete the seven-phase production-readiness roadmap and attach
   evidence for every rollout exit gate before any public-network launch.
+- [x] GH-148: locally implement immutable Action pins, exact security tool and
+  toolchain versions, fail-closed Go vulnerability/static and maintained-tree
+  secret gates, lock enforcement, bounded weekly dependency updates, and a
+  repository-owned negative-fixture contract.
+- [ ] GH-148: complete independent final review, protected exact-head CI,
+  merge, GH-29/public-status synchronization, final-main/Pages verification,
+  and retroactive PR/branch/worktree reconciliation before marking Done.
 - [x] GH-145: implement deterministic property, fuzz, invariant, replay,
   malformed-genesis, and focused race evidence for critical Go paths without
   changing production behavior.

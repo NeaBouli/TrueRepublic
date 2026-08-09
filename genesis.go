@@ -202,7 +202,7 @@ func ensureOperatorAuthAccounts(cdc codec.Codec, appState map[string]json.RawMes
 		if _, exists := existingAddresses[operator]; exists {
 			for _, account := range existingAccounts {
 				if account.GetAddress().String() == operator {
-					if _, reserved := account.(authtypes.ModuleAccountI); reserved {
+					if _, reserved := account.(sdk.ModuleAccountI); reserved {
 						return fmt.Errorf("operator address %q is a module account", operator)
 					}
 					break

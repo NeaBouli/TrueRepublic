@@ -1,141 +1,94 @@
-# TrueRepublic - CI/CD, Security & Bug Bounty
+# TrueRepublic security policy
 
-## Continuous Integration (CI) & Deployment (CD) for TrueRepublic
+TrueRepublic v0.4 is a recovery project. It is not approved for production,
+mainnet, real keys, or real funds. The remaining rollout gates are tracked in
+[GH-29](https://github.com/NeaBouli/TrueRepublic/issues/29) and
+[`docs/ROLLOUT_ROADMAP.md`](docs/ROLLOUT_ROADMAP.md).
 
-### Continuous Integration (CI)
-CI ensures that every code change triggers automated tests and checks to catch errors early and keep the codebase stable.
+## Reporting a vulnerability
 
-#### 1. CI with GitHub Actions
-- Automated tests for:
-  - Blockchain (Go): `.github/workflows/go-ci.yml`
-  - Smart Contracts (Rust): `.github/workflows/rust-ci.yml`
-  - Maintained Web Client: `.github/workflows/react-ci.yml`
-  - Retired legacy clients: repository retirement contracts and Security Scan
-- Automated builds & error checking
+Do not publish exploitable details, credentials, private keys, mnemonics, or
+private infrastructure data in a public issue. Use GitHub's private
+vulnerability-reporting flow for this repository when it is available. If that
+flow is unavailable, open a public issue containing only a request for a private
+contact channel and no sensitive detail.
 
-#### 2. Continuous Deployment (CD)
-- This recovery repository does not define an approved production deployment
-  workflow. The maintained web client is `client-web`; the legacy web and
-  mobile prototypes have no deployment target and exist only in Git history.
+The repository does not currently promise a bug-bounty payment or production
+response SLA. Acknowledgement, triage, remediation evidence, and disclosure
+timing must be agreed for each report.
 
-### Security Measures (Audits & API Monitoring)
+## Maintained automated gates
 
-#### 1. Smart Contract Security Audits
-- Tools: `cargo-audit`, `clippy`
-- Commands: 
-  ```bash
-  cargo install cargo-audit cargo-clippy
-  cargo clippy --all-targets --all-features
-  cargo audit
+The authoritative policy is
+[`configs/security/gates.json`](configs/security/gates.json). The Security Scan
+workflow runs for every pull request and push to `main`, on a weekly schedule,
+and by manual dispatch. It blocks on:
 
+- reachable Go vulnerabilities, except exact active no-fix IDs in the central
+  policy;
+- Rust advisories and maintained-client high/critical advisories;
+- Go `staticcheck`, Rust `clippy`, and maintained-client lint/type checks;
+- maintained-tree secret scanning, including a planted-credential failure test;
+- the repository security-gate contract and dependency lock integrity;
+- retired client and custom-query surfaces reappearing.
 
-#### 2. Automated Dependency Scans
-- Workflow: `.github/workflows/dependency-check.yml`
-- Runs daily at 03:00 UTC and on every push to `main`.
+All third-party GitHub Actions use reviewed immutable commit SHAs. Scanner and
+toolchain versions are exact values in the policy contract. Dependabot opens
+bounded weekly grouped updates for GitHub Actions, Go modules, Cargo, and the
+maintained npm client.
 
-#### 3. API Monitoring with Prometheus & Grafana
-- Setup:
-  ```bash
-  docker run -d --name prometheus -p 127.0.0.1:9090:9090 prom/prometheus
-  docker run -d --name grafana -p 127.0.0.1:3000:3000 grafana/grafana
+## Local verification
 
-- Integration in `blockchain/app.go`:
-  ```go
-  import (
-      "github.com/prometheus/client_golang/prometheus"
-      "github.com/prometheus/client_golang/prometheus/promhttp"
-      "net/http"
-  )
+Install the exact tool versions from `configs/security/gates.json`, then run:
 
-  var apiRequests = prometheus.NewCounterVec(
-      prometheus.CounterOpts{
-          Name: "api_requests_total",
-          Help: "Total API requests",
-      },
-      []string{"method"},
-  )
+```bash
+go test . -run '^TestSecurityGateRepositoryContract$' -count=1
+STATICCHECK_BIN=/path/to/staticcheck ./scripts/check-static-analysis.sh
+GITLEAKS_BIN=/path/to/gitleaks ./scripts/check-secret-scan.sh
+GITLEAKS_BIN=/path/to/gitleaks ./scripts/test-secret-scan.sh
+GOVULNCHECK_BIN=/path/to/govulncheck ./scripts/check-go-vulnerabilities.sh
+./scripts/test-go-vulnerability-scan.sh
 
-  func main() {
-      prometheus.MustRegister(apiRequests)
-      http.Handle("/metrics", promhttp.Handler())
-      go http.ListenAndServe(":8080", nil)
-  }
+cd contracts
+cargo fmt --check
+cargo clippy --locked --workspace -- -D warnings
+cargo build --locked --workspace
+cargo test --locked --workspace
+cargo audit
 
+cd ../client-web
+npm ci
+npm run lint
+npm test -- --run
+npm run build
+npm run audit:high
+```
 
-#### 4. Firewall & DDoS Protection
-- UFW setup:
-  ```bash
-  sudo ufw allow 26656  # Tendermint P2P
-  sudo ufw deny 26657   # RPC stays on loopback behind the HTTPS proxy
-  sudo ufw deny 9090    # gRPC stays private
-  sudo ufw deny 26660   # Prometheus stays private
-  sudo ufw allow 443/tcp  # HTTPS for API
-  sudo ufw enable
+The complete Go integration baseline remains `make verify`. A green local run is
+not a substitute for protected exact-head pull-request checks and final `main`
+verification.
 
-Cloudflare: Enable "Under Attack Mode" and rate-limiting (max. 100 API requests/minute).
+## Update and exception rules
 
-### Emergency Backup & Recovery System
+Security dependencies are reviewed weekly. Updates must change the central
+contract and immutable workflow pins together, pass the planted negative
+fixtures, and receive normal pull-request review. Never replace a pin with a
+mutable tag or `latest` reference.
 
-#### 1. Blockchain Backup
-- CronJob (daily at 03:00):
-  ```bash
-  0 3 * * * tar -czf ~/backup/truerepublic_$(date +\%F).tar.gz ~/.truerepublic
+An exception must identify the exact package or rule, affected surface, owner,
+reason, compensating test, upstream reference, and an expiry no more than 30
+days away. Broad path, commit, or stopword exclusions are forbidden for secret
+scanning. Expired exceptions fail closed and must not be renewed without fresh
+evidence.
 
-Remote backup script: scripts/backup.sh
-bash
+The Go gate permits only the exact reachable IDs listed in the central policy,
+only while they have no published fixed version and their dated exception is
+active. A new, fixable, expired, missing, malformed, or stale finding/exception
+fails the gate. Scanner execution and report parsing errors also fail closed.
 
-#!/bin/bash
-tar -czf ~/backup/truerepublic_$(date +%F).tar.gz ~/.truerepublic
-rclone copy ~/backup/truerepublic_$(date +%F).tar.gz remote:TrueRepublicBackups
-
-CronJob for script:
-bash
-
-0 4 * * * ~/backup/backup.sh
-
-- Recovery:
-  ```bash
-  rclone copy remote:TrueRepublicBackups/truerepublic_LATEST.tar.gz ~/
-  tar -xzf truerepublic_LATEST.tar.gz -C ~/
-  truerepublicd start
-
-
-#### 2. API Server Backup
-- PM2 setup:
-  ```bash
-  npm install pm2 -g
-  pm2 start api-server.js --name truerepublic-api
-  pm2 save
-  pm2 startup
-
-Database backup (daily at 02:00):
-bash
-
-0 2 * * * pg_dump truerepublic_db > ~/backup/api_backup_$(date +\%F).sql
-
-Recovery:
-bash
-
-psql truerepublic_db < ~/backup/api_backup_LATEST.sql
-
-
-#### 3. Client rollback
-
-No production client deployment or rollback path is approved during recovery.
-The maintained source is `client-web`; both legacy client prototypes are
-retired and available only through Git history.
-
-#### 4. Monitoring
-- UptimeRobot: Add `https://api.truerepublic.network` with Telegram alerts.
-
-### Bug Bounty Program
-- Page: `bug-bounty/pages/index.js` (Next.js, deployable with `npx vercel --prod --token=${{ secrets.VERCEL_TOKEN }}`)
-- GitHub Issues: `.github/ISSUE_TEMPLATE/bug_bounty.md`
-- Optional platforms: HackerOne, Immunefi
-
-### Community Governance
-- Smart Contracts for voting: `contracts/governance.rs`
-- Community voting with PNYX stakes
-- On-chain proposal mechanism
-
-TrueRepublic is now fully automated, secure, and community-driven!
+Moderate/low npm findings and non-vulnerability RustSec warnings may remain
+visible without blocking only when the maintained policy explicitly classifies
+them. Critical/high findings, scanner errors, and malformed reports fail the
+gate. Independent cryptographic/privacy review, release signing, SBOM,
+provenance, production topology, and rollout approval remain separate GH-29
+requirements.

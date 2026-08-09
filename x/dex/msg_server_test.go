@@ -51,7 +51,7 @@ func TestMsgServerSwapFailsClosed(t *testing.T) {
 	}
 	traderBefore := bank.balance(ctx, accountOwner(trader), pnyxDenom)
 
-	if _, err := server.Swap(sdk.WrapSDKContext(ctx), &MsgSwap{
+	if _, err := server.Swap(ctx, &MsgSwap{
 		Sender:      trader,
 		InputDenom:  pnyxDenom,
 		InputAmt:    10_000,
@@ -77,7 +77,7 @@ func TestMsgServerRegisterAssetAuthorityBoundary(t *testing.T) {
 	keeper, ctx, _, authority := setupCustodyKeeper(t)
 	ctx = ctx.WithEventManager(sdk.NewEventManager())
 	server := NewMsgServer(keeper)
-	goCtx := sdk.WrapSDKContext(ctx)
+	goCtx := ctx
 
 	registration := &MsgRegisterAsset{
 		Sender:      sdk.AccAddress("registry-attacker"),
@@ -130,7 +130,7 @@ func TestMsgServerRegisterAssetAuthorityBoundary(t *testing.T) {
 func TestMsgServerUpdateAssetStatusAuthorityBoundary(t *testing.T) {
 	keeper, ctx, _, authority := setupCustodyKeeper(t)
 	server := NewMsgServer(keeper)
-	goCtx := sdk.WrapSDKContext(ctx)
+	goCtx := ctx
 
 	if _, err := server.UpdateAssetStatus(goCtx, &MsgUpdateAssetStatus{
 		Sender:   sdk.AccAddress("status-attacker"),
@@ -183,7 +183,7 @@ func TestMsgServerUpdateAssetStatusAuthorityBoundary(t *testing.T) {
 func TestMsgServerCreatePoolCustodyBoundary(t *testing.T) {
 	keeper, ctx, bank, _ := setupCustodyKeeper(t)
 	server := NewMsgServer(keeper)
-	goCtx := sdk.WrapSDKContext(ctx)
+	goCtx := ctx
 	provider := sdk.AccAddress("msg-pool-provider")
 
 	// An unfunded provider must fail without committing pool or LP state.
@@ -236,7 +236,7 @@ func TestMsgServerCreatePoolCustodyBoundary(t *testing.T) {
 func TestMsgServerAddAndRemoveLiquidityCustody(t *testing.T) {
 	keeper, ctx, bank, _ := setupCustodyKeeper(t)
 	server := NewMsgServer(keeper)
-	goCtx := sdk.WrapSDKContext(ctx)
+	goCtx := ctx
 	provider := sdk.AccAddress("msg-lp-provider")
 	second := sdk.AccAddress("msg-lp-second")
 	bank.fundAccount(ctx, provider, sdk.NewCoins(
@@ -321,7 +321,7 @@ func TestMsgServerAddAndRemoveLiquidityCustody(t *testing.T) {
 func TestMsgServerSwapExactCustodyBoundary(t *testing.T) {
 	keeper, ctx, bank, _ := setupCustodyKeeper(t)
 	server := NewMsgServer(keeper)
-	goCtx := sdk.WrapSDKContext(ctx)
+	goCtx := ctx
 	provider := sdk.AccAddress("msg-swap-provider")
 	trader := sdk.AccAddress("msg-swap-trader")
 	bank.fundAccount(ctx, provider, sdk.NewCoins(

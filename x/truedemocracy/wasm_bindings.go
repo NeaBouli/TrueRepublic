@@ -275,12 +275,7 @@ func handleQueryPurgeSchedule(ctx sdk.Context, keeper Keeper, req *WasmQueryPurg
 		return nil, fmt.Errorf("purge schedule not found for domain: %s", req.DomainName)
 	}
 
-	resp := WasmPurgeScheduleResponse{
-		DomainName:       schedule.DomainName,
-		NextPurgeTime:    schedule.NextPurgeTime,
-		PurgeInterval:    schedule.PurgeInterval,
-		AnnouncementLead: schedule.AnnouncementLead,
-	}
+	resp := WasmPurgeScheduleResponse(schedule)
 	return json.Marshal(resp)
 }
 
