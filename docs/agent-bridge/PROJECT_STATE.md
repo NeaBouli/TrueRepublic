@@ -1,6 +1,6 @@
 # Project State
 
-Updated: 2026-08-09 11:11 UTC
+Updated: 2026-08-09 11:32 UTC
 
 ## Repository
 
@@ -23,18 +23,21 @@ Updated: 2026-08-09 11:11 UTC
   `31309567545` pass. The new bounded sweep generated minor/patch PRs
   #156-#158; separate Cargo/Go updater-resolution failures remain explicit
   follow-up findings and no dependency update is auto-merged.
-- GH-154 is locally complete and PR-ready. All 31 remote branches whose current
+- GH-154 is closed through PR #159. All 31 remote branches whose current
   SHA exactly matched a merged PR head and all 17 clean exact-merged local
   worktrees were removed after immediate revalidation; no forced worktree
   removal was used.
   - **Remote inventory (six heads):** `main`; active Dependabot PR branches
     #156-#158; closed-unmerged `agent/public-recovery-status`; and
     `solana-archived`.
-  - **Local inventory (seven worktrees):** the dirty/divergent legacy checkout;
+  - **Preserved local inventory (six worktrees):** the dirty/divergent legacy checkout;
     four clean but historically divergent worktrees; closed-unmerged recovery
-    status; and active GH-154.
-  Independent final review is approved with no P0-P3. Protected docs-only
-  publication and final-main readback remain before Done.
+    status.
+  Independent final review approved the audit with no P0-P3. PR #159 exact head
+  `46f687b` passed 11/11 checks and merged as `ac8fbbc`; final-main Docs
+  `31310820782`, Security `31310820753`, and Pages `31310820227` pass on that
+  commit. Issue #154 is closed, its remote task branch is gone, and GH-154 is
+  Done. Dependabot PRs #156-#158 remain separate bounded maintenance work.
 
 - GH-145 is closed through merged PR #146 (`50f18e0`). Two real seeded fuzz
   targets plus deterministic DEX, PNYX cap/malformed-genesis, governance

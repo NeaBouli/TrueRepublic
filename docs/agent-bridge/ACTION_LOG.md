@@ -1,5 +1,17 @@
 # Action Log
 
+## 2026-08-09 — GH-154 merged and final-main verified
+
+- PR #159 passed 11/11 protected exact-head checks on `46f687b` and was
+  squash-merged as `ac8fbbc`; issue #154 is closed and its remote task branch
+  is deleted.
+- Exact-main Docs `31310820782`, Security `31310820753`, and Pages
+  `31310820227` all pass on `ac8fbbc`. GH-154 is Done with no runtime,
+  dependency, workflow, production, chain, signing, key, or funds mutation.
+- The six intentionally preserved remote heads and six preserved historical or
+  closed-unmerged local worktrees remain explicit boundaries. Dependabot PRs
+  #156-#158 are separate follow-up maintenance and were not auto-merged.
+
 ## 2026-08-09 — GH-154 exact remote cleanup / local cleanup in progress
 
 - Repeated the inventory against current GitHub state after GH-153 merged.
