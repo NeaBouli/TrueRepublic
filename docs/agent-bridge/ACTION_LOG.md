@@ -1,5 +1,16 @@
 # Action Log
 
+## 2026-08-10 — GH-172 merged and final-main verified
+
+- PR #173 exact head `671ff37` passed 18/18 contexts with zero open review
+  threads and merged as `293ea35`; GH-172 closed and its remote branch is gone.
+- Final-main Go `31340763723`, Security `31340763717`, reproducible Linux
+  `31340763708`, Docs `31340763710`, and Pages `31340763413` pass. Live Pages
+  publishes 1,607 cases, GH-172 evidence, 23/59, and production false.
+- GH-29 now links GH-172/PR #173 inside the existing quality-depth item, so the
+  canonical rollout denominator and completed count remain unchanged. GH-172
+  is Done; no production or real-key/funds action occurred.
+
 ## 2026-08-10 — GH-172 published as PR #173
 
 - Reviewed commit `972e324` is pushed and PR #173 targets protected `main`.
