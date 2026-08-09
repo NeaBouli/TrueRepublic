@@ -63,6 +63,14 @@
   repository contract, shell/diff checks, and full repeated Go build/vet/Race/
   Coverage across all 13 maintained packages.
 
+## 2026-08-09 — GH-148 PR #149 exact Rust components
+
+- First exact-head CI exposed one integration-only failure: pinned Rust 1.95.0
+  did not include cargo-fmt by default. Added explicit `rustfmt, clippy`
+  components to the same immutable toolchain action.
+- The failed run changed no source or status claim. Fresh exact-head CI remains
+  mandatory; merge stays blocked until every required job passes.
+
 ## 2026-08-09 — GH-145 generative quality-depth inventory
 
 - Confirmed zero existing Go fuzz targets and zero generative property-test

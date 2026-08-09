@@ -786,6 +786,18 @@ GitHub recovery epic: [#4](https://github.com/NeaBouli/TrueRepublic/issues/4)
   final-main/Pages/GH-29 synchronization. Retroactive repository reconciliation
   remains the immediately following block.
 
+### 2026-08-09 12:52 EEST PR #149 first exact-head CI correction
+
+- **Published:** commit `970a198`, PR #149. DeepScan and docs passed on the first
+  head; Rust CI failed immediately because the exact Rust 1.95.0 toolchain action
+  did not install `rustfmt` by default (`cargo-fmt is not installed`).
+- **Correction:** explicitly install the `rustfmt, clippy` components through the
+  same immutable toolchain action. No Rust source, lockfile, runtime, protocol,
+  or public status changed.
+- **Verification:** local Rust 1.95.0 fmt/clippy/build/test/audit had already
+  passed; workflow YAML, repository contract, and exact new-head CI are required
+  again before merge.
+
 ---
 
 ## 2026-08-08 11:22 EEST GH-121 browser query transport → Review
