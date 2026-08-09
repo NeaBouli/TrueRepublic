@@ -5,7 +5,10 @@
 - Every third-party GitHub Action is bound to a reviewed full commit SHA and
   every workflow job has a finite timeout. Go, Node, and Rust toolchains plus
   govulncheck, staticcheck, gitleaks, and cargo-audit have exact versions in one
-  repository contract; Dependabot proposes bounded weekly updates.
+  repository contract. GH-153 narrows weekly Dependabot version maintenance to
+  structurally validated minor/patch groups; ordinary major updates are ignored
+  and require separately scoped review. Dependabot security updates remain a
+  deliberate separately reviewed exception to that version-maintenance rule.
 - Go vulnerabilities, static analysis, maintained-tree secrets, Rust advisories,
   and high/critical maintained-client advisories fail closed. Four secret-scan
   exceptions match exact public synthetic test/documentation strings; broad

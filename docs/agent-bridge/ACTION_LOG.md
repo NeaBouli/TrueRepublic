@@ -1,5 +1,52 @@
 # Action Log
 
+## 2026-08-09 — GH-153 bounded Dependabot maintenance started
+
+- GH-148 merged through PR #149 as `5baeea6`; its security, static, secret,
+  Rust, client, docs, reproducible-build, and Pages checks pass on `main`.
+- The first Dependabot sweep opened failing PRs #150–#152 because wildcard
+  groups combined incompatible major updates with normal maintenance. Opened
+  GH-153 and branch `fix/GH-153-bounded-dependabot` from exact clean main.
+- Scope is limited to minor/patch update policy, repository contract evidence,
+  and classification/closure of the broken generated PRs. No production or
+  runtime action occurred.
+
+## 2026-08-09 — GH-153 compatible update policy verified
+
+- Added explicit version-update minor/patch grouping and wildcard semver-major
+  ignores for Actions, Go, Cargo, and npm. A repository negative test rejects
+  any missing ecosystem exclusion.
+- Focused repository contract, YAML parse, and diff checks pass. Closed failing
+  PRs #150–#152 with evidence and deleted only their generated Dependabot
+  branches; no dependency change was merged.
+- Complete repository verification, independent review, protected PR, merge,
+  final-main/Pages, and Bridge closeout remain pending.
+
+## 2026-08-09 — GH-153 structural policy hardening
+
+- Replaced Dependabot string-count assertions with typed YAML validation per
+  exact ecosystem/group/ignore after Kimi's P3 robustness observation. Invalid
+  nesting, duplicate/unexpected ecosystems, and missing or loosened policy now
+  fail the repository contract.
+- `go mod tidy` reclassified only three existing pinned direct imports; no
+  version or checksum changed. Full `make verify` passes all 1,412 Go cases
+  under Race/Coverage; docs, YAML, and diff checks pass.
+- Ordinary major version updates are suppressed. Security-update PRs remain an
+  intentional separately reviewed exception and are never auto-merged.
+
+## 2026-08-09 — GH-153 final local approval
+
+- Kimi's final read-only review returned APPROVE with no P0-P3 and made no
+  change. Repeated full Go build/vet/Race/Coverage passes all 1,412 cases;
+  module verify/tidy, docs, typed YAML, and diff checks pass.
+- Exact pinned gitleaks scans the 4.04 MB maintained tree with zero findings;
+  secret negative fixtures and exact pinned staticcheck pass. Publication and
+  protected/final-main evidence remain before Done.
+
+
+
+
+
 ## 2026-08-09 — GH-148 security-gate baseline audit and implementation
 
 - Created GH-148 from exact clean `origin/main` `c1a0ed4` for the single GH-29

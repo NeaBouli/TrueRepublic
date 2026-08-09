@@ -9,9 +9,16 @@
   toolchain versions, fail-closed Go vulnerability/static and maintained-tree
   secret gates, lock enforcement, bounded weekly dependency updates, and a
   repository-owned negative-fixture contract.
-- [ ] GH-148: complete independent final review, protected exact-head CI,
-  merge, GH-29/public-status synchronization, final-main/Pages verification,
-  and retroactive PR/branch/worktree reconciliation before marking Done.
+- [x] GH-148: complete independent final review, protected exact-head CI,
+  merge, GH-29/public-status synchronization, and final-main/Pages verification.
+- [x] GH-153: classify and close the three failing first-run Dependabot PRs;
+  implement structurally tested minor/patch-only grouping with ordinary major
+  updates excluded across Actions, Go, Cargo, and maintained npm.
+- [ ] GH-153: pass independent final review and complete local/protected CI,
+  merge, issue/Bridge synchronization, and final-main verification.
+- [ ] GH-154: delete only exact merged-PR remote branches and clean exact-merged
+  local worktrees; preserve and document every unique, dirty, archival, active,
+  or ambiguous ref/worktree.
 - [x] GH-145: implement deterministic property, fuzz, invariant, replay,
   malformed-genesis, and focused race evidence for critical Go paths without
   changing production behavior.

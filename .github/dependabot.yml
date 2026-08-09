@@ -10,7 +10,12 @@ updates:
     open-pull-requests-limit: 3
     groups:
       github-actions:
+        applies-to: version-updates
         patterns: ["*"]
+        update-types: ["minor", "patch"]
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major"]
 
   - package-ecosystem: gomod
     directory: /
@@ -22,7 +27,12 @@ updates:
     open-pull-requests-limit: 3
     groups:
       go-maintenance:
+        applies-to: version-updates
         patterns: ["*"]
+        update-types: ["minor", "patch"]
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major"]
 
   - package-ecosystem: cargo
     directory: /contracts
@@ -34,7 +44,12 @@ updates:
     open-pull-requests-limit: 3
     groups:
       rust-maintenance:
+        applies-to: version-updates
         patterns: ["*"]
+        update-types: ["minor", "patch"]
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major"]
 
   - package-ecosystem: npm
     directory: /client-web
@@ -46,4 +61,9 @@ updates:
     open-pull-requests-limit: 3
     groups:
       client-maintenance:
+        applies-to: version-updates
         patterns: ["*"]
+        update-types: ["minor", "patch"]
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major"]

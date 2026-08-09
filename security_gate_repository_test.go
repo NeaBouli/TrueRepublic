@@ -10,6 +10,8 @@ import (
 	"strings"
 	"testing"
 	"time"
+
+	"gopkg.in/yaml.v3"
 )
 
 type securityGateContract struct {
@@ -27,6 +29,28 @@ type goVulnerabilityException struct {
 	ApprovedOn string `json:"approved_on"`
 	Expires    string `json:"expires"`
 	Reason     string `json:"reason"`
+}
+
+type dependabotConfig struct {
+	Version int                `yaml:"version"`
+	Updates []dependabotUpdate `yaml:"updates"`
+}
+
+type dependabotUpdate struct {
+	Ecosystem string                      `yaml:"package-ecosystem"`
+	Groups    map[string]dependabotGroup  `yaml:"groups"`
+	Ignore    []dependabotIgnoreCondition `yaml:"ignore"`
+}
+
+type dependabotGroup struct {
+	AppliesTo   string   `yaml:"applies-to"`
+	Patterns    []string `yaml:"patterns"`
+	UpdateTypes []string `yaml:"update-types"`
+}
+
+type dependabotIgnoreCondition struct {
+	DependencyName string   `yaml:"dependency-name"`
+	UpdateTypes    []string `yaml:"update-types"`
 }
 
 var actionUsePattern = regexp.MustCompile(`(?m)^\s*(?:-\s*)?uses:\s*([^@\s]+)@([0-9a-f]{40})\s+#\s+\S+`)
@@ -105,6 +129,16 @@ func TestSecurityGateRepositoryContract(t *testing.T) {
 		mutated := cloneSecurityGateFiles(files)
 		delete(mutated, "contracts/Cargo.lock")
 		assertSecurityGateRejected(t, mutated, contract, "contracts/Cargo.lock")
+	})
+
+	t.Run("rejects automatic major dependency updates", func(t *testing.T) {
+		mutated := cloneSecurityGateFiles(files)
+		mutated[".github/dependabot.yml"] = strings.Replace(
+			mutated[".github/dependabot.yml"],
+			`update-types: ["version-update:semver-major"]`,
+			`update-types: ["version-update:semver-minor"]`, 1,
+		)
+		assertSecurityGateRejected(t, mutated, contract, "exclude automatic major updates")
 	})
 }
 
@@ -248,6 +282,7 @@ func securityGateViolations(files map[string]string, contract securityGateContra
 			violations = append(violations, "Dependabot policy missing "+required)
 		}
 	}
+	violations = append(violations, dependabotPolicyViolations(dependabot)...)
 	gitleaks := files[".gitleaks.toml"]
 	if strings.Contains(gitleaks, "paths =") || strings.Contains(gitleaks, "commits =") || strings.Contains(gitleaks, "stopwords =") {
 		violations = append(violations, "gitleaks policy must not use broad path, commit, or stopword allowlists")
@@ -260,6 +295,49 @@ func securityGateViolations(files map[string]string, contract securityGateContra
 	for _, lockfile := range []string{"go.sum", "contracts/Cargo.lock", "client-web/package-lock.json"} {
 		if _, exists := files[lockfile]; !exists {
 			violations = append(violations, "missing required lockfile "+lockfile)
+		}
+	}
+	return violations
+}
+
+func dependabotPolicyViolations(content string) []string {
+	var config dependabotConfig
+	if err := yaml.Unmarshal([]byte(content), &config); err != nil {
+		return []string{"Dependabot policy is invalid YAML"}
+	}
+	if config.Version != 2 {
+		return []string{"Dependabot policy must use version 2"}
+	}
+
+	expectedGroups := map[string]string{
+		"github-actions": "github-actions",
+		"gomod":          "go-maintenance",
+		"cargo":          "rust-maintenance",
+		"npm":            "client-maintenance",
+	}
+	seen := make(map[string]bool, len(expectedGroups))
+	var violations []string
+	for _, update := range config.Updates {
+		groupName, expected := expectedGroups[update.Ecosystem]
+		if !expected || seen[update.Ecosystem] {
+			violations = append(violations, "Dependabot policy contains an unexpected or duplicate ecosystem "+update.Ecosystem)
+			continue
+		}
+		seen[update.Ecosystem] = true
+		group, exists := update.Groups[groupName]
+		if !exists || group.AppliesTo != "version-updates" ||
+			strings.Join(group.Patterns, ",") != "*" ||
+			strings.Join(group.UpdateTypes, ",") != "minor,patch" {
+			violations = append(violations, "Dependabot policy must group only minor and patch version updates for "+update.Ecosystem)
+		}
+		if len(update.Ignore) != 1 || update.Ignore[0].DependencyName != "*" ||
+			strings.Join(update.Ignore[0].UpdateTypes, ",") != "version-update:semver-major" {
+			violations = append(violations, "Dependabot policy must exclude automatic major updates for "+update.Ecosystem)
+		}
+	}
+	for ecosystem := range expectedGroups {
+		if !seen[ecosystem] {
+			violations = append(violations, "Dependabot policy missing compatible update rules for "+ecosystem)
 		}
 	}
 	return violations

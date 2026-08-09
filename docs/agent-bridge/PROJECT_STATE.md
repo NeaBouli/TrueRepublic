@@ -1,28 +1,31 @@
 # Project State
 
-Updated: 2026-08-09 09:45 UTC
+Updated: 2026-08-09 10:28 UTC
 
 ## Repository
 
-- GH-148 is locally implemented on exact `origin/main` `c1a0ed4`: all 35
-  third-party Action uses are immutable SHA pins, tool/scanner/toolchain
-  versions are centralized, every job is bounded, Go vulnerability and
-  static-analysis gates fail closed, current-tree secret scanning includes
-  positive/negative evidence, lockfiles are enforced, and bounded weekly
-  Dependabot updates cover four ecosystems. Kimi's baseline audit identified
-  the repaired fail-open govulncheck path and missing controls. Final review
-  then caught and closed the bare-scanner exit-3 blocker with an exact,
-  expiry-bounded no-fix policy wrapper, and narrowed secret scanning to the
-  maintained Git tree so ignored build artifacts cannot create false
-  positives. Re-review also hardened real-date/30-day/duplicate policy checks
-  and fail-closed Git enumeration with committed negative fixtures. Focused
-  policy,
-  static, secret, documentation, retirement, generative-quality, live Go/Rust/
-  Node audit, and client gates pass; full Go/Rust verification is in progress.
-  Candidate public arithmetic is 1,579 cases (1,412 Go, 26 Rust, 141 client),
-  rollout 22/59 overall and 22/51 phase work, Phase 6 6/7, production false.
-  Independent final diff review, protected PR, merge, final-main/Pages, GH-29,
-  and retroactive repository cleanup remain before Done.
+- GH-148 is closed through merged PR #149 (`5baeea6`). All 35 third-party
+  Action uses are immutable SHA pins; toolchains/scanners are centralized and
+  exact; every job is bounded; Go vulnerability/static, maintained-tree secret,
+  Cargo/Node audit, and lock gates fail closed with committed negative fixtures.
+  Kimi's independent final review found no P0/P1/P2 after remediation. Exact PR
+  head passed 22/22 checks; final-main Go `31307697100`, Security
+  `31307697098`, Rust `31307697110`, Client `31307697087`, reproducible Linux
+  `31307697093`, Docs `31307697083`, and Pages `31307696631` pass. Live Pages
+  publishes 1,579 cases (1,412 Go, 26 Rust, 141 client), rollout 22/59 overall
+  and 22/51 phase work, Phase 6 6/7, and production false. GH-29 is synchronized.
+- GH-153 is in progress after the first Dependabot sweep proved wildcard groups
+  could combine incompatible major lines into failing PRs #150–#152. Those PRs
+  are closed without merging dependency changes. The candidate policy groups
+  only minor/patch version updates, ignores ordinary automatic semver-major
+  updates in all four ecosystems, and validates the exact YAML structure in a
+  repository regression. Full verification and independent re-review are in
+  progress; protected PR, merge, and final-main evidence remain.
+- GH-154 tracks the separate lossless repository reconciliation. Read-only
+  evidence classifies 31 remote branches and 16 local worktrees as exact
+  merged-PR residue. Closed-unmerged/archival remote refs, the dirty/divergent
+  legacy checkout, and ambiguous stacked worktrees remain explicit preservation
+  boundaries until their final audit record is published.
 
 - GH-145 is closed through merged PR #146 (`50f18e0`). Two real seeded fuzz
   targets plus deterministic DEX, PNYX cap/malformed-genesis, governance
