@@ -4,7 +4,7 @@
 
 - [x] GH-169: implement and locally verify a versioned cross-system threat
   register plus fail-closed repository contract across all maintained domains.
-- [ ] GH-169: publish through protected exact-head CI, merge, synchronize GH-29
+- [x] GH-169: publish through protected exact-head CI, merge, synchronize GH-29
   and public status, then verify final `main` and Pages before Done.
 - [ ] GH-4: keep the recovery epic and acceptance criteria current.
 - [ ] GH-29: complete the seven-phase production-readiness roadmap and attach
