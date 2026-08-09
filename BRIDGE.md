@@ -1,5 +1,20 @@
 # TrueRepublic Agent Bridge
 
+## 2026-08-09 14:32 EEST GH-154 protected publication → Done
+
+- PR #159 passed all 11 exact-head checks on
+  `46f687be0f57774dcc8c970154246371a90759f3` and was squash-merged as
+  `ac8fbbcfabdc87e9293c30ddffc1cf320cac3aca`; issue #154 is closed and the
+  remote task branch is deleted.
+- Fresh exact-main Docs Consistency Check `31310820782`, Security Scan
+  `31310820753`, and Pages `31310820227` all completed successfully on the
+  same merge commit. The cleanup audit is therefore fully published and
+  GH-154 is Done.
+- The preservation boundaries remain unchanged: six intentional remote heads
+  and six historical/closed-unmerged local worktrees after this clean closeout
+  worktree is retired. Active Dependabot PRs #156-#158 are separate bounded
+  maintenance tasks and were not modified or auto-merged by GH-154.
+
 ## 2026-08-09 13:58 EEST GH-154 lossless repository reconciliation → In Progress
 
 - **Issue/branch:** [GH-154](https://github.com/NeaBouli/TrueRepublic/issues/154),

@@ -20,7 +20,7 @@
   local worktrees; preserve and document every unique, dirty, archival, active,
   or ambiguous ref/worktree.
 - [x] GH-154: pass independent final review with no unresolved P0-P3 finding.
-- [ ] GH-154: publish the audit through protected docs-only CI, merge, close the
+- [x] GH-154: publish the audit through protected docs-only CI, merge, close the
   issue, and verify final-main Docs/Pages state.
 - [x] GH-145: implement deterministic property, fuzz, invariant, replay,
   malformed-genesis, and focused race evidence for critical Go paths without
