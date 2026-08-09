@@ -1,5 +1,98 @@
 # TrueRepublic Agent Bridge
 
+## 2026-08-09 13:19 EEST GH-153 bounded Dependabot maintenance → In Progress
+
+- **Issue/branch:** [GH-153](https://github.com/NeaBouli/TrueRepublic/issues/153),
+  `fix/GH-153-bounded-dependabot` from exact merged `origin/main` `5baeea6`.
+- **Trigger:** GH-148's first scheduled update sweep opened PRs #150–#152 and
+  exposed that wildcard groups also combine incompatible major dependency
+  lines. Cargo attempted `schemars` 0.8→1.2 and unresolved CosmWasm updates;
+  Go attempted incompatible Cosmos/CometBFT candidates; npm combined 23
+  updates and fails build, browser, integration, and audit gates.
+- **Scope:** restrict automatic grouped maintenance to compatible minor/patch
+  updates, add a repository regression contract, classify/close the broken
+  generated PRs, and require local plus protected GitHub evidence.
+- **Boundary/risk:** Medium supply-chain configuration only. Major upgrades
+  remain separately reviewed tasks. No runtime, protocol, consensus,
+  wallet/key/signing, funds, deployment, network, mainnet, or production
+  action is authorized.
+- **Retro audit:** independent read-only audit classified 31 remote branches
+  and 16 local worktrees as exact merged-PR residue; two remote branches and
+  ten local worktrees remain active, unique, dirty, or ambiguous and are
+  preserved. No cleanup has yet been performed.
+- **Ready for:** Sol implementation, focused/full verification, independent
+  review, protected PR, merge, final-main/Pages and Bridge closure.
+
+---
+
+### 2026-08-09 13:28 EEST policy correction and generated-PR cleanup
+
+- **Fix:** every ecosystem group now explicitly applies only to version
+  updates at `minor` or `patch` level, while a wildcard ignore prevents
+  automatic `semver-major` PRs. Major dependency changes remain standalone,
+  architecture-aware review tasks.
+- **Regression:** `TestSecurityGateRepositoryContract` now rejects removal of
+  any of the four major-update exclusions and requires all four compatible
+  groups. Official GitHub option semantics were checked before implementation.
+- **Focused PASS:** repository security-gate contract including the new
+  negative case; Dependabot YAML parse; `git diff --check`.
+- **GitHub cleanup:** failing generated PRs #150, #151, and #152 were closed
+  with exact failure classification and only their automatic Dependabot
+  branches were deleted. No dependency diff was merged.
+- **Pending:** full repository verification, independent read-only review,
+  commit/push/protected CI/merge, final-main evidence, then proven-safe merged
+  branch/worktree cleanup.
+- **Cleanup ticket:** [GH-154](https://github.com/NeaBouli/TrueRepublic/issues/154)
+  now owns the separate lossless branch/worktree reconciliation so GH-153 stays
+  an atomic supply-chain policy repair.
+
+### 2026-08-09 13:28 EEST review hardening
+
+- **Review response:** Kimi's first read-only pass identified one P3 robustness
+  concern: literal string counts could accept correctly repeated rules in the
+  wrong YAML entries. Sol replaced them with typed `yaml.v3` parsing that
+  rejects invalid YAML, missing/duplicate/unexpected ecosystems, wrong group
+  names, wrong nesting, extra/missing ignores, and non-minor/patch policy.
+- **Module hygiene:** `go mod tidy` only reclassifies three already-pinned,
+  already-used modules (`zerolog`, `testify`, `yaml.v3`) as direct; no version,
+  checksum, runtime dependency graph, or production source changed.
+- **Full PASS:** `make verify` passes build, vet, and all 1,412 Go cases under
+  Race/Coverage across 13 packages; root 71.9%, DEX 51.1%, governance 63.8%.
+  Documentation consistency, YAML parse, and diff checks also pass.
+- **Security-update caveat:** the ordinary version-update policy suppresses
+  automatic majors. Dependabot security updates may still cross a major line
+  and remain separately reviewed, never auto-merged.
+- **Pending:** final re-review on this hardened exact diff, then publication and
+  protected/final-main evidence.
+
+### 2026-08-09 13:39 EEST final local review → Approved
+
+- **Kimi verdict:** APPROVE; no P0/P1/P2/P3 remains. The final read-only review
+  reproduced the contract case, verified all four exact ecosystem structures,
+  confirmed zero dependency/checksum/runtime change, and found Bridge state
+  consistent. Kimi changed no file.
+- **Final local PASS:** repeated `make verify` passes build, vet, and 1,412 Go
+  cases under Race/Coverage; `go mod verify` and `go mod tidy -diff` pass;
+  documentation consistency, typed Dependabot YAML, and diff checks pass.
+- **Security PASS:** exact pinned gitleaks 8.30.1 scans 4.04 MB with zero leaks;
+  planted-secret and Git-failure fixtures pass; exact pinned staticcheck 2026.1
+  passes. The first attempt correctly stopped because the new worktree lacked
+  scanner binaries; no false PASS was recorded.
+- **Ready for:** commit, push, protected exact-head PR checks and merge. GH-153
+  is not Done until final-main verification succeeds.
+
+### 2026-08-09 13:43 EEST PR #155 published
+
+- Commit `5f188e6` is pushed through
+  [PR #155](https://github.com/NeaBouli/TrueRepublic/pull/155), closing GH-153
+  only after merge. The PR records full local evidence and Kimi approval.
+- Exact-head protected workflows and review are now mandatory. No check is
+  bypassed; merge, final-main/Pages, issue closure, and Bridge synchronization
+  remain pending.
+
+
+
+
 Canonical coordination lives in [`docs/agent-bridge/`](docs/agent-bridge/README.md).
 
 - Current state: [`PROJECT_STATE.md`](docs/agent-bridge/PROJECT_STATE.md)
