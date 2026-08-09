@@ -38,6 +38,13 @@
   remote residue. The initial 16 exact worktrees plus completed GH-153 account
   for the final 17 non-forced removals. Protected publication remains.
 
+## 2026-08-09 — GH-154 PR #159 documentation review remediated
+
+- Corrected project-state/TODO sequencing so independent review is complete
+  and only protected publication remains. Split remote and local inventories
+  into explicit lists without changing any verified count or preservation
+  boundary. No code, dependency, workflow, or runtime change occurred.
+
 ## 2026-08-09 — GH-153 protected merge and exact-main checkpoint
 
 - PR #155 passed all 18 exact-head checks on `3f698a2`, then merged as

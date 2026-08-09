@@ -82,6 +82,15 @@
 - Remaining work is publication only: commit, protected docs-only PR, merge,
   issue closure, final-main Docs/Pages and Bridge readback.
 
+### 2026-08-09 14:22 EEST PR #159 review remediation
+
+- CodeRabbit's two valid documentation findings are fixed: project state now
+  separates the six remote heads from the seven local worktrees, and the TODO
+  records independent review as complete while publication remains open.
+- GH-153 closure evidence remains in this closeout because it is the missing
+  final-main/Bridge handoff that immediately precedes and establishes GH-154's
+  exact base. No runtime, dependency, workflow, or inventory claim changed.
+
 ---
 
 ## 2026-08-09 13:19 EEST GH-153 bounded Dependabot maintenance → In Progress

@@ -26,12 +26,15 @@ Updated: 2026-08-09 11:11 UTC
 - GH-154 is locally complete and PR-ready. All 31 remote branches whose current
   SHA exactly matched a merged PR head and all 17 clean exact-merged local
   worktrees were removed after immediate revalidation; no forced worktree
-  removal was used. Final inventory intentionally preserves six remote heads
-  and seven local worktrees covering `main`, active Dependabot PRs #156-#158,
-  closed-unmerged recovery status, archival Solana, the dirty/divergent legacy
-  checkout, four clean but historically divergent worktrees, and active GH-154.
-  Independent review, protected docs-only publication, and final-main readback
-  remain before Done.
+  removal was used.
+  - **Remote inventory (six heads):** `main`; active Dependabot PR branches
+    #156-#158; closed-unmerged `agent/public-recovery-status`; and
+    `solana-archived`.
+  - **Local inventory (seven worktrees):** the dirty/divergent legacy checkout;
+    four clean but historically divergent worktrees; closed-unmerged recovery
+    status; and active GH-154.
+  Independent final review is approved with no P0-P3. Protected docs-only
+  publication and final-main readback remain before Done.
 
 - GH-145 is closed through merged PR #146 (`50f18e0`). Two real seeded fuzz
   targets plus deterministic DEX, PNYX cap/malformed-genesis, governance
