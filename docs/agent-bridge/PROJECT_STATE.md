@@ -1,8 +1,17 @@
 # Project State
 
-Updated: 2026-08-09 11:32 UTC
+Updated: 2026-08-09 12:13 UTC
 
 ## Repository
+
+- GH-161 is in progress. Safe Cargo maintenance PR #156 is merged as `4aeddc0`
+  after refreshed exact-head and local workspace evidence. Failing npm #157 and
+  Go #158 are classified as incompatible groups and remain unmerged. Bounded
+  replacement updates pass their full local client and Go gates; a typed policy
+  regression restricts Go automation to patches, preserves the Playwright and
+  React Refresh compatibility boundaries, and removes CosmWasm from grouping.
+  Independent review, protected replacement PRs, final-main, Pages, and Bridge
+  synchronization remain before Done.
 
 - GH-148 is closed through merged PR #149 (`5baeea6`). All 35 third-party
   Action uses are immutable SHA pins; toolchains/scanners are centralized and

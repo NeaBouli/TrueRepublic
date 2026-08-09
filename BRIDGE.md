@@ -1,5 +1,45 @@
 # TrueRepublic Agent Bridge
 
+## 2026-08-09 14:45 EEST GH-161 bounded dependency reconciliation → In Progress
+
+- **Issue/branch:** [GH-161](https://github.com/NeaBouli/TrueRepublic/issues/161),
+  `fix/GH-161-dependabot-reconciliation` from exact verified `origin/main`
+  `b152fb13dc4303859e078a94c0b8e526752c7ea7`.
+- **Scope:** independently reproduce and reconcile Cargo PR #156, npm PR #157,
+  and Go PR #158. Merge only compatible, fully reviewed updates; otherwise
+  repair or replace the generated group and record the concrete incompatibility.
+- **Safety boundary:** no automatic merge, semver-major widening, production,
+  deployment, network, mainnet, wallet, key, signing, migration, or funds
+  action. The six documented historical/closed-unmerged preservation
+  worktrees and branches remain untouched.
+- **Current evidence:** #156 is green; #157 has one failing client build; #158
+  has failing Go build/recovery/capacity plus vulnerability/static gates. Kimi
+  receives a secret-free read-only compatibility review while Sol owns all
+  edits, integration, protected publication, and final verification.
+
+### 2026-08-09 15:00 EEST triage and safe replacement evidence
+
+- PR #156 was refreshed onto current `main`, passed all ten exact-head checks
+  and no review thread, then merged as `4aeddc0267bffd8105ff2182892b72419c6fb88b`.
+  Local exact-head Rust fmt, Clippy, build, all 26 unit tests, and doc tests pass.
+- PR #157 is rejected as a group: `eslint-plugin-react-refresh` 0.5.3 makes 19
+  existing lazy-route exports fail lint, and Playwright 1.62.1 exceeds the
+  frozen macOS 12 browser boundary. A seven-package replacement retaining both
+  pins passes lint, 141 unit/policy cases, build/budget, audit, chain harness
+  compilation, and 26 local Chromium/Firefox browser cases. Ubuntu WebKit CI
+  remains the authoritative engine gate.
+- PR #158 is rejected as a protocol migration: Cosmos SDK 0.50.14→0.53.0 and
+  related 0.x changes disable expected invariant behavior, alter export output,
+  break recovery/capacity suites, add static deprecations, and expose three new
+  reachable vulnerability IDs. A four-direct-dependency patch-only replacement
+  passes full `make verify`, module verification, pinned staticcheck, pinned
+  govulncheck policy, and the repository security contract.
+- Spark implemented the bounded typed policy patch in `.github/dependabot.yml`
+  and `security_gate_repository_test.go`; Sol reviewed the diff and repeated
+  the focused tests. Kimi approved the three-slice review; Sol also closed its
+  P2 by fully freezing automatic Playwright version updates. Protected
+  publication remains.
+
 ## 2026-08-09 14:32 EEST GH-154 protected publication → Done
 
 - PR #159 passed all 11 exact-head checks on
