@@ -53,10 +53,10 @@ boundaries.
 ## Toolchain
 
 - Go toolchain 1.26.5
-- Cosmos SDK 0.50.14
-- CometBFT 0.38.22
-- ibc-go 8.7.0
-- wasmd 0.53.3 / wasmvm 2.2.2
+- Cosmos SDK v0.50.15
+- CometBFT v0.38.25
+- ibc-go v8.7.0
+- wasmd v0.53.4 / wasmvm 2.2.2
 - gnark 0.14.0
 - React 18.2, TypeScript 5.9, Vite 8.2.1, CosmJS 0.39.0
 - Rust 1.75+

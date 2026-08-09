@@ -128,7 +128,7 @@ See [INSTALLATION.md](INSTALLATION.md) for detailed instructions.
 | **DEX (stacked recovery)** | PR #18 adds custody/LP ownership/burns; PR #19 reconciles genesis and checks reserves/shares every block | [DEX Guide](docs/user-manual/dex-trading-guide.md) |
 | **VoteToEarn** | Earn PNYX rewards for active participation | [Stones Guide](docs/user-manual/stones-voting-guide.md) |
 | **Suggestion Lifecycle** | Green/yellow/red zones with auto-delete | [Governance](docs/user-manual/governance-tutorial.md) |
-| **IBC Transfers** | Cross-chain PNYX via ICS-20 (ibc-go v8) | [IBC Setup](docs/IBC_RELAYER_SETUP.md) |
+| **IBC Transfers** | ICS-20 transfer module wired; two-chain and relayer evidence pending | [IBC Setup](docs/IBC_RELAYER_SETUP.md) |
 
 ---
 
@@ -244,7 +244,7 @@ cd client-web && npm ci && npm run lint && npm test -- --run && npm run build
 | Cosmos SDK | v0.50.15 | Recovery verified |
 | CometBFT | v0.38.25 | Recovery verified |
 | CosmWasm | v0.53.4 | Recovery verified |
-| ibc-go | v8.7.0 | Transfer Active |
+| ibc-go | v8.7.0 | Transfer wired; two-chain/relayer unverified |
 | gnark (ZKP) | v0.14.0 | On-chain recovery verified; client disabled |
 | Go | 1.26.5 | Recovery verified |
 | Rust | 1.75+ | Contracts |

@@ -202,7 +202,7 @@ This model does not claim: a real ZKP prover or ceremony; any independent
 external audit; wallet custody proof; IBC or testnet evidence; private
 topology, firewall, or DNS deployment; release artifact signing or
 provenance; production or mainnet readiness; or real-funds/real-key safety.
-Entries needing those carry `deferred` or `blocked` status and map to GH-7
+Entries needing those carry a `deferred` or `blocked` status and map to GH-7
 or GH-29.
 
 ## Review and update triggers

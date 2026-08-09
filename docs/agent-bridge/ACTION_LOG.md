@@ -1,5 +1,15 @@
 # Action Log
 
+## 2026-08-09 — PR #170 review remediation verified
+
+- Reproduced and fixed all five CodeRabbit inline findings: two residual IBC
+  overclaims, stale agent-guide versions, a stale treasury count, and raw-text
+  rather than parsed Go module version validation. Also removed JSON-format
+  coupling and used robust EOF matching in the contract test.
+- Repeated focused contract, docs consistency, full build/vet/Race/Coverage,
+  Staticcheck, secret scan, module verification, JSON and diff checks; all pass.
+  No failed check was bypassed; the remediated exact-head CI remains required.
+
 ## 2026-08-09 — GH-169 locally verified
 
 - Added a canonical v1 cross-system threat register with 18 threats across all

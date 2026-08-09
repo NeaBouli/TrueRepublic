@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"os"
@@ -107,10 +108,6 @@ func TestThreatModelRepositoryContract(t *testing.T) {
 			t.Fatalf("threat model register contains forbidden secret/host shape %q", forbidden)
 		}
 	}
-	if !strings.Contains(raw, `"production_ready": false`) {
-		t.Fatal("threat model register must carry an explicit production_ready false boundary")
-	}
-
 	doc := readRepositoryFile(t, threatModelDocPath)
 	for _, required := range []string{
 		threatModelVersion,
@@ -279,7 +276,7 @@ func decodeThreatModel(raw []byte) (threatModelContract, error) {
 		return threatModelContract{}, err
 	}
 	var trailing json.RawMessage
-	if err := decoder.Decode(&trailing); err != io.EOF {
+	if err := decoder.Decode(&trailing); !errors.Is(err, io.EOF) {
 		if err == nil {
 			return threatModelContract{}, fmt.Errorf("unexpected trailing JSON value")
 		}

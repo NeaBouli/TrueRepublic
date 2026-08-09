@@ -42,7 +42,7 @@ APPLICATION LAYER (Cosmos SDK v0.50.15)
 │   └── slashing.go ← Double-sign (5%), downtime (1%)
 ├── x/dex ← AMM exchange (7 msg types, 138 recovery cases)
 │   └── keeper.go ← CreatePool, Swap (x*y=k), Add/RemoveLiquidity
-├── treasury/keeper ← Tokenomics equations 1-5 (31 tests)
+├── treasury/keeper ← Tokenomics equations 1-5 (36 tests)
 │   └── rewards.go ← Domain interest, staking rewards, decay
 ├── CosmWasm ← Smart contracts (governance.rs, treasury.rs)
 └── Standard modules (auth, bank, staking, etc.)

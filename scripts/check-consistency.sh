@@ -111,15 +111,23 @@ if [ "$ROLLOUT_COMPLETED" -gt "$ROLLOUT_TOTAL" ] ||
 fi
 
 echo "Checking technology source of truth..."
+if ! GO_MODULE_METADATA=$(go mod edit -json); then
+  echo "FAIL unable to parse go.mod metadata"
+  exit 1
+fi
 for module_version in \
-  "github.com/cosmos/cosmos-sdk $COSMOS_SDK_VERSION" \
-  "github.com/cometbft/cometbft $COMETBFT_VERSION" \
-  "github.com/CosmWasm/wasmd $WASMD_VERSION" \
-  "github.com/cosmos/ibc-go/v8 $IBC_GO_VERSION"; do
-  if grep -Fq "$module_version" go.mod; then
-    echo "  OK $module_version"
+  "github.com/cosmos/cosmos-sdk:$COSMOS_SDK_VERSION" \
+  "github.com/cometbft/cometbft:$COMETBFT_VERSION" \
+  "github.com/CosmWasm/wasmd:$WASMD_VERSION" \
+  "github.com/cosmos/ibc-go/v8:$IBC_GO_VERSION"; do
+  module=${module_version%%:*}
+  expected=${module_version#*:}
+  actual=$(jq -r --arg module "$module" \
+    '.Require[] | select(.Path == $module) | .Version' <<<"$GO_MODULE_METADATA")
+  if [ "$actual" = "$expected" ]; then
+    echo "  OK $module $expected"
   else
-    echo "  FAIL go.mod does not match status value $module_version"
+    echo "  FAIL go.mod requires $module $actual, status records $expected"
     ERRORS=$((ERRORS+1))
   fi
 done
@@ -177,6 +185,11 @@ for file_value in \
   "README.md:$COMETBFT_VERSION" \
   "README.md:$WASMD_VERSION" \
   "README.md:$IBC_GO_VERSION" \
+  "CLAUDE.md:$COSMOS_SDK_VERSION" \
+  "CLAUDE.md:$COMETBFT_VERSION" \
+  "CLAUDE.md:$WASMD_VERSION" \
+  "CLAUDE.md:$IBC_GO_VERSION" \
+  "CLAUDE.md:Vite $VITE_VERSION" \
   "wiki/Home.md:$COSMOS_SDK_VERSION" \
   "wiki/Home.md:$COMETBFT_VERSION" \
   "wiki/Home.md:$WASMD_VERSION" \

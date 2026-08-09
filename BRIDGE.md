@@ -1,5 +1,19 @@
 # TrueRepublic Agent Bridge
 
+## 2026-08-09 23:54 EEST PR #170 review remediation → Verified
+
+- CodeRabbit's five inline findings were reproduced and fixed: remaining IBC
+  claims are explicitly unverified, CLAUDE/treasury versions and counts match
+  source truth, module checks parse active `go.mod` requirements instead of raw
+  text, and the threat-model parser/test wording is format-independent and uses
+  robust EOF comparison. Two related low-value test nits were also resolved.
+- The remediated tree passes the focused 20-case threat-model contract,
+  documentation consistency including parsed SDK/CometBFT/wasmd/ibc-go/Vite
+  parity, complete build/vet/Race/Coverage, Staticcheck, maintained-tree secret
+  scan, module verification, JSON and diff integrity.
+- The first PR head reached 17/18 green before remediation; no failed check was
+  ignored. A new exact head and its complete protected CI/review chain are next.
+
 ## 2026-08-09 23:38 EEST GH-169 cross-system threat model → Locally Verified
 
 - **Implementation:** added canonical `truerepublic.threat-model/v1` JSON and
