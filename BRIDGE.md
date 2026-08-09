@@ -1,5 +1,22 @@
 # TrueRepublic Agent Bridge
 
+## 2026-08-10 00:25 EEST GH-169 merged and final-main verified → Done
+
+- PR [#170](https://github.com/NeaBouli/TrueRepublic/pull/170) exact head
+  `620c41d` passed 18/18 checks after all five review threads were resolved and
+  merged by owner-authorized admin squash as `d50c131`. The bypass covered only
+  formal self-approval; no technical check or review finding was bypassed.
+- Exact merged-main runs pass: Go CI `31336109586`, Security Scan `31336109601`,
+  Reproducible Linux Daemon `31336109590`, Docs `31336109615`, and Pages
+  `31336109276`. GH-169 is closed and its remote implementation branch is gone.
+- GH-29 now checks the Phase-5 threat-model item and links GH-169/PR #170. Live
+  Pages readback confirms 1,606 tests, 23/59 overall, 23/51 phase work, 39%/45%,
+  GH-169, Vite 8.2 and the unchanged non-production boundary. Phase 5 is 5/6;
+  Phase 6 remains 6/7; `production_ready=false`.
+- No deployment, mainnet, production, wallet/key/signing, consensus-state
+  migration, release publishing or real-funds action occurred. The independent
+  external security review remains the final open Phase-5 item.
+
 ## 2026-08-09 23:54 EEST PR #170 review remediation → Verified
 
 - CodeRabbit's five inline findings were reproduced and fixed: remaining IBC

@@ -1,8 +1,16 @@
 # Project State
 
-Updated: 2026-08-09 20:38 UTC
+Updated: 2026-08-09 21:25 UTC
 
 ## Repository
+
+- GH-169 is complete through PR #170. Exact reviewed head `620c41d` passed
+  18/18 contexts with zero unresolved review threads and squash-merged as
+  `d50c131`. Final-main Go `31336109586`, Security `31336109601`, reproducible
+  Linux `31336109590`, Docs `31336109615`, and Pages `31336109276` pass. GH-29
+  and live Pages publish 1,606 cases, 23/59 overall, 23/51 phase work, Phase 5
+  5/6, Phase 6 6/7 and production false. Independent external security review
+  remains open.
 
 - GH-169 is locally verified on `security/GH-169-threat-model`. The canonical
   v1 register covers nine domains with 18 threats and 33 repository evidence

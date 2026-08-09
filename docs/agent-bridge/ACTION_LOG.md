@@ -1,5 +1,16 @@
 # Action Log
 
+## 2026-08-10 — GH-169 merged and final-main verified
+
+- PR #170 exact remediation head `620c41d` passed 18/18 contexts, all five
+  CodeRabbit threads were resolved, and owner-authorized admin squash bypassed
+  only formal self-approval. Merge `d50c131` closes GH-169; the remote task
+  branch was deleted.
+- Final-main Go `31336109586`, Security `31336109601`, reproducible Linux
+  `31336109590`, Docs `31336109615`, and Pages `31336109276` pass. Live Pages
+  confirms 1,606 tests, 23/59 overall, 23/51 phase work and the unchanged
+  non-production boundary. GH-29 is synchronized; external review remains open.
+
 ## 2026-08-09 — PR #170 review remediation verified
 
 - Reproduced and fixed all five CodeRabbit inline findings: two residual IBC
