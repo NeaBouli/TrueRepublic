@@ -14,7 +14,7 @@ members = [
 cosmwasm-std = "3"
 cosmwasm-vm = "3"
 serde = { version = "1", default-features = false, features = ["derive"] }
-schemars = "0.8"
+schemars = "1.2"
 thiserror = "2"
 truerepublic-bindings = { path = "packages/bindings" }
 truerepublic-testing-utils = { path = "packages/testing-utils" }
