@@ -1,6 +1,6 @@
 # TrueRepublic Road to Rollout
 
-Updated: 2026-08-08
+Updated: 2026-08-09
 
 TrueRepublic has a recovered and CI-verified v0.4 engineering foundation. It
 is **not production-ready, mainnet-ready, or approved for real funds or keys**.
@@ -19,7 +19,7 @@ intentionally more granular than the public 59-item tracker.
 
 - The ordered recovery merge chain is on `main`.
 - The maximum supply is fixed at 21,000,000 PNYX.
-- The source of truth records 1,579 recovery-verified tests: 1,412 Go, 26 Rust,
+- The source of truth records 1,606 recovery-verified tests: 1,439 Go, 26 Rust,
   and 141 maintained-client tests. GH-121's real registered browser-query
   boundary and GH-115's local client-chain delivery
   case is separately gated and excluded from this arithmetic.
@@ -163,8 +163,10 @@ software.
   static and secret scans, lockfile enforcement, bounded weekly dependency
   updates, and a repository-owned fail-closed contract
   ([GH-148](https://github.com/NeaBouli/TrueRepublic/issues/148)).
-- [ ] Refresh the threat model for consensus, governance, DEX, ZKP, IBC,
-  operator, and client boundaries.
+- [x] Refresh the threat model for consensus, governance, DEX, ZKP, IBC,
+  operator, and client boundaries with a versioned register and fail-closed
+  repository contract
+  ([GH-169](https://github.com/NeaBouli/TrueRepublic/issues/169)).
 - [ ] Complete an independent security review and resolve every critical/high
   finding.
 

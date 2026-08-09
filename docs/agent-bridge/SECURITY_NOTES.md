@@ -1,5 +1,22 @@
 # Security Notes
 
+## GH-169 cross-system threat-model boundary
+
+- `configs/security/threat-model.json` is the canonical versioned register. It
+  covers consensus/P2P, governance/identity, token/treasury/DEX, ZKP/privacy,
+  IBC/upgrades, client/wallet/RPC, operations, dependencies/CI and release
+  artifacts with stable IDs, controls, repository evidence, residual risk,
+  owners and explicit GH-7/GH-29 gates.
+- `production_ready` is structurally pinned false. High/critical residual risks
+  cannot be marked closed and must map to GH-7 or GH-29. Evidence must be a
+  normalized repository-relative path that exists; malformed/trailing JSON,
+  schema drift, unsafe evidence, secret/host shapes and prose/register drift
+  fail closed in the root test.
+- The model is a repository-grounded self-assessment, not an independent audit.
+  It does not claim a real prover/ceremony, wallet-custody review, two-chain IBC
+  evidence, private topology, live paging/SLOs, signed release provenance,
+  production/mainnet readiness or real-key/real-funds safety.
+
 ## GH-148 maintained security-gate boundary
 
 - Every third-party GitHub Action is bound to a reviewed full commit SHA and

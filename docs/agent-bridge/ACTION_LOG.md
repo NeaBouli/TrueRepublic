@@ -1,5 +1,33 @@
 # Action Log
 
+## 2026-08-09 — PR #170 review remediation verified
+
+- Reproduced and fixed all five CodeRabbit inline findings: two residual IBC
+  overclaims, stale agent-guide versions, a stale treasury count, and raw-text
+  rather than parsed Go module version validation. Also removed JSON-format
+  coupling and used robust EOF matching in the contract test.
+- Repeated focused contract, docs consistency, full build/vet/Race/Coverage,
+  Staticcheck, secret scan, module verification, JSON and diff checks; all pass.
+  No failed check was bypassed; the remediated exact-head CI remains required.
+
+## 2026-08-09 — GH-169 locally verified
+
+- Added a canonical v1 cross-system threat register with 18 threats across all
+  nine required domains, plus a human-readable model and 19-mutation fail-closed
+  repository contract. All 33 evidence paths exist; high/critical residuals map
+  to GH-7/GH-29 and production readiness is structurally false.
+- Corrected public dependency, IBC and GH-131 history drift. Fresh package-scoped
+  JSON output records 1,439 Go cases; with 26 Rust and 141 client cases the
+  source of truth is 1,606. GH-169 moves candidate rollout to 23/59 overall and
+  23/51 phase work; Phase 6 remains 6/7.
+- Kimi's independent review found no P0/P1. Sol fixed its stale multi-client P2,
+  made mutations ID-stable and bound ibc-go into consistency checks. PASS:
+  focused contract, docs consistency, full build/vet/Race/Coverage, security
+  contract, Staticcheck, secret and vulnerability positive/negative gates,
+  module verification, JSON and diff integrity.
+- Protected PR/CI, merge, GH-29/public synchronization, final-main and Pages
+  readback remain. No external runtime or production action occurred.
+
 ## 2026-08-09 — GH-161 merged and final-main verified
 
 - Policy PR #162 merged as `7b3f183`, compatible npm PR #163 as `3a3919c`,

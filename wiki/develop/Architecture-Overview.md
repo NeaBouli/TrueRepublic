@@ -31,8 +31,8 @@ API LAYER
 ├── Module gRPC queries ← Registered truedemocracy.Query and dex.Query services
 └── WebSocket (port 26657/websocket) ← Real-time events
     ↓
-APPLICATION LAYER (Cosmos SDK v0.50.14)
-├── x/truedemocracy ← Core governance (23 msg types, 505 recovery cases)
+APPLICATION LAYER (Cosmos SDK v0.50.15)
+├── x/truedemocracy ← Core governance (23 msg types, 533 recovery cases)
 │   ├── keeper.go ← Domain CRUD, proposals, ratings
 │   ├── anonymity.go ← Permission register, domain key pairs (WP S4)
 │   ├── stones.go ← VoteToEarn, stone voting, list sorting (WP S3.1)
@@ -40,14 +40,14 @@ APPLICATION LAYER (Cosmos SDK v0.50.14)
 │   ├── governance.go ← Admin election, exclusion, cleanup (WP S3.6)
 │   ├── validator.go ← Proof of Domain, staking, transfer limits
 │   └── slashing.go ← Double-sign (5%), downtime (1%)
-├── x/dex ← AMM exchange (7 msg types, 124 recovery cases)
+├── x/dex ← AMM exchange (7 msg types, 138 recovery cases)
 │   └── keeper.go ← CreatePool, Swap (x*y=k), Add/RemoveLiquidity
-├── treasury/keeper ← Tokenomics equations 1-5 (31 tests)
+├── treasury/keeper ← Tokenomics equations 1-5 (36 tests)
 │   └── rewards.go ← Domain interest, staking rewards, decay
 ├── CosmWasm ← Smart contracts (governance.rs, treasury.rs)
 └── Standard modules (auth, bank, staking, etc.)
     ↓
-CONSENSUS LAYER (CometBFT v0.38.22)
+CONSENSUS LAYER (CometBFT v0.38.25)
 ├── Byzantine Fault Tolerance (instant finality)
 ├── P2P Networking (port 26656)
 ├── Block Production (~5s blocks)
@@ -72,9 +72,9 @@ STORAGE LAYER
 | **Why Go?** | Cosmos SDK requirement, excellent performance, strong concurrency |
 | **Key Libraries** | Cosmos SDK, CometBFT, Cobra CLI, LevelDB |
 | **Build** | `make build` produces `truerepublicd` binary |
-| **Test** | `./scripts/go-packages.sh go test -race -cover -count=1 -timeout=600s` (1,412 Go passing cases) |
+| **Test** | `./scripts/go-packages.sh go test -race -cover -count=1 -timeout=600s` (1,439 Go passing cases) |
 
-### Framework: Cosmos SDK v0.50.14
+### Framework: Cosmos SDK v0.50.15
 
 | Aspect | Detail |
 |--------|--------|
@@ -83,7 +83,7 @@ STORAGE LAYER
 | **Standard Modules** | auth, bank, crisis, consensus params, capability, IBC, transfer, wasm; staking/governance/distribution remain explicit boundaries |
 | **Codec** | Amino (legacy) + Protobuf (modern) |
 
-### Consensus: CometBFT v0.38.22
+### Consensus: CometBFT v0.38.25
 
 | Aspect | Detail |
 |--------|--------|

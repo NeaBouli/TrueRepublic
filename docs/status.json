@@ -4,15 +4,15 @@
   "release_date": "2026-03-04",
   "tests": {
     "status": "recovery_verified_locally",
-    "total": 1579,
-    "go": 1412,
+    "total": 1606,
+    "go": 1439,
     "rust": 26,
     "frontend": 141,
     "historical_total": 577
   },
   "web_client": {
     "version": "v0.4.0",
-    "framework": "React 18.2 + TypeScript 5.9 + Vite 8.1",
+    "framework": "React 18.2 + TypeScript 5.9 + Vite 8.2",
     "components": 43,
     "routes": 21,
     "stores": 8,
@@ -37,16 +37,16 @@
     "status": "engineering_in_progress",
     "tracker_scope": "github_issue_29",
     "github_issue": 29,
-    "completed": 22,
+    "completed": 23,
     "total": 59,
-    "phase_work_completed": 22,
+    "phase_work_completed": 23,
     "phase_work_total": 51,
     "phase_6_completed": 6,
     "phase_6_total": 7,
     "production_ready": false
   },
   "modules": {
-    "root": 126,
+    "root": 153,
     "capacitypolicy": 48,
     "deploymentevidence": 71,
     "healthcheck": 55,
@@ -70,14 +70,14 @@
   },
   "tech": {
     "go": "1.26.5",
-    "cosmos_sdk": "v0.50.14",
-    "cometbft": "v0.38.22",
-    "cosmwasm": "v0.53.3",
+    "cosmos_sdk": "v0.50.15",
+    "cometbft": "v0.38.25",
+    "cosmwasm": "v0.53.4",
     "ibc_go": "v8.7.0",
     "rust": "1.75+",
     "react": "18.2",
     "typescript": "5.9",
-    "vite": "8.1.4",
+    "vite": "8.2.1",
     "cosmjs": "0.39.0",
     "zustand": "4.5",
     "tailwindcss": "3.4"
@@ -94,7 +94,7 @@
     },
     "cosmwasm": {
       "status": "recovery_verified_locally",
-      "version": "v0.53.3"
+      "version": "v0.53.4"
     },
     "ibc": {
       "status": "implemented_unverified",
@@ -181,7 +181,7 @@
     "ibc_upgrade": "stubbed - compatible binary replacement and fail-before-open rollback verified and merged on GH-53; state migration not integrated",
     "x_staking": "stubbed - PoD consensus instead",
     "zkp_client": "mock preview is fail-closed and non-submittable; compatible real prover pending",
-    "tx_history": "not yet implemented in web client",
+    "tx_history": "submitted-only newest-first pagination verified on GH-131; incoming-only history is not claimed",
     "ibc_transfers_ui": "query support only in web client",
     "node_bootstrap": "init-node wrapper delegates exclusively to generated CometBFT-key, exact bank-backed PoD genesis; independent multi-node operations review pending"
   },
