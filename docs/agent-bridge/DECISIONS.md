@@ -1,5 +1,18 @@
 # Decisions
 
+## 2026-08-09 - Canonical versioned cross-system threat register
+
+- Security risk state is canonical in `configs/security/threat-model.json`;
+  `docs/security/THREAT_MODEL.md` explains it and must remain bidirectionally
+  consistent. The initial schema is `truerepublic.threat-model/v1`.
+- Severity describes inherent impact while `residual_severity` describes the
+  remaining risk after verified controls. Mitigated/not-applicable threats may
+  not retain high/critical residual risk. Every other high/critical residual
+  maps to GH-7 (independent review) or GH-29 (rollout engineering).
+- Only existing repository paths count as verified evidence. External/live
+  claims remain deferred or blocked; the register is not an audit and cannot
+  set `production_ready=true`.
+
 ## 2026-08-08 - Maintained browser module-query transport
 
 - The maintained browser uses registered protobuf gRPC query paths through the

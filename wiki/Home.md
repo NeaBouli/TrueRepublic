@@ -14,7 +14,7 @@
 | Item | Verified state |
 |---|---|
 | Version label | v0.4.0 recovery |
-| Tests | 1,579 total: 1,412 Go, 26 Rust, 141 maintained-client |
+| Tests | 1,606 total: 1,439 Go, 26 Rust, 141 maintained-client |
 | PNYX cap | 21,000,000 PNYX = 21,000,000,000,000 `upnyx` |
 | Node | Restart, four-validator recovery, state sync, sanitized backup/restore, compatible binary rollback, cold identity failover, secret-safe JSON logs, private metrics, and the GH-85 dashboard/alert/objective baseline verified |
 | ZKP client | Mock generation/submission disabled; real prover pending |
@@ -54,6 +54,7 @@ Recovery tracking: [Issue #4](https://github.com/NeaBouli/TrueRepublic/issues/4)
 - [Audit Reports](security/Audit-Reports)
 - [Known Issues](security/Known-Issues)
 - [Security Architecture](security/Security-Architecture)
+- [Cross-System Threat Model](https://github.com/NeaBouli/TrueRepublic/blob/main/docs/security/THREAT_MODEL.md)
 - [Best Practices](security/Best-Practices)
 
 ## Technology baseline
@@ -61,11 +62,11 @@ Recovery tracking: [Issue #4](https://github.com/NeaBouli/TrueRepublic/issues/4)
 | Layer | Recovery version |
 |---|---|
 | Go | 1.26.5 |
-| Cosmos SDK | v0.50.14 |
-| CometBFT | v0.38.22 |
+| Cosmos SDK | v0.50.15 |
+| CometBFT | v0.38.25 |
 | ibc-go | v8.7.0 |
-| wasmd / wasmvm | v0.53.3 / v2.2.2 |
-| Maintained web client | React 18.2, TypeScript 5.9, Vite 8.1, CosmJS 0.39 |
+| wasmd / wasmvm | v0.53.4 / v2.2.2 |
+| Maintained web client | React 18.2, TypeScript 5.9, Vite 8.2, CosmJS 0.39 |
 
 Historical milestone documents describe implemented surface area, not current
 production approval. Use the status and audit pages above for current claims.

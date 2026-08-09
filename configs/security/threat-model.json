@@ -1,0 +1,614 @@
+{
+  "model": {
+    "name": "truerepublic-cross-system-threat-model",
+    "version": "truerepublic.threat-model/v1",
+    "updated": "2026-08-09"
+  },
+  "production_ready": false,
+  "safety_boundary": "Recovery-only repository threat model covering documentation, configuration, and tests. This register is not an independent external audit and does not authorize or claim consensus-state, cryptography, wallet-custody, key, signing, funds, deployment, mainnet, migration, release, or production activity. The repository holds no secrets, private keys, real topology, or customer data; all committed configuration is synthetic.",
+  "assets": [
+    {
+      "id": "pnyx_ledger",
+      "description": "Canonical bank state, the 21,000,000 PNYX supply cap, module escrow, and treasury accounting."
+    },
+    {
+      "id": "governance_state",
+      "description": "Domains, proposals, votes, validator claims, stake, and slash state in x/truedemocracy."
+    },
+    {
+      "id": "dex_custody",
+      "description": "DEX pool reserves, provider-owned LP shares, asset registry, and swap burn settlement."
+    },
+    {
+      "id": "consensus_identity",
+      "description": "CometBFT validator identity, consensus-key history and revocation, and signer state held by operators, never by the repository."
+    },
+    {
+      "id": "zkp_anonymity",
+      "description": "Pinned genesis verification-key state, identity Merkle roots, and the active nullifier set protecting anonymous voting."
+    },
+    {
+      "id": "maintained_client",
+      "description": "The client-web browser client and user-side key material, which remains user-held and outside repository custody."
+    },
+    {
+      "id": "node_software",
+      "description": "The truerepublicd daemon, deterministic build contract, and release artifacts derived from this repository."
+    },
+    {
+      "id": "ci_supply_chain",
+      "description": "GitHub workflows, pinned Actions, dependency lockfiles, and the security gate contract guarding them."
+    },
+    {
+      "id": "operations_evidence",
+      "description": "Structured logs, private metrics, dashboards, alert rules, and recovery drill evidence."
+    }
+  ],
+  "actors": [
+    {
+      "id": "external_network_attacker",
+      "kind": "adversary",
+      "description": "Unauthenticated remote party probing P2P, RPC, or client-facing surfaces."
+    },
+    {
+      "id": "malicious_validator",
+      "kind": "adversary",
+      "description": "Consensus participant that equivocates, censors, goes offline, or is compromised."
+    },
+    {
+      "id": "malicious_participant",
+      "kind": "adversary",
+      "description": "Governance, treasury, or DEX user attempting spoofed identity, theft, or arithmetic exploitation."
+    },
+    {
+      "id": "malicious_rpc_provider",
+      "kind": "adversary",
+      "description": "Configured or intercepted RPC/REST endpoint returning forged or incomplete chain data to the browser client."
+    },
+    {
+      "id": "supply_chain_attacker",
+      "kind": "adversary",
+      "description": "Party poisoning dependencies, toolchains, Actions, or build inputs."
+    },
+    {
+      "id": "compromised_operator",
+      "kind": "adversary",
+      "description": "Operator whose credentials, signer, or host are partially compromised."
+    },
+    {
+      "id": "maintainer",
+      "kind": "legitimate",
+      "description": "Reviewed repository maintainer acting through protected CI and append-only Bridge records."
+    },
+    {
+      "id": "node_operator",
+      "kind": "legitimate",
+      "description": "Operator running seed, sentry, validator, RPC, or private roles under documented policy."
+    }
+  ],
+  "trust_boundaries": [
+    {
+      "id": "p2p_network",
+      "description": "Untrusted internet and peer nodes versus sentry-shielded validators with deny-by-default role policy.",
+      "data_flows": [
+        "Consensus votes, proposals, and blocks between validators through sentries",
+        "Peer exchange and discovery limited to sanctioned roles",
+        "State-sync snapshots from trusted validators to catching-up nodes"
+      ]
+    },
+    {
+      "id": "consensus_application",
+      "description": "CometBFT consensus versus the Cosmos SDK application over ABCI, including evidence and upgrade boundaries.",
+      "data_flows": [
+        "Deterministic BeginBlock/DeliverTx/EndBlock transitions",
+        "ABCI++ misbehavior evidence feeding slashing",
+        "Export/import and migration state across binary versions"
+      ]
+    },
+    {
+      "id": "module_bank_custody",
+      "description": "Custom governance and DEX modules versus canonical bank custody and the cap-checked issuance service.",
+      "data_flows": [
+        "Escrow, stake, fee, reward, and slash transfers as exact bank movements",
+        "DEX reserve settlement and canonical supply burns",
+        "Every-block crisis invariants over supply, escrow, reserves, and LP totals"
+      ]
+    },
+    {
+      "id": "zkp_prover_verifier",
+      "description": "Client-side proof generation versus the on-chain pinned verification-key boundary; no real prover exists yet.",
+      "data_flows": [
+        "Versioned chain/proposal/rating-bound proof signals",
+        "Nullifier publication preventing double votes",
+        "Genesis-pinned verification key consulted at vote time"
+      ]
+    },
+    {
+      "id": "client_rpc",
+      "description": "Browser client versus the configured CometBFT RPC/REST provider, which is trusted for completeness until a light client exists.",
+      "data_flows": [
+        "Registered protobuf gRPC-over-ABCI queries",
+        "Centralized simulate/sign/deliver transaction flow",
+        "User key material that never leaves user custody"
+      ]
+    },
+    {
+      "id": "repository_ci",
+      "description": "Maintained source versus CI runners, third-party Actions, and external package registries.",
+      "data_flows": [
+        "SHA-pinned Action execution with read-only permissions",
+        "Lockfile-bound Go, Rust, and npm dependency resolution",
+        "Fail-closed vulnerability, static-analysis, and secret gates"
+      ]
+    },
+    {
+      "id": "operator_node",
+      "description": "Operator-held keys, signer state, and host infrastructure versus the secret-free repository.",
+      "data_flows": [
+        "Generated-key genesis bootstrap writing mode-0600 files",
+        "Sanitized backup artifacts excluding key material",
+        "Secret-minimized structured logs and private-only metrics"
+      ]
+    },
+    {
+      "id": "ibc_counterparty",
+      "description": "Future IBC channels versus counterparty chains; currently an explicit non-goal with disabled stubs.",
+      "data_flows": [
+        "No live packet flow exists today",
+        "Documented setup guidance remains untested against a second chain"
+      ]
+    }
+  ],
+  "assumptions": [
+    "Pinned CometBFT, Cosmos SDK, and Wasmd releases behave as specified; reachable upstream vulnerabilities without fixes are tracked with bounded exceptions.",
+    "Operators keep private keys, seed phrases, and signer state outside the repository; committed topology and rehearsal data is synthetic only.",
+    "The maintained client-web is the single supported public client; retired prototypes exist only in Git history.",
+    "Protected GitHub CI on the exact reviewed head is the authoritative public verification signal.",
+    "One consensus identity has exactly one active signer under operator custody procedures."
+  ],
+  "non_goals": [
+    "Production, mainnet, real-funds, or real-key readiness approval; production_ready is false.",
+    "An independent external security audit; this register is repository self-assessment only.",
+    "A real Groth16 prover, ceremony artifact, or independent cryptographic review.",
+    "Live IBC relaying, two-chain tests, or a public testnet.",
+    "Publication of private topology, firewall, DNS, or provider configuration.",
+    "Release artifact signing, SBOM, provenance, or publishing.",
+    "Browser light-client verification of the configured RPC provider."
+  ],
+  "threats": [
+    {
+      "id": "TM-CON-001",
+      "domain": "consensus_p2p",
+      "severity": "high",
+      "likelihood": "medium",
+      "status": "deferred",
+      "attack_path": "External attacker eclipses or floods validators through public P2P listeners, peer exchange, or forged topology.",
+      "impact": "Consensus liveness loss, validator isolation, or deanonymization of the validator set.",
+      "controls": [
+        "GH-71 role-based policy: validators run no public P2P listener, PEX, or seeds and dial at least two sentries",
+        "GH-89 cross-node topology qualification with deny-by-default flows and reserved external principal",
+        "Fail-closed startup validation of per-role network policy"
+      ],
+      "evidence": [
+        "networkpolicy/policy.go",
+        "topologypolicy/validate.go",
+        "configs/topology/qualification.example.json",
+        "docs/agent-bridge/SECURITY_NOTES.md"
+      ],
+      "residual_risk": "Repository policy is verified, but no applied firewall, proxy, DNS, or private live topology deployment evidence exists.",
+      "residual_severity": "high",
+      "owner": "security-maintainers",
+      "next_gate": "GH-29 Phase 1 exit gate: reproduce topology and recovery results on clean infrastructure",
+      "umbrella_issue": "GH-29"
+    },
+    {
+      "id": "TM-CON-002",
+      "domain": "consensus_p2p",
+      "severity": "critical",
+      "likelihood": "medium",
+      "status": "blocked",
+      "attack_path": "A consensus-breaking upgrade or partially applied migration corrupts or splits canonical state with no rehearsed rollback.",
+      "impact": "Ledger divergence, permanent state loss, or an unrecoverable chain halt.",
+      "controls": [
+        "Compatible binary replacement and fail-before-open rollback drills on persisted validator homes",
+        "Bounded fresh-genesis legacy-authority migration with exact export binding",
+        "Sanitized backup/restore/export/import drills and every-block crisis invariants"
+      ],
+      "evidence": [
+        "migration/app_state.go",
+        "server_lifecycle.go",
+        "token/invariant.go",
+        "docs/ROLLOUT_ROADMAP.md"
+      ],
+      "residual_risk": "Governance-controlled consensus-breaking migration and partially applied migration recovery remain unimplemented and unrehearsed.",
+      "residual_severity": "critical",
+      "owner": "security-maintainers",
+      "next_gate": "GH-29 Phase 1: prove consensus-breaking state migration and rollback after partial application",
+      "umbrella_issue": "GH-29"
+    },
+    {
+      "id": "TM-GOV-001",
+      "domain": "governance_identity",
+      "severity": "high",
+      "likelihood": "medium",
+      "status": "mitigated",
+      "attack_path": "Malicious participant spoofs identity or authority to claim treasury, stake, validator, or registry privileges.",
+      "impact": "Theft of escrowed funds, unauthorized validator power, or corrupted governance state.",
+      "controls": [
+        "Identity derived only from authenticated signers or verified proofs, never caller-supplied strings",
+        "Exact bank escrow backs every domain, proposal, stake, deposit, and withdrawal claim",
+        "Chain-authority comparison before asset registry mutation and cached atomic settlement"
+      ],
+      "evidence": [
+        "x/truedemocracy/msg_server.go",
+        "x/truedemocracy/escrow.go",
+        "x/dex/msg_server.go",
+        "CODEX_AUDIT.md"
+      ],
+      "residual_risk": "Merged recovery evidence covers spoofed, duplicate, and injected-failure cases; independent review remains a GH-7 program item, not a repository claim.",
+      "residual_severity": "low",
+      "owner": "security-maintainers",
+      "next_gate": "Preserve signer-bound identity; re-verify under the GH-29 Phase 5 security-depth review",
+      "umbrella_issue": ""
+    },
+    {
+      "id": "TM-GOV-002",
+      "domain": "governance_identity",
+      "severity": "high",
+      "likelihood": "medium",
+      "status": "deferred",
+      "attack_path": "Attacker front-runs anonymous rating reward payouts because proof and signature payloads do not bind a safe bank recipient.",
+      "impact": "Reward theft from anonymous voters and forced deanonymization pressure.",
+      "controls": [
+        "Anonymous rating rewards are deferred; production handlers refuse unsafe direct payout",
+        "Proofs and legacy signatures bind chain, domain, issue, suggestion, and rating",
+        "The maintained web client fails closed on mock or unsafe submission"
+      ],
+      "evidence": [
+        "x/truedemocracy/zkp.go",
+        "client-web/src/services/zkp.ts",
+        "docs/agent-bridge/SECURITY_NOTES.md"
+      ],
+      "residual_risk": "No front-running-safe anonymous reward-recipient binding design has passed review.",
+      "residual_severity": "high",
+      "owner": "security-maintainers",
+      "next_gate": "GH-7: design and independently review recipient-bound anonymous rewards before enabling payouts",
+      "umbrella_issue": "GH-7"
+    },
+    {
+      "id": "TM-TOK-001",
+      "domain": "token_treasury_dex",
+      "severity": "critical",
+      "likelihood": "low",
+      "status": "mitigated",
+      "attack_path": "Minting, genesis, or reward logic inflates supply beyond the 21,000,000 PNYX cap or desynchronizes module custody.",
+      "impact": "Irreversible supply-cap violation and loss of the token's core scarcity invariant.",
+      "controls": [
+        "One canonical cap-checked issuance service reads bank supply before every mint",
+        "Bank genesis rejects over-cap supply before any custom module mutation",
+        "Every-block crisis invariant halts on supply, escrow, reserve, or LP divergence"
+      ],
+      "evidence": [
+        "token/issuance.go",
+        "token/invariant.go",
+        "genesis.go"
+      ],
+      "residual_risk": "Cap, escrow, and custody reconciliation has merged local and CI evidence; it remains recovery evidence, not production approval.",
+      "residual_severity": "low",
+      "owner": "security-maintainers",
+      "next_gate": "Preserve the single issuance boundary; re-verify under GH-29 Phase 5 depth review",
+      "umbrella_issue": ""
+    },
+    {
+      "id": "TM-TOK-002",
+      "domain": "token_treasury_dex",
+      "severity": "high",
+      "likelihood": "low",
+      "status": "mitigated",
+      "attack_path": "Malicious participant drains DEX reserves, withdraws foreign LP shares, or mutates the asset registry without authority.",
+      "impact": "Loss of pooled funds and corrupted market state.",
+      "controls": [
+        "Exact module-bank custody is the only public transition path with cached atomic settlement",
+        "Withdrawals require provider-owned LP shares behind length-prefixed keys",
+        "Registry and status mutation require the configured chain authority"
+      ],
+      "evidence": [
+        "x/dex/custody.go",
+        "x/dex/msg_server.go",
+        "CODEX_AUDIT.md"
+      ],
+      "residual_risk": "Custody, slippage, and authority boundaries are regression-tested; independent DEX review stays open under GH-7.",
+      "residual_severity": "low",
+      "owner": "security-maintainers",
+      "next_gate": "Preserve custody-wrapper exclusivity; re-verify under GH-29 Phase 5 depth review",
+      "umbrella_issue": ""
+    },
+    {
+      "id": "TM-ZKP-001",
+      "domain": "zkp_privacy",
+      "severity": "critical",
+      "likelihood": "high",
+      "status": "blocked",
+      "attack_path": "Without a real compatible Groth16 prover, any enabled anonymous path would rely on mock or incompatible proofs.",
+      "impact": "Forged anonymous votes or a false sense of privacy guarantees.",
+      "controls": [
+        "Anonymous submission stays fail-closed in the maintained client and mock proof submission is rejected",
+        "Consensus never runs randomized setup; genesis pins circuit ID, VK fingerprint, curve, and public-input shape",
+        "Versioned signals bind chain, proposal, and rating context"
+      ],
+      "evidence": [
+        "x/truedemocracy/anonymity.go",
+        "client-web/src/services/zkp.ts",
+        "docs/agent-bridge/SECURITY_NOTES.md"
+      ],
+      "residual_risk": "No real prover, reproducible circuit artifacts, or browser-to-chain real-proof compatibility tests exist; this register claims none.",
+      "residual_severity": "critical",
+      "owner": "security-maintainers",
+      "next_gate": "GH-29 Phase 2 exit gate: a real maintained-client proof verifies on-chain under the published circuit identity",
+      "umbrella_issue": "GH-29"
+    },
+    {
+      "id": "TM-ZKP-002",
+      "domain": "zkp_privacy",
+      "severity": "high",
+      "likelihood": "medium",
+      "status": "deferred",
+      "attack_path": "A compromised or unaudited trusted setup or circuit error weakens soundness or leaks voter identity.",
+      "impact": "Undetectable vote forgery or privacy loss across the anonymity set.",
+      "controls": [
+        "Genesis ceremony artifacts are treated as the trust anchor with pinned fingerprints",
+        "Identity roots are recomputed from canonical commitments and nullifier state survives export/import",
+        "Enabling any real prover is gated on external review"
+      ],
+      "evidence": [
+        "x/truedemocracy/zkp.go",
+        "docs/ROLLOUT_ROADMAP.md",
+        "CODEX_AUDIT.md"
+      ],
+      "residual_risk": "Ceremony provenance, participant assumptions, and independent cryptographic, privacy, and trusted-setup review are absent and not claimed.",
+      "residual_severity": "high",
+      "owner": "security-maintainers",
+      "next_gate": "GH-7: complete independent cryptographic and trusted-setup review before any prover enablement",
+      "umbrella_issue": "GH-7"
+    },
+    {
+      "id": "TM-IBC-001",
+      "domain": "ibc_upgrades",
+      "severity": "high",
+      "likelihood": "medium",
+      "status": "blocked",
+      "attack_path": "Enabling IBC without two-chain relayer, acknowledgement, timeout, and recovery tests strands or duplicates cross-chain value.",
+      "impact": "Loss or duplication of PNYX on counterparty chains and unrecoverable channel state.",
+      "controls": [
+        "IBC transfer is wired but remains unverified against a second chain and relayer",
+        "Rollout roadmap keeps every IBC item unchecked and exit-gated",
+        "Public status continues to mark the repository non-production"
+      ],
+      "evidence": [
+        "docs/IBC_RELAYER_SETUP.md",
+        "docs/ROLLOUT_ROADMAP.md",
+        "docs/LIMITATIONS.md"
+      ],
+      "residual_risk": "No relayer tests, acknowledgement/timeout drills, channel-closure handling, or cross-upgrade IBC evidence exists.",
+      "residual_severity": "high",
+      "owner": "security-maintainers",
+      "next_gate": "GH-29 Phase 3 exit gate: supported IBC flows pass automated failure and recovery tests",
+      "umbrella_issue": "GH-29"
+    },
+    {
+      "id": "TM-IBC-002",
+      "domain": "ibc_upgrades",
+      "severity": "high",
+      "likelihood": "medium",
+      "status": "blocked",
+      "attack_path": "Residual staking, distribution, or upgrade stubs are invoked as if they were supported protocol surfaces.",
+      "impact": "Undefined consensus behavior or operator confusion about the supported feature boundary.",
+      "controls": [
+        "IBC staking/upgrade and standard CosmWasm staking/distribution remain explicit stubs",
+        "Limitations and roadmap documents define the exact supported Cosmos boundary",
+        "Unsupported surfaces must be absent or unmistakably disabled before rollout"
+      ],
+      "evidence": [
+        "app.go",
+        "docs/LIMITATIONS.md",
+        "docs/ROLLOUT_ROADMAP.md"
+      ],
+      "residual_risk": "Stubs are documented but not yet implemented, replaced, or removed, and the governance-controlled upgrade path is incomplete.",
+      "residual_severity": "high",
+      "owner": "security-maintainers",
+      "next_gate": "GH-29 Phase 3: implement, replace, or explicitly remove remaining stubs and document the boundary",
+      "umbrella_issue": "GH-29"
+    },
+    {
+      "id": "TM-CLI-001",
+      "domain": "client_wallet_rpc",
+      "severity": "high",
+      "likelihood": "medium",
+      "status": "deferred",
+      "attack_path": "Malicious or compromised RPC provider returns forged or incomplete chain data to the browser client.",
+      "impact": "Users see fabricated governance, DEX, or history state and may sign against false information.",
+      "controls": [
+        "Client uses only registered protobuf gRPC-over-ABCI paths and fails closed on malformed responses",
+        "Typed unavailable, timeout, protocol, and decode states never fabricate empty state",
+        "Chain failure output is control-character-stripped and length-capped"
+      ],
+      "evidence": [
+        "client-web/src/services/moduleQuery.ts",
+        "client-web/src/services/transaction.ts",
+        "docs/agent-bridge/SECURITY_NOTES.md"
+      ],
+      "residual_risk": "The configured RPC provider remains trusted for completeness; no browser light client or participant index exists.",
+      "residual_severity": "high",
+      "owner": "security-maintainers",
+      "next_gate": "GH-29 Phase 4: qualify browser trust boundaries before rollout UX approval",
+      "umbrella_issue": "GH-29"
+    },
+    {
+      "id": "TM-CLI-002",
+      "domain": "client_wallet_rpc",
+      "severity": "critical",
+      "likelihood": "medium",
+      "status": "deferred",
+      "attack_path": "Browser key custody weaknesses expose user keys through storage, UI, or signing-flow flaws.",
+      "impact": "Irreversible theft of user funds without any chain-side fault.",
+      "controls": [
+        "One exact fail-closed transaction registry with a centralized simulate/sign/deliver boundary",
+        "Browser quality matrix never submits forms, unlocks stored material, or enters seed phrases",
+        "Retired prototypes with unsafe seed-phrase handling are removed from release paths"
+      ],
+      "evidence": [
+        "client-web/src/services/txRegistry.ts",
+        "client-web/src/services/wallet.ts",
+        "docs/agent-bridge/SECURITY_NOTES.md"
+      ],
+      "residual_risk": "No independent wallet custody or cryptographic review of the maintained client exists and none is claimed.",
+      "residual_severity": "critical",
+      "owner": "security-maintainers",
+      "next_gate": "GH-7: independent wallet and custody review before any authenticated real-funds flow",
+      "umbrella_issue": "GH-7"
+    },
+    {
+      "id": "TM-OPS-001",
+      "domain": "operations_observability",
+      "severity": "high",
+      "likelihood": "medium",
+      "status": "deferred",
+      "attack_path": "An operator misses consensus, slashing, or capacity incidents because paging, SLOs, and live monitoring are unproven.",
+      "impact": "Extended liveness loss or undetected validator misbehavior during a real incident.",
+      "controls": [
+        "Immutable Grafana dashboard, eleven deterministic alert rules, and recovery/testnet objectives",
+        "Separate bounded liveness and synchronization-aware readiness probes",
+        "Incident-command contract with eight synthetic rehearsal scenarios"
+      ],
+      "evidence": [
+        "monitoring/prometheus-alerts.yml",
+        "observability/app_metrics.go",
+        "docs/agent-bridge/SECURITY_NOTES.md"
+      ],
+      "residual_risk": "External paging, production SLOs, private live operator rehearsal, and capacity soak evidence remain open.",
+      "residual_severity": "high",
+      "owner": "security-maintainers",
+      "next_gate": "GH-29 Phase 6: complete paging drills, private rehearsal, and soak evidence",
+      "umbrella_issue": "GH-29"
+    },
+    {
+      "id": "TM-OPS-002",
+      "domain": "operations_observability",
+      "severity": "medium",
+      "likelihood": "low",
+      "status": "mitigated",
+      "attack_path": "Logs, metrics, or committed configuration leak credentials, keys, or private transaction material.",
+      "impact": "Secret disclosure enabling validator or operator compromise.",
+      "controls": [
+        "Secret-minimized structured JSON logging through the central SDK/CometBFT logger boundary",
+        "Defensive redaction of reviewed credential, key, and private-transaction patterns",
+        "Fail-closed maintained-tree secret scanning with exact synthetic-only exceptions"
+      ],
+      "evidence": [
+        "observability/logger.go",
+        "observability/sanitize.go",
+        "scripts/check-secret-scan.sh"
+      ],
+      "residual_risk": "Redaction covers reviewed patterns; novel secret shapes remain a scanning-residual accepted under the weekly gate cadence.",
+      "residual_severity": "low",
+      "owner": "security-maintainers",
+      "next_gate": "Preserve fail-closed secret gates; re-verify under GH-29 Phase 6 operations review",
+      "umbrella_issue": ""
+    },
+    {
+      "id": "TM-DEP-001",
+      "domain": "dependencies_ci",
+      "severity": "high",
+      "likelihood": "medium",
+      "status": "accepted",
+      "attack_path": "A reachable dependency vulnerability without an upstream fix is merged or left untracked.",
+      "impact": "Exploitable node, contract, or client behavior inherited from upstream code.",
+      "controls": [
+        "govulncheck, cargo-audit, and high-severity npm audit gates fail closed",
+        "No-fix Go findings are allowed only by exact IDs with 30-day-bounded expiry",
+        "Dependabot maintenance is grouped minor/patch-only with separately reviewed exceptions"
+      ],
+      "evidence": [
+        "configs/security/gates.json",
+        "scripts/check-go-vulnerabilities.sh",
+        ".github/workflows/security-scan.yml"
+      ],
+      "residual_risk": "Four reachable no-fix Go findings and monitored cargo-audit warnings remain visible until upstream publishes fixes.",
+      "residual_severity": "medium",
+      "owner": "security-maintainers",
+      "next_gate": "Re-validate exceptions inside the 30-day expiry bound; escalate to GH-29 if a fix or exploit appears",
+      "umbrella_issue": ""
+    },
+    {
+      "id": "TM-DEP-002",
+      "domain": "dependencies_ci",
+      "severity": "high",
+      "likelihood": "low",
+      "status": "mitigated",
+      "attack_path": "Supply-chain attacker retargets a mutable Action, persists checkout credentials, or bypasses scanner failures in CI.",
+      "impact": "Compromised build, test, or release pipeline producing untrustworthy artifacts.",
+      "controls": [
+        "Every third-party Action is pinned to a reviewed full commit SHA with a version comment",
+        "Workflows use contents-read permissions, per-job timeouts, and disabled credential persistence",
+        "Repository contract rejects mutable references, failure bypasses, and unapproved pins"
+      ],
+      "evidence": [
+        "configs/security/gates.json",
+        ".github/workflows/security-scan.yml",
+        "scripts/check-secret-scan.sh"
+      ],
+      "residual_risk": "Pin integrity is enforced by contract test; runner compromise outside repository control is not covered.",
+      "residual_severity": "low",
+      "owner": "security-maintainers",
+      "next_gate": "Preserve SHA pinning and read-only permissions; re-verify under GH-29 Phase 7 release review",
+      "umbrella_issue": ""
+    },
+    {
+      "id": "TM-REL-001",
+      "domain": "release_artifacts",
+      "severity": "high",
+      "likelihood": "medium",
+      "status": "blocked",
+      "attack_path": "Unsigned release artifacts without SBOM or provenance are substituted between build and operator installation.",
+      "impact": "Operators run attacker-controlled binaries believing they are reviewed releases.",
+      "controls": [
+        "Deterministic Linux daemon build contract reproduces artifacts byte-for-byte",
+        "Reproducible-build CI compares independent builds before any release claim",
+        "Signing, SBOM, provenance, and publishing stay explicitly outside current gates"
+      ],
+      "evidence": [
+        "configs/build/deterministic-linux-daemon.json",
+        "scripts/build-deterministic-daemon.sh",
+        "docs/ROLLOUT_ROADMAP.md"
+      ],
+      "residual_risk": "No artifact signing, SBOM, provenance, or publishing pipeline exists and none is claimed.",
+      "residual_severity": "high",
+      "owner": "security-maintainers",
+      "next_gate": "GH-29 Phase 7: implement artifact signing, SBOM, and provenance before any release",
+      "umbrella_issue": "GH-29"
+    },
+    {
+      "id": "TM-REL-002",
+      "domain": "release_artifacts",
+      "severity": "medium",
+      "likelihood": "low",
+      "status": "mitigated",
+      "attack_path": "Non-deterministic build inputs cause reviewed source and shipped binaries to diverge silently.",
+      "impact": "Review evidence no longer covers the artifact operators actually run.",
+      "controls": [
+        "Pinned toolchains and a repository-owned deterministic build script",
+        "Reproducible Linux build evidence recorded for merged release candidates",
+        "Exact dependency lockfiles bound into the security gate contract"
+      ],
+      "evidence": [
+        "configs/build/deterministic-linux-daemon.json",
+        "scripts/build-deterministic-daemon.sh"
+      ],
+      "residual_risk": "Determinism is proven for the Linux daemon target only; other artifact classes remain uncovered until Phase 7.",
+      "residual_severity": "low",
+      "owner": "security-maintainers",
+      "next_gate": "Extend deterministic coverage to remaining artifact classes under GH-29 Phase 7",
+      "umbrella_issue": ""
+    }
+  ]
+}

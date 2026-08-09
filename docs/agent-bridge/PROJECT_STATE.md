@@ -1,8 +1,17 @@
 # Project State
 
-Updated: 2026-08-09 13:46 UTC
+Updated: 2026-08-09 20:38 UTC
 
 ## Repository
+
+- GH-169 is locally verified on `security/GH-169-threat-model`. The canonical
+  v1 register covers nine domains with 18 threats and 33 repository evidence
+  paths; its fail-closed root contract passes 19 negative mutations. Kimi's
+  independent review found no P0/P1, and Sol remediated its one P2 plus both
+  actionable P3 hardening notes. Fresh source-of-truth arithmetic is 1,606
+  cases (1,439 Go, 26 Rust, 141 client), rollout 23/59 overall and 23/51 phase
+  work, Phase 6 6/7, production false. Protected PR/CI, merge, GH-29, final-main
+  and Pages verification remain pending.
 
 - GH-161 is complete. Safe Cargo PR #156 merged as `4aeddc0`; incompatible
   grouped npm #157 and Go #158 were closed with concrete evidence and replaced

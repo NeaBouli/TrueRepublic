@@ -12,7 +12,7 @@ source of current security or production-readiness claims.
 - Recovery epic: GitHub issue #4
 - Continuous handoff: `BRIDGE.md` and `docs/agent-bridge/`
 - Authoritative machine-readable status: `docs/status.json`
-- Verified recovery total: 1,579 cases (1,412 Go, 26 Rust, 141 maintained-client)
+- Verified recovery total: 1,606 cases (1,439 Go, 26 Rust, 141 maintained-client)
 - PNYX cap: 21,000,000 PNYX = 21,000,000,000,000 `upnyx`
 
 The recovery foundation was reviewed and merged to `main` through this ordered
@@ -58,7 +58,7 @@ boundaries.
 - ibc-go 8.7.0
 - wasmd 0.53.3 / wasmvm 2.2.2
 - gnark 0.14.0
-- React 18.2, TypeScript 5.9, Vite 8.1.4, CosmJS 0.39.0
+- React 18.2, TypeScript 5.9, Vite 8.2.1, CosmJS 0.39.0
 - Rust 1.75+
 
 ## Required verification

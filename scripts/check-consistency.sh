@@ -54,6 +54,12 @@ ROLLOUT_PHASE_WORK_COMPLETED=$(jq -r '.rollout.phase_work_completed' "$STATUS_FI
 ROLLOUT_PHASE_WORK_TOTAL=$(jq -r '.rollout.phase_work_total' "$STATUS_FILE")
 ROLLOUT_PHASE_6_COMPLETED=$(jq -r '.rollout.phase_6_completed' "$STATUS_FILE")
 ROLLOUT_PHASE_6_TOTAL=$(jq -r '.rollout.phase_6_total' "$STATUS_FILE")
+COSMOS_SDK_VERSION=$(jq -r '.tech.cosmos_sdk' "$STATUS_FILE")
+COMETBFT_VERSION=$(jq -r '.tech.cometbft' "$STATUS_FILE")
+WASMD_VERSION=$(jq -r '.tech.cosmwasm' "$STATUS_FILE")
+IBC_GO_VERSION=$(jq -r '.tech.ibc_go' "$STATUS_FILE")
+VITE_VERSION=$(jq -r '.tech.vite' "$STATUS_FILE")
+VITE_SERIES=${VITE_VERSION%.*}
 ROLLOUT_PERCENT=$(((ROLLOUT_COMPLETED * 100 + ROLLOUT_TOTAL / 2) / ROLLOUT_TOTAL))
 ROLLOUT_PHASE_WORK_PERCENT=$(((ROLLOUT_PHASE_WORK_COMPLETED * 100 + ROLLOUT_PHASE_WORK_TOTAL / 2) / ROLLOUT_PHASE_WORK_TOTAL))
 ROLLOUT_PHASE_6_PERCENT=$(((ROLLOUT_PHASE_6_COMPLETED * 100 + ROLLOUT_PHASE_6_TOTAL / 2) / ROLLOUT_PHASE_6_TOTAL))
@@ -104,6 +110,39 @@ if [ "$ROLLOUT_COMPLETED" -gt "$ROLLOUT_TOTAL" ] ||
   ERRORS=$((ERRORS+1))
 fi
 
+echo "Checking technology source of truth..."
+for module_version in \
+  "github.com/cosmos/cosmos-sdk $COSMOS_SDK_VERSION" \
+  "github.com/cometbft/cometbft $COMETBFT_VERSION" \
+  "github.com/CosmWasm/wasmd $WASMD_VERSION" \
+  "github.com/cosmos/ibc-go/v8 $IBC_GO_VERSION"; do
+  if grep -Fq "$module_version" go.mod; then
+    echo "  OK $module_version"
+  else
+    echo "  FAIL go.mod does not match status value $module_version"
+    ERRORS=$((ERRORS+1))
+  fi
+done
+LOCKED_VITE_VERSION=$(jq -r '.packages["node_modules/vite"].version' client-web/package-lock.json)
+if [ "$VITE_VERSION" = "$LOCKED_VITE_VERSION" ]; then
+  echo "  OK vite $VITE_VERSION"
+else
+  echo "  FAIL Vite status $VITE_VERSION does not match lockfile $LOCKED_VITE_VERSION"
+  ERRORS=$((ERRORS+1))
+fi
+if jq -e '
+  .limitations.tx_history |
+  contains("submitted-only") and
+  contains("GH-131") and
+  (contains("not yet implemented") | not)
+' "$STATUS_FILE" >/dev/null; then
+  echo "  OK submitted-only transaction-history boundary"
+else
+  echo "  FAIL transaction-history status does not match GH-131"
+  ERRORS=$((ERRORS+1))
+fi
+echo ""
+
 check_file() {
   local file="$1"
   local label="$2"
@@ -131,6 +170,36 @@ check_file "docs/index.html" "Landing Page"
 check_file "wiki/Home.md" "Wiki Home"
 check_file "wiki/status/Current-Status.md" "Wiki Current Status"
 check_file "wiki/status/Testing-Status.md" "Wiki Testing Status"
+
+echo "Checking public technology documentation..."
+for file_value in \
+  "README.md:$COSMOS_SDK_VERSION" \
+  "README.md:$COMETBFT_VERSION" \
+  "README.md:$WASMD_VERSION" \
+  "README.md:$IBC_GO_VERSION" \
+  "wiki/Home.md:$COSMOS_SDK_VERSION" \
+  "wiki/Home.md:$COMETBFT_VERSION" \
+  "wiki/Home.md:$WASMD_VERSION" \
+  "wiki/Home.md:$IBC_GO_VERSION" \
+  "wiki/Home.md:Vite $VITE_SERIES" \
+  "wiki/develop/Code-Structure.md:$COSMOS_SDK_VERSION" \
+  "wiki/develop/Code-Structure.md:$COMETBFT_VERSION" \
+  "wiki/develop/Architecture-Overview.md:$COSMOS_SDK_VERSION" \
+  "wiki/develop/Architecture-Overview.md:$COMETBFT_VERSION" \
+  "docs/FAQ.md:$COSMOS_SDK_VERSION" \
+  "docs/FAQ.md:$COMETBFT_VERSION" \
+  "docs/FAQ.md:$WASMD_VERSION" \
+  "docs/FAQ.md:Vite $VITE_SERIES"; do
+  file=${file_value%%:*}
+  value=${file_value#*:}
+  if grep -Fq "$value" "$file"; then
+    echo "  OK $file contains $value"
+  else
+    echo "  FAIL $file does not contain $value"
+    ERRORS=$((ERRORS+1))
+  fi
+done
+echo ""
 
 check_count_file() {
   local file="$1"

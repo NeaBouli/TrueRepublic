@@ -20,7 +20,7 @@
   <img src="https://img.shields.io/badge/version-v0.4.0-blue" alt="Version"/>
   <img src="https://img.shields.io/badge/recovery-active-orange" alt="Recovery active"/>
   <img src="https://img.shields.io/badge/Go-1.26.5-00ADD8?logo=go" alt="Go"/>
-  <img src="https://img.shields.io/badge/Cosmos%20SDK-v0.50.14-5C4EE5" alt="Cosmos SDK"/>
+  <img src="https://img.shields.io/badge/Cosmos%20SDK-v0.50.15-5C4EE5" alt="Cosmos SDK"/>
   <img src="https://img.shields.io/badge/Rust-1.75+-orange?logo=rust" alt="Rust"/>
 </p>
 
@@ -76,6 +76,7 @@ The native token **PNYX** -- named after the hill in Athens where citizens gathe
 
 **For Security:**
 - [Security Architecture](https://github.com/NeaBouli/TrueRepublic/wiki/security-Security-Architecture)
+- [Cross-System Threat Model](docs/security/THREAT_MODEL.md)
 - [Best Practices](https://github.com/NeaBouli/TrueRepublic/wiki/security-Best-Practices)
 
 ### Additional Docs
@@ -156,12 +157,12 @@ See [`client-web/README.md`](client-web/README.md) for details.
 ```text
 TrueRepublic/
 ├── app.go                      Cosmos SDK application entry point
-├── go.mod / go.sum             Go module (SDK v0.50.14, CometBFT v0.38.21)
+├── go.mod / go.sum             Go module (SDK v0.50.15, CometBFT v0.38.25)
 ├── Makefile                    Build targets (build, test, lint, docker)
 ├── INSTALLATION.md             Quick install guide
 ├── x/
-│   ├── truedemocracy/          Governance module (23 msg types, 484 test cases)
-│   └── dex/                    DEX module (7 msg types, 116 test cases)
+│   ├── truedemocracy/          Governance module (23 msg types, 533 test cases)
+│   └── dex/                    DEX module (7 msg types, 138 test cases)
 ├── treasury/keeper/            Tokenomics equations 1-5 (36 test cases)
 ├── contracts/                  CosmWasm workspace (7 crates, 26 tests)
 │   ├── core/                   Governance + treasury contracts
@@ -200,7 +201,7 @@ TrueRepublic/
 | Zero-Knowledge Proofs (Groth16) | 🟡 Recovery verified on PR #22 | Chain/rating binding and fail-closed VK; real client prover and external review pending |
 | CosmWasm Smart Contracts | ✅ | `x/truedemocracy/wasm_bindings.go` |
 | Domain-Bank Bridge | ✅ | `x/truedemocracy/treasury_bridge.go` |
-| IBC Transfer (ICS-20) | ✅ | `app.go` (ibc-go v8.4.0) |
+| IBC Transfer (ICS-20) | 🟡 Module wired; two-chain/relayer evidence pending | `app.go` (ibc-go v8.7.0) |
 | Stones Voting (WP S3.1) | ✅ | `x/truedemocracy/stones.go` |
 | VoteToEarn Rewards | ✅ | `x/truedemocracy/stones.go` |
 | Suggestion Lifecycle (WP S3.1.2) | ✅ | `x/truedemocracy/lifecycle.go` |
@@ -225,7 +226,7 @@ TrueRepublic/
 # Blockchain
 go mod tidy
 ./scripts/go-packages.sh go build
-./scripts/go-packages.sh go test -race -cover -count=1 -timeout=600s    # 1,412 Go cases
+./scripts/go-packages.sh go test -race -cover -count=1 -timeout=600s    # 1,439 Go cases
 
 # Smart contracts
 cd contracts && cargo test --workspace       # 26 tests
@@ -240,9 +241,9 @@ cd client-web && npm ci && npm run lint && npm test -- --run && npm run build
 
 | Component | Version | Status |
 |-----------|---------|--------|
-| Cosmos SDK | v0.50.14 | Production |
-| CometBFT | v0.38.22 | Recovery verified |
-| CosmWasm | v0.53.3 | Production |
+| Cosmos SDK | v0.50.15 | Recovery verified |
+| CometBFT | v0.38.25 | Recovery verified |
+| CosmWasm | v0.53.4 | Recovery verified |
 | ibc-go | v8.7.0 | Transfer Active |
 | gnark (ZKP) | v0.14.0 | On-chain recovery verified; client disabled |
 | Go | 1.26.5 | Recovery verified |
@@ -263,14 +264,15 @@ The checklist below records implemented surface area, not a production security
 approval. Current evidence, risks, and commands are maintained in
 [`BRIDGE.md`](BRIDGE.md) and [GitHub issue #4](https://github.com/NeaBouli/TrueRepublic/issues/4).
 
-- 🟡 1,579 tests recovery-verified locally (1,412 Go + 26 Rust + 141 maintained-client), plus the separately gated GH-145 bounded live fuzz campaigns, GH-131 real submitted-history pagination proof, GH-121 real browser-query boundary, GH-115 local client-chain delivery proof, GH-56 rotation, GH-59 slashing, GH-60 inactive-validator genesis, GH-61 legacy-authority migration, GH-93 incident rehearsal, and GH-97 sustained-load process harnesses; protected publication and production rollout evidence remain required
+- 🟡 1,606 tests recovery-verified locally (1,439 Go + 26 Rust + 141 maintained-client), plus the separately gated GH-145 bounded live fuzz campaigns, GH-131 real submitted-history pagination proof, GH-121 real browser-query boundary, GH-115 local client-chain delivery proof, GH-56 rotation, GH-59 slashing, GH-60 inactive-validator genesis, GH-61 legacy-authority migration, GH-93 incident rehearsal, and GH-97 sustained-load process harnesses; protected publication and production rollout evidence remain required
 - ✅ Core blockchain compiles and runs
 - 🟡 Tokenomics, exact custom genesis, and every-block ledger invariants are recovery-verified and merged through PR #19
 - 🟡 Governance escrow/auth recovery is verified and merged; independent release review remains open
 - 🟡 Groth16 voting backend tested; reward-recipient binding and real web proof generation remain open
-- ✅ CosmWasm smart contract integration (wasmd v0.53.3)
+- ✅ CosmWasm smart contract integration (wasmd v0.53.4)
 - 🟡 Domain-Bank escrow recovery implemented and merged via PR #16
-- ✅ IBC Transfer module (ibc-go v8.4.0, cross-chain PNYX transfers)
+- 🟡 IBC transfer module wired on ibc-go v8.7.0; two-chain relayer,
+  acknowledgement, timeout, replay, interruption, and upgrade evidence pending
 - 🟡 Multi-Asset DEX bank custody, provider LP ownership, authority checks, and
   canonical burns are recovery-verified and merged via PR #18
 - 🟡 GH-12 genesis/runtime conservation is recovery-verified and merged via PR #19
@@ -293,7 +295,7 @@ approval. Current evidence, risks, and commands are maintained in
 - ✅ **v0.2.x (Feb 2026):** Governance core — Systemic Consensing, Tokenomics, Elections
 - 🟡 **v0.3.0 (Q1 2026): historical feature surface implemented; recovery verification incomplete**
   - ✅ Weeks 1-4: ZKP Anonymity Layer (Groth16, Merkle trees, nullifiers)
-  - ✅ Week 5: CosmWasm Integration (wasmd v0.53.3, custom bindings)
+  - ✅ Week 5: CosmWasm Integration (wasmd v0.53.4, custom bindings)
   - ✅ Week 6: Domain-Bank Bridge (dual accounting, deposit/withdraw)
   - ✅ Week 7: IBC Integration (ICS-20 transfer, relayer support)
   - ✅ Week 8: Multi-Asset DEX (asset registry, trading validation, symbol resolution)
@@ -312,10 +314,9 @@ approval. Current evidence, risks, and commands are maintained in
 - 📋 **v0.5.0 (Q3 2026):** Native Apps (iOS/Android)
 - 🎯 **v1.0.0 (Q4 2026):** Production Release — External audit, mainnet launch
 
-> Historical test count: 577. The authoritative recovery-verified total is 1,579
-> (1,412 Go + 26 Rust + 141 maintained-client), reproduced from package-scoped
-> JSON output on GH-115 plus merged GH-101/GH-102 evidence using the established
-> passing-case method.
+> Historical test count: 577. The authoritative recovery-verified total is 1,606
+> (1,439 Go + 26 Rust + 141 maintained-client), reproduced from fresh
+> package-scoped JSON output on GH-169 using the established passing-case method.
 
 ---
 

@@ -1,5 +1,52 @@
 # TrueRepublic Agent Bridge
 
+## 2026-08-09 23:38 EEST GH-169 cross-system threat model → Locally Verified
+
+- **Implementation:** added canonical `truerepublic.threat-model/v1` JSON and
+  explanatory Markdown for nine maintained security domains, 18 stable threat
+  IDs, explicit assets/actors/trust boundaries/data flows, verified controls,
+  evidence paths, residual risk, durable owners and GH-7/GH-29 next gates.
+- **Fail-closed contract:** the root repository test strictly rejects malformed
+  or trailing JSON, unknown schema/enums, missing/unsafe/nonexistent evidence,
+  duplicate/empty IDs, missing controls/owners/gates, invalid umbrella mappings,
+  high residual risk on closed threats and any production-ready claim. All 19
+  negative mutations pass.
+- **Truth synchronization:** corrected stale SDK/CometBFT/wasmd/Vite versions,
+  GH-131 submitted-history status and IBC wording; consistency now binds SDK,
+  CometBFT, wasmd, ibc-go and Vite to lock/module truth. Fresh package-scoped
+  JSON evidence records 1,439 Go cases (root 153), making 1,606 total. Rollout
+  candidate is 23/59 overall and 23/51 phase work; Phase 6 stays 6/7 and
+  `production_ready=false`.
+- **Review/tests:** Kimi independently verified all 33 evidence paths and found
+  no P0/P1. Its one P2 stale multi-client claim and two actionable P3 hardening
+  notes were fixed. Sol reran the focused contract, documentation consistency,
+  complete build/vet/Race/Coverage `make verify`, security contract,
+  Staticcheck, maintained-tree secret positive/negative gates, Go vulnerability
+  positive/negative gates, module verification, JSON parsing and diff checks;
+  all pass.
+- **Risk/next:** this is repository self-assessment, not independent audit or
+  production approval. Protected PR/CI, merge, GH-29 synchronization, final-main
+  and Pages readback remain before Done. No production, mainnet, deployment,
+  key, wallet, signing, migration or funds action occurred.
+
+## 2026-08-09 23:12 EEST GH-169 cross-system threat model → In Progress
+
+- **Issue/branch:** [GH-169](https://github.com/NeaBouli/TrueRepublic/issues/169),
+  `security/GH-169-threat-model` from exact verified `origin/main` `f6619e6`.
+- **Scope:** define maintained assets, actors, trust boundaries and data flows;
+  add a versioned secret-free threat register for consensus/P2P, governance,
+  token/treasury/DEX, ZKP/privacy, IBC/upgrades, client/wallet/RPC, operations,
+  dependencies/CI and release artifacts; enforce it with fail-closed repository
+  tests and negative mutations.
+- **Safety boundary:** repository documentation, configuration and tests only.
+  This is not an external audit and does not authorize consensus-state,
+  cryptography, wallet-custody, keys, signing, funds, deployment, mainnet,
+  production, migration or release activity.
+- **Roles/next:** Sol owns architecture, security judgment, integration,
+  complete verification and GitHub closure. Kimi receives one bounded
+  secret-free implementation/review slice; Sol reviews every diff and reruns
+  the complete relevant gates before any status or rollout claim changes.
+
 ## 2026-08-09 14:45 EEST GH-161 bounded dependency reconciliation → In Progress
 
 - **Issue/branch:** [GH-161](https://github.com/NeaBouli/TrueRepublic/issues/161),
