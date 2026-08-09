@@ -45,6 +45,7 @@ type dependabotUpdate struct {
 type dependabotGroup struct {
 	AppliesTo   string   `yaml:"applies-to"`
 	Patterns    []string `yaml:"patterns"`
+	Exclude     []string `yaml:"exclude-patterns"`
 	UpdateTypes []string `yaml:"update-types"`
 }
 
@@ -133,12 +134,166 @@ func TestSecurityGateRepositoryContract(t *testing.T) {
 
 	t.Run("rejects automatic major dependency updates", func(t *testing.T) {
 		mutated := cloneSecurityGateFiles(files)
-		mutated[".github/dependabot.yml"] = strings.Replace(
-			mutated[".github/dependabot.yml"],
-			`update-types: ["version-update:semver-major"]`,
-			`update-types: ["version-update:semver-minor"]`, 1,
-		)
-		assertSecurityGateRejected(t, mutated, contract, "exclude automatic major updates")
+		mutated[".github/dependabot.yml"] = mutateDependabotYAML(t, mutated[".github/dependabot.yml"], func(updates []map[string]interface{}) {
+			for _, update := range updates {
+				if ecosystem, ok := update["package-ecosystem"].(string); !ok || ecosystem != "gomod" {
+					continue
+				}
+				ignore, ok := update["ignore"].([]interface{})
+				if !ok {
+					continue
+				}
+				for _, ignoreEntry := range ignore {
+					condition, ok := ignoreEntry.(map[string]interface{})
+					if !ok {
+						continue
+					}
+					if condition["dependency-name"] == "*" {
+						condition["update-types"] = []interface{}{"version-update:semver-major"}
+					}
+				}
+			}
+		})
+		assertSecurityGateRejected(t, mutated, contract, "Dependabot policy must use exact exception set for gomod")
+	})
+
+	t.Run("rejects widening Go maintenance beyond patch-only", func(t *testing.T) {
+		mutated := cloneSecurityGateFiles(files)
+		mutated[".github/dependabot.yml"] = mutateDependabotYAML(t, mutated[".github/dependabot.yml"], func(updates []map[string]interface{}) {
+			for _, update := range updates {
+				if ecosystem, ok := update["package-ecosystem"].(string); !ok || ecosystem != "gomod" {
+					continue
+				}
+				groups, ok := update["groups"].(map[string]interface{})
+				if !ok {
+					continue
+				}
+				group, ok := groups["go-maintenance"].(map[string]interface{})
+				if !ok {
+					continue
+				}
+				group["update-types"] = []interface{}{"minor", "patch"}
+			}
+		})
+		assertSecurityGateRejected(t, mutated, contract, "Dependabot policy must use exact grouped update-types for gomod")
+	})
+
+	t.Run("rejects missing npm package exceptions", func(t *testing.T) {
+		mutated := cloneSecurityGateFiles(files)
+		mutated[".github/dependabot.yml"] = mutateDependabotYAML(t, mutated[".github/dependabot.yml"], func(updates []map[string]interface{}) {
+			for _, update := range updates {
+				if ecosystem, ok := update["package-ecosystem"].(string); !ok || ecosystem != "npm" {
+					continue
+				}
+				filtered := make([]interface{}, 0, 1)
+				ignore, ok := update["ignore"].([]interface{})
+				if !ok {
+					continue
+				}
+				for _, entry := range ignore {
+					condition, ok := entry.(map[string]interface{})
+					if !ok || condition["dependency-name"] == "@playwright/test" {
+						continue
+					}
+					filtered = append(filtered, condition)
+				}
+				update["ignore"] = filtered
+			}
+		})
+		assertSecurityGateRejected(t, mutated, contract, "Dependabot policy must use exact exception set for npm")
+	})
+
+	t.Run("rejects incomplete Playwright freeze", func(t *testing.T) {
+		mutated := cloneSecurityGateFiles(files)
+		mutated[".github/dependabot.yml"] = mutateDependabotYAML(t, mutated[".github/dependabot.yml"], func(updates []map[string]interface{}) {
+			for _, update := range updates {
+				if ecosystem, ok := update["package-ecosystem"].(string); !ok || ecosystem != "npm" {
+					continue
+				}
+				ignore, ok := update["ignore"].([]interface{})
+				if !ok {
+					continue
+				}
+				for _, entry := range ignore {
+					condition, ok := entry.(map[string]interface{})
+					if ok && condition["dependency-name"] == "@playwright/test" {
+						condition["update-types"] = []interface{}{"version-update:semver-minor", "version-update:semver-patch"}
+					}
+				}
+			}
+		})
+		assertSecurityGateRejected(t, mutated, contract, "Dependabot policy must use exact exception set for npm")
+	})
+
+	t.Run("rejects missing npm React Refresh exception", func(t *testing.T) {
+		mutated := cloneSecurityGateFiles(files)
+		mutated[".github/dependabot.yml"] = mutateDependabotYAML(t, mutated[".github/dependabot.yml"], func(updates []map[string]interface{}) {
+			for _, update := range updates {
+				if ecosystem, ok := update["package-ecosystem"].(string); !ok || ecosystem != "npm" {
+					continue
+				}
+				filtered := make([]interface{}, 0, 2)
+				ignore, ok := update["ignore"].([]interface{})
+				if !ok {
+					continue
+				}
+				for _, entry := range ignore {
+					condition, ok := entry.(map[string]interface{})
+					if !ok || condition["dependency-name"] == "eslint-plugin-react-refresh" {
+						continue
+					}
+					filtered = append(filtered, condition)
+				}
+				update["ignore"] = filtered
+			}
+		})
+		assertSecurityGateRejected(t, mutated, contract, "Dependabot policy must use exact exception set for npm")
+	})
+
+	t.Run("rejects missing Cargo cosmwasm grouped exclusion", func(t *testing.T) {
+		mutated := cloneSecurityGateFiles(files)
+		mutated[".github/dependabot.yml"] = mutateDependabotYAML(t, mutated[".github/dependabot.yml"], func(updates []map[string]interface{}) {
+			for _, update := range updates {
+				if ecosystem, ok := update["package-ecosystem"].(string); !ok || ecosystem != "cargo" {
+					continue
+				}
+				groups, ok := update["groups"].(map[string]interface{})
+				if !ok {
+					continue
+				}
+				group, ok := groups["rust-maintenance"].(map[string]interface{})
+				if !ok {
+					continue
+				}
+				delete(group, "exclude-patterns")
+			}
+		})
+		assertSecurityGateRejected(t, mutated, contract, "Dependabot policy must exclude cosmwasm-* from rust maintenance grouping for cargo")
+	})
+
+	t.Run("rejects missing Cargo cosmwasm minor exception", func(t *testing.T) {
+		mutated := cloneSecurityGateFiles(files)
+		mutated[".github/dependabot.yml"] = mutateDependabotYAML(t, mutated[".github/dependabot.yml"], func(updates []map[string]interface{}) {
+			for _, update := range updates {
+				if ecosystem, ok := update["package-ecosystem"].(string); !ok || ecosystem != "cargo" {
+					continue
+				}
+				filtered := make([]interface{}, 0, 1)
+				ignore, ok := update["ignore"].([]interface{})
+				if !ok {
+					continue
+				}
+				for _, entry := range ignore {
+					condition, ok := entry.(map[string]interface{})
+					if !ok || condition["dependency-name"] == "cosmwasm-*" {
+						continue
+					}
+					filtered = append(filtered, condition)
+				}
+				update["ignore"] = filtered
+			}
+		})
+		assertSecurityGateRejected(t, mutated, contract, "Dependabot policy must use exact exception set for cargo")
 	})
 }
 
@@ -315,6 +470,29 @@ func dependabotPolicyViolations(content string) []string {
 		"cargo":          "rust-maintenance",
 		"npm":            "client-maintenance",
 	}
+	expectedUpdateTypes := map[string][]string{
+		"github-actions": {"minor", "patch"},
+		"gomod":          {"patch"},
+		"cargo":          {"minor", "patch"},
+		"npm":            {"minor", "patch"},
+	}
+	expectedIgnores := map[string][]dependabotIgnoreCondition{
+		"github-actions": {
+			{DependencyName: "*", UpdateTypes: []string{"version-update:semver-major"}},
+		},
+		"gomod": {
+			{DependencyName: "*", UpdateTypes: []string{"version-update:semver-major", "version-update:semver-minor"}},
+		},
+		"cargo": {
+			{DependencyName: "*", UpdateTypes: []string{"version-update:semver-major"}},
+			{DependencyName: "cosmwasm-*", UpdateTypes: []string{"version-update:semver-major", "version-update:semver-minor"}},
+		},
+		"npm": {
+			{DependencyName: "*", UpdateTypes: []string{"version-update:semver-major"}},
+			{DependencyName: "@playwright/test", UpdateTypes: []string{"version-update:semver-major", "version-update:semver-minor", "version-update:semver-patch"}},
+			{DependencyName: "eslint-plugin-react-refresh", UpdateTypes: []string{"version-update:semver-major", "version-update:semver-minor"}},
+		},
+	}
 	seen := make(map[string]bool, len(expectedGroups))
 	var violations []string
 	for _, update := range config.Updates {
@@ -325,14 +503,22 @@ func dependabotPolicyViolations(content string) []string {
 		}
 		seen[update.Ecosystem] = true
 		group, exists := update.Groups[groupName]
-		if !exists || group.AppliesTo != "version-updates" ||
-			strings.Join(group.Patterns, ",") != "*" ||
-			strings.Join(group.UpdateTypes, ",") != "minor,patch" {
-			violations = append(violations, "Dependabot policy must group only minor and patch version updates for "+update.Ecosystem)
+		if !exists || group.AppliesTo != "version-updates" || strings.Join(group.Patterns, ",") != "*" {
+			violations = append(violations, "Dependabot policy must configure grouped version updates for "+update.Ecosystem)
+			continue
 		}
-		if len(update.Ignore) != 1 || update.Ignore[0].DependencyName != "*" ||
-			strings.Join(update.Ignore[0].UpdateTypes, ",") != "version-update:semver-major" {
-			violations = append(violations, "Dependabot policy must exclude automatic major updates for "+update.Ecosystem)
+		if !slicesEqualInsensitive(group.UpdateTypes, expectedUpdateTypes[update.Ecosystem]) {
+			violations = append(violations, "Dependabot policy must use exact grouped update-types for "+update.Ecosystem)
+		}
+		if update.Ecosystem == "cargo" {
+			if !slicesEqualInsensitive(group.Exclude, []string{"cosmwasm-*"}) {
+				violations = append(violations, "Dependabot policy must exclude cosmwasm-* from rust maintenance grouping for cargo")
+			}
+		} else if len(group.Exclude) != 0 {
+			violations = append(violations, "Dependabot policy must not set exclude-patterns for "+update.Ecosystem)
+		}
+		if !dependabotIgnoreConditionsEqual(update.Ignore, expectedIgnores[update.Ecosystem]) {
+			violations = append(violations, "Dependabot policy must use exact exception set for "+update.Ecosystem)
 		}
 	}
 	for ecosystem := range expectedGroups {
@@ -341,6 +527,84 @@ func dependabotPolicyViolations(content string) []string {
 		}
 	}
 	return violations
+}
+
+func mutateDependabotYAML(t *testing.T, content string, mutate func([]map[string]interface{})) string {
+	t.Helper()
+	var root map[string]interface{}
+	if err := yaml.Unmarshal([]byte(content), &root); err != nil {
+		t.Fatalf("parse dependabot yaml: %v", err)
+	}
+	rawUpdates, ok := root["updates"].([]interface{})
+	if !ok {
+		t.Fatalf("dependabot yaml missing updates list")
+	}
+	updates := make([]map[string]interface{}, 0, len(rawUpdates))
+	for _, raw := range rawUpdates {
+		update, ok := raw.(map[string]interface{})
+		if !ok {
+			continue
+		}
+		updates = append(updates, update)
+	}
+	mutate(updates)
+	bytes, err := yaml.Marshal(root)
+	if err != nil {
+		t.Fatalf("render dependabot yaml: %v", err)
+	}
+	return string(bytes)
+}
+
+func slicesEqualInsensitive(lhs, rhs []string) bool {
+	if len(lhs) != len(rhs) {
+		return false
+	}
+	left := make(map[string]int, len(lhs))
+	for _, value := range lhs {
+		left[value]++
+	}
+	right := make(map[string]int, len(rhs))
+	for _, value := range rhs {
+		right[value]++
+	}
+	for key, lhsCount := range left {
+		if right[key] != lhsCount {
+			return false
+		}
+	}
+	return true
+}
+
+func dependabotIgnoreConditionsEqual(lhs, rhs []dependabotIgnoreCondition) bool {
+	if len(lhs) != len(rhs) {
+		return false
+	}
+	lhsIndex := make(map[string]dependabotIgnoreCondition, len(lhs))
+	for _, item := range lhs {
+		lhsIndex[item.DependencyName] = item
+	}
+	for _, item := range rhs {
+		lhsItem, ok := lhsIndex[item.DependencyName]
+		if !ok || !slicesEqualInsensitive(lhsItem.UpdateTypes, item.UpdateTypes) {
+			return false
+		}
+	}
+	for _, item := range lhs {
+		if item.DependencyName == "" {
+			continue
+		}
+		found := false
+		for _, expected := range rhs {
+			if expected.DependencyName == item.DependencyName {
+				found = true
+				break
+			}
+		}
+		if !found {
+			return false
+		}
+	}
+	return true
 }
 
 func cloneSecurityGateFiles(files map[string]string) map[string]string {

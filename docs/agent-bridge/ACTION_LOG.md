@@ -1,5 +1,23 @@
 # Action Log
 
+## 2026-08-09 — GH-161 dependency groups independently reconciled
+
+- Refreshed and merged Cargo PR #156 only after exact local Rust and ten-job
+  protected evidence passed; merge is `4aeddc0` and its remote branch is gone.
+- Rejected npm PR #157 because React Refresh 0.5.3 fails 19 route exports and
+  Playwright 1.62.1 violates the frozen macOS runner boundary. A bounded
+  seven-package replacement retains both pins and passes local lint, unit,
+  policy, build/budget, audit, and Chromium/Firefox browser evidence.
+- Rejected Go PR #158 because its 0.x Cosmos SDK migration breaks runtime
+  invariants, exports, recovery/capacity, static analysis, and vulnerability
+  policy. A four-direct-dependency patch replacement passes full `make verify`,
+  module verification, staticcheck, govulncheck policy, and contract tests.
+- Added typed fail-closed Dependabot exceptions for Go patch-only maintenance,
+  npm compatibility pins, and ungrouped CosmWasm updates. Independent final
+  review approved the replacements and policy; Sol closed its Playwright-major
+  P2 by fully freezing that automatic pin. Protected publication remains; no
+  production action occurred.
+
 ## 2026-08-09 — GH-154 merged and final-main verified
 
 - PR #159 passed 11/11 protected exact-head checks on `46f687b` and was
