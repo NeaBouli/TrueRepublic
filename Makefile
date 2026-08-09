@@ -6,7 +6,7 @@ DETERMINISTIC_TARGET ?= linux-amd64
 SOURCE_REF           ?= $(shell git rev-parse HEAD)
 DETERMINISTIC_OUT    ?= $(BUILD_DIR)/deterministic/$(DETERMINISTIC_TARGET)
 
-.PHONY: build critical-coverage quality-depth deterministic-linux-daemon deterministic-build-contract-test install verify test lint clean docker-build docker-up docker-down proto-gen
+.PHONY: build critical-coverage quality-depth security-contract go-vuln static-analysis secret-scan deterministic-linux-daemon deterministic-build-contract-test install verify test lint clean docker-build docker-up docker-down proto-gen
 
 build:
 	@echo "Building $(BINARY)..."
@@ -18,6 +18,19 @@ critical-coverage:
 
 quality-depth:
 	./scripts/check-generative-quality.sh
+
+security-contract:
+	go test . -run '^TestSecurityGateRepositoryContract$$' -count=1
+
+go-vuln:
+	./scripts/check-go-vulnerabilities.sh
+	./scripts/test-go-vulnerability-scan.sh
+
+static-analysis:
+	./scripts/check-static-analysis.sh
+
+secret-scan:
+	./scripts/check-secret-scan.sh
 
 deterministic-linux-daemon:
 	./scripts/build-deterministic-daemon.sh \
@@ -47,8 +60,8 @@ test:
 lint:
 	@echo "Running vet..."
 	./scripts/go-packages.sh go vet
-	@echo "Running staticcheck (if installed)..."
-	-./scripts/go-packages.sh staticcheck
+	@echo "Running blocking staticcheck..."
+	./scripts/check-static-analysis.sh
 
 clean:
 	rm -rf $(BUILD_DIR)

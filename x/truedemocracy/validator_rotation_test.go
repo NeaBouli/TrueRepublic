@@ -349,7 +349,7 @@ func TestMsgServerRotateValidatorKeyEmitsDeterministicEvent(t *testing.T) {
 		ExpectedOldPubKey: hex.EncodeToString(before.PubKey),
 		NewPubKey:         hex.EncodeToString(newKey),
 	}
-	if _, err := NewMsgServer(k).RotateValidatorKey(sdk.WrapSDKContext(ctx), msg); err != nil {
+	if _, err := NewMsgServer(k).RotateValidatorKey(ctx, msg); err != nil {
 		t.Fatal(err)
 	}
 	events := ctx.EventManager().Events()

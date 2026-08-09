@@ -1,5 +1,68 @@
 # Action Log
 
+## 2026-08-09 — GH-148 security-gate baseline audit and implementation
+
+- Created GH-148 from exact clean `origin/main` `c1a0ed4` for the single GH-29
+  Phase-5 dependency/static/secret/supply-chain checkbox. Kimi's independent
+  read-only baseline audit found the Go vulnerability step fail-open on scanner
+  errors, mutable tools/actions, no repository secret gate, optional staticcheck,
+  incomplete Cargo lock enforcement, missing update automation, and unbounded
+  jobs; no file was changed by Kimi.
+- Centralized exact scanner/toolchain and approved Action SHA pins, pinned all
+  35 third-party Action uses, bounded every job, made govulncheck and staticcheck
+  fail closed over the repository package selector, added current-tree gitleaks
+  scanning plus planted positive/negative fixtures, enforced Go/Cargo/npm locks,
+  and added weekly grouped Dependabot updates for Actions/Go/Cargo/npm.
+- The repository contract rejects mutable/unapproved Actions, failure bypasses,
+  missing secret negative tests, broad secret allowlists, and missing lockfiles.
+  Staticcheck exposed and closed 14 baseline findings without changing protocol
+  semantics; four gitleaks matches were exact public synthetic strings and have
+  exact-regex exceptions only.
+
+## 2026-08-09 — GH-148 focused gates and candidate status verified
+
+- PASS: six positive/negative security-contract cases; blocking staticcheck;
+  maintained-tree gitleaks with zero findings; planted credential rejection;
+  strict govulncheck with four exact, active, no-fix policy entries;
+  cargo-audit with zero vulnerabilities and five warning-only advisories; npm
+  install/audit with zero high/critical findings; all documentation consistency,
+  retirement, shell, workflow YAML, Dependabot YAML, JSON, and diff checks.
+- PASS: maintained client lint, 10 Node policy/budget cases, 131 Vitest cases,
+  build at 76.40 kB gzip initial / 5.03 kB max route / 353.56 kB total, and
+  guarded audit. Ten-second DEX/token fuzz plus focused deterministic/race gate
+  passes. Full Go and Rust verification continue.
+- Candidate arithmetic is 1,579 standard cases (1,412 Go + 26 Rust + 141
+  maintained client), rollout 22/59 overall and 22/51 phase work, Phase 6 6/7,
+  and `production_ready=false`. No production, deployment, release, real key,
+  account, fund, signing, or public-network action occurred.
+
+## 2026-08-09 — GH-148 final-review blockers repaired
+
+- Kimi's read-only final review reproduced a P1: bare govulncheck exits 3 for
+  the four reachable no-fix findings and would keep protected CI red. It also
+  found a local-only secret-scan false positive in ignored Rust build output.
+- Replaced the bare invocation with a fail-closed JSON policy wrapper. Only the
+  exact four IDs may pass, only with no published fixed version and active
+  dated exceptions bounded to 30 days; unknown, fixable, missing, stale,
+  expired, malformed, or scanner-error fixtures are rejected.
+- Scoped local secret scanning to tracked plus non-ignored changed files. With
+  existing Node/Rust build artifacts present it scans 4.02 MB, reports zero
+  leaks, and still rejects the planted credential. The live Go policy gate and
+  all positive/negative wrapper fixtures pass.
+
+## 2026-08-09 — GH-148 remediation re-review hardened
+
+- Re-review confirmed the original exit-3 and ignored-build-output findings
+  closed, then identified standalone metadata-validation and enumeration-error
+  gaps. The executable Go gate now validates real UTC dates, ID/reason types,
+  duplicates, and the central 1..30-day maximum itself.
+- Expanded fixtures reject long, malformed, stale, duplicate, expired, unknown,
+  fixable, and scanner-error states. Secret-tree enumeration now has a checked
+  manifest, a non-empty invariant, and a failing-Git regression fixture.
+- PASS: expanded fixtures, live maintained-tree gitleaks and planted credential,
+  repository contract, shell/diff checks, and full repeated Go build/vet/Race/
+  Coverage across all 13 maintained packages.
+
 ## 2026-08-09 — GH-145 generative quality-depth inventory
 
 - Confirmed zero existing Go fuzz targets and zero generative property-test

@@ -1,0 +1,14 @@
+title = "TrueRepublic maintained-tree secret scanning"
+
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Exact public synthetic strings used by documentation and logger redaction tests"
+regexTarget = "match"
+regexes = [
+  '''mnemonic/private/signing''',
+  '''firewall/TLS/DNS''',
+  '''cosmos1climatekey\.\.\.''',
+  '''private-key-material-123456'''
+]

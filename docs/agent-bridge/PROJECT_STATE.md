@@ -1,8 +1,28 @@
 # Project State
 
-Updated: 2026-08-08 22:11 UTC
+Updated: 2026-08-09 09:45 UTC
 
 ## Repository
+
+- GH-148 is locally implemented on exact `origin/main` `c1a0ed4`: all 35
+  third-party Action uses are immutable SHA pins, tool/scanner/toolchain
+  versions are centralized, every job is bounded, Go vulnerability and
+  static-analysis gates fail closed, current-tree secret scanning includes
+  positive/negative evidence, lockfiles are enforced, and bounded weekly
+  Dependabot updates cover four ecosystems. Kimi's baseline audit identified
+  the repaired fail-open govulncheck path and missing controls. Final review
+  then caught and closed the bare-scanner exit-3 blocker with an exact,
+  expiry-bounded no-fix policy wrapper, and narrowed secret scanning to the
+  maintained Git tree so ignored build artifacts cannot create false
+  positives. Re-review also hardened real-date/30-day/duplicate policy checks
+  and fail-closed Git enumeration with committed negative fixtures. Focused
+  policy,
+  static, secret, documentation, retirement, generative-quality, live Go/Rust/
+  Node audit, and client gates pass; full Go/Rust verification is in progress.
+  Candidate public arithmetic is 1,579 cases (1,412 Go, 26 Rust, 141 client),
+  rollout 22/59 overall and 22/51 phase work, Phase 6 6/7, production false.
+  Independent final diff review, protected PR, merge, final-main/Pages, GH-29,
+  and retroactive repository cleanup remain before Done.
 
 - GH-145 is closed through merged PR #146 (`50f18e0`). Two real seeded fuzz
   targets plus deterministic DEX, PNYX cap/malformed-genesis, governance

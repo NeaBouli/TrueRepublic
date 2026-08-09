@@ -1,5 +1,27 @@
 # Security Notes
 
+## GH-148 maintained security-gate boundary
+
+- Every third-party GitHub Action is bound to a reviewed full commit SHA and
+  every workflow job has a finite timeout. Go, Node, and Rust toolchains plus
+  govulncheck, staticcheck, gitleaks, and cargo-audit have exact versions in one
+  repository contract; Dependabot proposes bounded weekly updates.
+- Go vulnerabilities, static analysis, maintained-tree secrets, Rust advisories,
+  and high/critical maintained-client advisories fail closed. Four secret-scan
+  exceptions match exact public synthetic test/documentation strings; broad
+  path, commit, and stopword allowlists are forbidden and tested.
+- Fresh local evidence finds no secret, no fixable Go vulnerability, no Rust
+  vulnerability, and no high/critical npm advisory. Four reachable Go entries
+  have no upstream fix and are allowed only by exact IDs with 30-day-bounded
+  expiry; unknown, fixable, stale, expired, malformed, or scanner-error cases
+  fail. Cargo-audit reports five monitored warning-only transitive advisories;
+  neither class is represented as production approval.
+- The unchanged maintained client rebuilds inside budget at 76.40 kB gzip
+  initial entry, 5.03 kB maximum lazy route, and 353.56 kB total JavaScript
+  gzip. Phase-7 image/base-digest pinning, artifact signing, SBOM, provenance,
+  publishing, branch-policy administration, and production systems are outside
+  GH-148.
+
 ## GH-139 critical-path coverage boundary
 
 - Root/application, DEX, and governance statement coverage now have explicit

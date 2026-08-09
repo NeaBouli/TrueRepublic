@@ -38,7 +38,7 @@ func findSuggestion(domain Domain, issueName, suggestionName string) bool {
 func TestMsgServerCreateDomainEscrowBoundary(t *testing.T) {
 	k, ctx, bk := setupKeeperWithBank(t)
 	server := NewMsgServer(k)
-	goCtx := sdk.WrapSDKContext(ctx)
+	goCtx := ctx
 	admin := sdk.AccAddress("domain-admin")
 	initial := sdk.NewCoins(sdk.NewInt64Coin(PNYXDenom, 1_000_000))
 
@@ -104,7 +104,7 @@ func TestMsgServerCreateDomainEscrowBoundary(t *testing.T) {
 func TestMsgServerSubmitProposalEscrowBoundary(t *testing.T) {
 	k, ctx, bk := setupKeeperWithBank(t)
 	server := NewMsgServer(k)
-	goCtx := sdk.WrapSDKContext(ctx)
+	goCtx := ctx
 	admin := sdk.AccAddress("proposal-admin")
 	creator := sdk.AccAddress("proposal-creator")
 	initial := sdk.NewCoins(sdk.NewInt64Coin(PNYXDenom, 1_000_000))
@@ -178,7 +178,7 @@ func TestMsgServerSubmitProposalEscrowBoundary(t *testing.T) {
 func TestMsgServerAddMemberAuthorization(t *testing.T) {
 	k, ctx, _ := setupKeeperWithBank(t)
 	server := NewMsgServer(k)
-	goCtx := sdk.WrapSDKContext(ctx)
+	goCtx := ctx
 	admin := sdk.AccAddress("member-admin")
 	k.CreateDomain(ctx, "Gov", admin, sdk.NewCoins(sdk.NewInt64Coin(PNYXDenom, 1_000)))
 
@@ -223,7 +223,7 @@ func TestMsgServerAddMemberAuthorization(t *testing.T) {
 func TestMsgServerPlaceStoneOnIssueBoundary(t *testing.T) {
 	k, ctx, bk := setupKeeperWithBank(t)
 	server := NewMsgServer(k)
-	goCtx := sdk.WrapSDKContext(ctx)
+	goCtx := ctx
 	admin := sdk.AccAddress("stone-admin")
 	creator := sdk.AccAddress("stone-creator")
 	alice := sdk.AccAddress("stone-alice")
@@ -301,7 +301,7 @@ func TestMsgServerPlaceStoneOnIssueBoundary(t *testing.T) {
 func TestMsgServerWithdrawFromDomainBoundary(t *testing.T) {
 	k, ctx, bk := setupKeeperWithBank(t)
 	server := NewMsgServer(k)
-	goCtx := sdk.WrapSDKContext(ctx)
+	goCtx := ctx
 	admin := sdk.AccAddress("withdraw-admin")
 	recipient := sdk.AccAddress("withdraw-recipient")
 	bk.fundAccount(admin, sdk.NewCoins(sdk.NewInt64Coin(PNYXDenom, 1_000_000)))
