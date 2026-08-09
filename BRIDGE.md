@@ -1,5 +1,98 @@
 # TrueRepublic Agent Bridge
 
+## 2026-08-09 13:58 EEST GH-154 lossless repository reconciliation → In Progress
+
+- **Issue/branch:** [GH-154](https://github.com/NeaBouli/TrueRepublic/issues/154),
+  `chore/GH-154-reconcile-residue` from exact merged `origin/main`
+  `8489d5477db695b81cb6626a96f44204aa1ade5a`.
+- **Precondition:** GH-153/PR #155 is merged and issue #153 is closed. Fresh
+  exact-main workflows are still running, so GH-153 is not yet recorded as
+  fully closed.
+- **Safety invariant:** re-fetch and revalidate each candidate immediately
+  before cleanup. Remove only a remote ref whose current SHA exactly equals a
+  merged PR head, or a clean local worktree whose HEAD exactly equals that
+  merged PR head. Preserve all dirty, unique, archival, closed-unmerged,
+  active, or ambiguous state.
+- **Current action:** repeat the prior read-only inventory against current
+  GitHub and local state. No residue has been deleted in GH-154 yet.
+
+### 2026-08-09 14:05 EEST exact-remote reconciliation complete
+
+- A fresh GitHub/remote comparison reconfirmed 31 branch heads as byte-exact
+  heads of merged PRs. Every candidate was checked again immediately before
+  deletion and none had an open PR. All 31 exact merged residues are now
+  absent from the remote.
+- The final remote inventory intentionally preserves exactly six heads:
+  `main`; active Dependabot PR branches #156, #157, and #158; closed-unmerged
+  `agent/public-recovery-status`; and `solana-archived`.
+- Local cleanup is still running. Seventeen candidates were clean and exact
+  merged-PR heads before removal began. The dirty/divergent original checkout,
+  four clean but historically divergent worktrees, closed-unmerged recovery
+  status, and the active GH-154 worktree remain preservation boundaries.
+- Older worktrees contain large ignored `node_modules`/Rust `target` trees, so
+  safe non-forced `git worktree remove` operations are filesystem-bound. No
+  additional cleanup is started while those operations remain active.
+
+### 2026-08-09 14:05 EEST GH-153 merged / final-main verification
+
+- PR #155 exact head `3f698a2924493579dafde7e91a9b9ee1cd6a847b`
+  passed 18/18 protected checks and was squash-merged as
+  `8489d5477db695b81cb6626a96f44204aa1ade5a`; issue #153 is closed and its
+  remote task branch is deleted.
+- Fresh exact-main Go `31309568219`, Security `31309568223`, Reproducible Linux
+  `31309568233`, Docs `31309568209`, Dependency Graph `31309569964`, and Pages
+  `31309567545` all pass; the five-job Go run includes successful bounded
+  multi-validator recovery. GH-153 is Done.
+- The bounded policy correctly generated minor/patch PRs #156-#158. Cargo and
+  Go generator runs also report separate updater/resolution failures for
+  CosmWasm and an incompatible Wasmd/SDK candidate. These are explicit
+  follow-up supply-chain findings; no generated update is auto-merged.
+
+### 2026-08-09 14:12 EEST final inventory → Local Complete / PR Ready
+
+- **Remote:** after final fetch/prune exactly six heads remain: `main`
+  `8489d54`; active PR #156 `acc37e8`; active PR #157 `2b59b32`; active PR
+  #158 `f124156`; closed-unmerged recovery status `e756d0b`; archival Solana
+  `043c62e`. There is no stale exact-merged remote residue.
+- **Removed locally:** 17 worktrees whose pre-removal state was clean and whose
+  HEAD exactly matched a merged PR head. Removal used `git worktree remove`
+  without force. Large ignored dependency/build trees explained the bounded
+  filesystem delay; no cleanup process remains.
+- **Preserved locally:** the legacy checkout (`78d7ce3`, 18 status entries, 24
+  commits outside current origin/main); clean but historically divergent GH-10
+  (`63960e3`, 24), GH-12 (`6d307d8`, 28), GH-20 (`cd4f3e6`, 31), and GH-8
+  (`71dfa9d`, 41); closed-unmerged recovery status (`e756d0b`, one); and the
+  active GH-154 worktree. Parenthesized counts are commits outside current
+  origin/main. None was modified.
+- **Checks:** final remote/open-PR/worktree/dirty inventory, documentation
+  consistency, and `git diff --check` pass. Next: independent final review,
+  protected docs-only PR, merge, issue closure, exact-main Docs/Pages readback,
+  then GH-154 Done.
+
+### 2026-08-09 14:16 EEST independent final review → Approved
+
+- Kimi returned **APPROVE** with no P0/P1/P2/P3 and changed no file. The review
+  independently reproduced all six remote SHAs, all seven worktrees and their
+  dirty/divergence counts, PR #25 as closed-unmerged, PRs #156-#158 as open,
+  every cited exact-main run, docs consistency, and clean diff checks.
+- An independent probe of 91 distinct merged-PR head branch names found zero
+  remaining remote residue. The original 16-worktree baseline plus the GH-153
+  worktree that became exact-merged after PR #155 explains the final 17 safe
+  removals.
+- Remaining work is publication only: commit, protected docs-only PR, merge,
+  issue closure, final-main Docs/Pages and Bridge readback.
+
+### 2026-08-09 14:22 EEST PR #159 review remediation
+
+- CodeRabbit's two valid documentation findings are fixed: project state now
+  separates the six remote heads from the seven local worktrees, and the TODO
+  records independent review as complete while publication remains open.
+- GH-153 closure evidence remains in this closeout because it is the missing
+  final-main/Bridge handoff that immediately precedes and establishes GH-154's
+  exact base. No runtime, dependency, workflow, or inventory claim changed.
+
+---
+
 ## 2026-08-09 13:19 EEST GH-153 bounded Dependabot maintenance → In Progress
 
 - **Issue/branch:** [GH-153](https://github.com/NeaBouli/TrueRepublic/issues/153),
