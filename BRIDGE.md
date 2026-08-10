@@ -414,6 +414,21 @@
   JSON/YAML, formatting, and diff integrity. New exact-head CI remains before
   merge.
 
+## 2026-08-10 13:18 EEST GH-175 / PR #176 → Merged / Final Main Green / Done
+
+- **Merge:** reviewed head `bc03215` passed 18/18 protected contexts with zero
+  unresolved review threads. Authorized administrative merge produced
+  `e8ea2eb`; PR #176 merged, GH-175 closed, and the remote branch was deleted.
+- **Final `main`:** Go CI `31377429576`, Security `31377429590`, reproducible
+  Linux `31377429630`, Docs `31377429560`, and Pages `31377428474` PASS.
+- **Public readback:** Pages publishes 1,608 maintained cases, rollout 25/59,
+  phase work 25/51, Phase 6 6/7, and production false. GH-29 marks only the two
+  proven Phase-3 IBC units complete; pending-ACK recovery is noted while
+  post-upgrade/channel-close/timeout-on-close work stays open.
+- **Status:** GH-175 Done. No deployment, public counterparty, external
+  relayer, production, real account/key/fund, or infrastructure mutation
+  occurred. Next IBC work is the still-open residual boundary above.
+
 ---
 
 ## 2026-08-09 13:19 EEST GH-153 bounded Dependabot maintenance → In Progress

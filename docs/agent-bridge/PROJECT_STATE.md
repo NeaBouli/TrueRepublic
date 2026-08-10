@@ -1,18 +1,18 @@
 # Project State
 
-Updated: 2026-08-10 01:05 UTC
+Updated: 2026-08-10 10:18 UTC
 
 ## Repository
 
-- GH-175 is locally verified and awaiting protected publication. Two persistent
-  TrueRepublic apps complete real Tendermint client/connection/unordered
-  channel handshakes, native PNYX escrow and voucher mint, acknowledgement,
-  timeout refund, replay-safe duplicate handling, and pending-ack database
-  recovery. The run found and fixed the missing Tendermint light-client codec
-  registration. `make ibc-two-chain`, focused IBC tests, 1,441 standard Go
-  cases, and documentation consistency pass. Candidate rollout is 25/59 and
-  25/51 phase work; external relayers, channel close/replacement, cross-upgrade
-  behavior, protected CI, and production readiness remain open.
+- GH-175 is complete through PR #176, merged as `e8ea2eb`. Exact reviewed head
+  `bc03215` passed all 18 contexts with zero open review threads. Final-main Go
+  `31377429576`, Security `31377429590`, reproducible Linux `31377429630`, Docs
+  `31377429560`, and Pages `31377428474` pass. Live Pages publishes 1,608 cases
+  (1,441 Go, 26 Rust, 141 client), rollout 25/59, phase work 25/51, and
+  production false. The IBC gate proves local two-chain proof relay, escrow,
+  voucher, ACK, timeout, idempotent replay, and pending-ACK database recovery.
+  External relayers, channel close/replacement, timeout-on-close, cross-upgrade
+  behavior, upgrade/staking stubs, and production readiness remain open.
 
 - GH-172 is complete through PR #173. Exact reviewed head `671ff37` passed
   18/18 contexts with zero open review threads and merged as `293ea35`.
