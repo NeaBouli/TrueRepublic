@@ -4,8 +4,8 @@
   "release_date": "2026-03-04",
   "tests": {
     "status": "recovery_verified_locally",
-    "total": 1607,
-    "go": 1440,
+    "total": 1608,
+    "go": 1441,
     "rust": 26,
     "frontend": 141,
     "historical_total": 577
@@ -37,16 +37,16 @@
     "status": "engineering_in_progress",
     "tracker_scope": "github_issue_29",
     "github_issue": 29,
-    "completed": 23,
+    "completed": 25,
     "total": 59,
-    "phase_work_completed": 23,
+    "phase_work_completed": 25,
     "phase_work_total": 51,
     "phase_6_completed": 6,
     "phase_6_total": 7,
     "production_ready": false
   },
   "modules": {
-    "root": 154,
+    "root": 155,
     "capacitypolicy": 48,
     "deploymentevidence": 71,
     "healthcheck": 55,
@@ -97,8 +97,8 @@
       "version": "v0.53.4"
     },
     "ibc": {
-      "status": "implemented_unverified",
-      "note": "Transfer module active, staking/upgrade stubbed"
+      "status": "two_chain_packet_lifecycle_recovery_verified_locally_on_gh175",
+      "note": "Tendermint clients, connection, unordered ICS-20 channel, native escrow, voucher mint, acknowledgement, timeout refund, idempotent replay no-ops, and pending-ack database recovery verified; external relayer, channel closure, cross-upgrade behavior, staking and upgrade surfaces remain unqualified or stubbed"
     },
     "dex": {
       "status": "recovery_verified_merged",

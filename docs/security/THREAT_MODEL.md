@@ -145,9 +145,13 @@ JSON register.
 
 ### ibc_upgrades
 
-- **TM-IBC-001** (high/medium, blocked → GH-29): untested IBC value transfer.
-  Verified: IBC transfer is wired but rollout remains exit-gated. Blocked: no relayer,
-  acknowledgement, timeout, or cross-upgrade tests exist.
+- **TM-IBC-001** (high/medium, partially mitigated → GH-29/GH-175): IBC value
+  transfer or relay failure. Verified locally: two proof-driven TrueRepublic
+  chains complete client/connection/channel handshakes, native escrow, voucher
+  mint, acknowledgement, timeout refund, replay-safe duplicate handling, and
+  pending-ack database recovery. Residual: external relayer/counterparty,
+  channel-close/replacement, timeout-on-close, and cross-upgrade evidence is
+  absent, so rollout remains exit-gated.
 - **TM-IBC-002** (high/medium, blocked → GH-29): residual staking,
   distribution, and upgrade stubs. Verified: explicit stubs and documented
   boundary. Blocked: stubs not yet implemented, replaced, or removed.

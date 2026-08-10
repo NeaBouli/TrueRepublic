@@ -6,7 +6,7 @@ DETERMINISTIC_TARGET ?= linux-amd64
 SOURCE_REF           ?= $(shell git rev-parse HEAD)
 DETERMINISTIC_OUT    ?= $(BUILD_DIR)/deterministic/$(DETERMINISTIC_TARGET)
 
-.PHONY: build critical-coverage quality-depth concurrency-replay security-contract go-vuln static-analysis secret-scan deterministic-linux-daemon deterministic-build-contract-test install verify test lint clean docker-build docker-up docker-down proto-gen
+.PHONY: build critical-coverage quality-depth concurrency-replay ibc-two-chain security-contract go-vuln static-analysis secret-scan deterministic-linux-daemon deterministic-build-contract-test install verify test lint clean docker-build docker-up docker-down proto-gen
 
 build:
 	@echo "Building $(BINARY)..."
@@ -22,6 +22,11 @@ quality-depth:
 concurrency-replay:
 	TRUEREPUBLIC_CONCURRENCY_REPLAY_SMOKE=1 go test . \
 		-run '^TestConcurrentSharedStateReplayRestart$$' \
+		-count=1 -timeout=900s -v
+
+ibc-two-chain:
+	TRUEREPUBLIC_IBC_TWO_CHAIN_SMOKE=1 go test . \
+		-run '^TestIBCTwoChainTransferAcknowledgementTimeoutReplayRecovery$$' \
 		-count=1 -timeout=900s -v
 
 security-contract:

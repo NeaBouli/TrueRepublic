@@ -24,7 +24,16 @@ approved for production or real funds during this audit.
   custom messages fail closed. This is local test evidence, not approval for
   real keys, public RPCs, production broadcasts, or funds.
 
-## IBC Modules (Stubbed)
+## IBC Compatibility Boundaries
+
+The IBC core, Tendermint light-client types, capability module, and ICS-20
+transfer application are real wired modules. GH-175 locally verifies two
+isolated TrueRepublic states through client, connection, and unordered channel
+handshakes; native PNYX escrow and voucher minting; acknowledgement and timeout
+cleanup; replay safety; and database recovery with a pending acknowledgement.
+This is deterministic in-process proof-relay evidence. It does not qualify an
+external relayer release, public counterparty, channel closure/replacement,
+timeout-on-close, or behavior across an application upgrade.
 
 ### IBC Staking
 **Status:** Stubbed
@@ -33,7 +42,7 @@ approved for production or real funds during this audit.
 **Code:** `ibc_stubs.go - IBCStakingKeeper`
 
 ### IBC Upgrade
-**Status:** Stubbed (No-op)
+**Status:** Stubbed / unsupported
 **Reason:** x/upgrade module not integrated
 **Impact:** Compatible binary replacement is manual; governance-controlled
 state migrations and IBC client upgrades are unsupported

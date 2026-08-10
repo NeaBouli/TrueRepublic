@@ -331,6 +331,72 @@
 
 ---
 
+## 2026-08-10 03:10 EEST GH-175 IBC two-chain evidence → In Progress
+
+- **Ticket:** `GIO-20260810-TR-IBC-TWO-CHAIN`; GitHub issue #175.
+- **Scope:** two isolated TrueRepublic application states with Tendermint IBC
+  clients, connection and unordered ICS-20 channel handshakes, native PNYX
+  transfer/escrow/voucher acknowledgement, timeout refund, duplicate packet
+  rejection, and persistent-state interruption/recovery evidence.
+- **Baseline:** exact `origin/main` `10629f1`; no open PR; 13 existing focused
+  IBC configuration/stub tests pass. They do not yet exercise a two-chain
+  packet lifecycle.
+- **Boundary:** governance-controlled client upgrades, replacement of the
+  explicitly unsupported x/upgrade path, external relayer qualification,
+  deployment, real accounts, keys, or funds are not part of GH-175.
+- **Delegation:** Kimi K3 receives a bounded, secret-free implementation block;
+  Sol owns architecture, security, integration, full verification, GitHub
+  writes, and closure.
+- **Status:** In Progress; no blocker identified.
+
+---
+
+## 2026-08-10 04:05 EEST GH-175 → Local Implementation Verified
+
+- **Finding/fix:** the first real client-creation transaction failed with
+  Cosmos code 2 because the concrete Tendermint light-client types were absent
+  from the application interface registry. `app.go` now registers them and a
+  standard regression test pins the contract.
+- **Evidence:** two persistent TrueRepublic apps complete client, connection,
+  unordered channel, native escrow/voucher, acknowledgement, timeout refund,
+  duplicate receive rejection, idempotent ACK/timeout replay, and a
+  pending-ack database reopen followed by a fresh verified header.
+- **PASS:** dedicated `make ibc-two-chain` (1.05s), focused IBC suite, 1,441
+  standard Go cases, docs consistency, JSON/YAML, formatting, and diff checks.
+- **Status:** Local Review; candidate rollout 25/59 and phase work 25/51.
+  Full build/Vet/Race/Coverage, security gates, independent review, protected
+  CI, merge, final-main, and Pages remain. External relayers, channel
+  close/replacement, cross-upgrade behavior, production, real keys/accounts,
+  and funds remain outside GH-175.
+
+## 2026-08-10 04:32 EEST GH-175 → Replay Review Remediated
+
+- **Independent review:** Kimi reproduced the dedicated harness and found one
+  P2 evidence-quality issue: duplicate receive was stopping at a stale client
+  proof before reaching ibc-go's receipt replay check.
+- **Fix:** the harness now refreshes the destination client first, then proves
+  the duplicate receive succeeds as ibc-go's intentional no-op with code 0 and
+  no second voucher mint. Documentation now describes receive, ACK, and timeout
+  replays consistently as economically idempotent no-ops.
+- **PASS:** remediated `make ibc-two-chain` (1.17s), focused IBC suite, and diff
+  integrity. No production, deployment, real account/key/fund, or external
+  relayer action occurred.
+
+## 2026-08-10 04:40 EEST GH-175 → Local Gates Green / Ready for PR
+
+- **PASS:** remediated `make ibc-two-chain` (1.17s); focused IBC suite; full
+  build/Vet/Race/Coverage (`truerepublic` 71.9%); Staticcheck v0.7.0; security
+  repository contract; Gitleaks v8.30.1 with no leaks; govulncheck v1.6.0 with
+  exact active no-fix policy and positive/negative fixtures.
+- **PASS:** 1,441 standard Go cases (1,608 maintained total), documentation
+  consistency, `status.json`, workflow YAML, `go mod tidy`, formatting, and diff
+  integrity.
+- **Review:** Kimi's single P2 evidence-quality finding is remediated; no P0/P1
+  or unresolved P2 remains. Status advances to Ready for PR. Protected exact-
+  head CI, review threads, merge, final-main, tracker, and Pages remain.
+
+---
+
 ## 2026-08-09 13:19 EEST GH-153 bounded Dependabot maintenance → In Progress
 
 - **Issue/branch:** [GH-153](https://github.com/NeaBouli/TrueRepublic/issues/153),

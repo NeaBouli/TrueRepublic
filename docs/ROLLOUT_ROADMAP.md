@@ -19,11 +19,12 @@ intentionally more granular than the public 59-item tracker.
 
 - The ordered recovery merge chain is on `main`.
 - The maximum supply is fixed at 21,000,000 PNYX.
-- The source of truth records 1,607 recovery-verified tests: 1,440 Go, 26 Rust,
+- The source of truth records 1,608 recovery-verified tests: 1,441 Go, 26 Rust,
   and 141 maintained-client tests. GH-121's real registered browser-query
   boundary and GH-115's local client-chain delivery
   case are separately gated and excluded from this arithmetic, as is GH-172's
-  real contention/replay/restart process harness.
+  real contention/replay/restart process harness. GH-175's two-chain IBC
+  packet/recovery harness is also separately gated.
 - Ledger, escrow, issuance, DEX custody, genesis, runtime invariants, ZKP
   statement binding, node persistence, and the safe operator-init boundary
   have CI-backed recovery evidence.
@@ -99,10 +100,14 @@ published circuit identity, with no unresolved critical or high audit finding.
 
 ## Phase 3 — IBC and protocol completeness
 
-- [ ] Run two-chain relayer tests for PNYX transfers.
-- [ ] Test acknowledgements, timeouts, channel closure, replay resistance, and
-  relayer interruption.
-- [ ] Prove safe recovery after partial IBC and network failures.
+- [x] Run deterministic two-chain proof-relay tests for native PNYX transfer,
+  escrow, destination voucher minting, and commitment cleanup ([GH-175](https://github.com/NeaBouli/TrueRepublic/issues/175)).
+- [x] Test acknowledgements, timeout refunds, open unordered channel state,
+  idempotent duplicate receive/ACK/timeout replay, and relay
+  interruption ([GH-175](https://github.com/NeaBouli/TrueRepublic/issues/175)).
+- [x] Reopen a persisted destination application while an acknowledgement is
+  pending and complete the relay without balance or invariant drift (GH-175).
+- [ ] Test channel closure, timeout-on-close, and recovery on a replacement channel.
 - [ ] Test IBC behavior across application upgrades.
 - [ ] Complete the supported upgrade path and its governance controls.
 - [ ] Implement, replace, or explicitly remove remaining staking,

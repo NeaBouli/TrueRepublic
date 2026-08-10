@@ -1,5 +1,23 @@
 # Security Notes
 
+## GH-175 IBC packet and recovery boundary
+
+- Two isolated persistent TrueRepublic apps now prove Tendermint client,
+  connection, unordered transfer-channel, native escrow, voucher mint,
+  acknowledgement, timeout refund, replay handling, and pending-ack restart
+  behavior with real ibc-go state proofs.
+- The first proof run found a code-2 decode failure because the concrete
+  Tendermint light-client types were absent from the application registry.
+  `app.go` now registers them and a standard test prevents regression.
+- A duplicate receive with a refreshed counterparty proof reaches ibc-go's
+  receipt replay check and cannot mint twice. ibc-go deliberately treats that
+  receive and already relayed acknowledgements/timeouts as successful no-ops;
+  balance and commitment assertions prove no second economic effect.
+- All keys, accounts, databases, and funds are generated disposable local test
+  material. The evidence does not qualify an external relayer/counterparty,
+  channel closure/replacement, cross-upgrade behavior, governance upgrades,
+  deployment, production, or real funds. Production remains false.
+
 ## GH-172 concurrency, replay, and restart boundary
 
 - The opt-in process harness uses only generated disposable localhost accounts

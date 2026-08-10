@@ -1,8 +1,18 @@
 # Project State
 
-Updated: 2026-08-09 23:15 UTC
+Updated: 2026-08-10 01:05 UTC
 
 ## Repository
+
+- GH-175 is locally verified and awaiting protected publication. Two persistent
+  TrueRepublic apps complete real Tendermint client/connection/unordered
+  channel handshakes, native PNYX escrow and voucher mint, acknowledgement,
+  timeout refund, replay-safe duplicate handling, and pending-ack database
+  recovery. The run found and fixed the missing Tendermint light-client codec
+  registration. `make ibc-two-chain`, focused IBC tests, 1,441 standard Go
+  cases, and documentation consistency pass. Candidate rollout is 25/59 and
+  25/51 phase work; external relayers, channel close/replacement, cross-upgrade
+  behavior, protected CI, and production readiness remain open.
 
 - GH-172 is complete through PR #173. Exact reviewed head `671ff37` passed
   18/18 contexts with zero open review threads and merged as `293ea35`.
