@@ -52,6 +52,7 @@ import (
 	porttypes "github.com/cosmos/ibc-go/v8/modules/core/05-port/types"
 	ibcexported "github.com/cosmos/ibc-go/v8/modules/core/exported"
 	ibckeeper "github.com/cosmos/ibc-go/v8/modules/core/keeper"
+	ibctm "github.com/cosmos/ibc-go/v8/modules/light-clients/07-tendermint"
 
 	"truerepublic/observability"
 	"truerepublic/token"
@@ -114,6 +115,10 @@ func makeInterfaceRegistry() codectypes.InterfaceRegistry {
 	}
 	std.RegisterInterfaces(interfaceRegistry)
 	ModuleBasics.RegisterInterfaces(interfaceRegistry)
+	// IBC core registers the client interfaces and localhost implementation,
+	// but applications must also register every concrete light-client type they
+	// accept inside MsgCreateClient and MsgUpdateClient Any values.
+	ibctm.RegisterInterfaces(interfaceRegistry)
 	return interfaceRegistry
 }
 

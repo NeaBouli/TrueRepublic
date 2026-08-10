@@ -212,7 +212,7 @@ PNYX Burn: 1% on PNYX output (100 bps)
 
 ### Modules Used
 
-- **ibc-go v8.4.0:** Core IBC protocol
+- **ibc-go v8.7.0:** Core IBC protocol
 - **ICS-20 Transfer:** Token transfers
 - **Capability Module:** Port/channel binding
 
@@ -239,7 +239,8 @@ IBC Transfers ←──────────────→ IBC Transfers
 
 ### Relayer
 
-- **Hermes** or **Go Relayer** supported
+- **Hermes** or **Go Relayer** are candidate external relayers; each deployed
+  version and counterparty must be qualified separately
 - Monitors both chains for packets
 - Submits proofs for verification
 - Handles timeouts and acknowledgments

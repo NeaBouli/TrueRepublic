@@ -1,12 +1,19 @@
 # IBC Relayer Setup Guide
 
-TrueRepublic supports **Inter-Blockchain Communication (IBC)** via the ICS-20 Transfer module (ibc-go v8.4.0). This guide covers relayer configuration for local testing and testnet deployment.
+TrueRepublic wires **Inter-Blockchain Communication (IBC)** through the ICS-20
+transfer module on ibc-go v8.7.0. This document is an operator recipe, not proof
+that an external chain or relayer deployment has been qualified. The maintained
+GH-175 gate uses two isolated TrueRepublic application states and submits the
+same client, connection, channel, receive, acknowledgement, and timeout
+messages with real state proofs, without an external relayer process.
 
 ---
 
 ## Overview
 
-IBC enables cross-chain PNYX transfers between TrueRepublic and any IBC-enabled Cosmos chain (Cosmos Hub, Osmosis, Neutron, etc.). The setup requires:
+The wired protocol can transfer PNYX over a compatible ICS-20 counterparty. Each
+specific external chain, relayer release, channel, trust period, and operational
+deployment still requires separate qualification. A setup requires:
 
 1. Two running chains (source + destination)
 2. An IBC relayer (Hermes or Go Relayer)
@@ -14,12 +21,12 @@ IBC enables cross-chain PNYX transfers between TrueRepublic and any IBC-enabled 
 
 ---
 
-## Supported Relayers
+## Candidate Relayers (Not Yet Qualified)
 
-| Relayer | Language | Recommended | Link |
-|---------|----------|-------------|------|
-| **Hermes** | Rust | Yes | [hermes.informal.systems](https://hermes.informal.systems) |
-| **Go Relayer** | Go | Alternative | [github.com/cosmos/relayer](https://github.com/cosmos/relayer) |
+| Relayer | Language | Qualification | Link |
+|---------|----------|---------------|------|
+| **Hermes** | Rust | Unqualified candidate | [hermes.informal.systems](https://hermes.informal.systems) |
+| **Go Relayer** | Go | Unqualified candidate | [github.com/cosmos/relayer](https://github.com/cosmos/relayer) |
 
 ---
 
@@ -27,7 +34,7 @@ IBC enables cross-chain PNYX transfers between TrueRepublic and any IBC-enabled 
 
 ### Prerequisites
 
-- Go 1.24+
+- Go 1.26.5
 - `truerepublicd` built (`make build`)
 - Hermes installed (`cargo install ibc-relayer-cli`)
 
@@ -41,7 +48,7 @@ truerepublicd init test-node-a --chain-id truerepublic-test-1 \
   --home ~/.truerepublic-a --bootstrap-operator "$OPERATOR_A"
 
 # Fund the genesis account
-truerepublicd genesis add-genesis-account validator-a 10000000pnyx --keyring-backend test --home ~/.truerepublic-a
+truerepublicd genesis add-genesis-account validator-a 1000000000upnyx --keyring-backend test --home ~/.truerepublic-a
 
 # Start chain A (default ports: RPC 26657, gRPC 9090)
 truerepublicd start --home ~/.truerepublic-a
@@ -57,7 +64,7 @@ truerepublicd init test-node-b --chain-id truerepublic-test-2 \
   --home ~/.truerepublic-b --bootstrap-operator "$OPERATOR_B"
 
 # Fund the genesis account
-truerepublicd genesis add-genesis-account validator-b 10000000pnyx --keyring-backend test --home ~/.truerepublic-b
+truerepublicd genesis add-genesis-account validator-b 1000000000upnyx --keyring-backend test --home ~/.truerepublic-b
 
 # Start chain B (offset ports to avoid conflicts)
 truerepublicd start --home ~/.truerepublic-b \
@@ -99,7 +106,7 @@ rpc_addr = 'http://127.0.0.1:26657'
 grpc_addr = 'http://127.0.0.1:9090'
 websocket_addr = 'ws://127.0.0.1:26657/websocket'
 rpc_timeout = '10s'
-account_prefix = 'cosmos'
+account_prefix = 'truerepublic'
 key_name = 'relayer-a'
 store_prefix = 'ibc'
 default_gas = 200000
@@ -118,7 +125,7 @@ rpc_addr = 'http://127.0.0.1:26658'
 grpc_addr = 'http://127.0.0.1:9091'
 websocket_addr = 'ws://127.0.0.1:26658/websocket'
 rpc_timeout = '10s'
-account_prefix = 'cosmos'
+account_prefix = 'truerepublic'
 key_name = 'relayer-b'
 store_prefix = 'ibc'
 default_gas = 200000
@@ -166,24 +173,27 @@ hermes start
 ### Test IBC Transfer
 
 ```bash
-# Send 1000 PNYX from chain A to chain B
+# Set this to a valid chain-B account before executing the example.
+RECIPIENT_B="$(truerepublicd keys show validator-b -a --keyring-backend test --home ~/.truerepublic-b)"
+
+# Send 0.001 PNYX (1000 upnyx) from chain A to chain B
 truerepublicd tx ibc-transfer transfer \
   transfer \
   channel-0 \
-  cosmos1<recipient-on-chain-b> \
-  1000pnyx \
+  "$RECIPIENT_B" \
+  1000upnyx \
   --from validator-a \
   --keyring-backend test \
   --home ~/.truerepublic-a \
   --chain-id truerepublic-test-1 \
-  --fees 10pnyx
+  --fees 10upnyx
 
 # Verify on chain B (after relayer processes the packet)
-truerepublicd query bank balances cosmos1<recipient-on-chain-b> \
+truerepublicd query bank balances "$RECIPIENT_B" \
   --home ~/.truerepublic-b \
   --chain-id truerepublic-test-2
 
-# Expected: ibc/<hash> denomination with 1000 amount
+# Expected: ibc/<hash> denomination with 1000 base units
 # The IBC denom is: ibc/SHA256(transfer/channel-0/upnyx)
 ```
 
@@ -197,7 +207,7 @@ Follow the [Node Setup Guide](node-operators/README.md) to deploy a TrueRepublic
 
 ### 2. Choose Target Chain
 
-Compatible IBC chains for testnet:
+Potential counterparties that require their own compatibility and trust review:
 - **Cosmos Hub Testnet** (theta-testnet-001)
 - **Osmosis Testnet** (osmo-test-5)
 - **Neutron Testnet** (pion-1)
@@ -224,7 +234,7 @@ The relayer needs tokens on both chains to pay transaction fees:
 
 ```bash
 # Fund relayer on TrueRepublic
-truerepublicd tx bank send validator relayer-address 100000pnyx --chain-id truerepublic-testnet-1
+truerepublicd tx bank send validator relayer-address 100000upnyx --chain-id truerepublic-testnet-1
 
 # Fund relayer on target chain (use that chain's faucet or send tokens)
 ```

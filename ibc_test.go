@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"encoding/json"
+	"slices"
 	"testing"
 	"time"
 
@@ -202,6 +203,13 @@ func TestIBCDefaultGenesis(t *testing.T) {
 		if !json.Valid(data) {
 			t.Fatalf("DefaultGenesis for %s is not valid JSON", name)
 		}
+	}
+}
+
+func TestIBCTendermintLightClientInterfaceRegistered(t *testing.T) {
+	implementations := makeInterfaceRegistry().ListImplementations("ibc.core.client.v1.ClientState")
+	if !slices.Contains(implementations, "/ibc.lightclients.tendermint.v1.ClientState") {
+		t.Fatalf("Tendermint client state is not registered: %v", implementations)
 	}
 }
 

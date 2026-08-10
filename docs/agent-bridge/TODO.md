@@ -171,6 +171,15 @@
 
 ## P1 - consensus and wallet audit
 
+- [x] GH-175: locally prove two-chain Tendermint clients, connection and
+  unordered ICS-20 channel, native PNYX escrow/voucher/ACK, timeout refund,
+  replay safety, and pending-ack persistent recovery; register the concrete
+  Tendermint light-client codec types.
+- [ ] GH-175: publish the reviewed branch, pass protected exact-head CI, merge,
+  synchronize GH-29/Pages/Bridge, and verify final `main` before Done.
+- [ ] Phase 3 follow-up: qualify an external relayer/counterparty and prove
+  channel close/replacement, timeout-on-close, and cross-upgrade recovery.
+
 - [x] GH-7: audit PNYX 21M cap, denomination, and ledger conservation paths.
 - [x] GH-11: denomination/cap branch was locally and GitHub verified and merged
   via PR #15.

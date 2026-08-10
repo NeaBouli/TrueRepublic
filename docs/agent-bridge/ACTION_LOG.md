@@ -1,5 +1,22 @@
 # Action Log
 
+## 2026-08-10 — GH-175 IBC two-chain implementation locally verified
+
+- Added a dedicated proof-driven two-chain gate over two real persistent
+  TrueRepublic applications. It opens Tendermint clients, a connection, and an
+  unordered ICS-20 channel; verifies PNYX escrow/voucher/ACK; proves idempotent
+  receive/ACK/timeout replay; refunds an expired packet; and
+  finishes a pending acknowledgement after database reopen and fresh header.
+- The first run failed with Cosmos code 2 and exposed a real production defect:
+  Tendermint light-client concrete types were missing from the transaction
+  interface registry. The registration and a standard regression test now pass.
+- PASS: dedicated 1.05s harness, focused IBC suite, 1,441 standard Go cases,
+  documentation consistency, JSON/YAML, formatting, and diff integrity.
+  Candidate rollout is 25/59; full build/Vet/Race/Coverage, security gates,
+  independent review, protected CI, merge, final-main, and Pages remain.
+- No external relayer, public network, real account/key/fund, deployment,
+  upgrade, production, or infrastructure action occurred.
+
 ## 2026-08-10 — GH-172 merged and final-main verified
 
 - PR #173 exact head `671ff37` passed 18/18 contexts with zero open review
