@@ -21,12 +21,12 @@ deployment still requires separate qualification. A setup requires:
 
 ---
 
-## Supported Relayers
+## Candidate Relayers (Not Yet Qualified)
 
-| Relayer | Language | Recommended | Link |
-|---------|----------|-------------|------|
-| **Hermes** | Rust | Yes | [hermes.informal.systems](https://hermes.informal.systems) |
-| **Go Relayer** | Go | Alternative | [github.com/cosmos/relayer](https://github.com/cosmos/relayer) |
+| Relayer | Language | Qualification | Link |
+|---------|----------|---------------|------|
+| **Hermes** | Rust | Unqualified candidate | [hermes.informal.systems](https://hermes.informal.systems) |
+| **Go Relayer** | Go | Unqualified candidate | [github.com/cosmos/relayer](https://github.com/cosmos/relayer) |
 
 ---
 
@@ -173,11 +173,14 @@ hermes start
 ### Test IBC Transfer
 
 ```bash
-# Send 1000 PNYX from chain A to chain B
+# Set this to a valid chain-B account before executing the example.
+RECIPIENT_B="$(truerepublicd keys show validator-b -a --keyring-backend test --home ~/.truerepublic-b)"
+
+# Send 0.001 PNYX (1000 upnyx) from chain A to chain B
 truerepublicd tx ibc-transfer transfer \
   transfer \
   channel-0 \
-  truerepublic1<recipient-on-chain-b> \
+  "$RECIPIENT_B" \
   1000upnyx \
   --from validator-a \
   --keyring-backend test \
@@ -186,7 +189,7 @@ truerepublicd tx ibc-transfer transfer \
   --fees 10upnyx
 
 # Verify on chain B (after relayer processes the packet)
-truerepublicd query bank balances truerepublic1<recipient-on-chain-b> \
+truerepublicd query bank balances "$RECIPIENT_B" \
   --home ~/.truerepublic-b \
   --chain-id truerepublic-test-2
 

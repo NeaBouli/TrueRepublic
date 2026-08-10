@@ -11,6 +11,7 @@ import (
 
 	"cosmossdk.io/log"
 	"cosmossdk.io/math"
+	storetypes "cosmossdk.io/store/types"
 	abci "github.com/cometbft/cometbft/abci/types"
 	cmted25519 "github.com/cometbft/cometbft/crypto/ed25519"
 	cryptoproto "github.com/cometbft/cometbft/proto/tendermint/crypto"
@@ -44,19 +45,45 @@ import (
 const ibcTwoChainSmokeEnv = "TRUEREPUBLIC_IBC_TWO_CHAIN_SMOKE"
 
 type trueRepublicIBCTestStakingKeeper struct {
-	validators stakingtypes.Validators
-	header     func(int64) cmtproto.Header
+	validators  stakingtypes.Validators
+	header      func(int64) (cmtproto.Header, bool)
+	initialTime time.Time
+	timeChanges map[int64]time.Time
+}
+
+type ibcCommitInfoReader interface {
+	GetCommitInfo(int64) (*storetypes.CommitInfo, error)
 }
 
 func (k *trueRepublicIBCTestStakingKeeper) GetHistoricalInfo(_ context.Context, height int64) (stakingtypes.HistoricalInfo, error) {
 	if height < 1 {
 		return stakingtypes.HistoricalInfo{}, fmt.Errorf("invalid historical height %d", height)
 	}
-	return stakingtypes.HistoricalInfo{Header: k.header(height), Valset: k.validators.Validators}, nil
+	header, found := k.header(height)
+	if !found {
+		return stakingtypes.HistoricalInfo{}, fmt.Errorf("historical header %d not captured", height)
+	}
+	return stakingtypes.HistoricalInfo{Header: header, Valset: k.validators.Validators}, nil
 }
 
 func (*trueRepublicIBCTestStakingKeeper) UnbondingTime(context.Context) (time.Duration, error) {
 	return ibctesting.UnbondingPeriod, nil
+}
+
+func (k *trueRepublicIBCTestStakingKeeper) recordTimeFromHeight(height int64, at time.Time) {
+	k.timeChanges[height] = at
+}
+
+func (k *trueRepublicIBCTestStakingKeeper) timeAtHeight(height int64) time.Time {
+	selectedHeight := int64(0)
+	selectedTime := k.initialTime
+	for fromHeight, at := range k.timeChanges {
+		if fromHeight <= height && fromHeight >= selectedHeight {
+			selectedHeight = fromHeight
+			selectedTime = at
+		}
+	}
+	return selectedTime
 }
 
 type trueRepublicIBCTestingApp struct {
@@ -170,6 +197,9 @@ func TestIBCTwoChainTransferAcknowledgementTimeoutReplayRecovery(t *testing.T) {
 	timeoutPacket := sendIBCTransfer(t, path, token.NewCoin(math.NewInt(timeoutAmount)), receiver.String(), timeoutAt)
 	require.Equal(t, timeoutSourceBefore.SubRaw(timeoutAmount), chainA.chain.App.(*trueRepublicIBCTestingApp).bankKeeper.GetBalance(chainA.chain.GetContext(), source, token.BaseDenom).Amount)
 
+	nextBlockTime := coord.CurrentTime.Add(10 * time.Second)
+	chainA.staking.recordTimeFromHeight(chainA.chain.App.LastBlockHeight()+1, nextBlockTime)
+	chainB.staking.recordTimeFromHeight(chainB.chain.App.LastBlockHeight()+1, nextBlockTime)
 	coord.IncrementTimeBy(10 * time.Second)
 	coord.CommitBlock(chainB.chain)
 	require.NoError(t, path.EndpointA.UpdateClient())
@@ -185,6 +215,7 @@ func TestIBCTwoChainTransferAcknowledgementTimeoutReplayRecovery(t *testing.T) {
 
 func newTrueRepublicIBCChain(t *testing.T, coord *ibctesting.Coordinator, chainID, suffix string) *trueRepublicIBCChain {
 	t.Helper()
+	require.NotEmpty(t, suffix)
 	dbDir := t.TempDir()
 	homeDir := t.TempDir()
 	database, err := dbm.NewDB("application", dbm.GoLevelDBBackend, dbDir)
@@ -202,7 +233,7 @@ func newTrueRepublicIBCChain(t *testing.T, coord *ibctesting.Coordinator, chainI
 	senderAddressString := senderAddress.String()
 	require.NotEmpty(t, senderAddressString)
 	senderAccount := authtypes.NewBaseAccount(senderAddress, senderKey.PubKey(), 0, 0)
-	staking := newIBCTestStakingKeeper(t, validatorSet)
+	staking := newIBCTestStakingKeeper(t, validatorSet, coord.CurrentTime)
 	app := NewTrueRepublicApp(log.NewNopLogger(), database, homeDir)
 	baseapp.SetChainID(chainID)(app.BaseApp)
 	wrapper := &trueRepublicIBCTestingApp{TrueRepublicApp: app, staking: staking}
@@ -213,7 +244,7 @@ func newTrueRepublicIBCChain(t *testing.T, coord *ibctesting.Coordinator, chainI
 	state[authtypes.ModuleName] = app.appCodec.MustMarshalJSON(authGenesis)
 	setBankGenesis(t, app, state, []banktypes.Balance{{Address: senderAddressString, Coins: sdk.NewCoins(token.NewCoin(math.NewInt(2_000_000_000)))}})
 	democracyGenesis := truedemocracy.DefaultGenesisState()
-	democracyGenesis.BootstrapOperatorAddresses = []string{sdk.AccAddress(bytes.Repeat([]byte{byte(0x40 + len(suffix))}, 20)).String()}
+	democracyGenesis.BootstrapOperatorAddresses = []string{sdk.AccAddress(bytes.Repeat([]byte{suffix[0]}, 20)).String()}
 	democracyJSON, err := json.Marshal(democracyGenesis)
 	require.NoError(t, err)
 	state[truedemocracy.ModuleName] = democracyJSON
@@ -240,17 +271,12 @@ func newTrueRepublicIBCChain(t *testing.T, coord *ibctesting.Coordinator, chainI
 		SenderPrivKey: senderKey, SenderAccount: senderAccount,
 		SenderAccounts: []ibctesting.SenderAccount{{SenderPrivKey: senderKey, SenderAccount: senderAccount}},
 	}
-	staking.header = func(height int64) cmtproto.Header {
-		header := chain.CurrentHeader
-		header.Height = height
-		header.NextValidatorsHash = chain.NextVals.Hash()
-		return header
-	}
+	configureIBCHistoricalHeaderProvider(t, staking, app, chainID, validatorSet)
 	chain.NextBlock()
 	return &trueRepublicIBCChain{chain: chain, dbDir: dbDir, homeDir: homeDir, db: database, staking: staking, validators: validatorSet}
 }
 
-func newIBCTestStakingKeeper(t *testing.T, validatorSet *cmttypes.ValidatorSet) *trueRepublicIBCTestStakingKeeper {
+func newIBCTestStakingKeeper(t *testing.T, validatorSet *cmttypes.ValidatorSet, initialTime time.Time) *trueRepublicIBCTestStakingKeeper {
 	t.Helper()
 	validators := make([]stakingtypes.Validator, 0, len(validatorSet.Validators))
 	for _, validator := range validatorSet.Validators {
@@ -263,7 +289,11 @@ func newIBCTestStakingKeeper(t *testing.T, validatorSet *cmttypes.ValidatorSet) 
 		validatorState.DelegatorShares = math.LegacyOneDec()
 		validators = append(validators, validatorState)
 	}
-	return &trueRepublicIBCTestStakingKeeper{validators: stakingtypes.Validators{Validators: validators}}
+	return &trueRepublicIBCTestStakingKeeper{
+		validators:  stakingtypes.Validators{Validators: validators},
+		initialTime: initialTime,
+		timeChanges: make(map[int64]time.Time),
+	}
 }
 
 func restartTrueRepublicIBCChain(t *testing.T, state *trueRepublicIBCChain, coord *ibctesting.Coordinator) {
@@ -288,7 +318,44 @@ func restartTrueRepublicIBCChain(t *testing.T, state *trueRepublicIBCChain, coor
 	state.chain.CurrentHeader.AppHash = app.LastCommitID().Hash
 	state.chain.CurrentHeader.Height = app.LastBlockHeight() + 1
 	state.chain.CurrentHeader.Time = coord.CurrentTime
+	configureIBCHistoricalHeaderProvider(t, state.staking, app, state.chain.ChainID, state.validators)
 	state.db = database
+}
+
+func configureIBCHistoricalHeaderProvider(
+	t *testing.T,
+	staking *trueRepublicIBCTestStakingKeeper,
+	app *TrueRepublicApp,
+	chainID string,
+	validatorSet *cmttypes.ValidatorSet,
+) {
+	t.Helper()
+	commitInfoReader, ok := app.CommitMultiStore().(ibcCommitInfoReader)
+	require.True(t, ok, "application commit store must expose historical commit information")
+	historicalHeaders := make(map[int64]cmtproto.Header)
+	staking.header = func(height int64) (cmtproto.Header, bool) {
+		if header, found := historicalHeaders[height]; found {
+			return header, true
+		}
+		var appHash []byte
+		if height > 1 {
+			commitInfo, err := commitInfoReader.GetCommitInfo(height - 1)
+			if err != nil {
+				return cmtproto.Header{}, false
+			}
+			appHash = commitInfo.Hash()
+		}
+		header := cmtproto.Header{
+			ChainID:            chainID,
+			Height:             height,
+			Time:               staking.timeAtHeight(height),
+			AppHash:            appHash,
+			ValidatorsHash:     validatorSet.Hash(),
+			NextValidatorsHash: validatorSet.Hash(),
+		}
+		historicalHeaders[height] = header
+		return header, true
+	}
 }
 
 func requireIBCOpenUnorderedChannel(t *testing.T, path *ibctesting.Path) {

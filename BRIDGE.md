@@ -395,6 +395,25 @@
   or unresolved P2 remains. Status advances to Ready for PR. Protected exact-
   head CI, review threads, merge, final-main, tracker, and Pages remain.
 
+## 2026-08-10 12:48 EEST GH-175 / PR #176 → Review Remediated
+
+- **First protected head:** commit `4033b9a` passed all 18 contexts, including
+  the new `ibc-two-chain` job (3m39s) and multi-validator recovery (14m36s).
+- **Review:** CodeRabbit opened nine actionable threads. Eight are fixed:
+  historical header AppHash/time now come from height-keyed persistent commit
+  data and the provider is rebound after database reopen; chain bootstrap
+  operators are distinct; CI has five minutes of timeout headroom; the target
+  uses the repository package selector; relayers are explicitly unqualified;
+  the executable example and PNYX units are exact; and TM-IBC-001 uses the
+  allowed `deferred` state.
+- **Append-only disposition:** the thread on older `duplicate ... rejection`
+  wording is answered by the later 04:32 correction entry and is not rewritten;
+  the canonical result is idempotent receive/ACK/timeout no-op handling.
+- **PASS on review diff:** `make ibc-two-chain` (root scenario 2.03s), full
+  build/Vet/Race/Coverage, Staticcheck, security contract, docs consistency,
+  JSON/YAML, formatting, and diff integrity. New exact-head CI remains before
+  merge.
+
 ---
 
 ## 2026-08-09 13:19 EEST GH-153 bounded Dependabot maintenance → In Progress

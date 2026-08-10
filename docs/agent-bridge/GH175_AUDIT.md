@@ -16,6 +16,11 @@ Kimi's independent review found one P2 evidence-quality defect: the original
 duplicate receive stopped at a stale proof before the receipt replay check.
 Sol remediated it by refreshing the client and proving ibc-go's real code-0
 receive no-op without a second mint. No P0/P1 or unresolved P2 finding remains.
+CodeRabbit's protected review then identified nine actionable integration and
+documentation threads. Sol accepted and remediated eight; the immutable Bridge
+wording thread is superseded by append-only correction entries that preserve
+the audit trail. Historical headers are now reconstructed per height from the
+persistent commit store and rebound after restart.
 
 ## Evidence reviewed
 
@@ -41,7 +46,8 @@ receive no-op without a second mint. No P0/P1 or unresolved P2 finding remains.
 
 ## Verification
 
-- Dedicated remediated `make ibc-two-chain`: PASS in 1.17s locally.
+- Dedicated review-remediated `make ibc-two-chain`: PASS (root scenario 2.03s)
+  through the repository-owned package selector.
 - Focused IBC standard tests: PASS; the opt-in harness skips outside its gate.
 - Standard Go arithmetic: 1,441 passing cases; the opt-in harness is excluded.
 - Documentation consistency, JSON, workflow YAML, formatting, and diff
