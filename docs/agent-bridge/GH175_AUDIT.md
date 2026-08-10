@@ -54,7 +54,14 @@ persistent commit store and rebound after restart.
   integrity: PASS.
 - Full build, Vet, Race/Coverage (root 71.9%), Staticcheck, security contract,
   Gitleaks, and exact active-policy Go vulnerability gates: PASS locally.
-- Protected exact-head workflow results remain required before merge and Done.
+- Protected reviewed head `bc03215`: 18/18 contexts PASS with zero unresolved
+  review threads. The dedicated IBC job passed in 3m12s.
+- PR #176 merged as `e8ea2eb`; final-main Go `31377429576`, Security
+  `31377429590`, reproducible Linux `31377429630`, Docs `31377429560`, and
+  Pages `31377428474`: PASS.
+- Live Pages and GH-29 readback: 1,608 maintained cases, rollout 25/59, phase
+  work 25/51, the first two canonical Phase-3 IBC items complete, residual
+  partial/post-upgrade work open, and production false.
 
 ## Residual boundary
 

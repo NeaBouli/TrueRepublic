@@ -175,7 +175,7 @@
   unordered ICS-20 channel, native PNYX escrow/voucher/ACK, timeout refund,
   replay safety, and pending-ack persistent recovery; register the concrete
   Tendermint light-client codec types.
-- [ ] GH-175: publish the reviewed branch, pass protected exact-head CI, merge,
+- [x] GH-175: publish the reviewed branch, pass protected exact-head CI, merge,
   synchronize GH-29/Pages/Bridge, and verify final `main` before Done.
 - [ ] Phase 3 follow-up: qualify an external relayer/counterparty and prove
   channel close/replacement, timeout-on-close, and cross-upgrade recovery.
