@@ -3574,3 +3574,17 @@
 - Public candidate state is 1,609 cases (1,442 Go + 26 Rust + 141 client),
   rollout 25/59 and production false. Protected PR checks, merge, final-main,
   GH-29 and Pages readback remain before Done.
+
+## 2026-08-12 01:20 EEST - GH-178 completed
+
+- Protected PR #179 reviewed exact head `02b3aef`; all 20 contexts passed.
+  Three CodeRabbit documentation findings were fixed, answered, and resolved,
+  leaving zero open review threads.
+- PR #179 merged as `ef8d600`; GH-178 closed automatically. Final-main Go
+  `31541112827`, Security `31541112905`, reproducible Linux `31541112832`, Docs
+  `31541112826`, and Pages `31541111526` all passed.
+- Live Pages readback confirms 1,609 standard-suite cases, rollout 25/59,
+  Phase 6 6/7, production false, and the GH-178 IBC recovery status.
+- GH-29 now credits GH-178 channel close/replacement and timeout-on-close while
+  correctly retaining post-upgrade recovery as open. No production or external
+  network action occurred.

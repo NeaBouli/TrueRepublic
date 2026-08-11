@@ -331,6 +331,7 @@
 
 ---
 
+
 ## 2026-08-10 03:10 EEST GH-175 IBC two-chain evidence → In Progress
 
 - **Ticket:** `GIO-20260810-TR-IBC-TWO-CHAIN`; GitHub issue #175.
@@ -5750,5 +5751,34 @@ exclusion, CI wiring, and documentation boundaries.
   stubs, deployment, real keys/funds, and release approval remain open.
 - **Ready for:** commit, protected PR/exact-head checks, merge, final-main and
   live Pages verification. Rollout remains 25/59; production remains false.
+
+---
+
+## 2026-08-12 01:20 EEST GH-178 IBC channel recovery → Done
+
+- **Issue/PR:** GH-178 closed through protected PR #179; merge commit
+  `ef8d600fa8f0a769d8ff3dd117c76b8dfd13a9bd` is on `main`.
+- **Reviewed head:** `02b3aefff623c0b79ec336c4fc1b777df64a3987`
+  passed all 20 reported contexts. Three CodeRabbit documentation findings were
+  fixed in `02b3aef`, answered, and resolved; zero review threads remain open.
+- **Final-main:** Go CI `31541112827`, Security `31541112905`, reproducible
+  Linux `31541112832`, Docs `31541112826`, and Pages `31541111526` all PASS on
+  the merge commit.
+- **Live Pages:** readback publishes 1,609 standard-suite cases (1,442 Go + 26
+  Rust + 141 maintained client), rollout 25/59, Phase 6 6/7,
+  `production_ready=false`, and IBC status
+  `two_chain_channel_recovery_verified_locally_on_gh178`.
+- **Tracker:** GH-29 now records pending-ACK recovery through GH-175 and channel
+  close/replacement plus timeout-on-close through GH-178. Its combined item
+  remains open for post-upgrade recovery.
+- **Kimi contribution:** bounded secret-free read-only design and final diff
+  reviews confirmed the ibc-go fixture/proof boundary; Sol fixed Kimi's one P3
+  assertion-precision finding and retained every write, test, GitHub, merge,
+  and security decision.
+- **Residual:** external relayer/public counterparty qualification,
+  post-upgrade IBC recovery, upgrade/staking/distribution stubs, production
+  deployment, real keys/funds, and release approval remain open.
+- **Safety:** no production, deployment, public-network, real-key, account, or
+  fund action occurred. GH-178 is Done; production remains false.
 
 ---

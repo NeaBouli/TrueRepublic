@@ -1,7 +1,7 @@
 # GH-178 IBC Channel-Recovery Audit
 
 Date: 2026-08-12 00:05 EEST (2026-08-11 21:05 UTC)
-Status: LOCAL PASS / PROTECTED PR GATES PENDING
+Status: PASS / MERGED / FINAL-MAIN VERIFIED
 Risk: High — IBC packet commitments, bank escrow, refunds, channel state, and
 persistent proof verification
 
@@ -65,9 +65,20 @@ failure reason; Sol tightened it to `channel is not OPEN` and reran the gate.
 - External relayer/counterparty qualification, IBC application-upgrade
   recovery, governance upgrade support, staking/distribution/upgrade stubs,
   deployment, real keys/funds, and release approval are not proven here.
-- Protected exact-head CI, review-thread closure, merge, final-main checks, and
-  live Pages readback remain required before GH-178 is Done.
+- External protocol and rollout boundaries above remain required for later
+  work; they do not block closure of this bounded repository evidence task.
+
+## Protected and final-main evidence
+
+- Exact reviewed head `02b3aefff623c0b79ec336c4fc1b777df64a3987`
+  passed all 20 reported contexts; zero review threads remain open.
+- PR #179 merged as `ef8d600fa8f0a769d8ff3dd117c76b8dfd13a9bd`;
+  issue #178 is closed.
+- Final-main Go `31541112827`, Security `31541112905`, reproducible Linux
+  `31541112832`, Docs `31541112826`, and Pages `31541111526` all pass.
+- Live Pages confirms the documented 1,609 standard-suite total, rollout 25/59,
+  Phase 6 6/7, production false, and the GH-178 IBC status.
 
 ## Verdict
 
-LOCAL PASS. The branch is ready for protected review; production remains false.
+PASS. GH-178 is merged and verified on `main`; production remains false.
