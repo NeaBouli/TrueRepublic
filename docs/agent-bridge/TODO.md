@@ -312,5 +312,6 @@
   unreceived ICS-20 packet exactly once and removes its commitment.
 - [x] Prove closed-channel state survives database recovery, replacement uses a
   distinct channel, and transfer/ACK succeeds without reopening the old path.
-- [ ] Add the bounded local/CI gate and synchronize docs, status, GH-29, Bridge,
-  protected PR evidence, final-main checks, and live Pages readback.
+- [x] Add the bounded local/CI gate and synchronize repository docs and status.
+- [ ] Synchronize GH-29 and both Bridges as each remaining gate changes.
+- [ ] Record protected-PR evidence, final-main checks, and live Pages readback.

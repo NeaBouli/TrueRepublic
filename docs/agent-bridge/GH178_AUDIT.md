@@ -1,6 +1,6 @@
 # GH-178 IBC Channel-Recovery Audit
 
-Date: 2026-08-12
+Date: 2026-08-12 00:05 EEST (2026-08-11 21:05 UTC)
 Status: LOCAL PASS / PROTECTED PR GATES PENDING
 Risk: High — IBC packet commitments, bank escrow, refunds, channel state, and
 persistent proof verification

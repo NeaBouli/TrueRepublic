@@ -23,8 +23,8 @@ intentionally more granular than the public 59-item tracker.
   and 141 maintained-client tests. GH-121's real registered browser-query
   boundary and GH-115's local client-chain delivery
   case are separately gated and excluded from this arithmetic, as is GH-172's
-  real contention/replay/restart process harness. GH-175's two-chain IBC
-  packet/recovery harness is also separately gated.
+  real contention/replay/restart process harness. GH-175/GH-178's two-chain IBC
+  packet and channel-recovery harnesses are also separately gated.
 - Ledger, escrow, issuance, DEX custody, genesis, runtime invariants, ZKP
   statement binding, node persistence, and the safe operator-init boundary
   have CI-backed recovery evidence.

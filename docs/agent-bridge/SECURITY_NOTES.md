@@ -9,7 +9,8 @@
 - Close-confirm and timeout-on-close are real messages verified against the
   reopened counterparty database's channel-membership and receipt-absence
   proofs. Native escrow refunds once, packet commitment deletion persists, and
-  duplicate relay is an ibc-go success/no-op without another economic effect.
+  a duplicate timeout-on-close relay is an ibc-go success/no-op without another
+  economic effect.
 - A distinct channel over the maintained connection receives and acknowledges
   a transfer with separate escrow and voucher denomination while both old ends
   stay CLOSED. External relayers, cross-upgrade recovery, stubs, deployment,

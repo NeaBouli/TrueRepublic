@@ -1,6 +1,8 @@
 # Testing Status
 
-The current **v0.4.0 recovery** source of truth records **1,609 verified cases**.
+The current **v0.4.0 recovery** source of truth records **1,609 verified
+standard-suite cases**. This arithmetic excludes the separately run opt-in
+GH-175/GH-178 IBC two-chain gate (`make ibc-two-chain`).
 
 | Suite | Passing cases |
 |---|---:|
@@ -20,6 +22,10 @@ The current **v0.4.0 recovery** source of truth records **1,609 verified cases**
 | Rust/CosmWasm | 26 |
 | Maintained client | 141 |
 | **Total** | **1,609** |
+
+The published total is the reproducible standard-suite baseline; the opt-in
+GH-175/GH-178 IBC recovery gate is additional evidence and is not counted in
+the 1,442 Go subtotal.
 
 ## Current Go coverage
 
