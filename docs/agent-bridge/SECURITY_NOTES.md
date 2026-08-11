@@ -1,5 +1,21 @@
 # Security Notes
 
+## GH-178 IBC channel-recovery boundary
+
+- The initial counterparty CLOSED channel end is a deterministic committed test
+  fixture because the real ICS-20 callback rejects user-initiated close. It is
+  not a production close authority, governance mechanism, or external-relayer
+  claim.
+- Close-confirm and timeout-on-close are real messages verified against the
+  reopened counterparty database's channel-membership and receipt-absence
+  proofs. Native escrow refunds once, packet commitment deletion persists, and
+  a duplicate timeout-on-close relay is an ibc-go success/no-op without another
+  economic effect.
+- A distinct channel over the maintained connection receives and acknowledges
+  a transfer with separate escrow and voucher denomination while both old ends
+  stay CLOSED. External relayers, cross-upgrade recovery, stubs, deployment,
+  production, and real keys/funds remain unqualified.
+
 ## GH-175 IBC packet and recovery boundary
 
 - Two isolated persistent TrueRepublic apps now prove Tendermint client,

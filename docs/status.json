@@ -4,8 +4,8 @@
   "release_date": "2026-03-04",
   "tests": {
     "status": "recovery_verified_locally",
-    "total": 1608,
-    "go": 1441,
+    "total": 1609,
+    "go": 1442,
     "rust": 26,
     "frontend": 141,
     "historical_total": 577
@@ -46,7 +46,7 @@
     "production_ready": false
   },
   "modules": {
-    "root": 155,
+    "root": 156,
     "capacitypolicy": 48,
     "deploymentevidence": 71,
     "healthcheck": 55,
@@ -97,8 +97,8 @@
       "version": "v0.53.4"
     },
     "ibc": {
-      "status": "two_chain_packet_lifecycle_recovery_verified_locally_on_gh175",
-      "note": "Tendermint clients, connection, unordered ICS-20 channel, native escrow, voucher mint, acknowledgement, timeout refund, idempotent replay no-ops, and pending-ack database recovery verified; external relayer, channel closure, cross-upgrade behavior, staking and upgrade surfaces remain unqualified or stubbed"
+      "status": "two_chain_channel_recovery_verified_locally_on_gh178",
+      "note": "GH-175 verifies Tendermint clients, connection, unordered ICS-20 transfer, acknowledgement, timeout, replay, and pending-ack recovery. GH-178 additionally verifies a committed closed counterparty end, proof-driven close-confirm and timeout-on-close, exactly-once refund, database recovery, and replacement-channel transfer/acknowledgement. ICS-20 rejects user-initiated close; external relayers, public counterparties, cross-upgrade behavior, staking, and upgrade surfaces remain unqualified or stubbed."
     },
     "dex": {
       "status": "recovery_verified_merged",

@@ -306,3 +306,12 @@
 - [x] GH-37: configure project-scoped Codex subagent roles so the main agent can
   delegate small bounded work to `spark_worker` without losing architecture,
   security, GitHub, or Bridge ownership.
+## Active - GH-178 IBC channel recovery
+
+- [x] Prove counterparty channel closure plus `TimeoutOnClose` refunds one
+  unreceived ICS-20 packet exactly once and removes its commitment.
+- [x] Prove closed-channel state survives database recovery, replacement uses a
+  distinct channel, and transfer/ACK succeeds without reopening the old path.
+- [x] Add the bounded local/CI gate and synchronize repository docs and status.
+- [ ] Synchronize GH-29 and both Bridges as each remaining gate changes.
+- [ ] Record protected-PR evidence, final-main checks, and live Pages readback.

@@ -26,7 +26,7 @@ concurrency-replay:
 
 ibc-two-chain:
 	TRUEREPUBLIC_IBC_TWO_CHAIN_SMOKE=1 ./scripts/go-packages.sh go test \
-		-run '^TestIBCTwoChainTransferAcknowledgementTimeoutReplayRecovery$$' \
+		-run '^TestIBCTwoChain(TransferAcknowledgementTimeoutReplayRecovery|ChannelCloseTimeoutRecoveryReplacement)$$' \
 		-count=1 -timeout=900s -v
 
 security-contract:
