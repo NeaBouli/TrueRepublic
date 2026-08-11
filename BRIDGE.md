@@ -5712,3 +5712,43 @@ exclusion, CI wiring, and documentation boundaries.
 - **Next:** GH-116 is the next bounded cleanup. GH-115 is Done.
 
 ---
+## 2026-08-12 00:05 EEST GH-178 IBC channel recovery → In Progress
+
+- **Branch:** `test/GH-178-ibc-channel-recovery`
+- **Issue:** [GH-178](https://github.com/NeaBouli/TrueRepublic/issues/178)
+- **Baseline:** exact clean `origin/main` `5a22f1c`; no unrelated local work and
+  no open pull request was present at takeover.
+- **Scope:** prove a real TrueRepublic two-chain ICS-20 packet can be refunded
+  exactly once through counterparty channel closure and `TimeoutOnClose`, then
+  prove safe continuation through a distinct replacement channel and ACK.
+- **Delegation:** Kimi K3 receives a bounded, secret-free read-only design and
+  risk review. Sol retains architecture, every write, security judgment,
+  complete verification, GitHub actions, merge, and closure.
+- **Risk:** High because packet commitments, channel state, bank escrow,
+  refunds, replay behavior, and persistent recovery are protocol-critical.
+- **Safety boundary:** ephemeral local applications only; no external relayer,
+  public network, real key/account/funds, upgrade, deployment, release, or
+  production action.
+- **Ready for:** bounded design review, implementation, and focused validation.
+
+---
+
+## 2026-08-12 00:41 EEST GH-178 IBC channel recovery → Review
+
+- **Changed:** real two-chain CloseConfirm/TimeoutOnClose/refund/replay/restart/
+  replacement evidence; protected CI target; public IBC, test-count, threat,
+  limitation, rollout, wiki, status, and agent documentation.
+- **Tests:** focused IBC PASS; complete Go Build/Vet/Race/Coverage PASS;
+  quality/fuzz/security/static/secret/vulnerability gates PASS; maintained
+  client lint/141 tests/build/audit PASS; Rust format/Clippy/26 tests/audit PASS;
+  docs/status/diff consistency PASS.
+- **Independent review:** Kimi confirmed the committed-fixture boundary and real
+  proof paths. No P0/P1/P2 surfaced; its P3 exact negative-error assertion was
+  remediated and the focused gate rerun successfully.
+- **Risk:** High protocol/accounting test surface; no production state changed.
+- **Residual:** external relayer/counterparty, post-upgrade recovery, protocol
+  stubs, deployment, real keys/funds, and release approval remain open.
+- **Ready for:** commit, protected PR/exact-head checks, merge, final-main and
+  live Pages verification. Rollout remains 25/59; production remains false.
+
+---

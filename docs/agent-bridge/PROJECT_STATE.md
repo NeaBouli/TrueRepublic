@@ -2,6 +2,16 @@
 
 Updated: 2026-08-10 10:18 UTC
 
+- GH-178 is locally verified on `test/GH-178-ibc-channel-recovery`. The real
+  proof path rejects user close-init, persists a committed CLOSED counterparty
+  end across restart, verifies close-confirm and timeout-on-close, refunds and
+  clears the packet exactly once, rejects old-channel reuse, and completes
+  transfer/ACK on a distinct channel over the existing connection. All local
+  Go/security/client/Rust/docs gates pass after Kimi's one P3 precision finding
+  was remediated. Public arithmetic is 1,609 cases (1,442 Go, 26 Rust, 141
+  client), rollout 25/59, production false. Protected PR, merge, final-main and
+  Pages verification remain pending.
+
 ## Repository
 
 - GH-175 is complete through PR #176, merged as `e8ea2eb`. Exact reviewed head

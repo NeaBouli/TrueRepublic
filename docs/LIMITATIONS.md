@@ -31,9 +31,14 @@ transfer application are real wired modules. GH-175 locally verifies two
 isolated TrueRepublic states through client, connection, and unordered channel
 handshakes; native PNYX escrow and voucher minting; acknowledgement and timeout
 cleanup; replay safety; and database recovery with a pending acknowledgement.
-This is deterministic in-process proof-relay evidence. It does not qualify an
-external relayer release, public counterparty, channel closure/replacement,
-timeout-on-close, or behavior across an application upgrade.
+GH-178 additionally proves a committed CLOSED counterparty end survives
+database recovery, then drives real proof-verified close-confirm and
+timeout-on-close messages, refunds exactly once, rejects the old channel, and
+completes transfer/ACK on a distinct replacement channel. ICS-20 intentionally
+rejects user-initiated close, so the initial CLOSED end is a deterministic
+fixture rather than a claimed production close authority. This evidence does
+not qualify an external relayer release, public counterparty, or behavior
+across an application upgrade.
 
 ### IBC Staking
 **Status:** Stubbed

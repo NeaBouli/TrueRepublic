@@ -3544,3 +3544,33 @@
 - GH-115 is Done. GH-116 is the next bounded cleanup; transaction history,
   IBC, real ZKP, wallet custody review, accessibility/performance, broader
   quality/security depth, external audit, and staged rollout remain open.
+## 2026-08-12 00:05 EEST - GH-178 started
+
+- Created GitHub issue #178 and branch `test/GH-178-ibc-channel-recovery`
+  from exact clean `origin/main` `5a22f1c`.
+- Selected the remaining bounded GH-29 IBC partial-failure slice: channel
+  closure, `TimeoutOnClose`, exactly-once refund/commitment cleanup, database
+  recovery, and a successful replacement-channel transfer/acknowledgement.
+- External relayer qualification, public-network operation, post-upgrade
+  recovery, production, real keys/accounts/funds, and deployment remain out of
+  scope and open.
+- Next: independent Kimi design review, then Sol implementation and full
+  focused/repository validation.
+
+## 2026-08-12 00:41 EEST - GH-178 locally verified
+
+- Added a second opt-in TrueRepublic two-chain case covering committed channel
+  close, database reopen, proof-driven close-confirm/timeout-on-close,
+  exactly-once refund/no-op replay, old-channel rejection, and replacement
+  channel transfer/ACK over the existing connection.
+- Kimi's bounded independent review confirmed the ICS-20 and ibc-go proof
+  boundary. Sol remediated its one actionable P3 by requiring the exact
+  `channel is not OPEN` negative reason; no P0/P1/P2 surfaced.
+- PASS: focused IBC gate, full Go build/Vet/Race/Coverage, deterministic quality
+  and fuzz, security contract, pinned Staticcheck/Gitleaks/Govuln policy,
+  maintained-client install/lint/141 tests/build/audit, Rust format/strict
+  Clippy/26 tests/audit, documentation consistency, status arithmetic, and diff
+  integrity.
+- Public candidate state is 1,609 cases (1,442 Go + 26 Rust + 141 client),
+  rollout 25/59 and production false. Protected PR checks, merge, final-main,
+  GH-29 and Pages readback remain before Done.

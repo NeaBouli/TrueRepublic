@@ -33,6 +33,7 @@ import (
 	transfertypes "github.com/cosmos/ibc-go/v8/modules/apps/transfer/types"
 	clienttypes "github.com/cosmos/ibc-go/v8/modules/core/02-client/types"
 	channeltypes "github.com/cosmos/ibc-go/v8/modules/core/04-channel/types"
+	ibchost "github.com/cosmos/ibc-go/v8/modules/core/24-host"
 	ibckeeper "github.com/cosmos/ibc-go/v8/modules/core/keeper"
 	ibctm "github.com/cosmos/ibc-go/v8/modules/light-clients/07-tendermint"
 	ibctesting "github.com/cosmos/ibc-go/v8/testing"
@@ -213,6 +214,125 @@ func TestIBCTwoChainTransferAcknowledgementTimeoutReplayRecovery(t *testing.T) {
 	chainB.chain.App.(*trueRepublicIBCTestingApp).crisisKeeper.AssertInvariants(chainB.chain.GetContext())
 }
 
+func TestIBCTwoChainChannelCloseTimeoutRecoveryReplacement(t *testing.T) {
+	if os.Getenv(ibcTwoChainSmokeEnv) != "1" {
+		t.Skip("set " + ibcTwoChainSmokeEnv + "=1 to run the bounded two-chain IBC harness")
+	}
+
+	coord := &ibctesting.Coordinator{
+		T:           t,
+		CurrentTime: time.Date(2026, 8, 12, 0, 0, 0, 0, time.UTC),
+		Chains:      make(map[string]*ibctesting.TestChain),
+	}
+	chainA := newTrueRepublicIBCChain(t, coord, ibctesting.GetChainID(1), "a")
+	chainB := newTrueRepublicIBCChain(t, coord, ibctesting.GetChainID(2), "b")
+	coord.Chains[chainA.chain.ChainID] = chainA.chain
+	coord.Chains[chainB.chain.ChainID] = chainB.chain
+	t.Cleanup(func() {
+		if chainA.db != nil {
+			_ = chainA.chain.App.(*trueRepublicIBCTestingApp).Close()
+		}
+		if chainB.db != nil {
+			_ = chainB.chain.App.(*trueRepublicIBCTestingApp).Close()
+		}
+	})
+
+	path := ibctesting.NewTransferPath(chainA.chain, chainB.chain)
+	coord.SetupConnections(path)
+	coord.CreateTransferChannels(path)
+	requireIBCOpenUnorderedChannel(t, path)
+
+	const closeAmount int64 = 900_000
+	source := chainA.chain.SenderAccount.GetAddress()
+	receiver := chainB.chain.SenderAccount.GetAddress()
+	sourceBefore := chainA.chain.App.(*trueRepublicIBCTestingApp).bankKeeper.GetBalance(chainA.chain.GetContext(), source, token.BaseDenom).Amount
+	oldEscrow := transfertypes.GetEscrowAddress(path.EndpointA.ChannelConfig.PortID, path.EndpointA.ChannelID)
+	packet := sendIBCTransfer(t, path, token.NewCoin(math.NewInt(closeAmount)), receiver.String(), 0)
+	oldVoucherDenom := transfertypes.DenomTrace{Path: packet.DestinationPort + "/" + packet.DestinationChannel, BaseDenom: token.BaseDenom}.IBCDenom()
+	require.Equal(t, sourceBefore.SubRaw(closeAmount), chainA.chain.App.(*trueRepublicIBCTestingApp).bankKeeper.GetBalance(chainA.chain.GetContext(), source, token.BaseDenom).Amount)
+	require.Equal(t, math.NewInt(closeAmount), chainA.chain.App.(*trueRepublicIBCTestingApp).bankKeeper.GetBalance(chainA.chain.GetContext(), oldEscrow, token.BaseDenom).Amount)
+	require.True(t, chainB.chain.App.(*trueRepublicIBCTestingApp).bankKeeper.GetBalance(chainB.chain.GetContext(), receiver, oldVoucherDenom).IsZero())
+	require.NotEmpty(t, chainA.chain.App.GetIBCKeeper().ChannelKeeper.GetPacketCommitment(chainA.chain.GetContext(), packet.SourcePort, packet.SourceChannel, packet.Sequence))
+	_, receiptFound := chainB.chain.App.GetIBCKeeper().ChannelKeeper.GetPacketReceipt(chainB.chain.GetContext(), packet.DestinationPort, packet.DestinationChannel, packet.Sequence)
+	require.False(t, receiptFound)
+
+	// ICS-20 deliberately rejects user-initiated channel close. Mirror ibc-go's
+	// own TimeoutOnClose fixture by committing a counterparty CLOSED end, then
+	// exercise the real proof-verified close-confirm and timeout messages.
+	require.ErrorContains(t, path.EndpointB.ChanCloseInit(), "user cannot close channel")
+	require.NoError(t, path.EndpointB.SetChannelState(channeltypes.CLOSED))
+	restartTrueRepublicIBCChain(t, chainB, coord)
+	path.EndpointB.Chain = chainB.chain
+	path.EndpointA.Counterparty = path.EndpointB
+	path.EndpointB.Counterparty = path.EndpointA
+	requireIBCChannelState(t, path.EndpointB, channeltypes.CLOSED)
+	require.NotEmpty(t, chainA.chain.App.GetIBCKeeper().ChannelKeeper.GetPacketCommitment(chainA.chain.GetContext(), packet.SourcePort, packet.SourceChannel, packet.Sequence))
+
+	channelKey := ibchost.ChannelKey(path.EndpointB.ChannelConfig.PortID, path.EndpointB.ChannelID)
+	closedProof, proofHeight := path.EndpointB.QueryProof(channelKey)
+	closeConfirm := channeltypes.NewMsgChannelCloseConfirm(
+		path.EndpointA.ChannelConfig.PortID,
+		path.EndpointA.ChannelID,
+		closedProof,
+		proofHeight,
+		path.EndpointA.Chain.SenderAccount.GetAddress().String(),
+	)
+	_, err := path.EndpointA.Chain.SendMsgs(closeConfirm)
+	require.NoError(t, err)
+	requireIBCChannelState(t, path.EndpointA, channeltypes.CLOSED)
+
+	require.NoError(t, path.EndpointA.TimeoutOnClose(packet))
+	require.Equal(t, sourceBefore, chainA.chain.App.(*trueRepublicIBCTestingApp).bankKeeper.GetBalance(chainA.chain.GetContext(), source, token.BaseDenom).Amount)
+	require.True(t, chainA.chain.App.(*trueRepublicIBCTestingApp).bankKeeper.GetBalance(chainA.chain.GetContext(), oldEscrow, token.BaseDenom).IsZero())
+	require.Empty(t, chainA.chain.App.GetIBCKeeper().ChannelKeeper.GetPacketCommitment(chainA.chain.GetContext(), packet.SourcePort, packet.SourceChannel, packet.Sequence))
+	require.NoError(t, path.EndpointA.TimeoutOnClose(packet), "duplicate timeout-on-close must be an IBC no-op")
+	require.Equal(t, sourceBefore, chainA.chain.App.(*trueRepublicIBCTestingApp).bankKeeper.GetBalance(chainA.chain.GetContext(), source, token.BaseDenom).Amount)
+
+	closedTransfer := transfertypes.NewMsgTransfer(
+		path.EndpointA.ChannelConfig.PortID,
+		path.EndpointA.ChannelID,
+		token.NewCoin(math.NewInt(1)),
+		source.String(),
+		receiver.String(),
+		clienttypes.NewHeight(clienttypes.ParseChainID(chainB.chain.ChainID), uint64(chainB.chain.App.LastBlockHeight()+100)),
+		0,
+		"gh178-closed-channel",
+	)
+	_, err = path.EndpointA.Chain.SendMsgs(closedTransfer)
+	require.ErrorContains(t, err, "channel is not OPEN", "the old channel must reject specifically because it is closed")
+	require.Equal(t, sourceBefore, chainA.chain.App.(*trueRepublicIBCTestingApp).bankKeeper.GetBalance(chainA.chain.GetContext(), source, token.BaseDenom).Amount)
+
+	replacement := ibctesting.NewTransferPath(chainA.chain, chainB.chain)
+	replacement.EndpointA.ClientID = path.EndpointA.ClientID
+	replacement.EndpointA.ConnectionID = path.EndpointA.ConnectionID
+	replacement.EndpointB.ClientID = path.EndpointB.ClientID
+	replacement.EndpointB.ConnectionID = path.EndpointB.ConnectionID
+	coord.CreateTransferChannels(replacement)
+	requireIBCOpenUnorderedChannel(t, replacement)
+	require.Equal(t, path.EndpointA.ConnectionID, replacement.EndpointA.ConnectionID)
+	require.Equal(t, path.EndpointB.ConnectionID, replacement.EndpointB.ConnectionID)
+	require.NotEqual(t, path.EndpointA.ChannelID, replacement.EndpointA.ChannelID)
+	require.NotEqual(t, path.EndpointB.ChannelID, replacement.EndpointB.ChannelID)
+
+	const replacementAmount int64 = 400_000
+	replacementPacket, ack := sendAndReceiveIBCTransfer(t, replacement, token.NewCoin(math.NewInt(replacementAmount)), receiver.String(), 0)
+	require.NoError(t, replacement.EndpointA.AcknowledgePacket(replacementPacket, ack))
+	replacementEscrow := transfertypes.GetEscrowAddress(replacement.EndpointA.ChannelConfig.PortID, replacement.EndpointA.ChannelID)
+	require.NotEqual(t, oldEscrow.String(), replacementEscrow.String())
+	require.Equal(t, math.NewInt(replacementAmount), chainA.chain.App.(*trueRepublicIBCTestingApp).bankKeeper.GetBalance(chainA.chain.GetContext(), replacementEscrow, token.BaseDenom).Amount)
+	require.Equal(t, sourceBefore.SubRaw(replacementAmount), chainA.chain.App.(*trueRepublicIBCTestingApp).bankKeeper.GetBalance(chainA.chain.GetContext(), source, token.BaseDenom).Amount)
+	replacementVoucherDenom := transfertypes.DenomTrace{Path: replacementPacket.DestinationPort + "/" + replacementPacket.DestinationChannel, BaseDenom: token.BaseDenom}.IBCDenom()
+	require.NotEqual(t, oldVoucherDenom, replacementVoucherDenom)
+	require.Equal(t, math.NewInt(replacementAmount), chainB.chain.App.(*trueRepublicIBCTestingApp).bankKeeper.GetBalance(chainB.chain.GetContext(), receiver, replacementVoucherDenom).Amount)
+	require.True(t, chainB.chain.App.(*trueRepublicIBCTestingApp).bankKeeper.GetBalance(chainB.chain.GetContext(), receiver, oldVoucherDenom).IsZero())
+	require.Empty(t, chainA.chain.App.GetIBCKeeper().ChannelKeeper.GetPacketCommitment(chainA.chain.GetContext(), replacementPacket.SourcePort, replacementPacket.SourceChannel, replacementPacket.Sequence))
+	requireIBCChannelState(t, path.EndpointA, channeltypes.CLOSED)
+	requireIBCChannelState(t, path.EndpointB, channeltypes.CLOSED)
+
+	chainA.chain.App.(*trueRepublicIBCTestingApp).crisisKeeper.AssertInvariants(chainA.chain.GetContext())
+	chainB.chain.App.(*trueRepublicIBCTestingApp).crisisKeeper.AssertInvariants(chainB.chain.GetContext())
+}
+
 func newTrueRepublicIBCChain(t *testing.T, coord *ibctesting.Coordinator, chainID, suffix string) *trueRepublicIBCChain {
 	t.Helper()
 	require.NotEmpty(t, suffix)
@@ -367,6 +487,13 @@ func requireIBCOpenUnorderedChannel(t *testing.T, path *ibctesting.Path) {
 		require.Equal(t, channeltypes.UNORDERED, channel.Ordering)
 		require.Equal(t, transfertypes.Version, channel.Version)
 	}
+}
+
+func requireIBCChannelState(t *testing.T, endpoint *ibctesting.Endpoint, expected channeltypes.State) {
+	t.Helper()
+	channel, found := endpoint.Chain.App.GetIBCKeeper().ChannelKeeper.GetChannel(endpoint.Chain.GetContext(), endpoint.ChannelConfig.PortID, endpoint.ChannelID)
+	require.True(t, found)
+	require.Equal(t, expected, channel.State)
 }
 
 func sendIBCTransfer(t *testing.T, path *ibctesting.Path, coin sdk.Coin, receiver string, timeoutTimestamp uint64) channeltypes.Packet {
