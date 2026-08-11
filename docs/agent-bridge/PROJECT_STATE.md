@@ -1,16 +1,15 @@
 # Project State
 
-Updated: 2026-08-10 10:18 UTC
+Updated: 2026-08-11 22:20 UTC
 
-- GH-178 is locally verified on `test/GH-178-ibc-channel-recovery`. The real
-  proof path rejects user close-init, persists a committed CLOSED counterparty
-  end across restart, verifies close-confirm and timeout-on-close, refunds and
-  clears the packet exactly once, rejects old-channel reuse, and completes
-  transfer/ACK on a distinct channel over the existing connection. All local
-  Go/security/client/Rust/docs gates pass after Kimi's one P3 precision finding
-  was remediated. Public arithmetic is 1,609 cases (1,442 Go, 26 Rust, 141
-  client), rollout 25/59, production false. Protected PR, merge, final-main and
-  Pages verification remain pending.
+- GH-178 is complete through PR #179, merged as `ef8d600`. Exact reviewed head
+  `02b3aef` passed all 20 contexts with zero open review threads. Final-main Go
+  `31541112827`, Security `31541112905`, reproducible Linux `31541112832`, Docs
+  `31541112826`, and Pages `31541111526` pass. Live Pages publishes 1,609
+  standard-suite cases (1,442 Go, 26 Rust, 141 client), rollout 25/59, Phase 6
+  6/7, production false, and the GH-178 IBC channel-recovery status. GH-29
+  credits channel close/replacement and timeout-on-close; post-upgrade recovery
+  remains open.
 
 ## Repository
 
