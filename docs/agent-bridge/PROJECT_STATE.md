@@ -1,6 +1,17 @@
 # Project State
 
-Updated: 2026-08-11 22:20 UTC
+Updated: 2026-08-12 08:35 UTC
+
+- GH-181 is locally implemented on `test/GH-181-ibc-compatible-upgrade`. The
+  focused opt-in gate passes all three two-chain cases, including a separately
+  linked compatible candidate reopening the same LevelDB state, fail-before-open
+  byte-hash protection, preserved client/connection/channel/sequence/economic
+  state, pending and fresh ACK, and timeout/refund exactly once. Candidate public
+  arithmetic is 1,610 cases (1,443 Go, 26 Rust, 141 client), rollout 26/59 and
+  phase work 26/51 (the separate `docs/status.json` phase-work fields), with
+  production false. Full local, security, client, Rust,
+  and docs gates pass; Kimi found no P0/P1/P2 and both P3 notes were remediated.
+  Protected PR/CI, merge, final-main, GH-29, and Pages remain pending.
 
 - GH-178 is complete through PR #179, merged as `ef8d600`. Exact reviewed head
   `02b3aef` passed all 20 contexts with zero open review threads. Final-main Go

@@ -128,7 +128,7 @@ See [INSTALLATION.md](INSTALLATION.md) for detailed instructions.
 | **DEX (stacked recovery)** | PR #18 adds custody/LP ownership/burns; PR #19 reconciles genesis and checks reserves/shares every block | [DEX Guide](docs/user-manual/dex-trading-guide.md) |
 | **VoteToEarn** | Earn PNYX rewards for active participation | [Stones Guide](docs/user-manual/stones-voting-guide.md) |
 | **Suggestion Lifecycle** | Green/yellow/red zones with auto-delete | [Governance](docs/user-manual/governance-tutorial.md) |
-| **IBC Transfers** | GH-175/GH-178 locally verify two-chain packet proofs, ACK, timeout, replay, pending-ACK recovery, timeout-on-close, and replacement-channel recovery; external relayer and upgrade qualification remain open | [IBC Setup](docs/IBC_RELAYER_SETUP.md) |
+| **IBC Transfers** | GH-175/GH-178/GH-181 locally verify two-chain packet proofs, ACK, timeout, replay, channel recovery, and in-place compatible test-binary restart recovery; external relayer and governance-controlled upgrade qualification remain open | [IBC Setup](docs/IBC_RELAYER_SETUP.md) |
 
 ---
 
@@ -201,7 +201,7 @@ TrueRepublic/
 | Zero-Knowledge Proofs (Groth16) | 🟡 Recovery verified on PR #22 | Chain/rating binding and fail-closed VK; real client prover and external review pending |
 | CosmWasm Smart Contracts | ✅ | `x/truedemocracy/wasm_bindings.go` |
 | Domain-Bank Bridge | ✅ | `x/truedemocracy/treasury_bridge.go` |
-| IBC Transfer (ICS-20) | 🟡 Two-chain lifecycle and channel-replacement recovery verified locally on GH-175/GH-178; external relayer and upgrade evidence pending | `app.go` (ibc-go v8.7.0) |
+| IBC Transfer (ICS-20) | 🟡 Two-chain lifecycle, channel replacement, and compatible binary-restart recovery verified locally on GH-175/GH-178/GH-181; external relayer and governed migration evidence pending | `app.go` (ibc-go v8.7.0) |
 | Stones Voting (WP S3.1) | ✅ | `x/truedemocracy/stones.go` |
 | VoteToEarn Rewards | ✅ | `x/truedemocracy/stones.go` |
 | Suggestion Lifecycle (WP S3.1.2) | ✅ | `x/truedemocracy/lifecycle.go` |
@@ -226,8 +226,8 @@ TrueRepublic/
 # Blockchain
 go mod tidy
 ./scripts/go-packages.sh go build
-./scripts/go-packages.sh go test -race -cover -count=1 -timeout=600s    # 1,442 Go cases
-make ibc-two-chain                                                   # separate GH-175/GH-178 proof gate
+./scripts/go-packages.sh go test -race -cover -count=1 -timeout=600s    # 1,443 Go cases
+make ibc-two-chain                                                     # separate GH-175/GH-178/GH-181 proof gate
 
 # Smart contracts
 cd contracts && cargo test --workspace       # 26 tests
@@ -265,7 +265,7 @@ The checklist below records implemented surface area, not a production security
 approval. Current evidence, risks, and commands are maintained in
 [`BRIDGE.md`](BRIDGE.md) and [GitHub issue #4](https://github.com/NeaBouli/TrueRepublic/issues/4).
 
-- 🟡 1,609 tests recovery-verified locally (1,442 Go + 26 Rust + 141 maintained-client), plus the separately gated GH-175/GH-178 two-chain IBC packet/channel-recovery proof, GH-172 shared-state contention/exact-replay/restart proof, GH-145 bounded live fuzz campaigns, GH-131 real submitted-history pagination proof, GH-121 real browser-query boundary, GH-115 local client-chain delivery proof, GH-56 rotation, GH-59 slashing, GH-60 inactive-validator genesis, GH-61 legacy-authority migration, GH-93 incident rehearsal, and GH-97 sustained-load process harnesses; protected publication and production rollout evidence remain required
+- 🟡 1,610 tests recovery-verified locally (1,443 Go + 26 Rust + 141 maintained-client), plus the separately gated GH-175/GH-178/GH-181 two-chain IBC packet/channel/compatible-restart proof, GH-172 shared-state contention/exact-replay/restart proof, GH-145 bounded live fuzz campaigns, GH-131 real submitted-history pagination proof, GH-121 real browser-query boundary, GH-115 local client-chain delivery proof, GH-56 rotation, GH-59 slashing, GH-60 inactive-validator genesis, GH-61 legacy-authority migration, GH-93 incident rehearsal, and GH-97 sustained-load process harnesses; protected publication and production rollout evidence remain required
 - ✅ Core blockchain compiles and runs
 - 🟡 Tokenomics, exact custom genesis, and every-block ledger invariants are recovery-verified and merged through PR #19
 - 🟡 Governance escrow/auth recovery is verified and merged; independent release review remains open
@@ -274,8 +274,9 @@ approval. Current evidence, risks, and commands are maintained in
 - 🟡 Domain-Bank escrow recovery implemented and merged via PR #16
 - 🟡 IBC transfer on ibc-go v8.7.0 has local proof-driven two-chain transfer,
   acknowledgement, timeout refund, replay-safety, pending-ACK restart,
-  timeout-on-close, and replacement-channel evidence on GH-175/GH-178;
-  external relayers and application-upgrade behavior remain open
+  timeout-on-close, replacement-channel, and compatible in-place binary-restart
+  evidence on GH-175/GH-178/GH-181; external relayers and governed
+  consensus-migration behavior remain open
 - 🟡 Multi-Asset DEX bank custody, provider LP ownership, authority checks, and
   canonical burns are recovery-verified and merged via PR #18
 - 🟡 GH-12 genesis/runtime conservation is recovery-verified and merged via PR #19
@@ -317,8 +318,8 @@ approval. Current evidence, risks, and commands are maintained in
 - 📋 **v0.5.0 (Q3 2026):** Native Apps (iOS/Android)
 - 🎯 **v1.0.0 (Q4 2026):** Production Release — External audit, mainnet launch
 
-> Historical test count: 577. The authoritative recovery-verified total is 1,609
-> (1,442 Go + 26 Rust + 141 maintained-client), reproduced from fresh
+> Historical test count: 577. The authoritative recovery-verified total is 1,610
+> (1,443 Go + 26 Rust + 141 maintained-client), reproduced from fresh
 > package-scoped output using the established passing-case method.
 
 ---

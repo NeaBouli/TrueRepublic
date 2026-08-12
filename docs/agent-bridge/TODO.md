@@ -177,8 +177,10 @@
   Tendermint light-client codec types.
 - [x] GH-175: publish the reviewed branch, pass protected exact-head CI, merge,
   synchronize GH-29/Pages/Bridge, and verify final `main` before Done.
-- [ ] Phase 3 follow-up: qualify an external relayer/counterparty and prove
-  channel close/replacement, timeout-on-close, and cross-upgrade recovery.
+- [ ] Phase 3 follow-up: qualify an external relayer/counterparty. Channel
+  close/replacement and timeout-on-close are covered by GH-178; GH-181 covers
+  only the supported compatible in-place binary restart. Governed
+  consensus-breaking migrations and IBC client upgrades remain separate.
 
 - [x] GH-7: audit PNYX 21M cap, denomination, and ledger conservation paths.
 - [x] GH-11: denomination/cap branch was locally and GitHub verified and merged
@@ -315,3 +317,17 @@
 - [x] Add the bounded local/CI gate and synchronize repository docs and status.
 - [x] Synchronize GH-29 and both Bridges as each remaining gate changes.
 - [x] Record protected-PR evidence, final-main checks, and live Pages readback.
+
+## Active - GH-181 compatible IBC binary-restart recovery
+
+- [x] Preserve real IBC client, connection, channel, sequence, escrow, packet
+  commitment, receipt, and acknowledgement state across a separately compiled
+  compatible test-binary restart without exporting or reinitializing genesis.
+- [x] Complete a pre-restart pending acknowledgement after reopen, then prove a
+  fresh transfer/ACK and timeout/refund exactly once on the same channel.
+- [x] Prove a fail-before-open candidate leaves persistent state unchanged and
+  that the baseline binary can resume safely.
+- [x] Run focused and full local/security gates plus independent final review;
+  publish only the bounded compatible-restart claim.
+- [ ] Synchronize GH-29, public status, both Bridges, protected PR/CI, final
+  `main`, and live Pages evidence before marking Done.

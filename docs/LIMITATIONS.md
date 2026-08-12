@@ -36,9 +36,15 @@ database recovery, then drives real proof-verified close-confirm and
 timeout-on-close messages, refunds exactly once, rejects the old channel, and
 completes transfer/ACK on a distinct replacement channel. ICS-20 intentionally
 rejects user-initiated close, so the initial CLOSED end is a deterministic
-fixture rather than a claimed production close authority. This evidence does
-not qualify an external relayer release, public counterparty, or behavior
-across an application upgrade.
+fixture rather than a claimed production close authority. GH-181 additionally
+reopens the same application databases with a separately linked compatible
+test binary, preserves the open IBC path plus pending packet/ACK and economic
+state, completes the pending ACK, and proves a fresh ACK and timeout refund
+exactly once. The intentional candidate failure exits before database open and
+leaves both recursive state hashes unchanged. This is compatible binary-restart
+evidence only; it does not qualify an external relayer release, public
+counterparty, `x/upgrade`, governance-controlled halt, state migration, IBC
+client upgrade, daemon rollout, or arbitrary cross-version compatibility.
 
 ### IBC Staking
 **Status:** Stubbed

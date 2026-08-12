@@ -3,13 +3,18 @@
 TrueRepublic wires **Inter-Blockchain Communication (IBC)** through the ICS-20
 transfer module on ibc-go v8.7.0. This document is an operator recipe, not proof
 that an external chain or relayer deployment has been qualified. The maintained
-GH-175/GH-178 gates use two isolated TrueRepublic application states and submit the
+GH-175/GH-178/GH-181 gates use two isolated TrueRepublic application states and submit the
 same client, connection, channel, receive, acknowledgement, and timeout
 messages with real state proofs, without an external relayer process. GH-178
 also proves close-confirm, timeout-on-close, exactly-once refund, persistent
 closed state, and a replacement channel. Because ICS-20 rejects
 user-initiated close, its initial committed CLOSED counterparty end is a
 deterministic test fixture, matching ibc-go's own timeout-on-close tests.
+GH-181 additionally runs the same package through a separately linked
+compatible candidate test binary, reopens the existing LevelDB state without
+`InitChain` or genesis export/import, and proves pending/fresh ACK plus timeout
+recovery. It remains a test relay and compatible restart boundary, not daemon,
+external-relayer, `x/upgrade`, migration, or public-network qualification.
 
 ---
 

@@ -99,7 +99,7 @@ jobs:
         with:
           go-version: '1.26.5'
 
-      - name: Prove two-chain ICS-20 transfer, acknowledgement, timeout, close, replacement, replay, and restart recovery
+      - name: Prove two-chain ICS-20 transfer, acknowledgement, timeout, close, replacement, replay, and compatible binary-restart recovery
         run: make ibc-two-chain
 
   build-and-test:

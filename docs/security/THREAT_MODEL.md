@@ -145,15 +145,18 @@ JSON register.
 
 ### ibc_upgrades
 
-- **TM-IBC-001** (high/medium, deferred → GH-29/GH-175): IBC value
+- **TM-IBC-001** (high/medium, deferred → GH-29): IBC value
   transfer or relay failure. Verified locally: two proof-driven TrueRepublic
   chains complete client/connection/channel handshakes, native escrow, voucher
   mint, acknowledgement, timeout refund, replay-safe duplicate handling, and
   pending-ack database recovery. GH-178 additionally verifies a committed
   closed counterparty end, proof-driven close-confirm and timeout-on-close,
   exactly-once refund, persistent recovery, and replacement-channel transfer.
-  Residual: external relayer/counterparty and cross-upgrade evidence is absent,
-  so rollout remains exit-gated.
+  GH-181 verifies that the supported in-place compatible binary replacement
+  preserves open IBC and pending packet state, then completes pending/fresh ACK
+  and timeout/refund paths exactly once. Residual: external relayer/counterparty,
+  `x/upgrade`, governed consensus migrations, IBC client upgrades, and arbitrary
+  cross-version evidence remain absent, so rollout remains exit-gated.
 - **TM-IBC-002** (high/medium, blocked → GH-29): residual staking,
   distribution, and upgrade stubs. Verified: explicit stubs and documented
   boundary. Blocked: stubs not yet implemented, replaced, or removed.

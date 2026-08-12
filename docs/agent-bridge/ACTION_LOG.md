@@ -3588,3 +3588,41 @@
 - GH-29 now credits GH-178 channel close/replacement and timeout-on-close while
   correctly retaining post-upgrade recovery as open. No production or external
   network action occurred.
+
+## 2026-08-12 10:27 EEST - GH-181 started
+
+- Created GitHub issue #181 and branch `test/GH-181-ibc-compatible-upgrade`
+  from exact clean `origin/main` `968f334`.
+- Selected the remaining bounded IBC recovery slice: preserve a real
+  Tendermint-client/connection/unordered ICS-20 channel and pending packet state
+  across a compatible application binary restart, then complete ACK and
+  timeout/refund paths exactly once.
+- This evidence must remain explicitly distinct from an `x/upgrade`, governance
+  halt, consensus migration, public relayer, production deployment, or claim of
+  arbitrary cross-version compatibility.
+- Kimi completed the initial read-only architecture review. It confirmed the
+  existing in-process restart coverage and the absence of a production
+  `x/upgrade` path; Sol retains implementation, security, integration, GitHub,
+  and final verification ownership.
+
+## 2026-08-12 11:15 EEST - GH-181 locally verified
+
+- Added a third opt-in two-chain scenario. A separately linked candidate test
+  binary reopens both original LevelDB states in place, verifies preserved
+  client/OPEN-connection/unordered-channel/sequence/escrow/packet/receipt/ACK
+  state, completes the pending ACK, and proves fresh ACK plus timeout/refund and
+  their duplicate no-op economics.
+- The exact candidate's intentional exit-42 phase runs before manifest read or
+  database open; recursive path-and-byte hashes for both application databases
+  remain identical before baseline continuation.
+- Kimi found no P0/P1/P2. Sol remediated both P3 hardening notes with immediate
+  duplicate-relay balance assertions and a child timeout below the parent gate,
+  then reran the focused and complete relevant suites.
+- PASS: all three IBC scenarios, build, package selection, Vet, Race/Coverage,
+  deterministic/property/fuzz quality, security contract, pinned Staticcheck,
+  Gitleaks and Govuln, maintained-client install/lint/141 tests/build/audit,
+  Rust format/strict Clippy/26 tests/audit, documentation consistency, JSON and
+  diff integrity.
+- Candidate public state is 1,610 cases (1,443 Go + 26 Rust + 141 client),
+  rollout 26/59, Phase 6 6/7, and production false. Protected PR/CI, merge,
+  final-main, GH-29, both Bridges, and live Pages remain before Done.
