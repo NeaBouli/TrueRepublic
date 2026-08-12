@@ -318,7 +318,7 @@
 - [x] Synchronize GH-29 and both Bridges as each remaining gate changes.
 - [x] Record protected-PR evidence, final-main checks, and live Pages readback.
 
-## Active - GH-181 compatible IBC binary-restart recovery
+## Completed - GH-181 compatible IBC binary-restart recovery
 
 - [x] Preserve real IBC client, connection, channel, sequence, escrow, packet
   commitment, receipt, and acknowledgement state across a separately compiled
@@ -329,5 +329,5 @@
   that the baseline binary can resume safely.
 - [x] Run focused and full local/security gates plus independent final review;
   publish only the bounded compatible-restart claim.
-- [ ] Synchronize GH-29, public status, both Bridges, protected PR/CI, final
+- [x] Synchronize GH-29, public status, both Bridges, protected PR/CI, final
   `main`, and live Pages evidence before marking Done.

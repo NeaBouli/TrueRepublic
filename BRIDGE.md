@@ -5836,3 +5836,33 @@ exclusion, CI wiring, and documentation boundaries.
   merge only when green, then final-main/GH-29/Pages/Bridge closure.
 
 ---
+
+## 2026-08-12 11:45 EEST GH-181 compatible IBC binary restart → Done
+
+- **Issue/PR:** GH-181 closed through protected PR #182; merge commit
+  `2f22b60d0dc75e25657f70165d7209668d3cb957` is on `main`.
+- **Reviewed head:** `68341f8c78d887681167e1cedc93c006b7ca6831`
+  passed all 20 reported contexts. Four CodeRabbit findings were fixed,
+  answered, and resolved; zero review threads remain open.
+- **Final-main:** Docs `31579387559`, Security `31579387595`, and Pages
+  `31579386407` pass on the merge commit. Pages initially hit a hosted-runner
+  self-signed-certificate error after a successful build/upload; the failed
+  deploy retry passed without a repository change.
+- **Live Pages:** readback publishes 1,610 standard-suite cases (1,443 Go + 26
+  Rust + 141 maintained client), rollout 26/59, Phase 6 6/7,
+  `production_ready=false`, and IBC status
+  `compatible_binary_restart_recovery_verified_locally_on_gh181`.
+- **Tracker:** GH-29 marks partial-failure and compatible binary-restart
+  recovery complete through GH-175/GH-178/GH-181. Governance-controlled
+  consensus migrations and IBC client upgrades remain separate open work.
+- **Kimi contribution:** bounded secret-free read-only design and final reviews;
+  no Kimi writes. Sol remediated both P3 hardening notes and retained every
+  write, test, security, GitHub, tracker, merge, and closure decision.
+- **Residual:** external relayer/public counterparty qualification, governed
+  `x/upgrade` and migration rollback, IBC client upgrades,
+  staking/distribution/upgrade stubs, production deployment, real keys/funds,
+  and release approval remain open.
+- **Safety:** no production, public-network, real-key, account, fund, or release
+  action occurred. GH-181 is Done; production remains false.
+
+---

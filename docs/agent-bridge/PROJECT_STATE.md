@@ -1,17 +1,16 @@
 # Project State
 
-Updated: 2026-08-12 08:35 UTC
+Updated: 2026-08-12 08:45 UTC
 
-- GH-181 is locally implemented on `test/GH-181-ibc-compatible-upgrade`. The
-  focused opt-in gate passes all three two-chain cases, including a separately
-  linked compatible candidate reopening the same LevelDB state, fail-before-open
-  byte-hash protection, preserved client/connection/channel/sequence/economic
-  state, pending and fresh ACK, and timeout/refund exactly once. Candidate public
-  arithmetic is 1,610 cases (1,443 Go, 26 Rust, 141 client), rollout 26/59 and
-  phase work 26/51 (the separate `docs/status.json` phase-work fields), with
-  production false. Full local, security, client, Rust,
-  and docs gates pass; Kimi found no P0/P1/P2 and both P3 notes were remediated.
-  Protected PR/CI, merge, final-main, GH-29, and Pages remain pending.
+- GH-181 is complete through PR #182, merged as `2f22b60`. Exact reviewed head
+  `68341f8` passed all 20 reported contexts with zero open review threads.
+  Final-main Docs `31579387559`, Security `31579387595`, and Pages
+  `31579386407` pass; the transient hosted-runner Pages certificate failure
+  cleared on unchanged-commit retry. Live Pages publishes 1,610 standard-suite
+  cases (1,443 Go, 26 Rust, 141 client), rollout 26/59, phase work 26/51,
+  Phase 6 6/7, production false, and the GH-181 compatible-restart status.
+  GH-29 credits the bounded compatible binary-restart recovery while governed
+  consensus migrations and IBC client upgrades remain open.
 
 - GH-178 is complete through PR #179, merged as `ef8d600`. Exact reviewed head
   `02b3aef` passed all 20 contexts with zero open review threads. Final-main Go
