@@ -1,17 +1,15 @@
 # Project State
 
-Updated: 2026-08-12 20:27 UTC
+Updated: 2026-08-12 21:30 UTC
 
-- GH-187 is locally implemented on `refactor/GH-187-protocol-boundary`.
-  Required IBC/CosmWasm staking and distribution adapters now fail closed;
-  `x/staking` and `x/distribution` remain unmounted across module, store,
-  genesis, gRPC, message-router, and CLI surfaces. Focused tests, fresh 1,461
-  Go-case arithmetic, the 51.06s IBC two-chain gate, the 236.47s governed
-  upgrade gate, docs consistency, and the security contract pass. Candidate
-  public status is 1,628 cases, rollout 30/59, phase work 30/51, Phase 6 6/7,
-  production false. Full local gates, final independent review, protected PR,
-  exact-head CI, merge, GH-29, final-main, live Pages, and both-Bridge closure
-  remain pending.
+- GH-187 is complete through PR #188, merged as `6c8d2a8`. Exact reviewed head
+  `ef6afbb` passed all 22 reported contexts with zero review threads. Required
+  IBC/CosmWasm staking and distribution adapters fail closed; `x/staking` and
+  `x/distribution` remain unmounted across module, store, genesis, gRPC,
+  message-router, and CLI surfaces. Final-main Go `31641633848`, Docs
+  `31641633858`, Security `31641633794`, reproducible Linux `31641633845`, and
+  Pages `31641632893` pass. GH-29 and live Pages publish 1,628 cases, rollout
+  30/59, phase work 30/51, Phase 6 6/7, and production false.
 
 - GH-184 is complete through PR #185, merged as `bf32ad5`. Exact reviewed head
   `9c4f58c` passed all 21 reported contexts with zero review threads. Final-main

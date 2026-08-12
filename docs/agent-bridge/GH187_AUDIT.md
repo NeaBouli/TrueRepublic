@@ -1,8 +1,8 @@
 # GH-187 Protocol Compatibility Boundary Audit
 
-Status: local implementation, process, repository, and security gates verified;
-protected publication pending. The deterministic Linux build is CI-owned
-because its contract rejects the local macOS host.
+Status: complete through protected PR #188 and merge commit `6c8d2a8`. Exact
+reviewed head `ef6afbb` passed all 22 reported contexts with zero review
+threads; GH-187 is closed and GH-29 plus live Pages are synchronized.
 
 ## Scope
 
@@ -44,9 +44,18 @@ root query/transaction CLI commands.
 - PASS: pinned Staticcheck, exact-policy Govulncheck plus fixtures, Gitleaks,
   maintained-client clean install/lint/141 tests/build/audit, and Rust
   format/Clippy/build/26 tests/advisory audit.
-- EXPECTED LOCAL PLATFORM BLOCK: the clean-commit deterministic daemon command
+- EXPECTED LOCAL PLATFORM BOUNDARY: the clean-commit deterministic daemon command
   correctly rejects macOS with `linux-amd64 requires a native Linux x86_64
-  runner`; the protected reproducible-Linux CI job must supply this evidence.
+  runner`; protected native-Linux CI supplied the missing evidence on both the
+  exact PR head and final `main`.
+- PASS: exact PR head `ef6afbb` passed 22/22 reported contexts, including both
+  native Linux architectures, with zero review threads.
+- PASS: PR #188 merged as `6c8d2a8`; final-main Go `31641633848`, Docs
+  `31641633858`, Security `31641633794`, reproducible Linux `31641633845`, and
+  Pages `31641632893` completed successfully.
+- PASS: GH-187 is closed, GH-29 credits the completed Phase 3 boundary, and
+  live Pages reports 1,628 cases, 30/59 overall, 30/51 phase work, Phase 6
+  6/7, and production readiness false.
 
 Kimi K3 performed a bounded, secret-free read-only architecture review and
 identified the success-like query behavior, default message encoder exposure,

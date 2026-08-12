@@ -3737,3 +3737,18 @@
   native-Linux CI ownership boundary, residual scope, and prohibited actions.
 - This append-only handoff becomes the final candidate head; exact-head checks,
   review threads, merge and final public closure remain pending.
+
+## 2026-08-13 00:30 EEST - GH-187 completed
+
+- Exact PR head `ef6afbb` passed all 22 reported contexts with zero review
+  threads and PR #188 merged as `6c8d2a8`; GH-187 closed and the remote feature
+  branch was deleted.
+- Final-main Go `31641633848`, Docs `31641633858`, Security `31641633794`,
+  reproducible Linux `31641633845`, and Pages `31641632893` pass.
+- GH-29 and live Pages now publish 1,628 cases, rollout 30/59, phase work
+  30/51, Phase 6 6/7, and production false.
+- Kimi performed bounded secret-free read-only architecture and final reviews;
+  Sol owns every implementation write, integration, full test, GitHub action,
+  merge, tracker update, and closure decision.
+- All scoped gates are satisfied. GH-187 is Done; no production/public-network,
+  real key/account/fund, migration, release, or deployment action occurred.
