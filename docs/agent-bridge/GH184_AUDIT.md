@@ -69,4 +69,8 @@ chain. Final review reports no P0/P1/P2 finding.
   26 tests/audit: PASS. Rust audit retains five allowed upstream warnings.
 - Documentation consistency, JSON and diff integrity: PASS.
 - Kimi final read-only review: no P0/P1/P2; all actionable P3 notes resolved.
-- Protected PR, final-main, GH-29 and live Pages evidence remain pending.
+- Protected PR #185 exact head `9c4f58c` passed all 21 reported contexts with
+  zero review threads and merged as `bf32ad5`. Final-main Docs, Security,
+  reproducible Linux, Go, and Pages pass; live Pages confirms 1,624 cases,
+  rollout 28/59, Phase 6 6/7, production false, and the GH-184 status. GH-29
+  is synchronized.
