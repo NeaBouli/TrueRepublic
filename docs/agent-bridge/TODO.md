@@ -332,7 +332,7 @@
 - [x] Synchronize GH-29, public status, both Bridges, protected PR/CI, final
   `main`, and live Pages evidence before marking Done.
 
-## In Progress - GH-184 governed application upgrade recovery
+## Completed - GH-184 governed application upgrade recovery
 
 - [x] Wire real `x/upgrade` with non-signing module authority and remove the
   IBC upgrade stub.
@@ -344,5 +344,5 @@
 - [x] Synchronize candidate runbook, limitations, threat register, rollout
   roadmap, public status, and Bridge evidence.
 - [x] Complete every full local/security gate and independent final review.
-- [ ] Publish protected PR, merge green exact head, verify final `main`, update
+- [x] Publish protected PR, merge green exact head, verify final `main`, update
   GH-29 and live Pages, and close both Bridges.

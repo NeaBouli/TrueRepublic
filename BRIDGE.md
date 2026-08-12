@@ -5967,3 +5967,25 @@ exclusion, CI wiring, and documentation boundaries.
   merge and perform final-main/GH-29/Pages/both-Bridge closure.
 
 ---
+
+## 2026-08-12 14:52 EEST GH-184 governed upgrade → Done
+
+- **GitHub:** PR #185 exact reviewed head `9c4f58c` passed all 21 reported
+  contexts with zero review threads and merged as `bf32ad5`; GH-184 closed and
+  the remote feature branch was deleted.
+- **Final main:** Docs `31592981577`, Security `31592981538`, reproducible
+  Linux `31592981655`, Pages `31592980432`, and Go `31592981562` pass.
+- **Public readback:** live Pages reports 1,624 standard cases (1,457 Go + 26
+  Rust + 141 client), rollout 28/59, phase work 28/51, Phase 6 6/7,
+  production false, and `governed_application_upgrade_recovery_verified_locally_on_gh184`.
+- **Tracker:** GH-29 credits governed application-upgrade recovery only within
+  the documented fresh-genesis v0.4.1 boundary. Pre-GH-184 store introduction,
+  IBC client upgrades, external relayers, remaining staking/distribution stubs,
+  production deployment, and release approval remain open.
+- **Agents:** Kimi performed bounded secret-free implementation/review with no
+  final P0/P1/P2; Sol reviewed every write and retained full architecture,
+  security, integration, test, GitHub, merge, tracker, and closure ownership.
+- **Safety:** no production, public-network, real-key/account, fund, release,
+  or deployment action occurred. GH-184 is Done.
+
+---
