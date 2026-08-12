@@ -60,6 +60,12 @@ For client or contract changes, use the exact lockfile-driven commands and CI
 versions documented in their package/workspace files. Use `npm ci`, never
 `npm install`.
 
+Governed software-upgrade recovery has a separate three-artifact gate:
+
+```bash
+make governed-upgrade
+```
+
 ## Project-specific safety
 
 - Consensus transitions must be synchronous, deterministic, and

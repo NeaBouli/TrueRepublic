@@ -329,9 +329,27 @@
   final-main/Bridge handoff that immediately precedes and establishes GH-154's
   exact base. No runtime, dependency, workflow, or inventory claim changed.
 
----
+## 2026-08-12 12:01 EEST GH-184 governed deterministic upgrade path → In Progress
 
-
+- **Ticket:** `GIO-20260812-TR-GOVERNED-UPGRADE`; [GH-184](https://github.com/NeaBouli/TrueRepublic/issues/184).
+- **Branch/baseline:** `feature/GH-184-governed-upgrade` from exact clean
+  `origin/main` `a87eb5871b4c590a20621a463d37607889636723`; no unrelated
+  work was present at takeover.
+- **Scope:** replace the application-upgrade no-op boundary with a persisted
+  `x/upgrade` plan, a fail-closed TrueRepublic 2/3 governance authorization,
+  named deterministic migration, old-binary halt, same-state restart, and
+  rollback/partial-failure evidence.
+- **Delegation:** Kimi K3 is performing a bounded, secret-free read-only
+  architecture/risk review. Sol owns architecture, every write, security,
+  integration, complete verification, GitHub actions, merge, and closure.
+- **Risk:** High/consensus-critical. Store layout, pre-block execution,
+  authority selection, vote identity, threshold arithmetic, exact-once
+  migration, and multi-validator recovery must remain deterministic.
+- **Safety boundary:** repository-only; no production/public network,
+  deployment, release, real validator/relayer, real key/account/funds,
+  arbitrary migration, or IBC client-upgrade action. Production remains false.
+- **Ready for:** bounded implementation, focused adversarial tests, full local
+  gates, independent review, protected PR/CI, and final-main closeout.
 
 ## 2026-08-10 03:10 EEST GH-175 IBC two-chain evidence → In Progress
 
@@ -350,8 +368,6 @@
   Sol owns architecture, security, integration, full verification, GitHub
   writes, and closure.
 - **Status:** In Progress; no blocker identified.
-
----
 
 ## 2026-08-10 04:05 EEST GH-175 → Local Implementation Verified
 
@@ -5864,5 +5880,90 @@ exclusion, CI wiring, and documentation boundaries.
   and release approval remain open.
 - **Safety:** no production, public-network, real-key, account, fund, or release
   action occurred. GH-181 is Done; production remains false.
+
+---
+
+## 2026-08-12 13:30 EEST GH-184 governed upgrade → Locally Verified
+
+- **Implementation:** real `x/upgrade` keeper/module/PreBlock replaces the IBC
+  upgrade stub. Its authority is the non-signing `truedemocracy` module account;
+  only the reserved genesis governance Domain's immutable electorate may
+  schedule or cancel an exact plan at a two-thirds threshold.
+- **Release boundary:** old artifacts halt; only an artifact with exact
+  `main.upgradePlan=v0.4.1` registers the migration handler while
+  `main.version` remains the source commit. Pre-GH-184 store introduction, arbitrary
+  plans, and IBC client upgrades remain unsupported.
+- **PASS:** focused governance suite and the four-validator three-artifact
+  process harness. The latter proves old-binary halt, intentional partial
+  cached-write failure rollback, fixed-candidate recovery, common app hashes,
+  unchanged validator power, and exact-once restart in 230.63 seconds.
+- **Kimi contribution:** bounded secret-free architecture review and
+  `x/truedemocracy` adapter implementation. Sol reviewed every write, added
+  adversarial tests/harness, and owns security, integration, full gates, and
+  all external actions.
+- **Candidate status:** 1,621 standard cases (1,454 Go + 26 Rust + 141 client),
+  rollout 28/59, phase work 28/51, Phase 6 6/7, production false.
+- **Pending:** full local/security gates, final Kimi review, protected PR/CI,
+  merge, final-main, GH-29, live Pages, and both-Bridge closure.
+- **Safety:** no production, deployment, public network, real keys/accounts,
+  funds, or release action occurred.
+
+---
+
+## 2026-08-12 13:58 EEST GH-184 governed upgrade → Hardened verification
+
+- **Review remediations:** reserved governance membership is genesis-immutable;
+  pending scheduled plans and authenticated votes round-trip through export/import;
+  stale unscheduled proposals remain cancellable; malformed upgrade genesis is
+  rejected; import inside the original lead window is safe while plans at/past
+  execution height fail closed.
+- **Release identity:** reproducible artifacts keep `main.version` bound to the
+  source commit and independently inject exact `main.upgradePlan=v0.4.1`; the
+  build contract and verifier agree on both values.
+- **CI ownership:** `make governed-upgrade` and the protected
+  `governed-upgrade` workflow job now own the three-artifact process gate.
+- **PASS:** fresh 1,454-case Go arithmetic (551 governance), deterministic-build
+  contract, focused governance suite, documentation consistency, JSON/diff
+  integrity, and fresh four-validator harness in 231.39 seconds.
+- **Candidate:** 1,621 standard cases (1,454 Go + 26 Rust + 141 client), rollout
+  28/59, phase work 28/51, Phase 6 6/7, production false.
+- **Pending:** full race/coverage/security/client/Rust gates, final independent
+  review, protected PR/CI, merge, final-main/GH-29/Pages readback and Done.
+
+---
+
+## 2026-08-12 14:22 EEST GH-184 governed upgrade → Local gates complete
+
+- **PASS:** build, package selector, Vet, 1,457-case Race/Coverage, maintained
+  coverage floors (root 72.2%, governance 64.0%, DEX 51.1%), property/fuzz,
+  security contract, deterministic build, Staticcheck, exact-policy
+  Govulncheck, Gitleaks and their negative fixtures.
+- **PASS:** maintained client fresh install/lint/141 tests/build/bundle/audit;
+  Rust fmt/clippy/build/26 tests/audit; docs consistency, JSON and diff checks;
+  fresh four-validator three-artifact process gate in 231.39 seconds.
+- **Review:** Kimi final read-only review reports no P0/P1/P2. Sol resolved the
+  actionable P3s with fresh exact counting and tested/documented authenticated
+  post-execution cleanup. Historical audit statements remain historical.
+- **Candidate:** 1,624 standard cases (1,457 Go + 26 Rust + 141 client), rollout
+  28/59, phase work 28/51, Phase 6 6/7, production false.
+- **Pending:** commit, protected PR/exact-head CI, review threads, merge,
+  final-main/GH-29/live Pages and both-Bridge Done closure.
+- **Safety:** no deployment, public network, real keys/accounts, funds or
+  release action occurred.
+
+---
+
+## 2026-08-12 14:27 EEST GH-184 → PR #185 published
+
+- **Implementation commit:** `5a236527333ec21f8cec8213d3cb62dce9bfcf73`
+  publishes the complete reviewed governed-upgrade implementation and local
+  evidence on `feature/GH-184-governed-upgrade`.
+- **Pull request:** [PR #185](https://github.com/NeaBouli/TrueRepublic/pull/185)
+  targets protected `main` and closes GH-184 on merge.
+- **Local evidence:** every required Go/Race/Coverage, process, security,
+  deterministic build, client, Rust/audit, documentation and review gate passes.
+- **Next:** this append-only handoff becomes the final PR head; wait for every
+  exact-head context and review thread, remediate without bypassing gates, then
+  merge and perform final-main/GH-29/Pages/both-Bridge closure.
 
 ---

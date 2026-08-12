@@ -48,6 +48,8 @@ func GetTxCmd() *cobra.Command {
 		CmdRateWithProof(),
 		CmdDepositToDomain(),
 		CmdWithdrawFromDomain(),
+		CmdVoteSoftwareUpgrade(),
+		CmdVoteCancelSoftwareUpgrade(),
 	)
 	return txCmd
 }
@@ -680,6 +682,64 @@ func CmdRateWithProof() *cobra.Command {
 				Proof:          args[4],
 				NullifierHash:  args[5],
 				MerkleRoot:     merkleRoot,
+			}
+			if err := msg.ValidateBasic(); err != nil {
+				return err
+			}
+			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), &msg)
+		},
+	}
+	flags.AddTxFlagsToCmd(cmd)
+	return cmd
+}
+
+func CmdVoteSoftwareUpgrade() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "vote-software-upgrade [plan-name] [height] [info]",
+		Short: "Vote to schedule a software-upgrade plan (governance domain members, 2/3 majority)",
+		Args:  cobra.RangeArgs(2, 3),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			clientCtx, err := client.GetClientTxContext(cmd)
+			if err != nil {
+				return err
+			}
+			height, err := strconv.ParseInt(args[1], 10, 64)
+			if err != nil {
+				return fmt.Errorf("invalid height: %w", err)
+			}
+			info := ""
+			if len(args) > 2 {
+				info = args[2]
+			}
+			msg := MsgVoteSoftwareUpgrade{
+				Sender:   clientCtx.GetFromAddress(),
+				PlanName: args[0],
+				Height:   height,
+				Info:     info,
+			}
+			if err := msg.ValidateBasic(); err != nil {
+				return err
+			}
+			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), &msg)
+		},
+	}
+	flags.AddTxFlagsToCmd(cmd)
+	return cmd
+}
+
+func CmdVoteCancelSoftwareUpgrade() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "vote-cancel-software-upgrade [plan-name]",
+		Short: "Vote to cancel the scheduled software-upgrade plan (2/3 of the original snapshot)",
+		Args:  cobra.ExactArgs(1),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			clientCtx, err := client.GetClientTxContext(cmd)
+			if err != nil {
+				return err
+			}
+			msg := MsgVoteCancelSoftwareUpgrade{
+				Sender:   clientCtx.GetFromAddress(),
+				PlanName: args[0],
 			}
 			if err := msg.ValidateBasic(); err != nil {
 				return err

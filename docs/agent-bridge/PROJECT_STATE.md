@@ -1,6 +1,17 @@
 # Project State
 
-Updated: 2026-08-12 08:45 UTC
+Updated: 2026-08-12 11:22 UTC
+
+- GH-184 is locally verified on `feature/GH-184-governed-upgrade`. Real
+  `x/upgrade` replaces the upgrade stub; an immutable genesis governance
+  electorate schedules or cancels an exact plan at a two-thirds threshold.
+  The opt-in four-validator harness passes old-binary halt, intentional partial
+  cached-write failure rollback, fixed v0.4.1 recovery, common app hashes, and
+  exact-once restart. Candidate public arithmetic is 1,624 cases (1,457 Go,
+  26 Rust, 141 client), rollout 28/59, phase work 28/51, Phase 6 6/7, and
+  production false. Complete local, security, client, Rust, consistency and
+  independent-review gates pass with no P0/P1/P2 finding. Protected PR,
+  final-main checks, tracker, Pages, and closure remain pending.
 
 - GH-181 is complete through PR #182, merged as `2f22b60`. Exact reviewed head
   `68341f8` passed all 20 reported contexts with zero open review threads.

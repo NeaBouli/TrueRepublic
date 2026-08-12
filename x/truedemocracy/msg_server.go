@@ -164,6 +164,20 @@ func (*MsgWithdrawFromDomainResponse) ProtoMessage()  {}
 func (*MsgWithdrawFromDomainResponse) Reset()         {}
 func (*MsgWithdrawFromDomainResponse) String() string { return "MsgWithdrawFromDomainResponse" }
 
+type MsgVoteSoftwareUpgradeResponse struct{}
+
+func (*MsgVoteSoftwareUpgradeResponse) ProtoMessage()  {}
+func (*MsgVoteSoftwareUpgradeResponse) Reset()         {}
+func (*MsgVoteSoftwareUpgradeResponse) String() string { return "MsgVoteSoftwareUpgradeResponse" }
+
+type MsgVoteCancelSoftwareUpgradeResponse struct{}
+
+func (*MsgVoteCancelSoftwareUpgradeResponse) ProtoMessage() {}
+func (*MsgVoteCancelSoftwareUpgradeResponse) Reset()        {}
+func (*MsgVoteCancelSoftwareUpgradeResponse) String() string {
+	return "MsgVoteCancelSoftwareUpgradeResponse"
+}
+
 // ---------------------------------------------------------------------------
 // Register response types with gogoproto
 // ---------------------------------------------------------------------------
@@ -195,6 +209,8 @@ func init() {
 	gogoproto.RegisterType((*MsgRateWithProof)(nil), "truedemocracy.MsgRateWithProof")
 	gogoproto.RegisterType((*MsgDepositToDomain)(nil), "truedemocracy.MsgDepositToDomain")
 	gogoproto.RegisterType((*MsgWithdrawFromDomain)(nil), "truedemocracy.MsgWithdrawFromDomain")
+	gogoproto.RegisterType((*MsgVoteSoftwareUpgrade)(nil), "truedemocracy.MsgVoteSoftwareUpgrade")
+	gogoproto.RegisterType((*MsgVoteCancelSoftwareUpgrade)(nil), "truedemocracy.MsgVoteCancelSoftwareUpgrade")
 
 	// Register response types.
 	gogoproto.RegisterType((*MsgCreateDomainResponse)(nil), "truedemocracy.MsgCreateDomainResponse")
@@ -221,6 +237,8 @@ func init() {
 	gogoproto.RegisterType((*MsgRateWithProofResponse)(nil), "truedemocracy.MsgRateWithProofResponse")
 	gogoproto.RegisterType((*MsgDepositToDomainResponse)(nil), "truedemocracy.MsgDepositToDomainResponse")
 	gogoproto.RegisterType((*MsgWithdrawFromDomainResponse)(nil), "truedemocracy.MsgWithdrawFromDomainResponse")
+	gogoproto.RegisterType((*MsgVoteSoftwareUpgradeResponse)(nil), "truedemocracy.MsgVoteSoftwareUpgradeResponse")
+	gogoproto.RegisterType((*MsgVoteCancelSoftwareUpgradeResponse)(nil), "truedemocracy.MsgVoteCancelSoftwareUpgradeResponse")
 }
 
 // ---------------------------------------------------------------------------
@@ -263,6 +281,8 @@ type MsgServer interface {
 	RateWithProof(context.Context, *MsgRateWithProof) (*MsgRateWithProofResponse, error)
 	DepositToDomain(context.Context, *MsgDepositToDomain) (*MsgDepositToDomainResponse, error)
 	WithdrawFromDomain(context.Context, *MsgWithdrawFromDomain) (*MsgWithdrawFromDomainResponse, error)
+	VoteSoftwareUpgrade(context.Context, *MsgVoteSoftwareUpgrade) (*MsgVoteSoftwareUpgradeResponse, error)
+	VoteCancelSoftwareUpgrade(context.Context, *MsgVoteCancelSoftwareUpgrade) (*MsgVoteCancelSoftwareUpgradeResponse, error)
 }
 
 var _ MsgServer = msgServer{}
@@ -798,6 +818,55 @@ func (m msgServer) WithdrawFromDomain(goCtx context.Context, msg *MsgWithdrawFro
 	return &MsgWithdrawFromDomainResponse{}, nil
 }
 
+func (m msgServer) VoteSoftwareUpgrade(goCtx context.Context, msg *MsgVoteSoftwareUpgrade) (*MsgVoteSoftwareUpgradeResponse, error) {
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	if err := msg.ValidateBasic(); err != nil {
+		return nil, err
+	}
+	votes, eligible, scheduled, err := m.Keeper.VoteSoftwareUpgrade(ctx, msg.Sender, msg.PlanName, msg.Height, msg.Info)
+	if err != nil {
+		return nil, err
+	}
+
+	ctx.EventManager().EmitEvent(sdk.NewEvent(
+		"vote_software_upgrade",
+		sdk.NewAttribute("action", "schedule"),
+		sdk.NewAttribute("plan", msg.PlanName),
+		sdk.NewAttribute("height", fmt.Sprintf("%d", msg.Height)),
+		sdk.NewAttribute("voter", msg.Sender.String()),
+		sdk.NewAttribute("votes", fmt.Sprintf("%d", votes)),
+		sdk.NewAttribute("eligible", fmt.Sprintf("%d", eligible)),
+		sdk.NewAttribute("scheduled", fmt.Sprintf("%t", scheduled)),
+	))
+
+	return &MsgVoteSoftwareUpgradeResponse{}, nil
+}
+
+func (m msgServer) VoteCancelSoftwareUpgrade(goCtx context.Context, msg *MsgVoteCancelSoftwareUpgrade) (*MsgVoteCancelSoftwareUpgradeResponse, error) {
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	if err := msg.ValidateBasic(); err != nil {
+		return nil, err
+	}
+	votes, eligible, cancelled, err := m.Keeper.VoteCancelSoftwareUpgrade(ctx, msg.Sender, msg.PlanName)
+	if err != nil {
+		return nil, err
+	}
+
+	ctx.EventManager().EmitEvent(sdk.NewEvent(
+		"vote_cancel_software_upgrade",
+		sdk.NewAttribute("action", "cancel"),
+		sdk.NewAttribute("plan", msg.PlanName),
+		sdk.NewAttribute("voter", msg.Sender.String()),
+		sdk.NewAttribute("votes", fmt.Sprintf("%d", votes)),
+		sdk.NewAttribute("eligible", fmt.Sprintf("%d", eligible)),
+		sdk.NewAttribute("cancelled", fmt.Sprintf("%t", cancelled)),
+	))
+
+	return &MsgVoteCancelSoftwareUpgradeResponse{}, nil
+}
+
 // ---------------------------------------------------------------------------
 // gRPC method handlers
 // ---------------------------------------------------------------------------
@@ -1244,6 +1313,42 @@ func _Msg_WithdrawFromDomain_Handler(srv interface{}, ctx context.Context, dec f
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Msg_VoteSoftwareUpgrade_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgVoteSoftwareUpgrade)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServer).VoteSoftwareUpgrade(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/truedemocracy.Msg/VoteSoftwareUpgrade",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServer).VoteSoftwareUpgrade(ctx, req.(*MsgVoteSoftwareUpgrade))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Msg_VoteCancelSoftwareUpgrade_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgVoteCancelSoftwareUpgrade)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServer).VoteCancelSoftwareUpgrade(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/truedemocracy.Msg/VoteCancelSoftwareUpgrade",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServer).VoteCancelSoftwareUpgrade(ctx, req.(*MsgVoteCancelSoftwareUpgrade))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 var _Msg_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "truedemocracy.Msg",
 	HandlerType: (*MsgServer)(nil),
@@ -1343,6 +1448,14 @@ var _Msg_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "WithdrawFromDomain",
 			Handler:    _Msg_WithdrawFromDomain_Handler,
+		},
+		{
+			MethodName: "VoteSoftwareUpgrade",
+			Handler:    _Msg_VoteSoftwareUpgrade_Handler,
+		},
+		{
+			MethodName: "VoteCancelSoftwareUpgrade",
+			Handler:    _Msg_VoteCancelSoftwareUpgrade_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

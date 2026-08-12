@@ -279,20 +279,24 @@ type PendingValidatorRemoval struct {
 }
 
 type GenesisState struct {
-	Domains                    []Domain                      `json:"domains"`
-	Validators                 []GenesisValidator            `json:"validators"`
-	RevokedValidatorKeys       []RevokedValidatorKey         `json:"revoked_validator_keys"`
-	PendingValidatorRotations  []PendingValidatorKeyRotation `json:"pending_validator_rotations"`
-	ConsensusKeyHistory        []ConsensusKeyRecord          `json:"consensus_key_history,omitempty"`
-	ValidatorSigningInfos      []ValidatorSigningInfo        `json:"validator_signing_infos,omitempty"`
-	ProcessedInfractions       []ProcessedInfraction         `json:"processed_infractions,omitempty"`
-	PendingValidatorRemovals   []PendingValidatorRemoval     `json:"pending_validator_removals,omitempty"`
-	LastCommitCursor           LastCommitCursor              `json:"last_commit_cursor,omitempty"`
-	BootstrapOperatorAddresses []string                      `json:"bootstrap_operator_addresses,omitempty"`
-	UsedNullifiers             []NullifierRecord             `json:"used_nullifiers"`
-	ZKPCircuitID               string                        `json:"zkp_circuit_id,omitempty"`
-	VerifyingKeyHex            string                        `json:"verifying_key_hex,omitempty"`
-	VerifyingKeySHA256         string                        `json:"verifying_key_sha256,omitempty"`
+	Domains                    []Domain                       `json:"domains"`
+	Validators                 []GenesisValidator             `json:"validators"`
+	RevokedValidatorKeys       []RevokedValidatorKey          `json:"revoked_validator_keys"`
+	PendingValidatorRotations  []PendingValidatorKeyRotation  `json:"pending_validator_rotations"`
+	ConsensusKeyHistory        []ConsensusKeyRecord           `json:"consensus_key_history,omitempty"`
+	ValidatorSigningInfos      []ValidatorSigningInfo         `json:"validator_signing_infos,omitempty"`
+	ProcessedInfractions       []ProcessedInfraction          `json:"processed_infractions,omitempty"`
+	PendingValidatorRemovals   []PendingValidatorRemoval      `json:"pending_validator_removals,omitempty"`
+	LastCommitCursor           LastCommitCursor               `json:"last_commit_cursor,omitempty"`
+	BootstrapOperatorAddresses []string                       `json:"bootstrap_operator_addresses,omitempty"`
+	UsedNullifiers             []NullifierRecord              `json:"used_nullifiers"`
+	ZKPCircuitID               string                         `json:"zkp_circuit_id,omitempty"`
+	VerifyingKeyHex            string                         `json:"verifying_key_hex,omitempty"`
+	VerifyingKeySHA256         string                         `json:"verifying_key_sha256,omitempty"`
+	SoftwareUpgradeProposal    *SoftwareUpgradeProposal       `json:"software_upgrade_proposal,omitempty"`
+	SoftwareUpgradeVotes       []string                       `json:"software_upgrade_votes,omitempty"`
+	UpgradeCancelProposal      *SoftwareUpgradeCancelProposal `json:"software_upgrade_cancel_proposal,omitempty"`
+	UpgradeCancelVotes         []string                       `json:"software_upgrade_cancel_votes,omitempty"`
 }
 
 func RegisterCodec(cdc *codec.LegacyAmino) {
@@ -315,6 +319,8 @@ func RegisterCodec(cdc *codec.LegacyAmino) {
 	cdc.RegisterConcrete(ProcessedInfraction{}, "truedemocracy/ProcessedInfraction", nil)
 	cdc.RegisterConcrete(LastCommitCursor{}, "truedemocracy/LastCommitCursor", nil)
 	cdc.RegisterConcrete(PendingValidatorRemoval{}, "truedemocracy/PendingValidatorRemoval", nil)
+	cdc.RegisterConcrete(SoftwareUpgradeProposal{}, "truedemocracy/SoftwareUpgradeProposal", nil)
+	cdc.RegisterConcrete(SoftwareUpgradeCancelProposal{}, "truedemocracy/SoftwareUpgradeCancelProposal", nil)
 
 	// Message types for CLI transactions.
 	cdc.RegisterConcrete(MsgCreateDomain{}, "truedemocracy/MsgCreateDomain", nil)
@@ -341,6 +347,8 @@ func RegisterCodec(cdc *codec.LegacyAmino) {
 	cdc.RegisterConcrete(MsgRateWithProof{}, "truedemocracy/MsgRateWithProof", nil)
 	cdc.RegisterConcrete(MsgDepositToDomain{}, "truedemocracy/MsgDepositToDomain", nil)
 	cdc.RegisterConcrete(MsgWithdrawFromDomain{}, "truedemocracy/MsgWithdrawFromDomain", nil)
+	cdc.RegisterConcrete(MsgVoteSoftwareUpgrade{}, "truedemocracy/MsgVoteSoftwareUpgrade", nil)
+	cdc.RegisterConcrete(MsgVoteCancelSoftwareUpgrade{}, "truedemocracy/MsgVoteCancelSoftwareUpgrade", nil)
 }
 
 func DefaultGenesisState() GenesisState {

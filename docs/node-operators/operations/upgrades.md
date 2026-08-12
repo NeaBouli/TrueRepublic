@@ -1,17 +1,64 @@
-# Compatible Binary Upgrades and Rollback
+# Governed Application Upgrades and Rollback
 
-TrueRepublic currently supports only **operator-coordinated, state-compatible
-binary replacement**. The application does not wire Cosmos SDK `x/upgrade`, an
-upgrade plan, or migration handlers. Governance-controlled halt heights,
-consensus-breaking state migrations, and automatic post-upgrade resume are not
-supported yet.
+TrueRepublic wires Cosmos SDK `x/upgrade` and supports the exact fresh-genesis
+`v0.4.1` governed migration path. A genesis-only `governance` Domain snapshots
+its electorate on the first matching proposal vote. At least two thirds of
+that immutable electorate must submit the same plan name, height, and info;
+the height must retain at least ten blocks of lead time. The same snapshot and
+threshold control cancellation.
 
-Do not use this procedure for a release that changes stores, consensus rules,
-or persisted-state encoding. Such a release requires the unfinished protocol
-upgrade work and dedicated migration evidence.
+The old binary has no `v0.4.1` handler and deterministically halts consensus at
+the scheduled height. Only a binary built with the exact release identity
+`main.upgradePlan=v0.4.1` registers the reviewed handler, runs module migrations, and
+records completion atomically. Ordinary accounts cannot invoke the stock
+upgrade authority because it is the non-signing `truedemocracy` module account.
+
+This path is supported only for chains created with the upgrade store already
+present. Introducing that store into an existing pre-GH-184 chain requires a
+separate reviewed store-loader release and is not covered here. IBC client
+upgrades, arbitrary plan names, public deployment, and real-funds operation
+remain unsupported.
 
 Coordinate every rehearsal, abort, or rollback decision through
 [Incident Command and Rehearsal](incident-command.md).
+
+## Schedule or cancel v0.4.1
+
+Every governance member uses its own key and submits the identical command:
+
+```bash
+truerepublicd tx truedemocracy vote-software-upgrade \
+  v0.4.1 <upgrade-height> '<reviewed-info>' \
+  --from <member-key> --chain-id <chain-id>
+```
+
+For four eligible genesis members, three matching votes schedule the plan.
+Membership changes after the first vote do not alter that proposal's
+electorate; GH-184 additionally forbids adding or excluding members from this
+reserved Domain after genesis. Duplicate votes, conflicting plans, late
+members, insufficient lead time, and runtime creation fail closed. A pending
+plan and its schedule/cancel votes are included in application genesis export
+and restore the real plan on a validated import.
+
+Before the scheduled height, the same original electorate may cancel. The
+same two-thirds path also clears an unscheduled proposal whose lead-time window
+expired, preventing a stale first vote from blocking future plans:
+
+```bash
+truerepublicd tx truedemocracy vote-cancel-software-upgrade \
+  v0.4.1 --from <member-key> --chain-id <chain-id>
+```
+
+After successful execution, use the same two-thirds cancellation vote as an
+authenticated cleanup step before proposing the next named release. `x/upgrade`
+has already cleared the executed plan; this vote removes only the retained
+governance record and makes the next exact proposal available.
+
+Install the reviewed candidate at a separate immutable path before the halt,
+but do not run it early. After all operators observe the expected halt and
+preserve logs, stop the diagnostic/RPC processes that CometBFT may leave alive,
+then start the exact candidate on the unchanged homes. Never use
+`--unsafe-skip-upgrades` as a recovery shortcut.
 
 ## Safety rules
 
@@ -175,8 +222,16 @@ before state is opened, returns every validator to the baseline binary, and
 checks historical and current app hashes, validator power, unchanged identity
 keys, non-regressing signing state, exported ledger invariants, and re-import.
 
-This evidence does not complete the separate `x/upgrade` and state-migration
-rollout gate.
+`TestGovernedUpgradeMultiValidatorHaltFailureRecovery` adds the governed path:
+four real validators reach a three-of-four vote, the old artifact halts at the
+same height, an intentional partial cached write returns an error without
+committing marker or height, and the fixed `v0.4.1` artifact resumes with equal
+app hashes and validator power. A second candidate restart proves the migration
+marker and done height execute exactly once.
+
+This local harness completes the bounded implementation gate. A private clean-
+infrastructure rehearsal, independent review, pre-GH-184 store introduction,
+IBC client upgrade, and production approval remain separate rollout gates.
 
 The bounded pre-GH-56 operator-authority transition is documented separately
 in [Legacy Validator-Authority Migration](legacy-authority-migration.md). It

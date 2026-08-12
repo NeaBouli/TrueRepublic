@@ -66,6 +66,8 @@ func (AppModuleBasic) RegisterInterfaces(registry codectypes.InterfaceRegistry) 
 		&MsgRateWithProof{},
 		&MsgDepositToDomain{},
 		&MsgWithdrawFromDomain{},
+		&MsgVoteSoftwareUpgrade{},
+		&MsgVoteCancelSoftwareUpgrade{},
 	)
 	msgservice.RegisterMsgServiceDesc(registry, &_Msg_serviceDesc)
 }
@@ -142,6 +144,15 @@ func (am AppModule) InitGenesis(ctx sdk.Context, cdc codec.JSONCodec, data json.
 			am.cdc.MustMarshalLengthPrefixed(domain.TotalPayouts),
 		)
 		am.keeper.InitializeBigPurgeSchedule(ctx, domain.Name)
+	}
+	if err := am.keeper.InitSoftwareUpgradeGovernance(
+		ctx,
+		genesisState.SoftwareUpgradeProposal,
+		genesisState.SoftwareUpgradeVotes,
+		genesisState.UpgradeCancelProposal,
+		genesisState.UpgradeCancelVotes,
+	); err != nil {
+		panic(err)
 	}
 	for _, record := range genesisState.UsedNullifiers {
 		am.keeper.SetNullifierUsed(ctx, record.DomainName, record.NullifierHash, record.UsedAtHeight)
@@ -416,6 +427,8 @@ func (am AppModule) ExportGenesis(ctx sdk.Context, cdc codec.JSONCodec) json.Raw
 		vkFingerprint = VerifyingKeyFingerprint(vkBytes)
 		circuitID = MembershipCircuitID
 	}
+	upgradeProposal, upgradeVotes, upgradeCancelProposal, upgradeCancelVotes :=
+		am.keeper.ExportSoftwareUpgradeGovernance(ctx)
 
 	genesis := GenesisState{
 		Domains:                   domains,
@@ -431,6 +444,10 @@ func (am AppModule) ExportGenesis(ctx sdk.Context, cdc codec.JSONCodec) json.Raw
 		ZKPCircuitID:              circuitID,
 		VerifyingKeyHex:           vkHex,
 		VerifyingKeySHA256:        vkFingerprint,
+		SoftwareUpgradeProposal:   upgradeProposal,
+		SoftwareUpgradeVotes:      upgradeVotes,
+		UpgradeCancelProposal:     upgradeCancelProposal,
+		UpgradeCancelVotes:        upgradeCancelVotes,
 	}
 	bz, err := json.Marshal(genesis)
 	if err != nil {

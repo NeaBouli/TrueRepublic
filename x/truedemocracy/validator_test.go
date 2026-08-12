@@ -37,7 +37,7 @@ func setupKeeper(t *testing.T) (Keeper, sdk.Context) {
 	RegisterCodec(cdc)
 
 	nodes := BuildTree()
-	keeper := NewKeeper(cdc, storeKey, nodes, nil)
+	keeper := NewKeeper(cdc, storeKey, nodes, nil, nil)
 
 	ctx := sdk.NewContext(ms, cmtproto.Header{
 		Time: time.Date(2026, 1, 1, 0, 0, 0, 0, time.UTC),

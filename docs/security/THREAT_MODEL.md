@@ -108,11 +108,13 @@ JSON register.
   validators. Verified: GH-71 role policy and GH-89 topology qualification.
   Deferred: no applied firewall, proxy, DNS, or private live topology
   evidence exists.
-- **TM-CON-002** (critical/medium, blocked → GH-29): consensus-breaking
+- **TM-CON-002** (critical/medium, deferred → GH-29): consensus-breaking
   migration or partially applied migration without rehearsed rollback.
-  Verified: compatible binary replacement/rollback and export/import drills.
-  Blocked: governance-controlled consensus-breaking migration is
-  unimplemented.
+  Verified: compatible replacement/export drills plus GH-184 two-thirds
+  governance, deterministic old-binary halt, cached-write failure rollback,
+  fixed-candidate recovery, and exact-once four-validator restart. Residual:
+  pre-GH-184 store introduction, clean private-infrastructure reproduction,
+  independent review, and production operation remain unqualified.
 
 ### governance_identity
 
@@ -154,12 +156,14 @@ JSON register.
   exactly-once refund, persistent recovery, and replacement-channel transfer.
   GH-181 verifies that the supported in-place compatible binary replacement
   preserves open IBC and pending packet state, then completes pending/fresh ACK
-  and timeout/refund paths exactly once. Residual: external relayer/counterparty,
-  `x/upgrade`, governed consensus migrations, IBC client upgrades, and arbitrary
+  and timeout/refund paths exactly once. GH-184 adds the governed application
+  migration failure/recovery path. Residual: external relayer/counterparty,
+  pre-existing-chain store introduction, IBC client upgrades, and arbitrary
   cross-version evidence remain absent, so rollout remains exit-gated.
-- **TM-IBC-002** (high/medium, blocked → GH-29): residual staking,
-  distribution, and upgrade stubs. Verified: explicit stubs and documented
-  boundary. Blocked: stubs not yet implemented, replaced, or removed.
+- **TM-IBC-002** (high/medium, blocked → GH-29): residual staking and
+  distribution stubs. Verified: the upgrade stub is replaced by the real
+  keeper; remaining stubs and their boundary are explicit. Blocked: those
+  remaining stubs are not yet implemented, replaced, or removed.
 
 ### client_wallet_rpc
 

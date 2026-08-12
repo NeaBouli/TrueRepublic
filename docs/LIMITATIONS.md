@@ -40,11 +40,12 @@ fixture rather than a claimed production close authority. GH-181 additionally
 reopens the same application databases with a separately linked compatible
 test binary, preserves the open IBC path plus pending packet/ACK and economic
 state, completes the pending ACK, and proves a fresh ACK and timeout refund
-exactly once. The intentional candidate failure exits before database open and
-leaves both recursive state hashes unchanged. This is compatible binary-restart
-evidence only; it does not qualify an external relayer release, public
-counterparty, `x/upgrade`, governance-controlled halt, state migration, IBC
-client upgrade, daemon rollout, or arbitrary cross-version compatibility.
+exactly once. GH-184 separately wires `x/upgrade` and proves a governed
+fresh-genesis `v0.4.1` halt, cached-write failure rollback, fixed-candidate
+recovery, common app hashes, and exact-once completion across four validators.
+These remain local harnesses; they do not qualify an external relayer release,
+public counterparty, pre-GH-184 store introduction, IBC client upgrade, daemon
+rollout, or arbitrary cross-version compatibility.
 
 ### IBC Staking
 **Status:** Stubbed
@@ -53,11 +54,13 @@ client upgrade, daemon rollout, or arbitrary cross-version compatibility.
 **Code:** `ibc_stubs.go - IBCStakingKeeper`
 
 ### IBC Upgrade
-**Status:** Stubbed / unsupported
-**Reason:** x/upgrade module not integrated
-**Impact:** Compatible binary replacement is manual; governance-controlled
-state migrations and IBC client upgrades are unsupported
-**Code:** `ibc_stubs.go - IBCUpgradeKeeper`
+**Status:** Application upgrade supported for the exact fresh-genesis v0.4.1
+path; IBC client upgrade unsupported
+**Reason:** GH-184 replaces the IBC upgrade stub with the real `x/upgrade`
+keeper and a `truedemocracy` two-thirds governance adapter
+**Impact:** Pre-GH-184 chains still need a separate store-loader transition;
+IBC client upgrades and arbitrary release plans remain exit-gated
+**Code:** `app.go`, `upgrade_handlers.go`, `x/truedemocracy/upgrade_gov.go`
 
 ## CosmWasm Stubs
 
@@ -110,9 +113,9 @@ restored export/re-import, compatible binary replacement/rollback, and
 single-signer validator-identity cold failover, plus authenticated atomic
 rotation with permanent revocation. The GH-61 path is intentionally limited to
 empty CosmWasm state and a new chain ID; it is not an in-place upgrade or a
-generic governance migration. Do not claim public-network readiness until
-generic consensus-breaking state migration, partially applied in-place
-migration recovery, external paging drills, production sizing and multi-day
+generic governance migration. Do not claim public-network readiness until the
+GH-184 path is reproduced on clean private infrastructure and independently
+reviewed, and until external paging drills, production sizing and multi-day
 soak evidence, real topology deployment, broader independent migration/ABCI++
 slashing security review, and independent operations review pass. GH-85 supplies the
 repository-owned dashboard, alert rules, recovery/testnet objectives, and role

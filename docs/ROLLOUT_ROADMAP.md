@@ -19,13 +19,14 @@ intentionally more granular than the public 59-item tracker.
 
 - The ordered recovery merge chain is on `main`.
 - The maximum supply is fixed at 21,000,000 PNYX.
-- The source of truth records 1,610 recovery-verified tests: 1,443 Go, 26 Rust,
+- The source of truth records 1,624 recovery-verified tests: 1,457 Go, 26 Rust,
   and 141 maintained-client tests. GH-121's real registered browser-query
   boundary and GH-115's local client-chain delivery
   case are separately gated and excluded from this arithmetic, as is GH-172's
   real contention/replay/restart process harness. GH-175/GH-178/GH-181's
   two-chain IBC packet, channel, and compatible binary-restart recovery
-  harnesses are also separately gated.
+  harnesses are also separately gated. GH-184 adds the opt-in four-validator
+  governed upgrade/failure/recovery process harness.
 - Ledger, escrow, issuance, DEX custody, genesis, runtime invariants, ZKP
   statement binding, node persistence, and the safe operator-init boundary
   have CI-backed recovery evidence.
@@ -58,8 +59,9 @@ approval.
 - [x] Prove rollback after a candidate fails before opening state, without
   replacing validator identity or regressing signer state
   ([GH-53](https://github.com/NeaBouli/TrueRepublic/issues/53)).
-- [ ] Implement and prove governance-controlled consensus-breaking state
-  migrations and rollback after a partially applied migration.
+- [x] Implement and prove governance-controlled consensus-breaking state
+  migrations and rollback after a partially applied migration
+  ([GH-184](https://github.com/NeaBouli/TrueRepublic/issues/184)).
 - [x] Define and test coupled validator-key/signer-state cold custody,
   single-signer failover, and compromise containment
   ([GH-55](https://github.com/NeaBouli/TrueRepublic/issues/55)).
@@ -119,9 +121,10 @@ published circuit identity, with no unresolved critical or high audit finding.
   export/import ([GH-181](https://github.com/NeaBouli/TrueRepublic/issues/181)).
   This does not qualify `x/upgrade`, consensus migrations, arbitrary version
   changes, a daemon relayer, or public-network operation.
-- [ ] Complete the supported upgrade path and its governance controls.
+- [x] Complete the supported fresh-genesis application-upgrade path and its
+  immutable-snapshot two-thirds governance controls (GH-184).
 - [ ] Implement, replace, or explicitly remove remaining staking,
-  distribution, and upgrade stubs.
+  and distribution compatibility stubs.
 - [ ] Document the exact supported Cosmos/IBC feature boundary.
 
 **Exit gate:** supported IBC and upgrade flows pass automated failure and

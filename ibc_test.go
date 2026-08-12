@@ -7,7 +7,6 @@ import (
 	"testing"
 	"time"
 
-	upgradetypes "cosmossdk.io/x/upgrade/types"
 	"github.com/cosmos/cosmos-sdk/codec"
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	capabilitytypes "github.com/cosmos/ibc-go/modules/capability/types"
@@ -39,70 +38,6 @@ func TestIBCStakingKeeper_GetHistoricalInfo(t *testing.T) {
 	}
 }
 
-// --- IBCUpgradeKeeper Tests ---
-
-func TestIBCUpgradeKeeper_GetUpgradePlan(t *testing.T) {
-	k := IBCUpgradeKeeper{}
-	plan, err := k.GetUpgradePlan(context.Background())
-	if err != nil {
-		t.Fatalf("unexpected error: %v", err)
-	}
-	if plan.Name != "" {
-		t.Fatal("expected empty plan name")
-	}
-}
-
-func TestIBCUpgradeKeeper_ClearIBCState(t *testing.T) {
-	k := IBCUpgradeKeeper{}
-	if err := k.ClearIBCState(context.Background(), 100); err != nil {
-		t.Fatalf("unexpected error: %v", err)
-	}
-}
-
-func TestIBCUpgradeKeeper_ScheduleUpgrade(t *testing.T) {
-	k := IBCUpgradeKeeper{}
-	err := k.ScheduleUpgrade(context.Background(), upgradetypes.Plan{Name: "test"})
-	if err == nil {
-		t.Fatal("expected error for ScheduleUpgrade (not supported)")
-	}
-}
-
-func TestIBCUpgradeKeeper_ClientState(t *testing.T) {
-	k := IBCUpgradeKeeper{}
-
-	// GetUpgradedClient returns nil (no upgraded client)
-	bz, err := k.GetUpgradedClient(context.Background(), 100)
-	if err != nil {
-		t.Fatalf("unexpected error: %v", err)
-	}
-	if bz != nil {
-		t.Fatal("expected nil for GetUpgradedClient")
-	}
-
-	// SetUpgradedClient is a no-op
-	if err := k.SetUpgradedClient(context.Background(), 100, []byte("test")); err != nil {
-		t.Fatalf("unexpected error: %v", err)
-	}
-}
-
-func TestIBCUpgradeKeeper_ConsensusState(t *testing.T) {
-	k := IBCUpgradeKeeper{}
-
-	// GetUpgradedConsensusState returns nil
-	bz, err := k.GetUpgradedConsensusState(context.Background(), 100)
-	if err != nil {
-		t.Fatalf("unexpected error: %v", err)
-	}
-	if bz != nil {
-		t.Fatal("expected nil for GetUpgradedConsensusState")
-	}
-
-	// SetUpgradedConsensusState is a no-op
-	if err := k.SetUpgradedConsensusState(context.Background(), 100, []byte("test")); err != nil {
-		t.Fatalf("unexpected error: %v", err)
-	}
-}
-
 // --- Module configuration tests ---
 
 func TestModuleBasicsIncludesIBC(t *testing.T) {
@@ -112,7 +47,7 @@ func TestModuleBasicsIncludesIBC(t *testing.T) {
 		names[name] = true
 	}
 
-	required := []string{"ibc", "transfer", "capability"}
+	required := []string{"ibc", "transfer", "capability", "upgrade"}
 	for _, name := range required {
 		if !names[name] {
 			t.Fatalf("ModuleBasics missing required module: %s", name)
