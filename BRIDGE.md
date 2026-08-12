@@ -6068,3 +6068,16 @@ exclusion, CI wiring, and documentation boundaries.
   threads, remediate if needed, then merge and complete public closure.
 
 ---
+
+## 2026-08-12 23:58 EEST GH-187 → PR #188 published
+
+- **PR:** [#188](https://github.com/NeaBouli/TrueRepublic/pull/188), protected
+  `main`, closes GH-187.
+- **Branch:** `refactor/GH-187-protocol-boundary`.
+- **Evidence:** PR records the full local process/security/client/Rust review
+  matrix and the explicit macOS/native-Linux reproducibility boundary.
+- **Next:** push this final append-only handoff, wait for every exact-head
+  context and review thread, remediate without bypassing gates, then merge and
+  verify final main, GH-29, live Pages and both Bridges.
+
+---

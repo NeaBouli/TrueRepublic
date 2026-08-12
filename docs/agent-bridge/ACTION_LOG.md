@@ -3728,3 +3728,12 @@
   the required native proof for the exact published head.
 - Kimi follow-up reports the documentation finding RESOLVED and no remaining
   P0/P1/P2 in the remediated public-count diffs.
+
+## 2026-08-12 23:58 EEST - GH-187 published as PR #188
+
+- Pushed `refactor/GH-187-protocol-boundary` and opened protected
+  [PR #188](https://github.com/NeaBouli/TrueRepublic/pull/188), closing GH-187.
+- PR body records implementation, root cause, all real local evidence, the
+  native-Linux CI ownership boundary, residual scope, and prohibited actions.
+- This append-only handoff becomes the final candidate head; exact-head checks,
+  review threads, merge and final public closure remain pending.
