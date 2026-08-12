@@ -1,12 +1,12 @@
 # Testing Status
 
-The current **v0.4.0 recovery** source of truth records **1,609 verified
+The current **v0.4.0 recovery** source of truth records **1,610 verified
 standard-suite cases**. This arithmetic excludes the separately run opt-in
-GH-175/GH-178 IBC two-chain gate (`make ibc-two-chain`).
+GH-175/GH-178/GH-181 IBC two-chain gate (`make ibc-two-chain`).
 
 | Suite | Passing cases |
 |---|---:|
-| Go root/application | 156 |
+| Go root/application | 157 |
 | Go capacity policy | 48 |
 | Go deployment evidence | 71 |
 | Go health checks | 55 |
@@ -21,11 +21,11 @@ GH-175/GH-178 IBC two-chain gate (`make ibc-two-chain`).
 | Go governance | 533 |
 | Rust/CosmWasm | 26 |
 | Maintained client | 141 |
-| **Total** | **1,609** |
+| **Total** | **1,610** |
 
 The published total is the reproducible standard-suite baseline; the opt-in
-GH-175/GH-178 IBC recovery gate is additional evidence and is not counted in
-the 1,442 Go subtotal.
+GH-175/GH-178/GH-181 IBC recovery gate is additional evidence and is not
+counted in the 1,443 Go subtotal.
 
 ## Current Go coverage
 

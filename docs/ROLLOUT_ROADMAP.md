@@ -19,12 +19,13 @@ intentionally more granular than the public 59-item tracker.
 
 - The ordered recovery merge chain is on `main`.
 - The maximum supply is fixed at 21,000,000 PNYX.
-- The source of truth records 1,609 recovery-verified tests: 1,442 Go, 26 Rust,
+- The source of truth records 1,610 recovery-verified tests: 1,443 Go, 26 Rust,
   and 141 maintained-client tests. GH-121's real registered browser-query
   boundary and GH-115's local client-chain delivery
   case are separately gated and excluded from this arithmetic, as is GH-172's
-  real contention/replay/restart process harness. GH-175/GH-178's two-chain IBC
-  packet and channel-recovery harnesses are also separately gated.
+  real contention/replay/restart process harness. GH-175/GH-178/GH-181's
+  two-chain IBC packet, channel, and compatible binary-restart recovery
+  harnesses are also separately gated.
 - Ledger, escrow, issuance, DEX custody, genesis, runtime invariants, ZKP
   statement binding, node persistence, and the safe operator-init boundary
   have CI-backed recovery evidence.
@@ -113,7 +114,11 @@ published circuit identity, with no unresolved critical or high audit finding.
   ([GH-178](https://github.com/NeaBouli/TrueRepublic/issues/178)). ICS-20
   intentionally rejects user-initiated close, so this does not claim a public
   channel-close authority or external relayer qualification.
-- [ ] Test IBC behavior across application upgrades.
+- [x] Test IBC packet behavior across the currently supported compatible,
+  in-place application binary replacement without height reset or genesis
+  export/import ([GH-181](https://github.com/NeaBouli/TrueRepublic/issues/181)).
+  This does not qualify `x/upgrade`, consensus migrations, arbitrary version
+  changes, a daemon relayer, or public-network operation.
 - [ ] Complete the supported upgrade path and its governance controls.
 - [ ] Implement, replace, or explicitly remove remaining staking,
   distribution, and upgrade stubs.

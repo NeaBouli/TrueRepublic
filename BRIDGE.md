@@ -332,6 +332,7 @@
 ---
 
 
+
 ## 2026-08-10 03:10 EEST GH-175 IBC two-chain evidence → In Progress
 
 - **Ticket:** `GIO-20260810-TR-IBC-TWO-CHAIN`; GitHub issue #175.
@@ -5780,5 +5781,48 @@ exclusion, CI wiring, and documentation boundaries.
   deployment, real keys/funds, and release approval remain open.
 - **Safety:** no production, deployment, public-network, real-key, account, or
   fund action occurred. GH-178 is Done; production remains false.
+
+---
+
+## 2026-08-12 10:27 EEST GH-181 compatible IBC post-upgrade recovery → In Progress
+
+- **Branch:** `test/GH-181-ibc-compatible-upgrade`
+- **Issue:** [GH-181](https://github.com/NeaBouli/TrueRepublic/issues/181)
+- **Baseline:** exact clean `origin/main` `968f334`; no open pull request and no
+  unrelated work in this worktree at takeover.
+- **Scope:** prove established two-chain IBC state and pending packets survive
+  the supported state-compatible application/binary restart boundary; complete
+  post-reopen ACK and timeout paths, and prove fail-before-open rollback does
+  not mutate state.
+- **Delegation:** Kimi K3 receives a bounded, secret-free read-only architecture
+  and risk review. Sol owns scope, architecture, every write, security,
+  complete verification, GitHub actions, merge, and closure.
+- **Risk:** High evidence surface because IBC proofs, packet commitments,
+  escrow, replay behavior, persistent databases, and upgrade/rollback wording
+  are protocol-critical.
+- **Safety boundary:** no `x/upgrade`, consensus-breaking migration,
+  governance-controlled upgrade, IBC client upgrade, external relayer/public
+  network, production, deployment, real key/account/funds, or release action.
+- **Ready for:** architecture review, bounded implementation, focused and full
+  local verification, protected PR, final-main, tracker/Page/Bridge closure.
+
+## 2026-08-12 11:15 EEST GH-181 compatible IBC binary restart → Locally Verified
+
+- **Implementation:** a separately linked candidate test binary reopens the
+  same two LevelDB states without `InitChain`, export/import, or height reset.
+  Clients, OPEN connections, unordered channel, sequence, escrow, commitment,
+  receipt, and ACK commitment persist.
+- **Recovery:** pending and fresh ACK plus timeout/refund complete exactly once;
+  duplicate ACK/timeout relays are balance-checked no-ops. A fail-before-open
+  exit-42 candidate leaves both recursive database hashes byte-identical.
+- **Review:** Kimi no P0/P1/P2; both P3 notes remediated and rerun.
+- **PASS:** full IBC, Go/Race/Coverage, quality/fuzz, security scanners, client,
+  Rust/audit, docs consistency, JSON and diff integrity.
+- **Candidate:** 1,610 = 1,443 Go + 26 Rust + 141 client; rollout 26/59, Phase 6
+  6/7, production false.
+- **Boundary:** same-source compatible binary restart only; `x/upgrade`, governed
+  migrations, IBC client upgrades, external relayers, daemon/public deployment,
+  arbitrary version compatibility, real keys and funds remain open.
+- **Next:** protected PR/CI, merge, final-main/GH-29/Pages readback, then Done.
 
 ---

@@ -1,5 +1,22 @@
 # Security Notes
 
+## GH-181 compatible IBC binary-restart boundary
+
+- The candidate is a separately linked package test binary built from the same
+  source with an asserted version marker. It reopens the exact LevelDB state in
+  place without `InitChain`, genesis export/import, height reset, public RPC, or
+  a relayer process.
+- Before candidate open, recursive hashes cover both closed application
+  databases. The intentional exit-42 candidate path reads no manifest or state,
+  and the hashes must remain byte-identical before rollback/continuation.
+- Clients, OPEN connections, unordered ICS-20 channel ends, sequence state,
+  escrow, packet commitment, receipt, and acknowledgement commitment are
+  checked after reopen. Pending and fresh ACK plus timeout refund complete once;
+  duplicate ACK/timeout relays are economic no-ops and crisis invariants pass.
+- This evidence does not qualify `x/upgrade`, governance-controlled halt/resume,
+  consensus-breaking migration, IBC client upgrades, arbitrary source changes,
+  external relayers, daemon deployment, production, real keys, or real funds.
+
 ## GH-178 IBC channel-recovery boundary
 
 - The initial counterparty CLOSED channel end is a deterministic committed test

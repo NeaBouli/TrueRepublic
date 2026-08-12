@@ -152,8 +152,11 @@ JSON register.
   pending-ack database recovery. GH-178 additionally verifies a committed
   closed counterparty end, proof-driven close-confirm and timeout-on-close,
   exactly-once refund, persistent recovery, and replacement-channel transfer.
-  Residual: external relayer/counterparty and cross-upgrade evidence is absent,
-  so rollout remains exit-gated.
+  GH-181 verifies that the supported in-place compatible binary replacement
+  preserves open IBC and pending packet state, then completes pending/fresh ACK
+  and timeout/refund paths exactly once. Residual: external relayer/counterparty,
+  `x/upgrade`, governed consensus migrations, IBC client upgrades, and arbitrary
+  cross-version evidence remain absent, so rollout remains exit-gated.
 - **TM-IBC-002** (high/medium, blocked → GH-29): residual staking,
   distribution, and upgrade stubs. Verified: explicit stubs and documented
   boundary. Blocked: stubs not yet implemented, replaced, or removed.
