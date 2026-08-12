@@ -376,12 +376,12 @@
       "domain": "ibc_upgrades",
       "severity": "high",
       "likelihood": "medium",
-      "status": "blocked",
-      "attack_path": "Enabling IBC without two-chain relayer, acknowledgement, timeout, and recovery tests strands or duplicates cross-chain value.",
+      "status": "deferred",
+      "attack_path": "Enabling IBC on a public counterparty or across an unsupported governed upgrade without qualified relayer and migration evidence can strand or duplicate cross-chain value.",
       "impact": "Loss or duplication of PNYX on counterparty chains and unrecoverable channel state.",
       "controls": [
-        "IBC transfer is wired but remains unverified against a second chain and relayer",
-        "Rollout roadmap keeps every IBC item unchecked and exit-gated",
+        "GH-175, GH-178, and GH-181 provide local proof-driven two-chain packet, channel, and compatible binary-restart recovery evidence",
+        "External relayers, public counterparties, x/upgrade, governed migrations, and IBC client upgrades remain exit-gated",
         "Public status continues to mark the repository non-production"
       ],
       "evidence": [
@@ -389,10 +389,10 @@
         "docs/ROLLOUT_ROADMAP.md",
         "docs/LIMITATIONS.md"
       ],
-      "residual_risk": "No relayer tests, acknowledgement/timeout drills, channel-closure handling, or cross-upgrade IBC evidence exists.",
+      "residual_risk": "No external relayer/public-counterparty qualification, x/upgrade governance path, consensus-breaking migration rollback, or IBC client-upgrade evidence exists.",
       "residual_severity": "high",
       "owner": "security-maintainers",
-      "next_gate": "GH-29 Phase 3 exit gate: supported IBC flows pass automated failure and recovery tests",
+      "next_gate": "GH-29 Phase 3 exit gate: qualify an external relayer/counterparty and complete governed upgrade, migration, and IBC client-upgrade evidence",
       "umbrella_issue": "GH-29"
     },
     {

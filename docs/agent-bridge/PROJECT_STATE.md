@@ -8,7 +8,8 @@ Updated: 2026-08-12 08:35 UTC
   byte-hash protection, preserved client/connection/channel/sequence/economic
   state, pending and fresh ACK, and timeout/refund exactly once. Candidate public
   arithmetic is 1,610 cases (1,443 Go, 26 Rust, 141 client), rollout 26/59 and
-  phase work 26/51, with production false. Full local, security, client, Rust,
+  phase work 26/51 (the separate `docs/status.json` phase-work fields), with
+  production false. Full local, security, client, Rust,
   and docs gates pass; Kimi found no P0/P1/P2 and both P3 notes were remediated.
   Protected PR/CI, merge, final-main, GH-29, and Pages remain pending.
 

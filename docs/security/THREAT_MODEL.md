@@ -145,7 +145,7 @@ JSON register.
 
 ### ibc_upgrades
 
-- **TM-IBC-001** (high/medium, deferred → GH-29/GH-175): IBC value
+- **TM-IBC-001** (high/medium, deferred → GH-29): IBC value
   transfer or relay failure. Verified locally: two proof-driven TrueRepublic
   chains complete client/connection/channel handshakes, native escrow, voucher
   mint, acknowledgement, timeout refund, replay-safe duplicate handling, and

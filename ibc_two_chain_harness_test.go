@@ -61,6 +61,7 @@ const (
 type ibcCompatibleChainManifest struct {
 	ChainID        string    `json:"chain_id"`
 	Suffix         string    `json:"suffix"`
+	SecretPrefix   string    `json:"secret_prefix"`
 	DBDir          string    `json:"db_dir"`
 	LastHeight     int64     `json:"last_height"`
 	LastHeaderTime time.Time `json:"last_header_time"`
@@ -161,13 +162,14 @@ func (a *trueRepublicIBCTestingApp) AppCodec() codec.Codec        { return a.app
 var _ ibctesting.TestingApp = (*trueRepublicIBCTestingApp)(nil)
 
 type trueRepublicIBCChain struct {
-	chain      *ibctesting.TestChain
-	suffix     string
-	dbDir      string
-	homeDir    string
-	db         dbm.DB
-	staking    *trueRepublicIBCTestStakingKeeper
-	validators *cmttypes.ValidatorSet
+	chain        *ibctesting.TestChain
+	suffix       string
+	secretPrefix string
+	dbDir        string
+	homeDir      string
+	db           dbm.DB
+	staking      *trueRepublicIBCTestStakingKeeper
+	validators   *cmttypes.ValidatorSet
 }
 
 func TestIBCTwoChainTransferAcknowledgementTimeoutReplayRecovery(t *testing.T) {
@@ -681,7 +683,7 @@ func newTrueRepublicIBCChainAt(t *testing.T, coord *ibctesting.Coordinator, chai
 	}
 	configureIBCHistoricalHeaderProvider(t, staking, app, chainID, validatorSet)
 	chain.NextBlock()
-	return &trueRepublicIBCChain{chain: chain, suffix: suffix, dbDir: dbDir, homeDir: homeDir, db: database, staking: staking, validators: validatorSet}
+	return &trueRepublicIBCChain{chain: chain, suffix: suffix, secretPrefix: secretPrefix, dbDir: dbDir, homeDir: homeDir, db: database, staking: staking, validators: validatorSet}
 }
 
 func reopenIBCCompatiblePair(t *testing.T, manifest ibcCompatibleRestartManifest) (*ibctesting.Coordinator, *trueRepublicIBCChain, *trueRepublicIBCChain, *ibctesting.Path) {
@@ -709,12 +711,13 @@ func reopenIBCCompatibleChain(t *testing.T, coord *ibctesting.Coordinator, manif
 	require.NoError(t, err)
 	configureSDKConfig()
 
-	validatorKey := cmted25519.GenPrivKeyFromSecret([]byte("gh181-validator-" + manifest.Suffix))
+	require.NotEmpty(t, manifest.SecretPrefix)
+	validatorKey := cmted25519.GenPrivKeyFromSecret([]byte(manifest.SecretPrefix + "-validator-" + manifest.Suffix))
 	privValidator := cmttypes.NewMockPVWithParams(validatorKey, false, false)
 	validator := cmttypes.NewValidator(validatorKey.PubKey(), 1)
 	validatorSet := cmttypes.NewValidatorSet([]*cmttypes.Validator{validator})
 	signers := map[string]cmttypes.PrivValidator{validator.Address.String(): privValidator}
-	senderKey := secp256k1.GenPrivKeyFromSecret([]byte("gh181-sender-" + manifest.Suffix))
+	senderKey := secp256k1.GenPrivKeyFromSecret([]byte(manifest.SecretPrefix + "-sender-" + manifest.Suffix))
 
 	staking := newIBCTestStakingKeeper(t, validatorSet, manifest.LastHeaderTime)
 	homeDir := t.TempDir()
@@ -744,7 +747,7 @@ func reopenIBCCompatibleChain(t *testing.T, coord *ibctesting.Coordinator, manif
 	require.NotNil(t, account)
 	chain.SenderAccount = account
 	chain.SenderAccounts = []ibctesting.SenderAccount{{SenderPrivKey: senderKey, SenderAccount: account}}
-	return &trueRepublicIBCChain{chain: chain, suffix: manifest.Suffix, dbDir: manifest.DBDir, homeDir: homeDir, db: database, staking: staking, validators: validatorSet}
+	return &trueRepublicIBCChain{chain: chain, suffix: manifest.Suffix, secretPrefix: manifest.SecretPrefix, dbDir: manifest.DBDir, homeDir: homeDir, db: database, staking: staking, validators: validatorSet}
 }
 
 func ibcCompatibleChainState(chain *trueRepublicIBCChain) ibcCompatibleChainManifest {
@@ -753,7 +756,7 @@ func ibcCompatibleChainState(chain *trueRepublicIBCChain) ibcCompatibleChainMani
 		lastHeaderTime = chain.chain.LastHeader.SignedHeader.Header.Time
 	}
 	return ibcCompatibleChainManifest{
-		ChainID: chain.chain.ChainID, Suffix: chain.suffix, DBDir: chain.dbDir,
+		ChainID: chain.chain.ChainID, Suffix: chain.suffix, SecretPrefix: chain.secretPrefix, DBDir: chain.dbDir,
 		LastHeight: chain.chain.App.LastBlockHeight(), LastHeaderTime: lastHeaderTime,
 	}
 }
