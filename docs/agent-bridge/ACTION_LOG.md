@@ -3626,3 +3626,18 @@
 - Candidate public state is 1,610 cases (1,443 Go + 26 Rust + 141 client),
   rollout 26/59, Phase 6 6/7, and production false. Protected PR/CI, merge,
   final-main, GH-29, both Bridges, and live Pages remain before Done.
+
+## 2026-08-12 11:45 EEST - GH-181 completed
+
+- Protected PR #182 reviewed exact head `68341f8`; all 20 reported contexts
+  passed. Four CodeRabbit findings were fixed, answered, and resolved, leaving
+  zero open review threads.
+- PR #182 merged as `2f22b60`; GH-181 closed automatically. Final-main Docs
+  `31579387559`, Security `31579387595`, and Pages `31579386407` pass. The
+  first Pages deploy hit a hosted-runner certificate error after successful
+  build/upload; its unchanged-commit retry passed.
+- Live Pages confirms 1,610 standard-suite cases, rollout 26/59, Phase 6 6/7,
+  production false, and the GH-181 compatible-restart status.
+- GH-29 now credits compatible binary-restart recovery while correctly keeping
+  governance-controlled migrations and IBC client upgrades open. No production
+  or external-network action occurred.

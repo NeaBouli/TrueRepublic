@@ -1,9 +1,9 @@
 # TrueRepublic GH-181 — Audit
-> Scope: compatible IBC binary-restart harness, gate wiring, and public evidence · Date: 2026-08-12 · Result: 0 FAIL / 1 WARN / 8 PASS
+> Scope: compatible IBC binary-restart harness, gate wiring, and public evidence · Date: 2026-08-12 · Result: 0 FAIL / 1 WARN / 8 PASS · MERGED / FINAL-MAIN VERIFIED
 
 ## Summary
 
-GH-181 is locally ready for protected publication. A separately linked package
+GH-181 is merged and verified on `main`. A separately linked package
 test binary reopens two closed LevelDB application states in place, retains the
 real ibc-go client/connection/channel and packet/economic state, and completes
 pending ACK, fresh ACK, and timeout/refund paths with explicit duplicate no-op
@@ -131,3 +131,20 @@ None.
 - Documentation consistency, JSON parse and `git diff --check` — PASS.
 - Independent Kimi review — no P0/P1/P2; both P3 hardening notes remediated and
   the focused/full relevant gates rerun afterward.
+
+## Protected and final-main evidence
+
+- Exact reviewed head `68341f8c78d887681167e1cedc93c006b7ca6831`
+  passed all 20 reported contexts; zero review threads remain open.
+- PR #182 merged as `2f22b60d0dc75e25657f70165d7209668d3cb957`;
+  issue #181 is closed.
+- Final-main Docs `31579387559`, Security `31579387595`, and Pages
+  `31579386407` pass. The initial Pages deployment encountered a hosted-runner
+  certificate failure after successful build/upload; the retry passed on the
+  unchanged merge commit.
+- Live Pages confirms 1,610 standard-suite cases, rollout 26/59, Phase 6 6/7,
+  production false, and the bounded GH-181 IBC status.
+
+## Verdict
+
+PASS. GH-181 is merged and verified on `main`; production remains false.
