@@ -6081,3 +6081,27 @@ exclusion, CI wiring, and documentation boundaries.
   verify final main, GH-29, live Pages and both Bridges.
 
 ---
+
+## 2026-08-13 00:30 EEST GH-187 → Done
+
+- **Publication:** exact PR head `ef6afbbe063ab5b8333d5d866640e031561c27cf`
+  passed all 22 reported contexts with zero review threads; protected PR #188
+  merged as `6c8d2a8eb9f9271a9182fafe383bd058d68c7263`, its remote branch was
+  deleted, and GH-187 closed.
+- **Final main:** Go `31641633848`, Docs `31641633858`, Security
+  `31641633794`, reproducible Linux `31641633845`, and Pages `31641632893`
+  pass.
+- **Public synchronization:** GH-29 now credits the completed governed-upgrade,
+  fail-closed compatibility-adapter, and exact feature-boundary work. Live
+  Pages reports 1,628 cases, rollout 30/59, phase work 30/51, Phase 6 6/7, and
+  production readiness false.
+- **Agents:** Kimi supplied bounded, secret-free read-only architecture and
+  final reviews; no Kimi write diff was accepted. Sol implemented, reviewed,
+  tested, published, and merged every change.
+- **Safety:** no production/public network, relayer/counterparty, real
+  key/account/fund, migration, release, or deployment action occurred.
+- **Closure:** every repository, security, process, native-build, protected
+  publication, tracker, live-site, and Bridge gate is satisfied. GH-187 is
+  Done; remaining rollout work stays explicitly separate.
+
+---
