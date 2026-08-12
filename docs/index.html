@@ -493,7 +493,7 @@
                 <span class="tech-badge">TailwindCSS 3.4</span>
                 <span class="tech-badge">Go 1.26.5</span>
                 <span class="tech-badge">Rust</span>
-                <span class="tech-badge">1,624 recovery-verified tests</span>
+                <span class="tech-badge">1,628 recovery-verified tests</span>
             </div>
         </div>
     </section>
@@ -504,14 +504,14 @@
             <p class="rollout-intro">The recovered v0.4 foundation is ready for continued engineering, not for production. These are the remaining blocking workstreams before any public-network rollout.</p>
             <div class="rollout-summary" aria-label="Rollout progress">
                 <article class="rollout-metric">
-                    <div class="rollout-metric-value">47%</div>
+                    <div class="rollout-metric-value">51%</div>
                     <h3>Full rollout checklist</h3>
-                    <p>28 of 59 tracked items complete. The total includes the final exit gates, which remain open.</p>
+                    <p>30 of 59 tracked items complete. The total includes the final exit gates, which remain open.</p>
                 </article>
                 <article class="rollout-metric">
-                    <div class="rollout-metric-value">55%</div>
+                    <div class="rollout-metric-value">59%</div>
                     <h3>Seven-phase work</h3>
-                    <p>28 of 51 phase tasks complete before the final go/no-go gates.</p>
+                    <p>30 of 51 phase tasks complete before the final go/no-go gates.</p>
                 </article>
                 <article class="rollout-metric">
                     <div class="rollout-metric-value">86%</div>
@@ -548,8 +548,8 @@
                         <li><strong>Verified locally:</strong> GH-175/GH-178/GH-181 two-chain proof relay, PNYX escrow/voucher, ACK, timeout refund, replay safety, pending-ACK and channel recovery, plus compatible in-place test-binary restart recovery</li>
                         <li><strong>Verified locally:</strong> GH-184 real x/upgrade application migration with two-thirds governance and four-validator recovery</li>
                         <li>External relayer/counterparty and IBC client-upgrade qualification</li>
-                        <li>Resolve or remove unsupported protocol stubs</li>
-                        <li>Publish the exact supported feature boundary</li>
+                        <li><strong>Verified locally:</strong> GH-187 replaces unsupported staking/distribution stubs with explicit fail-closed adapters</li>
+                        <li><strong>Verified locally:</strong> GH-187 freezes and regression-tests the exact supported Cosmos/IBC feature boundary</li>
                     </ul>
                 </article>
                 <article class="rollout-card">

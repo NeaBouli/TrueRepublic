@@ -19,7 +19,7 @@ intentionally more granular than the public 59-item tracker.
 
 - The ordered recovery merge chain is on `main`.
 - The maximum supply is fixed at 21,000,000 PNYX.
-- The source of truth records 1,624 recovery-verified tests: 1,457 Go, 26 Rust,
+- The source of truth records 1,628 recovery-verified tests: 1,461 Go, 26 Rust,
   and 141 maintained-client tests. GH-121's real registered browser-query
   boundary and GH-115's local client-chain delivery
   case are separately gated and excluded from this arithmetic, as is GH-172's
@@ -123,9 +123,10 @@ published circuit identity, with no unresolved critical or high audit finding.
   changes, a daemon relayer, or public-network operation.
 - [x] Complete the supported fresh-genesis application-upgrade path and its
   immutable-snapshot two-thirds governance controls (GH-184).
-- [ ] Implement, replace, or explicitly remove remaining staking,
-  and distribution compatibility stubs.
-- [ ] Document the exact supported Cosmos/IBC feature boundary.
+- [x] Replace remaining staking and distribution compatibility stubs with
+  explicit fail-closed adapters (GH-187).
+- [x] Document and regression-test the exact supported Cosmos/IBC feature
+  boundary (GH-187).
 
 **Exit gate:** supported IBC and upgrade flows pass automated failure and
 recovery tests; unsupported surfaces are absent or unmistakably disabled.

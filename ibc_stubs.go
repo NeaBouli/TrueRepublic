@@ -1,26 +1,28 @@
 package main
 
-// IBC-specific keeper stub for ibc-go v8 integration.
-// TrueRepublic uses Proof-of-Domain consensus (x/truedemocracy/validator.go)
-// instead of standard x/staking. The real x/upgrade keeper is wired directly
-// in app.go, so only the staking compatibility boundary remains here.
+// Explicit fail-closed adapter required by the pinned ibc-go v8 constructor.
+// TrueRepublic uses Proof of Domain instead of x/staking; it must not invent
+// historical staking state or a PoS unbonding period.
 
 import (
 	"context"
 	"time"
 
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
+	ibcclienttypes "github.com/cosmos/ibc-go/v8/modules/core/02-client/types"
 )
 
-// IBCStakingKeeper satisfies ibc-go's clienttypes.StakingKeeper interface.
-// IBC light-client verification needs historical validator sets and unbonding
-// period. We return a sensible default unbonding time and empty historical info.
-type IBCStakingKeeper struct{ initialized bool }
+// UnsupportedIBCStakingKeeper stays non-zero when passed to ibc-go because
+// ibckeeper.NewKeeper rejects zero-valued compatibility keepers. Both methods
+// fail closed if a future ibc-go path attempts self-consensus validation.
+type UnsupportedIBCStakingKeeper struct{ registered bool }
 
-func (IBCStakingKeeper) GetHistoricalInfo(_ context.Context, _ int64) (stakingtypes.HistoricalInfo, error) {
-	return stakingtypes.HistoricalInfo{}, errNotAvailable
+var _ ibcclienttypes.StakingKeeper = UnsupportedIBCStakingKeeper{}
+
+func (UnsupportedIBCStakingKeeper) GetHistoricalInfo(_ context.Context, _ int64) (stakingtypes.HistoricalInfo, error) {
+	return stakingtypes.HistoricalInfo{}, errUnsupportedStakingSurface
 }
 
-func (IBCStakingKeeper) UnbondingTime(_ context.Context) (time.Duration, error) {
-	return 3 * 7 * 24 * time.Hour, nil // 3 weeks (standard Cosmos default)
+func (UnsupportedIBCStakingKeeper) UnbondingTime(_ context.Context) (time.Duration, error) {
+	return 0, errUnsupportedStakingSurface
 }

@@ -5989,3 +5989,68 @@ exclusion, CI wiring, and documentation boundaries.
   or deployment action occurred. GH-184 is Done.
 
 ---
+
+## 2026-08-12 22:53 EEST GH-187 protocol compatibility boundary → In Progress
+
+- **Branch:** `refactor/GH-187-protocol-boundary`
+- **Issue:** [GH-187](https://github.com/NeaBouli/TrueRepublic/issues/187)
+- **Scope:** replace ambiguous staking/distribution stubs with explicit
+  fail-closed compatibility adapters; prove unsupported `x/staking` and
+  `x/distribution` module/query/transaction surfaces stay absent; freeze the
+  exact supported Cosmos SDK, CosmWasm, IBC and governed-upgrade boundary.
+- **Invariants:** preserve PoD validator/reward accounting, ICS-20 transfer,
+  governed `x/upgrade`, genesis/export/restart behavior, and the 21M PNYX cap;
+  do not introduce a consensus-state migration or delegated staking semantics.
+- **Delegation:** Kimi K3 receives a bounded, secret-free architecture and
+  implementation analysis. Sol owns scope, architecture, every accepted write,
+  security, complete verification, GitHub, merge, tracker and closure.
+- **Risk:** High because upstream keeper interfaces and protocol exposure are
+  consensus-adjacent. The implementation must remain behavior-preserving and
+  fail closed on unsupported surfaces.
+- **Safety:** repository-only. No production/public network, relayer,
+  counterparty, real key/account/fund, IBC client upgrade, store migration,
+  release or deployment action.
+- **Ready for:** code/interface census, Kimi review, bounded implementation and
+  focused/full verification.
+
+---
+
+## 2026-08-12 23:27 EEST GH-187 local implementation/process gates → Verified
+
+- **Implementation:** required ibc-go/wasmd staking and distribution adapters
+  now reject through a stable unsupported-surface boundary; explicit Wasm
+  query/message plugins prevent empty or zero-valued success responses.
+- **Absence proof:** four new standard cases cover every adapter and prove
+  `x/staking`/`x/distribution` are absent from module basics/runtime, stores,
+  default genesis, gRPC, message routers, and root CLI query/transaction trees.
+- **Real gates:** IBC two-chain transfer/ACK/timeout/replay/channel/restart PASS
+  (51.06s root); four-validator governed upgrade halt/failure/rollback/recovery
+  PASS (236.47s). Fresh Go arithmetic PASS: 1,461.
+- **Candidate status:** 1,628 standard cases (1,461 Go + 26 Rust + 141 client),
+  rollout 30/59, phase work 30/51, Phase 6 6/7, production false.
+- **Agents:** Kimi delivered bounded secret-free read-only architecture review
+  and no accepted write diff. Sol implemented/reviewed all writes and owns full
+  verification, GitHub, merge, tracker, and closure.
+- **Pending:** full repository/security/client/Rust/deterministic gates, final
+  independent review, protected PR/exact-head CI, merge, GH-29/final-main/live
+  Pages, and both-Bridge Done closure.
+- **Safety:** no production/public network, relayer/counterparty, real
+  key/account/fund, store or IBC client migration, release, or deployment
+  action occurred.
+
+---
+
+## 2026-08-12 23:48 EEST GH-187 full local/security gates → PASS
+
+- Full Go build/vet/Race/Coverage, critical floors, property/fuzz,
+  contention/replay/restart, real IBC and governed-upgrade gates pass.
+- Pinned Staticcheck, exact-policy Govuln plus negative fixtures, Gitleaks,
+  docs/JSON/security contract, maintained-client lint/141 tests/build/audit,
+  and Rust format/Clippy/build/26 tests/audit pass.
+- Kimi's independent review found one public test-attribution error; Sol fixed
+  README and two wiki references so GH-187 is correctly inside the 1,461 Go
+  standard cases rather than described as a separate process gate.
+- Clean-commit deterministic Linux build, protected PR/exact-head CI and
+  review, merge, final-main/GH-29/live Pages and both-Bridge Done closure remain.
+
+---

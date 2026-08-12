@@ -294,7 +294,7 @@ func NewTrueRepublicApp(logger log.Logger, db dbm.DB, homeDir string, baseAppOpt
 		appCodec,
 		keys[ibcexported.StoreKey],
 		ibcSubspace,
-		IBCStakingKeeper{initialized: true},
+		UnsupportedIBCStakingKeeper{registered: true},
 		app.upgradeKeeper,
 		scopedIBCKeeper,
 		authority,
@@ -334,8 +334,8 @@ func NewTrueRepublicApp(logger log.Logger, db dbm.DB, homeDir string, baseAppOpt
 		runtime.NewKVStoreService(keys[wasmtypes.StoreKey]),
 		app.accountKeeper,
 		app.bankKeeper,
-		StubStakingKeeper{},
-		StubDistributionKeeper{},
+		UnsupportedWasmStakingKeeper{},
+		UnsupportedWasmDistributionKeeper{},
 		app.ibcKeeper.ChannelKeeper,
 		app.ibcKeeper.ChannelKeeper,
 		app.ibcKeeper.PortKeeper,
@@ -348,10 +348,14 @@ func NewTrueRepublicApp(logger log.Logger, db dbm.DB, homeDir string, baseAppOpt
 		[]string{"iterator", "stargate", "cosmwasm_1_1", "cosmwasm_1_2", "cosmwasm_1_3", "cosmwasm_1_4", "cosmwasm_2_0"},
 		authority,
 		wasmkeeper.WithQueryPlugins(&wasmkeeper.QueryPlugins{
-			Custom: truedemocracy.CustomQueryHandler(tdKeeper),
+			Custom:       truedemocracy.CustomQueryHandler(tdKeeper),
+			Staking:      rejectWasmStakingQuery,
+			Distribution: rejectWasmDistributionQuery,
 		}),
 		wasmkeeper.WithMessageEncoders(&wasmkeeper.MessageEncoders{
-			Custom: truedemocracy.CustomMessageEncoder(),
+			Custom:       truedemocracy.CustomMessageEncoder(),
+			Staking:      rejectWasmStakingMessage,
+			Distribution: rejectWasmDistributionMessage,
 		}),
 	)
 
@@ -367,7 +371,7 @@ func NewTrueRepublicApp(logger log.Logger, db dbm.DB, homeDir string, baseAppOpt
 	capModule := capability.NewAppModule(appCodec, *app.capKeeper, false)
 	ibcModule := ibc.NewAppModule(app.ibcKeeper)
 	transferModule := transfer.NewAppModule(app.transferKeeper)
-	wasmModule := wasm.NewAppModule(appCodec, &app.wasmKeeper, StubValidatorSetSource{}, app.accountKeeper, app.bankKeeper, app.MsgServiceRouter(), nil)
+	wasmModule := wasm.NewAppModule(appCodec, &app.wasmKeeper, NoOpWasmValidatorSetSource{}, app.accountKeeper, app.bankKeeper, app.MsgServiceRouter(), nil)
 
 	app.mm = module.NewManager(
 		authModule,

@@ -47,11 +47,12 @@ These remain local harnesses; they do not qualify an external relayer release,
 public counterparty, pre-GH-184 store introduction, IBC client upgrade, daemon
 rollout, or arbitrary cross-version compatibility.
 
-### IBC Staking
-**Status:** Stubbed
-**Reason:** TrueRepublic uses Proof of Democracy (PoD), not traditional PoS
-**Impact:** Cannot delegate to validators via IBC
-**Code:** `ibc_stubs.go - IBCStakingKeeper`
+### IBC Staking Compatibility
+**Status:** Explicitly unsupported and fail-closed
+**Reason:** TrueRepublic uses Proof of Domain (PoD), not `x/staking` PoS
+**Impact:** IBC cannot expose delegation or a fabricated unbonding period. The
+keeper required by ibc-go returns the stable unsupported-surface error.
+**Code:** `ibc_stubs.go - UnsupportedIBCStakingKeeper`
 
 ### IBC Upgrade
 **Status:** Application upgrade supported for the exact fresh-genesis v0.4.1
@@ -62,19 +63,32 @@ keeper and a `truedemocracy` two-thirds governance adapter
 IBC client upgrades and arbitrary release plans remain exit-gated
 **Code:** `app.go`, `upgrade_handlers.go`, `x/truedemocracy/upgrade_gov.go`
 
-## CosmWasm Stubs
+## CosmWasm Compatibility Boundary
 
 ### Staking Module
-**Status:** Stubbed
-**Reason:** PoD consensus instead of PoS
-**Impact:** Contracts cannot query validator info
-**Code:** `wasm_stubs.go - WasmStakingKeeper`
+**Status:** Explicitly unsupported and fail-closed
+**Reason:** PoD consensus replaces `x/staking`; no standard PoS state is
+fabricated from custom validator records
+**Impact:** Every standard staking query and message is rejected. Contracts
+must use supported TrueRepublic custom interfaces instead of assuming Cosmos
+staking semantics.
+**Code:** `wasm_stubs.go - UnsupportedWasmStakingKeeper`
 
 ### Distribution Module
-**Status:** Stubbed
-**Reason:** Custom reward system (VoteToEarn, NodeReward)
-**Impact:** Contracts cannot query standard distribution
-**Code:** `wasm_stubs.go - WasmDistributionKeeper`
+**Status:** Explicitly unsupported and fail-closed
+**Reason:** Custom VoteToEarn and node rewards do not implement
+`x/distribution` semantics
+**Impact:** Every standard distribution query and message is rejected; empty
+or zero-valued responses are never presented as real distribution state.
+**Code:** `wasm_stubs.go - UnsupportedWasmDistributionKeeper`
+
+GH-187 regression-tests that `x/staking` and `x/distribution` remain absent
+from module basics, runtime modules, stores, genesis, gRPC services, message
+routers, and root CLI query/transaction commands. The supported boundary is
+auth/bank/consensus params/crisis, TrueRepublic governance and DEX, CosmWasm,
+IBC core plus ICS-20 transfer, and the bounded governed `x/upgrade` path
+described above. This local boundary evidence is not external-relayer,
+counterparty, public-network, IBC client-upgrade, or production approval.
 
 ## Production Node Lifecycle
 
@@ -152,10 +166,14 @@ canonical encoding. Anonymous rewards remain deferred.
 ## Workarounds
 
 ### For IBC Staking
-Use TrueRepublic's PoD system instead of traditional staking.
+Use TrueRepublic's PoD system instead of traditional staking. Do not issue
+standard staking/distribution queries or transactions; they intentionally fail
+closed.
 
 ### For Upgrades
-Manual chain halt + restart with new binary.
+Use only the bounded governed application-upgrade path documented for the
+fresh-genesis v0.4.1 baseline. Pre-GH-184 store introduction and IBC client
+upgrades remain unsupported.
 
 ### For ZKP
 Do not submit anonymous votes from either web client. Use the reviewed

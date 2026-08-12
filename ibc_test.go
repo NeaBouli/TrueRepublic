@@ -3,9 +3,9 @@ package main
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"slices"
 	"testing"
-	"time"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
@@ -16,25 +16,19 @@ import (
 	"truerepublic/token"
 )
 
-// --- IBCStakingKeeper Tests ---
+// --- Unsupported IBC staking compatibility tests ---
 
-func TestIBCStakingKeeper_UnbondingTime(t *testing.T) {
-	k := IBCStakingKeeper{}
-	dur, err := k.UnbondingTime(context.Background())
-	if err != nil {
-		t.Fatalf("unexpected error: %v", err)
-	}
-	expected := 3 * 7 * 24 * time.Hour
-	if dur != expected {
-		t.Fatalf("expected %v, got %v", expected, dur)
+func TestUnsupportedIBCStakingKeeperUnbondingTimeFailsClosed(t *testing.T) {
+	k := UnsupportedIBCStakingKeeper{}
+	if _, err := k.UnbondingTime(context.Background()); !errors.Is(err, errUnsupportedStakingSurface) {
+		t.Fatalf("expected unsupported staking sentinel, got %v", err)
 	}
 }
 
-func TestIBCStakingKeeper_GetHistoricalInfo(t *testing.T) {
-	k := IBCStakingKeeper{}
-	_, err := k.GetHistoricalInfo(context.Background(), 100)
-	if err == nil {
-		t.Fatal("expected error for GetHistoricalInfo (stub)")
+func TestUnsupportedIBCStakingKeeperHistoricalInfoFailsClosed(t *testing.T) {
+	k := UnsupportedIBCStakingKeeper{}
+	if _, err := k.GetHistoricalInfo(context.Background(), 100); !errors.Is(err, errUnsupportedStakingSurface) {
+		t.Fatalf("expected unsupported staking sentinel, got %v", err)
 	}
 }
 

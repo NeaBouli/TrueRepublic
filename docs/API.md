@@ -74,12 +74,14 @@ SDK routes only. See the [module query reference](developers/api-reference/abci-
 
 ## REST/LCD Endpoints (port 1317)
 
-Standard Cosmos SDK REST endpoints are available:
+Only REST routes for mounted modules are available. TrueRepublic does not
+mount `x/staking` or `x/distribution`; their REST, gRPC, CLI and transaction
+surfaces are intentionally absent and their required IBC/CosmWasm adapters
+reject fail-closed.
 
 | Endpoint | Description |
 |----------|-------------|
 | `/cosmos/bank/v1beta1/balances/{address}` | Account balances |
-| `/cosmos/staking/v1beta1/validators` | Validator set |
 | `/cosmos/tx/v1beta1/txs` | Transaction search |
 | `/node_info` | Node information |
 | `/syncing` | Sync status |

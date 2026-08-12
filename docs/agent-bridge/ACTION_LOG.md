@@ -3684,3 +3684,37 @@
   full verification, GitHub, merge, tracker, and closure ownership.
 - No production deployment, public-network action, real key/account, funds,
   release, or IBC client upgrade occurred. GH-184 is Done.
+
+## 2026-08-12 23:27 EEST - GH-187 implementation and process gates verified
+
+- Replaced success-like staking/distribution compatibility stubs with stable
+  fail-closed IBC/CosmWasm adapters and explicit query/message rejection.
+- Added four standard-suite boundary cases proving every required adapter
+  rejects and `x/staking`/`x/distribution` remain absent from module, store,
+  genesis, gRPC, message-router, and CLI surfaces. Fresh arithmetic is 1,628
+  total: 1,461 Go, 26 Rust, and 141 maintained-client.
+- PASS: focused boundary/IBC/module tests, 51.06s two-chain transfer/channel/
+  restart recovery, 236.47s four-validator governed-upgrade recovery, docs
+  consistency, JSON, security contract, formatting, and diff checks.
+- Kimi supplied the bounded secret-free architecture review; Sol implemented
+  and reviewed all writes. Candidate rollout becomes 30/59 overall and 30/51
+  phase work; Phase 6 remains 6/7 and production readiness remains false.
+- Full local/security gates, final review, protected PR/CI, merge, GH-29,
+  final-main, live Pages, and both-Bridge closure remain pending. No production,
+  external network, real key/account/fund, migration, release, or deployment
+  action occurred.
+
+## 2026-08-12 23:48 EEST - GH-187 full local/security gates pass
+
+- PASS: Go build/vet/full Race/Coverage, critical floors, property/fuzz,
+  contention/replay/restart, IBC two-chain, governed upgrade, Staticcheck,
+  exact-policy Govuln plus fixtures, Gitleaks, docs/JSON/security contract.
+- PASS: maintained-client clean install, lint, 141 tests, production build,
+  bundle budgets and high audit; Rust format, strict Clippy, build, 26 tests,
+  and cargo audit with the existing allowed warning set.
+- Kimi's read-only final review found one test-attribution documentation issue:
+  GH-187 standard cases were grouped with separately gated evidence. README and
+  both wiki references now correctly count GH-187 inside the 1,461 Go cases.
+- Remaining before publication: focused post-remediation confirmation,
+  clean-commit deterministic Linux build, protected PR exact-head CI/review,
+  merge, final-main/GH-29/live Pages and both-Bridge closure.
