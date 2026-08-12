@@ -5825,4 +5825,14 @@ exclusion, CI wiring, and documentation boundaries.
   arbitrary version compatibility, real keys and funds remain open.
 - **Next:** protected PR/CI, merge, final-main/GH-29/Pages readback, then Done.
 
+## 2026-08-12 11:22 EEST GH-181 → Published for protected review
+
+- **Commits:** `0f49d88` test/CI implementation; `4255f54` audit, public status,
+  tracker candidate, and Bridge evidence.
+- **Pull request:** [PR #182](https://github.com/NeaBouli/TrueRepublic/pull/182)
+  targets `main`; exact final head and protected contexts remain pending.
+- **Local state:** clean after publication; all recorded local gates pass.
+- **Next:** mark ready, review exact-head CI/review threads, remediate in scope,
+  merge only when green, then final-main/GH-29/Pages/Bridge closure.
+
 ---
