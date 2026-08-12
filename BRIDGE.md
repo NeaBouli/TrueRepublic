@@ -369,8 +369,6 @@
   writes, and closure.
 - **Status:** In Progress; no blocker identified.
 
----
-
 ## 2026-08-10 04:05 EEST GH-175 → Local Implementation Verified
 
 - **Finding/fix:** the first real client-creation transaction failed with
@@ -5952,5 +5950,20 @@ exclusion, CI wiring, and documentation boundaries.
   final-main/GH-29/live Pages and both-Bridge Done closure.
 - **Safety:** no deployment, public network, real keys/accounts, funds or
   release action occurred.
+
+---
+
+## 2026-08-12 14:27 EEST GH-184 → PR #185 published
+
+- **Implementation commit:** `5a236527333ec21f8cec8213d3cb62dce9bfcf73`
+  publishes the complete reviewed governed-upgrade implementation and local
+  evidence on `feature/GH-184-governed-upgrade`.
+- **Pull request:** [PR #185](https://github.com/NeaBouli/TrueRepublic/pull/185)
+  targets protected `main` and closes GH-184 on merge.
+- **Local evidence:** every required Go/Race/Coverage, process, security,
+  deterministic build, client, Rust/audit, documentation and review gate passes.
+- **Next:** this append-only handoff becomes the final PR head; wait for every
+  exact-head context and review thread, remediate without bypassing gates, then
+  merge and perform final-main/GH-29/Pages/both-Bridge closure.
 
 ---
