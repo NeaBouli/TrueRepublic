@@ -6054,3 +6054,17 @@ exclusion, CI wiring, and documentation boundaries.
   review, merge, final-main/GH-29/live Pages and both-Bridge Done closure remain.
 
 ---
+
+## 2026-08-12 23:54 EEST GH-187 review commit → Ready for protected PR
+
+- Reviewed implementation commit: `e147dce796fa3c237e154bfd9667f6eda21b332a`.
+- Kimi follow-up: attribution finding RESOLVED; no P0/P1/P2 remains in the
+  remediated public-count diffs.
+- The clean-commit deterministic command correctly refused the macOS host with
+  `linux-amd64 requires a native Linux x86_64 runner`. Protected native-Linux CI
+  must produce that exact-head evidence; it is not claimed locally.
+- All other local repository, process, client, Rust, security, consistency and
+  review gates pass. Next: publish branch/PR, monitor exact-head checks and
+  threads, remediate if needed, then merge and complete public closure.
+
+---

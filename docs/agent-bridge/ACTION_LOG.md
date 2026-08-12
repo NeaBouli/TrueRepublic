@@ -3718,3 +3718,13 @@
 - Remaining before publication: focused post-remediation confirmation,
   clean-commit deterministic Linux build, protected PR exact-head CI/review,
   merge, final-main/GH-29/live Pages and both-Bridge closure.
+
+## 2026-08-12 23:54 EEST - GH-187 review commit and platform boundary
+
+- Created reviewed implementation commit `e147dce`; the repository was clean.
+- The deterministic build contract then rejected this macOS host as designed:
+  `linux-amd64 requires a native Linux x86_64 runner`. This is not a product
+  failure and cannot be claimed locally; protected reproducible-Linux CI owns
+  the required native proof for the exact published head.
+- Kimi follow-up reports the documentation finding RESOLVED and no remaining
+  P0/P1/P2 in the remediated public-count diffs.

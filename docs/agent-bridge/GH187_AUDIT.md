@@ -1,7 +1,8 @@
 # GH-187 Protocol Compatibility Boundary Audit
 
 Status: local implementation, process, repository, and security gates verified;
-clean-commit deterministic build and protected publication pending.
+protected publication pending. The deterministic Linux build is CI-owned
+because its contract rejects the local macOS host.
 
 ## Scope
 
@@ -43,6 +44,9 @@ root query/transaction CLI commands.
 - PASS: pinned Staticcheck, exact-policy Govulncheck plus fixtures, Gitleaks,
   maintained-client clean install/lint/141 tests/build/audit, and Rust
   format/Clippy/build/26 tests/advisory audit.
+- EXPECTED LOCAL PLATFORM BLOCK: the clean-commit deterministic daemon command
+  correctly rejects macOS with `linux-amd64 requires a native Linux x86_64
+  runner`; the protected reproducible-Linux CI job must supply this evidence.
 
 Kimi K3 performed a bounded, secret-free read-only architecture review and
 identified the success-like query behavior, default message encoder exposure,
