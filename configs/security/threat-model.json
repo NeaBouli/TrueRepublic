@@ -206,24 +206,27 @@
       "domain": "consensus_p2p",
       "severity": "critical",
       "likelihood": "medium",
-      "status": "blocked",
+      "status": "deferred",
       "attack_path": "A consensus-breaking upgrade or partially applied migration corrupts or splits canonical state with no rehearsed rollback.",
       "impact": "Ledger divergence, permanent state loss, or an unrecoverable chain halt.",
       "controls": [
         "Compatible binary replacement and fail-before-open rollback drills on persisted validator homes",
         "Bounded fresh-genesis legacy-authority migration with exact export binding",
-        "Sanitized backup/restore/export/import drills and every-block crisis invariants"
+        "Sanitized backup/restore/export/import drills and every-block crisis invariants",
+        "GH-184 immutable-electorate two-thirds governance, old-binary halt, cached-write failure rollback, fixed-candidate recovery, and exact-once four-validator restart"
       ],
       "evidence": [
         "migration/app_state.go",
         "server_lifecycle.go",
         "token/invariant.go",
-        "docs/ROLLOUT_ROADMAP.md"
+        "docs/ROLLOUT_ROADMAP.md",
+        "governed_upgrade_harness_test.go",
+        "upgrade_handlers.go"
       ],
-      "residual_risk": "Governance-controlled consensus-breaking migration and partially applied migration recovery remain unimplemented and unrehearsed.",
-      "residual_severity": "critical",
+      "residual_risk": "The bounded fresh-genesis v0.4.1 path is locally rehearsed, but pre-GH-184 store introduction, clean private infrastructure reproduction, independent review, and production operation remain unqualified.",
+      "residual_severity": "high",
       "owner": "security-maintainers",
-      "next_gate": "GH-29 Phase 1: prove consensus-breaking state migration and rollback after partial application",
+      "next_gate": "GH-29 Phase 1 exit gate: reproduce the governed upgrade and recovery path on clean private infrastructure and obtain independent review",
       "umbrella_issue": "GH-29"
     },
     {
@@ -381,7 +384,8 @@
       "impact": "Loss or duplication of PNYX on counterparty chains and unrecoverable channel state.",
       "controls": [
         "GH-175, GH-178, and GH-181 provide local proof-driven two-chain packet, channel, and compatible binary-restart recovery evidence",
-        "External relayers, public counterparties, x/upgrade, governed migrations, and IBC client upgrades remain exit-gated",
+        "GH-184 provides local governed x/upgrade migration failure and recovery evidence across four validators",
+        "External relayers, public counterparties, pre-GH-184 store introduction, and IBC client upgrades remain exit-gated",
         "Public status continues to mark the repository non-production"
       ],
       "evidence": [
@@ -389,10 +393,10 @@
         "docs/ROLLOUT_ROADMAP.md",
         "docs/LIMITATIONS.md"
       ],
-      "residual_risk": "No external relayer/public-counterparty qualification, x/upgrade governance path, consensus-breaking migration rollback, or IBC client-upgrade evidence exists.",
+      "residual_risk": "No external relayer/public-counterparty qualification, pre-GH-184 store transition, or IBC client-upgrade evidence exists.",
       "residual_severity": "high",
       "owner": "security-maintainers",
-      "next_gate": "GH-29 Phase 3 exit gate: qualify an external relayer/counterparty and complete governed upgrade, migration, and IBC client-upgrade evidence",
+      "next_gate": "GH-29 Phase 3 exit gate: qualify an external relayer/counterparty, pre-existing-chain store transition, and IBC client-upgrade evidence",
       "umbrella_issue": "GH-29"
     },
     {
@@ -401,10 +405,10 @@
       "severity": "high",
       "likelihood": "medium",
       "status": "blocked",
-      "attack_path": "Residual staking, distribution, or upgrade stubs are invoked as if they were supported protocol surfaces.",
+      "attack_path": "Residual staking or distribution stubs are invoked as if they were supported protocol surfaces.",
       "impact": "Undefined consensus behavior or operator confusion about the supported feature boundary.",
       "controls": [
-        "IBC staking/upgrade and standard CosmWasm staking/distribution remain explicit stubs",
+        "IBC staking and standard CosmWasm staking/distribution remain explicit stubs; GH-184 replaced the upgrade stub with the real keeper",
         "Limitations and roadmap documents define the exact supported Cosmos boundary",
         "Unsupported surfaces must be absent or unmistakably disabled before rollout"
       ],
@@ -413,7 +417,7 @@
         "docs/LIMITATIONS.md",
         "docs/ROLLOUT_ROADMAP.md"
       ],
-      "residual_risk": "Stubs are documented but not yet implemented, replaced, or removed, and the governance-controlled upgrade path is incomplete.",
+      "residual_risk": "The remaining staking and distribution compatibility stubs are documented but not yet implemented, replaced, or removed.",
       "residual_severity": "high",
       "owner": "security-maintainers",
       "next_gate": "GH-29 Phase 3: implement, replace, or explicitly remove remaining stubs and document the boundary",

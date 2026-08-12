@@ -1,6 +1,7 @@
 package truedemocracy
 
 import (
+	"sort"
 	"strings"
 	"testing"
 
@@ -61,6 +62,54 @@ func TestValidateGenesisStateRejectsMalformedAndDuplicateDemocracyState(t *testi
 			tc.mutate(&genesis)
 			if err := ValidateGenesisState(genesis); err == nil {
 				t.Fatal("malformed genesis was accepted")
+			}
+		})
+	}
+}
+
+func TestValidateGenesisStateRejectsMalformedSoftwareUpgradeState(t *testing.T) {
+	members := upgradeMembers()[:3]
+	memberStrings := []string{members[0].String(), members[1].String(), members[2].String()}
+	sort.Strings(memberStrings)
+	valid := func() GenesisState {
+		return GenesisState{
+			Domains: []Domain{{
+				Name: ReservedGovernanceDomain, Admin: members[0], Members: append([]string(nil), memberStrings...),
+				Treasury: sdk.NewCoins(), Issues: []Issue{}, Options: DomainOptions{AdminElectable: true}, PermissionReg: []string{},
+			}},
+			SoftwareUpgradeProposal: &SoftwareUpgradeProposal{
+				Name: "v0.4.1", Height: 120, Info: "round-trip", Eligible: append([]string(nil), memberStrings...), Scheduled: true,
+			},
+			SoftwareUpgradeVotes: append([]string(nil), memberStrings[:2]...),
+		}
+	}
+	if err := ValidateGenesisState(valid()); err != nil {
+		t.Fatalf("valid upgrade genesis rejected: %v", err)
+	}
+	tests := []struct {
+		name   string
+		mutate func(*GenesisState)
+	}{
+		{"missing governance domain", func(g *GenesisState) { g.Domains = nil }},
+		{"runtime join enabled", func(g *GenesisState) { g.Domains[0].Options.AnyoneCanJoin = true }},
+		{"unscheduled proposal", func(g *GenesisState) { g.SoftwareUpgradeProposal.Scheduled = false }},
+		{"invalid plan name", func(g *GenesisState) { g.SoftwareUpgradeProposal.Name = "V0.4.1" }},
+		{"nonpositive height", func(g *GenesisState) { g.SoftwareUpgradeProposal.Height = 0 }},
+		{"electorate mismatch", func(g *GenesisState) { g.SoftwareUpgradeProposal.Eligible = g.SoftwareUpgradeProposal.Eligible[:2] }},
+		{"insufficient votes", func(g *GenesisState) { g.SoftwareUpgradeVotes = g.SoftwareUpgradeVotes[:1] }},
+		{"duplicate votes", func(g *GenesisState) { g.SoftwareUpgradeVotes[1] = g.SoftwareUpgradeVotes[0] }},
+		{"outside voter", func(g *GenesisState) { g.SoftwareUpgradeVotes[1] = sdk.AccAddress("outsider").String() }},
+		{"orphan cancel votes", func(g *GenesisState) { g.UpgradeCancelVotes = []string{memberStrings[0]} }},
+		{"cancel name mismatch", func(g *GenesisState) {
+			g.UpgradeCancelProposal = &SoftwareUpgradeCancelProposal{Name: "v0.4.2", Eligible: append([]string(nil), memberStrings...)}
+		}},
+	}
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
+			genesis := valid()
+			tc.mutate(&genesis)
+			if err := ValidateGenesisState(genesis); err == nil {
+				t.Fatal("malformed software-upgrade genesis accepted")
 			}
 		})
 	}

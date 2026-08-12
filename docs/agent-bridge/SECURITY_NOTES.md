@@ -1,5 +1,20 @@
 # Security Notes
 
+## GH-184 governed application-upgrade boundary
+
+- The real `x/upgrade` authority is the non-signing `truedemocracy` module
+  account. Only the narrow keeper adapter can schedule or clear a plan after an
+  immutable genesis-governance electorate reaches two thirds.
+- Plan name, height, info, lead time, duplicate/conflicting votes, late-member
+  admission, scheduling failure, cancellation failure, and the genesis-only
+  reserved Domain all fail closed with cached atomicity.
+- Only `main.upgradePlan=v0.4.1` registers the release handler while `main.version` remains the source commit. The prior binary halts;
+  the failure fixture writes a marker then errors; the fixed candidate rejects
+  any leaked marker, migrates, and records done height exactly once.
+- The evidence is a local four-validator fresh-genesis harness. It does not
+  qualify pre-GH-184 store introduction, arbitrary plans, IBC client upgrades,
+  external relayers, public networks, production, real keys, or real funds.
+
 ## GH-181 compatible IBC binary-restart boundary
 
 - The candidate is a separately linked package test binary built from the same

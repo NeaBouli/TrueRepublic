@@ -6,6 +6,7 @@ import (
 
 	errorsmod "cosmossdk.io/errors"
 	storetypes "cosmossdk.io/store/types"
+	upgradetypes "cosmossdk.io/x/upgrade/types"
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/crypto/keys/ed25519"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -23,21 +24,32 @@ type BankKeeper interface {
 	GetAllBalances(ctx context.Context, addr sdk.AccAddress) sdk.Coins
 }
 
-type Keeper struct {
-	StoreKey   storetypes.StoreKey
-	nodes      []*Node
-	cdc        *codec.LegacyAmino
-	bankKeeper BankKeeper // nil until x/bank is wired (bridge functions check)
-	issuer     token.IssuanceService
+// UpgradeScheduler is the narrow x/upgrade boundary the governance adapter
+// needs. A nil scheduler fails closed: no upgrade vote can schedule or clear
+// a plan without it.
+type UpgradeScheduler interface {
+	ScheduleUpgrade(ctx context.Context, plan upgradetypes.Plan) error
+	ClearUpgradePlan(ctx context.Context) error
+	GetUpgradePlan(ctx context.Context) (upgradetypes.Plan, error)
 }
 
-func NewKeeper(cdc *codec.LegacyAmino, storeKey storetypes.StoreKey, nodes []*Node, bankKeeper BankKeeper) Keeper {
+type Keeper struct {
+	StoreKey         storetypes.StoreKey
+	nodes            []*Node
+	cdc              *codec.LegacyAmino
+	bankKeeper       BankKeeper // nil until x/bank is wired (bridge functions check)
+	issuer           token.IssuanceService
+	upgradeScheduler UpgradeScheduler // nil fails closed for software-upgrade governance
+}
+
+func NewKeeper(cdc *codec.LegacyAmino, storeKey storetypes.StoreKey, nodes []*Node, bankKeeper BankKeeper, upgradeScheduler UpgradeScheduler) Keeper {
 	return Keeper{
-		StoreKey:   storeKey,
-		nodes:      nodes,
-		cdc:        cdc,
-		bankKeeper: bankKeeper,
-		issuer:     token.NewIssuanceService(bankKeeper, ModuleName),
+		StoreKey:         storeKey,
+		nodes:            nodes,
+		cdc:              cdc,
+		bankKeeper:       bankKeeper,
+		issuer:           token.NewIssuanceService(bankKeeper, ModuleName),
+		upgradeScheduler: upgradeScheduler,
 	}
 }
 
@@ -74,6 +86,9 @@ func (k Keeper) CreateDomain(ctx sdk.Context, name string, admin sdk.AccAddress,
 // AddMember adds a new member to a domain. Only the domain admin can add
 // members. This is step 1 of the two-step onboarding flow (WP S4).
 func (k Keeper) AddMember(ctx sdk.Context, domainName, newMember string, caller sdk.AccAddress) error {
+	if domainName == ReservedGovernanceDomain {
+		return errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "governance electorate is immutable after genesis")
+	}
 	domain, found := k.GetDomain(ctx, domainName)
 	if !found {
 		return errorsmod.Wrapf(sdkerrors.ErrUnknownRequest, "domain %s not found", domainName)

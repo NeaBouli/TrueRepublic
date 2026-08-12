@@ -3641,3 +3641,30 @@
 - GH-29 now credits compatible binary-restart recovery while correctly keeping
   governance-controlled migrations and IBC client upgrades open. No production
   or external-network action occurred.
+## 2026-08-12 13:30 EEST - GH-184 locally verified
+
+- Wired real `x/upgrade`, non-signing module authority, release handler, and
+  immutable-electorate two-thirds schedule/cancel governance.
+- Kimi K3 contributed the bounded secret-free truedemocracy adapter and review;
+  Sol reviewed the diff and added adversarial keeper and process evidence.
+- The four-validator three-artifact harness passes old-binary halt, intentional
+  cached partial-write failure rollback, fixed candidate recovery, common app
+  hashes, preserved power, and exact-once restart in 230.63 seconds.
+- Updated candidate rollout/status/runbook/limitations/threat/Bridge records to
+  1,621 cases, 28/59 overall, 28/51 phase work, Phase 6 6/7, production false.
+- Full local gates, protected PR, final-main, tracker, Pages, and closure remain
+  pending; no production, public network, real key, fund, or deployment action
+  occurred.
+
+## 2026-08-12 14:22 EEST - GH-184 local gates and final review complete
+
+- Remediated immutable electorate, pending-plan export/import, stale and
+  post-execution cleanup, malformed-genesis rejection, exact release identity,
+  deterministic build verification, dedicated CI ownership and handler
+  coverage without lowering any quality floor.
+- PASS: 1,624 standard cases (1,457 Go, 26 Rust, 141 client), full Race/Coverage,
+  property/fuzz, security scanners, client, Rust/audit, docs/JSON/diff, and the
+  fresh 231.39s four-validator governed-upgrade process gate.
+- Kimi final read-only review reports no P0/P1/P2. Sol confirmed the fresh count
+  and added documented/tested 2/3 post-execution cleanup, resolving actionable
+  P3 notes. Protected PR/CI, merge and public closure remain.

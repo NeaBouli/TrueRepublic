@@ -128,7 +128,7 @@ See [INSTALLATION.md](INSTALLATION.md) for detailed instructions.
 | **DEX (stacked recovery)** | PR #18 adds custody/LP ownership/burns; PR #19 reconciles genesis and checks reserves/shares every block | [DEX Guide](docs/user-manual/dex-trading-guide.md) |
 | **VoteToEarn** | Earn PNYX rewards for active participation | [Stones Guide](docs/user-manual/stones-voting-guide.md) |
 | **Suggestion Lifecycle** | Green/yellow/red zones with auto-delete | [Governance](docs/user-manual/governance-tutorial.md) |
-| **IBC Transfers** | GH-175/GH-178/GH-181 locally verify two-chain packet proofs, ACK, timeout, replay, channel recovery, and in-place compatible test-binary restart recovery; external relayer and governance-controlled upgrade qualification remain open | [IBC Setup](docs/IBC_RELAYER_SETUP.md) |
+| **IBC Transfers** | GH-175/GH-178/GH-181 locally verify packet and compatible-restart recovery; GH-184 adds governed fresh-genesis application-upgrade recovery. External relayer and IBC client-upgrade qualification remain open | [IBC Setup](docs/IBC_RELAYER_SETUP.md) |
 
 ---
 
@@ -161,7 +161,7 @@ TrueRepublic/
 ├── Makefile                    Build targets (build, test, lint, docker)
 ├── INSTALLATION.md             Quick install guide
 ├── x/
-│   ├── truedemocracy/          Governance module (23 msg types, 533 test cases)
+│   ├── truedemocracy/          Governance module (25 msg types, 552 test cases)
 │   └── dex/                    DEX module (7 msg types, 138 test cases)
 ├── treasury/keeper/            Tokenomics equations 1-5 (36 test cases)
 ├── contracts/                  CosmWasm workspace (7 crates, 26 tests)
@@ -201,7 +201,7 @@ TrueRepublic/
 | Zero-Knowledge Proofs (Groth16) | 🟡 Recovery verified on PR #22 | Chain/rating binding and fail-closed VK; real client prover and external review pending |
 | CosmWasm Smart Contracts | ✅ | `x/truedemocracy/wasm_bindings.go` |
 | Domain-Bank Bridge | ✅ | `x/truedemocracy/treasury_bridge.go` |
-| IBC Transfer (ICS-20) | 🟡 Two-chain lifecycle, channel replacement, and compatible binary-restart recovery verified locally on GH-175/GH-178/GH-181; external relayer and governed migration evidence pending | `app.go` (ibc-go v8.7.0) |
+| IBC Transfer (ICS-20) | 🟡 Two-chain lifecycle, channel replacement, compatible restart, and governed fresh-genesis app-upgrade recovery verified locally through GH-184; external relayer and IBC client-upgrade evidence pending | `app.go` (ibc-go v8.7.0) |
 | Stones Voting (WP S3.1) | ✅ | `x/truedemocracy/stones.go` |
 | VoteToEarn Rewards | ✅ | `x/truedemocracy/stones.go` |
 | Suggestion Lifecycle (WP S3.1.2) | ✅ | `x/truedemocracy/lifecycle.go` |
@@ -210,7 +210,7 @@ TrueRepublic/
 | Admin Election (WP S3.6) | ✅ | `x/truedemocracy/governance.go` |
 | Member Exclusion (2/3 vote) | ✅ | `x/truedemocracy/governance.go` |
 | PoD Transfer Limit (10%, WP S7) | ✅ | `x/truedemocracy/validator.go` |
-| CLI Commands (24 tx + 7 query) | ✅ | `x/truedemocracy/cli.go` |
+| CLI Commands (26 tx + 7 query) | ✅ | `x/truedemocracy/cli.go` |
 | DEX CLI (7 tx + 9 query) | ✅ | `x/dex/cli.go` |
 | CosmWasm Contracts (7 crates) | ✅ | `contracts/` (workspace) |
 | Maintained Web Client | 🟡 Recovery verified | `client-web/` |
@@ -226,7 +226,7 @@ TrueRepublic/
 # Blockchain
 go mod tidy
 ./scripts/go-packages.sh go build
-./scripts/go-packages.sh go test -race -cover -count=1 -timeout=600s    # 1,443 Go cases
+./scripts/go-packages.sh go test -race -cover -count=1 -timeout=600s    # 1,457 Go cases
 make ibc-two-chain                                                     # separate GH-175/GH-178/GH-181 proof gate
 
 # Smart contracts
@@ -253,7 +253,7 @@ cd client-web && npm ci && npm run lint && npm test -- --run && npm run build
 | Native mobile client | — | Retired under GH-102; replacement pending |
 | Local encrypted test wallet + CosmJS | 0.39 | Maintained v0.4 client |
 
-**Known Limitations:** IBC staking/upgrade remains stubbed (PoD is used instead), a real ZKP prover/ceremony review is pending, and the migration-focused harness proves compatible binary replacement and fail-before-open rollback—not consensus-breaking state migration. GH-93 provides a strict synthetic incident-command and rehearsal contract, but a private live operator rehearsal remains pending. GH-85 provides dashboard/application runtime evidence, alert rules, recovery/testnet objectives, and role ownership. GH-89 adds a strict synthetic topology qualification contract. GH-97 adds bounded four-validator load, resource, retention, restart, and ledger evidence; it does not establish production sizing or multi-day soak behavior. GH-101 adds a digest-bound offline deployment-evidence envelope and verifier; it does not prove or perform a live deployment. Real seed/sentry/validator/RPC deployment, firewall/TLS/DNS evidence, external paging drills, private-environment capacity evidence, and independent live operations review remain open. See [LIMITATIONS.md](docs/LIMITATIONS.md).
+**Known Limitations:** IBC staking and standard CosmWasm staking/distribution remain stubbed (PoD is used instead). GH-184 wires real `x/upgrade` for the exact governed fresh-genesis v0.4.1 path, but pre-GH-184 store introduction and IBC client upgrades remain unsupported. A real ZKP prover/ceremony review is pending. GH-93 provides a strict synthetic incident-command and rehearsal contract, but a private live operator rehearsal remains pending. GH-85 provides dashboard/application runtime evidence, alert rules, recovery/testnet objectives, and role ownership. GH-89 adds a strict synthetic topology qualification contract. GH-97 adds bounded four-validator load, resource, retention, restart, and ledger evidence; it does not establish production sizing or multi-day soak behavior. GH-101 adds a digest-bound offline deployment-evidence envelope and verifier; it does not prove or perform a live deployment. Real seed/sentry/validator/RPC deployment, firewall/TLS/DNS evidence, external paging drills, private-environment capacity evidence, and independent live operations review remain open. See [LIMITATIONS.md](docs/LIMITATIONS.md).
 
 ---
 
@@ -265,7 +265,7 @@ The checklist below records implemented surface area, not a production security
 approval. Current evidence, risks, and commands are maintained in
 [`BRIDGE.md`](BRIDGE.md) and [GitHub issue #4](https://github.com/NeaBouli/TrueRepublic/issues/4).
 
-- 🟡 1,610 tests recovery-verified locally (1,443 Go + 26 Rust + 141 maintained-client), plus the separately gated GH-175/GH-178/GH-181 two-chain IBC packet/channel/compatible-restart proof, GH-172 shared-state contention/exact-replay/restart proof, GH-145 bounded live fuzz campaigns, GH-131 real submitted-history pagination proof, GH-121 real browser-query boundary, GH-115 local client-chain delivery proof, GH-56 rotation, GH-59 slashing, GH-60 inactive-validator genesis, GH-61 legacy-authority migration, GH-93 incident rehearsal, and GH-97 sustained-load process harnesses; protected publication and production rollout evidence remain required
+- 🟡 1,624 tests recovery-verified locally (1,457 Go + 26 Rust + 141 maintained-client), plus the separately gated GH-175/GH-178/GH-181 IBC proof and GH-184 governed-upgrade recovery proof, GH-172 shared-state contention/exact-replay/restart proof, GH-145 bounded live fuzz campaigns, GH-131 real submitted-history pagination proof, GH-121 real browser-query boundary, GH-115 local client-chain delivery proof, GH-56 rotation, GH-59 slashing, GH-60 inactive-validator genesis, GH-61 legacy-authority migration, GH-93 incident rehearsal, and GH-97 sustained-load process harnesses; protected publication and production rollout evidence remain required
 - ✅ Core blockchain compiles and runs
 - 🟡 Tokenomics, exact custom genesis, and every-block ledger invariants are recovery-verified and merged through PR #19
 - 🟡 Governance escrow/auth recovery is verified and merged; independent release review remains open
@@ -318,8 +318,8 @@ approval. Current evidence, risks, and commands are maintained in
 - 📋 **v0.5.0 (Q3 2026):** Native Apps (iOS/Android)
 - 🎯 **v1.0.0 (Q4 2026):** Production Release — External audit, mainnet launch
 
-> Historical test count: 577. The authoritative recovery-verified total is 1,610
-> (1,443 Go + 26 Rust + 141 maintained-client), reproduced from fresh
+> Historical test count: 577. The authoritative recovery-verified total is 1,624
+> (1,457 Go + 26 Rust + 141 maintained-client), reproduced from fresh
 > package-scoped output using the established passing-case method.
 
 ---

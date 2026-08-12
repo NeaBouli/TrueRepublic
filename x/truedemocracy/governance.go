@@ -149,6 +149,9 @@ func (k Keeper) ElectAdmin(ctx sdk.Context, domainName string) error {
 // of members have voted, the target is removed from the member list and their
 // stones are cleaned up. Returns (excluded bool, error).
 func (k Keeper) VoteToExclude(ctx sdk.Context, domainName, targetMember, voterAddr string) (bool, error) {
+	if domainName == ReservedGovernanceDomain {
+		return false, errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "governance electorate is immutable after genesis")
+	}
 	domain, found := k.GetDomain(ctx, domainName)
 	if !found {
 		return false, errorsmod.Wrapf(sdkerrors.ErrUnknownRequest, "domain %s not found", domainName)

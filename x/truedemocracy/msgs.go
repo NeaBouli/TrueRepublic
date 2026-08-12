@@ -29,6 +29,9 @@ func (m MsgCreateDomain) ValidateBasic() error {
 	if m.Name == "" {
 		return sdkerrors.ErrInvalidRequest.Wrap("name is required")
 	}
+	if m.Name == ReservedGovernanceDomain {
+		return sdkerrors.ErrInvalidRequest.Wrap("domain governance is reserved and can only be anchored in genesis")
+	}
 	if m.Admin.Empty() {
 		return sdkerrors.ErrInvalidAddress.Wrap("admin address is required")
 	}
@@ -688,4 +691,54 @@ func (m MsgWithdrawFromDomain) ValidateBasic() error {
 		return sdkerrors.ErrInvalidRequest.Wrap("only upnyx withdrawals supported")
 	}
 	return nil
+}
+
+// --- MsgVoteSoftwareUpgrade ---
+
+type MsgVoteSoftwareUpgrade struct {
+	Sender   sdk.AccAddress `protobuf:"bytes,1,opt,name=sender,proto3,casttype=github.com/cosmos/cosmos-sdk/types.AccAddress" json:"sender"`
+	PlanName string         `protobuf:"bytes,2,opt,name=plan_name,json=planName,proto3" json:"plan_name"`
+	Height   int64          `protobuf:"varint,3,opt,name=height,proto3" json:"height"`
+	Info     string         `protobuf:"bytes,4,opt,name=info,proto3" json:"info"`
+}
+
+func (m *MsgVoteSoftwareUpgrade) ProtoMessage()               {}
+func (m *MsgVoteSoftwareUpgrade) Reset()                      { *m = MsgVoteSoftwareUpgrade{} }
+func (m *MsgVoteSoftwareUpgrade) String() string              { b, _ := json.Marshal(m); return string(b) }
+func (m MsgVoteSoftwareUpgrade) Route() string                { return ModuleName }
+func (m MsgVoteSoftwareUpgrade) Type() string                 { return "vote_software_upgrade" }
+func (m MsgVoteSoftwareUpgrade) GetSigners() []sdk.AccAddress { return []sdk.AccAddress{m.Sender} }
+func (m MsgVoteSoftwareUpgrade) ValidateBasic() error {
+	if m.Sender.Empty() {
+		return sdkerrors.ErrInvalidAddress.Wrap("sender address is required")
+	}
+	if err := validateUpgradePlanName(m.PlanName); err != nil {
+		return err
+	}
+	if len(m.Info) > UpgradePlanInfoMaxBytes {
+		return sdkerrors.ErrInvalidRequest.Wrap("info exceeds the maximum length")
+	}
+	return nil
+}
+
+// --- MsgVoteCancelSoftwareUpgrade ---
+
+type MsgVoteCancelSoftwareUpgrade struct {
+	Sender   sdk.AccAddress `protobuf:"bytes,1,opt,name=sender,proto3,casttype=github.com/cosmos/cosmos-sdk/types.AccAddress" json:"sender"`
+	PlanName string         `protobuf:"bytes,2,opt,name=plan_name,json=planName,proto3" json:"plan_name"`
+}
+
+func (m *MsgVoteCancelSoftwareUpgrade) ProtoMessage()  {}
+func (m *MsgVoteCancelSoftwareUpgrade) Reset()         { *m = MsgVoteCancelSoftwareUpgrade{} }
+func (m *MsgVoteCancelSoftwareUpgrade) String() string { b, _ := json.Marshal(m); return string(b) }
+func (m MsgVoteCancelSoftwareUpgrade) Route() string   { return ModuleName }
+func (m MsgVoteCancelSoftwareUpgrade) Type() string    { return "vote_cancel_software_upgrade" }
+func (m MsgVoteCancelSoftwareUpgrade) GetSigners() []sdk.AccAddress {
+	return []sdk.AccAddress{m.Sender}
+}
+func (m MsgVoteCancelSoftwareUpgrade) ValidateBasic() error {
+	if m.Sender.Empty() {
+		return sdkerrors.ErrInvalidAddress.Wrap("sender address is required")
+	}
+	return validateUpgradePlanName(m.PlanName)
 }

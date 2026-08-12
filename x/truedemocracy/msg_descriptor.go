@@ -107,6 +107,8 @@ func msgTypesForDescriptor() []reflect.Type {
 		reflect.TypeOf((*MsgRateWithProof)(nil)),
 		reflect.TypeOf((*MsgDepositToDomain)(nil)),
 		reflect.TypeOf((*MsgWithdrawFromDomain)(nil)),
+		reflect.TypeOf((*MsgVoteSoftwareUpgrade)(nil)),
+		reflect.TypeOf((*MsgVoteCancelSoftwareUpgrade)(nil)),
 	}
 }
 
@@ -136,6 +138,8 @@ func msgResponseTypesForDescriptor() []string {
 		"MsgRateWithProofResponse",
 		"MsgDepositToDomainResponse",
 		"MsgWithdrawFromDomainResponse",
+		"MsgVoteSoftwareUpgradeResponse",
+		"MsgVoteCancelSoftwareUpgradeResponse",
 	}
 }
 
@@ -348,4 +352,16 @@ func (*MsgDepositToDomainResponse) Descriptor() ([]byte, []int) {
 }
 func (*MsgWithdrawFromDomainResponse) Descriptor() ([]byte, []int) {
 	return descriptorForMessage("MsgWithdrawFromDomainResponse")
+}
+func (*MsgVoteSoftwareUpgrade) Descriptor() ([]byte, []int) {
+	return descriptorForMessage("MsgVoteSoftwareUpgrade")
+}
+func (*MsgVoteCancelSoftwareUpgrade) Descriptor() ([]byte, []int) {
+	return descriptorForMessage("MsgVoteCancelSoftwareUpgrade")
+}
+func (*MsgVoteSoftwareUpgradeResponse) Descriptor() ([]byte, []int) {
+	return descriptorForMessage("MsgVoteSoftwareUpgradeResponse")
+}
+func (*MsgVoteCancelSoftwareUpgradeResponse) Descriptor() ([]byte, []int) {
+	return descriptorForMessage("MsgVoteCancelSoftwareUpgradeResponse")
 }

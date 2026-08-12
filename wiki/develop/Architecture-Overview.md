@@ -32,7 +32,7 @@ API LAYER
 └── WebSocket (port 26657/websocket) ← Real-time events
     ↓
 APPLICATION LAYER (Cosmos SDK v0.50.15)
-├── x/truedemocracy ← Core governance (23 msg types, 533 recovery cases)
+├── x/truedemocracy ← Core governance (25 msg types, 552 recovery cases)
 │   ├── keeper.go ← Domain CRUD, proposals, ratings
 │   ├── anonymity.go ← Permission register, domain key pairs (WP S4)
 │   ├── stones.go ← VoteToEarn, stone voting, list sorting (WP S3.1)
@@ -72,7 +72,7 @@ STORAGE LAYER
 | **Why Go?** | Cosmos SDK requirement, excellent performance, strong concurrency |
 | **Key Libraries** | Cosmos SDK, CometBFT, Cobra CLI, LevelDB |
 | **Build** | `make build` produces `truerepublicd` binary |
-| **Test** | `./scripts/go-packages.sh go test -race -cover -count=1 -timeout=600s` (1,443 standard-suite Go cases; separate GH-175/GH-178/GH-181 IBC gate excluded) |
+| **Test** | `./scripts/go-packages.sh go test -race -cover -count=1 -timeout=600s` (1,457 standard-suite Go cases; separate GH-175/GH-178/GH-181 IBC and GH-184 upgrade gates excluded) |
 
 ### Framework: Cosmos SDK v0.50.15
 

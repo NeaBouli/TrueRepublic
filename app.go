@@ -1,11 +1,15 @@
 package main
 
 import (
+	"context"
 	"encoding/json"
 	"sync"
 
 	"cosmossdk.io/log"
 	storetypes "cosmossdk.io/store/types"
+	upgrade "cosmossdk.io/x/upgrade"
+	upgradekeeper "cosmossdk.io/x/upgrade/keeper"
+	upgradetypes "cosmossdk.io/x/upgrade/types"
 	dbm "github.com/cosmos/cosmos-db"
 
 	wasm "github.com/CosmWasm/wasmd/x/wasm"
@@ -73,11 +77,17 @@ var maccPerms = map[string][]string{
 // version is injected by release and container builds via -ldflags.
 var version = "dev"
 
+// upgradePlan is injected only into a reviewed migration-bearing artifact.
+// It is deliberately separate from the immutable source-commit version used
+// by reproducible builds.
+var upgradePlan = ""
+
 var ModuleBasics = module.NewBasicManager(
 	auth.AppModuleBasic{},
 	bank.AppModuleBasic{},
 	crisis.AppModuleBasic{},
 	consensus.AppModuleBasic{},
+	upgrade.AppModuleBasic{},
 	capability.AppModuleBasic{},
 	ibc.AppModuleBasic{},
 	transfer.AppModuleBasic{},
@@ -147,6 +157,7 @@ type TrueRepublicApp struct {
 	bankKeeper      bankkeeper.BaseKeeper
 	crisisKeeper    *crisiskeeper.Keeper
 	consensusKeeper consensusparamkeeper.Keeper
+	upgradeKeeper   *upgradekeeper.Keeper
 	capKeeper       *capabilitykeeper.Keeper
 	ibcKeeper       *ibckeeper.Keeper
 	transferKeeper  transferkeeper.Keeper
@@ -155,6 +166,7 @@ type TrueRepublicApp struct {
 	dexKeeper       dex.Keeper
 	tdModule        truedemocracy.AppModule
 	dexModule       dex.AppModule
+	configurator    module.Configurator
 	appMetrics      *observability.AppMetrics
 }
 
@@ -172,6 +184,7 @@ func NewTrueRepublicApp(logger log.Logger, db dbm.DB, homeDir string, baseAppOpt
 		banktypes.StoreKey,   // "bank"
 		crisistypes.StoreKey, // "crisis"
 		consensusparamtypes.StoreKey,
+		upgradetypes.StoreKey,
 		paramstypes.StoreKey,     // "params"
 		capabilitytypes.StoreKey, // "capability"
 		ibcexported.StoreKey,     // "ibc"
@@ -201,8 +214,13 @@ func NewTrueRepublicApp(logger log.Logger, db dbm.DB, homeDir string, baseAppOpt
 	// address codecs and custom signer resolvers.
 	app.SetInterfaceRegistry(interfaceRegistry)
 
-	// Authority address for governance operations (standard pattern).
+	// Authority address for SDK operations that do not yet have an executable
+	// governance route in this PoD application.
 	authority := authtypes.NewModuleAddress("gov").String()
+	// x/upgrade is controlled exclusively through x/truedemocracy. Module
+	// accounts cannot sign ordinary transactions, so the stock upgrade messages
+	// cannot bypass the bounded 2/3 governance adapter.
+	upgradeAuthority := authtypes.NewModuleAddress(truedemocracy.ModuleName).String()
 
 	// --- Params keeper (legacy — required by IBC for parameter subspaces) ---
 	app.paramsKeeper = paramskeeper.NewKeeper(
@@ -252,6 +270,14 @@ func NewTrueRepublicApp(logger log.Logger, db dbm.DB, homeDir string, baseAppOpt
 		authority,
 		accountAddressCodec,
 	)
+	app.upgradeKeeper = upgradekeeper.NewKeeper(
+		map[int64]bool{},
+		runtime.NewKVStoreService(keys[upgradetypes.StoreKey]),
+		appCodec,
+		homeDir,
+		app.BaseApp,
+		upgradeAuthority,
+	)
 
 	// --- Capability keeper (IBC port/channel capability management) ---
 	app.capKeeper = capabilitykeeper.NewKeeper(
@@ -269,7 +295,7 @@ func NewTrueRepublicApp(logger log.Logger, db dbm.DB, homeDir string, baseAppOpt
 		keys[ibcexported.StoreKey],
 		ibcSubspace,
 		IBCStakingKeeper{initialized: true},
-		IBCUpgradeKeeper{initialized: true},
+		app.upgradeKeeper,
 		scopedIBCKeeper,
 		authority,
 	)
@@ -296,7 +322,7 @@ func NewTrueRepublicApp(logger log.Logger, db dbm.DB, homeDir string, baseAppOpt
 	app.ibcKeeper.SetRouter(ibcRouter)
 
 	// --- Governance module keepers ---
-	tdKeeper := truedemocracy.NewKeeper(cdc, keys[truedemocracy.ModuleName], truedemocracy.BuildTree(), app.bankKeeper)
+	tdKeeper := truedemocracy.NewKeeper(cdc, keys[truedemocracy.ModuleName], truedemocracy.BuildTree(), app.bankKeeper, app.upgradeKeeper)
 	dexKeeper := dex.NewKeeper(cdc, keys[dex.ModuleName], app.bankKeeper, authority)
 	app.tdKeeper = tdKeeper
 	app.dexKeeper = dexKeeper
@@ -337,6 +363,7 @@ func NewTrueRepublicApp(logger log.Logger, db dbm.DB, homeDir string, baseAppOpt
 	bankModule := bank.NewAppModule(appCodec, app.bankKeeper, app.accountKeeper, nil)
 	crisisModule := crisis.NewAppModule(app.crisisKeeper, false, nil)
 	consensusModule := consensus.NewAppModule(appCodec, app.consensusKeeper)
+	upgradeModule := upgrade.NewAppModule(app.upgradeKeeper, accountAddressCodec)
 	capModule := capability.NewAppModule(appCodec, *app.capKeeper, false)
 	ibcModule := ibc.NewAppModule(app.ibcKeeper)
 	transferModule := transfer.NewAppModule(app.transferKeeper)
@@ -347,6 +374,7 @@ func NewTrueRepublicApp(logger log.Logger, db dbm.DB, homeDir string, baseAppOpt
 		bankModule,
 		crisisModule,
 		consensusModule,
+		upgradeModule,
 		capModule,
 		ibcModule,
 		transferModule,
@@ -361,6 +389,7 @@ func NewTrueRepublicApp(logger log.Logger, db dbm.DB, homeDir string, baseAppOpt
 		authtypes.ModuleName,
 		banktypes.ModuleName,
 		consensusparamtypes.ModuleName,
+		upgradetypes.ModuleName,
 		ibcexported.ModuleName,
 		transfertypes.ModuleName,
 		wasmtypes.ModuleName,
@@ -368,6 +397,7 @@ func NewTrueRepublicApp(logger log.Logger, db dbm.DB, homeDir string, baseAppOpt
 		dex.ModuleName,
 		crisistypes.ModuleName,
 	)
+	app.mm.SetOrderPreBlockers(upgradetypes.ModuleName)
 
 	// BeginBlock order: IBC client updates run first.
 	app.mm.SetOrderBeginBlockers(
@@ -397,10 +427,17 @@ func NewTrueRepublicApp(logger log.Logger, db dbm.DB, homeDir string, baseAppOpt
 	)
 
 	// Register gRPC message handlers via module Configurator.
-	configurator := module.NewConfigurator(appCodec, app.MsgServiceRouter(), app.GRPCQueryRouter())
-	app.mm.RegisterServices(configurator)
+	app.configurator = module.NewConfigurator(appCodec, app.MsgServiceRouter(), app.GRPCQueryRouter())
+	app.mm.RegisterServices(app.configurator)
+	// Fresh chains persist the exact current module versions during x/upgrade's
+	// InitGenesis. Existing chains are intentionally outside GH-184 because
+	// introducing the upgrade store itself requires a separately coordinated
+	// store-loader transition.
+	app.upgradeKeeper.SetInitVersionMap(app.mm.GetVersionMap())
+	app.registerReleaseUpgradeHandlers()
 
 	app.SetInitChainer(app.InitChainer)
+	app.SetPreBlocker(app.PreBlocker)
 	app.SetBeginBlocker(app.BeginBlocker)
 	app.SetEndBlocker(app.EndBlocker)
 	anteHandler, err := authante.NewAnteHandler(authante.HandlerOptions{
@@ -423,6 +460,20 @@ func NewTrueRepublicApp(logger log.Logger, db dbm.DB, homeDir string, baseAppOpt
 	}
 
 	return app
+}
+
+// PreBlocker runs x/upgrade before every BeginBlock. At a due height the old
+// binary halts before any module state is changed; a handler-bearing candidate
+// applies its deterministic migration in the same cached FinalizeBlock.
+func (app *TrueRepublicApp) PreBlocker(ctx sdk.Context, _ *abci.RequestFinalizeBlock) (*sdk.ResponsePreBlock, error) {
+	return app.mm.PreBlock(ctx)
+}
+
+// registerUpgradeHandler is the only application-level handler registration
+// seam. Release binaries register an exact, reviewed plan name; tests use the
+// same seam for halt, failure, retry, and exact-once evidence.
+func (app *TrueRepublicApp) registerUpgradeHandler(name string, migrate func(context.Context, upgradetypes.Plan, module.VersionMap) (module.VersionMap, error)) {
+	app.upgradeKeeper.SetUpgradeHandler(name, migrate)
 }
 
 // InitChainer initializes the chain from genesis state.
@@ -503,6 +554,7 @@ func makeAminoCodec() *codec.LegacyAmino {
 	authtypes.RegisterLegacyAminoCodec(cdc)
 	banktypes.RegisterLegacyAminoCodec(cdc)
 	crisistypes.RegisterLegacyAminoCodec(cdc)
+	upgradetypes.RegisterLegacyAminoCodec(cdc)
 	truedemocracy.RegisterCodec(cdc)
 	dex.RegisterCodec(cdc)
 	return cdc

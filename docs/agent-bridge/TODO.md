@@ -331,3 +331,18 @@
   publish only the bounded compatible-restart claim.
 - [x] Synchronize GH-29, public status, both Bridges, protected PR/CI, final
   `main`, and live Pages evidence before marking Done.
+
+## In Progress - GH-184 governed application upgrade recovery
+
+- [x] Wire real `x/upgrade` with non-signing module authority and remove the
+  IBC upgrade stub.
+- [x] Add immutable-electorate two-thirds schedule/cancel voting through the
+  reserved genesis governance Domain, with conflicting/duplicate/late votes
+  rejected and scheduler failures atomic.
+- [x] Prove four-validator old-binary halt, partial cached-write rollback,
+  fixed v0.4.1 recovery, common hashes, and exact-once restart.
+- [x] Synchronize candidate runbook, limitations, threat register, rollout
+  roadmap, public status, and Bridge evidence.
+- [x] Complete every full local/security gate and independent final review.
+- [ ] Publish protected PR, merge green exact head, verify final `main`, update
+  GH-29 and live Pages, and close both Bridges.

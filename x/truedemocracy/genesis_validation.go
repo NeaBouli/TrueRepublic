@@ -451,6 +451,83 @@ func ValidateGenesisState(genesis GenesisState) error {
 			return fmt.Errorf("invalid verifying key: %w", err)
 		}
 	}
+	if err := validateSoftwareUpgradeGenesis(genesis, domains); err != nil {
+		return err
+	}
+	return nil
+}
+
+func validateSoftwareUpgradeGenesis(genesis GenesisState, domains map[string]Domain) error {
+	proposal := genesis.SoftwareUpgradeProposal
+	if proposal == nil {
+		if len(genesis.SoftwareUpgradeVotes) != 0 || genesis.UpgradeCancelProposal != nil || len(genesis.UpgradeCancelVotes) != 0 {
+			return fmt.Errorf("software-upgrade votes require a proposal")
+		}
+		return nil
+	}
+	domain, found := domains[ReservedGovernanceDomain]
+	if !found {
+		return fmt.Errorf("software-upgrade proposal requires reserved governance domain")
+	}
+	if domain.Options.AnyoneCanJoin {
+		return fmt.Errorf("reserved governance domain cannot allow runtime joins")
+	}
+	if !proposal.Scheduled {
+		return fmt.Errorf("genesis software-upgrade proposal must be scheduled")
+	}
+	if err := validateUpgradePlanName(proposal.Name); err != nil {
+		return fmt.Errorf("invalid genesis software-upgrade plan: %w", err)
+	}
+	if proposal.Height <= 0 {
+		return fmt.Errorf("genesis software-upgrade plan height must be positive")
+	}
+	if len(proposal.Info) > UpgradePlanInfoMaxBytes {
+		return fmt.Errorf("genesis software-upgrade plan info exceeds %d bytes", UpgradePlanInfoMaxBytes)
+	}
+	wantEligible := snapshotEligibleMembers(domain)
+	if len(wantEligible) == 0 || len(wantEligible) != len(proposal.Eligible) {
+		return fmt.Errorf("genesis software-upgrade electorate does not match governance domain")
+	}
+	for i := range wantEligible {
+		if wantEligible[i] != proposal.Eligible[i] {
+			return fmt.Errorf("genesis software-upgrade electorate must exactly match the sorted governance domain")
+		}
+	}
+	if err := validateUpgradeGenesisVoters("software-upgrade", genesis.SoftwareUpgradeVotes, proposal.Eligible); err != nil {
+		return err
+	}
+	if !upgradeThresholdReached(len(genesis.SoftwareUpgradeVotes), len(proposal.Eligible)) {
+		return fmt.Errorf("genesis scheduled software-upgrade proposal lacks two-thirds vote evidence")
+	}
+	cancel := genesis.UpgradeCancelProposal
+	if cancel == nil {
+		if len(genesis.UpgradeCancelVotes) != 0 {
+			return fmt.Errorf("software-upgrade cancellation votes require a cancellation proposal")
+		}
+		return nil
+	}
+	if cancel.Name != proposal.Name || len(cancel.Eligible) != len(proposal.Eligible) {
+		return fmt.Errorf("genesis software-upgrade cancellation does not match proposal")
+	}
+	for i := range proposal.Eligible {
+		if cancel.Eligible[i] != proposal.Eligible[i] {
+			return fmt.Errorf("genesis software-upgrade cancellation electorate mismatch")
+		}
+	}
+	return validateUpgradeGenesisVoters("software-upgrade cancellation", genesis.UpgradeCancelVotes, proposal.Eligible)
+}
+
+func validateUpgradeGenesisVoters(label string, voters, eligible []string) error {
+	seen := make(map[string]struct{}, len(voters))
+	for _, voter := range voters {
+		if !isEligibleSnapshotMember(eligible, voter) {
+			return fmt.Errorf("genesis %s voter is outside the electorate", label)
+		}
+		if _, duplicate := seen[voter]; duplicate {
+			return fmt.Errorf("duplicate genesis %s voter", label)
+		}
+		seen[voter] = struct{}{}
+	}
 	return nil
 }
 

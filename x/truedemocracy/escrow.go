@@ -45,6 +45,9 @@ func (k Keeper) CreateDomainWithEscrow(ctx sdk.Context, name string, admin sdk.A
 	if name == "" {
 		return errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "domain name is required")
 	}
+	if name == ReservedGovernanceDomain {
+		return errorsmod.Wrapf(sdkerrors.ErrInvalidRequest, "domain %s is reserved and can only be anchored in genesis", ReservedGovernanceDomain)
+	}
 	if admin.Empty() {
 		return errorsmod.Wrap(sdkerrors.ErrInvalidAddress, "admin address is required")
 	}
