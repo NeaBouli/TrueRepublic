@@ -72,7 +72,7 @@ STORAGE LAYER
 | **Why Go?** | Cosmos SDK requirement, excellent performance, strong concurrency |
 | **Key Libraries** | Cosmos SDK, CometBFT, Cobra CLI, LevelDB |
 | **Build** | `make build` produces `truerepublicd` binary |
-| **Test** | `./scripts/go-packages.sh go test -race -cover -count=1 -timeout=600s` (1,457 standard-suite Go cases; separate GH-175/GH-178/GH-181 IBC and GH-184 upgrade gates excluded) |
+| **Test** | `./scripts/go-packages.sh go test -race -cover -count=1 -timeout=600s` (1,461 standard-suite Go cases, including GH-187 boundary regressions; separate GH-175/GH-178/GH-181 IBC and GH-184 upgrade gates excluded) |
 
 ### Framework: Cosmos SDK v0.50.15
 
@@ -80,7 +80,7 @@ STORAGE LAYER
 |--------|--------|
 | **Why Cosmos SDK?** | Proven blockchain framework, modular, IBC-ready, battle-tested |
 | **Custom Modules** | `x/truedemocracy`, `x/dex` |
-| **Standard Modules** | auth, bank, crisis, consensus params, capability, IBC, transfer, wasm; staking/governance/distribution remain explicit boundaries |
+| **Standard Modules** | auth, bank, crisis, consensus params, capability, IBC, transfer, wasm, upgrade; `x/staking` and `x/distribution` are unmounted fail-closed boundaries, while governance is custom `x/truedemocracy` |
 | **Codec** | Amino (legacy) + Protobuf (modern) |
 
 ### Consensus: CometBFT v0.38.25

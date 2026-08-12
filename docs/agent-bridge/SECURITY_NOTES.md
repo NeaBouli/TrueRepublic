@@ -452,3 +452,17 @@
   fail-soft empty-state behavior as an explicit rollout blocker. GH-116 makes
   no production, deployment, key, signing, broadcast, account, fund, or
   anonymous-proof change.
+
+## 2026-08-12 - GH-187 fail-closed protocol compatibility boundary
+
+- wasmd's former default query plugins could return empty or zero-valued
+  successful staking/distribution responses through required compatibility
+  keepers. GH-187 installs explicit unsupported-request handlers instead.
+- Default staking/distribution message encoders are also replaced with stable
+  rejection, preventing unsupported standard messages from reaching a later
+  missing-handler failure. The ibc-go adapter no longer fabricates a PoS
+  unbonding duration.
+- Regression tests prove `x/staking` and `x/distribution` remain absent from
+  module, store, genesis, gRPC, message-router, and root CLI surfaces. PoD,
+  ICS-20, CosmWasm, and governed application-upgrade process gates remain
+  green. Dependency upgrades must preserve and re-verify this boundary.

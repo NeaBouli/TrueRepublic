@@ -404,24 +404,25 @@
       "domain": "ibc_upgrades",
       "severity": "high",
       "likelihood": "medium",
-      "status": "blocked",
+      "status": "mitigated",
       "attack_path": "Residual staking or distribution stubs are invoked as if they were supported protocol surfaces.",
       "impact": "Undefined consensus behavior or operator confusion about the supported feature boundary.",
       "controls": [
-        "IBC staking and standard CosmWasm staking/distribution remain explicit stubs; GH-184 replaced the upgrade stub with the real keeper",
-        "Limitations and roadmap documents define the exact supported Cosmos boundary",
-        "Unsupported surfaces must be absent or unmistakably disabled before rollout"
+        "GH-187 replaces required IBC and CosmWasm staking/distribution compatibility stubs with explicit fail-closed adapters",
+        "x/staking and x/distribution are absent from module, store, genesis, gRPC, message-router, and CLI surfaces",
+        "Limitations, API, roadmap, and status documents define the exact supported Cosmos boundary"
       ],
       "evidence": [
         "app.go",
+        "protocol_compatibility_boundary_test.go",
         "docs/LIMITATIONS.md",
         "docs/ROLLOUT_ROADMAP.md"
       ],
-      "residual_risk": "The remaining staking and distribution compatibility stubs are documented but not yet implemented, replaced, or removed.",
-      "residual_severity": "high",
+      "residual_risk": "Upstream ibc-go and wasmd interfaces still require compatibility adapters; repository regressions make them deterministic and fail-closed, but dependency upgrades must re-verify the boundary.",
+      "residual_severity": "low",
       "owner": "security-maintainers",
-      "next_gate": "GH-29 Phase 3: implement, replace, or explicitly remove remaining stubs and document the boundary",
-      "umbrella_issue": "GH-29"
+      "next_gate": "Preserve the fail-closed boundary under dependency upgrades and re-verify it during the GH-29 Phase 5 security-depth review",
+      "umbrella_issue": ""
     },
     {
       "id": "TM-CLI-001",

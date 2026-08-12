@@ -346,3 +346,16 @@
 - [x] Complete every full local/security gate and independent final review.
 - [x] Publish protected PR, merge green exact head, verify final `main`, update
   GH-29 and live Pages, and close both Bridges.
+
+## In progress - GH-187 protocol compatibility boundary
+
+- [x] Replace success-like IBC/CosmWasm staking and distribution stubs with
+  stable, explicit fail-closed compatibility adapters.
+- [x] Prove `x/staking` and `x/distribution` stay absent from module, store,
+  genesis, gRPC, message-router, and CLI surfaces.
+- [x] Preserve ICS-20 and governed-upgrade recovery through both real process
+  gates; publish the exact supported Cosmos/IBC boundary in candidate docs.
+- [ ] Complete all repository, security, deterministic-build, client, Rust,
+  and independent final-review gates.
+- [ ] Publish through protected PR, pass exact-head CI/review, merge, verify
+  final `main`, update GH-29/live Pages/both Bridges, and close GH-187.

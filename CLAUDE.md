@@ -12,7 +12,7 @@ source of current security or production-readiness claims.
 - Recovery epic: GitHub issue #4
 - Continuous handoff: `BRIDGE.md` and `docs/agent-bridge/`
 - Authoritative machine-readable status: `docs/status.json`
-- Verified recovery total: 1,624 standard-suite cases (1,457 Go, 26 Rust, 141
+- Verified recovery total: 1,628 standard-suite cases (1,461 Go, 26 Rust, 141
   maintained-client); run the separate opt-in IBC recovery gate with
   `make ibc-two-chain`
 - PNYX cap: 21,000,000 PNYX = 21,000,000,000,000 `upnyx`
@@ -125,9 +125,10 @@ block, restarts the same container and requires the height to advance.
 home. `init` binds the generated Comet private-validator public key to the PoD
 bootstrap validator. Native and Docker restart smoke tests must stay green.
 
-IBC core/transfer wiring starts in the node, but staking and upgrade keepers are
-explicit stubs. Do not claim production IBC, relayer or upgrade support without
-multi-node evidence and replacement/approval of those boundaries.
+IBC core/transfer and the governed application-upgrade path are wired. GH-187
+keeps `x/staking` and `x/distribution` unmounted and rejects their CosmWasm and
+IBC compatibility surfaces fail-closed. Do not claim production IBC, external
+relayer/counterparty, IBC client-upgrade, or arbitrary migration support.
 
 ## ZKP and anonymity boundaries
 

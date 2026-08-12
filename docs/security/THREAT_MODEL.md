@@ -160,10 +160,12 @@ JSON register.
   migration failure/recovery path. Residual: external relayer/counterparty,
   pre-existing-chain store introduction, IBC client upgrades, and arbitrary
   cross-version evidence remain absent, so rollout remains exit-gated.
-- **TM-IBC-002** (high/medium, blocked → GH-29): residual staking and
-  distribution stubs. Verified: the upgrade stub is replaced by the real
-  keeper; remaining stubs and their boundary are explicit. Blocked: those
-  remaining stubs are not yet implemented, replaced, or removed.
+- **TM-IBC-002** (high/medium, mitigated → GH-29): unsupported staking and
+  distribution compatibility surfaces. GH-187 replaces ambiguous success-like
+  stubs with deterministic fail-closed IBC/CosmWasm adapters and proves
+  `x/staking` and `x/distribution` remain absent from module, store, genesis,
+  gRPC, message-router, and CLI surfaces. Residual: upstream interface changes
+  must preserve this boundary under dependency upgrades.
 
 ### client_wallet_rpc
 

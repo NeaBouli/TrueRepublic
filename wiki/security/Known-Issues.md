@@ -24,8 +24,10 @@ reward recipient binding are still required.
   consensus-breaking migration recovery, authenticated consensus-key rotation,
   compromised consensus-key eviction/recovery, and network-policy drills remain
   open.
-- IBC staking/upgrade and standard CosmWasm staking/distribution remain explicit
-  stubs.
+- GH-187 makes unsupported IBC/CosmWasm staking and distribution adapters
+  fail closed and proves `x/staking`/`x/distribution` remain unmounted. External
+  relayers/counterparties, IBC client upgrades, and arbitrary migrations remain
+  unqualified.
 - Production monitoring, alerting, incident response, validator key custody,
   and release procedures are not independently verified.
 
