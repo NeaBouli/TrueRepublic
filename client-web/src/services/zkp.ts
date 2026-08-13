@@ -127,9 +127,9 @@ export class ZKPService {
   }
 
   /**
-   * Compute the nullifier hash for double-voting prevention.
-   * nullifierHash = MiMC(identitySecret, externalNullifier)
-   * This matches Go ComputeNullifier().
+   * Preview-only nullifier placeholder for the disabled mock flow.
+   * It is not the canonical MiMC(identitySecret, externalNullifier) encoding;
+   * real proof generation and submission remain unavailable.
    */
   computeNullifierHash(
     identitySecret: string,

@@ -1,6 +1,6 @@
 # TrueRepublic Road to Rollout
 
-Updated: 2026-08-12
+Updated: 2026-08-13
 
 TrueRepublic has a recovered and CI-verified v0.4 engineering foundation. It
 is **not production-ready, mainnet-ready, or approved for real funds or keys**.
@@ -19,8 +19,9 @@ intentionally more granular than the public 59-item tracker.
 
 - The ordered recovery merge chain is on `main`.
 - The maximum supply is fixed at 21,000,000 PNYX.
-- The source of truth records 1,810 recovery-verified tests: 1,473 Go, 26 Rust,
-  and 311 maintained-client tests. GH-121's real registered browser-query
+- The source of truth records 1,837 recovery-verified tests: 1,500 Go, 26 Rust,
+  and 311 maintained-client tests. The Go total includes GH-203's versioned,
+  test-only ZKP circuit/encoding freeze. GH-121's real registered browser-query
   boundary and GH-115's local client-chain delivery
   case are separately gated and excluded from this arithmetic, as is GH-172's
   real contention/replay/restart process harness. GH-175/GH-178/GH-181's

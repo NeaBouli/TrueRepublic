@@ -62,6 +62,11 @@ func TestComputeCommitment(t *testing.T) {
 	if allZero {
 		t.Fatal("commitment should not be all zeros")
 	}
+
+	nonCanonical := fr.Modulus().FillBytes(make([]byte, 32))
+	if _, err := ComputeCommitment(nonCanonical); err == nil {
+		t.Fatal("commitment accepted a non-canonical BN254 field element")
+	}
 }
 
 func TestComputeCommitmentDeterministic(t *testing.T) {
@@ -82,6 +87,11 @@ func TestComputeNullifier(t *testing.T) {
 	}
 	if len(nullifier) != 32 {
 		t.Fatalf("expected 32 bytes, got %d", len(nullifier))
+	}
+
+	nonCanonical := fr.Modulus().FillBytes(make([]byte, 32))
+	if _, err := ComputeNullifier(secret, nonCanonical); err == nil {
+		t.Fatal("nullifier accepted a non-canonical external nullifier")
 	}
 }
 

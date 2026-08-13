@@ -415,3 +415,18 @@
   independent review with no remaining P0/P1/P2/P3.
 - [x] Merge PR #201 as `b0e963f`, close GH-200, and verify final-main workflows
   and live Pages without changing rollout or production-readiness claims.
+
+## In progress - GH-203 ZKP circuit-identity freeze
+
+- [x] Add the strict versioned machine-readable circuit/encoding specification
+  with explicit test-only/non-production classification.
+- [x] Add fail-closed Go cross-checks against Go constants/behavior, the GH-198
+  fixture manifest/golden vector, the active go.mod gnark toolchain, and the
+  maintained-client zkpEncoding contract with hard-false `isSubmittable`.
+- [x] Prove deterministic in-memory constraint-system byte/hash parity against
+  pinned `membership_v2.cs` without regenerating or comparing PK/VK/proof
+  bytes.
+- [x] Complete Sol line-by-line review, full local/security gates, candidate
+  arithmetic recount, and independent re-review.
+- [ ] Publish a protected PR, merge a green exact head, verify final main and
+  Pages, synchronize GH-29 and both Bridges, and close GH-203.

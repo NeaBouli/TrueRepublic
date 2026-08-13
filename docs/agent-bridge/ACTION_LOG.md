@@ -3927,3 +3927,55 @@
   single-party toxic-waste artifacts are not a production ceremony, audited
   prover, real-key flow or deployment. Rollout remains 32/59 and production
   remains false.
+
+## 2026-08-13 20:35 EEST - GH-203 local candidate passed
+
+- Added strict versioned `configs/security/zkp-circuit.json` and fail-closed
+  `x/truedemocracy/zkp_circuit_spec_test.go`: spec/Go-constant/behavior,
+  fixture manifest/golden-vector, active `go.mod` toolchain, maintained-client
+  `zkpEncoding`/`isSubmittable` contract, and 17 drift/strict-decode negative
+  mutations all fail closed.
+- In-memory `frontend.Compile` of `MembershipCircuit` serializes
+  byte/hash-identical to pinned `membership_v2.cs` without modifying the
+  fixture; PK/VK/proof bytes are excluded because groth16.Setup samples random
+  toxic waste and is not reproducible.
+- Focused evidence: six new Go test functions (27 PASS lines with subtests),
+  full `x/truedemocracy` package pass, 5 maintained-client zkp Vitest cases,
+  go vet/gofmt clean, docs consistency and `git diff --check` pass. Rollout
+  remains 32/59 and production remains false; Sol owns review, full gates and
+  candidate-arithmetic recount.
+
+## 2026-08-13 21:18 EEST - GH-203 review fixes and complete local gates passed
+
+- Sol resolved Kimi's independent P2 finding by making `MiMCHashBytes` reject
+  non-canonical BN254 elements instead of allowing gnark-crypto's write error
+  to be discarded. Existing commitment/nullifier tests and the circuit-spec
+  behavior test now pin rejection at the field modulus.
+- Sol also closed the P3 hardening gaps: strict fixture/spec JSON recursively
+  rejects duplicate object keys, and the disabled client mock-nullifier comment
+  no longer claims canonical Go parity. Kimi's final read-only re-review found
+  no remaining P0/P1/P2/P3 and returned merge-ready.
+- PASS: full 1,500-case Go race/coverage suite, 26 Rust tests, 10 Node + 301
+  Vitest cases, client lint/build/bundle/high-audit, pinned govulncheck,
+  staticcheck, gitleaks and their failure-semantics contracts, Rust audit (five
+  allowed warnings, no blocking vulnerability), `go mod verify`, docs
+  consistency, strict JSON and diff hygiene.
+- Public source-of-truth arithmetic is 1,837 cases. Rollout remains 32/59 and
+  production false; only protected publication and final-main verification are
+  pending.
+
+## 2026-08-13 21:38 EEST - GH-203 PR #204 review fixes applied
+
+- Exact head `184139f` passed all 24 PR contexts. CodeRabbit's two actionable
+  threads were valid: the canonical-rule wording conflated accepted input
+  length with the fixed encoded element, and Quickstart omitted `-count=1`.
+- Three valid nits were also fixed: tokenizer errors now remain diagnostic,
+  `go.mod` is parsed structurally with `golang.org/x/mod/modfile` and rejects
+  gnark replacements/exclusions, and LIMITATIONS explicitly classifies the
+  committed keys as randomized single-party toxic-waste test artifacts.
+- Focused GH-203 evidence remains 27 PASS lines and the drift test passes 20
+  repetitions. Kimi's targeted re-review approved; Sol also hardened mixed
+  direct/indirect duplicate rejection. Full Go race/coverage, pinned
+  govulncheck/staticcheck/gitleaks contracts, module verification, docs
+  consistency and diff hygiene pass again. No public arithmetic, rollout or
+  production claim changed; replacement-head publication is pending.

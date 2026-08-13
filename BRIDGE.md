@@ -1,5 +1,81 @@
 # TrueRepublic Agent Bridge
 
+## 2026-08-13 21:38 EEST GH-203 PR #204 → Review fixes in progress
+
+- Exact head `184139f` passed all 24 reported PR contexts, including the
+  14m35s multi-validator recovery gate, CodeRabbit and DeepScan. CodeRabbit
+  then left two actionable threads plus three valid hardening nits.
+- Sol applied the bounded review fixes: distinguish 1-32-byte inputs from their
+  32-byte canonical field encoding, document fresh `-count=1` tests, preserve
+  tokenizer errors, parse `go.mod` structurally with `x/mod/modfile` while
+  rejecting replacements/exclusions, and explicitly classify committed keys
+  as randomized single-party toxic-waste test artifacts.
+- Focused GH-203 tests still produce exactly 27 PASS lines; 20 randomized-order
+  drift repetitions pass. Kimi's targeted review approved the fixes; Sol also
+  rejected mixed direct/indirect module duplicates. Full Go race/coverage,
+  pinned security tools, module verification, docs consistency and diff hygiene
+  pass again. Rollout stays 32/59 and production false.
+- **Next:** commit/push a new PR head,
+  resolve both review threads, and require all exact-head checks again.
+
+## 2026-08-13 21:18 EEST GH-203 ZKP circuit-identity freeze → Locally merge-ready
+
+- Sol reviewed Kimi's implementation line by line. Kimi's independent review
+  found a P2 canonical-field gap in the pre-existing Go hash helper and P3
+  strict-JSON/comment truth gaps; Sol fixed them by rejecting BN254 values at
+  or above the scalar modulus, rejecting duplicate JSON keys recursively, and
+  correcting the disabled mock-flow comment. Kimi's final re-review reports no
+  remaining P0/P1/P2/P3 and a merge-ready verdict.
+- Final local evidence passes: `make build && make verify` (1,500 Go PASS lines,
+  race/coverage), 26 Rust tests, 10 Node + 301 Vitest tests, client lint/build/
+  bundle/high-audit, pinned govulncheck/staticcheck/gitleaks positive and
+  negative contracts, Rust audit with five allowed warnings and no blocking
+  vulnerability, Go module verification, docs consistency, JSON and diff
+  hygiene.
+- Source-of-truth arithmetic is 1,837 = 1,500 Go + 26 Rust + 311 maintained
+  client. Rollout remains 32/59 and production remains false. No PK/VK/proof
+  regeneration, ceremony, prover, submission, keys/funds or deployment.
+- **Next:** commit and publish the protected GH-203 PR, require green exact-head
+  checks and zero unresolved review threads, merge, then verify final main,
+  Pages, GH-29 and both Bridges.
+
+## 2026-08-13 20:35 EEST GH-203 ZKP circuit-identity freeze → Local candidate delivered
+
+- Kimi delivered the bounded secret-free slice on `test/GH-203-zkp-circuit-freeze`:
+  strict versioned `configs/security/zkp-circuit.json` plus fail-closed
+  `x/truedemocracy/zkp_circuit_spec_test.go` cross-checks against Go
+  constants/behavior, the GH-198 fixture manifest/golden vector, the active
+  `go.mod` gnark v0.14.0 / gnark-crypto v0.19.2 direct requires, and the
+  maintained-client `zkpEncoding` contract with hard-false `isSubmittable`.
+- In-memory recompilation of `MembershipCircuit` serializes byte/hash-identical
+  to pinned `membership_v2.cs` non-destructively; PK/VK/proof bytes are never
+  regenerated or compared (groth16.Setup samples random toxic waste).
+- Focused gates pass: six new Go test functions (27 PASS lines with subtests),
+  full truedemocracy package, 5 maintained-client zkp Vitest cases, vet/gofmt,
+  docs consistency, diff hygiene. Rollout remains 32/59, production false.
+- **Next:** Sol line-by-line integration/security review, complete local gates,
+  candidate-arithmetic recount, independent re-review, protected PR and
+  final-main verification.
+
+## 2026-08-13 19:55 EEST GH-203 ZKP circuit-identity freeze → In Progress
+
+- **Branch/issue:** `test/GH-203-zkp-circuit-freeze`,
+  https://github.com/NeaBouli/TrueRepublic/issues/203 from exact verified main
+  `21c2e1f` with no open PR or local diff.
+- **Scope:** add a strict versioned circuit/encoding contract, deterministic
+  compiled constraint-system parity, active `go.mod` toolchain binding, and
+  fail-closed Go/fixture/client drift tests. Kimi K3 owns one bounded
+  secret-free implementation slice; Sol owns architecture, cryptographic
+  safety judgment, diff review, full verification, publication and closure.
+- **Hard boundary:** Groth16 setup samples random toxic waste. PK/VK byte
+  reproducibility, ceremony provenance, real prover integration, submission,
+  reward payout, real keys/funds, deployment, release and network mutation are
+  excluded. `isSubmittable` remains hard false; rollout remains 32/59 and
+  production remains false.
+- **Next:** Kimi implementation, Sol line-by-line integration/security review,
+  complete local gates, independent re-review, protected PR and final-main
+  verification.
+
 ## 2026-08-13 — Public security audit handoff — OPEN
 
 - A private VLABS operator audit records unresolved CI-hygiene and dependency-

@@ -1,0 +1,69 @@
+{
+  "schema": "truerepublic/zkp-circuit/v1",
+  "circuit_id": "truerepublic/membership-vote/v2-bn254-mimc-depth20",
+  "classification": "TEST-ONLY SINGLE-PARTY TOXIC WASTE",
+  "production_allowed": false,
+  "curve": {
+    "name": "BN254",
+    "scalar_field_modulus": "21888242871839275222246405745257275088548364400416034343698204186575808495617",
+    "scalar_field_bytes": 32,
+    "byte_encoding": "big-endian",
+    "canonical_rule": "inputs are 1-32 big-endian bytes, left-padded to a 32-byte big-endian field element; values >= scalar field modulus are rejected"
+  },
+  "hash": {
+    "algorithm": "MiMC",
+    "rounds": 110,
+    "exponent": 5,
+    "seed": "seed",
+    "constants": "110 round constants: keccak256 iterated starting from keccak256(\"seed\"), each digest reduced modulo the BN254 scalar field",
+    "construction": "Miyaguchi-Preneel"
+  },
+  "merkle": {
+    "depth": 20,
+    "leaf": "identity_commitment",
+    "zero_leaf": "MiMC(0)",
+    "node_rule": "MiMC(left, right) per level; pathIndex 0 = current node is the left child, 1 = right child"
+  },
+  "identity_commitment": "commitment = MiMC(identitySecret); identitySecret is 1-32 bytes, big-endian",
+  "external_nullifier": "externalNullifier = hashToField(voteContext(chainID, domainName, issueName, suggestionName)); rating-independent, stable per suggestion",
+  "nullifier_hash": "nullifierHash = MiMC(identitySecret, externalNullifier)",
+  "signal_hash": "signalHash = hashToField(voteContext(chainID, domainName, issueName, suggestionName, rating)); binds chain, domain, issue, suggestion and the exact rating",
+  "vote_context_encoding": {
+    "domain_separator": "TrueRepublic/vote/v1",
+    "fields": [
+      "chain_id",
+      "domain_name",
+      "issue_name",
+      "suggestion_name"
+    ],
+    "string_length_prefix": "uint32 big-endian",
+    "rating_encoding": "int64 big-endian, appended only for the signal"
+  },
+  "hash_to_field": "SHA-256(data) as big-endian integer reduced modulo the BN254 scalar field, serialized as 32 big-endian bytes",
+  "public_input_order": [
+    "merkle_root",
+    "nullifier_hash",
+    "external_nullifier",
+    "signal_hash"
+  ],
+  "toolchain": {
+    "gnark": "v0.14.0",
+    "gnark_crypto": "v0.19.2"
+  },
+  "fixtures": {
+    "directory": "x/truedemocracy/testdata/zkp",
+    "manifest": "manifest.json",
+    "manifest_schema": "truerepublic/zkp-test-fixture/v1",
+    "golden_vector": "golden_vector.json",
+    "golden_vector_schema": "truerepublic/zkp-golden-vector/v1",
+    "constraint_system": "membership_v2.cs"
+  },
+  "client_encoding_contract": "client-web/src/services/zkpEncoding.ts",
+  "client_submission_guard": "client-web/src/services/zkp.ts isSubmittable must return false",
+  "exclusions": [
+    "groth16.Setup samples random toxic waste: proving key, verifying key and proof bytes are NOT reproducible and MUST NOT be regenerated, compared or claimed as ceremony output",
+    "only the compiled constraint system is deterministic and pinned by byte/hash parity",
+    "no production ceremony, real prover, submission, reward binding, real keys/funds, deployment, release or network mutation",
+    "client isSubmittable remains hard false"
+  ]
+}
