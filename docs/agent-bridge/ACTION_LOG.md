@@ -1,5 +1,17 @@
 # Action Log
 
+## 2026-08-14 — GH-206 merged and final-main gates passed
+
+- Exact PR #207 head `a2b3d17` passed all 25 reported contexts with zero open
+  review threads and squash-merged as `b9e0a06`; GH-206 closed.
+- Final-main Client `31754724759`, Go `31754724837`, Security `31754724800`,
+  Docs `31754724828`, reproducible Linux `31754724745`, dependency graph
+  `31754727509`, and Pages `31754723966` pass. Live status remains 1,854 tests,
+  rollout 32/59 and production false.
+- No rollout checkbox is credited because this is synthetic test-only proof
+  compatibility, not production ZKP qualification. This append-only closeout
+  synchronization remains the final documentation-only publication step.
+
 ## 2026-08-14 — GH-206 PR review findings remediated locally
 
 - All nine CodeRabbit threads were checked against the current PR head. The

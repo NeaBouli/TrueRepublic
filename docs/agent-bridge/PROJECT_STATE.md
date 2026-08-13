@@ -1,16 +1,18 @@
 # Project State
 
-GH-206 is locally review-complete on `feature/GH-206-zkp-client-prover`: the
-maintained client generates a fresh real Groth16 proof through an isolated
-Go/WASM command from exact synthetic GH-198 fixtures, and the native Go verifier
-accepts it. Complete local Go/Rust/client/docs gates pass. Candidate arithmetic
-is 1,854 = 1,511 Go + 26 Rust + 317 client; rollout remains 32/59 and production
-false. Submission remains hard-disabled and the work claims no production
-ceremony or audited prover. Protected PR, merge, final-main and Pages evidence
-remain before Done. Kimi review was unavailable due provider quota HTTP 403;
-independent read-only review findings were fully remediated by Sol.
+GH-206 is complete through PR #207, merged as `b9e0a06`. Exact reviewed head
+`a2b3d17` passed all 25 reported contexts with zero open review threads.
+Final-main Client `31754724759`, Go `31754724837`, Security `31754724800`, Docs
+`31754724828`, reproducible Linux `31754724745`, dependency graph
+`31754727509`, and Pages `31754723966` pass. Live Pages publishes 1,854 = 1,511
+Go + 26 Rust + 317 client, rollout 32/59 and production false. The maintained
+client proves real synthetic Go/WASM-to-native compatibility, while submission
+remains hard-disabled and no production ceremony, audited prover, key, fund,
+deployment or release is claimed. Kimi review was unavailable due provider
+quota HTTP 403; independent and hosted review findings were fully remediated by
+Sol.
 
-Updated: 2026-08-13 22:16 UTC
+Updated: 2026-08-13 23:56 UTC
 
 ---
 
