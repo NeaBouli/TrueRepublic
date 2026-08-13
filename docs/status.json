@@ -4,10 +4,10 @@
   "release_date": "2026-03-04",
   "tests": {
     "status": "recovery_verified_locally",
-    "total": 1795,
-    "go": 1461,
+    "total": 1810,
+    "go": 1473,
     "rust": 26,
-    "frontend": 308,
+    "frontend": 311,
     "historical_total": 577
   },
   "web_client": {
@@ -16,9 +16,9 @@
     "components": 44,
     "routes": 23,
     "stores": 9,
-    "services": 15,
-    "build_size_gzip": "355.07 kB total JavaScript",
-    "initial_entry_gzip": "71.15 kB",
+    "services": 16,
+    "build_size_gzip": "355.09 kB total JavaScript",
+    "initial_entry_gzip": "71.16 kB",
     "max_lazy_route_gzip": "4.91 kB",
     "lazy_route_entries": 20,
     "bundle_budget": "enforced_during_build"
@@ -58,7 +58,7 @@
     "topologypolicy": 56,
     "treasury": 36,
     "dex": 138,
-    "truedemocracy": 552
+    "truedemocracy": 564
   },
   "token": {
     "symbol": "PNYX",

@@ -389,3 +389,17 @@
 - [x] Publish protected PR #194, pass exact-head checks with zero review
   threads, merge as `10a9a83`, synchronize GH-29/live Pages/Bridges, and close
   GH-193.
+
+## In progress - GH-198 test-only ZKP compatibility foundation
+
+- [x] Pin synthetic single-party CS/PK/VK/golden-proof artifacts with exact
+  checksums, sizes, circuit ID, public-input order and toxic-waste boundary.
+- [x] Replay the real proof through verifier and keeper; reject corruption,
+  wrong root/chain/rating, manifest drift and trailing data.
+- [x] Match maintained-client BN254 MiMC, field and vote-context encodings to the
+  shared Go vector while keeping `isSubmittable` hard false.
+- [x] Pass full local repository/client/security/docs gates and Kimi review.
+- [x] Reconcile PR #197 through merged commit `fc5b418` and rebase the verified
+  candidate without changing the approved GH-198 scope.
+- [ ] Complete PR #199 review, pass exact-head checks, merge, verify final
+  main/Pages/Bridges and close GH-198.

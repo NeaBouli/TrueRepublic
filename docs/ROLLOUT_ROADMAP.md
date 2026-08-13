@@ -19,8 +19,8 @@ intentionally more granular than the public 59-item tracker.
 
 - The ordered recovery merge chain is on `main`.
 - The maximum supply is fixed at 21,000,000 PNYX.
-- The source of truth records 1,795 recovery-verified tests: 1,461 Go, 26 Rust,
-  and 308 maintained-client tests. GH-121's real registered browser-query
+- The source of truth records 1,810 recovery-verified tests: 1,473 Go, 26 Rust,
+  and 311 maintained-client tests. GH-121's real registered browser-query
   boundary and GH-115's local client-chain delivery
   case are separately gated and excluded from this arithmetic, as is GH-172's
   real contention/replay/restart process harness. GH-175/GH-178/GH-181's
@@ -97,6 +97,12 @@ recovery, upgrade, and rollback results on clean infrastructure.
   binding without leaking voter identity.
 - [ ] Complete independent cryptographic, privacy, and trusted-setup review.
 - [ ] Keep anonymous submission fail-closed until every item above passes.
+
+GH-198 establishes a deliberately test-only compatibility foundation: pinned
+single-party fixture artifacts, checksums, synthetic golden proofs, Go keeper
+replay, and maintained-client MiMC/context parity. These forge-capable fixtures
+are not ceremony output and do not complete any production checkbox above; the
+client remains unconditionally non-submittable.
 
 **Exit gate:** a real maintained-client proof must verify on-chain under the
 published circuit identity, with no unresolved critical or high audit finding.

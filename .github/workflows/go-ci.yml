@@ -182,6 +182,12 @@ jobs:
       - name: Enforce critical package coverage floors
         run: ./scripts/check-critical-coverage.sh
 
+      - name: Verify pinned test-only ZKP compatibility artifacts
+        run: >-
+          go test ./x/truedemocracy
+          -run '^(TestZKPFixture|TestZKPGoldenProofKeeperReplay)'
+          -count=1 -timeout=300s
+
       - name: Test
         run: CGO_ENABLED=1 ./scripts/go-packages.sh go test -race -cover -count=1 -timeout=600s
 

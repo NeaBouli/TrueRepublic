@@ -6290,3 +6290,81 @@ exclusion, CI wiring, and documentation boundaries.
   real-key/account/fund, release or deployment action.
 
 ---
+
+## 2026-08-13 12:55 EEST GH-198 ZKP compatibility foundation → In Progress
+
+- User granted an exact bounded approval for GH-198. Scope is repository-only,
+  explicitly test-only Groth16 artifacts, synthetic golden vectors, Go/client
+  encoding and proof compatibility, negative tests, and deterministic CI gates.
+- Safety boundary: no consensus wire-format or active genesis-VK change, no
+  production ceremony or keys, no public network/RPC, no real account/funds,
+  no reward-recipient design, no deployment, and no anonymous UI/transaction
+  enablement. `isSubmittable` must remain false.
+- Baseline is clean `origin/main` `954b11b`. A separate owner-authored docs-only
+  PR #197 modifies only `BRIDGE.md`; it was inspected read-only and is preserved
+  without merge, edit, or attribution to GH-198. GH-198 uses isolated branch
+  `feat/GH-198-zkp-compatibility`.
+- Kimi's read-only inventory confirmed the chain verifier and randomized
+  test-time setup exist, while no committed artifact set, deterministic vector
+  replay, maintained-client prover, or cross-language encoding gate exists.
+  Claude independently identified a test-injectable client prover seam that
+  preserves the fail-closed production boundary.
+- Next: Kimi implements the isolated Go artifact/vector slice; Sol reviews every
+  byte, integrates client/CI/security work, runs the complete relevant gates,
+  and reconciles PR #197 before GH-198 publication so Bridge history cannot slip.
+
+---
+
+## 2026-08-13 15:18 EEST GH-198 implementation and local gates → PASS
+
+- Added immutable test-only CS (1,656,948 bytes), PK (2,382,883), VK (460) and
+  synthetic golden-vector/manifest artifacts. Exact size/SHA-256, circuit ID,
+  public-input order, CS/PK decoding, canonical VK shape/fingerprint, proof and
+  keeper replay, corruption, wrong root/chain/rating, manifest drift and trailing
+  data are fail-closed. The env-gated generator intentionally performs a new
+  randomized single-party setup; regeneration is not a production ceremony.
+- Added a maintained-client BN254 MiMC and vote-context compatibility module plus
+  shared-vector tests. The only service integration is a test-injectable prover;
+  `isSubmittable` remains hard false and no transaction registration/UI broadcast
+  path was added.
+- PASS: focused Go/client tests; full 1,473-case Go race/coverage suite; 10 Node +
+  301 Vitest = 311 client cases; ESLint; TypeScript/Vite build and bundle budgets
+  (355.09 kB total); high audit; vet; critical coverage; docs/JSON/retirement
+  checks; pinned Gitleaks v8.30.1 maintained-tree scan with no leak.
+- Kimi independently verified MiMC constants/rounds/compression, Keccak variant,
+  field/context/rating encoding, fail-closed client and artifact boundaries and
+  found no P0/P1/P2. Sol fixed its P3 clean-failure notes for unexpected fixture
+  directories and malformed 32-byte hex. The accepted residual P3 is ~3.9 MB Git
+  growth for forge-capable test material; production ZKP risk remains critical.
+- Public arithmetic is 1,810 standard cases. Rollout remains 32/59 because no
+  production ZKP checkbox is claimed. Next: reconcile separate PR #197, commit,
+  protected PR checks/review, merge and final main/Pages/Bridge verification.
+
+---
+
+## 2026-08-13 15:22 EEST PR #197 reconciled → GH-198 publication-ready
+
+- Owner-authored docs-only PR #197 passed its reported security contexts and was
+  admin-squash-merged as `fc5b418`; its remote branch was deleted. Its public
+  audit handoff remains intact at the top of the append-only root Bridge.
+- GH-198 rebased cleanly onto exact `origin/main` `fc5b418` with no conflict or
+  lost line. Candidate commit is now `028a555`; protected publication is next.
+
+---
+
+## 2026-08-13 15:41 EEST GH-198 review follow-up → PASS
+
+- Independently verified the GitHub review findings before changing code. The
+  fixture loader now exercises its exact checksum rejection helper, keeper replay
+  checks `AddMember`, the client prover seam proves exact input forwarding, and
+  empty MiMC elements match Go field-zero behavior. Strict JSON now uses one
+  explicit EOF check; no production or consensus path changed.
+- Synchronized the current Bridge state for completed PR #197 reconciliation.
+  Full post-review Go `-race ./...` passes. Full client evidence remains 10 Node
+  + 301 Vitest cases, 3 skipped; lint, TypeScript/Vite build, bundle budgets
+  (entry 72,868 bytes, 20 lazy routes, max 5,030, total 363,613), and high audit
+  all pass. Public arithmetic therefore remains 1,810 and rollout remains 32/59.
+- No known P0/P1/P2 remains. The next protected head must rerun every GitHub
+  context and close all review threads before merge.
+
+---

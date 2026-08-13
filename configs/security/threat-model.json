@@ -342,9 +342,12 @@
       "evidence": [
         "x/truedemocracy/anonymity.go",
         "client-web/src/services/zkp.ts",
+        "client-web/src/services/zkpEncoding.test.ts",
+        "x/truedemocracy/zkp_artifacts_test.go",
+        "x/truedemocracy/testdata/zkp/manifest.json",
         "docs/agent-bridge/SECURITY_NOTES.md"
       ],
-      "residual_risk": "No real prover, reproducible circuit artifacts, or browser-to-chain real-proof compatibility tests exist; this register claims none.",
+      "residual_risk": "GH-198 pins forge-capable single-party test artifacts and cross-language synthetic proof vectors, but no production ceremony artifact, maintained-browser prover, or enabled browser-to-chain anonymous submission exists; this register claims none.",
       "residual_severity": "critical",
       "owner": "security-maintainers",
       "next_gate": "GH-29 Phase 2 exit gate: a real maintained-client proof verifies on-chain under the published circuit identity",

@@ -3850,3 +3850,40 @@
   `31657679040`, and Pages `31657678393` pass. GH-29 is checked and live Pages
   publishes 1,795 cases, rollout 32/59, phase work 32/51, Phase 6 6/7 and the
   GH-193 wallet-safety boundary. No production or real-key/fund action occurred.
+
+## 2026-08-13 12:55 EEST - GH-198 approved and isolated
+
+- Opened GH-198 with the exact test-only ZKP compatibility scope and explicit
+  exclusions. Created `feat/GH-198-zkp-compatibility` from clean main `954b11b`.
+- Preserved separate owner-authored PR #197 after a read-only overlap check; it
+  modifies only the root Bridge and will be reconciled before publication.
+- Kimi owns the bounded Go artifact/golden-vector implementation slice. Sol owns
+  security boundaries, integration, full tests, CI/docs and final publication.
+
+## 2026-08-13 15:18 EEST - GH-198 local candidate passed
+
+- Pinned ~3.9 MB of explicitly forge-capable test-only Groth16 CS/PK/VK and a
+  synthetic golden vector; strict Go replay/negative gates and maintained-client
+  MiMC/context parity pass without changing consensus or enabling submission.
+- Full relevant local evidence passes: 1,473 Go race/coverage cases, 311 client
+  cases, lint/build/budgets/audit, vet/coverage, docs/JSON/retirement contracts
+  and pinned Gitleaks. Kimi found no P0/P1/P2; Sol closed two P3 test-loader nits.
+- Rollout stays 32/59: this is compatibility foundation, not ceremony, audited
+  production prover, reward binding or browser-to-chain enablement.
+
+## 2026-08-13 15:22 EEST - PR #197 reconciled
+
+- Merged the independent owner-authored docs-only PR #197 as `fc5b418`, retained
+  its root-Bridge audit handoff, and rebased GH-198 cleanly onto that exact main.
+- No GH-198 implementation or evidence line was lost; protected publication is
+  now unblocked.
+
+## 2026-08-13 15:41 EEST - GH-198 review follow-up passed
+
+- Verified and addressed the valid GitHub review findings with bounded test and
+  state-record changes only: exact loader checksum rejection, checked keeper
+  setup, complete prover-input forwarding, Go-compatible empty MiMC elements,
+  and a single strict JSON EOF check.
+- Post-review full Go race and full client test/lint/build/budget/high-audit
+  gates pass. Test arithmetic remains 1,810 and rollout remains 32/59; no
+  production ZKP capability or consensus format was enabled.

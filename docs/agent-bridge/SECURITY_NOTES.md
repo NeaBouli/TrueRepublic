@@ -522,3 +522,18 @@
 - Final maintained-client evidence is 10 Node + 298 Vitest cases, lint and
   production build/budgets. Final bundle: 355.07 kB total JavaScript. No known
   P0/P1/P2 remains.
+
+## 2026-08-13 GH-198 test-only ZKP compatibility boundary
+
+- Pinned CS/PK/VK and golden-proof files are single-party, forge-capable toxic
+  waste for deterministic compatibility testing only. They are prohibited as
+  production ceremony or genesis artifacts.
+- The Go fixture gate validates exact file set, SHA-256/size manifest, circuit
+  ID, public-input order, canonical VK/fingerprint/shape, CS/PK decoding, proof
+  replay, corruption, wrong root/chain/rating and trailing-data rejection.
+- The maintained client matches Go BN254 MiMC, field reduction and vote-context
+  encoding against the shared synthetic vector. Its injected prover seam is
+  test-only and `isSubmittable` remains unconditionally false.
+- No production prover, ceremony, real identity/key/account/fund, public RPC,
+  reward binding, deployment or external cryptographic review is claimed.
+  Candidate build remains within budgets at 355.09 kB total JavaScript.
