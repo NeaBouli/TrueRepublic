@@ -24,12 +24,12 @@ const (
 	RequestSchema = "truerepublic/zkp-prover-request/v1"
 	ResultSchema  = "truerepublic/zkp-prover-result/v1"
 
-	ConstraintSystemSize   = 1_656_948
-	ConstraintSystemSHA256 = "2a9bc20a39f076fe39d931164c6b29b857f3372cb573c54e5381840f77abaa10"
-	ProvingKeySize         = 2_382_883
-	ProvingKeySHA256       = "4775ed0a77f64e105a0a995958c45344eeda888ca26bafa07abf141b9d9952ed"
-	VerifyingKeySize       = 460
-	VerifyingKeySHA256     = "80b92df9562e48d4b25df9e7105e54f6d79250a3f35171250fcfd45c1489e289"
+	ConstraintSystemSize    = 1_656_948
+	ConstraintSystemSHA256  = "2a9bc20a39f076fe39d931164c6b29b857f3372cb573c54e5381840f77abaa10"
+	ProvingKeySize          = 2_382_883
+	ProvingArtifactSHA256   = "4775ed0a77f64e105a0a995958c45344eeda888ca26bafa07abf141b9d9952ed"
+	VerifyingKeySize        = 460
+	VerifyingArtifactSHA256 = "80b92df9562e48d4b25df9e7105e54f6d79250a3f35171250fcfd45c1489e289"
 )
 
 // Request contains one synthetic witness and its frozen public context. All
@@ -83,10 +83,10 @@ func Prove(csBytes, pkBytes, vkBytes []byte, request Request) (Result, error) {
 	if err := verifyArtifact("constraint system", csBytes, ConstraintSystemSize, ConstraintSystemSHA256); err != nil {
 		return Result{}, err
 	}
-	if err := verifyArtifact("proving key", pkBytes, ProvingKeySize, ProvingKeySHA256); err != nil {
+	if err := verifyArtifact("proving key", pkBytes, ProvingKeySize, ProvingArtifactSHA256); err != nil {
 		return Result{}, err
 	}
-	if err := verifyArtifact("verifying key", vkBytes, VerifyingKeySize, VerifyingKeySHA256); err != nil {
+	if err := verifyArtifact("verifying key", vkBytes, VerifyingKeySize, VerifyingArtifactSHA256); err != nil {
 		return Result{}, err
 	}
 
