@@ -1,7 +1,7 @@
 # GH-193 Maintained-client Wallet and Signing Safety Audit
 
 Status: locally verified candidate; full repository and protected publication
-remain pending.
+gates pass. Protected PR #194 exact-head review and merge remain pending.
 
 ## Implemented boundary
 

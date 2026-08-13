@@ -3832,3 +3832,11 @@
   bounded malformed JSON. Final client evidence is 10 Node + 298 Vitest, lint
   and build/budgets; candidate arithmetic is 1,795 cases. No known P0/P1/P2
   remains; protected publication is next.
+
+## 2026-08-13 04:20 EEST - GH-193 PR published
+
+- Committed the reviewed implementation as `700eb18`, pushed
+  `feature/GH-193-wallet-safety`, and opened protected PR #194 against `main`
+  with `Closes #193` and the complete local/security evidence.
+- Exact-head checks/review, merge, GH-29/final-main/live Pages and both-Bridge
+  closure remain pending.
