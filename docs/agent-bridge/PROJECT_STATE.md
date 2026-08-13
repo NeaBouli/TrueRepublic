@@ -1,5 +1,9 @@
 # Project State
 
+GH-193 is merged and final-main verified through PR #194 at `10a9a83`. The
+maintained wallet boundary, public 1,795-case arithmetic, rollout 32/59 and
+Phase 4 tracker completion are published; production remains false.
+
 Updated: 2026-08-13 00:58 UTC
 
 - GH-193 is locally verified on `feature/GH-193-wallet-safety`. Kimi delivered

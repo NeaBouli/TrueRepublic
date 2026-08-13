@@ -3840,3 +3840,13 @@
   with `Closes #193` and the complete local/security evidence.
 - Exact-head checks/review, merge, GH-29/final-main/live Pages and both-Bridge
   closure remain pending.
+
+## 2026-08-13 04:30 EEST - GH-193 merged and final-main verified
+
+- Exact PR head `16d752f` passed all 14 reported contexts with zero review
+  threads. Admin merge was used only for the review-required repository rule;
+  PR #194 merged as `10a9a83`, GH-193 closed and the remote branch was deleted.
+- Final-main Client Web CI `31657679062`, Security `31657679041`, Docs
+  `31657679040`, and Pages `31657678393` pass. GH-29 is checked and live Pages
+  publishes 1,795 cases, rollout 32/59, phase work 32/51, Phase 6 6/7 and the
+  GH-193 wallet-safety boundary. No production or real-key/fund action occurred.
