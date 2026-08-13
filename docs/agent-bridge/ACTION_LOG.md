@@ -3777,3 +3777,9 @@
   security/static/vulnerability/secret, Rust, docs/JSON and retirement gates.
 - Candidate public arithmetic is 1,746 cases and 31/59 rollout. GH190_AUDIT.md
   records exact evidence, delegation, limits and remaining protected PR work.
+
+## 2026-08-13 03:18 EEST - GH-190 published as PR #191
+
+- Pushed implementation commit `7eca8eb` and opened protected PR #191 against
+  `main`, closing GH-190 and advancing GH-29. Exact-head CI/review, merge,
+  final-main/live Pages, tracker and both-Bridge closure remain pending.

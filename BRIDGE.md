@@ -6156,3 +6156,14 @@ exclusion, CI wiring, and documentation boundaries.
   both Bridges, then close GH-190.
 
 ---
+
+## 2026-08-13 03:18 EEST GH-190 → PR #191 published
+
+- Implementation commit `7eca8eb` was pushed and protected
+  [PR #191](https://github.com/NeaBouli/TrueRepublic/pull/191) opened against
+  `main`, closing GH-190 and advancing GH-29.
+- PR evidence records the complete local client, disposable-chain, Go/IBC,
+  security, Rust, consistency and safety boundary. The candidate is ready for
+  exact-head protected checks and review; it is not yet merged or Done.
+
+---
