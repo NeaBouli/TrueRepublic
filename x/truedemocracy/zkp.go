@@ -13,83 +13,17 @@ import (
 	"github.com/consensys/gnark/constraint"
 	"github.com/consensys/gnark/frontend"
 	"github.com/consensys/gnark/frontend/cs/r1cs"
-	"github.com/consensys/gnark/std/hash/mimc"
+
+	"truerepublic/x/truedemocracy/zkpcircuit"
 )
 
 const (
-	MembershipCircuitID          = "truerepublic/membership-vote/v2-bn254-mimc-depth20"
-	membershipPublicWitnessCount = 4
+	MembershipCircuitID          = zkpcircuit.ID
+	membershipPublicWitnessCount = zkpcircuit.PublicWitnessCount
 )
 
-// MembershipCircuit is the Groth16 circuit for anonymous set membership.
-// It proves knowledge of an identitySecret whose MiMC hash is a leaf
-// in the Merkle tree, and computes a deterministic nullifier.
-type MembershipCircuit struct {
-	// Public inputs (known to verifier).
-	MerkleRoot        frontend.Variable `gnark:",public"`
-	NullifierHash     frontend.Variable `gnark:",public"`
-	ExternalNullifier frontend.Variable `gnark:",public"`
-	SignalHash        frontend.Variable `gnark:",public"`
-
-	// Private inputs (known only to prover).
-	IdentitySecret frontend.Variable
-	Siblings       [MerkleTreeDepth]frontend.Variable
-	PathIndices    [MerkleTreeDepth]frontend.Variable
-}
-
-// Define implements frontend.Circuit. It constrains:
-// 1. commitment = MiMC(identitySecret)
-// 2. Merkle path from commitment to root
-// 3. nullifier = MiMC(identitySecret, externalNullifier)
-// 4. nullifier == NullifierHash
-// 5. SignalHash is a non-zero public input bound to the proof
-// 6. All PathIndices are boolean
-func (c *MembershipCircuit) Define(api frontend.API) error {
-	// 1. Compute commitment = MiMC(identitySecret).
-	commitHasher, err := mimc.NewMiMC(api)
-	if err != nil {
-		return fmt.Errorf("mimc init for commitment: %w", err)
-	}
-	commitHasher.Write(c.IdentitySecret)
-	commitment := commitHasher.Sum()
-
-	// 2. Verify Merkle path from commitment to root.
-	currentHash := commitment
-	for i := 0; i < MerkleTreeDepth; i++ {
-		// PathIndices[i] == 0: current is left child, sibling is right.
-		// PathIndices[i] == 1: current is right child, sibling is left.
-		api.AssertIsBoolean(c.PathIndices[i])
-
-		left := api.Select(c.PathIndices[i], c.Siblings[i], currentHash)
-		right := api.Select(c.PathIndices[i], currentHash, c.Siblings[i])
-
-		levelHasher, err := mimc.NewMiMC(api)
-		if err != nil {
-			return fmt.Errorf("mimc init for level %d: %w", i, err)
-		}
-		levelHasher.Write(left, right)
-		currentHash = levelHasher.Sum()
-	}
-	api.AssertIsEqual(currentHash, c.MerkleRoot)
-
-	// 3. Compute nullifier = MiMC(identitySecret, externalNullifier).
-	nullHasher, err := mimc.NewMiMC(api)
-	if err != nil {
-		return fmt.Errorf("mimc init for nullifier: %w", err)
-	}
-	nullHasher.Write(c.IdentitySecret, c.ExternalNullifier)
-	nullifier := nullHasher.Sum()
-
-	// 4. Assert nullifier matches public input.
-	api.AssertIsEqual(nullifier, c.NullifierHash)
-
-	// 5. SignalHash is deliberately independent from the nullifier so a voter
-	// keeps one stable nullifier per suggestion while the proof is still bound
-	// to the exact rating being submitted.
-	api.AssertIsDifferent(c.SignalHash, 0)
-
-	return nil
-}
+// MembershipCircuit is the shared frozen Groth16 membership-vote circuit.
+type MembershipCircuit = zkpcircuit.MembershipCircuit
 
 // ZKPKeys holds the compiled circuit artifacts for Groth16.
 type ZKPKeys struct {

@@ -142,7 +142,7 @@ npm run dev
 ```
 
 - Wallet: Create/import, encrypted storage, send PNYX
-- Governance: Browse domains and create suggestions; anonymous submission remains disabled until a real prover exists
+- Governance: Browse domains and create suggestions; GH-206 proves test-only Go/WASM compatibility while anonymous submission remains disabled pending production ceremony and review
 - DEX: Swap tokens, provide liquidity, manage LP positions
 - Membership: Join domains, 2-step onboarding
 - Admin: Domain management, member verification
@@ -198,7 +198,7 @@ TrueRepublic/
 | Domain Interest (25% APY) | ✅ | `treasury/keeper/rewards.go` (eq.4) |
 | Release Decay | ✅ | `treasury/keeper/rewards.go` |
 | Anonymous Voting (WP S4) | ✅ | `x/truedemocracy/anonymity.go` |
-| Zero-Knowledge Proofs (Groth16) | 🟡 Recovery verified on PR #22 | Chain/rating binding and fail-closed VK; real client prover and external review pending |
+| Zero-Knowledge Proofs (Groth16) | 🟡 Test-only compatibility verified | Chain/rating binding, fail-closed VK, and real synthetic Go/WASM proof compatibility; production ceremony, submission, and external review pending |
 | CosmWasm Smart Contracts | ✅ | `x/truedemocracy/wasm_bindings.go` |
 | Domain-Bank Bridge | ✅ | `x/truedemocracy/treasury_bridge.go` |
 | IBC Transfer (ICS-20) | 🟡 Two-chain lifecycle, channel replacement, compatible restart, and governed fresh-genesis app-upgrade recovery verified locally through GH-184; external relayer and IBC client-upgrade evidence pending | `app.go` (ibc-go v8.7.0) |
@@ -226,7 +226,7 @@ TrueRepublic/
 # Blockchain
 go mod tidy
 ./scripts/go-packages.sh go build
-./scripts/go-packages.sh go test -race -cover -count=1 -timeout=600s    # 1,500 Go cases
+./scripts/go-packages.sh go test -race -cover -count=1 -timeout=600s    # 1,511 Go cases
 make ibc-two-chain                                                     # separate GH-175/GH-178/GH-181 proof gate
 
 # Smart contracts
@@ -265,11 +265,11 @@ The checklist below records implemented surface area, not a production security
 approval. Current evidence, risks, and commands are maintained in
 [`BRIDGE.md`](BRIDGE.md) and [GitHub issue #4](https://github.com/NeaBouli/TrueRepublic/issues/4).
 
-- 🟡 1,837 tests recovery-verified locally (1,500 Go, including the GH-203 versioned ZKP circuit/encoding freeze and canonical-field rejection, + 26 Rust + 311 maintained-client), plus the separately gated GH-175/GH-178/GH-181 IBC proof and GH-184 governed-upgrade recovery proof, GH-172 shared-state contention/exact-replay/restart proof, GH-145 bounded live fuzz campaigns, GH-193 maintained-client wallet/signing-safety proof, GH-190 maintained-client IBC transfer/recovery proof, GH-131 real submitted-history pagination proof, GH-121 real browser-query boundary, GH-115 local client-chain delivery proof, GH-56 rotation, GH-59 slashing, GH-60 inactive-validator genesis, GH-61 legacy-authority migration, GH-93 incident rehearsal, and GH-97 sustained-load process harnesses; protected publication and production rollout evidence remain required
+- 🟡 1,854 tests recovery-verified locally (1,511 Go, including GH-206's fail-closed pinned-artifact prover boundary, + 26 Rust + 317 maintained-client, including its runtime/result validation), plus the separately gated GH-206 real Go/WASM-to-native-verifier compatibility proof, GH-175/GH-178/GH-181 IBC proof and GH-184 governed-upgrade recovery proof, GH-172 shared-state contention/exact-replay/restart proof, GH-145 bounded live fuzz campaigns, GH-193 maintained-client wallet/signing-safety proof, GH-190 maintained-client IBC transfer/recovery proof, GH-131 real submitted-history pagination proof, GH-121 real browser-query boundary, GH-115 local client-chain delivery proof, GH-56 rotation, GH-59 slashing, GH-60 inactive-validator genesis, GH-61 legacy-authority migration, GH-93 incident rehearsal, and GH-97 sustained-load process harnesses; protected publication and production rollout evidence remain required
 - ✅ Core blockchain compiles and runs
 - 🟡 Tokenomics, exact custom genesis, and every-block ledger invariants are recovery-verified and merged through PR #19
 - 🟡 Governance escrow/auth recovery is verified and merged; independent release review remains open
-- 🟡 Groth16 voting backend tested; reward-recipient binding and real web proof generation remain open
+- 🟡 Groth16 voting backend and synthetic Go/WASM proof compatibility tested; production ceremony, audited submission, and reward-recipient binding remain open
 - ✅ CosmWasm smart contract integration (wasmd v0.53.4)
 - 🟡 Domain-Bank escrow recovery implemented and merged via PR #16
 - 🟡 IBC transfer on ibc-go v8.7.0 has local proof-driven two-chain transfer,
@@ -295,7 +295,7 @@ approval. Current evidence, risks, and commands are maintained in
   failure/restart/catch-up, partition, state-sync, and sanitized backup/restore
   gates plus compatible binary upgrade/fail-before-open rollback evidence;
   consensus-breaking migrations and broader multi-node operations remain open
-- 🟡 ZKP UI is a clearly disabled preview until a compatible real Groth16 prover exists
+- 🟡 ZKP UI remains a clearly disabled preview; GH-206's real prover is isolated to synthetic test-only compatibility and cannot submit
 - ✅ Developer Tooling: 4 CosmWasm example contracts, shared bindings, testing utils
 - 🟡 DEX burns reduce canonical bank supply via merged PR #18
 - ✅ Canonical v0.4 web client with 3-column governance UI
@@ -327,8 +327,8 @@ approval. Current evidence, risks, and commands are maintained in
 - 📋 **v0.5.0 (Q3 2026):** Native Apps (iOS/Android)
 - 🎯 **v1.0.0 (Q4 2026):** Production Release — External audit, mainnet launch
 
-> Historical test count: 577. The authoritative recovery-verified total is 1,837
-> (1,500 Go + 26 Rust + 311 maintained-client), reproduced from fresh
+> Historical test count: 577. The authoritative recovery-verified total is 1,854
+> (1,511 Go + 26 Rust + 317 maintained-client), reproduced from fresh
 > package-scoped output using the established passing-case method.
 
 ---

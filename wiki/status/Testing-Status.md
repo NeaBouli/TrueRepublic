@@ -1,6 +1,6 @@
 # Testing Status
 
-The current **v0.4.0 recovery** source of truth records **1,837 verified
+The current **v0.4.0 recovery** source of truth records **1,854 verified
 standard-suite cases**. This arithmetic excludes the separately run opt-in
 GH-175/GH-178/GH-181 IBC two-chain and GH-184 governed-upgrade gates.
 
@@ -18,14 +18,15 @@ GH-175/GH-178/GH-181 IBC two-chain and GH-184 governed-upgrade gates.
 | Go topology policy | 56 |
 | Go treasury | 36 |
 | Go DEX | 138 |
-| Go governance | 591 |
+| Go governance | 594 |
+| Go test-only ZKP prover | 8 |
 | Rust/CosmWasm | 26 |
-| Maintained client | 311 |
-| **Total** | **1,837** |
+| Maintained client | 317 |
+| **Total** | **1,854** |
 
 The published total is the reproducible standard-suite baseline; the opt-in
 GH-175/GH-178/GH-181 IBC recovery and GH-184 upgrade gates are additional
-evidence and are not counted in the 1,500 Go subtotal.
+evidence and are not counted in the 1,511 Go subtotal.
 
 ## Current Go coverage
 

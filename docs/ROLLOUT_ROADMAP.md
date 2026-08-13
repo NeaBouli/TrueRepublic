@@ -19,8 +19,8 @@ intentionally more granular than the public 59-item tracker.
 
 - The ordered recovery merge chain is on `main`.
 - The maximum supply is fixed at 21,000,000 PNYX.
-- The source of truth records 1,837 recovery-verified tests: 1,500 Go, 26 Rust,
-  and 311 maintained-client tests. The Go total includes GH-203's versioned,
+- The source of truth records 1,854 recovery-verified tests: 1,511 Go, 26 Rust,
+  and 317 maintained-client tests. The Go total includes GH-206's pinned,
   test-only ZKP circuit/encoding freeze. GH-121's real registered browser-query
   boundary and GH-115's local client-chain delivery
   case are separately gated and excluded from this arithmetic, as is GH-172's
@@ -104,6 +104,12 @@ single-party fixture artifacts, checksums, synthetic golden proofs, Go keeper
 replay, and maintained-client MiMC/context parity. These forge-capable fixtures
 are not ceremony output and do not complete any production checkbox above; the
 client remains unconditionally non-submittable.
+
+GH-206 adds a real but isolated Go/WASM Groth16 prover for those exact synthetic
+fixtures. A maintained-client test generates a fresh proof and the native Go
+verifier accepts it. The command imports no chain runtime, is not production-
+bundled, has no wallet/RPC/broadcast path, and keeps `isSubmittable` hard false.
+This compatibility evidence does not complete a production checkbox above.
 
 **Exit gate:** a real maintained-client proof must verify on-chain under the
 published circuit identity, with no unresolved critical or high audit finding.

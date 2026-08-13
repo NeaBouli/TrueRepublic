@@ -1,5 +1,23 @@
 # Security Notes
 
+## GH-206 test-only real Groth16 WASM boundary
+
+- The prover accepts only exact size/SHA-256 pinned GH-198 constraint-system,
+  proving-key and verifying-key bytes, strict v1 JSON, canonical BN254 fields,
+  a 20-level binary path, and an explicit synthetic/test-only marker. It
+  self-verifies before returning its canonical 164-byte proof.
+- The maintained-client adapter independently recomputes vote scope, rating
+  signal, identity commitment and nullifier; validates all public-signal
+  bindings; and has no mutable initialization state. Native Go verification
+  accepts the fresh WASM proof and rejects a bit-flipped proof.
+- The command imports no Cosmos SDK, CometBFT, Pebble, wasmd or cosmos-db
+  package. It has no transaction, wallet, RPC or broadcast capability and is
+  absent from the production client wiring. `isSubmittable` remains hard false.
+- Fixture artifacts remain forge-capable single-party toxic waste. This work
+  is compatibility evidence only and does not qualify a production ceremony,
+  production key, privacy review, audited submission, real identity/account/
+  funds, deployment, release or rollout checkbox.
+
 ## GH-184 governed application-upgrade boundary
 
 - The real `x/upgrade` authority is the non-signing `truedemocracy` module
@@ -536,4 +554,4 @@
   test-only and `isSubmittable` remains unconditionally false.
 - No production prover, ceremony, real identity/key/account/fund, public RPC,
   reward binding, deployment or external cryptographic review is claimed.
-  Candidate build remains within budgets at 355.09 kB total JavaScript.
+  Candidate build remains within budgets at 355.13 kB total JavaScript.

@@ -1,5 +1,27 @@
 # Action Log
 
+## 2026-08-14 — GH-206 real test-only Go/WASM proof compatibility verified locally
+
+- Extracted the exact frozen membership circuit into a dependency-light leaf,
+  then added an isolated Go/WASM Groth16 engine and strict maintained-client
+  adapter over the unchanged GH-198 synthetic single-party toxic-waste fixture.
+- The dedicated gate builds with Go 1.26.5, rejects chain/runtime dependencies,
+  generates a fresh proof through TypeScript, and proves native Go acceptance.
+  Drift, malformed fields/runtime/result, invalid witness/path, identity-leaf
+  mismatch and proof tampering all fail closed; concurrent adapter calls share
+  no mutable initialization state.
+- Complete local gates pass: Go build/Vet/Race/Coverage, 26 Rust tests with
+  fmt/Clippy, 10 Node + 307 Vitest standard cases, client lint/build/budgets/
+  high audit, docs consistency, JSON/YAML/shell/format and diff hygiene. Source
+  of truth is 1,854 = 1,511 Go + 26 Rust + 317 maintained client.
+- Independent review findings were all remediated. Kimi was attempted twice
+  through the configured wrapper but provider quota returned HTTP 403 and no
+  Kimi diff or review was produced. Rollout remains 32/59 and production false;
+  `isSubmittable` is hard false and no ceremony, production key/fund, RPC,
+  broadcast, deployment, release or network mutation occurred.
+- Protected PR, exact-head hosted checks, merge and final-main/Pages/Bridge
+  synchronization remain before GH-206 is Done.
+
 ## 2026-08-10 — GH-175 IBC two-chain implementation locally verified
 
 - Added a dedicated proof-driven two-chain gate over two real persistent

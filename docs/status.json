@@ -4,10 +4,10 @@
   "release_date": "2026-03-04",
   "tests": {
     "status": "recovery_verified_locally",
-    "total": 1837,
-    "go": 1500,
+    "total": 1854,
+    "go": 1511,
     "rust": 26,
-    "frontend": 311,
+    "frontend": 317,
     "historical_total": 577
   },
   "web_client": {
@@ -16,10 +16,10 @@
     "components": 44,
     "routes": 23,
     "stores": 9,
-    "services": 16,
-    "build_size_gzip": "355.09 kB total JavaScript",
+    "services": 17,
+    "build_size_gzip": "355.13 kB total JavaScript",
     "initial_entry_gzip": "71.16 kB",
-    "max_lazy_route_gzip": "4.91 kB",
+    "max_lazy_route_gzip": "4.93 kB",
     "lazy_route_entries": 20,
     "bundle_budget": "enforced_during_build"
   },
@@ -58,7 +58,8 @@
     "topologypolicy": 56,
     "treasury": 36,
     "dex": 138,
-    "truedemocracy": 591
+    "truedemocracy": 594,
+    "zkpprover": 8
   },
   "token": {
     "symbol": "PNYX",
@@ -84,13 +85,13 @@
   },
   "features": {
     "zkp": {
-      "status": "recovery_verified_locally_circuit_identity_frozen_client_disabled",
-      "client": "mock_preview_fail_closed_not_submittable",
+      "status": "test_only_real_wasm_compatibility_verified_client_submission_disabled",
+      "client": "real_test_only_groth16_wasm_harness_mock_and_submission_fail_closed",
       "proof_system": "groth16",
       "circuit_binding": "chain_proposal_rating_signal_on_pr22",
       "nullifier": "chain_proposal_scoped_rating_independent_on_pr22",
       "verifying_key": "genesis_circuit_id_sha256_shape_pinned_on_pr22",
-      "note": "GH-203 pins the test-only circuit and encoding identity with deterministic constraint-system parity. Proving/verifying keys and proofs are excluded because setup uses randomized toxic waste. Mock proof submission remains disabled; a real compatible prover and external ceremony/circuit review are required."
+      "note": "GH-203 pins the test-only circuit and encoding identity with deterministic constraint-system parity. GH-206 adds an isolated real Go/WASM Groth16 prover that uses only the exact pinned synthetic single-party toxic-waste artifacts; its fresh maintained-client proof is accepted by the native Go verifier. It is excluded from production bundles and transaction paths, isSubmittable remains hard false, and production ceremony, reproducible keys, independent cryptographic review, and audited submission remain required."
     },
     "cosmwasm": {
       "status": "recovery_verified_locally",
@@ -183,7 +184,7 @@
     "ibc_staking": "explicitly unsupported fail-closed compatibility adapter on GH-187; PoD consensus instead",
     "ibc_upgrade": "real x/upgrade keeper and governed fresh-genesis v0.4.1 application migration verified locally on GH-184; pre-GH-184 store introduction and IBC client upgrades unsupported",
     "x_staking": "not mounted; standard staking/distribution query and transaction surfaces reject fail-closed on GH-187",
-    "zkp_client": "mock preview is fail-closed and non-submittable; compatible real prover pending",
+    "zkp_client": "real Groth16 Go/WASM compatibility is test-only on GH-206; mock and transaction submission remain fail-closed and non-submittable pending production ceremony and independent review",
     "tx_history": "submitted-only newest-first pagination verified on GH-131; incoming-only history is not claimed",
     "ibc_transfers_ui": "canonical native ICS-20 signing and source-chain evidence recovery verified locally on GH-190; external relayer and public counterparty delivery remain unqualified",
     "browser_wallet_custody": "local AES-GCM/PBKDF2 recovery store and live-session invalidation verified on GH-193; same-origin XSS, compromised browsers, hardware custody, real keys/funds, and production wallet operation remain unqualified",

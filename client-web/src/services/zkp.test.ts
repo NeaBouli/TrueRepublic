@@ -29,6 +29,7 @@ describe('ZKPService fail-closed boundary', () => {
       publicSignals: ['02', '01'],
     };
     const inputs: ProofInputs = {
+      chainId: 'truerepublic-zkp-fixture-1',
       identitySecret: '03',
       merkleRoot: '04',
       merkleProof: {

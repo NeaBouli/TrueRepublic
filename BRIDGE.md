@@ -1,5 +1,59 @@
 # TrueRepublic Agent Bridge
 
+## 2026-08-14 01:16 EEST GH-206 test-only maintained-client prover → Local review complete
+
+- **Delivered locally:** extracted the frozen circuit into the dependency-light
+  `zkpcircuit` leaf, added an exact-artifact Groth16 engine plus a dedicated
+  Go `js/wasm` command, and added a strict maintained-client runtime/prover
+  adapter without wiring it into the production bundle or transaction flow.
+- **Compatibility evidence:** `./scripts/test-zkp-wasm-client.sh` builds an
+  isolated 18.8 MB Go WASM command with Go 1.26.5, rejects Cosmos/Comet/Pebble/
+  wasmd imports, generates a fresh proof through TypeScript from the unchanged
+  synthetic GH-198 fixture, and proves native Go verification. Tampered proof,
+  artifact drift, unsafe metadata, invalid witness/path/field, leaf/identity
+  mismatch, malformed/trapped runtime, and concurrent stateless calls are
+  covered fail closed.
+- **Complete local evidence:** `make verify` passes build, Vet, and Race/
+  Coverage across all 16 repository Go packages; 26 Rust tests plus fmt/Clippy,
+  10 Node + 307 Vitest standard cases, client lint/build/budgets/high audit,
+  dedicated WASM compatibility, strict circuit parity, docs consistency,
+  JSON/YAML/shell/format/diff hygiene all pass. Public arithmetic is 1,854 =
+  1,511 Go + 26 Rust + 317 maintained-client; rollout intentionally remains
+  32/59 and `production_ready` remains false.
+- **Review:** independent read-only review found and Sol remediated strict-spec
+  path drift, proof-tamper/shape, identity-leaf binding, runtime-concurrency,
+  CI-filter, and bundle-metric findings. Kimi K3 was invoked twice through the
+  required wrapper but both attempts returned provider quota HTTP 403 and made
+  no changes; this is not a project blocker.
+- **Safety:** exact pinned artifacts were neither modified nor regenerated.
+  `isSubmittable` remains literal hard false; no production ceremony, key,
+  account/fund, wallet, RPC, broadcast, deploy, release or network action.
+- **Next:** create the reviewed commit and protected PR, require all exact-head
+  hosted checks and zero unresolved review threads, merge, then synchronize
+  final main, Pages, GH-206/GH-29 and both Bridges.
+
+---
+
+## 2026-08-14 00:29 EEST GH-206 test-only maintained-client prover → In Progress
+
+- **Branch:** `feature/GH-206-zkp-client-prover`
+- **Issue:** https://github.com/NeaBouli/TrueRepublic/issues/206
+- **Scope:** add an isolated real Groth16 proving path against the exact
+  GH-198/GH-203 synthetic fixtures, with strict cross-language/browser-to-Go
+  compatibility evidence and fail-closed malformed/drift/runtime handling.
+- **Owner split:** Kimi K3 receives the larger secret-free feasibility and
+  implementation slice; Sol owns architecture, cryptographic boundaries,
+  writing-diff review, full local/protected gates, GitHub writes and closure.
+- **Risk:** High because this handles private witness material and Groth16
+  artifacts. `isSubmittable` must remain hard false; no ceremony, production
+  key, real identity/account/fund, public RPC, broadcast, release or deployment.
+- **Initial evidence:** exact `origin/main`/HEAD `09f6eeb`, clean worktree, no
+  open PR, GH-203/Main/Pages closure green. No implementation file changed yet.
+- **Next:** independently inventory the smallest browser-compatible prover
+  architecture, choose an auditable bounded design, then implement and test it.
+
+---
+
 ## 2026-08-13 22:30 EEST GH-203 protected closeout → PASS
 
 - PR #204 exact head `87c2e8d` passed all 24 reported contexts with both review

@@ -11,11 +11,13 @@ import (
 	"github.com/consensys/gnark-crypto/ecc"
 	"github.com/consensys/gnark-crypto/ecc/bn254/fr"
 	"github.com/consensys/gnark-crypto/ecc/bn254/fr/mimc"
+
+	"truerepublic/x/truedemocracy/zkpcircuit"
 )
 
 // MerkleTreeDepth is the fixed depth of the Merkle tree.
 // Supports up to 2^20 = 1,048,576 leaves per domain (Semaphore standard).
-const MerkleTreeDepth = 20
+const MerkleTreeDepth = zkpcircuit.MerkleDepth
 
 // MiMCHash computes MiMC(data...) using the BN254 native hasher.
 // Each element is a big.Int that must be < BN254 field modulus.

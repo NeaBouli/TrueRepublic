@@ -59,11 +59,13 @@
     "constraint_system": "membership_v2.cs"
   },
   "client_encoding_contract": "client-web/src/services/zkpEncoding.ts",
+  "test_only_client_prover": "client-web/src/services/zkpWasmProver.ts",
+  "test_only_wasm_command": "cmd/zkp-prover-wasm",
   "client_submission_guard": "client-web/src/services/zkp.ts isSubmittable must return false",
   "exclusions": [
     "groth16.Setup samples random toxic waste: proving key, verifying key and proof bytes are NOT reproducible and MUST NOT be regenerated, compared or claimed as ceremony output",
     "only the compiled constraint system is deterministic and pinned by byte/hash parity",
-    "no production ceremony, real prover, submission, reward binding, real keys/funds, deployment, release or network mutation",
+    "no production ceremony, production prover, submission, reward binding, real keys/funds, deployment, release or network mutation",
     "client isSubmittable remains hard false"
   ]
 }

@@ -293,6 +293,7 @@ topologypolicy|topology policy
 treasury|treasury
 dex|DEX
 truedemocracy|governance
+zkpprover|test-only ZKP prover
 MODULES
 echo ""
 
