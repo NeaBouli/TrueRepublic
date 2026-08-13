@@ -1,7 +1,7 @@
 # ============================================================
 # Stage 1: Build the truerepublicd binary
 # ============================================================
-ARG GO_VERSION=1.26.5
+ARG GO_VERSION=1.26.6
 FROM golang:${GO_VERSION}-bookworm AS builder
 
 ARG TARGETARCH

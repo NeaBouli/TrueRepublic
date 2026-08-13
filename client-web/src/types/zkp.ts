@@ -28,6 +28,7 @@ export interface MerkleProof {
 
 /** Inputs for Groth16 proof generation */
 export interface ProofInputs {
+  chainId: string;
   identitySecret: string;
   merkleRoot: string;
   merkleProof: MerkleProof;

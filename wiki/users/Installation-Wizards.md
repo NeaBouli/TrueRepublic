@@ -284,7 +284,7 @@ not by itself qualify a production validator or authorize real funds.
 
 **Time:** 45 minutes
 **Requirements:**
-- Go 1.26.5
+- Go 1.26.6
 - Node.js 18+
 - Git
 
@@ -294,10 +294,10 @@ not by itself qualify a production validator or authorize real funds.
 
 ```bash
 # Download Go
-wget https://go.dev/dl/go1.26.5.linux-amd64.tar.gz
+wget https://go.dev/dl/go1.26.6.linux-amd64.tar.gz
 
 # Extract
-sudo tar -C /usr/local -xzf go1.26.5.linux-amd64.tar.gz
+sudo tar -C /usr/local -xzf go1.26.6.linux-amd64.tar.gz
 
 # Add to PATH
 echo 'export PATH=$PATH:/usr/local/go/bin' >> ~/.bashrc
@@ -451,7 +451,7 @@ make build
 
 # If still fails, check Go version:
 go version
-# Should be 1.26.5
+# Should be 1.26.6
 ```
 
 ## Getting Help

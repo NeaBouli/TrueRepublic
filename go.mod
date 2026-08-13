@@ -2,7 +2,7 @@ module truerepublic
 
 go 1.25.8
 
-toolchain go1.26.5
+toolchain go1.26.6
 
 require (
 	cosmossdk.io/core v0.11.3

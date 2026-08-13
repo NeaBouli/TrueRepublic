@@ -43,6 +43,8 @@ const (
 	zkpSpecRatingEncoding = "int64 big-endian, appended only for the signal"
 	zkpSpecHashToField    = "SHA-256(data) as big-endian integer reduced modulo the BN254 scalar field, serialized as 32 big-endian bytes"
 	zkpSpecClientContract = "client-web/src/services/zkpEncoding.ts"
+	zkpSpecTestProver     = "client-web/src/services/zkpWasmProver.ts"
+	zkpSpecWASMCommand    = "cmd/zkp-prover-wasm"
 	zkpSpecClientGuard    = "client-web/src/services/zkp.ts isSubmittable must return false"
 )
 
@@ -67,6 +69,8 @@ type zkpCircuitSpec struct {
 	Toolchain              zkpSpecToolchain   `json:"toolchain"`
 	Fixtures               zkpSpecFixtures    `json:"fixtures"`
 	ClientEncodingContract string             `json:"client_encoding_contract"`
+	TestOnlyClientProver   string             `json:"test_only_client_prover"`
+	TestOnlyWASMCommand    string             `json:"test_only_wasm_command"`
 	ClientSubmissionGuard  string             `json:"client_submission_guard"`
 	Exclusions             []string           `json:"exclusions"`
 }
@@ -232,6 +236,8 @@ func zkpCircuitSpecViolations(spec zkpCircuitSpec, gnarkVersion, gnarkCryptoVers
 	wantString("fixtures.constraint_system", spec.Fixtures.ConstraintSystem, "membership_v2.cs")
 
 	wantString("client_encoding_contract", spec.ClientEncodingContract, zkpSpecClientContract)
+	wantString("test_only_client_prover", spec.TestOnlyClientProver, zkpSpecTestProver)
+	wantString("test_only_wasm_command", spec.TestOnlyWASMCommand, zkpSpecWASMCommand)
 	wantString("client_submission_guard", spec.ClientSubmissionGuard, zkpSpecClientGuard)
 
 	joinedExclusions := strings.Join(spec.Exclusions, "\n")
@@ -433,6 +439,24 @@ func TestZKPCircuitSpecMatchesMaintainedClientContract(t *testing.T) {
 	if !regexp.MustCompile(`get isSubmittable\(\): boolean \{\s*return false;\s*\}`).Match(guard) {
 		t.Fatal("client isSubmittable is not a hard-false getter")
 	}
+
+	testProver, err := os.ReadFile(filepath.Join("../..", spec.TestOnlyClientProver))
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, required := range []string{
+		MembershipCircuitID,
+		"synthetic_and_test_only: true",
+		"class TestOnlyGroth16WasmProver",
+	} {
+		if !strings.Contains(string(testProver), required) {
+			t.Fatalf("test-only maintained-client prover contract missing %q", required)
+		}
+	}
+	wasmEntries, err := filepath.Glob(filepath.Join("../..", spec.TestOnlyWASMCommand, "main_*.go"))
+	if err != nil || len(wasmEntries) != 2 {
+		t.Fatalf("test-only WASM command boundary: files=%v err=%v", wasmEntries, err)
+	}
 }
 
 // TestZKPCircuitConstraintSystemParity compiles MembershipCircuit in memory,
@@ -495,6 +519,8 @@ func TestZKPCircuitSpecRejectsDrift(t *testing.T) {
 		"wrong gnark-crypto version": func(s *zkpCircuitSpec) { s.Toolchain.GnarkCrypto = "v0.20.0" },
 		"missing exclusions":         func(s *zkpCircuitSpec) { s.Exclusions = nil },
 		"wrong client contract":      func(s *zkpCircuitSpec) { s.ClientEncodingContract = "client-web/src/services/zkp.ts" },
+		"wrong test prover":          func(s *zkpCircuitSpec) { s.TestOnlyClientProver = "client-web/src/services/zkp.ts" },
+		"wrong WASM command":         func(s *zkpCircuitSpec) { s.TestOnlyWASMCommand = "cmd/truerepublicd" },
 		"wrong fixture directory":    func(s *zkpCircuitSpec) { s.Fixtures.Directory = "testdata/zkp" },
 	}
 	for name, mutate := range cases {

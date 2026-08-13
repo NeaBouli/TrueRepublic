@@ -12,8 +12,9 @@
   reconciliation, and every-block supply/custody invariants on the ordered
   recovery stack.
 - Chain/proposal/rating-bound ZKP statement and pinned genesis verification-key
-  identity; the maintained web client rejects mock proof generation and
-  submission fail-closed.
+  identity; GH-206 generates a real proof through isolated Go/WASM from exact
+  synthetic toxic-waste fixtures and proves native verifier compatibility,
+  while mock and transaction submission remain fail-closed.
 - Persistent Cosmos/Comet lifecycle with generated-key, bank-backed PoD
   genesis, native/Docker restart evidence, and a bounded four-validator
   failure/restart/catch-up, partition-recovery, trusted state-sync, and
@@ -35,7 +36,7 @@
   claiming production sizing or multi-day soak behavior.
   GH-101 adds a strict secret-free digest-bound deployment-evidence envelope
   and offline verifier without claiming or performing a live deployment.
-- 1,837 recovery-verified tests: 1,500 Go, 26 Rust, and 311 maintained-client,
+- 1,854 recovery-verified tests: 1,511 Go, 26 Rust, and 317 maintained-client,
   plus the separately gated GH-175/GH-178/GH-181 two-chain IBC packet/channel/compatible-restart recovery and GH-172
   contention/replay/restart process proofs.
 
@@ -49,7 +50,7 @@ reviewed, verified, and merged to `main` in this order.
 ## Release blockers
 
 - Release qualification and independent security review.
-- Compatible real Groth16 client prover and external circuit/ceremony review.
+- Production-qualified Groth16 client prover, ceremony, submission path, and external circuit review.
 - Privacy-preserving anonymous reward recipient binding.
 - IBC/consensus-breaking migration recovery, external paging drills,
   private-live-capacity/live-topology deployment, private live rehearsal, and

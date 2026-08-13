@@ -4,14 +4,14 @@ Build and run TrueRepublic directly on your system without Docker.
 
 ## Prerequisites
 
-- Go 1.26.5 ([download](https://go.dev/dl/))
+- Go 1.26.6 ([download](https://go.dev/dl/))
 - Make
 - Git
 
 Verify Go installation:
 ```bash
 go version
-# go version go1.26.5 linux/amd64
+# go version go1.26.6 linux/amd64
 ```
 
 ## Step 1: Clone Repository

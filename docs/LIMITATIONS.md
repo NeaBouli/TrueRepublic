@@ -168,7 +168,7 @@ Full validator exits remain supported through the evidence-window escrow hold.
 
 ## ZKP Client
 
-**Status:** On-chain binding recovery-verified and merged via PR #22; client disabled
+**Status:** Real synthetic Go/WASM compatibility verified; production ZKP submission disabled
 **Timeline:** v0.4.0
 **Current:** Proofs bind chain/proposal/rating, nullifiers persist across export,
 and the trusted genesis VK is pinned by circuit ID, SHA-256, curve, shape, and
@@ -180,8 +180,12 @@ vector, the active `go.mod` gnark toolchain, and the maintained-client
 recompiled constraint system only. Committed Groth16 proving/verifying keys are
 randomized single-party toxic-waste test artifacts, not production or
 reproducible ceremony artifacts; no ceremony is claimed. Anonymous rewards
-remain deferred.
-**Future:** Compatible real prover, ceremony artifacts, and independent circuit review
+remain deferred. GH-206's isolated Go/WASM command consumes only those exact
+artifacts, generates a fresh proof through the maintained-client adapter, and
+proves native Go verification. It is not shipped in the production bundle, has
+no wallet/RPC/broadcast capability, and does not change the hard-false
+`isSubmittable` guard.
+**Future:** Production ceremony artifacts, audited prover/submission integration, and independent circuit review
 
 ## Workarounds
 
@@ -196,8 +200,9 @@ fresh-genesis v0.4.1 baseline. Pre-GH-184 store introduction and IBC client
 upgrades remain unsupported.
 
 ### For ZKP
-Do not submit anonymous votes from either web client. Use the reviewed
-domain-key path without anonymous rewards, or wait for a compatible real prover.
+Do not submit anonymous votes from the web client. GH-206 is synthetic test-only
+compatibility evidence, not a production prover. Use the reviewed domain-key
+path without anonymous rewards until ceremony and independent review complete.
 
 ## Reporting Issues
 

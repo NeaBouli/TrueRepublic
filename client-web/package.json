@@ -13,6 +13,7 @@
     "test": "node --test scripts/*.node-test.mjs && vitest",
     "test:browser": "playwright test",
     "test:chain": "vitest run src/services/clientChain.integration.test.ts",
+    "test:zkp-wasm": "../scripts/test-zkp-wasm-client.sh",
     "test:ui": "vitest --ui",
     "test:coverage": "vitest --coverage",
     "lint": "eslint .",

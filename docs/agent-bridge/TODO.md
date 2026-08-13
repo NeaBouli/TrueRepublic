@@ -430,3 +430,19 @@
   arithmetic recount, and independent re-review.
 - [x] Publish a protected PR, merge a green exact head, verify final main and
   Pages, synchronize GH-29 and both Bridges, and close GH-203.
+
+## In progress - GH-206 test-only maintained-client Groth16 prover
+
+- [x] Select and document the smallest browser-compatible proving architecture
+  that consumes only the exact GH-198/GH-203 synthetic fixtures.
+- [x] Implement a strict versioned client/prover boundary and real proof engine
+  without enabling anonymous submission or changing consensus.
+- [x] Prove exact browser/client-to-Go verification compatibility and reject
+  malformed inputs, drift, invalid witnesses, tampered output, and unavailable
+  runtime states fail closed.
+- [x] Complete Sol line-by-line/security review and full local
+  repository/client/security/docs gates.
+- [ ] Complete the protected PR, merge, final-main, Pages, tracker, and
+  both-Bridge synchronization before Done.
+  Kimi deep review was attempted twice but provider quota returned HTTP 403;
+  an independent read-only review was completed and all findings remediated.

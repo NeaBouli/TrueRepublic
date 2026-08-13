@@ -78,9 +78,9 @@ Yes, by **2/3 majority vote** of domain members. Any member can initiate a vote-
 ### Is voting anonymous?
 The on-chain recovery design supports domain-scoped anonymous ratings and binds
 proofs to the chain, proposal, and rating. However, the maintained web client
-rejects mock proof generation/submission. Anonymous voting is therefore not
-available for production use until a compatible real prover and independent
-cryptographic review exist.
+rejects mock proof generation/submission. GH-206 verifies only synthetic test
+compatibility. Production qualification, ceremony, submission integration,
+reward-recipient binding, and independent cryptographic review remain pending.
 
 ## Wallet
 
@@ -131,7 +131,7 @@ Validator stake withdrawals are capped at **10% of the domain's total payouts**.
 ## Development
 
 ### What is the tech stack?
-Go 1.26.5, Cosmos SDK v0.50.15, CometBFT v0.38.25, React 18.2 +
+Go 1.26.6, Cosmos SDK v0.50.15, CometBFT v0.38.25, React 18.2 +
 TypeScript 5.9/Vite 8.2 for the maintained web client, and Rust/CosmWasm v0.53.4
 for contracts.
 The former Expo/React Native prototype was retired and removed under GH-102.
@@ -141,9 +141,10 @@ There is no supported native mobile client.
 Fork the repo, create a branch, write tests, and submit a PR. See [Developer Docs](developers/README.md).
 
 ### Where are the tests?
-The recovery baseline has 1,837 verified standard-suite cases: 1,500 Go, 26
-Rust, and 311 maintained-client tests. This total excludes the separate opt-in
-GH-175/GH-178/GH-181 IBC gate (`make ibc-two-chain`). Run
+The recovery baseline has 1,854 verified standard-suite cases: 1,511 Go, 26
+Rust, and 317 maintained-client tests. This total excludes the separate opt-in
+GH-175/GH-178/GH-181 IBC gate (`make ibc-two-chain`), GH-184 governed-upgrade
+gate, and GH-206 compatibility gate (`./scripts/test-zkp-wasm-client.sh`). Run
 `./scripts/go-packages.sh go test -race -cover -count=1` and see
 `docs/status.json` for the authoritative breakdown.
 

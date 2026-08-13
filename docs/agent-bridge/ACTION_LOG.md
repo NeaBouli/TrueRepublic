@@ -1,5 +1,66 @@
 # Action Log
 
+## 2026-08-14 — GH-206 PR review findings remediated locally
+
+- All nine CodeRabbit threads were checked against the current PR head. The
+  strict decoder now caps nesting, both native compatibility verifications use
+  the fixed VK digest from the committed manifest, and the WASM gate fails
+  closed unless the locally installed Vitest binary exists.
+- Public status and verification-gate wording now consistently distinguish
+  synthetic test compatibility from production qualification, ceremony,
+  submission, reward binding and independent review. Detailed governance and
+  maintained-client counts were already correct and remain 594/317.
+- Focused prover/WASM/docs checks and complete Go 1.26.6 Build/Vet/Race/
+  Coverage pass. Hosted replacement-head checks remain required before merge.
+
+## 2026-08-14 — GH-206 Go 1.26.6 remediation fully verified locally
+
+- The synchronized Go 1.26.6 candidate passes the complete `make verify`
+  build/Vet/Race/Coverage chain over all 16 selected packages after a clean
+  toolchain/module-cache reconstruction.
+- Exact govuln policy and its positive/negative fixtures, the real
+  maintained-client WASM-to-native proof gate, deterministic daemon, docs
+  consistency, workflow YAML, JSON, shell and diff hygiene all pass. No new
+  security exception or production capability was introduced.
+- Publication to PR #207 and all checks on that new exact head remain required
+  before merge.
+
+## 2026-08-14 — GH-206 hosted security findings remediated without exceptions
+
+- PR #207 first exposed a gitleaks false positive on two public artifact
+  fingerprints; identifier-only remediation made the real and failure-semantic
+  secret-scan gates pass without allowlisting the values.
+- A newly refreshed Go vulnerability database then reported six reachable Go
+  1.26.5 standard-library findings. Each is fixed in Go 1.26.6, so the candidate
+  moves every maintained toolchain/CI/Docker/deterministic-contract/docs pin to
+  1.26.6 rather than weakening policy. `golang.org/x/net` was already at the
+  fixed v0.55.0 and the exact four active no-fix exceptions remain unchanged.
+- Focused Go vulnerability positive/negative policy, test-only ZKP Go/WASM
+  compatibility, docs consistency and diff hygiene pass. Complete local and
+  restarted exact-head hosted gates remain required before merge.
+
+## 2026-08-14 — GH-206 real test-only Go/WASM proof compatibility verified locally
+
+- Extracted the exact frozen membership circuit into a dependency-light leaf,
+  then added an isolated Go/WASM Groth16 engine and strict maintained-client
+  adapter over the unchanged GH-198 synthetic single-party toxic-waste fixture.
+- The dedicated gate builds with Go 1.26.5, rejects chain/runtime dependencies,
+  generates a fresh proof through TypeScript, and proves native Go acceptance.
+  Drift, malformed fields/runtime/result, invalid witness/path, identity-leaf
+  mismatch and proof tampering all fail closed; concurrent adapter calls share
+  no mutable initialization state.
+- Complete local gates pass: Go build/Vet/Race/Coverage, 26 Rust tests with
+  fmt/Clippy, 10 Node + 307 Vitest standard cases, client lint/build/budgets/
+  high audit, docs consistency, JSON/YAML/shell/format and diff hygiene. Source
+  of truth is 1,854 = 1,511 Go + 26 Rust + 317 maintained client.
+- Independent review findings were all remediated. Kimi was attempted twice
+  through the configured wrapper but provider quota returned HTTP 403 and no
+  Kimi diff or review was produced. Rollout remains 32/59 and production false;
+  `isSubmittable` is hard false and no ceremony, production key/fund, RPC,
+  broadcast, deployment, release or network mutation occurred.
+- Protected PR, exact-head hosted checks, merge and final-main/Pages/Bridge
+  synchronization remain before GH-206 is Done.
+
 ## 2026-08-10 — GH-175 IBC two-chain implementation locally verified
 
 - Added a dedicated proof-driven two-chain gate over two real persistent

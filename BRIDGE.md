@@ -1,5 +1,118 @@
 # TrueRepublic Agent Bridge
 
+## 2026-08-14 02:25 EEST GH-206 PR review remediation → Locally verified
+
+- Reviewed all nine CodeRabbit threads against exact PR #207 head `dfc7fe3`.
+  Hardened strict request decoding with a bounded JSON nesting depth, made both
+  native compatibility checks consume the committed manifest's fixed VK
+  fingerprint, and made the WASM gate execute only the `npm ci`-installed
+  Vitest binary. The already-correct 594/317 detailed counts were retained.
+- Split completed local evidence from pending publication work and aligned the
+  ZKP status, threat model, roadmap, FAQ and testing wiki on one explicit
+  test-only/non-production boundary.
+- **PASS:** focused prover tests, real maintained-client WASM-to-native proof,
+  docs consistency, diff hygiene, and complete `make verify` Build/Vet/Race/
+  Coverage over all 16 selected packages under Go 1.26.6. Prover coverage
+  increased from 72.6% to 74.8%.
+- **Next:** publish the review-fix head, resolve the verified threads with
+  evidence, and require the replacement exact head to pass every protected
+  check before merge.
+
+---
+
+## 2026-08-14 02:18 EEST GH-206 Go 1.26.6 remediation → Locally verified
+
+- Synchronized the current Go toolchain contract from 1.26.5 to 1.26.6 across
+  `go.mod`, hosted workflows, Docker, deterministic-build metadata/verifier,
+  the security source of truth, the dedicated WASM compatibility gate and
+  current operator/developer documentation. Historical append-only records
+  remain unchanged and no vulnerability exception was added.
+- **PASS:** complete `make verify` build/Vet/Race/Coverage over all 16 selected
+  Go packages under Go 1.26.6; the real maintained-client WASM-to-native proof
+  gate; deterministic-daemon verification; exact active govuln policy plus
+  positive/negative fixtures; documentation consistency; workflow YAML, JSON,
+  shell and diff hygiene.
+- The refreshed official database now returns exactly the four already
+  documented reachable upstream findings without available fixes. The
+  maintained `golang.org/x/net` remains fixed at v0.55.0.
+- **Next:** commit and push this bounded hosted-security remediation, then
+  require every check and review thread on the new exact PR #207 head to pass
+  before merge.
+
+---
+
+## 2026-08-14 01:39 EEST GH-206 hosted security remediation → In Progress
+
+- PR #207 exact head `def3ee1` made the false-positive secret scan green by
+  disambiguating public pinned-artifact digest identifiers without changing
+  bytes or verification behavior.
+- The refreshed official Go vulnerability database then rejected Go 1.26.5
+  for six reachable standard-library findings, all fixed in Go 1.26.6. The
+  maintained `golang.org/x/net` is already fixed at v0.55.0; no new exception
+  was added.
+- Candidate remediation synchronizes Go 1.26.6 across toolchain, all hosted
+  workflows, Docker, deterministic-build contract/verifier, security source of
+  truth and current operator/developer docs. Focused vulnerability policy plus
+  its negative contract, ZKP WASM end-to-end gate, docs and diff hygiene pass.
+- **Next:** rerun the complete local chain under Go 1.26.6, commit/push, then
+  require a fully green exact PR head before any merge.
+
+---
+
+## 2026-08-14 01:16 EEST GH-206 test-only maintained-client prover → Local review complete
+
+- **Delivered locally:** extracted the frozen circuit into the dependency-light
+  `zkpcircuit` leaf, added an exact-artifact Groth16 engine plus a dedicated
+  Go `js/wasm` command, and added a strict maintained-client runtime/prover
+  adapter without wiring it into the production bundle or transaction flow.
+- **Compatibility evidence:** `./scripts/test-zkp-wasm-client.sh` builds an
+  isolated 18.8 MB Go WASM command with Go 1.26.5, rejects Cosmos/Comet/Pebble/
+  wasmd imports, generates a fresh proof through TypeScript from the unchanged
+  synthetic GH-198 fixture, and proves native Go verification. Tampered proof,
+  artifact drift, unsafe metadata, invalid witness/path/field, leaf/identity
+  mismatch, malformed/trapped runtime, and concurrent stateless calls are
+  covered fail closed.
+- **Complete local evidence:** `make verify` passes build, Vet, and Race/
+  Coverage across all 16 repository Go packages; 26 Rust tests plus fmt/Clippy,
+  10 Node + 307 Vitest standard cases, client lint/build/budgets/high audit,
+  dedicated WASM compatibility, strict circuit parity, docs consistency,
+  JSON/YAML/shell/format/diff hygiene all pass. Public arithmetic is 1,854 =
+  1,511 Go + 26 Rust + 317 maintained-client; rollout intentionally remains
+  32/59 and `production_ready` remains false.
+- **Review:** independent read-only review found and Sol remediated strict-spec
+  path drift, proof-tamper/shape, identity-leaf binding, runtime-concurrency,
+  CI-filter, and bundle-metric findings. Kimi K3 was invoked twice through the
+  required wrapper but both attempts returned provider quota HTTP 403 and made
+  no changes; this is not a project blocker.
+- **Safety:** exact pinned artifacts were neither modified nor regenerated.
+  `isSubmittable` remains literal hard false; no production ceremony, key,
+  account/fund, wallet, RPC, broadcast, deploy, release or network action.
+- **Next:** create the reviewed commit and protected PR, require all exact-head
+  hosted checks and zero unresolved review threads, merge, then synchronize
+  final main, Pages, GH-206/GH-29 and both Bridges.
+
+---
+
+## 2026-08-14 00:29 EEST GH-206 test-only maintained-client prover → In Progress
+
+- **Branch:** `feature/GH-206-zkp-client-prover`
+- **Issue:** https://github.com/NeaBouli/TrueRepublic/issues/206
+- **Scope:** add an isolated real Groth16 proving path against the exact
+  GH-198/GH-203 synthetic fixtures, with strict cross-language/browser-to-Go
+  compatibility evidence and fail-closed malformed/drift/runtime handling.
+- **Owner split:** Kimi K3 receives the larger secret-free feasibility and
+  implementation slice; Sol owns architecture, cryptographic boundaries,
+  writing-diff review, full local/protected gates, GitHub writes and closure.
+- **Risk:** High because this handles private witness material and Groth16
+  artifacts. `isSubmittable` must remain hard false; no ceremony, production
+  key, real identity/account/fund, public RPC, broadcast, release or deployment.
+- **Initial evidence:** exact `origin/main`/HEAD `09f6eeb`, clean worktree, no
+  open PR, GH-203/Main/Pages closure green. No implementation file changed yet.
+- **Next:** independently inventory the smallest browser-compatible prover
+  architecture, choose an auditable bounded design, then implement and test it.
+
+---
+
 ## 2026-08-13 22:30 EEST GH-203 protected closeout → PASS
 
 - PR #204 exact head `87c2e8d` passed all 24 reported contexts with both review

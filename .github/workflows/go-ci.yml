@@ -67,7 +67,7 @@ jobs:
 
       - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
         with:
-          go-version: '1.26.5'
+          go-version: '1.26.6'
 
       - name: Run bounded property, fuzz, replay, malformed-genesis, and race gate
         run: ./scripts/check-generative-quality.sh
@@ -82,7 +82,7 @@ jobs:
 
       - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
         with:
-          go-version: '1.26.5'
+          go-version: '1.26.6'
 
       - name: Prove shared-state contention, exact replay rejection, and same-home restart persistence
         run: make concurrency-replay
@@ -97,7 +97,7 @@ jobs:
 
       - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
         with:
-          go-version: '1.26.5'
+          go-version: '1.26.6'
 
       - name: Prove two-chain ICS-20 transfer, acknowledgement, timeout, close, replacement, replay, and compatible binary-restart recovery
         run: make ibc-two-chain
@@ -112,7 +112,7 @@ jobs:
 
       - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
         with:
-          go-version: '1.26.5'
+          go-version: '1.26.6'
 
       - name: Prove governed halt, cached failure rollback, fixed recovery, and exact-once restart
         run: make governed-upgrade
@@ -127,7 +127,7 @@ jobs:
 
       - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
         with:
-          go-version: '1.26.5'
+          go-version: '1.26.6'
 
       - name: Verify repository Go package selection
         run: ./scripts/test-go-packages.sh
@@ -202,7 +202,7 @@ jobs:
 
       - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
         with:
-          go-version: '1.26.5'
+          go-version: '1.26.6'
 
       - name: Run multi-validator recovery, migration, slashing, rotation, state-sync, backup/restore, identity-recovery, and upgrade/rollback harnesses
         env:
@@ -219,7 +219,7 @@ jobs:
 
       - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
         with:
-          go-version: '1.26.5'
+          go-version: '1.26.6'
 
       - name: Run bounded four-validator capacity qualification
         env:

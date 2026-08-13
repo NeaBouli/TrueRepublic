@@ -108,6 +108,7 @@ export function VotingPanel({
 
       // Generate Groth16 proof
       const proof = await zkpService.generateProof({
+        chainId: DEFAULT_CHAIN.chainId,
         identitySecret: identity.secret,
         merkleRoot: merkleProof.root,
         merkleProof,

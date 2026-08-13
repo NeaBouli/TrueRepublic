@@ -32,7 +32,7 @@ average block time, and commit latency. It is not a production traffic model.
 
 ## Run locally
 
-Prerequisites are Go 1.26.5, the repository's CGO/wasmvm build prerequisites,
+Prerequisites are Go 1.26.6, the repository's CGO/wasmvm build prerequisites,
 permission to bind temporary loopback ports, and enough temporary disk space
 for four node homes.
 

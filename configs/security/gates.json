@@ -3,7 +3,7 @@
   "review_cadence_days": 7,
   "exception_max_days": 30,
   "toolchains": {
-    "go": "1.26.5",
+    "go": "1.26.6",
     "node": "22.22.2",
     "rust": "1.95.0"
   },

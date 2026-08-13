@@ -1,7 +1,7 @@
 # Reproducible Linux daemon build
 
 The maintained build contract is
-`configs/build/deterministic-linux-daemon.json`. It fixes Go 1.26.5, CGO,
+`configs/build/deterministic-linux-daemon.json`. It fixes Go 1.26.6, CGO,
 the Linux amd64 and arm64 targets, the main package, and all deterministic Go
 and linker flags. The source ref is a full Git commit SHA and is injected into
 `main.version`; verification requires `truerepublicd --version` to report that

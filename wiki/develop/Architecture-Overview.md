@@ -65,14 +65,14 @@ STORAGE LAYER
 
 ## Technology Stack
 
-### Backend: Go 1.26.5
+### Backend: Go 1.26.6
 
 | Aspect | Detail |
 |--------|--------|
 | **Why Go?** | Cosmos SDK requirement, excellent performance, strong concurrency |
 | **Key Libraries** | Cosmos SDK, CometBFT, Cobra CLI, LevelDB |
 | **Build** | `make build` produces `truerepublicd` binary |
-| **Test** | `./scripts/go-packages.sh go test -race -cover -count=1 -timeout=600s` (1,500 standard-suite Go cases, including GH-203 ZKP circuit/encoding freeze coverage; separate GH-175/GH-178/GH-181 IBC and GH-184 upgrade gates excluded) |
+| **Test** | `./scripts/go-packages.sh go test -race -cover -count=1 -timeout=600s` (1,511 standard-suite Go cases, including GH-206 test-only prover boundary coverage; separate GH-206 Go/WASM, GH-175/GH-178/GH-181 IBC, and GH-184 upgrade gates excluded) |
 
 ### Framework: Cosmos SDK v0.50.15
 

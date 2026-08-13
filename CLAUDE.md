@@ -12,7 +12,7 @@ source of current security or production-readiness claims.
 - Recovery epic: GitHub issue #4
 - Continuous handoff: `BRIDGE.md` and `docs/agent-bridge/`
 - Authoritative machine-readable status: `docs/status.json`
-- Verified recovery total: 1,837 standard-suite cases (1,500 Go, 26 Rust, 311
+- Verified recovery total: 1,854 standard-suite cases (1,511 Go, 26 Rust, 317
   maintained-client); run the separate opt-in IBC recovery gate with
   `make ibc-two-chain`
 - PNYX cap: 21,000,000 PNYX = 21,000,000,000,000 `upnyx`
@@ -54,7 +54,7 @@ boundaries.
 
 ## Toolchain
 
-- Go toolchain 1.26.5
+- Go toolchain 1.26.6
 - Cosmos SDK v0.50.15
 - CometBFT v0.38.25
 - ibc-go v8.7.0
@@ -138,10 +138,10 @@ Transaction execution never generates trusted setup; a missing configured VK
 fails closed.
 
 The maintained and legacy web clients reject mock proof generation and
-submission. Anonymous voting is not production-approved until a compatible
-real prover and independent cryptographic review exist. Anonymous rewards
-remain deferred because current proof/signature submissions do not bind a safe
-payout recipient.
+submission. GH-206 verifies only synthetic test compatibility. Anonymous
+voting is not production-approved until production qualification, ceremony,
+submission integration, reward-recipient binding, and independent
+cryptographic review are complete.
 
 ## Client policy
 

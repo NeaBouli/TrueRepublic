@@ -24,7 +24,7 @@ validate_contract() {
     .schema == "truerepublic.daemon-build/v1" and
     .binary == "truerepublicd" and
     .main_package == "." and
-    .go_version == "1.26.5" and
+    .go_version == "1.26.6" and
     .cgo_enabled == "1" and
     .source_ref == {
       "kind": "git-commit",

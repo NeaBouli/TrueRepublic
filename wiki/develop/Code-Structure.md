@@ -10,7 +10,7 @@ TrueRepublic/
 ├── app.go                          # Cosmos SDK application wiring (TrueRepublicApp)
 ├── go.mod / go.sum                 # Go module: SDK v0.50.15, CometBFT v0.38.25
 ├── Makefile                        # Build: build, install, test, lint, docker-*
-├── Dockerfile                      # Multi-stage: Go 1.26.5 Bookworm → non-root Debian Bookworm slim
+├── Dockerfile                      # Multi-stage: Go 1.26.6 Bookworm → non-root Debian Bookworm slim
 ├── docker-compose.yml              # Full stack: node, client-web, nginx, prometheus, grafana
 ├── .env.example                    # Environment template
 ├── README.md                       # Project overview + feature matrix
