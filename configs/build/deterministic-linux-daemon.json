@@ -2,7 +2,7 @@
   "schema": "truerepublic.daemon-build/v1",
   "binary": "truerepublicd",
   "main_package": ".",
-  "go_version": "1.26.5",
+  "go_version": "1.26.6",
   "cgo_enabled": "1",
   "source_ref": {
     "kind": "git-commit",

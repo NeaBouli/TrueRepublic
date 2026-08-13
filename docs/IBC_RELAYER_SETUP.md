@@ -43,7 +43,7 @@ deployment still requires separate qualification. A setup requires:
 
 ### Prerequisites
 
-- Go 1.26.5
+- Go 1.26.6
 - `truerepublicd` built (`make build`)
 - Hermes installed (`cargo install ibc-relayer-cli`)
 

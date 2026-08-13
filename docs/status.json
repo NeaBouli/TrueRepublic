@@ -70,7 +70,7 @@
     "max_supply_base_units": 21000000000000
   },
   "tech": {
-    "go": "1.26.5",
+    "go": "1.26.6",
     "cosmos_sdk": "v0.50.15",
     "cometbft": "v0.38.25",
     "cosmwasm": "v0.53.4",

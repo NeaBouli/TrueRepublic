@@ -65,7 +65,7 @@ STORAGE LAYER
 
 ## Technology Stack
 
-### Backend: Go 1.26.5
+### Backend: Go 1.26.6
 
 | Aspect | Detail |
 |--------|--------|

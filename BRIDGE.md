@@ -1,5 +1,44 @@
 # TrueRepublic Agent Bridge
 
+## 2026-08-14 02:18 EEST GH-206 Go 1.26.6 remediation → Locally verified
+
+- Synchronized the current Go toolchain contract from 1.26.5 to 1.26.6 across
+  `go.mod`, hosted workflows, Docker, deterministic-build metadata/verifier,
+  the security source of truth, the dedicated WASM compatibility gate and
+  current operator/developer documentation. Historical append-only records
+  remain unchanged and no vulnerability exception was added.
+- **PASS:** complete `make verify` build/Vet/Race/Coverage over all 16 selected
+  Go packages under Go 1.26.6; the real maintained-client WASM-to-native proof
+  gate; deterministic-daemon verification; exact active govuln policy plus
+  positive/negative fixtures; documentation consistency; workflow YAML, JSON,
+  shell and diff hygiene.
+- The refreshed official database now returns exactly the four already
+  documented reachable upstream findings without available fixes. The
+  maintained `golang.org/x/net` remains fixed at v0.55.0.
+- **Next:** commit and push this bounded hosted-security remediation, then
+  require every check and review thread on the new exact PR #207 head to pass
+  before merge.
+
+---
+
+## 2026-08-14 01:39 EEST GH-206 hosted security remediation → In Progress
+
+- PR #207 exact head `def3ee1` made the false-positive secret scan green by
+  disambiguating public pinned-artifact digest identifiers without changing
+  bytes or verification behavior.
+- The refreshed official Go vulnerability database then rejected Go 1.26.5
+  for six reachable standard-library findings, all fixed in Go 1.26.6. The
+  maintained `golang.org/x/net` is already fixed at v0.55.0; no new exception
+  was added.
+- Candidate remediation synchronizes Go 1.26.6 across toolchain, all hosted
+  workflows, Docker, deterministic-build contract/verifier, security source of
+  truth and current operator/developer docs. Focused vulnerability policy plus
+  its negative contract, ZKP WASM end-to-end gate, docs and diff hygiene pass.
+- **Next:** rerun the complete local chain under Go 1.26.6, commit/push, then
+  require a fully green exact PR head before any merge.
+
+---
+
 ## 2026-08-14 01:16 EEST GH-206 test-only maintained-client prover → Local review complete
 
 - **Delivered locally:** extracted the frozen circuit into the dependency-light

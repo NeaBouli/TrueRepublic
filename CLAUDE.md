@@ -54,7 +54,7 @@ boundaries.
 
 ## Toolchain
 
-- Go toolchain 1.26.5
+- Go toolchain 1.26.6
 - Cosmos SDK v0.50.15
 - CometBFT v0.38.25
 - ibc-go v8.7.0

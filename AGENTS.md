@@ -12,7 +12,7 @@ evidence, security boundaries, and handoffs.
 
 ## Stack and source of truth
 
-- Go 1.26.5, Cosmos SDK, CometBFT, and Wasmd implement the node and
+- Go 1.26.6, Cosmos SDK, CometBFT, and Wasmd implement the node and
   consensus-critical modules.
 - Rust/CosmWasm sources live under `contracts/`.
 - The maintained TypeScript client lives under `client-web/`. The former

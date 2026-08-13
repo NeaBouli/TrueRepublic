@@ -61,7 +61,7 @@ Recovery tracking: [Issue #4](https://github.com/NeaBouli/TrueRepublic/issues/4)
 
 | Layer | Recovery version |
 |---|---|
-| Go | 1.26.5 |
+| Go | 1.26.6 |
 | Cosmos SDK | v0.50.15 |
 | CometBFT | v0.38.25 |
 | ibc-go | v8.7.0 |

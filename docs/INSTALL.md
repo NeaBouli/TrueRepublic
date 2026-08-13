@@ -6,7 +6,7 @@
 
 ## Voraussetzungen
 
-- Go 1.26.5
+- Go 1.26.6
 - Git
 - optional: Rust 1.75+ für `contracts/`
 - optional: Node.js 22+ und npm für `client-web/`

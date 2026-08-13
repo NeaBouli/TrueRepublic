@@ -29,7 +29,7 @@ test; production defaults are unchanged.
 
 Prerequisites:
 
-- Go 1.26.5;
+- Go 1.26.6;
 - the repository's CGO/wasmvm build prerequisites; and
 - permission to bind temporary loopback RPC and P2P ports.
 

@@ -2,7 +2,7 @@
 set -euo pipefail
 
 ROOT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
-EXPECTED_GO_VERSION=go1.26.5
+EXPECTED_GO_VERSION=go1.26.6
 ACTUAL_GO_VERSION=$(go env GOVERSION)
 
 if [[ "$ACTUAL_GO_VERSION" != "$EXPECTED_GO_VERSION" ]]; then

@@ -1,5 +1,31 @@
 # Action Log
 
+## 2026-08-14 — GH-206 Go 1.26.6 remediation fully verified locally
+
+- The synchronized Go 1.26.6 candidate passes the complete `make verify`
+  build/Vet/Race/Coverage chain over all 16 selected packages after a clean
+  toolchain/module-cache reconstruction.
+- Exact govuln policy and its positive/negative fixtures, the real
+  maintained-client WASM-to-native proof gate, deterministic daemon, docs
+  consistency, workflow YAML, JSON, shell and diff hygiene all pass. No new
+  security exception or production capability was introduced.
+- Publication to PR #207 and all checks on that new exact head remain required
+  before merge.
+
+## 2026-08-14 — GH-206 hosted security findings remediated without exceptions
+
+- PR #207 first exposed a gitleaks false positive on two public artifact
+  fingerprints; identifier-only remediation made the real and failure-semantic
+  secret-scan gates pass without allowlisting the values.
+- A newly refreshed Go vulnerability database then reported six reachable Go
+  1.26.5 standard-library findings. Each is fixed in Go 1.26.6, so the candidate
+  moves every maintained toolchain/CI/Docker/deterministic-contract/docs pin to
+  1.26.6 rather than weakening policy. `golang.org/x/net` was already at the
+  fixed v0.55.0 and the exact four active no-fix exceptions remain unchanged.
+- Focused Go vulnerability positive/negative policy, test-only ZKP Go/WASM
+  compatibility, docs consistency and diff hygiene pass. Complete local and
+  restarted exact-head hosted gates remain required before merge.
+
 ## 2026-08-14 — GH-206 real test-only Go/WASM proof compatibility verified locally
 
 - Extracted the exact frozen membership circuit into a dependency-light leaf,
