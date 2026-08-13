@@ -82,11 +82,18 @@ src/
 
 ## Security
 
-- Wallet encryption: AES-GCM (256-bit)
-- Key derivation: PBKDF2 (100k iterations, SHA-256)
-- Mnemonic: BIP39 (24 words)
+- Wallet encryption: versioned AES-GCM (256-bit) payloads
+- Key derivation: PBKDF2-HMAC-SHA-256 (600k iterations); authenticated legacy
+  100k payloads are re-encrypted after a successful unlock
+- Mnemonic: bounded English BIP-39 validation (12 or 24 words)
 - Derivation path: m/44'/118'/0'/0/0 (Cosmos)
 - Storage: localStorage (encrypted)
+
+The derived account must exactly match the selected stored address, every
+signing endpoint must report the configured chain ID, and session-bound signers
+reject after lock, switch, active-wallet deletion, or reload. This protects the
+qualified local browser flow; it does not defend a compromised same-origin
+runtime, replace hardware custody, or authorize real keys or funds.
 
 ## Chain Configuration
 
@@ -143,10 +150,10 @@ send funds to an address solely because an obsolete preview displayed it.
 ## Build Output
 
 Current recovery build (`npm run build`):
-- Initial JavaScript entry: 70.05 kB gzip using the pinned
+- Initial JavaScript entry: 71.15 kB gzip using the pinned
   project measurement
 - 20 lazy page-route entries; largest direct route entry: 4.91 kB gzip
-- 353.53 kB total JavaScript (gzip) across all deferred chunks
+- 355.07 kB total JavaScript (gzip across all deferred chunks)
 - CSS: 22.38 kB; 4.86 kB gzip
 - `npm run build` fails if the raw or gzip entry, route, chunk, or total budget
   regresses. Signing and protobuf dependencies remain deferred until needed.

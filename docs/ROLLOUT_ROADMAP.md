@@ -19,8 +19,8 @@ intentionally more granular than the public 59-item tracker.
 
 - The ordered recovery merge chain is on `main`.
 - The maximum supply is fixed at 21,000,000 PNYX.
-- The source of truth records 1,746 recovery-verified tests: 1,461 Go, 26 Rust,
-  and 259 maintained-client tests. GH-121's real registered browser-query
+- The source of truth records 1,795 recovery-verified tests: 1,461 Go, 26 Rust,
+  and 308 maintained-client tests. GH-121's real registered browser-query
   boundary and GH-115's local client-chain delivery
   case are separately gated and excluded from this arithmetic, as is GH-172's
   real contention/replay/restart process harness. GH-175/GH-178/GH-181's
@@ -150,7 +150,12 @@ recovery tests; unsupported surfaces are absent or unmistakably disabled.
   ([GH-190](https://github.com/NeaBouli/TrueRepublic/issues/190)). External
   relayer and public-counterparty qualification remain Phase 3 work.
 - [ ] Connect the real audited ZKP prover and remove preview-only dead paths.
-- [ ] Verify wallet creation, import, locking, signing, and key-storage safety.
+- [x] Verify BIP-39 import validation, versioned AES-GCM/PBKDF2 encrypted
+  storage with legacy re-encryption, lock/switch/delete/reload invalidation,
+  exact derived-address and RPC chain binding, and in-flight signer rejection
+  ([GH-193](https://github.com/NeaBouli/TrueRepublic/issues/193)). This local
+  browser boundary does not qualify same-origin XSS, hardware custody, real
+  keys/funds, or production wallet operation.
 - [x] Add accessibility, responsive-layout, low-bandwidth, and browser support
   checks for the safe unauthenticated maintained-client surfaces, with a pinned
   protected Chromium/Firefox/WebKit matrix and explicit authenticated-flow

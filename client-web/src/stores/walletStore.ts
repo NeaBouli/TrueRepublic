@@ -54,6 +54,13 @@ let blockchainService: Promise<import('@/services/blockchain').BlockchainService
 let transactionModule: Promise<typeof import('@/services/transaction')> | null = null;
 let transactionService: Promise<import('@/services/transaction').TransactionService> | null = null;
 let historyAbortController: AbortController | null = null;
+let walletSessionGeneration = 0;
+
+function beginWalletSessionTransition(): number {
+  walletSessionGeneration += 1;
+  WalletService.invalidateSigningSession();
+  return walletSessionGeneration;
+}
 
 function invalidateIbcTransferSession(): void {
   // Keep the transfer/recovery chunk lazy and avoid a static store cycle.
@@ -139,13 +146,25 @@ export const useWalletStore = create<WalletStore>()(
 
       // Actions
       createWallet: async (name: string, password: string) => {
-        set({ isLoading: true, error: null });
+        const generation = beginWalletSessionTransition();
+        get().clearHistory();
+        invalidateIbcTransferSession();
+        set({
+          currentWallet: null,
+          password: null,
+          isLocked: true,
+          balances: [],
+          isLoading: true,
+          error: null,
+        });
 
         try {
           const wallet = await WalletService.createWallet({ name, password });
 
-          get().clearHistory();
-          invalidateIbcTransferSession();
+          if (generation !== walletSessionGeneration) {
+            throw new Error('Wallet session changed during creation');
+          }
+          WalletService.activateSigningSession(wallet.address);
 
           set((state) => ({
             wallets: [...state.wallets, { ...wallet, mnemonic: undefined }],
@@ -159,19 +178,33 @@ export const useWalletStore = create<WalletStore>()(
           return wallet;
         } catch (error: unknown) {
           const message = error instanceof Error ? error.message : 'Failed to create wallet';
-          set({ error: message, isLoading: false });
+          if (generation === walletSessionGeneration) {
+            set({ error: message, isLoading: false });
+          }
           throw error;
         }
       },
 
       importWallet: async (name: string, mnemonic: string, password: string) => {
-        set({ isLoading: true, error: null });
+        const generation = beginWalletSessionTransition();
+        get().clearHistory();
+        invalidateIbcTransferSession();
+        set({
+          currentWallet: null,
+          password: null,
+          isLocked: true,
+          balances: [],
+          isLoading: true,
+          error: null,
+        });
 
         try {
           const wallet = await WalletService.importWallet({ name, mnemonic, password });
 
-          get().clearHistory();
-          invalidateIbcTransferSession();
+          if (generation !== walletSessionGeneration) {
+            throw new Error('Wallet session changed during import');
+          }
+          WalletService.activateSigningSession(wallet.address);
 
           set((state) => ({
             wallets: [...state.wallets, { ...wallet, mnemonic: undefined }],
@@ -185,21 +218,33 @@ export const useWalletStore = create<WalletStore>()(
           return wallet;
         } catch (error: unknown) {
           const message = error instanceof Error ? error.message : 'Failed to import wallet';
-          set({ error: message, isLoading: false });
+          if (generation === walletSessionGeneration) {
+            set({ error: message, isLoading: false });
+          }
           throw error;
         }
       },
 
       switchWallet: async (address: string, password: string) => {
-        set({ isLoading: true, error: null });
+        const generation = beginWalletSessionTransition();
+        get().clearHistory();
+        invalidateIbcTransferSession();
+        set({
+          currentWallet: null,
+          password: null,
+          isLocked: true,
+          balances: [],
+          isLoading: true,
+          error: null,
+        });
 
         try {
           const wallet = await WalletService.getWallet(address, password);
 
-          // A different unlocked wallet must never show the previous wallet's
-          // history, even while the next page is still loading.
-          get().clearHistory();
-          invalidateIbcTransferSession();
+          if (generation !== walletSessionGeneration) {
+            throw new Error('Wallet session changed during unlock');
+          }
+          WalletService.activateSigningSession(wallet.address);
 
           set({
             currentWallet: { ...wallet, mnemonic: undefined },
@@ -211,7 +256,9 @@ export const useWalletStore = create<WalletStore>()(
           get().refreshBalance();
         } catch (error: unknown) {
           const message = error instanceof Error ? error.message : 'Failed to switch wallet';
-          set({ error: message, isLoading: false });
+          if (generation === walletSessionGeneration) {
+            set({ error: message, isLoading: false });
+          }
           throw error;
         }
       },
@@ -221,14 +268,27 @@ export const useWalletStore = create<WalletStore>()(
         const removingCurrent = get().currentWallet?.address === address;
         if (removingCurrent) get().clearHistory();
         if (removingCurrent) invalidateIbcTransferSession();
+        if (removingCurrent) beginWalletSessionTransition();
         set((state) => ({
           wallets: state.wallets.filter((w) => w.address !== address),
           currentWallet:
             state.currentWallet?.address === address ? null : state.currentWallet,
+          // Deleting the active wallet must invalidate the unlocked session
+          // too; a signer password without its wallet is session residue.
+          ...(removingCurrent
+            ? {
+                password: null,
+                isLocked: true,
+                balances: [],
+                isLoading: false,
+                error: null,
+              }
+            : {}),
         }));
       },
 
       lock: () => {
+        beginWalletSessionTransition();
         get().clearHistory();
         invalidateIbcTransferSession();
         set({
@@ -236,6 +296,8 @@ export const useWalletStore = create<WalletStore>()(
           password: null,
           currentWallet: null,
           balances: [],
+          isLoading: false,
+          error: null,
         });
       },
 
@@ -250,12 +312,21 @@ export const useWalletStore = create<WalletStore>()(
       },
 
       refreshBalance: async () => {
-        const { currentWallet } = get();
-        if (!currentWallet) return;
+        const { currentWallet, isLocked } = get();
+        if (!currentWallet || isLocked) return;
+        const address = currentWallet.address;
+        const generation = walletSessionGeneration;
 
         try {
           const service = await getBlockchainService();
-          const balances = await service.getBalance(currentWallet.address);
+          const balances = await service.getBalance(address);
+          if (
+            generation !== walletSessionGeneration ||
+            get().isLocked ||
+            get().currentWallet?.address !== address
+          ) {
+            return;
+          }
           set({ balances });
         } catch {
           // Balance refresh is best-effort; node may be offline
@@ -275,11 +346,12 @@ export const useWalletStore = create<WalletStore>()(
       },
 
       sendTokens: async (params: SendParams) => {
-        const { currentWallet, password } = get();
-        if (!currentWallet || !password) {
+        const { currentWallet, password, isLocked } = get();
+        if (isLocked || !currentWallet || !password) {
           throw new Error('Wallet not unlocked');
         }
 
+        const generation = walletSessionGeneration;
         set({ isLoading: true, error: null });
 
         try {
@@ -287,6 +359,13 @@ export const useWalletStore = create<WalletStore>()(
             currentWallet.address,
             password
           );
+          if (
+            generation !== walletSessionGeneration ||
+            get().isLocked ||
+            get().currentWallet?.address !== currentWallet.address
+          ) {
+            throw new Error('Wallet signing session is no longer active');
+          }
 
           const service = await getTransactionService();
           const result = await service.send(signingWallet, params);
@@ -310,7 +389,9 @@ export const useWalletStore = create<WalletStore>()(
           return result;
         } catch (error: unknown) {
           const message = error instanceof Error ? error.message : 'Transaction failed';
-          set({ error: message, isLoading: false });
+          if (generation === walletSessionGeneration) {
+            set({ error: message, isLoading: false });
+          }
           throw error;
         }
       },

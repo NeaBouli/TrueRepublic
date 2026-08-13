@@ -25,7 +25,10 @@ The development server listens on `http://localhost:3001`. The Docker Compose
 profile builds the same maintained client and exposes it on loopback port 3001;
 the reverse-proxy entry point is `http://localhost:8080`.
 
-Before any release use, complete the open rollout gates in
-[ROLLOUT_ROADMAP.md](../ROLLOUT_ROADMAP.md), including wallet/key review,
-client-to-chain end-to-end tests, real ZKP integration, accessibility, browser
-support, and external security review.
+GH-193 qualifies the local maintained-client wallet boundary: bounded BIP-39
+import, versioned encrypted storage with legacy re-encryption, exact account and
+chain binding, and signer invalidation on lock/switch/delete/reload. This is not
+approval for real keys or funds and does not protect a compromised browser or
+same-origin script. Before release use, complete the remaining gates in
+[ROLLOUT_ROADMAP.md](../ROLLOUT_ROADMAP.md), including real ZKP integration,
+external review, production custody and staged-rollout evidence.

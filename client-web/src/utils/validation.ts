@@ -1,11 +1,19 @@
 /**
- * Validate mnemonic
+ * Validate mnemonic. Normalizes like the wallet service (NFKC, lowercase,
+ * collapsed whitespace) so the form and the service accept exactly the same
+ * phrases; wordlist membership and checksum are enforced fail-closed by
+ * WalletService on import.
  */
 export function validateMnemonic(mnemonic: string): {
   valid: boolean;
   error?: string;
 } {
-  const words = mnemonic.trim().split(/\s+/);
+  const words = mnemonic
+    .normalize('NFKC')
+    .trim()
+    .toLowerCase()
+    .split(/\s+/)
+    .filter((word) => word.length > 0);
 
   if (words.length !== 12 && words.length !== 24) {
     return {
@@ -14,10 +22,10 @@ export function validateMnemonic(mnemonic: string): {
     };
   }
 
-  if (words.some((w) => !w)) {
+  if (words.some((w) => !/^[a-z]+$/.test(w))) {
     return {
       valid: false,
-      error: 'All words must be filled',
+      error: 'Recovery phrase words must be letters a-z',
     };
   }
 

@@ -372,3 +372,19 @@
   registry, store, component, integration-rejection and bundle regressions.
 - [x] Publish protected PR, pass exact-head checks/review, merge, synchronize
   GH-29 and both Bridges, verify final `main` and live Pages, then close GH-190.
+
+## In progress - GH-193 maintained-client wallet and signing safety
+
+- [x] Validate 12/24-word English BIP-39 imports with bounded errors and enforce
+  service-layer wallet-name/password bounds.
+- [x] Version AES-GCM wallet payloads, raise PBKDF2-HMAC-SHA-256 to 600,000
+  iterations, and transparently re-encrypt authenticated legacy payloads.
+- [x] Reject stored-address/derived-account, signer prefix/length, recipient,
+  and RPC chain-ID mismatches before signing or broadcast.
+- [x] Invalidate session-bound signers and stale unlocks after lock, switch,
+  active-wallet deletion, or reload; keep session secrets out of persistence.
+- [x] Pass focused, full client, build/budget and disposable-chain gates; publish
+  exact limitations and candidate arithmetic.
+- [x] Complete full repository/security gates and independent review.
+- [ ] Publish a protected PR, merge exact green head, synchronize GH-29/live
+  Pages/Bridges, and close GH-193.

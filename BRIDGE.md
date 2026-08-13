@@ -6187,3 +6187,67 @@ exclusion, CI wiring, and documentation boundaries.
   occurred. The scoped task is fully complete and verified.
 
 ---
+
+## 2026-08-13 03:41 EEST GH-193 wallet and signing safety → In Progress
+
+- **Issue/branch:** [GH-193](https://github.com/NeaBouli/TrueRepublic/issues/193)
+  on `feature/GH-193-wallet-safety`, based on exact clean `origin/main`
+  `5cc5edc` after the fully verified GH-190 closeout.
+- **Scope:** qualify maintained-client wallet creation/import, encrypted
+  persistence, unlock/lock/switch/delete/reload invalidation, signer and chain
+  scoping, and sensitive-data exclusion with negative and lifecycle evidence.
+- **Delegation:** Kimi K3 receives a large bounded secret-free architecture and
+  implementation block. Claude Code receives only a small read-only inventory
+  task. Neither may delegate or write externally. Sol owns security decisions,
+  every accepted diff, integration, full tests, GitHub, merge, and closure.
+- **Safety:** repository and disposable local-chain work only; no real key,
+  account, fund, public RPC, production wallet, release, deployment, external
+  message, or production-readiness claim.
+- **Status:** task and durable handoff are created before code changes. Next is
+  parallel inventory/review followed by bounded implementation and full gates.
+
+---
+
+## 2026-08-13 03:58 EEST GH-193 client slice → Locally verified
+
+- Kimi delivered the large bounded wallet/service/test implementation; Sol
+  reviewed every write and added versioned PBKDF2-600k legacy re-encryption,
+  fail-closed malformed storage handling, stale-unlock protection, and
+  session-bound in-flight signer invalidation. Claude Code supplied only the
+  small read-only signing inventory.
+- PASS: 10 Node + 295 Vitest cases, lint, TypeScript production build/budgets,
+  and three real disposable-chain client deliveries. Build is 71.13 kB gzip
+  entry, 4.91 kB maximum lazy route, 355.08 kB total JavaScript.
+- Candidate status: 1,792 standard cases, rollout 32/59, phase work 32/51,
+  Phase 6 6/7, production false. Browser compromise/XSS, hardware custody, real
+  keys/accounts/funds, public RPC, release and deployment remain excluded.
+- Next: full Go/Race/Coverage, IBC, security/tooling, Rust, consistency and
+  independent-review gates; then protected PR/merge/public closure.
+
+---
+
+## 2026-08-13 04:17 EEST GH-193 full local gates → PASS
+
+- Full Go verify and real two-chain IBC transfer/ACK/timeout/replay/recovery
+  pass. Pinned Govulncheck, Staticcheck and Gitleaks pass; Rust fmt/Clippy/26
+  tests/audit pass with no vulnerability and five allowed existing warnings;
+  npm audit, docs, JSON and retirement contracts pass.
+- Kimi's independent review found no P0/P1 and one P2 concurrent-save race. Sol
+  fixed it, a stale balance-refresh-after-lock race, malformed-JSON error
+  bounding, and post-lock signer mnemonic access, then reran the relevant full
+  client gates: 10 Node + 298 Vitest, lint and build/budgets all pass.
+- Candidate status is now 1,795 standard cases, rollout 32/59, phase work 32/51,
+  Phase 6 6/7, production false. No known P0/P1/P2 remains. Next is protected
+  PR, exact-head checks/review, merge, GH-29/live Pages and both-Bridge closure.
+
+---
+
+## 2026-08-13 04:20 EEST GH-193 → PR #194 published
+
+- Reviewed commit `700eb18` is pushed and protected
+  [PR #194](https://github.com/NeaBouli/TrueRepublic/pull/194) targets `main`,
+  closes GH-193 and carries the complete local evidence and safety boundary.
+- Exact-head protected checks and review are now pending; merge, GH-29, final
+  main, live Pages and both-Bridge closure remain required before Done.
+
+---

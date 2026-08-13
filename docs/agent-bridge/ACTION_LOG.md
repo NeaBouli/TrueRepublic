@@ -3799,3 +3799,44 @@
   and verified the public result. Claude Code supplied only a small read-only
   inventory. No production/public-network, real-key/account/fund, release, or
   deployment action occurred.
+
+## 2026-08-13 03:41 EEST - GH-193 started
+
+- Created GH-193 and `feature/GH-193-wallet-safety` from exact clean main
+  `5cc5edc`; recorded scope and non-production boundary in both Bridges before
+  code changes.
+- Kimi received the large bounded client implementation; Claude Code received a
+  small read-only signing-path inventory. Sol retained security, review,
+  integration, complete gates, GitHub and closure.
+
+## 2026-08-13 03:58 EEST - GH-193 client slice locally verified
+
+- Kimi implemented bounded BIP-39 errors, service validation, exact account and
+  chain scoping, native-send validation, active-delete locking and extensive
+  regressions. Sol reviewed every write, replaced destructive malformed-record
+  filtering with fail-closed preservation, added versioned PBKDF2-600k legacy
+  migration, stale-unlock races, and session-bound in-flight signer invalidation.
+- PASS: 10 Node + 295 Vitest cases, lint, TypeScript/build/bundle budgets, and
+  three real disposable-chain deliveries. Candidate arithmetic is 1,792 cases,
+  rollout 32/59 and phase work 32/51; full repository/security and protected
+  publication gates remain pending.
+
+## 2026-08-13 04:17 EEST - GH-193 full local and independent review passed
+
+- Full Go verify and real two-chain IBC recovery pass; pinned Govulncheck,
+  Staticcheck and Gitleaks pass. Rust format, Clippy, 26 tests and audit pass
+  with no vulnerability and five allowed existing warnings. npm audit, docs,
+  JSON and all retirement contracts pass.
+- Kimi independently reproduced the client evidence and found no P0/P1. Sol
+  fixed its P2 concurrent-save finding plus a stale balance-refresh race and
+  bounded malformed JSON. Final client evidence is 10 Node + 298 Vitest, lint
+  and build/budgets; candidate arithmetic is 1,795 cases. No known P0/P1/P2
+  remains; protected publication is next.
+
+## 2026-08-13 04:20 EEST - GH-193 PR published
+
+- Committed the reviewed implementation as `700eb18`, pushed
+  `feature/GH-193-wallet-safety`, and opened protected PR #194 against `main`
+  with `Closes #193` and the complete local/security evidence.
+- Exact-head checks/review, merge, GH-29/final-main/live Pages and both-Bridge
+  closure remain pending.

@@ -4,10 +4,10 @@
   "release_date": "2026-03-04",
   "tests": {
     "status": "recovery_verified_locally",
-    "total": 1746,
+    "total": 1795,
     "go": 1461,
     "rust": 26,
-    "frontend": 259,
+    "frontend": 308,
     "historical_total": 577
   },
   "web_client": {
@@ -17,8 +17,8 @@
     "routes": 23,
     "stores": 9,
     "services": 15,
-    "build_size_gzip": "353.53 kB total JavaScript",
-    "initial_entry_gzip": "70.05 kB",
+    "build_size_gzip": "355.07 kB total JavaScript",
+    "initial_entry_gzip": "71.15 kB",
     "max_lazy_route_gzip": "4.91 kB",
     "lazy_route_entries": 20,
     "bundle_budget": "enforced_during_build"
@@ -37,9 +37,9 @@
     "status": "engineering_in_progress",
     "tracker_scope": "github_issue_29",
     "github_issue": 29,
-    "completed": 31,
+    "completed": 32,
     "total": 59,
-    "phase_work_completed": 31,
+    "phase_work_completed": 32,
     "phase_work_total": 51,
     "phase_6_completed": 6,
     "phase_6_total": 7,
@@ -155,7 +155,7 @@
       "production_deployment": false
     },
     "web_client": {
-      "status": "canonical_registry_delivery_query_and_ibc_recovery_verified_locally",
+      "status": "canonical_registry_delivery_query_ibc_and_wallet_safety_verified_locally",
       "features": [
         "wallet_create_import_unlock",
         "send_transactions",
@@ -169,7 +169,8 @@
       ],
       "custom_transaction_registry": "exact_fail_closed_type_urls_on_gh115",
       "local_chain_delivery": "ephemeral_bank_governance_membership_identity_and_dex_on_gh115",
-      "module_query_transport": "registered_grpc_over_cometbft_abci_json_rpc_fail_closed_on_gh121"
+      "module_query_transport": "registered_grpc_over_cometbft_abci_json_rpc_fail_closed_on_gh121",
+      "wallet_safety": "bip39_import_validation_versioned_aes_gcm_pbkdf2_600k_legacy_reencryption_address_chain_and_live_session_binding_on_gh193"
     },
     "module_queries": {
       "status": "registered_grpc_over_abci_browser_transport_verified_locally_on_gh121",
@@ -185,6 +186,7 @@
     "zkp_client": "mock preview is fail-closed and non-submittable; compatible real prover pending",
     "tx_history": "submitted-only newest-first pagination verified on GH-131; incoming-only history is not claimed",
     "ibc_transfers_ui": "canonical native ICS-20 signing and source-chain evidence recovery verified locally on GH-190; external relayer and public counterparty delivery remain unqualified",
+    "browser_wallet_custody": "local AES-GCM/PBKDF2 recovery store and live-session invalidation verified on GH-193; same-origin XSS, compromised browsers, hardware custody, real keys/funds, and production wallet operation remain unqualified",
     "node_bootstrap": "init-node wrapper delegates exclusively to generated CometBFT-key, exact bank-backed PoD genesis; independent multi-node operations review pending"
   },
   "branding": {

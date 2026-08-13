@@ -483,3 +483,42 @@
 - This is repository/local-chain evidence only. External relayers,
   counterparties, public RPCs, real keys/accounts/funds, release, deployment,
   and production remain outside GH-190.
+
+## 2026-08-13 - GH-193 maintained-client wallet and signing boundary
+
+- Imports accept only normalized 12/24-word English BIP-39 phrases with bounded
+  wordlist/checksum errors; service callers cannot bypass wallet-name or minimum
+  encryption-password validation.
+- New local custody payloads use versioned AES-256-GCM with unique 16-byte salts,
+  12-byte IVs and PBKDF2-HMAC-SHA-256 at 600,000 iterations. Authenticated legacy
+  100,000-iteration payloads remain readable and are immediately re-encrypted
+  after successful unlock. This follows current OWASP PBKDF2 guidance and W3C's
+  recommended authenticated AES-GCM boundary.
+- Decrypted mnemonics must re-derive the exact selected 20-byte account. The
+  canonical signing client rejects empty/malformed/foreign-prefix accounts and
+  RPC chain-ID mismatches before signing. Native sends validate recipient,
+  positive amount and denom before network work.
+- Session-generation-bound signer proxies re-check before and after account reads
+  and `signDirect`; lock, switch, active-wallet delete, reload, and stale unlock
+  completion invalidate them. Password/current wallet/signer/mnemonic remain
+  excluded from persisted Zustand, history and IBC records.
+- PASS so far: 10 Node + 295 Vitest cases, lint, TypeScript production build,
+  20 lazy routes, 71.13 kB gzip entry, 4.91 kB maximum route, and 355.08 kB total JavaScript;
+  the three-case disposable local-chain gate also passes.
+- Residual boundary: JavaScript cannot guarantee string-memory erasure, and an
+  XSS/compromised same-origin runtime can access an unlocked session. Hardware
+  custody, extension wallets, real keys/accounts/funds, public RPC, production,
+  release and deployment remain unqualified.
+
+### GH-193 final review closure
+
+- Kimi's independent review found a concurrent encrypted-record persistence
+  race. The final implementation performs the synchronous storage read/check/
+  merge/write only after asynchronous encryption and proves two concurrent
+  distinct saves are retained.
+- Balance refreshes are generation/address/lock scoped, so a response started
+  before lock or switch cannot restore stale balances afterward. Malformed JSON
+  also fails with a bounded message without echoing stored content.
+- Final maintained-client evidence is 10 Node + 298 Vitest cases, lint and
+  production build/budgets. Final bundle: 355.07 kB total JavaScript. No known
+  P0/P1/P2 remains.

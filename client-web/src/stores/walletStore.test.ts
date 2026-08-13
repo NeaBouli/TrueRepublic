@@ -10,13 +10,14 @@ import { useWalletStore } from './walletStore';
 const originalLoadHistoryPage = useWalletStore.getState().loadHistoryPage;
 
 const serviceMocks = vi.hoisted(() => ({
+  getBalance: vi.fn(),
   getSubmittedTransactions: vi.fn(),
   send: vi.fn(),
 }));
 
 vi.mock('@/services/blockchain', () => ({
   BlockchainService: vi.fn(() => ({
-    getBalance: vi.fn(async () => []),
+    getBalance: serviceMocks.getBalance,
   })),
 }));
 
@@ -89,6 +90,7 @@ describe('wallet store submitted-transaction history', () => {
   beforeEach(() => {
     localStorage.clear();
     serviceMocks.getSubmittedTransactions.mockReset();
+    serviceMocks.getBalance.mockReset().mockResolvedValue([]);
     serviceMocks.send.mockReset();
     resetHistoryState();
   });
@@ -408,5 +410,140 @@ describe('wallet store submitted-transaction history', () => {
     const state = useWalletStore.getState();
     expect(state.historyTransactions).toEqual([]);
     expect(state.historyStatus).toBe('idle');
+  });
+});
+
+describe('wallet session invalidation', () => {
+  const otherWallet: Wallet = {
+    address: OTHER_ADDRESS,
+    name: 'Other',
+    createdAt: 2,
+  };
+
+  beforeEach(() => {
+    localStorage.clear();
+    serviceMocks.getSubmittedTransactions.mockReset();
+    serviceMocks.send.mockReset();
+    resetHistoryState();
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  it('lock clears the unlocked session state', () => {
+    useWalletStore.setState({
+      balances: [{ denom: 'upnyx', amount: '5' }],
+    });
+
+    useWalletStore.getState().lock();
+
+    const state = useWalletStore.getState();
+    expect(state.isLocked).toBe(true);
+    expect(state.password).toBeNull();
+    expect(state.currentWallet).toBeNull();
+    expect(state.balances).toEqual([]);
+  });
+
+  it('does not restore stale balances after lock wins an in-flight refresh', async () => {
+    let resolveBalance: (value: { denom: string; amount: string }[]) => void =
+      () => {};
+    serviceMocks.getBalance.mockImplementation(
+      () =>
+        new Promise((resolve) => {
+          resolveBalance = resolve;
+        })
+    );
+
+    const pending = useWalletStore.getState().refreshBalance();
+    await new Promise((resolve) => setTimeout(resolve, 0));
+    useWalletStore.getState().lock();
+    resolveBalance([{ denom: 'upnyx', amount: '99' }]);
+    await pending;
+
+    const state = useWalletStore.getState();
+    expect(state.isLocked).toBe(true);
+    expect(state.balances).toEqual([]);
+  });
+
+  it('deleting the active wallet locks the session', () => {
+    useWalletStore.setState({
+      wallets: [wallet, otherWallet],
+      balances: [{ denom: 'upnyx', amount: '5' }],
+    });
+
+    useWalletStore.getState().deleteWallet(ADDRESS);
+
+    const state = useWalletStore.getState();
+    expect(state.currentWallet).toBeNull();
+    expect(state.password).toBeNull();
+    expect(state.isLocked).toBe(true);
+    expect(state.balances).toEqual([]);
+    expect(state.wallets.map((w) => w.address)).toEqual([OTHER_ADDRESS]);
+  });
+
+  it('deleting another wallet preserves the active session', () => {
+    useWalletStore.setState({ wallets: [wallet, otherWallet] });
+
+    useWalletStore.getState().deleteWallet(OTHER_ADDRESS);
+
+    const state = useWalletStore.getState();
+    expect(state.currentWallet?.address).toBe(ADDRESS);
+    expect(state.password).toBe('pw');
+    expect(state.isLocked).toBe(false);
+    expect(state.wallets.map((w) => w.address)).toEqual([ADDRESS]);
+  });
+
+  it('persists only the wallet list, never session secrets', () => {
+    useWalletStore.setState({ wallets: [wallet, otherWallet] });
+
+    const raw = localStorage.getItem('wallet-store') ?? '';
+    const persisted = JSON.parse(raw) as { state?: Record<string, unknown> };
+    expect(Object.keys(persisted.state ?? {})).toEqual(['wallets']);
+    expect(raw).not.toContain('password');
+    expect(raw).not.toContain('mnemonic');
+    expect(raw).not.toContain('currentWallet');
+    expect(raw).not.toContain('isLocked');
+  });
+
+  it('rejects sends while the wallet is locked', async () => {
+    useWalletStore.setState({
+      isLocked: true,
+      currentWallet: null,
+      password: null,
+    });
+
+    await expect(
+      useWalletStore.getState().sendTokens({
+        to: OTHER_ADDRESS,
+        amount: '1',
+        denom: 'upnyx',
+      })
+    ).rejects.toThrow('Wallet not unlocked');
+    expect(serviceMocks.send).not.toHaveBeenCalled();
+  });
+
+  it('cannot reopen a session when lock wins an in-flight unlock race', async () => {
+    let resolveWallet: (value: Wallet) => void = () => {};
+    vi.spyOn(WalletService, 'getWallet').mockImplementation(
+      () =>
+        new Promise<Wallet>((resolve) => {
+          resolveWallet = resolve;
+        })
+    );
+
+    const pending = useWalletStore
+      .getState()
+      .switchWallet(OTHER_ADDRESS, 'other-password');
+    await new Promise((resolve) => setTimeout(resolve, 0));
+    useWalletStore.getState().lock();
+    resolveWallet(otherWallet);
+
+    await expect(pending).rejects.toThrow('session changed during unlock');
+    const state = useWalletStore.getState();
+    expect(state.isLocked).toBe(true);
+    expect(state.currentWallet).toBeNull();
+    expect(state.password).toBeNull();
+    expect(state.isLoading).toBe(false);
   });
 });

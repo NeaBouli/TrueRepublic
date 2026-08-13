@@ -1,6 +1,6 @@
 # Testing Status
 
-The current **v0.4.0 recovery** source of truth records **1,746 verified
+The current **v0.4.0 recovery** source of truth records **1,795 verified
 standard-suite cases**. This arithmetic excludes the separately run opt-in
 GH-175/GH-178/GH-181 IBC two-chain and GH-184 governed-upgrade gates.
 
@@ -20,8 +20,8 @@ GH-175/GH-178/GH-181 IBC two-chain and GH-184 governed-upgrade gates.
 | Go DEX | 138 |
 | Go governance | 552 |
 | Rust/CosmWasm | 26 |
-| Maintained client | 259 |
-| **Total** | **1,746** |
+| Maintained client | 308 |
+| **Total** | **1,795** |
 
 The published total is the reproducible standard-suite baseline; the opt-in
 GH-175/GH-178/GH-181 IBC recovery and GH-184 upgrade gates are additional
