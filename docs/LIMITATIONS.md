@@ -23,6 +23,13 @@ approved for production or real funds during this audit.
   membership, identity, and slippage-bounded DEX flows. Unknown and legacy
   custom messages fail closed. This is local test evidence, not approval for
   real keys, public RPCs, production broadcasts, or funds.
+- GH-193 verifies bounded English BIP-39 import errors, versioned AES-GCM with
+  PBKDF2-HMAC-SHA-256 at 600,000 iterations, authenticated legacy-payload
+  re-encryption, exact derived-address and endpoint chain-ID matching, and
+  session-bound signer rejection after lock, switch, delete, or reload. Browser
+  localStorage remains exposed to a compromised same-origin runtime; hardware
+  custody, extension wallets, real keys/accounts/funds, and production wallet
+  operation remain unqualified.
 
 ## IBC Compatibility Boundaries
 

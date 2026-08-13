@@ -252,6 +252,29 @@ export class TransactionService {
     let client: SigningStargateClient | undefined;
 
     try {
+      // Fail closed before any network or signing work: the recipient must
+      // be this chain's 20-byte bech32 address, the amount a positive base
+      // denom integer, and the denom non-empty.
+      try {
+        const decoded = fromBech32(params.to);
+        if (
+          decoded.prefix !== this.config.bech32Prefix ||
+          decoded.data.length !== 20
+        ) {
+          throw new Error('wrong address network or length');
+        }
+      } catch {
+        throw new Error(
+          `Recipient must be a valid ${this.config.bech32Prefix} address`
+        );
+      }
+      if (!/^[0-9]+$/.test(params.amount) || BigInt(params.amount) <= 0n) {
+        throw new Error('Amount must be a positive integer');
+      }
+      if (typeof params.denom !== 'string' || params.denom.length === 0) {
+        throw new Error('Denom is required');
+      }
+
       client = await connectSigningClient(this.config, wallet);
       const msg = {
         typeUrl: '/cosmos.bank.v1beta1.MsgSend',

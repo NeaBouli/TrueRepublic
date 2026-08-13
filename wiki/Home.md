@@ -14,7 +14,7 @@
 | Item | Verified state |
 |---|---|
 | Version label | v0.4.0 recovery |
-| Tests | 1,746 standard-suite total: 1,461 Go (including GH-187 protocol-boundary regressions), 26 Rust, 259 maintained-client; separate GH-175/GH-178/GH-181 IBC and GH-184 governed-upgrade gates excluded |
+| Tests | 1,795 standard-suite total: 1,461 Go (including GH-187 protocol-boundary regressions), 26 Rust, 308 maintained-client; separate GH-175/GH-178/GH-181 IBC and GH-184 governed-upgrade gates excluded |
 | PNYX cap | 21,000,000 PNYX = 21,000,000,000,000 `upnyx` |
 | Node | Restart, four-validator recovery, state sync, sanitized backup/restore, compatible binary rollback, cold identity failover, secret-safe JSON logs, private metrics, and the GH-85 dashboard/alert/objective baseline verified |
 | ZKP client | Mock generation/submission disabled; real prover pending |

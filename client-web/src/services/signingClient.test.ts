@@ -1,6 +1,9 @@
-import type { SigningStargateClient } from '@cosmjs/stargate';
-import { describe, expect, it, vi } from 'vitest';
-import { deliverMessages } from './signingClient';
+import { SigningStargateClient } from '@cosmjs/stargate';
+import { toBech32 } from '@cosmjs/encoding';
+import type { OfflineSigner } from '@cosmjs/proto-signing';
+import { afterEach, describe, expect, it, vi } from 'vitest';
+import type { ChainConfig } from '@/types/chain';
+import { connectSigningClient, deliverMessages } from './signingClient';
 
 function mockClient(overrides?: {
   simulate?: ReturnType<typeof vi.fn>;
@@ -84,5 +87,102 @@ describe('canonical transaction delivery', () => {
     await expect(
       deliverMessages(client, 'truerepublic1sender', [], '0.025upnyx')
     ).rejects.toThrow('Transaction failed with code 9');
+  });
+});
+
+/* ------------------------------------------------------------------------ */
+/* connectSigningClient scoping (wallet/account/chain mismatch)              */
+/* ------------------------------------------------------------------------ */
+
+const SCOPING_CONFIG: ChainConfig = {
+  chainId: 'truerepublic-1',
+  chainName: 'TrueRepublic',
+  rpc: 'http://localhost:26657',
+  rest: 'http://localhost:1317',
+  bech32Prefix: 'truerepublic',
+  coinDenom: 'PNYX',
+  coinMinimalDenom: 'upnyx',
+  coinDecimals: 6,
+  gasPrice: '25000upnyx',
+};
+
+const LOCAL_ACCOUNT = toBech32(
+  'truerepublic',
+  Uint8Array.from({ length: 20 }, (_, index) => index + 1)
+);
+const FOREIGN_ACCOUNT = toBech32('cosmos', new Uint8Array(20).fill(9));
+
+function signerWith(addresses: string[]): OfflineSigner {
+  return {
+    getAccounts: async () =>
+      addresses.map((address) => ({
+        address,
+        algo: 'secp256k1' as const,
+        pubkey: new Uint8Array(33),
+      })),
+  } as unknown as OfflineSigner;
+}
+
+function connectedClient(chainId: string): SigningStargateClient {
+  return {
+    getChainId: vi.fn().mockResolvedValue(chainId),
+    disconnect: vi.fn(),
+  } as unknown as SigningStargateClient;
+}
+
+describe('signing client scoping', () => {
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  it('connects when account prefix and chain id match the config', async () => {
+    const client = connectedClient('truerepublic-1');
+    const connect = vi
+      .spyOn(SigningStargateClient, 'connectWithSigner')
+      .mockResolvedValue(client);
+
+    await expect(
+      connectSigningClient(SCOPING_CONFIG, signerWith([LOCAL_ACCOUNT]))
+    ).resolves.toBe(client);
+    expect(connect).toHaveBeenCalledOnce();
+  });
+
+  it('rejects a signer without any account before connecting', async () => {
+    const connect = vi.spyOn(SigningStargateClient, 'connectWithSigner');
+
+    await expect(
+      connectSigningClient(SCOPING_CONFIG, signerWith([]))
+    ).rejects.toThrow('no account');
+    expect(connect).not.toHaveBeenCalled();
+  });
+
+  it('rejects a foreign-network account before connecting', async () => {
+    const connect = vi.spyOn(SigningStargateClient, 'connectWithSigner');
+
+    await expect(
+      connectSigningClient(SCOPING_CONFIG, signerWith([FOREIGN_ACCOUNT]))
+    ).rejects.toThrow('does not belong to the truerepublic network');
+    expect(connect).not.toHaveBeenCalled();
+  });
+
+  it('rejects a malformed account address before connecting', async () => {
+    const connect = vi.spyOn(SigningStargateClient, 'connectWithSigner');
+
+    await expect(
+      connectSigningClient(SCOPING_CONFIG, signerWith(['not-an-address']))
+    ).rejects.toThrow('not valid bech32');
+    expect(connect).not.toHaveBeenCalled();
+  });
+
+  it('rejects a chain id mismatch and disconnects the client', async () => {
+    const client = connectedClient('other-chain-9');
+    vi.spyOn(SigningStargateClient, 'connectWithSigner').mockResolvedValue(
+      client
+    );
+
+    await expect(
+      connectSigningClient(SCOPING_CONFIG, signerWith([LOCAL_ACCOUNT]))
+    ).rejects.toThrow('expected truerepublic-1');
+    expect(client.disconnect).toHaveBeenCalledOnce();
   });
 });

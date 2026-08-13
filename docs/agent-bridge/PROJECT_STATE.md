@@ -1,6 +1,15 @@
 # Project State
 
-Updated: 2026-08-13 00:27 UTC
+Updated: 2026-08-13 00:58 UTC
+
+- GH-193 is locally verified on `feature/GH-193-wallet-safety`. Kimi delivered
+  the large wallet/service/test slice; Sol added versioned PBKDF2-600k legacy
+  migration and session-bound in-flight signer invalidation after independent
+  review. Claude Code supplied a small read-only signing inventory. Client lint,
+  10 Node + 298 Vitest cases, TypeScript/build/budgets, and three real disposable
+  chain deliveries pass. Candidate public arithmetic is 1,795 cases, rollout
+  32/59, phase work 32/51, Phase 6 6/7, production false. Full repository and
+  protected publication gates remain pending.
 
 - GH-190 is complete through PR #191, merged as `ed669a2`. Exact reviewed head
   `847540f` passed all 14 reported contexts with zero review threads. Final-main

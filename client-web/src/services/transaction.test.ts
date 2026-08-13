@@ -386,3 +386,51 @@ describe('boundChainError', () => {
     expect(boundChainError('\n\t', 11)).toBe('Transaction failed with code 11');
   });
 });
+
+describe('send input validation', () => {
+  const stubWallet = {
+    getAccounts: async () => [
+      { address: ADDRESS, algo: 'secp256k1', pubkey: new Uint8Array(33) },
+    ],
+  } as unknown as import('@cosmjs/proto-signing').DirectSecp256k1HdWallet;
+
+  it('rejects a foreign or malformed recipient before any network work', async () => {
+    const service = new TransactionService(DEFAULT_CHAIN);
+
+    for (const to of [FOREIGN_ADDRESS, LONG_ADDRESS, 'not-an-address']) {
+      const result = await service.send(stubWallet, {
+        to,
+        amount: '1',
+        denom: 'upnyx',
+      });
+      expect(result.success).toBe(false);
+      expect(result.error).toContain('Recipient must be a valid');
+    }
+  });
+
+  it('rejects non-positive or non-integer amounts before any network work', async () => {
+    const service = new TransactionService(DEFAULT_CHAIN);
+
+    for (const amount of ['0', '1.5', '-3', 'abc', '']) {
+      const result = await service.send(stubWallet, {
+        to: ADDRESS,
+        amount,
+        denom: 'upnyx',
+      });
+      expect(result.success).toBe(false);
+      expect(result.error).toContain('positive integer');
+    }
+  });
+
+  it('rejects an empty denom before any network work', async () => {
+    const service = new TransactionService(DEFAULT_CHAIN);
+
+    const result = await service.send(stubWallet, {
+      to: ADDRESS,
+      amount: '1',
+      denom: '',
+    });
+    expect(result.success).toBe(false);
+    expect(result.error).toContain('Denom is required');
+  });
+});
