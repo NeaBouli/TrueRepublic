@@ -286,7 +286,7 @@ func clear(data []byte) {
 }
 
 func rejectDuplicateJSONKeys(decoder *json.Decoder) error {
-	if err := rejectDuplicateJSONValue(decoder); err != nil {
+	if err := rejectDuplicateJSONValue(decoder, 0); err != nil {
 		return err
 	}
 	switch _, err := decoder.Token(); {
@@ -299,7 +299,12 @@ func rejectDuplicateJSONKeys(decoder *json.Decoder) error {
 	}
 }
 
-func rejectDuplicateJSONValue(decoder *json.Decoder) error {
+const maxJSONNestingDepth = 8
+
+func rejectDuplicateJSONValue(decoder *json.Decoder, depth int) error {
+	if depth > maxJSONNestingDepth {
+		return fmt.Errorf("JSON nesting exceeds %d levels", maxJSONNestingDepth)
+	}
 	token, err := decoder.Token()
 	if err != nil {
 		return err
@@ -324,7 +329,7 @@ func rejectDuplicateJSONValue(decoder *json.Decoder) error {
 				return fmt.Errorf("duplicate JSON key %q", key)
 			}
 			seen[key] = struct{}{}
-			if err := rejectDuplicateJSONValue(decoder); err != nil {
+			if err := rejectDuplicateJSONValue(decoder, depth+1); err != nil {
 				return err
 			}
 		}
@@ -332,7 +337,7 @@ func rejectDuplicateJSONValue(decoder *json.Decoder) error {
 		return err
 	case '[':
 		for decoder.More() {
-			if err := rejectDuplicateJSONValue(decoder); err != nil {
+			if err := rejectDuplicateJSONValue(decoder, depth+1); err != nil {
 				return err
 			}
 		}

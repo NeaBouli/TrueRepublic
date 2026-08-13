@@ -138,10 +138,10 @@ Transaction execution never generates trusted setup; a missing configured VK
 fails closed.
 
 The maintained and legacy web clients reject mock proof generation and
-submission. Anonymous voting is not production-approved until a compatible
-real prover and independent cryptographic review exist. Anonymous rewards
-remain deferred because current proof/signature submissions do not bind a safe
-payout recipient.
+submission. GH-206 verifies only synthetic test compatibility. Anonymous
+voting is not production-approved until production qualification, ceremony,
+submission integration, reward-recipient binding, and independent
+cryptographic review are complete.
 
 ## Client policy
 

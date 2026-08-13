@@ -37,7 +37,7 @@ TRUEREPUBLIC_ZKP_WASM_INTEGRATION=1 \
 TRUEREPUBLIC_ZKP_WASM_PATH="$WASM_PATH" \
 TRUEREPUBLIC_WASM_EXEC_PATH="$WASM_EXEC_PATH" \
 TRUEREPUBLIC_ZKP_RESULT_PATH="$RESULT_PATH" \
-  npx vitest run src/services/zkpWasmProver.integration.test.ts
+  ./node_modules/.bin/vitest run src/services/zkpWasmProver.integration.test.ts
 
 cd "$ROOT_DIR"
 TRUEREPUBLIC_ZKP_RESULT_PATH="$RESULT_PATH" \

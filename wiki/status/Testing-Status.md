@@ -25,7 +25,8 @@ GH-175/GH-178/GH-181 IBC two-chain and GH-184 governed-upgrade gates.
 | **Total** | **1,854** |
 
 The published total is the reproducible standard-suite baseline; the opt-in
-GH-175/GH-178/GH-181 IBC recovery and GH-184 upgrade gates are additional
+GH-175/GH-178/GH-181 IBC recovery, GH-184 upgrade, and GH-206 Go/WASM
+compatibility (`./scripts/test-zkp-wasm-client.sh`) gates are additional
 evidence and are not counted in the 1,511 Go subtotal.
 
 ## Current Go coverage

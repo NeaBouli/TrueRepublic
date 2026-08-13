@@ -23,6 +23,13 @@ type goldenVector struct {
 	NullifierHashHex     string   `json:"nullifier_hash_hex"`
 }
 
+type fixtureManifest struct {
+	Artifacts []struct {
+		Path   string `json:"path"`
+		SHA256 string `json:"sha256"`
+	} `json:"artifacts"`
+}
+
 func TestPinnedSyntheticProofIsAcceptedByNativeVerifier(t *testing.T) {
 	request, cs, pk, vk := loadFixture(t)
 	result, err := zkpprover.Prove(cs, pk, vk, request)
@@ -41,7 +48,7 @@ func TestPinnedSyntheticProofIsAcceptedByNativeVerifier(t *testing.T) {
 	validatedVK, err := truedemocracy.ValidateMembershipVerifyingKey(
 		vk,
 		truedemocracy.MembershipCircuitID,
-		truedemocracy.VerifyingKeyFingerprint(vk),
+		pinnedVerifyingKeyFingerprint(t),
 	)
 	if err != nil {
 		t.Fatalf("validate pinned verifying key: %v", err)
@@ -103,7 +110,15 @@ func TestDecodeRequestStrictRejectsAmbiguousJSON(t *testing.T) {
 			t.Fatalf("ambiguous JSON accepted: %s", candidate)
 		}
 	}
+	tooDeep := strings.Repeat("[", maxTestJSONNestingDepth+2) + "0" +
+		strings.Repeat("]", maxTestJSONNestingDepth+2)
+	if _, err := zkpprover.DecodeRequestStrict([]byte(tooDeep)); err == nil ||
+		!strings.Contains(err.Error(), "JSON nesting exceeds") {
+		t.Fatalf("deeply nested JSON result = %v", err)
+	}
 }
+
+const maxTestJSONNestingDepth = 8
 
 func TestWASMClientOutputIsAcceptedByNativeVerifier(t *testing.T) {
 	path := os.Getenv("TRUEREPUBLIC_ZKP_RESULT_PATH")
@@ -130,7 +145,7 @@ func TestWASMClientOutputIsAcceptedByNativeVerifier(t *testing.T) {
 	validatedVK, err := truedemocracy.ValidateMembershipVerifyingKey(
 		vk,
 		truedemocracy.MembershipCircuitID,
-		truedemocracy.VerifyingKeyFingerprint(vk),
+		pinnedVerifyingKeyFingerprint(t),
 	)
 	if err != nil {
 		t.Fatal(err)
@@ -189,6 +204,26 @@ func loadFixture(t *testing.T) (zkpprover.Request, []byte, []byte, []byte) {
 		ExternalNullifierHex: vector.ExternalNullifierHex,
 		SignalHashHex:        vector.SignalHashHex,
 	}, read("membership_v2.cs"), read("membership_v2.pk"), read("membership_v2.vk")
+}
+
+func pinnedVerifyingKeyFingerprint(t *testing.T) string {
+	t.Helper()
+	directory := filepath.Join("..", "..", "x", "truedemocracy", "testdata", "zkp")
+	data, err := os.ReadFile(filepath.Join(directory, "manifest.json"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	var manifest fixtureManifest
+	if err := json.Unmarshal(data, &manifest); err != nil {
+		t.Fatal(err)
+	}
+	for _, artifact := range manifest.Artifacts {
+		if artifact.Path == "membership_v2.vk" && artifact.SHA256 != "" {
+			return artifact.SHA256
+		}
+	}
+	t.Fatal("manifest does not pin membership_v2.vk SHA-256")
+	return ""
 }
 
 func decodeHex(t *testing.T, label, value string) []byte {

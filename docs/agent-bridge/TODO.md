@@ -440,8 +440,9 @@
 - [x] Prove exact browser/client-to-Go verification compatibility and reject
   malformed inputs, drift, invalid witnesses, tampered output, and unavailable
   runtime states fail closed.
-- [ ] Complete Sol line-by-line/security review, full local
-  repository/client/security/docs gates, protected PR, merge, final-main,
-  Pages, tracker, and both-Bridge synchronization before Done.
+- [x] Complete Sol line-by-line/security review and full local
+  repository/client/security/docs gates.
+- [ ] Complete the protected PR, merge, final-main, Pages, tracker, and
+  both-Bridge synchronization before Done.
   Kimi deep review was attempted twice but provider quota returned HTTP 403;
   an independent read-only review was completed and all findings remediated.

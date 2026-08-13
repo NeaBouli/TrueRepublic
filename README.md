@@ -253,7 +253,7 @@ cd client-web && npm ci && npm run lint && npm test -- --run && npm run build
 | Native mobile client | — | Retired under GH-102; replacement pending |
 | Local encrypted test wallet + CosmJS | 0.39 | Maintained v0.4 client |
 
-**Known Limitations:** TrueRepublic uses PoD and does not mount `x/staking` or `x/distribution`; GH-187 makes every required IBC/CosmWasm compatibility adapter reject those unsupported surfaces fail-closed. GH-184 wires real `x/upgrade` for the exact governed fresh-genesis v0.4.1 path, but pre-GH-184 store introduction and IBC client upgrades remain unsupported. A real ZKP prover/ceremony review is pending. GH-93 provides a strict synthetic incident-command and rehearsal contract, but a private live operator rehearsal remains pending. GH-85 provides dashboard/application runtime evidence, alert rules, recovery/testnet objectives, and role ownership. GH-89 adds a strict synthetic topology qualification contract. GH-97 adds bounded four-validator load, resource, retention, restart, and ledger evidence; it does not establish production sizing or multi-day soak behavior. GH-101 adds a digest-bound offline deployment-evidence envelope and verifier; it does not prove or perform a live deployment. Real seed/sentry/validator/RPC deployment, firewall/TLS/DNS evidence, external paging drills, private-environment capacity evidence, and independent live operations review remain open. See [LIMITATIONS.md](docs/LIMITATIONS.md).
+**Known Limitations:** TrueRepublic uses PoD and does not mount `x/staking` or `x/distribution`; GH-187 makes every required IBC/CosmWasm compatibility adapter reject those unsupported surfaces fail-closed. GH-184 wires real `x/upgrade` for the exact governed fresh-genesis v0.4.1 path, but pre-GH-184 store introduction and IBC client upgrades remain unsupported. GH-206 verifies only synthetic test compatibility; production qualification, ceremony, submission integration, reward-recipient binding, and independent cryptographic review remain pending. GH-93 provides a strict synthetic incident-command and rehearsal contract, but a private live operator rehearsal remains pending. GH-85 provides dashboard/application runtime evidence, alert rules, recovery/testnet objectives, and role ownership. GH-89 adds a strict synthetic topology qualification contract. GH-97 adds bounded four-validator load, resource, retention, restart, and ledger evidence; it does not establish production sizing or multi-day soak behavior. GH-101 adds a digest-bound offline deployment-evidence envelope and verifier; it does not prove or perform a live deployment. Real seed/sentry/validator/RPC deployment, firewall/TLS/DNS evidence, external paging drills, private-environment capacity evidence, and independent live operations review remain open. See [LIMITATIONS.md](docs/LIMITATIONS.md).
 
 ---
 
@@ -320,7 +320,7 @@ approval. Current evidence, risks, and commands are maintained in
   - ✅ Wallet Foundation (create/import/encrypt/send)
   - ✅ Governance UI (domains, issues, suggestions, stones)
   - ✅ DEX Interface (swap, liquidity, LP positions)
-  - 🟡 ZKP Anonymous Voting (on-chain binding verified; mock submission disabled; real prover pending)
+  - 🟡 ZKP Anonymous Voting (GH-206 test-only compatibility verified; production qualification, ceremony, submission, reward-recipient binding, and independent review pending)
   - ✅ Domain Membership & Onboarding
   - ✅ Admin Dashboard (member management, stats)
   - ✅ Network Explorer (validators, blocks, IBC)

@@ -78,9 +78,9 @@ Yes, by **2/3 majority vote** of domain members. Any member can initiate a vote-
 ### Is voting anonymous?
 The on-chain recovery design supports domain-scoped anonymous ratings and binds
 proofs to the chain, proposal, and rating. However, the maintained web client
-rejects mock proof generation/submission. Anonymous voting is therefore not
-available for production use until a compatible real prover and independent
-cryptographic review exist.
+rejects mock proof generation/submission. GH-206 verifies only synthetic test
+compatibility. Production qualification, ceremony, submission integration,
+reward-recipient binding, and independent cryptographic review remain pending.
 
 ## Wallet
 
@@ -143,7 +143,8 @@ Fork the repo, create a branch, write tests, and submit a PR. See [Developer Doc
 ### Where are the tests?
 The recovery baseline has 1,854 verified standard-suite cases: 1,511 Go, 26
 Rust, and 317 maintained-client tests. This total excludes the separate opt-in
-GH-175/GH-178/GH-181 IBC gate (`make ibc-two-chain`). Run
+GH-175/GH-178/GH-181 IBC gate (`make ibc-two-chain`), GH-184 governed-upgrade
+gate, and GH-206 compatibility gate (`./scripts/test-zkp-wasm-client.sh`). Run
 `./scripts/go-packages.sh go test -race -cover -count=1` and see
 `docs/status.json` for the authoritative breakdown.
 

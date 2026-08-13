@@ -1,5 +1,25 @@
 # TrueRepublic Agent Bridge
 
+## 2026-08-14 02:25 EEST GH-206 PR review remediation → Locally verified
+
+- Reviewed all nine CodeRabbit threads against exact PR #207 head `dfc7fe3`.
+  Hardened strict request decoding with a bounded JSON nesting depth, made both
+  native compatibility checks consume the committed manifest's fixed VK
+  fingerprint, and made the WASM gate execute only the `npm ci`-installed
+  Vitest binary. The already-correct 594/317 detailed counts were retained.
+- Split completed local evidence from pending publication work and aligned the
+  ZKP status, threat model, roadmap, FAQ and testing wiki on one explicit
+  test-only/non-production boundary.
+- **PASS:** focused prover tests, real maintained-client WASM-to-native proof,
+  docs consistency, diff hygiene, and complete `make verify` Build/Vet/Race/
+  Coverage over all 16 selected packages under Go 1.26.6. Prover coverage
+  increased from 72.6% to 74.8%.
+- **Next:** publish the review-fix head, resolve the verified threads with
+  evidence, and require the replacement exact head to pass every protected
+  check before merge.
+
+---
+
 ## 2026-08-14 02:18 EEST GH-206 Go 1.26.6 remediation → Locally verified
 
 - Synchronized the current Go toolchain contract from 1.26.5 to 1.26.6 across

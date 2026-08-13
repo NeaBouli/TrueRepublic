@@ -139,8 +139,9 @@ JSON register.
 - **TM-ZKP-001** (critical/high, blocked → GH-29): no production-qualified Groth16 prover.
   Verified: fail-closed clients, pinned genesis VK, no randomized consensus
   setup, and GH-206 real synthetic Go/WASM-to-native-verifier compatibility.
-  Blocked: no production ceremony, reproducible production proving artifacts,
-  audited submission path, or real-network browser-to-chain evidence is claimed.
+  Blocked: no production ceremony, no reproducible proving artifacts for
+  production, no audited submission path, or real-network browser-to-chain
+  evidence is claimed.
 - **TM-ZKP-002** (high/medium, deferred → GH-7): compromised or unaudited
   trusted setup or circuit. Verified: genesis ceremony artifacts pinned as
   trust anchor. Deferred: ceremony provenance and independent cryptographic,

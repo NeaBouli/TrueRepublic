@@ -1,5 +1,18 @@
 # Action Log
 
+## 2026-08-14 — GH-206 PR review findings remediated locally
+
+- All nine CodeRabbit threads were checked against the current PR head. The
+  strict decoder now caps nesting, both native compatibility verifications use
+  the fixed VK digest from the committed manifest, and the WASM gate fails
+  closed unless the locally installed Vitest binary exists.
+- Public status and verification-gate wording now consistently distinguish
+  synthetic test compatibility from production qualification, ceremony,
+  submission, reward binding and independent review. Detailed governance and
+  maintained-client counts were already correct and remain 594/317.
+- Focused prover/WASM/docs checks and complete Go 1.26.6 Build/Vet/Race/
+  Coverage pass. Hosted replacement-head checks remain required before merge.
+
 ## 2026-08-14 — GH-206 Go 1.26.6 remediation fully verified locally
 
 - The synchronized Go 1.26.6 candidate passes the complete `make verify`

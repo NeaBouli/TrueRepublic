@@ -168,7 +168,7 @@ Full validator exits remain supported through the evidence-window escrow hold.
 
 ## ZKP Client
 
-**Status:** Real synthetic Go/WASM compatibility verified; production client disabled
+**Status:** Real synthetic Go/WASM compatibility verified; production ZKP submission disabled
 **Timeline:** v0.4.0
 **Current:** Proofs bind chain/proposal/rating, nullifiers persist across export,
 and the trusted genesis VK is pinned by circuit ID, SHA-256, curve, shape, and
