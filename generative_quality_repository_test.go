@@ -26,12 +26,16 @@ func TestGenerativeQualityRepositoryContract(t *testing.T) {
 		"TestConsensusSlashingReplayProperty",
 		"FuzzComputeSwapOutput",
 		"FuzzPNYXCapAndGenesisValidation",
-		"TRUEREPUBLIC_FUZZ_SECONDS",
-		"FUZZ_SECONDS > 60",
+		"TRUEREPUBLIC_FUZZ_ITERATIONS",
+		"FUZZ_ITERATIONS > 60000",
+		`-fuzztime="${FUZZ_ITERATIONS}x"`,
 	} {
 		if !strings.Contains(script, required) {
 			t.Fatalf("generative quality script missing %q", required)
 		}
+	}
+	if strings.Contains(script, `-fuzztime="${FUZZ_ITERATIONS}s"`) {
+		t.Fatal("generative quality gate must not use a wall-clock fuzz deadline")
 	}
 
 	for _, required := range []string{
