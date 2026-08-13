@@ -28,15 +28,33 @@ describe('ZKPService fail-closed boundary', () => {
       merkleRoot: '02',
       publicSignals: ['02', '01'],
     };
+    const inputs: ProofInputs = {
+      identitySecret: '03',
+      merkleRoot: '04',
+      merkleProof: {
+        root: '04',
+        pathIndices: Array.from({ length: 20 }, () => 0),
+        pathElements: Array.from({ length: 20 }, () => '00'),
+        leaf: '05',
+      },
+      externalNullifier: '06',
+      rating: 3,
+      domainName: 'FixtureDomain',
+      issueName: 'FixtureIssue',
+      suggestionName: 'FixtureSuggestion',
+    };
+    let forwarded: ProofInputs | undefined;
     const prover: Groth16Prover = {
-      generate: async () => fixture,
+      generate: async (received) => {
+        forwarded = received;
+        return fixture;
+      },
     };
     const service = new ZKPService(DEFAULT_CHAIN, undefined, prover);
 
     expect(service.isSubmittable).toBe(false);
-    await expect(service.generateProof({} as ProofInputs)).resolves.toEqual(
-      fixture
-    );
+    await expect(service.generateProof(inputs)).resolves.toEqual(fixture);
+    expect(forwarded).toEqual(inputs);
     expect(service.isSubmittable).toBe(false);
   });
 });

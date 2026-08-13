@@ -399,5 +399,7 @@
 - [x] Match maintained-client BN254 MiMC, field and vote-context encodings to the
   shared Go vector while keeping `isSubmittable` hard false.
 - [x] Pass full local repository/client/security/docs gates and Kimi review.
-- [ ] Reconcile PR #197, publish protected GH-198 PR, pass exact-head checks,
-  merge, verify final main/Pages/Bridges and close GH-198.
+- [x] Reconcile PR #197 through merged commit `fc5b418` and rebase the verified
+  candidate without changing the approved GH-198 scope.
+- [ ] Complete PR #199 review, pass exact-head checks, merge, verify final
+  main/Pages/Bridges and close GH-198.

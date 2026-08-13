@@ -6351,3 +6351,20 @@ exclusion, CI wiring, and documentation boundaries.
   lost line. Candidate commit is now `028a555`; protected publication is next.
 
 ---
+
+## 2026-08-13 15:41 EEST GH-198 review follow-up → PASS
+
+- Independently verified the GitHub review findings before changing code. The
+  fixture loader now exercises its exact checksum rejection helper, keeper replay
+  checks `AddMember`, the client prover seam proves exact input forwarding, and
+  empty MiMC elements match Go field-zero behavior. Strict JSON now uses one
+  explicit EOF check; no production or consensus path changed.
+- Synchronized the current Bridge state for completed PR #197 reconciliation.
+  Full post-review Go `-race ./...` passes. Full client evidence remains 10 Node
+  + 301 Vitest cases, 3 skipped; lint, TypeScript/Vite build, bundle budgets
+  (entry 72,868 bytes, 20 lazy routes, max 5,030, total 363,613), and high audit
+  all pass. Public arithmetic therefore remains 1,810 and rollout remains 32/59.
+- No known P0/P1/P2 remains. The next protected head must rerun every GitHub
+  context and close all review threads before merge.
+
+---

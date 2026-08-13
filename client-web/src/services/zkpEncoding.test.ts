@@ -35,6 +35,11 @@ const vector = JSON.parse(
 
 describe('ZKP Go/client encoding compatibility', () => {
   it('matches the synthetic Go MiMC commitment and nullifier vector', () => {
+    const emptyElement = bytesToHex(mimcBn254([new Uint8Array()]));
+    const explicitZero = bytesToHex(mimcBn254([new Uint8Array(32)]));
+
+    expect(emptyElement).toBe(explicitZero);
+    expect(emptyElement).toHaveLength(64);
     expect(vector.synthetic_and_test_only).toBe(true);
     const secret = hexToBytes(vector.synthetic_witness_hex);
     const external = hexToBytes(vector.external_nullifier_hex);

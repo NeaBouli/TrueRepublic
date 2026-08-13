@@ -6,6 +6,7 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
+	"io"
 	"os"
 	"path/filepath"
 	"sort"
@@ -67,11 +68,8 @@ func strictJSON(data []byte, target any) error {
 	if err := decoder.Decode(target); err != nil {
 		return err
 	}
-	if decoder.More() {
-		return fmt.Errorf("trailing JSON value")
-	}
-	var extra any
-	if err := decoder.Decode(&extra); err == nil {
+	var extra json.RawMessage
+	if err := decoder.Decode(&extra); err != io.EOF {
 		return fmt.Errorf("trailing JSON value")
 	}
 	return nil
@@ -80,6 +78,13 @@ func strictJSON(data []byte, target any) error {
 func artifactRecord(path string, data []byte) zkpArtifactRecord {
 	digest := sha256.Sum256(data)
 	return zkpArtifactRecord{Path: path, Size: len(data), SHA256: hex.EncodeToString(digest[:])}
+}
+
+func verifyArtifact(record zkpArtifactRecord, data []byte) error {
+	if got := artifactRecord(record.Path, data); got != record {
+		return fmt.Errorf("artifact mismatch for %s: got %+v want %+v", record.Path, got, record)
+	}
+	return nil
 }
 
 func readVerifiedZKPFixture(t *testing.T) (zkpFixtureManifest, zkpGoldenVector, groth16.VerifyingKey, []byte) {
@@ -130,8 +135,8 @@ func readVerifiedZKPFixture(t *testing.T) (zkpFixtureManifest, zkpGoldenVector, 
 		if err != nil {
 			t.Fatal(err)
 		}
-		if got := artifactRecord(record.Path, data); got != record {
-			t.Fatalf("artifact mismatch for %s: got %+v want %+v", record.Path, got, record)
+		if err := verifyArtifact(record, data); err != nil {
+			t.Fatal(err)
 		}
 		if _, duplicate := artifactData[record.Path]; duplicate {
 			t.Fatalf("duplicate artifact %q", record.Path)
@@ -255,8 +260,8 @@ func TestZKPFixtureMetadataRejectsDriftAndMalformedKeys(t *testing.T) {
 		}
 		candidate := append([]byte(nil), data...)
 		candidate[0] ^= 1
-		if artifactRecord(record.Path, candidate) == record {
-			t.Fatal("corrupted artifact retained manifest identity")
+		if err := verifyArtifact(record, candidate); err == nil {
+			t.Fatal("loader checksum validation accepted corrupted artifact")
 		}
 	})
 	t.Run("verifying key fingerprint mismatch", func(t *testing.T) {
@@ -287,7 +292,9 @@ func TestZKPGoldenProofKeeperReplay(t *testing.T) {
 	admin := sdk.AccAddress("fixture-admin")
 	member := sdk.AccAddress("fixture-member")
 	k.CreateDomain(ctx, vector.DomainName, admin, sdk.NewCoins(sdk.NewInt64Coin(PNYXDenom, 500_000)))
-	k.AddMember(ctx, vector.DomainName, member.String(), admin)
+	if err := k.AddMember(ctx, vector.DomainName, member.String(), admin); err != nil {
+		t.Fatal(err)
+	}
 	if err := k.RegisterIdentityCommitment(ctx, vector.DomainName, member.String(), vector.CommitmentHex); err != nil {
 		t.Fatal(err)
 	}

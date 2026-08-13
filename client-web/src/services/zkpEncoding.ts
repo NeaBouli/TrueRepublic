@@ -28,8 +28,8 @@ function bigintToBytes(value: bigint, size = 32): Uint8Array {
 }
 
 function fieldElement(bytes: Uint8Array, label: string): bigint {
-  if (bytes.length === 0 || bytes.length > 32) {
-    throw new Error(`${label} must be 1-32 bytes`);
+  if (bytes.length > 32) {
+    throw new Error(`${label} must be at most 32 bytes`);
   }
   const value = bytesToBigInt(bytes);
   if (value >= BN254_SCALAR_MODULUS) {

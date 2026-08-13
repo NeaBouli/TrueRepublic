@@ -3877,3 +3877,13 @@
   its root-Bridge audit handoff, and rebased GH-198 cleanly onto that exact main.
 - No GH-198 implementation or evidence line was lost; protected publication is
   now unblocked.
+
+## 2026-08-13 15:41 EEST - GH-198 review follow-up passed
+
+- Verified and addressed the valid GitHub review findings with bounded test and
+  state-record changes only: exact loader checksum rejection, checked keeper
+  setup, complete prover-input forwarding, Go-compatible empty MiMC elements,
+  and a single strict JSON EOF check.
+- Post-review full Go race and full client test/lint/build/budget/high-audit
+  gates pass. Test arithmetic remains 1,810 and rollout remains 32/59; no
+  production ZKP capability or consensus format was enabled.

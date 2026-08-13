@@ -5,12 +5,13 @@ Groth16 fixtures, real proof/keeper replay and maintained-client encoding parity
 pass without enabling submission. Candidate arithmetic is 1,810 cases; rollout
 remains 32/59 and production remains false. Protected publication is pending.
 
-Updated: 2026-08-13 12:18 UTC
+Updated: 2026-08-13 12:33 UTC
 
 - GH-198 adds no production prover or ceremony claim. The committed PK is
   explicitly single-party toxic waste; `isSubmittable` remains false. Full Go
   race/coverage, client, build/audit, vet/coverage, docs and pinned secret scan
-  pass; Kimi found no P0/P1/P2. Separate PR #197 must be reconciled before push.
+  pass; Kimi found no P0/P1/P2. Separate PR #197 was reconciled through merged
+  commit `fc5b418`; protected PR #199 publication and final verification remain.
 
 - GH-193 is locally verified on `feature/GH-193-wallet-safety`. Kimi delivered
   the large wallet/service/test slice; Sol added versioned PBKDF2-600k legacy
