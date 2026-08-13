@@ -40,6 +40,9 @@ func MiMCHashBytes(data ...[]byte) ([]byte, error) {
 			return nil, fmt.Errorf("element %d exceeds 32 bytes", i)
 		}
 		vals[i] = new(big.Int).SetBytes(d)
+		if vals[i].Cmp(ecc.BN254.ScalarField()) >= 0 {
+			return nil, fmt.Errorf("element %d is not a canonical BN254 field element", i)
+		}
 	}
 	return MiMCHash(vals...), nil
 }

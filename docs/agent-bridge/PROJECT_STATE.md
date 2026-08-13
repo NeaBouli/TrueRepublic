@@ -4,10 +4,17 @@ GH-198 is complete through PR #199 (`f7a9a52`): pinned test-only Groth16
 fixtures, real proof/keeper replay and maintained-client encoding parity pass
 without enabling submission. GH-200 is complete through PR #201 (`b0e963f`),
 which replaced a hosted-runner wall-clock fuzz deadline with a bounded 10,000
-iteration gate. Public arithmetic remains 1,810 cases, rollout remains 32/59,
-and production remains false.
+iteration gate. GH-203 has a local candidate on
+`test/GH-203-zkp-circuit-freeze`: the strict versioned circuit/encoding spec,
+fail-closed Go/fixture/toolchain/client cross-checks, and deterministic
+in-memory constraint-system byte/hash parity against pinned `membership_v2.cs`
+pass focused and full local gates with 1,500 Go PASS lines. The source-of-truth
+arithmetic is now 1,837 total cases with 26 Rust and 311 client. Rollout remains
+32/59 and production remains false. Kimi's independent final re-review found
+no remaining P0/P1/P2/P3 after Sol closed the canonical-field and strict-JSON
+gaps; protected publication and final-main verification remain pending.
 
-Updated: 2026-08-13 13:28 UTC
+Updated: 2026-08-13 18:18 UTC
 
 - GH-198 adds no production prover or ceremony claim. The committed PK is
   explicitly single-party toxic waste; `isSubmittable` remains false. Exact PR

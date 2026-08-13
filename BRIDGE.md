@@ -1,5 +1,44 @@
 # TrueRepublic Agent Bridge
 
+## 2026-08-13 21:18 EEST GH-203 ZKP circuit-identity freeze → Locally merge-ready
+
+- Sol reviewed Kimi's implementation line by line. Kimi's independent review
+  found a P2 canonical-field gap in the pre-existing Go hash helper and P3
+  strict-JSON/comment truth gaps; Sol fixed them by rejecting BN254 values at
+  or above the scalar modulus, rejecting duplicate JSON keys recursively, and
+  correcting the disabled mock-flow comment. Kimi's final re-review reports no
+  remaining P0/P1/P2/P3 and a merge-ready verdict.
+- Final local evidence passes: `make build && make verify` (1,500 Go PASS lines,
+  race/coverage), 26 Rust tests, 10 Node + 301 Vitest tests, client lint/build/
+  bundle/high-audit, pinned govulncheck/staticcheck/gitleaks positive and
+  negative contracts, Rust audit with five allowed warnings and no blocking
+  vulnerability, Go module verification, docs consistency, JSON and diff
+  hygiene.
+- Source-of-truth arithmetic is 1,837 = 1,500 Go + 26 Rust + 311 maintained
+  client. Rollout remains 32/59 and production remains false. No PK/VK/proof
+  regeneration, ceremony, prover, submission, keys/funds or deployment.
+- **Next:** commit and publish the protected GH-203 PR, require green exact-head
+  checks and zero unresolved review threads, merge, then verify final main,
+  Pages, GH-29 and both Bridges.
+
+## 2026-08-13 20:35 EEST GH-203 ZKP circuit-identity freeze → Local candidate delivered
+
+- Kimi delivered the bounded secret-free slice on `test/GH-203-zkp-circuit-freeze`:
+  strict versioned `configs/security/zkp-circuit.json` plus fail-closed
+  `x/truedemocracy/zkp_circuit_spec_test.go` cross-checks against Go
+  constants/behavior, the GH-198 fixture manifest/golden vector, the active
+  `go.mod` gnark v0.14.0 / gnark-crypto v0.19.2 direct requires, and the
+  maintained-client `zkpEncoding` contract with hard-false `isSubmittable`.
+- In-memory recompilation of `MembershipCircuit` serializes byte/hash-identical
+  to pinned `membership_v2.cs` non-destructively; PK/VK/proof bytes are never
+  regenerated or compared (groth16.Setup samples random toxic waste).
+- Focused gates pass: six new Go test functions (27 PASS lines with subtests),
+  full truedemocracy package, 5 maintained-client zkp Vitest cases, vet/gofmt,
+  docs consistency, diff hygiene. Rollout remains 32/59, production false.
+- **Next:** Sol line-by-line integration/security review, complete local gates,
+  candidate-arithmetic recount, independent re-review, protected PR and
+  final-main verification.
+
 ## 2026-08-13 19:55 EEST GH-203 ZKP circuit-identity freeze → In Progress
 
 - **Branch/issue:** `test/GH-203-zkp-circuit-freeze`,

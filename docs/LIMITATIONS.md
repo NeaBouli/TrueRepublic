@@ -172,7 +172,14 @@ Full validator exits remain supported through the evidence-window escrow hold.
 **Timeline:** v0.4.0
 **Current:** Proofs bind chain/proposal/rating, nullifiers persist across export,
 and the trusted genesis VK is pinned by circuit ID, SHA-256, curve, shape, and
-canonical encoding. Anonymous rewards remain deferred.
+canonical encoding. GH-203 freezes the circuit and encoding contract in
+`configs/security/zkp-circuit.json`: fail-closed repository tests cross-check
+it against Go constants/behavior, the GH-198 fixture manifest and golden
+vector, the active `go.mod` gnark toolchain, and the maintained-client
+`zkpEncoding` contract, and prove deterministic byte/hash parity of the
+recompiled constraint system only. Groth16 proving/verifying keys and proofs
+are not reproducible and no ceremony is claimed. Anonymous rewards remain
+deferred.
 **Future:** Compatible real prover, ceremony artifacts, and independent circuit review
 
 ## Workarounds
