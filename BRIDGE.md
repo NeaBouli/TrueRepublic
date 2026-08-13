@@ -6167,3 +6167,23 @@ exclusion, CI wiring, and documentation boundaries.
   exact-head protected checks and review; it is not yet merged or Done.
 
 ---
+
+## 2026-08-13 03:27 EEST GH-190 IBC transfer UX and recovery → Done
+
+- **Publication:** exact PR head `847540f` passed all 14 reported contexts with
+  zero review threads; PR #191 merged as `ed669a2`, GH-190 closed, and the
+  remote feature branch was deleted.
+- **Final main:** Client Web CI `31654208105`, Security `31654208135`, Docs
+  `31654208130`, and Pages `31654207520` pass on the merge commit.
+- **Public synchronization:** GH-29 credits GH-190. Live Pages reports 1,746
+  standard cases, rollout 31/59, phase work 31/51, Phase 6 6/7, 20 lazy routes,
+  the GH-190 IBC recovery boundary, and production readiness false.
+- **Agents:** Kimi supplied the large bounded core implementation; Sol reviewed
+  and extended every accepted write and owns all integration, testing,
+  publication, merge, tracker and closure work. Claude Code supplied only a
+  small read-only inventory.
+- **Safety:** no external relayer/public counterparty, production/public
+  network, real key/account/fund, release, migration, or deployment action
+  occurred. The scoped task is fully complete and verified.
+
+---

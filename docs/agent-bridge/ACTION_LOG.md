@@ -3783,3 +3783,19 @@
 - Pushed implementation commit `7eca8eb` and opened protected PR #191 against
   `main`, closing GH-190 and advancing GH-29. Exact-head CI/review, merge,
   final-main/live Pages, tracker and both-Bridge closure remain pending.
+
+## 2026-08-13 03:27 EEST - GH-190 completed
+
+- Exact PR head `847540f` passed all 14 reported contexts with zero review
+  threads; PR #191 merged as `ed669a2`, GH-190 closed, and its remote feature
+  branch was deleted.
+- Final-main Client Web CI `31654208105`, Security `31654208135`, Docs
+  `31654208130`, and Pages `31654207520` pass on the merge commit.
+- GH-29 credits GH-190. Live Pages readback confirms 1,746 standard cases,
+  rollout 31/59, phase work 31/51, Phase 6 6/7, 20 lazy routes, the GH-190
+  evidence boundary, and production readiness false.
+- Kimi delivered the large bounded core implementation; Sol reviewed and
+  extended every accepted write, ran the complete gates, published, merged,
+  and verified the public result. Claude Code supplied only a small read-only
+  inventory. No production/public-network, real-key/account/fund, release, or
+  deployment action occurred.

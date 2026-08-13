@@ -360,7 +360,7 @@
 - [x] Publish through protected PR, pass exact-head CI/review, merge, verify
   final `main`, update GH-29/live Pages/both Bridges, and close GH-187.
 
-## In progress - GH-190 maintained-client IBC transfer UX
+## Completed - GH-190 maintained-client IBC transfer UX
 
 - [x] Register canonical ICS-20 MsgTransfer without weakening the fail-closed
   transaction registry; pin exact wire encoding.
@@ -370,5 +370,5 @@
   committed, pending-relay, acknowledgement, timeout/refund and unknown states.
 - [x] Add accessible lazy transfer/status routes and comprehensive focused,
   registry, store, component, integration-rejection and bundle regressions.
-- [ ] Publish protected PR, pass exact-head checks/review, merge, synchronize
+- [x] Publish protected PR, pass exact-head checks/review, merge, synchronize
   GH-29 and both Bridges, verify final `main` and live Pages, then close GH-190.
