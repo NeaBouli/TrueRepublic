@@ -8,7 +8,7 @@
     "scalar_field_modulus": "21888242871839275222246405745257275088548364400416034343698204186575808495617",
     "scalar_field_bytes": 32,
     "byte_encoding": "big-endian",
-    "canonical_rule": "exactly 32 big-endian bytes; values >= scalar field modulus are rejected"
+    "canonical_rule": "inputs are 1-32 big-endian bytes, left-padded to a 32-byte big-endian field element; values >= scalar field modulus are rejected"
   },
   "hash": {
     "algorithm": "MiMC",

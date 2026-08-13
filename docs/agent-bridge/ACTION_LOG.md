@@ -3963,3 +3963,19 @@
 - Public source-of-truth arithmetic is 1,837 cases. Rollout remains 32/59 and
   production false; only protected publication and final-main verification are
   pending.
+
+## 2026-08-13 21:38 EEST - GH-203 PR #204 review fixes applied
+
+- Exact head `184139f` passed all 24 PR contexts. CodeRabbit's two actionable
+  threads were valid: the canonical-rule wording conflated accepted input
+  length with the fixed encoded element, and Quickstart omitted `-count=1`.
+- Three valid nits were also fixed: tokenizer errors now remain diagnostic,
+  `go.mod` is parsed structurally with `golang.org/x/mod/modfile` and rejects
+  gnark replacements/exclusions, and LIMITATIONS explicitly classifies the
+  committed keys as randomized single-party toxic-waste test artifacts.
+- Focused GH-203 evidence remains 27 PASS lines and the drift test passes 20
+  repetitions. Kimi's targeted re-review approved; Sol also hardened mixed
+  direct/indirect duplicate rejection. Full Go race/coverage, pinned
+  govulncheck/staticcheck/gitleaks contracts, module verification, docs
+  consistency and diff hygiene pass again. No public arithmetic, rollout or
+  production claim changed; replacement-head publication is pending.

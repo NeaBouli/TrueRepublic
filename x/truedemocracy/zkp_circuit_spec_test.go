@@ -16,6 +16,7 @@ import (
 	"github.com/consensys/gnark-crypto/ecc/bn254/fr"
 	"github.com/consensys/gnark/frontend"
 	"github.com/consensys/gnark/frontend/cs/r1cs"
+	"golang.org/x/mod/modfile"
 )
 
 // GH-203 freezes the test-only ZKP circuit/encoding contract in a strict
@@ -32,7 +33,7 @@ const (
 	zkpGoModPath         = "../../go.mod"
 
 	zkpSpecClassification = "TEST-ONLY SINGLE-PARTY TOXIC WASTE"
-	zkpSpecCanonicalRule  = "exactly 32 big-endian bytes; values >= scalar field modulus are rejected"
+	zkpSpecCanonicalRule  = "inputs are 1-32 big-endian bytes, left-padded to a 32-byte big-endian field element; values >= scalar field modulus are rejected"
 	zkpSpecConstants      = "110 round constants: keccak256 iterated starting from keccak256(\"seed\"), each digest reduced modulo the BN254 scalar field"
 	zkpSpecNodeRule       = "MiMC(left, right) per level; pathIndex 0 = current node is the left child, 1 = right child"
 	zkpSpecCommitment     = "commitment = MiMC(identitySecret); identitySecret is 1-32 bytes, big-endian"
@@ -119,13 +120,31 @@ type zkpSpecFixtures struct {
 // gnark and gnark-crypto. Each module must appear exactly once as a direct
 // (non-indirect) require line.
 func parseGnarkToolchain(goMod string) (gnark string, gnarkCrypto string, err error) {
+	parsed, err := modfile.Parse("go.mod", []byte(goMod), nil)
+	if err != nil {
+		return "", "", fmt.Errorf("parse go.mod: %w", err)
+	}
 	find := func(module string) (string, error) {
-		pattern := regexp.MustCompile(`(?m)^\t` + regexp.QuoteMeta(module) + ` (v[0-9]+\.[0-9]+\.[0-9]+)$`)
-		matches := pattern.FindAllStringSubmatch(goMod, -1)
-		if len(matches) != 1 {
-			return "", fmt.Errorf("go.mod must contain exactly one direct require for %s, found %d", module, len(matches))
+		for _, replacement := range parsed.Replace {
+			if replacement.Old.Path == module {
+				return "", fmt.Errorf("go.mod must not replace %s", module)
+			}
 		}
-		return matches[0][1], nil
+		for _, exclusion := range parsed.Exclude {
+			if exclusion.Mod.Path == module {
+				return "", fmt.Errorf("go.mod must not exclude %s", module)
+			}
+		}
+		var requirements []*modfile.Require
+		for _, requirement := range parsed.Require {
+			if requirement.Mod.Path == module {
+				requirements = append(requirements, requirement)
+			}
+		}
+		if len(requirements) != 1 || requirements[0].Indirect {
+			return "", fmt.Errorf("go.mod must contain exactly one direct require for %s, found %d", module, len(requirements))
+		}
+		return requirements[0].Mod.Version, nil
 	}
 	gnark, err = find("github.com/consensys/gnark")
 	if err != nil {
@@ -349,6 +368,10 @@ func TestZKPCircuitSpecMatchesGoModToolchain(t *testing.T) {
 		if _, _, err := parseGnarkToolchain(candidate); err == nil {
 			t.Fatal("indirect gnark require accepted as direct")
 		}
+		candidate = "module example\nrequire (\n\tgithub.com/consensys/gnark v0.14.0\n\tgithub.com/consensys/gnark v0.13.0 // indirect\n\tgithub.com/consensys/gnark-crypto v0.19.2\n)\n"
+		if _, _, err := parseGnarkToolchain(candidate); err == nil {
+			t.Fatal("mixed direct and indirect gnark requirements accepted")
+		}
 	})
 	t.Run("missing module rejected", func(t *testing.T) {
 		candidate := "module example\nrequire (\n\tgithub.com/consensys/gnark v0.14.0\n)\n"
@@ -361,11 +384,24 @@ func TestZKPCircuitSpecMatchesGoModToolchain(t *testing.T) {
 		if _, _, err := parseGnarkToolchain(candidate); err == nil {
 			t.Fatal("duplicate gnark require accepted")
 		}
+		candidate = "module example\nrequire (\n\tgithub.com/consensys/gnark v0.14.0\n\tgithub.com/consensys/gnark-crypto v0.19.2\n)\nreplace github.com/consensys/gnark => github.com/example/gnark v0.14.0\n"
+		if _, _, err := parseGnarkToolchain(candidate); err == nil {
+			t.Fatal("replaced gnark require accepted")
+		}
+		candidate = "module example\nrequire (\n\tgithub.com/consensys/gnark v0.14.0\n\tgithub.com/consensys/gnark-crypto v0.19.2\n)\nexclude github.com/consensys/gnark-crypto v0.19.2\n"
+		if _, _, err := parseGnarkToolchain(candidate); err == nil {
+			t.Fatal("excluded gnark-crypto require accepted")
+		}
 	})
 	t.Run("prefixed module not matched", func(t *testing.T) {
 		candidate := "module example\nrequire (\n\tgithub.com/consensys/gnark-crypto v0.19.2\n\tgithub.com/ingonyama-zk/icicle-gnark/v3 v3.2.2\n)\n"
 		if _, _, err := parseGnarkToolchain(candidate); err == nil {
 			t.Fatal("icicle-gnark path matched the gnark module")
+		}
+		candidate = "module example\nrequire (\n\tgithub.com/consensys/gnark v0.14.0-rc.1\n\tgithub.com/consensys/gnark-crypto v0.0.0-20260813000000-abcdefabcdef\n)\n"
+		gnark, gnarkCrypto, err := parseGnarkToolchain(candidate)
+		if err != nil || gnark != "v0.14.0-rc.1" || gnarkCrypto != "v0.0.0-20260813000000-abcdefabcdef" {
+			t.Fatalf("valid prerelease/pseudo-version requirements rejected: %s/%s: %v", gnark, gnarkCrypto, err)
 		}
 	})
 }

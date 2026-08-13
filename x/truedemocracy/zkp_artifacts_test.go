@@ -82,7 +82,11 @@ func rejectDuplicateJSONKeys(decoder *json.Decoder) error {
 	if err := rejectDuplicateJSONValue(decoder); err != nil {
 		return err
 	}
-	if _, err := decoder.Token(); err != io.EOF {
+	switch _, err := decoder.Token(); {
+	case err == io.EOF:
+	case err != nil:
+		return err
+	default:
 		return fmt.Errorf("trailing JSON value")
 	}
 	return nil

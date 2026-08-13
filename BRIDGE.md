@@ -1,5 +1,23 @@
 # TrueRepublic Agent Bridge
 
+## 2026-08-13 21:38 EEST GH-203 PR #204 → Review fixes in progress
+
+- Exact head `184139f` passed all 24 reported PR contexts, including the
+  14m35s multi-validator recovery gate, CodeRabbit and DeepScan. CodeRabbit
+  then left two actionable threads plus three valid hardening nits.
+- Sol applied the bounded review fixes: distinguish 1-32-byte inputs from their
+  32-byte canonical field encoding, document fresh `-count=1` tests, preserve
+  tokenizer errors, parse `go.mod` structurally with `x/mod/modfile` while
+  rejecting replacements/exclusions, and explicitly classify committed keys
+  as randomized single-party toxic-waste test artifacts.
+- Focused GH-203 tests still produce exactly 27 PASS lines; 20 randomized-order
+  drift repetitions pass. Kimi's targeted review approved the fixes; Sol also
+  rejected mixed direct/indirect module duplicates. Full Go race/coverage,
+  pinned security tools, module verification, docs consistency and diff hygiene
+  pass again. Rollout stays 32/59 and production false.
+- **Next:** commit/push a new PR head,
+  resolve both review threads, and require all exact-head checks again.
+
 ## 2026-08-13 21:18 EEST GH-203 ZKP circuit-identity freeze → Locally merge-ready
 
 - Sol reviewed Kimi's implementation line by line. Kimi's independent review

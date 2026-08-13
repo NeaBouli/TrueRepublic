@@ -177,9 +177,10 @@ canonical encoding. GH-203 freezes the circuit and encoding contract in
 it against Go constants/behavior, the GH-198 fixture manifest and golden
 vector, the active `go.mod` gnark toolchain, and the maintained-client
 `zkpEncoding` contract, and prove deterministic byte/hash parity of the
-recompiled constraint system only. Groth16 proving/verifying keys and proofs
-are not reproducible and no ceremony is claimed. Anonymous rewards remain
-deferred.
+recompiled constraint system only. Committed Groth16 proving/verifying keys are
+randomized single-party toxic-waste test artifacts, not production or
+reproducible ceremony artifacts; no ceremony is claimed. Anonymous rewards
+remain deferred.
 **Future:** Compatible real prover, ceremony artifacts, and independent circuit review
 
 ## Workarounds

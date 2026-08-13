@@ -104,7 +104,7 @@ cargo wasm
 
 ```bash
 # All Go tests in the package-scoped standard suite (1,500; process gates run separately in CI)
-./scripts/go-packages.sh go test -timeout=600s
+./scripts/go-packages.sh go test -count=1 -timeout=600s
 
 # Specific module
 go test ./x/dex/...
