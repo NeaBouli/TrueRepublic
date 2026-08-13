@@ -22,6 +22,7 @@ import type {
   GeneratedProof,
   ProofGenerationStatus,
   MerkleProof,
+  Groth16Prover,
 } from '@/types/zkp';
 import type { ChainConfig } from '@/types/chain';
 import {
@@ -36,9 +37,15 @@ export class ZKPService {
   private wasmLoaded = false;
   private statusCallback?: (status: ProofGenerationStatus) => void;
   private readonly queries: ModuleQueryClient;
+  private readonly testProver?: Groth16Prover;
 
-  constructor(config: ChainConfig, queries = new ModuleQueryClient(config)) {
+  constructor(
+    config: ChainConfig,
+    queries = new ModuleQueryClient(config),
+    testProver?: Groth16Prover
+  ) {
     this.queries = queries;
+    this.testProver = testProver;
   }
 
   /**
@@ -163,7 +170,7 @@ export class ZKPService {
    * Real implementation calls gnark-wasm with the proving key.
    */
   async generateProof(inputs: ProofInputs): Promise<GeneratedProof> {
-    void inputs;
+    if (this.testProver) return this.testProver.generate(inputs);
     const message =
       'Mock proofs are not chain-compatible; real Groth16 proof generation is unavailable.';
     this.updateStatus('error', 0, 'ZKP submission unavailable', message);

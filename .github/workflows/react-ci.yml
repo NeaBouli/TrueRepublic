@@ -7,10 +7,12 @@ on:
       - main
     paths:
       - 'client-web/**'
+      - 'x/truedemocracy/testdata/zkp/**'
       - '.github/workflows/react-ci.yml'
   pull_request:
     paths:
       - 'client-web/**'
+      - 'x/truedemocracy/testdata/zkp/**'
       - '.github/workflows/react-ci.yml'
 
 permissions:

@@ -1,0 +1,38 @@
+{
+  "schema": "truerepublic/zkp-test-fixture/v1",
+  "circuit_id": "truerepublic/membership-vote/v2-bn254-mimc-depth20",
+  "curve": "BN254",
+  "merkle_depth": 20,
+  "public_input_order": [
+    "merkle_root",
+    "nullifier_hash",
+    "external_nullifier",
+    "signal_hash"
+  ],
+  "gnark": "v0.14.0",
+  "gnark_crypto": "v0.19.2",
+  "classification": "TEST-ONLY SINGLE-PARTY TOXIC WASTE",
+  "production_allowed": false,
+  "artifacts": [
+    {
+      "path": "golden_vector.json",
+      "size_bytes": 2934,
+      "sha256": "c6882b6db0c971437a2f609b48b96ed0aac1245ff1b9f10c9ba72502a1e6e675"
+    },
+    {
+      "path": "membership_v2.cs",
+      "size_bytes": 1656948,
+      "sha256": "2a9bc20a39f076fe39d931164c6b29b857f3372cb573c54e5381840f77abaa10"
+    },
+    {
+      "path": "membership_v2.pk",
+      "size_bytes": 2382883,
+      "sha256": "4775ed0a77f64e105a0a995958c45344eeda888ca26bafa07abf141b9d9952ed"
+    },
+    {
+      "path": "membership_v2.vk",
+      "size_bytes": 460,
+      "sha256": "80b92df9562e48d4b25df9e7105e54f6d79250a3f35171250fcfd45c1489e289"
+    }
+  ]
+}

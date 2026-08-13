@@ -46,6 +46,11 @@ export interface GeneratedProof {
   publicSignals: string[];
 }
 
+/** Test seam for replaying compatible proof fixtures without enabling UI submission. */
+export interface Groth16Prover {
+  generate(inputs: ProofInputs): Promise<GeneratedProof>;
+}
+
 /**
  * Params for MsgRateWithProof submission.
  * Field names match Go MsgRateWithProof json tags.
