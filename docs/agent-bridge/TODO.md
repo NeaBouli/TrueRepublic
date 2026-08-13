@@ -386,5 +386,6 @@
 - [x] Pass focused, full client, build/budget and disposable-chain gates; publish
   exact limitations and candidate arithmetic.
 - [x] Complete full repository/security gates and independent review.
-- [ ] Publish a protected PR, merge exact green head, synchronize GH-29/live
-  Pages/Bridges, and close GH-193.
+- [x] Publish protected PR #194, pass exact-head checks with zero review
+  threads, merge as `10a9a83`, synchronize GH-29/live Pages/Bridges, and close
+  GH-193.

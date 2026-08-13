@@ -1,7 +1,6 @@
 # GH-193 Maintained-client Wallet and Signing Safety Audit
 
-Status: locally verified candidate; full repository and protected publication
-gates pass. Protected PR #194 exact-head review and merge remain pending.
+Status: merged and final-main verified through PR #194 at `10a9a83`.
 
 ## Implemented boundary
 
@@ -46,6 +45,11 @@ read/check/merge/write section after asynchronous encryption and adding a
 concurrent-save regression. Sol also closed the stale balance-refresh race and
 bounded malformed-JSON failures before the final client rerun. No known
 P0/P1/P2 remains.
+
+PR head `16d752f` passed all 14 reported contexts with zero review threads and
+merged as `10a9a83107323bb959baf02216e339c682af4d65`. Final-main Client Web CI
+`31657679062`, Security `31657679041`, Docs `31657679040`, and Pages
+`31657678393` pass. GH-29 and live Pages publish the 1,795-case, 32/59 state.
 
 ## Standards and residual risk
 

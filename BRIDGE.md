@@ -6251,3 +6251,19 @@ exclusion, CI wiring, and documentation boundaries.
   main, live Pages and both-Bridge closure remain required before Done.
 
 ---
+
+## 2026-08-13 04:30 EEST GH-193 wallet and signing safety → Done
+
+- Exact PR head `16d752f` passed all 14 reported contexts with zero review
+  threads; protected PR #194 merged as exact main `10a9a83`, GH-193 closed,
+  and the remote feature branch was deleted.
+- Final-main Client Web CI `31657679062`, Security `31657679041`, Docs
+  `31657679040`, and Pages `31657678393` pass. GH-29 and live Pages publish
+  1,795 cases, rollout 32/59, phase work 32/51 and Phase 6 6/7.
+- Kimi delivered the large implementation and independent review; Sol fixed
+  the review's P2 plus the stale-balance race, reviewed every accepted write,
+  and owns complete verification/publication. No known P0/P1/P2 remains.
+- No production/public network, real key/account/fund, release or deployment
+  action occurred. GH-193 is complete; remaining rollout work is separate.
+
+---
