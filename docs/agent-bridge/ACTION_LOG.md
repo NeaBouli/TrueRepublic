@@ -3887,3 +3887,28 @@
 - Post-review full Go race and full client test/lint/build/budget/high-audit
   gates pass. Test arithmetic remains 1,810 and rollout remains 32/59; no
   production ZKP capability or consensus format was enabled.
+
+## 2026-08-13 16:03 EEST - GH-200 final-main fuzz flake isolated
+
+- PR #199 merged as `f7a9a52` after all 24 exact-head contexts passed and GH-198
+  closed. Final-main `quality-depth` alone failed because its exact 10-second
+  wall-clock fuzz budget expired by ~80 ms after 15,459 successful executions;
+  no product invariant failed.
+- The exact command passed five consecutive local reruns. GH-200 scopes the
+  remediation to an iteration-bounded CI harness and repository contract test;
+  rollout remains 32/59 and production remains false.
+
+## 2026-08-13 16:09 EEST - GH-200 local remediation passed
+
+- Both fuzz targets now run exactly 10,000 iterations instead of a hosted-runner
+  wall-clock deadline. The fail-closed override is capped at 60,000 against the
+  unchanged 180-second command timeout.
+- Repository contract, invalid bounds, and complete quality gate pass. Claude
+  Code found and then confirmed closure of the original excessive-cap P2; final
+  review is APPROVED with no P0/P1/P2/P3.
+
+## 2026-08-13 16:13 EEST - GH-200 full local gates passed
+
+- Full Go race, vet, docs consistency and diff hygiene pass after the complete
+  iteration-bounded quality gate. Candidate scope is harness, existing contract
+  test and append-only evidence only; protected publication is next.

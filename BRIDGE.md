@@ -6368,3 +6368,49 @@ exclusion, CI wiring, and documentation boundaries.
   context and close all review threads before merge.
 
 ---
+
+## 2026-08-13 16:03 EEST GH-200 final-main quality flake → Diagnosed
+
+- PR #199 merged as `f7a9a52` after exact head `ab9a3cd` passed all 24
+  contexts with zero open review threads; GH-198 closed and its branch was
+  deleted. Final-main Docs and Pages pass, and live Pages publishes 1,810 cases,
+  rollout 32/59, and production false.
+- Final-main Go run `31702374261` diverged only in `quality-depth`:
+  `FuzzComputeSwapOutput` completed 15,459 executions but exceeded its exact
+  10-second wall-clock fuzz deadline by ~80 ms under hosted-runner contention.
+  No invariant, DEX, ZKP, race, or product assertion failed. The exact command
+  then passed five consecutive local reproductions.
+- Opened GH-200 for a bounded harness-only remediation: replace wall-clock fuzz
+  duration with an equivalent finite iteration budget and retain every
+  property/fuzz/race gate. No product, consensus, client, artifact, production,
+  key/account/fund, release or deployment path may change.
+
+---
+
+## 2026-08-13 16:09 EEST GH-200 iteration-bounded harness → Local PASS
+
+- Replaced both 10-second wall-clock fuzz deadlines with exact 10,000-execution
+  budgets. The optional override is numeric, fail-closed, and capped at 60,000
+  so each invocation retains margin under its fixed 180-second timeout even on
+  substantially slower runners. Race/property packages, fuzz targets,
+  assertions, parallelism, workflow wiring and job timeout are unchanged.
+- PASS: repository contract, invalid `0` and `60001` configuration rejection,
+  and complete generative-quality script. Both fuzz targets reached exactly
+  10,000 executions and exited normally; no wall-clock context governs them.
+- Claude Code's focused read-only review first found the excessive 1,000,000
+  override cap as P2. Sol reduced it to 60,000; Claude's follow-up is APPROVED
+  with no P0/P1/P2/P3. No product or production path changed.
+
+---
+
+## 2026-08-13 16:13 EEST GH-200 complete local gates → PASS
+
+- Post-review full `go test -race ./...`, `go vet ./...`, documentation
+  consistency and diff hygiene pass. The complete iteration-bounded generative
+  gate already passed both 10,000-execution fuzz targets plus its unchanged race
+  property stage.
+- Candidate changes remain limited to the quality harness, its existing
+  repository contract test, and append-only handoff records. No public test or
+  rollout count changes; protected GH-200 publication is next.
+
+---
