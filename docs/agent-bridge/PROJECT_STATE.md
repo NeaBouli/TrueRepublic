@@ -1,17 +1,22 @@
 # Project State
 
-GH-198 is locally verified on `feat/GH-198-zkp-compatibility`. Test-only pinned
-Groth16 fixtures, real proof/keeper replay and maintained-client encoding parity
-pass without enabling submission. Candidate arithmetic is 1,810 cases; rollout
-remains 32/59 and production remains false. Protected publication is pending.
+GH-198 is complete through PR #199 (`f7a9a52`): pinned test-only Groth16
+fixtures, real proof/keeper replay and maintained-client encoding parity pass
+without enabling submission. GH-200 is complete through PR #201 (`b0e963f`),
+which replaced a hosted-runner wall-clock fuzz deadline with a bounded 10,000
+iteration gate. Public arithmetic remains 1,810 cases, rollout remains 32/59,
+and production remains false.
 
-Updated: 2026-08-13 12:33 UTC
+Updated: 2026-08-13 13:28 UTC
 
 - GH-198 adds no production prover or ceremony claim. The committed PK is
-  explicitly single-party toxic waste; `isSubmittable` remains false. Full Go
-  race/coverage, client, build/audit, vet/coverage, docs and pinned secret scan
-  pass; Kimi found no P0/P1/P2. Separate PR #197 was reconciled through merged
-  commit `fc5b418`; protected PR #199 publication and final verification remain.
+  explicitly single-party toxic waste; `isSubmittable` remains false. Exact PR
+  head `ab9a3cd` passed all 24 contexts with zero open review threads before PR
+  #199 merged. GH-200 then isolated the only final-main failure as fuzz-harness
+  timing, not a product invariant, and exact PR #201 head `60cc641` passed every
+  reported context with zero open review threads. Final-main Docs
+  `31705055493`, Security `31705055382`, Reproducible Linux `31705055420`, and
+  Pages `31705054350` pass; Go CI `31705055413` is the final recorded gate.
 
 - GH-193 is locally verified on `feature/GH-193-wallet-safety`. Kimi delivered
   the large wallet/service/test slice; Sol added versioned PBKDF2-600k legacy
