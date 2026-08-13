@@ -1,6 +1,17 @@
 # Project State
 
-Updated: 2026-08-12 21:30 UTC
+Updated: 2026-08-13 00:27 UTC
+
+- GH-190 is complete through PR #191, merged as `ed669a2`. Exact reviewed head
+  `847540f` passed all 14 reported contexts with zero review threads. Final-main
+  Client Web CI `31654208105`, Security `31654208135`, Docs `31654208130`, and
+  Pages `31654207520` pass. GH-29 and live Pages publish 1,746 standard cases,
+  rollout 31/59, phase work 31/51, Phase 6 6/7, and production false. The
+  maintained client now signs canonical native ICS-20 transfers, validates
+  channel/amount/balance/timeout inputs fail closed, persists wallet-scoped
+  public recovery records, and reconciles ACK/timeout state from source-chain
+  evidence without automatic resubmission. External relayers, public
+  counterparties, real keys/funds, releases, and deployment remain unqualified.
 
 - GH-187 is complete through PR #188, merged as `6c8d2a8`. Exact reviewed head
   `ef6afbb` passed all 22 reported contexts with zero review threads. Required

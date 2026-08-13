@@ -1,6 +1,19 @@
 # GH-190 Maintained-client IBC Transfer and Recovery Audit
 
-Status: locally verified candidate; protected publication remains pending.
+Status: complete through protected PR #191 and merge `ed669a2`.
+
+## Protected publication and public readback
+
+- Exact PR head `847540f` passed all 14 reported CI, security, static-analysis,
+  integration, and review contexts with zero review threads. CodeRabbit was
+  rate-limited but returned success without findings; DeepScan reported zero.
+- PR #191 merged to `main` as `ed669a2`; GH-190 closed and the remote feature
+  branch was deleted. GH-29 now credits the completed transfer UX item.
+- Final-main Client Web CI `31654208105`, Security Scan `31654208135`, Docs
+  `31654208130`, and Pages `31654207520` pass on the merge commit.
+- Live Pages readback publishes 1,746 standard cases, rollout 31/59, phase work
+  31/51, Phase 6 6/7, 20 lazy routes, the GH-190 IBC boundary, and production
+  readiness false.
 
 ## Implemented boundary
 
