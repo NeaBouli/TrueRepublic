@@ -1,5 +1,24 @@
 # TrueRepublic Agent Bridge
 
+## 2026-08-13 19:55 EEST GH-203 ZKP circuit-identity freeze → In Progress
+
+- **Branch/issue:** `test/GH-203-zkp-circuit-freeze`,
+  https://github.com/NeaBouli/TrueRepublic/issues/203 from exact verified main
+  `21c2e1f` with no open PR or local diff.
+- **Scope:** add a strict versioned circuit/encoding contract, deterministic
+  compiled constraint-system parity, active `go.mod` toolchain binding, and
+  fail-closed Go/fixture/client drift tests. Kimi K3 owns one bounded
+  secret-free implementation slice; Sol owns architecture, cryptographic
+  safety judgment, diff review, full verification, publication and closure.
+- **Hard boundary:** Groth16 setup samples random toxic waste. PK/VK byte
+  reproducibility, ceremony provenance, real prover integration, submission,
+  reward payout, real keys/funds, deployment, release and network mutation are
+  excluded. `isSubmittable` remains hard false; rollout remains 32/59 and
+  production remains false.
+- **Next:** Kimi implementation, Sol line-by-line integration/security review,
+  complete local gates, independent re-review, protected PR and final-main
+  verification.
+
 ## 2026-08-13 — Public security audit handoff — OPEN
 
 - A private VLABS operator audit records unresolved CI-hygiene and dependency-
