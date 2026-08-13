@@ -390,7 +390,7 @@
   threads, merge as `10a9a83`, synchronize GH-29/live Pages/Bridges, and close
   GH-193.
 
-## In progress - GH-198 test-only ZKP compatibility foundation
+## Done - GH-198 test-only ZKP compatibility foundation
 
 - [x] Pin synthetic single-party CS/PK/VK/golden-proof artifacts with exact
   checksums, sizes, circuit ID, public-input order and toxic-waste boundary.
@@ -401,5 +401,17 @@
 - [x] Pass full local repository/client/security/docs gates and Kimi review.
 - [x] Reconcile PR #197 through merged commit `fc5b418` and rebase the verified
   candidate without changing the approved GH-198 scope.
-- [ ] Complete PR #199 review, pass exact-head checks, merge, verify final
+- [x] Complete PR #199 review, pass exact-head checks, merge, verify final
   main/Pages/Bridges and close GH-198.
+
+## Done - GH-200 iteration-bounded generative-quality harness
+
+- [x] Diagnose the final-main `quality-depth` failure as hosted-runner
+  wall-clock expiry after successful fuzz executions, with no invariant failure.
+- [x] Replace both 10-second fuzz deadlines with a fail-closed, configurable
+  10,000-iteration default capped at 60,000; keep targets and race/property
+  stages unchanged.
+- [x] Pass local full quality, Go race, vet, docs and diff gates; obtain focused
+  independent review with no remaining P0/P1/P2/P3.
+- [x] Merge PR #201 as `b0e963f`, close GH-200, and verify final-main workflows
+  and live Pages without changing rollout or production-readiness claims.
