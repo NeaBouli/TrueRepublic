@@ -4,10 +4,12 @@ import { useWalletStore } from '@/stores/walletStore';
 import { Button } from '@/components/common/Button';
 import { Input } from '@/components/common/Input';
 import { Card } from '@/components/common/Card';
-import { formatPnyx, parsePnyx } from '@/utils/format';
+import { formatPnyx, parsePositivePnyx } from '@/utils/format';
 import { DEFAULT_CHAIN } from '@/config/chains';
 import { fromBech32 } from '@cosmjs/encoding';
 import { ArrowLeftIcon, CheckCircleIcon } from '@heroicons/react/24/outline';
+
+const NATIVE_SEND_FEE_RESERVE = 10_000n;
 
 export function SendForm() {
   const navigate = useNavigate();
@@ -43,13 +45,13 @@ export function SendForm() {
       }
     }
 
-    if (!amount || parseFloat(amount) <= 0) {
-      newErrors.amount = 'Amount must be greater than 0';
-    }
-
-    const amountMicro = parsePnyx(amount);
-    if (BigInt(amountMicro) > BigInt(availableBalance)) {
-      newErrors.amount = 'Insufficient balance';
+    const amountMicro = parsePositivePnyx(amount);
+    if (amountMicro === null) {
+      newErrors.amount = 'Enter a positive amount with up to 6 decimals';
+    } else if (
+      BigInt(amountMicro) + NATIVE_SEND_FEE_RESERVE > BigInt(availableBalance)
+    ) {
+      newErrors.amount = 'Insufficient balance after the fee reserve';
     }
 
     setErrors(newErrors);
@@ -58,11 +60,13 @@ export function SendForm() {
 
   const handleSend = async () => {
     if (!validateForm()) return;
+    const amountMicro = parsePositivePnyx(amount);
+    if (amountMicro === null) return;
 
     try {
       const result = await sendTokens({
         to: recipient,
-        amount: parsePnyx(amount),
+        amount: amountMicro,
         denom: DEFAULT_CHAIN.coinMinimalDenom,
         memo: memo || undefined,
       });
@@ -76,7 +80,7 @@ export function SendForm() {
   };
 
   const handleSetMax = () => {
-    const maxAmount = BigInt(availableBalance) - BigInt(10000);
+    const maxAmount = BigInt(availableBalance) - NATIVE_SEND_FEE_RESERVE;
     if (maxAmount > 0) {
       setAmount(formatPnyx(maxAmount.toString()));
     }

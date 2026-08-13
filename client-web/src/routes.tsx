@@ -19,6 +19,11 @@ const WalletDashboard = lazy(() =>
 const SendForm = lazy(() =>
   import('@/components/wallet/SendForm').then(({ SendForm }) => ({ default: SendForm }))
 );
+const IbcTransferPage = lazy(() =>
+  import('@/components/ibc/IbcTransferPage').then(({ IbcTransferPage }) => ({
+    default: IbcTransferPage,
+  }))
+);
 const DomainBrowser = lazy(() =>
   import('@/components/governance/DomainBrowser').then(({ DomainBrowser }) => ({
     default: DomainBrowser,
@@ -92,6 +97,8 @@ export const appRoutes: RouteObject[] = [
   { path: '/unlock', element: <UnlockWallet /> },
   { path: '/wallet', element: <WalletDashboard /> },
   { path: '/send', element: <SendForm /> },
+  { path: '/ibc/transfer', element: <IbcTransferPage /> },
+  { path: '/ibc/transfer/:txHash', element: <IbcTransferPage /> },
   { path: '/governance', element: <DomainBrowser /> },
   { path: '/governance/domain/:domainId', element: <IssueList /> },
   { path: '/governance/domain/:domainId/issue/:issueId', element: <SuggestionList /> },

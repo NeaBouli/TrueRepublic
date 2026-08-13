@@ -14,6 +14,7 @@ import { DEFAULT_CHAIN } from '@/config/chains';
  */
 const MESSAGE_LABELS: Record<string, string> = {
   '/cosmos.bank.v1beta1.MsgSend': 'Send',
+  '/ibc.applications.transfer.v1.MsgTransfer': 'IBC transfer',
   '/truedemocracy.MsgCreateDomain': 'Create domain',
   '/truedemocracy.MsgAddMember': 'Add member',
   '/truedemocracy.MsgSubmitProposal': 'Submit proposal',

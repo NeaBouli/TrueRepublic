@@ -45,6 +45,7 @@ export interface IBCChannel {
   channel_id: string;
   port_id: string;
   state: string;
+  ordering: string;
   counterparty: {
     channel_id: string;
     port_id: string;

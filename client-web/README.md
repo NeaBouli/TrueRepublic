@@ -33,6 +33,7 @@ src/
 │   ├── membership/     Invites, onboarding
 │   ├── admin/          Domain management dashboard
 │   ├── network/        Explorer, validators, blocks
+│   ├── ibc/            Native transfer and evidence recovery
 │   └── common/         Button, Card, Input, Toast, etc.
 ├── services/           Blockchain query & tx services
 ├── stores/             Zustand state stores
@@ -54,6 +55,7 @@ src/
 - `MembershipService`: Onboarding, domain membership
 - `AdminService`: Domain management, member verification
 - `NetworkService`: Chain statistics, validators, blocks
+- `IbcTransferService`: Canonical native ICS-20 transfer and source evidence
 
 ### Stores (Zustand)
 - `walletStore`: Current wallet, balances, lock state
@@ -63,6 +65,7 @@ src/
 - `membershipStore`: Domain memberships
 - `adminStore`: Admin status, members, stats
 - `networkStore`: Network info, validators, blocks
+- `ibcTransferStore`: Wallet/chain-scoped non-secret transfer recovery records
 
 ## ZKP Implementation
 
@@ -110,10 +113,18 @@ maintained client supports exactly these custom message identities:
   `MsgApproveOnboarding`, `MsgAddMember`, `MsgOnboardToDomain`, and
   `MsgRegisterIdentity`
 - `dex`: `MsgAddLiquidity`, `MsgRemoveLiquidity`, and `MsgSwapExact`
+- `ibc`: upstream canonical `MsgTransfer` for native `upnyx` only
 
 Unknown, legacy, or mismatched type URLs are rejected before signing. Integer
 token amounts remain decimal strings until protobuf encoding. Anonymous proof
 generation remains disabled as described above.
+
+The `/ibc/transfer` route accepts only schema-validated open unordered ICS-20
+channels, verifies a fresh balance plus fee reserve, derives bounded timeouts
+from the channel client state, and derives the sender from the unlocked signer.
+Its persisted ledger contains no password, mnemonic, signer, or key. Broadcast
+is not shown as delivery: users explicitly check source-chain acknowledgement
+or timeout evidence by transaction hash, and the client never auto-resubmits.
 
 Run the deterministic registry tests with `npm test -- --run`. The secret-free
 local chain proof uses generated, disposable accounts in a temporary genesis:
@@ -132,10 +143,10 @@ send funds to an address solely because an obsolete preview displayed it.
 ## Build Output
 
 Current recovery build (`npm run build`):
-- Initial JavaScript entry: 234.32 kB raw; 75.79 kB gzip using the pinned
+- Initial JavaScript entry: 70.05 kB gzip using the pinned
   project measurement
-- 19 lazy page-route entries; largest direct route entry: 5.03 kB gzip
-- Total JavaScript: 1,733.60 kB raw; 349.42 kB gzip across all deferred chunks
+- 20 lazy page-route entries; largest direct route entry: 4.91 kB gzip
+- 353.53 kB total JavaScript (gzip) across all deferred chunks
 - CSS: 22.38 kB; 4.86 kB gzip
 - `npm run build` fails if the raw or gzip entry, route, chunk, or total budget
   regresses. Signing and protobuf dependencies remain deferred until needed.

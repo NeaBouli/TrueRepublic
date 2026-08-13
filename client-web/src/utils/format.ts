@@ -15,18 +15,27 @@ export function formatPnyx(amount: string | number): string {
 }
 
 /**
- * Parse PNYX input (from display to micro)
+ * Strictly parse PNYX input (from display to micro). Invalid, zero, and
+ * over-precision values stay distinguishable from a real zero amount.
  */
-export function parsePnyx(input: string): string {
+export function parsePositivePnyx(input: string): string | null {
   const normalized = input.replace(/,/g, '').trim();
-  if (!/^\d+(\.\d{0,6})?$/.test(normalized)) return '0';
+  if (!/^\d+(\.\d{0,6})?$/.test(normalized)) return null;
 
   const [whole, fraction = ''] = normalized.split('.');
   const fractionalMicroPnyx = fraction.padEnd(6, '0');
-
-  return (
+  const amount = (
     BigInt(whole) * 1_000_000n + BigInt(fractionalMicroPnyx || '0')
-  ).toString();
+  );
+  return amount > 0n ? amount.toString() : null;
+}
+
+/**
+ * Backwards-compatible display parser. Signing forms must use
+ * parsePositivePnyx so invalid input cannot be confused with zero.
+ */
+export function parsePnyx(input: string): string {
+  return parsePositivePnyx(input) ?? '0';
 }
 
 /**

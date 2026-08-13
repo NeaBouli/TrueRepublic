@@ -4,23 +4,23 @@
   "release_date": "2026-03-04",
   "tests": {
     "status": "recovery_verified_locally",
-    "total": 1628,
+    "total": 1746,
     "go": 1461,
     "rust": 26,
-    "frontend": 141,
+    "frontend": 259,
     "historical_total": 577
   },
   "web_client": {
     "version": "v0.4.0",
     "framework": "React 18.2 + TypeScript 5.9 + Vite 8.2",
-    "components": 43,
-    "routes": 21,
-    "stores": 8,
-    "services": 14,
-    "build_size_gzip": "353.56 kB total JavaScript",
-    "initial_entry_gzip": "76.40 kB",
-    "max_lazy_route_gzip": "5.03 kB",
-    "lazy_route_entries": 19,
+    "components": 44,
+    "routes": 23,
+    "stores": 9,
+    "services": 15,
+    "build_size_gzip": "353.53 kB total JavaScript",
+    "initial_entry_gzip": "70.05 kB",
+    "max_lazy_route_gzip": "4.91 kB",
+    "lazy_route_entries": 20,
     "bundle_budget": "enforced_during_build"
   },
   "recovery": {
@@ -37,9 +37,9 @@
     "status": "engineering_in_progress",
     "tracker_scope": "github_issue_29",
     "github_issue": 29,
-    "completed": 30,
+    "completed": 31,
     "total": 59,
-    "phase_work_completed": 30,
+    "phase_work_completed": 31,
     "phase_work_total": 51,
     "phase_6_completed": 6,
     "phase_6_total": 7,
@@ -97,8 +97,8 @@
       "version": "v0.53.4"
     },
     "ibc": {
-      "status": "supported_boundary_recovery_verified_locally_on_gh187",
-      "note": "GH-175/GH-178/GH-181 verify the local two-chain ICS-20 packet, channel, database, and compatible-restart lifecycle. GH-184 wires the real x/upgrade keeper and proves an immutable-electorate two-thirds governed v0.4.1 halt, partial cached-write failure rollback, fixed-candidate recovery, common app hashes, and exact-once restart across four validators. GH-187 explicitly rejects unsupported staking/distribution compatibility queries and messages and proves x/staking and x/distribution remain absent. External relayers, public counterparties, pre-GH-184 store introduction, daemon deployment, IBC client upgrades, and arbitrary cross-version compatibility remain unqualified."
+      "status": "supported_boundary_and_maintained_client_recovery_verified_locally_on_gh190",
+      "note": "GH-175/GH-178/GH-181 verify the local two-chain ICS-20 packet, channel, database, and compatible-restart lifecycle. GH-184 wires the real x/upgrade keeper and proves governed recovery; GH-187 pins the fail-closed feature boundary. GH-190 adds the maintained client's canonical MsgTransfer, strict channel/amount/balance/timeout validation, wallet-scoped persistence, and source-chain-evidenced acknowledgement/timeout recovery without automatic resubmission. External relayers, public counterparties, pre-GH-184 store introduction, daemon deployment, IBC client upgrades, and arbitrary cross-version compatibility remain unqualified."
     },
     "dex": {
       "status": "recovery_verified_merged",
@@ -155,7 +155,7 @@
       "production_deployment": false
     },
     "web_client": {
-      "status": "canonical_registry_delivery_and_registered_query_transport_verified_locally",
+      "status": "canonical_registry_delivery_query_and_ibc_recovery_verified_locally",
       "features": [
         "wallet_create_import_unlock",
         "send_transactions",
@@ -164,7 +164,8 @@
         "zkp_anonymous_voting_preview_disabled",
         "domain_membership",
         "admin_dashboard",
-        "network_explorer"
+        "network_explorer",
+        "ibc_transfer_and_recovery"
       ],
       "custom_transaction_registry": "exact_fail_closed_type_urls_on_gh115",
       "local_chain_delivery": "ephemeral_bank_governance_membership_identity_and_dex_on_gh115",
@@ -183,7 +184,7 @@
     "x_staking": "not mounted; standard staking/distribution query and transaction surfaces reject fail-closed on GH-187",
     "zkp_client": "mock preview is fail-closed and non-submittable; compatible real prover pending",
     "tx_history": "submitted-only newest-first pagination verified on GH-131; incoming-only history is not claimed",
-    "ibc_transfers_ui": "query support only in web client",
+    "ibc_transfers_ui": "canonical native ICS-20 signing and source-chain evidence recovery verified locally on GH-190; external relayer and public counterparty delivery remain unqualified",
     "node_bootstrap": "init-node wrapper delegates exclusively to generated CometBFT-key, exact bank-backed PoD genesis; independent multi-node operations review pending"
   },
   "branding": {

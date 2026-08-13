@@ -265,7 +265,7 @@ The checklist below records implemented surface area, not a production security
 approval. Current evidence, risks, and commands are maintained in
 [`BRIDGE.md`](BRIDGE.md) and [GitHub issue #4](https://github.com/NeaBouli/TrueRepublic/issues/4).
 
-- 🟡 1,628 tests recovery-verified locally (1,461 Go, including the GH-187 protocol-boundary regressions, + 26 Rust + 141 maintained-client), plus the separately gated GH-175/GH-178/GH-181 IBC proof and GH-184 governed-upgrade recovery proof, GH-172 shared-state contention/exact-replay/restart proof, GH-145 bounded live fuzz campaigns, GH-131 real submitted-history pagination proof, GH-121 real browser-query boundary, GH-115 local client-chain delivery proof, GH-56 rotation, GH-59 slashing, GH-60 inactive-validator genesis, GH-61 legacy-authority migration, GH-93 incident rehearsal, and GH-97 sustained-load process harnesses; protected publication and production rollout evidence remain required
+- 🟡 1,746 tests recovery-verified locally (1,461 Go, including the GH-187 protocol-boundary regressions, + 26 Rust + 259 maintained-client), plus the separately gated GH-175/GH-178/GH-181 IBC proof and GH-184 governed-upgrade recovery proof, GH-172 shared-state contention/exact-replay/restart proof, GH-145 bounded live fuzz campaigns, GH-190 maintained-client IBC transfer/recovery proof, GH-131 real submitted-history pagination proof, GH-121 real browser-query boundary, GH-115 local client-chain delivery proof, GH-56 rotation, GH-59 slashing, GH-60 inactive-validator genesis, GH-61 legacy-authority migration, GH-93 incident rehearsal, and GH-97 sustained-load process harnesses; protected publication and production rollout evidence remain required
 - ✅ Core blockchain compiles and runs
 - 🟡 Tokenomics, exact custom genesis, and every-block ledger invariants are recovery-verified and merged through PR #19
 - 🟡 Governance escrow/auth recovery is verified and merged; independent release review remains open
@@ -277,6 +277,10 @@ approval. Current evidence, risks, and commands are maintained in
   timeout-on-close, replacement-channel, and compatible in-place binary-restart
   evidence on GH-175/GH-178/GH-181; external relayers and governed
   consensus-migration behavior remain open
+- 🟡 GH-190 adds canonical native ICS-20 signing to the maintained client,
+  strict fail-closed channel/amount/balance/timeout checks, wallet-scoped
+  recovery records, and manual source-chain ACK/timeout reconciliation. A
+  committed broadcast is never displayed as delivery or automatically retried.
 - 🟡 Multi-Asset DEX bank custody, provider LP ownership, authority checks, and
   canonical burns are recovery-verified and merged via PR #18
 - 🟡 GH-12 genesis/runtime conservation is recovery-verified and merged via PR #19
@@ -318,8 +322,8 @@ approval. Current evidence, risks, and commands are maintained in
 - 📋 **v0.5.0 (Q3 2026):** Native Apps (iOS/Android)
 - 🎯 **v1.0.0 (Q4 2026):** Production Release — External audit, mainnet launch
 
-> Historical test count: 577. The authoritative recovery-verified total is 1,628
-> (1,461 Go + 26 Rust + 141 maintained-client), reproduced from fresh
+> Historical test count: 577. The authoritative recovery-verified total is 1,746
+> (1,461 Go + 26 Rust + 259 maintained-client), reproduced from fresh
 > package-scoped output using the established passing-case method.
 
 ---

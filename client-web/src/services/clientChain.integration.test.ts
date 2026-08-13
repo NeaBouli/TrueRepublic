@@ -644,4 +644,49 @@ describe.skipIf(!enabled)('canonical client-to-chain delivery', () => {
       );
     }
   }, 120_000);
+
+  // GH-190: the canonical registry reaches the real IBC router, while a
+  // nonexistent channel is committed as a chain rejection rather than being
+  // fabricated as a successful transfer by the client.
+  it('delivers canonical MsgTransfer encoding and rejects an absent channel', async () => {
+    const [account] = await signerWallet.getAccounts();
+    const client = await connectSigningClient(
+      {
+        chainId,
+        chainName: 'GH-190 local integration',
+        rpc: rpcUrl,
+        rest: apiUrl,
+        bech32Prefix: 'truerepublic',
+        coinDenom: 'PNYX',
+        coinMinimalDenom: 'upnyx',
+        coinDecimals: 6,
+        gasPrice,
+      },
+      signerWallet
+    );
+    try {
+      const result = await client.signAndBroadcast(
+        account.address,
+        [{
+          typeUrl: '/ibc.applications.transfer.v1.MsgTransfer',
+          value: {
+            sourcePort: 'transfer',
+            sourceChannel: 'channel-999999',
+            token: { denom: 'upnyx', amount: '1' },
+            sender: account.address,
+            receiver: receiverAddress,
+            timeoutHeight: { revisionNumber: 0n, revisionHeight: 1_000_000n },
+            timeoutTimestamp: 0n,
+            memo: 'gh190 fail-closed absent channel',
+            encoding: '',
+          },
+        }],
+        calculateFee(300_000, GasPrice.fromString(gasPrice))
+      );
+      expect(result.code).not.toBe(0);
+      expect(result.transactionHash).toMatch(/^[0-9A-Fa-f]{64}$/);
+    } finally {
+      client.disconnect();
+    }
+  }, 120_000);
 });

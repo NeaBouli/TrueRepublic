@@ -55,6 +55,14 @@ let transactionModule: Promise<typeof import('@/services/transaction')> | null =
 let transactionService: Promise<import('@/services/transaction').TransactionService> | null = null;
 let historyAbortController: AbortController | null = null;
 
+function invalidateIbcTransferSession(): void {
+  // Keep the transfer/recovery chunk lazy and avoid a static store cycle.
+  // Wallet operations must remain available even if that optional chunk fails.
+  void import('./ibcTransferStore')
+    .then((module) => module.invalidateIbcTransferSession())
+    .catch(() => undefined);
+}
+
 function getBlockchainService() {
   if (!blockchainService) {
     blockchainService = import('@/services/blockchain').then(
@@ -137,6 +145,7 @@ export const useWalletStore = create<WalletStore>()(
           const wallet = await WalletService.createWallet({ name, password });
 
           get().clearHistory();
+          invalidateIbcTransferSession();
 
           set((state) => ({
             wallets: [...state.wallets, { ...wallet, mnemonic: undefined }],
@@ -162,6 +171,7 @@ export const useWalletStore = create<WalletStore>()(
           const wallet = await WalletService.importWallet({ name, mnemonic, password });
 
           get().clearHistory();
+          invalidateIbcTransferSession();
 
           set((state) => ({
             wallets: [...state.wallets, { ...wallet, mnemonic: undefined }],
@@ -189,6 +199,7 @@ export const useWalletStore = create<WalletStore>()(
           // A different unlocked wallet must never show the previous wallet's
           // history, even while the next page is still loading.
           get().clearHistory();
+          invalidateIbcTransferSession();
 
           set({
             currentWallet: { ...wallet, mnemonic: undefined },
@@ -209,6 +220,7 @@ export const useWalletStore = create<WalletStore>()(
         WalletService.deleteWallet(address);
         const removingCurrent = get().currentWallet?.address === address;
         if (removingCurrent) get().clearHistory();
+        if (removingCurrent) invalidateIbcTransferSession();
         set((state) => ({
           wallets: state.wallets.filter((w) => w.address !== address),
           currentWallet:
@@ -218,6 +230,7 @@ export const useWalletStore = create<WalletStore>()(
 
       lock: () => {
         get().clearHistory();
+        invalidateIbcTransferSession();
         set({
           isLocked: true,
           password: null,

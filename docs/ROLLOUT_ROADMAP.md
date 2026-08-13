@@ -19,8 +19,8 @@ intentionally more granular than the public 59-item tracker.
 
 - The ordered recovery merge chain is on `main`.
 - The maximum supply is fixed at 21,000,000 PNYX.
-- The source of truth records 1,628 recovery-verified tests: 1,461 Go, 26 Rust,
-  and 141 maintained-client tests. GH-121's real registered browser-query
+- The source of truth records 1,746 recovery-verified tests: 1,461 Go, 26 Rust,
+  and 259 maintained-client tests. GH-121's real registered browser-query
   boundary and GH-115's local client-chain delivery
   case are separately gated and excluded from this arithmetic, as is GH-172's
   real contention/replay/restart process harness. GH-175/GH-178/GH-181's
@@ -144,8 +144,11 @@ recovery tests; unsupported surfaces are absent or unmistakably disabled.
   evidence ([GH-131](https://github.com/NeaBouli/TrueRepublic/issues/131)).
   Incoming-only activity remains explicitly outside this submitted-history
   boundary.
-- [ ] Complete IBC transfer UX, status tracking, timeout handling, and recovery
-  messaging.
+- [x] Complete canonical native ICS-20 signing, strict open-channel/amount/
+  balance/timeout validation, wallet-scoped status persistence, and manual
+  source-chain acknowledgement/timeout recovery without automatic resubmission
+  ([GH-190](https://github.com/NeaBouli/TrueRepublic/issues/190)). External
+  relayer and public-counterparty qualification remain Phase 3 work.
 - [ ] Connect the real audited ZKP prover and remove preview-only dead paths.
 - [ ] Verify wallet creation, import, locking, signing, and key-storage safety.
 - [x] Add accessibility, responsive-layout, low-bandwidth, and browser support
@@ -153,7 +156,7 @@ recovery tests; unsupported surfaces are absent or unmistakably disabled.
   protected Chromium/Firefox/WebKit matrix and explicit authenticated-flow
   boundary ([GH-132](https://github.com/NeaBouli/TrueRepublic/issues/132),
   [PR #136](https://github.com/NeaBouli/TrueRepublic/pull/136)).
-- [x] Split all 19 page routes and enforce raw/gzip entry, route, chunk, and
+- [x] Split all 20 page routes and enforce raw/gzip entry, route, chunk, and
   total-JavaScript budgets during every maintained-client build
   ([GH-128](https://github.com/NeaBouli/TrueRepublic/issues/128)).
 

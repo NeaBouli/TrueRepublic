@@ -4,7 +4,7 @@ import { fileURLToPath } from 'node:url';
 import { gzipSync } from 'node:zlib';
 
 export const BUNDLE_BUDGET = Object.freeze({
-  routeEntries: 19,
+  routeEntries: 20,
   entry: Object.freeze({ raw: 260_000, gzip: 85_000 }),
   route: Object.freeze({ raw: 25_000, gzip: 7_000 }),
   chunk: Object.freeze({ raw: 1_100_000, gzip: 150_000 }),

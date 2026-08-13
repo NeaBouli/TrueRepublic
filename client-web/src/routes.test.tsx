@@ -23,6 +23,14 @@ vi.mock('@/components/wallet/WalletDashboard', () => ({
 vi.mock('@/components/wallet/SendForm', () => ({
   SendForm: () => <div data-testid="page-send" />,
 }));
+vi.mock('@/components/ibc/IbcTransferPage', async () => {
+  const { useParams } = await import('react-router-dom');
+  return {
+    IbcTransferPage: () => (
+      <div data-testid="page-ibc-transfer" data-params={JSON.stringify(useParams())} />
+    ),
+  };
+});
 vi.mock('@/components/governance/DomainBrowser', () => ({
   DomainBrowser: () => <div data-testid="page-governance" />,
 }));
@@ -137,6 +145,8 @@ describe('route contract', () => {
       '/unlock',
       '/wallet',
       '/send',
+      '/ibc/transfer',
+      '/ibc/transfer/:txHash',
       '/governance',
       '/governance/domain/:domainId',
       '/governance/domain/:domainId/issue/:issueId',
@@ -190,6 +200,7 @@ describe('static routes', () => {
     ['/unlock', 'page-unlock'],
     ['/wallet', 'page-wallet'],
     ['/send', 'page-send'],
+    ['/ibc/transfer', 'page-ibc-transfer'],
     ['/governance', 'page-governance'],
     ['/dex', 'page-dex'],
     ['/dex/swap', 'page-swap'],
@@ -225,6 +236,7 @@ describe('parameterized routes', () => {
     ['/dex/pool/atom/add', 'page-add-liquidity', { assetDenom: 'atom' }],
     ['/dex/pool/atom/remove', 'page-remove-liquidity', { assetDenom: 'atom' }],
     ['/admin/domain/validators', 'page-admin', { domainId: 'validators' }],
+    ['/ibc/transfer/AABB', 'page-ibc-transfer', { txHash: 'AABB' }],
     ['/onboard/pnyx', 'page-onboard', { domainId: 'pnyx' }],
   ])('renders %s with extracted params', async (path, testId, params) => {
     renderAt(path);
