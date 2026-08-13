@@ -1,5 +1,14 @@
 # TrueRepublic Agent Bridge
 
+## 2026-08-13 — Public security audit handoff — OPEN
+
+- A private VLABS operator audit records unresolved CI-hygiene and dependency-
+  coverage work. No live secret compromise was confirmed in the covered current
+  checkout.
+- Obtain a bounded, no-secrets task from the operator and record only sanitized
+  completion evidence. Do not publish finding details, raw matches or private
+  runtime evidence in this Bridge.
+
 ## 2026-08-10 02:15 EEST GH-172 → Merged / Final Main Green / Done
 
 - **Merge:** PR [#173](https://github.com/NeaBouli/TrueRepublic/pull/173)
