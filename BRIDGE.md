@@ -1,5 +1,21 @@
 # TrueRepublic Agent Bridge
 
+## 2026-08-13 22:30 EEST GH-203 protected closeout → PASS
+
+- PR #204 exact head `87c2e8d` passed all 24 reported contexts with both review
+  threads resolved, then admin-squash-merged as `c518fdc`; GH-203 closed and no
+  pull request remains open.
+- Final-main Go CI `31734145539`, Security `31734145526`, Client Web
+  `31734145572`, Docs `31734145563`, Reproducible Linux `31734145553`,
+  Dependency Graph `31734148836`, and Pages `31734144842` all pass on the exact
+  merge commit. Cache-busted live Pages publishes 1,837 cases and 32/59 with
+  `production_ready: false`.
+- Kimi implemented and independently reviewed the bounded circuit/encoding
+  freeze; Sol reviewed every writing diff, remediated all valid findings, and
+  reran the complete local and protected integration/security chain. This is a
+  compatibility foundation only: no production ceremony, prover, submission,
+  keys, funds, release, deployment, or rollout checkbox was authorized.
+
 ## 2026-08-13 21:38 EEST GH-203 PR #204 → Review fixes in progress
 
 - Exact head `184139f` passed all 24 reported PR contexts, including the

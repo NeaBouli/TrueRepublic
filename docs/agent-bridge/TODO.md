@@ -416,7 +416,7 @@
 - [x] Merge PR #201 as `b0e963f`, close GH-200, and verify final-main workflows
   and live Pages without changing rollout or production-readiness claims.
 
-## In progress - GH-203 ZKP circuit-identity freeze
+## Done - GH-203 ZKP circuit-identity freeze
 
 - [x] Add the strict versioned machine-readable circuit/encoding specification
   with explicit test-only/non-production classification.
@@ -428,5 +428,5 @@
   bytes.
 - [x] Complete Sol line-by-line review, full local/security gates, candidate
   arithmetic recount, and independent re-review.
-- [ ] Publish a protected PR, merge a green exact head, verify final main and
+- [x] Publish a protected PR, merge a green exact head, verify final main and
   Pages, synchronize GH-29 and both Bridges, and close GH-203.

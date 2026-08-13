@@ -3979,3 +3979,18 @@
   govulncheck/staticcheck/gitleaks contracts, module verification, docs
   consistency and diff hygiene pass again. No public arithmetic, rollout or
   production claim changed; replacement-head publication is pending.
+
+## 2026-08-13 22:30 EEST - GH-203 protected closeout passed
+
+- Exact PR #204 head `87c2e8d` passed all 24 reported contexts with both review
+  threads resolved and merged as `c518fdc`; GH-203 closed and no PR remains
+  open.
+- Final-main Go `31734145539`, Security `31734145526`, Client
+  `31734145572`, Docs `31734145563`, Reproducible Linux `31734145553`,
+  Dependency Graph `31734148836`, and Pages `31734144842` pass on the exact
+  merge. Cache-busted live status reports 1,837 cases, rollout 32/59, and
+  production false.
+- Kimi supplied the bounded implementation and independent deep reviews; Sol
+  owned all finding remediation, writing-diff review, complete gates, merge,
+  and final-main verification. No production ZKP, ceremony, key, fund,
+  deployment, release, or rollout authorization occurred.
