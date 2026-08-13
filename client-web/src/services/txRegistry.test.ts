@@ -1,9 +1,11 @@
 import { describe, expect, it } from 'vitest';
 import { BinaryWriter } from 'cosmjs-types/binary';
+import { MsgTransfer } from 'cosmjs-types/ibc/applications/transfer/v1/tx';
 import {
   assertPositiveInt64Decimal,
   createTxRegistry,
   customRegistryTypes,
+  ibcRegistryTypes,
   MsgAddLiquidity,
   MsgAddMember,
   MsgApproveOnboarding,
@@ -197,6 +199,64 @@ describe('custom message wire encoding', () => {
       BinaryWriter.create()
     ).finish();
     expect(MsgSubmitProposal.decode(bytes)).toEqual(value);
+  });
+});
+
+describe('canonical IBC transfer registration (GH-190)', () => {
+  const transferValue = {
+    sourcePort: 'transfer',
+    sourceChannel: 'channel-0',
+    token: { denom: 'upnyx', amount: '1000000' },
+    sender: 'truerepublic1sender',
+    receiver: 'cosmos1receiver',
+    timeoutHeight: { revisionNumber: 1n, revisionHeight: 1000n },
+    timeoutTimestamp: 1700000000000000000n,
+    memo: '',
+    encoding: '',
+  };
+
+  it('pins the upstream MsgTransfer codec at its canonical type URL', () => {
+    expect(ibcRegistryTypes.map(([typeUrl]) => typeUrl)).toEqual([
+      '/ibc.applications.transfer.v1.MsgTransfer',
+    ]);
+    expect(ibcRegistryTypes[0][1]).toBe(MsgTransfer);
+  });
+
+  it('encodes MsgTransfer through the registry with the exact golden bytes', () => {
+    // Field order and wire types mirror ibc-go applications/transfer/v1/tx.proto:
+    // 1 source_port, 2 source_channel, 3 token (Coin), 4 sender, 5 receiver,
+    // 6 timeout_height (Height), 7 timeout_timestamp (uint64 varint).
+    // Proto3 default fields (memo, encoding) are omitted.
+    const registry = createTxRegistry();
+    const bytes = registry.encode({
+      typeUrl: '/ibc.applications.transfer.v1.MsgTransfer',
+      value: transferValue,
+    });
+    expect(toHex(bytes)).toBe(
+      '0a087472616e7366657212096368616e6e656c2d30' +
+        '1a100a0575706e7978120731303030303030' +
+        '22137472756572657075626c69633173656e646572' +
+        '2a0f636f736d6f73317265636569766572' +
+        '3205080110e807' +
+        '388080a8b1e39fe7cb17'
+    );
+    const decoded = MsgTransfer.decode(bytes);
+    expect(decoded.sourceChannel).toBe('channel-0');
+    expect(decoded.timeoutHeight.revisionHeight).toBe(1000n);
+    expect(decoded.timeoutTimestamp).toBe(1700000000000000000n);
+  });
+
+  it('keeps rejecting unregistered IBC type URLs', () => {
+    const registry = createTxRegistry();
+    for (const typeUrl of [
+      '/ibc.applications.transfer.v1.MsgTransferV2',
+      '/ibc.applications.transfer.v2.MsgSendPacket',
+      '/ibc.lightclients.tendermint.v1.MsgMisbehaviour',
+    ]) {
+      expect(() => registry.encode({ typeUrl, value: {} })).toThrow(
+        /Unregistered type url/
+      );
+    }
   });
 });
 

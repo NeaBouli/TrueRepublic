@@ -43,6 +43,11 @@ state, completes the pending ACK, and proves a fresh ACK and timeout refund
 exactly once. GH-184 separately wires `x/upgrade` and proves a governed
 fresh-genesis `v0.4.1` halt, cached-write failure rollback, fixed-candidate
 recovery, common app hashes, and exact-once completion across four validators.
+GH-190 adds local maintained-client evidence for canonical native MsgTransfer
+encoding, strict open-channel/amount/balance/timeout validation, wallet-scoped
+non-secret recovery records, and manual source-chain acknowledgement/timeout
+reconciliation. A broadcast or send_packet is never represented as delivery,
+and the client never resubmits automatically.
 These remain local harnesses; they do not qualify an external relayer release,
 public counterparty, pre-GH-184 store introduction, IBC client upgrade, daemon
 rollout, or arbitrary cross-version compatibility.

@@ -9,6 +9,7 @@ import {
   ChatBubbleLeftRightIcon,
   GlobeAltIcon,
   ShieldCheckIcon,
+  PaperAirplaneIcon,
 } from '@heroicons/react/24/outline';
 
 export function MobileNav() {
@@ -21,6 +22,7 @@ export function MobileNav() {
 
   const navItems = [
     { path: '/wallet', label: 'Wallet', icon: WalletIcon },
+    { path: '/ibc/transfer', label: 'IBC Transfer', icon: PaperAirplaneIcon },
     { path: '/dex', label: 'DEX', icon: ArrowsRightLeftIcon },
     { path: '/governance', label: 'Governance', icon: ChatBubbleLeftRightIcon },
     { path: '/network', label: 'Network', icon: GlobeAltIcon },

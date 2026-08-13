@@ -189,6 +189,25 @@ describe('TransactionHistory', () => {
     expect(container.querySelector('img')).toBeNull();
   });
 
+  it('labels committed ICS-20 submissions without claiming packet delivery', () => {
+    setHistoryState({
+      historyStatus: 'ready',
+      historyTotal: 1,
+      historyTransactions: [
+        tx({
+          messages: [
+            { typeUrl: '/ibc.applications.transfer.v1.MsgTransfer' },
+          ],
+        }),
+      ],
+    });
+
+    render(<TransactionHistory />);
+
+    expect(screen.getByText('IBC transfer')).toBeInTheDocument();
+    expect(screen.queryByText(/delivered/i)).not.toBeInTheDocument();
+  });
+
   it('does not fabricate missing time or fee', () => {
     setHistoryState({
       historyStatus: 'ready',

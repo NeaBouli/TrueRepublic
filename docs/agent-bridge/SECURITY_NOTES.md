@@ -466,3 +466,20 @@
   module, store, genesis, gRPC, message-router, and root CLI surfaces. PoD,
   ICS-20, CosmWasm, and governed application-upgrade process gates remain
   green. Dependency upgrades must preserve and re-verify this boundary.
+
+## 2026-08-13 - GH-190 maintained-client IBC transfer boundary
+
+- Canonical MsgTransfer encoding, signer-derived sender identity, strict
+  native-denom/channel/amount/fresh-balance/timeout validation, and a 10,000
+  upnyx reserve all fail closed before signing.
+- Persisted recovery records are chain-and-wallet scoped and contain no
+  password, mnemonic, signer, key, or client. Wallet lock, switch, deletion,
+  and stale async completion invalidate active session state.
+- Broadcast is never equated with delivery. Only exact source-chain
+  send_packet, acknowledgement, and timeout events advance status; malformed
+  or contradictory evidence becomes unknown, and no path auto-resubmits.
+- The verified production build remains inside policy at 70.05 kB gzip initial
+  entry, 4.91 kB maximum lazy route, and 353.53 kB total JavaScript.
+- This is repository/local-chain evidence only. External relayers,
+  counterparties, public RPCs, real keys/accounts/funds, release, deployment,
+  and production remain outside GH-190.

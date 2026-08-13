@@ -22,9 +22,14 @@
  * Unknown custom type URLs fail closed: the registry contains exactly the
  * types below plus the CosmJS default types (which include
  * /cosmos.bank.v1beta1.MsgSend).
+ *
+ * ICS-20 transfers (GH-190) additionally pin the upstream cosmjs-types
+ * MsgTransfer codec at its canonical type URL so the signing path does not
+ * depend on the contents of the CosmJS default type list.
  */
 import { BinaryReader, BinaryWriter } from 'cosmjs-types/binary';
 import { Coin } from 'cosmjs-types/cosmos/base/v1beta1/coin';
+import { MsgTransfer } from 'cosmjs-types/ibc/applications/transfer/v1/tx';
 import { Registry, type GeneratedType } from '@cosmjs/proto-signing';
 import { defaultRegistryTypes } from '@cosmjs/stargate';
 
@@ -904,6 +909,15 @@ export const MsgSwapExact = {
 /* ------------------------------------------------------------------------ */
 
 /**
+ * The canonical ICS-20 transfer codec identity (GH-190). Registered
+ * explicitly so the IBC signing path is covered by the fail-closed registry
+ * even if the CosmJS default type list changes.
+ */
+export const ibcRegistryTypes: ReadonlyArray<[string, GeneratedType]> = [
+  [MsgTransfer.typeUrl, MsgTransfer],
+];
+
+/**
  * The exact custom type identities this client may sign. Every other custom
  * type URL fails closed in the registry.
  */
@@ -926,5 +940,9 @@ export const customRegistryTypes: ReadonlyArray<[string, GeneratedType]> = [
  * /cosmos.bank.v1beta1.MsgSend) plus the exact TrueRepublic custom types.
  */
 export function createTxRegistry(): Registry {
-  return new Registry([...defaultRegistryTypes, ...customRegistryTypes]);
+  return new Registry([
+    ...defaultRegistryTypes,
+    ...ibcRegistryTypes,
+    ...customRegistryTypes,
+  ]);
 }

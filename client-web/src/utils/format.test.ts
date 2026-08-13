@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { formatPnyx, parsePnyx } from './format';
+import { formatPnyx, parsePnyx, parsePositivePnyx } from './format';
 
 describe('PNYX amount formatting', () => {
   it('formats micro PNYX without losing precision', () => {
@@ -18,5 +18,15 @@ describe('PNYX amount formatting', () => {
     expect(parsePnyx('-1')).toBe('0');
     expect(parsePnyx('1.0000001')).toBe('0');
     expect(parsePnyx('not-an-amount')).toBe('0');
+  });
+
+  it('keeps invalid and zero signing inputs distinct from positive amounts', () => {
+    expect(parsePositivePnyx('1.000001')).toBe('1000001');
+    expect(parsePositivePnyx('0.000001')).toBe('1');
+    expect(parsePositivePnyx('0')).toBeNull();
+    expect(parsePositivePnyx('0.000000')).toBeNull();
+    expect(parsePositivePnyx('-1')).toBeNull();
+    expect(parsePositivePnyx('1.0000001')).toBeNull();
+    expect(parsePositivePnyx('not-an-amount')).toBeNull();
   });
 });

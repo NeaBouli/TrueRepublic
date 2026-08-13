@@ -83,6 +83,14 @@ export function WalletDashboard() {
               </Button>
               <Button
                 variant="secondary"
+                onClick={() => navigate('/ibc/transfer')}
+                className="w-full flex items-center justify-center gap-2"
+              >
+                <GlobeAltIcon className="h-5 w-5" />
+                IBC Transfer
+              </Button>
+              <Button
+                variant="secondary"
                 className="w-full flex items-center justify-center gap-2"
               >
                 <ArrowDownTrayIcon className="h-5 w-5" />

@@ -6105,3 +6105,65 @@ exclusion, CI wiring, and documentation boundaries.
   Done; remaining rollout work stays explicitly separate.
 
 ---
+
+## 2026-08-13 02:23 EEST GH-190 IBC transfer UX and recovery status → In Progress
+
+- **Branch:** `feature/GH-190-ibc-transfer-ux`
+- **Issue:** [GH-190](https://github.com/NeaBouli/TrueRepublic/issues/190)
+- **Scope:** complete the maintained client's canonical ICS-20 transfer form,
+  fail-closed channel/amount/timeout validation, source-chain-evidenced packet
+  lifecycle, persistence, timeout/refund and uncertain-broadcast recovery UX.
+- **Starting point:** exact clean `origin/main`
+  `c845e99fa88f36d99bcee44e427ba7198d613133`; no open PRs. GH-29 remains the
+  parent rollout tracker at 30/59 overall and 30/51 phase work.
+- **Initial findings:** the native Send form can accept non-numeric input as a
+  zero amount, and the current IBC channel query conflates transport/schema
+  failure with an empty channel set. Both must be fixed before reuse.
+- **Delegation:** Kimi K3 completed a bounded secret-free read-only architecture
+  review and will implement a substantial, named client slice. Claude Code is
+  limited to one small read-only/test-impact helper task. Neither may delegate
+  further or perform external writes. Sol owns architecture, security, every
+  accepted diff, integration, complete tests, GitHub, merge and closure.
+- **Risk:** High because misleading cross-chain status or replay UX can cause
+  duplicate escrow. Broadcast success must never be presented as delivery;
+  uncertain outcomes must be checked before manual resubmission.
+- **Safety:** repository-only. External relayer/counterparty qualification,
+  IBC client upgrades, ZKP, wallet custody, contracts, consensus migration,
+  production, real keys/accounts/funds, release and deployment are excluded.
+- **Ready for:** bounded Kimi implementation, small Claude test inventory, Sol
+  integration/security review, focused tests and the complete relevant gates.
+
+---
+
+## 2026-08-13 03:16 EEST GH-190 implementation → Locally verified
+
+- Canonical native MsgTransfer, strict channel/amount/fresh-balance/timeout
+  checks, wallet-scoped non-secret records, lazy transfer/status UI, and manual
+  source-chain send_packet/ACK/timeout recovery are implemented. Broadcast is
+  never delivery and no path automatically resubmits.
+- PASS: client lint, 10 Node + 249 Vitest cases, production build/budgets and
+  audit; disposable local-chain delivery/rejection; full Go build/vet/Race/
+  Coverage; real two-chain IBC recovery; security/static/vulnerability/secret
+  gates; Rust format/Clippy/26 tests/audit; docs/JSON/retirement consistency.
+- Public candidate status is 1,746 standard cases, rollout 31/59, phase work
+  31/51, Phase 6 6/7, production false.
+- Kimi implemented the large core slice; Sol reviewed and extended every
+  accepted diff. Claude Code performed only the small route/bundle inventory.
+  A final Kimi review did not complete; Sol's final review found and added
+  canonical packet_ack_hex decoding. No known P0/P1/P2 remains.
+- Safety remains repository/local-chain only. Next: commit, publish protected
+  PR, wait for exact-head checks/review, merge, synchronize GH-29/live Pages and
+  both Bridges, then close GH-190.
+
+---
+
+## 2026-08-13 03:18 EEST GH-190 → PR #191 published
+
+- Implementation commit `7eca8eb` was pushed and protected
+  [PR #191](https://github.com/NeaBouli/TrueRepublic/pull/191) opened against
+  `main`, closing GH-190 and advancing GH-29.
+- PR evidence records the complete local client, disposable-chain, Go/IBC,
+  security, Rust, consistency and safety boundary. The candidate is ready for
+  exact-head protected checks and review; it is not yet merged or Done.
+
+---

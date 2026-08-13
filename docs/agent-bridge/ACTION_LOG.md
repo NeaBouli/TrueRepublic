@@ -3752,3 +3752,34 @@
   merge, tracker update, and closure decision.
 - All scoped gates are satisfied. GH-187 is Done; no production/public-network,
   real key/account/fund, migration, release, or deployment action occurred.
+
+## 2026-08-13 02:23 EEST - GH-190 started
+
+- Created GH-190 and branch `feature/GH-190-ibc-transfer-ux` from exact clean
+  `origin/main` `c845e99` to close GH-29 Phase 4's IBC transfer UX item.
+- Kimi's bounded read-only architecture review identified two prerequisites:
+  strict native amount parsing and typed IBC channel query failure. It designed
+  a canonical MsgTransfer registry/service/store/UI boundary with evidence-only
+  status and no automatic resubmission.
+- Kimi receives a substantial bounded implementation slice; Claude Code gets
+  only a small test-impact inventory. Sol retains architecture, security,
+  integration, full verification, external writes, merge and closure.
+- No external relayer, counterparty, IBC client upgrade, ZKP, wallet-custody,
+  contract, migration, production, real-key/account/fund, release or deployment
+  action is in scope.
+
+## 2026-08-13 03:16 EEST - GH-190 locally verified
+
+- Implemented canonical native ICS-20 signing, strict channel/amount/fresh
+  balance/timeout boundaries, scoped non-secret persistence, recovery UI, and
+  manual source-chain packet lifecycle reconciliation with no auto-resubmit.
+- PASS: complete client, disposable-chain, Go/Race/Coverage, IBC two-chain,
+  security/static/vulnerability/secret, Rust, docs/JSON and retirement gates.
+- Candidate public arithmetic is 1,746 cases and 31/59 rollout. GH190_AUDIT.md
+  records exact evidence, delegation, limits and remaining protected PR work.
+
+## 2026-08-13 03:18 EEST - GH-190 published as PR #191
+
+- Pushed implementation commit `7eca8eb` and opened protected PR #191 against
+  `main`, closing GH-190 and advancing GH-29. Exact-head CI/review, merge,
+  final-main/live Pages, tracker and both-Bridge closure remain pending.
