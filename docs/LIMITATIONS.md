@@ -179,8 +179,18 @@ vector, the active `go.mod` gnark toolchain, and the maintained-client
 `zkpEncoding` contract, and prove deterministic byte/hash parity of the
 recompiled constraint system only. Committed Groth16 proving/verifying keys are
 randomized single-party toxic-waste test artifacts, not production or
-reproducible ceremony artifacts; no ceremony is claimed. Anonymous rewards
-remain deferred. GH-206's isolated Go/WASM command consumes only those exact
+reproducible ceremony artifacts; no ceremony is claimed. GH-209 binds one
+canonical bech32 reward recipient into the domain-separated
+`TrueRepublic/vote/v2` signal covered by both anonymous rating paths and
+replaces deferred rewards with an atomic treasury-funded payout to only the
+bound recipient; the one-vote nullifier stays recipient-independent. This
+handler change raises the `truedemocracy` module consensus version to 2, so an
+existing supported chain requires the registered governed no-op store migration
+or fresh genesis — version 1 payloads fail closed and are never dual-accepted.
+Direct payout publicly links
+the vote/nullifier event to the chosen payout address; fresh addresses reduce
+address-reuse linkage but do not create shielded payout privacy. GH-206's
+isolated Go/WASM command consumes only those exact
 artifacts, generates a fresh proof through the maintained-client adapter, and
 proves native Go verification. It is not shipped in the production bundle, has
 no wallet/RPC/broadcast capability, and does not change the hard-false
@@ -201,8 +211,9 @@ upgrades remain unsupported.
 
 ### For ZKP
 Do not submit anonymous votes from the web client. GH-206 is synthetic test-only
-compatibility evidence, not a production prover. Use the reviewed domain-key
-path without anonymous rewards until ceremony and independent review complete.
+compatibility evidence, not a production prover. The GH-209 recipient binding
+covers both anonymous rating paths chain-side, but anonymous submission still
+requires ceremony and independent review before it can be enabled.
 
 ## Reporting Issues
 

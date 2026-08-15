@@ -117,6 +117,10 @@ export function VotingPanel({
         domainName: domainId,
         issueName,
         suggestionName: suggestion.suggestionId,
+        // GH-209: a production flow must collect and bind a canonical reward
+        // recipient here. This preview panel fails closed in initialize()
+        // above, so no recipient is ever bound or submitted from this flow.
+        rewardRecipient: '',
       });
 
       // TODO: Submit MsgRateWithProof to blockchain via SigningStargateClient

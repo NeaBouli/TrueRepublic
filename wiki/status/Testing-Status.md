@@ -1,6 +1,6 @@
 # Testing Status
 
-The current **v0.4.0 recovery** source of truth records **1,854 verified
+The current **v0.4.0 recovery** source of truth records **1,874 verified
 standard-suite cases**. This arithmetic excludes the separately run opt-in
 GH-175/GH-178/GH-181 IBC two-chain and GH-184 governed-upgrade gates.
 
@@ -18,16 +18,16 @@ GH-175/GH-178/GH-181 IBC two-chain and GH-184 governed-upgrade gates.
 | Go topology policy | 56 |
 | Go treasury | 36 |
 | Go DEX | 138 |
-| Go governance | 594 |
+| Go governance | 612 |
 | Go test-only ZKP prover | 8 |
 | Rust/CosmWasm | 26 |
-| Maintained client | 317 |
-| **Total** | **1,854** |
+| Maintained client | 319 |
+| **Total** | **1,874** |
 
 The published total is the reproducible standard-suite baseline; the opt-in
 GH-175/GH-178/GH-181 IBC recovery, GH-184 upgrade, and GH-206 Go/WASM
 compatibility (`./scripts/test-zkp-wasm-client.sh`) gates are additional
-evidence and are not counted in the 1,511 Go subtotal.
+evidence and are not counted in the 1,529 Go subtotal.
 
 ## Current Go coverage
 
@@ -45,7 +45,7 @@ evidence and are not counted in the 1,511 Go subtotal.
 | topology policy | 85.8% |
 | treasury | 97.0% |
 | DEX | 51.1% |
-| governance | 64.0% |
+| governance | 64.3% |
 
 ## Reproduction commands
 
@@ -59,8 +59,9 @@ CGO_ENABLED=1 ./scripts/go-packages.sh go build
 ./scripts/check-consistency.sh
 ```
 
-The maintained client is verified with `npm ci`, lint, 259 cases (249 Vitest plus
-ten Node policy/budget cases), production build, and guarded live audit. The CosmWasm workspace is verified with tests, formatting,
+The maintained client is verified with `npm ci`, lint, 319 passing cases (309
+Vitest plus ten Node policy/budget cases), production build, and guarded live
+audit. The CosmWasm workspace is verified with tests, formatting,
 Clippy, build, and audit.
 
 GH-32/GH-41/GH-43/GH-45/GH-53/GH-55/GH-56/GH-60/GH-61/GH-93/GH-97 add the separately gated

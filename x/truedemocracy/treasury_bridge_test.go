@@ -20,6 +20,7 @@ type mockBankKeeper struct {
 	accounts            map[string]sdk.Coins // address → balances
 	modules             map[string]sdk.Coins // module name → balances
 	supply              sdk.Coins
+	blocked             map[string]bool // blocked module account addresses
 	failAccountToModule bool
 	failModuleToAccount bool
 	failMint            bool
@@ -63,9 +64,25 @@ func (m *mockBankKeeper) SendCoinsFromAccountToModule(_ context.Context, senderA
 	return nil
 }
 
+func (m *mockBankKeeper) BlockedAddr(addr sdk.AccAddress) bool {
+	return m.blocked[addr.String()]
+}
+
+// blockModuleAccount mirrors the production bank keeper's blocked module
+// accounts for the named module.
+func (m *mockBankKeeper) blockModuleAccount(moduleName string) {
+	if m.blocked == nil {
+		m.blocked = make(map[string]bool)
+	}
+	m.blocked[authtypes.NewModuleAddress(moduleName).String()] = true
+}
+
 func (m *mockBankKeeper) SendCoinsFromModuleToAccount(_ context.Context, senderModule string, recipientAddr sdk.AccAddress, amt sdk.Coins) error {
 	if m.failModuleToAccount {
 		return fmt.Errorf("injected module-to-account failure")
+	}
+	if m.BlockedAddr(recipientAddr) {
+		return fmt.Errorf("recipient %s is a blocked module account", recipientAddr.String())
 	}
 	bal := m.modules[senderModule]
 	for _, coin := range amt {

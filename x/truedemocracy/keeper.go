@@ -22,6 +22,9 @@ type BankKeeper interface {
 	SendCoinsFromModuleToAccount(ctx context.Context, senderModule string, recipientAddr sdk.AccAddress, amt sdk.Coins) error
 	GetBalance(ctx context.Context, addr sdk.AccAddress, denom string) sdk.Coin
 	GetAllBalances(ctx context.Context, addr sdk.AccAddress) sdk.Coins
+	// BlockedAddr reports module-account addresses that must never receive
+	// direct sends; GH-209 reward payouts fail closed for them.
+	BlockedAddr(addr sdk.AccAddress) bool
 }
 
 // UpgradeScheduler is the narrow x/upgrade boundary the governance adapter
@@ -265,9 +268,15 @@ func (k Keeper) RateProposal(ctx sdk.Context, domainName, issueName, suggestionN
 // RateProposalWithSignature records a rating using a pre-computed signature.
 // This is the message-handler variant: the client signs the payload offline
 // and submits pubkey + signature (private key never leaves the client).
-func (k Keeper) RateProposalWithSignature(ctx sdk.Context, domainName, issueName, suggestionName string, rating int, domainPubKeyHex, signatureHex string) (sdk.Coins, error) {
+// GH-209: the signature must cover the recipient-bound v2 payload; the reward
+// recipient is validated, never persisted, and never inferred from the
+// transaction sender.
+func (k Keeper) RateProposalWithSignature(ctx sdk.Context, domainName, issueName, suggestionName string, rating int, domainPubKeyHex, signatureHex, rewardRecipient string) (sdk.Coins, error) {
 	if rating < -5 || rating > 5 {
 		return sdk.Coins{}, errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "rating must be between -5 and +5")
+	}
+	if _, err := ValidateRewardRecipient(rewardRecipient); err != nil {
+		return sdk.Coins{}, err
 	}
 
 	// Decode and verify the public key.
@@ -282,7 +291,7 @@ func (k Keeper) RateProposalWithSignature(ctx sdk.Context, domainName, issueName
 	if err != nil {
 		return sdk.Coins{}, errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "invalid signature hex")
 	}
-	payload := encodeVoteContext(ctx.ChainID(), domainName, issueName, suggestionName, &rating)
+	payload := encodeVoteContextV2(ctx.ChainID(), domainName, issueName, suggestionName, rating, rewardRecipient)
 	if !pubKey.VerifySignature(payload, sigBytes) {
 		return sdk.Coins{}, errorsmod.Wrap(sdkerrors.ErrUnauthorized, "signature verification failed")
 	}
@@ -343,9 +352,14 @@ func (k Keeper) RateProposalWithSignature(ctx sdk.Context, domainName, issueName
 // The voter proves membership in the domain's identity commitment set without
 // revealing which commitment is theirs. A deterministic nullifier prevents
 // double-voting while preserving full anonymity (WP S4 ZKP extension).
-func (k Keeper) RateProposalWithZKP(ctx sdk.Context, domainName, issueName, suggestionName string, rating int, proofHex, nullifierHashHex, merkleRootHex string) (sdk.Coins, error) {
+// GH-209: the public SignalHash is the recipient-bound v2 signal; the
+// external-nullifier scope stays recipient- and rating-independent.
+func (k Keeper) RateProposalWithZKP(ctx sdk.Context, domainName, issueName, suggestionName string, rating int, proofHex, nullifierHashHex, merkleRootHex, rewardRecipient string) (sdk.Coins, error) {
 	if rating < -5 || rating > 5 {
 		return sdk.Coins{}, errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "rating must be between -5 and +5")
+	}
+	if _, err := ValidateRewardRecipient(rewardRecipient); err != nil {
+		return sdk.Coins{}, err
 	}
 
 	// Get domain and verify identity commitments exist.
@@ -377,9 +391,10 @@ func (k Keeper) RateProposalWithZKP(ctx sdk.Context, domainName, issueName, sugg
 	}
 	nullifierHashHex = hex.EncodeToString(nullifierBytes)
 
-	// Compute external nullifier from voting context.
+	// Compute external nullifier from voting context. The scope deliberately
+	// stays recipient- and rating-independent (GH-209).
 	externalNullifier := ComputeVoteNullifierScope(ctx.ChainID(), domainName, issueName, suggestionName)
-	signalHash := ComputeVoteSignal(ctx.ChainID(), domainName, issueName, suggestionName, rating)
+	signalHash := ComputeVoteSignalV2(ctx.ChainID(), domainName, issueName, suggestionName, rating, rewardRecipient)
 
 	// Decode proof.
 	proofBytes, err := hex.DecodeString(proofHex)

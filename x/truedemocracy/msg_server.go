@@ -585,7 +585,10 @@ func (m msgServer) VoteToDelete(goCtx context.Context, msg *MsgVoteToDelete) (*M
 func (m msgServer) RateProposal(goCtx context.Context, msg *MsgRateProposal) (*MsgRateProposalResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	reward, err := m.Keeper.RateProposalWithSignatureDeferredReward(
+	if err := msg.ValidateBasic(); err != nil {
+		return nil, err
+	}
+	reward, err := m.Keeper.RateProposalWithSignaturePayout(
 		ctx,
 		msg.DomainName,
 		msg.IssueName,
@@ -593,6 +596,7 @@ func (m msgServer) RateProposal(goCtx context.Context, msg *MsgRateProposal) (*M
 		int(msg.Rating),
 		msg.DomainPubKey,
 		msg.Signature,
+		msg.RewardRecipient,
 	)
 	if err != nil {
 		return nil, err
@@ -604,6 +608,7 @@ func (m msgServer) RateProposal(goCtx context.Context, msg *MsgRateProposal) (*M
 		sdk.NewAttribute("issue", msg.IssueName),
 		sdk.NewAttribute("suggestion", msg.SuggestionName),
 		sdk.NewAttribute("rating", fmt.Sprintf("%d", msg.Rating)),
+		sdk.NewAttribute("reward_recipient", msg.RewardRecipient),
 		sdk.NewAttribute("reward", reward.String()),
 	))
 
@@ -750,7 +755,10 @@ func (m msgServer) RegisterIdentity(goCtx context.Context, msg *MsgRegisterIdent
 func (m msgServer) RateWithProof(goCtx context.Context, msg *MsgRateWithProof) (*MsgRateWithProofResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	reward, err := m.Keeper.RateProposalWithZKPDeferredReward(
+	if err := msg.ValidateBasic(); err != nil {
+		return nil, err
+	}
+	reward, err := m.Keeper.RateProposalWithZKPPayout(
 		ctx,
 		msg.DomainName,
 		msg.IssueName,
@@ -759,6 +767,7 @@ func (m msgServer) RateWithProof(goCtx context.Context, msg *MsgRateWithProof) (
 		msg.Proof,
 		msg.NullifierHash,
 		msg.MerkleRoot,
+		msg.RewardRecipient,
 	)
 	if err != nil {
 		return nil, err
@@ -770,6 +779,7 @@ func (m msgServer) RateWithProof(goCtx context.Context, msg *MsgRateWithProof) (
 		sdk.NewAttribute("issue", msg.IssueName),
 		sdk.NewAttribute("suggestion", msg.SuggestionName),
 		sdk.NewAttribute("rating", fmt.Sprintf("%d", msg.Rating)),
+		sdk.NewAttribute("reward_recipient", msg.RewardRecipient),
 		sdk.NewAttribute("reward", reward.String()),
 	))
 

@@ -267,8 +267,38 @@ func ComputeVoteNullifierScope(chainID, domainName, issueName, suggestionName st
 }
 
 // ComputeVoteSignal binds a proof to the chain, suggestion, and exact rating.
+// This is the historical v1 signal; consensus rating handlers now require the
+// recipient-bound v2 signal. It is retained only so the frozen GH-198 test
+// vector and the recipient-independent nullifier scope keep their exact
+// historical semantics.
 func ComputeVoteSignal(chainID, domainName, issueName, suggestionName string, rating int) []byte {
 	return hashToField(encodeVoteContext(chainID, domainName, issueName, suggestionName, &rating))
+}
+
+// encodeVoteContextV2 builds the recipient-bound GH-209 vote signal preimage:
+// domain separator, then the length-prefixed chain ID, domain, issue, and
+// suggestion names, the exact rating as big-endian int64, and the canonical
+// length-prefixed bech32 reward recipient. Every variable-length field is
+// length-prefixed, so the encoding is unambiguous.
+func encodeVoteContextV2(chainID, domainName, issueName, suggestionName string, rating int, rewardRecipient string) []byte {
+	var buf bytes.Buffer
+	buf.WriteString("TrueRepublic/vote/v2")
+	for _, value := range []string{chainID, domainName, issueName, suggestionName} {
+		_ = binary.Write(&buf, binary.BigEndian, uint32(len(value)))
+		buf.WriteString(value)
+	}
+	_ = binary.Write(&buf, binary.BigEndian, int64(rating))
+	_ = binary.Write(&buf, binary.BigEndian, uint32(len(rewardRecipient)))
+	buf.WriteString(rewardRecipient)
+	return buf.Bytes()
+}
+
+// ComputeVoteSignalV2 binds a proof or domain-key signature to the chain,
+// domain, issue, suggestion, exact rating, and the canonical reward
+// recipient. The recipient is never part of the nullifier scope, so the
+// one-vote rule stays recipient-independent.
+func ComputeVoteSignalV2(chainID, domainName, issueName, suggestionName string, rating int, rewardRecipient string) []byte {
+	return hashToField(encodeVoteContextV2(chainID, domainName, issueName, suggestionName, rating, rewardRecipient))
 }
 
 // HexToFieldElement converts a hex string to a 32-byte big-endian

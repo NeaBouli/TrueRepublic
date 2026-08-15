@@ -1,9 +1,10 @@
+import { fromBech32, toBech32 } from '@cosmjs/encoding';
 import type { GeneratedProof, Groth16Prover, ProofInputs } from '@/types/zkp';
 import { MERKLE_TREE_DEPTH } from '@/types/zkp';
 import {
   bytesToHex,
   computeVoteNullifierScope,
-  computeVoteSignal,
+  computeVoteSignalV2,
   hexToBytes,
   mimcBn254,
 } from './zkpEncoding';
@@ -115,12 +116,13 @@ export class TestOnlyGroth16WasmProver implements Groth16Prover {
       throw new Error('external nullifier does not match the canonical vote scope');
     }
     const signal = bytesToHex(
-      computeVoteSignal(
+      computeVoteSignalV2(
         inputs.chainId,
         inputs.domainName,
         inputs.issueName,
         inputs.suggestionName,
-        inputs.rating
+        inputs.rating,
+        inputs.rewardRecipient
       )
     );
     const request = JSON.stringify({
@@ -156,6 +158,7 @@ export class TestOnlyGroth16WasmProver implements Groth16Prover {
 }
 
 function validateInputs(inputs: ProofInputs): void {
+  validateRewardRecipient(inputs.rewardRecipient);
   if (
     inputs.merkleRoot !== inputs.merkleProof.root ||
     inputs.merkleProof.pathElements.length !== MERKLE_TREE_DEPTH ||
@@ -179,6 +182,32 @@ function validateInputs(inputs: ProofInputs): void {
   const expectedLeaf = bytesToHex(mimcBn254([hexToBytes(inputs.identitySecret)]));
   if (inputs.merkleProof.leaf !== expectedLeaf) {
     throw new Error('Merkle proof leaf does not match the identity commitment');
+  }
+}
+
+/**
+ * GH-209: the v2 signal binds the payout address, so the test seam rejects a
+ * missing, non-canonical, or foreign-prefix recipient before any proving work.
+ * The chain remains the authoritative bech32 validator.
+ */
+function validateRewardRecipient(recipient: string): void {
+  if (recipient.length === 0 || recipient !== recipient.toLowerCase()) {
+    throw new Error(
+      'reward recipient must be a canonical lowercase truerepublic bech32 address'
+    );
+  }
+  try {
+    const decoded = fromBech32(recipient);
+    if (
+      decoded.prefix !== 'truerepublic' ||
+      toBech32(decoded.prefix, decoded.data) !== recipient
+    ) {
+      throw new Error('non-canonical reward recipient');
+    }
+  } catch {
+    throw new Error(
+      'reward recipient must be a canonical lowercase truerepublic bech32 address'
+    );
   }
 }
 

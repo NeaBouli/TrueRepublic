@@ -5,6 +5,7 @@ import {
   bytesToHex,
   computeVoteNullifierScope,
   computeVoteSignal,
+  computeVoteSignalV2,
   hexToBytes,
   mimcBn254,
 } from './zkpEncoding';
@@ -23,6 +24,24 @@ interface GoldenVector {
   synthetic_and_test_only: boolean;
 }
 
+interface CircuitSpecV2Vector {
+  chain_id: string;
+  domain_name: string;
+  issue_name: string;
+  suggestion_name: string;
+  rating: number;
+  reward_recipient: string;
+  signal_hash_hex: string;
+}
+
+interface CircuitSpec {
+  schema: string;
+  vote_context_v2: {
+    domain_separator: string;
+    vector: CircuitSpecV2Vector;
+  };
+}
+
 const vector = JSON.parse(
   readFileSync(
     resolve(
@@ -32,6 +51,13 @@ const vector = JSON.parse(
     'utf8'
   )
 ) as GoldenVector;
+
+const spec = JSON.parse(
+  readFileSync(
+    resolve(process.cwd(), '../configs/security/zkp-circuit.json'),
+    'utf8'
+  )
+) as CircuitSpec;
 
 describe('ZKP Go/client encoding compatibility', () => {
   it('matches the synthetic Go MiMC commitment and nullifier vector', () => {
@@ -78,5 +104,46 @@ describe('ZKP Go/client encoding compatibility', () => {
         )
       )
     ).not.toBe(vector.signal_hash_hex);
+  });
+
+  it('matches the GH-209 recipient-bound v2 signal vector', () => {
+    expect(spec.schema).toBe('truerepublic/zkp-circuit/v2');
+    expect(spec.vote_context_v2.domain_separator).toBe('TrueRepublic/vote/v2');
+    const v2 = spec.vote_context_v2.vector;
+    const signal = computeVoteSignalV2(
+      v2.chain_id,
+      v2.domain_name,
+      v2.issue_name,
+      v2.suggestion_name,
+      v2.rating,
+      v2.reward_recipient
+    );
+    expect(bytesToHex(signal)).toBe(v2.signal_hash_hex);
+
+    // The v2 signal binds the recipient and never collides with the v1 or
+    // recipient-shifted encodings.
+    expect(
+      bytesToHex(
+        computeVoteSignalV2(
+          v2.chain_id,
+          v2.domain_name,
+          v2.issue_name,
+          v2.suggestion_name,
+          v2.rating,
+          `${v2.reward_recipient}x`
+        )
+      )
+    ).not.toBe(v2.signal_hash_hex);
+    expect(
+      bytesToHex(
+        computeVoteSignal(
+          v2.chain_id,
+          v2.domain_name,
+          v2.issue_name,
+          v2.suggestion_name,
+          v2.rating
+        )
+      )
+    ).not.toBe(v2.signal_hash_hex);
   });
 });

@@ -40,8 +40,8 @@ TrueRepublic exposes APIs via:
 | Message | CLI Command | Description |
 |---------|-------------|-------------|
 | `MsgPlaceStone` | `tx truedemocracy place-stone` | Place a stone on a suggestion |
-| `MsgRateProposal` | `tx truedemocracy rate-proposal` | Rate with domain key signature |
-| `MsgRateWithProof` | `tx truedemocracy rate-with-proof` | Rate with ZKP (anonymous) |
+| `MsgRateProposal` | `tx truedemocracy rate-proposal` | Rate with domain key signature over the recipient-bound v2 payload |
+| `MsgRateWithProof` | `tx truedemocracy rate-with-proof` | Rate with ZKP (anonymous); signal binds the reward recipient |
 | `MsgCastElectionVote` | `tx truedemocracy cast-election-vote` | Vote in person election |
 
 #### Governance

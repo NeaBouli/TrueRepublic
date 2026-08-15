@@ -1,5 +1,61 @@
 # TrueRepublic Agent Bridge
 
+## 2026-08-15 18:56 EEST GH-209 recipient-bound anonymous rewards → Local PASS
+
+- **Delivered:** both anonymous rating paths bind the canonical
+  `truerepublic` reward recipient into the versioned `TrueRepublic/vote/v2`
+  signal while the external nullifier stays recipient- and rating-independent.
+  Reward payout is atomic with vote mutation and rejects malformed,
+  non-canonical and blocked module-account recipients.
+- **Compatibility:** the existing public `SignalHash` is reused, so the frozen
+  circuit, CS, PK and VK are unchanged. Consensus version 2 has a registered
+  governed v1→v2 no-op migration and an explicit upgrade regression test.
+- **Review:** Kimi K3 supplied the large bounded implementation after its
+  architecture/security review. Sol reviewed the complete writing diff,
+  added the migration registration and checksum-strict client validation,
+  reconciled threat/spec/rollout claims and reran all relevant gates. Claude
+  Code was attempted for the small independent check but its OAuth session
+  had expired; it made no changes and is not a project blocker.
+- **PASS:** 1,529 Go cases with Build/Vet/Race/Coverage (`x/truedemocracy`
+  64.3%), 26 Rust tests plus fmt/Clippy, 10 Node + 309 Vitest cases (4 skipped),
+  client lint/build/budgets/high audit, real WASM-to-native ZKP compatibility,
+  staticcheck, gitleaks, govuln policy/fixtures, docs consistency, governed
+  four-validator upgrade recovery, all three IBC two-chain cases and the full
+  eight-case multi-validator recovery matrix.
+- **Status:** candidate arithmetic is 1,874 = 1,529 Go + 26 Rust + 319 client;
+  rollout 33/59, phase work 33/51, Phase 6 6/7, production false. Direct payout
+  linkability and independent cryptographic/privacy review remain explicit.
+- **Next:** commit and push the reviewed candidate, open the protected PR,
+  resolve all review threads, require exact-head CI green, then merge and
+  synchronize GH-29, final main, Pages and both Bridges.
+
+---
+
+## 2026-08-15 17:16 EEST GH-209 recipient-bound anonymous rewards → In Progress
+
+- **Branch:** `feature/GH-209-zkp-reward-recipient`
+- **Issue:** https://github.com/NeaBouli/TrueRepublic/issues/209
+- **Baseline:** clean exact `origin/main`/HEAD `de098ff`; GH-206 and its
+  closeout are complete, no pull request was open when this task started.
+- **Scope:** bind a canonical reward recipient into a new domain-separated vote
+  signal while preserving the recipient-independent external nullifier; cover
+  Groth16 and domain-key anonymous ratings, atomic payout, adversarial replay/
+  substitution/accounting evidence, encoding parity, consensus-version and
+  privacy documentation.
+- **Kimi contribution:** completed the required secret-free read-only
+  architecture/security review. It confirmed the existing `SignalHash` public
+  input is sufficient, so the frozen circuit, CS, PK and VK need no change.
+- **Safety:** high risk because message/consensus, cryptography and token
+  accounting are involved. Client submission remains hard false. No ceremony,
+  production artifacts, keys/accounts/funds, RPC/broadcast, release,
+  deployment or network mutation is in scope.
+- **Tests:** not run yet; this is the pre-implementation ownership record.
+- **Next:** delegate the bounded main implementation to Kimi, review every
+  writing diff in Sol, use Claude Code for one small independent check, then
+  run focused adversarial and complete repository gates.
+
+---
+
 ## 2026-08-14 02:56 EEST GH-206 protected closeout → PASS
 
 - PR #207 exact head `a2b3d17` passed all 25 reported contexts, including

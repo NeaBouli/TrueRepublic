@@ -121,9 +121,21 @@ func (am AppModule) RegisterInvariants(ir sdk.InvariantRegistry) {
 func (am AppModule) RegisterServices(cfg module.Configurator) {
 	RegisterMsgServer(cfg.MsgServer(), NewMsgServer(am.keeper))
 	RegisterQueryServer(cfg.QueryServer(), am.keeper)
+	// GH-209 changes message semantics but introduces no store layout change.
+	// Cosmos SDK nevertheless requires every ConsensusVersion increment to
+	// register the complete migration step so supported governed upgrades can
+	// advance the version map deterministically instead of panicking.
+	if err := cfg.RegisterMigration(ModuleName, 1, func(sdk.Context) error { return nil }); err != nil {
+		panic(err)
+	}
 }
 
-func (am AppModule) ConsensusVersion() uint64 { return 1 }
+// ConsensusVersion is 2 since GH-209: anonymous rating handlers require the
+// recipient-bound v2 payload and pay the bound recipient directly. Chains
+// running version 1 must adopt this through the registered governed no-op
+// store migration or a fresh genesis; version 1 submissions fail closed and
+// are never dual-accepted.
+func (am AppModule) ConsensusVersion() uint64 { return 2 }
 
 func (am AppModule) InitGenesis(ctx sdk.Context, cdc codec.JSONCodec, data json.RawMessage) []abci.ValidatorUpdate {
 	var genesisState GenesisState

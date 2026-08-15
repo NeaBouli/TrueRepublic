@@ -3,6 +3,7 @@ package truedemocracy
 import (
 	"encoding/hex"
 	"math/big"
+	"strings"
 	"testing"
 
 	"github.com/consensys/gnark-crypto/ecc"
@@ -167,9 +168,23 @@ func setupDomainWithZKPIdentity(t *testing.T, k Keeper, ctx sdk.Context, domainN
 	return secrets
 }
 
-// generateZKPRating generates a Groth16 proof and nullifier for rating a suggestion.
+// testRewardRecipient is the deterministic valid payout address bound into v2
+// anonymous rating payloads in tests.
+func testRewardRecipient() string {
+	return sdk.AccAddress("zkp-reward-recipient").String()
+}
+
+// generateZKPRating generates a Groth16 proof and nullifier for rating a
+// suggestion with the default test reward recipient.
 // Returns proofHex and nullifierHashHex ready for RateProposalWithZKP.
 func generateZKPRating(t *testing.T, k Keeper, ctx sdk.Context, domainName string, secrets [][]byte, memberIndex int, issueName, suggestionName string, rating int) (string, string) {
+	t.Helper()
+	return generateZKPRatingForRecipient(t, k, ctx, domainName, secrets, memberIndex, issueName, suggestionName, rating, testRewardRecipient())
+}
+
+// generateZKPRatingForRecipient generates a proof bound to the v2 signal that
+// covers the given canonical reward recipient.
+func generateZKPRatingForRecipient(t *testing.T, k Keeper, ctx sdk.Context, domainName string, secrets [][]byte, memberIndex int, issueName, suggestionName string, rating int, rewardRecipient string) (string, string) {
 	t.Helper()
 	keys := getTestZKPKeys(t)
 
@@ -191,7 +206,7 @@ func generateZKPRating(t *testing.T, k Keeper, ctx sdk.Context, domainName strin
 	}
 
 	extNullifier := ComputeVoteNullifierScope(ctx.ChainID(), domainName, issueName, suggestionName)
-	signalHash := ComputeVoteSignal(ctx.ChainID(), domainName, issueName, suggestionName, rating)
+	signalHash := ComputeVoteSignalV2(ctx.ChainID(), domainName, issueName, suggestionName, rating, rewardRecipient)
 
 	proofBytes, nullifierHash, err := GenerateMembershipProofForSignal(
 		keys,
@@ -228,7 +243,7 @@ func TestRateProposalWithZKP(t *testing.T) {
 
 	proofHex, nullifierHex := generateZKPRating(t, k, ctx, "ZKPDomain", secrets, 1, "Climate", "GreenDeal", 3)
 
-	reward, err := k.RateProposalWithZKP(ctx, "ZKPDomain", "Climate", "GreenDeal", 3, proofHex, nullifierHex, "")
+	reward, err := k.RateProposalWithZKP(ctx, "ZKPDomain", "Climate", "GreenDeal", 3, proofHex, nullifierHex, "", testRewardRecipient())
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
@@ -260,7 +275,7 @@ func TestRateProposalWithZKPProofBindsRating(t *testing.T) {
 	addProposal(t, k, ctx, "ZKPDomain", "Climate", "GreenDeal")
 
 	proofHex, nullifierHex := generateZKPRating(t, k, ctx, "ZKPDomain", secrets, 0, "Climate", "GreenDeal", 3)
-	if _, err := k.RateProposalWithZKP(ctx, "ZKPDomain", "Climate", "GreenDeal", -4, proofHex, nullifierHex, ""); err == nil {
+	if _, err := k.RateProposalWithZKP(ctx, "ZKPDomain", "Climate", "GreenDeal", -4, proofHex, nullifierHex, "", testRewardRecipient()); err == nil {
 		t.Fatal("proof replay with altered rating must fail")
 	}
 	domain, _ := k.GetDomain(ctx, "ZKPDomain")
@@ -270,7 +285,7 @@ func TestRateProposalWithZKPProofBindsRating(t *testing.T) {
 	if k.IsNullifierUsed(ctx, "ZKPDomain", nullifierHex) {
 		t.Fatal("failed altered-rating proof consumed nullifier")
 	}
-	if _, err := k.RateProposalWithZKP(ctx, "ZKPDomain", "Climate", "GreenDeal", 3, proofHex, nullifierHex, ""); err != nil {
+	if _, err := k.RateProposalWithZKP(ctx, "ZKPDomain", "Climate", "GreenDeal", 3, proofHex, nullifierHex, "", testRewardRecipient()); err != nil {
 		t.Fatalf("proof with bound rating should succeed: %v", err)
 	}
 }
@@ -283,10 +298,10 @@ func TestRateProposalWithZKPProofBindsChainID(t *testing.T) {
 
 	proofHex, nullifierHex := generateZKPRating(t, k, ctx, "ZKPDomain", secrets, 0, "Climate", "GreenDeal", 3)
 	otherChain := ctx.WithChainID("truerepublic-test-2")
-	if _, err := k.RateProposalWithZKP(otherChain, "ZKPDomain", "Climate", "GreenDeal", 3, proofHex, nullifierHex, ""); err == nil {
+	if _, err := k.RateProposalWithZKP(otherChain, "ZKPDomain", "Climate", "GreenDeal", 3, proofHex, nullifierHex, "", testRewardRecipient()); err == nil {
 		t.Fatal("proof replay on another chain must fail")
 	}
-	if _, err := k.RateProposalWithZKP(ctx, "ZKPDomain", "Climate", "GreenDeal", 3, proofHex, nullifierHex, ""); err != nil {
+	if _, err := k.RateProposalWithZKP(ctx, "ZKPDomain", "Climate", "GreenDeal", 3, proofHex, nullifierHex, "", testRewardRecipient()); err != nil {
 		t.Fatalf("proof on its bound chain should succeed: %v", err)
 	}
 }
@@ -318,7 +333,7 @@ func TestRateProposalWithZKPMissingVKFailsWithoutMutation(t *testing.T) {
 	addProposal(t, k, ctx, "NoVKDomain", "Climate", "GreenDeal")
 
 	domain, _ := k.GetDomain(ctx, "NoVKDomain")
-	if _, err := k.RateProposalWithZKP(ctx, "NoVKDomain", "Climate", "GreenDeal", 3, "aa", hex.EncodeToString(make([]byte, 32)), domain.MerkleRoot); err == nil {
+	if _, err := k.RateProposalWithZKP(ctx, "NoVKDomain", "Climate", "GreenDeal", 3, "aa", hex.EncodeToString(make([]byte, 32)), domain.MerkleRoot, testRewardRecipient()); err == nil {
 		t.Fatal("rating without a configured VK must fail")
 	}
 	if _, found := k.GetVerifyingKey(ctx); found {
@@ -338,13 +353,13 @@ func TestRateProposalWithZKPDoubleVoteBlocked(t *testing.T) {
 	proofHex, nullifierHex := generateZKPRating(t, k, ctx, "ZKPDomain", secrets, 0, "Climate", "GreenDeal", 5)
 
 	// First vote succeeds.
-	_, err := k.RateProposalWithZKP(ctx, "ZKPDomain", "Climate", "GreenDeal", 5, proofHex, nullifierHex, "")
+	_, err := k.RateProposalWithZKP(ctx, "ZKPDomain", "Climate", "GreenDeal", 5, proofHex, nullifierHex, "", testRewardRecipient())
 	if err != nil {
 		t.Fatalf("first vote should succeed: %v", err)
 	}
 
 	// Second vote with same nullifier rejected.
-	_, err = k.RateProposalWithZKP(ctx, "ZKPDomain", "Climate", "GreenDeal", -3, proofHex, nullifierHex, "")
+	_, err = k.RateProposalWithZKP(ctx, "ZKPDomain", "Climate", "GreenDeal", -3, proofHex, nullifierHex, "", testRewardRecipient())
 	if err == nil {
 		t.Fatal("expected error for double vote")
 	}
@@ -364,12 +379,12 @@ func TestRateProposalWithZKPDifferentSuggestions(t *testing.T) {
 		t.Fatal("different suggestions should produce different nullifiers")
 	}
 
-	_, err := k.RateProposalWithZKP(ctx, "ZKPDomain", "Climate", "GreenDeal", 5, proof1, null1, "")
+	_, err := k.RateProposalWithZKP(ctx, "ZKPDomain", "Climate", "GreenDeal", 5, proof1, null1, "", testRewardRecipient())
 	if err != nil {
 		t.Fatalf("first suggestion rating failed: %v", err)
 	}
 
-	_, err = k.RateProposalWithZKP(ctx, "ZKPDomain", "Climate", "BlueDeal", -2, proof2, null2, "")
+	_, err = k.RateProposalWithZKP(ctx, "ZKPDomain", "Climate", "BlueDeal", -2, proof2, null2, "", testRewardRecipient())
 	if err != nil {
 		t.Fatalf("second suggestion rating failed: %v", err)
 	}
@@ -385,7 +400,7 @@ func TestRateProposalWithZKPWrongProof(t *testing.T) {
 	// Use garbage proof bytes.
 	badProofHex := hex.EncodeToString(make([]byte, 256))
 
-	_, err := k.RateProposalWithZKP(ctx, "ZKPDomain", "Climate", "GreenDeal", 3, badProofHex, nullifierHex, "")
+	_, err := k.RateProposalWithZKP(ctx, "ZKPDomain", "Climate", "GreenDeal", 3, badProofHex, nullifierHex, "", testRewardRecipient())
 	if err == nil {
 		t.Fatal("expected error for wrong proof")
 	}
@@ -396,7 +411,7 @@ func TestRateProposalWithZKPEmptyMerkleRoot(t *testing.T) {
 	admin := sdk.AccAddress("admin1")
 	k.CreateDomain(ctx, "EmptyDomain", admin, sdk.NewCoins(sdk.NewInt64Coin(PNYXDenom, 500_000)))
 
-	_, err := k.RateProposalWithZKP(ctx, "EmptyDomain", "Issue", "Sugg", 3, "aabb", "aabb", "")
+	_, err := k.RateProposalWithZKP(ctx, "EmptyDomain", "Issue", "Sugg", 3, "aabb", "aabb", "", testRewardRecipient())
 	if err == nil {
 		t.Fatal("expected error for domain with no identity commitments")
 	}
@@ -405,11 +420,11 @@ func TestRateProposalWithZKPEmptyMerkleRoot(t *testing.T) {
 func TestRateProposalWithZKPInvalidRating(t *testing.T) {
 	k, ctx := setupKeeper(t)
 
-	_, err := k.RateProposalWithZKP(ctx, "D", "I", "S", 6, "aa", "bb", "")
+	_, err := k.RateProposalWithZKP(ctx, "D", "I", "S", 6, "aa", "bb", "", testRewardRecipient())
 	if err == nil {
 		t.Fatal("expected error for rating > 5")
 	}
-	_, err = k.RateProposalWithZKP(ctx, "D", "I", "S", -6, "aa", "bb", "")
+	_, err = k.RateProposalWithZKP(ctx, "D", "I", "S", -6, "aa", "bb", "", testRewardRecipient())
 	if err == nil {
 		t.Fatal("expected error for rating < -5")
 	}
@@ -418,7 +433,7 @@ func TestRateProposalWithZKPInvalidRating(t *testing.T) {
 func TestRateProposalWithZKPUnknownDomain(t *testing.T) {
 	k, ctx := setupKeeper(t)
 
-	_, err := k.RateProposalWithZKP(ctx, "NoDomain", "I", "S", 3, "aa", "bb", "")
+	_, err := k.RateProposalWithZKP(ctx, "NoDomain", "I", "S", 3, "aa", "bb", "", testRewardRecipient())
 	if err == nil {
 		t.Fatal("expected error for unknown domain")
 	}
@@ -433,7 +448,7 @@ func TestRateProposalWithZKPRewardsDistributed(t *testing.T) {
 	treasuryBefore := domainBefore.Treasury.AmountOf(PNYXDenom).Int64()
 
 	proofHex, nullifierHex := generateZKPRating(t, k, ctx, "ZKPDomain", secrets, 2, "Climate", "GreenDeal", 4)
-	reward, err := k.RateProposalWithZKP(ctx, "ZKPDomain", "Climate", "GreenDeal", 4, proofHex, nullifierHex, "")
+	reward, err := k.RateProposalWithZKP(ctx, "ZKPDomain", "Climate", "GreenDeal", 4, proofHex, nullifierHex, "", testRewardRecipient())
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
@@ -457,6 +472,22 @@ func TestMsgRateWithProofValidateBasic(t *testing.T) {
 
 	t.Run("valid message", func(t *testing.T) {
 		msg := MsgRateWithProof{
+			Sender:          sdk.AccAddress("sender1"),
+			DomainName:      "TestDomain",
+			IssueName:       "Climate",
+			SuggestionName:  "GreenDeal",
+			Rating:          3,
+			Proof:           validProof,
+			NullifierHash:   validNullifier,
+			RewardRecipient: testRewardRecipient(),
+		}
+		if err := msg.ValidateBasic(); err != nil {
+			t.Fatalf("expected valid, got: %v", err)
+		}
+	})
+
+	t.Run("missing reward recipient rejected", func(t *testing.T) {
+		msg := MsgRateWithProof{
 			Sender:         sdk.AccAddress("sender1"),
 			DomainName:     "TestDomain",
 			IssueName:      "Climate",
@@ -465,8 +496,24 @@ func TestMsgRateWithProofValidateBasic(t *testing.T) {
 			Proof:          validProof,
 			NullifierHash:  validNullifier,
 		}
-		if err := msg.ValidateBasic(); err != nil {
-			t.Fatalf("expected valid, got: %v", err)
+		if err := msg.ValidateBasic(); err == nil {
+			t.Fatal("expected error for missing reward recipient")
+		}
+	})
+
+	t.Run("non-canonical reward recipient rejected", func(t *testing.T) {
+		msg := MsgRateWithProof{
+			Sender:          sdk.AccAddress("sender1"),
+			DomainName:      "TestDomain",
+			IssueName:       "Climate",
+			SuggestionName:  "GreenDeal",
+			Rating:          3,
+			Proof:           validProof,
+			NullifierHash:   validNullifier,
+			RewardRecipient: strings.ToUpper(testRewardRecipient()),
+		}
+		if err := msg.ValidateBasic(); err == nil {
+			t.Fatal("expected error for non-canonical reward recipient")
 		}
 	})
 
@@ -564,13 +611,14 @@ func TestMsgServerRateWithProof(t *testing.T) {
 	proofHex, nullifierHex := generateZKPRating(t, k, ctx, "ZKPDomain", secrets, 1, "Climate", "GreenDeal", 4)
 
 	msg := &MsgRateWithProof{
-		Sender:         sdk.AccAddress("sender1"),
-		DomainName:     "ZKPDomain",
-		IssueName:      "Climate",
-		SuggestionName: "GreenDeal",
-		Rating:         4,
-		Proof:          proofHex,
-		NullifierHash:  nullifierHex,
+		Sender:          sdk.AccAddress("sender1"),
+		DomainName:      "ZKPDomain",
+		IssueName:       "Climate",
+		SuggestionName:  "GreenDeal",
+		Rating:          4,
+		Proof:           proofHex,
+		NullifierHash:   nullifierHex,
+		RewardRecipient: testRewardRecipient(),
 	}
 
 	_, err := srv.RateWithProof(ctx, msg)
@@ -587,11 +635,18 @@ func TestMsgServerRateWithProof(t *testing.T) {
 	if ratings[0].Value != 4 {
 		t.Fatalf("expected rating value 4, got %d", ratings[0].Value)
 	}
+	recipient, err := sdk.AccAddressFromBech32(msg.RewardRecipient)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if got := accountBalance(bank, recipient); got != domain.TotalPayouts {
+		t.Fatalf("bound recipient balance = %d, want exact payout %d", got, domain.TotalPayouts)
+	}
 	if got := accountBalance(bank, msg.Sender); got != 0 {
-		t.Fatalf("unbound anonymous reward was paid to transaction sender: %d", got)
+		t.Fatalf("anonymous reward was paid to the transaction sender: %d", got)
 	}
 	if err := k.ValidateEscrowParity(ctx); err != nil {
-		t.Fatalf("deferred anonymous reward broke escrow parity: %v", err)
+		t.Fatalf("recipient-bound payout broke escrow parity: %v", err)
 	}
 }
 
@@ -606,13 +661,14 @@ func TestMsgServerRateWithProofDoubleVote(t *testing.T) {
 	proofHex, nullifierHex := generateZKPRating(t, k, ctx, "ZKPDomain", secrets, 0, "Climate", "GreenDeal", 3)
 
 	msg := &MsgRateWithProof{
-		Sender:         sdk.AccAddress("sender1"),
-		DomainName:     "ZKPDomain",
-		IssueName:      "Climate",
-		SuggestionName: "GreenDeal",
-		Rating:         3,
-		Proof:          proofHex,
-		NullifierHash:  nullifierHex,
+		Sender:          sdk.AccAddress("sender1"),
+		DomainName:      "ZKPDomain",
+		IssueName:       "Climate",
+		SuggestionName:  "GreenDeal",
+		Rating:          3,
+		Proof:           proofHex,
+		NullifierHash:   nullifierHex,
+		RewardRecipient: testRewardRecipient(),
 	}
 
 	// First vote succeeds.
@@ -687,7 +743,7 @@ func TestE2EZKPRatingFlow(t *testing.T) {
 		t.Fatalf("GenerateProof failed: %v", err)
 	}
 	extNullifier := ComputeVoteNullifierScope(ctx.ChainID(), "E2EDomain", "Energy", "Solar")
-	signalHash := ComputeVoteSignal(ctx.ChainID(), "E2EDomain", "Energy", "Solar", 5)
+	signalHash := ComputeVoteSignalV2(ctx.ChainID(), "E2EDomain", "Energy", "Solar", 5, testRewardRecipient())
 	proofBytes, nullifierHash, err := GenerateMembershipProofForSignal(keys, secret, tree.Root, siblings, pathIndices, extNullifier, signalHash)
 	if err != nil {
 		t.Fatalf("GenerateMembershipProof failed: %v", err)
@@ -695,13 +751,14 @@ func TestE2EZKPRatingFlow(t *testing.T) {
 
 	// 6. Submit MsgRateWithProof.
 	rateMsg := &MsgRateWithProof{
-		Sender:         sdk.AccAddress("memberA"),
-		DomainName:     "E2EDomain",
-		IssueName:      "Energy",
-		SuggestionName: "Solar",
-		Rating:         5,
-		Proof:          hex.EncodeToString(proofBytes),
-		NullifierHash:  hex.EncodeToString(nullifierHash),
+		Sender:          sdk.AccAddress("memberA"),
+		DomainName:      "E2EDomain",
+		IssueName:       "Energy",
+		SuggestionName:  "Solar",
+		Rating:          5,
+		Proof:           hex.EncodeToString(proofBytes),
+		NullifierHash:   hex.EncodeToString(nullifierHash),
+		RewardRecipient: testRewardRecipient(),
 	}
 	_, err = srv.RateWithProof(ctx, rateMsg)
 	if err != nil {
@@ -816,7 +873,7 @@ func TestRateWithHistoricalRoot(t *testing.T) {
 	}
 
 	// Rate with the OLD root (now in history) — should succeed.
-	_, err := k.RateProposalWithZKP(ctx, "HistRateDomain", "Climate", "GreenDeal", 3, proofHex, nullifierHex, rootBeforeNewCommit)
+	_, err := k.RateProposalWithZKP(ctx, "HistRateDomain", "Climate", "GreenDeal", 3, proofHex, nullifierHex, rootBeforeNewCommit, testRewardRecipient())
 	if err != nil {
 		t.Fatalf("rating with historical root should succeed: %v", err)
 	}
@@ -856,7 +913,7 @@ func TestRateWithExpiredRoot(t *testing.T) {
 	}
 
 	// Rate with expired root — should fail.
-	_, err := k.RateProposalWithZKP(ctx, "ExpiredDomain", "Climate", "GreenDeal", 3, proofHex, nullifierHex, oldRoot)
+	_, err := k.RateProposalWithZKP(ctx, "ExpiredDomain", "Climate", "GreenDeal", 3, proofHex, nullifierHex, oldRoot, testRewardRecipient())
 	if err == nil {
 		t.Fatal("expected error for expired root")
 	}
@@ -870,7 +927,7 @@ func TestRateWithEmptyMerkleRootUsesCurrentRoot(t *testing.T) {
 	proofHex, nullifierHex := generateZKPRating(t, k, ctx, "EmptyRootDomain", secrets, 0, "Climate", "GreenDeal", 4)
 
 	// Empty merkleRootHex → uses current domain root (existing behavior).
-	_, err := k.RateProposalWithZKP(ctx, "EmptyRootDomain", "Climate", "GreenDeal", 4, proofHex, nullifierHex, "")
+	_, err := k.RateProposalWithZKP(ctx, "EmptyRootDomain", "Climate", "GreenDeal", 4, proofHex, nullifierHex, "", testRewardRecipient())
 	if err != nil {
 		t.Fatalf("rating with empty merkle root should use current root: %v", err)
 	}
@@ -923,7 +980,7 @@ func TestE2EBigPurgeClearsAndReallowsVoting(t *testing.T) {
 
 	// 1. Rate with ZKP — succeeds.
 	proof1, null1 := generateZKPRating(t, k, ctx, "PurgeDomain", secrets, 0, "Climate", "GreenDeal", 3)
-	_, err := k.RateProposalWithZKP(ctx, "PurgeDomain", "Climate", "GreenDeal", 3, proof1, null1, "")
+	_, err := k.RateProposalWithZKP(ctx, "PurgeDomain", "Climate", "GreenDeal", 3, proof1, null1, "", testRewardRecipient())
 	if err != nil {
 		t.Fatalf("first rating should succeed: %v", err)
 	}
@@ -960,7 +1017,7 @@ func TestE2EBigPurgeClearsAndReallowsVoting(t *testing.T) {
 
 	// 4. Rate again with new proof — succeeds.
 	proof2, null2 := generateZKPRating(t, k, ctx, "PurgeDomain", newSecrets, 0, "Climate", "GreenDeal", -2)
-	_, err = k.RateProposalWithZKP(ctx, "PurgeDomain", "Climate", "GreenDeal", -2, proof2, null2, "")
+	_, err = k.RateProposalWithZKP(ctx, "PurgeDomain", "Climate", "GreenDeal", -2, proof2, null2, "", testRewardRecipient())
 	if err != nil {
 		t.Fatalf("rating after purge + re-register should succeed: %v", err)
 	}

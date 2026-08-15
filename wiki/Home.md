@@ -14,10 +14,10 @@
 | Item | Verified state |
 |---|---|
 | Version label | v0.4.0 recovery |
-| Tests | 1,854 standard-suite total: 1,511 Go (including GH-206's pinned test-only prover boundary), 26 Rust, 317 maintained-client; separate GH-206 Go/WASM compatibility, GH-175/GH-178/GH-181 IBC, and GH-184 governed-upgrade gates excluded |
+| Tests | 1,874 standard-suite total: 1,529 Go (including GH-209 recipient-binding and GH-206 pinned test-only prover coverage), 26 Rust, 319 maintained-client; separate GH-206/GH-209 Go/WASM compatibility, GH-175/GH-178/GH-181 IBC, and GH-184 governed-upgrade gates excluded |
 | PNYX cap | 21,000,000 PNYX = 21,000,000,000,000 `upnyx` |
 | Node | Restart, four-validator recovery, state sync, sanitized backup/restore, compatible binary rollback, cold identity failover, secret-safe JSON logs, private metrics, and the GH-85 dashboard/alert/objective baseline verified |
-| ZKP client | Real synthetic Go/WASM compatibility verified on GH-206; production submission remains hard-disabled |
+| ZKP client | Real synthetic Go/WASM compatibility verified on GH-206 and recipient-bound rewards on GH-209; production submission remains hard-disabled |
 | Maintained client | `client-web` |
 | Legacy clients | Web and mobile prototypes retired under GH-112/GH-102; Git history only |
 

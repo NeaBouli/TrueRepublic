@@ -1,5 +1,19 @@
 # Project State
 
+GH-209 is locally verified on `feature/GH-209-zkp-reward-recipient`. Both
+anonymous rating paths bind a canonical reward recipient into the versioned
+vote signal without changing the recipient-independent nullifier or frozen
+Groth16 artifacts; payout and vote mutation are atomic. Consensus version 2
+has a registered governed v1→v2 no-op migration. Full Go Race/Coverage,
+client, Rust, security, ZKP-WASM, governed-upgrade, IBC two-chain and all eight
+multi-validator recovery gates pass. Candidate arithmetic is 1,874 standard
+cases, rollout 33/59, phase work 33/51, Phase 6 6/7 and production false.
+Protected PR/CI, merge, final-main/Pages and tracker/Bridge closeout remain.
+
+Updated: 2026-08-15 15:56 UTC
+
+---
+
 GH-206 is complete through PR #207, merged as `b9e0a06`. Exact reviewed head
 `a2b3d17` passed all 25 reported contexts with zero open review threads.
 Final-main Client `31754724759`, Go `31754724837`, Security `31754724800`, Docs

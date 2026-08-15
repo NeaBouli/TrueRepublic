@@ -21,9 +21,14 @@ func TestV041UpgradeHandlerAppliesMarkerExactlyOnce(t *testing.T) {
 	ctx := sdkCtx
 	plan := upgradetypes.Plan{Name: governedUpgradePlanV041, Height: 1}
 
-	updated, err := app.v041UpgradeHandler(ctx, plan, app.mm.GetVersionMap())
+	fromVM := app.mm.GetVersionMap()
+	fromVM[truedemocracy.ModuleName] = 1
+	updated, err := app.v041UpgradeHandler(ctx, plan, fromVM)
 	if err != nil || updated == nil {
 		t.Fatalf("v0.4.1 handler failed: versions=%v err=%v", updated, err)
+	}
+	if got := updated[truedemocracy.ModuleName]; got != 2 {
+		t.Fatalf("truedemocracy module version = %d, want 2", got)
 	}
 	marker := sdkCtx.KVStore(app.keys[truedemocracy.ModuleName]).Get(governedUpgradeMarkerV041)
 	if !bytes.Equal(marker, []byte{1}) {

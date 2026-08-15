@@ -6,6 +6,10 @@ export const BN254_SCALAR_MODULUS =
 
 const MIMC_ROUNDS = 110;
 const VOTE_CONTEXT_DOMAIN = new TextEncoder().encode('TrueRepublic/vote/v1');
+// GH-209: recipient-bound vote signal domain. The historical v1 encoding
+// above is retained for the recipient-independent nullifier scope and the
+// frozen GH-198 fixture parity checks.
+const VOTE_CONTEXT_V2_DOMAIN = new TextEncoder().encode('TrueRepublic/vote/v2');
 const textEncoder = new TextEncoder();
 
 function bytesToBigInt(bytes: Uint8Array): bigint {
@@ -134,6 +138,51 @@ export function computeVoteSignal(
 ): Uint8Array {
   return hashToBn254Field(
     encodeVoteContext(chainId, domainName, issueName, suggestionName, rating)
+  );
+}
+
+/**
+ * GH-209 recipient-bound v2 preimage: domain separator, four length-prefixed
+ * names, the exact rating as big-endian int64, and the canonical
+ * length-prefixed bech32 reward recipient. Must match Go encodeVoteContextV2.
+ */
+export function encodeVoteContextV2(
+  chainId: string,
+  domainName: string,
+  issueName: string,
+  suggestionName: string,
+  rating: number,
+  rewardRecipient: string
+): Uint8Array {
+  const parts: Uint8Array[] = [VOTE_CONTEXT_V2_DOMAIN];
+  for (const value of [chainId, domainName, issueName, suggestionName]) {
+    const encoded = textEncoder.encode(value);
+    parts.push(uint32BigEndian(encoded.length), encoded);
+  }
+  parts.push(int64BigEndian(rating));
+  const recipient = textEncoder.encode(rewardRecipient);
+  parts.push(uint32BigEndian(recipient.length), recipient);
+  return concatBytes(parts);
+}
+
+/** GH-209 v2 signal bound to the exact canonical reward recipient. */
+export function computeVoteSignalV2(
+  chainId: string,
+  domainName: string,
+  issueName: string,
+  suggestionName: string,
+  rating: number,
+  rewardRecipient: string
+): Uint8Array {
+  return hashToBn254Field(
+    encodeVoteContextV2(
+      chainId,
+      domainName,
+      issueName,
+      suggestionName,
+      rating,
+      rewardRecipient
+    )
   );
 }
 

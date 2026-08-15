@@ -19,8 +19,9 @@ intentionally more granular than the public 59-item tracker.
 
 - The ordered recovery merge chain is on `main`.
 - The maximum supply is fixed at 21,000,000 PNYX.
-- The source of truth records 1,854 recovery-verified tests: 1,511 Go, 26 Rust,
-  and 317 maintained-client tests. The Go total includes GH-206's pinned,
+- The source of truth records 1,874 recovery-verified tests: 1,529 Go, 26 Rust,
+  and 319 maintained-client tests. The Go total includes GH-209's recipient-
+  binding and atomic-payout adversarial coverage plus GH-206's pinned,
   test-only ZKP circuit/encoding freeze. GH-121's real registered browser-query
   boundary and GH-115's local client-chain delivery
   case are separately gated and excluded from this arithmetic, as is GH-172's
@@ -94,8 +95,8 @@ recovery, upgrade, and rollback results on clean infrastructure.
 - [ ] Document ceremony provenance, participant assumptions, and artifact
   rotation or circuit-upgrade rules.
 - [ ] Add browser-to-chain proof compatibility tests using real proofs.
-- [ ] Design and implement a front-running-safe anonymous reward-recipient
-  binding without leaking voter identity.
+- [x] Design and implement a front-running-safe anonymous reward-recipient
+  binding that prevents recipient substitution.
 - [ ] Complete independent cryptographic, privacy, and trusted-setup review.
 - [ ] Keep anonymous submission fail-closed until every item above passes.
 
@@ -110,6 +111,18 @@ fixtures. A maintained-client test generates a fresh proof and the native Go
 verifier accepts it. The command imports no chain runtime, is not production-
 bundled, has no wallet/RPC/broadcast path, and keeps `isSubmittable` hard false.
 This compatibility evidence does not complete a production checkbox above.
+
+GH-209 implements the chain-side reward-recipient binding: both anonymous
+rating paths require a canonical bech32 recipient covered by the
+domain-separated `TrueRepublic/vote/v2` signal, and the treasury pays only
+that bound recipient atomically while the nullifier stays recipient- and
+rating-independent. Direct payout publicly links the vote/nullifier event to
+the chosen payout address; fresh addresses reduce address-reuse linkage but do
+not create shielded payout privacy. The module consensus version rises to 2,
+so adoption requires the registered governed no-op store migration or fresh
+genesis. This protocol
+binding alone does not complete the production prover, ceremony, submission,
+or independent-review checkboxes above.
 
 **Exit gate:** a real maintained-client proof must verify on-chain under the
 published circuit identity, with no unresolved critical or high audit finding.

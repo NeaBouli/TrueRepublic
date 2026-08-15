@@ -1,5 +1,5 @@
 {
-  "schema": "truerepublic/zkp-circuit/v1",
+  "schema": "truerepublic/zkp-circuit/v2",
   "circuit_id": "truerepublic/membership-vote/v2-bn254-mimc-depth20",
   "classification": "TEST-ONLY SINGLE-PARTY TOXIC WASTE",
   "production_allowed": false,
@@ -39,6 +39,29 @@
     "string_length_prefix": "uint32 big-endian",
     "rating_encoding": "int64 big-endian, appended only for the signal"
   },
+  "vote_context_v2": {
+    "domain_separator": "TrueRepublic/vote/v2",
+    "purpose": "GH-209 recipient-bound anonymous rating signal; the Groth16 SignalHash and the domain-key signature payload both cover this exact preimage",
+    "fields": [
+      "chain_id",
+      "domain_name",
+      "issue_name",
+      "suggestion_name"
+    ],
+    "string_length_prefix": "uint32 big-endian",
+    "rating_encoding": "int64 big-endian, appended after the four length-prefixed names",
+    "reward_recipient_encoding": "canonical lowercase truerepublic bech32 address, uint32 big-endian length-prefixed, appended after the rating",
+    "external_nullifier": "identical to the v1 scope; the one-vote nullifier stays recipient- and rating-independent",
+    "vector": {
+      "chain_id": "truerepublic-zkp-fixture-1",
+      "domain_name": "FixtureDomain",
+      "issue_name": "FixtureIssue",
+      "suggestion_name": "FixtureSuggestion",
+      "rating": 3,
+      "reward_recipient": "truerepublic10f4hqttjv4mkzuny94ex2cmfwp5k2mn5kqf890",
+      "signal_hash_hex": "03f724ec71efdeeb178c658689bdfc859d96edb4782a123ca5eb2cdd22c9fe92"
+    }
+  },
   "hash_to_field": "SHA-256(data) as big-endian integer reduced modulo the BN254 scalar field, serialized as 32 big-endian bytes",
   "public_input_order": [
     "merkle_root",
@@ -65,7 +88,9 @@
   "exclusions": [
     "groth16.Setup samples random toxic waste: proving key, verifying key and proof bytes are NOT reproducible and MUST NOT be regenerated, compared or claimed as ceremony output",
     "only the compiled constraint system is deterministic and pinned by byte/hash parity",
-    "no production ceremony, production prover, submission, reward binding, real keys/funds, deployment, release or network mutation",
+    "no production ceremony, production prover, submission enablement, real keys/funds, deployment, release or network mutation",
+    "the v1 golden vector and fixture artifacts keep their exact historical bytes and semantics; GH-209 adds the recipient-bound v2 signal without modifying the circuit, CS, PK, VK, or the frozen v1 proof",
+    "direct payout publicly links the vote/nullifier event to the chosen payout address; fresh addresses reduce address-reuse linkage but do not create shielded payout privacy",
     "client isSubmittable remains hard false"
   ]
 }

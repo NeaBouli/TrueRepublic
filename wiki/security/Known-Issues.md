@@ -11,9 +11,11 @@ or release-security review.
 
 ### Anonymous voting is not client-ready
 
-The maintained web client rejects mock proof generation/submission. A compatible real
-prover, trusted-setup/circuit review, privacy analysis, and safe anonymous
-reward recipient binding are still required.
+The maintained web client rejects mock proof generation/submission. GH-209
+implements recipient-bound atomic rewards without changing the frozen circuit
+or setup artifacts, but direct payout publicly links the vote/nullifier event
+to the chosen address. A production-qualified prover, trusted-setup/circuit
+review, privacy analysis, and audited submission path are still required.
 
 ## High-priority operational gaps
 

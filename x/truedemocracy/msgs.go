@@ -394,13 +394,14 @@ func (m MsgVoteToDelete) ValidateBasic() error {
 // --- MsgRateProposal ---
 
 type MsgRateProposal struct {
-	Sender         sdk.AccAddress `protobuf:"bytes,1,opt,name=sender,proto3,casttype=github.com/cosmos/cosmos-sdk/types.AccAddress" json:"sender"`
-	DomainName     string         `protobuf:"bytes,2,opt,name=domain_name,json=domainName,proto3" json:"domain_name"`
-	IssueName      string         `protobuf:"bytes,3,opt,name=issue_name,json=issueName,proto3" json:"issue_name"`
-	SuggestionName string         `protobuf:"bytes,4,opt,name=suggestion_name,json=suggestionName,proto3" json:"suggestion_name"`
-	Rating         int32          `protobuf:"varint,5,opt,name=rating,proto3" json:"rating"`
-	DomainPubKey   string         `protobuf:"bytes,6,opt,name=domain_pub_key,json=domainPubKey,proto3" json:"domain_pub_key"` // hex-encoded ed25519 pubkey
-	Signature      string         `protobuf:"bytes,7,opt,name=signature,proto3" json:"signature"`                             // hex-encoded signature
+	Sender          sdk.AccAddress `protobuf:"bytes,1,opt,name=sender,proto3,casttype=github.com/cosmos/cosmos-sdk/types.AccAddress" json:"sender"`
+	DomainName      string         `protobuf:"bytes,2,opt,name=domain_name,json=domainName,proto3" json:"domain_name"`
+	IssueName       string         `protobuf:"bytes,3,opt,name=issue_name,json=issueName,proto3" json:"issue_name"`
+	SuggestionName  string         `protobuf:"bytes,4,opt,name=suggestion_name,json=suggestionName,proto3" json:"suggestion_name"`
+	Rating          int32          `protobuf:"varint,5,opt,name=rating,proto3" json:"rating"`
+	DomainPubKey    string         `protobuf:"bytes,6,opt,name=domain_pub_key,json=domainPubKey,proto3" json:"domain_pub_key"`        // hex-encoded ed25519 pubkey
+	Signature       string         `protobuf:"bytes,7,opt,name=signature,proto3" json:"signature"`                                    // hex-encoded signature
+	RewardRecipient string         `protobuf:"bytes,8,opt,name=reward_recipient,json=rewardRecipient,proto3" json:"reward_recipient"` // GH-209: canonical bech32 payout address bound into the v2 signed payload
 }
 
 func (m *MsgRateProposal) ProtoMessage()               {}
@@ -422,20 +423,24 @@ func (m MsgRateProposal) ValidateBasic() error {
 	if m.DomainPubKey == "" || m.Signature == "" {
 		return sdkerrors.ErrInvalidRequest.Wrap("domain_pub_key and signature are required")
 	}
+	if _, err := ValidateRewardRecipient(m.RewardRecipient); err != nil {
+		return err
+	}
 	return nil
 }
 
 // --- MsgRateWithProof ---
 
 type MsgRateWithProof struct {
-	Sender         sdk.AccAddress `protobuf:"bytes,1,opt,name=sender,proto3,casttype=github.com/cosmos/cosmos-sdk/types.AccAddress" json:"sender"`
-	DomainName     string         `protobuf:"bytes,2,opt,name=domain_name,json=domainName,proto3" json:"domain_name"`
-	IssueName      string         `protobuf:"bytes,3,opt,name=issue_name,json=issueName,proto3" json:"issue_name"`
-	SuggestionName string         `protobuf:"bytes,4,opt,name=suggestion_name,json=suggestionName,proto3" json:"suggestion_name"`
-	Rating         int32          `protobuf:"varint,5,opt,name=rating,proto3" json:"rating"`
-	Proof          string         `protobuf:"bytes,6,opt,name=proof,proto3" json:"proof"`                                      // hex-encoded Groth16 proof
-	NullifierHash  string         `protobuf:"bytes,7,opt,name=nullifier_hash,json=nullifierHash,proto3" json:"nullifier_hash"` // hex-encoded (64 chars)
-	MerkleRoot     string         `protobuf:"bytes,8,opt,name=merkle_root,json=merkleRoot,proto3" json:"merkle_root"`          // optional; empty = current root
+	Sender          sdk.AccAddress `protobuf:"bytes,1,opt,name=sender,proto3,casttype=github.com/cosmos/cosmos-sdk/types.AccAddress" json:"sender"`
+	DomainName      string         `protobuf:"bytes,2,opt,name=domain_name,json=domainName,proto3" json:"domain_name"`
+	IssueName       string         `protobuf:"bytes,3,opt,name=issue_name,json=issueName,proto3" json:"issue_name"`
+	SuggestionName  string         `protobuf:"bytes,4,opt,name=suggestion_name,json=suggestionName,proto3" json:"suggestion_name"`
+	Rating          int32          `protobuf:"varint,5,opt,name=rating,proto3" json:"rating"`
+	Proof           string         `protobuf:"bytes,6,opt,name=proof,proto3" json:"proof"`                                            // hex-encoded Groth16 proof
+	NullifierHash   string         `protobuf:"bytes,7,opt,name=nullifier_hash,json=nullifierHash,proto3" json:"nullifier_hash"`       // hex-encoded (64 chars)
+	MerkleRoot      string         `protobuf:"bytes,8,opt,name=merkle_root,json=merkleRoot,proto3" json:"merkle_root"`                // optional; empty = current root
+	RewardRecipient string         `protobuf:"bytes,9,opt,name=reward_recipient,json=rewardRecipient,proto3" json:"reward_recipient"` // GH-209: canonical bech32 payout address bound into the v2 signal
 }
 
 func (m *MsgRateWithProof) ProtoMessage()               {}
@@ -473,6 +478,9 @@ func (m MsgRateWithProof) ValidateBasic() error {
 		if _, err := hex.DecodeString(m.MerkleRoot); err != nil {
 			return sdkerrors.ErrInvalidRequest.Wrap("merkle_root must be valid hex")
 		}
+	}
+	if _, err := ValidateRewardRecipient(m.RewardRecipient); err != nil {
+		return err
 	}
 	return nil
 }

@@ -30,6 +30,7 @@ const inputs: ProofInputs = {
   domainName: 'FixtureDomain',
   issueName: 'FixtureIssue',
   suggestionName: 'FixtureSuggestion',
+  rewardRecipient: 'truerepublic10f4hqttjv4mkzuny94ex2cmfwp5k2mn5kqf890',
 };
 
 describe('test-only Groth16 WASM client boundary', () => {
@@ -86,6 +87,34 @@ describe('test-only Groth16 WASM client boundary', () => {
         merkleProof: { ...inputs.merkleProof, leaf: '00'.repeat(32) },
       })
     ).rejects.toThrow('identity commitment');
+  });
+
+  it('rejects a missing or non-canonical reward recipient before proving', async () => {
+    const runtime: TestOnlyZKPRuntime = {
+      prove: async () => {
+        throw new Error('must not run');
+      },
+    };
+    const prover = new TestOnlyGroth16WasmProver(runtime, artifacts);
+
+    await expect(
+      prover.generate({ ...inputs, rewardRecipient: '' })
+    ).rejects.toThrow('reward recipient');
+    await expect(
+      prover.generate({
+        ...inputs,
+        rewardRecipient: inputs.rewardRecipient.toUpperCase(),
+      })
+    ).rejects.toThrow('reward recipient');
+    await expect(
+      prover.generate({ ...inputs, rewardRecipient: 'cosmos1qqqqqqqq' })
+    ).rejects.toThrow('reward recipient');
+    await expect(
+      prover.generate({
+        ...inputs,
+        rewardRecipient: `${inputs.rewardRecipient.slice(0, -1)}q`,
+      })
+    ).rejects.toThrow('reward recipient');
   });
 
   it('fails closed on a trapped or malformed Go WASM runtime', async () => {
