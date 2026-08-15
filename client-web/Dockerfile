@@ -1,7 +1,7 @@
 # ============================================================
 # Stage 1: Build the maintained client-web frontend
 # ============================================================
-FROM node:22-alpine AS builder
+FROM node:22.22.2-alpine@sha256:8ea2348b068a9544dae7317b4f3aafcdc032df1647bb7d768a05a5cad1a7683f AS builder
 
 WORKDIR /app
 COPY package.json package-lock.json ./
@@ -20,7 +20,7 @@ RUN npm run build
 # ============================================================
 # Stage 2: Non-root nginx runtime
 # ============================================================
-FROM nginx:alpine
+FROM nginx:alpine@sha256:4a73073bd557c65b759505da037898b61f1be6cbcc3c2c3aeac22d2a470c1752
 
 RUN rm /etc/nginx/conf.d/default.conf
 COPY nginx.conf /etc/nginx/nginx.conf

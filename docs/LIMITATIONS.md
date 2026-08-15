@@ -162,6 +162,23 @@ separation. It cannot prove that referenced artifacts exist, that observations
 were honestly collected, that seats are distinct humans, or that any real
 infrastructure is deployed. The Phase 6 production-topology gate remains open.
 
+## Release Engineering
+
+**Status:** Repository-only unsigned evidence foundation; no release published
+
+GH-212 pins the supported native Linux amd64/arm64 runners, release and SBOM
+tools, and the four maintained container-base manifests. It adds a strict
+offline bundle verifier that cross-binds exact source, build contract,
+artifacts, checksums, build metadata, repeated normalized Go/client CycloneDX
+SBOMs, and a separate unsigned provenance record. CI exercises the real SBOM
+generators and synthetic positive/adversarial bundle fixtures without
+uploading binaries.
+
+This does not authenticate who created a bundle or whether every SBOM component
+is truthful, prove byte-reproducible container images, create a tag, publish or
+sign an artifact, issue authenticated provenance, deploy a candidate, or
+approve rollout. Those Phase 7 gates remain open.
+
 Partial validator stake withdrawals are disabled until generalized slashable
 unbonding can retain the withdrawn claim through the CometBFT evidence window.
 Full validator exits remain supported through the evidence-window escrow hold.

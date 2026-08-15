@@ -215,19 +215,25 @@ JSON register.
 ### release_artifacts
 
 - **TM-REL-001** (high/medium, blocked → GH-29): unsigned release artifacts
-  without SBOM or provenance. Verified: deterministic Linux build contract
-  and reproducible-build CI. Blocked: signing, SBOM, provenance, and
-  publishing do not exist and are not claimed.
+  without authenticated SBOM or provenance. Verified: deterministic Linux
+  build contract, reproducible-build CI, and GH-212's strict repository-only
+  two-target checksums, metadata, normalized SBOM and explicitly unsigned
+  provenance bindings. Blocked: signing, authenticated provenance, tagged
+  publication, staged qualification and rollout do not exist and are not
+  claimed.
 - **TM-REL-002** (medium/low, mitigated): non-deterministic build drift.
-  Verified: pinned toolchains, repository-owned deterministic build script,
-  lockfiles bound into the security contract.
+  Verified: pinned build/release/SBOM toolchains, supported native Linux
+  platforms, digest-pinned maintained container bases, repository-owned
+  deterministic build script, and lockfiles bound into the security contract.
+  Container-image byte reproducibility remains unproven.
 
 ## Explicitly not claimed
 
 This model does not claim: a real ZKP prover or ceremony; any independent
 external audit; wallet custody proof; IBC or testnet evidence; private
 topology, firewall, or DNS deployment; release artifact signing or
-provenance; production or mainnet readiness; or real-funds/real-key safety.
+authenticated provenance; production or mainnet readiness; or
+real-funds/real-key safety.
 Entries needing those carry a `deferred` or `blocked` status and map to GH-7
 or GH-29.
 

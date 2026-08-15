@@ -19,7 +19,7 @@ intentionally more granular than the public 59-item tracker.
 
 - The ordered recovery merge chain is on `main`.
 - The maximum supply is fixed at 21,000,000 PNYX.
-- The source of truth records 1,874 recovery-verified tests: 1,529 Go, 26 Rust,
+- The source of truth records 1,896 recovery-verified tests: 1,551 Go, 26 Rust,
   and 319 maintained-client tests. The Go total includes GH-209's recipient-
   binding and atomic-payout adversarial coverage plus GH-206's pinned,
   test-only ZKP circuit/encoding freeze. GH-121's real registered browser-query
@@ -272,7 +272,11 @@ failure using the published runbooks and telemetry.
 - [ ] Produce reproducible binaries and container images from a tagged commit.
 - [ ] Publish signed artifacts, checksums, software bill of materials (SBOM),
   provenance, and dependency reports.
-- [ ] Pin release toolchains and document supported platforms.
+- [x] Pin release toolchains and document supported platforms
+  ([GH-212](https://github.com/NeaBouli/TrueRepublic/issues/212)); the strict
+  offline bundle/SBOM/unsigned-provenance contract is repository-only and does
+  not complete tagged builds, signing, publication, container reproducibility,
+  deployment, or go/no-go approval.
 - [ ] Provide installation, configuration, migration, upgrade, rollback, and
   uninstallation instructions.
 - [ ] Publish release notes with compatibility and breaking-change statements.

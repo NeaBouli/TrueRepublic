@@ -10,9 +10,20 @@ on:
       - 'go.sum'
       - 'Makefile'
       - 'configs/build/deterministic-linux-daemon.json'
+      - 'configs/release/**'
+      - 'configs/security/gates.json'
+      - 'releaseevidence/**'
+      - 'cmd/release-evidence/**'
       - 'scripts/build-deterministic-daemon.sh'
+      - 'scripts/generate-release-evidence.sh'
+      - 'scripts/test-release-evidence.sh'
+      - 'scripts/verify-release-evidence.sh'
       - 'scripts/test-deterministic-daemon.sh'
       - 'scripts/verify-deterministic-daemon.sh'
+      - 'Dockerfile'
+      - 'client-web/Dockerfile'
+      - 'client-web/package.json'
+      - 'client-web/package-lock.json'
       - '.github/workflows/reproducible-daemon.yml'
   pull_request:
     paths:
@@ -21,15 +32,68 @@ on:
       - 'go.sum'
       - 'Makefile'
       - 'configs/build/deterministic-linux-daemon.json'
+      - 'configs/release/**'
+      - 'configs/security/gates.json'
+      - 'releaseevidence/**'
+      - 'cmd/release-evidence/**'
       - 'scripts/build-deterministic-daemon.sh'
+      - 'scripts/generate-release-evidence.sh'
+      - 'scripts/test-release-evidence.sh'
+      - 'scripts/verify-release-evidence.sh'
       - 'scripts/test-deterministic-daemon.sh'
       - 'scripts/verify-deterministic-daemon.sh'
+      - 'Dockerfile'
+      - 'client-web/Dockerfile'
+      - 'client-web/package.json'
+      - 'client-web/package-lock.json'
       - '.github/workflows/reproducible-daemon.yml'
 
 permissions:
   contents: read
 
 jobs:
+  release-evidence-contract:
+    name: release evidence contract
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
+        with:
+          go-version: '1.26.6'
+
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: '22.22.2'
+          cache: npm
+          cache-dependency-path: client-web/package-lock.json
+
+      - name: Install exact SBOM generators outside the repository
+        run: |
+          test "$(npm --version)" = "$(jq -er '.tools.npm' configs/security/gates.json)"
+          GOBIN="${RUNNER_TEMP}/release-tools" \
+            go install "github.com/CycloneDX/cyclonedx-gomod/cmd/cyclonedx-gomod@$(jq -er '.tools.cyclonedx_gomod' configs/security/gates.json)"
+          npm install --global --prefix "${RUNNER_TEMP}/cyclonedx-npm" \
+            "@cyclonedx/cyclonedx-npm@$(jq -er '.tools.cyclonedx_npm' configs/security/gates.json)"
+
+      - name: Generate each maintained-source SBOM twice
+        run: |
+          "${RUNNER_TEMP}/release-tools/cyclonedx-gomod" mod -json -output-version 1.6 -output "${RUNNER_TEMP}/go-a.json" .
+          "${RUNNER_TEMP}/release-tools/cyclonedx-gomod" mod -json -output-version 1.6 -output "${RUNNER_TEMP}/go-b.json" .
+          "${RUNNER_TEMP}/cyclonedx-npm/bin/cyclonedx-npm" --package-lock-only --spec-version 1.6 --output-format JSON --output-file "${RUNNER_TEMP}/client-a.json" client-web/package.json
+          "${RUNNER_TEMP}/cyclonedx-npm/bin/cyclonedx-npm" --package-lock-only --spec-version 1.6 --output-format JSON --output-file "${RUNNER_TEMP}/client-b.json" client-web/package.json
+          for component in go client; do
+            jq -cS 'del(.serialNumber, .metadata.timestamp)' "${RUNNER_TEMP}/${component}-a.json" >"${RUNNER_TEMP}/${component}-normalized-a.json"
+            jq -cS 'del(.serialNumber, .metadata.timestamp)' "${RUNNER_TEMP}/${component}-b.json" >"${RUNNER_TEMP}/${component}-normalized-b.json"
+            cmp "${RUNNER_TEMP}/${component}-normalized-a.json" "${RUNNER_TEMP}/${component}-normalized-b.json"
+          done
+
+      - name: Verify fail-closed release-evidence fixtures offline
+        run: ./scripts/test-release-evidence.sh
+
   deterministic-build:
     name: ${{ matrix.target }}
     strategy:

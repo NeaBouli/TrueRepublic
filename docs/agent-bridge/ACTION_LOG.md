@@ -4126,3 +4126,63 @@
 - Public arithmetic remains 1,874 cases, rollout 33/59, phase work 33/51,
   Phase 6 6/7 and production false. No production ceremony/artifact, key,
   account/fund, RPC/broadcast, deployment, release or network mutation occurred.
+
+## 2026-08-16 00:45 EEST - GH-212 release-evidence block started
+
+- Reconstructed exact clean final main `79c2a6d`, GH-29, the project/global
+  Bridges and all current rollout boundaries. No TrueRepublic PR or unrelated
+  change exists in the isolated worktree; the legacy Desktop checkout remains
+  untouched.
+- Opened GH-212 and `feature/GH-212-release-evidence`. Kimi K3's secret-free
+  read-only architecture review selected Phase 7 because remaining Phase 2,
+  Phase 5 and Phase 6 gates require ceremony, independent review or private
+  deployment evidence that repository work cannot honestly supply.
+- Scope is a strict offline manifest/verifier, normalized Go/client CycloneDX
+  SBOMs, unsigned provenance, digest-pinned base images and exact supported
+  Linux platforms around the existing deterministic daemon build.
+- No release/tag/signing/publishing/registry/attestation/deploy/network/genesis/
+  production action is authorized. Only pinned toolchains/supported platforms
+  may receive rollout credit after complete proof; all signed-release gates stay open.
+
+## 2026-08-16 01:30 EEST - GH-212 local candidate implemented and reviewed
+
+- Implemented the strict offline two-target release manifest/verifier, repeated
+  normalized Go/client CycloneDX parity, explicit unsigned provenance and exact
+  release tool/platform/container-base contract. Added a small standalone
+  verifier entry point so offline checks do not compile the entire daemon.
+- Digest-pinned the four official maintained bases and confirmed their Docker
+  Registry manifest lists include Linux amd64 and arm64. Repository tests bind
+  the exact contract references to both Dockerfiles and reject whitespace-based
+  unpinned `FROM` drift.
+- Kimi K3's independent deep review found no P0/P1. Sol fixed its actionable
+  cleanup, contract-drift, report-count, offline toolchain, epoch-binding and
+  test-integrity findings. Claude Code OAuth remained expired; no Claude diff.
+- PASS so far: focused Go/root/security/workflow tests; real pinned Go/client
+  SBOM generation twice with normalized byte parity; synthetic positive,
+  tamper, divergent-SBOM and invalid-final cleanup; docs consistency; JSON and
+  diff checks. Fresh standard-suite arithmetic is 1,896 = 1,551 Go + 26 Rust +
+  319 client. Full gates and protected publication remain next.
+- Only GH-29 Phase 7 pinned toolchains/supported platforms is credited. No tag,
+  signed/published artifact, authenticated provenance, container-reproducibility
+  claim, deployment, go/no-go or production action occurred.
+
+## 2026-08-16 02:00 EEST - GH-212 full local gates passed
+
+- Final supply-chain verification found that the first moving `node:22-alpine`
+  digest contained Node 22.23.2. Replaced it before commit with official exact
+  `node:22.22.2-alpine@sha256:8ea234...`; registry index covers amd64/arm64,
+  image config reports Node 22.22.2 and the official distribution bundles npm
+  10.9.7. Dockerfile/contract/verifier are cross-bound by repository tests.
+- PASS: `make build` and full `make verify` twice after code hardening; exact
+  1,551 Go cases with race/vet/build and 74.0% release-evidence coverage.
+- PASS: maintained client 10 Node + 309 Vitest, lint, production build/budgets
+  (355.17 kB total, 71.16 kB entry, 4.94 kB max lazy route), zero blocking npm
+  advisories; 26 Rust tests/fmt/Clippy/build and cargo audit with five existing
+  allowed warnings.
+- PASS: exact pinned staticcheck, gitleaks scan plus failure fixtures, exact
+  four-ID active no-fix govuln policy plus fixtures, security repository
+  contract, deterministic build contract, real repeated SBOM parity, synthetic
+  release bundle positive/tamper/parity/cleanup, docs/JSON/diff checks.
+- Local Docker engine is unavailable, so no local container build was claimed.
+  No release, binary upload, signature, registry push, deploy or production
+  action occurred. Protected PR and final-main validation are next.

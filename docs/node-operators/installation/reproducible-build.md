@@ -31,3 +31,9 @@ checksum and metadata files as a short-lived workflow artifact; the daemon
 binary is not uploaded. This does not create a tag, GitHub Release, registry
 image, signature, SBOM, provenance attestation, deployment, production
 artifact, or rollout approval.
+
+The repository-only Phase 7 foundation additionally pins the maintained
+container bases and release/SBOM toolchains and provides a strict offline
+two-target evidence verifier. See [Offline release evidence](release-evidence.md).
+It still does not publish or sign artifacts and does not establish container
+image reproducibility.

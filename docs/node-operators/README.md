@@ -9,6 +9,8 @@ production or public-network approval.
 - [System Requirements](installation/requirements.md)
 - [Docker Setup](installation/docker-setup.md) (Recommended)
 - [Native Build](installation/native-build.md)
+- [Reproducible Build](installation/reproducible-build.md)
+- [Offline Release Evidence](installation/release-evidence.md)
 
 ### Configuration
 - [Node Configuration](configuration/node-config.md)

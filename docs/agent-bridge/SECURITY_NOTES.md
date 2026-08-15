@@ -571,3 +571,18 @@
 - No production prover, ceremony, real identity/key/account/fund, public RPC,
   reward binding, deployment or external cryptographic review is claimed.
   Candidate build remains within budgets at 355.13 kB total JavaScript.
+
+## 2026-08-16 GH-212 repository-only release evidence boundary
+
+- The offline verifier binds a full source commit, the deterministic daemon
+  contract, exact native amd64/arm64 artifact/checksum/metadata sets, repeated
+  normalized Go/client SBOMs and separate explicitly unsigned provenance.
+- Strict byte/depth/duplicate/unknown/trailing/path/symlink/order/digest/status
+  failures are tested; verification disables Go toolchain and module downloads.
+- Exact release/SBOM tools and the four official maintained multi-arch base
+  manifests are pinned and cross-bound to both Dockerfiles. The Node base is
+  the exact Node 22.22.2/npm 10.9.7 image rather than the moving Node 22 tag.
+- This does not authenticate SBOM truth or provenance, sign/publish an artifact,
+  prove reproducible container images, deploy, or approve rollout. Production
+  remains false. Fresh client build remains within budgets at 355.17 kB total JavaScript,
+  71.16 kB entry and 4.94 kB maximum lazy route.

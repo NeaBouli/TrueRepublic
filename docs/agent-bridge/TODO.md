@@ -450,3 +450,46 @@
   both-Bridge synchronization before Done.
   Kimi deep review was attempted twice but provider quota returned HTTP 403;
   an independent read-only review was completed and all findings remediated.
+
+## In progress - GH-212 repository-only release evidence
+
+- [ ] Define a bounded versioned manifest binding the exact source commit,
+  deterministic build contract, per-platform checksums/metadata, normalized
+  Go/client SBOMs, unsigned provenance, tool pins and supported platforms.
+- [ ] Add a network-free offline verifier with strict decoding, size/depth/path
+  bounds, complete digest binding and adversarial failure fixtures.
+- [ ] Generate normalized SBOMs twice with byte parity and pin reviewed tools,
+  runtime toolchains and maintained container base images fail closed.
+- [ ] Extend protected CI to assemble and verify an ephemeral evidence bundle
+  without publishing binaries/images, tags, releases, signatures or attestations.
+- [ ] Publish the exact supported-platform and verification boundary; complete
+  full local/security gates, Kimi/Sol review and the Claude helper check.
+- [ ] Publish protected PR, merge a green exact head, update GH-29/Bridges and
+  verify final main/Pages while production remains false.
+
+## Local candidate - GH-212 repository-only release evidence
+
+- [x] Define and implement the exact source/build/tool/two-target manifest,
+  normalized SBOM and explicitly unsigned provenance bindings.
+- [x] Add strict network-free offline verification and adversarial JSON,
+  path/symlink, ordering, digest, source, metadata and status failures.
+- [x] Pin reviewed tools, supported native runners and maintained multi-arch
+  container manifests; cross-bind the Dockerfiles to the release contract.
+- [x] Generate both real maintained-source SBOMs twice in CI and exercise a
+  synthetic two-target bundle without uploading binaries or release evidence.
+- [x] Complete Sol hardening and Kimi independent deep review; Claude remained
+  unavailable due expired OAuth and made no changes.
+- [ ] Complete all local build/verify/client/Rust/security gates, protected PR,
+  exact-head review/CI, merge, final-main/Pages and Bridge/GH-29 closeout.
+
+## Local PASS - GH-212 repository-only release evidence
+
+- [x] Complete two fresh full Go build/verify passes after final pin hardening.
+- [x] Pass maintained-client lint, 319 tests, production budget and high audit.
+- [x] Pass 26 Rust tests, fmt, Clippy, build and cargo audit.
+- [x] Pass deterministic/release/security contracts, staticcheck, gitleaks,
+  govuln exact-policy fixtures, real repeated SBOM parity and docs/diff checks.
+- [x] Correct moving Node 22 base to official exact Node 22.22.2/npm 10.9.7
+  multi-arch image after final registry-config inspection.
+- [ ] Commit/push, protected PR, review threads, exact-head CI, merge,
+  final-main/Pages, GH-29/GH-212 and both-Bridge closeout.
