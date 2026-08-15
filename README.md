@@ -226,7 +226,7 @@ TrueRepublic/
 # Blockchain
 go mod tidy
 ./scripts/go-packages.sh go build
-./scripts/go-packages.sh go test -race -cover -count=1 -timeout=600s    # 1,529 Go cases
+CGO_ENABLED=1 ./scripts/go-packages.sh go test -race -cover -count=1 -timeout=600s    # 1,551 Go cases
 make ibc-two-chain                                                     # separate GH-175/GH-178/GH-181 proof gate
 
 # Smart contracts
@@ -253,7 +253,7 @@ cd client-web && npm ci && npm run lint && npm test -- --run && npm run build
 | Native mobile client | — | Retired under GH-102; replacement pending |
 | Local encrypted test wallet + CosmJS | 0.39 | Maintained v0.4 client |
 
-**Known Limitations:** TrueRepublic uses PoD and does not mount `x/staking` or `x/distribution`; GH-187 makes every required IBC/CosmWasm compatibility adapter reject those unsupported surfaces fail-closed. GH-184 wires real `x/upgrade` for the exact governed fresh-genesis v0.4.1 path, but pre-GH-184 store introduction and IBC client upgrades remain unsupported. GH-206 verifies only synthetic test compatibility. GH-209 implements front-running-safe recipient-bound anonymous rewards while documenting direct-payout linkability; production ZKP qualification, ceremony, submission integration, and independent cryptographic/privacy review remain pending. GH-93 provides a strict synthetic incident-command and rehearsal contract, but a private live operator rehearsal remains pending. GH-85 provides dashboard/application runtime evidence, alert rules, recovery/testnet objectives, and role ownership. GH-89 adds a strict synthetic topology qualification contract. GH-97 adds bounded four-validator load, resource, retention, restart, and ledger evidence; it does not establish production sizing or multi-day soak behavior. GH-101 adds a digest-bound offline deployment-evidence envelope and verifier; it does not prove or perform a live deployment. Real seed/sentry/validator/RPC deployment, firewall/TLS/DNS evidence, external paging drills, private-environment capacity evidence, and independent live operations review remain open. See [LIMITATIONS.md](docs/LIMITATIONS.md).
+**Known Limitations:** TrueRepublic uses PoD and does not mount `x/staking` or `x/distribution`; GH-187 makes every required IBC/CosmWasm compatibility adapter reject those unsupported surfaces fail-closed. GH-184 wires real `x/upgrade` for the exact governed fresh-genesis v0.4.1 path, but pre-GH-184 store introduction and IBC client upgrades remain unsupported. GH-206 verifies only synthetic test compatibility. GH-209 implements front-running-safe recipient-bound anonymous rewards while documenting direct-payout linkability; production ZKP qualification, ceremony, submission integration, and independent cryptographic/privacy review remain pending. GH-93 provides a strict synthetic incident-command and rehearsal contract, but a private live operator rehearsal remains pending. GH-85 provides dashboard/application runtime evidence, alert rules, recovery/testnet objectives, and role ownership. GH-89 adds a strict synthetic topology qualification contract. GH-97 adds bounded four-validator load, resource, retention, restart, and ledger evidence; it does not establish production sizing or multi-day soak behavior. GH-101 adds a digest-bound offline deployment-evidence envelope and verifier; it does not prove or perform a live deployment. GH-212 pins the release tools, supported platforms and maintained container bases and adds strict unsigned offline release evidence; it does not create a tag, publish or sign artifacts, authenticate SBOM truth, prove container reproducibility, deploy, or approve rollout. Real seed/sentry/validator/RPC deployment, firewall/TLS/DNS evidence, external paging drills, private-environment capacity evidence, and independent live operations review remain open. See [LIMITATIONS.md](docs/LIMITATIONS.md).
 
 ---
 
@@ -265,7 +265,13 @@ The checklist below records implemented surface area, not a production security
 approval. Current evidence, risks, and commands are maintained in
 [`BRIDGE.md`](BRIDGE.md) and [GitHub issue #4](https://github.com/NeaBouli/TrueRepublic/issues/4).
 
-- 🟡 1,874 tests recovery-verified locally (1,529 Go, including GH-209's recipient-binding and atomic-payout adversarial coverage, + 26 Rust + 319 maintained-client, including its v2 encoding and canonical-recipient validation), plus the separately gated GH-206/GH-209 real Go/WASM-to-native-verifier compatibility proof, GH-175/GH-178/GH-181 IBC proof and GH-184 governed-upgrade recovery proof, GH-172 shared-state contention/exact-replay/restart proof, GH-145 bounded live fuzz campaigns, GH-193 maintained-client wallet/signing-safety proof, GH-190 maintained-client IBC transfer/recovery proof, GH-131 real submitted-history pagination proof, GH-121 real browser-query boundary, GH-115 local client-chain delivery proof, GH-56 rotation, GH-59 slashing, GH-60 inactive-validator genesis, GH-61 legacy-authority migration, GH-93 incident rehearsal, and GH-97 sustained-load process harnesses; protected publication and production rollout evidence remain required
+- 🟡 1,896 tests recovery-verified locally (1,551 Go, including GH-209's recipient-binding and atomic-payout adversarial coverage, + 26 Rust + 319 maintained-client, including its v2 encoding and canonical-recipient validation), plus the separately gated GH-206/GH-209 real Go/WASM-to-native-verifier compatibility proof, GH-175/GH-178/GH-181 IBC proof and GH-184 governed-upgrade recovery proof, GH-172 shared-state contention/exact-replay/restart proof, GH-145 bounded live fuzz campaigns, GH-193 maintained-client wallet/signing-safety proof, GH-190 maintained-client IBC transfer/recovery proof, GH-131 real submitted-history pagination proof, GH-121 real browser-query boundary, GH-115 local client-chain delivery proof, GH-56 rotation, GH-59 slashing, GH-60 inactive-validator genesis, GH-61 legacy-authority migration, GH-93 incident rehearsal, and GH-97 sustained-load process harnesses; protected publication and production rollout evidence remain required
+- 🟡 GH-212 verifies exact release tool/platform/container-base pins, repeated
+  normalized SBOM parity and a strict unsigned two-target evidence bundle;
+  signing, publication, tagged candidates, container reproducibility and staged
+  rollout remain open
+- ✅ Maintained-client production build remains within budget at 355.17 kB
+  total JavaScript gzip, with a 71.16 kB entry and 4.94 kB largest lazy route
 - ✅ Core blockchain compiles and runs
 - 🟡 Tokenomics, exact custom genesis, and every-block ledger invariants are recovery-verified and merged through PR #19
 - 🟡 Governance escrow/auth recovery is verified and merged; independent release review remains open
@@ -327,8 +333,8 @@ approval. Current evidence, risks, and commands are maintained in
 - 📋 **v0.5.0 (Q3 2026):** Native Apps (iOS/Android)
 - 🎯 **v1.0.0 (Q4 2026):** Production Release — External audit, mainnet launch
 
-> Historical test count: 577. The authoritative recovery-verified total is 1,874
-> (1,529 Go + 26 Rust + 319 maintained-client), reproduced from fresh
+> Historical test count: 577. The authoritative recovery-verified total is 1,896
+> (1,551 Go + 26 Rust + 319 maintained-client), reproduced from fresh
 > package-scoped output using the established passing-case method.
 
 ---

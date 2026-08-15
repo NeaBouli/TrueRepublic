@@ -4,8 +4,8 @@
   "release_date": "2026-03-04",
   "tests": {
     "status": "recovery_verified_locally",
-    "total": 1874,
-    "go": 1529,
+    "total": 1896,
+    "go": 1551,
     "rust": 26,
     "frontend": 319,
     "historical_total": 577
@@ -17,9 +17,9 @@
     "routes": 23,
     "stores": 9,
     "services": 17,
-    "build_size_gzip": "355.13 kB total JavaScript",
+    "build_size_gzip": "355.17 kB total JavaScript",
     "initial_entry_gzip": "71.16 kB",
-    "max_lazy_route_gzip": "4.93 kB",
+    "max_lazy_route_gzip": "4.94 kB",
     "lazy_route_entries": 20,
     "bundle_budget": "enforced_during_build"
   },
@@ -37,16 +37,16 @@
     "status": "engineering_in_progress",
     "tracker_scope": "github_issue_29",
     "github_issue": 29,
-    "completed": 33,
+    "completed": 34,
     "total": 59,
-    "phase_work_completed": 33,
+    "phase_work_completed": 34,
     "phase_work_total": 51,
     "phase_6_completed": 6,
     "phase_6_total": 7,
     "production_ready": false
   },
   "modules": {
-    "root": 156,
+    "root": 158,
     "capacitypolicy": 48,
     "deploymentevidence": 71,
     "healthcheck": 55,
@@ -59,7 +59,8 @@
     "treasury": 36,
     "dex": 138,
     "truedemocracy": 612,
-    "zkpprover": 8
+    "zkpprover": 8,
+    "releaseevidence": 20
   },
   "token": {
     "symbol": "PNYX",
@@ -133,6 +134,7 @@
       "capacity_qualification": "bounded_four_validator_ninety_six_transaction_resource_retention_restart_and_ledger_evidence_merged_on_gh97",
       "concurrency_replay_restart": "shared_state_contention_exact_transaction_replay_rejection_same_home_restart_and_export_reimport_verified_on_gh172",
       "deployment_evidence": "strict_secret_free_digest_bound_offline_envelope_and_verifier_merged_on_gh101",
+      "release_evidence": "strict_two_target_offline_checksums_metadata_sbom_and_unsigned_provenance_contract_verified_locally_on_gh212",
       "multi_validator_recovery": "failure_restart_catchup_partition_state_sync_backup_restore_export_import_compatible_binary_upgrade_fail_before_open_rollback_and_app_hash_agreement_merged_on_gh32_gh41_gh43_gh45_gh53",
       "consensus_key_rotation": "authenticated_atomic_h_plus_2_rotation_permanent_revocation_and_separate_operator_authority_merged_on_gh56",
       "consensus_slashing": "abci_plus_plus_equivocation_downtime_replay_exit_hold_and_four_process_recovery_merged_on_gh59",
@@ -188,7 +190,8 @@
     "tx_history": "submitted-only newest-first pagination verified on GH-131; incoming-only history is not claimed",
     "ibc_transfers_ui": "canonical native ICS-20 signing and source-chain evidence recovery verified locally on GH-190; external relayer and public counterparty delivery remain unqualified",
     "browser_wallet_custody": "local AES-GCM/PBKDF2 recovery store and live-session invalidation verified on GH-193; same-origin XSS, compromised browsers, hardware custody, real keys/funds, and production wallet operation remain unqualified",
-    "node_bootstrap": "init-node wrapper delegates exclusively to generated CometBFT-key, exact bank-backed PoD genesis; independent multi-node operations review pending"
+    "node_bootstrap": "init-node wrapper delegates exclusively to generated CometBFT-key, exact bank-backed PoD genesis; independent multi-node operations review pending",
+    "release_engineering": "repository-only unsigned release evidence and pinned tool/platform contracts are verified locally on GH-212; no tag, signed artifact, published bundle, reproducible container image, deployment, or rollout approval is claimed"
   },
   "branding": {
     "logo_main": "https://raw.githubusercontent.com/NeaBouli/TrueRepublic/main/assets/logo.png",

@@ -72,7 +72,7 @@ STORAGE LAYER
 | **Why Go?** | Cosmos SDK requirement, excellent performance, strong concurrency |
 | **Key Libraries** | Cosmos SDK, CometBFT, Cobra CLI, LevelDB |
 | **Build** | `make build` produces `truerepublicd` binary |
-| **Test** | `./scripts/go-packages.sh go test -race -cover -count=1 -timeout=600s` (1,529 standard-suite Go cases, including GH-209 recipient-binding and GH-206 test-only prover coverage; separate GH-206/GH-209 Go/WASM, GH-175/GH-178/GH-181 IBC, and GH-184 upgrade gates excluded) |
+| **Test** | `CGO_ENABLED=1 ./scripts/go-packages.sh go test -race -cover -count=1 -timeout=600s` (1,551 standard-suite Go cases, including GH-209 recipient-binding and GH-206 test-only prover coverage; separate GH-206/GH-209 Go/WASM, GH-175/GH-178/GH-181 IBC, and GH-184 upgrade gates excluded) |
 
 ### Framework: Cosmos SDK v0.50.15
 

@@ -39,7 +39,11 @@
   claiming production sizing or multi-day soak behavior.
   GH-101 adds a strict secret-free digest-bound deployment-evidence envelope
   and offline verifier without claiming or performing a live deployment.
-- 1,874 recovery-verified tests: 1,529 Go, 26 Rust, and 319 maintained-client,
+  GH-212 adds a strict offline two-target release-evidence contract with exact
+  checksums, metadata, normalized SBOM and unsigned-provenance bindings, pinned
+  release tools/platforms and container bases, without publishing or signing
+  an artifact or claiming production rollout.
+- 1,896 recovery-verified tests: 1,551 Go, 26 Rust, and 319 maintained-client,
   plus the separately gated GH-175/GH-178/GH-181 two-chain IBC packet/channel/compatible-restart recovery and GH-172
   contention/replay/restart process proofs.
 
@@ -53,6 +57,9 @@ reviewed, verified, and merged to `main` in this order.
 ## Release blockers
 
 - Release qualification and independent security review.
+- Signed and published release artifacts, authenticated provenance, exact
+  tagged-candidate qualification, and staged deployment evidence; GH-212 is an
+  unsigned repository-only foundation, not completion of these gates.
 - Production-qualified Groth16 client prover, ceremony, submission path, and external circuit review.
 - Independent privacy review of the implemented recipient binding and its
   documented direct-payout linkability.

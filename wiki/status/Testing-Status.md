@@ -1,12 +1,12 @@
 # Testing Status
 
-The current **v0.4.0 recovery** source of truth records **1,874 verified
+The current **v0.4.0 recovery** source of truth records **1,896 verified
 standard-suite cases**. This arithmetic excludes the separately run opt-in
 GH-175/GH-178/GH-181 IBC two-chain and GH-184 governed-upgrade gates.
 
 | Suite | Passing cases |
 |---|---:|
-| Go root/application | 156 |
+| Go root/application | 158 |
 | Go capacity policy | 48 |
 | Go deployment evidence | 71 |
 | Go health checks | 55 |
@@ -20,14 +20,15 @@ GH-175/GH-178/GH-181 IBC two-chain and GH-184 governed-upgrade gates.
 | Go DEX | 138 |
 | Go governance | 612 |
 | Go test-only ZKP prover | 8 |
+| Go release evidence | 20 |
 | Rust/CosmWasm | 26 |
 | Maintained client | 319 |
-| **Total** | **1,874** |
+| **Total** | **1,896** |
 
 The published total is the reproducible standard-suite baseline; the opt-in
 GH-175/GH-178/GH-181 IBC recovery, GH-184 upgrade, and GH-206 Go/WASM
 compatibility (`./scripts/test-zkp-wasm-client.sh`) gates are additional
-evidence and are not counted in the 1,529 Go subtotal.
+evidence and are not counted in the 1,551 Go subtotal.
 
 ## Current Go coverage
 
@@ -41,6 +42,7 @@ evidence and are not counted in the 1,529 Go subtotal.
 | migration | 84.6% |
 | network policy | 95.5% |
 | observability | 80.3% |
+| release evidence | 74.0% |
 | token | 95.6% |
 | topology policy | 85.8% |
 | treasury | 97.0% |
@@ -78,6 +80,11 @@ soak, live topology, private live rehearsal, or independent operations gates.
 GH-101 adds the strict offline deployment-evidence parser, verifier, repository
 contract, and CI manifest gate. It validates only a synthetic secret-free
 envelope and does not replace live topology or private deployment evidence.
+
+GH-212 adds the strict two-target offline release-evidence parser/verifier,
+repeated normalized SBOM parity, unsigned provenance binding, exact tool and
+platform pins, and synthetic adversarial CI gate. It does not publish binaries,
+authenticate SBOM component truth, sign an artifact, or approve rollout.
 
 Green tests are recovery evidence, not an external security or production
 approval. See [Current Status](Current-Status) for remaining gates.

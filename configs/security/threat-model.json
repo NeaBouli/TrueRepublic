@@ -586,17 +586,21 @@
       "controls": [
         "Deterministic Linux daemon build contract reproduces artifacts byte-for-byte",
         "Reproducible-build CI compares independent builds before any release claim",
-        "Signing, SBOM, provenance, and publishing stay explicitly outside current gates"
+        "Strict offline release evidence binds both supported artifacts, checksums, metadata, normalized SBOMs, and explicitly unsigned provenance",
+        "Signing, authenticated provenance, artifact publication, and rollout stay explicitly outside current gates"
       ],
       "evidence": [
         "configs/build/deterministic-linux-daemon.json",
         "scripts/build-deterministic-daemon.sh",
+        "configs/release/tool-platform.json",
+        "scripts/verify-release-evidence.sh",
+        "releaseevidence/verify.go",
         "docs/ROLLOUT_ROADMAP.md"
       ],
-      "residual_risk": "No artifact signing, SBOM, provenance, or publishing pipeline exists and none is claimed.",
+      "residual_risk": "Repository-only SBOM and unsigned provenance consistency exist, but no artifact signing, authenticated provenance, tagged release, publication, or staged rollout exists or is claimed.",
       "residual_severity": "high",
       "owner": "security-maintainers",
-      "next_gate": "GH-29 Phase 7: implement artifact signing, SBOM, and provenance before any release",
+      "next_gate": "GH-29 Phase 7: authenticate and sign the exact tagged artifacts and provenance, publish them, and complete staged qualification before any release",
       "umbrella_issue": "GH-29"
     },
     {
@@ -608,15 +612,18 @@
       "attack_path": "Non-deterministic build inputs cause reviewed source and shipped binaries to diverge silently.",
       "impact": "Review evidence no longer covers the artifact operators actually run.",
       "controls": [
-        "Pinned toolchains and a repository-owned deterministic build script",
+        "Pinned build and release/SBOM toolchains, supported platforms, and maintained container-base digests",
         "Reproducible Linux build evidence recorded for merged release candidates",
-        "Exact dependency lockfiles bound into the security gate contract"
+        "Exact dependency lockfiles bound into the security gate contract",
+        "Repository contract cross-binds maintained Dockerfile FROM references to the release tool/platform contract"
       ],
       "evidence": [
         "configs/build/deterministic-linux-daemon.json",
-        "scripts/build-deterministic-daemon.sh"
+        "configs/release/tool-platform.json",
+        "scripts/build-deterministic-daemon.sh",
+        "client_docker_repository_test.go"
       ],
-      "residual_risk": "Determinism is proven for the Linux daemon target only; other artifact classes remain uncovered until Phase 7.",
+      "residual_risk": "Determinism is proven for the Linux daemon target only; digest-pinned container inputs do not prove reproducible images and other artifact classes remain uncovered.",
       "residual_severity": "low",
       "owner": "security-maintainers",
       "next_gate": "Extend deterministic coverage to remaining artifact classes under GH-29 Phase 7",

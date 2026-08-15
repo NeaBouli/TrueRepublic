@@ -1,5 +1,137 @@
 # TrueRepublic Agent Bridge
 
+## 2026-08-16 02:40 EEST GH-212 replacement candidate → Local PASS
+
+- Sol completed the post-Kimi integration review and reran `make build` plus
+  full `make verify`: all 1,551 maintained Go cases pass under race/coverage,
+  root coverage remains 73.6% and release-evidence coverage is now 74.5%.
+- Exact pinned staticcheck v0.7.0, gitleaks v8.30.1 with positive/negative
+  fixtures, the security repository contract, deterministic-daemon contract,
+  complete release generator/verifier adversarial flow, docs consistency,
+  shell syntax, formatting and diff checks pass.
+- The local environment still has no Docker engine and no standalone
+  ShellCheck binary; Docker restart/build and shell/static validation therefore
+  remain mandatory protected replacement-head jobs. No local claim fills those
+  evidence gaps.
+- Next: commit and push the reviewed replacement candidate, resolve the nine
+  CodeRabbit threads, wait for all checks on the exact new head, then merge and
+  perform final-main/Pages/GH-29/Bridge closeout. No release or production write.
+
+---
+
+## 2026-08-16 02:27 EEST GH-212 protected review → Findings remediated
+
+- **PR/head:** PR #213 originally passed every protected context on exact head
+  `44e13c8`; CodeRabbit then reported seven actionable findings and two useful
+  nitpicks. Merge was correctly withheld.
+- **Kimi contribution:** Kimi K3 implemented the bounded review-fix block. Sol
+  reviewed the complete writing diff; Claude Code remains unavailable because
+  its local OAuth session is expired and changed no files.
+- **Hardening:** active Dockerfile `FROM` references are now parsed and exactly
+  cross-bound to the release contract; tool pins are checked across release,
+  security, deterministic-build and workflow contracts; generator metadata
+  derives from the reviewed contract; fixture errors and ambiguous negative
+  cases fail explicitly; Linux-only evidence boundaries and real race-command
+  requirements are stated precisely.
+- **Focused PASS:** release-evidence and root adversarial Go tests, root/package
+  vet, executed generator/verifier tamper flow, docs consistency, formatting
+  and diff checks. ShellCheck is unavailable locally; protected CI remains the
+  authoritative shell/static gate.
+- **Next:** run Sol's relevant complete gates, commit/push the replacement head,
+  resolve every review thread, require all replacement-head checks green, then
+  squash-merge and complete exact-main/Pages/tracker closeout. Production,
+  release, signing, publication and deployment remain false/not performed.
+
+---
+
+## 2026-08-16 02:00 EEST GH-212 release-evidence contract → Local PASS
+
+- **Implementation:** exact source/build/tool/platform-bound amd64+arm64
+  artifact, checksum, metadata, normalized CycloneDX SBOM and separate unsigned
+  provenance bundle with a strict network-free verifier and standalone CLI.
+- **Supply-chain pins:** Go 1.26.6, Node 22.22.2/npm 10.9.7,
+  `cyclonedx-gomod` v1.10.0, `cyclonedx-npm` 6.0.1 and four official
+  multi-arch container manifests. Final read-only registry inspection caught
+  and replaced a moving Node 22 image with exact `node:22.22.2-alpine`.
+- **PASS:** fresh `make build` + complete `make verify` twice (1,551 Go cases,
+  race/vet/build; root 73.6%, release evidence 74.0%); 10 Node + 309 Vitest,
+  lint/build/budgets/high audit; 26 Rust tests/fmt/Clippy/build and cargo audit;
+  staticcheck, gitleaks plus positive/negative fixtures, exact four-ID no-fix
+  govuln policy plus fixtures, security repository contract, deterministic
+  build contract, real repeated SBOM parity, synthetic bundle/tamper/cleanup,
+  JSON/docs consistency and diff checks.
+- **Review:** Kimi architecture plus independent deep review found no P0/P1;
+  all actionable P2/P3 were remediated. Sol reviewed/hardened the complete
+  writing diff. Claude OAuth remained expired and made no changes.
+- **Local limitation:** Docker is not installed in this environment, so no
+  local container build ran. Official registry index/config data verifies all
+  four digests cover amd64+arm64 and the Node image/tool versions; protected CI
+  and repository contracts remain required.
+- **Public truth:** 1,896 = 1,551 Go + 26 Rust + 319 client; rollout 34/59,
+  phase work 34/51, Phase 6 6/7, production false. No tag, signed/published
+  artifact, authenticated provenance, container reproducibility, deployment or
+  go/no-go claim. Next: commit, push, protected PR/review/CI and final-main closeout.
+
+---
+
+## 2026-08-16 01:30 EEST GH-212 release-evidence contract → Local candidate
+
+- **Delivered:** strict `truerepublic.release-evidence/v1` offline verification
+  binds exact source/build/tool contracts, both native Linux targets, artifacts,
+  per-target checksums/metadata, repeated normalized Go/client CycloneDX SBOMs
+  and a separate explicitly unsigned provenance record.
+- **Hardening:** exact Go 1.26.6, Node 22.22.2/npm 10.9.7,
+  `cyclonedx-gomod` v1.10.0 and `cyclonedx-npm` 6.0.1 pins; four official
+  maintained image manifest digests cross-bound to both Dockerfiles; strict
+  size/depth/duplicate/unknown/trailing/path/symlink/order/digest/source/status
+  rejection; failed generation leaves no complete-looking bundle.
+- **CI boundary:** real Go/client SBOMs are generated twice and normalized for
+  parity; a synthetic two-architecture positive/adversarial bundle is verified
+  offline. No daemon binary, bundle, image, signature or release is uploaded.
+- **Review:** Kimi K3 supplied the architecture and independent deep diff
+  review. All current P2/P3 findings were fixed or explicitly bounded. Its two
+  requested implementation runs produced design only, so the bounded core was
+  executed by a worker and fully reviewed/hardened by Sol. Claude Code remained
+  unavailable because its OAuth session is expired and changed nothing.
+- **Verified so far:** exact real SBOM commands/parity, focused package/root/
+  security/workflow tests, end-to-end generator/verifier tamper tests, JSON,
+  docs consistency and diff checks. Fresh arithmetic is 1,896 = 1,551 Go + 26
+  Rust + 319 client. Full build/verify/client/Rust/security gates still run next.
+- **Rollout:** Phase 7 toolchain/platform checkbox only: 34/59 overall and
+  34/51 phase work; Phase 6 remains 6/7; production remains false. Signing,
+  authenticated provenance/SBOM truth, tagged artifacts, publication,
+  container reproducibility, staged deployment and go/no-go remain open.
+
+---
+
+## 2026-08-16 00:45 EEST GH-212 release-evidence contract → In Progress
+
+- **Branch:** `feature/GH-212-release-evidence`
+- **Issue:** https://github.com/NeaBouli/TrueRepublic/issues/212
+- **Baseline:** clean exact `origin/main`/HEAD `79c2a6d`; GH-209 and its
+  documentation closeout are complete and no TrueRepublic PR was open.
+- **Scope:** add a strict repository-only release-candidate evidence manifest,
+  deterministic normalized Go/client CycloneDX SBOMs, unsigned provenance,
+  explicit local offline verification, digest-pinned maintained container base
+  images, and a machine-readable Linux amd64/arm64 supported-platform contract.
+- **Owner split:** Kimi K3 completed the secret-free read-only architecture
+  analysis and owns the bounded primary implementation. Sol owns scope,
+  release/security boundaries, full diff review, integration, complete tests,
+  public claims and all GitHub writes. Claude Code receives one small focused
+  helper check only.
+- **Risk:** release-adjacent but repository-only. No tag, GitHub Release,
+  registry push, signing key, signature, external attestation, binary/image
+  publication, deploy, genesis freeze, network action or production approval.
+- **Rollout claim:** only Phase 7 pinned toolchains/supported platforms may be
+  credited if fully proven. Signed artifacts, published SBOM/provenance and
+  reproducible tagged binaries/containers remain open.
+- **Tests:** not run yet; this is the pre-implementation ownership record.
+- **Next:** Kimi implements the bounded evidence/verifier/CI/docs block; Sol
+  reviews and hardens it, Claude performs a small read-only cross-check, then
+  the complete relevant repository/security/client/Rust/build gates run.
+
+---
+
 ## 2026-08-15 19:45 EEST GH-209 protected closeout → PASS
 
 - PR #210 exact reviewed head `297e927` passed all 25 reported contexts after
