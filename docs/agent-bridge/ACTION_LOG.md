@@ -4110,3 +4110,19 @@
   6/7, production false. Protected PR publication and exact-main closeout are
   next; no production ceremony, key, account/fund, RPC/broadcast, deployment,
   release or network mutation occurred.
+
+## 2026-08-15 19:45 EEST - GH-209 protected closeout passed
+
+- PR #210 initial head `55cf7b3` passed 25 contexts. CodeRabbit then identified
+  four valid documentation inconsistencies; Sol corrected all four, reran docs
+  consistency, replied and resolved every thread.
+- Replacement exact head `297e927` passed all 25 contexts with zero unresolved
+  threads and squash-merged as `3cc392e`. GH-209 closed, the remote feature
+  branch was deleted, and GH-29 now checks the recipient-substitution-safe
+  binding while retaining independent cryptographic/privacy/setup review open.
+- Final-main Client `31895690591`, reproducible Linux `31895690584`, Docs
+  `31895690565`, Go `31895690592`, Security `31895690558` and Pages
+  `31895690006` pass on the merge commit.
+- Public arithmetic remains 1,874 cases, rollout 33/59, phase work 33/51,
+  Phase 6 6/7 and production false. No production ceremony/artifact, key,
+  account/fund, RPC/broadcast, deployment, release or network mutation occurred.
