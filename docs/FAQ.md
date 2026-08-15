@@ -76,12 +76,12 @@ Yes, by **2/3 majority vote** of domain members. Any member can initiate a vote-
 | Red | Expiring, will be auto-deleted if not supported |
 
 ### Is voting anonymous?
-The on-chain recovery design supports domain-scoped anonymous ratings and binds
-proofs to the chain, proposal, rating, and — since GH-209 — one canonical
-bech32 reward recipient paid directly from treasury. That direct payout
-publicly links the vote/nullifier event to the chosen payout address; fresh
-addresses reduce address-reuse linkage but do not create shielded payout
-privacy. The maintained web client
+The on-chain recovery design supports domain-scoped anonymous ratings. Since
+GH-209, both domain-key signatures and Groth16 proofs bind the chain, proposal,
+rating, and one canonical bech32 reward recipient paid directly from treasury.
+That direct payout publicly links the vote/nullifier event to the chosen payout
+address; fresh addresses reduce address-reuse linkage but do not create
+shielded payout privacy. The maintained web client
 rejects mock proof generation/submission. GH-206 verifies only synthetic test
 compatibility. Production qualification, ceremony, submission integration,
 and independent cryptographic review remain pending.

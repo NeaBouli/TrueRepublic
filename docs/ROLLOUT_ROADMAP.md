@@ -96,7 +96,7 @@ recovery, upgrade, and rollback results on clean infrastructure.
   rotation or circuit-upgrade rules.
 - [ ] Add browser-to-chain proof compatibility tests using real proofs.
 - [x] Design and implement a front-running-safe anonymous reward-recipient
-  binding without leaking voter identity.
+  binding that prevents recipient substitution.
 - [ ] Complete independent cryptographic, privacy, and trusted-setup review.
 - [ ] Keep anonymous submission fail-closed until every item above passes.
 

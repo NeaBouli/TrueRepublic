@@ -4,9 +4,9 @@
 
 - `TrueRepublic/vote/v2` length-prefixes chain, domain, issue, suggestion and
   canonical reward recipient and binds the signed/proved rating. The existing
-  recipient-independent external nullifier remains v1-compatible, preserving
-  one-vote semantics without making recipient substitution possible.
-- Both signature and Groth16/domain-key entry paths reject empty, malformed,
+  external nullifier preserves recipient- and rating-independent semantics;
+  legacy v1 rating payloads remain rejected fail closed.
+- Both domain-key signature and Groth16 proof entry paths reject empty, malformed,
   wrong-prefix, non-canonical and blocked module-account recipients before
   mutation. Cached execution makes rating, treasury debit and bank payout
   atomic; adversarial replay, substitution, insufficient-funds and restart
@@ -250,9 +250,6 @@
 - The token/ledger recovery slice through GH-12 is merged to `main` after local
   and GitHub verification. Independent release-security review is still
   required. See `CODEX_AUDIT.md` and GH-7.
-- Anonymous legacy rating signatures and Groth16 proofs do not bind a bank
-  reward recipient. Direct payout to the transaction sender is front-runnable;
-  production handlers therefore defer those rewards pending GH-7.
 - GH-20's on-chain ZKP binding passes locally, but a real compatible prover,
   ceremony artifact, and independent circuit review do not yet exist. Both web
   clients fail closed and must remain non-submittable.
