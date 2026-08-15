@@ -1,5 +1,20 @@
 # Project State
 
+GH-209 is complete through PR #210, squash-merged as exact main `3cc392e` after
+reviewed head `297e927` passed all 25 contexts with zero unresolved threads.
+Final-main Client `31895690591`, reproducible Linux `31895690584`, Docs
+`31895690565`, Go `31895690592`, Security `31895690558` and Pages `31895690006`
+pass. Both anonymous rating paths now bind a canonical reward recipient and pay
+atomically without changing the recipient-independent nullifier or frozen
+Groth16 artifacts. Published status is 1,874 cases, rollout 33/59, phase work
+33/51, Phase 6 6/7 and production false. Direct payout linkability,
+independent cryptographic/privacy/setup review, production ceremony/prover and
+submission integration remain open.
+
+Updated: 2026-08-15 16:45 UTC
+
+---
+
 GH-209 is locally verified on `feature/GH-209-zkp-reward-recipient`. Both
 anonymous rating paths bind a canonical reward recipient into the versioned
 vote signal without changing the recipient-independent nullifier or frozen

@@ -197,7 +197,7 @@
 - [x] GH-20: bind ZKP proofs/signatures to chain and vote context, pin genesis
   VK identity, preserve active nullifiers, validate canonical fields, and make
   mock clients non-submittable in merged PR #22.
-- [ ] GH-209: bind both anonymous rating paths to one canonical, proof- or
+- [x] GH-209: bind both anonymous rating paths to one canonical, proof- or
   signature-covered reward recipient; preserve the recipient-independent
   nullifier, frozen circuit/setup artifacts, atomic escrow accounting and the
   hard-disabled maintained-client submission boundary.
