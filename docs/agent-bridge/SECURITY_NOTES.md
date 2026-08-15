@@ -1,5 +1,24 @@
 # Security Notes
 
+## GH-209 recipient-bound anonymous reward boundary
+
+- `TrueRepublic/vote/v2` length-prefixes chain, domain, issue, suggestion and
+  canonical reward recipient and binds the signed/proved rating. The existing
+  recipient-independent external nullifier remains v1-compatible, preserving
+  one-vote semantics without making recipient substitution possible.
+- Both signature and Groth16/domain-key entry paths reject empty, malformed,
+  wrong-prefix, non-canonical and blocked module-account recipients before
+  mutation. Cached execution makes rating, treasury debit and bank payout
+  atomic; adversarial replay, substitution, insufficient-funds and restart
+  tests pass.
+- The circuit and synthetic CS/PK/VK remain byte-unchanged because the already
+  public signal hash carries the new binding. Consensus version 2 registers a
+  governed v1→v2 no-op migration because no store transformation is needed.
+- A public payout recipient remains linkable on-chain. Independent
+  cryptographic/privacy review, a production ceremony/prover and audited
+  submission integration remain open; client submission stays hard false and
+  `production_ready` remains false.
+
 ## GH-206 test-only real Groth16 WASM boundary
 
 - The prover accepts only exact size/SHA-256 pinned GH-198 constraint-system,

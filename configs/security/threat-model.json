@@ -2,7 +2,7 @@
   "model": {
     "name": "truerepublic-cross-system-threat-model",
     "version": "truerepublic.threat-model/v1",
-    "updated": "2026-08-09"
+    "updated": "2026-08-15"
   },
   "production_ready": false,
   "safety_boundary": "Recovery-only repository threat model covering documentation, configuration, and tests. This register is not an independent external audit and does not authorize or claim consensus-state, cryptography, wallet-custody, key, signing, funds, deployment, mainnet, migration, release, or production activity. The repository holds no secrets, private keys, real topology, or customer data; all committed configuration is synthetic.",
@@ -259,24 +259,28 @@
       "domain": "governance_identity",
       "severity": "high",
       "likelihood": "medium",
-      "status": "deferred",
+      "status": "mitigated",
       "attack_path": "Attacker front-runs anonymous rating reward payouts because proof and signature payloads do not bind a safe bank recipient.",
       "impact": "Reward theft from anonymous voters and forced deanonymization pressure.",
       "controls": [
-        "Anonymous rating rewards are deferred; production handlers refuse unsafe direct payout",
-        "Proofs and legacy signatures bind chain, domain, issue, suggestion, and rating",
+        "GH-209 binds one canonical bech32 reward recipient into the domain-separated TrueRepublic/vote/v2 signal preimage covered by both the Groth16 SignalHash and the domain-key signature",
+        "Recipient validation fails closed for empty, malformed, wrong-prefix, non-canonical, and blocked module-account addresses; the recipient is never persisted in rating or module state",
+        "Payout is an atomic treasury-funded bank send to only the bound recipient under one cached context, so validation, proof/signature, or bank-send failure leaves rating, nullifier, treasury, and escrow unchanged",
+        "The external-nullifier scope stays recipient- and rating-independent; replayed or malleated proofs cannot duplicate a payout",
         "The maintained web client fails closed on mock or unsafe submission"
       ],
       "evidence": [
-        "x/truedemocracy/zkp.go",
-        "client-web/src/services/zkp.ts",
-        "docs/agent-bridge/SECURITY_NOTES.md"
+        "x/truedemocracy/merkle.go",
+        "x/truedemocracy/escrow.go",
+        "x/truedemocracy/zkp_reward_recipient_test.go",
+        "configs/security/zkp-circuit.json",
+        "client-web/src/services/zkp.ts"
       ],
-      "residual_risk": "No front-running-safe anonymous reward-recipient binding design has passed review.",
-      "residual_severity": "high",
+      "residual_risk": "Direct payout publicly links the vote/nullifier event to the chosen payout address; fresh addresses reduce address-reuse linkage but do not create shielded payout privacy. Production ceremony, prover, and submission qualification remain covered by TM-ZKP-001/TM-ZKP-002.",
+      "residual_severity": "medium",
       "owner": "security-maintainers",
-      "next_gate": "GH-7: design and independently review recipient-bound anonymous rewards before enabling payouts",
-      "umbrella_issue": "GH-7"
+      "next_gate": "Re-verify the recipient binding under the GH-29 Phase 5 security-depth review alongside the production ZKP qualification",
+      "umbrella_issue": ""
     },
     {
       "id": "TM-TOK-001",

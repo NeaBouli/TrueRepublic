@@ -14,7 +14,10 @@
 - Chain/proposal/rating-bound ZKP statement and pinned genesis verification-key
   identity; GH-206 generates a real proof through isolated Go/WASM from exact
   synthetic toxic-waste fixtures and proves native verifier compatibility,
-  while mock and transaction submission remain fail-closed.
+  while GH-209 binds an atomic anonymous reward to one canonical recipient
+  without changing the circuit/setup artifacts or recipient-independent
+  nullifier. Direct payout is publicly linkable; mock and transaction
+  submission remain fail-closed.
 - Persistent Cosmos/Comet lifecycle with generated-key, bank-backed PoD
   genesis, native/Docker restart evidence, and a bounded four-validator
   failure/restart/catch-up, partition-recovery, trusted state-sync, and
@@ -36,7 +39,7 @@
   claiming production sizing or multi-day soak behavior.
   GH-101 adds a strict secret-free digest-bound deployment-evidence envelope
   and offline verifier without claiming or performing a live deployment.
-- 1,854 recovery-verified tests: 1,511 Go, 26 Rust, and 317 maintained-client,
+- 1,874 recovery-verified tests: 1,529 Go, 26 Rust, and 319 maintained-client,
   plus the separately gated GH-175/GH-178/GH-181 two-chain IBC packet/channel/compatible-restart recovery and GH-172
   contention/replay/restart process proofs.
 
@@ -51,7 +54,8 @@ reviewed, verified, and merged to `main` in this order.
 
 - Release qualification and independent security review.
 - Production-qualified Groth16 client prover, ceremony, submission path, and external circuit review.
-- Privacy-preserving anonymous reward recipient binding.
+- Independent privacy review of the implemented recipient binding and its
+  documented direct-payout linkability.
 - IBC/consensus-breaking migration recovery, external paging drills,
   private-live-capacity/live-topology deployment, private live rehearsal, and
   independent live operations evidence.

@@ -192,16 +192,17 @@ func TestRateProposalWithSignatureBindsChainID(t *testing.T) {
 	}
 
 	rating := 3
-	wrongPayload := encodeVoteContext("truerepublic-test-2", "AnonDomain", "Climate", "GreenDeal", &rating)
+	recipient := testRewardRecipient()
+	wrongPayload := encodeVoteContextV2("truerepublic-test-2", "AnonDomain", "Climate", "GreenDeal", rating, recipient)
 	wrongSig, _ := aliceKey.Sign(wrongPayload)
 	pubKeyHex := hex.EncodeToString(aliceKey.PubKey().Bytes())
-	if _, err := k.RateProposalWithSignature(ctx, "AnonDomain", "Climate", "GreenDeal", rating, pubKeyHex, hex.EncodeToString(wrongSig)); err == nil {
+	if _, err := k.RateProposalWithSignature(ctx, "AnonDomain", "Climate", "GreenDeal", rating, pubKeyHex, hex.EncodeToString(wrongSig), recipient); err == nil {
 		t.Fatal("signature from another chain must fail")
 	}
 
-	payload := encodeVoteContext(ctx.ChainID(), "AnonDomain", "Climate", "GreenDeal", &rating)
+	payload := encodeVoteContextV2(ctx.ChainID(), "AnonDomain", "Climate", "GreenDeal", rating, recipient)
 	sig, _ := aliceKey.Sign(payload)
-	if _, err := k.RateProposalWithSignature(ctx, "AnonDomain", "Climate", "GreenDeal", rating, pubKeyHex, hex.EncodeToString(sig)); err != nil {
+	if _, err := k.RateProposalWithSignature(ctx, "AnonDomain", "Climate", "GreenDeal", rating, pubKeyHex, hex.EncodeToString(sig), recipient); err != nil {
 		t.Fatalf("chain-bound signature should succeed: %v", err)
 	}
 }

@@ -37,6 +37,8 @@ export interface ProofInputs {
   domainName: string;
   issueName: string;
   suggestionName: string;
+  /** GH-209: canonical bech32 payout address bound into the v2 signal */
+  rewardRecipient: string;
 }
 
 /** Generated Groth16 proof ready for chain submission */
@@ -64,6 +66,8 @@ export interface VoteWithProofParams {
   proof: string;
   nullifier_hash: string;
   merkle_root: string;
+  /** GH-209: proof-bound canonical bech32 payout address */
+  reward_recipient: string;
 }
 
 /** Proof generation progress tracking */

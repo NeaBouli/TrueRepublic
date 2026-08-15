@@ -346,7 +346,13 @@ func TestZKPFixtureMetadataRejectsDriftAndMalformedKeys(t *testing.T) {
 	})
 }
 
-func TestZKPGoldenProofKeeperReplay(t *testing.T) {
+// TestZKPGoldenProofV1SignalRejectedByKeeper proves the frozen GH-198 golden
+// proof, whose SignalHash is the historical recipient-independent v1 signal,
+// fails closed at the GH-209 keeper boundary: the handler requires the
+// recipient-bound v2 signal and never dual-accepts v1. The frozen proof
+// itself remains positively verified at the raw verifier level in
+// TestZKPFixtureArtifactsAndGoldenProof, preserving artifact parity evidence.
+func TestZKPGoldenProofV1SignalRejectedByKeeper(t *testing.T) {
 	_, vector, _, proof := readVerifiedZKPFixture(t)
 	k, ctx := setupKeeper(t)
 	ctx = ctx.WithChainID(vector.ChainID)
@@ -371,12 +377,16 @@ func TestZKPGoldenProofKeeperReplay(t *testing.T) {
 	k.SetVerifyingKey(ctx, vkBytes)
 	if _, err := k.RateProposalWithZKP(
 		ctx, vector.DomainName, vector.IssueName, vector.SuggestionName, vector.Rating,
-		hex.EncodeToString(proof), vector.NullifierHashHex, vector.MerkleRootHex,
-	); err != nil {
-		t.Fatalf("keeper rejected golden proof: %v", err)
+		hex.EncodeToString(proof), vector.NullifierHashHex, vector.MerkleRootHex, testRewardRecipient(),
+	); err == nil {
+		t.Fatal("keeper accepted a v1 recipient-independent golden proof after GH-209")
 	}
-	if !k.IsNullifierUsed(ctx, vector.DomainName, vector.NullifierHashHex) {
-		t.Fatal("keeper did not persist golden nullifier")
+	if k.IsNullifierUsed(ctx, vector.DomainName, vector.NullifierHashHex) {
+		t.Fatal("rejected v1 proof consumed the nullifier")
+	}
+	domain, _ = k.GetDomain(ctx, vector.DomainName)
+	if got := len(domain.Issues[0].Suggestions[0].Ratings); got != 0 {
+		t.Fatalf("rejected v1 proof recorded %d ratings", got)
 	}
 }
 

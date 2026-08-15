@@ -77,10 +77,14 @@ Yes, by **2/3 majority vote** of domain members. Any member can initiate a vote-
 
 ### Is voting anonymous?
 The on-chain recovery design supports domain-scoped anonymous ratings and binds
-proofs to the chain, proposal, and rating. However, the maintained web client
+proofs to the chain, proposal, rating, and — since GH-209 — one canonical
+bech32 reward recipient paid directly from treasury. That direct payout
+publicly links the vote/nullifier event to the chosen payout address; fresh
+addresses reduce address-reuse linkage but do not create shielded payout
+privacy. The maintained web client
 rejects mock proof generation/submission. GH-206 verifies only synthetic test
 compatibility. Production qualification, ceremony, submission integration,
-reward-recipient binding, and independent cryptographic review remain pending.
+and independent cryptographic review remain pending.
 
 ## Wallet
 
@@ -141,8 +145,8 @@ There is no supported native mobile client.
 Fork the repo, create a branch, write tests, and submit a PR. See [Developer Docs](developers/README.md).
 
 ### Where are the tests?
-The recovery baseline has 1,854 verified standard-suite cases: 1,511 Go, 26
-Rust, and 317 maintained-client tests. This total excludes the separate opt-in
+The recovery baseline has 1,874 verified standard-suite cases: 1,529 Go, 26
+Rust, and 319 maintained-client tests. This total excludes the separate opt-in
 GH-175/GH-178/GH-181 IBC gate (`make ibc-two-chain`), GH-184 governed-upgrade
 gate, and GH-206 compatibility gate (`./scripts/test-zkp-wasm-client.sh`). Run
 `./scripts/go-packages.sh go test -race -cover -count=1` and see

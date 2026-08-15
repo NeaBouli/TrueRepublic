@@ -2,6 +2,7 @@ package truedemocracy
 
 import (
 	"encoding/hex"
+	"strings"
 
 	errorsmod "cosmossdk.io/errors"
 	"cosmossdk.io/math"
@@ -259,48 +260,68 @@ func (k Keeper) PlaceStoneOnSuggestionWithPayout(
 	})
 }
 
-// executeDeferredAnonymousReward records an anonymous rating but restores the
-// calculated reward to treasury. Current legacy signatures and ZKP public
-// inputs do not bind a bank recipient, so paying msg.Sender would be
-// front-runnable. GH-13/GH-7 must add a recipient-bound claim before payout.
-func (k Keeper) executeDeferredAnonymousReward(
-	ctx sdk.Context,
-	domainName string,
-	action rewardAction,
-) (sdk.Coins, error) {
-	cacheCtx, write := ctx.CacheContext()
-	reward, err := action(cacheCtx)
+// executeDeferredAnonymousReward was the GH-13/GH-7 stopgap: it recorded the
+// anonymous rating but restored the reward to treasury because neither path
+// bound a bank recipient. GH-209 replaces it with an atomic treasury-funded
+// payout to the proof- or signature-bound recipient below.
+
+// ValidateRewardRecipient decodes and fail-closed validates the canonical
+// bech32 reward recipient bound into the v2 anonymous-rating payload. The
+// recipient must be non-empty, use the configured account prefix, and match
+// its own canonical lowercase re-encoding exactly.
+func ValidateRewardRecipient(recipient string) (sdk.AccAddress, error) {
+	if recipient == "" {
+		return nil, errorsmod.Wrap(sdkerrors.ErrInvalidAddress, "reward recipient is required")
+	}
+	if recipient != strings.ToLower(recipient) {
+		return nil, errorsmod.Wrap(sdkerrors.ErrInvalidAddress, "reward recipient must be canonical lowercase bech32")
+	}
+	prefix := sdk.GetConfig().GetBech32AccountAddrPrefix()
+	if !strings.HasPrefix(recipient, prefix+"1") {
+		return nil, errorsmod.Wrapf(sdkerrors.ErrInvalidAddress, "reward recipient must use the %s account prefix", prefix)
+	}
+	addr, err := sdk.AccAddressFromBech32(recipient)
+	if err != nil {
+		return nil, errorsmod.Wrap(sdkerrors.ErrInvalidAddress, "reward recipient is not valid bech32")
+	}
+	if addr.String() != recipient {
+		return nil, errorsmod.Wrap(sdkerrors.ErrInvalidAddress, "reward recipient is not in canonical bech32 form")
+	}
+	return addr, nil
+}
+
+// validatePayoutRecipient additionally rejects blocked module accounts so a
+// reward can never be paid into an address the bank layer forbids receiving.
+func (k Keeper) validatePayoutRecipient(recipient string) (sdk.AccAddress, error) {
+	if err := requireBankKeeper(k.bankKeeper); err != nil {
+		return nil, err
+	}
+	addr, err := ValidateRewardRecipient(recipient)
 	if err != nil {
 		return nil, err
 	}
-	if !reward.Empty() {
-		if err := validatePNYXCoins(reward, "deferred reward"); err != nil {
-			return nil, err
-		}
-		domain, found := k.GetDomain(cacheCtx, domainName)
-		if !found {
-			return nil, errorsmod.Wrap(sdkerrors.ErrUnknownRequest, "domain disappeared while deferring reward")
-		}
-		rewardAmount := reward.AmountOf(PNYXDenom)
-		if !rewardAmount.IsInt64() || domain.TotalPayouts < rewardAmount.Int64() {
-			return nil, errorsmod.Wrap(sdkerrors.ErrLogic, "invalid deferred reward accounting")
-		}
-		domain.Treasury = domain.Treasury.Add(reward...)
-		domain.TotalPayouts -= rewardAmount.Int64()
-		store := cacheCtx.KVStore(k.StoreKey)
-		store.Set([]byte("domain:"+domainName), k.cdc.MustMarshalLengthPrefixed(&domain))
+	if k.bankKeeper.BlockedAddr(addr) {
+		return nil, errorsmod.Wrap(sdkerrors.ErrInvalidAddress, "reward recipient must not be a blocked module account")
 	}
-	write()
-	return sdk.Coins{}, nil
+	return addr, nil
 }
 
-func (k Keeper) RateProposalWithSignatureDeferredReward(
+// RateProposalWithSignaturePayout records a domain-key anonymous rating whose
+// signature covers the recipient-bound v2 payload and atomically pays the
+// treasury reward to exactly that bound recipient. Any validation, signature,
+// or bank-send failure leaves rating, treasury, and escrow state unchanged.
+func (k Keeper) RateProposalWithSignaturePayout(
 	ctx sdk.Context,
 	domainName, issueName, suggestionName string,
 	rating int,
 	domainPubKeyHex, signatureHex string,
+	rewardRecipient string,
 ) (sdk.Coins, error) {
-	return k.executeDeferredAnonymousReward(ctx, domainName, func(cacheCtx sdk.Context) (sdk.Coins, error) {
+	recipient, err := k.validatePayoutRecipient(rewardRecipient)
+	if err != nil {
+		return nil, err
+	}
+	return k.executeRewardPayout(ctx, recipient, func(cacheCtx sdk.Context) (sdk.Coins, error) {
 		return k.RateProposalWithSignature(
 			cacheCtx,
 			domainName,
@@ -309,17 +330,29 @@ func (k Keeper) RateProposalWithSignatureDeferredReward(
 			rating,
 			domainPubKeyHex,
 			signatureHex,
+			rewardRecipient,
 		)
 	})
 }
 
-func (k Keeper) RateProposalWithZKPDeferredReward(
+// RateProposalWithZKPPayout records a Groth16 anonymous rating whose public
+// SignalHash covers the recipient-bound v2 payload and atomically pays the
+// treasury reward to exactly that bound recipient. Any validation, proof, or
+// bank-send failure leaves rating, nullifier, treasury, and escrow state
+// unchanged. The reward never goes to msg.Sender for submitting the
+// transaction.
+func (k Keeper) RateProposalWithZKPPayout(
 	ctx sdk.Context,
 	domainName, issueName, suggestionName string,
 	rating int,
 	proofHex, nullifierHashHex, merkleRootHex string,
+	rewardRecipient string,
 ) (sdk.Coins, error) {
-	return k.executeDeferredAnonymousReward(ctx, domainName, func(cacheCtx sdk.Context) (sdk.Coins, error) {
+	recipient, err := k.validatePayoutRecipient(rewardRecipient)
+	if err != nil {
+		return nil, err
+	}
+	return k.executeRewardPayout(ctx, recipient, func(cacheCtx sdk.Context) (sdk.Coins, error) {
 		return k.RateProposalWithZKP(
 			cacheCtx,
 			domainName,
@@ -329,6 +362,7 @@ func (k Keeper) RateProposalWithZKPDeferredReward(
 			proofHex,
 			nullifierHashHex,
 			merkleRootHex,
+			rewardRecipient,
 		)
 	})
 }

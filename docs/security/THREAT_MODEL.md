@@ -121,9 +121,18 @@ JSON register.
 - **TM-GOV-001** (high/medium, mitigated): spoofed identity or authority.
   Verified: signer-derived identity, exact bank escrow, cached atomic
   settlement, chain-authority registry checks.
-- **TM-GOV-002** (high/medium, deferred → GH-7): front-running of anonymous
-  rating rewards. Verified: rewards deferred, bound proof/signature payloads,
-  fail-closed clients. Deferred: no reviewed recipient-binding design.
+- **TM-GOV-002** (high/medium, mitigated): front-running of anonymous
+  rating rewards. Verified: GH-209 binds one canonical bech32 reward recipient
+  into the domain-separated `TrueRepublic/vote/v2` signal preimage covered by
+  both the Groth16 SignalHash and the domain-key signature; payout is an
+  atomic treasury-funded bank send to only the bound recipient, the
+  recipient-independent nullifier and one-vote semantics are unchanged, and
+  any validation, proof/signature, or bank-send failure rolls back rating,
+  nullifier, treasury, and escrow state. Residual: the direct payout publicly
+  links the vote/nullifier event to the chosen payout address — fresh
+  addresses reduce address-reuse linkage but do not create shielded payout
+  privacy; production ceremony and submission qualification remain covered by
+  TM-ZKP-001/TM-ZKP-002.
 
 ### token_treasury_dex
 

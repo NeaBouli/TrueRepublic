@@ -26,6 +26,15 @@ interface GoldenVector {
   nullifier_hash_hex: string;
 }
 
+interface CircuitSpecV2 {
+  vote_context_v2: {
+    vector: {
+      reward_recipient: string;
+      signal_hash_hex: string;
+    };
+  };
+}
+
 interface GoRuntime {
   importObject: WebAssembly.Imports;
   run(instance: WebAssembly.Instance): Promise<void>;
@@ -75,6 +84,13 @@ integration('real maintained-client Groth16 WASM compatibility', () => {
     const vector = JSON.parse(
       readFileSync(resolve(fixtureDirectory, 'golden_vector.json'), 'utf8')
     ) as GoldenVector;
+    const specV2 = JSON.parse(
+      readFileSync(
+        resolve(process.cwd(), '../configs/security/zkp-circuit.json'),
+        'utf8'
+      )
+    ) as CircuitSpecV2;
+    const v2Vector = specV2.vote_context_v2.vector;
     const artifacts: TestOnlyZKPArtifacts = {
       constraintSystem: readFileSync(
         resolve(fixtureDirectory, 'membership_v2.cs')
@@ -98,6 +114,7 @@ integration('real maintained-client Groth16 WASM compatibility', () => {
       domainName: vector.domain_name,
       issueName: vector.issue_name,
       suggestionName: vector.suggestion_name,
+      rewardRecipient: v2Vector.reward_recipient,
     };
     const result = await new TestOnlyGroth16WasmProver(
       runtime,
@@ -107,11 +124,14 @@ integration('real maintained-client Groth16 WASM compatibility', () => {
     expect(result.proof).toMatch(/^[0-9a-f]+$/u);
     expect(result.nullifierHash).toBe(vector.nullifier_hash_hex);
     expect(result.merkleRoot).toBe(vector.merkle_root_hex);
+    // GH-209: the proof's public signal is the pinned recipient-bound v2
+    // signal; the external nullifier and nullifier stay identical to the
+    // recipient-independent v1 fixture values.
     expect(result.publicSignals).toEqual([
       vector.merkle_root_hex,
       vector.nullifier_hash_hex,
       vector.external_nullifier_hex,
-      vector.signal_hash_hex,
+      v2Vector.signal_hash_hex,
     ]);
     writeFileSync(resultPath, `${JSON.stringify(result)}\n`, {
       encoding: 'utf8',

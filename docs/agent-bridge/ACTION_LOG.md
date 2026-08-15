@@ -4067,3 +4067,46 @@
   owned all finding remediation, writing-diff review, complete gates, merge,
   and final-main verification. No production ZKP, ceremony, key, fund,
   deployment, release, or rollout authorization occurred.
+## 2026-08-15 17:16 EEST - GH-209 recipient-bound anonymous rewards started
+
+- Reconstructed the clean exact `de098ff` post-GH-206 baseline from Git,
+  GitHub issue GH-29, repository state, both Bridges and the required handoff
+  files; no open PR or unrelated local change was found in this isolated
+  worktree.
+- Opened GH-209 and branch `feature/GH-209-zkp-reward-recipient` for one bounded
+  high-risk review unit. The preserved divergent Desktop checkout remains
+  untouched.
+- Kimi K3 completed a secret-free read-only architecture/security review. Its
+  key result is that a versioned recipient-bearing preimage can use the
+  existing public `SignalHash`; the recipient-independent external nullifier
+  and exact frozen circuit/CS/PK/VK can remain unchanged.
+- Production submission, ceremony/setup generation, real keys/accounts/funds,
+  RPC/broadcast, release, deployment and network mutation remain excluded.
+- Tests have not run because implementation has not started.
+- Next: Kimi bounded implementation, Sol diff/security integration review,
+  Claude Code focused helper check, then focused and full verification.
+
+## 2026-08-15 18:56 EEST - GH-209 local candidate verified
+
+- Kimi K3 implemented the bounded recipient-binding block after its successful
+  architecture/security review. Sol reviewed every writing diff and corrected
+  the consensus-version migration contract, strict Bech32 checksum/canonical
+  client validation, security-spec exclusions, coverage and public rollout
+  arithmetic. Claude Code's small read-only review could not authenticate due
+  an expired OAuth session and made no changes.
+- Both anonymous rating paths now commit to a canonical recipient through
+  `TrueRepublic/vote/v2`, retain the recipient-independent external nullifier,
+  reject module accounts and make payout plus state mutation atomic. Frozen
+  circuit/setup artifacts and hard-disabled production submission are intact.
+- PASS: complete Go Build/Vet/Race/Coverage (1,529 cases; governance 64.3%), 26
+  Rust tests/fmt/Clippy, 10 Node + 309 Vitest cases with 4 intentional skips,
+  client lint/build/budgets/high audit, real WASM-to-native proof compatibility,
+  staticcheck, gitleaks, govuln policy/fixtures and documentation consistency.
+- PASS: governed four-validator halt/failure/recovery, all three IBC two-chain
+  transfer/channel/restart cases, and all eight multi-validator migration,
+  consensus, state-sync, backup, binary rollback, cold failover, key rotation
+  and slashing cases.
+- Candidate status is 1,874 cases, rollout 33/59, phase work 33/51, Phase 6
+  6/7, production false. Protected PR publication and exact-main closeout are
+  next; no production ceremony, key, account/fund, RPC/broadcast, deployment,
+  release or network mutation occurred.

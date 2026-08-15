@@ -43,6 +43,7 @@ describe('ZKPService fail-closed boundary', () => {
       domainName: 'FixtureDomain',
       issueName: 'FixtureIssue',
       suggestionName: 'FixtureSuggestion',
+      rewardRecipient: 'truerepublic10f4hqttjv4mkzuny94ex2cmfwp5k2mn5kqf890',
     };
     let forwarded: ProofInputs | undefined;
     const prover: Groth16Prover = {

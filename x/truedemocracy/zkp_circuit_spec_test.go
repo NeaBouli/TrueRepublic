@@ -3,6 +3,7 @@ package truedemocracy
 import (
 	"bytes"
 	"crypto/sha256"
+	"encoding/binary"
 	"encoding/hex"
 	"fmt"
 	"math/big"
@@ -29,7 +30,7 @@ import (
 
 const (
 	zkpCircuitSpecPath   = "../../configs/security/zkp-circuit.json"
-	zkpCircuitSpecSchema = "truerepublic/zkp-circuit/v1"
+	zkpCircuitSpecSchema = "truerepublic/zkp-circuit/v2"
 	zkpGoModPath         = "../../go.mod"
 
 	zkpSpecClassification = "TEST-ONLY SINGLE-PARTY TOXIC WASTE"
@@ -42,6 +43,19 @@ const (
 	zkpSpecSignal         = "signalHash = hashToField(voteContext(chainID, domainName, issueName, suggestionName, rating)); binds chain, domain, issue, suggestion and the exact rating"
 	zkpSpecRatingEncoding = "int64 big-endian, appended only for the signal"
 	zkpSpecHashToField    = "SHA-256(data) as big-endian integer reduced modulo the BN254 scalar field, serialized as 32 big-endian bytes"
+
+	zkpSpecV2DomainSeparator     = "TrueRepublic/vote/v2"
+	zkpSpecV2RatingEncoding      = "int64 big-endian, appended after the four length-prefixed names"
+	zkpSpecV2RecipientEncoding   = "canonical lowercase truerepublic bech32 address, uint32 big-endian length-prefixed, appended after the rating"
+	zkpSpecV2External            = "identical to the v1 scope; the one-vote nullifier stays recipient- and rating-independent"
+	zkpSpecV2VectorChainID       = "truerepublic-zkp-fixture-1"
+	zkpSpecV2VectorDomain        = "FixtureDomain"
+	zkpSpecV2VectorIssue         = "FixtureIssue"
+	zkpSpecV2VectorSuggestion    = "FixtureSuggestion"
+	zkpSpecV2VectorRating        = 3
+	zkpSpecV2VectorRecipient     = "truerepublic10f4hqttjv4mkzuny94ex2cmfwp5k2mn5kqf890"
+	zkpSpecV2VectorSignalHashHex = "03f724ec71efdeeb178c658689bdfc859d96edb4782a123ca5eb2cdd22c9fe92"
+
 	zkpSpecClientContract = "client-web/src/services/zkpEncoding.ts"
 	zkpSpecTestProver     = "client-web/src/services/zkpWasmProver.ts"
 	zkpSpecWASMCommand    = "cmd/zkp-prover-wasm"
@@ -52,27 +66,28 @@ var zkpSpecPublicInputOrder = []string{"merkle_root", "nullifier_hash", "externa
 var zkpSpecVoteContextFields = []string{"chain_id", "domain_name", "issue_name", "suggestion_name"}
 
 type zkpCircuitSpec struct {
-	Schema                 string             `json:"schema"`
-	CircuitID              string             `json:"circuit_id"`
-	Classification         string             `json:"classification"`
-	ProductionAllowed      bool               `json:"production_allowed"`
-	Curve                  zkpSpecCurve       `json:"curve"`
-	Hash                   zkpSpecHash        `json:"hash"`
-	Merkle                 zkpSpecMerkle      `json:"merkle"`
-	IdentityCommitment     string             `json:"identity_commitment"`
-	ExternalNullifier      string             `json:"external_nullifier"`
-	NullifierHash          string             `json:"nullifier_hash"`
-	SignalHash             string             `json:"signal_hash"`
-	VoteContextEncoding    zkpSpecVoteContext `json:"vote_context_encoding"`
-	HashToField            string             `json:"hash_to_field"`
-	PublicInputOrder       []string           `json:"public_input_order"`
-	Toolchain              zkpSpecToolchain   `json:"toolchain"`
-	Fixtures               zkpSpecFixtures    `json:"fixtures"`
-	ClientEncodingContract string             `json:"client_encoding_contract"`
-	TestOnlyClientProver   string             `json:"test_only_client_prover"`
-	TestOnlyWASMCommand    string             `json:"test_only_wasm_command"`
-	ClientSubmissionGuard  string             `json:"client_submission_guard"`
-	Exclusions             []string           `json:"exclusions"`
+	Schema                 string               `json:"schema"`
+	CircuitID              string               `json:"circuit_id"`
+	Classification         string               `json:"classification"`
+	ProductionAllowed      bool                 `json:"production_allowed"`
+	Curve                  zkpSpecCurve         `json:"curve"`
+	Hash                   zkpSpecHash          `json:"hash"`
+	Merkle                 zkpSpecMerkle        `json:"merkle"`
+	IdentityCommitment     string               `json:"identity_commitment"`
+	ExternalNullifier      string               `json:"external_nullifier"`
+	NullifierHash          string               `json:"nullifier_hash"`
+	SignalHash             string               `json:"signal_hash"`
+	VoteContextEncoding    zkpSpecVoteContext   `json:"vote_context_encoding"`
+	VoteContextV2          zkpSpecVoteContextV2 `json:"vote_context_v2"`
+	HashToField            string               `json:"hash_to_field"`
+	PublicInputOrder       []string             `json:"public_input_order"`
+	Toolchain              zkpSpecToolchain     `json:"toolchain"`
+	Fixtures               zkpSpecFixtures      `json:"fixtures"`
+	ClientEncodingContract string               `json:"client_encoding_contract"`
+	TestOnlyClientProver   string               `json:"test_only_client_prover"`
+	TestOnlyWASMCommand    string               `json:"test_only_wasm_command"`
+	ClientSubmissionGuard  string               `json:"client_submission_guard"`
+	Exclusions             []string             `json:"exclusions"`
 }
 
 type zkpSpecCurve struct {
@@ -104,6 +119,30 @@ type zkpSpecVoteContext struct {
 	Fields             []string `json:"fields"`
 	StringLengthPrefix string   `json:"string_length_prefix"`
 	RatingEncoding     string   `json:"rating_encoding"`
+}
+
+// zkpSpecVoteContextV2 is the GH-209 recipient-bound signal preimage section.
+// The pinned vector is recomputed by both the Go and maintained-client
+// encoders, so cross-language drift fails closed.
+type zkpSpecVoteContextV2 struct {
+	DomainSeparator         string                     `json:"domain_separator"`
+	Purpose                 string                     `json:"purpose"`
+	Fields                  []string                   `json:"fields"`
+	StringLengthPrefix      string                     `json:"string_length_prefix"`
+	RatingEncoding          string                     `json:"rating_encoding"`
+	RewardRecipientEncoding string                     `json:"reward_recipient_encoding"`
+	ExternalNullifier       string                     `json:"external_nullifier"`
+	Vector                  zkpSpecVoteContextV2Vector `json:"vector"`
+}
+
+type zkpSpecVoteContextV2Vector struct {
+	ChainID         string `json:"chain_id"`
+	DomainName      string `json:"domain_name"`
+	IssueName       string `json:"issue_name"`
+	SuggestionName  string `json:"suggestion_name"`
+	Rating          int    `json:"rating"`
+	RewardRecipient string `json:"reward_recipient"`
+	SignalHashHex   string `json:"signal_hash_hex"`
 }
 
 type zkpSpecToolchain struct {
@@ -218,6 +257,24 @@ func zkpCircuitSpecViolations(spec zkpCircuitSpec, gnarkVersion, gnarkCryptoVers
 	wantStrings("vote_context_encoding.fields", spec.VoteContextEncoding.Fields, zkpSpecVoteContextFields)
 	wantString("vote_context_encoding.string_length_prefix", spec.VoteContextEncoding.StringLengthPrefix, "uint32 big-endian")
 	wantString("vote_context_encoding.rating_encoding", spec.VoteContextEncoding.RatingEncoding, zkpSpecRatingEncoding)
+
+	v2 := spec.VoteContextV2
+	wantString("vote_context_v2.domain_separator", v2.DomainSeparator, zkpSpecV2DomainSeparator)
+	if !strings.Contains(v2.Purpose, "GH-209") {
+		violations = append(violations, "vote_context_v2.purpose must reference GH-209")
+	}
+	wantStrings("vote_context_v2.fields", v2.Fields, zkpSpecVoteContextFields)
+	wantString("vote_context_v2.string_length_prefix", v2.StringLengthPrefix, "uint32 big-endian")
+	wantString("vote_context_v2.rating_encoding", v2.RatingEncoding, zkpSpecV2RatingEncoding)
+	wantString("vote_context_v2.reward_recipient_encoding", v2.RewardRecipientEncoding, zkpSpecV2RecipientEncoding)
+	wantString("vote_context_v2.external_nullifier", v2.ExternalNullifier, zkpSpecV2External)
+	wantString("vote_context_v2.vector.chain_id", v2.Vector.ChainID, zkpSpecV2VectorChainID)
+	wantString("vote_context_v2.vector.domain_name", v2.Vector.DomainName, zkpSpecV2VectorDomain)
+	wantString("vote_context_v2.vector.issue_name", v2.Vector.IssueName, zkpSpecV2VectorIssue)
+	wantString("vote_context_v2.vector.suggestion_name", v2.Vector.SuggestionName, zkpSpecV2VectorSuggestion)
+	wantInt("vote_context_v2.vector.rating", v2.Vector.Rating, zkpSpecV2VectorRating)
+	wantString("vote_context_v2.vector.reward_recipient", v2.Vector.RewardRecipient, zkpSpecV2VectorRecipient)
+	wantString("vote_context_v2.vector.signal_hash_hex", v2.Vector.SignalHashHex, zkpSpecV2VectorSignalHashHex)
 	wantString("hash_to_field", spec.HashToField, zkpSpecHashToField)
 
 	wantStrings("public_input_order", spec.PublicInputOrder, zkpSpecPublicInputOrder)
@@ -309,6 +366,39 @@ func TestZKPCircuitSpecMatchesGoConstantsAndBehavior(t *testing.T) {
 	signal := ComputeVoteSignal(vector.ChainID, vector.DomainName, vector.IssueName, vector.SuggestionName, vector.Rating)
 	if got := hex.EncodeToString(signal); got != vector.SignalHashHex {
 		t.Fatalf("signal hash = %s, want %s", got, vector.SignalHashHex)
+	}
+
+	// GH-209 recipient-bound v2 signal: recompute from the Go encoder and
+	// independently from the spec formula so drift cannot self-agree.
+	v2 := spec.VoteContextV2.Vector
+	signalV2 := ComputeVoteSignalV2(v2.ChainID, v2.DomainName, v2.IssueName, v2.SuggestionName, v2.Rating, v2.RewardRecipient)
+	if got := hex.EncodeToString(signalV2); got != v2.SignalHashHex {
+		t.Fatalf("v2 signal hash = %s, want %s", got, v2.SignalHashHex)
+	}
+	var preimage bytes.Buffer
+	preimage.WriteString(zkpSpecV2DomainSeparator)
+	for _, value := range []string{v2.ChainID, v2.DomainName, v2.IssueName, v2.SuggestionName} {
+		_ = binary.Write(&preimage, binary.BigEndian, uint32(len(value)))
+		preimage.WriteString(value)
+	}
+	_ = binary.Write(&preimage, binary.BigEndian, int64(v2.Rating))
+	_ = binary.Write(&preimage, binary.BigEndian, uint32(len(v2.RewardRecipient)))
+	preimage.WriteString(v2.RewardRecipient)
+	digestV2 := sha256.Sum256(preimage.Bytes())
+	reducedV2 := new(big.Int).Mod(new(big.Int).SetBytes(digestV2[:]), ecc.BN254.ScalarField())
+	var independentV2 [32]byte
+	reducedV2.FillBytes(independentV2[:])
+	if !bytes.Equal(independentV2[:], signalV2) {
+		t.Fatal("spec hash_to_field formula disagrees with ComputeVoteSignalV2")
+	}
+	// The v2 signal must bind the recipient: a different recipient or the v1
+	// encoding must never collide with the pinned v2 vector.
+	if bytes.Equal(signal, signalV2) {
+		t.Fatal("v1 and v2 signals collided for the same vote context")
+	}
+	otherRecipient := ComputeVoteSignalV2(v2.ChainID, v2.DomainName, v2.IssueName, v2.SuggestionName, v2.Rating, v2.RewardRecipient+"x")
+	if bytes.Equal(otherRecipient, signalV2) {
+		t.Fatal("v2 signal is recipient-independent")
 	}
 	nullifier, err := ComputeNullifier(witness, external)
 	if err != nil {
@@ -422,6 +512,7 @@ func TestZKPCircuitSpecMatchesMaintainedClientContract(t *testing.T) {
 		spec.Curve.ScalarFieldModulus,
 		fmt.Sprintf("MIMC_ROUNDS = %d", spec.Hash.Rounds),
 		"'" + spec.VoteContextEncoding.DomainSeparator + "'",
+		"'" + spec.VoteContextV2.DomainSeparator + "'",
 		"keccak256",
 		"sha256",
 		"setUint32(0, value, false)",
@@ -518,10 +609,16 @@ func TestZKPCircuitSpecRejectsDrift(t *testing.T) {
 		"wrong gnark version":        func(s *zkpCircuitSpec) { s.Toolchain.Gnark = "v0.15.0" },
 		"wrong gnark-crypto version": func(s *zkpCircuitSpec) { s.Toolchain.GnarkCrypto = "v0.20.0" },
 		"missing exclusions":         func(s *zkpCircuitSpec) { s.Exclusions = nil },
-		"wrong client contract":      func(s *zkpCircuitSpec) { s.ClientEncodingContract = "client-web/src/services/zkp.ts" },
-		"wrong test prover":          func(s *zkpCircuitSpec) { s.TestOnlyClientProver = "client-web/src/services/zkp.ts" },
-		"wrong WASM command":         func(s *zkpCircuitSpec) { s.TestOnlyWASMCommand = "cmd/truerepublicd" },
-		"wrong fixture directory":    func(s *zkpCircuitSpec) { s.Fixtures.Directory = "testdata/zkp" },
+		"wrong v2 domain separator":  func(s *zkpCircuitSpec) { s.VoteContextV2.DomainSeparator = "TrueRepublic/vote/v1" },
+		"wrong v2 vector recipient": func(s *zkpCircuitSpec) {
+			s.VoteContextV2.Vector.RewardRecipient = "truerepublic1qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq"
+		},
+		"wrong v2 vector signal":   func(s *zkpCircuitSpec) { s.VoteContextV2.Vector.SignalHashHex = strings.Repeat("00", 32) },
+		"wrong v2 rating encoding": func(s *zkpCircuitSpec) { s.VoteContextV2.RatingEncoding = "int64 little-endian" },
+		"wrong client contract":    func(s *zkpCircuitSpec) { s.ClientEncodingContract = "client-web/src/services/zkp.ts" },
+		"wrong test prover":        func(s *zkpCircuitSpec) { s.TestOnlyClientProver = "client-web/src/services/zkp.ts" },
+		"wrong WASM command":       func(s *zkpCircuitSpec) { s.TestOnlyWASMCommand = "cmd/truerepublicd" },
+		"wrong fixture directory":  func(s *zkpCircuitSpec) { s.Fixtures.Directory = "testdata/zkp" },
 	}
 	for name, mutate := range cases {
 		t.Run(name, func(t *testing.T) {
