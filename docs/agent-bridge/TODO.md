@@ -458,8 +458,14 @@
   Go/client SBOMs, unsigned provenance, tool pins and supported platforms.
 - [ ] Add a network-free offline verifier with strict decoding, size/depth/path
   bounds, complete digest binding and adversarial failure fixtures.
-- [ ] Generate normalized SBOMs twice with byte parity and pin reviewed tools,
-  runtime toolchains and maintained container base images fail closed.
+- [ ] Generate each maintained-source Go/client SBOM twice and require
+  byte-identical output after normalization (which removes only
+  `serialNumber` and `metadata.timestamp`); pin the exact reviewed SBOM tool
+  versions, runtime toolchains and digest-pinned container base images
+  consistently across `configs/release/tool-platform.json`,
+  `configs/security/gates.json`, the Go verifier literals, the generator and
+  the workflow, failing closed on any contract schema, tool, platform,
+  base-image or Dockerfile FROM mismatch.
 - [ ] Extend protected CI to assemble and verify an ephemeral evidence bundle
   without publishing binaries/images, tags, releases, signatures or attestations.
 - [ ] Publish the exact supported-platform and verification boundary; complete

@@ -72,8 +72,12 @@ func TestValidBundleAndAdversarialBindings(t *testing.T) {
 
 	t.Run("symlink escape", func(t *testing.T) {
 		outside := filepath.Join(t.TempDir(), "outside.json")
-		os.WriteFile(outside, []byte(`{"bomFormat":"CycloneDX","specVersion":"1.6","components":[]}`), 0600)
-		os.Remove(filepath.Join(dir, "go.cdx.json"))
+		if err := os.WriteFile(outside, []byte(`{"bomFormat":"CycloneDX","specVersion":"1.6","components":[]}`), 0600); err != nil {
+			t.Fatal(err)
+		}
+		if err := os.Remove(filepath.Join(dir, "go.cdx.json")); err != nil {
+			t.Fatal(err)
+		}
 		if err := os.Symlink(outside, filepath.Join(dir, "go.cdx.json")); err != nil {
 			t.Fatal(err)
 		}
@@ -124,11 +128,15 @@ func makeBundle(t *testing.T) (string, Bundle) {
 	for i, d := range defs {
 		data := []byte("artifact-" + d.ID)
 		artifactPath := filepath.Join(dir, d.Artifact)
-		os.WriteFile(artifactPath, data, 0600)
+		if err := os.WriteFile(artifactPath, data, 0600); err != nil {
+			t.Fatal(err)
+		}
 		h := sum(data)
 		checksum := d.ID + ".CHECKSUMS.sha256"
 		metadataName := d.ID + ".build-metadata.json"
-		os.WriteFile(filepath.Join(dir, checksum), []byte(h+"  "+d.Artifact+"\n"), 0600)
+		if err := os.WriteFile(filepath.Join(dir, checksum), []byte(h+"  "+d.Artifact+"\n"), 0600); err != nil {
+			t.Fatal(err)
+		}
 		m := map[string]any{"schema": BuildEvidenceSchema, "contract_schema": BuildSchema, "contract_sha256": bh, "source_ref": testSource, "target": d.ID, "ci_runner": d.CIRunner, "runner_arch": d.RunnerArch, "artifact": d.Artifact, "sha256": h, "reproducible_pair_sha256": []string{h, h}, "go_version": "1.26.6", "cgo_enabled": "1", "source_date_epoch": 123, "build_flags": map[string]any{"trimpath": true, "buildvcs": false, "mod": "readonly", "buildid": "", "linker_build_id": "none", "version_variable": "main.version"}}
 		writeJSON(t, filepath.Join(dir, metadataName), m)
 		b.Targets = append(b.Targets, Target{d.ID, d.Artifact, h, checksum, metadataName})
@@ -137,7 +145,9 @@ func makeBundle(t *testing.T) (string, Bundle) {
 	for _, component := range []string{"go", "client"} {
 		name := component + ".cdx.json"
 		raw := []byte(`{"bomFormat":"CycloneDX","components":[{"name":"` + component + `"}],"specVersion":"1.6"}`)
-		os.WriteFile(filepath.Join(dir, name), raw, 0600)
+		if err := os.WriteFile(filepath.Join(dir, name), raw, 0600); err != nil {
+			t.Fatal(err)
+		}
 		b.SBOMs = append(b.SBOMs, SBOM{component, name, sum(raw)})
 	}
 	p := Provenance{Schema: ProvenanceSchema, SourceRef: testSource, BuildContractSHA256: bh, ToolContractSHA256: th, Claims: Claims{present: true}}

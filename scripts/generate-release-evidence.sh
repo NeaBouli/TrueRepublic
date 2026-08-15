@@ -5,7 +5,14 @@ export LC_ALL=C LANG=C
 ROOT_DIR=$(git -C "$(dirname "${BASH_SOURCE[0]}")/.." rev-parse --show-toplevel)
 BUILD_CONTRACT="$ROOT_DIR/configs/build/deterministic-linux-daemon.json"
 TOOL_CONTRACT="$ROOT_DIR/configs/release/tool-platform.json"
-SOURCE_REF= AMD64_DIR= ARM64_DIR= GO_SBOM_A= GO_SBOM_B= CLIENT_SBOM_A= CLIENT_SBOM_B= OUTPUT_DIR=
+SOURCE_REF=
+AMD64_DIR=
+ARM64_DIR=
+GO_SBOM_A=
+GO_SBOM_B=
+CLIENT_SBOM_A=
+CLIENT_SBOM_B=
+OUTPUT_DIR=
 usage() { echo "usage: $0 --source-ref <40-hex> --amd64-dir <dir> --arm64-dir <dir> --go-sbom-a <raw.json> --go-sbom-b <raw.json> --client-sbom-a <raw.json> --client-sbom-b <raw.json> --output-dir <new-dir> [--build-contract <file>] [--tool-contract <file>]" >&2; }
 while [[ $# -gt 0 ]]; do
   case "$1" in
@@ -20,6 +27,10 @@ done
 [[ "$SOURCE_REF" =~ ^[0-9a-f]{40}$ ]] || { echo "source ref must be exactly 40 lowercase hexadecimal characters" >&2; exit 1; }
 [[ ! -e "$OUTPUT_DIR" ]] || { echo "output directory already exists" >&2; exit 1; }
 jq -e '.schema=="truerepublic.release-tool-platform/v1" and .tools=={"cyclonedx_gomod":"v1.10.0","cyclonedx_npm":"6.0.1","node":"22.22.2","npm":"10.9.7"} and (.platforms|length)==2 and (.base_images|length)==4' "$TOOL_CONTRACT" >/dev/null
+tool_cyclonedx_gomod=$(jq -er '.tools.cyclonedx_gomod' "$TOOL_CONTRACT")
+tool_cyclonedx_npm=$(jq -er '.tools.cyclonedx_npm' "$TOOL_CONTRACT")
+tool_node=$(jq -er '.tools.node' "$TOOL_CONTRACT")
+tool_npm=$(jq -er '.tools.npm' "$TOOL_CONTRACT")
 tmp=$(mktemp -d)
 complete=0
 trap 'rm -rf "$tmp"; if [[ "$complete" != 1 && -d "$OUTPUT_DIR" ]]; then rm -rf "$OUTPUT_DIR"; fi' EXIT
@@ -50,7 +61,7 @@ amd_hash=$(sha256_file "$OUTPUT_DIR/truerepublicd-linux-amd64"); arm_hash=$(sha2
 go_hash=$(sha256_file "$OUTPUT_DIR/go.cdx.json"); client_hash=$(sha256_file "$OUTPUT_DIR/client.cdx.json")
 jq -n -cS --arg source "$SOURCE_REF" --arg bh "$build_hash" --arg th "$tool_hash" --arg ah "$amd_hash" --arg rh "$arm_hash" --arg gh "$go_hash" --arg ch "$client_hash" '{schema:"truerepublic.unsigned-provenance/v1",source_ref:$source,build_contract_sha256:$bh,tool_contract_sha256:$th,claims:{signed:false,published:false,production:false},targets:[{id:"linux-amd64",sha256:$ah},{id:"linux-arm64",sha256:$rh}],sboms:[{id:"go",sha256:$gh},{id:"client",sha256:$ch}]}' >"$OUTPUT_DIR/provenance.json"
 provenance_hash=$(sha256_file "$OUTPUT_DIR/provenance.json")
-jq -n -S --arg source "$SOURCE_REF" --arg bh "$build_hash" --arg th "$tool_hash" --arg ah "$amd_hash" --arg rh "$arm_hash" --arg gh "$go_hash" --arg ch "$client_hash" --arg ph "$provenance_hash" '{schema:"truerepublic.release-evidence/v1",source_ref:$source,build_contract_sha256:$bh,tool_contract_sha256:$th,tools:{cyclonedx_gomod:"v1.10.0",cyclonedx_npm:"6.0.1",node:"22.22.2",npm:"10.9.7"},claims:{signed:false,published:false,production:false},provenance:{file:"provenance.json",sha256:$ph},targets:[{id:"linux-amd64",artifact:"truerepublicd-linux-amd64",sha256:$ah,checksums_file:"linux-amd64.CHECKSUMS.sha256",metadata_file:"linux-amd64.build-metadata.json"},{id:"linux-arm64",artifact:"truerepublicd-linux-arm64",sha256:$rh,checksums_file:"linux-arm64.CHECKSUMS.sha256",metadata_file:"linux-arm64.build-metadata.json"}],sboms:[{component:"go",file:"go.cdx.json",sha256:$gh},{component:"client",file:"client.cdx.json",sha256:$ch}]}' >"$OUTPUT_DIR/release-evidence.json"
+jq -n -S --arg source "$SOURCE_REF" --arg bh "$build_hash" --arg th "$tool_hash" --arg ah "$amd_hash" --arg rh "$arm_hash" --arg gh "$go_hash" --arg ch "$client_hash" --arg ph "$provenance_hash" --arg cxg "$tool_cyclonedx_gomod" --arg cxn "$tool_cyclonedx_npm" --arg node "$tool_node" --arg npm "$tool_npm" '{schema:"truerepublic.release-evidence/v1",source_ref:$source,build_contract_sha256:$bh,tool_contract_sha256:$th,tools:{cyclonedx_gomod:$cxg,cyclonedx_npm:$cxn,node:$node,npm:$npm},claims:{signed:false,published:false,production:false},provenance:{file:"provenance.json",sha256:$ph},targets:[{id:"linux-amd64",artifact:"truerepublicd-linux-amd64",sha256:$ah,checksums_file:"linux-amd64.CHECKSUMS.sha256",metadata_file:"linux-amd64.build-metadata.json"},{id:"linux-arm64",artifact:"truerepublicd-linux-arm64",sha256:$rh,checksums_file:"linux-arm64.CHECKSUMS.sha256",metadata_file:"linux-arm64.build-metadata.json"}],sboms:[{component:"go",file:"go.cdx.json",sha256:$gh},{component:"client",file:"client.cdx.json",sha256:$ch}]}' >"$OUTPUT_DIR/release-evidence.json"
 "$ROOT_DIR/scripts/verify-release-evidence.sh" --bundle "$OUTPUT_DIR" --build-contract "$BUILD_CONTRACT" --tool-contract "$TOOL_CONTRACT"
 complete=1
 trap - EXIT

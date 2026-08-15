@@ -1,5 +1,49 @@
 # TrueRepublic Agent Bridge
 
+## 2026-08-16 02:40 EEST GH-212 replacement candidate → Local PASS
+
+- Sol completed the post-Kimi integration review and reran `make build` plus
+  full `make verify`: all 1,551 maintained Go cases pass under race/coverage,
+  root coverage remains 73.6% and release-evidence coverage is now 74.5%.
+- Exact pinned staticcheck v0.7.0, gitleaks v8.30.1 with positive/negative
+  fixtures, the security repository contract, deterministic-daemon contract,
+  complete release generator/verifier adversarial flow, docs consistency,
+  shell syntax, formatting and diff checks pass.
+- The local environment still has no Docker engine and no standalone
+  ShellCheck binary; Docker restart/build and shell/static validation therefore
+  remain mandatory protected replacement-head jobs. No local claim fills those
+  evidence gaps.
+- Next: commit and push the reviewed replacement candidate, resolve the nine
+  CodeRabbit threads, wait for all checks on the exact new head, then merge and
+  perform final-main/Pages/GH-29/Bridge closeout. No release or production write.
+
+---
+
+## 2026-08-16 02:27 EEST GH-212 protected review → Findings remediated
+
+- **PR/head:** PR #213 originally passed every protected context on exact head
+  `44e13c8`; CodeRabbit then reported seven actionable findings and two useful
+  nitpicks. Merge was correctly withheld.
+- **Kimi contribution:** Kimi K3 implemented the bounded review-fix block. Sol
+  reviewed the complete writing diff; Claude Code remains unavailable because
+  its local OAuth session is expired and changed no files.
+- **Hardening:** active Dockerfile `FROM` references are now parsed and exactly
+  cross-bound to the release contract; tool pins are checked across release,
+  security, deterministic-build and workflow contracts; generator metadata
+  derives from the reviewed contract; fixture errors and ambiguous negative
+  cases fail explicitly; Linux-only evidence boundaries and real race-command
+  requirements are stated precisely.
+- **Focused PASS:** release-evidence and root adversarial Go tests, root/package
+  vet, executed generator/verifier tamper flow, docs consistency, formatting
+  and diff checks. ShellCheck is unavailable locally; protected CI remains the
+  authoritative shell/static gate.
+- **Next:** run Sol's relevant complete gates, commit/push the replacement head,
+  resolve every review thread, require all replacement-head checks green, then
+  squash-merge and complete exact-main/Pages/tracker closeout. Production,
+  release, signing, publication and deployment remain false/not performed.
+
+---
+
 ## 2026-08-16 02:00 EEST GH-212 release-evidence contract → Local PASS
 
 - **Implementation:** exact source/build/tool/platform-bound amd64+arm64

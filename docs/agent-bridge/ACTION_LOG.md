@@ -4186,3 +4186,39 @@
 - Local Docker engine is unavailable, so no local container build was claimed.
   No release, binary upload, signature, registry push, deploy or production
   action occurred. Protected PR and final-main validation are next.
+
+## 2026-08-16 02:27 EEST - GH-212 protected review findings remediated
+
+- Exact PR #213 head `44e13c8` passed all protected contexts before merge;
+  CodeRabbit then supplied seven actionable findings and two useful nitpicks,
+  so merge was withheld and every valid finding was addressed.
+- Kimi K3 implemented the bounded review-fix block. Sol reviewed the complete
+  diff. Active Dockerfile `FROM` references are exactly cross-bound to the
+  release contract, tool pins are checked across release/security/build/CI
+  contracts, generator tool metadata derives from the contract, fixture write
+  failures and negative CLI cases are explicit, and platform/race documentation
+  now matches the real Linux and CGO-enabled gates.
+- Focused PASS: `go test ./releaseevidence`, root contract/adversarial tests,
+  `go vet . ./releaseevidence`, `scripts/test-release-evidence.sh`, docs
+  consistency, formatting and diff checks. ShellCheck is unavailable locally;
+  its protected CI replacement-head result remains required.
+- Claude Code OAuth remains expired and Claude changed no files. No tag,
+  release, signature, artifact/image publication, deployment or production
+  action occurred. Full Sol gates, replacement-head publication, review-thread
+  resolution and protected merge remain next.
+
+## 2026-08-16 02:40 EEST - GH-212 replacement candidate local PASS
+
+- Sol reviewed the complete Kimi diff and reran `make build` plus full
+  `make verify`: all 1,551 maintained Go race/coverage cases pass; root remains
+  73.6% and release-evidence coverage is 74.5%.
+- PASS: exact staticcheck v0.7.0, exact gitleaks v8.30.1 plus positive/negative
+  fixtures, security repository contract, deterministic-daemon contract,
+  complete release generator/verifier adversarial flow, docs consistency,
+  shell syntax, formatting and diff checks.
+- Docker is still unavailable locally and ShellCheck has no local binary, so
+  the protected replacement-head Docker and shell/static jobs remain required.
+  No release/tag/signing/publishing/deployment/production action occurred.
+- Next: commit/push the replacement candidate, resolve all review threads,
+  require the exact new head fully green, squash-merge and verify final main,
+  Pages, GH-29 and both Bridges.

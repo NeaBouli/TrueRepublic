@@ -54,6 +54,15 @@ done
   --output-dir "$tmp/bundle" >/dev/null
 ./scripts/verify-release-evidence.sh --bundle "$tmp/bundle" >/dev/null
 
+if ./scripts/verify-release-evidence.sh --bundle "$tmp/bundle" --unknown value >/dev/null 2>&1; then
+  echo "verifier accepted an unknown flag" >&2
+  exit 1
+fi
+if ./scripts/verify-release-evidence.sh --bundle "$tmp/missing" >/dev/null 2>&1; then
+  echo "verifier accepted a missing bundle" >&2
+  exit 1
+fi
+
 printf '%064d  truerepublicd-linux-arm64\n' 0 >"$tmp/linux-arm64/CHECKSUMS.sha256"
 if ./scripts/generate-release-evidence.sh \
   --source-ref "$source_ref" --amd64-dir "$tmp/linux-amd64" --arm64-dir "$tmp/linux-arm64" \
@@ -88,9 +97,5 @@ fi
 
 if ./scripts/generate-release-evidence.sh --source-ref ../escape --amd64-dir "$tmp" --arm64-dir "$tmp" --go-sbom-a "$tmp/go-a.json" --go-sbom-b "$tmp/go-b.json" --client-sbom-a "$tmp/client-a.json" --client-sbom-b "$tmp/client-b.json" --output-dir "$tmp/out" >/dev/null 2>&1; then
   echo "generator accepted a malformed source ref" >&2
-  exit 1
-fi
-if ./scripts/verify-release-evidence.sh --bundle "$tmp/missing" --unknown value >/dev/null 2>&1; then
-  echo "verifier accepted an unknown flag" >&2
   exit 1
 fi

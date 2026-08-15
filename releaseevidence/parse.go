@@ -14,7 +14,7 @@ func parseFile(path string, target any) error {
 	if err != nil {
 		return errors.New("input file is unavailable")
 	}
-	defer f.Close()
+	defer func() { _ = f.Close() }()
 	return parseReader(f, target)
 }
 

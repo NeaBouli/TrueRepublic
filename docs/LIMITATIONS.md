@@ -172,7 +172,9 @@ offline bundle verifier that cross-binds exact source, build contract,
 artifacts, checksums, build metadata, repeated normalized Go/client CycloneDX
 SBOMs, and a separate unsigned provenance record. CI exercises the real SBOM
 generators and synthetic positive/adversarial bundle fixtures without
-uploading binaries.
+uploading binaries. Release evidence verifies the Linux amd64 and Linux arm64
+daemon targets only; it does not build, bind, or verify macOS or Windows
+artifacts.
 
 This does not authenticate who created a bundle or whether every SBOM component
 is truthful, prove byte-reproducible container images, create a tag, publish or

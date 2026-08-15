@@ -301,7 +301,7 @@ func hashFile(path string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	defer f.Close()
+	defer func() { _ = f.Close() }()
 	h := sha256.New()
 	written, err := io.CopyN(h, f, maxBundleMemberBytes+1)
 	if err != nil && !errors.Is(err, io.EOF) {
@@ -317,7 +317,7 @@ func verifyChecksum(path, digest, name string) error {
 	if err != nil {
 		return err
 	}
-	defer f.Close()
+	defer func() { _ = f.Close() }()
 	s := bufio.NewScanner(f)
 	if !s.Scan() {
 		return errors.New("empty")
@@ -335,7 +335,7 @@ func validateCycloneDX(path string) error {
 	if err != nil {
 		return err
 	}
-	defer f.Close()
+	defer func() { _ = f.Close() }()
 	value, err := parseValue(f)
 	if err != nil {
 		return err
@@ -353,13 +353,10 @@ func validateCycloneDX(path string) error {
 	if _, exists := v["serialNumber"]; exists {
 		return fmt.Errorf("not normalized")
 	}
-	if metadata, ok := v["metadata"].(map[string]any); ok {
-		if _, exists := metadata["timestamp"]; exists {
+	if sbomMetadata, ok := v["metadata"].(map[string]any); ok {
+		if _, exists := sbomMetadata["timestamp"]; exists {
 			return fmt.Errorf("not normalized")
 		}
-	}
-	if format != "CycloneDX" {
-		return fmt.Errorf("invalid")
 	}
 	return nil
 }

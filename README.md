@@ -226,7 +226,7 @@ TrueRepublic/
 # Blockchain
 go mod tidy
 ./scripts/go-packages.sh go build
-./scripts/go-packages.sh go test -race -cover -count=1 -timeout=600s    # 1,551 Go cases
+CGO_ENABLED=1 ./scripts/go-packages.sh go test -race -cover -count=1 -timeout=600s    # 1,551 Go cases
 make ibc-two-chain                                                     # separate GH-175/GH-178/GH-181 proof gate
 
 # Smart contracts
