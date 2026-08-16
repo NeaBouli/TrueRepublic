@@ -1,6 +1,6 @@
 # TrueRepublic Road to Rollout
 
-Updated: 2026-08-13
+Updated: 2026-08-16
 
 TrueRepublic has a recovered and CI-verified v0.4 engineering foundation. It
 is **not production-ready, mainnet-ready, or approved for real funds or keys**.
@@ -19,7 +19,7 @@ intentionally more granular than the public 59-item tracker.
 
 - The ordered recovery merge chain is on `main`.
 - The maximum supply is fixed at 21,000,000 PNYX.
-- The source of truth records 1,896 recovery-verified tests: 1,551 Go, 26 Rust,
+- The source of truth records 1,921 recovery-verified tests: 1,576 Go, 26 Rust,
   and 319 maintained-client tests. The Go total includes GH-209's recipient-
   binding and atomic-payout adversarial coverage plus GH-206's pinned,
   test-only ZKP circuit/encoding freeze. GH-121's real registered browser-query
@@ -207,7 +207,7 @@ security, recovery and distribution gates.
 
 This is a separate future delivery program, not retroactive evidence for the
 current 59-item rollout tracker. Architecture documentation changes neither
-the **33/59** status nor `production_ready: false`. Whether an optional web
+the **34/59** status nor `production_ready: false`. Whether an optional web
 interface remains after Alpha qualification is deliberately deferred. See
 [SOVEREIGN_ALPHA_ARCHITECTURE.md](SOVEREIGN_ALPHA_ARCHITECTURE.md) for the
 component model, trust boundaries, delivery slices and future issue breakdown.
@@ -294,8 +294,12 @@ failure using the published runbooks and telemetry.
   offline bundle/SBOM/unsigned-provenance contract is repository-only and does
   not complete tagged builds, signing, publication, container reproducibility,
   deployment, or go/no-go approval.
-- [ ] Provide installation, configuration, migration, upgrade, rollback, and
-  uninstallation instructions.
+- [x] Provide installation, configuration, migration, upgrade, rollback, and
+  uninstallation instructions
+  ([GH-222](https://github.com/NeaBouli/TrueRepublic/issues/222) /
+  [PR #223](https://github.com/NeaBouli/TrueRepublic/pull/223)); only the
+  bounded governed v0.4.1 migration path is supported, while arbitrary
+  migrations remain explicitly unsupported.
 - [ ] Publish release notes with compatibility and breaking-change statements.
 - [ ] Freeze and independently review chain ID, genesis, consensus parameters,
   governance authorities, initial validator set, and all initial allocations.

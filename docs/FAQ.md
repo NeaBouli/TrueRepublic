@@ -145,7 +145,7 @@ There is no supported native mobile client.
 Fork the repo, create a branch, write tests, and submit a PR. See [Developer Docs](developers/README.md).
 
 ### Where are the tests?
-The recovery baseline has 1,896 verified standard-suite cases: 1,551 Go, 26
+The recovery baseline has 1,921 verified standard-suite cases: 1,576 Go, 26
 Rust, and 319 maintained-client tests. This total excludes the separate opt-in
 GH-175/GH-178/GH-181 IBC gate (`make ibc-two-chain`), GH-184 governed-upgrade
 gate, and GH-206 compatibility gate (`./scripts/test-zkp-wasm-client.sh`). Run

@@ -294,6 +294,8 @@ treasury|treasury
 dex|DEX
 truedemocracy|governance
 zkpprover|test-only ZKP prover
+releaseevidence|release evidence
+installlifecycle|install lifecycle
 MODULES
 echo ""
 
