@@ -451,14 +451,14 @@
   Kimi deep review was attempted twice but provider quota returned HTTP 403;
   an independent read-only review was completed and all findings remediated.
 
-## In progress - GH-212 repository-only release evidence
+## Completed - GH-212 repository-only release evidence
 
-- [ ] Define a bounded versioned manifest binding the exact source commit,
+- [x] Define a bounded versioned manifest binding the exact source commit,
   deterministic build contract, per-platform checksums/metadata, normalized
   Go/client SBOMs, unsigned provenance, tool pins and supported platforms.
-- [ ] Add a network-free offline verifier with strict decoding, size/depth/path
+- [x] Add a network-free offline verifier with strict decoding, size/depth/path
   bounds, complete digest binding and adversarial failure fixtures.
-- [ ] Generate each maintained-source Go/client SBOM twice and require
+- [x] Generate each maintained-source Go/client SBOM twice and require
   byte-identical output after normalization (which removes only
   `serialNumber` and `metadata.timestamp`); pin the exact reviewed SBOM tool
   versions, runtime toolchains and digest-pinned container base images
@@ -466,11 +466,11 @@
   `configs/security/gates.json`, the Go verifier literals, the generator and
   the workflow, failing closed on any contract schema, tool, platform,
   base-image or Dockerfile FROM mismatch.
-- [ ] Extend protected CI to assemble and verify an ephemeral evidence bundle
+- [x] Extend protected CI to assemble and verify an ephemeral evidence bundle
   without publishing binaries/images, tags, releases, signatures or attestations.
-- [ ] Publish the exact supported-platform and verification boundary; complete
+- [x] Publish the exact supported-platform and verification boundary; complete
   full local/security gates, Kimi/Sol review and the Claude helper check.
-- [ ] Publish protected PR, merge a green exact head, update GH-29/Bridges and
+- [x] Publish protected PR, merge a green exact head, update GH-29/Bridges and
   verify final main/Pages while production remains false.
 
 ## Local candidate - GH-212 repository-only release evidence

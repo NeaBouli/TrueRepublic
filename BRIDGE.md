@@ -1,5 +1,29 @@
 # TrueRepublic Agent Bridge
 
+## 2026-08-16 03:11 EEST GH-212 release-evidence contract → Merged / exact main green
+
+- **Protected publication:** PR #213 replacement head
+  `b72f29784ed6d1cd7340d580d527b4883f4ca8a5` passed all 26 contexts with zero
+  unresolved review threads and squash-merged as
+  `1e4cdb814eefa1441e70c75cf61ff81bbd081b1b`. GH-212 is closed and the remote
+  feature branch is deleted.
+- **Exact-main PASS:** Docs `31915999520`, Client `31915999527`, Security
+  `31915999568`, reproducible Linux `31915999607`, Go `31915999593` and Pages
+  `31915999145` all completed successfully for the merge commit.
+- **Tracker/public truth:** GH-29 now checks only Phase 7 “Pinned toolchains and
+  supported-platform documentation.” Public arithmetic remains 1,896 total,
+  rollout 34/59, phase work 34/51, Phase 6 6/7 and production false.
+- **Review split:** Kimi K3 supplied architecture, deep review and the bounded
+  CodeRabbit remediation; Sol reviewed/integrated every writing diff and ran
+  the complete local/protected/final-main gates. Claude Code OAuth remained
+  expired and Claude made no change.
+- **Boundaries:** no tag, GitHub Release, signed/published artifact, authenticated
+  provenance, registry push, container-reproducibility claim, deployment,
+  genesis/network mutation or production approval occurred. Remaining Phase 7
+  signing/publication/reproducible-tagged-release gates stay open.
+
+---
+
 ## 2026-08-16 02:40 EEST GH-212 replacement candidate → Local PASS
 
 - Sol completed the post-Kimi integration review and reran `make build` plus
