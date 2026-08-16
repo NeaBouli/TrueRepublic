@@ -24,8 +24,9 @@
     "bundle_budget": "enforced_during_build"
   },
   "recovery": {
-    "status": "active",
-    "github_issue": 4,
+    "status": "foundation_complete_rollout_in_progress",
+    "foundation_issue": 4,
+    "github_issue": 29,
     "production_ready": false,
     "canonical_web_client": "client-web",
     "legacy_clients": {
@@ -37,9 +38,9 @@
     "status": "engineering_in_progress",
     "tracker_scope": "github_issue_29",
     "github_issue": 29,
-    "completed": 34,
+    "completed": 33,
     "total": 59,
-    "phase_work_completed": 34,
+    "phase_work_completed": 33,
     "phase_work_total": 51,
     "phase_6_completed": 6,
     "phase_6_total": 7,

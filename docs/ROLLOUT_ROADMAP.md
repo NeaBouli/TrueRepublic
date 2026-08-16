@@ -207,7 +207,7 @@ security, recovery and distribution gates.
 
 This is a separate future delivery program, not retroactive evidence for the
 current 59-item rollout tracker. Architecture documentation changes neither
-the **34/59** status nor `production_ready: false`. Whether an optional web
+the **33/59** status nor `production_ready: false`. Whether an optional web
 interface remains after Alpha qualification is deliberately deferred. See
 [SOVEREIGN_ALPHA_ARCHITECTURE.md](SOVEREIGN_ALPHA_ARCHITECTURE.md) for the
 component model, trust boundaries, delivery slices and future issue breakdown.

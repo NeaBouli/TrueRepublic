@@ -4313,3 +4313,66 @@
 - No product implementation, license selection, release, deployment, key,
   fund, network or production action occurred. A0 native transport and license
   qualification is the next bounded Alpha implementation gate.
+
+## 2026-08-16 12:58 EEST - GH-218 GitHub hygiene started
+
+- Opened GH-218 and isolated `docs/GH-218-github-hygiene` from exact
+  `origin/main` `697c89feb9e243679e3d6028ff5b1890596ad3fd`.
+- Verified before mutation: zero open PRs; three open issues (#4, #7, #29);
+  three remote branches (`main`, superseded `agent/public-recovery-status`,
+  unrelated `solana-archived`); `delete_branch_on_merge=false`; review
+  protection enabled but no required status checks; GitHub detects no license.
+- Public v0.4.0 still claims Production Ready despite the current explicit
+  production-false boundary. An unpublished v0.3.0 draft repeats obsolete
+  production claims. Both require bounded reconciliation.
+- Next: Kimi independent read-only audit, then Sol-owned GitHub cleanup and a
+  real protected-PR proof. No product/release/deployment action is authorized.
+
+## 2026-08-16 13:05 EEST - GH-218 Kimi review integrated
+
+- Kimi verified the release, issue, branch, tag, status and protection evidence
+  read-only. All proposed cleanup actions are safe with bounded corrections;
+  no external write or file change came from Kimi.
+- Sol corrected the only policy-design gap: Docs `check` now runs on every PR
+  to main, while post-merge main pushes retain their existing path filter. The
+  eight Security Scan contexts were already universal.
+- Added warning-wrapped exact archives of the original v0.4.0 release body and
+  unpublished v0.3.0 draft body before GitHub mutation. Neither is current
+  product guidance.
+- Both unmerged recovery-status and unrelated Solana tips must be tagged and
+  remotely verified before branch deletion. The complete existing classic
+  protection object must be preserved when required contexts are added.
+
+## 2026-08-16 13:12 EEST - GH-218 external hygiene applied
+
+- Reconciled the public v0.4.0 release as a historical, artifact-free,
+  non-production prerelease and removed only the unpublished v0.3.0 draft.
+  Both annotated version tags remain; exact original bodies are locally
+  archived with explicit obsolete-claim warnings for protected publication.
+- Published and verified annotated archive tags
+  `archive/recovery-status-pr25-2026-07-12` → `e756d0b` and
+  `archive/solana-legacy-2026-08-16` → `043c62e`; only then deleted the two
+  remote branches. `main` was the sole remaining head before GH-218 push.
+- Closed completed #4/#7, synchronized active #29 with 1,896 / 34/59 / 34/51 /
+  Phase 6 6/7 / production false, and opened GH-219 for an explicit license
+  decision without selecting one.
+- Enabled merged-branch auto-deletion. Added nine exact Actions-owned required
+  contexts with `strict=false`; the full readback preserves linear history,
+  one stale-dismissing approval, admin enforcement disabled, signatures off,
+  and force-push/branch-deletion denial.
+- Updated README, Pages source, wiki and machine status so closed recovery
+  foundation #4 is not presented as the active tracker; #29 is active.
+
+## 2026-08-16 14:04 EEST - GH-218 Kimi final audit corrected tracker arithmetic
+
+- Kimi independently re-read the full working diff and live GitHub state. The
+  release, release archives, annotated tag targets, deleted remote branches,
+  issue states, repository settings, universal workflow contexts and local
+  documentation check were verified.
+- Kimi found one P2 evidence mismatch: the active GH-29 body has exactly 33
+  checked plus 26 unchecked items, although recent machine/public status text
+  reported 34/59. Sol traced the body-edit and repository history and found no
+  evidence supporting completion of any currently unchecked item.
+- Corrected the current source of truth to 33/59 overall and 33/51 phase work,
+  with Phase 6 unchanged at 6/7 and production unchanged at false. No checkbox,
+  product behavior, test count or production gate changed.

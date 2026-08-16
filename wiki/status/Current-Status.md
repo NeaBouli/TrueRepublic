@@ -69,6 +69,8 @@ reviewed, verified, and merged to `main` in this order.
 - The deprecated legacy web client was retired and removed under GH-112; the
   former mobile prototype was retired and removed under GH-102.
 
-See [Issue #4](https://github.com/NeaBouli/TrueRepublic/issues/4),
+See the completed recovery foundation in
+[Issue #4](https://github.com/NeaBouli/TrueRepublic/issues/4), the active
+[rollout tracker #29](https://github.com/NeaBouli/TrueRepublic/issues/29),
 [`BRIDGE.md`](https://github.com/NeaBouli/TrueRepublic/blob/main/BRIDGE.md),
 and [`docs/status.json`](https://github.com/NeaBouli/TrueRepublic/blob/main/docs/status.json).
