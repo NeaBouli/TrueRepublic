@@ -500,7 +500,7 @@
 - [ ] Commit/push, protected PR, review threads, exact-head CI, merge,
   final-main/Pages, GH-29/GH-212 and both-Bridge closeout.
 
-## In progress - GH-222 verified install lifecycle
+## Completed - GH-222 verified install lifecycle
 
 - [x] Define a versioned machine-readable native install lifecycle contract.
 - [x] Implement fail-closed install, compatible upgrade, pre-start rollback and
@@ -512,9 +512,11 @@
 - [x] Add the lifecycle gate to protected CI and reconcile installation,
   deployment and operator documentation with actual supported behavior.
 - [x] Complete fresh full gates.
-- [ ] Complete protected PR/review, exact-main/Pages and both-Bridge closeout.
-- [ ] Keep rollout at 33/59 until protected completion evidence exists; never
+- [x] Complete protected PR/review, exact-main/Pages and both-Bridge closeout.
+- [x] Keep rollout at 33/59 until protected completion evidence exists; never
   publish, deploy, tag, sign or authorize production from this task.
+- [x] Synchronize merged evidence at 1,921 cases, rollout 34/59, phase work
+  34/51, Phase 6 6/7 and production false.
 
 ## Completed - GH-215 sovereign decentralized Alpha architecture
 

@@ -7145,3 +7145,32 @@ exclusion, CI wiring, and documentation boundaries.
 - No release, tag, artifact publication, deployment, real state, network,
   key, fund or production action occurred. Public status remains 1,896 and
   rollout 33/59 until protected merge and closeout synchronization.
+
+## 2026-08-16 16:43 EEST - GH-222 implementation merged / closeout in progress
+
+- PR #223 exact head `c6cbcb7e634c1c3f6b4d8c38e768465bd075cc80`
+  passed all 22 reported protected contexts with zero unresolved review threads.
+  Admin squash merge `1bf9ce45cf55f0ee8c2f0c30e7b6a5a6818114a3`
+  closed GH-222 and removed the remote feature branch; no technical gate was
+  bypassed.
+- GH-29 now credits the exact Phase 7 install/migrate/upgrade/rollback/uninstall
+  documentation item with GH-222/PR #223 evidence and retains arbitrary
+  migrations as unsupported. Public closeout candidate is 1,921 cases, rollout
+  34/59, phase work 34/51, Phase 6 6/7, production false.
+- Docs-only branch `docs/GH-222-closeout` synchronizes status.json, README,
+  roadmap, Pages, wiki, limitations and handoff records. Protected docs review,
+  merge and exact-main/Pages verification remain pending. No tag, release,
+  publication, deployment or production action occurred.
+
+## 2026-08-16 16:45 EEST - GH-222 docs closeout local PASS
+
+- Synchronized all maintained public status surfaces to 1,921 cases (1,576 Go,
+  26 Rust, 319 client), rollout 34/59, phase work 34/51, Phase 6 6/7 and
+  production false. Added root 159 and install-lifecycle 24 to the canonical
+  module table and extended the consistency gate to enforce both release and
+  install-lifecycle rows.
+- PASS: documentation consistency, JSON arithmetic/schema queries, stale-live-
+  status scan and diff hygiene. GH-29 and the public roadmap now link the
+  merged GH-222/PR #223 evidence with arbitrary migrations still unsupported.
+- Next: protected docs PR, review/merge, exact-main workflows and cache-busted
+  live Pages verification. No release, deployment or production action.

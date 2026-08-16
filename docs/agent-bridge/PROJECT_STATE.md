@@ -820,3 +820,20 @@ to `main`.
 - Candidate evidence: 1,921 total = 1,576 Go + 26 Rust + 319 client.
 - All relevant local gates pass; protected replacement head and closeout are
   pending. Public truth remains 1,896, rollout 33/59, production false.
+
+## 2026-08-16 16:43 EEST - GH-222 merged / status synchronization
+
+- Implementation: merged to main as `1bf9ce4`; GH-222 closed; 22/22 protected
+  contexts green; unresolved review threads 0.
+- Canonical closeout values: 1,921 total = 1,576 Go + 26 Rust + 319 client;
+  rollout 34/59; phase work 34/51; Phase 6 6/7; production false.
+- GH-29 lifecycle-documentation item: complete with GH-222/PR #223 evidence;
+  arbitrary migrations remain unsupported.
+- Pending: docs-only protected merge, exact-main workflow and live Pages proof.
+
+## 2026-08-16 16:45 EEST - GH-222 closeout candidate
+
+- Public candidate: 1,921 total; 1,576 Go; 26 Rust; 319 client; rollout 34/59;
+  phase work 34/51; Phase 6 6/7; production false.
+- GH-29 and roadmap evidence synchronized. Docs/JSON/stale-status/diff checks
+  pass. Protected closeout merge and exact-main/Pages proof remain pending.

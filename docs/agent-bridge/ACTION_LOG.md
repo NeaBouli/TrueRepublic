@@ -4471,3 +4471,24 @@
 - Exact standard count is now 1,921: 1,576 Go, 26 Rust and 319 client. The
   earlier 1,920 candidate record predates the new concurrency test; public
   merged-main truth remains 1,896 and rollout 33/59 pending protected merge.
+
+## 2026-08-16 16:43 EEST - GH-222 protected implementation merge
+
+- Exact PR head `c6cbcb7` passed 22/22 reported contexts and had zero open
+  review threads. Squash merge `1bf9ce4` closed GH-222 and deleted the remote
+  feature branch.
+- GH-29 now links GH-222/PR #223 on the completed Phase 7 lifecycle-doc item.
+  The docs-only closeout publishes 1,921 total, 1,576 Go, rollout 34/59, phase
+  work 34/51, Phase 6 6/7 and production false.
+- Closeout PR, exact-main workflows and live Pages remain pending. No release,
+  artifact publication, deployment, real network/state/key/fund or production
+  action occurred.
+
+## 2026-08-16 16:45 EEST - GH-222 docs closeout local PASS
+
+- Updated canonical and public status to 1,921 total / 1,576 Go / 34-of-59 /
+  34-of-51 / Phase 6 6-of-7 / production false.
+- Added root 159 and install lifecycle 24 module evidence and made the docs
+  consistency gate enforce release-evidence and install-lifecycle wiki rows.
+- Docs consistency, JSON arithmetic, stale-live-status and diff gates pass.
+  Protected docs publication and exact-main/Pages verification remain pending.

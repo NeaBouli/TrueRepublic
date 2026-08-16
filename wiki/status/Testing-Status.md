@@ -1,12 +1,12 @@
 # Testing Status
 
-The current **v0.4.0 recovery** source of truth records **1,896 verified
+The current **v0.4.0 recovery** source of truth records **1,921 verified
 standard-suite cases**. This arithmetic excludes the separately run opt-in
 GH-175/GH-178/GH-181 IBC two-chain and GH-184 governed-upgrade gates.
 
 | Suite | Passing cases |
 |---|---:|
-| Go root/application | 158 |
+| Go root/application | 159 |
 | Go capacity policy | 48 |
 | Go deployment evidence | 71 |
 | Go health checks | 55 |
@@ -21,14 +21,15 @@ GH-175/GH-178/GH-181 IBC two-chain and GH-184 governed-upgrade gates.
 | Go governance | 612 |
 | Go test-only ZKP prover | 8 |
 | Go release evidence | 20 |
+| Go install lifecycle | 24 |
 | Rust/CosmWasm | 26 |
 | Maintained client | 319 |
-| **Total** | **1,896** |
+| **Total** | **1,921** |
 
 The published total is the reproducible standard-suite baseline; the opt-in
 GH-175/GH-178/GH-181 IBC recovery, GH-184 upgrade, and GH-206 Go/WASM
 compatibility (`./scripts/test-zkp-wasm-client.sh`) gates are additional
-evidence and are not counted in the 1,551 Go subtotal.
+evidence and are not counted in the 1,576 Go subtotal.
 
 ## Current Go coverage
 
@@ -42,7 +43,8 @@ evidence and are not counted in the 1,551 Go subtotal.
 | migration | 84.6% |
 | network policy | 95.5% |
 | observability | 80.3% |
-| release evidence | 74.0% |
+| release evidence | 74.5% |
+| install lifecycle | 77.2% |
 | token | 95.6% |
 | topology policy | 85.8% |
 | treasury | 97.0% |
