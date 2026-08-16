@@ -4537,3 +4537,17 @@
 - Fresh standard arithmetic is 1,941 = 1,596 Go + 26 Rust + 319 client: the
   contract contributes exactly 20 Go passing cases. Public 1,921 and rollout
   34/59 remain unchanged until protected merge and evidence closeout.
+
+## 2026-08-17 02:57 EEST - GH-225 first protected review remediated
+
+- PR #226 first head had 21 successful and five still-running contexts with no
+  failure when CodeRabbit completed with three valid inline findings.
+- Closed all three in the replacement diff: exact candidate/build source-kind
+  and `main.version={{source_ref}}` binding; explicit rejection of repository
+  root as evidence; and bidirectional document status validation requiring
+  unreleased/all-false claims while rejecting contradictory released/true
+  wording.
+- Focused contract, focused Race and pinned staticcheck pass after remediation.
+  Case count stays at exactly 20 new Go passing cases because the added negative
+  assertions remain inside the existing top-level case. Replacement protected
+  checks, replies/thread resolution and merge remain.

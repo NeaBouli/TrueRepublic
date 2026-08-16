@@ -7228,3 +7228,18 @@ exclusion, CI wiring, and documentation boundaries.
   protected GH-225 merge and a separate evidence closeout. No tag, artifact,
   signature, deployment, genesis freeze, real key/fund, production approval or
   go/no-go action occurred.
+
+## 2026-08-17 02:57 EEST - GH-225 protected review remediation PASS
+
+- PR #226 first head reached 21 green contexts with zero failures before its
+  three actionable CodeRabbit contract findings were independently verified.
+- The replacement candidate now requires the deterministic build source kind
+  to equal the candidate source identity and an exact
+  `main.version={{source_ref}}` assignment, rejects repository root `.` as
+  evidence, and requires both candidate documents to contain the explicit
+  unreleased plus production/tagged/published/signed false claims while
+  rejecting contradictory true/released claims.
+- Added in-parent negative assertions without changing the published case
+  arithmetic. Focused normal and Race contract tests plus pinned staticcheck
+  pass. Exact replacement-head protected checks and thread resolution are next;
+  no release, artifact, deployment or production action occurred.

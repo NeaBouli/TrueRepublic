@@ -1,5 +1,19 @@
 # Project State
 
+GH-225 PR #226 is under replacement-head protected validation after all three
+first-review findings were remediated. Candidate/build source identity now
+requires the exact configured source kind plus
+`main.version={{source_ref}}`; repository root cannot satisfy evidence; and
+both candidate documents must contain unreleased plus all four false safety
+claims and reject contradictory released/true wording. Focused normal/Race
+contracts and pinned staticcheck pass. The first head had 21 green and no
+failed contexts when replaced. Candidate/public arithmetic and all explicit
+non-release/non-production boundaries remain unchanged.
+
+Updated: 2026-08-16 23:57 UTC
+
+---
+
 GH-225 is locally implementation- and gate-complete on
 `docs/GH-225-release-compatibility`. The new
 `truerepublic.release-compatibility/v1` contract binds the unreleased candidate

@@ -103,6 +103,19 @@ type releaseDocuments struct {
 	Compatibility string `json:"compatibility"`
 }
 
+type releaseBuildContract struct {
+	GoVersion string `json:"go_version"`
+	SourceRef struct {
+		Kind string `json:"kind"`
+	} `json:"source_ref"`
+	Targets []struct {
+		ID string `json:"id"`
+	} `json:"targets"`
+	BuildFlags struct {
+		LDFlags []string `json:"ldflags"`
+	} `json:"build_flags"`
+}
+
 func TestReleaseCompatibilityRepositoryContract(t *testing.T) {
 	raw := []byte(readRepositoryFile(t, releaseCompatibilityPath))
 	contract, err := decodeReleaseCompatibility(raw)
@@ -111,6 +124,26 @@ func TestReleaseCompatibilityRepositoryContract(t *testing.T) {
 	}
 	if violations := releaseCompatibilityViolations(contract); len(violations) != 0 {
 		t.Fatalf("contract violations:\n- %s", strings.Join(violations, "\n- "))
+	}
+	if len(evidenceViolations([]string{"."})) == 0 {
+		t.Fatal("repository root accepted as evidence")
+	}
+	if sourceIdentityLDFlagConfigured(contract.Candidate, contract.Candidate.SourceIdentity, []string{"-s"}) {
+		t.Fatal("missing source-identity ldflag accepted")
+	}
+	if sourceIdentityLDFlagConfigured(contract.Candidate, "tag", []string{"main.version={{source_ref}}"}) {
+		t.Fatal("mismatched source identity accepted")
+	}
+	for _, doc := range []string{contract.Documents.ReleaseNotes, contract.Documents.Compatibility} {
+		body := readRepositoryFile(t, doc)
+		for _, label := range []string{"production", "tagged", "published", "signed"} {
+			documentLabel := strings.ToUpper(label[:1]) + label[1:]
+			falseClaim := regexp.MustCompile(`(?i)\b` + regexp.QuoteMeta(label) + `:\s*` + "`false`")
+			contradictory := falseClaim.ReplaceAllString(body, documentLabel+": `true`")
+			if contradictory == body || len(documentStatusViolations(contradictory, contract.Candidate)) == 0 {
+				t.Fatalf("%s true claim accepted in %s", label, doc)
+			}
+		}
 	}
 
 	for name, mutated := range map[string][]byte{
@@ -292,16 +325,9 @@ func releaseCompatibilityViolations(c releaseCompatibilityContract) []string {
 		Tools      map[string]string `json:"tools"`
 	}
 	mustReadJSON(&out, "configs/security/gates.json", &gates)
-	var build struct {
-		GoVersion string `json:"go_version"`
-		Targets   []struct {
-			ID string `json:"id"`
-		} `json:"targets"`
-		BuildFlags struct {
-			LDFlags []string `json:"ldflags"`
-		} `json:"build_flags"`
-	}
+	var build releaseBuildContract
 	mustReadJSON(&out, "configs/build/deterministic-linux-daemon.json", &build)
+	add(sourceIdentityLDFlagConfigured(c.Candidate, build.SourceRef.Kind, build.BuildFlags.LDFlags), "source identity ldflag mismatch")
 	ids := func(ts []releaseTarget) []string {
 		r := make([]string, len(ts))
 		for i, t := range ts {
@@ -391,10 +417,10 @@ func releaseCompatibilityViolations(c releaseCompatibilityContract) []string {
 		if err == nil {
 			txt := string(body)
 			add(strings.Contains(txt, c.Schema), "document schema missing")
+			out = append(out, documentStatusViolations(txt, c.Candidate)...)
 			for _, ch := range c.Changes {
 				add(strings.Contains(txt, ch.ID), "document change ID missing")
 			}
-			add(!strings.Contains(txt, "Release Date:") && !strings.Contains(txt, "Production Ready"), "document contains forbidden release claim")
 		}
 	}
 	for _, workflow := range []string{".github/workflows/docs-check.yml", ".github/workflows/reproducible-daemon.yml"} {
@@ -421,7 +447,7 @@ func evidenceViolations(paths []string) []string {
 	}
 	for _, p := range paths {
 		clean := filepath.Clean(p)
-		if p == "" || clean != p || filepath.IsAbs(p) || strings.Contains(p, "\\") || strings.HasPrefix(p, "../") {
+		if p == "" || p == "." || clean != p || filepath.IsAbs(p) || strings.Contains(p, "\\") || strings.HasPrefix(p, "../") {
 			out = append(out, "unsafe evidence path")
 			continue
 		}
@@ -450,6 +476,57 @@ func evidenceViolations(paths []string) []string {
 	}
 	return out
 }
+
+func sourceIdentityLDFlagConfigured(candidate releaseCandidate, sourceKind string, ldflags []string) bool {
+	if candidate.SourceIdentity == "" || sourceKind != candidate.SourceIdentity {
+		return false
+	}
+	want := candidate.BinaryVersionLDFlag + "={{source_ref}}"
+	for _, flag := range ldflags {
+		if flag == want {
+			return true
+		}
+	}
+	return false
+}
+
+func documentStatusViolations(text string, candidate releaseCandidate) []string {
+	var out []string
+	lower := strings.ToLower(text)
+	if candidate.Unreleased == nil || !*candidate.Unreleased || !regexp.MustCompile(`\bunreleased\b`).MatchString(lower) || regexp.MustCompile(`\breleased\b`).MatchString(lower) {
+		out = append(out, "document release status mismatch")
+	}
+	claims := map[string]*bool{
+		"production": candidate.Production,
+		"tagged":     candidate.Tagged,
+		"published":  candidate.Published,
+		"signed":     candidate.Signed,
+	}
+	for label, expected := range claims {
+		if expected == nil {
+			out = append(out, "document "+label+" status missing")
+			continue
+		}
+		value := "false"
+		if *expected {
+			value = "true"
+		}
+		claim := regexp.MustCompile(`\b` + regexp.QuoteMeta(label) + `:\s*` + "`?" + value + `\b` + "`?")
+		contradiction := "false"
+		if value == "false" {
+			contradiction = "true"
+		}
+		forbidden := regexp.MustCompile(`\b` + regexp.QuoteMeta(label) + `:\s*` + "`?" + contradiction + `\b` + "`?")
+		if !claim.MatchString(lower) || forbidden.MatchString(lower) {
+			out = append(out, "document "+label+" status mismatch")
+		}
+	}
+	if strings.Contains(text, "Release Date:") || strings.Contains(text, "Production Ready") {
+		out = append(out, "document contains forbidden release claim")
+	}
+	return out
+}
+
 func releaseStringsEqual(a, b []string) bool {
 	if len(a) != len(b) {
 		return false
