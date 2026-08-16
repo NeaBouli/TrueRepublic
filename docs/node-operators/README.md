@@ -11,6 +11,7 @@ production or public-network approval.
 - [Native Build](installation/native-build.md)
 - [Reproducible Build](installation/reproducible-build.md)
 - [Offline Release Evidence](installation/release-evidence.md)
+- [Artifact Lifecycle](installation/lifecycle.md)
 
 ### Configuration
 - [Node Configuration](configuration/node-config.md)
@@ -74,7 +75,7 @@ make build
 │ Cosmos SDK Application Layer             │
 │ truedemocracy │ dex │ treasury modules   │
 ├──────────────────────────────────────────┤
-│ CometBFT Consensus (v0.38.21)            │
+│ CometBFT Consensus (v0.38.25)            │
 │ P2P (26656) │ Metrics (26660)            │
 └──────────────────────────────────────────┘
 ```

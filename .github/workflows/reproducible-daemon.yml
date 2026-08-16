@@ -14,6 +14,14 @@ on:
       - 'configs/security/gates.json'
       - 'releaseevidence/**'
       - 'cmd/release-evidence/**'
+      - 'installlifecycle/**'
+      - 'cmd/install-lifecycle/**'
+      - 'INSTALLATION.md'
+      - 'README.md'
+      - 'RELEASE_NOTES_v0.3.0.md'
+      - 'docs/DEPLOYMENT.md'
+      - 'docs/node-operators/README.md'
+      - 'docs/node-operators/installation/**'
       - 'scripts/build-deterministic-daemon.sh'
       - 'scripts/generate-release-evidence.sh'
       - 'scripts/test-release-evidence.sh'
@@ -36,6 +44,14 @@ on:
       - 'configs/security/gates.json'
       - 'releaseevidence/**'
       - 'cmd/release-evidence/**'
+      - 'installlifecycle/**'
+      - 'cmd/install-lifecycle/**'
+      - 'INSTALLATION.md'
+      - 'README.md'
+      - 'RELEASE_NOTES_v0.3.0.md'
+      - 'docs/DEPLOYMENT.md'
+      - 'docs/node-operators/README.md'
+      - 'docs/node-operators/installation/**'
       - 'scripts/build-deterministic-daemon.sh'
       - 'scripts/generate-release-evidence.sh'
       - 'scripts/test-release-evidence.sh'
@@ -93,6 +109,11 @@ jobs:
 
       - name: Verify fail-closed release-evidence fixtures offline
         run: ./scripts/test-release-evidence.sh
+
+      - name: Verify fail-closed install lifecycle offline
+        run: |
+          make install-lifecycle-contract-test
+          go test . -run '^TestInstallLifecycleRepositoryContract$' -count=1
 
   deterministic-build:
     name: ${{ matrix.target }}

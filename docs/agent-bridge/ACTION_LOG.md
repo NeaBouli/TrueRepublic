@@ -4392,3 +4392,82 @@
 - GH-218 is ready for this Bridge closeout PR. No product behavior, rollout
   checkbox, license decision, release artifact, deployment, network, key, fund
   or production boundary changed.
+
+## 2026-08-16 14:54 EEST - GH-222 verified install lifecycle started
+
+- Opened GH-222 and branched `feature/GH-222-install-lifecycle` from exact main
+  `6707ff3bdd9a8d19a65477fc27f5a70d1b60248d` with a clean tree.
+- Selected the next fully autonomous Phase 7 gate: tested installation,
+  configuration, compatible upgrade, pre-start rollback and safe uninstall.
+  The earlier reproducible-tagged-artifact item remains publication-gated and
+  is not silently authorized by this development request.
+- Initial inspection found stale and unsafe public guidance: mixed Go/version
+  requirements, unverified GOPATH installation, direct binary replacement,
+  nonexistent migration commands and destructive `unsafe-reset-all` recovery
+  advice. GH-222 must replace claims with executable fail-closed evidence.
+- Kimi receives one bounded secret-free implementation/audit block. Sol retains
+  architecture, state-safety, integration, full verification and external
+  action ownership. No production or real operator state is in scope.
+
+## 2026-08-16 15:46 EEST - GH-222 local implementation and review remediation
+
+- Implemented the generic v1 install-lifecycle contract plus isolated Go CLI
+  and package for clean install, exact status/pre-start, compatible upgrade,
+  one newest rollback snapshot, replay-resistant rollback and exact-allowlist
+  uninstall. Operator home/state is contractually outside the prefix and is
+  preserved by positive and negative fixtures.
+- Sol reviewed the delegated core and fixed host-target/runtime binding,
+  full-chain symlink detection, opened-file identity comparison, post-copy
+  verification, owner-execute/special-mode validation, monotonic rollback
+  generations, no-mutation invalid preflight, inside-prefix upgrade rejection,
+  orphan rollback status and CI doc-trigger coverage.
+- Kimi's read-only review reported one P2 and three P3 findings. The P2 and the
+  macOS/CI/status findings are closed; the residual privileged local path-race
+  surface is explicitly bounded by exclusive root-owned parent ownership and
+  fail-closed post-copy/marker behavior. Claude Code was attempted for a small
+  docs audit, but expired OAuth produced no output or diff.
+- Reconciled installation/deployment/operator guidance and removed unsupported
+  GOPATH install, in-place replacement, fictitious migration, destructive
+  reset/volume deletion and unreachable macOS service instructions. The
+  v0.3.0 root release note is explicitly historical and non-operational.
+- PASS: focused package/CLI tests, repository contract, Make target, Go vet,
+  JSON/YAML, formatting and diff checks. Earlier full Race/Coverage passed but
+  must be rerun after the last remediation before publication.
+- No release, tag, registry, artifact publication, deployment, real state,
+  network, key, fund or production action occurred; rollout remains 33/59.
+
+## 2026-08-16 16:02 EEST - GH-222 final local gate complete
+
+- Final post-remediation `make verify` passes package selection, build, vet and
+  full Race/Coverage over all 19 maintained Go packages; install-lifecycle
+  coverage is 76.6%. Exact pinned staticcheck, Go vulnerability policy and
+  negative fixtures, secret scan, release-evidence, deterministic-build and
+  lifecycle/repository contracts pass.
+- Maintained client lint, 319 tests, TypeScript/Vite build and bundle budgets
+  pass. Rust format, Clippy with denied warnings and 26 tests pass. Docs
+  consistency, JSON/YAML, formatting and diff checks pass.
+- Fresh standard count is 1,920: 1,575 Go (including 23 lifecycle plus one root
+  contract), 26 Rust and 319 client. Public 1,896 and rollout 33/59 remain
+  unchanged until protected merge and evidence synchronization.
+- Docker is not installed locally. Hosted protected Docker/Compose and all
+  exact-head review checks remain required before merge.
+
+## 2026-08-16 16:07 EEST - GH-222 protected review remediation
+
+- Independently reproduced and closed the six current automated review
+  findings with bounded code, test, documentation and checklist changes.
+- Added exclusive lifecycle transaction creation plus concurrent regression,
+  exact empty managed-directory pruning plus reinstall regression, mandatory
+  post-upgrade pre-start, and complete identity-bound systemd examples.
+- Fresh full Go race and lifecycle repository contracts pass on the remediated
+  tree. Remaining complete gates, replacement protected checks, thread
+  resolution, merge and exact-main/Pages synchronization remain pending.
+
+## 2026-08-16 16:20 EEST - GH-222 final review hardening
+
+- Kimi's independent final diff review found no P0-P2 and four P3 hardening
+  opportunities; all four were addressed and the dedicated transaction-dir
+  scenario was added to an existing regression without adding another case.
+- Exact standard count is now 1,921: 1,576 Go, 26 Rust and 319 client. The
+  earlier 1,920 candidate record predates the new concurrency test; public
+  merged-main truth remains 1,896 and rollout 33/59 pending protected merge.

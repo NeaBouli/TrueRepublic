@@ -44,7 +44,7 @@ make docker-build
 ```
 
 This builds:
-- **truerepublic-node** -- Multi-stage Go build (golang:1.23-alpine -> alpine:3.19)
+- **truerepublic-node** -- pinned multi-stage Go 1.26.6 build on Debian Bookworm
 - **client-web** -- maintained React/Vite build served by nginx
 
 ## Step 3: Start
@@ -186,13 +186,12 @@ curl http://localhost:26657/net_info | jq .result.n_peers
 docker exec truerepublic-node ping seed1.truerepublic.network
 ```
 
-### Reset node data
+### Suspected data corruption
 
-```bash
-make docker-down
-docker volume rm truerepublic_node-data
-make docker-up
-```
+Stop the stack and preserve logs and the named volume. Do not delete or reset
+the volume as a troubleshooting shortcut. Follow
+[Backup & Recovery](../operations/backup-recovery.md); validator recovery also
+requires a double-sign safety review before any state is restored.
 
 ## Next Steps
 

@@ -2,7 +2,7 @@
 
 ## Quick Start
 
-### Option A: Docker (Recommended)
+### Option A: Docker recovery profile
 
 Run the complete TrueRepublic stack (node + maintained web client + monitoring)
 with Docker:
@@ -34,8 +34,7 @@ open http://localhost:3000                   # Grafana (admin / your-password)
 git clone https://github.com/NeaBouli/TrueRepublic.git
 cd TrueRepublic
 
-# Build blockchain
-go mod tidy
+# Build blockchain without changing the module graph
 make build                    # Binary: ./build/truerepublicd
 
 # Start node
@@ -60,7 +59,7 @@ npm run dev
 | Component | Requirement | Check |
 |-----------|-------------|-------|
 | **Docker** (Option A) | Docker 24.0+, Compose v2.20+ | `docker --version` |
-| **Go** (Option B) | Go 1.23.5+ | `go version` |
+| **Go** (Option B) | Go 1.26.6 | `go version` |
 | **Node.js** (web client) | Node.js 22+ | `node --version` |
 | **Rust** (smart contracts) | Rust 1.75+ | `rustc --version` |
 
@@ -83,7 +82,7 @@ profile. Production role exposure must follow the
 
 ### Native Build
 
-Binary: `./build/truerepublicd` (or `$GOPATH/bin/truerepublicd` with `make install`)
+Binary: `./build/truerepublicd`
 
 Data directory: `~/.truerepublic/`
 
@@ -92,8 +91,7 @@ Data directory: `~/.truerepublic/`
 | Command | Description |
 |---------|-------------|
 | `make build` | Build blockchain binary |
-| `make install` | Install to $GOPATH/bin |
-| `make test` | Run 182 tests with race detector |
+| `make test` | Run the Go test suite with race detector |
 | `make lint` | Run vet and staticcheck |
 | `make clean` | Remove build artifacts |
 | `make docker-build` | Build Docker images |
@@ -124,6 +122,7 @@ audit only; use `client-web` for all current development.
 
 ## Next Steps
 
+- **Artifact lifecycle:** [Install, upgrade, rollback, and uninstall](docs/node-operators/installation/lifecycle.md)
 - **End users:** [User Manual](docs/user-manual/README.md)
 - **Node operators:** [Node Operators Guide](docs/node-operators/README.md)
 - **Validators:** [Validator Guide](docs/validators/README.md)
