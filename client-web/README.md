@@ -160,4 +160,6 @@ Current recovery build (`npm run build`):
 
 ## License
 
-See main repository LICENSE.
+The repository currently has no root `LICENSE` file. `CONTRIBUTING.md` describes
+Apache 2.0 intent, but GH-215 Alpha dependency/code adoption remains blocked
+until maintainers publish the exact project license and compatibility review.

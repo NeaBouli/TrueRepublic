@@ -45,8 +45,10 @@ Published arithmetic remains **1,896 recovery-verified tests** (1,551 Go +
    signing. Adopt [Waku](https://docs.waku.org/) protocols over libp2p as the
    candidate transport, conditional on the A0 real-device qualification gate
    (DG-4). Exact toolchain versions and binding mechanics are spike-gated.
-   The Beta's TypeScript services remain behavioral specifications and golden
-   compatibility vectors, not Alpha runtime dependencies.
+   The Beta's current fail-closed TypeScript transaction/signing and registered
+   protobuf query behavior remains the target for golden compatibility vectors,
+   not an Alpha runtime dependency. Retired or pre-GH-121 unregistered query
+   aliases are explicitly excluded from the compatibility contract.
 2. **Reject forking Telegram clients or building on TDLib.** Telegram's
    architecture is client-open/server-closed: cloud chats are stored on and
    routed by Telegram-operated servers under the MTProto client-server
@@ -141,9 +143,11 @@ This audit cites exact repository evidence and states limitations plainly.
   discussion, attachment, notification, or presence subsystem on chain or in
   the client. Discussions today happen outside the product (e.g. the project
   Telegram group linked in `README.md`).
-- **Role in the Alpha:** the Beta TypeScript transaction, query, signing, and
-  wallet services become behavioral specifications and golden compatibility
-  vectors for the Go core. They are not Alpha runtime dependencies.
+- **Role in the Alpha:** the Beta's current fail-closed transaction/signing,
+  registered protobuf query, and wallet behavior becomes golden compatibility
+  evidence for the Go core. Retired/pre-GH-121 unregistered query aliases and
+  any historical fail-soft behavior are excluded. TypeScript is not an Alpha
+  runtime dependency.
 
 ### 2.3 Retired and absent surfaces
 
@@ -370,6 +374,13 @@ Component responsibilities:
   download, F-Droid-class repositories, and platform stores as replaceable
   channels. iOS distribution remains policy/jurisdiction constrained (OD-6),
   so this document does not claim app stores are never needed for first install.
+  Each manifest binds target platform, channel, semantic version, monotonic
+  build number, minimum supported build, artifact digest and prior-manifest
+  digest. `UpdateVerifier` stores the highest accepted build per target/channel
+  in core-protected state and rejects replay/downgrade or cross-channel/target
+  substitution. An emergency downgrade requires a separately typed, bounded,
+  expiring rollback authorization under the future release-signing policy; an
+  ordinary signed manifest can never lower the floor.
 - **Optional web boundary.** Out of Alpha scope; see Section 16.
 
 ---
@@ -391,17 +402,25 @@ settled in implementation issues with test vectors.
 | L4 | **Anonymous governance identity** (ZKP identity secret → identity commitment, existing `x/truedemocracy` anonymity model) | Unlinkable systemic-consensing ratings | Device vault, **separate from and never linkably derived from L1** | Reset by the existing on-chain Big Purge mechanism (90-day anonymity-set refresh) |
 | L5 | **Validator/operator keys** (CometBFT Ed25519 consensus key + operator authority) | Consensus participation and node operation | **Never in the Alpha app.** Operator custody per GH-55/GH-56 | Existing rotation/revocation paths only |
 
-**Multi-device enrollment:** new device generates L2; an existing enrolled
-device (or the L1 key directly) signs an enrollment record `{account, device
-pubkey, capabilities, timestamp}`; enrollment and revocation records sync as
-signed envelopes on a per-account control topic. Group keys are distributed to
-the new device through the qualified group scheme's member-add mechanism or an
-established device-to-device encrypted channel.
+**Multi-device control:** a new device generates L2. L1 signs a canonical
+control record `{account, control_seq, prev_control_hash, action, device_pubkey,
+capabilities}`. Sequence begins at 1 and advances by exactly one. Records with a
+sequence of 1 use a fixed 32-byte all-zero predecessor; all later records use
+the exact canonical hash of the winning prior record. Records with a gap,
+replayed sequence, or wrong predecessor remain quarantined until missing state
+arrives; they never authorize a device speculatively. For competing valid
+records at the same sequence, revocation of the affected device wins, then the
+lexicographically smallest canonical record hash breaks any remaining tie.
+Every later record must extend that deterministic winner, so different arrival
+orders converge. Group state reaches a newly enrolled device only through the
+qualified MLS member-add path or an established device-to-device channel.
 
-**Revocation:** L1-signed revocation tombstones the L2 key; clients reject
-envelopes from revoked devices after the revocation's causal point; honest
-relays drop them. A revoked device keeps read access only to history it
-already possesses — no retroactive secrecy is claimed.
+**Revocation:** the winning L1-signed revocation tombstones L2 and advances both
+the account control epoch and affected domain MLS epochs. Once a client observes
+that update it rejects every not-yet-accepted envelope carrying an earlier
+control or group epoch, including honestly delayed envelopes; safety is chosen
+over delayed delivery. A revoked device retains only history it already holds —
+no retroactive secrecy is claimed. Relays are not trusted to enforce revocation.
 
 **Recovery:** BIP-39 L0 recovery restores the chain account L1 and its ability
 to re-enroll devices. It does **not** restore old L3 chat epochs. Chat history
@@ -453,19 +472,23 @@ anchors where governance needs them.
 Outer Waku frame (relay/store-visible):
   version, ttl, content_topic, opaque_payload
   Private domains use epoch-scoped unguessable topic capabilities (DG-7).
-  No account, device, domain, moderation, or causal identifier is exposed.
+  No plaintext account, device, domain, moderation, or causal identifier is
+  placed in the frame; content-topic, size, timing and network metadata remain
+  observable and may permit domain-to-topic correlation.
 
 Inner envelope v1 (canonical protobuf; group-encrypted and L2-signed):
   version, chain_id (domain separation; pinned at signing time)
-  envelope_id = SHA-256(canonical_bytes_without_signature)
+  envelope_id = SHA-256(canonical bytes excluding envelope_id and signature)
+  topic_binding = SHA-256(canonical outer content_topic bytes)
   domain_id, topic_class (discussion | control | moderation | attachment_manifest)
   author_account (bech32, proven — see 9.2), author_device_id (L2 pubkey hash)
+  account_control_seq, account_control_hash, domain_group_epoch
   lamport_clock, parent_refs[] (causal parents; last-seen envelope ids)
-  chain_height_hint (on-chain role/membership reference height)
+  authorization_block {height, block_hash} (latest final state observed at signing)
   content_type, content, content_size
   attachment_refs[] {content_hash, chunk_count, total_size, key_id}
   schema extensions
-  signature (L2 Ed25519 over canonical bytes)
+  signature (L2 Ed25519 over all other canonical inner fields, including topic_binding)
 ```
 
 ### 9.2 Authentication
@@ -473,10 +496,18 @@ Inner envelope v1 (canonical protobuf; group-encrypted and L2-signed):
 Every inner envelope's `author_account` is proven, not asserted: the envelope (or
 its device enrollment chain) carries an L2 signature plus the L1-signed
 enrollment record binding L2→L1. Clients verify the chain of signatures
-locally; membership at `chain_height_hint` is verified via ChainGateway.
+locally. Before processing they require the outer topic to hash exactly to the
+signed `topic_binding`, the latest converged account-control record to authorize
+L2 at the signed sequence/hash, the message's group epoch to equal the current
+accepted domain epoch, and membership/role authorization at least as recent as
+`authorization_block`. A caller cannot select an older valid height to bypass a
+later observed revocation: once newer final chain or control state is known, any
+not-yet-accepted earlier-epoch envelope fails closed. The sender's claimed block
+is a lower bound/checkpoint, not proof of wall-clock issuance; until OD-4, a
+malicious RPC can still delay or lie about newer state, which remains explicit.
 Caller-supplied addresses without proof are rejected — the Alpha inherits the
 repository rule that identity comes from verified signers. The outer frame
-contains none of this identity data.
+contains none of these fields in plaintext.
 
 ### 9.3 Encryption policy
 
@@ -497,6 +528,9 @@ display hints only and never ordering authority. Governance-visible state
 (suggestions, ratings, stones) is ordered by the chain, not by chat order —
 chat about a suggestion can be eventually consistent without affecting any
 governance outcome.
+Account-control records additionally follow the sequence/predecessor and
+deny-wins/tie-break rules in Section 7; Lamport order alone never authorizes or
+revokes a device.
 
 ### 9.5 Retention
 
@@ -521,9 +555,11 @@ than inventing continuity.
   copies; honest store nodes drop the ciphertext. Cryptographic
   "un-distribution" is impossible — deletion is best-effort and stated as such.
 - **Moderation action**: L2-signed record `{action: hide|pin|remove-request,
-  target_envelope_id, role_height}`; clients accept it only if the author
-  account held the on-chain admin role at `role_height` (verified via
-  ChainGateway). A verifiable moderation log per domain is rendered in the
+  target_envelope_id, authorization_block, account_control_seq,
+  domain_group_epoch}`. Clients accept it only if the device is current and the
+  account still holds the admin role in their latest observed final chain state;
+  delayed actions from an earlier role/control epoch fail closed even if the
+  author supplies a formerly valid height. A verifiable moderation log is rendered in the
   admin panel, so silent abuse is visible to all members. Content-level
   censorship by relays cannot delete what other relays/clients already hold;
   exclusion from the domain (on-chain) is the ultimate remedy and triggers an
@@ -555,7 +591,7 @@ Each entry states mitigation and **residual risk honestly**.
 
 | Threat | Mitigation (architecture level) | Residual risk |
 |---|---|---|
-| Malicious relays/store nodes | Ciphertext-only storage; envelope signatures; multi-node redundancy; store-node answers are verifiable by hash/dedup | Availability withholding and traffic-analysis by relays; topic metadata (domain ↔ topic) visible — mitigations (padding, cover traffic, private topic derivation) are DG-7 and not claimed |
+| Malicious relays/store nodes | Ciphertext-only storage; signed `topic_binding` rejects cross-topic republishing; envelope signatures; multi-node redundancy; hash/dedup verification | Availability withholding and traffic analysis remain; topic/domain correlation is visible or inferable — padding/cover traffic/private derivation remain DG-7 |
 | Metadata leakage | Inner-envelope E2EE; identity and domain metadata absent from private outer frames; no phone-number identity | IP/timing/size/topic traffic remains observable; no perfect metadata privacy is claimed |
 | Spam/Sybil | Honest clients validate membership before rendering; client rate policy and moderation | A malicious publisher can still write to relays. Private write capabilities and/or ZK rate/membership credentials need DG-8; RLN evaluation is not PNYX integration |
 | Replay | Envelope id dedup, causal parents, TTL; chain txs inherit CometBFT/account-sequence replay protection (GH-172 evidence class) | Cross-network replay between a testnet and a future network must be domain-separated at envelope signing time (pinned chain-id field — required in envelope v1) |
@@ -671,7 +707,7 @@ shipping the slice; the Beta remains the supported client."
 | **A1 — Go core foundations** | Outer/inner codec, canonical ids, L2 identity, encrypted LocalStore, MessagingPort conformance; **no UI** | Property/fuzz tests; conformance against real Waku; enrollment/revocation flows | Parallel to Beta | Core versioned away |
 | **A2 — Flutter chat slice** | Android-first Telegram-like discussion UI; group encryption only through the DG-2-qualified MLS path; attachments after DG-5 | Offline queue/reconnect/gap-honesty matrix; MLS interop/performance evidence; multi-device/moderation/accessibility tests | Invite-only disposable test environment | Pull build; Beta remains |
 | **A3 — Wallet + governance integration** | Go ChainGateway checked against Beta golden vectors; core-owned wallet/vault; ratings/stones/suggestions; role-verified moderation | Wallet/signing adversarial suite; governance parity vs CLI and Beta vectors; RPC-lying/finality tests | Alpha and Beta share canonical chain state | Disable Alpha wallet; Beta unchanged |
-| **A4 — Distribution + updates** | Signed release manifests, UpdateVerifier, reproducible mobile builds extending GH-212 evidence, F-Droid-class + direct download channels | Deterministic-build parity across two builders; update-compromise negative tests; install-without-website walkthrough by external tester | Beta continues as the web path; no website is added to the Alpha trust path | Halt channel publication; installed builds keep working |
+| **A4 — Distribution + updates** | Target/channel-bound signed manifests, monotonic UpdateVerifier floor, reproducible mobile builds extending GH-212 evidence, F-Droid-class + direct download channels | Deterministic-build parity; replayed-old-build, downgrade, cross-target/channel, floor-loss and unauthorized-rollback negative tests; install-without-website walkthrough | Beta continues as the web path; no website is added to the Alpha trust path | Halt publication; installed builds keep working; emergency rollback uses separately authorized bounded metadata |
 | **A5 — Hardening + iOS/desktop** | iOS lifecycle/distribution, desktop sequencing, hardware signer, DG-8 spam gate, independent security and MLS-integration review | Zero unresolved P0/P1; multi-platform conformance; recovery/revocation and missing-history drills | iOS channel decided per OD-6 | Platform slice deferred without touching Beta |
 | **A6 — Alpha readiness review** | Full verification matrix (Section 13); data-portability export/import proof; Beta↔Alpha coexistence soak | All prior gates re-run on the release candidate; rollback drill executed; **explicit go/no-go recorded by project owner** | Beta remains available regardless of the decision | "No-go" leaves Beta as the sole supported client |
 
@@ -691,8 +727,10 @@ rollback is uninstalling the Alpha.
 - **Protocol conformance:** a Go transport-independent conformance suite every
   MessagingPort adapter must pass (publish, filter, store-query, TTL, cursor
   resume) — this is what makes the OD-2 fallback cheap.
-- **Multi-device:** enrollment, revocation, mid-sync device addition, revoked-
-  device rejection, and history-partiality tests on real device pairs.
+- **Multi-device:** enrollment, revocation, mid-sync device addition, sequence/
+  predecessor gaps, replay, concurrent enroll-vs-revoke, deterministic tie-break,
+  different arrival orders, delayed old-epoch rejection and history-partiality
+  tests on real device pairs.
 - **Offline/replay/recovery:** airplane-mode send/receive matrices;
   store-node-loss and missing-history behavior; duplicate-envelope and
   cross-chain replay negatives; mnemonic recovery drills proving chain-account
@@ -703,6 +741,9 @@ rollback is uninstalling the Alpha.
   extends the GH-212 pinned-toolchain and SBOM-parity evidence model to
   mobile; unsigned-evidence discipline retained until Phase 7 signing gates
   exist.
+- **Updates:** target/channel/version/build/floor/digest binding; replayed older
+  signed manifests, downgrade, cross-channel/target substitution, protected-
+  state loss and unauthorized emergency rollback all fail closed.
 - **Wallet/signing:** Beta behavior used as golden vectors for the Go core —
   fail-closed registry drift tests, in-flight signer invalidation after lock/
   switch/delete, exact chain-id binding, drain-prompt decoding tests.
@@ -712,8 +753,9 @@ rollback is uninstalling the Alpha.
 - **Cross-platform:** Android/iOS/desktop core conformance; release order is OD-3.
 - **Licenses/SBOM:** no dependency adoption before DG-3; A0 records the complete
   resolved SBOM and license-compatibility evidence.
-- **Adversarial security:** malicious-relay, malicious-RPC, update-compromise,
-  and equivocation harnesses from Section 10, run as CI gates where
+- **Adversarial security:** malicious-relay topic substitution, malicious-RPC,
+  delayed-after-revocation authorization, update compromise, and equivocation
+  harnesses from Section 10, run as CI gates where
   deterministic and as scheduled process harnesses otherwise.
 - **Independent reviews:** protocol/core review before A5 completion;
   cryptographic review of the DG-2 group-scheme choice; no production claim
@@ -733,7 +775,7 @@ rollback is uninstalling the Alpha.
 | ADR-3 | RFC 9420 MLS target for application-owned group E2EE; no custom crypto | Transport-owned encryption; ad-hoc sender keys | Proposed (DG-2) |
 | ADR-4 | Chain canonical for governance/economics; chat off-chain; domain policy is signed off-chain today | On-chain chat; invented current chain policy fields | Proposed |
 | ADR-5 | Key separation L0–L5 with device enrollment/revocation | Single-key model; per-message chain identity | Proposed |
-| ADR-6 | Beta preserved; its TS services are golden vectors, not Alpha runtime dependencies | Big-bang replacement | Proposed |
+| ADR-6 | Beta preserved; only current registered/fail-closed behavior is golden evidence, excluding retired/pre-GH-121 aliases; TS is not an Alpha runtime dependency | Big-bang replacement | Proposed |
 | ADR-7 | Exit sovereignty: no mandatory single TrueRepublic-operated service; infrastructure remains replaceable, not nonexistent | Website-gated operation; decentralization absolutism | Proposed (OD-6/OD-7) |
 
 ### 14.2 Non-goals (NG)
@@ -791,7 +833,8 @@ rollback is uninstalling the Alpha.
 7. `GH-2xx` Core-owned encrypted LocalStore, index, cursors, gap detection.
 8. `GH-2xx` MLS qualification (DG-2), then GroupCrypto integration.
 9. `GH-2xx` Flutter chat slice (A2) with offline/gap-honesty tests.
-10. `GH-2xx` Go ChainGateway checked against Beta golden vectors.
+10. `GH-2xx` Go ChainGateway checked against current registered/fail-closed Beta
+    vectors, explicitly excluding retired/pre-GH-121 aliases.
 11. `GH-2xx` Native wallet slice with signer adapters (A3).
 12. `GH-2xx` Moderation engine + verifiable moderation log UI.
 13. `GH-2xx` Signed, chain-authority-verified domain policy record.

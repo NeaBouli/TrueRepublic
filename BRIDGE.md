@@ -53,9 +53,10 @@
 - **Decision:** preserve `client-web` as Beta; future Alpha = Flutter UI over a
   Go sovereign core, Waku conditional on A0, RFC 9420 MLS conditional on DG-2,
   Status as reference rather than fork, and no optional-web decision yet.
-- **Security truth:** secrets stay in the Go core; private outer frames expose
-  no account/domain/moderation data; BIP-39 does not restore chat epochs; Store
-  history, push, spam resistance and metadata privacy are not overclaimed.
+- **Security truth:** secrets stay in the Go core; private outer frames contain
+  no plaintext account/domain/moderation identifiers, while observable topic/
+  traffic correlation remains explicit; BIP-39 does not restore chat epochs;
+  Store history, push, spam resistance and metadata privacy are not overclaimed.
 - **Review:** Kimi produced the deep draft and independent review. Sol
   remediated its P2 state citation and P3 editorial/version findings; zero
   P0/P1 remain. Claude OAuth was expired and Claude changed nothing.
@@ -66,6 +67,21 @@
   production false.
 - **Next:** protected PR, exact-head review/checks, squash merge and exact-main/
   Pages/GitHub/Bridge closeout. No release, deploy or production write.
+
+---
+
+## 2026-08-16 11:40 EEST GH-215 PR #216 review → Findings remediated
+
+- First head passed all technical contexts; CodeRabbit then reported nine valid
+  documentation/protocol gaps, so merge remained blocked.
+- All nine are fixed: post-GH-121 golden-vector scope, license/count/TODO truth,
+  transport metadata wording, signed topic binding, deterministic device-control
+  sequencing and revocation, latest-observed authorization, monotonic update
+  anti-rollback and the corresponding adversarial tests.
+- Kimi's focused independent review found no P0/P1/P2; its only P3 genesis-hash
+  detail is also fixed. Docs consistency and diff checks pass.
+- **Next:** replacement commit/checks, thread resolution, squash merge and exact
+  main/Pages/GitHub closeout. Rollout remains 34/59; production remains false.
 
 ---
 

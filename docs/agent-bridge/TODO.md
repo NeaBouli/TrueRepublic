@@ -511,7 +511,10 @@
   governance mappings and no-required-website distribution path.
 - [x] Define threat/privacy model, phased Beta-to-Alpha migration, test plan,
   decision gates and explicitly deferred web-interface choice.
-- [ ] Complete Kimi deep contribution, Sol review, small Claude helper check if
-  available, documentation consistency, protected PR and exact-main closeout.
+- [x] Complete Kimi deep contribution and independent review.
+- [x] Complete Sol security/integration review and documentation consistency.
+- [x] Attempt the small Claude helper check; local OAuth was expired and Claude
+  changed no file.
+- [ ] Complete protected PR review/checks, merge and exact-main closeout.
 - [x] Keep rollout at 34/59 and production false; architecture documentation
   earns no existing rollout checkbox.

@@ -167,7 +167,7 @@ TrueRepublic/
 ├── Makefile                    Build targets (build, test, lint, docker)
 ├── INSTALLATION.md             Quick install guide
 ├── x/
-│   ├── truedemocracy/          Governance module (25 msg types, 552 test cases)
+│   ├── truedemocracy/          Governance module (26 msg types, 552 test cases)
 │   └── dex/                    DEX module (7 msg types, 138 test cases)
 ├── treasury/keeper/            Tokenomics equations 1-5 (36 test cases)
 ├── contracts/                  CosmWasm workspace (7 crates, 26 tests)

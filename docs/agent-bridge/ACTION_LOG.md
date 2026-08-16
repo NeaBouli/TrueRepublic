@@ -4277,3 +4277,23 @@
 - Next: protected documentation PR, exact-head Docs/Client/Security/review
   contexts, squash merge, exact-main/Pages and GH-215/Bridge closeout. No
   deployment, release or production action.
+
+## 2026-08-16 11:40 EEST - GH-215 protected review findings remediated
+
+- PR #216 exact first head passed all Docs, Client, Security and DeepScan
+  contexts. CodeRabbit then produced nine actionable architecture/bookkeeping
+  findings; merge was withheld.
+- Remediation narrows golden compatibility to current post-GH-121 registered
+  behavior, synchronizes the missing-license gate and 26-message inventory,
+  splits completed/pending TODO state, and narrows transport privacy wording.
+- Security additions bind the Waku content topic into the L2-signed inner
+  envelope, define deterministic hash-chained device control with deny-wins
+  revocation and delayed-old-epoch rejection, require latest-observed final
+  authorization rather than caller-selected historical heights, and add
+  target/channel monotonic update floors plus explicit emergency rollback
+  authorization and adversarial gates.
+- Kimi independently reviewed the complete remediation. Its sole P3 genesis-
+  predecessor nit was fixed with a canonical all-zero predecessor for sequence
+  1; no P0/P1/P2 findings remain. Docs consistency and diff checks pass.
+- Next: commit/push the replacement head, resolve all nine review threads,
+  require replacement-head checks green, then merge and verify main/Pages.
