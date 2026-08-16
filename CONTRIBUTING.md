@@ -237,15 +237,15 @@ Check existing issues or create new ones:
 
 ## Release Process
 
-**Versioning:** Semantic versioning (MAJOR.MINOR.PATCH)
+TrueRepublic is still an unreleased recovery candidate. The repository source
+of truth is `configs/release/compatibility.json`; current human-readable notes
+are under `docs/releases/`. `client-web/CHANGELOG.md` and the root v0.3.0 notes
+are historical audit records, not current release instructions.
 
-**Release Checklist:**
-1. Update version in code
-2. Update CHANGELOG.md
-3. Run full test suite
-4. Create release tag
-5. Build binaries
-6. Publish release notes
+Before any separately approved release, update the compatibility contract and
+notes, pass `make release-compatibility-contract-test` and the complete release
+gates, and obtain the explicit Phase 7 go/no-go decision. A contribution must
+not create a tag, publish/sign an artifact or claim production readiness.
 
 ---
 

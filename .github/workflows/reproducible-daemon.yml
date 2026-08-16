@@ -22,6 +22,14 @@ on:
       - 'docs/DEPLOYMENT.md'
       - 'docs/node-operators/README.md'
       - 'docs/node-operators/installation/**'
+      - 'docs/releases/**'
+      - 'docs/status.json'
+      - 'docs/LIMITATIONS.md'
+      - 'docs/node-operators/operations/upgrades.md'
+      - 'docs/developers/api-reference/abci-queries.md'
+      - 'client-web/CHANGELOG.md'
+      - 'scripts/check-mobile-retirement.sh'
+      - 'scripts/check-web-wallet-retirement.sh'
       - 'scripts/build-deterministic-daemon.sh'
       - 'scripts/generate-release-evidence.sh'
       - 'scripts/test-release-evidence.sh'
@@ -52,6 +60,14 @@ on:
       - 'docs/DEPLOYMENT.md'
       - 'docs/node-operators/README.md'
       - 'docs/node-operators/installation/**'
+      - 'docs/releases/**'
+      - 'docs/status.json'
+      - 'docs/LIMITATIONS.md'
+      - 'docs/node-operators/operations/upgrades.md'
+      - 'docs/developers/api-reference/abci-queries.md'
+      - 'client-web/CHANGELOG.md'
+      - 'scripts/check-mobile-retirement.sh'
+      - 'scripts/check-web-wallet-retirement.sh'
       - 'scripts/build-deterministic-daemon.sh'
       - 'scripts/generate-release-evidence.sh'
       - 'scripts/test-release-evidence.sh'
@@ -114,6 +130,9 @@ jobs:
         run: |
           make install-lifecycle-contract-test
           go test . -run '^TestInstallLifecycleRepositoryContract$' -count=1
+
+      - name: Verify release notes and compatibility contract
+        run: make release-compatibility-contract-test
 
   deterministic-build:
     name: ${{ matrix.target }}

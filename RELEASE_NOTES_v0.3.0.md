@@ -3,8 +3,8 @@
 > **Historical draft only.** These notes describe an obsolete pre-recovery
 > candidate and are retained for audit context. Their production claims,
 > versions and commands are superseded by `docs/status.json`, issue #29 and the
-> current operator documentation. Do not use this file to install or operate a
-> node.
+> current operator documentation. Current candidate notes and compatibility are
+> under `docs/releases/`. Do not use this file to install or operate a node.
 
 **Release Date:** March 2, 2026
 **Historical status claim (superseded):** "Production Ready"

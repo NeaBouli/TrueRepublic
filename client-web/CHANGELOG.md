@@ -1,5 +1,11 @@
 # Changelog
 
+> **Historical pre-recovery snapshot.** The `0.4.0` entry below records the
+> March 2026 client baseline and contains superseded dependency, ZKP, history,
+> IBC, and feature statements. It is non-operational audit history, not current
+> release guidance. Use `docs/releases/current-candidate-release-notes.md`,
+> `docs/releases/current-candidate-compatibility.md`, and `docs/status.json`.
+
 ## [0.4.0] - 2026-03-04
 
 ### Added
