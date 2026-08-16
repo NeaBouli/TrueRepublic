@@ -69,6 +69,21 @@
 - This is arithmetic reconciliation, not lost implementation or a rollout
   reversal. No checkbox was unchecked and no open work was represented as done.
 
+### 2026-08-16 14:42 EEST protected merge / exact-main verification
+
+- PR #220 exact head `ca18671c121e3323de54a5b69144768f1ab4a21e`
+  passed all nine required universal Docs/Security contexts plus DeepScan. All
+  four CodeRabbit threads were remediated and resolved before admin squash.
+- PR #220 merged as exact main
+  `ae20e65934a3401b7487651afa67d08bbcf7ba5b`; merged-branch auto-deletion
+  removed its remote head and only `main` remains.
+- Exact-main Docs `31942112014`, Security `31942112026`, and Pages
+  `31942111796` passed. Cache-busted live Pages and raw `docs/status.json`
+  publish 1,896 / 33-of-59 / 33-of-51 / Phase 6 6-of-7 / production false and
+  distinguish completed recovery #4 from active rollout #29.
+- This closeout commit records evidence only. No product, license, artifact,
+  deployment, public network, key, fund or production action occurred.
+
 ---
 
 ## 2026-08-16 03:11 EEST GH-212 release-evidence contract → Merged / exact main green

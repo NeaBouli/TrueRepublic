@@ -527,12 +527,12 @@
   epic with current evidence.
 - [x] Preserve archived history, remove superseded active branches and enable
   automatic deletion of future merged branches.
-- [ ] Require only universal protected status contexts and prove them on the
+- [x] Require only universal protected status contexts and prove them on the
   exact GH-218 PR head.
 - [x] Open an explicit license-decision issue without choosing a license.
 - [x] Reconcile the tracker arithmetic conservatively: GH-29 has exactly 33
   checked of 59 items (33/51 phase work), so correct the previously published
   off-by-one without inventing completion evidence.
 - [x] Complete Kimi review and final audit.
-- [ ] Complete Sol verification, protected merge, exact-main/Pages and both-
+- [x] Complete Sol verification, protected merge, exact-main/Pages and both-
   Bridge closeout while rollout stays 33/59 and production false.

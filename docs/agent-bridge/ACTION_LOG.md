@@ -4376,3 +4376,19 @@
 - Corrected the current source of truth to 33/59 overall and 33/51 phase work,
   with Phase 6 unchanged at 6/7 and production unchanged at false. No checkbox,
   product behavior, test count or production gate changed.
+
+## 2026-08-16 14:42 EEST - GH-218 protected merge and exact-main proof
+
+- PR #220 replacement head `ca18671c121e3323de54a5b69144768f1ab4a21e`
+  passed all nine required contexts and DeepScan. Four CodeRabbit findings were
+  remediated; all review threads read back resolved before merge.
+- Admin-squash-merged PR #220 as
+  `ae20e65934a3401b7487651afa67d08bbcf7ba5b`. Automatic branch deletion was
+  proved: its remote head disappeared and `main` is the sole remote branch.
+- Exact-main Docs `31942112014`, Security `31942112026`, and Pages
+  `31942111796` completed successfully. Cache-busted live Pages and raw status
+  publish the corrected 33/59 and 33/51 values, Phase 6 6/7, 1,896 cases and
+  production false.
+- GH-218 is ready for this Bridge closeout PR. No product behavior, rollout
+  checkbox, license decision, release artifact, deployment, network, key, fund
+  or production boundary changed.
