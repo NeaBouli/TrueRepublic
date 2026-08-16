@@ -500,7 +500,7 @@
 - [ ] Commit/push, protected PR, review threads, exact-head CI, merge,
   final-main/Pages, GH-29/GH-212 and both-Bridge closeout.
 
-## In progress - GH-215 sovereign decentralized Alpha architecture
+## Completed - GH-215 sovereign decentralized Alpha architecture
 
 - [x] Audit current maintained-client, wallet, governance, query and signing
   boundaries while preserving `client-web` as Beta.
@@ -515,6 +515,6 @@
 - [x] Complete Sol security/integration review and documentation consistency.
 - [x] Attempt the small Claude helper check; local OAuth was expired and Claude
   changed no file.
-- [ ] Complete protected PR review/checks, merge and exact-main closeout.
+- [x] Complete protected PR review/checks, merge and exact-main closeout.
 - [x] Keep rollout at 34/59 and production false; architecture documentation
   earns no existing rollout checkbox.

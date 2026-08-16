@@ -4297,3 +4297,19 @@
   1; no P0/P1/P2 findings remain. Docs consistency and diff checks pass.
 - Next: commit/push the replacement head, resolve all nine review threads,
   require replacement-head checks green, then merge and verify main/Pages.
+
+## 2026-08-16 11:53 EEST - GH-215 merged, exact main and Pages green
+
+- PR #216 replacement head `ac11bf59bc5168ccb9c50475c71cc7c55b8bcbce`
+  passed all reported protected contexts with all nine review threads resolved.
+  It admin-squash-merged as `1190ae2a1b7b577fdd89fd325d608854874cbbfb`,
+  and GH-215 closed automatically.
+- Exact-main PASS: Docs `31937409146`, Client `31937409059`, Security
+  `31937409105` and Pages `31937408558`. The live public page was read back and
+  contains the Beta-client and Sovereign-Alpha architecture links.
+- GitHub README, client documentation, architecture, limitations, roadmap and
+  Pages are synchronized. Rollout remains 34/59 and production remains false;
+  this documentation-only architecture milestone earns no rollout credit.
+- No product implementation, license selection, release, deployment, key,
+  fund, network or production action occurred. A0 native transport and license
+  qualification is the next bounded Alpha implementation gate.
