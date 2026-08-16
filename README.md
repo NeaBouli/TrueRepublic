@@ -89,6 +89,7 @@ The native token **PNYX** -- named after the hill in Athens where citizens gathe
 | **[Node Operators](docs/node-operators/README.md)** | Operators | Setup, configuration, monitoring, backup |
 | **[Validator Guide](docs/validators/README.md)** | Validators | PoD consensus, staking, slashing, operations |
 | **[Developer Docs](docs/developers/README.md)** | Developers | Architecture, API reference, CosmJS, smart contracts |
+| **[Sovereign Alpha Architecture](docs/SOVEREIGN_ALPHA_ARCHITECTURE.md)** | Product / Engineering | Future decentralized app, messaging, governance and PNYX wallet architecture |
 | **[FAQ](docs/FAQ.md)** | Everyone | Frequently asked questions |
 | **[Glossary](docs/GLOSSARY.md)** | Everyone | Term definitions |
 | **[Whitepaper](docs/WhitePaper_TR_eng.md)** | Everyone | Full whitepaper |
@@ -132,9 +133,14 @@ See [INSTALLATION.md](INSTALLATION.md) for detailed instructions.
 
 ---
 
-## Web Client (v0.4.0)
+## Current Beta Client (v0.4.0)
 
-React-based web client with full governance and DEX functionality:
+The maintained React web client remains the current Beta while the future
+website-independent Sovereign Alpha is designed under
+[GH-215](https://github.com/NeaBouli/TrueRepublic/issues/215). The Beta has
+governance and DEX functionality, but it is not approved for production keys or
+funds:
+
 ```bash
 cd client-web
 npm ci
@@ -161,7 +167,7 @@ TrueRepublic/
 ├── Makefile                    Build targets (build, test, lint, docker)
 ├── INSTALLATION.md             Quick install guide
 ├── x/
-│   ├── truedemocracy/          Governance module (25 msg types, 552 test cases)
+│   ├── truedemocracy/          Governance module (26 msg types, 552 test cases)
 │   └── dex/                    DEX module (7 msg types, 138 test cases)
 ├── treasury/keeper/            Tokenomics equations 1-5 (36 test cases)
 ├── contracts/                  CosmWasm workspace (7 crates, 26 tests)
@@ -330,8 +336,14 @@ approval. Current evidence, risks, and commands are maintained in
   - ✅ Domain Membership & Onboarding
   - ✅ Admin Dashboard (member management, stats)
   - ✅ Network Explorer (validators, blocks, IBC)
-- 📋 **v0.5.0 (Q3 2026):** Native Apps (iOS/Android)
-- 🎯 **v1.0.0 (Q4 2026):** Production Release — External audit, mainnet launch
+- 📐 **Sovereign Alpha track (GH-215; implementation not started):** an
+  installable, Telegram-like domain/discussion/governance client with an
+  integrated non-custodial PNYX wallet and no mandatory hosted-website
+  dependency. `client-web` remains the Beta during construction; whether an
+  optional web interface survives is deferred until the Alpha exit gates pass.
+- 🎯 **Production release (no committed date):** external reviews, signed
+  reproducible clients and chain artifacts, staged networks, and explicit
+  go/no-go approval are still required.
 
 > Historical test count: 577. The authoritative recovery-verified total is 1,896
 > (1,551 Go + 26 Rust + 319 maintained-client), reproduced from fresh
@@ -346,6 +358,7 @@ approval. Current evidence, risks, and commands are maintained in
 | [API Reference](docs/API_REFERENCE.md) | Complete API overview |
 | [Deployment Guide](docs/DEPLOYMENT.md) | Production setup |
 | [Architecture](docs/ARCHITECTURE.md) | System design |
+| [Sovereign Alpha Architecture](docs/SOVEREIGN_ALPHA_ARCHITECTURE.md) | Future decentralized client, messaging and wallet design |
 | [Quick Start](docs/QUICKSTART.md) | 5-minute setup |
 | [Contributing](CONTRIBUTING.md) | Development guide |
 

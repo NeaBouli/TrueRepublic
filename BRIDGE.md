@@ -24,6 +24,67 @@
 
 ---
 
+## 2026-08-16 10:38 EEST GH-215 sovereign decentralized Alpha architecture → In Progress
+
+- **Branch:** `docs/GH-215-sovereign-alpha`
+- **Issue:** [GH-215](https://github.com/NeaBouli/TrueRepublic/issues/215)
+- **Scope:** preserve `client-web` as the current Beta and define a complete
+  Telegram-like, website-independent Alpha architecture for domains,
+  discussion, governance, ratings, stones, administration and an integrated
+  non-custodial PNYX wallet.
+- **Boundary:** architecture and roadmap documentation only. No Telegram fork,
+  dependency addition, wallet/cryptography/consensus/protocol change, real
+  key/fund use, deployment, release, production action or rollout credit.
+- **Roles:** Sol owns architecture, security, integration and publication;
+  Kimi K3 receives the bounded deep platform/architecture analysis; Claude
+  Code may perform one small read-only consistency inventory if available.
+- **Risk:** High future implementation risk because identity, wallet custody,
+  messaging privacy, moderation and governance meet in one client. This
+  documentation task itself is medium risk and must keep every unproven choice
+  explicit.
+- **Next:** audit current repository boundaries, research primary upstream
+  sources and licenses, then write and independently review the decision-ready
+  architecture and phased migration plan.
+
+---
+
+## 2026-08-16 11:22 EEST GH-215 sovereign Alpha architecture → Local PASS
+
+- **Decision:** preserve `client-web` as Beta; future Alpha = Flutter UI over a
+  Go sovereign core, Waku conditional on A0, RFC 9420 MLS conditional on DG-2,
+  Status as reference rather than fork, and no optional-web decision yet.
+- **Security truth:** secrets stay in the Go core; private outer frames contain
+  no plaintext account/domain/moderation identifiers, while observable topic/
+  traffic correlation remains explicit; BIP-39 does not restore chat epochs;
+  Store history, push, spam resistance and metadata privacy are not overclaimed.
+- **Review:** Kimi produced the deep draft and independent review. Sol
+  remediated its P2 state citation and P3 editorial/version findings; zero
+  P0/P1 remain. Claude OAuth was expired and Claude changed nothing.
+- **PASS:** docs consistency, root Go package, client lint, 10 Node + 309
+  Vitest cases, production build/budgets, diff check and 22 external links.
+- **State correction:** stale GH-212 `PROJECT_STATE.md` now matches the already
+  published 1,896 tests, rollout 34/59, phase work 34/51, Phase 6 6/7 and
+  production false.
+- **Next:** protected PR, exact-head review/checks, squash merge and exact-main/
+  Pages/GitHub/Bridge closeout. No release, deploy or production write.
+
+---
+
+## 2026-08-16 11:40 EEST GH-215 PR #216 review → Findings remediated
+
+- First head passed all technical contexts; CodeRabbit then reported nine valid
+  documentation/protocol gaps, so merge remained blocked.
+- All nine are fixed: post-GH-121 golden-vector scope, license/count/TODO truth,
+  transport metadata wording, signed topic binding, deterministic device-control
+  sequencing and revocation, latest-observed authorization, monotonic update
+  anti-rollback and the corresponding adversarial tests.
+- Kimi's focused independent review found no P0/P1/P2; its only P3 genesis-hash
+  detail is also fixed. Docs consistency and diff checks pass.
+- **Next:** replacement commit/checks, thread resolution, squash merge and exact
+  main/Pages/GitHub closeout. Rollout remains 34/59; production remains false.
+
+---
+
 ## 2026-08-16 02:40 EEST GH-212 replacement candidate → Local PASS
 
 - Sol completed the post-Kimi integration review and reran `make build` plus

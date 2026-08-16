@@ -499,3 +499,22 @@
   multi-arch image after final registry-config inspection.
 - [ ] Commit/push, protected PR, review threads, exact-head CI, merge,
   final-main/Pages, GH-29/GH-212 and both-Bridge closeout.
+
+## In progress - GH-215 sovereign decentralized Alpha architecture
+
+- [x] Audit current maintained-client, wallet, governance, query and signing
+  boundaries while preserving `client-web` as Beta.
+- [x] Evaluate upstream Telegram open-source components/protocol boundaries,
+  decentralization mismatch and licenses from primary sources.
+- [x] Define the Alpha component model, trust boundaries, identity/device/key
+  model, PNYX wallet, decentralized messaging/storage/sync, moderation,
+  governance mappings and no-required-website distribution path.
+- [x] Define threat/privacy model, phased Beta-to-Alpha migration, test plan,
+  decision gates and explicitly deferred web-interface choice.
+- [x] Complete Kimi deep contribution and independent review.
+- [x] Complete Sol security/integration review and documentation consistency.
+- [x] Attempt the small Claude helper check; local OAuth was expired and Claude
+  changed no file.
+- [ ] Complete protected PR review/checks, merge and exact-main closeout.
+- [x] Keep rollout at 34/59 and production false; architecture documentation
+  earns no existing rollout checkbox.

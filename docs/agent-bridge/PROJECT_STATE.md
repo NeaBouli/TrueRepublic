@@ -1,5 +1,21 @@
 # Project State
 
+GH-212 is complete through PR #213 and its Bridge closeout PR #214. The
+replacement head `b72f29784ed6d1cd7340d580d527b4883f4ca8a5` passed all 26
+protected contexts with zero unresolved threads, squash-merged as
+`1e4cdb814eefa1441e70c75cf61ff81bbd081b1b`, and final-main Docs, Client,
+Security, reproducible Linux, Go and Pages workflows passed before closeout
+commit `cd5426f1880163ff99705b6c69986e3e717f9784`. Published status is 1,896
+recovery-verified cases (1,551 Go + 26 Rust + 319 client), rollout 34/59,
+phase work 34/51, Phase 6 6/7 and production false. GH-212 created no tag,
+signed or published artifact, authenticated provenance, deployment, network,
+genesis or production approval. GH-215 is documentation-only and does not
+change these figures.
+
+Updated: 2026-08-16 08:00 UTC
+
+---
+
 GH-209 is complete through PR #210, squash-merged as exact main `3cc392e` after
 reviewed head `297e927` passed all 25 contexts with zero unresolved threads.
 Final-main Client `31895690591`, reproducible Linux `31895690584`, Docs
