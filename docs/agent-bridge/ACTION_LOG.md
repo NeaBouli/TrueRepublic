@@ -4222,3 +4222,22 @@
 - Next: commit/push the replacement candidate, resolve all review threads,
   require the exact new head fully green, squash-merge and verify final main,
   Pages, GH-29 and both Bridges.
+
+## 2026-08-16 03:11 EEST - GH-212 merged and exact main green
+
+- PR #213 exact replacement head `b72f29784ed6d1cd7340d580d527b4883f4ca8a5`
+  passed all 26 contexts with zero unresolved threads and squash-merged as
+  `1e4cdb814eefa1441e70c75cf61ff81bbd081b1b`. GH-212 closed and the remote
+  feature branch was deleted.
+- Exact-main PASS: Docs `31915999520`, Client `31915999527`, Security
+  `31915999568`, reproducible Linux `31915999607`, Go `31915999593` and Pages
+  `31915999145`.
+- GH-29 now checks only the earned Phase 7 pinned-toolchain/supported-platform
+  item. Status is 1,896 tests, rollout 34/59, phase work 34/51, Phase 6 6/7 and
+  production false.
+- Kimi supplied architecture, deep review and the bounded review remediation;
+  Sol reviewed/integrated the full diff and ran complete local, protected and
+  exact-main verification. Claude OAuth remained expired and changed nothing.
+- No release/tag/signature/publication/registry/deploy/network/genesis/
+  production action occurred. Remaining Phase 7 release ceremony and signing
+  gates remain open.
