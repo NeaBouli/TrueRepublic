@@ -1,0 +1,17 @@
+{
+  "schema": "truerepublic.install-lifecycle/v1",
+  "supported_targets": ["linux-amd64", "linux-arm64"],
+  "target_runtimes": {
+    "linux-amd64": "linux-glibc",
+    "linux-arm64": "linux-glibc"
+  },
+  "layout": {
+    "binary": "bin/truerepublicd",
+    "manifest": "lib/install-manifest.json",
+    "rollback_binary": "lib/rollback/truerepublicd",
+    "transaction": "lib/install-transaction.json"
+  },
+  "modes": {"binary": 493, "metadata": 420, "transaction": 384},
+  "limits": {"max_artifact_bytes": 536870912},
+  "operator_state_boundary": "outside-prefix"
+}

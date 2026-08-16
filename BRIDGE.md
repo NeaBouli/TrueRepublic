@@ -1,5 +1,69 @@
 # TrueRepublic Agent Bridge
 
+## 2026-08-16 14:54 EEST GH-222 install lifecycle → In Progress
+
+- **Branch:** `feature/GH-222-install-lifecycle`
+- **Issue:** [GH-222](https://github.com/NeaBouli/TrueRepublic/issues/222)
+- **Scope:** add one versioned, repository-owned native daemon install,
+  compatible-upgrade, pre-start rollback and safe-uninstall contract with
+  disposable fail-closed tests; reconcile operator documentation and CI.
+- **Roles:** Kimi K3 owns one bounded secret-free implementation/audit block.
+  Sol owns architecture, security boundaries, integration, complete tests,
+  GitHub writes, merge and closure.
+- **Risk:** High. Installer mistakes can replace the wrong binary, lose operator
+  state, bypass artifact verification, or make rollback impossible.
+- **Boundary:** isolated local prefixes and synthetic fixtures only; no tag,
+  release, registry, published artifact, production host/network, real key/fund,
+  destructive state removal or go/no-go action.
+- **Next:** Kimi/Sol audit current release evidence and unsafe stale installation
+  guidance, then implement the smallest fail-closed lifecycle contract.
+
+### 2026-08-16 15:46 EEST local implementation / review remediation
+
+- Added a generic `truerepublic.install-lifecycle/v1` contract and isolated
+  `installlifecycle` CLI/package for install, status, pre-start, compatible
+  upgrade, newest-snapshot rollback and allowlisted uninstall. Identity binds
+  exact digest, source commit, Linux target and runtime; operator state must be
+  outside the managed prefix and is never read or removed.
+- Kimi contributed the bounded safety design and a final read-only review. Its
+  P2 inside-prefix upgrade-artifact finding and P3 orphan-status, macOS-doc and
+  CI-trigger findings were remediated. Residual local path-swap risk is bounded
+  by full-chain symlink checks, opened-file identity comparison, post-copy
+  digest verification and the documented exclusive root-owned prefix parent.
+- Claude Code's small documentation audit was attempted but its OAuth session
+  was expired; it produced no output or file change. A bounded Codex worker
+  implemented only the assigned new core paths; Sol reviewed and hardened every
+  line and owns all integration changes.
+- Removed unsupported GOPATH installation, in-place replacement, fictitious
+  migration, destructive validator reset/volume deletion and unreachable macOS
+  service guidance. The historical v0.3.0 root note now carries an explicit
+  supersession warning and no operational quick-start commands.
+- PASS: lifecycle/CLI tests, root repository contract, Make target, JSON, YAML,
+  gofmt, vet and diff hygiene. An earlier full `make verify` passed all 19 Go
+  packages with Race/Coverage; it predates the final review remediations and
+  therefore does not close the gate. Fresh full gates are next.
+- Published status intentionally remains 1,896 and 33/59 until protected merge.
+  No tag, release, artifact publication, deployment, real operator state,
+  network, key, fund or production action occurred.
+
+### 2026-08-16 16:02 EEST fresh full local gates passed
+
+- PASS on the final remediated tree: complete Go package selection/build/vet/
+  Race/Coverage (`installlifecycle` 76.6%), exact pinned staticcheck, Go
+  vulnerability policy plus negative fixtures, secret scan, lifecycle and root
+  repository contracts, release-evidence and deterministic-daemon fixtures.
+- PASS: maintained client lint, 319 cases, TypeScript/Vite production build and
+  bundle budgets; Rust format, Clippy with warnings denied and all 26 cases;
+  documentation consistency, JSON/YAML, formatting and diff hygiene.
+- Fresh package-scoped JSON evidence adds 23 install-lifecycle cases plus one
+  root repository case. Candidate arithmetic is 1,920 = 1,575 Go + 26 Rust +
+  319 client; public files deliberately retain merged-main 1,896 until the
+  protected implementation merge is real.
+- Docker CLI is unavailable locally, so hosted Docker/Compose evidence remains
+  authoritative. GH-222 is locally ready for commit, protected PR and review.
+
+---
+
 ## 2026-08-16 12:58 EEST GH-218 GitHub repository hygiene → In Progress
 
 - **Branch:** `docs/GH-218-github-hygiene`

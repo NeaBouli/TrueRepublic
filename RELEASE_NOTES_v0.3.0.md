@@ -1,7 +1,13 @@
 # Release v0.3.0 - ZKP Anonymity & Multi-Asset DEX
 
+> **Historical draft only.** These notes describe an obsolete pre-recovery
+> candidate and are retained for audit context. Their production claims,
+> versions and commands are superseded by `docs/status.json`, issue #29 and the
+> current operator documentation. Do not use this file to install or operate a
+> node.
+
 **Release Date:** March 2, 2026
-**Status:** ✅ Production Ready
+**Historical status claim (superseded):** "Production Ready"
 **Breaking Changes:** Yes (from v0.2.5)
 
 ---
@@ -14,7 +20,7 @@
 - 🤖 **CosmWasm Smart Contracts** - Full contract integration with custom bindings
 - 🌐 **IBC Cross-Chain** - Transfer PNYX and trade IBC assets
 - 💱 **Multi-Asset DEX** - Trade BTC, ETH, LUSD with symbol-based UX
-- 🚀 **Complete Documentation** - Production-ready deployment guides
+- 🚀 **Historical documentation claim (superseded)** - production-ready deployment guides
 
 **Development Achievement:**
 - ⏱️ 12-week roadmap completed in single 10-hour session
@@ -282,22 +288,11 @@ truerepublicd query dex estimate-swap PNYX ETH 1000
 ## 🚀 Deployment
 
 ### Quick Start
-```bash
-# Install
-git clone https://github.com/NeaBouli/TrueRepublic.git
-cd TrueRepublic
-CGO_ENABLED=1 make install
 
-# Initialize
-truerepublicd init dev --chain-id truerepublic-dev
-truerepublicd keys add validator
-truerepublicd genesis add-genesis-account validator 100000000pnyx
-truerepublicd genesis gentx validator 50000000pnyx --chain-id truerepublic-dev
-truerepublicd genesis collect-gentxs
-
-# Start
-truerepublicd start
-```
+The historical commands were removed because they bypassed the verified
+artifact lifecycle and no longer matched the application genesis model. Use
+the current recovery-only [Installation Guide](INSTALLATION.md) and
+[Verified Artifact Lifecycle](docs/node-operators/installation/lifecycle.md).
 
 **Full guides:**
 - [Deployment Guide](docs/DEPLOYMENT.md)
@@ -379,6 +374,6 @@ See [LICENSE](LICENSE) file.
 
 ---
 
-**🎉 v0.3.0 - Production Ready**
+**Historical v0.3.0 claim (superseded): "Production Ready"**
 
 All 12 weeks of the roadmap completed. Zero regressions. Comprehensive documentation. Ready for deployment.

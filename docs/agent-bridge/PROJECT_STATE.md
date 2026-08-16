@@ -1,5 +1,50 @@
 # Project State
 
+GH-222 is locally gate-complete and ready for protected publication. Final
+Go build/vet/Race/Coverage, pinned static/security/vulnerability/secret gates,
+release and deterministic fixtures, lifecycle/root contracts, maintained
+client lint/319 tests/build/budgets, Rust fmt/Clippy/26 tests, docs, JSON/YAML
+and diff checks pass. Candidate standard arithmetic is 1,920 = 1,575 Go + 26
+Rust + 319 client. Docker is unavailable locally; protected exact-head hosted
+evidence, review, merge, exact-main/Pages and tracker/Bridge sync remain. Public
+status stays on merged main: 1,896, 33/59, 33/51, Phase 6 6/7, production false.
+
+Updated: 2026-08-16 13:02 UTC
+
+---
+
+GH-222 is locally implemented and under final verification. The generic v1
+contract and CLI bind native install, status, pre-start, upgrade, rollback and
+uninstall to exact SHA-256, source commit, supported Linux host target and
+runtime under an isolated prefix. Full-chain symlinks, unsafe permissions,
+partial markers, identity drift, snapshot tampering, replay and unknown
+uninstall entries fail closed; external operator state remains untouched.
+Kimi's bounded design/read-only review findings are remediated, Claude's small
+helper attempt produced no output because local OAuth was expired, and Sol has
+reviewed/hardened the delegated core. Focused package/CLI/repository/Make/JSON/
+YAML/Vet/diff gates pass. A fresh post-remediation full verification, protected
+PR, review, merge, exact-main/Pages and tracker synchronization remain. Public
+status stays 1,896, 33/59, 33/51, Phase 6 6/7, production false.
+
+Updated: 2026-08-16 12:46 UTC
+
+---
+
+GH-222 is in progress from exact main
+`6707ff3bdd9a8d19a65477fc27f5a70d1b60248d` on
+`feature/GH-222-install-lifecycle`. It will define and test a repository-only
+native daemon install, compatible-upgrade, rollback and safe-uninstall contract
+under disposable prefixes, then reconcile stale operator documentation. This
+is a high-risk release-engineering boundary because operator state and artifact
+identity must never be silently replaced or deleted. No tag, release, artifact
+publication, registry, deployment, production host/network, real key/fund or
+go/no-go action is in scope. Published status remains 1,896 tests, rollout
+33/59, phase work 33/51, Phase 6 6/7 and production false.
+
+Updated: 2026-08-16 11:54 UTC
+
+---
+
 GH-218 is complete through protected PR #220. Exact reviewed head
 `ca18671c121e3323de54a5b69144768f1ab4a21e` passed all nine required universal
 Docs/Security contexts plus DeepScan, with all four review threads remediated

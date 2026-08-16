@@ -27,8 +27,6 @@ cd TrueRepublic
 # Build binary to ./build/truerepublicd
 make build
 
-# Or install to $GOPATH/bin
-make install
 ```
 
 Verify:
@@ -101,7 +99,7 @@ After=network.target
 [Service]
 Type=simple
 User=truerepublic
-ExecStart=/usr/local/bin/truerepublicd start
+ExecStart=/opt/truerepublic/bin/truerepublicd start --home /home/truerepublic/.truerepublic
 Restart=on-failure
 RestartSec=10
 LimitNOFILE=65535
@@ -110,7 +108,11 @@ LimitNOFILE=65535
 WantedBy=multi-user.target
 ```
 
-Enable and start:
+This unit fragment is incomplete until an `ExecStartPre` wrapper invokes the
+exact identity-bound lifecycle `pre-start` command. Do not enable unattended
+startup without that fail-closed gate.
+
+After adding and verifying that pre-start gate, enable and start:
 ```bash
 sudo systemctl daemon-reload
 sudo systemctl enable truerepublicd
@@ -125,45 +127,24 @@ sudo journalctl -u truerepublicd -f
 
 ### launchd (macOS)
 
-Create `~/Library/LaunchAgents/com.truerepublic.node.plist`:
-
-```xml
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN"
-  "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-<plist version="1.0">
-<dict>
-    <key>Label</key>
-    <string>com.truerepublic.node</string>
-    <key>ProgramArguments</key>
-    <array>
-        <string>/usr/local/bin/truerepublicd</string>
-        <string>start</string>
-    </array>
-    <key>RunAtLoad</key>
-    <true/>
-    <key>KeepAlive</key>
-    <true/>
-</dict>
-</plist>
-```
-
-```bash
-launchctl load ~/Library/LaunchAgents/com.truerepublic.node.plist
-```
+The verified artifact lifecycle currently supports Linux only. macOS remains a
+foreground local-development build target; no reviewed `launchd` installation
+or unattended-service procedure is provided. Do not adapt the Linux `/opt`
+layout to macOS without a separate contract, tests, and operator review.
 
 ## Build Targets
 
 | Command | Description |
 |---------|-------------|
 | `make build` | Build binary to `./build/truerepublicd` |
-| `make install` | Install to `$GOPATH/bin` |
 | `make test` | Run all tests with race detector |
 | `make lint` | Run vet and staticcheck |
 | `make clean` | Remove build artifacts |
 
 ## Next Steps
 
+- [Artifact lifecycle](lifecycle.md) -- checksum-bound installation, upgrade,
+  rollback, and uninstall without touching operator state
 - [Node Configuration](../configuration/node-config.md)
 - [Monitoring](../operations/monitoring.md)
 - [Validator Guide](../../validators/README.md)

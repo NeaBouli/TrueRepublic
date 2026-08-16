@@ -1,10 +1,13 @@
 # Deployment Guide
 
-**Version:** v0.3.0
+**Version:** v0.4.0 recovery baseline
+
+> This guide covers local development and recovery-testnet evidence only.
+> Mainnet, public deployment, production keys, and real funds are not approved.
 
 ## Prerequisites
 
-- Go 1.24+ (for native build)
+- Go 1.26.6 (repository-pinned native toolchain)
 - Docker and Docker Compose (for containerized deployment)
 - Rust toolchain (for CosmWasm contracts)
 - Node.js 22+ (for the maintained web client)
@@ -189,7 +192,7 @@ After=network.target
 [Service]
 Type=simple
 User=truerepublic
-ExecStart=/usr/local/bin/truerepublicd start
+ExecStart=/opt/truerepublic/bin/truerepublicd start --home /home/truerepublic/.truerepublic
 Restart=on-failure
 RestartSec=10
 LimitNOFILE=65535
@@ -198,6 +201,13 @@ Environment="CGO_ENABLED=1"
 [Install]
 WantedBy=multi-user.target
 ```
+
+This unit fragment is not rollout-complete by itself. Before enabling it, add
+an `ExecStartPre` wrapper that runs the exact identity-bound lifecycle
+`pre-start` command from the current reviewed evidence; the service must remain
+stopped when that gate fails.
+
+After adding and verifying that pre-start gate:
 
 ```bash
 sudo systemctl daemon-reload
@@ -311,33 +321,18 @@ and signer state through a separate offline key-custody process.
 
 ## Upgrade Procedures
 
-### Binary Upgrade (Non-Breaking)
+Do not overwrite a running binary in place. Verify the immutable release
+evidence, stage the candidate outside the managed prefix, stop the service,
+apply the identity-bound lifecycle upgrade, and run the pre-start verification
+before the service may restart. The repository-owned procedure and fail-closed
+tool are documented in
+[Artifact Lifecycle](node-operators/installation/lifecycle.md).
 
-```bash
-# Stop node
-sudo systemctl stop truerepublicd
-
-# Replace binary
-cp ./build/truerepublicd /usr/local/bin/
-
-# Start node
-sudo systemctl start truerepublicd
-```
-
-### State Migration (Breaking)
-
-```bash
-# Export state at upgrade height
-./build/truerepublicd export --height <upgrade-height> > genesis_export.json
-
-# Migrate genesis
-./build/truerepublicd-new migrate genesis_export.json --chain-id truerepublic-2 > new_genesis.json
-
-# Reset and restart with new genesis
-./build/truerepublicd-new tendermint unsafe-reset-all
-cp new_genesis.json ~/.truerepublic/config/genesis.json
-sudo systemctl start truerepublicd
-```
+Only the governed `v0.4.1` migration path is currently implemented. Arbitrary
+or breaking migrations, store-loader changes for pre-GH-184 chains, and
+destructive state resets are unsupported. Follow
+[Governed Application Upgrades and Rollback](node-operators/operations/upgrades.md)
+and stop for coordinated recovery if a candidate may have mutated state.
 
 ---
 
@@ -349,5 +344,5 @@ sudo systemctl start truerepublicd
 | Node won't sync | Check seeds/persistent_peers in config.toml |
 | Out of memory | Increase RAM or enable swap |
 | Port already in use | Check for existing processes: `lsof -i :26657` |
-| WAL corruption | `truerepublicd tendermint unsafe-reset-all` (data loss) |
+| Suspected WAL or database corruption | Stop the node, preserve logs and state, then follow the reviewed backup/recovery and incident-command procedure; do not reset validator data |
 | IBC timeout | Verify relayer is running and channels are open |

@@ -17,7 +17,7 @@
 - Docker Compose v2.20+
 
 ### Native Build
-- Go 1.23.5+
+- Go 1.26.6 (the repository-pinned toolchain)
 - Make
 - Git
 
