@@ -21,24 +21,11 @@ on:
       - '.github/workflows/docs-check.yml'
       - '.github/workflows/security-scan.yml'
       - 'wiki/**'
+  # This workflow is a required status context. It must report on every pull
+  # request so path-only source changes cannot remain stuck in an expected
+  # state. Main pushes stay path-filtered to avoid redundant post-merge work.
   pull_request:
-    paths:
-      - 'README.md'
-      - 'CLAUDE.md'
-      - 'SECURITY.md'
-      - '.github/SECURITY.md'
-      - '.github/dependabot.yml'
-      - 'client-web/**'
-      - 'docs/**'
-      - 'scripts/check-consistency.sh'
-      - 'scripts/check-mobile-retirement.sh'
-      - 'scripts/check-web-wallet-retirement.sh'
-      - 'scripts/check-custom-query-retirement.sh'
-      - 'mobile-wallet/**'
-      - 'web-wallet/**'
-      - '.github/workflows/docs-check.yml'
-      - '.github/workflows/security-scan.yml'
-      - 'wiki/**'
+    branches: [main]
 
 permissions:
   contents: read

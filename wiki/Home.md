@@ -22,7 +22,9 @@
 | Legacy clients | Web and mobile prototypes retired under GH-112/GH-102; Git history only |
 
 Authoritative machine status: [`docs/status.json`](https://github.com/NeaBouli/TrueRepublic/blob/main/docs/status.json).
-Recovery tracking: [Issue #4](https://github.com/NeaBouli/TrueRepublic/issues/4).
+Completed recovery foundation:
+[Issue #4](https://github.com/NeaBouli/TrueRepublic/issues/4). Active rollout
+tracking: [Issue #29](https://github.com/NeaBouli/TrueRepublic/issues/29).
 
 ## Navigation
 

@@ -20,7 +20,7 @@ approved for production or real funds during this audit.
   messaging and an integrated non-custodial PNYX wallet. This is architecture
   only: no Alpha binary, native client, messaging network, hardware signer,
   secure multi-device recovery or independently reviewed wallet implementation
-  exists yet. `client-web` remains the Beta, and the rollout count stays 34/59.
+  exists yet. `client-web` remains the Beta, and the rollout count stays 33/59.
 - The repository currently describes its project license as Apache 2.0 in
   `CONTRIBUTING.md` but has no discoverable root `LICENSE` file. No Telegram,
   Status, Waku, Matrix or other upstream client code may be copied or linked

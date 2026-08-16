@@ -49,6 +49,8 @@ cryptographic audit. CodeRabbit was rate-limited on parts of the recovery
 stack, so a green status must not be described as substantive independent
 review where no findings were produced.
 
-Track authoritative progress in
-[Issue #4](https://github.com/NeaBouli/TrueRepublic/issues/4) and the repository
-`BRIDGE.md`.
+The recovery foundation is preserved in completed
+[Issue #4](https://github.com/NeaBouli/TrueRepublic/issues/4). Track remaining
+production-readiness work in
+[Issue #29](https://github.com/NeaBouli/TrueRepublic/issues/29) and the
+repository `BRIDGE.md`.

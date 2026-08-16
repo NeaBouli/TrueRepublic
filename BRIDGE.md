@@ -1,5 +1,76 @@
 # TrueRepublic Agent Bridge
 
+## 2026-08-16 12:58 EEST GH-218 GitHub repository hygiene → In Progress
+
+- **Branch:** `docs/GH-218-github-hygiene`
+- **Issue:** [GH-218](https://github.com/NeaBouli/TrueRepublic/issues/218)
+- **Scope:** reconcile misleading historical releases, completed recovery
+  epics, stale/archival branches, merged-branch cleanup, universal protected
+  status checks, the unresolved repository-license decision and GH-29 status.
+- **Roles:** Kimi K3 performs one bounded secret-free read-only audit of the
+  exact cleanup and protection plan. Sol owns every external GitHub write,
+  policy decision, deletion, integration, verification and closeout.
+- **Risk:** Medium. Release/issue/branch cleanup is externally visible and
+  branch-protection mistakes can block future work. Historical commits/tags
+  and all product code must remain recoverable and unchanged.
+- **Boundary:** no product/consensus/client change, rollout credit, license
+  selection, artifact publication, deployment, network, key, fund or
+  production action.
+- **Next:** obtain Kimi review, apply only verified cleanup operations, prove
+  required checks against a real protected PR, then merge and verify main/
+  Pages/both Bridges.
+
+### 2026-08-16 13:05 EEST Kimi review / Sol correction
+
+- Kimi independently verified all ten cleanup actions and the exact reported
+  context names. No P0 blocker exists.
+- Kimi found that `check` was still pull-request path-filtered and therefore
+  not universal. Sol removed only that PR path filter; main pushes remain
+  filtered. The GH-218 PR will prove the context on the exact head.
+- Kimi also required recoverability symmetry. Both unmerged recovery-status
+  history and unrelated Solana history will receive verified annotated archive
+  tags before their active branches are deleted.
+- Original v0.4.0 and unpublished v0.3.0 release bodies are now preserved under
+  `docs/archive/releases/` before any GitHub release text is replaced/deleted.
+- Branch protection must preserve linear history, stale-review dismissal, one
+  approval, force-push/deletion denial and the deliberate admin-bypass boundary;
+  only required status contexts are added.
+
+### 2026-08-16 13:12 EEST external cleanup / local synchronization
+
+- v0.4.0 is now a historical, artifact-free, non-production prerelease with
+  current 1,896 / 34-of-59 / production-false boundaries. The obsolete
+  unpublished v0.3.0 draft release is deleted; both version tags remain.
+- Annotated archive tags preserve exact tips `e756d0b` (closed PR #25 recovery
+  status) and `043c62e` (unrelated Solana/pnyx history). Both tags were read
+  back before the two active branches were deleted; remote heads now contain
+  only `main` plus the current GH-218 task once pushed.
+- Completed recovery issues #4 and #7 are closed with evidence. GH-29 remains
+  the active rollout epic and carries the exact current snapshot. GH-219 now
+  tracks the unresolved license decision without choosing a license.
+- `delete_branch_on_merge` is enabled. Main protection now requires exact
+  universal Docs/Security contexts while retaining linear history, one stale-
+  dismissing review, disabled admin enforcement, and force-push/deletion denial.
+- Public status references now distinguish completed recovery foundation #4
+  from active rollout #29. Local documentation consistency/PR verification is
+  next; no rollout or production state changed.
+
+### 2026-08-16 14:04 EEST Kimi final audit / rollout arithmetic correction
+
+- Kimi's second independent read-only pass verified the release, archive tags,
+  removed remote branches, issue states, repository settings, workflow context
+  names and passing local documentation check. It found one P2 discrepancy:
+  GH-29 contains exactly 33 checked and 26 unchecked boxes, while recent status
+  text said 34/59.
+- Sol traced the mismatch through GitHub body-edit history and repository status
+  commits. No currently unchecked rollout item has completion evidence. The
+  conservative source of truth is therefore corrected to 33/59 overall and
+  33/51 phase work; Phase 6 remains 6/7 and production remains false.
+- This is arithmetic reconciliation, not lost implementation or a rollout
+  reversal. No checkbox was unchecked and no open work was represented as done.
+
+---
+
 ## 2026-08-16 03:11 EEST GH-212 release-evidence contract → Merged / exact main green
 
 - **Protected merge:** PR #213 replacement head

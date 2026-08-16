@@ -1,5 +1,26 @@
 # Project State
 
+GH-218 is locally synchronized after the external GitHub hygiene pass. The
+published v0.4.0 release is now an artifact-free historical prerelease with an
+explicit production-false boundary; the obsolete unpublished v0.3.0 draft is
+removed while both version tags remain. Exact annotated archive tags preserve
+the former PR #25 recovery-status tip and unrelated legacy Solana tip before
+their active branches were deleted. Completed recovery issues #4/#7 are closed,
+Issue #29 is the active rollout epic, and GH-219 tracks license selection without a
+decision. Merged branches now auto-delete. Main protection requires the exact
+universal Docs/Security contexts and otherwise preserves its prior linear-
+history/review/force-push/deletion policy. Public documentation now separates
+completed recovery #4 from active rollout #29. Protected GH-218 PR and exact-
+main/Pages verification remain. Kimi's final read-only audit proved that the
+active GH-29 body contains exactly 33 checked and 26 unchecked boxes; the
+previously published 34/59 count was one ahead of that tracker. Current truth is
+therefore 1,896 tests, rollout 33/59, phase work 33/51, Phase 6 6/7 and
+production false. No open item was relabelled complete.
+
+Updated: 2026-08-16 11:04 UTC
+
+---
+
 GH-215 is complete through PR #216. Replacement head
 `ac11bf59bc5168ccb9c50475c71cc7c55b8bcbce` passed every reported protected
 context with all nine review threads resolved, admin-squash-merged as

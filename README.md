@@ -40,8 +40,10 @@
 ---
 
 > [!WARNING]
-> **Recovery audit active:** v0.4.0 functionality exists, but production-readiness
-> claims are being re-verified in [GitHub issue #4](https://github.com/NeaBouli/TrueRepublic/issues/4).
+> **Recovery foundation verified; rollout still active:** the completed recovery
+> evidence is preserved in [GitHub issue #4](https://github.com/NeaBouli/TrueRepublic/issues/4),
+> while every remaining production-readiness gate is tracked in
+> [GitHub issue #29](https://github.com/NeaBouli/TrueRepublic/issues/29).
 > `client-web` is the sole maintained web client. The legacy `web-wallet`
 > and `mobile-wallet` prototypes were retired and removed under GH-112 and
 > GH-102; Git history preserves them for audit only.
@@ -265,11 +267,12 @@ cd client-web && npm ci && npm run lint && npm test -- --run && npm run build
 
 ## Current Status
 
-**Version: v0.4.0 — recovery audit active; not production-ready**
+**Version: v0.4.0 — recovery foundation verified; not production-ready**
 
 The checklist below records implemented surface area, not a production security
 approval. Current evidence, risks, and commands are maintained in
-[`BRIDGE.md`](BRIDGE.md) and [GitHub issue #4](https://github.com/NeaBouli/TrueRepublic/issues/4).
+[`BRIDGE.md`](BRIDGE.md) and the active
+[rollout tracker #29](https://github.com/NeaBouli/TrueRepublic/issues/29).
 
 - 🟡 1,896 tests recovery-verified locally (1,551 Go, including GH-209's recipient-binding and atomic-payout adversarial coverage, + 26 Rust + 319 maintained-client, including its v2 encoding and canonical-recipient validation), plus the separately gated GH-206/GH-209 real Go/WASM-to-native-verifier compatibility proof, GH-175/GH-178/GH-181 IBC proof and GH-184 governed-upgrade recovery proof, GH-172 shared-state contention/exact-replay/restart proof, GH-145 bounded live fuzz campaigns, GH-193 maintained-client wallet/signing-safety proof, GH-190 maintained-client IBC transfer/recovery proof, GH-131 real submitted-history pagination proof, GH-121 real browser-query boundary, GH-115 local client-chain delivery proof, GH-56 rotation, GH-59 slashing, GH-60 inactive-validator genesis, GH-61 legacy-authority migration, GH-93 incident rehearsal, and GH-97 sustained-load process harnesses; protected publication and production rollout evidence remain required
 - 🟡 GH-212 verifies exact release tool/platform/container-base pins, repeated
