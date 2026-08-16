@@ -533,5 +533,6 @@
 - [x] Reconcile the tracker arithmetic conservatively: GH-29 has exactly 33
   checked of 59 items (33/51 phase work), so correct the previously published
   off-by-one without inventing completion evidence.
-- [ ] Complete Kimi review, Sol verification, protected merge, exact-main/
-  Pages and both-Bridge closeout while rollout stays 33/59 and production false.
+- [x] Complete Kimi review and final audit.
+- [ ] Complete Sol verification, protected merge, exact-main/Pages and both-
+  Bridge closeout while rollout stays 33/59 and production false.

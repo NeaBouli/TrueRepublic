@@ -6,7 +6,7 @@ explicit production-false boundary; the obsolete unpublished v0.3.0 draft is
 removed while both version tags remain. Exact annotated archive tags preserve
 the former PR #25 recovery-status tip and unrelated legacy Solana tip before
 their active branches were deleted. Completed recovery issues #4/#7 are closed,
-#29 is the active rollout epic, and GH-219 tracks license selection without a
+Issue #29 is the active rollout epic, and GH-219 tracks license selection without a
 decision. Merged branches now auto-delete. Main protection requires the exact
 universal Docs/Security contexts and otherwise preserves its prior linear-
 history/review/force-push/deletion policy. Public documentation now separates
