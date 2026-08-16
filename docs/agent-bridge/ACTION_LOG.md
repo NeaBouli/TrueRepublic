@@ -4451,3 +4451,23 @@
   unchanged until protected merge and evidence synchronization.
 - Docker is not installed locally. Hosted protected Docker/Compose and all
   exact-head review checks remain required before merge.
+
+## 2026-08-16 16:07 EEST - GH-222 protected review remediation
+
+- Independently reproduced and closed the six current automated review
+  findings with bounded code, test, documentation and checklist changes.
+- Added exclusive lifecycle transaction creation plus concurrent regression,
+  exact empty managed-directory pruning plus reinstall regression, mandatory
+  post-upgrade pre-start, and complete identity-bound systemd examples.
+- Fresh full Go race and lifecycle repository contracts pass on the remediated
+  tree. Remaining complete gates, replacement protected checks, thread
+  resolution, merge and exact-main/Pages synchronization remain pending.
+
+## 2026-08-16 16:20 EEST - GH-222 final review hardening
+
+- Kimi's independent final diff review found no P0-P2 and four P3 hardening
+  opportunities; all four were addressed and the dedicated transaction-dir
+  scenario was added to an existing regression without adding another case.
+- Exact standard count is now 1,921: 1,576 Go, 26 Rust and 319 client. The
+  earlier 1,920 candidate record predates the new concurrency test; public
+  merged-main truth remains 1,896 and rollout 33/59 pending protected merge.

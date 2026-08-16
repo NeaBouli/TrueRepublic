@@ -8,6 +8,7 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"sync"
 	"testing"
 )
 
@@ -83,8 +84,42 @@ func TestLifecycleInstallUpgradeRollbackUninstall(t *testing.T) {
 	if exists(c.BinaryPath) || exists(c.ManifestPath) {
 		t.Fatal("managed files survived uninstall")
 	}
+	for _, dir := range []string{filepath.Dir(c.BinaryPath), filepath.Dir(c.RollbackPath), filepath.Dir(c.ManifestPath)} {
+		if exists(dir) {
+			t.Fatalf("empty managed directory survived uninstall: %s", dir)
+		}
+	}
 	if got := string(mustRead(t, stateFile)); got != "must survive" {
 		t.Fatalf("operator state changed: %q", got)
+	}
+	if err := Install(c, two); err != nil {
+		t.Fatalf("reinstall after uninstall: %v", err)
+	}
+}
+
+func TestTransactionMarkerCreationIsExclusive(t *testing.T) {
+	path := filepath.Join(canonicalTestPath(t.TempDir()), "lib", "install-transaction.json")
+	start := make(chan struct{})
+	results := make(chan error, 2)
+	var ready sync.WaitGroup
+	ready.Add(2)
+	for range 2 {
+		go func() {
+			ready.Done()
+			<-start
+			results <- exclusiveJSON(path, transaction{Schema: TransactionSchema, Operation: "install"}, 0600)
+		}()
+	}
+	ready.Wait()
+	close(start)
+	succeeded := 0
+	for range 2 {
+		if err := <-results; err == nil {
+			succeeded++
+		}
+	}
+	if succeeded != 1 {
+		t.Fatalf("exclusive marker successes = %d, want 1", succeeded)
 	}
 }
 
@@ -162,6 +197,18 @@ func TestFailClosedAdversarialBoundaries(t *testing.T) {
 		}
 		if err := PreStart(good); err == nil {
 			t.Fatal("pre-start accepted transaction")
+		}
+
+		dedicated := contract(t.TempDir(), filepath.Join(t.TempDir(), "state"), digest(t, one))
+		dedicated.TransactionPath = filepath.Join(dedicated.Prefix, "transaction", "install.json")
+		if err := Install(dedicated, one); err != nil {
+			t.Fatalf("install with dedicated transaction directory: %v", err)
+		}
+		if err := Uninstall(dedicated, dedicated.ArtifactSHA256); err != nil {
+			t.Fatalf("uninstall with dedicated transaction directory: %v", err)
+		}
+		if exists(filepath.Dir(dedicated.TransactionPath)) {
+			t.Fatal("dedicated transaction directory survived uninstall")
 		}
 	})
 

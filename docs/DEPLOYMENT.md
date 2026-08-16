@@ -192,6 +192,8 @@ After=network.target
 [Service]
 Type=simple
 User=truerepublic
+EnvironmentFile=/etc/truerepublic/lifecycle.env
+ExecStartPre=/usr/local/libexec/truerepublic-install-lifecycle --contract=${LIFECYCLE_CONTRACT} --prefix=${INSTALL_PREFIX} --operator-state=${OPERATOR_STATE} --sha256=${ARTIFACT_SHA256} --source-ref=${SOURCE_REF} --target=${TARGET} --runtime=${RUNTIME} pre-start
 ExecStart=/opt/truerepublic/bin/truerepublicd start --home /home/truerepublic/.truerepublic
 Restart=on-failure
 RestartSec=10
@@ -202,12 +204,18 @@ Environment="CGO_ENABLED=1"
 WantedBy=multi-user.target
 ```
 
-This unit fragment is not rollout-complete by itself. Before enabling it, add
-an `ExecStartPre` wrapper that runs the exact identity-bound lifecycle
-`pre-start` command from the current reviewed evidence; the service must remain
-stopped when that gate fails.
+Build `./cmd/install-lifecycle` from the same reviewed source commit and install
+it root-owned at `/usr/local/libexec/truerepublic-install-lifecycle`. Install
+the reviewed contract root-owned, mode `0644`, in a root-owned non-writable
+directory outside the managed prefix so the service user can read it. Then
+create the
+root-owned, mode `0600` `/etc/truerepublic/lifecycle.env` with fixed values for
+`LIFECYCLE_CONTRACT`, `INSTALL_PREFIX`, `OPERATOR_STATE`, `ARTIFACT_SHA256`,
+`SOURCE_REF`, `TARGET`, and `RUNTIME` from the accepted release evidence. Do
+not place shell syntax or secrets in that file. The complete `ExecStartPre`
+above fails closed and prevents service startup if any identity check fails.
 
-After adding and verifying that pre-start gate:
+After verifying that pre-start gate manually:
 
 ```bash
 sudo systemctl daemon-reload

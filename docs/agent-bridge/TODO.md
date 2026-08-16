@@ -511,8 +511,8 @@
   tampering and uninstall behavior with disposable fixtures.
 - [x] Add the lifecycle gate to protected CI and reconcile installation,
   deployment and operator documentation with actual supported behavior.
-- [ ] Complete fresh full gates, protected PR/review, exact-main/Pages and
-  both-Bridge closeout.
+- [x] Complete fresh full gates.
+- [ ] Complete protected PR/review, exact-main/Pages and both-Bridge closeout.
 - [ ] Keep rollout at 33/59 until protected completion evidence exists; never
   publish, deploy, tag, sign or authorize production from this task.
 

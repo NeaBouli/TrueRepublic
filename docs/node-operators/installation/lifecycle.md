@@ -103,6 +103,12 @@ go run ./cmd/install-lifecycle \
   upgrade --artifact "$ARTIFACT" \
   --expected-current-sha256 "$OLD_SHA256" \
   --expected-current-source-ref "$OLD_SOURCE_REF"
+
+go run ./cmd/install-lifecycle \
+  --contract "$LIFECYCLE_CONTRACT" --prefix "$INSTALL_PREFIX" \
+  --operator-state "$OPERATOR_STATE" --sha256 "$ARTIFACT_SHA256" \
+  --source-ref "$SOURCE_REF" --target "$TARGET" --runtime "$RUNTIME" \
+  pre-start
 ```
 
 The current binary is copied to the single rollback slot before replacement.
@@ -110,6 +116,8 @@ A later successful upgrade replaces that slot with the immediately preceding
 verified binary. State migrations are not performed by this tool; if a
 candidate may have opened or changed chain state, stop and follow the governed
 upgrade and incident-command procedure instead of attempting binary rollback.
+The post-upgrade `pre-start` invocation above must succeed before any service
+restart.
 
 ## Rollback
 

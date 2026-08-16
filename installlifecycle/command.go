@@ -44,7 +44,7 @@ func newCommandForHost(hostTarget string) *cobra.Command {
 		return Install(c, artifact)
 	}}
 	install.Flags().StringVar(&artifact, "artifact", "", "absolute path to verified artifact")
-	install.MarkFlagRequired("artifact")
+	_ = install.MarkFlagRequired("artifact")
 	var upgradeArtifact, expected, expectedSource string
 	upgrade := &cobra.Command{Use: "upgrade", Args: cobra.NoArgs, RunE: func(*cobra.Command, []string) error {
 		c, err := load()
@@ -56,9 +56,9 @@ func newCommandForHost(hostTarget string) *cobra.Command {
 	upgrade.Flags().StringVar(&upgradeArtifact, "artifact", "", "absolute path to verified artifact")
 	upgrade.Flags().StringVar(&expected, "expected-current-sha256", "", "expected installed binary digest")
 	upgrade.Flags().StringVar(&expectedSource, "expected-current-source-ref", "", "expected installed source commit")
-	upgrade.MarkFlagRequired("artifact")
-	upgrade.MarkFlagRequired("expected-current-sha256")
-	upgrade.MarkFlagRequired("expected-current-source-ref")
+	_ = upgrade.MarkFlagRequired("artifact")
+	_ = upgrade.MarkFlagRequired("expected-current-sha256")
+	_ = upgrade.MarkFlagRequired("expected-current-source-ref")
 	rollback := &cobra.Command{Use: "rollback", Args: cobra.NoArgs, RunE: func(*cobra.Command, []string) error {
 		c, err := load()
 		if err != nil {
@@ -75,7 +75,7 @@ func newCommandForHost(hostTarget string) *cobra.Command {
 		return Uninstall(c, uninstallExpected)
 	}}
 	uninstall.Flags().StringVar(&uninstallExpected, "expected-current-sha256", "", "expected installed binary digest")
-	uninstall.MarkFlagRequired("expected-current-sha256")
+	_ = uninstall.MarkFlagRequired("expected-current-sha256")
 	preStart := &cobra.Command{Use: "pre-start", Args: cobra.NoArgs, RunE: func(*cobra.Command, []string) error {
 		c, err := load()
 		if err != nil {

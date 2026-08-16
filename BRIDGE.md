@@ -7130,3 +7130,18 @@ exclusion, CI wiring, and documentation boundaries.
   Desktop worktree was preserved and not modified.
 
 ---
+
+## 2026-08-16 16:20 EEST - GH-222 protected review remediation
+
+- Verified and addressed all six CodeRabbit threads plus Kimi's final P3
+  hardening: exclusive marker errors retain causes, all independent managed
+  directories are pruned before returning a joined error, dedicated
+  transaction directories are allowlisted and tested, and systemd contract
+  readability is explicit. Kimi's final review found no P0-P2.
+- Fresh full Go Race/Coverage, vet, staticcheck, vulnerability policy and
+  fixtures, gitleaks, lifecycle/repository, release-evidence, deterministic,
+  docs and diff gates pass. The additional concurrency regression corrects
+  candidate arithmetic to 1,921 = 1,576 Go + 26 Rust + 319 client.
+- No release, tag, artifact publication, deployment, real state, network,
+  key, fund or production action occurred. Public status remains 1,896 and
+  rollout 33/59 until protected merge and closeout synchronization.

@@ -9,6 +9,7 @@ import (
 	"os"
 	"path/filepath"
 	"regexp"
+	"sort"
 	"strings"
 )
 
@@ -241,14 +242,17 @@ func Uninstall(c Contract, expectedCurrentSHA string) error {
 	if err := ensureExactAllowlist(c); err != nil {
 		return err
 	}
-	return mutate(c, "uninstall", func() error {
+	if err := mutate(c, "uninstall", func() error {
 		for _, p := range []string{c.RollbackPath, c.BinaryPath, c.ManifestPath} {
 			if err := removeRegularOnly(p); err != nil {
 				return err
 			}
 		}
 		return nil
-	})
+	}); err != nil {
+		return err
+	}
+	return pruneManagedDirs(c)
 }
 
 func Check(c Contract) (Status, error) {
@@ -322,7 +326,7 @@ func mutate(c Contract, operation string, fn func() error) error {
 			return err
 		}
 	}
-	if err := atomicJSON(c.TransactionPath, transaction{Schema: TransactionSchema, Operation: operation}, os.FileMode(c.Modes.Transaction)); err != nil {
+	if err := exclusiveJSON(c.TransactionPath, transaction{Schema: TransactionSchema, Operation: operation}, os.FileMode(c.Modes.Transaction)); err != nil {
 		return err
 	}
 	if err := fn(); err != nil {
@@ -349,7 +353,7 @@ func verifyArtifact(path, want string, maxBytes int64) error {
 	if err != nil {
 		return errors.New("artifact is unavailable")
 	}
-	defer f.Close()
+	defer func() { _ = f.Close() }()
 	info, err := f.Stat()
 	if err != nil || !os.SameFile(pathInfo, info) || !info.Mode().IsRegular() || info.Size() <= 0 || info.Size() > maxBytes || info.Mode().Perm()&0100 == 0 || info.Mode().Perm()&0022 != 0 || info.Mode()&(os.ModeSetuid|os.ModeSetgid|os.ModeSticky) != 0 {
 		return errors.New("artifact must be a regular file")
@@ -367,7 +371,7 @@ func verifyArtifact(path, want string, maxBytes int64) error {
 func ensureExactAllowlist(c Contract) error {
 	allowedFiles := map[string]bool{c.BinaryPath: true, c.ManifestPath: true, c.RollbackPath: true}
 	allowedDirs := map[string]bool{c.Prefix: true}
-	for p := range allowedFiles {
+	for _, p := range []string{c.BinaryPath, c.ManifestPath, c.RollbackPath, c.TransactionPath} {
 		for d := filepath.Dir(p); within(c.Prefix, d) || d == c.Prefix; d = filepath.Dir(d) {
 			allowedDirs[d] = true
 			if d == c.Prefix {
@@ -403,7 +407,7 @@ func atomicCopy(source, destination string, mode os.FileMode) error {
 	if err != nil {
 		return err
 	}
-	defer s.Close()
+	defer func() { _ = s.Close() }()
 	if err := os.MkdirAll(filepath.Dir(destination), 0755); err != nil {
 		return err
 	}
@@ -412,7 +416,7 @@ func atomicCopy(source, destination string, mode os.FileMode) error {
 		return err
 	}
 	tmp := t.Name()
-	defer os.Remove(tmp)
+	defer func() { _ = os.Remove(tmp) }()
 	if _, err = io.Copy(t, s); err == nil {
 		err = t.Chmod(mode)
 	}
@@ -444,7 +448,7 @@ func atomicJSON(path string, value any, mode os.FileMode) error {
 		return err
 	}
 	tmp := t.Name()
-	defer os.Remove(tmp)
+	defer func() { _ = os.Remove(tmp) }()
 	if _, err = t.Write(b); err == nil {
 		err = t.Chmod(mode)
 	}
@@ -461,6 +465,56 @@ func atomicJSON(path string, value any, mode os.FileMode) error {
 		return err
 	}
 	return syncDir(filepath.Dir(path))
+}
+
+func exclusiveJSON(path string, value any, mode os.FileMode) error {
+	b, err := marshal(value)
+	if err != nil {
+		return err
+	}
+	if err := os.MkdirAll(filepath.Dir(path), 0755); err != nil {
+		return err
+	}
+	f, err := os.OpenFile(path, os.O_WRONLY|os.O_CREATE|os.O_EXCL, mode)
+	if err != nil {
+		return fmt.Errorf("transaction marker could not be created exclusively: %w", err)
+	}
+	if _, err = f.Write(b); err == nil {
+		err = f.Sync()
+	}
+	if closeErr := f.Close(); err == nil {
+		err = closeErr
+	}
+	if err != nil {
+		_ = os.Remove(path)
+		return err
+	}
+	return syncDir(filepath.Dir(path))
+}
+
+func pruneManagedDirs(c Contract) error {
+	seen := make(map[string]bool)
+	var dirs []string
+	for _, path := range []string{c.RollbackPath, c.BinaryPath, c.ManifestPath, c.TransactionPath} {
+		for dir := filepath.Dir(path); dir != c.Prefix && within(c.Prefix, dir); dir = filepath.Dir(dir) {
+			if seen[dir] {
+				continue
+			}
+			seen[dir] = true
+			dirs = append(dirs, dir)
+		}
+	}
+	sort.Slice(dirs, func(i, j int) bool { return len(dirs[i]) > len(dirs[j]) })
+	var removeErrs []error
+	for _, dir := range dirs {
+		if err := os.Remove(dir); err != nil && !os.IsNotExist(err) {
+			removeErrs = append(removeErrs, fmt.Errorf("remove managed directory %s: %w", dir, err))
+		}
+	}
+	if err := syncDir(c.Prefix); err != nil {
+		removeErrs = append(removeErrs, err)
+	}
+	return errors.Join(removeErrs...)
 }
 
 func removeRegularOnly(path string) error {
@@ -509,6 +563,6 @@ func syncDir(path string) error {
 	if err != nil {
 		return err
 	}
-	defer d.Close()
+	defer func() { _ = d.Close() }()
 	return d.Sync()
 }

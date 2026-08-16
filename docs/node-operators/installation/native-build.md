@@ -99,6 +99,8 @@ After=network.target
 [Service]
 Type=simple
 User=truerepublic
+EnvironmentFile=/etc/truerepublic/lifecycle.env
+ExecStartPre=/usr/local/libexec/truerepublic-install-lifecycle --contract=${LIFECYCLE_CONTRACT} --prefix=${INSTALL_PREFIX} --operator-state=${OPERATOR_STATE} --sha256=${ARTIFACT_SHA256} --source-ref=${SOURCE_REF} --target=${TARGET} --runtime=${RUNTIME} pre-start
 ExecStart=/opt/truerepublic/bin/truerepublicd start --home /home/truerepublic/.truerepublic
 Restart=on-failure
 RestartSec=10
@@ -108,11 +110,18 @@ LimitNOFILE=65535
 WantedBy=multi-user.target
 ```
 
-This unit fragment is incomplete until an `ExecStartPre` wrapper invokes the
-exact identity-bound lifecycle `pre-start` command. Do not enable unattended
-startup without that fail-closed gate.
+Build `./cmd/install-lifecycle` from the same reviewed source commit and install
+it root-owned at `/usr/local/libexec/truerepublic-install-lifecycle`. Install
+the reviewed contract root-owned, mode `0644`, in a root-owned non-writable
+directory outside the managed prefix so the service user can read it. Create
+the
+root-owned, mode `0600` `/etc/truerepublic/lifecycle.env` with fixed release
+evidence values for `LIFECYCLE_CONTRACT`, `INSTALL_PREFIX`, `OPERATOR_STATE`,
+`ARTIFACT_SHA256`, `SOURCE_REF`, `TARGET`, and `RUNTIME`; do not put shell
+syntax or secrets in it. The complete `ExecStartPre` above prevents startup
+when the identity-bound lifecycle gate fails.
 
-After adding and verifying that pre-start gate, enable and start:
+After verifying that pre-start gate manually, enable and start:
 ```bash
 sudo systemctl daemon-reload
 sudo systemctl enable truerepublicd

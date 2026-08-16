@@ -804,3 +804,19 @@ authority, and GH-12 closes custom-genesis/runtime-invariant findings on
 implementation on `main`. GH-21 closes the native single-node persistence/
 restart implementation locally and in GitHub CI. These remediations are merged
 to `main`.
+
+## 2026-08-16 16:07 EEST - GH-222 review-remediated candidate
+
+- Status: In progress; all current review findings are locally remediated.
+- PASS: fresh full Go race suite and lifecycle package/CLI contract, including
+  exclusive transaction and uninstall/reinstall regressions.
+- Pending: remaining full gates, replacement protected head, resolved review
+  threads, merge, exact-main/Pages and public status synchronization.
+- Public truth remains 1,896 tests, rollout 33/59, production false.
+
+## 2026-08-16 16:20 EEST - GH-222 final local candidate
+
+- Kimi final review: no P0-P2; all four P3 observations remediated.
+- Candidate evidence: 1,921 total = 1,576 Go + 26 Rust + 319 client.
+- All relevant local gates pass; protected replacement head and closeout are
+  pending. Public truth remains 1,896, rollout 33/59, production false.
