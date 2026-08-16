@@ -1,5 +1,22 @@
 # Project State
 
+GH-215 is complete through PR #216. Replacement head
+`ac11bf59bc5168ccb9c50475c71cc7c55b8bcbce` passed every reported protected
+context with all nine review threads resolved, admin-squash-merged as
+`1190ae2a1b7b577fdd89fd325d608854874cbbfb`, and exact-main Docs, Client,
+Security and Pages passed. GitHub README, maintained-client documentation,
+architecture, limitations, rollout roadmap and live Pages now preserve
+`client-web` as Beta and publish the sovereign Alpha direction. This was a
+documentation-only architecture milestone: status remains 1,896 tests,
+rollout 34/59, phase work 34/51, Phase 6 6/7 and production false. A0 native
+transport and license qualification is next; no implementation, license
+selection, release, deployment, key/fund, network or production action
+occurred.
+
+Updated: 2026-08-16 08:53 UTC
+
+---
+
 GH-212 is complete through PR #213 and its Bridge closeout PR #214. The
 replacement head `b72f29784ed6d1cd7340d580d527b4883f4ca8a5` passed all 26
 protected contexts with zero unresolved threads, squash-merged as

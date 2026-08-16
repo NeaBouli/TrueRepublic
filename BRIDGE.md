@@ -85,6 +85,31 @@
 
 ---
 
+## 2026-08-16 11:53 EEST GH-215 sovereign Alpha architecture → Done
+
+- **Protected merge:** PR #216 replacement head
+  `ac11bf59bc5168ccb9c50475c71cc7c55b8bcbce` passed every reported Docs,
+  Client, Security, DeepScan and CodeRabbit context with all nine review
+  threads resolved, then admin-squash-merged as
+  `1190ae2a1b7b577fdd89fd325d608854874cbbfb`. GH-215 is closed.
+- **Exact-main PASS:** Docs `31937409146`, Client `31937409059`, Security
+  `31937409105` and Pages `31937408558` all completed successfully for the
+  merge commit.
+- **Published GitHub truth:** README, maintained-client documentation,
+  architecture, limitations, rollout roadmap and the public project page now
+  preserve `client-web` as Beta and publish the sovereign Alpha direction. The
+  live Pages site was read back successfully after deployment.
+- **Status:** documentation-only completion earns no rollout checkbox. Public
+  arithmetic remains 1,896 tests, rollout 34/59, phase work 34/51, Phase 6
+  6/7 and production false.
+- **Boundary/next:** no application implementation, license selection, release,
+  deployment, key/fund use or production action occurred. The next Alpha task
+  is A0: qualify the native Go/Waku transport boundary and all license/SBOM,
+  reproducibility, lifecycle, device, battery and bandwidth gates before any
+  dependency is adopted.
+
+---
+
 ## 2026-08-16 02:40 EEST GH-212 replacement candidate → Local PASS
 
 - Sol completed the post-Kimi integration review and reran `make build` plus
