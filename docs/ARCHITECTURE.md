@@ -1,6 +1,20 @@
 # TrueRepublic Architecture
 
-**Version:** v0.3.0
+**Version:** v0.4.0 recovery baseline
+
+## Client architecture tracks
+
+- **Current Beta:** `client-web` is the sole maintained client. It is a React,
+  TypeScript, Vite and CosmJS browser application with a locally encrypted test
+  wallet. It remains subject to the browser/same-origin and production-custody
+  limits documented in [LIMITATIONS.md](LIMITATIONS.md).
+- **Future Sovereign Alpha:** GH-215 defines a separate installable,
+  Telegram-like domain/discussion/governance application with an integrated
+  non-custodial PNYX wallet and no mandatory hosted-website dependency. Its
+  decision-ready target design is documented in
+  [SOVEREIGN_ALPHA_ARCHITECTURE.md](SOVEREIGN_ALPHA_ARCHITECTURE.md). No native
+  Alpha implementation or rollout credit exists yet, and the optional future
+  web-interface decision is deliberately deferred.
 
 ## System Overview
 
@@ -55,7 +69,7 @@ TrueRepublic is a Cosmos SDK blockchain with:
 - **Domains:** Organizational units with treasuries
 - **Issues:** Topics for collective decision-making
 - **Suggestions:** Proposals within issues
-- **ZKP Voting:** Anonymous rating (1-10) with Groth16 proofs
+- **ZKP Voting:** Anonymous rating (-5 to +5) with Groth16 proofs
 - **Stones:** Weighted votes (Green/Yellow/Red)
 - **Elections:** Person election system
 

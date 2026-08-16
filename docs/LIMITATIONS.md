@@ -16,6 +16,16 @@ approved for production or real funds during this audit.
   mnemonic in UI memory, and carried high/critical Expo, React Native, Axios,
   protobuf, XML, and obsolete CosmJS dependency exposure. There is currently no
   supported native mobile client.
+- GH-215 documents a future Sovereign Alpha client with decentralized
+  messaging and an integrated non-custodial PNYX wallet. This is architecture
+  only: no Alpha binary, native client, messaging network, hardware signer,
+  secure multi-device recovery or independently reviewed wallet implementation
+  exists yet. `client-web` remains the Beta, and the rollout count stays 34/59.
+- The repository currently describes its project license as Apache 2.0 in
+  `CONTRIBUTING.md` but has no discoverable root `LICENSE` file. No Telegram,
+  Status, Waku, Matrix or other upstream client code may be copied or linked
+  into an Alpha implementation until project counsel/maintainers select and
+  publish the repository license and an exact dependency/license review passes.
 - Client-side ZKP generation remains a preview, not real Groth16 proof
   generation. The maintained client fails closed and cannot submit mock proofs.
 - GH-115 gives the maintained client one exact custom protobuf registry and a

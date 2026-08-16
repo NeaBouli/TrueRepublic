@@ -4241,3 +4241,39 @@
 - No release/tag/signature/publication/registry/deploy/network/genesis/
   production action occurred. Remaining Phase 7 release ceremony and signing
   gates remain open.
+
+## 2026-08-16 10:38 EEST - GH-215 architecture task opened
+
+- Opened GH-215 and branched `docs/GH-215-sovereign-alpha` from exact
+  `origin/main` `cd5426f`.
+- Bounded the task to architecture/roadmap evidence: `client-web` stays the
+  Beta; the Alpha target is a sovereign Telegram-like domain/discussion/
+  governance client with integrated non-custodial PNYX wallet and no mandatory
+  hosted-website dependency.
+- No product code, dependency, wallet, cryptography, consensus, protocol,
+  deployment, release, key, fund or rollout-count change is authorized by this
+  ticket.
+- Next: repository audit, primary-source platform/license research, Kimi deep
+  architecture contribution, Sol security/integration review and documentation
+  gates.
+
+## 2026-08-16 11:22 EEST - GH-215 local architecture candidate passes review
+
+- Added the decision-ready Sovereign Alpha architecture and synchronized the
+  README, architecture/limitations/rollout documents and public project page.
+  The maintained `client-web` Beta and all product behavior remain unchanged.
+- Kimi K3 authored the initial deep architecture and performed an independent
+  read-only review. Sol replaced the initial JS key boundary with Flutter UI +
+  Go sovereign core, added opaque outer envelopes, RFC 9420 MLS gates and honest
+  store/offline/recovery/spam/push limits, then remediated every Kimi finding.
+  Claude Code was attempted read-only but its OAuth session is expired; it
+  changed no file.
+- Fixed a pre-existing GH-212 state gap: `PROJECT_STATE.md` now matches the
+  already published 1,896 cases, rollout 34/59, phase work 34/51 and production
+  false. Also synchronized the maintained-client Vite 8.2 documentation.
+- PASS: docs consistency, diff check, root Go package, client lint, 10 Node +
+  309 Vitest cases, production build/budgets, all 22 architecture links after
+  replacing one moved Waku RFC URL, and Kimi review with zero P0/P1.
+- Next: protected documentation PR, exact-head Docs/Client/Security/review
+  contexts, squash merge, exact-main/Pages and GH-215/Bridge closeout. No
+  deployment, release or production action.

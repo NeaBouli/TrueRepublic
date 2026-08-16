@@ -249,3 +249,30 @@
   pre-existing fail-soft compatibility defect is isolated in GH-121 and must
   be resolved before any rollout claim; it does not justify retaining an
   unrelated legacy `custom/...` shim.
+
+## 2026-08-16 - Sovereign Alpha architecture direction
+
+- `client-web` remains the supported Beta. GH-215 is a parallel architecture
+  track and earns no recovery-rollout checkbox.
+- The Alpha target is a native-compiled Flutter UI for Android, iOS and desktop
+  over a Go sovereign core exposed through a narrow generated/FFI boundary.
+  The core exclusively owns keys, signing, group cryptography, envelope
+  validation and encrypted local storage; Beta TypeScript behavior becomes
+  golden compatibility evidence, not an Alpha runtime dependency.
+- Waku is the conditional messaging transport behind `MessagingPort`, subject
+  to an A0 real-device, lifecycle, resource, license/SBOM and reproducibility
+  qualification. Status is a reference, not a fork. Telegram/TDLib are rejected
+  because open clients do not provide a sovereign backend; Matrix remains only
+  an explicit homeserver-trust fallback.
+- RFC 9420 MLS is the target for domain group encryption. No custom group
+  cryptography, private-domain confidentiality, forward secrecy or
+  post-compromise-security claim exists before implementation qualification and
+  independent cryptographic review.
+- Exit sovereignty means no mandatory single TrueRepublic-operated service for
+  custody, messaging, governance or normal operation. Bootstrap, RPC, store,
+  distribution and OS-push infrastructure remains replaceable but risky.
+- BIP-39 restores the chain account, not historical chat epochs. Chat recovery
+  requires an encrypted user-held backup or transfer from an enrolled device.
+- Third-party implementation is blocked until the owner publishes a root
+  project license and exact per-component compatibility review passes. This
+  architecture does not choose a license for the owner.

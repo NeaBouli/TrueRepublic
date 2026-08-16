@@ -195,6 +195,23 @@ recovery tests; unsupported surfaces are absent or unmistakably disabled.
 against the rollout candidate; legacy clients cannot be mistaken for supported
 software.
 
+### Parallel product track — Sovereign Alpha (not counted in 59 rollout items)
+
+[GH-215](https://github.com/NeaBouli/TrueRepublic/issues/215) defines a future
+installable, Telegram-like TrueRepublic application for domain discussion,
+governance and an integrated non-custodial PNYX wallet. The target must operate
+without a mandatory hosted website, single TrueRepublic-operated messaging
+service or custodial signer. `client-web` remains the current Beta until the
+Alpha independently passes its architecture, protocol, wallet, cross-platform,
+security, recovery and distribution gates.
+
+This is a separate future delivery program, not retroactive evidence for the
+current 59-item rollout tracker. Architecture documentation changes neither
+the **34/59** status nor `production_ready: false`. Whether an optional web
+interface remains after Alpha qualification is deliberately deferred. See
+[SOVEREIGN_ALPHA_ARCHITECTURE.md](SOVEREIGN_ALPHA_ARCHITECTURE.md) for the
+component model, trust boundaries, delivery slices and future issue breakdown.
+
 ## Phase 5 — Quality and security depth
 
 - [x] Raise critical-path coverage for the root package, DEX, and governance

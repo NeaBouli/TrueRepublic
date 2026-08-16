@@ -13,7 +13,7 @@ npm run build    # Production build
 ## Tech Stack
 
 - **React 18** + TypeScript 5.9
-- **Vite 8.1** (build tooling)
+- **Vite 8.2** (build tooling)
 - **CosmJS 0.39** (blockchain interaction)
 - **Zustand 4.5** (state management)
 - **TailwindCSS 3.4** (styling)
