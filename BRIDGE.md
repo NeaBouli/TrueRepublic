@@ -2,7 +2,7 @@
 
 ## 2026-08-16 03:11 EEST GH-212 release-evidence contract → Merged / exact main green
 
-- **Protected publication:** PR #213 replacement head
+- **Protected merge:** PR #213 replacement head
   `b72f29784ed6d1cd7340d580d527b4883f4ca8a5` passed all 26 contexts with zero
   unresolved review threads and squash-merged as
   `1e4cdb814eefa1441e70c75cf61ff81bbd081b1b`. GH-212 is closed and the remote
