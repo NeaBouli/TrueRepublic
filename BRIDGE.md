@@ -1,5 +1,29 @@
 # TrueRepublic Agent Bridge
 
+## 2026-08-17 03:33 EEST GH-225 release compatibility contract → Done
+
+- **Implementation merge:** PR #226 → `8fb1e315b2df71331c1b4b0082cc96a7cedd327d`;
+  26/26 exact-head contexts green and zero unresolved review threads.
+- **Closeout merge:** PR #227 → `15804e625da733a19cfb7bbc31d9a19f4e98937f`;
+  exact-main Docs `31982049130`, Security `31982049131`, reproducible Linux
+  `31982049121` and Pages `31982048662` all pass.
+- **Implementation main:** Go `31981415265`, Client `31981415204`, Security
+  `31981415239`, Docs `31981415243`, reproducible Linux `31981415240` and Pages
+  `31981414597` all pass.
+- **Live readback:** cache-busted Pages publishes 1,941 total = 1,596 Go + 26
+  Rust + 319 client, rollout 35/59, phase work 35/51 and
+  `production_ready: false`; the landing page reports the same totals.
+- **Roles:** Kimi K3 delivered architecture and independent deep review. Sol
+  owned final code, all three review remediations, integration, complete local
+  and hosted gates, GitHub publication and closeout. Claude Code was attempted
+  for one small bounded test helper but its expired OAuth session changed no
+  file.
+- **Boundary held:** no tag, release, artifact/image publication, signing,
+  deployment, genesis freeze, real key/fund operation, production approval or
+  go/no-go action occurred.
+- **Next:** GH-225 can close after this append-only audit record reaches exact
+  main. The next rollout task must be selected separately from GH-29.
+
 ## 2026-08-17 03:18 EEST GH-225 protected implementation merged → Closeout In Progress
 
 - **Implementation:** PR #226 exact head `40b328cc7b201549048a38d1175b21861c320efc`

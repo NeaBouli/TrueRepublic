@@ -4567,3 +4567,17 @@
 - No tag, release, artifact/image publication, signing, deployment, genesis
   freeze, real key/fund operation, production approval or go/no-go action
   occurred.
+
+## 2026-08-17 03:33 EEST - GH-225 exact-main and live Pages verified
+
+- Implementation merge `8fb1e315` passes exact-main Go `31981415265`, Client
+  `31981415204`, Security `31981415239`, Docs `31981415243`, reproducible Linux
+  `31981415240` and Pages `31981414597`.
+- Closeout merge `15804e6` passes exact-main Docs `31982049130`, Security
+  `31982049131`, reproducible Linux `31982049121` and Pages `31982048662`.
+- Cache-busted live `status.json` and landing-page readback match 1,941 total =
+  1,596 Go + 26 Rust + 319 client, rollout 35/59, phase work 35/51, Phase 6
+  6/7 and production false. GH-29 records GH-225/PR #226 evidence.
+- The local closeout tree was clean before this append-only audit entry. No
+  release, tag, artifact/signature, deployment, production, genesis, key/fund
+  or go/no-go action occurred.
