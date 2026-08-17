@@ -1,5 +1,18 @@
 # Project State
 
+GH-225 is complete. Implementation PR #226 merged as `8fb1e315`; its exact
+main Go, Client, Security, Docs, reproducible Linux and Pages workflows all
+pass. Status closeout PR #227 merged as `15804e6`; exact-main Docs
+`31982049130`, Security `31982049131`, reproducible Linux `31982049121` and
+Pages `31982048662` pass. Cache-busted live Pages publish 1,941 tests = 1,596
+Go + 26 Rust + 319 client, rollout 35/59, phase work 35/51, Phase 6 6/7 and
+production false. GH-29 contains the completed evidence link. No tag, release,
+artifact/signature, deployment, genesis freeze, real key/fund operation,
+production approval or go/no-go action occurred. This append-only audit record
+is the only remaining publication step; the next rollout task is separate.
+
+---
+
 GH-225 implementation PR #226 passed all 26 protected contexts with zero open
 review threads and merged as `8fb1e315b2df71331c1b4b0082cc96a7cedd327d`.
 The separate `agent/GH-225-closeout` branch now synchronizes the canonical and
