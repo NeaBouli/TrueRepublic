@@ -19,8 +19,9 @@ intentionally more granular than the public 59-item tracker.
 
 - The ordered recovery merge chain is on `main`.
 - The maximum supply is fixed at 21,000,000 PNYX.
-- The source of truth records 1,921 recovery-verified tests: 1,576 Go, 26 Rust,
-  and 319 maintained-client tests. The Go total includes GH-209's recipient-
+- The source of truth records 1,941 recovery-verified tests: 1,596 Go, 26 Rust,
+  and 319 maintained-client tests. The Go total includes GH-225's release-
+  compatibility contract, GH-209's recipient-
   binding and atomic-payout adversarial coverage plus GH-206's pinned,
   test-only ZKP circuit/encoding freeze. GH-121's real registered browser-query
   boundary and GH-115's local client-chain delivery
@@ -207,7 +208,7 @@ security, recovery and distribution gates.
 
 This is a separate future delivery program, not retroactive evidence for the
 current 59-item rollout tracker. Architecture documentation changes neither
-the **34/59** status nor `production_ready: false`. Whether an optional web
+the **35/59** status nor `production_ready: false`. Whether an optional web
 interface remains after Alpha qualification is deliberately deferred. See
 [SOVEREIGN_ALPHA_ARCHITECTURE.md](SOVEREIGN_ALPHA_ARCHITECTURE.md) for the
 component model, trust boundaries, delivery slices and future issue breakdown.
@@ -300,7 +301,9 @@ failure using the published runbooks and telemetry.
   [PR #223](https://github.com/NeaBouli/TrueRepublic/pull/223)); only the
   bounded governed v0.4.1 migration path is supported, while arbitrary
   migrations remain explicitly unsupported.
-- [ ] Publish release notes with compatibility and breaking-change statements.
+- [x] Publish repository-owned current-candidate release notes with compatibility
+  and breaking-change statements — GH-225/PR #226; no tag, artifact publication,
+  signature or production release is claimed.
 - [ ] Freeze and independently review chain ID, genesis, consensus parameters,
   governance authorities, initial validator set, and all initial allocations.
 - [ ] Re-run supply, balance, escrow, DEX, and validator-power checks against

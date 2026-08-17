@@ -4551,3 +4551,19 @@
   Case count stays at exactly 20 new Go passing cases because the added negative
   assertions remain inside the existing top-level case. Replacement protected
   checks, replies/thread resolution and merge remain.
+
+## 2026-08-17 03:18 EEST - GH-225 implementation merged; closeout started
+
+- PR #226 replacement head `40b328c` passed all 26 hosted contexts, including
+  the 14m46s multi-validator recovery harness; all three review threads are
+  resolved and the PR squash-merged as `8fb1e315`.
+- GH-29 now checks only the completed release-notes/compatibility item. The
+  dedicated closeout branch is based on exact merged main and synchronizes
+  1,941 total / 1,596 Go / 26 Rust / 319 client, rollout 35/59, phase work
+  35/51, Phase 6 6/7 and production false.
+- Local docs consistency, JSON validation, stale-status search and diff hygiene
+  are the closeout gates. Protected closeout merge, exact-main CI and live
+  Pages readback remain before GH-225 can be marked Done.
+- No tag, release, artifact/image publication, signing, deployment, genesis
+  freeze, real key/fund operation, production approval or go/no-go action
+  occurred.
