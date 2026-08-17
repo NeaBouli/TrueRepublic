@@ -1,0 +1,86 @@
+{
+  "schema": "truerepublic.release-compatibility/v1",
+  "candidate": {
+    "id": "v0.4-recovery-line",
+    "recovery_line_label": "v0.4.0",
+    "source_identity": "git-commit",
+    "binary_version_ldflag": "main.version",
+    "default_version": "dev",
+    "release_status": "recovery_active",
+    "unreleased": true,
+    "production": false,
+    "tagged": false,
+    "published": false,
+    "signed": false,
+    "evidence": ["app.go", "configs/build/deterministic-linux-daemon.json", "docs/status.json"]
+  },
+  "supported_targets": [
+    {"id": "linux-amd64", "runtime": "linux-glibc", "evidence": ["configs/release/tool-platform.json", "configs/release/install-lifecycle.json"]},
+    {"id": "linux-arm64", "runtime": "linux-glibc", "evidence": ["configs/release/tool-platform.json", "configs/release/install-lifecycle.json"]}
+  ],
+  "toolchains": {
+    "go": "1.26.6",
+    "node": "22.22.2",
+    "npm": "10.9.7",
+    "rust": "1.95.0",
+    "evidence": ["configs/security/gates.json", "configs/release/tool-platform.json"]
+  },
+  "maintained_client": {
+    "path": "client-web",
+    "version_label": "v0.4.0",
+    "package_version": "0.4.0",
+    "status": "maintained_beta",
+    "evidence": ["client-web/package.json", "docs/status.json"]
+  },
+  "install_lifecycle": {
+    "schema": "truerepublic.install-lifecycle/v1",
+    "contract": "configs/release/install-lifecycle.json",
+    "operations": ["install", "status", "pre-start", "upgrade", "rollback", "uninstall"],
+    "evidence": ["configs/release/install-lifecycle.json", "installlifecycle/command.go", "docs/node-operators/installation/lifecycle.md"]
+  },
+  "governed_upgrade": {
+    "plan_name": "v0.4.1",
+    "authority": "non-signing truedemocracy module account",
+    "approval": "two-thirds immutable genesis-governance electorate",
+    "boundary": "fresh-genesis chains with the upgrade store; arbitrary plans, pre-GH-184 store introduction and IBC client upgrades are unsupported",
+    "evidence": ["upgrade_handlers.go", "governed_upgrade_harness_test.go", "docs/node-operators/operations/upgrades.md"]
+  },
+  "protocol": {
+    "supported": [
+      {"id": "pod_consensus", "summary": "bank-backed Proof of Domain validator lifecycle", "evidence": ["app.go", "genesis.go"]},
+      {"id": "truerepublic_governance", "summary": "domains, issues, suggestions, ratings and governed upgrades", "evidence": ["x/truedemocracy"]},
+      {"id": "bank_pnyx", "summary": "capped native upnyx accounting", "evidence": ["token", "docs/status.json"]},
+      {"id": "multi_asset_dex", "summary": "bank-custodied DEX module", "evidence": ["x/dex"]},
+      {"id": "cosmwasm_custom_bindings", "summary": "maintained TrueRepublic CosmWasm bindings", "evidence": ["contracts", "app.go"]},
+      {"id": "ics20_transfer", "summary": "local two-chain transfer, acknowledgement, timeout and recovery evidence", "evidence": ["ibc_two_chain_harness_test.go", "docs/status.json"]},
+      {"id": "registered_grpc_queries", "summary": "registered protobuf gRPC queries over the maintained transport", "evidence": ["query_protocol_boundary_test.go", "client-web"]}
+    ],
+    "unsupported": [
+      {"id": "x_staking", "reason": "PoD replaces standard staking and the surface fails closed", "evidence": ["protocol_compatibility_boundary_test.go", "wasm_stubs.go"]},
+      {"id": "x_distribution", "reason": "custom rewards do not implement distribution semantics", "evidence": ["protocol_compatibility_boundary_test.go", "wasm_stubs.go"]},
+      {"id": "ibc_staking", "reason": "the IBC staking compatibility adapter fails closed", "evidence": ["ibc_stubs.go"]},
+      {"id": "ibc_client_upgrade", "reason": "IBC client upgrades are not qualified", "evidence": ["docs/node-operators/operations/upgrades.md"]},
+      {"id": "external_relayers", "reason": "external relayers and counterparties are not qualified", "evidence": ["docs/LIMITATIONS.md", "docs/status.json"]},
+      {"id": "anonymous_zkp_submission", "reason": "only synthetic compatibility is verified and submission remains disabled", "evidence": ["client-web/src/services/zkpWasmProver.ts", "docs/LIMITATIONS.md"]},
+      {"id": "legacy_custom_abci_queries", "reason": "the legacy custom query surface was removed", "evidence": ["query_protocol_boundary_test.go"]}
+    ]
+  },
+  "changes": [
+    {"id": "COMPAT-001", "category": "breaking_chain_state", "summary": "Pre-recovery chain state has no generic in-place migration path.", "operator_actions": ["Bootstrap a separately reviewed fresh chain ID; never reuse an unsupported home or export as candidate genesis."], "user_actions": ["Treat historical balances and identities as non-transferable unless a separately reviewed migration says otherwise."], "evidence": ["migration", "docs/LIMITATIONS.md"]},
+    {"id": "COMPAT-002", "category": "breaking_api", "summary": "x/staking and x/distribution queries and messages fail closed.", "operator_actions": [], "user_actions": ["Use the documented PoD and TrueRepublic reward surfaces instead of Cosmos PoS endpoints."], "evidence": ["protocol_compatibility_boundary_test.go", "wasm_stubs.go"]},
+    {"id": "COMPAT-003", "category": "breaking_client", "summary": "Legacy web and mobile clients are retired; client-web is the maintained Beta.", "operator_actions": [], "user_actions": ["Use client-web and independently backed-up wallet recovery material."], "evidence": ["scripts/check-web-wallet-retirement.sh", "scripts/check-mobile-retirement.sh", "docs/status.json"]},
+    {"id": "COMPAT-004", "category": "breaking_api", "summary": "Legacy custom ABCI query aliases are removed.", "operator_actions": [], "user_actions": ["Use registered protobuf gRPC methods through the maintained CometBFT transport."], "evidence": ["query_protocol_boundary_test.go", "docs/developers/api-reference/abci-queries.md"]},
+    {"id": "COMPAT-005", "category": "breaking_client", "summary": "Anonymous ZKP submission is disabled despite synthetic prover compatibility.", "operator_actions": [], "user_actions": ["Do not submit mock or synthetic proofs to a live chain."], "evidence": ["client-web/src/services/zkpWasmProver.ts", "docs/LIMITATIONS.md"]},
+    {"id": "COMPAT-006", "category": "breaking_operations", "summary": "Native install, upgrade, rollback and uninstall require the verified lifecycle.", "operator_actions": ["Keep operator state outside the managed prefix and run pre-start before service activation."], "user_actions": [], "evidence": ["configs/release/install-lifecycle.json", "docs/node-operators/installation/lifecycle.md"]},
+    {"id": "COMPAT-007", "category": "breaking_operations", "summary": "Daemon identity is the exact source commit; only the exact v0.4.1 governed migration is registered.", "operator_actions": ["Verify the source commit and schedule only the reviewed v0.4.1 plan within its documented boundary."], "user_actions": [], "evidence": ["configs/build/deterministic-linux-daemon.json", "upgrade_handlers.go"]},
+    {"id": "COMPAT-008", "category": "compatible", "summary": "ICS-20 packet and compatible-restart recovery are verified only inside the local two-chain boundary.", "operator_actions": [], "user_actions": [], "evidence": ["ibc_two_chain_harness_test.go", "docs/status.json"]}
+  ],
+  "historical": [
+    {"id": "daemon-v0.3.0-draft", "path": "RELEASE_NOTES_v0.3.0.md", "marker": "Historical draft only"},
+    {"id": "client-v0.4.0-changelog", "path": "client-web/CHANGELOG.md", "marker": "Historical pre-recovery snapshot"}
+  ],
+  "documents": {
+    "release_notes": "docs/releases/current-candidate-release-notes.md",
+    "compatibility": "docs/releases/current-candidate-compatibility.md"
+  }
+}

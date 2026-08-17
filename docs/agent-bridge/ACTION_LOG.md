@@ -4492,3 +4492,62 @@
   consistency gate enforce release-evidence and install-lifecycle wiki rows.
 - Docs consistency, JSON arithmetic, stale-live-status and diff gates pass.
   Protected docs publication and exact-main/Pages verification remain pending.
+## 2026-08-17 00:03 EEST - GH-225 release compatibility started
+
+- Opened GH-225 and branched `docs/GH-225-release-compatibility` from clean
+  exact `origin/main` `b031f2d48df79692195271605a17f3ba586cbabb` after verifying
+  zero open PRs and only `main` as a remote head.
+- Live GH-29 confirms the next autonomous Phase 7 item is release notes and
+  compatibility statements. The current source tree contains an explicitly
+  historical v0.3.0 draft and a stale maintained-client v0.4.0 changelog but no
+  strict current-candidate compatibility source of truth.
+- GH-225 is bounded to repository contracts, human-readable documentation,
+  tests and CI. Kimi K3 receives the large secret-free implementation slice;
+  Sol owns architecture, compatibility/security judgment, full review, gates,
+  GitHub and closure.
+- No tag, release, artifact/image publication, signing, registry, deployment,
+  genesis freeze, production approval, real key/fund or go/no-go action is in
+  scope. Public truth remains 1,921 tests, 34/59, 34/51, Phase 6 6/7 and
+  production false.
+
+## 2026-08-17 02:32 EEST - GH-225 local implementation and final gates PASS
+
+- Added `configs/release/compatibility.json`, versioned current-candidate notes
+  and statement, a strict repository contract, Make target and universal Docs
+  plus reproducible-daemon workflow enforcement. Reconciled README,
+  contribution guidance and the two historical release records without
+  rewriting audit history.
+- Kimi K3 produced the architecture and independent deep review. Sol authored
+  the final implementation and remediated source/tag ambiguity, universal CI
+  coverage, exact lifecycle binding, missing required fields, unsafe/symlink
+  evidence, strict JSON and unsupported-surface classification. Kimi wrote no
+  final diff. Claude Code's small helper attempt failed authentication and
+  changed nothing; Sol fixed the observed crypto-test timeout strictly in the
+  test harness and the complete client suite then passed.
+- Final `make verify` passes build, vet and Race/Coverage across all 19
+  maintained Go packages. Staticcheck, exact active no-fix govuln policy and
+  fixtures, gitleaks, deterministic daemon, install lifecycle, release
+  evidence, docs consistency, JSON/YAML and diff checks pass. Client lint,
+  10 Node + 309 Vitest, production build/bundle budgets and high audit pass.
+  Rust fmt, Clippy with denied warnings and 26 tests pass.
+- The initial final-link retry was blocked only by local disk exhaustion after
+  reproducible Go/Rust cache rebuilds; removing the generated Rust `target`
+  cache restored space and the exact final focused and full Go gates passed.
+  No source or user data was removed.
+- Fresh standard arithmetic is 1,941 = 1,596 Go + 26 Rust + 319 client: the
+  contract contributes exactly 20 Go passing cases. Public 1,921 and rollout
+  34/59 remain unchanged until protected merge and evidence closeout.
+
+## 2026-08-17 02:57 EEST - GH-225 first protected review remediated
+
+- PR #226 first head had 21 successful and five still-running contexts with no
+  failure when CodeRabbit completed with three valid inline findings.
+- Closed all three in the replacement diff: exact candidate/build source-kind
+  and `main.version={{source_ref}}` binding; explicit rejection of repository
+  root as evidence; and bidirectional document status validation requiring
+  unreleased/all-false claims while rejecting contradictory released/true
+  wording.
+- Focused contract, focused Race and pinned staticcheck pass after remediation.
+  Case count stays at exactly 20 new Go passing cases because the added negative
+  assertions remain inside the existing top-level case. Replacement protected
+  checks, replies/thread resolution and merge remain.

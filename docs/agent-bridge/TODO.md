@@ -1,5 +1,24 @@
 # Recovery Queue
 
+## In progress - GH-225 release notes and compatibility contract
+
+- [x] Define a strict versioned machine-readable current-candidate release and
+  compatibility contract with exact evidence, status and required actions.
+- [x] Cross-check source/version, supported targets/toolchains, install
+  lifecycle, governed upgrade, maintained client, protocol boundaries and
+  production-false public status; reject stale, duplicate, unknown or unbound
+  claims fail closed.
+- [x] Deterministically validate human-readable release notes and quarantine
+  obsolete v0.3.0/v0.4.0 claims as historical non-operational evidence.
+- [x] Complete Kimi implementation/deep review, Sol line-by-line integration
+  review and full relevant local/security/docs gates.
+- [ ] Publish through protected exact-head PR, resolve every review finding,
+  merge, update GH-29/public status/both Bridges, and verify exact main plus
+  live Pages before Done.
+- [ ] Do not tag, release, publish/sign artifacts or images, deploy, freeze
+  genesis, approve production, operate real keys/funds, or create a go/no-go
+  record under GH-225.
+
 ## P0 - security and reproducibility
 
 - [x] GH-172: implement and locally verify bounded concurrent shared-state,

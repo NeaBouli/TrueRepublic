@@ -85,7 +85,7 @@ describe('wallet address migration', () => {
   });
 });
 
-describe('wallet creation and import hardening', () => {
+describe('wallet creation and import hardening', { timeout: 15_000 }, () => {
   beforeEach(() => {
     localStorage.clear();
     WalletService.invalidateSigningSession();

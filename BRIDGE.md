@@ -1,5 +1,30 @@
 # TrueRepublic Agent Bridge
 
+## 2026-08-17 00:03 EEST GH-225 release compatibility contract → In Progress
+
+- **Branch:** `docs/GH-225-release-compatibility`
+- **Issue:** [GH-225](https://github.com/NeaBouli/TrueRepublic/issues/225)
+- **Base:** exact `origin/main` `b031f2d48df79692195271605a17f3ba586cbabb`;
+  clean detached recovery worktree before branch creation, no open PRs, and
+  `main` was the only remote head.
+- **Scope:** define one strict versioned source of truth for the current
+  unreleased recovery candidate, its release notes, supported/unsupported
+  compatibility boundaries, breaking-change classifications, evidence and
+  required operator actions; add fail-closed repository/CI validation and
+  reconcile stale current-facing release claims.
+- **Roles:** Kimi K3 owns the large bounded secret-free implementation slice.
+  Sol owns architecture, compatibility/security decisions, full diff review,
+  integration, complete gates, GitHub writes, merge and closure.
+- **Risk:** High. Incorrect compatibility promises can cause operators to run
+  unsupported binaries, migrations or clients against persistent chain state.
+- **Boundary:** repository documentation, contracts and tests only. No tag,
+  GitHub Release, artifact/image publication, signing, registry, deployment,
+  genesis freeze, production approval, real key/fund or go/no-go action.
+- **Public truth:** 1,921 tests; rollout 34/59; phase work 34/51; Phase 6 6/7;
+  production false. No rollout credit exists until protected completion.
+- **Next:** Kimi implements the bounded contract/docs/test slice while Sol
+  audits source-version, lifecycle, upgrade, client and public-status bindings.
+
 ## 2026-08-16 14:54 EEST GH-222 install lifecycle → In Progress
 
 - **Branch:** `feature/GH-222-install-lifecycle`
@@ -7174,3 +7199,47 @@ exclusion, CI wiring, and documentation boundaries.
   merged GH-222/PR #223 evidence with arbitrary migrations still unsupported.
 - Next: protected docs PR, review/merge, exact-main workflows and cache-busted
   live Pages verification. No release, deployment or production action.
+
+## 2026-08-17 02:32 EEST - GH-225 local compatibility gate complete
+
+- Implemented the strict `truerepublic.release-compatibility/v1` source of
+  truth, current candidate release notes and compatibility statement. It
+  separates the v0.4.0 recovery/client label from exact daemon source-commit
+  identity and explicitly keeps production, tag, publication and signing false.
+- The repository contract cross-binds exact targets/runtime, Go/Node/npm/Rust
+  pins, maintained Beta client, install lifecycle, governed v0.4.1 upgrade,
+  supported/unsupported protocol surfaces, evidence paths and concrete actions.
+  It fails closed on duplicate/unknown JSON, missing safety flags, stale values,
+  unsafe or symlinked evidence, category/ID drift, promoted unsupported
+  surfaces, incomplete breaking actions and misleading historical/current docs.
+- Kimi K3 supplied the architecture and independent deep review; Sol authored
+  and fully reviewed the final diff and closed every finding. Claude Code was
+  attempted for a small client test-harness fix, but expired OAuth produced no
+  output or diff. Sol scoped the timeout only to the crypto-heavy wallet suite;
+  no wallet or production cryptography changed.
+- Final PASS: `make verify` (all 19 maintained Go packages, Race/Coverage; root
+  73.6%, governance 64.3%), pinned staticcheck, exact no-fix vulnerability
+  policy plus negative fixtures, gitleaks with no findings, deterministic
+  daemon, install lifecycle and release evidence, docs consistency, JSON/YAML
+  and diff hygiene. Client: lint, 10 Node + 309 Vitest, build/budgets and no
+  high/critical advisories. Rust: fmt, Clippy `-D warnings`, 26 tests and docs.
+- Exactly 20 new Go passing cases make the post-merge candidate 1,941 = 1,596
+  Go + 26 Rust + 319 client. Public main stays at 1,921 and rollout 34/59 until
+  protected GH-225 merge and a separate evidence closeout. No tag, artifact,
+  signature, deployment, genesis freeze, real key/fund, production approval or
+  go/no-go action occurred.
+
+## 2026-08-17 02:57 EEST - GH-225 protected review remediation PASS
+
+- PR #226 first head reached 21 green contexts with zero failures before its
+  three actionable CodeRabbit contract findings were independently verified.
+- The replacement candidate now requires the deterministic build source kind
+  to equal the candidate source identity and an exact
+  `main.version={{source_ref}}` assignment, rejects repository root `.` as
+  evidence, and requires both candidate documents to contain the explicit
+  unreleased plus production/tagged/published/signed false claims while
+  rejecting contradictory true/released claims.
+- Added in-parent negative assertions without changing the published case
+  arithmetic. Focused normal and Race contract tests plus pinned staticcheck
+  pass. Exact replacement-head protected checks and thread resolution are next;
+  no release, artifact, deployment or production action occurred.

@@ -1,5 +1,62 @@
 # Project State
 
+GH-225 PR #226 is under replacement-head protected validation after all three
+first-review findings were remediated. Candidate/build source identity now
+requires the exact configured source kind plus
+`main.version={{source_ref}}`; repository root cannot satisfy evidence; and
+both candidate documents must contain unreleased plus all four false safety
+claims and reject contradictory released/true wording. Focused normal/Race
+contracts and pinned staticcheck pass. The first head had 21 green and no
+failed contexts when replaced. Candidate/public arithmetic and all explicit
+non-release/non-production boundaries remain unchanged.
+
+Updated: 2026-08-16 23:57 UTC
+
+---
+
+GH-225 is locally implementation- and gate-complete on
+`docs/GH-225-release-compatibility`. The new
+`truerepublic.release-compatibility/v1` contract binds the unreleased candidate
+to exact source-commit identity, supported Linux targets/runtime, pinned
+toolchains, maintained Beta client, verified install lifecycle, governed
+upgrade boundary, supported/unsupported protocol surfaces and concrete
+breaking-change actions. Strict repository tests reject malformed, duplicate,
+unknown, stale, unsafe/symlinked, under-specified and production/publishing
+claims; both current human documents and historical quarantines are enforced.
+Kimi K3 supplied architecture and independent deep review; Sol implemented,
+reviewed and remediated the final diff. Claude Code was attempted for the small
+wallet-test stability finding but local OAuth is expired, so it produced no
+change; Sol applied the test-only 15-second crypto-suite limit and reproduced
+the complete client suite. Final Go build/vet/Race/Coverage, staticcheck,
+vulnerability policy, secret scan, deterministic/release/lifecycle contracts,
+client lint/319 tests/build/audit, Rust fmt/Clippy/26 tests, docs, JSON/YAML and
+diff checks pass. The candidate adds exactly 20 Go passing cases, so post-merge
+closeout arithmetic will be 1,941 = 1,596 Go + 26 Rust + 319 client. Published
+main remains 1,921, rollout 34/59, phase work 34/51, Phase 6 6/7 and production
+false until protected merge and closeout. No tag, release, artifact/signature,
+deployment, genesis freeze, real key/fund or go/no-go action occurred.
+
+Updated: 2026-08-16 23:32 UTC
+
+---
+
+GH-225 is in progress from exact main
+`b031f2d48df79692195271605a17f3ba586cbabb` on
+`docs/GH-225-release-compatibility`. It will define and test a strict versioned
+release-notes and compatibility source of truth for the current unreleased
+recovery candidate, cross-bound to exact platform/toolchain, install lifecycle,
+governed upgrade, maintained-client and production-false evidence. Kimi K3 owns
+the large bounded implementation slice; Sol retains architecture, security,
+integration, full verification and all external writes. No tag, release,
+artifact/image publication, signing, registry, deployment, genesis freeze,
+real key/fund, production approval or go/no-go action is in scope. Published
+status remains 1,921 tests, rollout 34/59, phase work 34/51, Phase 6 6/7 and
+production false.
+
+Updated: 2026-08-16 21:03 UTC
+
+---
+
 GH-222 is locally gate-complete and ready for protected publication. Final
 Go build/vet/Race/Coverage, pinned static/security/vulnerability/secret gates,
 release and deterministic fixtures, lifecycle/root contracts, maintained

@@ -16,8 +16,8 @@
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/tests-1579%20recovery--verified-orange" alt="Recovery-verified tests"/>
-  <img src="https://img.shields.io/badge/version-v0.4.0-blue" alt="Version"/>
+  <img src="https://img.shields.io/badge/tests-1921%20recovery--verified-orange" alt="Recovery-verified tests"/>
+  <img src="https://img.shields.io/badge/release-unreleased-orange" alt="Unreleased recovery candidate"/>
   <img src="https://img.shields.io/badge/recovery-active-orange" alt="Recovery active"/>
   <img src="https://img.shields.io/badge/Go-1.26.6-00ADD8?logo=go" alt="Go"/>
   <img src="https://img.shields.io/badge/Cosmos%20SDK-v0.50.15-5C4EE5" alt="Cosmos SDK"/>
@@ -266,7 +266,7 @@ cd client-web && npm ci && npm run lint && npm test -- --run && npm run build
 
 ## Current Status
 
-**Version: v0.4.0 — recovery foundation verified; not production-ready**
+**Recovery line: v0.4.0 — current daemon candidate untagged; binary identity is the source commit; not production-ready**
 
 The checklist below records implemented surface area, not a production security
 approval. Current evidence, risks, and commands are maintained in
