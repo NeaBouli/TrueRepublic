@@ -1,5 +1,25 @@
 # TrueRepublic Agent Bridge
 
+## 2026-08-17 03:18 EEST GH-225 protected implementation merged → Closeout In Progress
+
+- **Implementation:** PR #226 exact head `40b328cc7b201549048a38d1175b21861c320efc`
+  passed 26/26 hosted contexts with zero unresolved review threads and was
+  squash-merged to `main` as `8fb1e315b2df71331c1b4b0082cc96a7cedd327d`.
+- **Review:** all three CodeRabbit findings were independently verified,
+  remediated and resolved: exact build/source-ref binding, repository-root
+  evidence rejection and contradictory release-status claim rejection.
+- **GitHub tracker:** GH-29 now credits only the completed release-notes and
+  compatibility item. Canonical closeout arithmetic is 1,941 tests = 1,596 Go
+  + 26 Rust + 319 client; rollout 35/59; phase work 35/51; Phase 6 6/7;
+  production false.
+- **Branch:** `agent/GH-225-closeout`, based on exact merged `origin/main`
+  `8fb1e315b2df71331c1b4b0082cc96a7cedd327d`.
+- **Boundary:** documentation/status synchronization only. No tag, release,
+  artifact/image publication, signing, deployment, genesis freeze, real
+  key/fund operation, production approval or go/no-go action.
+- **Next:** validate and publish the closeout PR, then verify exact-main gates
+  and cache-busted live Pages before marking GH-225 Done.
+
 ## 2026-08-17 00:03 EEST GH-225 release compatibility contract → In Progress
 
 - **Branch:** `docs/GH-225-release-compatibility`

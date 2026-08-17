@@ -7,8 +7,8 @@ this document. **This document does not create an Alpha product, does not claim
 production readiness, and does not select a production network.**
 
 **Rollout accounting note:** This architecture block earns no rollout checkbox.
-Published arithmetic remains **1,921 recovery-verified tests** (1,576 Go +
-26 Rust + 319 maintained client), **rollout 34/59**, phase work 34/51, and
+Published arithmetic is **1,941 recovery-verified tests** (1,596 Go +
+26 Rust + 319 maintained client), **rollout 35/59**, phase work 35/51, and
 **production false**, exactly as recorded in
 [`docs/agent-bridge/PROJECT_STATE.md`](agent-bridge/PROJECT_STATE.md) and
 [`docs/ROLLOUT_ROADMAP.md`](ROLLOUT_ROADMAP.md).
@@ -853,7 +853,7 @@ rollback is uninstalling the Alpha.
 This document proposes an architecture. It does **not** imply that any Alpha
 code, native app, production network, ceremony, security audit, or real key/
 fund handling exists. It does not change the recovery-track status: rollout
-**34/59**, phase work 34/51, production **false**, test arithmetic **1,921**
+**35/59**, phase work 35/51, production **false**, test arithmetic **1,941**
 unchanged. Every external claim herein is either cited to primary upstream
 sources (Sections 3–4) or marked as a decision gate/open decision. The Beta —
 `client-web` — remains the only supported client.

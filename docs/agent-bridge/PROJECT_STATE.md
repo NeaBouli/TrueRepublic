@@ -1,5 +1,17 @@
 # Project State
 
+GH-225 implementation PR #226 passed all 26 protected contexts with zero open
+review threads and merged as `8fb1e315b2df71331c1b4b0082cc96a7cedd327d`.
+The separate `agent/GH-225-closeout` branch now synchronizes the canonical and
+public status to 1,941 total = 1,596 Go + 26 Rust + 319 client, rollout 35/59,
+phase work 35/51, Phase 6 6/7 and production false. GH-29 credits the completed
+release-notes/compatibility item. Closeout PR, exact-main gates and live Pages
+readback remain required before Done. No tag, release, signed/published
+artifact, deployment, genesis freeze, real key/fund action or go/no-go approval
+occurred.
+
+---
+
 GH-225 PR #226 is under replacement-head protected validation after all three
 first-review findings were remediated. Candidate/build source identity now
 requires the exact configured source kind plus
