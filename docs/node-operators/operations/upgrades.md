@@ -70,6 +70,16 @@ then start the exact candidate on the unchanged homes. Never use
   compatible rolling-replacement procedure below across that version boundary;
   halt and restart every validator on the reviewed v0.38.26 artifact at the
   agreed height.
+- Before scheduling that restart, record the effective `block.max_bytes` and
+  `evidence.max_bytes` consensus parameters plus the largest validator-set size
+  permitted during the upgrade window. Calculate the v0.38.26 worst-case data
+  envelope as `max_bytes - 731 - (3358 * validators) - evidence_bytes`. The
+  constants are the v0.38.26 maximum block/header/commit framing plus its
+  3,309-byte maximum signature. The result must be non-negative. If it is
+  negative, do not restart: first enact a separately reviewed coordinated
+  consensus-parameter change or approve and enforce a smaller validator-set
+  bound. Preserve the parameter height, inputs, result, and bound approval in
+  the upgrade evidence; the current live count alone is not a sufficient bound.
 - Rehearse the exact old and new artifacts on a private network first.
 - Record commit IDs, versions, and SHA-256 checksums for both binaries.
 - Keep the last known-good binary available until the recovery window closes.
@@ -84,6 +94,36 @@ then start the exact candidate on the unchanged homes. Never use
   keyrings; manage identity keys through a separate offline procedure.
 
 ## Preflight
+
+For the v0.38.25 to v0.38.26 boundary, obtain the effective parameters from at
+least two trusted RPCs at the agreed pre-upgrade height. Set
+`MAX_VALIDATORS_DURING_UPGRADE` to the independently reviewed governance or
+operator bound, never merely the current validator count, and fail closed on a
+negative result:
+
+```bash
+export PARAMS_HEIGHT="12345" # replace with the agreed pre-upgrade height
+export MAX_VALIDATORS_DURING_UPGRADE="100" # replace with the reviewed bound
+
+params="$(curl --fail --silent \
+  "http://trusted-rpc-a:26657/consensus_params?height=$PARAMS_HEIGHT")"
+max_bytes="$(printf '%s' "$params" | jq -er \
+  '.result.consensus_params.block.max_bytes | tonumber')"
+evidence_bytes="$(printf '%s' "$params" | jq -er \
+  '.result.consensus_params.evidence.max_bytes | tonumber')"
+max_data_bytes="$((max_bytes - 731 - \
+  (3358 * MAX_VALIDATORS_DURING_UPGRADE) - evidence_bytes))"
+
+printf 'height=%s max_bytes=%s evidence_bytes=%s validator_bound=%s max_data_bytes=%s\n' \
+  "$PARAMS_HEIGHT" "$max_bytes" "$evidence_bytes" \
+  "$MAX_VALIDATORS_DURING_UPGRADE" "$max_data_bytes"
+test "$max_data_bytes" -ge 0
+```
+
+Repeat against the second trusted RPC and require identical parameter values.
+Archive both outputs and the reviewed source of the validator-set bound. A
+failed `test` is a hard stop, not permission to reduce evidence capacity or the
+validator set ad hoc.
 
 Choose immutable paths instead of overwriting the running binary in place:
 
