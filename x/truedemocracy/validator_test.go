@@ -159,6 +159,19 @@ func TestRegisterValidator(t *testing.T) {
 			t.Fatal("expected error for bad pubkey length")
 		}
 	})
+
+	t.Run("ML-DSA-sized pubkey remains rejected", func(t *testing.T) {
+		domain, _ := k.GetDomain(ctx, "Party")
+		domain.Members = append(domain.Members, "val4")
+		bz := k.cdc.MustMarshalLengthPrefixed(&domain)
+		st.Set([]byte("domain:Party"), bz)
+
+		stake := sdk.NewCoins(sdk.NewInt64Coin(PNYXDenom, 100_000*PNYXUnit))
+		err := k.RegisterValidator(ctx, "val4", make([]byte, 1952), stake, "Party")
+		if err == nil {
+			t.Fatal("expected ML-DSA-sized public key to remain outside the ed25519 validator boundary")
+		}
+	})
 }
 
 func TestGetValidatorByPubKey(t *testing.T) {

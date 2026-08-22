@@ -135,7 +135,7 @@ Validator stake withdrawals are capped at **10% of the domain's total payouts**.
 ## Development
 
 ### What is the tech stack?
-Go 1.26.6, Cosmos SDK v0.50.15, CometBFT v0.38.25, React 18.2 +
+Go 1.26.6, Cosmos SDK v0.50.15, CometBFT v0.38.26, React 18.2 +
 TypeScript 5.9/Vite 8.2 for the maintained web client, and Rust/CosmWasm v0.53.4
 for contracts.
 The former Expo/React Native prototype was retired and removed under GH-102.

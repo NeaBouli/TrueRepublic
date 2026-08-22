@@ -166,7 +166,7 @@ See [`client-web/README.md`](client-web/README.md) for details.
 ```text
 TrueRepublic/
 ├── app.go                      Cosmos SDK application entry point
-├── go.mod / go.sum             Go module (SDK v0.50.15, CometBFT v0.38.25)
+├── go.mod / go.sum             Go module (SDK v0.50.15, CometBFT v0.38.26)
 ├── Makefile                    Build targets (build, test, lint, docker)
 ├── INSTALLATION.md             Quick install guide
 ├── x/
@@ -251,7 +251,7 @@ cd client-web && npm ci && npm run lint && npm test -- --run && npm run build
 | Component | Version | Status |
 |-----------|---------|--------|
 | Cosmos SDK | v0.50.15 | Recovery verified |
-| CometBFT | v0.38.25 | Recovery verified |
+| CometBFT | v0.38.26 | Recovery verified |
 | CosmWasm | v0.53.4 | Recovery verified |
 | ibc-go | v8.7.0 | Two-chain packet lifecycle verified locally; external relayer/upgrade unqualified |
 | gnark (ZKP) | v0.14.0 | On-chain recovery verified; client disabled |

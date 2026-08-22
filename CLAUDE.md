@@ -56,7 +56,7 @@ boundaries.
 
 - Go toolchain 1.26.6
 - Cosmos SDK v0.50.15
-- CometBFT v0.38.25
+- CometBFT v0.38.26
 - ibc-go v8.7.0
 - wasmd v0.53.4 / wasmvm 2.2.2
 - gnark 0.14.0

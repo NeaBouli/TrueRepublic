@@ -47,7 +47,7 @@ APPLICATION LAYER (Cosmos SDK v0.50.15)
 ├── CosmWasm ← Smart contracts (governance.rs, treasury.rs)
 └── Standard modules (auth, bank, staking, etc.)
     ↓
-CONSENSUS LAYER (CometBFT v0.38.25)
+CONSENSUS LAYER (CometBFT v0.38.26)
 ├── Byzantine Fault Tolerance (instant finality)
 ├── P2P Networking (port 26656)
 ├── Block Production (~5s blocks)
@@ -83,7 +83,7 @@ STORAGE LAYER
 | **Standard Modules** | auth, bank, crisis, consensus params, capability, IBC, transfer, wasm, upgrade; `x/staking` and `x/distribution` are unmounted fail-closed boundaries, while governance is custom `x/truedemocracy` |
 | **Codec** | Amino (legacy) + Protobuf (modern) |
 
-### Consensus: CometBFT v0.38.25
+### Consensus: CometBFT v0.38.26
 
 | Aspect | Detail |
 |--------|--------|

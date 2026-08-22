@@ -1,5 +1,19 @@
 # Project State
 
+GH-235 is locally approved on `chore/GH-235-dependency-reconciliation` after
+current-base dependency reconciliation, independent Kimi review, explicit
+ed25519-boundary coverage and complete relevant local Go/client/security/IBC/
+multi-validator/governed-upgrade/docs gates. Protected PR, exact-head review,
+merge, superseded Dependabot closure and exact-main closeout remain. GH-236's
+Kimi/Sol Phase 0 analysis is complete and recommends a native TrueRepublic
+settlement chain plus hybrid edge layer; documentation has not started and no
+V4 implementation or dependency is authorized. Public status remains 1,941 /
+35-of-59 / 35-of-51 / Phase 6 6-of-7 / production false.
+
+Updated: 2026-08-23 EEST
+
+---
+
 GH-231 is complete. PR #233 exact head `c203974` passed 14/14 reported
 contexts with zero unresolved threads and merged as `59aa720`. Exact-main Docs
 `32589841959`, Security `32589841924`, reproducible daemon `32589841973` and

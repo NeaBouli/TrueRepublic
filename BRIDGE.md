@@ -1,5 +1,81 @@
 # TrueRepublic Agent Bridge
 
+## 2026-08-23 GH-235 dependency reconciliation → In Progress
+
+- **Branch:** `chore/GH-235-dependency-reconciliation`
+- **Issue:** [GH-235](https://github.com/NeaBouli/TrueRepublic/issues/235)
+- **Superseded candidates:** Dependabot PRs
+  [#229](https://github.com/NeaBouli/TrueRepublic/pull/229) and
+  [#230](https://github.com/NeaBouli/TrueRepublic/pull/230)
+- **Base:** exact clean `origin/main` `94ffe8b8890efade963a96b455bde43689e64e18`.
+- **Scope:** reproduce the five bounded Go/client maintenance updates on the
+  current base, reconcile canonical CometBFT documentation pins, inspect exact
+  lock/checksum changes and pass the complete relevant local/protected gates.
+- **Risk:** Medium. CometBFT is consensus infrastructure; client changes are
+  development-only but still affect lint, testing and accessibility tooling.
+- **Boundary:** no consensus behavior, migration, release, deployment,
+  production, real key/fund, rollout credit or gate waiver. The original bot
+  PRs close only after a verified replacement merge.
+- **Owner:** Sol owns diff review, security, full tests, GitHub and closure.
+
+### 2026-08-23 local integration and independent review → Approved
+
+- Reproduced both stale bot updates on current main: CometBFT v0.38.26 and
+  protobuf-go v1.36.12 plus the three bounded client development-tool bumps.
+  Module and lockfile graphs are clean; public version pins are consistent.
+- Kimi independently reviewed the upstream CometBFT ML-DSA backport and the
+  complete branch diff. TrueRepublic remains fail-closed on 32-byte ed25519
+  validator keys. Sol added explicit 1,952-byte ML-DSA rejection coverage and
+  a coordinated-upgrade warning because v0.38.25/v0.38.26 calculate different
+  maximum block-data sizes.
+- **PASS:** `make verify`; focused validator/genesis tests; docs consistency;
+  Go vulnerability policy plus fixtures; staticcheck plus security contract;
+  gitleaks plus fixtures; client lint, 309 tests, production build, bundle
+  budget and high/critical audit; all three IBC two-chain scenarios; all eight
+  multi-validator recovery scenarios; governed-upgrade recovery.
+- The eight-test multi-validator aggregate exceeded its 25-minute process
+  budget only after seven scenarios had passed; the remaining slashing scenario
+  passed separately in 217.12 seconds. The first governed-upgrade attempt hit a
+  full local temporary volume; after removing only test-generated Playwright
+  caches, its clean serial rerun passed in 281.36 seconds.
+- Browser-quality locally passed Chromium/Firefox desktop and Chromium mobile
+  (26 passed, one expected skip). The frozen macOS 12 WebKit runtime is protocol
+  incompatible with Playwright 1.55.1, so the protected Linux WebKit gate
+  remains authoritative. No application assertion failed.
+- **Next:** push protected replacement PR, require every exact-head context and
+  zero unresolved review threads, merge, close #229/#230 as superseded, then
+  verify exact main and publish the separate Bridge closeout. No deployment,
+  release, production or rollout-credit action is included.
+
+## 2026-08-23 GH-236 sovereign edge-native V4 architecture → In Progress
+
+- **Future branch:** `docs/GH-236-v4-edge-architecture` after GH-235 closes.
+- **Issue:** [GH-236](https://github.com/NeaBouli/TrueRepublic/issues/236)
+- **Scope:** compare native TrueRepublic, separate Minima-based and hybrid edge
+  architectures; specify privacy, Sybil resistance, messaging, local-first
+  storage, settlement, wallet, incentives, resource budgets, bridge readiness,
+  threat model, PoC phases and decision gates from repository evidence and
+  primary sources.
+- **Roles:** Kimi K3 owns the large bounded secret-free read-only analysis.
+  Sol owns source verification, architecture, documentation, security, GitHub
+  and final integration.
+- **Risk/boundary:** High future design, zero authorized runtime effect. No new
+  repository, third-party code/dependency, consensus/token/bridge change,
+  identity processing, release, deployment, production, key/fund action or
+  rollout credit follows from this ticket.
+
+### 2026-08-23 Phase 0 research → Complete; documentation pending
+
+- Kimi completed the bounded read-only analysis and Sol verified primary
+  sources. Recommendation: retain TrueRepublic as the sole settlement chain and
+  evolve the existing Sovereign Alpha into a hybrid local-first edge layer;
+  do not fork or depend on Minima.
+- `ekklesia.gr` maps to the same owner's MIT-licensed `NeaBouli/pnyx` sibling
+  repository. Its real-bill lifecycle and civic metrics are suitable workflow
+  inputs, not a replacement consensus or identity system.
+- No V4 files, dependencies, runtime behavior or rollout arithmetic have changed
+  under GH-236 yet. Architecture integration starts only after GH-235 closes.
+
 ## 2026-08-22 GH-231 optional domain ballot architecture → In Progress
 
 - **Branch:** `docs/GH-231-ballot-architecture`

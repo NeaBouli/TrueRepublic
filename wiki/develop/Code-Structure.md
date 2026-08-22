@@ -8,7 +8,7 @@ Complete directory structure, file organization, and development conventions.
 TrueRepublic/
 │
 ├── app.go                          # Cosmos SDK application wiring (TrueRepublicApp)
-├── go.mod / go.sum                 # Go module: SDK v0.50.15, CometBFT v0.38.25
+├── go.mod / go.sum                 # Go module: SDK v0.50.15, CometBFT v0.38.26
 ├── Makefile                        # Build: build, install, test, lint, docker-*
 ├── Dockerfile                      # Multi-stage: Go 1.26.6 Bookworm → non-root Debian Bookworm slim
 ├── docker-compose.yml              # Full stack: node, client-web, nginx, prometheus, grafana
