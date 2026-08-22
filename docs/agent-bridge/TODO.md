@@ -2,17 +2,19 @@
 
 ## In progress - GH-235 bounded dependency reconciliation
 
-- [ ] Reproduce and review the exact Go/client updates from PRs #229/#230 on
+- [x] Reproduce and review the exact Go/client updates from PRs #229/#230 on
   current main, including forbidden-version and lock/checksum inspection.
-- [ ] Reconcile canonical CometBFT source-of-truth documentation.
-- [ ] Pass focused and complete relevant local/protected gates.
+- [x] Reconcile canonical CometBFT source-of-truth documentation.
+- [x] Pass focused and complete relevant local gates; protected exact-head and
+  exact-main gates remain part of publication/closeout.
 - [ ] Merge the replacement, then close superseded PRs #229/#230 and verify
   exact main plus Bridge closeout.
 
 ## In progress - GH-236 sovereign edge-native V4 architecture
 
-- [ ] Complete Kimi deep read-only analysis and Sol primary-source verification.
-- [ ] Compare native-chain, separate-Minima and hybrid architectures.
+- [x] Complete Kimi deep read-only analysis and Sol primary-source verification.
+- [x] Compare native-chain, separate-Minima and hybrid architectures; select the
+  native settlement plus hybrid edge-layer direction for documentation.
 - [ ] Publish implementation-ready target architecture, threats, resource
   budgets, repository layout, PoC stages, tests and decision gates.
 - [ ] Reconcile roadmap/README/Pages/Bridge without implementation or rollout

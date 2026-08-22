@@ -1,12 +1,14 @@
 # Project State
 
-GH-235 is in progress from exact main `94ffe8b8` on
-`chore/GH-235-dependency-reconciliation`. It replaces stale Dependabot PRs
-#229/#230 with one current-base, fully reviewed dependency candidate and keeps
-all consistency/security gates intact. GH-236 is separately in read-only Phase
-0 architecture analysis with Kimi; no V4 implementation or dependency is
-authorized. Public status remains 1,941 / 35-of-59 / 35-of-51 / Phase 6 6-of-7
-/ production false.
+GH-235 is locally approved on `chore/GH-235-dependency-reconciliation` after
+current-base dependency reconciliation, independent Kimi review, explicit
+ed25519-boundary coverage and complete relevant local Go/client/security/IBC/
+multi-validator/governed-upgrade/docs gates. Protected PR, exact-head review,
+merge, superseded Dependabot closure and exact-main closeout remain. GH-236's
+Kimi/Sol Phase 0 analysis is complete and recommends a native TrueRepublic
+settlement chain plus hybrid edge layer; documentation has not started and no
+V4 implementation or dependency is authorized. Public status remains 1,941 /
+35-of-59 / 35-of-51 / Phase 6 6-of-7 / production false.
 
 Updated: 2026-08-23 EEST
 

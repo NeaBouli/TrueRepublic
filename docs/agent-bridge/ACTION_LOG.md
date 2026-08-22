@@ -1,5 +1,22 @@
 # Action Log
 
+## 2026-08-23 - GH-235 locally approved; GH-236 research complete
+
+- Reconciled Dependabot #229/#230 on current main, synchronized CometBFT
+  v0.38.26 documentation, added explicit ML-DSA-sized validator-key rejection
+  coverage and documented the coordinated consensus-engine upgrade boundary.
+- Kimi independently reviewed the dependency diff and completed the separate
+  GH-236 V4 fit/gap analysis. Sol verified both conclusions and closed Kimi's
+  focused test/documentation findings locally.
+- Go Build/Vet/Race/Coverage, security/static/secret gates, client lint/309
+  tests/build/audit, IBC two-chain, all eight multi-validator scenarios,
+  governed upgrade and docs consistency pass. The aggregate matrix and first
+  upgrade attempt had only bounded local time/disk infrastructure interruptions;
+  their affected scenarios passed clean serial reruns.
+- Protected PR, hosted WebKit/reproducible-daemon evidence, merge, superseded-PR
+  closure and exact-main closeout remain. Status stays 1,941 / 35-of-59 /
+  35-of-51 / Phase 6 6-of-7 / production false.
+
 ## 2026-08-23 - GH-235/GH-236 started from exact main
 
 - Opened GH-235 for current-base reconciliation of Dependabot PRs #229/#230.
