@@ -1,5 +1,17 @@
 # Action Log
 
+## 2026-08-22 - GH-231 protected findings remediated locally
+
+- PR #233's first exact head was green but carried nine unresolved CodeRabbit
+  findings; all were verified and corrected before merge.
+- Added deterministic cancellation, qualified-plurality, ZK vote-key/digest,
+  aggregate-leakage, final-EDPB and full-gate semantics; removed remaining
+  misleading production anonymous-voting labels.
+- Kimi's independent remediation review found three P2 gaps and two remaining
+  labels. Sol resolved all reported items; Kimi wrote no file.
+- Release compatibility, docs consistency, three retirement contracts, JSON
+  parsing and diff hygiene pass. Replacement protected evidence remains.
+
 ## 2026-08-22 - GH-231 ballot architecture locally approved
 
 - Opened GH-231 for documentation and GH-232 as the deferred implementation

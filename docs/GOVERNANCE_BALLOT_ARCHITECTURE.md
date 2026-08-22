@@ -117,14 +117,12 @@ new ballot ID and leaves the old record auditable.
 ## 4. Ballot lifecycle
 
 ```text
-PENDING --opens_at_height--> OPEN --closes_at_height--> CLOSED
-   |                          |                            |
-   +---- authorized cancel --+                            +--> FINALIZED
-                                                            |  PASSED
-                                                            |  REJECTED
-                                                            |  NO_QUORUM
-                                                            |  NO_WINNER
-                                                            +  RUNOFF_CREATED
+PENDING --opens_at_height--> OPEN --closes_at_height--> CLOSED --> FINALIZED
+   |                          |                                      |  PASSED
+   +---- authorized cancel --+--> CANCELLED                         |  REJECTED
+                                  reason_code + height              |  NO_QUORUM
+                                                                    |  NO_WINNER
+                                                                    +  RUNOFF_CREATED
 ```
 
 - `PENDING`: policy, electorate and options are frozen; votes are rejected.
@@ -133,7 +131,11 @@ PENDING --opens_at_height--> OPEN --closes_at_height--> CLOSED
 - `CLOSED`: votes are rejected; deterministic tally has not yet committed.
 - `FINALIZED`: outcome and all tally inputs are immutable.
 - `CANCELLED`: terminal; allowed only by the policy's explicit authority and
-  never after finalization. The reason code and height are stored.
+  only from `PENDING` or `OPEN`, optionally before an earlier policy cutoff.
+  `CLOSED` and `FINALIZED` ballots cannot be cancelled. A non-empty canonical
+  reason code and cancellation height are stored in both the ballot and terminal
+  outcome record. Cancellation emits `ballot_cancelled`; it never produces
+  tallies, a winner or a runoff.
 
 EndBlock performs height-based transitions synchronously. It finalizes closed
 ballots in a deterministic bounded batch ordered by `(domain, ballot_id)`.
@@ -222,6 +224,27 @@ therefore uses `approval_bps = 5_000` and `STRICTLY_GREATER`; exact two thirds
 uses an explicit rational `(2,3)` comparison where required so `6_667` basis
 points cannot introduce unintended rounding. Zero denominators fail closed.
 
+### Qualified plurality
+
+For a multi-candidate ballot, qualified plurality means that exactly one top
+candidate must both outpoll every other candidate and meet the policy's
+explicit `approval_bps` (or exact rational) against its selected approval
+denominator:
+
+```text
+qualified := top_votes * 10_000 >= denominator * approval_bps
+```
+
+`comparison = STRICTLY_GREATER` changes `>=` to `>` exactly as above. The
+denominator is one of `VALID_DECISIVE` (all valid candidate selections,
+excluding abstentions), `ALL_CAST`, or `ELECTORATE`; it is immutable and cannot
+be inferred from UI wording. A zero denominator, equal top count, or top count
+below the threshold yields `NO_WINNER`, unless the frozen `tie_rule`/failure
+rule requires a linked runoff. Meeting the threshold by one integer cross-
+multiplication unit passes; missing it by one fails. A runoff repeats the same
+formula under its own immutable policy and never promotes a candidate by
+lexicographic order.
+
 ### Revoting, duplicates and ties
 
 - `FINAL_VOTE_WINS`: signer-attributed profiles may overwrite until close;
@@ -255,6 +278,8 @@ type Ballot struct {
     ClosesAtHeight    int64
     ParentBallotID    uint64
     Stage             uint32
+    CancellationReasonCode string // non-empty only when CANCELLED
+    CancelledAtHeight int64        // zero unless CANCELLED
 }
 
 type BallotPolicy struct {
@@ -275,19 +300,28 @@ type BallotVote struct {
     BallotID       uint64
     Choice         BallotChoice
     Ratings        []OptionRating
-    VoterKey       string // address/profile key; empty for ZK ballots
+    VoterKey       string // address/profile key; signer profiles only
     NullifierHash  []byte // ZK profiles only
+    VoteDigest     []byte // hash of canonical choice/rating bytes
     CastAtHeight   int64
+}
+
+type BallotNullifierRecord struct {
+    NullifierHash  []byte
+    VoteDigest     []byte
+    AcceptedAtHeight int64
 }
 
 type BallotOutcome struct {
     BallotID       uint64
-    Code           OutcomeCode
+    Status         BallotStatus // FINALIZED or CANCELLED
+    Code           OutcomeCode // CANCELLED when Status is CANCELLED
     Tallies        []OptionTally
     Participants   uint64
     QuorumMet      bool
     WinnerOptionID string
-    FinalizedAt    int64
+    TerminatedAtHeight int64
+    CancellationReasonCode string // non-empty only when CANCELLED
     ResultHash     []byte
 }
 ```
@@ -297,15 +331,20 @@ type BallotOutcome struct {
 ```text
 ballot:next:{domain}                         -> uint64
 ballot:{domain}:{ballot_id}                  -> Ballot
-ballot:vote:{domain}:{ballot_id}:{voter_key} -> BallotVote
-ballot:nullifier:{domain}:{ballot_id}:{hash} -> height
+ballot:vote:{domain}:{ballot_id}:{voter_key} -> BallotVote (signer profiles)
+ballot:zk-vote:{domain}:{ballot_id}:{nullifier_hash} -> BallotVote (SECRET_ZK)
+ballot:nullifier:{domain}:{ballot_id}:{hash} -> BallotNullifierRecord
 ballot:outcome:{domain}:{ballot_id}          -> BallotOutcome
 ballot:close:{height}:{domain}:{ballot_id}    -> empty index value
 ballot:domain-policy:{domain}                -> DomainBallotDefaults
 ```
 
 Keys use length-delimited binary encoding in the implementation; the readable
-forms above only specify namespace and ordering.
+forms above only specify namespace and ordering. `SECRET_ZK` never uses an
+empty `voter_key`: its ballot-scoped nullifier is the vote-record key. The
+nullifier record persists the canonical vote digest, so replaying byte-identical
+vote content is idempotent while reusing the nullifier for a different digest
+fails. Signer-attributed profiles remain indexed by `VoterKey`.
 
 ### Messages
 
@@ -323,7 +362,11 @@ caller-supplied voter address never establishes authority.
 
 Queries: `Ballot`, `BallotsByDomain`, `BallotPolicy`, `BallotOutcome`,
 `BallotTally`, `BallotEligibility` and profile-appropriate receipt/nullifier
-status. Secret profiles never return a voter-to-choice mapping.
+status. A cancelled ballot returns its immutable reason code and termination
+height through `Ballot` and `BallotOutcome`, with `Code = CANCELLED` and empty
+tallies. `OutcomeCode` therefore contains `CANCELLED` in addition to the five
+finalized-result codes shown in Section 4. Secret profiles never return a
+voter-to-choice mapping.
 
 Events: `ballot_created`, `ballot_opened`, `ballot_vote_accepted`,
 `ballot_closed`, `ballot_finalized`, `ballot_cancelled`, and
@@ -341,7 +384,8 @@ explicit migration. The migration must be additive:
 - preserve legacy records only as explicitly historical/advisory state or
   remove them in a later separately approved migration after export evidence;
 - export/import domain defaults, ballots, electorate snapshots, votes,
-  nullifiers, close indexes and outcomes exactly;
+  nullifiers (including canonical vote digests), close indexes, cancellation
+  metadata and terminal outcomes exactly;
 - reject duplicate IDs/options/electorate entries, unsorted snapshots, invalid
   hashes, impossible heights/states, unknown enums, unsafe thresholds and
   outcome/tally mismatches; and
@@ -402,6 +446,18 @@ H("TrueRepublic/ballot/v1", chain_id, domain, ballot_id, policy_hash)
 The proof binds the exact choice or rating vector and policy hash. One identity
 can vote once per ballot without producing a reusable cross-ballot identifier.
 Nullifier inclusion in the result allows public duplicate-prevention auditing.
+
+`SECRET_ZK` guarantees ballot-scoped voter/choice **unlinkability**, not that an
+aggregate result can never reveal a person's choice. Its choices and aggregate
+tallies are public: a singleton electorate, a unanimous small group or enough
+votes known outside the protocol can make the remaining choice inferable. The
+UI and policy review must warn about this residual leakage and may enforce a
+domain-approved minimum electorate, but such a minimum cannot eliminate
+auxiliary-information attacks. A domain requiring stronger result secrecy must
+use a separately implemented and audited `SEALED_SECRET` protocol; it must not
+label `SECRET_ZK` as providing that stronger guarantee. Tally queries and events
+therefore publish only aggregates and nullifiers, never a voter mapping, while
+making this limitation explicit.
 
 ### Rewards, receipts and coercion
 
@@ -500,7 +556,7 @@ or replace jurisdiction-specific advice.
   personal data, pseudonymisation and identifiability definitions.
 - [GDPR Article 9](https://eur-lex.europa.eu/eli/reg/2016/679/art_9/oj) —
   special categories including data revealing political opinions.
-- [EDPB Guidelines 02/2025 on blockchain processing](https://www.edpb.europa.eu/public-consultations/guidelines-022025-processing-personal-data-through-blockchain_en)
+- [EDPB Guidelines on processing of personal data through blockchain technologies (final version)](https://www.edpb.europa.eu/documents/guideline/guidelines-on-processing-of-personal-data-through-blockchain-technologies_en)
   — data protection by design, minimisation and immutable-ledger risks.
 - [Council of Europe CM/Rec(2017)5](https://book.coe.int/en/legal-instruments/7609-standards-for-e-voting-recommendation-cmrec20175-guidelines-and-explanatory-memorandum.html)
   — legal, operational and technical standards for e-voting.
@@ -515,7 +571,8 @@ or replace jurisdiction-specific advice.
 - public-ballot eligibility and warning policy;
 - sealed-secret cryptographic protocol and recovery model;
 - unlinkable participation rewards, if any;
-- cancellation/challenge authority and time window; and
+- cancellation authority and optional pre-close cutoff within `PENDING`/`OPEN`;
+  and
 - migration/retirement treatment of historical `elecvote:` keys.
 
 Until those decisions, implementation, audits and activation gates are

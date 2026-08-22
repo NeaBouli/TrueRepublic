@@ -171,7 +171,8 @@ optional domain ballots for:
   winning proposal.
 
 Candidate names may be public while voter identity remains private. Public,
-pseudonymous and secret-ZK profiles are separate policy choices. See the
+pseudonymous, secret-ZK and future sealed-secret profiles are separate policy
+choices. The sealed-secret profile is not yet available. See the
 [Optional Domain Ballot Architecture](../GOVERNANCE_BALLOT_ARCHITECTURE.md).
 
 ## Member Exclusion

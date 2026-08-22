@@ -19,7 +19,8 @@
 ## System Overview
 
 TrueRepublic is a Cosmos SDK blockchain with:
-- **Zero-Knowledge Proof** anonymous voting
+- **Zero-Knowledge Proof** rating verification (test-only compatibility;
+  production prover/submission qualification pending)
 - **CosmWasm** smart contracts
 - **IBC** cross-chain transfers
 - **Multi-Asset DEX** with AMM
@@ -69,10 +70,12 @@ TrueRepublic is a Cosmos SDK blockchain with:
 - **Domains:** Organizational units with treasuries
 - **Issues:** Topics for collective decision-making
 - **Suggestions:** Proposals within issues
-- **ZKP Voting:** Anonymous rating (-5 to +5) with Groth16 proofs
+- **ZKP Rating Verification:** Groth16 compatibility for -5 to +5 suggestion
+  ratings; production prover/submission qualification remains pending
 - **Stones:** Weighted votes (Green/Yellow/Red)
 - **Elections:** Current address-linked person-election vote storage and
-  test-only tally helper; no binding ballot lifecycle exists yet
+  test-exercised production tally helper; no binding ballot lifecycle exists
+  yet
 
 The future [Optional Domain Ballot Architecture](GOVERNANCE_BALLOT_ARCHITECTURE.md)
 (GH-231, deferred implementation GH-232) specifies first-class systemic,
@@ -212,7 +215,7 @@ PNYX Burn: 1% on PNYX output (100 bps)
 | truerepublic-testing-utils | `packages/testing-utils/` | Mock querier, AMM pool, fixtures |
 | governance-dao | `examples/governance-dao/` | DAO proposal lifecycle |
 | dex-bot | `examples/dex-bot/` | Limit orders, arbitrage detection |
-| zkp-aggregator | `examples/zkp-aggregator/` | Anonymous vote aggregation |
+| zkp-aggregator | `examples/zkp-aggregator/` | Example ZKP rating aggregation; not a production ballot client |
 | token-vesting | `examples/token-vesting/` | Linear vesting with cliff |
 
 ### Domain↔Bank Bridge
@@ -276,7 +279,7 @@ IBC Transfers ←──────────────→ IBC Transfers
 **Public Inputs:**
 - Merkle root (domain membership)
 - Nullifier (uniqueness)
-- Rating (1-10)
+- Rating (-5 to +5)
 
 **Private Inputs:**
 - Identity secret
@@ -301,7 +304,11 @@ Verify(proof, publicInputs, verificationKey) → bool
 
 ## Data Flow Examples
 
-### Anonymous Vote
+### Proof-backed suggestion rating (qualification pending)
+
+This is the chain-side/test-compatible `MsgRateWithProof` flow. Maintained-client
+proof submission, production prover artifacts, ceremony and independent review
+remain pending; it is not a deployed secret-ballot flow.
 
 ```
 User generates ZKP proof (client-side)

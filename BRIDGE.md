@@ -42,6 +42,27 @@
 - No code, consensus, client, ZKP artifact, rollout or production state changed.
   GH-232 remains open and deferred. The diff is approved for protected PR.
 
+### 2026-08-22 21:02 EEST protected review remediation → Local PASS
+
+- PR #233's first protected head passed all reported contexts but CodeRabbit
+  opened nine valid documentation findings. Sol remediated all nine instead of
+  merging a merely green head.
+- The contract now models `CANCELLED` as an explicit terminal/exportable state,
+  defines qualified-plurality integer boundaries, keys `SECRET_ZK` votes by
+  ballot-scoped nullifier with a canonical vote digest, and states residual
+  aggregate-tally leakage plus the exact unlinkability guarantee.
+- Kimi independently reviewed the remediation and identified three additional
+  P2 consistency gaps plus two residual anonymous-voting labels. Sol closed the
+  cancellation-window, cancelled-outcome-code and status-label gaps and aligned
+  the documented rating range to the implemented `-5..+5` contract. Kimi made
+  no repository write; Sol reviewed and owns the final diff.
+- **PASS:** release-compatibility repository contract, documentation
+  consistency, mobile/web-wallet/custom-query retirement contracts, dual JSON
+  parsing and `git diff --check`.
+- Protected replacement-head review, zero-thread proof, merge, exact-main CI,
+  live Pages and final ticket/Bridge closeout remain. Rollout stays 35/59,
+  phase work 35/51, Phase 6 6/7 and production false.
+
 ---
 
 ## 2026-08-17 03:33 EEST GH-225 release compatibility contract → Done

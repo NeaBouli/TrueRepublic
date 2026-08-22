@@ -848,7 +848,8 @@ rollback is uninstalling the Alpha.
 19. `GH-2xx` Alpha readiness review + rollback drill (A6).
 20. [GH-232](https://github.com/NeaBouli/TrueRepublic/issues/232) chain-side
     optional ballot engine; Alpha consumes only its versioned, fail-closed
-    transaction/query contract after separate consensus and privacy approval.
+    transaction/query contract after rollout stabilization and all applicable
+    consensus, production-ZKP, privacy and legal/process gates.
 
 ---
 

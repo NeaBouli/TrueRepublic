@@ -1,5 +1,19 @@
 # Project State
 
+PR #233 is in protected-review remediation on
+`docs/GH-231-ballot-architecture` at local head `6661222` plus the current
+uncommitted correction. Nine hosted findings and Kimi's three P2 follow-ups are
+resolved locally, including explicit cancelled outcomes, exact plurality math,
+nullifier-keyed ZK votes with canonical digests, residual tally-leakage limits
+and honest test-only ZKP wording. All relevant local gates pass. Replacement
+commit/push, protected checks, zero unresolved threads, merge, exact-main and
+live Pages remain. GH-232 stays deferred; status remains 1,941 / 35-of-59 /
+35-of-51 / Phase 6 6-of-7 / production false.
+
+Updated: 2026-08-22 21:02 EEST
+
+---
+
 GH-231 is locally documentation-complete on
 `docs/GH-231-ballot-architecture` from exact main `baf8fa3`. The optional
 domain ballot architecture now specifies current gaps, deterministic state,
