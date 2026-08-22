@@ -66,7 +66,7 @@ tracking: [Issue #29](https://github.com/NeaBouli/TrueRepublic/issues/29).
 |---|---|
 | Go | 1.26.6 |
 | Cosmos SDK | v0.50.15 |
-| CometBFT | v0.38.25 |
+| CometBFT | v0.38.26 |
 | ibc-go | v8.7.0 |
 | wasmd / wasmvm | v0.53.4 / v2.2.2 |
 | Maintained web client | React 18.2, TypeScript 5.9, Vite 8.2, CosmJS 0.39 |
