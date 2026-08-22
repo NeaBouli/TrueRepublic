@@ -153,6 +153,27 @@ The domain admin is the member with the **most stones** from other members.
   - Configure domain options (if enabled)
   - All regular member actions
 
+## Formal Ballots (Planned, Not Yet Available)
+
+The current chain can record signer-linked candidate approval or abstention,
+but it does not yet provide a binding ballot window, frozen electorate,
+quorum, final result or secret person-election flow. Do not treat that storage
+surface as a legally binding election engine.
+
+[GH-231](https://github.com/NeaBouli/TrueRepublic/issues/231) specifies future,
+optional domain ballots for:
+
+- systemic consensing over multiple proposals;
+- yes/no/abstain decisions;
+- single- or multi-candidate person elections with explicit no-winner/runoff
+  rules; and
+- systemic consensing followed by yes/no/abstain ratification of the frozen
+  winning proposal.
+
+Candidate names may be public while voter identity remains private. Public,
+pseudonymous and secret-ZK profiles are separate policy choices. See the
+[Optional Domain Ballot Architecture](../GOVERNANCE_BALLOT_ARCHITECTURE.md).
+
 ## Member Exclusion
 
 A member can be excluded by **2/3 majority vote**:
@@ -169,5 +190,6 @@ Members inactive for **360 days** are automatically removed during EndBlock proc
 ## Next Steps
 
 - [Systemic Consensing Explained](systemic-consensing-explained.md) -- Deep dive into the rating system
+- [Optional Domain Ballot Architecture](../GOVERNANCE_BALLOT_ARCHITECTURE.md) -- Future formal ballot and privacy design
 - [Stones Voting Guide](stones-voting-guide.md) -- Using stones effectively
 - [DEX Trading Guide](dex-trading-guide.md) -- Trading on the DEX

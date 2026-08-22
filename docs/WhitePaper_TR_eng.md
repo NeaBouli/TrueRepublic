@@ -258,7 +258,7 @@ The total number of PNYX is fixed with 21 million coins. The majority of coins w
 
 ### 3.7 Voting modes for person elections
 
-For person elections (e.g. "Election of the Board Chairman", see §3.1.1), domains can configure a voting mode that determines how a winner is decided. This extends the existing stone-based ranking with formal majority requirements.
+For person elections (e.g. "Election of the Board Chairman", see §3.1.1), the current data model defines voting modes intended to determine how a winner is selected. Current chain code stores signer-linked approve/abstain votes and has a test-only tally helper, but it does not yet expose a binding, time-bounded ballot lifecycle, quorum or finalized outcome. The rules below therefore describe the intended semantics rather than a production-ready formal election engine.
 
 **Simple Majority** (default)
 
@@ -287,6 +287,18 @@ Members can explicitly abstain from a vote. This is configurable per domain (def
 - In Simple Majority mode: abstentions count towards quorum but are excluded from the majority calculation.
 - In Absolute Majority mode: abstentions effectively count as "No" since the denominator is the total number of members.
 - Not voted (implicit): the member has not participated at all — does not count towards quorum.
+
+**Planned optional formal ballots**
+
+GH-231 defines an implementation-ready extension for systemic-consensing,
+yes/no/abstain, person-election and two-stage
+consensing-to-ratification ballots. Every ballot freezes its policy, proposal
+hash and electorate; privacy is selected separately as public, pseudonymous,
+secret-ZK or a future sealed-secret profile. Candidate identity may be public
+without publishing voter identity. Implementation remains deferred under
+[GH-232](https://github.com/NeaBouli/TrueRepublic/issues/232) until rollout,
+consensus, production-ZKP, privacy and applicable legal/process gates pass. See
+the [Optional Domain Ballot Architecture](GOVERNANCE_BALLOT_ARCHITECTURE.md).
 
 ---
 

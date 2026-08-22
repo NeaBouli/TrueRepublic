@@ -1,5 +1,21 @@
 # Project State
 
+GH-231 is locally documentation-complete on
+`docs/GH-231-ballot-architecture` from exact main `baf8fa3`. The optional
+domain ballot architecture now specifies current gaps, deterministic state,
+immutable policy/electorate snapshots, exact quorum/threshold rules, four
+decision modes, four privacy profiles, proposed Go/state/migration/client
+contracts and complete verification stages. README, both whitepapers, roadmap,
+architecture, Pages, user/developer docs and wiki agree that GH-232 is deferred
+and unimplemented. Sol authored and reviewed the final diff; Kimi supplied deep
+analysis and a final no-P0-P2 review. Local gates pass. Protected PR, hosted
+review, merge, exact-main and live Pages remain. Status stays 1,941 / 35-of-59 /
+35-of-51 / Phase 6 6-of-7 / production false.
+
+Updated: 2026-08-22 UTC
+
+---
+
 GH-225 is complete. Implementation PR #226 merged as `8fb1e315`; its exact
 main Go, Client, Security, Docs, reproducible Linux and Pages workflows all
 pass. Status closeout PR #227 merged as `15804e6`; exact-main Docs

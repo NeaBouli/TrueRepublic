@@ -1,5 +1,18 @@
 # Action Log
 
+## 2026-08-22 - GH-231 ballot architecture locally approved
+
+- Opened GH-231 for documentation and GH-232 as the deferred implementation
+  epic; branched from clean exact `origin/main` `baf8fa3` and preserved unrelated
+  Dependabot PRs #229/#230.
+- Added the detailed optional ballot architecture and synchronized every public
+  documentation surface, including the signer/relayer privacy boundary.
+- Kimi provided deep analysis; its stalled writing run changed nothing. Sol
+  authored the diff, and Kimi's final read-only review found no P0-P2 issue.
+- Compatibility, docs, retirement, JSON and diff gates pass. No code,
+  consensus, artifact, client, rollout, release, deployment, identity, key/fund
+  or production mutation occurred.
+
 ## 2026-08-14 — GH-206 merged and final-main gates passed
 
 - Exact PR #207 head `a2b3d17` passed all 25 reported contexts with zero open

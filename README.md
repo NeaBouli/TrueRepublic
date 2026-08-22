@@ -92,6 +92,7 @@ The native token **PNYX** -- named after the hill in Athens where citizens gathe
 | **[Validator Guide](docs/validators/README.md)** | Validators | PoD consensus, staking, slashing, operations |
 | **[Developer Docs](docs/developers/README.md)** | Developers | Architecture, API reference, CosmJS, smart contracts |
 | **[Sovereign Alpha Architecture](docs/SOVEREIGN_ALPHA_ARCHITECTURE.md)** | Product / Engineering | Future decentralized app, messaging, governance and PNYX wallet architecture |
+| **[Optional Ballot Architecture](docs/GOVERNANCE_BALLOT_ARCHITECTURE.md)** | Product / Engineering | Future domain-configurable consensing, majority, person-election, hybrid and privacy modes |
 | **[FAQ](docs/FAQ.md)** | Everyone | Frequently asked questions |
 | **[Glossary](docs/GLOSSARY.md)** | Everyone | Term definitions |
 | **[Whitepaper](docs/WhitePaper_TR_eng.md)** | Everyone | Full whitepaper |
@@ -205,7 +206,7 @@ TrueRepublic/
 | Node Staking Rewards (10% APY) | ✅ | `treasury/keeper/rewards.go` (eq.5) |
 | Domain Interest (25% APY) | ✅ | `treasury/keeper/rewards.go` (eq.4) |
 | Release Decay | ✅ | `treasury/keeper/rewards.go` |
-| Anonymous Voting (WP S4) | ✅ | `x/truedemocracy/anonymity.go` |
+| Anonymous Suggestion Ratings (WP S4) | 🟡 Recovery backend verified | Permission-register and test-only Groth16 paths; formal secret ballots and production ZKP qualification remain future work |
 | Zero-Knowledge Proofs (Groth16) | 🟡 Test-only compatibility verified | Chain/rating binding, fail-closed VK, and real synthetic Go/WASM proof compatibility; production ceremony, submission, and external review pending |
 | CosmWasm Smart Contracts | ✅ | `x/truedemocracy/wasm_bindings.go` |
 | Domain-Bank Bridge | ✅ | `x/truedemocracy/treasury_bridge.go` |
@@ -361,6 +362,7 @@ approval. Current evidence, risks, and commands are maintained in
 | [Deployment Guide](docs/DEPLOYMENT.md) | Production setup |
 | [Architecture](docs/ARCHITECTURE.md) | System design |
 | [Sovereign Alpha Architecture](docs/SOVEREIGN_ALPHA_ARCHITECTURE.md) | Future decentralized client, messaging and wallet design |
+| [Optional Ballot Architecture](docs/GOVERNANCE_BALLOT_ARCHITECTURE.md) | Future domain-configurable formal ballot and privacy design |
 | [Quick Start](docs/QUICKSTART.md) | 5-minute setup |
 | [Contributing](CONTRIBUTING.md) | Development guide |
 

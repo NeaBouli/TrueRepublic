@@ -31,6 +31,7 @@ tracking: [Issue #29](https://github.com/NeaBouli/TrueRepublic/issues/29).
 ### Developers
 
 - [Architecture Overview](develop/Architecture-Overview)
+- [Optional Ballot Architecture](https://github.com/NeaBouli/TrueRepublic/blob/main/docs/GOVERNANCE_BALLOT_ARCHITECTURE.md)
 - [Code Structure](develop/Code-Structure)
 - [Module Deep-Dive](develop/Module-Deep-Dive)
 

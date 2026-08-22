@@ -170,6 +170,12 @@ STORAGE LAYER
 
 ### x/truedemocracy -- Core Governance
 
+The current module does not yet expose a first-class, binding formal ballot
+lifecycle. GH-231 documents the deferred, optional architecture for immutable
+systemic-consensing, yes/no/abstain, person-election and hybrid ballots; future
+implementation remains tracked by GH-232 and grants no rollout credit. See the
+[Optional Ballot Architecture](https://github.com/NeaBouli/TrueRepublic/blob/main/docs/GOVERNANCE_BALLOT_ARCHITECTURE.md).
+
 **23 message types, 505 recovery cases**
 
 ```

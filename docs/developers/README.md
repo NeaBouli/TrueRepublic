@@ -7,6 +7,7 @@ Technical documentation for developers building on or contributing to TrueRepubl
 ### Architecture
 - [System Architecture](architecture/system-overview.md) -- Layers, modules, data flow
 - [Module Reference](architecture/module-reference.md) -- Detailed module documentation
+- [Optional Ballot Architecture](../GOVERNANCE_BALLOT_ARCHITECTURE.md) -- Deferred domain ballot, privacy, state and migration contract
 
 ### API Reference
 - [CLI Commands](api-reference/cli-commands.md) -- All transaction and query commands

@@ -454,6 +454,7 @@ anchors where governance needs them.
 | Issues | Issue objects, lifecycle | Issue discussion threads (envelope topic per issue) |
 | Suggestions | Submission, lifecycle zones, auto-delete (`MsgSubmitProposal`, `lifecycle.go`) | Suggestion body long-form + discussion; on-chain stores the canonical object |
 | Systemic-consensing ratings | Ratings, nullifiers, reward payout (GH-209 v2 binding) | Rating *debate*; pre-rating sentiment is chat, not votes |
+| Formal ballots (future GH-232) | Proposed immutable policy/electorate snapshots, ballot lifecycle, tally and result under [GH-231](GOVERNANCE_BALLOT_ARCHITECTURE.md); not implemented | Deliberation, candidate profiles and notifications only; chat never determines the canonical result |
 | Stones | Stone placement (`MsgPlaceStoneOnIssue/Suggestion`) | Stone rationale discussion |
 | VoteToEarn | Reward accounting and payout (treasury equations) | Nothing |
 | ZKP votes | Proof verification, nullifiers, VK state (fail-closed until Phase 2 gates) | Proof generation happens client-side; no messaging role |
@@ -845,6 +846,9 @@ rollback is uninstalling the Alpha.
 17. `GH-2xx` Threat-model register extension for Alpha.
 18. `GH-2xx` Independent security and cryptographic review (A5).
 19. `GH-2xx` Alpha readiness review + rollback drill (A6).
+20. [GH-232](https://github.com/NeaBouli/TrueRepublic/issues/232) chain-side
+    optional ballot engine; Alpha consumes only its versioned, fail-closed
+    transaction/query contract after separate consensus and privacy approval.
 
 ---
 

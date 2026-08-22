@@ -1,5 +1,19 @@
 # Recovery Queue
 
+## In progress - GH-231 optional domain ballot architecture
+
+- [x] Verify current election, systemic-consensing, ZKP, signer, snapshot,
+  genesis and client boundaries against code.
+- [x] Publish the implementation-ready state, math, privacy, migration, client,
+  security/legal and verification architecture.
+- [x] Reconcile README, both whitepapers, architecture, roadmap, Sovereign
+  Alpha, user/developer docs, Pages and wiki without rollout credit.
+- [x] Complete Sol review and Kimi no-P0-P2 final review; pass all local gates.
+- [ ] Publish through protected exact-head PR, resolve hosted findings, merge,
+  verify exact main and live Pages, then close GH-231.
+- [ ] Keep GH-232 deferred until separately approved rollout, consensus,
+  production-ZKP, privacy and applicable legal/process gates pass.
+
 ## Completed - GH-225 release notes and compatibility contract
 
 - [x] Define a strict versioned machine-readable current-candidate release and

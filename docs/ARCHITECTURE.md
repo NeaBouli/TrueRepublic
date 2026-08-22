@@ -71,7 +71,14 @@ TrueRepublic is a Cosmos SDK blockchain with:
 - **Suggestions:** Proposals within issues
 - **ZKP Voting:** Anonymous rating (-5 to +5) with Groth16 proofs
 - **Stones:** Weighted votes (Green/Yellow/Red)
-- **Elections:** Person election system
+- **Elections:** Current address-linked person-election vote storage and
+  test-only tally helper; no binding ballot lifecycle exists yet
+
+The future [Optional Domain Ballot Architecture](GOVERNANCE_BALLOT_ARCHITECTURE.md)
+(GH-231, deferred implementation GH-232) specifies first-class systemic,
+yes/no/abstain, person-election and hybrid ballots with immutable policy and
+electorate snapshots. It is a documentation-only proposal and does not alter
+the current consensus or production-readiness boundary.
 
 **State Storage:**
 ```

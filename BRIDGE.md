@@ -1,5 +1,49 @@
 # TrueRepublic Agent Bridge
 
+## 2026-08-22 GH-231 optional domain ballot architecture → In Progress
+
+- **Branch:** `docs/GH-231-ballot-architecture`
+- **Issue:** [GH-231](https://github.com/NeaBouli/TrueRepublic/issues/231)
+- **Future implementation:** [GH-232](https://github.com/NeaBouli/TrueRepublic/issues/232)
+- **Base:** exact clean `origin/main` `baf8fa3`; unrelated open Dependabot PRs
+  #229 and #230 are preserved and outside scope.
+- **Scope:** publish an implementation-ready, code-aligned architecture for
+  optional domain-configurable systemic-consensing, yes/no/abstain,
+  person-election and hybrid consensing-to-ratification ballots, including
+  deterministic lifecycle, immutable policy/electorate snapshots, privacy
+  profiles, migration, client contracts and test gates.
+- **Roles:** Kimi K3 owns one bounded secret-free architecture/documentation
+  implementation slice. Sol owns current-state verification, architecture and
+  privacy/security decisions, full diff review, integration, all repository
+  and GitHub writes, complete verification, merge and closure.
+- **Risk:** High future design, low current runtime impact. Incorrect ballot,
+  privacy or migration promises could later become consensus-critical, while
+  this task itself changes documentation only.
+- **Boundary:** no consensus/module version, ZKP circuit/artifact, wallet,
+  transaction, migration, identity, key/fund, deployment, release, production
+  or rollout-credit change. `production_ready` remains false and rollout
+  arithmetic remains 35/59.
+- **Next:** Kimi drafts the bounded architecture slice while Sol maps every
+  public/documentation integration point; Sol then reviews, reconciles and
+  runs the full documentation/consistency gates before protected publication.
+
+### 2026-08-22 local implementation and independent review → Approved
+
+- Added the implementation-ready architecture plus consistent README,
+  architecture, rollout, Sovereign Alpha, English/German whitepaper,
+  user/developer, Pages and wiki integrations.
+- Sol added the proof-authorized relayer/fee-payer boundary after identifying
+  that a visible Cosmos signer would otherwise defeat a claimed secret ballot.
+- Kimi supplied the deep code/state/privacy analysis. Its large writing session
+  stalled before mutation and was stopped safely; Sol authored the diff. A
+  fresh Kimi read-only final review found no P0-P2 issue.
+- **PASS:** release-compatibility contract, docs consistency, mobile/web-wallet/
+  custom-query retirement contracts, JSON parsing and `git diff --check`.
+- No code, consensus, client, ZKP artifact, rollout or production state changed.
+  GH-232 remains open and deferred. The diff is approved for protected PR.
+
+---
+
 ## 2026-08-17 03:33 EEST GH-225 release compatibility contract → Done
 
 - **Implementation merge:** PR #226 → `8fb1e315b2df71331c1b4b0082cc96a7cedd327d`;
