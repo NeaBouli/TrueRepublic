@@ -49,6 +49,7 @@ func TestValidateGenesisStateRejectsMalformedAndDuplicateDemocracyState(t *testi
 		{"duplicate validator", func(g *GenesisState) { g.Validators = append(g.Validators, g.Validators[0]) }},
 		{"missing validator domain", func(g *GenesisState) { g.Validators[0].Domain = "missing" }},
 		{"invalid validator pubkey", func(g *GenesisState) { g.Validators[0].PubKey = []byte{1} }},
+		{"ML-DSA-sized validator pubkey", func(g *GenesisState) { g.Validators[0].PubKey = make([]byte, 1952) }},
 		{"invalid member", func(g *GenesisState) { g.Domains[0].Members[0] = "not-an-address" }},
 		{"admin not member", func(g *GenesisState) { g.Domains[0].Members = []string{sdk.AccAddress("other-member").String()} }},
 		{"transfer limit exceeded", func(g *GenesisState) { g.Domains[0].TransferredStake = 1 }},
