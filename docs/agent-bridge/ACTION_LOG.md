@@ -1,5 +1,16 @@
 # Action Log
 
+## 2026-08-22 - GH-231 merged and exact-main/Pages verified
+
+- PR #233 head `c203974` passed 14/14 reported contexts and zero unresolved
+  threads, then squash-merged as `59aa720`; GH-231 closed and GH-232 remains
+  open/deferred with the canonical architecture evidence linked.
+- Exact-main Docs `32589841959`, Security `32589841924`, reproducible daemon
+  `32589841973` and Pages `32589841349` pass.
+- Cache-busted Pages and raw-main readback expose the new architecture and its
+  cancellation, plurality and ZK privacy boundaries. Rollout remains 35/59 and
+  production false; no runtime/release/deployment mutation occurred.
+
 ## 2026-08-22 - GH-231 protected findings remediated locally
 
 - PR #233's first exact head was green but carried nine unresolved CodeRabbit

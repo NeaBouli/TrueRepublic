@@ -1,5 +1,17 @@
 # Project State
 
+GH-231 is complete. PR #233 exact head `c203974` passed 14/14 reported
+contexts with zero unresolved threads and merged as `59aa720`. Exact-main Docs
+`32589841959`, Security `32589841924`, reproducible daemon `32589841973` and
+Pages `32589841349` pass; live cache-busted Pages and raw-main readback contain
+the architecture. GH-232 remains open/deferred. Status is unchanged at 1,941 /
+35-of-59 / 35-of-51 / Phase 6 6-of-7 / production false. Only this protected
+Bridge closeout publication remains.
+
+Updated: 2026-08-22 21:13 EEST
+
+---
+
 PR #233 is in protected-review remediation on
 `docs/GH-231-ballot-architecture` at local head `6661222` plus the current
 uncommitted correction. Nine hosted findings and Kimi's three P2 follow-ups are
