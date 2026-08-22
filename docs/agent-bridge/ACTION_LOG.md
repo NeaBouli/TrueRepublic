@@ -1,5 +1,17 @@
 # Action Log
 
+## 2026-08-23 - GH-235/GH-236 started from exact main
+
+- Opened GH-235 for current-base reconciliation of Dependabot PRs #229/#230.
+  PR #229's old head passed every reported gate except the intentional docs
+  consistency pin; PR #230's old head was fully green. Neither is merge-ready
+  evidence for current main.
+- Opened GH-236 for a documentation-only sovereign edge-native V4 architecture
+  comparison. Kimi received a bounded secret-free read-only Phase 0 assignment;
+  Sol retains primary-source verification, architecture and all writes.
+- No dependency, code, documentation, runtime, release, deployment, key/fund,
+  production or rollout state has changed yet.
+
 ## 2026-08-22 - GH-231 merged and exact-main/Pages verified
 
 - PR #233 head `c203974` passed 14/14 reported contexts and zero unresolved

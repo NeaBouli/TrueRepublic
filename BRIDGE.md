@@ -1,5 +1,40 @@
 # TrueRepublic Agent Bridge
 
+## 2026-08-23 GH-235 dependency reconciliation → In Progress
+
+- **Branch:** `chore/GH-235-dependency-reconciliation`
+- **Issue:** [GH-235](https://github.com/NeaBouli/TrueRepublic/issues/235)
+- **Superseded candidates:** Dependabot PRs
+  [#229](https://github.com/NeaBouli/TrueRepublic/pull/229) and
+  [#230](https://github.com/NeaBouli/TrueRepublic/pull/230)
+- **Base:** exact clean `origin/main` `94ffe8b8890efade963a96b455bde43689e64e18`.
+- **Scope:** reproduce the five bounded Go/client maintenance updates on the
+  current base, reconcile canonical CometBFT documentation pins, inspect exact
+  lock/checksum changes and pass the complete relevant local/protected gates.
+- **Risk:** Medium. CometBFT is consensus infrastructure; client changes are
+  development-only but still affect lint, testing and accessibility tooling.
+- **Boundary:** no consensus behavior, migration, release, deployment,
+  production, real key/fund, rollout credit or gate waiver. The original bot
+  PRs close only after a verified replacement merge.
+- **Owner:** Sol owns diff review, security, full tests, GitHub and closure.
+
+## 2026-08-23 GH-236 sovereign edge-native V4 architecture → In Progress
+
+- **Future branch:** `docs/GH-236-v4-edge-architecture` after GH-235 closes.
+- **Issue:** [GH-236](https://github.com/NeaBouli/TrueRepublic/issues/236)
+- **Scope:** compare native TrueRepublic, separate Minima-based and hybrid edge
+  architectures; specify privacy, Sybil resistance, messaging, local-first
+  storage, settlement, wallet, incentives, resource budgets, bridge readiness,
+  threat model, PoC phases and decision gates from repository evidence and
+  primary sources.
+- **Roles:** Kimi K3 owns the large bounded secret-free read-only analysis.
+  Sol owns source verification, architecture, documentation, security, GitHub
+  and final integration.
+- **Risk/boundary:** High future design, zero authorized runtime effect. No new
+  repository, third-party code/dependency, consensus/token/bridge change,
+  identity processing, release, deployment, production, key/fund action or
+  rollout credit follows from this ticket.
+
 ## 2026-08-22 GH-231 optional domain ballot architecture → In Progress
 
 - **Branch:** `docs/GH-231-ballot-architecture`

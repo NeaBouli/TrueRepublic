@@ -1,5 +1,17 @@
 # Project State
 
+GH-235 is in progress from exact main `94ffe8b8` on
+`chore/GH-235-dependency-reconciliation`. It replaces stale Dependabot PRs
+#229/#230 with one current-base, fully reviewed dependency candidate and keeps
+all consistency/security gates intact. GH-236 is separately in read-only Phase
+0 architecture analysis with Kimi; no V4 implementation or dependency is
+authorized. Public status remains 1,941 / 35-of-59 / 35-of-51 / Phase 6 6-of-7
+/ production false.
+
+Updated: 2026-08-23 EEST
+
+---
+
 GH-231 is complete. PR #233 exact head `c203974` passed 14/14 reported
 contexts with zero unresolved threads and merged as `59aa720`. Exact-main Docs
 `32589841959`, Security `32589841924`, reproducible daemon `32589841973` and
