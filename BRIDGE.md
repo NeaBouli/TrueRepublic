@@ -63,6 +63,26 @@
   live Pages and final ticket/Bridge closeout remain. Rollout stays 35/59,
   phase work 35/51, Phase 6 6/7 and production false.
 
+### 2026-08-22 21:13 EEST protected merge and exact-main evidence → Done
+
+- PR #233 exact head `c203974b76cafa8235a26cc63a219e103f9397cc`
+  passed 14/14 reported contexts with zero unresolved review threads and
+  squash-merged as `59aa7202d5ca7fa8c564223dedcb876d247e0509`.
+  CodeRabbit's replacement-head context passed as rate-limited after its nine
+  original findings were resolved; Kimi and Sol independently reviewed the
+  remediation and all repository gates passed.
+- GH-231 closed automatically. GH-232 remains open and deferred, with a direct
+  canonical architecture/merge-evidence comment and unchanged safety gates.
+- Exact-main Docs `32589841959`, Security `32589841924`, reproducible Linux
+  daemon `32589841973` and Pages `32589841349` all pass.
+- Cache-busted live Pages exposes the Optional Ballot Architecture link; raw
+  exact-main readback contains explicit cancellation, qualified-plurality and
+  `SECRET_ZK` unlinkability/leakage semantics.
+- No code, consensus, ZKP artifact, migration, client, identity, release,
+  deployment, key/fund, production or rollout-credit change occurred. Status
+  remains 1,941 tests, rollout 35/59, phase work 35/51, Phase 6 6/7 and
+  production false.
+
 ---
 
 ## 2026-08-17 03:33 EEST GH-225 release compatibility contract → Done

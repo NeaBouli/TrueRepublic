@@ -1,6 +1,6 @@
 # Recovery Queue
 
-## In progress - GH-231 optional domain ballot architecture
+## Completed - GH-231 optional domain ballot architecture
 
 - [x] Verify current election, systemic-consensing, ZKP, signer, snapshot,
   genesis and client boundaries against code.
@@ -11,9 +11,9 @@
 - [x] Complete Sol review and Kimi no-P0-P2 final review; pass all local gates.
 - [x] Remediate all nine hosted findings plus Kimi's follow-up P2/status-label
   findings; rerun the complete relevant local gate set.
-- [ ] Publish through protected exact-head PR, resolve hosted findings, merge,
+- [x] Publish through protected exact-head PR, resolve hosted findings, merge,
   verify exact main and live Pages, then close GH-231.
-- [ ] Keep GH-232 deferred until separately approved rollout, consensus,
+- [x] Keep GH-232 deferred until separately approved rollout, consensus,
   production-ZKP, privacy and applicable legal/process gates pass.
 
 ## Completed - GH-225 release notes and compatibility contract
