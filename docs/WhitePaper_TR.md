@@ -68,8 +68,13 @@ Alle Vorschläge, Bewertungen und Abstimmungen erfolgen offen, überprüfbar und
 ## 6. Sicherheit & Compliance
 - **Zensurresistenz:** Keine zentrale Stelle kann Stimmen blockieren.
 - **Transparenz:** Alle Transaktionen und Votes on-chain nachvollziehbar.
-- **Compliance:** DSGVO-konforme Identitäts- & Datenverwaltung durch dezentrale ID.
-- **Audits:** Smart Contracts und Blockchain-Module durch externe Reviews geprüft.
+- **Datenschutz:** Personenbezogene Identitätsdaten sollen off-chain bleiben;
+  auf der Chain werden, soweit möglich, nur Commitments, Nullifier und
+  kryptografische Nachweise abgelegt. Pseudonyme Kennungen sind nicht
+  automatisch anonym.
+- **Prüfung:** Repository-interne Recovery- und Sicherheitsnachweise ersetzen
+  keine unabhängige kryptografische, datenschutzrechtliche oder rechtliche
+  Prüfung.
 
 ---
 
@@ -87,6 +92,11 @@ Alle Vorschläge, Bewertungen und Abstimmungen erfolgen offen, überprüfbar und
 
 ### Phase 3
 - Erweiterte DAO-Funktionalität
+- Optionale formale Abstimmungen mit systemischem Konsensieren,
+  Ja/Nein/Enthaltung, Personenwahl und hybrider Ratifikation nach der
+  [Wahlarchitektur](GOVERNANCE_BALLOT_ARCHITECTURE.md). GH-232 bleibt bis zur
+  Stabilisierung des Rollouts und den erforderlichen ZKP-, Datenschutz- und
+  Rechtsprozess-Prüfungen zurückgestellt.
 - Treasury-Auszahlungslogik (Community Grants)
 - Internationale Expansion
 

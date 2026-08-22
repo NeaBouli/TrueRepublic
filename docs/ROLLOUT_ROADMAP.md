@@ -213,6 +213,17 @@ interface remains after Alpha qualification is deliberately deferred. See
 [SOVEREIGN_ALPHA_ARCHITECTURE.md](SOVEREIGN_ALPHA_ARCHITECTURE.md) for the
 component model, trust boundaries, delivery slices and future issue breakdown.
 
+### Parallel governance design track (not counted in 59 rollout items)
+
+[GH-231](https://github.com/NeaBouli/TrueRepublic/issues/231) publishes the
+[optional domain ballot architecture](GOVERNANCE_BALLOT_ARCHITECTURE.md) for
+systemic-consensing, yes/no/abstain, person-election and hybrid
+consensing-to-ratification ballots. Future implementation is tracked by
+[GH-232](https://github.com/NeaBouli/TrueRepublic/issues/232) and is deferred
+until rollout stabilization plus the applicable consensus, ZKP, privacy and
+legal/process gates. This design work changes neither **35/59** nor
+`production_ready: false`.
+
 ## Phase 5 — Quality and security depth
 
 - [x] Raise critical-path coverage for the root package, DEX, and governance

@@ -1,5 +1,23 @@
 # Decisions
 
+## 2026-08-22 - Optional domain ballots are post-rollout and opt-in
+
+- Systemic consensing remains the proposal-development foundation. Formal
+  ballots are optional per domain: systemic, yes/no/abstain, person-election or
+  two-stage consensing-to-ratification.
+- Domain defaults seed only future ballots. Each ballot freezes policy,
+  options/proposal hashes and electorate; deterministic math, explicit
+  abstention/denominator/tie/runoff rules and export/import safety are required.
+- Candidate publicity and voter privacy are separate. Identity data stays
+  off-chain. Public, pseudonymous, secret-ZK and future sealed-secret profiles
+  are explicit and cannot silently downgrade.
+- A ZK proof from the voter's visible Cosmos signer is not a secret ballot.
+  Secret-ZK needs proof authorization, non-voter relayer/fee-payer submission
+  and metadata analysis. No receipt-freeness, coercion-resistance, legal-validity
+  or production-ZKP claim exists without separate qualification.
+- GH-231 documents this contract and earns no rollout credit. GH-232 remains
+  deferred behind rollout, consensus, cryptographic, privacy and legal gates.
+
 ## 2026-08-09 - Canonical versioned cross-system threat register
 
 - Security risk state is canonical in `configs/security/threat-model.json`;

@@ -1,5 +1,30 @@
 # Action Log
 
+## 2026-08-22 - GH-231 protected findings remediated locally
+
+- PR #233's first exact head was green but carried nine unresolved CodeRabbit
+  findings; all were verified and corrected before merge.
+- Added deterministic cancellation, qualified-plurality, ZK vote-key/digest,
+  aggregate-leakage, final-EDPB and full-gate semantics; removed remaining
+  misleading production anonymous-voting labels.
+- Kimi's independent remediation review found three P2 gaps and two remaining
+  labels. Sol resolved all reported items; Kimi wrote no file.
+- Release compatibility, docs consistency, three retirement contracts, JSON
+  parsing and diff hygiene pass. Replacement protected evidence remains.
+
+## 2026-08-22 - GH-231 ballot architecture locally approved
+
+- Opened GH-231 for documentation and GH-232 as the deferred implementation
+  epic; branched from clean exact `origin/main` `baf8fa3` and preserved unrelated
+  Dependabot PRs #229/#230.
+- Added the detailed optional ballot architecture and synchronized every public
+  documentation surface, including the signer/relayer privacy boundary.
+- Kimi provided deep analysis; its stalled writing run changed nothing. Sol
+  authored the diff, and Kimi's final read-only review found no P0-P2 issue.
+- Compatibility, docs, retirement, JSON and diff gates pass. No code,
+  consensus, artifact, client, rollout, release, deployment, identity, key/fund
+  or production mutation occurred.
+
 ## 2026-08-14 — GH-206 merged and final-main gates passed
 
 - Exact PR #207 head `a2b3d17` passed all 25 reported contexts with zero open

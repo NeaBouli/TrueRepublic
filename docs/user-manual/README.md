@@ -7,9 +7,10 @@ Welcome to the TrueRepublic User Manual. This guide helps you use TrueRepublic's
 1. [Maintained Web Client Guide](web-wallet-guide.md) -- Recovery-safe client boundary
 2. [Governance Tutorial](governance-tutorial.md) -- Participating in domains
 3. [Systemic Consensing Explained](systemic-consensing-explained.md) -- Understanding the rating system
-4. [Stones Voting Guide](stones-voting-guide.md) -- Using stones to influence rankings
-5. [DEX Trading Guide](dex-trading-guide.md) -- Swapping tokens and providing liquidity
-6. [Troubleshooting](troubleshooting.md) -- Common issues and solutions
+4. [Optional Ballot Architecture](../GOVERNANCE_BALLOT_ARCHITECTURE.md) -- Future formal ballot and privacy design
+5. [Stones Voting Guide](stones-voting-guide.md) -- Using stones to influence rankings
+6. [DEX Trading Guide](dex-trading-guide.md) -- Swapping tokens and providing liquidity
+7. [Troubleshooting](troubleshooting.md) -- Common issues and solutions
 
 ## Quick Start
 
