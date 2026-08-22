@@ -1,7 +1,9 @@
 # Optional Domain Ballot Architecture
 
-**Design issue:** [GH-231](https://github.com/NeaBouli/TrueRepublic/issues/231)  
-**Deferred implementation epic:** [GH-232](https://github.com/NeaBouli/TrueRepublic/issues/232)  
+**Design issue:** [GH-231](https://github.com/NeaBouli/TrueRepublic/issues/231)
+
+**Deferred implementation epic:** [GH-232](https://github.com/NeaBouli/TrueRepublic/issues/232)
+
 **Status:** implementation-ready proposal; no consensus or client behavior is
 implemented by this document.
 
