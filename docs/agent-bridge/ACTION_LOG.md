@@ -1,5 +1,16 @@
 # Action Log
 
+## 2026-08-23 - GH-235 protected merge and exact-main closeout complete
+
+- PR #237 passed 26/26 exact-head contexts with zero unresolved review threads
+  and merged as `a9b2edec`; #229/#230 were closed as superseded and GH-235 is
+  closed.
+- A client-chain retry closed a pre-first-block startup race without code
+  changes. Exact main then passed Go, Client, Security, Docs, reproducible
+  daemon, Pages and dependency-graph workflows.
+- No deployment, release, production mutation or rollout credit occurred.
+  GH-236 architecture documentation is the next separate workstream.
+
 ## 2026-08-23 - GH-235 locally approved; GH-236 research complete
 
 - Reconciled Dependabot #229/#230 on current main, synchronized CometBFT
