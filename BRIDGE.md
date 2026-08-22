@@ -1,6 +1,6 @@
 # TrueRepublic Agent Bridge
 
-## 2026-08-23 GH-235 dependency reconciliation → In Progress
+## 2026-08-23 GH-235 dependency reconciliation → Done
 
 - **Branch:** `chore/GH-235-dependency-reconciliation`
 - **Issue:** [GH-235](https://github.com/NeaBouli/TrueRepublic/issues/235)
@@ -46,6 +46,21 @@
   zero unresolved review threads, merge, close #229/#230 as superseded, then
   verify exact main and publish the separate Bridge closeout. No deployment,
   release, production or rollout-credit action is included.
+
+### 2026-08-23 protected publication and exact-main closeout → Complete
+
+- Replacement PR [#237](https://github.com/NeaBouli/TrueRepublic/pull/237)
+  passed all 26 exact-head contexts with zero unresolved review threads and
+  merged as `a9b2edeca54b0da4a46976e23b56012e9f224f36`.
+- The one client-chain startup race failed before the first block and passed on
+  the clean exact-head rerun; the same test had passed on the prior exact head.
+  No application assertion or dependency defect was involved.
+- Dependabot PRs #229/#230 are closed with explicit supersession records. GH-235
+  closed through the merge.
+- **Exact main PASS:** Go CI, Client Web CI, Security Scan, Docs Consistency,
+  Reproducible Linux Daemon, Pages and dependency-graph refresh all succeeded on
+  `a9b2edec`. No deployment, release, production or rollout-credit action was
+  performed.
 
 ## 2026-08-23 GH-236 sovereign edge-native V4 architecture → In Progress
 

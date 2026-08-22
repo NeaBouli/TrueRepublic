@@ -1,14 +1,14 @@
 # Recovery Queue
 
-## In progress - GH-235 bounded dependency reconciliation
+## Completed - GH-235 bounded dependency reconciliation
 
 - [x] Reproduce and review the exact Go/client updates from PRs #229/#230 on
   current main, including forbidden-version and lock/checksum inspection.
 - [x] Reconcile canonical CometBFT source-of-truth documentation.
-- [x] Pass focused and complete relevant local gates; protected exact-head and
-  exact-main gates remain part of publication/closeout.
-- [ ] Merge the replacement, then close superseded PRs #229/#230 and verify
-  exact main plus Bridge closeout.
+- [x] Pass focused and complete relevant local, protected exact-head and
+  exact-main gates.
+- [x] Merge replacement PR #237, close superseded PRs #229/#230 and GH-235,
+  and verify exact main plus Bridge closeout evidence.
 
 ## In progress - GH-236 sovereign edge-native V4 architecture
 
