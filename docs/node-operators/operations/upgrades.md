@@ -62,6 +62,14 @@ then start the exact candidate on the unchanged homes. Never use
 
 ## Safety rules
 
+- Treat consensus-engine patch releases as coordinated network upgrades unless
+  mixed-version compatibility is explicitly proven. In particular, CometBFT
+  v0.38.26 increases the maximum signature and commit-size constants for its
+  ML-DSA verification backport. A v0.38.25 node and a v0.38.26 node can
+  therefore calculate different maximum block-data sizes. Do not use the
+  compatible rolling-replacement procedure below across that version boundary;
+  halt and restart every validator on the reviewed v0.38.26 artifact at the
+  agreed height.
 - Rehearse the exact old and new artifacts on a private network first.
 - Record commit IDs, versions, and SHA-256 checksums for both binaries.
 - Keep the last known-good binary available until the recovery window closes.
