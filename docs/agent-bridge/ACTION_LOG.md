@@ -1,5 +1,12 @@
 # Action Log
 
+## 2026-08-23 - GH-236 protected closeout complete
+
+- PR #239 final head passed 14/14 contexts with zero unresolved threads and
+  merged as `cf331140`; GH-236 closed. Exact-main Docs, Security, reproducible
+  daemon and Pages plus live/raw readback pass. Status remains 1,941 / 35-of-59 /
+  production false; no runtime, deployment or rollout credit changed.
+
 ## 2026-08-23 - GH-236 protected review remediated
 
 - PR #239 first head passed all 14 technical contexts. Four CodeRabbit findings

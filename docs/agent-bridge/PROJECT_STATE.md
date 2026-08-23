@@ -1,14 +1,12 @@
 # Project State
 
-GH-236 PR #239 is in protected review on `docs/GH-236-v4-edge-architecture`
-from exact main `3150436`. The V4 target keeps TRChain as the sole settlement
-chain and specifies citizen nodes, mobile verification, local-first civic
-workflows, sandboxed domain apps, privacy/security boundaries and V4-0..V4-5
-gates. Its first head passed 14/14 contexts; four hosted findings are locally
-remediated, and replacement-head checks, merge, exact-main and Pages verification
-remain. No implementation,
-dependency or rollout credit exists. Public status remains 1,941 / 35-of-59 /
-35-of-51 / Phase 6 6-of-7 / production false.
+GH-236 is complete. PR #239 replacement head `935e9f0` passed all 14 reported
+contexts with zero unresolved threads and squash-merged as `cf331140`; GH-236
+is closed. Exact merged main passes Docs, Security, Reproducible Linux Daemon
+and Pages, and cache-busted raw-main/live Pages expose the V4 architecture.
+No implementation, dependency or rollout credit exists. Public status remains
+1,941 / 35-of-59 / 35-of-51 / Phase 6 6-of-7 / production false. V4-0 is the
+next separate reversible implementation slice.
 
 Updated: 2026-08-23 EEST
 
