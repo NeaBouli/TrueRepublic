@@ -1,5 +1,23 @@
 # Project State
 
+GH-241 V4-0 is implemented locally on `feat/GH-241-v4-edge-protocol` from exact
+main `5981621`. The standard-library-only package has canonical signed
+certificate/envelope/manifest codecs, strict cross-binding, fail-closed epoch/
+revocation decisions, bounded authenticated replay detection and 18 candidate
+test/fuzz cases. Kimi's first review found a future-epoch bypass and resource/
+trust-boundary issues; Sol remediated them. Kimi's independent follow-up found
+no P0-P2, and Sol also closed both remaining P3 observations by binding valid
+authentication decisions to exact message IDs and publisher facts to exact app
+versions. Focused Race/Coverage is 86.1%; Vet, pinned Staticcheck and the
+dedicated 0-warning audit pass. Final full Go, security, vulnerability, secret,
+release, documentation and retirement gates also pass. Protected publication
+and exact-main closeout remain. Public status stays 1,941 / 35-of-59 / 35-of-51 / Phase 6 6-of-7 /
+production false until merged evidence closeout.
+
+Updated: 2026-08-23 EEST
+
+---
+
 GH-236 is complete. PR #239 replacement head `935e9f0` passed all 14 reported
 contexts with zero unresolved threads and squash-merged as `cf331140`; GH-236
 is closed. Exact merged main passes Docs, Security, Reproducible Linux Daemon

@@ -223,6 +223,12 @@ are qualified in reversible slices. It rejects a Minima dependency, second
 chain/token and bridge commitment. This documentation changes neither **35/59**
 nor `production_ready: false`.
 
+[GH-241](https://github.com/NeaBouli/TrueRepublic/issues/241) implements the
+first reversible V4-0 slice as an unwired standard-library-only Go protocol
+package with canonical signed certificates, envelopes, manifests and
+adversarial/golden/fuzz/property tests. It activates no transport, client,
+wallet, chain change or rollout item.
+
 ### Parallel governance design track (not counted in 59 rollout items)
 
 [GH-231](https://github.com/NeaBouli/TrueRepublic/issues/231) publishes the
