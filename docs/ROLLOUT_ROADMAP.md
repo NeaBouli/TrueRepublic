@@ -19,7 +19,7 @@ intentionally more granular than the public 59-item tracker.
 
 - The ordered recovery merge chain is on `main`.
 - The maximum supply is fixed at 21,000,000 PNYX.
-- The source of truth records 1,941 recovery-verified tests: 1,596 Go, 26 Rust,
+- The source of truth records 1,959 recovery-verified tests: 1,614 Go, 26 Rust,
   and 319 maintained-client tests. The Go total includes GH-225's release-
   compatibility contract, GH-209's recipient-
   binding and atomic-payout adversarial coverage plus GH-206's pinned,

@@ -296,6 +296,7 @@ truedemocracy|governance
 zkpprover|test-only ZKP prover
 releaseevidence|release evidence
 installlifecycle|install lifecycle
+sovereignv4protocol|Sovereign V4 protocol
 MODULES
 echo ""
 

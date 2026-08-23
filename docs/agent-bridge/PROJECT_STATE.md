@@ -1,7 +1,7 @@
 # Project State
 
-GH-241 V4-0 is implemented locally on `feat/GH-241-v4-edge-protocol` from exact
-main `5981621`. The standard-library-only package has canonical signed
+GH-241 V4-0 implementation is merged through PR #242 as `fa7985c`. The
+standard-library-only package has canonical signed
 certificate/envelope/manifest codecs, strict cross-binding, fail-closed epoch/
 revocation decisions, bounded authenticated replay detection and 18 candidate
 test/fuzz cases. Kimi's first review found a future-epoch bypass and resource/
@@ -11,8 +11,9 @@ authentication decisions to exact message IDs and publisher facts to exact app
 versions. Focused Race/Coverage is 86.1%; Vet, pinned Staticcheck and the
 dedicated 0-warning audit pass. Final full Go, security, vulnerability, secret,
 release, documentation and retirement gates also pass. Protected publication
-and exact-main closeout remain. Public status stays 1,941 / 35-of-59 / 35-of-51 / Phase 6 6-of-7 /
-production false until merged evidence closeout.
+and local gates passed; the protected evidence closeout now publishes 1,959 =
+1,614 Go + 26 Rust + 319 client. Rollout stays 35-of-59 / phase work 35-of-51 /
+Phase 6 6-of-7 / production false. Exact-main and live Pages remain.
 
 Updated: 2026-08-23 EEST
 

@@ -1,5 +1,15 @@
 # Action Log
 
+## 2026-08-23 - GH-241 implementation merged / evidence closeout
+
+- PR #242 exact head `1f2b22d` passed all 22 contexts with zero review threads
+  and squash-merged as `fa7985c`; GH-241 closed.
+- Closeout arithmetic is 1,959 = 1,614 Go + 26 Rust + 319 client, including the
+  enforced 18-case Sovereign V4 protocol row. Rollout remains 35/59 and
+  production false because the package is unwired.
+- Protected closeout PR and exact-main/live Pages verification remain; no
+  release, deployment or runtime activation occurred.
+
 ## 2026-08-23 - GH-241 final local gates pass
 
 - Final Build/Vet/Race/Coverage passed across all 20 maintained Go packages on
