@@ -1,5 +1,19 @@
 # Project State
 
+GH-236 PR #239 is in protected review on `docs/GH-236-v4-edge-architecture`
+from exact main `3150436`. The V4 target keeps TRChain as the sole settlement
+chain and specifies citizen nodes, mobile verification, local-first civic
+workflows, sandboxed domain apps, privacy/security boundaries and V4-0..V4-5
+gates. Its first head passed 14/14 contexts; four hosted findings are locally
+remediated, and replacement-head checks, merge, exact-main and Pages verification
+remain. No implementation,
+dependency or rollout credit exists. Public status remains 1,941 / 35-of-59 /
+35-of-51 / Phase 6 6-of-7 / production false.
+
+Updated: 2026-08-23 EEST
+
+---
+
 GH-235 is complete. PR #237 passed 26/26 exact-head contexts with zero unresolved
 threads and merged as `a9b2edec`; superseded Dependabot PRs #229/#230 and GH-235
 are closed. Exact-main Go, Client, Security, Docs, reproducible daemon, Pages and

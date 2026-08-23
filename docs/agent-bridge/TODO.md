@@ -15,10 +15,12 @@
 - [x] Complete Kimi deep read-only analysis and Sol primary-source verification.
 - [x] Compare native-chain, separate-Minima and hybrid architectures; select the
   native settlement plus hybrid edge-layer direction for documentation.
-- [ ] Publish implementation-ready target architecture, threats, resource
+- [x] Publish implementation-ready target architecture, threats, resource
   budgets, repository layout, PoC stages, tests and decision gates.
-- [ ] Reconcile roadmap/README/Pages/Bridge without implementation or rollout
-  credit, then complete protected review and exact-main verification.
+- [x] Reconcile roadmap/README/Pages/Bridge without implementation or rollout
+  credit.
+- [x] Complete Sol/Kimi review and all relevant local gates.
+- [ ] Complete protected publication and exact-main/Pages verification.
 
 ## Completed - GH-231 optional domain ballot architecture
 

@@ -1,5 +1,11 @@
 # Sovereign Alpha Architecture Proposal
 
+> **Successor architecture:** GH-236's
+> [Sovereign V4 Edge Architecture](SOVEREIGN_V4_EDGE_ARCHITECTURE.md) evolves
+> this Alpha baseline with citizen nodes, mobile verification, civic workflows
+> and sandboxed domain apps while retaining TRChain as the sole settlement
+> chain. Both documents remain architecture-only.
+
 **Issue:** [GH-215](https://github.com/NeaBouli/TrueRepublic/issues/215)
 **Status:** Decision-ready proposal — documentation only. No product code,
 dependency, protocol, consensus, cryptography, or wallet behavior is changed by

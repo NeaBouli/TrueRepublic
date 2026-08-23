@@ -300,6 +300,15 @@ without publishing voter identity. Implementation remains deferred under
 consensus, production-ZKP, privacy and applicable legal/process gates pass. See
 the [Optional Domain Ballot Architecture](GOVERNANCE_BALLOT_ARCHITECTURE.md).
 
+**Planned sovereign V4 edge architecture**
+
+GH-236 evolves the installable Alpha while keeping TRChain as the only
+settlement and governance chain. User-operated pruned nodes, participants using
+mobile verification, local-first bill/discussion workflows and sandboxed domain
+apps are delivered through reversible gates. The design introduces no Minima
+dependency, second chain or token, or bridge commitment. See the
+[Sovereign V4 Edge Architecture](SOVEREIGN_V4_EDGE_ARCHITECTURE.md).
+
 ---
 
 ## 4 Anonymity & Onboarding
