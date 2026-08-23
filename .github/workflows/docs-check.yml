@@ -43,6 +43,8 @@ jobs:
           go-version: '1.26.6'
       - name: Check Release Compatibility Contract
         run: make release-compatibility-contract-test
+      - name: Check Rollout Genesis Contract
+        run: make rollout-genesis-contract-test
       - name: Check Consistency
         run: ./scripts/check-consistency.sh
       - name: Check Mobile Retirement

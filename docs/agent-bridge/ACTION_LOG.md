@@ -1,5 +1,43 @@
 # Action Log
 
+## 2026-08-24 - GH-244 protected review remediation local PASS
+
+- Closed all six CodeRabbit findings locally: deterministic offline command,
+  safe command errors/cleanup, dangling-symlink detection, fail-closed invalid
+  manifests, distinct validator-set bound evidence and exact DEX LP-share
+  conservation.
+- Kimi implemented the bounded core; Sol reviewed the full diff, corrected the
+  test integration and kept DEX address acceptance aligned with chain genesis.
+- Focused/Race/Vet, named contract, diff and full 21-package Build/Vet/Race/
+  Coverage pass. Candidate arithmetic is 2,028 = 1,683 Go + 26 Rust + 319
+  client; rollout stays 35/59 and production false.
+- Replacement protected head, thread resolution, merge and public exact-main
+  closeout remain. No genesis freeze, release, signing or deployment occurred.
+
+## 2026-08-24 - GH-244 local implementation approved
+
+- Implemented the offline rollout-genesis manifest/verifier, adversarial/fuzz
+  evidence, CLI, repository contract, CI wiring and operator documentation.
+- Sol hardened same-handle bounded regular-file reads, symlink/special-file
+  rejection, exact auth module address/permission/account reconciliation and
+  the named Make gate after reviewing the delegated core slice.
+- Kimi K3's final read-only review found no unresolved P0-P2. Full Go
+  Build/Vet/Race/Coverage, pinned static/vulnerability/secret gates,
+  documentation/retirement contracts and diff hygiene pass.
+- Candidate count is 2,016 = 1,671 Go + 26 Rust + 319 client; rollout stays
+  35/59 and production false. Clean-commit reproducibility and protected
+  publication/closeout remain; no rollout checkbox is credited.
+
+## 2026-08-23 - GH-244 Basic-rollout priority and start
+
+- Opened GH-244 and created `feat/GH-244-rollout-genesis-contract` from exact
+  clean main `9ecdd917`.
+- Locked the delivery order to Basic TrueRepublic rollout foundation first;
+  V4-1 and GH-232 remain separate deferred tracks.
+- Scope is a deterministic rollout-genesis manifest/verifier plus adversarial
+  evidence. No real freeze, release, signing, deployment, network, key/fund,
+  go/no-go or rollout credit is included; production remains false.
+
 ## 2026-08-23 - GH-241 implementation merged / evidence closeout
 
 - PR #242 exact head `1f2b22d` passed all 22 contexts with zero review threads

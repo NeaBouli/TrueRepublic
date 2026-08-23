@@ -14,6 +14,8 @@ on:
       - 'configs/security/gates.json'
       - 'releaseevidence/**'
       - 'cmd/release-evidence/**'
+      - 'genesisevidence/**'
+      - 'cmd/genesis-evidence/**'
       - 'installlifecycle/**'
       - 'cmd/install-lifecycle/**'
       - 'INSTALLATION.md'
@@ -52,6 +54,8 @@ on:
       - 'configs/security/gates.json'
       - 'releaseevidence/**'
       - 'cmd/release-evidence/**'
+      - 'genesisevidence/**'
+      - 'cmd/genesis-evidence/**'
       - 'installlifecycle/**'
       - 'cmd/install-lifecycle/**'
       - 'INSTALLATION.md'
@@ -133,6 +137,9 @@ jobs:
 
       - name: Verify release notes and compatibility contract
         run: make release-compatibility-contract-test
+
+      - name: Verify rollout genesis qualification contract
+        run: make rollout-genesis-contract-test
 
   deterministic-build:
     name: ${{ matrix.target }}

@@ -6,7 +6,7 @@ DETERMINISTIC_TARGET ?= linux-amd64
 SOURCE_REF           ?= $(shell git rev-parse HEAD)
 DETERMINISTIC_OUT    ?= $(BUILD_DIR)/deterministic/$(DETERMINISTIC_TARGET)
 
-.PHONY: build critical-coverage quality-depth concurrency-replay ibc-two-chain governed-upgrade security-contract go-vuln static-analysis secret-scan deterministic-linux-daemon deterministic-build-contract-test install-lifecycle-contract-test release-compatibility-contract-test verify test lint clean docker-build docker-up docker-down proto-gen
+.PHONY: build critical-coverage quality-depth concurrency-replay ibc-two-chain governed-upgrade security-contract go-vuln static-analysis secret-scan deterministic-linux-daemon deterministic-build-contract-test install-lifecycle-contract-test release-compatibility-contract-test rollout-genesis-contract-test verify test lint clean docker-build docker-up docker-down proto-gen
 
 build:
 	@echo "Building $(BINARY)..."
@@ -62,6 +62,10 @@ install-lifecycle-contract-test:
 
 release-compatibility-contract-test:
 	go test . -run '^TestReleaseCompatibilityRepositoryContract$$' -count=1
+
+rollout-genesis-contract-test:
+	go test ./genesisevidence ./cmd/genesis-evidence -count=1
+	go test . -run '^TestRolloutGenesisRepositoryContract$$' -count=1
 
 verify:
 	@echo "Verifying repository Go packages..."

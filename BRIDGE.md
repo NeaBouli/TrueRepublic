@@ -1,5 +1,84 @@
 # TrueRepublic Agent Bridge
 
+### 2026-08-24 protected review remediation → Local PASS
+
+- CodeRabbit identified six valid hardening gaps on PR #245. The replacement
+  candidate now runs documented verification with downloads disabled, preserves
+  safe input-error causes, validates output before work, explicitly discards the
+  read-only close error, detects dangling forbidden-artifact symlinks and emits
+  a distinct oversized-validator violation.
+- Invalid manifests now stop all dependent checks fail closed, invalid DEX
+  amounts cannot reach nil arithmetic, and every DEX pool's `total_shares` is
+  reconciled exactly against unique valid `lp_positions`. Boundary regressions
+  cover the exact 21M-PNYX cap, oversize input and LP ownership/mismatch cases.
+- Kimi K3 implemented the bounded remediation core. Sol stopped an incomplete
+  mechanical test-table edit, reviewed every written line, aligned LP-provider
+  acceptance with the actual chain schema, completed the assertions and owns
+  the final integration decision.
+- **PASS:** focused tests, focused Race/Vet, named rollout-genesis contract,
+  diff hygiene and full 21-package Build/Vet/Race/Coverage; `genesisevidence`
+  coverage is 84.2%, root 73.6%, governance 64.3% and DEX 51.1%.
+- Exact branch-vs-base arithmetic is now 69 new Go cases: 68
+  `genesisevidence` plus one root repository contract. Post-merge candidate is
+  2,028 = 1,683 Go + 26 Rust + 319 client. Public status remains 1,959 and
+  rollout 35/59 until protected merge/closeout; production remains false.
+- **Next:** commit/push the replacement head, resolve all six review threads,
+  require the full protected matrix again, merge, then synchronize public
+  status and exact-main/Pages/Bridge evidence. No freeze/release/deployment.
+
+## 2026-08-23 GH-244 rollout-genesis qualification contract → In Progress
+
+- **Branch:** `feat/GH-244-rollout-genesis-contract`
+- **Issue:** [GH-244](https://github.com/NeaBouli/TrueRepublic/issues/244)
+- **Base:** exact clean `origin/main` `9ecdd917238b17ac07b2508547b5f8aded35a88a`.
+- **Scope:** implement a deterministic, fail-closed repository contract that
+  binds an exact candidate genesis to source/version/chain identity and verifies
+  consensus/governance authorities, validator power, allocations, 21M PNYX
+  supply, escrow, DEX custody and module-account reconciliation.
+- **Delivery order:** Basic TrueRepublic rollout evidence has priority. V4-1
+  runtime work and GH-232 ballot implementation remain separate deferred tracks
+  until rollout stabilization or a new explicit decision changes that order.
+- **Roles:** Kimi K3 owns a large bounded secret-free implementation/analysis
+  slice. Sol owns architecture, security, every delegated diff, integration,
+  complete tests, GitHub publication and closure.
+- **Boundary:** no real genesis freeze, tag, signing/publication, private
+  inventory, deployment, testnet/mainnet action, key/fund use, go/no-go record,
+  V4 wiring, ZKP ceremony or rollout credit. Production remains false.
+- **Next:** inspect existing genesis/release contracts, delegate the bounded core
+  to Kimi, integrate adversarial coverage, then run the complete relevant gates.
+
+### 2026-08-24 local implementation and security review → Approved
+
+- Added the strict offline manifest/verifier, deterministic text/JSON evidence,
+  command, adversarial/fuzz coverage, repository contract, CI wiring and
+  operator documentation. Exact raw bytes bind the source/version/chain and
+  candidate genesis; consensus/application validators, allocations, PNYX cap,
+  governance escrow, DEX custody and exact auth module accounts reconcile
+  fail-closed.
+- Sol found and fixed a bounded-file TOCTOU/special-file risk plus incomplete
+  auth-module and named-gate enforcement. Inputs now require the same opened
+  regular file, reject symlinks, read through a hard byte limit, require all
+  canonical module addresses/permissions and validator operator accounts, and
+  execute the root repository contract from the named Make gate.
+- Kimi K3 completed the final bounded read-only security review and approved
+  the remediated diff with no unresolved P0-P2 finding. Sol reviewed every
+  accepted write and owns the implementation/integration decision.
+- **PASS:** named rollout-genesis gate including root contract; focused tests;
+  Race; Vet; 83.9% package coverage; full 21-package Build/Vet/Race/Coverage
+  (root 73.6%, governance 64.3%, DEX 51.1%); pinned Staticcheck v0.7.0;
+  Govulncheck v1.6.0 policy plus negative fixtures; Gitleaks v8.30.1 over the
+  maintained tree; security contract; docs/retirement consistency and diff
+  hygiene.
+- Candidate arithmetic is 2,016 standard cases: 1,671 Go (including 56
+  `genesisevidence` and one root contract), 26 Rust and 319 client. Public
+  status remains 1,959 and rollout remains 35/59 until protected publication;
+  GH-244 deliberately earns no rollout checkbox.
+- **Remaining before Done:** commit the reviewed diff, pass the clean-commit
+  deterministic build, publish protected PR, require exact-head checks and zero
+  unresolved review threads, merge, then synchronize exact-main/public status
+  and both Bridges. No freeze, release, signing, deployment or production
+  action is included.
+
 ## 2026-08-23 GH-235 dependency reconciliation → Done
 
 - **Branch:** `chore/GH-235-dependency-reconciliation`
