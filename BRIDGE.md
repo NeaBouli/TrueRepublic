@@ -1,6 +1,6 @@
 # TrueRepublic Agent Bridge
 
-### 2026-08-24 GH-244 protected merge / public status sync → In Progress
+## 2026-08-24 GH-244 protected merge / public status sync → In Progress
 
 - PR [#245](https://github.com/NeaBouli/TrueRepublic/pull/245) exact replacement
   head `695f7ff3f10e28eb3249f1d47651a5010d4c0d42` passed every protected context,
