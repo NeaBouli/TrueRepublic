@@ -98,14 +98,27 @@ validation and explicit wallet confirmation. No app receives raw keys.
 
 ### Domain discussion
 
-1. The core resolves the authenticated chain account and current domain
-   membership at a pinned height.
-2. It derives a domain-scoped messaging identity separate from wallet and
-   validator keys.
-3. A versioned envelope binds chain ID, domain ID, topic/bill ID, message ID,
-   parent ID, author key, sequence, timestamp, payload hash and signature.
-4. Waku transports ciphertext; the local store persists validated envelopes.
-5. Duplicates are idempotent. Sequence or parent gaps remain visible and cause
+1. The core resolves the authenticated chain account and domain membership at
+   a light-client-verified, pinned TRChain height.
+2. It creates a domain-scoped messaging key separate from wallet and validator
+   keys. The chain account signs a versioned authorization certificate binding
+   the messaging public key, chain ID, domain ID, member account, membership
+   height, key epoch, validity interval and membership-proof hash.
+3. A versioned envelope binds that certificate and proof, chain ID, domain ID,
+   topic/bill ID, message ID, parent ID, author key, key epoch, membership
+   height, sequence, timestamp, payload hash and message-key signature.
+4. Before displaying a message as authenticated, a peer verifies the TRChain
+   light proof for membership and account key at the stated height, the account
+   signature on the certificate, its domain/height/validity/epoch fields and
+   the envelope signature. Missing or unverifiable proof is labelled
+   unauthenticated and cannot enter governance or settlement inputs.
+5. Rotation creates a higher-epoch certificate and never reuses a retired key.
+   Compromise revocation is a committed TRChain revocation sequence; after a
+   peer syncs that height it rejects envelopes from the revoked and older epochs.
+   An offline peer marks post-expiry or not-yet-revocation-checked messages
+   provisional instead of claiming current authorization.
+6. Waku transports ciphertext; the local store persists validated envelopes.
+7. Duplicates are idempotent. Sequence or parent gaps remain visible and cause
    an incomplete-history state, never a fabricated complete thread.
 
 ### Real-bill lifecycle

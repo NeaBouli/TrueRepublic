@@ -1,5 +1,12 @@
 # Action Log
 
+## 2026-08-23 - GH-236 protected review remediated
+
+- PR #239 first head passed all 14 technical contexts. Four CodeRabbit findings
+  were verified and fixed: append-only Bridge provenance, TODO state, explicit
+  membership-to-messaging-key certificates with rotation/revocation, and public
+  English wording. Replacement checks remain; no runtime or rollout changed.
+
 ## 2026-08-23 - GH-236 final local approval
 
 - Kimi independently approved the complete documentation diff with no P0-P2;

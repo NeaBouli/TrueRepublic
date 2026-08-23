@@ -19,8 +19,8 @@
   budgets, repository layout, PoC stages, tests and decision gates.
 - [x] Reconcile roadmap/README/Pages/Bridge without implementation or rollout
   credit.
-- [ ] Complete Sol/Kimi review, local gates, protected publication and
-  exact-main/Pages verification.
+- [x] Complete Sol/Kimi review and all relevant local gates.
+- [ ] Complete protected publication and exact-main/Pages verification.
 
 ## Completed - GH-231 optional domain ballot architecture
 

@@ -1,11 +1,12 @@
 # Project State
 
-GH-236 is locally approved on `docs/GH-236-v4-edge-architecture`
+GH-236 PR #239 is in protected review on `docs/GH-236-v4-edge-architecture`
 from exact main `3150436`. The V4 target keeps TRChain as the sole settlement
 chain and specifies citizen nodes, mobile verification, local-first civic
 workflows, sandboxed domain apps, privacy/security boundaries and V4-0..V4-5
-gates. Sol and independent Kimi review plus full local gates pass; protected
-publication, exact-main and Pages verification remain. No implementation,
+gates. Its first head passed 14/14 contexts; four hosted findings are locally
+remediated, and replacement-head checks, merge, exact-main and Pages verification
+remain. No implementation,
 dependency or rollout credit exists. Public status remains 1,941 / 35-of-59 /
 35-of-51 / Phase 6 6-of-7 / production false.
 

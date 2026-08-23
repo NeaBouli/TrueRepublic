@@ -64,7 +64,7 @@
 
 ## 2026-08-23 GH-236 sovereign edge-native V4 architecture → In Progress
 
-- **Branch:** `docs/GH-236-v4-edge-architecture` from exact post-GH-235 main.
+- **Future branch:** `docs/GH-236-v4-edge-architecture` after GH-235 closes.
 - **Issue:** [GH-236](https://github.com/NeaBouli/TrueRepublic/issues/236)
 - **Scope:** compare native TrueRepublic, separate Minima-based and hybrid edge
   architectures; specify privacy, Sybil resistance, messaging, local-first
@@ -88,14 +88,15 @@
 - `ekklesia.gr` maps to the same owner's MIT-licensed `NeaBouli/pnyx` sibling
   repository. Its real-bill lifecycle and civic metrics are suitable workflow
   inputs, not a replacement consensus or identity system.
-- Correction: the license shorthand above is not evidenced by this repository.
-  The external repository's license and reusable scope must be verified at
-  DG-V4-1 before any code adoption.
 - No V4 files, dependencies, runtime behavior or rollout arithmetic have changed
   under GH-236 yet. Architecture integration starts only after GH-235 closes.
 
 ### 2026-08-23 implementation-ready documentation → Sol Review
 
+- The planned branch now exists from exact post-GH-235 main. Correction to the
+  earlier external-license shorthand: this repository does not evidence the
+  sibling repository's license; its license and reusable scope must be verified
+  at DG-V4-1 before any code adoption.
 - Added the native V4 target architecture and synchronized README, roadmap,
   German/English whitepapers, Pages, limitations, Alpha baseline, architecture,
   user/developer docs and wiki.
@@ -122,6 +123,18 @@
 - No runtime, dependency, test-count, rollout, release, deployment, production,
   key or fund state changed. Next is protected PR review, merge and exact-main
   plus Pages verification.
+
+### 2026-08-23 protected PR #239 review → Remediated
+
+- Exact head `69d7bef` passed all 14 reported technical contexts. CodeRabbit
+  raised four verified findings: preserve append-only provenance, reconcile the
+  open TODO, define membership-to-messaging-key authorization/rotation/
+  revocation, and clarify one English public summary.
+- The replacement diff restores the original Bridge text and appends its
+  correction, records completed local gates separately, and makes authenticated
+  discussion fail closed on light-client membership proof plus a chain-account-
+  signed key certificate. Focused revalidation and replacement-head checks are
+  next; no runtime or rollout state changed.
 
 ## 2026-08-22 GH-231 optional domain ballot architecture → In Progress
 
