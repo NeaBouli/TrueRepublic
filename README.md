@@ -345,10 +345,13 @@ approval. Current evidence, risks, and commands are maintained in
   integrated non-custodial PNYX wallet and no mandatory hosted-website
   dependency. `client-web` remains the Beta during construction; whether an
   optional web interface survives is deferred until the Alpha exit gates pass.
-- 📐 **Sovereign V4 edge track (GH-236; architecture only):** evolves the Alpha
+- 📐 **Sovereign V4 edge track (GH-236/GH-241):** evolves the Alpha
   with TRChain as the sole settlement chain, user-operated pruned nodes, mobile
   verification, local-first civic workflows and sandboxed domain apps. It adds
   no Minima dependency, second chain, token, bridge commitment or rollout credit.
+  V4-0 now provides an unwired canonical Go protocol package with strict signed
+  certificates, envelopes, manifests and adversarial vectors; no edge runtime
+  or client is active.
 - 🎯 **Production release (no committed date):** external reviews, signed
   reproducible clients and chain artifacts, staged networks, and explicit
   go/no-go approval are still required.

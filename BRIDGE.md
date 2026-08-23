@@ -148,6 +148,71 @@
   deployment, production, key/fund or rollout-credit action occurred. V4-0 is
   the next separately ticketed, reversible implementation slice.
 
+## 2026-08-23 GH-241 V4-0 canonical edge protocol → In Progress
+
+- **Branch:** `feat/GH-241-v4-edge-protocol` from exact main `5981621`.
+- **Issue:** [GH-241](https://github.com/NeaBouli/TrueRepublic/issues/241)
+- **Scope:** implement the reversible standard-library-only V4 protocol package:
+  versioned membership/key certificates, canonical edge envelopes, signed
+  domain-app manifests, strict codecs and adversarial/golden/fuzz/property tests.
+- **Roles:** Kimi K3 owns a bounded implementation block under
+  `sovereignv4/protocol`; Sol owns protocol/security decisions, integration,
+  independent diff review, complete gates, GitHub and closeout.
+- **Boundary:** no runtime wiring, Waku, Flutter, store, wallet integration,
+  chain migration, foreign chain/token/bridge, release, deployment, production
+  or rollout credit. TRChain remains the sole authority and V4 stays disabled.
+- **Next:** Kimi implementation while Sol defines acceptance/security checks;
+  then independent review and full repository gates.
+
+### 2026-08-23 V4-0 implementation and security remediation → Sol Review
+
+- Kimi's bounded write run produced a thorough design but no file diff and was
+  stopped safely. Sol implemented the standard-library-only package and owns the
+  complete code diff; Kimi then performed the independent line-by-line review.
+- The package provides canonical certificates, envelopes and manifests,
+  caller-verified membership/publisher facts, Ed25519/SHA-256 binding, exact-
+  epoch revocation decisions, authenticated/domain-separated bounded replay
+  detection and golden/property/mutation/fuzz coverage.
+- Sol closed Kimi's P1 future-epoch revocation bypass and all material P2s:
+  unknown higher epochs are provisional, only AuthValid messages enter the
+  replay store, stored payloads are reduced to hashes, chain/domain scope is
+  included, and manifest authorization requires a verified publisher fact plus
+  exact artifact/capability binding.
+- **Focused PASS:** 18 candidate test/fuzz cases, Race/Coverage 86.1%, vet,
+  pinned staticcheck and diff hygiene. Public status remains 1,941 and 35/59
+  until protected merge/evidence closeout; no runtime or rollout activation.
+- **Next:** focused Kimi follow-up, full repository/security/docs gates,
+  protected PR/review/merge and exact-main closeout.
+
+### 2026-08-23 V4-0 independent approval and final local hardening
+
+- Kimi's focused read-only follow-up approved the slice with no P0-P2 and
+  verified the future-epoch, bounded replay, concurrency, publisher, account-
+  key and documentation remediations. Three 15-second fuzz runs passed without
+  a crash; Race/Coverage remained 86.1%, Vet and pinned Staticcheck passed.
+- Sol also closed both non-blocking P3 observations: an `AuthValid` decision is
+  now unexportably bound to the exact verified envelope message ID, and the
+  caller-verified publisher fact now binds the exact app version. The dedicated
+  audit records 0 FAIL / 0 WARN / 8 PASS.
+- Full repository verification is running. Protected PR, hosted review, merge,
+  exact-main and public evidence closeout remain. Public status stays 1,941 and
+  rollout 35/59; V4-0 remains unwired and production remains false.
+
+### 2026-08-23 V4-0 final local gates → PASS
+
+- Final `make verify` passes all 20 maintained Go packages with Build, Vet and
+  Race/Coverage on the exact final diff: root 73.6%, governance 64.3% and V4-0
+  86.1%. All 18 V4-0 test/fuzz cases are present and the deterministic package
+  test passed ten additional consecutive runs.
+- PASS: pinned Staticcheck, exact active no-fix `govulncheck` policy and its
+  negative fixtures, Gitleaks and fixtures, repository security contract,
+  release-compatibility contract, docs consistency, all maintained retirement
+  contracts and diff hygiene. The temporary disk-space interruption was
+  resolved solely by clearing Go build/test/fuzz caches; no project file was
+  lost or reverted.
+- **Next:** commit/push, protected PR, zero-thread hosted review, merge and
+  exact-main/public closeout. Status remains 1,941 / 35/59 / production false.
+
 ## 2026-08-22 GH-231 optional domain ballot architecture → In Progress
 
 - **Branch:** `docs/GH-231-ballot-architecture`

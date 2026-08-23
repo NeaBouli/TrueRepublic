@@ -1,5 +1,47 @@
 # Action Log
 
+## 2026-08-23 - GH-241 final local gates pass
+
+- Final Build/Vet/Race/Coverage passed across all 20 maintained Go packages on
+  the exact final diff. V4-0 remains at 86.1% coverage and its deterministic
+  suite passed ten additional consecutive runs.
+- Pinned Staticcheck, exact-policy govulncheck plus fixtures, Gitleaks plus
+  fixtures, repository security, release compatibility, docs consistency,
+  retirement contracts and diff hygiene all pass.
+- Protected PR/review/merge and exact-main closeout remain. Public evidence is
+  unchanged at 1,941 tests and 35/59; production remains false.
+
+## 2026-08-23 - GH-241 final local hardening
+
+- Closed both remaining Kimi P3 observations: an `AuthValid` decision now
+  carries an unexported binding to the exact verified envelope message ID, so
+  it cannot be reused for another message, and `PublisherFact` now cross-binds
+  the exact app version as well as domain, app ID, key and artifact hash.
+- Added the dedicated V4-0 audit with 0 FAIL / 0 WARN / 8 PASS. Focused Race
+  and Coverage remains 86.1%; Vet, pinned Staticcheck and diff hygiene pass.
+- Full repository verification and protected delivery remain in progress.
+  Public status is unchanged at 1,941 and 35/59; no rollout or production
+  action occurred.
+
+## 2026-08-23 - GH-241 implementation and first remediation
+
+- Added the unwired standard-library-only V4-0 protocol and 18 candidate
+  golden/property/mutation/fuzz cases. Focused Race/Coverage 86.1%, vet and
+  pinned staticcheck pass.
+- Kimi's write run produced no diff; its independent review found a real future-
+  epoch revocation bypass plus replay/publisher boundary issues. Sol fixed all
+  material findings with exact-epoch qualification, authenticated/hash-only
+  scoped replay storage and caller-verified publisher/artifact binding.
+- Full gates/protected publication remain. No runtime, rollout or production
+  state changed; public count stays 1,941 until merged evidence closeout.
+
+## 2026-08-23 - GH-241 V4-0 started
+
+- Opened GH-241 and isolated `feat/GH-241-v4-edge-protocol` from exact main
+  `5981621`. Kimi received the bounded standard-library-only protocol package;
+  Sol retains security/integration and all external writes. No runtime,
+  dependency, production or rollout state changed.
+
 ## 2026-08-23 - GH-236 protected closeout complete
 
 - PR #239 final head passed 14/14 contexts with zero unresolved threads and

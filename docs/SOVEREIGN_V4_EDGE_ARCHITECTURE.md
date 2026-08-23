@@ -223,14 +223,21 @@ unmeasured device as supported.
 ## 8. Target repository and protocol layout
 
 ```text
-sovereign-v4/                 # proposed; absent today
-  protocol/                   # canonical envelope/manifest schemas and vectors
-  core/                       # Go key, wallet, transport, sync and policy core
-  app/                        # Flutter UI only
-  domain-app-runtime/         # sandbox and capability broker
-  profiles/                   # mobile/desktop/home-node configuration contracts
-  test/e2e/                   # disposable-chain and adversarial scenarios
+sovereignv4/
+  protocol/                   # V4-0 implemented: schemas, codecs and vectors
+  core/                       # proposed; absent today
+  app/                        # proposed; absent today
+  domain-app-runtime/         # proposed; absent today
+  profiles/                   # proposed; absent today
+  test/e2e/                   # proposed; absent today
 ```
+
+The implemented `sovereignv4/protocol` package is deliberately unwired. It uses
+only the Go standard library and supplies strict version/type/length decoding,
+canonical certificate/envelope/manifest bytes, Ed25519 signatures, caller-
+verified membership and publisher facts, epoch/revocation decisions, bounded
+authenticated replay detection, golden vectors and adversarial/property/fuzz
+tests. It does not verify light proofs, trust registries or execute an app.
 
 The wire schema starts at `truerepublic.edge-envelope/v1`. It binds `chain_id`,
 domain/topic identity, canonical byte encoding and signature algorithm. Unknown
@@ -247,7 +254,7 @@ without claiming global erasure.
 
 | Slice | Deliverable | Exit gate | Rollback boundary |
 |---|---|---|---|
-| V4-0 Protocol | Envelope/manifest schemas, Go codec, golden/fuzz/property vectors | Cross-platform canonical bytes; malformed/unknown/cross-domain inputs rejected | No runtime adoption |
+| V4-0 Protocol | GH-241 certificate/envelope/manifest schemas, Go codec, golden/fuzz/property vectors | Local Race/Coverage, vet, staticcheck and adversarial tests pass; protected cross-platform evidence required before Done | No runtime adoption |
 | V4-1 Discussion | Waku adapter, encrypted store, offline/gap/replay behavior | Two-device and restart/loss/reorder/adversarial-peer matrix | Disable transport; Beta unchanged |
 | V4-2 Civic lifecycle | Versioned bills, amendments, consensing and local metrics on disposable chain | Hash lineage, settlement and metric reproducibility under missing/conflicting data | Feature flag off; no chain migration |
 | V4-3 Device profiles | Mobile verifier and pruned citizen/home nodes | Real-device budgets, sync, pruning, recovery and upgrade tests | Unsupported profile removed |
@@ -286,8 +293,8 @@ relayer or wrapped asset. Existing IBC qualification boundaries remain intact.
 
 ## 12. Honest current status
 
-No `sovereign-v4/` code, Flutter client, Go edge core, Waku binding, light
-client, citizen-node profile, mini-app sandbox or production ZKP path exists in
-the repository today. This document is the implementation contract for future
-tickets. `client-web` remains the maintained Beta, TRChain remains recovery-only
-and no rollout checkbox changes.
+GH-241 implements only the unwired `sovereignv4/protocol` V4-0 library and its
+vectors/tests. No Flutter client, Go edge runtime, Waku binding, light client,
+citizen-node profile, mini-app sandbox or production ZKP path exists in the
+repository today. `client-web` remains the maintained Beta, TRChain remains
+recovery-only and no rollout checkbox changes.

@@ -1,5 +1,19 @@
 # Recovery Queue
 
+## In progress - GH-241 V4-0 canonical edge protocol
+
+- [x] Implement versioned certificate, envelope and manifest schemas plus
+  deterministic canonical codec without adding dependencies.
+- [x] Enforce chain/domain/membership/key/epoch/signature/capability and size
+  boundaries fail closed while keeping the package unwired.
+- [x] Add golden, round-trip, property, mutation, replay/conflict and fuzz tests.
+- [x] Complete Kimi independent review and Sol integration/security review;
+  close every P1-P3 finding and publish the dedicated 0-warning audit.
+- [x] Complete all full local Go, security, vulnerability, secret, release,
+  documentation and retirement gates on the final diff.
+- [ ] Complete protected PR gates, review, merge and exact-main closeout.
+- [ ] Keep rollout 35/59 and production false; perform no deployment/release.
+
 ## Completed - GH-235 bounded dependency reconciliation
 
 - [x] Reproduce and review the exact Go/client updates from PRs #229/#230 on
