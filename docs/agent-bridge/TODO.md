@@ -1,5 +1,25 @@
 # Recovery Queue
 
+## In progress - GH-244 rollout-genesis qualification contract
+
+- [x] Specify a strict versioned manifest bound to exact source, daemon,
+  chain ID and canonical genesis digest.
+- [x] Verify authorities, validator identities/power, allocations, 21M PNYX
+  cap, governance escrow, DEX custody and module-account reconciliation.
+- [x] Reject malformed, ambiguous, duplicate, stale, overflowed or mismatched
+  inputs fail closed and emit deterministic review evidence.
+- [x] Complete Kimi implementation/review, Sol security/integration review and
+  focused adversarial coverage with the full relevant local gates.
+- [ ] Publish through protected exact-head review, merge, verify exact main and
+  synchronize GitHub/public status/Bridge before Done.
+- [ ] Keep real freeze, release, signing, deployment, network, key/fund,
+  go/no-go and rollout-credit actions out of scope; production remains false.
+
+## Delivery priority
+
+- [x] Continue Basic TrueRepublic rollout foundation before V4-1 runtime work.
+- [x] Keep GH-232 deferred until the already documented rollout/security gates.
+
 ## In progress - GH-241 V4-0 canonical edge protocol closeout
 
 - [x] Implement versioned certificate, envelope and manifest schemas plus

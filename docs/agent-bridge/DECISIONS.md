@@ -1,5 +1,17 @@
 # Decisions
 
+## 2026-08-23 - Basic rollout precedes V4-1 runtime work
+
+- Complete the Basic TrueRepublic 59-item rollout foundation and its
+  independently reviewable evidence before starting Sovereign V4-1 runtime
+  wiring.
+- V4-0 remains an unwired parallel foundation and earns no rollout credit.
+  GH-232 remains deferred behind its existing rollout, consensus,
+  cryptographic, privacy and legal/process gates.
+- A later change to this order requires a new explicit documented decision;
+  architecture work and synthetic repository evidence cannot silently reorder
+  delivery or claim production readiness.
+
 ## 2026-08-23 - V4 uses one native settlement chain and a hybrid edge layer
 
 - TRChain remains the only L1, settlement, governance, PNYX and final-result

@@ -46,6 +46,16 @@ intentionally more granular than the public 59-item tracker.
 The baseline is suitable for continued engineering. It is not a rollout
 approval.
 
+## Delivery priority
+
+Engineering work now follows one explicit order: complete the Basic
+TrueRepublic rollout foundation and its independently reviewable evidence
+before starting Sovereign V4-1 runtime wiring. V4-0 remains an unwired parallel
+foundation, and the optional GH-232 ballot engine remains deferred behind its
+existing rollout, consensus, privacy and legal/process gates. A later change to
+this order requires an explicit documented decision; architecture documents or
+synthetic repository evidence do not earn rollout credit by themselves.
+
 ## Phase 1 — Network and disaster-recovery evidence
 
 - [x] Build a reproducible four-validator consensus and recovery harness

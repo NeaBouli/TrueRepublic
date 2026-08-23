@@ -1,5 +1,37 @@
 # Project State
 
+GH-244 is locally implementation- and security-review complete. The strict
+offline verifier binds an exact candidate genesis to source/version/chain,
+reconciles validator authority/power, every bank allocation, 21M PNYX cap,
+governance/DEX custody and exact module accounts, and rejects malformed,
+ambiguous, symlinked or unbounded inputs. Sol reviewed and hardened every
+accepted write; Kimi K3's final independent review found no unresolved P0-P2.
+All focused, full Go, static, vulnerability, secret, documentation and
+consistency gates pass. Candidate arithmetic is 2,016 = 1,671 Go + 26 Rust +
+319 client. Public truth remains 1,959 / 35-of-59 / production false until
+protected merge and closeout; GH-244 earns no rollout checkbox. Clean-commit
+reproducibility, protected PR/merge and exact-main/public synchronization remain.
+
+Updated: 2026-08-24 EEST
+
+---
+
+GH-244 is in progress from exact clean main
+`9ecdd917238b17ac07b2508547b5f8aded35a88a`. Delivery order is now explicit:
+finish the Basic TrueRepublic rollout foundation and evidence before starting
+V4-1 runtime work; GH-232 remains deferred as already documented. This slice
+will implement a deterministic, fail-closed rollout-genesis manifest/verifier
+and adversarial evidence for chain identity, consensus/governance authorities,
+validator power, allocations, PNYX cap, escrow, DEX custody and module-account
+reconciliation. No real freeze, release, signing, deployment, network, key/fund,
+go/no-go or rollout-credit action is authorized. Kimi owns one bounded
+secret-free core implementation block; Sol owns security, integration, full
+verification and all external writes.
+
+Updated: 2026-08-23 EEST
+
+---
+
 GH-241 V4-0 implementation is merged through PR #242 as `fa7985c`. The
 standard-library-only package has canonical signed
 certificate/envelope/manifest codecs, strict cross-binding, fail-closed epoch/

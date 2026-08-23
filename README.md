@@ -48,6 +48,11 @@
 > and `mobile-wallet` prototypes were retired and removed under GH-112 and
 > GH-102; Git history preserves them for audit only.
 
+Delivery priority is the Basic TrueRepublic rollout foundation first.
+Sovereign V4-1 runtime wiring and the optional GH-232 ballot engine remain
+separate, deferred tracks until rollout stabilization or a later explicit
+documented decision; V4-0 stays unwired and does not change rollout readiness.
+
 ## What is TrueRepublic?
 
 TrueRepublic is a platform for **direct democracy** and **digital self-determination**. Instead of electing representatives, participants make decisions directly through community-governed **Domains** using **Systemic Consensing** (rating -5 to +5) and **Stones Voting**.

@@ -26,6 +26,10 @@ evidence, security boundaries, and handoffs.
 - Read `docs/agent-bridge/README.md` in its stated order before material work.
 - One GitHub issue is one reviewable task. Preserve unrelated work and keep
   Bridge updates append-only.
+- Prioritize completion of the Basic TrueRepublic 59-item rollout foundation
+  and its evidence. Do not start V4-1 runtime wiring or GH-232 implementation
+  unless rollout stabilization is complete or a later explicit decision
+  changes that order; V4-0 remains an unwired parallel foundation.
 - Codex Sol owns scope, architecture, security, integration, complete
   verification, external writes, and closure.
 - Kimi K3 is the preferred secret-free implementation/review partner for

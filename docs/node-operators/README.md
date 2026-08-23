@@ -20,6 +20,7 @@ production or public-network approval.
 - [Multi-Node Topology Qualification](configuration/topology-contract.md)
 - [Private Deployment Evidence Gate](operations/deployment-evidence.md)
 - [Genesis & Chain Parameters](configuration/genesis-params.md)
+- [Rollout Genesis Qualification](configuration/rollout-genesis-qualification.md)
 
 ### Operations
 - [Incident Command and Rehearsal](operations/incident-command.md)
