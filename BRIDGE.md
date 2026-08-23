@@ -213,6 +213,19 @@
 - **Next:** commit/push, protected PR, zero-thread hosted review, merge and
   exact-main/public closeout. Status remains 1,941 / 35/59 / production false.
 
+### 2026-08-23 V4-0 protected implementation merged → Closeout
+
+- PR [#242](https://github.com/NeaBouli/TrueRepublic/pull/242) exact head
+  `1f2b22d` passed all 22 reported contexts, CodeRabbit and DeepScan with zero
+  review threads. Admin squash merge `fa7985c` closed GH-241; no technical gate
+  was bypassed.
+- The evidence closeout publishes 1,959 standard cases = 1,614 Go + 26 Rust +
+  319 client and adds the 18-case V4 protocol module to the enforced canonical
+  table. Rollout remains 35/59, phase work 35/51, Phase 6 6/7 and production
+  false because V4-0 is deliberately unwired.
+- **Next:** protected docs closeout, exact-main workflows and live Pages
+  readback. No release, deployment, runtime activation or rollout credit.
+
 ## 2026-08-22 GH-231 optional domain ballot architecture → In Progress
 
 - **Branch:** `docs/GH-231-ballot-architecture`

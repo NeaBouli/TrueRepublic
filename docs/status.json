@@ -4,8 +4,8 @@
   "release_date": "2026-03-04",
   "tests": {
     "status": "recovery_verified_locally",
-    "total": 1941,
-    "go": 1596,
+    "total": 1959,
+    "go": 1614,
     "rust": 26,
     "frontend": 319,
     "historical_total": 577
@@ -62,7 +62,8 @@
     "truedemocracy": 612,
     "zkpprover": 8,
     "releaseevidence": 20,
-    "installlifecycle": 24
+    "installlifecycle": 24,
+    "sovereignv4protocol": 18
   },
   "token": {
     "symbol": "PNYX",

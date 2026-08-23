@@ -1,6 +1,6 @@
 # Recovery Queue
 
-## In progress - GH-241 V4-0 canonical edge protocol
+## In progress - GH-241 V4-0 canonical edge protocol closeout
 
 - [x] Implement versioned certificate, envelope and manifest schemas plus
   deterministic canonical codec without adding dependencies.
@@ -11,7 +11,9 @@
   close every P1-P3 finding and publish the dedicated 0-warning audit.
 - [x] Complete all full local Go, security, vulnerability, secret, release,
   documentation and retirement gates on the final diff.
-- [ ] Complete protected PR gates, review, merge and exact-main closeout.
+- [x] Complete protected implementation PR gates, review and merge with zero
+  unresolved threads.
+- [ ] Complete protected evidence closeout and exact-main/live Pages checks.
 - [ ] Keep rollout 35/59 and production false; perform no deployment/release.
 
 ## Completed - GH-235 bounded dependency reconciliation
