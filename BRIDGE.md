@@ -136,6 +136,18 @@
   signed key certificate. Focused revalidation and replacement-head checks are
   next; no runtime or rollout state changed.
 
+### 2026-08-23 GH-236 → Done
+
+- PR #239 replacement head `935e9f0` passed all 14 reported contexts with zero
+  unresolved review threads and squash-merged as `cf331140`; GH-236 is closed.
+- Exact merged main passed Docs `32626668440`, Security `32626668462`,
+  Reproducible Linux Daemon `32626668426` and Pages `32626668013`. Cache-busted
+  raw-main and live Pages readback expose the V4 architecture and preserve
+  1,941 cases, rollout 35/59, phase work 35/51, Phase 6 6/7 and production false.
+- GH-236 changed documentation only. No runtime, dependency, release,
+  deployment, production, key/fund or rollout-credit action occurred. V4-0 is
+  the next separately ticketed, reversible implementation slice.
+
 ## 2026-08-22 GH-231 optional domain ballot architecture → In Progress
 
 - **Branch:** `docs/GH-231-ballot-architecture`

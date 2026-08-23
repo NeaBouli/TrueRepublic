@@ -10,7 +10,7 @@
 - [x] Merge replacement PR #237, close superseded PRs #229/#230 and GH-235,
   and verify exact main plus Bridge closeout evidence.
 
-## In progress - GH-236 sovereign edge-native V4 architecture
+## Completed - GH-236 sovereign edge-native V4 architecture
 
 - [x] Complete Kimi deep read-only analysis and Sol primary-source verification.
 - [x] Compare native-chain, separate-Minima and hybrid architectures; select the
@@ -20,7 +20,7 @@
 - [x] Reconcile roadmap/README/Pages/Bridge without implementation or rollout
   credit.
 - [x] Complete Sol/Kimi review and all relevant local gates.
-- [ ] Complete protected publication and exact-main/Pages verification.
+- [x] Complete protected publication and exact-main/Pages verification.
 
 ## Completed - GH-231 optional domain ballot architecture
 
