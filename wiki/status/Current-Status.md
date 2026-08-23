@@ -43,7 +43,7 @@
   checksums, metadata, normalized SBOM and unsigned-provenance bindings, pinned
   release tools/platforms and container bases, without publishing or signing
   an artifact or claiming production rollout.
-- 1,959 recovery-verified tests: 1,614 Go, 26 Rust, and 319 maintained-client,
+- 2,028 recovery-verified tests: 1,683 Go, 26 Rust, and 319 maintained-client,
   plus the separately gated GH-175/GH-178/GH-181 two-chain IBC packet/channel/compatible-restart recovery and GH-172
   contention/replay/restart process proofs.
 

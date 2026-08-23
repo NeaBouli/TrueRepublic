@@ -1,5 +1,16 @@
 # Action Log
 
+## 2026-08-24 - GH-244 protected merge and public closeout start
+
+- PR #245 exact head `695f7ff3` passed the complete protected matrix with zero
+  unresolved review threads and squash-merged as `807637d7`; GH-244 closed.
+- Started the separate public-status closeout from exact merged `origin/main`.
+  It publishes 2,028 = 1,683 Go + 26 Rust + 319 client, including 68
+  `genesisevidence` cases and root 180, without changing rollout 35/59 or
+  production false.
+- Docs checks, protected publication, exact-main and live Pages readback remain.
+  No freeze, tag, signing, release or deployment occurred.
+
 ## 2026-08-24 - GH-244 protected review remediation local PASS
 
 - Closed all six CodeRabbit findings locally: deterministic offline command,

@@ -1,5 +1,18 @@
 # Project State
 
+GH-244 implementation is merged through protected PR #245 as `807637d7` after
+the exact replacement head passed all contexts and zero unresolved review
+threads. The public closeout candidate now records 2,028 verified standard
+cases = 1,683 Go + 26 Rust + 319 maintained client, including root 180 and 68
+`genesisevidence` cases. Rollout deliberately remains 35-of-59, phase work
+35-of-51, Phase 6 6-of-7 and production false. Documentation checks, protected
+closeout merge, exact-main and live Pages verification remain; no freeze,
+release, signing or deployment occurred.
+
+Updated: 2026-08-24 EEST
+
+---
+
 GH-244 is locally implementation-, protected-review-remediation- and
 security-review complete. The strict
 offline verifier binds an exact candidate genesis to source/version/chain,

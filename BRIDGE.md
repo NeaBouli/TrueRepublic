@@ -1,5 +1,23 @@
 # TrueRepublic Agent Bridge
 
+### 2026-08-24 GH-244 protected merge / public status sync → In Progress
+
+- PR [#245](https://github.com/NeaBouli/TrueRepublic/pull/245) exact replacement
+  head `695f7ff3f10e28eb3249f1d47651a5010d4c0d42` passed every protected context,
+  including full build/test and 14m33 multi-validator recovery, with zero
+  unresolved review threads. It squash-merged as
+  `807637d7a25132fbb0fa7b08537da9612586b136`; GH-244 closed.
+- This closeout branch synchronizes the public machine source, README, roadmap,
+  architecture notes, GitHub Pages and wiki mirrors to the verified 2,028-case
+  arithmetic: 1,683 Go + 26 Rust + 319 maintained client. The Go breakdown is
+  root 180 plus `genesisevidence` 68 and all previously published modules.
+- Rollout remains 35/59, phase work 35/51, Phase 6 6/7 and production false.
+  GH-244 is foundation evidence and earns no rollout checkbox. No genesis
+  freeze, tag, signing, release, deployment or production action occurred.
+- **Next:** run consistency/retirement checks and diff hygiene, publish and
+  merge the protected docs closeout, then verify exact main and cache-busted
+  live Pages before marking Done.
+
 ### 2026-08-24 protected review remediation → Local PASS
 
 - CodeRabbit identified six valid hardening gaps on PR #245. The replacement
