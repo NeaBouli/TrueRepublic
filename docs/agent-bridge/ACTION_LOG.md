@@ -1,5 +1,24 @@
 # Action Log
 
+## 2026-08-23 - GH-236 final local approval
+
+- Kimi independently approved the complete documentation diff with no P0-P2;
+  Sol removed the one unsupported external-license assertion.
+- Full Go build/vet/Race/Coverage and all exact local documentation workflow
+  contracts pass. No runtime, dependency, status arithmetic or production state
+  changed; protected publication and exact-main/Pages evidence remain.
+
+## 2026-08-23 - GH-236 V4 architecture integrated for review
+
+- Published the implementation-ready TRChain-native V4 edge architecture and
+  synchronized all public and coordination surfaces without runtime changes.
+- Kimi supplied the deep fit/gap, component, flow, privacy, threat, device and
+  delivery-gate analysis. Its bounded writing attempts produced no diff; Sol
+  authored the integrated documentation.
+- Local checks, independent final review, protected PR/merge and exact-main
+  verification remain. Status stays 1,941 / 35-of-59 / 35-of-51 / Phase 6 6-of-7
+  / production false.
+
 ## 2026-08-23 - GH-235 protected merge and exact-main closeout complete
 
 - PR #237 passed 26/26 exact-head contexts with zero unresolved review threads

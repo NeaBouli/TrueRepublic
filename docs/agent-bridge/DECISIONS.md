@@ -1,5 +1,19 @@
 # Decisions
 
+## 2026-08-23 - V4 uses one native settlement chain and a hybrid edge layer
+
+- TRChain remains the only L1, settlement, governance, PNYX and final-result
+  authority. V4 evolves Sovereign Alpha above that boundary.
+- General user-node, edge, small-app and asynchronous-messaging ideas may be
+  adopted, but Minima code, dependencies, a second chain/token and bridge
+  commitment are rejected.
+- Mobile is a light/verifying participant, never falsely a full validator.
+  Capable desktop/home profiles may run pruned non-validator full nodes.
+- Ekklesia/pnyx bill lifecycles and civic metrics are workflow inspiration only;
+  they do not replace consensus, identity or custody.
+- `client-web` remains Beta. V4-0..V4-5 are reversible future slices and earn
+  no rollout credit until separately implemented and qualified.
+
 ## 2026-08-22 - Optional domain ballots are post-rollout and opt-in
 
 - Systemic consensing remains the proposal-development foundation. Formal

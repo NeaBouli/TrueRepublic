@@ -64,7 +64,7 @@
 
 ## 2026-08-23 GH-236 sovereign edge-native V4 architecture → In Progress
 
-- **Future branch:** `docs/GH-236-v4-edge-architecture` after GH-235 closes.
+- **Branch:** `docs/GH-236-v4-edge-architecture` from exact post-GH-235 main.
 - **Issue:** [GH-236](https://github.com/NeaBouli/TrueRepublic/issues/236)
 - **Scope:** compare native TrueRepublic, separate Minima-based and hybrid edge
   architectures; specify privacy, Sybil resistance, messaging, local-first
@@ -88,8 +88,40 @@
 - `ekklesia.gr` maps to the same owner's MIT-licensed `NeaBouli/pnyx` sibling
   repository. Its real-bill lifecycle and civic metrics are suitable workflow
   inputs, not a replacement consensus or identity system.
+- Correction: the license shorthand above is not evidenced by this repository.
+  The external repository's license and reusable scope must be verified at
+  DG-V4-1 before any code adoption.
 - No V4 files, dependencies, runtime behavior or rollout arithmetic have changed
   under GH-236 yet. Architecture integration starts only after GH-235 closes.
+
+### 2026-08-23 implementation-ready documentation → Sol Review
+
+- Added the native V4 target architecture and synchronized README, roadmap,
+  German/English whitepapers, Pages, limitations, Alpha baseline, architecture,
+  user/developer docs and wiki.
+- The contract covers TRChain-only settlement, citizen-node/mobile profiles,
+  local-first civic flows, domain-app sandboxing, privacy/Sybil boundaries,
+  threats, budgets, versioning and reversible V4-0..V4-5 delivery gates.
+- Kimi completed the deep architecture analysis. Two bounded Kimi writing runs
+  produced no file diff and were stopped; Sol authored and owns the integrated
+  documentation diff. No code, dependency, protocol or rollout arithmetic
+  changed.
+- **Next:** Sol complete diff/source/security review and local gates, obtain a
+  final independent Kimi read-only review, then protected PR/merge/exact-main
+  verification and append-only closeout.
+
+### 2026-08-23 final local review → Approved for protected publication
+
+- Kimi's independent final read-only review approved the complete diff with no
+  P0-P2 finding. Sol removed the unsupported external-license assertion; the
+  remaining append-only/cosmetic P3 notes do not affect correctness.
+- **PASS:** `git diff --check`, release-compatibility contract, documentation
+  consistency, mobile/legacy-web/custom-query retirement contracts, and full
+  `make verify` (all 19 maintained Go packages: build, vet, Race/Coverage;
+  root 73.6%, governance 64.3%).
+- No runtime, dependency, test-count, rollout, release, deployment, production,
+  key or fund state changed. Next is protected PR review, merge and exact-main
+  plus Pages verification.
 
 ## 2026-08-22 GH-231 optional domain ballot architecture → In Progress
 

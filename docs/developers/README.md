@@ -8,6 +8,7 @@ Technical documentation for developers building on or contributing to TrueRepubl
 - [System Architecture](architecture/system-overview.md) -- Layers, modules, data flow
 - [Module Reference](architecture/module-reference.md) -- Detailed module documentation
 - [Optional Ballot Architecture](../GOVERNANCE_BALLOT_ARCHITECTURE.md) -- Deferred domain ballot, privacy, state and migration contract
+- [Sovereign V4 Edge Architecture](../SOVEREIGN_V4_EDGE_ARCHITECTURE.md) -- Native edge-node, civic workflow and sandboxed domain-app target
 
 ### API Reference
 - [CLI Commands](api-reference/cli-commands.md) -- All transaction and query commands

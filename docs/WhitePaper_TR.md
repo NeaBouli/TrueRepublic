@@ -92,6 +92,11 @@ Alle Vorschläge, Bewertungen und Abstimmungen erfolgen offen, überprüfbar und
 
 ### Phase 3
 - Erweiterte DAO-Funktionalität
+- Souveräne V4-Edge-Architektur mit TRChain als einziger Settlement-Chain,
+  benutzerbetriebenen reduzierten Nodes, mobiler Verifikation, lokalen
+  Gesetzes-/Diskussionsabläufen und abgeschotteten Domain-Apps gemäß der
+  [V4-Architektur](SOVEREIGN_V4_EDGE_ARCHITECTURE.md). Sie enthält weder eine
+  Minima-Abhängigkeit noch eine zweite Chain oder Bridge-Zusage.
 - Optionale formale Abstimmungen mit systemischem Konsensieren,
   Ja/Nein/Enthaltung, Personenwahl und hybrider Ratifikation nach der
   [Wahlarchitektur](GOVERNANCE_BALLOT_ARCHITECTURE.md). GH-232 bleibt bis zur

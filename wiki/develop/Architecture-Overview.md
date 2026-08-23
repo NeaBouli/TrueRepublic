@@ -176,6 +176,11 @@ systemic-consensing, yes/no/abstain, person-election and hybrid ballots; future
 implementation remains tracked by GH-232 and grants no rollout credit. See the
 [Optional Ballot Architecture](https://github.com/NeaBouli/TrueRepublic/blob/main/docs/GOVERNANCE_BALLOT_ARCHITECTURE.md).
 
+GH-236's [Sovereign V4 Edge Architecture](https://github.com/NeaBouli/TrueRepublic/blob/main/docs/SOVEREIGN_V4_EDGE_ARCHITECTURE.md)
+keeps TRChain as the only settlement/governance chain and defines reversible
+citizen-node, mobile-verification, civic-workflow and domain-app slices. It is
+documentation-only and grants no rollout credit.
+
 **23 message types, 505 recovery cases**
 
 ```

@@ -213,6 +213,16 @@ interface remains after Alpha qualification is deliberately deferred. See
 [SOVEREIGN_ALPHA_ARCHITECTURE.md](SOVEREIGN_ALPHA_ARCHITECTURE.md) for the
 component model, trust boundaries, delivery slices and future issue breakdown.
 
+### Parallel product track — Sovereign V4 edge (not counted in 59 rollout items)
+
+[GH-236](https://github.com/NeaBouli/TrueRepublic/issues/236) evolves the Alpha
+into a [native edge architecture](SOVEREIGN_V4_EDGE_ARCHITECTURE.md): TRChain
+remains the sole settlement/governance chain while pruned citizen nodes, mobile
+verification, local-first bill/discussion workflows and sandboxed domain apps
+are qualified in reversible slices. It rejects a Minima dependency, second
+chain/token and bridge commitment. This documentation changes neither **35/59**
+nor `production_ready: false`.
+
 ### Parallel governance design track (not counted in 59 rollout items)
 
 [GH-231](https://github.com/NeaBouli/TrueRepublic/issues/231) publishes the

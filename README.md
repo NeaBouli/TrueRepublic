@@ -92,6 +92,7 @@ The native token **PNYX** -- named after the hill in Athens where citizens gathe
 | **[Validator Guide](docs/validators/README.md)** | Validators | PoD consensus, staking, slashing, operations |
 | **[Developer Docs](docs/developers/README.md)** | Developers | Architecture, API reference, CosmJS, smart contracts |
 | **[Sovereign Alpha Architecture](docs/SOVEREIGN_ALPHA_ARCHITECTURE.md)** | Product / Engineering | Future decentralized app, messaging, governance and PNYX wallet architecture |
+| **[Sovereign V4 Edge Architecture](docs/SOVEREIGN_V4_EDGE_ARCHITECTURE.md)** | Product / Engineering | Native TRChain settlement with local-first edge nodes, domain apps and civic workflows |
 | **[Optional Ballot Architecture](docs/GOVERNANCE_BALLOT_ARCHITECTURE.md)** | Product / Engineering | Future domain-configurable consensing, majority, person-election, hybrid and privacy modes |
 | **[FAQ](docs/FAQ.md)** | Everyone | Frequently asked questions |
 | **[Glossary](docs/GLOSSARY.md)** | Everyone | Term definitions |
@@ -344,6 +345,10 @@ approval. Current evidence, risks, and commands are maintained in
   integrated non-custodial PNYX wallet and no mandatory hosted-website
   dependency. `client-web` remains the Beta during construction; whether an
   optional web interface survives is deferred until the Alpha exit gates pass.
+- 📐 **Sovereign V4 edge track (GH-236; architecture only):** evolves the Alpha
+  with TRChain as the sole settlement chain, user-operated pruned nodes, mobile
+  verification, local-first civic workflows and sandboxed domain apps. It adds
+  no Minima dependency, second chain, token, bridge commitment or rollout credit.
 - 🎯 **Production release (no committed date):** external reviews, signed
   reproducible clients and chain artifacts, staged networks, and explicit
   go/no-go approval are still required.
@@ -362,6 +367,7 @@ approval. Current evidence, risks, and commands are maintained in
 | [Deployment Guide](docs/DEPLOYMENT.md) | Production setup |
 | [Architecture](docs/ARCHITECTURE.md) | System design |
 | [Sovereign Alpha Architecture](docs/SOVEREIGN_ALPHA_ARCHITECTURE.md) | Future decentralized client, messaging and wallet design |
+| [Sovereign V4 Edge Architecture](docs/SOVEREIGN_V4_EDGE_ARCHITECTURE.md) | Native edge-node, civic-workflow and domain-app target design |
 | [Optional Ballot Architecture](docs/GOVERNANCE_BALLOT_ARCHITECTURE.md) | Future domain-configurable formal ballot and privacy design |
 | [Quick Start](docs/QUICKSTART.md) | 5-minute setup |
 | [Contributing](CONTRIBUTING.md) | Development guide |

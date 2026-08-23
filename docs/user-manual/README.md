@@ -8,9 +8,10 @@ Welcome to the TrueRepublic User Manual. This guide helps you use TrueRepublic's
 2. [Governance Tutorial](governance-tutorial.md) -- Participating in domains
 3. [Systemic Consensing Explained](systemic-consensing-explained.md) -- Understanding the rating system
 4. [Optional Ballot Architecture](../GOVERNANCE_BALLOT_ARCHITECTURE.md) -- Future formal ballot and privacy design
-5. [Stones Voting Guide](stones-voting-guide.md) -- Using stones to influence rankings
-6. [DEX Trading Guide](dex-trading-guide.md) -- Swapping tokens and providing liquidity
-7. [Troubleshooting](troubleshooting.md) -- Common issues and solutions
+5. [Sovereign V4 Edge Architecture](../SOVEREIGN_V4_EDGE_ARCHITECTURE.md) -- Future local-first citizen application and node profiles
+6. [Stones Voting Guide](stones-voting-guide.md) -- Using stones to influence rankings
+7. [DEX Trading Guide](dex-trading-guide.md) -- Swapping tokens and providing liquidity
+8. [Troubleshooting](troubleshooting.md) -- Common issues and solutions
 
 ## Quick Start
 

@@ -15,6 +15,10 @@
   [SOVEREIGN_ALPHA_ARCHITECTURE.md](SOVEREIGN_ALPHA_ARCHITECTURE.md). No native
   Alpha implementation or rollout credit exists yet, and the optional future
   web-interface decision is deliberately deferred.
+- **Future Sovereign V4 edge layer:** GH-236 evolves that Alpha with TRChain as
+  the sole settlement chain, pruned citizen nodes, mobile verification,
+  local-first civic workflows and sandboxed domain apps. See
+  [SOVEREIGN_V4_EDGE_ARCHITECTURE.md](SOVEREIGN_V4_EDGE_ARCHITECTURE.md).
 
 ## System Overview
 

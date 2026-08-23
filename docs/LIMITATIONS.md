@@ -20,7 +20,10 @@ approved for production or real funds during this audit.
   messaging and an integrated non-custodial PNYX wallet. This is architecture
   only: no Alpha binary, native client, messaging network, hardware signer,
   secure multi-device recovery or independently reviewed wallet implementation
-  exists yet. `client-web` remains the Beta, and the rollout count is 35/59.
+  exists yet. GH-236's [V4 edge architecture](SOVEREIGN_V4_EDGE_ARCHITECTURE.md)
+  further specifies citizen-node, mobile-verification, civic-workflow and
+  domain-app gates; it adds no implementation, foreign chain or bridge.
+  `client-web` remains the Beta, and the rollout count is 35/59.
 - The repository currently describes its project license as Apache 2.0 in
   `CONTRIBUTING.md` but has no discoverable root `LICENSE` file. No Telegram,
   Status, Waku, Matrix or other upstream client code may be copied or linked
