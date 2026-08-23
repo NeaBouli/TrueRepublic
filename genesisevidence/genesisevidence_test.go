@@ -79,44 +79,45 @@ func TestVerifyAcceptsPrettyExactGenesis(t *testing.T) {
 
 func TestVerifyRejectsAdversarialInputs(t *testing.T) {
 	tests := []struct {
-		name   string
-		mutate func([]byte, []byte) ([]byte, []byte)
-		check  string
+		name      string
+		mutate    func([]byte, []byte) ([]byte, []byte)
+		check     string
+		violation string
 	}{
-		{"raw binding", func(m, g []byte) ([]byte, []byte) { return m, append(g, '\n') }, "genesis-binding"},
+		{"raw binding", func(m, g []byte) ([]byte, []byte) { return m, append(g, '\n') }, "genesis-binding", "raw-genesis-digest-mismatch"},
 		{"duplicate key", func(m, g []byte) ([]byte, []byte) {
 			return m, []byte(strings.Replace(string(g), `"chain_id": "truerepublic-rollout-1",`, `"chain_id":"other","chain_id": "truerepublic-rollout-1",`, 1))
-		}, "genesis-binding"},
-		{"trailing data", func(m, g []byte) ([]byte, []byte) { return m, append(g, []byte(` {}`)...) }, "genesis-binding"},
+		}, "genesis-binding", "invalid-genesis-json"},
+		{"trailing data", func(m, g []byte) ([]byte, []byte) { return m, append(g, []byte(` {}`)...) }, "genesis-binding", "invalid-genesis-json"},
 		{"unknown manifest", func(m, g []byte) ([]byte, []byte) {
 			return []byte(strings.Replace(string(m), `"schema":`, `"unknown":true,"schema":`, 1)), g
-		}, "manifest"},
+		}, "manifest", "invalid-manifest"},
 		{"chain mismatch", func(m, g []byte) ([]byte, []byte) {
 			g = []byte(strings.Replace(string(g), "truerepublic-rollout-1", "truerepublic-rollout-2", 1))
 			return bind(t, m, g), g
-		}, "chain-identity"},
+		}, "chain-identity", "chain-id-mismatch"},
 		{"consensus power", func(m, g []byte) ([]byte, []byte) {
 			g = []byte(strings.Replace(string(g), `"power":"1"`, `"power":"2"`, 1))
 			return bind(t, m, g), g
-		}, "consensus-validators"},
+		}, "consensus-validators", "consensus-manifest-mismatch"},
 		{"app key duplicate", func(m, g []byte) ([]byte, []byte) {
 			needle := `"validators":[{"operator_addr"`
 			g = []byte(strings.Replace(string(g), needle, `"validators":[{"operator_addr":"`+testOperator+`","pub_key":"MTIzNDU2Nzg5MDEyMzQ1Njc4OTAxMjM0NTY3ODkwMTI=","stake":100000000000,"domain":"Bootstrap"},{"operator_addr"`, 1))
 			return bind(t, m, g), g
-		}, "application-validators"},
+		}, "application-validators", "duplicate-or-invalid-identity"},
 		{"supply mismatch", func(m, g []byte) ([]byte, []byte) {
 			g = []byte(strings.Replace(string(g), `"supply":[{"denom":"upnyx","amount":"100000000000"}]`, `"supply":[{"denom":"upnyx","amount":"100000000001"}]`, 1))
 			return bind(t, m, g), g
-		}, "bank-supply"},
+		}, "bank-supply", "supply-balance-mismatch"},
 		{"escrow mismatch", func(m, g []byte) ([]byte, []byte) {
 			g = []byte(strings.Replace(string(g), `"stake":100000000000`, `"stake":200000000000`, 1))
 			return bind(t, m, g), g
-		}, "governance-escrow"},
+		}, "governance-escrow", "manifest-governance-claim-mismatch"},
 		{"forbidden custody", func(m, g []byte) ([]byte, []byte) {
 			g = []byte(strings.Replace(string(g), `"balances":[`, `"balances":[{"address":"`+feeCollectorAddress+`","coins":[{"denom":"upnyx","amount":"1"}]},`, 1))
 			g = []byte(strings.Replace(string(g), `"amount":"100000000000"}],"denom_metadata"`, `"amount":"100000000001"}],"denom_metadata"`, 1))
 			return bind(t, m, g), g
-		}, "module-isolation"},
+		}, "module-isolation", "forbidden-funded-module"},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -126,8 +127,12 @@ func TestVerifyRejectsAdversarialInputs(t *testing.T) {
 			if e.Valid {
 				t.Fatal("accepted mutation")
 			}
-			if check(e, tt.check).Pass {
+			c := check(e, tt.check)
+			if c.Pass {
 				t.Fatalf("expected %s failure: %+v", tt.check, e)
+			}
+			if !hasViolation(c, tt.violation) {
+				t.Fatalf("expected %s violation %q: %+v", tt.check, tt.violation, c)
 			}
 		})
 	}
@@ -165,6 +170,15 @@ func check(e Evidence, name string) Check {
 		}
 	}
 	return Check{}
+}
+
+func hasViolation(c Check, violation string) bool {
+	for _, v := range c.Violations {
+		if v == violation {
+			return true
+		}
+	}
+	return false
 }
 
 func FuzzVerifyNeverPanics(f *testing.F) {

@@ -1,5 +1,19 @@
 # Action Log
 
+## 2026-08-24 - GH-244 protected review remediation local PASS
+
+- Closed all six CodeRabbit findings locally: deterministic offline command,
+  safe command errors/cleanup, dangling-symlink detection, fail-closed invalid
+  manifests, distinct validator-set bound evidence and exact DEX LP-share
+  conservation.
+- Kimi implemented the bounded core; Sol reviewed the full diff, corrected the
+  test integration and kept DEX address acceptance aligned with chain genesis.
+- Focused/Race/Vet, named contract, diff and full 21-package Build/Vet/Race/
+  Coverage pass. Candidate arithmetic is 2,028 = 1,683 Go + 26 Rust + 319
+  client; rollout stays 35/59 and production false.
+- Replacement protected head, thread resolution, merge and public exact-main
+  closeout remain. No genesis freeze, release, signing or deployment occurred.
+
 ## 2026-08-24 - GH-244 local implementation approved
 
 - Implemented the offline rollout-genesis manifest/verifier, adversarial/fuzz

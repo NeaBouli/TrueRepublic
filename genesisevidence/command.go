@@ -22,13 +22,16 @@ func newVerifyCommand() *cobra.Command {
 		}
 		return nil
 	}, RunE: func(cmd *cobra.Command, _ []string) error {
+		if output != "json" && output != "text" {
+			return fmt.Errorf("--output must be json or text")
+		}
 		manifest, err := readBounded(manifestPath, MaxManifestBytes)
 		if err != nil {
-			return fmt.Errorf("read manifest: unavailable")
+			return fmt.Errorf("read manifest: %w", err)
 		}
 		genesis, err := readBounded(genesisPath, MaxGenesisBytes)
 		if err != nil {
-			return fmt.Errorf("read genesis: unavailable")
+			return fmt.Errorf("read genesis: %w", err)
 		}
 		evidence := Verify(manifest, genesis)
 		switch output {
@@ -73,7 +76,7 @@ func readBounded(path string, limit int) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	defer f.Close()
+	defer func() { _ = f.Close() }()
 	info, err := f.Stat()
 	if err != nil || !info.Mode().IsRegular() || !os.SameFile(pathInfo, info) || info.Size() > int64(limit) {
 		return nil, fmt.Errorf("invalid size")

@@ -1,5 +1,31 @@
 # TrueRepublic Agent Bridge
 
+### 2026-08-24 protected review remediation → Local PASS
+
+- CodeRabbit identified six valid hardening gaps on PR #245. The replacement
+  candidate now runs documented verification with downloads disabled, preserves
+  safe input-error causes, validates output before work, explicitly discards the
+  read-only close error, detects dangling forbidden-artifact symlinks and emits
+  a distinct oversized-validator violation.
+- Invalid manifests now stop all dependent checks fail closed, invalid DEX
+  amounts cannot reach nil arithmetic, and every DEX pool's `total_shares` is
+  reconciled exactly against unique valid `lp_positions`. Boundary regressions
+  cover the exact 21M-PNYX cap, oversize input and LP ownership/mismatch cases.
+- Kimi K3 implemented the bounded remediation core. Sol stopped an incomplete
+  mechanical test-table edit, reviewed every written line, aligned LP-provider
+  acceptance with the actual chain schema, completed the assertions and owns
+  the final integration decision.
+- **PASS:** focused tests, focused Race/Vet, named rollout-genesis contract,
+  diff hygiene and full 21-package Build/Vet/Race/Coverage; `genesisevidence`
+  coverage is 84.2%, root 73.6%, governance 64.3% and DEX 51.1%.
+- Exact branch-vs-base arithmetic is now 69 new Go cases: 68
+  `genesisevidence` plus one root repository contract. Post-merge candidate is
+  2,028 = 1,683 Go + 26 Rust + 319 client. Public status remains 1,959 and
+  rollout 35/59 until protected merge/closeout; production remains false.
+- **Next:** commit/push the replacement head, resolve all six review threads,
+  require the full protected matrix again, merge, then synchronize public
+  status and exact-main/Pages/Bridge evidence. No freeze/release/deployment.
+
 ## 2026-08-23 GH-244 rollout-genesis qualification contract → In Progress
 
 - **Branch:** `feat/GH-244-rollout-genesis-contract`

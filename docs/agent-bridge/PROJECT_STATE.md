@@ -1,16 +1,19 @@
 # Project State
 
-GH-244 is locally implementation- and security-review complete. The strict
+GH-244 is locally implementation-, protected-review-remediation- and
+security-review complete. The strict
 offline verifier binds an exact candidate genesis to source/version/chain,
 reconciles validator authority/power, every bank allocation, 21M PNYX cap,
-governance/DEX custody and exact module accounts, and rejects malformed,
+governance/DEX custody, exact DEX LP-share ownership and module accounts, and rejects malformed,
 ambiguous, symlinked or unbounded inputs. Sol reviewed and hardened every
-accepted write; Kimi K3's final independent review found no unresolved P0-P2.
+accepted write; Kimi K3 implemented the bounded CodeRabbit remediation core
+and Sol completed/reviewed its integration.
 All focused, full Go, static, vulnerability, secret, documentation and
-consistency gates pass. Candidate arithmetic is 2,016 = 1,671 Go + 26 Rust +
+consistency gates pass. Candidate arithmetic is 2,028 = 1,683 Go + 26 Rust +
 319 client. Public truth remains 1,959 / 35-of-59 / production false until
 protected merge and closeout; GH-244 earns no rollout checkbox. Clean-commit
-reproducibility, protected PR/merge and exact-main/public synchronization remain.
+replacement-head checks, review-thread resolution, protected merge and
+exact-main/public synchronization remain.
 
 Updated: 2026-08-24 EEST
 

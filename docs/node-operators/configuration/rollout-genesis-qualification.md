@@ -31,10 +31,12 @@ raw bytes, including whitespace, are covered by the SHA-256 binding.
 
 ## Verify offline
 
-Run the verifier from the exact reviewed repository checkout:
+The pinned Go toolchain and the complete module cache must be prepared first;
+the verifier then runs fully offline from the exact reviewed repository
+checkout:
 
 ```bash
-GOTOOLCHAIN=local GOFLAGS=-mod=readonly \
+GOTOOLCHAIN=local GOFLAGS=-mod=readonly GOPROXY=off GOSUMDB=off \
   go run ./cmd/genesis-evidence verify \
   --manifest /offline/review/rollout-genesis-manifest.json \
   --genesis /offline/review/genesis.json \

@@ -45,7 +45,7 @@ func TestRolloutGenesisRepositoryContract(t *testing.T) {
 		"configs/release/rollout-genesis-manifest.json",
 		"configs/release/genesis.json",
 	} {
-		if _, err := os.Stat(path); err == nil {
+		if _, err := os.Lstat(path); err == nil {
 			t.Errorf("repository must not ship an unapproved rollout artifact: %s", path)
 		} else if !os.IsNotExist(err) {
 			t.Fatalf("inspect %s: %v", path, err)

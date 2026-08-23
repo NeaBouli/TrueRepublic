@@ -47,6 +47,10 @@ func Verify(manifestBytes, genesisBytes []byte) Evidence {
 		return s.finish()
 	}
 	s.validateManifest(manifest)
+	if !s.evidence.Checks[s.byName["manifest"]].Pass {
+		s.skipAfter("manifest")
+		return s.finish()
+	}
 	_, root, err := strictJSON(genesisBytes, MaxGenesisBytes)
 	if err != nil {
 		s.fail("genesis-binding", "invalid-genesis-json")
@@ -107,8 +111,10 @@ func (s *state) validateManifest(m Manifest) {
 	if m.MaxValidatorPower <= 0 || m.MaxValidatorPower > MaxPowerLimit {
 		s.fail("manifest", "invalid-power-limit")
 	}
-	if len(m.Validators) == 0 || len(m.Validators) > 64 {
+	if len(m.Validators) == 0 {
 		s.fail("manifest", "empty-validator-set")
+	} else if len(m.Validators) > 64 {
+		s.fail("manifest", "validator-set-too-large")
 	}
 	seenOperators := map[string]bool{}
 	seenKeys := map[string]bool{}
@@ -573,6 +579,7 @@ func dexClaims(raw map[string]any) (map[string]*big.Int, bool) {
 	}
 	claims := map[string]*big.Int{}
 	seen := map[string]bool{}
+	poolShares := map[string]*big.Int{}
 	for _, r := range pools {
 		o, ok := r.(map[string]any)
 		if !ok {
@@ -591,15 +598,62 @@ func dexClaims(raw map[string]any) (map[string]*big.Int, bool) {
 		if !ok || a.Sign() <= 0 {
 			return nil, false
 		}
+		totalShares, ok := numberAmount(o["total_shares"])
+		if !ok || totalShares.Sign() <= 0 {
+			return nil, false
+		}
+		poolShares[denom] = totalShares
 		add(claims, "upnyx", p)
 		add(claims, denom, a)
+	}
+	positions, ok := raw["lp_positions"].([]any)
+	if !ok {
+		return nil, false
+	}
+	totals := map[string]*big.Int{}
+	seenPositions := map[string]bool{}
+	for _, r := range positions {
+		o, ok := r.(map[string]any)
+		if !ok {
+			return nil, false
+		}
+		denom, ok := o["asset_denom"].(string)
+		if !ok || poolShares[denom] == nil {
+			return nil, false
+		}
+		provider, ok := o["provider"].(string)
+		if !ok {
+			return nil, false
+		}
+		if _, ok := accountAddress(provider); !ok {
+			return nil, false
+		}
+		shares, ok := numberAmount(o["shares"])
+		if !ok || shares.Sign() <= 0 {
+			return nil, false
+		}
+		key := denom + "\x00" + provider
+		if seenPositions[key] {
+			return nil, false
+		}
+		seenPositions[key] = true
+		add(totals, denom, shares)
+	}
+	for denom, totalShares := range poolShares {
+		if zero(totals[denom]).Cmp(totalShares) != 0 {
+			return nil, false
+		}
 	}
 	return claims, true
 }
 func (s *state) compareDEX(m Manifest, b map[string]map[string]*big.Int, claims map[string]*big.Int) {
 	want := map[string]*big.Int{}
 	for _, c := range m.DEXCustody {
-		want[c.Denom] = mustAmount(c.Amount)
+		n, ok := amount(c.Amount)
+		if !ok {
+			continue
+		}
+		want[c.Denom] = n
 	}
 	if !coinMapsEqual(want, claims) {
 		s.fail("dex-custody", "manifest-dex-claim-mismatch")

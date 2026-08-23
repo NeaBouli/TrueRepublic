@@ -274,8 +274,9 @@ func TestConsensusAddressNameAllocationAndDomainAdversaries(t *testing.T) {
 			m.Validators = append(m.Validators, m.Validators[0])
 		}
 		mb, gb := encoded(t, m, g)
-		if check(Verify(mb, gb), "manifest").Pass {
-			t.Fatal("accepted oversized validator set")
+		c := check(Verify(mb, gb), "manifest")
+		if c.Pass || !hasViolation(c, "validator-set-too-large") {
+			t.Fatalf("oversized validator set not reported distinctly: %+v", c)
 		}
 	})
 }
@@ -291,6 +292,7 @@ func TestDEXCustodyAndBankReconciliation(t *testing.T) {
 	bank["supply"] = []any{map[string]any{"denom": "atom", "amount": "10"}, map[string]any{"denom": "upnyx", "amount": "100000000050"}}
 	app["dex"].(map[string]any)["pools"] = []any{map[string]any{"pnyx_reserve": "50", "asset_reserve": "10", "asset_denom": "atom", "total_shares": "1", "total_burned": "0", "swap_count": 0, "total_volume_pnyx": "0"}}
 	app["dex"].(map[string]any)["registered_assets"] = []any{map[string]any{"ibc_denom": "atom", "trading_enabled": true}}
+	app["dex"].(map[string]any)["lp_positions"] = []any{map[string]any{"asset_denom": "atom", "provider": testOperator, "shares": "1"}}
 	m.TotalSupplyUPNYX = "100000000050"
 	m.DEXCustody = []Coin{{Denom: "atom", Amount: "10"}, {Denom: "upnyx", Amount: "50"}}
 	m.Allocations = []Allocation{
@@ -347,6 +349,83 @@ func TestDEXCustodyAndBankReconciliation(t *testing.T) {
 			t.Fatal("accepted duplicate pool")
 		}
 	})
+	t.Run("aggregated LP positions", func(t *testing.T) {
+		goodG := cloneMap(t, g)
+		dex := goodG["app_state"].(map[string]any)["dex"].(map[string]any)
+		dex["pools"].([]any)[0].(map[string]any)["total_shares"] = "3"
+		second, err := encodeAddress(bytes.Repeat([]byte{0x43}, 20))
+		if err != nil {
+			t.Fatal(err)
+		}
+		dex["lp_positions"] = []any{
+			map[string]any{"asset_denom": "atom", "provider": testOperator, "shares": "1"},
+			map[string]any{"asset_denom": "atom", "provider": second, "shares": "2"},
+		}
+		bm, bg := encoded(t, m, goodG)
+		if e := Verify(bm, bg); !e.Valid {
+			t.Fatalf("valid aggregated LP positions rejected: %+v", e)
+		}
+	})
+	t.Run("total shares mismatch", func(t *testing.T) {
+		badG := cloneMap(t, g)
+		dex := badG["app_state"].(map[string]any)["dex"].(map[string]any)
+		dex["pools"].([]any)[0].(map[string]any)["total_shares"] = "2"
+		bm, bg := encoded(t, m, badG)
+		c := check(Verify(bm, bg), "dex-custody")
+		if c.Pass || !hasViolation(c, "invalid-dex-claims") {
+			t.Fatalf("accepted total_shares not backed by lp_positions: %+v", c)
+		}
+	})
+	t.Run("missing LP ownership", func(t *testing.T) {
+		badG := cloneMap(t, g)
+		badG["app_state"].(map[string]any)["dex"].(map[string]any)["lp_positions"] = []any{}
+		bm, bg := encoded(t, m, badG)
+		c := check(Verify(bm, bg), "dex-custody")
+		if c.Pass || !hasViolation(c, "invalid-dex-claims") {
+			t.Fatalf("accepted pool without LP ownership: %+v", c)
+		}
+	})
+	t.Run("orphan LP position", func(t *testing.T) {
+		badG := cloneMap(t, g)
+		dex := badG["app_state"].(map[string]any)["dex"].(map[string]any)
+		dex["lp_positions"] = append(dex["lp_positions"].([]any), map[string]any{"asset_denom": "btc", "provider": testOperator, "shares": "1"})
+		bm, bg := encoded(t, m, badG)
+		c := check(Verify(bm, bg), "dex-custody")
+		if c.Pass || !hasViolation(c, "invalid-dex-claims") {
+			t.Fatalf("accepted LP position for missing pool: %+v", c)
+		}
+	})
+	t.Run("duplicate LP position", func(t *testing.T) {
+		badG := cloneMap(t, g)
+		dex := badG["app_state"].(map[string]any)["dex"].(map[string]any)
+		positions := dex["lp_positions"].([]any)
+		dex["lp_positions"] = append(positions, positions[0])
+		bm, bg := encoded(t, m, badG)
+		c := check(Verify(bm, bg), "dex-custody")
+		if c.Pass || !hasViolation(c, "invalid-dex-claims") {
+			t.Fatalf("accepted duplicate LP position: %+v", c)
+		}
+	})
+	t.Run("zero LP shares", func(t *testing.T) {
+		badG := cloneMap(t, g)
+		dex := badG["app_state"].(map[string]any)["dex"].(map[string]any)
+		dex["lp_positions"].([]any)[0].(map[string]any)["shares"] = "0"
+		bm, bg := encoded(t, m, badG)
+		c := check(Verify(bm, bg), "dex-custody")
+		if c.Pass || !hasViolation(c, "invalid-dex-claims") {
+			t.Fatalf("accepted zero LP shares: %+v", c)
+		}
+	})
+	t.Run("invalid LP provider", func(t *testing.T) {
+		badG := cloneMap(t, g)
+		dex := badG["app_state"].(map[string]any)["dex"].(map[string]any)
+		dex["lp_positions"].([]any)[0].(map[string]any)["provider"] = "not-an-address"
+		bm, bg := encoded(t, m, badG)
+		c := check(Verify(bm, bg), "dex-custody")
+		if c.Pass || !hasViolation(c, "invalid-dex-claims") {
+			t.Fatalf("accepted invalid LP provider: %+v", c)
+		}
+	})
 }
 
 func TestSupplyCapModuleIsolationAndGoldenAddresses(t *testing.T) {
@@ -356,6 +435,27 @@ func TestSupplyCapModuleIsolationAndGoldenAddresses(t *testing.T) {
 			t.Fatalf("%s golden invalid", name)
 		}
 	}
+	t.Run("exact cap", func(t *testing.T) {
+		m, g := objects(t)
+		m.TotalSupplyUPNYX = MaxPNYXSupply
+		m.Allocations[0].Coins[0].Amount = MaxPNYXSupply
+		m.GovernanceEscrowUPNYX = MaxPNYXSupply
+		app := g["app_state"].(map[string]any)
+		bank := app["bank"].(map[string]any)
+		bank["balances"].([]any)[0].(map[string]any)["coins"].([]any)[0].(map[string]any)["amount"] = MaxPNYXSupply
+		bank["supply"].([]any)[0].(map[string]any)["amount"] = MaxPNYXSupply
+		td := app["truedemocracy"].(map[string]any)
+		td["validators"].([]any)[0].(map[string]any)["stake"] = json.Number(MaxPNYXSupply)
+		m.Validators[0].StakeUPNYX = MaxPNYXSupply
+		m.Validators[0].Power = 210
+		m.MaxValidatorPower = 210
+		consensus := g["consensus"].(map[string]any)
+		consensus["validators"].([]any)[0].(map[string]any)["power"] = "210"
+		mb, gb := encoded(t, m, g)
+		if e := Verify(mb, gb); !e.Valid {
+			t.Fatalf("exact supply cap rejected: %+v", e)
+		}
+	})
 	t.Run("above cap", func(t *testing.T) {
 		m, g := objects(t)
 		m.TotalSupplyUPNYX = "21000000000001"
@@ -546,6 +646,56 @@ func TestCommandJSONTextAndFailure(t *testing.T) {
 	cmd.SetArgs([]string{"verify", "--manifest", dir, "--genesis", gp})
 	if cmd.Execute() == nil {
 		t.Fatal("accepted non-regular input")
+	}
+}
+
+func TestInvalidManifestFailsClosedAndSkipsDependentChecks(t *testing.T) {
+	t.Run("invalid total supply", func(t *testing.T) {
+		m, g := objects(t)
+		m.TotalSupplyUPNYX = "not-a-number"
+		mb, gb := encoded(t, m, g)
+		e := Verify(mb, gb)
+		c := check(e, "manifest")
+		if c.Pass || !hasViolation(c, "invalid-total-supply") {
+			t.Fatalf("accepted invalid total supply: %+v", c)
+		}
+		for _, name := range checkNames[1:] {
+			dependent := check(e, name)
+			if dependent.Pass || len(dependent.Violations) != 1 || dependent.Violations[0] != "not-evaluated" {
+				t.Fatalf("%s not skipped fail closed: %+v", name, dependent)
+			}
+		}
+	})
+	t.Run("invalid dex custody amount", func(t *testing.T) {
+		m, g := objects(t)
+		m.DEXCustody = []Coin{{Denom: "atom", Amount: "not-a-number"}}
+		mb, gb := encoded(t, m, g)
+		e := Verify(mb, gb)
+		c := check(e, "manifest")
+		if c.Pass || !hasViolation(c, "invalid-dex-custody-amount") {
+			t.Fatalf("accepted invalid dex custody amount: %+v", c)
+		}
+		if check(e, "dex-custody").Pass {
+			t.Fatal("dependent dex-custody evaluated against invalid manifest")
+		}
+	})
+}
+
+func TestReadBoundedRejectsOversizeInput(t *testing.T) {
+	dir := t.TempDir()
+	oversize := filepath.Join(dir, "oversize.json")
+	if err := os.WriteFile(oversize, bytes.Repeat([]byte{' '}, MaxManifestBytes+1), 0600); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := readBounded(oversize, MaxManifestBytes); err == nil {
+		t.Fatal("accepted oversize input")
+	}
+	exact := filepath.Join(dir, "exact.json")
+	if err := os.WriteFile(exact, bytes.Repeat([]byte{' '}, MaxManifestBytes), 0600); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := readBounded(exact, MaxManifestBytes); err != nil {
+		t.Fatalf("rejected exact-limit input: %v", err)
 	}
 }
 
