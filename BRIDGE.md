@@ -1,5 +1,22 @@
 # TrueRepublic Agent Bridge
 
+## 2026-08-24 GH-244 rollout-genesis qualification → Done
+
+- Implementation PR [#245](https://github.com/NeaBouli/TrueRepublic/pull/245)
+  merged as `807637d7`; public closeout PR
+  [#246](https://github.com/NeaBouli/TrueRepublic/pull/246) merged as
+  `2e056dfa68228977b2e2b172122e688f6c6ddf39`. GH-244 is closed and GH-29 links
+  the evidence without granting a rollout checkbox.
+- Exact merged main passed Docs Consistency, Security Scan, Reproducible Linux
+  Daemon and Pages deployment. Cache-busted raw-main and live Pages readback
+  both expose 2,028 = 1,683 Go + 26 Rust + 319 maintained-client cases,
+  including root 180 and `genesisevidence` 68.
+- Rollout remains 35/59, phase work 35/51, Phase 6 6/7 and production false.
+  Kimi implemented the bounded remediation core; Sol reviewed every delegated
+  write, completed integration, tests, protected merges and live verification.
+- No blocker remains in GH-244. No genesis freeze, tag, signing, release,
+  deployment, production action, real key/fund use or go/no-go occurred.
+
 ## 2026-08-24 GH-244 protected merge / public status sync → In Progress
 
 - PR [#245](https://github.com/NeaBouli/TrueRepublic/pull/245) exact replacement
