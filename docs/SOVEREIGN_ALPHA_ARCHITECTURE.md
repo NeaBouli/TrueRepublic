@@ -70,11 +70,16 @@ Published arithmetic is **2,028 recovery-verified tests** (1,683 Go +
    (OD-2), with its homeserver dependency accepted explicitly.
 4. **Preserve `client-web` as the Beta** through all Alpha phases; the Alpha
    ships in parallel, never by mutating the Beta's trust model mid-flight.
-5. **Gate third-party adoption on a project license (DG-3).** Although
-   `CONTRIBUTING.md` says Apache 2.0, the repository currently has no
-   discoverable root `LICENSE`. No third-party code or dependency is copied or
-   linked until the owner publishes the project license and a per-component
-   compatibility review passes. This proposal does not choose that license.
+5. **Gate third-party adoption on a project license (DG-3).** The
+   repository publishes no license: there is no root `LICENSE`, no project
+   SPDX declaration, and no package-metadata license claim, and the earlier
+   `CONTRIBUTING.md` Apache-2.0 wording was a stale assertion reconciled
+   under GH-219, not an owner decision. The decision package
+   (`docs/legal/GH-219-LICENSE-DECISION.md`) and manifest
+   (`configs/legal/license-decision.json`) keep the status explicitly
+   pending. No third-party code or dependency is copied or linked until the
+   owner publishes the project license and a per-component compatibility
+   review passes. This proposal does not choose that license.
 
 Everything in this document is a proposal for future issues. Every item that
 cannot be verified from repository evidence or primary upstream sources is

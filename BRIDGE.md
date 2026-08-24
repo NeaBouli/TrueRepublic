@@ -1,5 +1,58 @@
 # TrueRepublic Agent Bridge
 
+## 2026-08-24 GH-219 repository license decision package → In Progress
+
+- **Branch:** `docs/GH-219-license-decision`
+- **Issue:** [GH-219](https://github.com/NeaBouli/TrueRepublic/issues/219)
+- **Base:** exact clean `origin/main`
+  `73ea3a1b8bdf9fea9a98a799f8cc380835fe5c71`.
+- **Scope:** reconcile the stale GH-244 TODO closeout; inventory repository
+  copyright/code/assets and direct/transitive dependency licenses; compare
+  viable project licenses against the maintained Go, Rust/CosmWasm, client and
+  future Alpha boundaries; publish a decision-ready recommendation and strict
+  license-consistency checks.
+- **Roles:** Kimi K3 owns the large bounded secret-free inventory, compatibility
+  analysis and documentation implementation. Sol owns primary-source
+  verification, legal/governance boundary, every delegated diff, integration,
+  complete tests, GitHub publication and closure.
+- **Risk:** High governance/legal boundary. Historical Apache-2.0 wording is
+  evidence to reconcile, not owner approval. No root license, SPDX claim or
+  third-party adoption will be published without an explicit owner/governance
+  decision recorded on GH-219.
+- **Boundary:** no dependency adoption, runtime/consensus/crypto/wallet change,
+  release, deployment, signing, production action or rollout credit.
+- **Next:** run the repository/license census and primary-source research in
+  parallel with Kimi, then integrate a decision package and verified checks.
+
+### 2026-08-24 Kimi implementation + Sol hardening → Local PASS
+
+- Kimi K3 completed the bounded inventory, candidate comparison, decision
+  runbook, pending-state manifest, CI checker, fixtures and maintained-doc
+  reconciliation. Sol reviewed every written line and independently verified
+  pinned upstream licenses, repository counts, authorship metadata and asset
+  provenance gaps.
+- Two Kimi read-only review passes reproduced the original mutable-pattern
+  fail-open, a weak dormant decided branch, case-variant/nested license paths
+  and documentation classification gaps. Sol closed every material finding:
+  the scan pattern and exception surface are immutable, scan errors fail closed,
+  all tracked license artifacts are caught case-insensitively while pending, and
+  nested contradictory licenses remain visible after a decision.
+- **PASS:** pending repository contract; 30 positive/adversarial shell fixtures,
+  including complete Apache-2.0 and AGPL-3.0-only decided states; documentation
+  consistency; JSON/YAML and shell syntax; diff hygiene; and full maintained Go
+  package selection/build/vet/race/coverage through `make verify`.
+- **Files:** `configs/legal/license-decision.json`,
+  `docs/legal/GH-219-LICENSE-DECISION.md`, license policy/check scripts,
+  Docs workflow/Make target, README, CONTRIBUTING, client README, limitations,
+  Alpha DG-3 and recovery TODO. No Go/Rust/client source, dependency, runtime,
+  rollout arithmetic, release or production surface changed.
+- **Owner boundary remains active:** no license was selected; no root
+  `LICENSE`/`NOTICE`, SPDX project claim or package-license metadata was added.
+  Publishing the license and closing GH-219 still requires an explicit owner
+  comment naming the SPDX choice, copyright identity and code/docs/assets scope.
+- **Next:** publish this decision-ready package through protected review, keep
+  GH-219 open at the owner-decision gate, and verify exact merged main/CI.
+
 ## 2026-08-24 GH-244 rollout-genesis qualification → Done
 
 - Implementation PR [#245](https://github.com/NeaBouli/TrueRepublic/pull/245)
