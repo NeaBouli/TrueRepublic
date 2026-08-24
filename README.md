@@ -382,13 +382,19 @@ approval. Current evidence, risks, and commands are maintained in
 
 ## Contributing
 
-1. Fork the repository
-2. Create a feature branch
-3. Write tests for new functionality
-4. Ensure all tests pass: `make test`
-5. Submit a pull request
+The repository license decision is still pending in
+[GH-219](https://github.com/NeaBouli/TrueRepublic/issues/219). Until it is
+recorded, use issues or discussions for proposals instead of submitting code
+for merge unless the maintainers first record separate written contribution
+terms. See [CONTRIBUTING.md](CONTRIBUTING.md) for the current boundary.
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) for detailed guidelines.
+## License status
+
+TrueRepublic currently publishes no open-source license, SPDX identifier, or
+package-license claim. The decision-ready inventory, compatibility comparison,
+and exact post-decision steps are documented in
+[the GH-219 license decision package](docs/legal/GH-219-LICENSE-DECISION.md).
+No license has been selected by that analysis.
 
 ## Community
 

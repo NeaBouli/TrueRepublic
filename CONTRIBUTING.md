@@ -261,5 +261,15 @@ not create a tag, publish/sign an artifact or claim production readiness.
 
 ## License
 
-By contributing, you agree that your contributions will be licensed
-under the same license as the project (Apache 2.0).
+The project license is **not decided yet**. The owner-gated decision is
+tracked in [GH-219](https://github.com/NeaBouli/TrueRepublic/issues/219);
+the decision package is `docs/legal/GH-219-LICENSE-DECISION.md` and the
+machine-readable state is `configs/legal/license-decision.json`
+(status `pending`). The repository currently publishes no `LICENSE` file and
+no SPDX or package-metadata license claim. It therefore does not document
+general open-source permission to copy, modify, or redistribute the project.
+
+Until GH-219 records the owner decision, please use issues or discussions for
+proposals instead of submitting code for merge, unless the maintainers first
+record separate written contribution terms. This avoids asking contributors
+to accept an unknown future license.

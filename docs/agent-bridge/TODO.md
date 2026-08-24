@@ -1,6 +1,19 @@
 # Recovery Queue
 
-## In progress - GH-244 rollout-genesis qualification contract
+## In progress - GH-219 repository license decision and publication
+
+- [x] Inventory tracked code, authorship metadata, generated material,
+  dependencies, assets, historical records and provenance gaps.
+- [x] Compare Apache-2.0, AGPL-3.0-only and dual-license models against the
+  maintained Cosmos/IBC, CosmWasm, client and future Alpha/V4 boundaries.
+- [x] Reconcile current public wording and add a machine-readable pending-state
+  policy with deterministic positive and adversarial CI checks.
+- [ ] Record the explicit owner decision on GH-219, including SPDX identifier,
+  copyright holder and scope for code, documentation and brand assets.
+- [ ] Publish the approved root license/notices and synchronized component
+  metadata, verify GitHub detection, then close GH-219 through protected review.
+
+## Completed - GH-244 rollout-genesis qualification contract
 
 - [x] Specify a strict versioned manifest bound to exact source, daemon,
   chain ID and canonical genesis digest.
@@ -10,9 +23,9 @@
   inputs fail closed and emit deterministic review evidence.
 - [x] Complete Kimi implementation/review, Sol security/integration review and
   focused adversarial coverage with the full relevant local gates.
-- [ ] Publish through protected exact-head review, merge, verify exact main and
+- [x] Publish through protected exact-head review, merge, verify exact main and
   synchronize GitHub/public status/Bridge before Done.
-- [ ] Keep real freeze, release, signing, deployment, network, key/fund,
+- [x] Keep real freeze, release, signing, deployment, network, key/fund,
   go/no-go and rollout-credit actions out of scope; production remains false.
 
 ## Delivery priority
@@ -20,7 +33,7 @@
 - [x] Continue Basic TrueRepublic rollout foundation before V4-1 runtime work.
 - [x] Keep GH-232 deferred until the already documented rollout/security gates.
 
-## In progress - GH-241 V4-0 canonical edge protocol closeout
+## Completed - GH-241 V4-0 canonical edge protocol closeout
 
 - [x] Implement versioned certificate, envelope and manifest schemas plus
   deterministic canonical codec without adding dependencies.
@@ -33,8 +46,8 @@
   documentation and retirement gates on the final diff.
 - [x] Complete protected implementation PR gates, review and merge with zero
   unresolved threads.
-- [ ] Complete protected evidence closeout and exact-main/live Pages checks.
-- [ ] Keep rollout 35/59 and production false; perform no deployment/release.
+- [x] Complete protected evidence closeout and exact-main/live Pages checks.
+- [x] Keep rollout 35/59 and production false; perform no deployment/release.
 
 ## Completed - GH-235 bounded dependency reconciliation
 

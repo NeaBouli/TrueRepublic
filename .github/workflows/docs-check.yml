@@ -7,12 +7,16 @@ on:
     paths:
       - 'README.md'
       - 'CLAUDE.md'
+      - 'CONTRIBUTING.md'
       - 'SECURITY.md'
       - '.github/SECURITY.md'
       - '.github/dependabot.yml'
       - 'client-web/**'
+      - 'configs/legal/**'
       - 'docs/**'
       - 'scripts/check-consistency.sh'
+      - 'scripts/check-license-policy.sh'
+      - 'scripts/test-license-policy.sh'
       - 'scripts/check-mobile-retirement.sh'
       - 'scripts/check-web-wallet-retirement.sh'
       - 'scripts/check-custom-query-retirement.sh'
@@ -45,6 +49,10 @@ jobs:
         run: make release-compatibility-contract-test
       - name: Check Rollout Genesis Contract
         run: make rollout-genesis-contract-test
+      - name: Check License Decision Policy
+        run: |
+          make license-policy-contract-test
+          ./scripts/test-license-policy.sh
       - name: Check Consistency
         run: ./scripts/check-consistency.sh
       - name: Check Mobile Retirement
