@@ -281,6 +281,7 @@ while IFS='|' read -r module label; do
   fi
 done <<'MODULES'
 root|root/application
+genesisevidence|rollout genesis evidence
 capacitypolicy|capacity policy
 deploymentevidence|deployment evidence
 healthcheck|health checks
