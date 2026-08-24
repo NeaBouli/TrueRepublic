@@ -266,7 +266,7 @@ tracked in [GH-219](https://github.com/NeaBouli/TrueRepublic/issues/219);
 the decision package is `docs/legal/GH-219-LICENSE-DECISION.md` and the
 machine-readable state is `configs/legal/license-decision.json`
 (status `pending`). The repository currently publishes no `LICENSE` file and
-no SPDX or package-metadata license claim. It therefore does not document
+no project SPDX or package-metadata license claim. It therefore does not document
 general open-source permission to copy, modify, or redistribute the project.
 
 Until GH-219 records the owner decision, please use issues or discussions for

@@ -20,7 +20,7 @@
     {"id": "ui-prototype", "kind": "repository-authored-unmaintained", "path": "ui", "metadata": "directory", "declared_license": "NONE"}
   ],
   "scan": {
-    "forbidden_assertion_pattern": "SPDX-License-Identifier|is licensed under|are licensed under|under the same license|same license as the project|licensed under the (apache|mit|gnu|bsd|mozilla)|under the apache license|under the mit license|apache license, version 2\\.0|gnu affero general public license|gnu general public license|\\[LICENSE\\]\\(LICENSE",
+    "forbidden_assertion_pattern": "SPDX-License-Identifier|license[[:space:]]*:[[:space:]]*(Apache-2.0|AGPL-3.0-only|MIT|BSD-[0-9]-Clause|GPL-[0-9.]+|MPL-[0-9.]+)|is licensed under|are licensed under|under the same license|same license as the project|licensed under the (apache|mit|gnu|bsd|mozilla)|under the apache license|under the mit license|apache license, version 2\\.0|gnu affero general public license|gnu general public license|\\[LICENSE\\]\\(LICENSE",
     "exempt_paths": [
       "configs/legal/license-decision.json",
       "docs/legal/GH-219-LICENSE-DECISION.md",

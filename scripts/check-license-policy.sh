@@ -11,7 +11,7 @@ set -euo pipefail
 ROOT_DIR=${LICENSE_POLICY_ROOT:-$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)}
 MANIFEST="$ROOT_DIR/configs/legal/license-decision.json"
 SCHEMA="truerepublic.license-decision/v1"
-EXPECTED_PATTERN='SPDX-License-Identifier|is licensed under|are licensed under|under the same license|same license as the project|licensed under the (apache|mit|gnu|bsd|mozilla)|under the apache license|under the mit license|apache license, version 2\.0|gnu affero general public license|gnu general public license|\[LICENSE\]\(LICENSE'
+EXPECTED_PATTERN='SPDX-License-Identifier|license[[:space:]]*:[[:space:]]*(Apache-2.0|AGPL-3.0-only|MIT|BSD-[0-9]-Clause|GPL-[0-9.]+|MPL-[0-9.]+)|is licensed under|are licensed under|under the same license|same license as the project|licensed under the (apache|mit|gnu|bsd|mozilla)|under the apache license|under the mit license|apache license, version 2\.0|gnu affero general public license|gnu general public license|\[LICENSE\]\(LICENSE'
 
 for tool in git jq; do
   if ! command -v "$tool" >/dev/null 2>&1; then
@@ -138,13 +138,21 @@ done < <(jq -r '.scan.allowed_historical_paths[] | .path + ":" + .marker' "$MANI
 [ "$ERRORS" -eq 0 ] && ok "historical allowlist intact"
 
 LICENSE_ARTIFACTS=$(git -C "$ROOT_DIR" ls-files |
-  grep -iE '(^|/)((LICENSE|LICENCE)(-(APACHE|AGPL|GPL|LGPL|MIT|BSD|MPL)(-[0-9.]+)?)?|COPYING|NOTICE|COPYRIGHT)(\.(md|txt))?$' || true)
+  grep -iE '(^|/)((LICENSE|LICENCE)[^/]*|(COPYING|NOTICE|COPYRIGHT)(\.(md|txt))?)$' |
+  grep -v '^configs/legal/license-decision.json$' || true)
 
 # Maintained-component metadata inventory.
 npm_license=$(jq -r '.license // "NONE"' "$ROOT_DIR/client-web/package.json" 2>/dev/null || echo "UNREADABLE")
 npm_private=$(jq -r '.private' "$ROOT_DIR/client-web/package.json" 2>/dev/null || echo "UNREADABLE")
-cargo_with_license=$(grep -lE '^[[:space:]]*license[[:space:]]*=' "$ROOT_DIR"/contracts/Cargo.toml \
-  "$ROOT_DIR"/contracts/*/Cargo.toml "$ROOT_DIR"/contracts/*/*/Cargo.toml 2>/dev/null || true)
+CARGO_MANIFESTS=$(git -C "$ROOT_DIR" ls-files |
+  grep -E '^contracts/(.*/)?Cargo\.toml$' || true)
+cargo_with_license=""
+while IFS= read -r cargo_manifest; do
+  [ -n "$cargo_manifest" ] || continue
+  if grep -Eq '^[[:space:]]*license[[:space:]]*=' "$ROOT_DIR/$cargo_manifest"; then
+    cargo_with_license="${cargo_with_license}${cargo_with_license:+$'\n'}$cargo_manifest"
+  fi
+done <<<"$CARGO_MANIFESTS"
 
 if [ "$STATUS" = "pending" ]; then
   [ "$SELECTED" = "NONE" ] && ok "no selected license while pending" ||
@@ -208,14 +216,19 @@ else
   fi
   [ "$npm_license" = "$SELECTED" ] && ok "client-web metadata matches decision" ||
     fail "client-web/package.json license must equal the decided SPDX id (got $npm_license)"
-  cargo_packages=$(grep -lE '^\[package\][[:space:]]*$' "$ROOT_DIR"/contracts/*/Cargo.toml \
-    "$ROOT_DIR"/contracts/*/*/Cargo.toml 2>/dev/null || true)
+  cargo_packages=""
+  while IFS= read -r cargo_manifest; do
+    [ -n "$cargo_manifest" ] || continue
+    if grep -Eq '^\[package\][[:space:]]*$' "$ROOT_DIR/$cargo_manifest"; then
+      cargo_packages="${cargo_packages}${cargo_packages:+$'\n'}$cargo_manifest"
+    fi
+  done <<<"$CARGO_MANIFESTS"
   cargo_total=$(printf '%s\n' "$cargo_packages" | grep -c . || true)
   cargo_matching=0
   while IFS= read -r cargo_manifest; do
     [ -n "$cargo_manifest" ] || continue
     if grep -Eq "^[[:space:]]*license[[:space:]]*=[[:space:]]*\"$SELECTED\"[[:space:]]*$" \
-      "$cargo_manifest"; then
+      "$ROOT_DIR/$cargo_manifest"; then
       cargo_matching=$((cargo_matching + 1))
     fi
   done <<<"$cargo_packages"
@@ -250,6 +263,29 @@ CONTRADICTIONS=$(printf '%s\n' "$MATCHES" | grep -Ev "^($EXEMPT_GREP|$HIST_GREP)
 if [ "$STATUS" = "decided" ]; then
   ROOT_DECIDED_ARTIFACTS=$(printf '%s\n' "$LICENSE_ARTIFACTS" |
     grep -E '^(LICENSE|NOTICE)$' || true)
+  while IFS= read -r root_artifact; do
+    [ -n "$root_artifact" ] || continue
+    while IFS= read -r spdx_line; do
+      [ -n "$spdx_line" ] || continue
+      spdx_value=$(printf '%s' "${spdx_line#*:}" |
+        sed 's/^[[:space:]]*//; s/[[:space:]]*$//')
+      [ "$spdx_value" = "$SELECTED" ] ||
+        fail "$root_artifact contains conflicting SPDX identity: $spdx_value"
+    done < <(grep -iE 'SPDX-License-Identifier[[:space:]]*:' \
+      "$ROOT_DIR/$root_artifact" 2>/dev/null || true)
+    case "$SELECTED" in
+      Apache-2.0)
+        grep -Eiq 'MIT License|GNU (AFFERO )?GENERAL PUBLIC LICENSE|Mozilla Public License' \
+          "$ROOT_DIR/$root_artifact" &&
+          fail "$root_artifact contains text for a conflicting license" || true
+        ;;
+      AGPL-3.0-only)
+        grep -Eiq 'Apache License|MIT License|Mozilla Public License' \
+          "$ROOT_DIR/$root_artifact" &&
+          fail "$root_artifact contains text for a conflicting license" || true
+        ;;
+    esac
+  done <<<"$ROOT_DECIDED_ARTIFACTS"
   LICENSE_GREP=$(printf '%s\n' "$ROOT_DECIDED_ARTIFACTS" |
     sed 's/[].[^$*\/|]/\\&/g' | paste -sd'|' -)
   CONTRADICTIONS=$(printf '%s\n' "$CONTRADICTIONS" | grep -Ev "^($LICENSE_GREP)$" | grep -v '^$' || true)

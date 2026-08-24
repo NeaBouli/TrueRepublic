@@ -161,7 +161,7 @@ Current recovery build (`npm run build`):
 ## License
 
 The repository publishes no project license: there is no root `LICENSE` file,
-no SPDX identifier, and no package-metadata license claim. The owner-gated
+no project SPDX declaration, and no package-metadata license claim. The owner-gated
 decision is pending in [GH-219](https://github.com/NeaBouli/TrueRepublic/issues/219);
 see `docs/legal/GH-219-LICENSE-DECISION.md` and
 `configs/legal/license-decision.json`. Alpha dependency/code adoption remains

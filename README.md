@@ -390,8 +390,8 @@ terms. See [CONTRIBUTING.md](CONTRIBUTING.md) for the current boundary.
 
 ## License status
 
-TrueRepublic currently publishes no open-source license, SPDX identifier, or
-package-license claim. The decision-ready inventory, compatibility comparison,
+TrueRepublic currently publishes no open-source license, project SPDX
+declaration, or package-license claim. The decision-ready inventory, compatibility comparison,
 and exact post-decision steps are documented in
 [the GH-219 license decision package](docs/legal/GH-219-LICENSE-DECISION.md).
 No license has been selected by that analysis.

@@ -37,7 +37,7 @@
   the scan pattern and exception surface are immutable, scan errors fail closed,
   all tracked license artifacts are caught case-insensitively while pending, and
   nested contradictory licenses remain visible after a decision.
-- **PASS:** pending repository contract; 26 positive/adversarial shell fixtures,
+- **PASS:** pending repository contract; 30 positive/adversarial shell fixtures,
   including complete Apache-2.0 and AGPL-3.0-only decided states; documentation
   consistency; JSON/YAML and shell syntax; diff hygiene; and full maintained Go
   package selection/build/vet/race/coverage through `make verify`.

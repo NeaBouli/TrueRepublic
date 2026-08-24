@@ -25,7 +25,7 @@ approved for production or real funds during this audit.
   domain-app gates; it adds no implementation, foreign chain or bridge.
   `client-web` remains the Beta, and the rollout count is 35/59.
 - The repository publishes no project license: there is no root `LICENSE`
-  file, no SPDX identifier, and no package-metadata license claim, and the
+  file, no project SPDX declaration, and no package-metadata license claim, and the
   owner-gated decision remains pending in
   [GH-219](https://github.com/NeaBouli/TrueRepublic/issues/219)
   (`docs/legal/GH-219-LICENSE-DECISION.md`,

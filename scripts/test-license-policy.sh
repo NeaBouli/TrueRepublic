@@ -18,7 +18,7 @@ done
 WORK=$(mktemp -d "${TMPDIR:-/tmp}/truerepublic-license-policy.XXXXXX")
 trap 'rm -rf "$WORK"' EXIT
 
-PATTERN='SPDX-License-Identifier|is licensed under|are licensed under|under the same license|same license as the project|licensed under the (apache|mit|gnu|bsd|mozilla)|under the apache license|under the mit license|apache license, version 2\.0|gnu affero general public license|gnu general public license|\[LICENSE\]\(LICENSE'
+PATTERN='SPDX-License-Identifier|license[[:space:]]*:[[:space:]]*(Apache-2.0|AGPL-3.0-only|MIT|BSD-[0-9]-Clause|GPL-[0-9.]+|MPL-[0-9.]+)|is licensed under|are licensed under|under the same license|same license as the project|licensed under the (apache|mit|gnu|bsd|mozilla)|under the apache license|under the mit license|apache license, version 2\.0|gnu affero general public license|gnu general public license|\[LICENSE\]\(LICENSE'
 
 write_manifest() {
   local dir=$1 status=$2 selected=$3
@@ -319,5 +319,34 @@ mkdir -p "$WORK/decided-nested-conflict/docs/sub"
 printf 'SPDX-License-Identifier: MIT\n' >"$WORK/decided-nested-conflict/docs/sub/LICENSE"
 commit_change "$WORK/decided-nested-conflict"
 expect_fail "decided state with conflicting nested license" "$WORK/decided-nested-conflict"
+
+# 27. Common label-and-SPDX shorthand is a public project-license claim.
+build_fixture "$WORK/readme-license-label"
+printf '# Project\n\nLicense: Apache-2.0\n' >"$WORK/readme-license-label/README.md"
+commit_change "$WORK/readme-license-label"
+expect_fail "README label-and-SPDX license claim" "$WORK/readme-license-label"
+
+# 28. Cargo manifests at arbitrary tracked depth cannot evade metadata checks.
+build_fixture "$WORK/deep-cargo-license"
+mkdir -p "$WORK/deep-cargo-license/contracts/a/b/c"
+printf '[package]\nname = "deep-crate"\nversion = "0.1.0"\nlicense = "MIT"\n' \
+  >"$WORK/deep-cargo-license/contracts/a/b/c/Cargo.toml"
+commit_change "$WORK/deep-cargo-license"
+expect_fail "deeply nested Cargo license metadata while pending" "$WORK/deep-cargo-license"
+
+# 29. Nonstandard LICENSE-prefixed artifact names are still license artifacts.
+build_fixture "$WORK/license-project"
+printf 'Apache License\nVersion 2.0\n' >"$WORK/license-project/LICENSE-PROJECT"
+commit_change "$WORK/license-project"
+expect_fail "nonstandard LICENSE-PROJECT artifact while pending" "$WORK/license-project"
+
+# 30. A decided root license cannot carry a conflicting SPDX identity.
+build_fixture "$WORK/decided-root-spdx-conflict"
+prepare_decided "$WORK/decided-root-spdx-conflict" Apache-2.0 \
+  'https://github.com/NeaBouli/TrueRepublic/issues/219#issuecomment-1415'
+printf 'Apache License\nVersion 2.0\nSPDX-License-Identifier: MIT\n' \
+  >"$WORK/decided-root-spdx-conflict/LICENSE"
+commit_change "$WORK/decided-root-spdx-conflict"
+expect_fail "decided root license with conflicting SPDX identity" "$WORK/decided-root-spdx-conflict"
 
 echo "license policy positive and negative fixtures passed"

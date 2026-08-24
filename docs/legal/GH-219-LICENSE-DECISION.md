@@ -11,7 +11,7 @@
 > does not select, publish, or claim owner approval of any license. The
 > project license remains an owner/governance decision recorded on GH-219;
 > until that decision is recorded, the repository publishes no `LICENSE`
-> file, no SPDX identifier, and no project-license claim, and the repository
+> file, no project SPDX declaration, and no project-license claim, and the repository
 > check fails closed if one appears without the recorded decision.
 
 ---
@@ -63,7 +63,8 @@ written essentially by the project principals (`True Republic <…NeaBouli…>`,
 
 **Formal copyright posture (flagged honestly):**
 
-- No source file carries a copyright header or SPDX identifier; no
+- No maintained Go, Rust, TypeScript, or C++ source file carries a copyright
+  header or project SPDX declaration; no
   `LICENSE`, `COPYING`, or `NOTICE` file exists at any level.
 - No Contributor License Agreement (CLA) or Developer Certificate of Origin
   (DCO) is recorded in the repository.
@@ -184,8 +185,11 @@ their stale wording only through the explicit per-path allowlist.
 State at the GH-219 base, after the reconciliation performed with this
 package:
 
-1. **No `LICENSE`/`COPYING`/`NOTICE` exists** and no SPDX identifier appears
-   anywhere in the tracked tree. Under default copyright law, publishing
+1. **No `LICENSE`/`COPYING`/`NOTICE` exists** and no maintained source or
+   package metadata carries a project SPDX declaration. This decision package,
+   policy manifest and checker intentionally contain literal SPDX terms for
+   analysis and enforcement; they do not declare the project license. Under
+   default copyright law, publishing
    source without a license grants no reuse rights: others may view and
    fork per the GitHub Terms of Service, but may not legally copy, modify,
    or redistribute
