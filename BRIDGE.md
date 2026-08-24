@@ -1,5 +1,34 @@
 # TrueRepublic Agent Bridge
 
+## 2026-08-24 GH-219 decision package protected merge → Owner Decision Required
+
+- Decision package PR [#250](https://github.com/NeaBouli/TrueRepublic/pull/250)
+  passed its complete exact-head protected matrix with zero unresolved review
+  threads and squash-merged to `main` as
+  `6593e7357993b32e9422f7ab681967468c34bab5`.
+- Kimi K3 implemented the bounded inventory, compatibility analysis and policy
+  package, then completed two independent read-only review passes. Sol reviewed
+  every delegated write, corrected the portability, fail-closed and dormant
+  decided-state gaps, integrated all six CodeRabbit findings and owns the merge.
+- **Verified:** full maintained Go `make verify`; 30 positive/adversarial
+  license-policy fixtures; documentation consistency; JSON/YAML and shell
+  syntax; Client Web CI; Security Scan; reproducible Linux amd64/arm64 and
+  release-evidence contracts; CodeRabbit and DeepScan.
+- **Published:** the repository now contains a decision-ready Apache-2.0 versus
+  AGPL-3.0-only versus rights-dependent dual/commercial comparison, provenance
+  inventory, machine-readable pending state, strict CI policy and exact
+  publication runbook. No project license has been selected or asserted.
+- **Governance boundary:** GH-219 remains open. No root `LICENSE`/`NOTICE`, SPDX
+  project declaration or package-license metadata may be published until the
+  owner records the chosen SPDX identifier, copyright identity and code/docs/
+  asset scope on GH-219. This is required owner input, not a technical blocker.
+- **Rollout:** unchanged at 35/59 overall and 35/51 phase work; Phase 6 remains
+  6/7 and production remains false. No runtime, dependency, release, deploy,
+  signing, key/fund or production action occurred.
+- **Next:** obtain the explicit owner decision, apply the already documented
+  publication runbook through protected review, verify GitHub license detection
+  and exact `main`, then close GH-219.
+
 ## 2026-08-24 GH-219 repository license decision package → In Progress
 
 - **Branch:** `docs/GH-219-license-decision`
