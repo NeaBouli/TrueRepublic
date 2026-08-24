@@ -1,5 +1,17 @@
 # Project State
 
+GH-244 is Done. The strict offline rollout-genesis qualification contract is
+merged through PR #245 as `807637d7`; public evidence is merged through PR
+#246 as exact main `2e056dfa68228977b2e2b172122e688f6c6ddf39`. Exact-main
+Docs, Security, reproducible Linux and Pages workflows pass, and cache-busted
+raw-main/live Pages agree on 2,028 = 1,683 Go + 26 Rust + 319 client. Rollout
+remains 35-of-59, phase work 35-of-51, Phase 6 6-of-7 and production false.
+No GH-244 blocker, freeze, release, signing or deployment remains/occurred.
+
+Updated: 2026-08-24 EEST
+
+---
+
 GH-244 implementation is merged through protected PR #245 as `807637d7` after
 the exact replacement head passed all contexts and zero unresolved review
 threads. The public closeout candidate now records 2,028 verified standard

@@ -1,5 +1,17 @@
 # Action Log
 
+## 2026-08-24 - GH-244 exact-main and live closeout complete
+
+- Implementation PR #245 and public closeout PR #246 are merged as `807637d7`
+  and `2e056df`; GH-244 is closed and GH-29 carries the evidence link without a
+  rollout checkbox.
+- Exact main Docs, Security, reproducible Linux and Pages workflows pass.
+  Cache-busted raw-main/live Pages agree on 2,028 = 1,683 Go + 26 Rust + 319
+  client, rollout 35/59 and production false.
+- Kimi owned the bounded remediation core; Sol reviewed/integrated every write
+  and completed protected delivery. No freeze, release, signing or deployment
+  occurred, and no GH-244 blocker remains.
+
 ## 2026-08-24 - GH-244 protected merge and public closeout start
 
 - PR #245 exact head `695f7ff3` passed the complete protected matrix with zero
