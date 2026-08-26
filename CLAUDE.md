@@ -58,7 +58,7 @@ boundaries.
 - Cosmos SDK v0.50.15
 - CometBFT v0.38.26
 - ibc-go v8.7.0
-- wasmd v0.53.4 / wasmvm 2.2.2
+- wasmd v0.53.4 / wasmvm v2.2.8
 - gnark 0.14.0
 - React 18.2, TypeScript 5.9, Vite 8.2.1, CosmJS 0.39.0
 - Rust 1.75+
@@ -118,6 +118,10 @@ block, restarts the same container and requires the height to advance.
   during recovery.
 - Custom genesis never self-funds internal claims; bank/custom state must
   reconcile before initialization.
+- `wasmvm`/libwasmvm is consensus-critical. wasmvm v2.2.2 is affected by
+  CWA-2025-003, and the upstream fix shipped in v2.2.3 is labeled
+  consensus-breaking; the pinned v2.2.8 includes it. Any wasmvm update
+  therefore requires the consensus/recovery matrix before merge.
 
 ## Node lifecycle
 

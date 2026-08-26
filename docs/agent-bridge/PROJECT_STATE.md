@@ -1,5 +1,37 @@
 # Project State
 
+GH-254's first integration is locally approved on exact base `01a8d387`.
+wasmvm is reconciled from 2.2.2 to 2.2.8 with synchronized maintained evidence
+and a fail-closed monitored-module replacement guard. Kimi's bounded
+implementation and independent final review returned `APPROVE`; Sol reviewed
+every write and completed the full local Go, security, documentation, client,
+ZKP/Wasm, replay, IBC, eight-scenario recovery, governed-upgrade and
+four-validator capacity matrix. The capacity harness committed 96/96
+transactions with zero failures and verified common app hash, validator power,
+restart and ledger integrity. Protected exact-head hosted checks, merge,
+exact-main verification and stale PR #248 closure remain before the separately
+bounded #249 client integration begins. Rollout remains 35-of-59, Phase 6
+remains 6-of-7 and production remains false.
+
+Updated: 2026-08-26 EEST
+
+---
+
+GH-254 is in progress from exact clean main
+`01a8d387ae1cba6b78cc91d423e55838c19e6fb8`. It will supersede stale
+Dependabot PRs #248/#249 through two separately protected current-main
+integrations: consensus-critical wasmvm 2.2.2 to 2.2.8 first, then the five
+maintained-client development updates with the Vite 8.2.2 documentation source
+reconciled. Kimi owns one bounded secret-free implementation/depth-review
+slice; Sol owns security, integration, full tests, all GitHub writes and final
+closure. Rollout stays 35-of-59, Phase 6 stays 6-of-7 and production remains
+false. No deployment, release, migration, signing, key/fund action or rollout
+credit is included.
+
+Updated: 2026-08-26 EEST
+
+---
+
 GH-219's Apache-2.0 community publication is technically complete. Protected
 PR #252 merged as `f1903fbcfc47eee9194b0c7bbf2ccf1ce833bcb0` after all 18
 hosted checks passed and every review thread was resolved. The exact-main Docs,

@@ -159,7 +159,7 @@ sources in Section 9):
 |---|---|---|
 | cosmos-sdk (+ `cosmossdk.io/*`) | v0.50.15 | Apache-2.0 |
 | CometBFT | v0.38.26 | Apache-2.0 |
-| wasmd / wasmvm | v0.53.4 / v2.2.2 | Apache-2.0 |
+| wasmd / wasmvm | v0.53.4 / v2.2.8 | Apache-2.0 |
 | ibc-go v8 (+ capability) | v8.7.0 / v1.0.1 | **MIT** (verified against the pinned LICENSE) |
 | gnark / gnark-crypto | v0.14.0 / v0.19.2 | Apache-2.0 (verified) |
 | cosmos-db | v1.1.3 | Apache-2.0 |
@@ -504,7 +504,7 @@ Dependency licenses (pinned upstream LICENSE files):
 - cosmos-sdk (Apache-2.0): <https://github.com/cosmos/cosmos-sdk/blob/v0.50.15/LICENSE>
 - CometBFT (Apache-2.0): <https://github.com/cometbft/cometbft/blob/v0.38.26/LICENSE>
 - wasmd (Apache-2.0): <https://github.com/CosmWasm/wasmd/blob/v0.53.4/LICENSE>
-- wasmvm (Apache-2.0): <https://github.com/CosmWasm/wasmvm/blob/v2.2.2/LICENSE>
+- wasmvm (Apache-2.0): <https://github.com/CosmWasm/wasmvm/blob/v2.2.8/LICENSE>
 - ibc-go v8.7.0 (MIT): <https://github.com/cosmos/ibc-go/blob/v8.7.0/LICENSE>
 - gnark v0.14.0 (Apache-2.0): <https://github.com/consensys/gnark/blob/v0.14.0/LICENSE>
 - gnark-crypto (Apache-2.0): <https://github.com/consensys/gnark-crypto/blob/v0.19.2/LICENSE>

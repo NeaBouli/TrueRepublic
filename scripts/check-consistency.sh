@@ -57,6 +57,7 @@ ROLLOUT_PHASE_6_TOTAL=$(jq -r '.rollout.phase_6_total' "$STATUS_FILE")
 COSMOS_SDK_VERSION=$(jq -r '.tech.cosmos_sdk' "$STATUS_FILE")
 COMETBFT_VERSION=$(jq -r '.tech.cometbft' "$STATUS_FILE")
 WASMD_VERSION=$(jq -r '.tech.cosmwasm' "$STATUS_FILE")
+WASMVM_VERSION=$(jq -r '.tech.wasmvm' "$STATUS_FILE")
 IBC_GO_VERSION=$(jq -r '.tech.ibc_go' "$STATUS_FILE")
 VITE_VERSION=$(jq -r '.tech.vite' "$STATUS_FILE")
 VITE_SERIES=${VITE_VERSION%.*}
@@ -122,9 +123,16 @@ for module_version in \
   "github.com/cosmos/cosmos-sdk:$COSMOS_SDK_VERSION" \
   "github.com/cometbft/cometbft:$COMETBFT_VERSION" \
   "github.com/CosmWasm/wasmd:$WASMD_VERSION" \
+  "github.com/CosmWasm/wasmvm/v2:$WASMVM_VERSION" \
   "github.com/cosmos/ibc-go/v8:$IBC_GO_VERSION"; do
   module=${module_version%%:*}
   expected=${module_version#*:}
+  if jq -e --arg module "$module" \
+    '.Replace[]? | select(.Old.Path == $module)' <<<"$GO_MODULE_METADATA" >/dev/null; then
+    echo "  FAIL go.mod replaces monitored module $module"
+    ERRORS=$((ERRORS+1))
+    continue
+  fi
   actual=$(jq -r --arg module "$module" \
     '.Require[] | select(.Path == $module) | .Version' <<<"$GO_MODULE_METADATA")
   if [ "$actual" = "$expected" ]; then
@@ -229,11 +237,13 @@ for file_value in \
   "CLAUDE.md:$COSMOS_SDK_VERSION" \
   "CLAUDE.md:$COMETBFT_VERSION" \
   "CLAUDE.md:$WASMD_VERSION" \
+  "CLAUDE.md:$WASMVM_VERSION" \
   "CLAUDE.md:$IBC_GO_VERSION" \
   "CLAUDE.md:Vite $VITE_VERSION" \
   "wiki/Home.md:$COSMOS_SDK_VERSION" \
   "wiki/Home.md:$COMETBFT_VERSION" \
   "wiki/Home.md:$WASMD_VERSION" \
+  "wiki/Home.md:$WASMVM_VERSION" \
   "wiki/Home.md:$IBC_GO_VERSION" \
   "wiki/Home.md:Vite $VITE_SERIES" \
   "wiki/develop/Code-Structure.md:$COSMOS_SDK_VERSION" \
@@ -243,6 +253,7 @@ for file_value in \
   "docs/FAQ.md:$COSMOS_SDK_VERSION" \
   "docs/FAQ.md:$COMETBFT_VERSION" \
   "docs/FAQ.md:$WASMD_VERSION" \
+  "docs/legal/GH-219-LICENSE-DECISION.md:$WASMVM_VERSION" \
   "docs/FAQ.md:Vite $VITE_SERIES"; do
   file=${file_value%%:*}
   value=${file_value#*:}
