@@ -60,7 +60,7 @@ boundaries.
 - ibc-go v8.7.0
 - wasmd v0.53.4 / wasmvm v2.2.8
 - gnark 0.14.0
-- React 18.2, TypeScript 5.9, Vite 8.2.1, CosmJS 0.39.0
+- React 18.2, TypeScript 5.9, Vite 8.2.2, CosmJS 0.39.0
 - Rust 1.75+
 
 ## Required verification
