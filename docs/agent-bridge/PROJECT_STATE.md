@@ -1,5 +1,19 @@
 # Project State
 
+GH-254 is complete. Protected replacements #255 and #256 merged as exact main
+commits `2b5ebb61` and `40969ee0`; stale Dependabot PRs #248/#249 are closed as
+superseded with exact evidence. Every final-main Client, Docs, Security,
+reproducible Linux amd64/arm64, release-evidence and Pages workflow passes. The
+real GitHub Wiki is synchronized at `1d9d74b`. Kimi's bounded implementation
+and independent reviews returned `APPROVE`; Sol reviewed every write and owned
+the complete local, integration and hosted validation chain. Rollout remains
+35-of-59, Phase 6 remains 6-of-7 and production remains false. No deployment,
+release, signing, key/fund, migration or public-network action occurred.
+
+Updated: 2026-08-27 EEST
+
+---
+
 GH-254's client replacement is locally approved on exact merged main
 `2b5ebb61`. The five bounded dev-dependency updates, Vite 8.2.2 status binding
 and Apache-2.0-preserving lockfile pass the full maintained-client, enabled

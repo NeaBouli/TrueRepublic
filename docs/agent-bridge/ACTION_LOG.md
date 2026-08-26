@@ -1,5 +1,21 @@
 # Action Log
 
+## 2026-08-27 - GH-254 dependency reconciliation completed
+
+- Protected client replacement PR #256 exact head `5c3939ed` passed every
+  reported Client, Docs, Security and reproducible Linux context with zero
+  review threads, then squash-merged as exact main `40969ee0`.
+- Closed stale Dependabot PR #249 with exact replacement/merge evidence. PR
+  #248 was already closed after protected wasmvm replacement #255 merged; no
+  stale Dependabot head was merged directly.
+- All exact-main workflows pass, including browser, client-chain, ZKP/WASM,
+  npm/Rust/Go audit, static/secret gates, Linux amd64/arm64 deterministic builds,
+  release evidence, documentation and Pages. The prior recovery proxy rerun
+  passed all eight scenarios in 14m38s.
+- Synchronized the real GitHub Wiki wasmvm baseline to 2.2.8 as Wiki commit
+  `1d9d74b`. Rollout remains 35/59, Phase 6 remains 6/7 and production false;
+  no deployment, release, signing, migration or public-network action occurred.
+
 ## 2026-08-27 - GH-254 client replacement locally approved
 
 - Rebuilt the exact five #249 dev-dependency updates from merged main

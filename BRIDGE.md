@@ -1,5 +1,35 @@
 # TrueRepublic Agent Bridge
 
+## 2026-08-27 GH-254 dependency reconciliation → Done
+
+- **Protected merges:** wasmvm replacement PR
+  [#255](https://github.com/NeaBouli/TrueRepublic/pull/255) merged as
+  `2b5ebb61`; maintained-client replacement PR
+  [#256](https://github.com/NeaBouli/TrueRepublic/pull/256) exact head
+  `5c3939ed` passed every reported protected context with zero review threads
+  and squash-merged as exact `main`
+  `40969ee0eccf9ece3df2007462ac805be0ff23b1`.
+- **Superseded sources:** stale Dependabot PRs
+  [#248](https://github.com/NeaBouli/TrueRepublic/pull/248) and
+  [#249](https://github.com/NeaBouli/TrueRepublic/pull/249) are closed with
+  replacement-head and merge evidence; neither stale head was merged directly.
+- **Exact final main:** Docs Consistency, Client Web (build, browser, real
+  client-chain and ZKP/WASM), Security Scan, reproducible Linux amd64/arm64,
+  release-evidence contract and GitHub Pages all pass on `40969ee0`. The prior
+  wasmvm main recovery rerun also passed all eight scenarios in 14m38s after
+  its sole public Go proxy HTTP/2 download failure.
+- **Public synchronization:** the repository source reports wasmvm 2.2.8 and
+  exact Vite 8.2.2; the real GitHub Wiki technology baseline is synchronized as
+  Wiki commit `1d9d74b`. Apache-2.0 lockfile metadata remains intact.
+- **Roles/review:** Kimi K3 implemented bounded dependency slices and returned
+  independent final `APPROVE` verdicts; Sol reviewed every write, ran the full
+  relevant local/integration matrix and owned all protected GitHub actions.
+- **Boundary:** rollout remains 35/59, Phase 6 remains 6/7 and production
+  remains false. No deployment, release, signing, key/fund, migration or
+  public-network action occurred.
+
+---
+
 ## 2026-08-27 GH-254 client reconciliation → Local PASS
 
 - **Candidate:** the five stale #249 development updates are rebuilt from exact
