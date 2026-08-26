@@ -20,7 +20,7 @@
 | ZKP client | Real synthetic Go/WASM compatibility verified on GH-206 and recipient-bound rewards on GH-209; production submission remains hard-disabled |
 | Maintained client | `client-web` |
 | Legacy clients | Web and mobile prototypes retired under GH-112/GH-102; Git history only |
-| Project licensing | Maintained source and documentation are Apache-2.0; individual contributors retain copyright, collectively attributed as “TrueRepublic contributors”; brand/art assets, historical PDFs, archived evidence, and third-party material remain excluded |
+| Project licensing | Maintained source and documentation are Apache-2.0; individual contributors retain copyright, collectively attributed as “TrueRepublic contributors”; brand/art assets, historical PDFs, archived evidence, and third-party material remain excluded unless an applicable file-specific notice exists or provenance and permission are documented |
 
 Authoritative machine status: [`docs/status.json`](https://github.com/NeaBouli/TrueRepublic/blob/main/docs/status.json).
 Completed recovery foundation:
@@ -38,6 +38,9 @@ The exact community licensing decision is recorded in
 - [Sovereign V4 Edge Architecture](https://github.com/NeaBouli/TrueRepublic/blob/main/docs/SOVEREIGN_V4_EDGE_ARCHITECTURE.md)
 - [Code Structure](develop/Code-Structure)
 - [Module Deep-Dive](develop/Module-Deep-Dive)
+- [API Reference](develop/API-Reference)
+- [Development Setup](develop/Development-Setup)
+- [Contributing Guide](develop/Contributing-Guide)
 
 ### Users
 
@@ -45,6 +48,7 @@ The exact community licensing decision is recorded in
 - [Installation Wizards](users/Installation-Wizards)
 - [User Manuals](users/User-Manuals)
 - [How It Works](users/How-It-Works)
+- [FAQ](users/FAQ)
 
 ### Node operators
 
@@ -57,6 +61,9 @@ The exact community licensing decision is recorded in
 ### Security and status
 
 - [Current Status](status/Current-Status)
+- [Roadmap](status/Roadmap)
+- [Feature Matrix](status/Feature-Matrix)
+- [Known Bugs and Limitations](status/Known-Bugs)
 - [Testing Status](status/Testing-Status)
 - [Audit Reports](security/Audit-Reports)
 - [Known Issues](security/Known-Issues)

@@ -1,5 +1,25 @@
 # Project State
 
+GH-219's Apache-2.0 community publication is technically complete. Protected
+PR #252 merged as `f1903fbcfc47eee9194b0c7bbf2ccf1ce833bcb0` after all 18
+hosted checks passed and every review thread was resolved. The exact-main Docs,
+Security, Rust, Client Web, reproducible Linux daemon and Pages workflows pass;
+GitHub detects the root license as Apache-2.0, and live Pages exposes the
+current 2,028-test, 35-of-59 and production-false state. The real GitHub Wiki
+was synchronized across 30 pages as
+`54b54b4ad70f06454f4e0e8934b11c8d4d6857e7`, and the previously disabled
+repository Wiki setting was enabled. Maintained source and
+documentation are Apache-2.0 under the contributor-retained community model;
+brand/art assets, historical PDFs, archived evidence and third-party material
+remain excluded unless an applicable file-specific notice exists or provenance
+and permission are documented. Rollout remains 35-of-59, phase work 35-of-51,
+Phase 6 6-of-7 and production false. Protected closeout merge and issue-state
+closure remain; no technical blocker, release or deployment exists.
+
+Updated: 2026-08-26 EEST
+
+---
+
 GH-219 Apache-2.0 community publication is in progress from exact clean main
 `96c8c059c60a83a4dfc2a960d20cb4d305b3c7c6`. The exact governance record
 confirms that TrueRepublic is community-governed without a central corporate

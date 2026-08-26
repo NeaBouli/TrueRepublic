@@ -51,8 +51,9 @@
   [GH-219](https://github.com/NeaBouli/TrueRepublic/issues/219#issuecomment-5423337355).
   Individual contributors retain copyright; “TrueRepublic contributors” is the
   collective attribution. Brand assets, artwork, historical PDFs, archived
-  historical evidence, and third-party materials remain excluded. This changes
-  no rollout or production-readiness value.
+  historical evidence, and third-party materials remain excluded unless an
+  applicable file-specific notice exists or provenance and permission are
+  documented. This changes no rollout or production-readiness value.
 
 ## Recovery sequence
 

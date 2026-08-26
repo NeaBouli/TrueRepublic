@@ -29,8 +29,9 @@ approved for production or real funds during this audit.
   publishes Apache-2.0 for maintained source and maintained documentation.
   Individual contributors retain copyright; “TrueRepublic contributors” is the
   collective attribution. Brand assets, artwork, historical PDFs, archived
-  historical evidence, and third-party materials remain excluded pending
-  documented provenance. Telegram, Status, Waku, Matrix, or other upstream
+  historical evidence, and third-party materials remain excluded unless an
+  applicable file-specific notice exists or provenance and permission are
+  documented. Telegram, Status, Waku, Matrix, or other upstream
   code still requires an exact per-component compatibility/provenance review
   before any Alpha adoption; the project grant does not relicense dependencies.
 - Client-side ZKP generation remains a preview, not real Groth16 proof
