@@ -138,6 +138,7 @@ path = [
     "docs/validators/*.md",
     "docs/validators/**/*.md",
     "wiki/Home.md",
+    "wiki/_Sidebar.md",
     "wiki/**/*.md",
     "client-web/README.md",
     "client-web/BROWSER_SUPPORT.md",

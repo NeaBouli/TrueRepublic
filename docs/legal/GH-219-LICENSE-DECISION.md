@@ -458,12 +458,17 @@ Completed in this change:
    candidates only; a dual-license decision requires extending this contract
    and its positive fixtures in the same reviewed change.
 
-Retained instructions (not completed by this change):
+Post-merge verification completed:
 
-9. **GitHub detection (post-merge):** after merge, confirm the repository
-   page shows the license via GitHub's licensee-based detection
+9. **GitHub detection:** after protected PR #252 merged as
+   `f1903fbcfc47eee9194b0c7bbf2ccf1ce833bcb0`, GitHub's repository license
+   API identified the root file as `Apache-2.0` and linked it from the
+   repository
    ([licensing a repository](https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/licensing-a-repository));
-   no API write is needed beyond the committed `LICENSE`.
+   no API write was needed beyond the committed `LICENSE`.
+
+Retained instructions:
+
 10. **Dependency notices for distributions (pre-distribution):** when
     binaries/images are next assembled, include the third-party license
     texts for the Section 2.4 dependency set in the distributed artifact

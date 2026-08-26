@@ -1,5 +1,23 @@
 # Action Log
 
+## 2026-08-26 - GH-219 protected publication and public sync complete
+
+- PR #252 passed all 18 hosted technical checks with zero unresolved review
+  threads and merged as `f1903fbc`. All six exact-main workflows pass, GitHub
+  detects `Apache-2.0`, and cache-busted Pages exposes the current licensing,
+  2,028-test, 35/59 and production-false truth.
+- Kimi implemented the bounded fail-closed review remediation core. Sol
+  reviewed every write, completed an additional regression, resolved all four
+  hosted findings and reran 33 policy fixtures plus full relevant Go, Rust,
+  maintained-client, documentation and diff gates.
+- The real GitHub Wiki was synchronized across 30 pages and pushed as
+  `54b54b4ad70f06454f4e0e8934b11c8d4d6857e7`; stale release, client and rollout
+  claims were replaced by the repository's canonical current sources. The
+  disabled repository Wiki setting was enabled so the content is public.
+- Rollout remains 35/59 and production false. Issue closeout follows the
+  protected documentation merge; no release, deployment or runtime change
+  occurred.
+
 ## 2026-08-26 - GH-219 local publication candidate approved
 
 - The exact staged publication passes canonical-text, 31-fixture policy,

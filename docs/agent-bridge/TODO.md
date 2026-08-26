@@ -11,7 +11,7 @@
 - [x] Record the explicit community governance decision on GH-219, including
   SPDX identifier, contributor-retained copyright model, collective
   attribution, maintained code/docs scope, and provenance-gated exclusions.
-- [ ] Publish the approved root license/notices and synchronized component
+- [x] Publish the approved root license/notices and synchronized component
   metadata, verify GitHub detection, then close GH-219 through protected review.
 
 ## Completed - GH-244 rollout-genesis qualification contract

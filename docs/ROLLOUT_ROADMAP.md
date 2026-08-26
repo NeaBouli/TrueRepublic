@@ -47,7 +47,8 @@ intentionally more granular than the public 59-item tracker.
   maintained source code and maintained documentation. Individual contributors
   retain copyright; “TrueRepublic contributors” is the collective attribution.
   Brand assets, artwork, historical PDFs, archived historical evidence, and
-  third-party materials remain excluded pending documented provenance. This
+  third-party materials remain excluded unless an applicable file-specific
+  notice exists or provenance and permission are documented. This
   repository-governance foundation earns no rollout checkbox and does not
   change 35/59, 35/51, Phase 6 at 6/7, or production false.
 

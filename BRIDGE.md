@@ -1,5 +1,39 @@
 # TrueRepublic Agent Bridge
 
+## 2026-08-26 GH-219 Apache-2.0 publication and public sync → Complete
+
+- **Protected publication:** PR
+  [#252](https://github.com/NeaBouli/TrueRepublic/pull/252) passed all 18
+  hosted technical checks with zero unresolved review threads and
+  squash-merged as `f1903fbcfc47eee9194b0c7bbf2ccf1ce833bcb0`.
+- **Review:** CodeRabbit's four actionable license-policy/documentation
+  findings were resolved on exact head `ea25c357`; Kimi K3 implemented the
+  bounded fail-closed remediation core and Sol reviewed every write, added the
+  broad-audit-glob regression, and reran the complete relevant chain.
+- **Local verification:** 33 positive/adversarial license fixtures, docs
+  consistency, full Go Build/Vet/Race/Coverage, Rust Format/Clippy/Build and 26
+  tests, maintained-client lint/10 policy/309 Vitest/4 documented skips/build/
+  budgets/high-critical audit, and diff hygiene pass.
+- **Exact main:** Docs, Security, Rust, Client Web, reproducible Linux daemon
+  and Pages workflows pass for `f1903fb`. GitHub identifies `LICENSE` as
+  `Apache-2.0`; cache-busted Pages exposes Apache-2.0, 2,028 tests, 35/59 and
+  the production-false boundary.
+- **Public documentation:** repository README, landing, roadmap, architecture,
+  whitepapers, maintained wiki sources, package metadata and contributor
+  guidance are synchronized. The separate GitHub Wiki's 30 stale pages were
+  replaced/synchronized and finalized as `54b54b4ad70f06454f4e0e8934b11c8d4d6857e7`.
+  The repository Wiki setting was enabled after its disabled state was found,
+  so those pages are publicly reachable instead of redirecting to the repo.
+- **Scope boundary:** brand/art assets, historical PDFs, archived evidence and
+  third-party material remain excluded unless an applicable file-specific
+  notice exists or provenance and permission are documented. Distribution
+  notices and per-component third-party review remain standing requirements.
+- **Rollout:** unchanged at 35/59 overall, 35/51 phase work and Phase 6 at 6/7;
+  production remains false. No runtime, dependency, release, deployment,
+  signing, key/fund or rollout-credit action occurred.
+- **Next:** merge this protected closeout, verify exact `main`, record the
+  evidence on GH-219/GH-29 and close GH-219. No technical blocker remains.
+
 ## 2026-08-26 GH-219 Apache-2.0 community publication → In Progress
 
 - **Branch:** `docs/GH-219-apache-publication-sol`
