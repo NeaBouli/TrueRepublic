@@ -8,8 +8,9 @@
   maintained Cosmos/IBC, CosmWasm, client and future Alpha/V4 boundaries.
 - [x] Reconcile current public wording and add a machine-readable pending-state
   policy with deterministic positive and adversarial CI checks.
-- [ ] Record the explicit owner decision on GH-219, including SPDX identifier,
-  copyright holder and scope for code, documentation and brand assets.
+- [x] Record the explicit community governance decision on GH-219, including
+  SPDX identifier, contributor-retained copyright model, collective
+  attribution, maintained code/docs scope, and provenance-gated exclusions.
 - [ ] Publish the approved root license/notices and synchronized component
   metadata, verify GitHub detection, then close GH-219 through protected review.
 

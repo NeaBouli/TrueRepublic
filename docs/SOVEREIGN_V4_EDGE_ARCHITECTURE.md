@@ -268,7 +268,10 @@ anonymous voting before the rollout Phase 2 exit gate.
 
 ## 10. Decision gates and risks
 
-- **DG-V4-1:** publish the repository license before adopting third-party code.
+- **DG-V4-1:** repository Apache-2.0 publication is resolved by
+  [GH-219](https://github.com/NeaBouli/TrueRepublic/issues/219#issuecomment-5423337355);
+  every third-party component still requires compatibility, provenance, SBOM,
+  and distribution review before adoption.
 - **DG-V4-2:** qualify Waku licenses, bindings and real-device behavior.
 - **DG-V4-3:** choose and prove the mobile light-verification protocol; until
   then RPC trust is explicit.

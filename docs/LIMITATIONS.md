@@ -24,15 +24,15 @@ approved for production or real funds during this audit.
   further specifies citizen-node, mobile-verification, civic-workflow and
   domain-app gates; it adds no implementation, foreign chain or bridge.
   `client-web` remains the Beta, and the rollout count is 35/59.
-- The repository publishes no project license: there is no root `LICENSE`
-  file, no project SPDX declaration, and no package-metadata license claim, and the
-  owner-gated decision remains pending in
-  [GH-219](https://github.com/NeaBouli/TrueRepublic/issues/219)
-  (`docs/legal/GH-219-LICENSE-DECISION.md`,
-  `configs/legal/license-decision.json`). No Telegram, Status, Waku, Matrix
-  or other upstream client code may be copied or linked into an Alpha
-  implementation until project counsel/maintainers select and publish the
-  repository license and an exact dependency/license review passes.
+- The community decision in
+  [GH-219](https://github.com/NeaBouli/TrueRepublic/issues/219#issuecomment-5423337355)
+  publishes Apache-2.0 for maintained source and maintained documentation.
+  Individual contributors retain copyright; “TrueRepublic contributors” is the
+  collective attribution. Brand assets, artwork, historical PDFs, archived
+  historical evidence, and third-party materials remain excluded pending
+  documented provenance. Telegram, Status, Waku, Matrix, or other upstream
+  code still requires an exact per-component compatibility/provenance review
+  before any Alpha adoption; the project grant does not relicense dependencies.
 - Client-side ZKP generation remains a preview, not real Groth16 proof
   generation. The maintained client fails closed and cannot submit mock proofs.
 - GH-115 gives the maintained client one exact custom protobuf registry and a

@@ -1,0 +1,143 @@
+version = 1
+
+# GH-219 community licensing decision (see configs/legal/license-decision.json
+# and docs/legal/GH-219-LICENSE-DECISION.md): maintained source code and
+# maintained documentation are Apache-2.0. Individual contributors retain
+# copyright; "TrueRepublic contributors" is the collective attribution.
+#
+# Deliberately not annotated here (excluded until provenance is documented):
+# brand assets and artwork (assets/**, docs/assets/**), historical PDFs
+# (*.pdf), archived/historical evidence (docs/archive/**,
+# RELEASE_NOTES_v0.3.0.md, client-web/CHANGELOG.md, audit/evidence records),
+# the unmaintained ui/** prototype, generated lockfiles/checksums, and
+# third-party material. This is a REUSE-compatible scope declaration; it does
+# not claim full REUSE compliance for deliberately excluded material.
+
+[[annotations]]
+path = [
+    # Go daemon, modules and tools.
+    "*.go",
+    "capacitypolicy/**/*.go",
+    "cmd/**/*.go",
+    "deploymentevidence/**/*.go",
+    "genesisevidence/**/*.go",
+    "healthcheck/**/*.go",
+    "incidentpolicy/**/*.go",
+    "installlifecycle/**/*.go",
+    "internal/**/*.go",
+    "migration/**/*.go",
+    "networkpolicy/**/*.go",
+    "observability/**/*.go",
+    "releaseevidence/**/*.go",
+    "sovereignv4/**/*.go",
+    "token/**/*.go",
+    "topologypolicy/**/*.go",
+    "treasury/**/*.go",
+    "x/**/*.go",
+    # Rust/CosmWasm workspace.
+    "contracts/**/*.rs",
+    # Maintained TypeScript/JavaScript client.
+    "client-web/**/*.ts",
+    "client-web/**/*.tsx",
+    "client-web/**/*.js",
+    "client-web/**/*.mjs",
+    "client-web/src/index.css",
+    "client-web/package.json",
+    "client-web/tsconfig.app.json",
+    "client-web/tsconfig.json",
+    "client-web/tsconfig.node.json",
+    "client-web/nginx.conf",
+    "client-web/.dockerignore",
+    "client-web/.gitignore",
+    # Rust workspace manifests; generated Cargo.lock remains outside.
+    "contracts/Cargo.toml",
+    "contracts/core/Cargo.toml",
+    "contracts/examples/dex-bot/Cargo.toml",
+    "contracts/examples/governance-dao/Cargo.toml",
+    "contracts/examples/token-vesting/Cargo.toml",
+    "contracts/examples/zkp-aggregator/Cargo.toml",
+    "contracts/packages/bindings/Cargo.toml",
+    "contracts/packages/testing-utils/Cargo.toml",
+    # Repository shell/ops scripts.
+    "scripts/*.sh",
+    # Build entry points and maintained HTML surfaces.
+    "Makefile",
+    "Dockerfile",
+    "client-web/Dockerfile",
+    "docs/index.html",
+    "docs/status.json",
+    "client-web/index.html",
+    "go.mod",
+    "docker-compose.yml",
+    ".dockerignore",
+    ".env.example",
+    ".gitignore",
+    ".gitleaks.toml",
+    ".codex/**",
+    # Repository-authored configuration, CI and monitoring surfaces.
+    "configs/**",
+    ".github/**",
+    "monitoring/**",
+    "nginx/**",
+    # Root documentation (historical/audit records excluded).
+    "AGENTS.md",
+    "BRIDGE.md",
+    "CLAUDE.md",
+    "CONTRIBUTING.md",
+    "INSTALLATION.md",
+    "README.md",
+    "SECURITY.md",
+    # Top-level maintained documentation.
+    "docs/API.md",
+    "docs/API_REFERENCE.md",
+    "docs/ARCHITECTURE.md",
+    "docs/DEPLOYMENT.md",
+    "docs/FAQ.md",
+    "docs/GLOSSARY.md",
+    "docs/GOVERNANCE_BALLOT_ARCHITECTURE.md",
+    "docs/IBC_RELAYER_SETUP.md",
+    "docs/INSTALL.md",
+    "docs/LIMITATIONS.md",
+    "docs/QUICKSTART.md",
+    "docs/ROLLOUT_ROADMAP.md",
+    "docs/SOVEREIGN_ALPHA_ARCHITECTURE.md",
+    "docs/SOVEREIGN_V4_EDGE_ARCHITECTURE.md",
+    "docs/V0.3.0_ROADMAP.md",
+    "docs/V0.4.0_OPTIONAL_INDEXER_STACK.md",
+    "docs/VALIDATOR_GUIDE.md",
+    "docs/WhitePaper_TR.md",
+    "docs/WhitePaper_TR_eng.md",
+    # Living agent-bridge coordination documents; frozen audits are excluded.
+    "docs/agent-bridge/ACTION_LOG.md",
+    "docs/agent-bridge/CLAUDE_TO_CODEX.md",
+    "docs/agent-bridge/CODEX_TO_CLAUDE.md",
+    "docs/agent-bridge/COOPERATION_RULES.md",
+    "docs/agent-bridge/DECISIONS.md",
+    "docs/agent-bridge/PROJECT_STATE.md",
+    "docs/agent-bridge/README.md",
+    "docs/agent-bridge/SECURITY_NOTES.md",
+    "docs/agent-bridge/TODO.md",
+    # Maintained documentation trees.
+    "docs/developers/*.md",
+    "docs/developers/**/*.md",
+    "docs/getting-started/*.md",
+    "docs/getting-started/**/*.md",
+    "docs/legal/*.md",
+    "docs/legal/**/*.md",
+    "docs/node-operators/*.md",
+    "docs/node-operators/**/*.md",
+    "docs/releases/*.md",
+    "docs/releases/**/*.md",
+    "docs/security/*.md",
+    "docs/security/**/*.md",
+    "docs/user-manual/*.md",
+    "docs/user-manual/**/*.md",
+    "docs/validators/*.md",
+    "docs/validators/**/*.md",
+    "wiki/Home.md",
+    "wiki/**/*.md",
+    "client-web/README.md",
+    "client-web/BROWSER_SUPPORT.md",
+]
+SPDX-FileCopyrightText = "Copyright 2026 TrueRepublic contributors"
+SPDX-License-Identifier = "Apache-2.0"

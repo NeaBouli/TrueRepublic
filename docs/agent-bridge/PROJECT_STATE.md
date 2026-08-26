@@ -1,5 +1,26 @@
 # Project State
 
+GH-219 Apache-2.0 community publication is in progress from exact clean main
+`96c8c059c60a83a4dfc2a960d20cb4d305b3c7c6`. The exact governance record
+confirms that TrueRepublic is community-governed without a central corporate
+owner, individual contributors retain copyright, and “TrueRepublic
+contributors” is the collective attribution. Canonical `LICENSE`, `NOTICE`,
+REUSE scope metadata, npm/Cargo declarations, contributor guidance, README,
+landing page, roadmap, whitepapers, Alpha/V4 architecture, maintained wiki
+sources, machine status and deterministic policy checks are synchronized
+locally. Brand/art assets, historical PDFs, archived evidence and third-party
+materials remain outside the project grant until provenance or file-specific
+permission is documented. Kimi completed the bounded implementation/inventory
+review and Sol owns the final diff, full verification, protected publication,
+GitHub license detection, wiki synchronization and issue closeout. Rollout
+remains 35-of-59, phase work 35-of-51, Phase 6 6-of-7 and production false;
+this governance foundation earns no rollout credit and performs no release or
+deployment.
+
+Updated: 2026-08-26 EEST
+
+---
+
 GH-244 is Done. The strict offline rollout-genesis qualification contract is
 merged through PR #245 as `807637d7`; public evidence is merged through PR
 #246 as exact main `2e056dfa68228977b2e2b172122e688f6c6ddf39`. Exact-main

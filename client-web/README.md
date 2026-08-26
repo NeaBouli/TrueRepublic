@@ -160,10 +160,12 @@ Current recovery build (`npm run build`):
 
 ## License
 
-The repository publishes no project license: there is no root `LICENSE` file,
-no project SPDX declaration, and no package-metadata license claim. The owner-gated
-decision is pending in [GH-219](https://github.com/NeaBouli/TrueRepublic/issues/219);
-see `docs/legal/GH-219-LICENSE-DECISION.md` and
-`configs/legal/license-decision.json`. Alpha dependency/code adoption remains
-blocked until maintainers publish the exact project license and a
-per-component compatibility review passes.
+The maintained web client is Apache-2.0 as part of the TrueRepublic community
+project; its npm metadata carries the matching SPDX identifier. Individual
+contributors retain copyright. The collective attribution is “TrueRepublic contributors.”
+See the repository root `LICENSE`, `NOTICE`, and the exact
+[GH-219 decision](https://github.com/NeaBouli/TrueRepublic/issues/219#issuecomment-5423337355).
+
+Brand/art material and third-party dependencies are not relicensed by this
+statement. Every new dependency still requires its own compatibility and
+provenance review.

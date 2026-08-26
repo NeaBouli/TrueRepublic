@@ -2,23 +2,47 @@
 
 - **Issue:** [GH-219](https://github.com/NeaBouli/TrueRepublic/issues/219)
 - **Machine-readable state:** `configs/legal/license-decision.json`
-  (`truerepublic.license-decision/v1`), decision status: **pending**
+  (`truerepublic.license-decision/v1`), decision status: **decided**
 - **Deterministic check:** `scripts/check-license-policy.sh`
-  (fail-closed while the decision status is pending)
+  (fail-closed across pending and decided states)
+- **Final engineering audit:** `docs/legal/GH-219-CODEX-AUDIT.md`
+- **Governance record:**
+  [GH-219 comment 5423337355](https://github.com/NeaBouli/TrueRepublic/issues/219#issuecomment-5423337355)
 
 > **This document is not legal advice.** It is an engineering decision
-> package prepared from repository evidence and primary upstream sources. It
-> does not select, publish, or claim owner approval of any license. The
-> project license remains an owner/governance decision recorded on GH-219;
-> until that decision is recorded, the repository publishes no `LICENSE`
-> file, no project SPDX declaration, and no project-license claim, and the repository
-> check fails closed if one appears without the recorded decision.
+> package prepared from repository evidence and primary upstream sources. The
+> community has now selected Apache-2.0 for maintained source code and
+> maintained documentation. Individual contributors retain copyright and the
+> collective attribution is “TrueRepublic contributors.” Brand assets,
+> artwork, historical PDFs, archived historical evidence, and third-party
+> materials remain excluded pending documented provenance.
+
+## 0. Decision recorded and publication scope
+
+TrueRepublic is a community-governed open-source project without a central
+corporate owner. The exact GH-219 governance record approves:
+
+- SPDX identifier `Apache-2.0`;
+- collective attribution `TrueRepublic contributors`, without assignment of
+  individual contributor rights;
+- maintained source code and maintained documentation as the covered project
+  scope; and
+- brand assets, artwork, historical PDFs, archived historical evidence, and
+  third-party materials as explicit exclusions unless a file-specific record
+  later documents provenance and permission.
+
+The root `LICENSE`, `NOTICE`, npm/Cargo metadata, public documentation, and
+`configs/legal/license-decision.json` implement that decision. This governance
+foundation earns no rollout credit, makes no production claim, and does not
+replace per-component dependency review.
 
 ---
 
 ## 1. Scope and method
 
-This package makes GH-219 decision-ready. It:
+This package records the completed GH-219 decision and its publication. The
+pre-decision analysis is retained so the community can audit why the chosen
+scope and exclusions exist. It:
 
 1. inventories what the repository actually contains and who authored it;
 2. classifies every maintained component as repository-authored code,
@@ -47,11 +71,16 @@ of this repository.
 
 ### 2.1 Repository-authored code
 
+The inventory below records the analyzed pre-decision base. The publication
+implemented by this change adds the Apache-2.0 metadata summarized in the
+final column; it does not rewrite the historical evidence used to reach the
+decision.
+
 | Component | Paths | Files (approx.) | Notes |
 |---|---|---|---|
 | Go daemon, modules, tools | root `*.go`, `x/dex`, `x/truedemocracy`, `treasury`, `token`, `migration`, `observability`, `healthcheck`, `networkpolicy`, `topologypolicy`, `incidentpolicy`, `capacitypolicy`, `genesisevidence`, `releaseevidence`, `deploymentevidence`, `installlifecycle`, `internal/zkpprover`, `sovereignv4/protocol`, `cmd/*` | 210 `.go` | module `truerepublic` (`go.mod`); consensus-critical |
-| Rust/CosmWasm workspace | `contracts/` (`core`, `packages/bindings`, `packages/testing-utils`, `examples/*`) | 32 `.rs` | no `license` field in any crate manifest |
-| Maintained TypeScript client | `client-web/src`, `client-web/scripts` | 114 `.ts`/`.tsx` | `client-web/package.json` is `"private": true` with **no** `license` field |
+| Rust/CosmWasm workspace | `contracts/` (`core`, `packages/bindings`, `packages/testing-utils`, `examples/*`) | 32 `.rs` | pre-decision manifests had no license field; every maintained crate now declares `Apache-2.0` |
+| Maintained TypeScript client | `client-web/src`, `client-web/scripts` | 114 `.ts`/`.tsx` | remains private and now declares `Apache-2.0` in `client-web/package.json` |
 | Shell/ops scripts, configs, CI | `scripts/`, `configs/`, `.github/`, `monitoring/`, `nginx/` | ~60 | repository-authored |
 | Documentation, wiki, whitepapers (Markdown) | `docs/`, `wiki/`, root `*.md` | 150 `.md` | repository-authored text |
 | C++ prototype UI | `ui/ui.cpp` plus tracked Mach-O artifact `ui/truerepublic_ui` | 2 | unmaintained prototype; the binary's origin is not documented well enough to classify it conclusively |
@@ -61,7 +90,7 @@ written essentially by the project principals (`True Republic <…NeaBouli…>`,
 `Gio Mario`, `NeaBouli`, plus two local `Pingonaut` test identities and
 `dependabot[bot]`).
 
-**Formal copyright posture (flagged honestly):**
+**Formal copyright posture at the analyzed pre-decision base:**
 
 - No maintained Go, Rust, TypeScript, or C++ source file carries a copyright
   header or project SPDX declaration; no
@@ -72,10 +101,11 @@ written essentially by the project principals (`True Republic <…NeaBouli…>`,
   assignment is recorded. Copyright therefore rests with the individual
   authors by default, concentrated in the project principals, but this is an
   inference from authorship metadata, not a documented legal fact.
-- Consequence: a future license grant is cleanest if executed by, or with
-  the documented consent of, those principals. Any later license *change*
-  after third-party contributions would require contributor consent or a
-  CLA/DCO-based inbound grant.
+- The GH-219 governance record now supplies the documented project decision:
+  individual contributors retain their rights, the collective attribution is
+  “TrueRepublic contributors,” and maintained source/documentation are
+  Apache-2.0. Any later license *change* would still require the rights and
+  consent appropriate to the affected contributions.
 
 ### 2.2 Generated material
 
@@ -103,8 +133,8 @@ written essentially by the project principals (`True Republic <…NeaBouli…>`,
   integrate official logos throughout project"). No author, tool, or license
   note is recorded for them. They are presumed project-commissioned
   branding, but provenance is undocumented; before a license is applied to
-  them, the owner should confirm they are original project artwork (or
-  replace them with documented-original versions). Trademark/branding rights
+  them, the community must document that they are original project artwork
+  (or replace them with documented-original versions). Trademark/branding rights
   in the "TrueRepublic" and "PNYX" marks are also unregistered and
   undocumented.
 - **PDFs:** `docs/WhitePaper_TR_eng Kopie 2.pdf` and
@@ -180,12 +210,12 @@ their stale wording only through the explicit per-path allowlist.
 
 ---
 
-## 3. Current public-claim audit
+## 3. Pre-decision public-claim audit and resolution
 
-State at the GH-219 base, after the reconciliation performed with this
-package:
+The numbered findings below describe the GH-219 base before publication. Each
+is retained as decision evidence and followed by its current resolution:
 
-1. **No `LICENSE`/`COPYING`/`NOTICE` exists** and no maintained source or
+1. **Pre-decision finding:** no `LICENSE`/`COPYING`/`NOTICE` existed and no maintained source or
    package metadata carries a project SPDX declaration. This decision package,
    policy manifest and checker intentionally contain literal SPDX terms for
    analysis and enforcement; they do not declare the project license. Under
@@ -195,22 +225,24 @@ package:
    or redistribute
    ([GitHub licensing documentation](https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/licensing-a-repository),
    [choosealicense.com/no-permission](https://choosealicense.com/no-permission/)).
-   Every day in this state, external contribution and adoption carry
-   uncertainty — for contributors (no inbound license clarity) and for the
-   project (no documented inbound grant).
-2. **Reconciled contradiction:** `CONTRIBUTING.md` asserted contributions
+   **Resolution:** the canonical root `LICENSE` and `NOTICE`, package
+   metadata, `REUSE.toml`, and the exact GH-219 decision record now establish
+   the maintained project scope and contributor-retained attribution.
+2. **Pre-decision contradiction:** `CONTRIBUTING.md` asserted contributions
    "will be licensed under the same license as the project (Apache 2.0)"
    although no such license was ever published. That wording is now
-   corrected to the pending state. Separately, stale links to a nonexistent
-   root license remain only in explicitly allowlisted, clearly marked
-   historical release records.
-3. Maintained public and architecture docs (`README.md`, `LIMITATIONS.md`,
-   `SOVEREIGN_ALPHA_ARCHITECTURE.md`, `client-web/README.md`) now describe
-   the pending GH-219 decision uniformly instead of an "Apache 2.0 intent".
-4. `configs/legal/license-decision.json` is the machine-readable state;
-   `scripts/check-license-policy.sh` fails closed if a root license file, an
-   SPDX claim, a package-metadata license, or a non-allowlisted public
-   license assertion appears while the status is pending.
+   first corrected to the pending state. **Resolution:** maintained contributor
+   guidance now states Apache-2.0 inbound-equals-outbound terms and links the
+   published root files. Stale wording survives only in explicitly allowlisted,
+   clearly marked historical records.
+3. **Pre-decision documentation state:** maintained public and architecture
+   docs described a pending GH-219 gate. **Resolution:** README, landing page,
+   roadmap, limitations, whitepapers, architecture docs, maintained-client
+   docs and wiki sources now all describe the recorded decision and exclusions.
+4. **Policy resolution:** `configs/legal/license-decision.json` is the
+   machine-readable decided state. `scripts/check-license-policy.sh` now fails
+   closed unless the canonical license text, NOTICE, attribution, scope,
+   exclusions, REUSE boundary, and npm/Cargo metadata remain consistent.
 
 ---
 
@@ -296,7 +328,7 @@ Two distinct models are commonly conflated; they have opposite effects:
 | Works with documented Alpha boundary (Telegram code remains rejected; Matrix/Synapse is only a gated fallback) | yes, subject to per-component review | yes, subject to per-component review | as Apache | subject to CLA/rights consolidation |
 | Contribution friction (no CLA today) | lowest | low–medium | low | requires CLA/consent |
 | Cosmos ecosystem norm | yes (sdk/comet/wasmd) | no | partial | no |
-| Owner effort post-decision | LICENSE + NOTICE + headers | LICENSE + headers | two LICENSE texts + notice | LICENSE + CLA process |
+| Community maintenance effort post-decision | LICENSE + NOTICE + scope metadata | LICENSE + scope metadata | two LICENSE texts + notice | LICENSE + rights-consolidation process |
 
 ---
 
@@ -328,60 +360,49 @@ Two distinct models are commonly conflated; they have opposite effects:
 
 ## 6. Honest unknowns and flagged risks
 
-1. **Formal copyright ownership is undocumented** (2.1): no headers, no CLA,
-   personal-identity commits. The license grant should be executed by the
-   project principals; anything else needs their written consent.
+1. **Contributor-level provenance still matters** (2.1): the community record
+   confirms contributor-retained copyright and Apache-2.0 for maintained work,
+   but there is no central rights holder or CLA. A future license change must
+   therefore respect the rights in every affected contribution.
 2. **Asset provenance is undocumented** (2.3): logos/artwork and the two
    PDFs. Confirm they are original before the license covers them, or
    replace them; license selection for *code* is not blocked by this.
 3. **Branding/trademark is unaddressed** by every candidate license
    (Apache-2.0 §6 and the GPL family both exclude trademarks). A separate
-   naming/usage policy is an open owner decision, out of GH-219's scope.
-4. **Contributor relicensing risk while pending:** code contributed before a
-   license exists carries no documented inbound grant; keeping the pending
-   window short reduces the set of contributions that would later need
-   explicit consent for any license *change*.
+   naming/usage policy remains an open community-governance decision outside
+   GH-219's scope.
+4. **Future relicensing remains distributed:** Apache-2.0 is now published;
+   because copyright remains with contributors, a future license change must
+   obtain the consent or other valid authority required for affected work.
 5. This package is engineering analysis, **not legal advice**; a
-   jurisdiction-aware review by counsel remains the owner's option.
+   jurisdiction-aware review by counsel remains available to the community.
 
 ---
 
-## 7. Recommended decision path (not a decision)
+## 7. Recorded decision and implemented path
 
-The owner gate stays pending. Technically, the evidence supports this
-procedure:
+The community has completed the decision gate. The evidence and recorded
+governance decision establish this outcome:
 
-1. **Decide the policy goal first.** If the goal is maximum ecosystem
-   adoption, validator/integrator frictionlessness, and alignment with the
-   Cosmos/IBC stack, **Apache-2.0** is the evidence-supported fit
-   (Sections 4.1, 4.4). If the goal is to guarantee that hosted or embedded
-   derivatives of the governance infrastructure remain public, **AGPL-3.0-only**
-   is the only candidate that delivers that guarantee (§13), at a measurable
-   adoption cost. A recipient's-choice dual license adds no copyleft
-   strength over Apache-2.0 and is justified only if GPLv3-only downstream
-   combinability is a documented requirement; AGPL+commercial dual licensing
-   is not currently viable without a CLA and a commercial entity.
-2. **Record the decision explicitly on GH-219** (owner/governance record,
-   naming the SPDX identifier, the copyright line, and the effective scope:
-   code, docs, assets or code-only).
-3. Execute the exact implementation steps in Section 8 in one reviewable
-   change, then flip `configs/legal/license-decision.json` to
-   `status: decided` and bind `decision_record` to the exact GH-219 owner
-   comment so the repository check enforces the *decided* state (license file
-   present, metadata consistent) instead of the pending one.
-4. Resolve the flagged unknowns in Section 6 (asset provenance confirmation,
-   optional counsel review) before the first release that *distributes*
-   binaries; release/distribution itself remains outside GH-219.
-
-This package deliberately recommends a **path**, not a license: no license
-is selected here, and nothing in this change claims owner approval.
+1. **Apache-2.0 is selected** for maintained source and maintained
+   documentation because it fits the Cosmos/IBC ecosystem and preserves the
+   contributor-retained community model.
+2. **The exact scope is recorded on GH-219** with the SPDX identifier,
+   collective attribution, retained individual rights, and provenance
+   exclusions.
+3. **The repository implements the decision** through the root texts,
+   package metadata, public documentation, machine policy, and adversarial
+   fixtures.
+4. **Asset and dependency boundaries remain open by design:** exclusions in
+   Section 6 require provenance or per-component review before reuse or
+   distribution.
 
 ---
 
-## 8. Exact post-decision implementation steps
+## 8. Publication implementation and verification
 
-Perform all of these in one reviewable change after the owner records the
-decision on GH-219:
+The decision is implemented in one protected, reviewable change. GitHub
+license detection and GH-219 closure are post-merge verification steps:
 
 1. **LICENSE:** add root `LICENSE` with the exact canonical text of the
    selected SPDX identifier from its primary source
@@ -391,9 +412,10 @@ decision on GH-219:
    `LICENSE-AGPL`) plus a root `LICENSE` explaining the choice.
 2. **NOTICE (Apache-2.0 only):** add root `NOTICE` with the project
    attribution line; Apache §4(d) then propagates it.
-3. **Copyright line:** use the documented owner identity in the form
-   `Copyright <year> <owner>` consistently in `LICENSE`/`NOTICE` and
-   headers; resolve Section 6.1 first if the owner name is not obvious.
+3. **Copyright line:** use the recorded collective attribution
+   `Copyright 2026 TrueRepublic contributors` consistently in `NOTICE` and
+   scope metadata without assigning individual contributor rights to a
+   central entity.
 4. **SPDX headers:** add `SPDX-License-Identifier: <id>` (and, for dual
    OR-licensing, `SPDX-License-Identifier: Apache-2.0 OR AGPL-3.0-only`) to
    source files, using each language's comment syntax; adopt the
@@ -414,7 +436,7 @@ decision on GH-219:
    allowlisted historical files untouched.
 8. **Manifest and check:** in `configs/legal/license-decision.json` set
    `status: decided`, `selected_spdx_id`, the copyright line, the exact GH-219
-   owner-comment URL in `decision_record`, and the decided scope;
+   governance-comment URL in `decision_record`, and the decided scope;
    `scripts/check-license-policy.sh` then enforces the
    decided branch (root license file present with the recorded SPDX
    identity, package metadata consistent, pending-state contradictions still

@@ -5,6 +5,16 @@ TrueRepublic (PNYX) ist eine Plattform für **direkte Demokratie**. Sie wurde en
 
 Kernidee: **digitale, zensurresistente, transparente und sichere Governance**, die auf Schwarmintelligenz setzt.
 
+### Projektstatus und Lizenzierung
+
+TrueRepublic ist ein gemeinschaftlich gesteuertes Open-Source-Projekt ohne
+zentralen Firmeninhaber. Gepflegter Quellcode und gepflegte Dokumentation sind
+Apache-2.0. Die Urheberrechte verbleiben bei den einzelnen Beitragenden; die
+gemeinsame Zuordnung lautet „TrueRepublic contributors“. Markenmaterial,
+Kunstwerke, historische PDFs, archivierte historische Nachweise und Material
+Dritter bleiben bis zum dokumentierten Herkunftsnachweis ausgenommen. Diese
+Lizenzgrundlage ändert weder den Rollout- noch den Produktionsstatus.
+
 ---
 
 ## 2. Problemstellung: Repräsentative Demokratie

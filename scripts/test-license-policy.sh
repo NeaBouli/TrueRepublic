@@ -33,19 +33,25 @@ write_manifest() {
   "copyright_line": "NONE",
   "decision_record": "NONE",
   "decision_package": "docs/legal/GH-219-LICENSE-DECISION.md",
+  "scope": {
+    "covers": "NONE",
+    "reuse_file": "REUSE.toml",
+    "excludes": []
+  },
   "candidates": [
     {"id": "Apache-2.0", "kind": "permissive", "reference": "https://www.apache.org/licenses/LICENSE-2.0"},
     {"id": "AGPL-3.0-only", "kind": "network-copyleft", "reference": "https://www.gnu.org/licenses/agpl-3.0.html"},
     {"id": "dual-license", "kind": "combination", "reference": "docs/legal/GH-219-LICENSE-DECISION.md"}
   ],
   "components": [
-    {"id": "daemon-go", "kind": "repository-authored", "path": "go.mod", "metadata": "go-module", "declared_license": "NONE"},
-    {"id": "contracts-rust", "kind": "repository-authored", "path": "contracts", "metadata": "cargo-workspace", "declared_license": "NONE"},
-    {"id": "client-web", "kind": "repository-authored", "path": "client-web/package.json", "metadata": "npm-package", "declared_license": "NONE"}
+    {"id": "daemon-go", "kind": "repository-authored", "path": "go.mod", "metadata": "go-module", "declared_license": "NONE", "coverage": "maintained"},
+    {"id": "contracts-rust", "kind": "repository-authored", "path": "contracts", "metadata": "cargo-workspace", "declared_license": "NONE", "coverage": "maintained"},
+    {"id": "client-web", "kind": "repository-authored", "path": "client-web/package.json", "metadata": "npm-package", "declared_license": "NONE", "coverage": "maintained"}
   ],
   "scan": {
     "forbidden_assertion_pattern": "$pattern_json",
     "exempt_paths": [
+      "REUSE.toml",
       "configs/legal/license-decision.json",
       "docs/legal/GH-219-LICENSE-DECISION.md",
       "scripts/check-license-policy.sh",
@@ -68,6 +74,7 @@ Decision package for truerepublic.license-decision/v1. Decision status: pending.
 EOF
   : >"$dir/scripts/check-license-policy.sh"
   : >"$dir/scripts/test-license-policy.sh"
+  : >"$dir/REUSE.toml"
   printf 'module truerepublic\n' >"$dir/go.mod"
   printf '[package]\nname = "truerepublic-contracts"\nversion = "0.1.0"\n' >"$dir/contracts/core/Cargo.toml"
   printf '[workspace]\nmembers = ["core"]\n' >"$dir/contracts/Cargo.toml"
@@ -106,8 +113,16 @@ prepare_decided() {
   jq --arg selected "$selected" --arg decision_record "$decision_record" '
     .status = "decided" |
     .selected_spdx_id = $selected |
-    .copyright_line = "Copyright 2026 TrueRepublic" |
+    .copyright_line = "Copyright 2026 TrueRepublic contributors" |
     .decision_record = $decision_record |
+    .scope.covers = "maintained-source-and-documentation" |
+    .scope.excludes = [
+      "brand-assets",
+      "artwork",
+      "historical-pdfs",
+      "archived-historical-evidence",
+      "third-party-materials"
+    ] |
     (.components[].declared_license) = $selected
   ' "$dir/configs/legal/license-decision.json" \
     >"$dir/configs/legal/license-decision.json.tmp"
@@ -115,10 +130,14 @@ prepare_decided() {
     "$dir/configs/legal/license-decision.json"
   printf 'Decision package for truerepublic.license-decision/v1. Decision status: decided.\n' \
     >"$dir/docs/legal/GH-219-LICENSE-DECISION.md"
+  printf 'version = 1\n\n[[annotations]]\npath = ["*.go"]\nSPDX-FileCopyrightText = "Copyright 2026 TrueRepublic contributors"\nSPDX-License-Identifier = "%s"\n' \
+    "$selected" >"$dir/REUSE.toml"
   printf '{"name":"client-web","private":true,"version":"0.4.0","license":"%s"}\n' \
     "$selected" >"$dir/client-web/package.json"
   printf '[package]\nname = "truerepublic-contracts"\nversion = "0.1.0"\nlicense = "%s"\n' \
     "$selected" >"$dir/contracts/core/Cargo.toml"
+  printf 'TrueRepublic\nCopyright 2026 TrueRepublic contributors\n\nTrueRepublic is a community-governed open-source project without a central corporate owner.\nBrand assets, artwork, historical PDFs remain excluded.\n' \
+    >"$dir/NOTICE"
 }
 
 # 1. Honest pending tree passes.
@@ -266,15 +285,15 @@ expect_fail "nested license artifact while pending" "$WORK/nested-license"
 # 20. A complete single-license decided state passes the dormant branch.
 build_fixture "$WORK/decided-apache"
 prepare_decided "$WORK/decided-apache" Apache-2.0 \
-  'https://github.com/NeaBouli/TrueRepublic/issues/219#issuecomment-123'
-printf 'Apache License\nVersion 2.0\n' >"$WORK/decided-apache/LICENSE"
+  'https://github.com/NeaBouli/TrueRepublic/issues/219#issuecomment-5423337355'
+cp "$ROOT_DIR/LICENSE" "$WORK/decided-apache/LICENSE"
 commit_change "$WORK/decided-apache"
 expect_pass "complete Apache-2.0 decided state" "$WORK/decided-apache"
 
 # 21. The AGPL-3.0-only decided state is independently exercised.
 build_fixture "$WORK/decided-agpl"
 prepare_decided "$WORK/decided-agpl" AGPL-3.0-only \
-  'https://github.com/NeaBouli/TrueRepublic/issues/219#issuecomment-456'
+  'https://github.com/NeaBouli/TrueRepublic/issues/219#issuecomment-5423337355'
 printf 'GNU AFFERO GENERAL PUBLIC LICENSE\nVersion 3\n' >"$WORK/decided-agpl/LICENSE"
 commit_change "$WORK/decided-agpl"
 expect_pass "complete AGPL-3.0-only decided state" "$WORK/decided-agpl"
@@ -282,23 +301,23 @@ expect_pass "complete AGPL-3.0-only decided state" "$WORK/decided-agpl"
 # 22. NOTICE alone cannot impersonate the required root LICENSE.
 build_fixture "$WORK/decided-notice-only"
 prepare_decided "$WORK/decided-notice-only" Apache-2.0 \
-  'https://github.com/NeaBouli/TrueRepublic/issues/219#issuecomment-789'
+  'https://github.com/NeaBouli/TrueRepublic/issues/219#issuecomment-5423337355'
 printf 'TrueRepublic notice\n' >"$WORK/decided-notice-only/NOTICE"
 commit_change "$WORK/decided-notice-only"
 expect_fail "decided state with NOTICE but no LICENSE" "$WORK/decided-notice-only"
 
-# 23. The owner decision URL must include a numeric comment identifier.
+# 23. A decided state requires the exact approved governance record.
 build_fixture "$WORK/decided-empty-comment"
 prepare_decided "$WORK/decided-empty-comment" Apache-2.0 \
   'https://github.com/NeaBouli/TrueRepublic/issues/219#issuecomment-'
-printf 'Apache License\nVersion 2.0\n' >"$WORK/decided-empty-comment/LICENSE"
+cp "$ROOT_DIR/LICENSE" "$WORK/decided-empty-comment/LICENSE"
 commit_change "$WORK/decided-empty-comment"
-expect_fail "decided state without numeric owner comment id" "$WORK/decided-empty-comment"
+expect_fail "decided state without the approved governance record" "$WORK/decided-empty-comment"
 
 # 24. The canonical root text must match the selected SPDX identity.
 build_fixture "$WORK/decided-wrong-text"
 prepare_decided "$WORK/decided-wrong-text" Apache-2.0 \
-  'https://github.com/NeaBouli/TrueRepublic/issues/219#issuecomment-1011'
+  'https://github.com/NeaBouli/TrueRepublic/issues/219#issuecomment-5423337355'
 printf 'GNU AFFERO GENERAL PUBLIC LICENSE\nVersion 3\n' >"$WORK/decided-wrong-text/LICENSE"
 commit_change "$WORK/decided-wrong-text"
 expect_fail "decided state with mismatched root license text" "$WORK/decided-wrong-text"
@@ -313,8 +332,8 @@ expect_fail "lowercase license artifact while pending" "$WORK/lowercase-license"
 # 26. A decided state cannot hide a conflicting nested license artifact.
 build_fixture "$WORK/decided-nested-conflict"
 prepare_decided "$WORK/decided-nested-conflict" Apache-2.0 \
-  'https://github.com/NeaBouli/TrueRepublic/issues/219#issuecomment-1213'
-printf 'Apache License\nVersion 2.0\n' >"$WORK/decided-nested-conflict/LICENSE"
+  'https://github.com/NeaBouli/TrueRepublic/issues/219#issuecomment-5423337355'
+cp "$ROOT_DIR/LICENSE" "$WORK/decided-nested-conflict/LICENSE"
 mkdir -p "$WORK/decided-nested-conflict/docs/sub"
 printf 'SPDX-License-Identifier: MIT\n' >"$WORK/decided-nested-conflict/docs/sub/LICENSE"
 commit_change "$WORK/decided-nested-conflict"
@@ -343,10 +362,18 @@ expect_fail "nonstandard LICENSE-PROJECT artifact while pending" "$WORK/license-
 # 30. A decided root license cannot carry a conflicting SPDX identity.
 build_fixture "$WORK/decided-root-spdx-conflict"
 prepare_decided "$WORK/decided-root-spdx-conflict" Apache-2.0 \
-  'https://github.com/NeaBouli/TrueRepublic/issues/219#issuecomment-1415'
+  'https://github.com/NeaBouli/TrueRepublic/issues/219#issuecomment-5423337355'
 printf 'Apache License\nVersion 2.0\nSPDX-License-Identifier: MIT\n' \
   >"$WORK/decided-root-spdx-conflict/LICENSE"
 commit_change "$WORK/decided-root-spdx-conflict"
 expect_fail "decided root license with conflicting SPDX identity" "$WORK/decided-root-spdx-conflict"
+
+# 31. Another numeric GH-219 comment cannot impersonate the approved record.
+build_fixture "$WORK/decided-wrong-comment"
+prepare_decided "$WORK/decided-wrong-comment" Apache-2.0 \
+  'https://github.com/NeaBouli/TrueRepublic/issues/219#issuecomment-123456'
+cp "$ROOT_DIR/LICENSE" "$WORK/decided-wrong-comment/LICENSE"
+commit_change "$WORK/decided-wrong-comment"
+expect_fail "decided state bound to the wrong numeric comment" "$WORK/decided-wrong-comment"
 
 echo "license policy positive and negative fixtures passed"

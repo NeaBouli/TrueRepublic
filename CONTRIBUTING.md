@@ -261,15 +261,19 @@ not create a tag, publish/sign an artifact or claim production readiness.
 
 ## License
 
-The project license is **not decided yet**. The owner-gated decision is
-tracked in [GH-219](https://github.com/NeaBouli/TrueRepublic/issues/219);
-the decision package is `docs/legal/GH-219-LICENSE-DECISION.md` and the
-machine-readable state is `configs/legal/license-decision.json`
-(status `pending`). The repository currently publishes no `LICENSE` file and
-no project SPDX or package-metadata license claim. It therefore does not document
-general open-source permission to copy, modify, or redistribute the project.
+Maintained source code and maintained documentation are Apache-2.0; see the
+root `LICENSE` and `NOTICE`. TrueRepublic has no central corporate owner.
+Individual contributors retain copyright, and “TrueRepublic contributors” is
+the collective attribution.
 
-Until GH-219 records the owner decision, please use issues or discussions for
-proposals instead of submitting code for merge, unless the maintainers first
-record separate written contribution terms. This avoids asking contributors
-to accept an unknown future license.
+Unless stated otherwise by the contributor, a contribution intentionally
+submitted for inclusion follows the same Apache-2.0 terms
+(inbound equals outbound), without additional terms. Do not submit brand
+assets, artwork, historical PDFs, archived evidence, or third-party material
+without documented provenance and a compatible file-specific permission.
+
+The exact community decision is recorded in
+[GH-219](https://github.com/NeaBouli/TrueRepublic/issues/219#issuecomment-5423337355);
+the reviewed decision package is
+`docs/legal/GH-219-LICENSE-DECISION.md`, and the machine-readable state is
+`configs/legal/license-decision.json` (status `decided`).

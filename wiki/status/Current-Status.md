@@ -3,6 +3,7 @@
 **Version:** v0.4.0 recovery
 **Release state:** recovery foundation merged to `main`
 **Production-ready:** no
+**Project licensing:** Apache-2.0 for maintained source and documentation
 
 ## Verified foundation
 
@@ -46,6 +47,12 @@
 - 2,028 recovery-verified tests: 1,683 Go, 26 Rust, and 319 maintained-client,
   plus the separately gated GH-175/GH-178/GH-181 two-chain IBC packet/channel/compatible-restart recovery and GH-172
   contention/replay/restart process proofs.
+- Community-governed Apache-2.0 publication is recorded on
+  [GH-219](https://github.com/NeaBouli/TrueRepublic/issues/219#issuecomment-5423337355).
+  Individual contributors retain copyright; “TrueRepublic contributors” is the
+  collective attribution. Brand assets, artwork, historical PDFs, archived
+  historical evidence, and third-party materials remain excluded. This changes
+  no rollout or production-readiness value.
 
 ## Recovery sequence
 
