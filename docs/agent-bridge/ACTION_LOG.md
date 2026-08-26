@@ -1,5 +1,36 @@
 # Action Log
 
+## 2026-08-27 - GH-254 client replacement locally approved
+
+- Rebuilt the exact five #249 dev-dependency updates from merged main
+  `2b5ebb61`, retained Apache-2.0 lockfile metadata and synchronized exact Vite
+  8.2.2 status sources. No runtime dependency or application source changed.
+- Sol passed lint, 10 Node policy tests, 309 Vitest cases with four documented
+  skips, production build/budgets, enabled three-scenario client-chain delivery,
+  docs, ZKP/WASM, audit and complete license-policy fixtures. Bundle evidence is
+  72,866 B entry, 20 routes, 5,056 B max route and 363,698 B total.
+- Kimi performed the bounded implementation and a separate full read-only diff
+  review: `APPROVE`, no P0/P1/P2 and safe to publish. All 413 lock entries have
+  registry integrity; forbidden Axios versions are absent.
+- #255 exact-main recovery initially failed only downloading historical
+  `cosmos-db v1.1.1` from the public Go proxy after seven scenarios passed. The
+  failed job is rerunning unchanged. Rollout remains 35/59 and production false.
+
+## 2026-08-26 - GH-254 wasmvm merged and client reconciliation started
+
+- PR #255 exact head `7650ee37` passed the complete reported protected matrix
+  with zero review threads and merged as `2b5ebb61`. Targeted reruns cleared two
+  GitHub proxy download failures without changing source or skipping a gate;
+  the final recovery rerun passed all eight scenarios in 14m23s.
+- Closed stale Dependabot PR #248 as superseded with the exact replacement and
+  merge evidence. Started `chore/GH-254-client-reconciliation` from exact merged
+  main `2b5ebb61`; stale PR #249 remains open until its replacement merges.
+- Kimi's read-only #249 preflight returned `APPROVE PREFLIGHT`: target engines
+  fit pinned Node/npm, current advisory queries are empty, exact Vite 8.2.2
+  status sources are known and Apache-2.0 lockfile metadata must be preserved.
+- Exact-main workflows are running. Rollout remains 35/59 and production false;
+  no deployment, release, signing, network or production action occurred.
+
 ## 2026-08-26 - GH-254 wasmvm current-main candidate locally approved
 
 - Reconciled wasmvm 2.2.2 to 2.2.8 on exact current main, synchronized its

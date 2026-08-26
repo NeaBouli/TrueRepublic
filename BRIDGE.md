@@ -1,5 +1,66 @@
 # TrueRepublic Agent Bridge
 
+## 2026-08-27 GH-254 client reconciliation → Local PASS
+
+- **Candidate:** the five stale #249 development updates are rebuilt from exact
+  merged main `2b5ebb61`: user-event 14.6.5, plugin-react 6.1.0,
+  happy-dom 20.11.6, Vite 8.2.2 and Vitest 4.1.11. Exact Vite bindings in
+  `docs/status.json` and `CLAUDE.md` now agree with the lockfile.
+- **Lockfile/security:** Apache-2.0 root metadata is preserved; every one of 413
+  packages resolves from `registry.npmjs.org` with integrity, forbidden Axios
+  versions are absent, engine ranges fit pinned Node 22.22.2/npm 10.9.7 and the
+  high/critical audit gate is clear.
+- **Local PASS:** lint; 10/10 Node policy tests; 309 Vitest passes with four
+  documented skips; production TypeScript/Vite build; bundle budget (72,866 B
+  entry, 20 lazy routes, 5,056 B max route, 363,698 B total); three enabled
+  client-to-chain delivery scenarios; docs consistency; native/WASM ZKP
+  compatibility; license decision policy and all positive/adversarial fixtures.
+- **Kimi contribution:** Kimi K3 applied the bounded dependency/status slice,
+  then independently read the complete 608-line lockfile delta and all eight
+  changed files. Final read-only verdict: `APPROVE`, no P0/P1/P2 finding and
+  safe to publish.
+- **Exact-main evidence:** every #255 post-merge workflow except the recovery
+  aggregate passed immediately. Its sole failed scenario was a public Go proxy
+  HTTP/2 download error for historical `cosmos-db v1.1.1`; the unchanged failed
+  job is rerunning. Seven other recovery scenarios passed, so no code workaround
+  or skipped gate is used.
+- **Boundary/next:** publish this bounded candidate through a protected
+  replacement PR and require exact-head hosted checks plus zero review threads.
+  Rollout remains 35/59, Phase 6 remains 6/7 and production remains false; no
+  deployment, release, signing, key/fund or public-network action occurred.
+
+---
+
+## 2026-08-26 GH-254 wasmvm merged; client reconciliation → In Progress
+
+- **Protected merge:** PR
+  [#255](https://github.com/NeaBouli/TrueRepublic/pull/255) exact head
+  `7650ee37` passed every reported technical context with zero review threads
+  and squash-merged as exact `main` `2b5ebb61f00c3a1306f144e7baf0cbd44d7ced1c`.
+- **Transient evidence:** first hosted `go-vuln` and recovery attempts were
+  blocked only by GitHub proxy HTTP/2 module-download failures. Targeted reruns
+  on the unchanged head passed; the recovery rerun completed all eight scenarios
+  in 14m23s. No source workaround or skipped gate was used.
+- **Superseded source:** stale Dependabot PR
+  [#248](https://github.com/NeaBouli/TrueRepublic/pull/248) is closed with a
+  replacement/merge evidence link and was not merged directly.
+- **Current branch/base:** `chore/GH-254-client-reconciliation` from exact
+  merged main `2b5ebb61`.
+- **Kimi preflight:** `APPROVE PREFLIGHT`, read-only. The five #249 updates are
+  compatible with pinned Node 22.22.2/npm 10.9.7, have no current advisories,
+  and require exact Vite 8.2.2 bindings in `docs/status.json` and `CLAUDE.md`.
+  The current Apache-2.0 root lockfile metadata must be retained; bundle-size
+  evidence must be remeasured and synchronized only if it changes.
+- **Boundary:** exact-main post-merge workflows are running while the separately
+  bounded client candidate is prepared. No deployment, release, production,
+  signing, key/fund or rollout-credit action; rollout remains 35/59 and
+  production remains false.
+- **Next:** apply the five dev-dependency updates on this exact current-main
+  branch, preserve license metadata, synchronize exact status sources, review
+  the complete lockfile delta and run the full maintained-client/security chain.
+
+---
+
 ## 2026-08-26 GH-254 wasmvm current-main candidate → Local PASS
 
 - **Candidate:** consensus-critical `github.com/CosmWasm/wasmvm/v2` is pinned

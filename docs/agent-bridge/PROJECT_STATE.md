@@ -1,5 +1,39 @@
 # Project State
 
+GH-254's client replacement is locally approved on exact merged main
+`2b5ebb61`. The five bounded dev-dependency updates, Vite 8.2.2 status binding
+and Apache-2.0-preserving lockfile pass the full maintained-client, enabled
+client-chain, documentation, ZKP/WASM, audit and license-policy matrix. Kimi's
+bounded implementation plus independent full-diff review returned `APPROVE`
+with no P0/P1/P2 finding. The protected replacement PR, hosted exact-head
+matrix, stale #249 closure and exact final-main closeout remain. The #255
+post-merge recovery aggregate is rerunning unchanged after a public Go proxy
+HTTP/2 download failure for historical `cosmos-db v1.1.1`; all other workflows
+and seven recovery scenarios passed. Rollout remains 35-of-59, Phase 6 remains
+6-of-7 and production remains false.
+
+Updated: 2026-08-27 EEST
+
+---
+
+GH-254's consensus-critical first integration is merged. Protected PR #255
+passed every reported technical context on exact head `7650ee37` with zero
+review threads and squash-merged as `2b5ebb61`; stale Dependabot PR #248 is
+closed as superseded. Two initial GitHub proxy module-download failures passed
+targeted reruns on the unchanged source, including all eight recovery scenarios
+in 14m23s. The separately bounded client integration now starts on
+`chore/GH-254-client-reconciliation` from that exact main. Kimi's read-only
+#249 preflight returned `APPROVE PREFLIGHT`: the five target dev dependencies
+fit pinned Node 22.22.2/npm 10.9.7, have no current advisories, require Vite
+8.2.2 status/CLAUDE bindings and must preserve current Apache-2.0 lockfile
+metadata. Exact-main workflows and the client implementation/verification
+remain. Rollout is unchanged at 35-of-59, Phase 6 at 6-of-7 and production
+false.
+
+Updated: 2026-08-26 EEST
+
+---
+
 GH-254's first integration is locally approved on exact base `01a8d387`.
 wasmvm is reconciled from 2.2.2 to 2.2.8 with synchronized maintained evidence
 and a fail-closed monitored-module replacement guard. Kimi's bounded

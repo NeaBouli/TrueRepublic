@@ -7,11 +7,12 @@
 - [x] Pass focused Go/Wasm plus full local Build/Vet/Race/Coverage,
   multi-validator, governed-upgrade, IBC, replay, restart, security, client and
   capacity gates with Kimi final `APPROVE`.
-- [ ] Pass the exact protected head's complete hosted workflow set, including
+- [x] Pass the exact protected head's complete hosted workflow set, including
   Linux amd64/arm64 and reproducible-daemon evidence.
-- [ ] Merge a protected #248 replacement, verify exact main and close #248 as
+- [x] Merge a protected #248 replacement and close #248 as
   superseded before starting the client replacement.
-- [ ] Rebuild PR #249 from the resulting exact main, synchronize Vite 8.2.2 and
+- [ ] Complete exact-main post-merge workflow verification for `2b5ebb61`.
+- [x] Rebuild PR #249 from the resulting exact main, synchronize Vite 8.2.2 and
   pass the complete maintained-client, docs and dependency-security gates.
 - [ ] Merge a protected #249 replacement, close #249 as superseded and complete
   exact-main/GitHub/Bridge verification without rollout credit or production.
