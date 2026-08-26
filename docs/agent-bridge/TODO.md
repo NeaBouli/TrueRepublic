@@ -1,5 +1,21 @@
 # Recovery Queue
 
+## In progress - GH-254 current-main dependency reconciliation
+
+- [x] Rebuild PR #248 from exact current main, upgrade wasmvm 2.2.2 to 2.2.8,
+  synchronize maintained dependency evidence and record the consensus boundary.
+- [x] Pass focused Go/Wasm plus full local Build/Vet/Race/Coverage,
+  multi-validator, governed-upgrade, IBC, replay, restart, security, client and
+  capacity gates with Kimi final `APPROVE`.
+- [ ] Pass the exact protected head's complete hosted workflow set, including
+  Linux amd64/arm64 and reproducible-daemon evidence.
+- [ ] Merge a protected #248 replacement, verify exact main and close #248 as
+  superseded before starting the client replacement.
+- [ ] Rebuild PR #249 from the resulting exact main, synchronize Vite 8.2.2 and
+  pass the complete maintained-client, docs and dependency-security gates.
+- [ ] Merge a protected #249 replacement, close #249 as superseded and complete
+  exact-main/GitHub/Bridge verification without rollout credit or production.
+
 ## In progress - GH-219 repository license decision and publication
 
 - [x] Inventory tracked code, authorship metadata, generated material,

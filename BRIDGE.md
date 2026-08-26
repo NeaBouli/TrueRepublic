@@ -1,5 +1,63 @@
 # TrueRepublic Agent Bridge
 
+## 2026-08-26 GH-254 wasmvm current-main candidate → Local PASS
+
+- **Candidate:** consensus-critical `github.com/CosmWasm/wasmvm/v2` is pinned
+  from 2.2.2 to 2.2.8 on exact base `01a8d387`; maintained toolchain, license
+  and Wiki sources now agree with `go.mod`/`go.sum`.
+- **Guard:** the documentation consistency gate now binds wasmvm to the
+  machine-readable status source and rejects any `replace` directive for every
+  monitored consensus module before trusting its declared requirement.
+- **Kimi contribution:** Kimi K3 implemented the bounded dependency/evidence
+  slice and independently re-reviewed the final Sol-hardened diff. Final verdict
+  `APPROVE`; the replace-bypass positive fixture is rejected and the real
+  no-replace `go.mod` produces no false positive.
+- **Local verification:** Go module verify/tidy/build/full verify, focused Wasm
+  fail-closed checks, security/static/secret gates, release/rollout/license/docs
+  contracts, maintained-client lint/10 policy/309 Vitest/4 documented skips/
+  build/budgets/audit and native-Wasm ZKP compatibility all pass. Replay,
+  IBC two-chain, all eight multi-validator recovery scenarios and the governed
+  upgrade harness pass. The four-validator capacity qualification passes in
+  430.87s with 96/96 committed transactions, common app hash, consistent power,
+  restart and ledger validation, and zero failed transactions.
+- **Boundary:** hosted exact-head Linux amd64/arm64, reproducible-daemon and the
+  complete protected workflow set remain required before merge. No deployment,
+  release, migration, signing, public-network action or rollout credit;
+  rollout remains 35/59 and production remains false.
+- **Next:** commit and push the bounded candidate, open its protected replacement
+  PR, resolve every hosted finding, merge only when exact-head checks are green,
+  then close stale Dependabot PR #248 as superseded.
+
+---
+
+## 2026-08-26 GH-254 current-main dependency reconciliation → In Progress
+
+- **Branch:** `chore/GH-254-wasmvm-reconciliation`
+- **Issue:** [GH-254](https://github.com/NeaBouli/TrueRepublic/issues/254)
+- **Superseded candidates:** Dependabot PRs
+  [#248](https://github.com/NeaBouli/TrueRepublic/pull/248) and
+  [#249](https://github.com/NeaBouli/TrueRepublic/pull/249).
+- **Base:** exact clean `origin/main`
+  `01a8d387ae1cba6b78cc91d423e55838c19e6fb8`.
+- **Scope/order:** first rebuild the consensus-relevant wasmvm 2.2.2 to 2.2.8
+  update on current main and publish it through its own protected PR; then
+  rebuild the five maintained-client development updates from the resulting
+  exact main through a second protected PR.
+- **Known findings:** current wasmvm 2.2.2 is affected by CWA-2025-003, whose
+  upstream fix is consensus-breaking. PR #249 is red because its Vite 8.2.2
+  lockfile is inconsistent with the 8.2.1 status source. Both Dependabot heads
+  predate the GH-219 closeout merges and are not current-main evidence.
+- **Roles:** Kimi K3 receives a bounded secret-free implementation/deep-review
+  block. Sol owns architecture, consensus/security judgment, every Kimi diff,
+  complete verification, GitHub writes, protected merges and closeout.
+- **Risk/boundary:** High for #248 because libwasmvm is consensus-critical; low
+  to medium for #249. No deployment, release, genesis freeze, signing,
+  public-network action, production mutation, key/fund use or rollout credit.
+- **Next:** integrate #248 minimally, synchronize exact maintained dependency
+  evidence, and run the complete focused plus consensus/recovery matrix.
+
+---
+
 ## 2026-08-26 GH-219 Apache-2.0 publication and public sync → Complete
 
 - **Protected publication:** PR

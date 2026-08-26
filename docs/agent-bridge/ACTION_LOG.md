@@ -1,5 +1,35 @@
 # Action Log
 
+## 2026-08-26 - GH-254 wasmvm current-main candidate locally approved
+
+- Reconciled wasmvm 2.2.2 to 2.2.8 on exact current main, synchronized its
+  maintained toolchain/license/Wiki evidence and added a fail-closed status
+  binding which rejects monitored-module `replace` directives.
+- Kimi implemented the bounded dependency/evidence slice and independently
+  returned `APPROVE` on the final Sol-reviewed diff. Its positive replacement
+  fixture is rejected and the real no-replace module graph passes.
+- Full local Go, security, documentation, maintained-client, ZKP/Wasm, replay,
+  IBC, eight-scenario recovery, governed-upgrade and four-validator capacity
+  gates pass. Capacity committed 96/96 transactions with zero failures and
+  verified common app hash, power consistency, restart and ledger integrity.
+- Hosted protected exact-head workflows, merge, exact-main verification and
+  stale PR #248 closure remain. Rollout is unchanged at 35/59 and production
+  remains false; no deployment, release or network mutation occurred.
+
+## 2026-08-26 - GH-254 current-main dependency reconciliation started
+
+- Opened GH-254 and isolated `chore/GH-254-wasmvm-reconciliation` from exact
+  clean main `01a8d38`.
+- Independent Sol/Kimi read-only analysis classifies #248 as desirable but
+  consensus-relevant: current wasmvm 2.2.2 is affected by CWA-2025-003 and the
+  2.2.3 fix contained by target 2.2.8 is upstream-labeled consensus-breaking.
+- #249's maintained-client update is technically bounded but its old head fails
+  Docs Consistency because Vite resolves to 8.2.2 while the status source says
+  8.2.1. Both old heads predate the GH-219 closeout and will be superseded by
+  current-main protected integrations rather than direct merges.
+- Rollout remains 35/59 and production false. No dependency file, runtime,
+  release, deployment, migration, key/fund or production state has changed yet.
+
 ## 2026-08-26 - GH-219 protected publication and public sync complete
 
 - PR #252 passed all 18 hosted technical checks with zero unresolved review

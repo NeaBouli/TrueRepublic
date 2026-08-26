@@ -13,7 +13,7 @@ require (
 	cosmossdk.io/x/tx v0.13.8
 	cosmossdk.io/x/upgrade v0.1.4
 	github.com/CosmWasm/wasmd v0.53.4
-	github.com/CosmWasm/wasmvm/v2 v2.2.2
+	github.com/CosmWasm/wasmvm/v2 v2.2.8
 	github.com/cometbft/cometbft v0.38.26
 	github.com/consensys/gnark v0.14.0
 	github.com/consensys/gnark-crypto v0.19.2

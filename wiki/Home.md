@@ -79,7 +79,7 @@ The exact community licensing decision is recorded in
 | Cosmos SDK | v0.50.15 |
 | CometBFT | v0.38.26 |
 | ibc-go | v8.7.0 |
-| wasmd / wasmvm | v0.53.4 / v2.2.2 |
+| wasmd / wasmvm | v0.53.4 / v2.2.8 |
 | Maintained web client | React 18.2, TypeScript 5.9, Vite 8.2, CosmJS 0.39 |
 
 Historical milestone documents describe implemented surface area, not current
