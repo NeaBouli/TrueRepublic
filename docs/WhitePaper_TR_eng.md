@@ -14,6 +14,17 @@
 
 ---
 
+## Project status and licensing
+
+TrueRepublic is a community-governed open-source project without a central
+corporate owner. Maintained source code and maintained documentation are
+Apache-2.0. Copyright remains with each contributor; the collective attribution
+is “TrueRepublic contributors.” Brand assets, artwork, historical PDFs,
+archived historical evidence, and third-party materials remain excluded unless
+a file-specific notice applies or their provenance and permission are
+documented. This foundation changes neither rollout progress nor production
+readiness.
+
 ## Content
 
 1. [Innovation](#1-innovation)

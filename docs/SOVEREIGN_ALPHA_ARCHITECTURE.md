@@ -70,16 +70,15 @@ Published arithmetic is **2,028 recovery-verified tests** (1,683 Go +
    (OD-2), with its homeserver dependency accepted explicitly.
 4. **Preserve `client-web` as the Beta** through all Alpha phases; the Alpha
    ships in parallel, never by mutating the Beta's trust model mid-flight.
-5. **Gate third-party adoption on a project license (DG-3).** The
-   repository publishes no license: there is no root `LICENSE`, no project
-   SPDX declaration, and no package-metadata license claim, and the earlier
-   `CONTRIBUTING.md` Apache-2.0 wording was a stale assertion reconciled
-   under GH-219, not an owner decision. The decision package
-   (`docs/legal/GH-219-LICENSE-DECISION.md`) and manifest
-   (`configs/legal/license-decision.json`) keep the status explicitly
-   pending. No third-party code or dependency is copied or linked until the
-   owner publishes the project license and a per-component compatibility
-   review passes. This proposal does not choose that license.
+5. **Gate third-party adoption on the recorded project scope (DG-3).**
+   [GH-219](https://github.com/NeaBouli/TrueRepublic/issues/219#issuecomment-5423337355)
+   records Apache-2.0 for maintained source and maintained documentation under
+   the community model. Individual contributors retain copyright and
+   “TrueRepublic contributors” is the collective attribution. Brand assets,
+   artwork, historical PDFs, archived historical evidence, and third-party
+   materials remain excluded. The publication half of DG-3 is resolved; every
+   external component must still pass a documented compatibility, provenance,
+   SBOM, and distribution review before it is copied or linked.
 
 Everything in this document is a proposal for future issues. Every item that
 cannot be verified from repository evidence or primary upstream sources is
@@ -721,7 +720,7 @@ shipping the slice; the Beta remains the supported client."
 | **A3 — Wallet + governance integration** | Go ChainGateway checked against Beta golden vectors; core-owned wallet/vault; ratings/stones/suggestions; role-verified moderation | Wallet/signing adversarial suite; governance parity vs CLI and Beta vectors; RPC-lying/finality tests | Alpha and Beta share canonical chain state | Disable Alpha wallet; Beta unchanged |
 | **A4 — Distribution + updates** | Target/channel-bound signed manifests, monotonic UpdateVerifier floor, reproducible mobile builds extending GH-212 evidence, F-Droid-class + direct download channels | Deterministic-build parity; replayed-old-build, downgrade, cross-target/channel, floor-loss and unauthorized-rollback negative tests; install-without-website walkthrough | Beta continues as the web path; no website is added to the Alpha trust path | Halt publication; installed builds keep working; emergency rollback uses separately authorized bounded metadata |
 | **A5 — Hardening + iOS/desktop** | iOS lifecycle/distribution, desktop sequencing, hardware signer, DG-8 spam gate, independent security and MLS-integration review | Zero unresolved P0/P1; multi-platform conformance; recovery/revocation and missing-history drills | iOS channel decided per OD-6 | Platform slice deferred without touching Beta |
-| **A6 — Alpha readiness review** | Full verification matrix (Section 13); data-portability export/import proof; Beta↔Alpha coexistence soak | All prior gates re-run on the release candidate; rollback drill executed; **explicit go/no-go recorded by project owner** | Beta remains available regardless of the decision | "No-go" leaves Beta as the sole supported client |
+| **A6 — Alpha readiness review** | Full verification matrix (Section 13); data-portability export/import proof; Beta↔Alpha coexistence soak | All prior gates re-run on the release candidate; rollback drill executed; **explicit community-governance go/no-go recorded** | Beta remains available regardless of the decision | "No-go" leaves Beta as the sole supported client |
 
 **Data portability:** local history export (encrypted archive, user-held key)
 and chain-state portability is inherent (chain is canonical). **Rollback
@@ -763,8 +762,9 @@ rollback is uninstalling the Alpha.
   responsive checks on all chat/governance/wallet flows (GH-132 discipline,
   native tooling).
 - **Cross-platform:** Android/iOS/desktop core conformance; release order is OD-3.
-- **Licenses/SBOM:** no dependency adoption before DG-3; A0 records the complete
-  resolved SBOM and license-compatibility evidence.
+- **Licenses/SBOM:** the GH-219 publication half of DG-3 is resolved; A0 still
+  records the complete resolved SBOM and per-component compatibility evidence
+  before dependency adoption.
 - **Adversarial security:** malicious-relay topic substitution, malicious-RPC,
   delayed-after-revocation authorization, update compromise, and equivocation
   harnesses from Section 10, run as CI gates where
@@ -809,7 +809,7 @@ rollback is uninstalling the Alpha.
 
 - **OD-1** RFC 9420 MLS implementation/library owner and delivery timeline.
 - **OD-2** Documented fallback if A0 fails: Matrix behind MessagingPort with
-  sovereignty downgrade explicitly accepted by the product owner.
+  sovereignty downgrade explicitly accepted in a community-governance record.
 - **OD-3** Desktop shell: build/defer decision after A2.
 - **OD-4** CometBFT light-client verification in the Alpha (library choice,
   mobile cost) — until then RPC trust remains a declared residual.
@@ -824,8 +824,9 @@ rollback is uninstalling the Alpha.
 - **DG-2** MLS implementation qualification: RFC 9420 interop vectors,
   large-group/mobile performance, and independent cryptographic review. No
   private-domain confidentiality/FS/PCS claim before it passes.
-- **DG-3** Project-license gate: publish the root license, then complete a
-  per-component compatibility review before copying or linking dependencies.
+- **DG-3** Project-license gate: root Apache-2.0 publication is resolved by
+  GH-219; complete a per-component compatibility/provenance review before
+  copying or linking dependencies.
 - **DG-4** A0 go-waku mobile binding, lifecycle, resource, SBOM/license, and
   reproducible-build qualification; exact Flutter/Go/FFI choices fixed here.
 - **DG-5** Attachment blob backend (Waku-store-with-caps vs IPFS-class).
@@ -837,7 +838,8 @@ rollback is uninstalling the Alpha.
 ### 14.4 Implementation work breakdown (future GitHub issues, proposal)
 
 1. `GH-2xx` A0 go-waku/Flutter/Go/FFI qualification and conformance harness.
-2. Owner action: resolve DG-3 root license and compatibility review.
+2. Complete DG-3 per-component compatibility/provenance review for the exact
+   A0 dependency set; the root publication is already resolved.
 3. `GH-2xx` Outer/inner envelope codec + property/fuzz suite.
 4. `GH-2xx` Go KeyVault and L0–L4 separation with enrollment/revocation.
 5. `GH-2xx` Versioned generated FFI/plugin boundary with no key-export API.

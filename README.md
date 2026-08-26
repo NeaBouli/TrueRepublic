@@ -382,19 +382,25 @@ approval. Current evidence, risks, and commands are maintained in
 
 ## Contributing
 
-The repository license decision is still pending in
-[GH-219](https://github.com/NeaBouli/TrueRepublic/issues/219). Until it is
-recorded, use issues or discussions for proposals instead of submitting code
-for merge unless the maintainers first record separate written contribution
-terms. See [CONTRIBUTING.md](CONTRIBUTING.md) for the current boundary.
+Contributions are welcome through issues and pull requests. Intentionally
+submitted contributions follow the repository's Apache-2.0 inbound-equals-
+outbound model; contributors retain copyright in their work. See
+[CONTRIBUTING.md](CONTRIBUTING.md) for review, testing, provenance, and
+scope requirements.
 
-## License status
+## License
 
-TrueRepublic currently publishes no open-source license, project SPDX
-declaration, or package-license claim. The decision-ready inventory, compatibility comparison,
-and exact post-decision steps are documented in
-[the GH-219 license decision package](docs/legal/GH-219-LICENSE-DECISION.md).
-No license has been selected by that analysis.
+TrueRepublic is a community-governed open-source project without a central
+corporate owner. Maintained source code and maintained documentation are
+Apache-2.0; see the root `LICENSE` and `NOTICE`. Copyright remains with the
+individual contributors. The collective attribution is “TrueRepublic contributors.”
+
+Brand assets, artwork, historical PDFs, archived historical evidence, and
+third-party materials remain outside that project grant unless a file-specific
+notice documents otherwise. The exact governance record is
+[GH-219](https://github.com/NeaBouli/TrueRepublic/issues/219#issuecomment-5423337355);
+the reviewed decision package and machine state are
+[documented here](docs/legal/GH-219-LICENSE-DECISION.md).
 
 ## Community
 

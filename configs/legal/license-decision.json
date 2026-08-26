@@ -1,27 +1,39 @@
 {
   "schema": "truerepublic.license-decision/v1",
   "issue": "GH-219",
-  "status": "pending",
-  "selected_spdx_id": "NONE",
-  "copyright_line": "NONE",
-  "decision_record": "NONE",
+  "status": "decided",
+  "selected_spdx_id": "Apache-2.0",
+  "copyright_line": "Copyright 2026 TrueRepublic contributors",
+  "decision_record": "https://github.com/NeaBouli/TrueRepublic/issues/219#issuecomment-5423337355",
   "decision_package": "docs/legal/GH-219-LICENSE-DECISION.md",
+  "scope": {
+    "covers": "maintained-source-and-documentation",
+    "reuse_file": "REUSE.toml",
+    "excludes": [
+      "brand-assets",
+      "artwork",
+      "historical-pdfs",
+      "archived-historical-evidence",
+      "third-party-materials"
+    ]
+  },
   "candidates": [
     {"id": "Apache-2.0", "kind": "permissive", "reference": "https://www.apache.org/licenses/LICENSE-2.0"},
     {"id": "AGPL-3.0-only", "kind": "network-copyleft", "reference": "https://www.gnu.org/licenses/agpl-3.0.html"},
     {"id": "dual-license", "kind": "combination", "reference": "docs/legal/GH-219-LICENSE-DECISION.md"}
   ],
   "components": [
-    {"id": "daemon-go", "kind": "repository-authored", "path": "go.mod", "metadata": "go-module", "declared_license": "NONE"},
-    {"id": "contracts-rust", "kind": "repository-authored", "path": "contracts", "metadata": "cargo-workspace", "declared_license": "NONE"},
-    {"id": "client-web", "kind": "repository-authored", "path": "client-web/package.json", "metadata": "npm-package", "declared_license": "NONE"},
-    {"id": "docs-wiki", "kind": "repository-authored", "path": "docs", "metadata": "directory", "declared_license": "NONE"},
-    {"id": "assets-branding", "kind": "assets-unknown-provenance", "path": "assets", "metadata": "directory", "declared_license": "NONE"},
-    {"id": "ui-prototype", "kind": "repository-authored-unmaintained", "path": "ui", "metadata": "directory", "declared_license": "NONE"}
+    {"id": "daemon-go", "kind": "repository-authored", "path": "go.mod", "metadata": "go-module", "declared_license": "Apache-2.0", "coverage": "maintained"},
+    {"id": "contracts-rust", "kind": "repository-authored", "path": "contracts", "metadata": "cargo-workspace", "declared_license": "Apache-2.0", "coverage": "maintained"},
+    {"id": "client-web", "kind": "repository-authored", "path": "client-web/package.json", "metadata": "npm-package", "declared_license": "Apache-2.0", "coverage": "maintained"},
+    {"id": "docs-wiki", "kind": "repository-authored", "path": "docs", "metadata": "directory", "declared_license": "Apache-2.0", "coverage": "maintained"},
+    {"id": "assets-branding", "kind": "assets-unknown-provenance", "path": "assets", "metadata": "directory", "declared_license": "NONE", "coverage": "excluded"},
+    {"id": "ui-prototype", "kind": "repository-authored-unmaintained", "path": "ui", "metadata": "directory", "declared_license": "NONE", "coverage": "excluded"}
   ],
   "scan": {
     "forbidden_assertion_pattern": "SPDX-License-Identifier|license[[:space:]]*:[[:space:]]*(Apache-2.0|AGPL-3.0-only|MIT|BSD-[0-9]-Clause|GPL-[0-9.]+|MPL-[0-9.]+)|is licensed under|are licensed under|under the same license|same license as the project|licensed under the (apache|mit|gnu|bsd|mozilla)|under the apache license|under the mit license|apache license, version 2\\.0|gnu affero general public license|gnu general public license|\\[LICENSE\\]\\(LICENSE",
     "exempt_paths": [
+      "REUSE.toml",
       "configs/legal/license-decision.json",
       "docs/legal/GH-219-LICENSE-DECISION.md",
       "scripts/check-license-policy.sh",

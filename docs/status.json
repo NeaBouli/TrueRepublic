@@ -2,6 +2,22 @@
   "version": "v0.4.0",
   "release_status": "recovery_active",
   "release_date": "2026-03-04",
+  "license": {
+    "status": "decided",
+    "spdx_id": "Apache-2.0",
+    "decision_issue": 219,
+    "decision_record": "https://github.com/NeaBouli/TrueRepublic/issues/219#issuecomment-5423337355",
+    "attribution": "TrueRepublic contributors",
+    "copyright_model": "individual_contributors_retain_rights",
+    "scope": "maintained_source_and_documentation",
+    "excluded": [
+      "brand_assets",
+      "artwork",
+      "historical_pdfs",
+      "archived_historical_evidence",
+      "third_party_materials"
+    ]
+  },
   "tests": {
     "status": "recovery_verified_locally",
     "total": 2028,

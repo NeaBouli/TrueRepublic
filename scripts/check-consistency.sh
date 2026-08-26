@@ -82,6 +82,9 @@ WEB_ROUTES=$(jq -r '.web_client.routes' "$STATUS_FILE")
 WEB_STORES=$(jq -r '.web_client.stores' "$STATUS_FILE")
 WEB_SERVICES=$(jq -r '.web_client.services' "$STATUS_FILE")
 WEB_BUILD_SIZE_GZIP=$(jq -r '.web_client.build_size_gzip' "$STATUS_FILE")
+LICENSE_ID=$(jq -r '.license.spdx_id' "$STATUS_FILE")
+LICENSE_DECISION_RECORD=$(jq -r '.license.decision_record' "$STATUS_FILE")
+LICENSE_ATTRIBUTION=$(jq -r '.license.attribution' "$STATUS_FILE")
 
 echo "Source of Truth (status.json):"
 echo "  Version: $VERSION"
@@ -149,6 +152,44 @@ else
   echo "  FAIL transaction-history status does not match GH-131"
   ERRORS=$((ERRORS+1))
 fi
+echo ""
+
+echo "Checking community licensing source of truth..."
+if jq -e '
+  .license.status == "decided" and
+  .license.spdx_id == "Apache-2.0" and
+  .license.decision_issue == 219 and
+  .license.decision_record == "https://github.com/NeaBouli/TrueRepublic/issues/219#issuecomment-5423337355" and
+  .license.attribution == "TrueRepublic contributors" and
+  .license.copyright_model == "individual_contributors_retain_rights" and
+  .license.scope == "maintained_source_and_documentation" and
+  .license.excluded == [
+    "brand_assets",
+    "artwork",
+    "historical_pdfs",
+    "archived_historical_evidence",
+    "third_party_materials"
+  ]
+' "$STATUS_FILE" >/dev/null &&
+  [ "$(jq -r '.selected_spdx_id' configs/legal/license-decision.json)" = "$LICENSE_ID" ] &&
+  [ "$(jq -r '.decision_record' configs/legal/license-decision.json)" = "$LICENSE_DECISION_RECORD" ] &&
+  [ "$(jq -r '.license' client-web/package.json)" = "$LICENSE_ID" ] &&
+  [ "$(jq -r '.packages[""].license' client-web/package-lock.json)" = "$LICENSE_ID" ]; then
+  echo "  OK machine-readable license state"
+else
+  echo "  FAIL machine-readable license state is inconsistent"
+  ERRORS=$((ERRORS+1))
+fi
+for license_file in README.md CONTRIBUTING.md client-web/README.md docs/index.html \
+  docs/ROLLOUT_ROADMAP.md wiki/Home.md wiki/status/Current-Status.md; do
+  if grep -Fq "$LICENSE_ID" "$license_file" &&
+    grep -Fq "$LICENSE_ATTRIBUTION" "$license_file"; then
+    echo "  OK $license_file license and attribution"
+  else
+    echo "  FAIL $license_file lacks current license or attribution"
+    ERRORS=$((ERRORS+1))
+  fi
+done
 echo ""
 
 check_file() {

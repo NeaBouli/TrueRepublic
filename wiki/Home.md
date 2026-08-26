@@ -20,11 +20,14 @@
 | ZKP client | Real synthetic Go/WASM compatibility verified on GH-206 and recipient-bound rewards on GH-209; production submission remains hard-disabled |
 | Maintained client | `client-web` |
 | Legacy clients | Web and mobile prototypes retired under GH-112/GH-102; Git history only |
+| Project licensing | Maintained source and documentation are Apache-2.0; individual contributors retain copyright, collectively attributed as “TrueRepublic contributors”; brand/art assets, historical PDFs, archived evidence, and third-party material remain excluded |
 
 Authoritative machine status: [`docs/status.json`](https://github.com/NeaBouli/TrueRepublic/blob/main/docs/status.json).
 Completed recovery foundation:
 [Issue #4](https://github.com/NeaBouli/TrueRepublic/issues/4). Active rollout
 tracking: [Issue #29](https://github.com/NeaBouli/TrueRepublic/issues/29).
+The exact community licensing decision is recorded in
+[GH-219](https://github.com/NeaBouli/TrueRepublic/issues/219#issuecomment-5423337355).
 
 ## Navigation
 

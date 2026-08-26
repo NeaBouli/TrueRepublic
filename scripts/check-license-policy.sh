@@ -4,13 +4,18 @@
 # decision recorded in configs/legal/license-decision.json. While the
 # decision status is pending this fails closed on any tracked license artifact,
 # SPDX claim, package-metadata license, or non-allowlisted public license
-# assertion. Scanning uses git grep/git ls-files, so build caches, .git,
-# node_modules and other untracked material are never inspected.
+# assertion. In the decided state it additionally parses the REUSE.toml
+# annotation set and fails closed unless it representatively covers every
+# maintained component of the declared source-and-documentation scope while
+# leaving audit/evidence records unannotated. Scanning uses git grep/git
+# ls-files, so build caches, .git, node_modules and other untracked material
+# are never inspected.
 set -euo pipefail
 
 ROOT_DIR=${LICENSE_POLICY_ROOT:-$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)}
 MANIFEST="$ROOT_DIR/configs/legal/license-decision.json"
 SCHEMA="truerepublic.license-decision/v1"
+EXPECTED_DECISION_RECORD="https://github.com/NeaBouli/TrueRepublic/issues/219#issuecomment-5423337355"
 EXPECTED_PATTERN='SPDX-License-Identifier|license[[:space:]]*:[[:space:]]*(Apache-2.0|AGPL-3.0-only|MIT|BSD-[0-9]-Clause|GPL-[0-9.]+|MPL-[0-9.]+)|is licensed under|are licensed under|under the same license|same license as the project|licensed under the (apache|mit|gnu|bsd|mozilla)|under the apache license|under the mit license|apache license, version 2\.0|gnu affero general public license|gnu general public license|\[LICENSE\]\(LICENSE'
 
 for tool in git jq; do
@@ -46,6 +51,10 @@ if ! jq -e --arg expected_pattern "$EXPECTED_PATTERN" '
   (.copyright_line | type == "string") and
   (.decision_record | type == "string") and
   (.decision_package == "docs/legal/GH-219-LICENSE-DECISION.md") and
+  (.scope | type == "object") and
+  (.scope.covers | type == "string") and
+  (.scope.reuse_file | type == "string") and
+  (.scope.excludes | type == "array") and
   (.candidates | type == "array" and length == 3) and
   ([.candidates[].id] | sort == ["AGPL-3.0-only", "Apache-2.0", "dual-license"]) and
   (all(.candidates[];
@@ -57,12 +66,14 @@ if ! jq -e --arg expected_pattern "$EXPECTED_PATTERN" '
     (.kind | type == "string" and length > 0) and
     (.path | type == "string" and length > 0) and
     (.metadata | type == "string" and length > 0) and
-    (.declared_license | type == "string" and length > 0))) and
+    (.declared_license | type == "string" and length > 0) and
+    (.coverage == "maintained" or .coverage == "excluded"))) and
   (([.components[].id] | length) == ([.components[].id] | unique | length)) and
   (([.components[].path] | length) == ([.components[].path] | unique | length)) and
   (.scan | type == "object") and
   (.scan.forbidden_assertion_pattern == $expected_pattern) and
   ([.scan.exempt_paths[]] | sort == [
+    "REUSE.toml",
     "configs/legal/license-decision.json",
     "docs/legal/GH-219-LICENSE-DECISION.md",
     "scripts/check-license-policy.sh",
@@ -159,7 +170,7 @@ if [ "$STATUS" = "pending" ]; then
     fail "selected_spdx_id must be NONE while pending, got: $SELECTED"
   [ "$COPYRIGHT_LINE" = "NONE" ] && ok "no copyright line while pending" ||
     fail "copyright_line must be NONE while pending"
-  [ "$DECISION_RECORD" = "NONE" ] && ok "no owner decision record while pending" ||
+  [ "$DECISION_RECORD" = "NONE" ] && ok "no governance decision record while pending" ||
     fail "decision_record must be NONE while pending"
   if [ -z "$LICENSE_ARTIFACTS" ]; then
     ok "no LICENSE/COPYING/NOTICE artifact while pending"
@@ -186,15 +197,86 @@ else
     Apache-2.0|AGPL-3.0-only) ok "supported selected license recorded" ;;
     *) fail "decided status requires Apache-2.0 or AGPL-3.0-only; extend the contract before a dual-license decision" ;;
   esac
-  [ "$COPYRIGHT_LINE" != "NONE" ] && [ -n "$COPYRIGHT_LINE" ] && ok "copyright line recorded" ||
-    fail "decided status requires a copyright_line"
-  decision_prefix="https://github.com/NeaBouli/TrueRepublic/issues/219#issuecomment-"
-  decision_suffix=${DECISION_RECORD#"$decision_prefix"}
-  if [ "$DECISION_RECORD" != "$decision_suffix" ] &&
-    printf '%s' "$decision_suffix" | grep -Eq '^[0-9]+$'; then
-      ok "owner decision record bound to GH-219"
+  [ "$COPYRIGHT_LINE" = "Copyright 2026 TrueRepublic contributors" ] &&
+    ok "community contributor attribution recorded" ||
+    fail "decided status requires the collective TrueRepublic contributors attribution"
+  if [ "$DECISION_RECORD" = "$EXPECTED_DECISION_RECORD" ]; then
+      ok "governance decision record bound to the exact GH-219 comment"
   else
-    fail "decided status requires an explicit numeric GH-219 owner decision comment URL"
+    fail "decided status requires the exact approved GH-219 governance comment URL"
+  fi
+  if [ "$(jq -r '.scope.covers' "$MANIFEST")" = "maintained-source-and-documentation" ] &&
+    [ "$(jq -r '.scope.reuse_file' "$MANIFEST")" = "REUSE.toml" ] &&
+    jq -e '.scope.excludes == [
+      "brand-assets",
+      "artwork",
+      "historical-pdfs",
+      "archived-historical-evidence",
+      "third-party-materials"
+    ]' "$MANIFEST" >/dev/null; then
+    ok "approved scope and provenance exclusions recorded"
+  else
+    fail "decided status requires the exact maintained-code/docs scope and exclusions"
+  fi
+  if [ -s "$ROOT_DIR/REUSE.toml" ] &&
+    grep -Fq 'SPDX-FileCopyrightText = "Copyright 2026 TrueRepublic contributors"' "$ROOT_DIR/REUSE.toml" &&
+    grep -Fq "SPDX-License-Identifier = \"$SELECTED\"" "$ROOT_DIR/REUSE.toml" &&
+    ! grep -Eq '"(assets|docs/assets|docs/archive|ui)/\*\*"' "$ROOT_DIR/REUSE.toml" &&
+    ! grep -Fq '"*.pdf"' "$ROOT_DIR/REUSE.toml" &&
+    ! grep -Fq '"RELEASE_NOTES_v0.3.0.md"' "$ROOT_DIR/REUSE.toml" &&
+    ! grep -Fq '"client-web/CHANGELOG.md"' "$ROOT_DIR/REUSE.toml"; then
+    ok "REUSE-compatible maintained scope excludes provenance-gated material"
+  else
+    fail "REUSE.toml must record Apache-2.0 without covering excluded material"
+  fi
+  # Parse the REUSE annotation path set (quoted entries outside comments and
+  # the SPDX key lines) and require representative coverage for every
+  # maintained component of the declared scope. A single-language annotation
+  # set (for example Go-only) cannot satisfy
+  # maintained-source-and-documentation.
+  reuse_annotation_paths=$(
+    grep -vE '^[[:space:]]*(#|$)' "$ROOT_DIR/REUSE.toml" |
+      grep -vE '^[[:space:]]*SPDX-' |
+      grep -oE '"[^"]+"' | tr -d '"' | sort -u || true
+  )
+  reuse_representative_paths() {
+    case "$1" in
+      daemon-go) printf '%s\n' '*.go' ;;
+      contracts-rust) printf '%s\n' 'contracts/**/*.rs' ;;
+      client-web) printf '%s\n' 'client-web/**/*.ts' 'client-web/**/*.tsx' ;;
+      docs-wiki)
+        printf '%s\n' 'README.md' 'docs/ARCHITECTURE.md' \
+          'docs/legal/GH-219-LICENSE-DECISION.md' 'wiki/**/*.md' ;;
+      *) return 1 ;;
+    esac
+  }
+  reuse_missing=""
+  reuse_unknown=""
+  while IFS='=' read -r component_id component_coverage; do
+    [ "$component_coverage" = "maintained" ] || continue
+    if ! required_paths=$(reuse_representative_paths "$component_id"); then
+      reuse_unknown="${reuse_unknown}${reuse_unknown:+, }$component_id"
+      continue
+    fi
+    while IFS= read -r required_path; do
+      [ -n "$required_path" ] || continue
+      printf '%s\n' "$reuse_annotation_paths" | grep -Fxq "$required_path" ||
+        reuse_missing="${reuse_missing}${reuse_missing:+, }$required_path"
+    done <<<"$required_paths"
+  done < <(jq -r '.components[] | .id + "=" + .coverage' "$MANIFEST")
+  [ -z "$reuse_unknown" ] ||
+    fail "maintained component without a REUSE coverage contract: $reuse_unknown"
+  [ -z "$reuse_missing" ] &&
+    ok "REUSE annotations cover every maintained component representatively" ||
+    fail "REUSE.toml annotations miss representative maintained-scope coverage: $reuse_missing"
+  # Frozen audit/evidence records must stay outside the annotation set; the
+  # maintained legal docs are annotated by exact path instead.
+  if printf '%s\n' "$reuse_annotation_paths" | grep -Eq '^docs/legal/\*' ||
+    printf '%s\n' "$reuse_annotation_paths" |
+      grep -Fxq 'docs/legal/GH-219-CODEX-AUDIT.md'; then
+    fail "REUSE.toml must not annotate audit/evidence records under docs/legal"
+  else
+    ok "REUSE annotations exclude audit/evidence records"
   fi
   if git -C "$ROOT_DIR" ls-files --error-unmatch LICENSE >/dev/null 2>&1 &&
     [ -s "$ROOT_DIR/LICENSE" ]; then
@@ -204,6 +286,16 @@ else
         grep -Fq 'Apache License' "$ROOT_DIR/LICENSE" &&
           grep -Fq 'Version 2.0' "$ROOT_DIR/LICENSE" ||
           fail "root LICENSE does not identify Apache-2.0"
+        if command -v shasum >/dev/null 2>&1; then
+          apache_hash=$(shasum -a 256 "$ROOT_DIR/LICENSE" | awk '{print $1}')
+        elif command -v sha256sum >/dev/null 2>&1; then
+          apache_hash=$(sha256sum "$ROOT_DIR/LICENSE" | awk '{print $1}')
+        else
+          apache_hash="UNAVAILABLE"
+        fi
+        [ "$apache_hash" = "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30" ] &&
+          ok "canonical Apache-2.0 text hash" ||
+          fail "root LICENSE is not the exact canonical Apache-2.0 text"
         ;;
       AGPL-3.0-only)
         grep -Fq 'GNU AFFERO GENERAL PUBLIC LICENSE' "$ROOT_DIR/LICENSE" &&
@@ -214,6 +306,24 @@ else
   else
     fail "decided status requires a tracked, non-empty root LICENSE"
   fi
+  if git -C "$ROOT_DIR" ls-files --error-unmatch NOTICE >/dev/null 2>&1 &&
+    [ -s "$ROOT_DIR/NOTICE" ] &&
+    grep -Fq "$COPYRIGHT_LINE" "$ROOT_DIR/NOTICE" &&
+    grep -Fq "without a central corporate owner" "$ROOT_DIR/NOTICE" &&
+    grep -Fq "Brand assets, artwork, historical PDFs" "$ROOT_DIR/NOTICE"; then
+    ok "community NOTICE and exclusions tracked"
+  else
+    fail "decided status requires a tracked NOTICE with attribution and exclusions"
+  fi
+  while IFS='=' read -r component_kind component_license; do
+    if [ "$component_kind" = "repository-authored" ]; then
+      [ "$component_license" = "$SELECTED" ] ||
+        fail "repository-authored component must match $SELECTED (got $component_license)"
+    else
+      [ "$component_license" = "NONE" ] ||
+        fail "excluded/non-maintained component must remain NONE (got $component_license)"
+    fi
+  done < <(jq -r '.components[] | .kind + "=" + .declared_license' "$MANIFEST")
   [ "$npm_license" = "$SELECTED" ] && ok "client-web metadata matches decision" ||
     fail "client-web/package.json license must equal the decided SPDX id (got $npm_license)"
   cargo_packages=""

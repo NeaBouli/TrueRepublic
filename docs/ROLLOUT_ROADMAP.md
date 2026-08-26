@@ -1,6 +1,6 @@
 # TrueRepublic Road to Rollout
 
-Updated: 2026-08-16
+Updated: 2026-08-26
 
 TrueRepublic has a recovered and CI-verified v0.4 engineering foundation. It
 is **not production-ready, mainnet-ready, or approved for real funds or keys**.
@@ -43,6 +43,13 @@ intentionally more granular than the public 59-item tracker.
 - GH-101/PR #103 add a strict secret-free digest-bound deployment-evidence
   envelope and offline verifier; private live deployment evidence remains open.
 - GitHub Pages, security scans, and the current CI matrix are green.
+- GH-219 records the community governance model and publishes Apache-2.0 for
+  maintained source code and maintained documentation. Individual contributors
+  retain copyright; “TrueRepublic contributors” is the collective attribution.
+  Brand assets, artwork, historical PDFs, archived historical evidence, and
+  third-party materials remain excluded pending documented provenance. This
+  repository-governance foundation earns no rollout checkbox and does not
+  change 35/59, 35/51, Phase 6 at 6/7, or production false.
 
 The baseline is suitable for continued engineering. It is not a rollout
 approval.

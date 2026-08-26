@@ -1,5 +1,58 @@
 # TrueRepublic Agent Bridge
 
+## 2026-08-26 GH-219 Apache-2.0 community publication → In Progress
+
+- **Branch:** `docs/GH-219-apache-publication-sol`
+- **Issue:** [GH-219](https://github.com/NeaBouli/TrueRepublic/issues/219)
+- **Base:** exact clean `origin/main`
+  `96c8c059c60a83a4dfc2a960d20cb4d305b3c7c6`.
+- **Governance decision:** TrueRepublic is a community-governed open-source
+  project without a central corporate owner. Individual contributors retain
+  copyright; collective attribution is `TrueRepublic contributors`.
+  Maintained source code and maintained documentation are approved for
+  `Apache-2.0`. Brand assets, artwork and historical PDFs remain excluded until
+  provenance is documented.
+- **Scope:** record the exact governance decision on GH-219; publish canonical
+  root license/notice and consistent SPDX/package metadata; synchronize README,
+  CONTRIBUTING, maintained client/docs, landing page, roadmap, architecture,
+  wiki and coordination state; verify GitHub detection and close GH-219.
+- **Roles:** Kimi K3 receives the large bounded secret-free implementation and
+  inventory reconciliation. Sol owns legal/scope interpretation, every
+  delegated diff, integration, complete tests, protected GitHub delivery and
+  closure.
+- **Risk:** Medium-high licensing/provenance boundary. No central ownership or
+  rights assignment may be implied. Excluded brand/art/PDF material must not be
+  silently relicensed, and historical records stay historical.
+- **Boundary:** no runtime, consensus, dependency, release, deployment,
+  production, key/fund or rollout-credit action.
+- **Next:** publish the governance record, bind the decided policy to its exact
+  comment URL, implement the documented runbook and run the complete gates.
+
+### 2026-08-26 Kimi/Sol final review → Local PASS
+
+- **Kimi contribution:** implemented the bounded license/provenance inventory
+  core, then independently reviewed the exact 35-file staged publication. Its
+  final verdict is APPROVE with no P0–P2; Sol also resolved the non-blocking
+  `docs/status.json` REUSE completeness observation.
+- **Sol verification:** canonical Apache text hash; 31 policy fixtures; docs
+  consistency; full Go Build/Vet/Race/Coverage; Rust Format/Clippy/Build and 26
+  tests; maintained-client CI (10 policy + 309 Vitest pass, 4 documented skips,
+  build/budget/audit); Go vulnerability/static/secret gates with failure
+  fixtures; RustSec audit; release/rollout/retirement contracts and diff hygiene
+  pass. Chromium/Firefox browser quality passes locally; macOS 12's frozen
+  WebKit is an environment-only limitation and the protected Linux browser job
+  remains authoritative.
+- **Files:** root `LICENSE`, `NOTICE`, `REUSE.toml`; npm and seven Cargo
+  manifests; README/contributor/client guidance; landing page, roadmap,
+  whitepapers, Alpha/V4 architecture, limitations, wiki sources, machine status,
+  decision/audit package, policy/fixtures and Bridge state.
+- **Risks:** provenance-gated material remains explicitly excluded; future
+  distributions still need third-party notices and per-component review. No
+  runtime/dependency/release/deploy/production/rollout-credit change occurred.
+- **Next:** protected exact-head PR, hosted checks and review; merge only when
+  green with zero unresolved threads; then verify GitHub detection, sync the
+  separate wiki repository, verify exact main/Pages and close GH-219.
+
 ## 2026-08-24 GH-219 decision package protected merge → Owner Decision Required
 
 - Decision package PR [#250](https://github.com/NeaBouli/TrueRepublic/pull/250)
@@ -7794,3 +7847,42 @@ exclusion, CI wiring, and documentation boundaries.
   arithmetic. Focused normal and Race contract tests plus pinned staticcheck
   pass. Exact replacement-head protected checks and thread resolution are next;
   no release, artifact, deployment or production action occurred.
+
+---
+
+## 2026-08-26 14:53 EEST GH-219 hosted review remediation → Changes Requested
+
+- **Branch:** `docs/GH-219-apache-publication-sol`
+- **Issue:** [GH-219](https://github.com/NeaBouli/TrueRepublic/issues/219)
+- **Review:** PR #252 completed all technical checks, but CodeRabbit reported
+  four actionable consistency gaps in the decision wording, whitepaper
+  provenance condition, REUSE audit exclusion, and maintained-scope checker.
+- **Next:** Kimi K3 receives the bounded, secret-free remediation block. Sol
+  will review every changed line and rerun the focused and full relevant gates
+  before replacing the protected PR head.
+- **Risk:** Medium — publication policy must fail closed without changing runtime,
+  rollout, release, dependency, deployment, or production state.
+
+## 2026-08-26 15:51 EEST GH-219 hosted review remediation → Approved
+
+- **Branch:** `docs/GH-219-apache-publication-sol`
+- **Issue:** [GH-219](https://github.com/NeaBouli/TrueRepublic/issues/219)
+- **Kimi contribution:** Kimi K3 implemented the bounded CodeRabbit remediation:
+  historical/completed decision wording, aligned provenance-plus-permission
+  conditions, exact legal-document REUSE coverage, and maintained-component
+  annotation validation. Sol reviewed every changed line, strengthened the
+  audit-glob regression coverage, and made the final documentation correction.
+- **Changed:** `REUSE.toml`, both maintained whitepapers,
+  `docs/legal/GH-219-LICENSE-DECISION.md`, and both license-policy scripts.
+- **Tests:** 33 positive/adversarial license fixtures PASS; real decided-state
+  policy PASS; docs consistency and diff hygiene PASS; full `make verify` PASS
+  (build, vet, Race/Coverage); Rust fmt, Clippy `-D warnings`, workspace build
+  and all 26 tests PASS; web lint, 10 Node policy tests, 309 Vitest cases,
+  production build/budgets and high/critical audit PASS.
+- **Local resource note:** the first parallel Go/Rust run exhausted temporary
+  disk space without a code assertion failure. Generated compiler caches only
+  were cleared and both suites passed when rerun serially.
+- **Risk:** Low — documentation/policy-only correction; no runtime, dependency,
+  release, deployment, rollout-credit, real-key/fund, or production change.
+- **Ready for:** replacement PR head, protected checks, thread resolution and
+  Sol-owned merge/closeout.

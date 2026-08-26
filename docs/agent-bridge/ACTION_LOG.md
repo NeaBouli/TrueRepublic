@@ -1,5 +1,31 @@
 # Action Log
 
+## 2026-08-26 - GH-219 local publication candidate approved
+
+- The exact staged publication passes canonical-text, 31-fixture policy,
+  documentation, full Go/Rust/client, security, vulnerability, secret,
+  release/rollout/retirement and diff-hygiene gates.
+- Kimi K3 independently reviewed the complete staged diff and returned APPROVE
+  with no P0–P2. Sol resolved its one non-blocking completeness observation by
+  explicitly adding `docs/status.json` to the maintained REUSE scope.
+- Provenance-gated material remains excluded, rollout remains 35/59 and
+  production false. Protected PR, hosted checks, merge, GitHub detection,
+  separate wiki sync, exact-main/Pages verification and GH-219 closeout remain.
+
+## 2026-08-26 - GH-219 Apache-2.0 community publication started
+
+- Gio explicitly confirmed Apache-2.0 for maintained source code and maintained
+  documentation under the community model: individual contributors retain
+  copyright and `TrueRepublic contributors` is the collective attribution.
+- Brand assets, artwork and historical PDFs remain excluded pending documented
+  provenance; no central corporate owner or rights assignment will be claimed.
+- Work starts from exact clean main `96c8c059` on
+  `docs/GH-219-apache-publication-sol`. Kimi owns one bounded secret-free
+  implementation/reconciliation slice; Sol owns scope accuracy, integration,
+  complete gates, protected publication, GitHub detection and GH-219 closure.
+- No runtime, dependency, release, deployment, production or rollout-credit
+  action is included.
+
 ## 2026-08-24 - GH-244 exact-main and live closeout complete
 
 - Implementation PR #245 and public closeout PR #246 are merged as `807637d7`
