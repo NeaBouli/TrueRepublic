@@ -12,7 +12,8 @@ zentralen Firmeninhaber. Gepflegter Quellcode und gepflegte Dokumentation sind
 Apache-2.0. Die Urheberrechte verbleiben bei den einzelnen Beitragenden; die
 gemeinsame Zuordnung lautet „TrueRepublic contributors“. Markenmaterial,
 Kunstwerke, historische PDFs, archivierte historische Nachweise und Material
-Dritter bleiben bis zum dokumentierten Herkunftsnachweis ausgenommen. Diese
+Dritter bleiben ausgenommen, es sei denn, ein dateispezifischer Lizenzhinweis gilt
+oder Herkunft und Erlaubnis sind dokumentiert. Diese
 Lizenzgrundlage ändert weder den Rollout- noch den Produktionsstatus.
 
 ---

@@ -7847,3 +7847,42 @@ exclusion, CI wiring, and documentation boundaries.
   arithmetic. Focused normal and Race contract tests plus pinned staticcheck
   pass. Exact replacement-head protected checks and thread resolution are next;
   no release, artifact, deployment or production action occurred.
+
+---
+
+## 2026-08-26 14:53 EEST GH-219 hosted review remediation → Changes Requested
+
+- **Branch:** `docs/GH-219-apache-publication-sol`
+- **Issue:** [GH-219](https://github.com/NeaBouli/TrueRepublic/issues/219)
+- **Review:** PR #252 completed all technical checks, but CodeRabbit reported
+  four actionable consistency gaps in the decision wording, whitepaper
+  provenance condition, REUSE audit exclusion, and maintained-scope checker.
+- **Next:** Kimi K3 receives the bounded, secret-free remediation block. Sol
+  will review every changed line and rerun the focused and full relevant gates
+  before replacing the protected PR head.
+- **Risk:** Medium — publication policy must fail closed without changing runtime,
+  rollout, release, dependency, deployment, or production state.
+
+## 2026-08-26 15:51 EEST GH-219 hosted review remediation → Approved
+
+- **Branch:** `docs/GH-219-apache-publication-sol`
+- **Issue:** [GH-219](https://github.com/NeaBouli/TrueRepublic/issues/219)
+- **Kimi contribution:** Kimi K3 implemented the bounded CodeRabbit remediation:
+  historical/completed decision wording, aligned provenance-plus-permission
+  conditions, exact legal-document REUSE coverage, and maintained-component
+  annotation validation. Sol reviewed every changed line, strengthened the
+  audit-glob regression coverage, and made the final documentation correction.
+- **Changed:** `REUSE.toml`, both maintained whitepapers,
+  `docs/legal/GH-219-LICENSE-DECISION.md`, and both license-policy scripts.
+- **Tests:** 33 positive/adversarial license fixtures PASS; real decided-state
+  policy PASS; docs consistency and diff hygiene PASS; full `make verify` PASS
+  (build, vet, Race/Coverage); Rust fmt, Clippy `-D warnings`, workspace build
+  and all 26 tests PASS; web lint, 10 Node policy tests, 309 Vitest cases,
+  production build/budgets and high/critical audit PASS.
+- **Local resource note:** the first parallel Go/Rust run exhausted temporary
+  disk space without a code assertion failure. Generated compiler caches only
+  were cleared and both suites passed when rerun serially.
+- **Risk:** Low — documentation/policy-only correction; no runtime, dependency,
+  release, deployment, rollout-credit, real-key/fund, or production change.
+- **Ready for:** replacement PR head, protected checks, thread resolution and
+  Sol-owned merge/closeout.

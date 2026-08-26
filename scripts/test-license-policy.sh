@@ -46,7 +46,8 @@ write_manifest() {
   "components": [
     {"id": "daemon-go", "kind": "repository-authored", "path": "go.mod", "metadata": "go-module", "declared_license": "NONE", "coverage": "maintained"},
     {"id": "contracts-rust", "kind": "repository-authored", "path": "contracts", "metadata": "cargo-workspace", "declared_license": "NONE", "coverage": "maintained"},
-    {"id": "client-web", "kind": "repository-authored", "path": "client-web/package.json", "metadata": "npm-package", "declared_license": "NONE", "coverage": "maintained"}
+    {"id": "client-web", "kind": "repository-authored", "path": "client-web/package.json", "metadata": "npm-package", "declared_license": "NONE", "coverage": "maintained"},
+    {"id": "docs-wiki", "kind": "repository-authored", "path": "docs", "metadata": "directory", "declared_license": "NONE", "coverage": "maintained"}
   ],
   "scan": {
     "forbidden_assertion_pattern": "$pattern_json",
@@ -130,8 +131,23 @@ prepare_decided() {
     "$dir/configs/legal/license-decision.json"
   printf 'Decision package for truerepublic.license-decision/v1. Decision status: decided.\n' \
     >"$dir/docs/legal/GH-219-LICENSE-DECISION.md"
-  printf 'version = 1\n\n[[annotations]]\npath = ["*.go"]\nSPDX-FileCopyrightText = "Copyright 2026 TrueRepublic contributors"\nSPDX-License-Identifier = "%s"\n' \
-    "$selected" >"$dir/REUSE.toml"
+  cat >"$dir/REUSE.toml" <<EOF
+version = 1
+
+[[annotations]]
+path = [
+    "*.go",
+    "contracts/**/*.rs",
+    "client-web/**/*.ts",
+    "client-web/**/*.tsx",
+    "README.md",
+    "docs/ARCHITECTURE.md",
+    "docs/legal/GH-219-LICENSE-DECISION.md",
+    "wiki/**/*.md",
+]
+SPDX-FileCopyrightText = "Copyright 2026 TrueRepublic contributors"
+SPDX-License-Identifier = "$selected"
+EOF
   printf '{"name":"client-web","private":true,"version":"0.4.0","license":"%s"}\n' \
     "$selected" >"$dir/client-web/package.json"
   printf '[package]\nname = "truerepublic-contracts"\nversion = "0.1.0"\nlicense = "%s"\n' \
@@ -375,5 +391,35 @@ prepare_decided "$WORK/decided-wrong-comment" Apache-2.0 \
 cp "$ROOT_DIR/LICENSE" "$WORK/decided-wrong-comment/LICENSE"
 commit_change "$WORK/decided-wrong-comment"
 expect_fail "decided state bound to the wrong numeric comment" "$WORK/decided-wrong-comment"
+
+# 32. A Go-only REUSE annotation cannot satisfy the maintained scope.
+build_fixture "$WORK/decided-go-only-reuse"
+prepare_decided "$WORK/decided-go-only-reuse" Apache-2.0 \
+  'https://github.com/NeaBouli/TrueRepublic/issues/219#issuecomment-5423337355'
+printf 'version = 1\n\n[[annotations]]\npath = ["*.go"]\nSPDX-FileCopyrightText = "Copyright 2026 TrueRepublic contributors"\nSPDX-License-Identifier = "Apache-2.0"\n' \
+  >"$WORK/decided-go-only-reuse/REUSE.toml"
+cp "$ROOT_DIR/LICENSE" "$WORK/decided-go-only-reuse/LICENSE"
+commit_change "$WORK/decided-go-only-reuse"
+expect_fail "decided state with Go-only REUSE coverage" "$WORK/decided-go-only-reuse"
+
+# 33. A broad legal-doc glob cannot annotate a frozen audit record.
+build_fixture "$WORK/decided-legal-audit-glob"
+prepare_decided "$WORK/decided-legal-audit-glob" Apache-2.0 \
+  'https://github.com/NeaBouli/TrueRepublic/issues/219#issuecomment-5423337355'
+awk '
+  { print }
+  $0 == "    \"docs/legal/GH-219-LICENSE-DECISION.md\"," {
+    print "    \"docs/legal/**/*.md\","
+  }
+' "$WORK/decided-legal-audit-glob/REUSE.toml" \
+  >"$WORK/decided-legal-audit-glob/REUSE.toml.tmp"
+mv "$WORK/decided-legal-audit-glob/REUSE.toml.tmp" \
+  "$WORK/decided-legal-audit-glob/REUSE.toml"
+printf '# Frozen audit record\n' \
+  >"$WORK/decided-legal-audit-glob/docs/legal/GH-219-CODEX-AUDIT.md"
+cp "$ROOT_DIR/LICENSE" "$WORK/decided-legal-audit-glob/LICENSE"
+commit_change "$WORK/decided-legal-audit-glob"
+expect_fail "decided state with broad legal audit annotation" \
+  "$WORK/decided-legal-audit-glob"
 
 echo "license policy positive and negative fixtures passed"

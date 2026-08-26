@@ -15,7 +15,8 @@
 > maintained documentation. Individual contributors retain copyright and the
 > collective attribution is “TrueRepublic contributors.” Brand assets,
 > artwork, historical PDFs, archived historical evidence, and third-party
-> materials remain excluded pending documented provenance.
+> materials remain excluded unless a file-specific notice applies or their
+> provenance and permission are documented.
 
 ## 0. Decision recorded and publication scope
 
@@ -53,8 +54,9 @@ scope and exclusions exist. It:
 4. compares Apache-2.0, AGPL-3.0-only, and a dual-license approach against
    the dependency, distribution, contribution, network-copyleft, and patent
    dimensions of this specific repository;
-5. recommends a decision path and gives exact post-decision implementation
-   steps.
+5. records the recommended decision path and, in Section 8, the exact
+   implementation steps executed for publication plus the retained post-merge
+   instructions.
 
 Evidence base: the tracked file census (`git ls-files`, 622 files at the
 GH-219 base), authorship metadata (`git shortlog`), package manifests
@@ -230,9 +232,10 @@ is retained as decision evidence and followed by its current resolution:
    the maintained project scope and contributor-retained attribution.
 2. **Pre-decision contradiction:** `CONTRIBUTING.md` asserted contributions
    "will be licensed under the same license as the project (Apache 2.0)"
-   although no such license was ever published. That wording is now
-   first corrected to the pending state. **Resolution:** maintained contributor
-   guidance now states Apache-2.0 inbound-equals-outbound terms and links the
+   although no such license was ever published. That wording was first
+   corrected to the pending state in the pre-decision package. **Resolution:**
+   maintained contributor guidance now states Apache-2.0
+   inbound-equals-outbound terms and links the
    published root files. Stale wording survives only in explicitly allowlisted,
    clearly marked historical records.
 3. **Pre-decision documentation state:** maintained public and architecture
@@ -336,16 +339,19 @@ Two distinct models are commonly conflated; they have opposite effects:
 
 - **Distribution of binaries** (daemon releases, Docker images, client
   bundles): under every candidate, the permissive dependency set requires
-  preserving license texts/notices in distributions. Post-decision, a
-  `NOTICE`/third-party notices step (Section 8) covers this mechanically.
+  preserving license texts/notices in distributions. The published root
+  `NOTICE` covers the project's own attribution; bundling third-party license
+  texts into distributed artifacts remains a retained pre-distribution step
+  (Section 8, item 10).
   Apache-2.0 additionally requires change notices in modified files when
   redistributing modified upstream code — this repository does not modify
   vendored upstream code, so the obligation is trivial.
 - **Contribution:** with no CLA/DCO today, inbound rights rest on whatever
   the chosen license says (Apache-2.0 §5 and the GPL family's
-  inbound=outbound convention both suffice). A DCO sign-off line in
-  `CONTRIBUTING.md` is a lightweight hardening compatible with all
-  candidates and is included in the post-decision steps.
+  inbound=outbound convention both suffice). Apache-2.0 §5 inbound=outbound
+  terms were recorded in `CONTRIBUTING.md`. A DCO sign-off line would be a
+  lightweight hardening compatible with all candidates; it was not adopted in
+  this change and remains an optional community decision.
 - **Network copyleft:** only AGPL-3.0-only (and the AGPL side of model 4.3.2)
   reaches hosted services. For TrueRepublic this matters for hosted RPC
   endpoints, explorers, and any future hosted client; it does not change
@@ -401,62 +407,71 @@ governance decision establish this outcome:
 
 ## 8. Publication implementation and verification
 
-The decision is implemented in one protected, reviewable change. GitHub
-license detection and GH-219 closure are post-merge verification steps:
+The decision was implemented in one protected, reviewable change. Steps 1–8
+below record what that change contains; steps 9–11 are retained instructions
+that were not completed by this change and are phrased as such.
 
-1. **LICENSE:** add root `LICENSE` with the exact canonical text of the
+Completed in this change:
+
+1. **LICENSE:** the root `LICENSE` carries the exact canonical text of the
    selected SPDX identifier from its primary source
-   (Apache-2.0: `https://www.apache.org/licenses/LICENSE-2.0.txt`;
-   AGPL-3.0-only: `https://www.gnu.org/licenses/agpl-3.0.txt`).
-   For a recipient's-choice dual license, add both texts (`LICENSE-APACHE`,
-   `LICENSE-AGPL`) plus a root `LICENSE` explaining the choice.
-2. **NOTICE (Apache-2.0 only):** add root `NOTICE` with the project
+   (Apache-2.0: `https://www.apache.org/licenses/LICENSE-2.0.txt`).
+   The documented AGPL-3.0-only and recipient's-choice dual-license paths
+   (two texts `LICENSE-APACHE`/`LICENSE-AGPL` plus a root `LICENSE`
+   explaining the choice) were retained for the record and not taken.
+2. **NOTICE (Apache-2.0):** the root `NOTICE` carries the project
    attribution line; Apache §4(d) then propagates it.
-3. **Copyright line:** use the recorded collective attribution
-   `Copyright 2026 TrueRepublic contributors` consistently in `NOTICE` and
-   scope metadata without assigning individual contributor rights to a
-   central entity.
-4. **SPDX headers:** add `SPDX-License-Identifier: <id>` (and, for dual
-   OR-licensing, `SPDX-License-Identifier: Apache-2.0 OR AGPL-3.0-only`) to
-   source files, using each language's comment syntax; adopt the
-   [REUSE](https://reuse.software/) convention so the check can be extended
-   to verify headers mechanically. Artwork/PDFs get sidecar `.license`
-   files or stay explicitly out of scope per the recorded decision.
-5. **Package metadata:** set `"license": "<spdx-id>"` (and keep
-   `"private": true` unless publishing) in `client-web/package.json`;
-   `license = "<spdx-id>"` in every `contracts/**/Cargo.toml`; Go modules
-   have no license field — the root `LICENSE` governs them.
-6. **README / CONTRIBUTING:** update the license sections to the selected
-   identifier; adopt inbound=outbound wording and optionally a DCO sign-off
-   requirement; point to `LICENSE` and this decision record.
-7. **Maintained docs:** refresh `docs/LIMITATIONS.md`,
+3. **Copyright line:** the recorded collective attribution
+   `Copyright 2026 TrueRepublic contributors` is used consistently in
+   `NOTICE` and scope metadata without assigning individual contributor
+   rights to a central entity.
+4. **SPDX scope declaration:** instead of per-file
+   `SPDX-License-Identifier` headers, the change adopted the
+   [REUSE](https://reuse.software/) `REUSE.toml` annotation convention for
+   the maintained scope, so the deterministic check verifies the declared
+   coverage mechanically. Artwork and PDFs carry no annotation and stay
+   explicitly out of scope per the recorded decision until a file-specific
+   record documents provenance and permission.
+5. **Package metadata:** `"license": "Apache-2.0"` (with `"private": true`
+   retained) in `client-web/package.json`; `license = "Apache-2.0"` in every
+   `contracts/**/Cargo.toml` package manifest; Go modules have no license
+   field — the root `LICENSE` governs them.
+6. **README / CONTRIBUTING:** the license sections record the selected
+   identifier, inbound=outbound contribution terms, and point to `LICENSE`
+   and this decision record. A DCO sign-off requirement was left as an
+   optional community hardening and was not adopted.
+7. **Maintained docs:** `docs/LIMITATIONS.md`,
    `docs/SOVEREIGN_ALPHA_ARCHITECTURE.md` (DG-3),
    `docs/SOVEREIGN_V4_EDGE_ARCHITECTURE.md` (DG-V4-1), and
-   `client-web/README.md` from "pending" to the recorded decision; leave the
-   allowlisted historical files untouched.
-8. **Manifest and check:** in `configs/legal/license-decision.json` set
-   `status: decided`, `selected_spdx_id`, the copyright line, the exact GH-219
-   governance-comment URL in `decision_record`, and the decided scope;
-   `scripts/check-license-policy.sh` then enforces the
-   decided branch (root license file present with the recorded SPDX
-   identity, package metadata consistent, pending-state contradictions still
-   forbidden). Extend `.github/workflows/docs-check.yml` coverage if the
-   decided metadata surface grows.
-   The current decided branch accepts the single-license candidates only; a
-   dual-license decision requires extending this contract and its positive
-   fixtures in the same reviewed change.
-9. **GitHub detection:** after merge, confirm the repository page shows the
-   license via GitHub's licensee-based detection
+   `client-web/README.md` were moved from "pending" to the recorded
+   decision; the allowlisted historical files were left untouched.
+8. **Manifest and check:** `configs/legal/license-decision.json` records
+   `status: decided`, `selected_spdx_id`, the copyright line, the exact
+   GH-219 governance-comment URL in `decision_record`, and the decided
+   scope; `scripts/check-license-policy.sh` enforces the decided branch
+   (root license file present with the recorded SPDX identity, package
+   metadata consistent, REUSE annotations representatively covering the
+   declared maintained scope, pending-state contradictions still forbidden).
+   **Retained conditional instruction:** if the decided metadata surface
+   grows, `.github/workflows/docs-check.yml` coverage must be extended in
+   the same reviewed change. The decided branch accepts the single-license
+   candidates only; a dual-license decision requires extending this contract
+   and its positive fixtures in the same reviewed change.
+
+Retained instructions (not completed by this change):
+
+9. **GitHub detection (post-merge):** after merge, confirm the repository
+   page shows the license via GitHub's licensee-based detection
    ([licensing a repository](https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/licensing-a-repository));
-   no API write is needed beyond committing `LICENSE`.
-10. **Dependency notices for distributions:** when binaries/images are next
-    assembled, include the third-party license texts for the Section 2.4
-    dependency set in the distributed artifact (release tooling change, not
-    part of the license decision itself).
-11. **Unblock downstream gates:** close DG-3 (Alpha) and DG-V4-1 (V4)
-    explicitly, citing the recorded decision; third-party code adoption then
-    still requires the per-component compatibility review those gates
-    specify.
+   no API write is needed beyond the committed `LICENSE`.
+10. **Dependency notices for distributions (pre-distribution):** when
+    binaries/images are next assembled, include the third-party license
+    texts for the Section 2.4 dependency set in the distributed artifact
+    (release tooling change, not part of the license decision itself).
+11. **Downstream gates (standing condition):** the publication half of DG-3
+    (Alpha) and DG-V4-1 (V4) is resolved by the recorded decision; adopting
+    third-party code still requires the per-component compatibility review
+    those gates specify before any adoption.
 
 ---
 

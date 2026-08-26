@@ -4,8 +4,12 @@
 # decision recorded in configs/legal/license-decision.json. While the
 # decision status is pending this fails closed on any tracked license artifact,
 # SPDX claim, package-metadata license, or non-allowlisted public license
-# assertion. Scanning uses git grep/git ls-files, so build caches, .git,
-# node_modules and other untracked material are never inspected.
+# assertion. In the decided state it additionally parses the REUSE.toml
+# annotation set and fails closed unless it representatively covers every
+# maintained component of the declared source-and-documentation scope while
+# leaving audit/evidence records unannotated. Scanning uses git grep/git
+# ls-files, so build caches, .git, node_modules and other untracked material
+# are never inspected.
 set -euo pipefail
 
 ROOT_DIR=${LICENSE_POLICY_ROOT:-$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)}
@@ -224,6 +228,55 @@ else
     ok "REUSE-compatible maintained scope excludes provenance-gated material"
   else
     fail "REUSE.toml must record Apache-2.0 without covering excluded material"
+  fi
+  # Parse the REUSE annotation path set (quoted entries outside comments and
+  # the SPDX key lines) and require representative coverage for every
+  # maintained component of the declared scope. A single-language annotation
+  # set (for example Go-only) cannot satisfy
+  # maintained-source-and-documentation.
+  reuse_annotation_paths=$(
+    grep -vE '^[[:space:]]*(#|$)' "$ROOT_DIR/REUSE.toml" |
+      grep -vE '^[[:space:]]*SPDX-' |
+      grep -oE '"[^"]+"' | tr -d '"' | sort -u || true
+  )
+  reuse_representative_paths() {
+    case "$1" in
+      daemon-go) printf '%s\n' '*.go' ;;
+      contracts-rust) printf '%s\n' 'contracts/**/*.rs' ;;
+      client-web) printf '%s\n' 'client-web/**/*.ts' 'client-web/**/*.tsx' ;;
+      docs-wiki)
+        printf '%s\n' 'README.md' 'docs/ARCHITECTURE.md' \
+          'docs/legal/GH-219-LICENSE-DECISION.md' 'wiki/**/*.md' ;;
+      *) return 1 ;;
+    esac
+  }
+  reuse_missing=""
+  reuse_unknown=""
+  while IFS='=' read -r component_id component_coverage; do
+    [ "$component_coverage" = "maintained" ] || continue
+    if ! required_paths=$(reuse_representative_paths "$component_id"); then
+      reuse_unknown="${reuse_unknown}${reuse_unknown:+, }$component_id"
+      continue
+    fi
+    while IFS= read -r required_path; do
+      [ -n "$required_path" ] || continue
+      printf '%s\n' "$reuse_annotation_paths" | grep -Fxq "$required_path" ||
+        reuse_missing="${reuse_missing}${reuse_missing:+, }$required_path"
+    done <<<"$required_paths"
+  done < <(jq -r '.components[] | .id + "=" + .coverage' "$MANIFEST")
+  [ -z "$reuse_unknown" ] ||
+    fail "maintained component without a REUSE coverage contract: $reuse_unknown"
+  [ -z "$reuse_missing" ] &&
+    ok "REUSE annotations cover every maintained component representatively" ||
+    fail "REUSE.toml annotations miss representative maintained-scope coverage: $reuse_missing"
+  # Frozen audit/evidence records must stay outside the annotation set; the
+  # maintained legal docs are annotated by exact path instead.
+  if printf '%s\n' "$reuse_annotation_paths" | grep -Eq '^docs/legal/\*' ||
+    printf '%s\n' "$reuse_annotation_paths" |
+      grep -Fxq 'docs/legal/GH-219-CODEX-AUDIT.md'; then
+    fail "REUSE.toml must not annotate audit/evidence records under docs/legal"
+  else
+    ok "REUSE annotations exclude audit/evidence records"
   fi
   if git -C "$ROOT_DIR" ls-files --error-unmatch LICENSE >/dev/null 2>&1 &&
     [ -s "$ROOT_DIR/LICENSE" ]; then

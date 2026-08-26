@@ -5,13 +5,15 @@ version = 1
 # maintained documentation are Apache-2.0. Individual contributors retain
 # copyright; "TrueRepublic contributors" is the collective attribution.
 #
-# Deliberately not annotated here (excluded until provenance is documented):
-# brand assets and artwork (assets/**, docs/assets/**), historical PDFs
-# (*.pdf), archived/historical evidence (docs/archive/**,
-# RELEASE_NOTES_v0.3.0.md, client-web/CHANGELOG.md, audit/evidence records),
-# the unmaintained ui/** prototype, generated lockfiles/checksums, and
-# third-party material. This is a REUSE-compatible scope declaration; it does
-# not claim full REUSE compliance for deliberately excluded material.
+# Deliberately not annotated here (excluded unless a file-specific notice
+# applies or provenance and permission are documented): brand assets and
+# artwork (assets/**, docs/assets/**), historical PDFs (*.pdf),
+# archived/historical evidence (docs/archive/**, RELEASE_NOTES_v0.3.0.md,
+# client-web/CHANGELOG.md), frozen audit/evidence records (for example
+# docs/legal/GH-219-CODEX-AUDIT.md), the unmaintained ui/** prototype,
+# generated lockfiles/checksums, and third-party material. This is a
+# REUSE-compatible scope declaration; it does not claim full REUSE compliance
+# for deliberately excluded material.
 
 [[annotations]]
 path = [
@@ -122,8 +124,9 @@ path = [
     "docs/developers/**/*.md",
     "docs/getting-started/*.md",
     "docs/getting-started/**/*.md",
-    "docs/legal/*.md",
-    "docs/legal/**/*.md",
+    # Maintained legal documentation; frozen audit/evidence records
+    # (docs/legal/GH-219-CODEX-AUDIT.md) stay unannotated.
+    "docs/legal/GH-219-LICENSE-DECISION.md",
     "docs/node-operators/*.md",
     "docs/node-operators/**/*.md",
     "docs/releases/*.md",
