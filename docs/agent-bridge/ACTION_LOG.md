@@ -1,5 +1,15 @@
 # Action Log
 
+## 2026-08-29 - GH-258 merged and exact main verified
+
+- PR #259 exact head `f26d63d` passed 22 reported contexts with no unresolved
+  review thread and squash-merged as `faf1215f`; GH-258 closed automatically.
+- Exact merged main passed Docs, Security, Go CI, native amd64/arm64 repeated
+  OCI identity and Pages. The real GitHub Wiki was synchronized at `8ca1704`.
+- GH-29 records the evidence without changing its combined tagged-binary/image
+  checkbox. Rollout remains 35/59, phase work 35/51, Phase 6 6/7 and production
+  false. No tag, signing, publication, deployment, key/fund or go/no-go action.
+
 ## 2026-08-29 - GH-258 exact aux-cache fix passed local review
 
 - The Dockerfile now removes the rebuildable aux-cache in both RUNs that can

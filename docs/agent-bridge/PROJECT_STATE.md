@@ -1,5 +1,18 @@
 # Project State
 
+GH-258 is Done. PR #259 exact head `f26d63d` passed all 22 reported contexts
+with zero review threads and squash-merged as `faf1215f`; GH-258 is closed.
+Exact merged main passed Docs `33279817849`, Security `33279817875`, Go CI
+`33279817872`, repeated native amd64/arm64 OCI `33279817870` and Pages
+`33279817349`. The live Wiki is synchronized at `8ca1704`, and GH-29 records
+the evidence without crediting the still-combined tagged-binary/container gate.
+Public state remains 2,094 cases, rollout 35-of-59, Phase 6 6-of-7 and
+production false. No tag, release, publication, signing or deployment occurred.
+
+Updated: 2026-08-29 EEST
+
+---
+
 GH-258's exact aux-cache fix passes focused/full root, Vet/docs/diff gates and
 independent Kimi APPROVE with no P0/P1/P2 finding. The protected exact-head
 amd64/arm64 repeated OCI run is now the sole merge gate. Rollout remains

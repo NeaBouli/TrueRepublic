@@ -8311,3 +8311,26 @@ exclusion, CI wiring, and documentation boundaries.
 - **Risk:** Low. Protected replacement-head Security, Go, Docs and OCI checks
   remain the merge gate. No release, tag, artifact publication, deployment,
   production, key or fund action occurred.
+
+## 2026-08-29 GH-258 reproducible maintained OCI images → Done
+
+- **Protected PR:** [#259](https://github.com/NeaBouli/TrueRepublic/pull/259)
+  exact head `f26d63d` passed 22 reported contexts, DeepScan with zero new
+  findings and zero unresolved review threads. Repeated OCI run `33279271233`
+  proved daemon and `client-web` identity parity on linux/amd64 and linux/arm64.
+- **Merge/issue:** authorized squash merge `faf1215f` is exact remote main and
+  closed [GH-258](https://github.com/NeaBouli/TrueRepublic/issues/258).
+- **Exact main:** Docs `33279817849`, Security `33279817875`, Go CI
+  `33279817872`, repeated OCI `33279817870`, and Pages `33279817349` PASS.
+- **Public synchronization:** GitHub Wiki `8ca1704` and
+  [GH-29](https://github.com/NeaBouli/TrueRepublic/issues/29#issuecomment-5465439158)
+  contain the verified boundary. Rollout stays 35/59, phase work 35/51, Phase 6
+  6/7 and production false because tagged binaries, cross-time hermetic builds,
+  signing, publication and deployment remain open.
+- **Roles/tests:** Claude Code's bounded helper produced no usable report and no
+  diff. Kimi K3 independently APPROVED the final remediation with no P0/P1/P2
+  blocker. Sol passed pinned staticcheck, Vet, focused OCI tests, complete CGO
+  Go packages, docs consistency and diff hygiene before protected verification.
+- **Risk:** Residual release-engineering work remains explicitly open. No tag,
+  release, image/artifact publication, signature, deployment, real key/fund,
+  production or go/no-go action occurred.
