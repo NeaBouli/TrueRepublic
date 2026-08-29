@@ -1,0 +1,73 @@
+{
+  "schema": "truerepublic.oci-build/v1",
+  "source_ref": {
+    "kind": "git-commit",
+    "pattern": "^[0-9a-f]{40}$"
+  },
+  "repetitions": 2,
+  "buildkit": {
+    "driver": "docker-container",
+    "builder_identity": "runner-provided-unpinned",
+    "no_cache": true,
+    "pull": true,
+    "provenance": false,
+    "sbom": false,
+    "rewrite_timestamp": true,
+    "source_date_epoch": "git-commit",
+    "output": "oci"
+  },
+  "targets": [
+    {
+      "id": "daemon-linux-amd64",
+      "dockerfile": "Dockerfile",
+      "context": ".",
+      "platform": "linux/amd64",
+      "runner": "ubuntu-24.04",
+      "runner_arch": "x86_64",
+      "build_args": {"VERSION": "{{source_ref}}"},
+      "base_images": [
+        "golang:1.26.6-bookworm@sha256:116d58cbd88c1297624acc6e967a060012422bacf9930927e23fb719189c6f36",
+        "debian:bookworm-slim@sha256:abd67ffcfa541b485a3dff59865ab629aa048a6c613e639d36e7456b0b229241"
+      ]
+    },
+    {
+      "id": "client-web-linux-amd64",
+      "dockerfile": "client-web/Dockerfile",
+      "context": "client-web",
+      "platform": "linux/amd64",
+      "runner": "ubuntu-24.04",
+      "runner_arch": "x86_64",
+      "build_args": {},
+      "base_images": [
+        "node:22.22.2-alpine@sha256:8ea2348b068a9544dae7317b4f3aafcdc032df1647bb7d768a05a5cad1a7683f",
+        "nginx:alpine@sha256:4a73073bd557c65b759505da037898b61f1be6cbcc3c2c3aeac22d2a470c1752"
+      ]
+    },
+    {
+      "id": "daemon-linux-arm64",
+      "dockerfile": "Dockerfile",
+      "context": ".",
+      "platform": "linux/arm64",
+      "runner": "ubuntu-24.04-arm",
+      "runner_arch": "aarch64",
+      "build_args": {"VERSION": "{{source_ref}}"},
+      "base_images": [
+        "golang:1.26.6-bookworm@sha256:116d58cbd88c1297624acc6e967a060012422bacf9930927e23fb719189c6f36",
+        "debian:bookworm-slim@sha256:abd67ffcfa541b485a3dff59865ab629aa048a6c613e639d36e7456b0b229241"
+      ]
+    },
+    {
+      "id": "client-web-linux-arm64",
+      "dockerfile": "client-web/Dockerfile",
+      "context": "client-web",
+      "platform": "linux/arm64",
+      "runner": "ubuntu-24.04-arm",
+      "runner_arch": "aarch64",
+      "build_args": {},
+      "base_images": [
+        "node:22.22.2-alpine@sha256:8ea2348b068a9544dae7317b4f3aafcdc032df1647bb7d768a05a5cad1a7683f",
+        "nginx:alpine@sha256:4a73073bd557c65b759505da037898b61f1be6cbcc3c2c3aeac22d2a470c1752"
+      ]
+    }
+  ]
+}

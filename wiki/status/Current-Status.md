@@ -44,9 +44,12 @@
   checksums, metadata, normalized SBOM and unsigned-provenance bindings, pinned
   release tools/platforms and container bases, without publishing or signing
   an artifact or claiming production rollout.
-- 2,028 recovery-verified tests: 1,683 Go, 26 Rust, and 319 maintained-client,
+- 2,084 recovery-verified tests: 1,739 Go, 26 Rust, and 319 maintained-client,
   plus the separately gated GH-175/GH-178/GH-181 two-chain IBC packet/channel/compatible-restart recovery and GH-172
   contention/replay/restart process proofs.
+- GH-258 requires native same-job double OCI exports for daemon and `client-web`
+  to match on index, manifest, config, and ordered layer digests. It publishes no
+  image and does not yet prove a tagged, cross-time hermetic rebuild.
 - Community-governed Apache-2.0 publication is recorded on
   [GH-219](https://github.com/NeaBouli/TrueRepublic/issues/219#issuecomment-5423337355).
   Individual contributors retain copyright; “TrueRepublic contributors” is the
@@ -67,7 +70,8 @@ reviewed, verified, and merged to `main` in this order.
 - Release qualification and independent security review.
 - Signed and published release artifacts, authenticated provenance, exact
   tagged-candidate qualification, and staged deployment evidence; GH-212 is an
-  unsigned repository-only foundation, not completion of these gates.
+  unsigned repository-only foundation and GH-258 is same-job OCI parity, not
+  completion of these gates.
 - Production-qualified Groth16 client prover, ceremony, submission path, and external circuit review.
 - Independent privacy review of the implemented recipient binding and its
   documented direct-payout linkability.

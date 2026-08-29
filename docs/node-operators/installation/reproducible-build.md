@@ -35,5 +35,23 @@ artifact, or rollout approval.
 The repository-only Phase 7 foundation additionally pins the maintained
 container bases and release/SBOM toolchains and provides a strict offline
 two-target evidence verifier. See [Offline release evidence](release-evidence.md).
-It still does not publish or sign artifacts and does not establish container
-image reproducibility.
+
+GH-258 adds the versioned `configs/build/reproducible-oci.json` contract and a
+separate native amd64/arm64 CI matrix. For each platform it exports the daemon
+and maintained-client OCI layout twice with `--no-cache`, `--pull`, disabled
+provenance/SBOM attestations, and a commit-derived `SOURCE_DATE_EPOCH`. The
+strict offline verifier compares OCI index, manifest, config, and ordered layer
+digests rather than requiring incidental tar header order to match:
+
+```bash
+make reproducible-oci-contract-test
+./scripts/verify-reproducible-oci.sh --evidence /path/to/oci-evidence
+```
+
+Docker/Buildx is required to generate real evidence; local contract fixtures do
+not substitute for the protected native runners. CI uploads only the evidence
+manifest and verifier report for 14 days, not the image archives. This proves
+same-job identity parity, not a cross-time hermetic rebuild: the runner/BuildKit
+identity is intentionally recorded as unpinned and Debian packages are resolved
+from live repositories. No image is tagged, pushed, signed, attested, deployed,
+or approved for rollout.

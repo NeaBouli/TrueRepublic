@@ -615,18 +615,24 @@
         "Pinned build and release/SBOM toolchains, supported platforms, and maintained container-base digests",
         "Reproducible Linux build evidence recorded for merged release candidates",
         "Exact dependency lockfiles bound into the security gate contract",
-        "Repository contract cross-binds maintained Dockerfile FROM references to the release tool/platform contract"
+        "Repository contract cross-binds maintained Dockerfile FROM references to the release tool/platform contract",
+        "Native no-cache daemon and maintained-client OCI double exports require equal index, manifest, config, and ordered layer digests"
       ],
       "evidence": [
         "configs/build/deterministic-linux-daemon.json",
+        "configs/build/reproducible-oci.json",
         "configs/release/tool-platform.json",
         "scripts/build-deterministic-daemon.sh",
+        "scripts/verify-reproducible-oci.sh",
+        "ocievidence/verify.go",
+        "reproducible_oci_repository_test.go",
+        ".github/workflows/reproducible-daemon.yml",
         "client_docker_repository_test.go"
       ],
-      "residual_risk": "Determinism is proven for the Linux daemon target only; digest-pinned container inputs do not prove reproducible images and other artifact classes remain uncovered.",
+      "residual_risk": "Linux daemon binaries are byte-reproducible and maintained daemon/client OCI identities match across two same-job exports. Floating runner and BuildKit versions plus live Debian package repositories prevent a cross-time hermetic image claim; tagged and other artifact classes remain uncovered.",
       "residual_severity": "low",
       "owner": "security-maintainers",
-      "next_gate": "Extend deterministic coverage to remaining artifact classes under GH-29 Phase 7",
+      "next_gate": "Pin or snapshot runner, BuildKit and OS package inputs, repeat from a tagged commit, and extend deterministic coverage to remaining artifact classes under GH-29 Phase 7",
       "umbrella_issue": ""
     }
   ]

@@ -1,5 +1,41 @@
 # Action Log
 
+## 2026-08-29 - GH-258 locally verified; protected OCI matrix pending
+
+- Added the exact four-target OCI contract, strict bounded offline verifier,
+  adversarial fixtures and native amd64/arm64 repeated-build jobs. Evidence
+  retains JSON identities only; the workflow has contents-read permission and
+  performs no login, push, signing, publication, deployment or production
+  action.
+- Complete local verification passes: 1,739 Go cases, 26 Rust cases, 319
+  maintained-client cases, full Go build/vet/race/coverage, client and Rust
+  quality/security gates, static/secret/vulnerability gates, release/install/
+  genesis/license/security/repository contracts and documentation consistency.
+  The synchronized public total is 2,084 and OCI verifier coverage is 77.9%.
+- Claude Code performed the bounded preflight. Kimi K3 performed a deep
+  independent review; Sol integrated and retested its findings. The only final
+  condition was a stale README badge, now corrected from 2,028 to 2,084. Kimi's
+  final read-only verdict is `APPROVE` with no P0/P1/P2 finding.
+- Docker/Buildx is unavailable on this host. Protected real-image CI, exact-head
+  review, merge, exact-main/Pages checks and live GitHub Wiki/issue sync remain
+  before Done. Rollout stays 35/59 and production false.
+
+## 2026-08-29 - GH-258 reproducible OCI evidence started
+
+- Opened GH-258 and isolated `feat/GH-258-reproducible-oci` from exact clean
+  main `6ef4f31a` after confirming no open PR and no newer remote-main commit.
+- Current GH-212 evidence already binds reproducible Linux daemon binaries,
+  normalized Go/client SBOMs, exact release tools/platforms and pinned
+  Dockerfile base identities; it explicitly does not prove image
+  reproducibility.
+- Docker/Buildx is unavailable locally. Strict verifier/fixture/repository
+  tests and the complete relevant local gates will run here; protected Linux
+  CI will own the two isolated real OCI builds for daemon and client targets.
+- Kimi K3 owns the bounded implementation core, Claude Code a small helper
+  slice, and Sol architecture, security, integration, full verification and
+  GitHub closure. No tag, publication, signing, registry, deployment or
+  production action is included; rollout remains 35/59 and production false.
+
 ## 2026-08-27 - GH-254 dependency reconciliation completed
 
 - Protected client replacement PR #256 exact head `5c3939ed` passed every

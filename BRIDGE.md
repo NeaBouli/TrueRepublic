@@ -1,5 +1,60 @@
 # TrueRepublic Agent Bridge
 
+## 2026-08-29 GH-258 reproducible maintained OCI images → Local PASS / Hosted pending
+
+- **Implemented:** a versioned four-target OCI build contract, strict bounded
+  offline verifier and adversarial fixtures, plus native amd64/arm64 CI jobs
+  which each perform two isolated no-cache daemon and maintained-client OCI
+  exports and compare index, manifest, config and ordered layer identities.
+- **Complete local verification:** 1,739 Go pass events, 26 Rust tests, 319
+  maintained-client cases, full Go build/vet/race/coverage, client lint/build/
+  audit/budgets, Rust fmt/clippy/build/audit, staticcheck, govuln policy,
+  gitleaks fixtures, repository/security/release/install/genesis/license/docs
+  contracts and `git diff --check` all pass. The public total is 2,084.
+- **Delegated review:** Claude Code confirmed the missing pre-implementation OCI
+  surface and same-job versus cross-time boundary. Kimi K3 reviewed the full
+  implementation; its findings on bounded parsing, canonical OCI archives,
+  artifact retention, build/config bindings and path triggers were integrated
+  and retested. Its only final condition, the stale README count badge, is now
+  corrected to 2,084; the final independent verdict is `APPROVE` with no
+  remaining P0/P1/P2 finding.
+- **Outstanding gate:** Docker/Buildx is unavailable locally. The exact-head
+  protected native Linux matrix must build and verify all four real targets
+  before merge. PR/review, exact-main workflows, Pages, real Wiki and issue
+  synchronization also remain before Done.
+- **Boundary:** rollout remains `35/59`, Phase 6 remains `6/7` and production
+  remains `false`. No tag, release, registry/image publication, signing,
+  attestation, deployment, key/fund, migration, public-network or go/no-go
+  action occurred.
+
+---
+
+## 2026-08-29 GH-258 reproducible maintained OCI images → In Progress
+
+- **Branch:** `feat/GH-258-reproducible-oci`
+- **Issue:** [GH-258](https://github.com/NeaBouli/TrueRepublic/issues/258)
+- **Base:** exact clean `origin/main`
+  `6ef4f31af2ac7f5c8b9aad4894636ffdd80eb055`.
+- **Scope:** add a versioned, fail-closed repository contract and protected
+  double-build evidence for reproducible daemon and maintained-client OCI
+  images, including exact source/context/Dockerfile/base/build settings and
+  manifest/config/layer digests.
+- **Roles:** Kimi K3 receives the bounded implementation core; Claude Code
+  receives only a small focused helper slice. Sol owns architecture,
+  supply-chain/security decisions, every delegated diff, complete local and
+  hosted verification, GitHub writes, merge and closure.
+- **Local constraint:** Docker/Buildx is unavailable on this host. Local strict
+  verifier, fixture, repository, build, client, Rust, security and docs gates
+  remain mandatory; protected native Linux CI is authoritative for
+  the two isolated real OCI builds.
+- **Risk/boundary:** medium, release-adjacent but repository-only. No tag,
+  GitHub Release, registry login/push, image publication, signing, attestation,
+  deployment, production, genesis/network, key/fund or go/no-go action.
+  Rollout stays `35/59` and production stays `false` unless canonical GH-29
+  criteria are fully satisfied with independent evidence.
+
+---
+
 ## 2026-08-27 GH-254 dependency reconciliation → Done
 
 - **Protected merges:** wasmvm replacement PR

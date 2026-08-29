@@ -1,5 +1,22 @@
 # Project State
 
+GH-258 is locally approved on exact base
+`6ef4f31af2ac7f5c8b9aad4894636ffdd80eb055`. The versioned four-target OCI
+contract, strict bounded offline verifier, adversarial fixtures and protected
+native amd64/arm64 double-export jobs pass the complete available local Go,
+Rust, maintained-client, security, release, repository and documentation
+matrix. The synchronized standard-suite total is 2,084 = 1,739 Go + 26 Rust +
+319 maintained-client cases. Claude Code completed the bounded preflight; Kimi
+K3's final independent verdict is `APPROVE` with no P0/P1/P2 finding. Docker is
+unavailable locally, so real OCI builds, protected exact-head review, merge,
+exact-main/Pages and live GitHub Wiki/issue synchronization remain. Rollout
+stays 35-of-59, Phase 6 stays 6-of-7 and production false; no tag, publication,
+signing, deployment or production action occurred.
+
+Updated: 2026-08-29 EEST
+
+---
+
 GH-254 is complete. Protected replacements #255 and #256 merged as exact main
 commits `2b5ebb61` and `40969ee0`; stale Dependabot PRs #248/#249 are closed as
 superseded with exact evidence. Every final-main Client, Docs, Security,

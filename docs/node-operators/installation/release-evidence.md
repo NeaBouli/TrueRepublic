@@ -17,7 +17,8 @@ The exact contract is `configs/release/tool-platform.json`. It pins Go
 1.26.6, Node 22.22.2, npm 10.9.7, `cyclonedx-gomod` v1.10.0,
 `@cyclonedx/cyclonedx-npm` 6.0.1, and the manifest-list digests used by both
 maintained Dockerfiles. The image manifests cover Linux amd64 and arm64.
-Digest pinning does not yet prove byte-reproducible container images.
+GH-258 supplements these input pins with same-job OCI identity parity for both
+maintained images. It does not prove cross-time hermetic rebuilding.
 
 ## Generate and verify a local candidate bundle
 
@@ -58,6 +59,14 @@ Pull-request CI generates the Go and maintained-client SBOM twice with the
 exact pinned tools, compares normalized parity, and exercises a synthetic
 two-target bundle through positive and adversarial verification. CI does not
 upload daemon binaries or publish a release bundle.
+
+The protected OCI matrix separately performs two no-cache exports of the daemon
+and maintained-client image on each native Linux architecture. Its strict
+offline verifier checks source/contract binding, safe archive structure, blob
+digests and sizes, platform identity, and equal index/manifest/config/ordered
+layer digests. Only JSON evidence is retained for 14 days; image archives are
+not uploaded or pushed. Floating runner/BuildKit versions and live Debian
+package sources remain explicit cross-time reproducibility limits.
 
 The provenance file is intentionally unsigned. Every bundle must explicitly
 state `signed: false`, `published: false`, and `production: false`. The

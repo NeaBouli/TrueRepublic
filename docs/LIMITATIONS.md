@@ -182,7 +182,7 @@ infrastructure is deployed. The Phase 6 production-topology gate remains open.
 
 ## Release Engineering
 
-**Status:** Repository-only unsigned evidence foundation; no release published
+**Status:** Repository-only unsigned evidence plus same-run OCI parity; no release published
 
 GH-212 pins the supported native Linux amd64/arm64 runners, release and SBOM
 tools, and the four maintained container-base manifests. It adds a strict
@@ -194,10 +194,23 @@ uploading binaries. Release evidence verifies the Linux amd64 and Linux arm64
 daemon targets only; it does not build, bind, or verify macOS or Windows
 artifacts.
 
-This does not authenticate who created a bundle or whether every SBOM component
-is truthful, prove byte-reproducible container images, create a tag, publish or
-sign an artifact, issue authenticated provenance, deploy a candidate, or
-approve rollout. Those Phase 7 gates remain open.
+GH-258 adds a separate strict OCI build/evidence contract for the daemon and
+maintained `client-web` image on native Linux amd64 and arm64 runners. Each
+target is exported twice without cache, with digest-pinned bases, disabled
+provenance/SBOM attestations, a commit-derived `SOURCE_DATE_EPOCH`, and no
+registry output. The offline verifier requires the two exports to agree on the
+OCI index, manifest, config, and ordered layer digests, and CI retains only the
+JSON digest evidence for 14 days. The image archives are not uploaded.
+
+This proves same-commit, same-job OCI identity parity under the runner and
+package repositories available during that job. It does not establish a
+cross-time hermetic rebuild: GitHub runner images and their BuildKit versions
+are floating, and the daemon Dockerfile still resolves Debian packages from
+live repositories. It also does not authenticate who created a bundle or
+whether every SBOM component is truthful, create a tag, publish or sign an
+artifact, issue authenticated provenance, deploy a candidate, or approve
+rollout. The combined tagged-binaries-and-container-images Phase 7 checkbox
+therefore remains open.
 
 Partial validator stake withdrawals are disabled until generalized slashable
 unbonding can retain the withdrawn claim through the CometBFT evidence window.

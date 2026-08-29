@@ -224,8 +224,11 @@ JSON register.
 - **TM-REL-002** (medium/low, mitigated): non-deterministic build drift.
   Verified: pinned build/release/SBOM toolchains, supported native Linux
   platforms, digest-pinned maintained container bases, repository-owned
-  deterministic build script, and lockfiles bound into the security contract.
-  Container-image byte reproducibility remains unproven.
+  deterministic build script, lockfiles bound into the security contract, and
+  GH-258's native no-cache double-export contract requiring daemon/client OCI
+  index, manifest, config, and ordered-layer parity. Cross-time hermetic image
+  rebuilding remains unproven because runner/BuildKit identities float and the
+  daemon image resolves Debian packages from live repositories.
 
 ## Explicitly not claimed
 

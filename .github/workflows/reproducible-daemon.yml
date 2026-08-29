@@ -10,10 +10,13 @@ on:
       - 'go.sum'
       - 'Makefile'
       - 'configs/build/deterministic-linux-daemon.json'
+      - 'configs/build/reproducible-oci.json'
       - 'configs/release/**'
       - 'configs/security/gates.json'
       - 'releaseevidence/**'
       - 'cmd/release-evidence/**'
+      - 'ocievidence/**'
+      - 'cmd/oci-evidence/**'
       - 'genesisevidence/**'
       - 'cmd/genesis-evidence/**'
       - 'installlifecycle/**'
@@ -36,12 +39,18 @@ on:
       - 'scripts/generate-release-evidence.sh'
       - 'scripts/test-release-evidence.sh'
       - 'scripts/verify-release-evidence.sh'
+      - 'scripts/test-reproducible-oci.sh'
+      - 'scripts/verify-reproducible-oci.sh'
       - 'scripts/test-deterministic-daemon.sh'
       - 'scripts/verify-deterministic-daemon.sh'
       - 'Dockerfile'
+      - '.dockerignore'
+      - 'scripts/docker-entrypoint.sh'
+      - 'client-web/**'
       - 'client-web/Dockerfile'
       - 'client-web/package.json'
       - 'client-web/package-lock.json'
+      - 'reproducible_oci_repository_test.go'
       - '.github/workflows/reproducible-daemon.yml'
   pull_request:
     paths:
@@ -50,10 +59,13 @@ on:
       - 'go.sum'
       - 'Makefile'
       - 'configs/build/deterministic-linux-daemon.json'
+      - 'configs/build/reproducible-oci.json'
       - 'configs/release/**'
       - 'configs/security/gates.json'
       - 'releaseevidence/**'
       - 'cmd/release-evidence/**'
+      - 'ocievidence/**'
+      - 'cmd/oci-evidence/**'
       - 'genesisevidence/**'
       - 'cmd/genesis-evidence/**'
       - 'installlifecycle/**'
@@ -76,12 +88,18 @@ on:
       - 'scripts/generate-release-evidence.sh'
       - 'scripts/test-release-evidence.sh'
       - 'scripts/verify-release-evidence.sh'
+      - 'scripts/test-reproducible-oci.sh'
+      - 'scripts/verify-reproducible-oci.sh'
       - 'scripts/test-deterministic-daemon.sh'
       - 'scripts/verify-deterministic-daemon.sh'
       - 'Dockerfile'
+      - '.dockerignore'
+      - 'scripts/docker-entrypoint.sh'
+      - 'client-web/**'
       - 'client-web/Dockerfile'
       - 'client-web/package.json'
       - 'client-web/package-lock.json'
+      - 'reproducible_oci_repository_test.go'
       - '.github/workflows/reproducible-daemon.yml'
 
 permissions:
@@ -179,5 +197,112 @@ jobs:
           path: |
             ${{ runner.temp }}/truerepublic-${{ matrix.target }}/CHECKSUMS.sha256
             ${{ runner.temp }}/truerepublic-${{ matrix.target }}/build-metadata.json
+          if-no-files-found: error
+          retention-days: 14
+
+  reproducible-oci:
+    name: reproducible OCI (${{ matrix.platform }})
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - platform: linux/amd64
+            runner: ubuntu-24.04
+            runner_arch: x86_64
+            suffix: amd64
+          - platform: linux/arm64
+            runner: ubuntu-24.04-arm
+            runner_arch: aarch64
+            suffix: arm64
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
+        with:
+          go-version: '1.26.6'
+
+      - name: Verify fail-closed OCI evidence contract offline
+        run: make reproducible-oci-contract-test
+
+      - name: Build each maintained image twice and verify OCI identity
+        env:
+          EXPECTED_PLATFORM: ${{ matrix.platform }}
+          EXPECTED_RUNNER_ARCH: ${{ matrix.runner_arch }}
+          PLATFORM_SUFFIX: ${{ matrix.suffix }}
+        run: |
+          set -euo pipefail
+          contract=configs/build/reproducible-oci.json
+          source_ref=$(git rev-parse HEAD)
+          source_date_epoch=$(git show -s --format=%ct HEAD)
+          actual_arch=$(uname -m)
+          test "$actual_arch" = "$EXPECTED_RUNNER_ARCH"
+          test "$(jq -r --arg platform "$EXPECTED_PLATFORM" '[.targets[] | select(.platform == $platform)] | length' "$contract")" = "2"
+          test "$(jq -r '.repetitions' "$contract")" = "2"
+          docker buildx version
+          builder="tr-oci-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}-${PLATFORM_SUFFIX}"
+          cleanup() { docker buildx rm "$builder" >/dev/null 2>&1 || true; }
+          trap cleanup EXIT HUP INT TERM
+          docker buildx create --name "$builder" --driver docker-container --use
+          docker buildx inspect --builder "$builder" --bootstrap
+
+          evidence="${RUNNER_TEMP}/oci-evidence-${PLATFORM_SUFFIX}"
+          mkdir -p "$evidence"
+          mapfile -t target_ids < <(jq -r --arg platform "$EXPECTED_PLATFORM" '.targets[] | select(.platform == $platform) | .id' "$contract")
+          for target_id in "${target_ids[@]}"; do
+            dockerfile=$(jq -r --arg id "$target_id" '.targets[] | select(.id == $id) | .dockerfile' "$contract")
+            context=$(jq -r --arg id "$target_id" '.targets[] | select(.id == $id) | .context' "$contract")
+            declared_platform=$(jq -r --arg id "$target_id" '.targets[] | select(.id == $id) | .platform' "$contract")
+            test "$declared_platform" = "$EXPECTED_PLATFORM"
+            for repetition in 1 2; do
+              archive="${evidence}/${target_id}-${repetition}.oci.tar"
+              build_args=(--build-arg "SOURCE_DATE_EPOCH=${source_date_epoch}")
+              if jq -e --arg id "$target_id" '.targets[] | select(.id == $id) | .build_args.VERSION == "{{source_ref}}"' "$contract" >/dev/null; then
+                build_args+=(--build-arg "VERSION=${source_ref}")
+              fi
+              docker buildx build \
+                --builder "$builder" \
+                --no-cache \
+                --pull \
+                --provenance=false \
+                --sbom=false \
+                --platform "$declared_platform" \
+                "${build_args[@]}" \
+                --output "type=oci,dest=${archive},rewrite-timestamp=true" \
+                --file "$dockerfile" \
+                "$context"
+            done
+          done
+
+          targets='[]'
+          for target_id in "${target_ids[@]}"; do
+            builds='[]'
+            for repetition in 1 2; do
+              file="${target_id}-${repetition}.oci.tar"
+              digest=$(sha256sum "${evidence}/${file}" | awk '{print $1}')
+              builds=$(jq -cn --argjson prior "$builds" --arg file "$file" --arg digest "$digest" '$prior + [{file:$file,sha256:$digest}]')
+            done
+            targets=$(jq -cn --argjson prior "$targets" --arg id "$target_id" --argjson builds "$builds" '$prior + [{id:$id,builds:$builds}]')
+          done
+          contract_digest=$(sha256sum "$contract" | awk '{print $1}')
+          jq -n -S \
+            --arg source_ref "$source_ref" \
+            --arg contract_digest "$contract_digest" \
+            --arg platform "$EXPECTED_PLATFORM" \
+            --argjson targets "$targets" \
+            '{schema:"truerepublic.oci-evidence/v1",source_ref:$source_ref,contract_sha256:$contract_digest,platform:$platform,claims:{signed:false,published:false,production:false},targets:$targets}' \
+            >"${evidence}/oci-evidence.json"
+          ./scripts/verify-reproducible-oci.sh --evidence "$evidence" --output json | tee "${RUNNER_TEMP}/oci-evidence-report-${PLATFORM_SUFFIX}.json"
+
+      - name: Upload repository-only OCI digest evidence
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: truerepublic-oci-${{ matrix.suffix }}-${{ github.sha }}
+          path: |
+            ${{ runner.temp }}/oci-evidence-${{ matrix.suffix }}/oci-evidence.json
+            ${{ runner.temp }}/oci-evidence-report-${{ matrix.suffix }}.json
           if-no-files-found: error
           retention-days: 14
