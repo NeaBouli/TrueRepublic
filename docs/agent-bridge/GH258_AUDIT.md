@@ -118,6 +118,17 @@ count.
   CGO-enabled package-scoped Go suite. Every package passed, including root,
   `ocievidence`, policy/evidence modules, Treasury, DEX and TrueDemocracy.
   Documentation consistency and diff validation pass as well.
+- Protected exact-head run `33277444211` exercised the new diagnostic and
+  isolated one path on both architectures: `var/cache/ldconfig/aux-cache` in
+  layer index 1. Per architecture its metadata digest is identical while its
+  content digest differs. Package post-install hooks create it in that layer;
+  the existing later removal cannot rewrite an earlier OCI layer. The bounded
+  correction therefore deletes it in both creating/recreating RUNs.
+- The exact two-removal correction passes repository/evidence contracts, full
+  root Go test (108.158s), Vet, docs consistency and diff validation. Kimi K3
+  independently returned **APPROVE** with no P0/P1/P2 finding and verified that
+  the inline negative mutation is detected only by the new two-occurrence
+  invariant, leaving published test-event accounting unchanged.
 
 ## Residual risks
 

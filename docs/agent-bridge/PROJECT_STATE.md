@@ -1,5 +1,24 @@
 # Project State
 
+GH-258's exact aux-cache fix passes focused/full root, Vet/docs/diff gates and
+independent Kimi APPROVE with no P0/P1/P2 finding. The protected exact-head
+amd64/arm64 repeated OCI run is now the sole merge gate. Rollout remains
+35-of-59, Phase 6 remains 6-of-7 and production false.
+
+Updated: 2026-08-29 EEST
+
+---
+
+GH-258 protected run `33277444211` used the new entry diagnostic successfully:
+the only unstable file on amd64 and arm64 is layer-1
+`var/cache/ldconfig/aux-cache`, with equal metadata and differing content. The
+next bounded fix deletes it inside both RUNs that can create it. No merge;
+rollout 35-of-59, Phase 6 6-of-7 and production false.
+
+Updated: 2026-08-29 EEST
+
+---
+
 GH-258's bounded layer diagnostic now passes the complete local Go integration
 chain in addition to focused/Vet/docs and Kimi APPROVE. The exact pushed head
 must still pass native amd64/arm64 repeated OCI verification before merge.

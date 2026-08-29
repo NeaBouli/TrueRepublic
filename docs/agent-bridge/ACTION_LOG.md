@@ -1,5 +1,21 @@
 # Action Log
 
+## 2026-08-29 - GH-258 exact aux-cache fix passed local review
+
+- The Dockerfile now removes the rebuildable aux-cache in both RUNs that can
+  create it. The repository contract binds exactly two occurrences and its
+  inline mutation proves the new invariant without adding a counted test event.
+- Focused/full root, Vet, docs and diff checks pass; Kimi K3 verdict is
+  **APPROVE**, no P0/P1/P2 finding. Protected rerun remains.
+
+## 2026-08-29 - GH-258 exact unstable file identified
+
+- Protected run `33277444211` reports only
+  `var/cache/ldconfig/aux-cache` as different in daemon layer 1 on both native
+  architectures. Metadata is equal and only content hashes differ.
+- The cache must be deleted in its package-postinst creating RUN as well as
+  after the later final ldconfig invocation. No image/archive was retained.
+
 ## 2026-08-29 - GH-258 layer diagnostic passed complete Go integration
 
 - The focused OCI contract/CLI, Vet and complete CGO-enabled package-scoped Go

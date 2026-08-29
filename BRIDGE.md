@@ -1,5 +1,33 @@
 # TrueRepublic Agent Bridge
 
+## 2026-08-29 GH-258 exact aux-cache fix locally approved
+
+- The aux-cache is removed after package post-install hooks in layer 1 and
+  again after the later final `ldconfig` recreation.
+- Repository contract/evidence, full root Go test (108.158s), Vet, docs
+  consistency and diff validation pass. The inline negative mutation proves
+  exactly two removals without changing public test-event accounting.
+- Kimi K3 independently returned **APPROVE** with no P0/P1/P2 finding.
+- Protected native repeated-image verification remains the only merge gate.
+
+---
+
+## 2026-08-29 GH-258 per-entry evidence → exact file identified
+
+- **Protected run:** PR #259 exact head `6768834`, run `33277444211`.
+- **Exact result:** on amd64 and arm64, the sole differing layer-1 entry is
+  `var/cache/ldconfig/aux-cache`. Its mode/owner/size/metadata digest match per
+  architecture; only its content SHA-256 differs. Both clients and every other
+  daemon layer remain identical.
+- **Root cause:** package post-install hooks create the auxiliary cache inside
+  layer 1. Removing it in the later final `ldconfig` RUN fixes the final
+  filesystem but cannot remove nondeterministic bytes from the earlier layer.
+- **Bounded fix:** also delete the aux-cache inside the package/account RUN,
+  while retaining the later deletion after final `ldconfig`.
+- No merge; rollout 35/59, Phase 6 6/7, production false.
+
+---
+
 ## 2026-08-29 GH-258 per-entry diagnostic full local integration PASS
 
 - `make reproducible-oci-contract-test`, focused CLI/evidence checks, Vet and

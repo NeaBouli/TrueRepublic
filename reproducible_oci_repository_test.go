@@ -65,6 +65,14 @@ func TestReproducibleOCIRepositoryContract(t *testing.T) {
 	if violations := reproducibleOCIRepositoryViolations(contract, workflow, dockerfiles); len(violations) != 0 {
 		t.Fatalf("reproducible OCI repository contract violations:\n- %s", strings.Join(violations, "\n- "))
 	}
+	mutatedDockerfiles := map[string]string{}
+	for path, contents := range dockerfiles {
+		mutatedDockerfiles[path] = contents
+	}
+	mutatedDockerfiles["Dockerfile"] = strings.Replace(mutatedDockerfiles["Dockerfile"], "/var/cache/ldconfig/aux-cache", "/var/cache/ldconfig/removed-once", 1)
+	if len(reproducibleOCIRepositoryViolations(contract, workflow, mutatedDockerfiles)) == 0 {
+		t.Fatal("repository contract accepted only one aux-cache cleanup")
+	}
 
 	for _, script := range []string{"scripts/test-reproducible-oci.sh", "scripts/verify-reproducible-oci.sh"} {
 		info, statErr := os.Stat(script)
@@ -203,6 +211,9 @@ func reproducibleOCIRepositoryViolations(contract repositoryOCIContract, workflo
 		if !strings.Contains(daemon, required) {
 			violations = append(violations, "daemon Dockerfile lacks reproducibility control: "+required)
 		}
+	}
+	if strings.Count(daemon, "/var/cache/ldconfig/aux-cache") != 2 {
+		violations = append(violations, "daemon Dockerfile must remove ldconfig aux-cache in both creating RUNs")
 	}
 	jobStart := strings.Index(workflow, "  reproducible-oci:")
 	if jobStart < 0 {

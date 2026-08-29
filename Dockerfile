@@ -38,7 +38,7 @@ FROM debian:bookworm-slim@sha256:abd67ffcfa541b485a3dff59865ab629aa048a6c613e639
 RUN apt-get update \
     && apt-get install --yes --no-install-recommends ca-certificates libgcc-s1 wget \
     && rm -rf /var/lib/apt/lists/* /var/cache/apt/* /var/log/apt \
-    && rm -f /var/log/dpkg.log /var/log/alternatives.log \
+    && rm -f /var/log/dpkg.log /var/log/alternatives.log /var/cache/ldconfig/aux-cache \
     && groupadd --system truerepublic \
     && useradd --system --gid truerepublic --home-dir /home/truerepublic --create-home truerepublic \
     && sed -i -E '/^truerepublic:/ s/^([^:]*:[^:]*):[0-9]+:/\1::/' /etc/shadow \
