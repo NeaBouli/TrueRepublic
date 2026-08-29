@@ -1,19 +1,19 @@
 # Recovery Queue
 
-## In progress - GH-258 reproducible maintained OCI images
+## Completed - GH-258 reproducible maintained OCI images
 
 - [x] Define and validate an exact versioned daemon/client OCI build contract.
 - [x] Add bounded evidence types, strict offline verification and adversarial
   fixtures for source, context, Dockerfile, build settings and OCI digests.
-- [ ] Run two isolated no-cache Buildx OCI exports per maintained target on
+- [x] Run two isolated no-cache Buildx OCI exports per maintained target on
   protected native Linux CI and require manifest/config/layer digest parity.
 - [x] Preserve the explicit no-tag/no-push/no-sign/no-deploy boundary and
   document residual package-source and long-term-rebuild limitations.
 - [x] Complete Kimi implementation/deep review, Claude helper verification,
   Sol diff/security review and the complete relevant local gate set.
-- [ ] Pass the complete protected exact-head hosted gate set with zero
+- [x] Pass the complete protected exact-head hosted gate set with zero
   unresolved review threads.
-- [ ] Publish through a protected exact-head PR, resolve every review thread,
+- [x] Publish through a protected exact-head PR, resolve every review thread,
   merge, synchronize GH-258/GH-29/public state/both Bridges and verify exact
   final main plus Pages before Done.
 

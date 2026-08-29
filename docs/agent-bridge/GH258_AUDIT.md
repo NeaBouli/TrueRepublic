@@ -139,3 +139,19 @@ count.
 - Tagged builds, authenticated provenance, signing, publication, staged
   deployment, independent release approval, and remaining artifact classes stay
   open under GH-29 Phase 7.
+
+## Protected closeout evidence
+
+- PR #259 replacement head `f26d63d82f888c1667c813a621d85e713375e276`
+  passed 22 reported protected contexts with zero unresolved review threads.
+  The authoritative repeated-image run was `33279271233`.
+- Squash merge `faf1215fe5726c1d62f5cd38ce227022dd59f416`
+  closed GH-258. Exact merged main passed Docs `33279817849`, Security
+  `33279817875`, Go CI `33279817872`, repeated OCI `33279817870`, and Pages
+  `33279817349`.
+- GitHub Wiki commit `8ca17041b69488f0362f50f418bf4ed56591fcdf`
+  synchronizes the canonical GH-258 status, architecture, feature, and testing
+  pages while preserving the Wiki's flat-link layout.
+- GH-29 comment `5465439158` records the evidence and intentionally leaves the
+  combined reproducible-tagged-binary/container checkbox open. Rollout remains
+  35/59 and `production_ready=false`.
