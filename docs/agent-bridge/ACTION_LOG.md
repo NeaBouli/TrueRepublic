@@ -1,5 +1,20 @@
 # Action Log
 
+## 2026-08-29 - GH-258 second hosted run isolated remaining layer source
+
+- The second native exact-head run again retained exact repeated client image
+  identities and rejected both daemon pairs. Different manifests prove real
+  layer-byte drift remains, not only image-config metadata.
+- Remaining final-image writes were re-audited with Kimi. Glibc's rebuildable
+  `/var/cache/ldconfig/aux-cache` is highest confidence because it records stat
+  data after the wasmvm library is copied with a per-build mtime; APT binary
+  caches are removed as adjacent hardening.
+- The verifier now emits per-repetition identity and ordered layer digests only
+  when parity fails. This preserves the no-image-retention boundary while making
+  any further Hosted failure precisely diagnosable.
+- Focused OCI/repository tests, full root tests, Vet and documentation consistency
+  pass. Kimi's final second-fix review is `APPROVE` with no P0/P1/P2 finding.
+
 ## 2026-08-29 - GH-258 first hosted run rejected daemon nondeterminism
 
 - PR #259 proved that both repeated maintained-client OCI identities match on

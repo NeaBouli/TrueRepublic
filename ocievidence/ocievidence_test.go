@@ -94,8 +94,12 @@ func TestAdversarialEvidenceRejected(t *testing.T) {
 			dir, contract, bundle := makeEvidence(t, "linux/amd64")
 			test.mutate(t, dir, &bundle)
 			writeJSON(t, filepath.Join(dir, "oci-evidence.json"), bundle)
-			if VerifyDirectory(dir, contract).Valid {
+			report := VerifyDirectory(dir, contract)
+			if report.Valid {
 				t.Fatal("adversarial evidence accepted")
+			}
+			if test.name == "unequal image identity" && (len(report.Images) < 2 || report.Images[0].Repetition != 1 || report.Images[1].Repetition != 2) {
+				t.Fatalf("mismatch diagnostics omit per-repetition identities: %#v", report.Images)
 			}
 		})
 	}

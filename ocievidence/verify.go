@@ -142,19 +142,27 @@ func VerifyDirectory(evidenceDir, contractPath string) Report {
 			identities = append(identities, identity)
 		}
 		if len(identities) == contract.Repetitions && !sameIdentity(identities[0], identities[1]) {
+			for repetition, identity := range identities {
+				report.Images = append(report.Images, reportIdentity(target.ID, repetition+1, identity))
+			}
 			fail("repeated OCI image digests differ for " + target.ID)
 		} else if len(identities) == contract.Repetitions {
-			report.Images = append(report.Images, ImageReport{
-				ID:       target.ID,
-				Index:    identities[0].Index,
-				Manifest: identities[0].Manifest,
-				Config:   identities[0].Config,
-				Layers:   append([]string(nil), identities[0].Layers...),
-			})
+			report.Images = append(report.Images, reportIdentity(target.ID, 0, identities[0]))
 		}
 	}
 	report.Valid = len(report.Violations) == 0
 	return report
+}
+
+func reportIdentity(id string, repetition int, identity imageIdentity) ImageReport {
+	return ImageReport{
+		ID:         id,
+		Repetition: repetition,
+		Index:      identity.Index,
+		Manifest:   identity.Manifest,
+		Config:     identity.Config,
+		Layers:     append([]string(nil), identity.Layers...),
+	}
 }
 
 func validateContract(contract Contract) error {

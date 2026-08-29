@@ -1,5 +1,25 @@
 # TrueRepublic Agent Bridge
 
+## 2026-08-29 GH-258 second daemon mismatch → ldconfig fix candidate
+
+- **Observed:** the second PR #259 exact-head run again passed both repeated
+  client identities but rejected both daemon pairs. This proves APT/DPKG logs
+  were a real gap but not the only remaining content source.
+- **Diagnosis:** both manifest and config digests differ, so at least one layer
+  has different bytes. Kimi and Sol independently rank glibc's rebuildable
+  `/var/cache/ldconfig/aux-cache` highest: it records per-library stat data after
+  the builder-timestamped wasmvm library is copied, which export-time metadata
+  rewriting cannot change.
+- **Candidate:** delete the aux cache after `ldconfig`, remove residual APT
+  binary caches, and emit per-repetition index/manifest/config/ordered-layer
+  digests on failure. No OCI tar is retained or uploaded.
+- **Review/local gates:** focused OCI/repository tests, full root tests, Vet and
+  docs pass. Kimi's final second-fix verdict is `APPROVE` without P0/P1/P2.
+- **Gate:** the protected rerun remains. Rollout stays 35/59 and production
+  false; no tag, image publication, signing or deployment occurred.
+
+---
+
 ## 2026-08-29 GH-258 hosted daemon nondeterminism → Fix candidate
 
 - **Observed:** PR #259's first native run passed the strict contract and both

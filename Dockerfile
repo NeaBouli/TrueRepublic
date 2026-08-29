@@ -38,7 +38,7 @@ FROM debian:bookworm-slim@sha256:abd67ffcfa541b485a3dff59865ab629aa048a6c613e639
 RUN apt-get update \
     && apt-get install --yes --no-install-recommends ca-certificates libgcc-s1 wget \
     && rm -rf /var/lib/apt/lists/* \
-    && rm -f /var/log/dpkg.log /var/log/apt/*.log /var/log/alternatives.log \
+    && rm -f /var/log/dpkg.log /var/log/apt/*.log /var/log/alternatives.log /var/cache/apt/*.bin \
     && groupadd --system truerepublic \
     && useradd --system --gid truerepublic --home-dir /home/truerepublic --create-home truerepublic \
     && sed -i -E '/^truerepublic:/ s/^([^:]*:[^:]*):[0-9]+:/\1::/' /etc/shadow \
@@ -49,6 +49,7 @@ COPY --from=builder /usr/local/bin/truerepublicd /usr/local/bin/truerepublicd
 COPY --from=builder /usr/local/lib/libwasmvm.*.so /usr/lib/
 COPY --chmod=755 scripts/docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
 RUN ldconfig \
+    && rm -f /var/cache/ldconfig/aux-cache \
     && truerepublicd --help >/dev/null \
     && truerepublicd --version >/dev/null
 

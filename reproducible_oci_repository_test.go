@@ -193,7 +193,8 @@ func reproducibleOCIRepositoryViolations(contract repositoryOCIContract, workflo
 		"-buildvcs=false",
 		"-buildid=",
 		"-extldflags=-Wl,--build-id=none",
-		"rm -f /var/log/dpkg.log /var/log/apt/*.log /var/log/alternatives.log",
+		"rm -f /var/log/dpkg.log /var/log/apt/*.log /var/log/alternatives.log /var/cache/apt/*.bin",
+		"rm -f /var/cache/ldconfig/aux-cache",
 		"/^truerepublic:/ s/^([^:]*:[^:]*):[0-9]+:/\\1::/",
 	} {
 		if !strings.Contains(daemon, required) {

@@ -1,5 +1,18 @@
 # Project State
 
+GH-258 PR #259's second native run again rejected both daemon pairs while both
+maintained-client pairs matched. Since manifests and configs differ, real layer
+bytes remain unstable. Sol and Kimi rank glibc's rebuildable ldconfig aux-cache
+highest because it records stat data after the builder-timestamped wasmvm library
+copy. The next bounded candidate deletes that cache plus residual APT binary
+caches and adds digest-only per-repetition layer diagnostics without retaining
+OCI archives. Local and protected reruns remain; rollout stays 35-of-59, Phase 6
+stays 6-of-7 and production false.
+
+Updated: 2026-08-29 EEST
+
+---
+
 GH-258 PR #259 correctly rejected daemon OCI nondeterminism on its first native
 amd64/arm64 run while both repeated maintained-client pairs and every completed
 existing release/security/docs gate passed. Hosted logs and Kimi's independent

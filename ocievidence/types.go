@@ -145,11 +145,12 @@ type Report struct {
 }
 
 type ImageReport struct {
-	ID       string   `json:"id"`
-	Index    string   `json:"index_sha256"`
-	Manifest string   `json:"manifest_sha256"`
-	Config   string   `json:"config_sha256"`
-	Layers   []string `json:"layer_sha256"`
+	ID         string   `json:"id"`
+	Repetition int      `json:"repetition,omitempty"`
+	Index      string   `json:"index_sha256"`
+	Manifest   string   `json:"manifest_sha256"`
+	Config     string   `json:"config_sha256"`
+	Layers     []string `json:"layer_sha256"`
 }
 
 type imageIdentity struct {

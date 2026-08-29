@@ -73,6 +73,16 @@ count.
   silent removal of these controls. Focused/full root, deterministic-contract,
   Vet and docs gates pass; Kimi's final fix-diff verdict is **APPROVE** with no
   P0/P1/P2 finding. A fully green hosted rerun remains mandatory.
+- The second exact-head run again rejected both daemon pairs while both client
+  pairs remained identical. The remaining highest-confidence source is glibc's
+  `/var/cache/ldconfig/aux-cache`, which records per-library stat data after the
+  builder-created wasmvm library is copied; export-time timestamp rewriting does
+  not normalize that embedded content. The next bounded candidate removes this
+  rebuildable cache after `ldconfig` and APT binary caches in their creating
+  layer. Invalid reports now retain only per-repetition identity/layer digests,
+  never OCI archives, so any further mismatch identifies its exact layer index.
+  Focused/full root, Vet and docs gates pass; Kimi's final review is **APPROVE**
+  with no P0/P1/P2 finding.
 
 ## Residual risks
 
