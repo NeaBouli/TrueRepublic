@@ -350,6 +350,7 @@ zkpprover|test-only ZKP prover
 releaseevidence|release evidence
 installlifecycle|install lifecycle
 sovereignv4protocol|Sovereign V4 protocol
+ocievidence|OCI evidence
 MODULES
 echo ""
 

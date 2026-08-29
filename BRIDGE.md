@@ -1,5 +1,210 @@
 # TrueRepublic Agent Bridge
 
+## 2026-08-29 GH-258 exact aux-cache fix locally approved
+
+- The aux-cache is removed after package post-install hooks in layer 1 and
+  again after the later final `ldconfig` recreation.
+- Repository contract/evidence, full root Go test (108.158s), Vet, docs
+  consistency and diff validation pass. The inline negative mutation proves
+  exactly two removals without changing public test-event accounting.
+- Kimi K3 independently returned **APPROVE** with no P0/P1/P2 finding.
+- Protected native repeated-image verification remains the only merge gate.
+
+---
+
+## 2026-08-29 GH-258 per-entry evidence → exact file identified
+
+- **Protected run:** PR #259 exact head `6768834`, run `33277444211`.
+- **Exact result:** on amd64 and arm64, the sole differing layer-1 entry is
+  `var/cache/ldconfig/aux-cache`. Its mode/owner/size/metadata digest match per
+  architecture; only its content SHA-256 differs. Both clients and every other
+  daemon layer remain identical.
+- **Root cause:** package post-install hooks create the auxiliary cache inside
+  layer 1. Removing it in the later final `ldconfig` RUN fixes the final
+  filesystem but cannot remove nondeterministic bytes from the earlier layer.
+- **Bounded fix:** also delete the aux-cache inside the package/account RUN,
+  while retaining the later deletion after final `ldconfig`.
+- No merge; rollout 35/59, Phase 6 6/7, production false.
+
+---
+
+## 2026-08-29 GH-258 per-entry diagnostic full local integration PASS
+
+- `make reproducible-oci-contract-test`, focused CLI/evidence checks, Vet and
+  the complete CGO-enabled package-scoped Go suite pass with zero failures.
+- Docs consistency, public arithmetic (2,094 = 1,749 + 26 + 319), 35 OCI
+  evidence events, 81.3% OCI coverage and diff validation are exact.
+- Kimi K3 final security review remains **APPROVE**, no P0/P1/P2 finding.
+- The exact pushed head still requires the protected native amd64/arm64 OCI
+  rerun before merge. Rollout remains 35/59 and production false.
+
+---
+
+## 2026-08-29 GH-258 bounded per-entry layer diagnostic approved locally
+
+- **Implementation:** unequal repeated OCI layers are now compared by normalized
+  entry path, bounded metadata digest and streamed content SHA-256. Plain tar
+  and gzip layers are supported; raw content is never retained or reported.
+- **Fail-closed limits:** archive/layer sizes, decompression, entry/path/link/PAX
+  metadata and report differences are bounded. Unsafe or duplicate paths,
+  unsupported types/compression, size/digest drift and malformed metadata become
+  violations rather than partial success.
+- **Verification:** 35 OCI-evidence test events pass at 81.3% coverage; Vet,
+  docs consistency and diff validation pass. Public arithmetic is synchronized
+  to 2,094 = 1,749 Go + 26 Rust + 319 maintained-client.
+- **Kimi contribution:** Kimi K3 supplied the detailed streaming/bounds design
+  and independently reviewed Sol's final diff: **APPROVE**, no P0/P1/P2 finding.
+- **Remaining gate:** full local integration and the next exact-head protected
+  native run. No merge, image retention/publication, signing or deployment.
+
+---
+
+## 2026-08-29 GH-258 fourth hosted run → exact layer still isolated
+
+- **Protected result:** PR #259 run `33275792489` passed docs, security,
+  release-evidence and repeated daemon-binary gates. Both client OCI pairs also
+  match. Both daemon OCI pairs still fail solely at ordered layer index 1; all
+  five other daemon layers match on amd64 and arm64.
+- **Conclusion:** the broad APT/account cleanup is safe but incomplete. Binary,
+  wasmvm, entrypoint and ldconfig remain excluded; one file or metadata source
+  inside the final package/account RUN remains unstable.
+- **Next bounded diagnostic:** compare the two differing layer tar streams and
+  emit only differing paths, metadata and content digests. Do not emit file
+  contents and do not retain or publish OCI archives.
+- **Status:** no merge. Rollout remains 35/59, Phase 6 remains 6/7 and
+  production false.
+
+---
+
+## 2026-08-29 GH-258 package/account cleanup locally approved
+
+- **Local gates:** focused OCI contract/evidence tests, full root suite, Vet,
+  documentation consistency and `git diff --check` pass.
+- **Independent review:** Kimi K3 returned **APPROVE** with no P0/P1/P2
+  finding after its own contract, Vet and full-root verification. The cleanup
+  preserves installed packages, `/var/lib/dpkg`, live account files and the
+  runtime linker cache while removing only non-runtime state in layer 1.
+- **Remaining gate:** the exact pushed head still requires native repeated
+  amd64/arm64 OCI verification on PR #259 before merge. Rollout remains 35/59,
+  production false, and no image/tag/signing/publication/deployment occurred.
+
+---
+
+## 2026-08-29 GH-258 exact layer isolated → Package/account cleanup candidate
+
+- **Exact evidence:** the third PR #259 run emitted both daemon layer lists.
+  Five of six ordered layers match; only index 1 differs on both repetitions.
+  This is the final-stage package-install/account-creation RUN. The daemon
+  binary, wasmvm copy, entrypoint and final `ldconfig` layer are identical.
+- **Correction of diagnosis:** CGO and ldconfig aux-cache are excluded as the
+  remaining source. The previous removals remain safe hardening, but layer 1
+  still contains package/account administrative state.
+- **Candidate:** delete the complete APT cache/log surface plus shadow-utils
+  backup and non-login lastlog/faillog databases in the same creating RUN. The
+  live passwd/group/shadow state and runtime libraries remain intact.
+- **Gate:** focused/full local tests, Kimi review and protected rerun remain.
+  Rollout stays 35/59 and production false; no image, tag, signing, publication
+  or deployment occurred.
+
+---
+
+## 2026-08-29 GH-258 second daemon mismatch → ldconfig fix candidate
+
+- **Observed:** the second PR #259 exact-head run again passed both repeated
+  client identities but rejected both daemon pairs. This proves APT/DPKG logs
+  were a real gap but not the only remaining content source.
+- **Diagnosis:** both manifest and config digests differ, so at least one layer
+  has different bytes. Kimi and Sol independently rank glibc's rebuildable
+  `/var/cache/ldconfig/aux-cache` highest: it records per-library stat data after
+  the builder-timestamped wasmvm library is copied, which export-time metadata
+  rewriting cannot change.
+- **Candidate:** delete the aux cache after `ldconfig`, remove residual APT
+  binary caches, and emit per-repetition index/manifest/config/ordered-layer
+  digests on failure. No OCI tar is retained or uploaded.
+- **Review/local gates:** focused OCI/repository tests, full root tests, Vet and
+  docs pass. Kimi's final second-fix verdict is `APPROVE` without P0/P1/P2.
+- **Gate:** the protected rerun remains. Rollout stays 35/59 and production
+  false; no tag, image publication, signing or deployment occurred.
+
+---
+
+## 2026-08-29 GH-258 hosted daemon nondeterminism → Fix candidate
+
+- **Observed:** PR #259's first native run passed the strict contract and both
+  repeated `client-web` image pairs, while both daemon pairs failed identity
+  parity. Existing deterministic daemon amd64/arm64 jobs and all completed
+  release/security/docs checks remained green.
+- **Root cause:** the final Debian install layer retained APT/DPKG logs whose
+  file content embeds wall-clock time; BuildKit `rewrite-timestamp=true`
+  normalizes tar metadata but not embedded text. This explains different
+  daemon manifests/configs on both architectures while the Alpine client was
+  identical. Kimi's independent diagnosis reached the same conclusion.
+- **Correction:** remove package-manager logs in the creating layer, normalize
+  the locked service user's shadow date, align the container CGO build with the
+  deterministic daemon flags, and bind those controls into the repository test.
+- **Review/local gates:** focused OCI/repository tests, full root tests, adjacent
+  deterministic contract, Vet and docs consistency pass. Kimi's final fix-diff
+  verdict is `APPROVE` with no P0/P1/P2 finding.
+- **Gate:** protected exact-head rerun remains before merge. Rollout stays 35/59
+  and production false; no image was retained, published, signed or deployed.
+
+---
+
+## 2026-08-29 GH-258 reproducible maintained OCI images → Local PASS / Hosted pending
+
+- **Implemented:** a versioned four-target OCI build contract, strict bounded
+  offline verifier and adversarial fixtures, plus native amd64/arm64 CI jobs
+  which each perform two isolated no-cache daemon and maintained-client OCI
+  exports and compare index, manifest, config and ordered layer identities.
+- **Complete local verification:** 1,739 Go pass events, 26 Rust tests, 319
+  maintained-client cases, full Go build/vet/race/coverage, client lint/build/
+  audit/budgets, Rust fmt/clippy/build/audit, staticcheck, govuln policy,
+  gitleaks fixtures, repository/security/release/install/genesis/license/docs
+  contracts and `git diff --check` all pass. The public total is 2,084.
+- **Delegated review:** Claude Code confirmed the missing pre-implementation OCI
+  surface and same-job versus cross-time boundary. Kimi K3 reviewed the full
+  implementation; its findings on bounded parsing, canonical OCI archives,
+  artifact retention, build/config bindings and path triggers were integrated
+  and retested. Its only final condition, the stale README count badge, is now
+  corrected to 2,084; the final independent verdict is `APPROVE` with no
+  remaining P0/P1/P2 finding.
+- **Outstanding gate:** Docker/Buildx is unavailable locally. The exact-head
+  protected native Linux matrix must build and verify all four real targets
+  before merge. PR/review, exact-main workflows, Pages, real Wiki and issue
+  synchronization also remain before Done.
+- **Boundary:** rollout remains `35/59`, Phase 6 remains `6/7` and production
+  remains `false`. No tag, release, registry/image publication, signing,
+  attestation, deployment, key/fund, migration, public-network or go/no-go
+  action occurred.
+
+---
+
+## 2026-08-29 GH-258 reproducible maintained OCI images → In Progress
+
+- **Branch:** `feat/GH-258-reproducible-oci`
+- **Issue:** [GH-258](https://github.com/NeaBouli/TrueRepublic/issues/258)
+- **Base:** exact clean `origin/main`
+  `6ef4f31af2ac7f5c8b9aad4894636ffdd80eb055`.
+- **Scope:** add a versioned, fail-closed repository contract and protected
+  double-build evidence for reproducible daemon and maintained-client OCI
+  images, including exact source/context/Dockerfile/base/build settings and
+  manifest/config/layer digests.
+- **Roles:** Kimi K3 receives the bounded implementation core; Claude Code
+  receives only a small focused helper slice. Sol owns architecture,
+  supply-chain/security decisions, every delegated diff, complete local and
+  hosted verification, GitHub writes, merge and closure.
+- **Local constraint:** Docker/Buildx is unavailable on this host. Local strict
+  verifier, fixture, repository, build, client, Rust, security and docs gates
+  remain mandatory; protected native Linux CI is authoritative for
+  the two isolated real OCI builds.
+- **Risk/boundary:** medium, release-adjacent but repository-only. No tag,
+  GitHub Release, registry login/push, image publication, signing, attestation,
+  deployment, production, genesis/network, key/fund or go/no-go action.
+  Rollout stays `35/59` and production stays `false` unless canonical GH-29
+  criteria are fully satisfied with independent evidence.
+
+---
+
 ## 2026-08-27 GH-254 dependency reconciliation → Done
 
 - **Protected merges:** wasmvm replacement PR
@@ -8069,3 +8274,40 @@ exclusion, CI wiring, and documentation boundaries.
   release, deployment, rollout-credit, real-key/fund, or production change.
 - **Ready for:** replacement PR head, protected checks, thread resolution and
   Sol-owned merge/closeout.
+
+## 2026-08-29 GH-258 protected static-analysis remediation → In Progress
+
+- Exact PR head `24fc3be9266bd9129bb7a73fedcdb9359215b837` passed the
+  reproducible OCI workflow on linux/amd64 and linux/arm64 in protected run
+  `33278275894`.
+- Security run `33278275868` found a bounded `staticcheck` failure only in the
+  new layer diagnostic: deprecated `archive/tar` compatibility APIs
+  (`TypeRegA` and `Header.Xattrs`, SA1019). All other completed security jobs
+  passed; no review threads are open.
+- Claude Code receives the small, secret-free, read-only remediation review.
+  Sol owns the patch, diff review, complete relevant rerun, push, protected
+  verification and merge decision.
+- **Risk:** Low — compatibility cleanup in diagnostic/test code only; no runtime
+  daemon, dependency, release, deployment, production, key or fund action.
+
+## 2026-08-29 GH-258 protected static-analysis remediation → Approved
+
+- **Changed:** `ocievidence/layerdiff.go` handles the legacy regular-file byte
+  without deprecated symbols and uses canonical `PAXRecords` as the single
+  bounded/deterministic extended-metadata source;
+  `ocievidence/ocievidence_test.go` proves legacy-file content hashing and PAX
+  xattr digest coverage without adding a published test event.
+- **Claude Code contribution:** the bounded read-only helper invocation returned
+  no usable report and made no change. Sol implemented and reviewed the patch.
+- **Kimi K3 contribution:** independent final review APPROVE with no P0/P1/P2
+  blocker; Kimi verified Go 1.26.6 tar-reader semantics, fail-closed bounds,
+  determinism, exact three-file scope, focused tests and the full Go suite.
+- **Sol tests:** pinned staticcheck v0.7.0 through
+  `STATICCHECK_BIN=$HOME/.cache/truerepublic-tools/bin/staticcheck
+  ./scripts/check-static-analysis.sh` PASS; `go vet ./...` PASS;
+  `CGO_ENABLED=1 go test ./... -count=1` PASS across all maintained Go
+  packages (root 136.562s, `ocievidence` 4.147s); focused `go test
+  ./ocievidence -count=1` PASS; docs consistency and diff hygiene PASS.
+- **Risk:** Low. Protected replacement-head Security, Go, Docs and OCI checks
+  remain the merge gate. No release, tag, artifact publication, deployment,
+  production, key or fund action occurred.

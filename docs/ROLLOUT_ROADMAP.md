@@ -1,6 +1,6 @@
 # TrueRepublic Road to Rollout
 
-Updated: 2026-08-26
+Updated: 2026-08-29
 
 TrueRepublic has a recovered and CI-verified v0.4 engineering foundation. It
 is **not production-ready, mainnet-ready, or approved for real funds or keys**.
@@ -19,9 +19,10 @@ intentionally more granular than the public 59-item tracker.
 
 - The ordered recovery merge chain is on `main`.
 - The maximum supply is fixed at 21,000,000 PNYX.
-- The source of truth records 2,028 recovery-verified tests: 1,683 Go, 26 Rust,
+- The source of truth records 2,094 recovery-verified tests: 1,749 Go, 26 Rust,
   and 319 maintained-client tests. The Go total includes GH-244's strict
-  offline rollout-genesis qualification contract, GH-225's release-
+  offline rollout-genesis qualification contract, GH-258's strict repeated-OCI
+  evidence contract, GH-225's release-
   compatibility contract, GH-209's recipient-
   binding and atomic-payout adversarial coverage plus GH-206's pinned,
   test-only ZKP circuit/encoding freeze. GH-121's real registered browser-query
@@ -338,8 +339,11 @@ failure using the published runbooks and telemetry.
   provenance, and dependency reports.
 - [x] Pin release toolchains and document supported platforms
   ([GH-212](https://github.com/NeaBouli/TrueRepublic/issues/212)); the strict
-  offline bundle/SBOM/unsigned-provenance contract is repository-only and does
-  not complete tagged builds, signing, publication, container reproducibility,
+  offline bundle/SBOM/unsigned-provenance contract is repository-only. GH-258
+  adds native same-job daemon/client OCI index, manifest, config and
+  ordered-layer parity. Floating runner/BuildKit versions and live Debian
+  package indexes still leave cross-time hermetic rebuilding unproven. These do
+  not complete tagged builds, signing, publication, long-term reproducibility,
   deployment, or go/no-go approval.
 - [x] Provide installation, configuration, migration, upgrade, rollback, and
   uninstallation instructions

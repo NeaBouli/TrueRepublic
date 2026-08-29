@@ -20,8 +20,8 @@
   },
   "tests": {
     "status": "recovery_verified_locally",
-    "total": 2028,
-    "go": 1683,
+    "total": 2094,
+    "go": 1749,
     "rust": 26,
     "frontend": 319,
     "historical_total": 577
@@ -63,7 +63,7 @@
     "production_ready": false
   },
   "modules": {
-    "root": 180,
+    "root": 191,
     "genesisevidence": 68,
     "capacitypolicy": 48,
     "deploymentevidence": 71,
@@ -76,11 +76,12 @@
     "topologypolicy": 56,
     "treasury": 36,
     "dex": 138,
-    "truedemocracy": 612,
+    "truedemocracy": 614,
     "zkpprover": 8,
     "releaseevidence": 20,
     "installlifecycle": 24,
-    "sovereignv4protocol": 18
+    "sovereignv4protocol": 36,
+    "ocievidence": 35
   },
   "token": {
     "symbol": "PNYX",
@@ -212,7 +213,7 @@
     "ibc_transfers_ui": "canonical native ICS-20 signing and source-chain evidence recovery verified locally on GH-190; external relayer and public counterparty delivery remain unqualified",
     "browser_wallet_custody": "local AES-GCM/PBKDF2 recovery store and live-session invalidation verified on GH-193; same-origin XSS, compromised browsers, hardware custody, real keys/funds, and production wallet operation remain unqualified",
     "node_bootstrap": "init-node wrapper delegates exclusively to generated CometBFT-key, exact bank-backed PoD genesis; independent multi-node operations review pending",
-    "release_engineering": "repository-only unsigned release evidence and pinned tool/platform contracts are verified locally on GH-212; no tag, signed artifact, published bundle, reproducible container image, deployment, or rollout approval is claimed"
+    "release_engineering": "GH-212 repository-only unsigned release evidence and pinned inputs plus GH-258 native same-job repeated OCI identity parity are verified; floating runner/BuildKit versions and live Debian package indexes prevent a cross-time hermetic container claim, and no tag, signed artifact, published image/bundle, deployment, or rollout approval is claimed"
   },
   "branding": {
     "logo_main": "https://raw.githubusercontent.com/NeaBouli/TrueRepublic/main/assets/logo.png",

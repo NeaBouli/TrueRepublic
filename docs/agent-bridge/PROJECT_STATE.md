@@ -1,5 +1,123 @@
 # Project State
 
+GH-258's exact aux-cache fix passes focused/full root, Vet/docs/diff gates and
+independent Kimi APPROVE with no P0/P1/P2 finding. The protected exact-head
+amd64/arm64 repeated OCI run is now the sole merge gate. Rollout remains
+35-of-59, Phase 6 remains 6-of-7 and production false.
+
+Updated: 2026-08-29 EEST
+
+---
+
+GH-258 protected run `33277444211` used the new entry diagnostic successfully:
+the only unstable file on amd64 and arm64 is layer-1
+`var/cache/ldconfig/aux-cache`, with equal metadata and differing content. The
+next bounded fix deletes it inside both RUNs that can create it. No merge;
+rollout 35-of-59, Phase 6 6-of-7 and production false.
+
+Updated: 2026-08-29 EEST
+
+---
+
+GH-258's bounded layer diagnostic now passes the complete local Go integration
+chain in addition to focused/Vet/docs and Kimi APPROVE. The exact pushed head
+must still pass native amd64/arm64 repeated OCI verification before merge.
+Rollout remains 35-of-59, Phase 6 remains 6-of-7 and production false.
+
+Updated: 2026-08-29 EEST
+
+---
+
+GH-258 now has a fail-closed digest-only per-entry layer diagnostic for the sole
+remaining daemon mismatch. It passes 35 OCI-evidence events at 81.3% coverage,
+Vet, docs consistency and independent Kimi **APPROVE** with no P0/P1/P2 finding.
+Public arithmetic is 2,094 = 1,749 Go + 26 Rust + 319 maintained-client. Full
+local integration and the next exact-head protected run remain; rollout stays
+35-of-59, Phase 6 stays 6-of-7 and production false. No merge/publication/signing
+or deployment occurred.
+
+Updated: 2026-08-29 EEST
+
+---
+
+PR #259 exact head `3f66899` passed docs, security, release evidence and both
+native repeated daemon-binary jobs. Both client OCI pairs match. The daemon OCI
+pairs still differ only at ordered layer index 1 on amd64 and arm64; all five
+other daemon layers match. A digest-only per-entry diagnostic is next. No merge
+occurred; rollout remains 35-of-59, Phase 6 remains 6-of-7 and production false.
+
+Updated: 2026-08-29 EEST
+
+---
+
+The GH-258 layer-1 package/account cleanup passes focused OCI/evidence tests,
+the full root suite, Vet, docs consistency and diff validation. Kimi K3 returned
+APPROVE with no P0/P1/P2 finding after independent verification. PR #259 now
+requires only the protected native repeated amd64/arm64 image run for this exact
+head before merge. Rollout remains 35-of-59, Phase 6 remains 6-of-7 and
+production false; no image, tag, signing, publication or deployment occurred.
+
+Updated: 2026-08-29 EEST
+
+---
+
+GH-258 PR #259 now has exact digest-only layer evidence: five of six daemon
+layers match and only final-stage package/account layer index 1 differs. Binary,
+wasmvm, entrypoint and final ldconfig layers are identical. The next bounded
+candidate removes complete APT cache/log state and non-runtime shadow-utils
+backup/login databases while preserving live account and runtime-library state.
+Local/Kimi/protected reruns remain; rollout stays 35-of-59, Phase 6 stays 6-of-7
+and production false. No image, tag, signing, publication or deployment occurred.
+
+Updated: 2026-08-29 EEST
+
+---
+
+GH-258 PR #259's second native run again rejected both daemon pairs while both
+maintained-client pairs matched. Since manifests and configs differ, real layer
+bytes remain unstable. Sol and Kimi rank glibc's rebuildable ldconfig aux-cache
+highest because it records stat data after the builder-timestamped wasmvm library
+copy. The next bounded candidate deletes that cache plus residual APT binary
+caches and adds digest-only per-repetition layer diagnostics without retaining
+OCI archives. Local and protected reruns remain; rollout stays 35-of-59, Phase 6
+stays 6-of-7 and production false.
+
+Updated: 2026-08-29 EEST
+
+---
+
+GH-258 PR #259 correctly rejected daemon OCI nondeterminism on its first native
+amd64/arm64 run while both repeated maintained-client pairs and every completed
+existing release/security/docs gate passed. Hosted logs and Kimi's independent
+review identify APT/DPKG wall-clock log content in the final Debian layer as the
+cause; BuildKit only rewrites metadata timestamps. A bounded fix candidate now
+removes those logs, normalizes the locked service-user shadow date, aligns the
+container CGO binary with the deterministic daemon flags and locks the controls
+in the repository contract. Local/full and protected exact-head reruns remain.
+Rollout stays 35-of-59, Phase 6 stays 6-of-7 and production false; no image,
+tag, publication, signing or deployment occurred.
+
+Updated: 2026-08-29 EEST
+
+---
+
+GH-258 is locally approved on exact base
+`6ef4f31af2ac7f5c8b9aad4894636ffdd80eb055`. The versioned four-target OCI
+contract, strict bounded offline verifier, adversarial fixtures and protected
+native amd64/arm64 double-export jobs pass the complete available local Go,
+Rust, maintained-client, security, release, repository and documentation
+matrix. The synchronized standard-suite total is 2,084 = 1,739 Go + 26 Rust +
+319 maintained-client cases. Claude Code completed the bounded preflight; Kimi
+K3's final independent verdict is `APPROVE` with no P0/P1/P2 finding. Docker is
+unavailable locally, so real OCI builds, protected exact-head review, merge,
+exact-main/Pages and live GitHub Wiki/issue synchronization remain. Rollout
+stays 35-of-59, Phase 6 stays 6-of-7 and production false; no tag, publication,
+signing, deployment or production action occurred.
+
+Updated: 2026-08-29 EEST
+
+---
+
 GH-254 is complete. Protected replacements #255 and #256 merged as exact main
 commits `2b5ebb61` and `40969ee0`; stale Dependabot PRs #248/#249 are closed as
 superseded with exact evidence. Every final-main Client, Docs, Security,

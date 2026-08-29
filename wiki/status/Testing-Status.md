@@ -1,12 +1,12 @@
 # Testing Status
 
-The current **v0.4.0 recovery** source of truth records **2,028 verified
+The current **v0.4.0 recovery** source of truth records **2,094 verified
 standard-suite cases**. This arithmetic excludes the separately run opt-in
 GH-175/GH-178/GH-181 IBC two-chain and GH-184 governed-upgrade gates.
 
 | Suite | Passing cases |
 |---|---:|
-| Go root/application | 180 |
+| Go root/application | 191 |
 | Go rollout genesis evidence | 68 |
 | Go capacity policy | 48 |
 | Go deployment evidence | 71 |
@@ -19,19 +19,20 @@ GH-175/GH-178/GH-181 IBC two-chain and GH-184 governed-upgrade gates.
 | Go topology policy | 56 |
 | Go treasury | 36 |
 | Go DEX | 138 |
-| Go governance | 612 |
+| Go governance | 614 |
 | Go test-only ZKP prover | 8 |
 | Go release evidence | 20 |
 | Go install lifecycle | 24 |
-| Go Sovereign V4 protocol | 18 |
+| Go Sovereign V4 protocol | 36 |
+| Go OCI evidence | 35 |
 | Rust/CosmWasm | 26 |
 | Maintained client | 319 |
-| **Total** | **2,028** |
+| **Total** | **2,094** |
 
 The published total is the reproducible standard-suite baseline; the opt-in
 GH-175/GH-178/GH-181 IBC recovery, GH-184 upgrade, and GH-206 Go/WASM
 compatibility (`./scripts/test-zkp-wasm-client.sh`) gates are additional
-evidence and are not counted in the 1,683 Go subtotal.
+evidence and are not counted in the 1,749 Go subtotal.
 
 ## Current Go coverage
 
@@ -46,6 +47,7 @@ evidence and are not counted in the 1,683 Go subtotal.
 | migration | 84.6% |
 | network policy | 95.5% |
 | observability | 80.3% |
+| OCI evidence | 81.3% |
 | release evidence | 74.5% |
 | install lifecycle | 77.2% |
 | token | 95.6% |
@@ -90,6 +92,13 @@ GH-212 adds the strict two-target offline release-evidence parser/verifier,
 repeated normalized SBOM parity, unsigned provenance binding, exact tool and
 platform pins, and synthetic adversarial CI gate. It does not publish binaries,
 authenticate SBOM component truth, sign an artifact, or approve rollout.
+
+GH-258 adds 35 standard-suite OCI evidence cases plus a repository contract and
+native Linux amd64/arm64 protected matrix. Each daemon and maintained-client
+image is exported twice without cache and must match on OCI index, manifest,
+config, and ordered layer digests. Only JSON evidence is retained; floating
+runner/BuildKit versions and live Debian package sources leave cross-time
+hermetic rebuilding open.
 
 Green tests are recovery evidence, not an external security or production
 approval. See [Current Status](Current-Status) for remaining gates.

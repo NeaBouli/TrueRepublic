@@ -1,5 +1,141 @@
 # Action Log
 
+## 2026-08-29 - GH-258 exact aux-cache fix passed local review
+
+- The Dockerfile now removes the rebuildable aux-cache in both RUNs that can
+  create it. The repository contract binds exactly two occurrences and its
+  inline mutation proves the new invariant without adding a counted test event.
+- Focused/full root, Vet, docs and diff checks pass; Kimi K3 verdict is
+  **APPROVE**, no P0/P1/P2 finding. Protected rerun remains.
+
+## 2026-08-29 - GH-258 exact unstable file identified
+
+- Protected run `33277444211` reports only
+  `var/cache/ldconfig/aux-cache` as different in daemon layer 1 on both native
+  architectures. Metadata is equal and only content hashes differ.
+- The cache must be deleted in its package-postinst creating RUN as well as
+  after the later final ldconfig invocation. No image/archive was retained.
+
+## 2026-08-29 - GH-258 layer diagnostic passed complete Go integration
+
+- The focused OCI contract/CLI, Vet and complete CGO-enabled package-scoped Go
+  suite pass with no failing package. Documentation consistency and diff checks
+  also pass.
+- The protected native repeated-image run remains the sole implementation gate;
+  no merge, artifact publication, signing or deployment occurred.
+
+## 2026-08-29 - GH-258 digest-only layer-entry diagnostic implemented
+
+- Added fail-closed tar/tar+gzip entry comparison on the repeated-image mismatch
+  path only. Reports contain normalized paths, bounded metadata and SHA-256
+  values, never file bytes.
+- Added traversal, duplicate-path, compression/type, decompression, entry/path/
+  link/PAX metadata, ordering, truncation, added/removed and no-content-leakage
+  coverage. OCI evidence now has 35 events and 81.3% statement coverage.
+- Public test arithmetic is synchronized to 2,094 = 1,749 Go + 26 Rust + 319
+  maintained-client. Kimi K3 reviewed the final implementation as **APPROVE**
+  with no P0/P1/P2 finding.
+
+## 2026-08-29 - GH-258 fourth hosted run kept merge gate closed
+
+- Exact head `3f66899` passed docs, security, release-evidence and both native
+  repeated daemon-binary jobs.
+- Both maintained-client image pairs match; both daemon pairs still differ only
+  in layer index 1. The cleanup changed that layer's digest but did not remove
+  its final unstable file or metadata source.
+- Next work is a bounded digest-only per-entry comparison for the differing
+  layer. It must expose no file contents and retain/publish no OCI archive.
+
+## 2026-08-29 - GH-258 layer-1 candidate passed local and Kimi gates
+
+- Focused OCI verification, the complete root package suite, Vet, docs
+  consistency and diff validation all pass locally.
+- Kimi K3 independently returned **APPROVE** with no P0/P1/P2 finding and
+  confirmed that the active package database, runtime libraries, service-user
+  records and linker cache remain intact.
+- The protected native repeated-image run remains the merge gate; no image or
+  release artifact was retained, published, signed or deployed.
+
+## 2026-08-29 - GH-258 third run identified exact unstable layer
+
+- Digest-only failure evidence shows five of six daemon layers are identical;
+  only ordered layer index 1 differs. That layer is the final-stage package and
+  service-account RUN. Binary, wasmvm, entrypoint and final ldconfig layers are
+  proven identical, excluding the prior aux-cache and CGO hypotheses.
+- Expanded the same-layer cleanup to the complete APT cache/log directories and
+  shadow-utils backup plus non-login login-database files. Runtime passwd/group/
+  shadow state, libraries and `/etc/ld.so.cache` are preserved.
+- No archive or image was retained, published, signed or deployed. Local and
+  protected verification remain mandatory before merge.
+
+## 2026-08-29 - GH-258 second hosted run isolated remaining layer source
+
+- The second native exact-head run again retained exact repeated client image
+  identities and rejected both daemon pairs. Different manifests prove real
+  layer-byte drift remains, not only image-config metadata.
+- Remaining final-image writes were re-audited with Kimi. Glibc's rebuildable
+  `/var/cache/ldconfig/aux-cache` is highest confidence because it records stat
+  data after the wasmvm library is copied with a per-build mtime; APT binary
+  caches are removed as adjacent hardening.
+- The verifier now emits per-repetition identity and ordered layer digests only
+  when parity fails. This preserves the no-image-retention boundary while making
+  any further Hosted failure precisely diagnosable.
+- Focused OCI/repository tests, full root tests, Vet and documentation consistency
+  pass. Kimi's final second-fix review is `APPROVE` with no P0/P1/P2 finding.
+
+## 2026-08-29 - GH-258 first hosted run rejected daemon nondeterminism
+
+- PR #259 proved that both repeated maintained-client OCI identities match on
+  native amd64 and arm64. Both daemon pairs were correctly rejected while the
+  pre-existing deterministic daemon jobs stayed green.
+- Exact logs showed different daemon manifests/configs. The final Debian layer
+  retained APT/DPKG logs containing per-build wall-clock text, which metadata
+  timestamp rewriting cannot normalize. Kimi independently confirmed this as
+  the high-confidence cause and identified service-user shadow dates plus
+  container build flags as adjacent reproducibility gaps.
+- Applied the bounded candidate: remove package logs in the same layer,
+  normalize the locked service account date, use the maintained deterministic
+  CGO build flags, and enforce every control through the repository contract.
+  Focused/full root tests, adjacent deterministic contract, Vet and docs pass;
+  Kimi's final fix-diff verdict is `APPROVE` without P0/P1/P2. No image, tag,
+  release, signature, publication or deployment occurred.
+
+## 2026-08-29 - GH-258 locally verified; protected OCI matrix pending
+
+- Added the exact four-target OCI contract, strict bounded offline verifier,
+  adversarial fixtures and native amd64/arm64 repeated-build jobs. Evidence
+  retains JSON identities only; the workflow has contents-read permission and
+  performs no login, push, signing, publication, deployment or production
+  action.
+- Complete local verification passes: 1,739 Go cases, 26 Rust cases, 319
+  maintained-client cases, full Go build/vet/race/coverage, client and Rust
+  quality/security gates, static/secret/vulnerability gates, release/install/
+  genesis/license/security/repository contracts and documentation consistency.
+  The synchronized public total is 2,084 and OCI verifier coverage is 77.9%.
+- Claude Code performed the bounded preflight. Kimi K3 performed a deep
+  independent review; Sol integrated and retested its findings. The only final
+  condition was a stale README badge, now corrected from 2,028 to 2,084. Kimi's
+  final read-only verdict is `APPROVE` with no P0/P1/P2 finding.
+- Docker/Buildx is unavailable on this host. Protected real-image CI, exact-head
+  review, merge, exact-main/Pages checks and live GitHub Wiki/issue sync remain
+  before Done. Rollout stays 35/59 and production false.
+
+## 2026-08-29 - GH-258 reproducible OCI evidence started
+
+- Opened GH-258 and isolated `feat/GH-258-reproducible-oci` from exact clean
+  main `6ef4f31a` after confirming no open PR and no newer remote-main commit.
+- Current GH-212 evidence already binds reproducible Linux daemon binaries,
+  normalized Go/client SBOMs, exact release tools/platforms and pinned
+  Dockerfile base identities; it explicitly does not prove image
+  reproducibility.
+- Docker/Buildx is unavailable locally. Strict verifier/fixture/repository
+  tests and the complete relevant local gates will run here; protected Linux
+  CI will own the two isolated real OCI builds for daemon and client targets.
+- Kimi K3 owns the bounded implementation core, Claude Code a small helper
+  slice, and Sol architecture, security, integration, full verification and
+  GitHub closure. No tag, publication, signing, registry, deployment or
+  production action is included; rollout remains 35/59 and production false.
+
 ## 2026-08-27 - GH-254 dependency reconciliation completed
 
 - Protected client replacement PR #256 exact head `5c3939ed` passed every
