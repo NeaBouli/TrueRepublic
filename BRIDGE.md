@@ -8274,3 +8274,40 @@ exclusion, CI wiring, and documentation boundaries.
   release, deployment, rollout-credit, real-key/fund, or production change.
 - **Ready for:** replacement PR head, protected checks, thread resolution and
   Sol-owned merge/closeout.
+
+## 2026-08-29 GH-258 protected static-analysis remediation → In Progress
+
+- Exact PR head `24fc3be9266bd9129bb7a73fedcdb9359215b837` passed the
+  reproducible OCI workflow on linux/amd64 and linux/arm64 in protected run
+  `33278275894`.
+- Security run `33278275868` found a bounded `staticcheck` failure only in the
+  new layer diagnostic: deprecated `archive/tar` compatibility APIs
+  (`TypeRegA` and `Header.Xattrs`, SA1019). All other completed security jobs
+  passed; no review threads are open.
+- Claude Code receives the small, secret-free, read-only remediation review.
+  Sol owns the patch, diff review, complete relevant rerun, push, protected
+  verification and merge decision.
+- **Risk:** Low — compatibility cleanup in diagnostic/test code only; no runtime
+  daemon, dependency, release, deployment, production, key or fund action.
+
+## 2026-08-29 GH-258 protected static-analysis remediation → Approved
+
+- **Changed:** `ocievidence/layerdiff.go` handles the legacy regular-file byte
+  without deprecated symbols and uses canonical `PAXRecords` as the single
+  bounded/deterministic extended-metadata source;
+  `ocievidence/ocievidence_test.go` proves legacy-file content hashing and PAX
+  xattr digest coverage without adding a published test event.
+- **Claude Code contribution:** the bounded read-only helper invocation returned
+  no usable report and made no change. Sol implemented and reviewed the patch.
+- **Kimi K3 contribution:** independent final review APPROVE with no P0/P1/P2
+  blocker; Kimi verified Go 1.26.6 tar-reader semantics, fail-closed bounds,
+  determinism, exact three-file scope, focused tests and the full Go suite.
+- **Sol tests:** pinned staticcheck v0.7.0 through
+  `STATICCHECK_BIN=$HOME/.cache/truerepublic-tools/bin/staticcheck
+  ./scripts/check-static-analysis.sh` PASS; `go vet ./...` PASS;
+  `CGO_ENABLED=1 go test ./... -count=1` PASS across all maintained Go
+  packages (root 136.562s, `ocievidence` 4.147s); focused `go test
+  ./ocievidence -count=1` PASS; docs consistency and diff hygiene PASS.
+- **Risk:** Low. Protected replacement-head Security, Go, Docs and OCI checks
+  remain the merge gate. No release, tag, artifact publication, deployment,
+  production, key or fund action occurred.

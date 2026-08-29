@@ -307,7 +307,7 @@ func describeLayerEntry(reader io.Reader, header *tar.Header) (layerEntry, error
 		LinkTarget: header.Linkname,
 	}
 	switch header.Typeflag {
-	case tar.TypeReg, tar.TypeRegA:
+	case tar.TypeReg, 0:
 		entry.Type = "file"
 		hasher := sha256.New()
 		written, err := io.Copy(hasher, io.LimitReader(reader, header.Size+1))
@@ -333,7 +333,7 @@ func describeLayerEntry(reader io.Reader, header *tar.Header) (layerEntry, error
 	default:
 		return layerEntry{}, errors.New("unsupported layer entry type")
 	}
-	if header.Typeflag != tar.TypeReg && header.Typeflag != tar.TypeRegA && header.Size != 0 {
+	if header.Typeflag != tar.TypeReg && header.Typeflag != 0 && header.Size != 0 {
 		return layerEntry{}, errors.New("non-regular layer entry has content")
 	}
 	if len(header.Linkname) > maxLayerLinkBytes {
@@ -351,12 +351,6 @@ func boundedLayerMetadata(header *tar.Header) bool {
 			return false
 		}
 	}
-	for key, value := range header.Xattrs {
-		total += len(key) + len(value)
-		if total > maxLayerMetadataBytes {
-			return false
-		}
-	}
 	return total <= maxLayerMetadataBytes
 }
 
@@ -367,7 +361,6 @@ func layerMetadataHash(header *tar.Header, entry layerEntry) string {
 		header.ModTime.UnixNano(), header.AccessTime.UnixNano(), header.ChangeTime.UnixNano(),
 		header.Devmajor, header.Devminor, header.Uname, header.Gname)
 	writeSortedMap(hasher, header.PAXRecords)
-	writeSortedMap(hasher, header.Xattrs)
 	return hex.EncodeToString(hasher.Sum(nil))
 }
 

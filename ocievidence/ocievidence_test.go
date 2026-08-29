@@ -276,17 +276,23 @@ func TestLayerDiffAdversarialInputsFailClosed(t *testing.T) {
 
 func TestLayerEntryMetadataAndDescriptorBoundaries(t *testing.T) {
 	raw := makeLayerTar(t, []layerEntryFixture{
+		{name: "legacy-file", legacyRegular: true, mode: 0644, body: []byte("legacy")},
 		{name: "dir", typeflag: tar.TypeDir, mode: 0755},
 		{name: "dir/symlink", typeflag: tar.TypeSymlink, mode: 0777, linkname: "/target"},
 		{name: "dir/hardlink", typeflag: tar.TypeLink, mode: 0644, linkname: "dir/file"},
 		{name: "char", typeflag: tar.TypeChar, mode: 0600},
 		{name: "block", typeflag: tar.TypeBlock, mode: 0600},
 		{name: "fifo", typeflag: tar.TypeFifo, mode: 0600},
-		{name: "dir/file", mode: 0644, uname: "root", gname: "root", pax: map[string]string{"comment": "bounded"}, xattrs: map[string]string{"user.test": "value"}, body: []byte("body")},
+		{name: "dir/file", mode: 0644, uname: "root", gname: "root", pax: map[string]string{"comment": "bounded", "SCHILY.xattr.user.test": "value"}, body: []byte("body")},
 	}, false)
 	entries, err := readLayerTar(bytes.NewReader(raw))
-	if err != nil || len(entries) != 7 || entries["dir/symlink"].LinkTarget != "/target" || entries["dir/file"].MetadataSHA256 == "" {
+	if err != nil || len(entries) != 8 || entries["legacy-file"].ContentSHA256 == "" || entries["dir/symlink"].LinkTarget != "/target" || entries["dir/file"].MetadataSHA256 == "" {
 		t.Fatalf("supported layer metadata rejected: %v %#v", err, entries)
+	}
+	withoutXattr := makeLayerTar(t, []layerEntryFixture{{name: "dir/file", mode: 0644, uname: "root", gname: "root", pax: map[string]string{"comment": "bounded"}, body: []byte("body")}}, false)
+	entriesWithoutXattr, err := readLayerTar(bytes.NewReader(withoutXattr))
+	if err != nil || entries["dir/file"].MetadataSHA256 == entriesWithoutXattr["dir/file"].MetadataSHA256 {
+		t.Fatalf("PAX extended attribute not represented in metadata digest: %v", err)
 	}
 
 	unsupported := makeLayerTar(t, []layerEntryFixture{{name: "unknown", typeflag: tar.TypeCont, mode: 0600}}, false)
@@ -550,17 +556,17 @@ func writeOCIArchiveFixture(t *testing.T, filePath, arch, identity string, varia
 }
 
 type layerEntryFixture struct {
-	name     string
-	typeflag byte
-	mode     int64
-	uid      int
-	gid      int
-	linkname string
-	uname    string
-	gname    string
-	pax      map[string]string
-	xattrs   map[string]string
-	body     []byte
+	name          string
+	typeflag      byte
+	legacyRegular bool
+	mode          int64
+	uid           int
+	gid           int
+	linkname      string
+	uname         string
+	gname         string
+	pax           map[string]string
+	body          []byte
 }
 
 func makeLayerTar(t *testing.T, entries []layerEntryFixture, compressed bool) []byte {
@@ -569,16 +575,16 @@ func makeLayerTar(t *testing.T, entries []layerEntryFixture, compressed bool) []
 	writer := tar.NewWriter(&raw)
 	for _, entry := range entries {
 		typeflag := entry.typeflag
-		if typeflag == 0 {
+		if typeflag == 0 && !entry.legacyRegular {
 			typeflag = tar.TypeReg
 		}
 		header := &tar.Header{
 			Name: entry.name, Mode: entry.mode, Uid: entry.uid, Gid: entry.gid,
 			Typeflag: typeflag, Linkname: entry.linkname, Uname: entry.uname,
-			Gname: entry.gname, PAXRecords: entry.pax, Xattrs: entry.xattrs,
+			Gname: entry.gname, PAXRecords: entry.pax,
 			ModTime: time.Unix(0, 0),
 		}
-		if typeflag == tar.TypeReg || typeflag == tar.TypeRegA {
+		if typeflag == tar.TypeReg || typeflag == 0 {
 			header.Size = int64(len(entry.body))
 		}
 		if err := writer.WriteHeader(header); err != nil {
