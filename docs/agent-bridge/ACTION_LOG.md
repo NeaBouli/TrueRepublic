@@ -1,5 +1,27 @@
 # Action Log
 
+## 2026-08-29 - GH-258 layer-1 candidate passed local and Kimi gates
+
+- Focused OCI verification, the complete root package suite, Vet, docs
+  consistency and diff validation all pass locally.
+- Kimi K3 independently returned **APPROVE** with no P0/P1/P2 finding and
+  confirmed that the active package database, runtime libraries, service-user
+  records and linker cache remain intact.
+- The protected native repeated-image run remains the merge gate; no image or
+  release artifact was retained, published, signed or deployed.
+
+## 2026-08-29 - GH-258 third run identified exact unstable layer
+
+- Digest-only failure evidence shows five of six daemon layers are identical;
+  only ordered layer index 1 differs. That layer is the final-stage package and
+  service-account RUN. Binary, wasmvm, entrypoint and final ldconfig layers are
+  proven identical, excluding the prior aux-cache and CGO hypotheses.
+- Expanded the same-layer cleanup to the complete APT cache/log directories and
+  shadow-utils backup plus non-login login-database files. Runtime passwd/group/
+  shadow state, libraries and `/etc/ld.so.cache` are preserved.
+- No archive or image was retained, published, signed or deployed. Local and
+  protected verification remain mandatory before merge.
+
 ## 2026-08-29 - GH-258 second hosted run isolated remaining layer source
 
 - The second native exact-head run again retained exact repeated client image

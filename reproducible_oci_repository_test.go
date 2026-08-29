@@ -193,7 +193,10 @@ func reproducibleOCIRepositoryViolations(contract repositoryOCIContract, workflo
 		"-buildvcs=false",
 		"-buildid=",
 		"-extldflags=-Wl,--build-id=none",
-		"rm -f /var/log/dpkg.log /var/log/apt/*.log /var/log/alternatives.log /var/cache/apt/*.bin",
+		"rm -rf /var/lib/apt/lists/* /var/cache/apt/* /var/log/apt",
+		"rm -f /var/log/dpkg.log /var/log/alternatives.log",
+		"rm -f /etc/passwd- /etc/group- /etc/shadow- /etc/gshadow- /etc/subuid- /etc/subgid-",
+		"/var/log/faillog /var/log/lastlog /var/log/wtmp /var/log/btmp",
 		"rm -f /var/cache/ldconfig/aux-cache",
 		"/^truerepublic:/ s/^([^:]*:[^:]*):[0-9]+:/\\1::/",
 	} {

@@ -1,5 +1,37 @@
 # TrueRepublic Agent Bridge
 
+## 2026-08-29 GH-258 package/account cleanup locally approved
+
+- **Local gates:** focused OCI contract/evidence tests, full root suite, Vet,
+  documentation consistency and `git diff --check` pass.
+- **Independent review:** Kimi K3 returned **APPROVE** with no P0/P1/P2
+  finding after its own contract, Vet and full-root verification. The cleanup
+  preserves installed packages, `/var/lib/dpkg`, live account files and the
+  runtime linker cache while removing only non-runtime state in layer 1.
+- **Remaining gate:** the exact pushed head still requires native repeated
+  amd64/arm64 OCI verification on PR #259 before merge. Rollout remains 35/59,
+  production false, and no image/tag/signing/publication/deployment occurred.
+
+---
+
+## 2026-08-29 GH-258 exact layer isolated → Package/account cleanup candidate
+
+- **Exact evidence:** the third PR #259 run emitted both daemon layer lists.
+  Five of six ordered layers match; only index 1 differs on both repetitions.
+  This is the final-stage package-install/account-creation RUN. The daemon
+  binary, wasmvm copy, entrypoint and final `ldconfig` layer are identical.
+- **Correction of diagnosis:** CGO and ldconfig aux-cache are excluded as the
+  remaining source. The previous removals remain safe hardening, but layer 1
+  still contains package/account administrative state.
+- **Candidate:** delete the complete APT cache/log surface plus shadow-utils
+  backup and non-login lastlog/faillog databases in the same creating RUN. The
+  live passwd/group/shadow state and runtime libraries remain intact.
+- **Gate:** focused/full local tests, Kimi review and protected rerun remain.
+  Rollout stays 35/59 and production false; no image, tag, signing, publication
+  or deployment occurred.
+
+---
+
 ## 2026-08-29 GH-258 second daemon mismatch → ldconfig fix candidate
 
 - **Observed:** the second PR #259 exact-head run again passed both repeated

@@ -83,6 +83,19 @@ count.
   never OCI archives, so any further mismatch identifies its exact layer index.
   Focused/full root, Vet and docs gates pass; Kimi's final review is **APPROVE**
   with no P0/P1/P2 finding.
+- The third exact-head report fulfilled that diagnostic purpose: all daemon
+  layers match except ordered layer index 1 (the final-stage package/account RUN).
+  The binary, wasmvm copy, entrypoint and final `ldconfig` layer all match, so the
+  CGO and aux-cache hypotheses are now excluded as the remaining cause. The next
+  bounded candidate removes the complete APT cache/log directory surface and
+  non-runtime account backup/login databases in their creating layer. These are
+  unnecessary for the locked non-login service user and package-manager-free
+  runtime, while the actual passwd/group/shadow state remains intact.
+- Sol's focused OCI/evidence tests, full root suite, Vet, docs consistency and
+  diff validation pass for that candidate. Kimi K3 independently returned
+  **APPROVE** with no P0/P1/P2 finding after its own contract, Vet and full-root
+  checks. Native repeated amd64/arm64 verification of the pushed exact head is
+  the sole remaining merge gate.
 
 ## Residual risks
 

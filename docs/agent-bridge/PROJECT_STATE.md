@@ -1,5 +1,28 @@
 # Project State
 
+The GH-258 layer-1 package/account cleanup passes focused OCI/evidence tests,
+the full root suite, Vet, docs consistency and diff validation. Kimi K3 returned
+APPROVE with no P0/P1/P2 finding after independent verification. PR #259 now
+requires only the protected native repeated amd64/arm64 image run for this exact
+head before merge. Rollout remains 35-of-59, Phase 6 remains 6-of-7 and
+production false; no image, tag, signing, publication or deployment occurred.
+
+Updated: 2026-08-29 EEST
+
+---
+
+GH-258 PR #259 now has exact digest-only layer evidence: five of six daemon
+layers match and only final-stage package/account layer index 1 differs. Binary,
+wasmvm, entrypoint and final ldconfig layers are identical. The next bounded
+candidate removes complete APT cache/log state and non-runtime shadow-utils
+backup/login databases while preserving live account and runtime-library state.
+Local/Kimi/protected reruns remain; rollout stays 35-of-59, Phase 6 stays 6-of-7
+and production false. No image, tag, signing, publication or deployment occurred.
+
+Updated: 2026-08-29 EEST
+
+---
+
 GH-258 PR #259's second native run again rejected both daemon pairs while both
 maintained-client pairs matched. Since manifests and configs differ, real layer
 bytes remain unstable. Sol and Kimi rank glibc's rebuildable ldconfig aux-cache
