@@ -1,5 +1,53 @@
 # TrueRepublic Agent Bridge
 
+## 2026-08-29 GH-258 per-entry diagnostic full local integration PASS
+
+- `make reproducible-oci-contract-test`, focused CLI/evidence checks, Vet and
+  the complete CGO-enabled package-scoped Go suite pass with zero failures.
+- Docs consistency, public arithmetic (2,094 = 1,749 + 26 + 319), 35 OCI
+  evidence events, 81.3% OCI coverage and diff validation are exact.
+- Kimi K3 final security review remains **APPROVE**, no P0/P1/P2 finding.
+- The exact pushed head still requires the protected native amd64/arm64 OCI
+  rerun before merge. Rollout remains 35/59 and production false.
+
+---
+
+## 2026-08-29 GH-258 bounded per-entry layer diagnostic approved locally
+
+- **Implementation:** unequal repeated OCI layers are now compared by normalized
+  entry path, bounded metadata digest and streamed content SHA-256. Plain tar
+  and gzip layers are supported; raw content is never retained or reported.
+- **Fail-closed limits:** archive/layer sizes, decompression, entry/path/link/PAX
+  metadata and report differences are bounded. Unsafe or duplicate paths,
+  unsupported types/compression, size/digest drift and malformed metadata become
+  violations rather than partial success.
+- **Verification:** 35 OCI-evidence test events pass at 81.3% coverage; Vet,
+  docs consistency and diff validation pass. Public arithmetic is synchronized
+  to 2,094 = 1,749 Go + 26 Rust + 319 maintained-client.
+- **Kimi contribution:** Kimi K3 supplied the detailed streaming/bounds design
+  and independently reviewed Sol's final diff: **APPROVE**, no P0/P1/P2 finding.
+- **Remaining gate:** full local integration and the next exact-head protected
+  native run. No merge, image retention/publication, signing or deployment.
+
+---
+
+## 2026-08-29 GH-258 fourth hosted run → exact layer still isolated
+
+- **Protected result:** PR #259 run `33275792489` passed docs, security,
+  release-evidence and repeated daemon-binary gates. Both client OCI pairs also
+  match. Both daemon OCI pairs still fail solely at ordered layer index 1; all
+  five other daemon layers match on amd64 and arm64.
+- **Conclusion:** the broad APT/account cleanup is safe but incomplete. Binary,
+  wasmvm, entrypoint and ldconfig remain excluded; one file or metadata source
+  inside the final package/account RUN remains unstable.
+- **Next bounded diagnostic:** compare the two differing layer tar streams and
+  emit only differing paths, metadata and content digests. Do not emit file
+  contents and do not retain or publish OCI archives.
+- **Status:** no merge. Rollout remains 35/59, Phase 6 remains 6/7 and
+  production false.
+
+---
+
 ## 2026-08-29 GH-258 package/account cleanup locally approved
 
 - **Local gates:** focused OCI contract/evidence tests, full root suite, Vet,

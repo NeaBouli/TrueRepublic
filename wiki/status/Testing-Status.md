@@ -1,6 +1,6 @@
 # Testing Status
 
-The current **v0.4.0 recovery** source of truth records **2,084 verified
+The current **v0.4.0 recovery** source of truth records **2,094 verified
 standard-suite cases**. This arithmetic excludes the separately run opt-in
 GH-175/GH-178/GH-181 IBC two-chain and GH-184 governed-upgrade gates.
 
@@ -24,15 +24,15 @@ GH-175/GH-178/GH-181 IBC two-chain and GH-184 governed-upgrade gates.
 | Go release evidence | 20 |
 | Go install lifecycle | 24 |
 | Go Sovereign V4 protocol | 36 |
-| Go OCI evidence | 25 |
+| Go OCI evidence | 35 |
 | Rust/CosmWasm | 26 |
 | Maintained client | 319 |
-| **Total** | **2,084** |
+| **Total** | **2,094** |
 
 The published total is the reproducible standard-suite baseline; the opt-in
 GH-175/GH-178/GH-181 IBC recovery, GH-184 upgrade, and GH-206 Go/WASM
 compatibility (`./scripts/test-zkp-wasm-client.sh`) gates are additional
-evidence and are not counted in the 1,739 Go subtotal.
+evidence and are not counted in the 1,749 Go subtotal.
 
 ## Current Go coverage
 
@@ -47,7 +47,7 @@ evidence and are not counted in the 1,739 Go subtotal.
 | migration | 84.6% |
 | network policy | 95.5% |
 | observability | 80.3% |
-| OCI evidence | 77.9% |
+| OCI evidence | 81.3% |
 | release evidence | 74.5% |
 | install lifecycle | 77.2% |
 | token | 95.6% |
@@ -93,7 +93,7 @@ repeated normalized SBOM parity, unsigned provenance binding, exact tool and
 platform pins, and synthetic adversarial CI gate. It does not publish binaries,
 authenticate SBOM component truth, sign an artifact, or approve rollout.
 
-GH-258 adds 25 standard-suite OCI evidence cases plus a repository contract and
+GH-258 adds 35 standard-suite OCI evidence cases plus a repository contract and
 native Linux amd64/arm64 protected matrix. Each daemon and maintained-client
 image is exported twice without cache and must match on OCI index, manifest,
 config, and ordered layer digests. Only JSON evidence is retained; floating

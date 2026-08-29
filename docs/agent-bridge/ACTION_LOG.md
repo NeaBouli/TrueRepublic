@@ -1,5 +1,35 @@
 # Action Log
 
+## 2026-08-29 - GH-258 layer diagnostic passed complete Go integration
+
+- The focused OCI contract/CLI, Vet and complete CGO-enabled package-scoped Go
+  suite pass with no failing package. Documentation consistency and diff checks
+  also pass.
+- The protected native repeated-image run remains the sole implementation gate;
+  no merge, artifact publication, signing or deployment occurred.
+
+## 2026-08-29 - GH-258 digest-only layer-entry diagnostic implemented
+
+- Added fail-closed tar/tar+gzip entry comparison on the repeated-image mismatch
+  path only. Reports contain normalized paths, bounded metadata and SHA-256
+  values, never file bytes.
+- Added traversal, duplicate-path, compression/type, decompression, entry/path/
+  link/PAX metadata, ordering, truncation, added/removed and no-content-leakage
+  coverage. OCI evidence now has 35 events and 81.3% statement coverage.
+- Public test arithmetic is synchronized to 2,094 = 1,749 Go + 26 Rust + 319
+  maintained-client. Kimi K3 reviewed the final implementation as **APPROVE**
+  with no P0/P1/P2 finding.
+
+## 2026-08-29 - GH-258 fourth hosted run kept merge gate closed
+
+- Exact head `3f66899` passed docs, security, release-evidence and both native
+  repeated daemon-binary jobs.
+- Both maintained-client image pairs match; both daemon pairs still differ only
+  in layer index 1. The cleanup changed that layer's digest but did not remove
+  its final unstable file or metadata source.
+- Next work is a bounded digest-only per-entry comparison for the differing
+  layer. It must expose no file contents and retain/publish no OCI archive.
+
 ## 2026-08-29 - GH-258 layer-1 candidate passed local and Kimi gates
 
 - Focused OCI verification, the complete root package suite, Vet, docs

@@ -141,6 +141,7 @@ type Report struct {
 	Platform   string        `json:"platform"`
 	Targets    int           `json:"targets"`
 	Images     []ImageReport `json:"images"`
+	LayerDiffs []LayerDiff   `json:"layer_diffs,omitempty"`
 	Violations []string      `json:"violations"`
 }
 
@@ -153,9 +154,38 @@ type ImageReport struct {
 	Layers     []string `json:"layer_sha256"`
 }
 
+// LayerDiff is a bounded, content-free diagnostic for one unequal OCI layer.
+type LayerDiff struct {
+	Target     string           `json:"target"`
+	LayerIndex int              `json:"layer_index"`
+	Entries    []LayerEntryDiff `json:"entries"`
+	Truncated  bool             `json:"truncated,omitempty"`
+}
+
+// LayerEntryDiff describes how one path differs between repetitions.
+type LayerEntryDiff struct {
+	Path   string          `json:"path"`
+	Change string          `json:"change"`
+	First  *LayerEntryInfo `json:"first,omitempty"`
+	Second *LayerEntryInfo `json:"second,omitempty"`
+}
+
+// LayerEntryInfo exposes only bounded metadata and digests, never file bytes.
+type LayerEntryInfo struct {
+	Type           string `json:"type"`
+	Mode           string `json:"mode"`
+	UID            int    `json:"uid"`
+	GID            int    `json:"gid"`
+	Size           int64  `json:"size"`
+	LinkTarget     string `json:"link_target,omitempty"`
+	ContentSHA256  string `json:"content_sha256,omitempty"`
+	MetadataSHA256 string `json:"metadata_sha256"`
+}
+
 type imageIdentity struct {
-	Index    string
-	Manifest string
-	Config   string
-	Layers   []string
+	Index            string
+	Manifest         string
+	Config           string
+	Layers           []string
+	LayerDescriptors []Descriptor
 }

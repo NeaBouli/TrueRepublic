@@ -3,6 +3,7 @@ package ocievidence
 import (
 	"archive/tar"
 	"bytes"
+	"compress/gzip"
 	"crypto/sha256"
 	"encoding/hex"
 	"encoding/json"
@@ -102,6 +103,226 @@ func TestAdversarialEvidenceRejected(t *testing.T) {
 				t.Fatalf("mismatch diagnostics omit per-repetition identities: %#v", report.Images)
 			}
 		})
+	}
+}
+
+func TestLayerDiffContentAndMetadataAreDigestOnly(t *testing.T) {
+	firstBody := []byte("private-marker-one")
+	secondBody := []byte("private-marker-two")
+	dir, contract := makeLayerDiagnosticEvidence(t, func(repetition int) ([]byte, string) {
+		body := firstBody
+		if repetition == 2 {
+			body = secondBody
+		}
+		return makeLayerTar(t, []layerEntryFixture{{name: "var/lib/app/state", mode: 0640, body: body}}, false), layerMediaTar
+	})
+	report := VerifyDirectory(dir, contract)
+	if report.Valid || len(report.LayerDiffs) != 1 {
+		t.Fatalf("layer mismatch diagnostic missing: %#v", report)
+	}
+	layer := report.LayerDiffs[0]
+	if layer.Target != "daemon-linux-amd64" || layer.LayerIndex != 0 || layer.Truncated || len(layer.Entries) != 1 {
+		t.Fatalf("unexpected layer diagnostic: %#v", layer)
+	}
+	entry := layer.Entries[0]
+	if entry.Path != "var/lib/app/state" || entry.Change != "modified" || entry.First == nil || entry.Second == nil {
+		t.Fatalf("unexpected entry diagnostic: %#v", entry)
+	}
+	if entry.First.ContentSHA256 == entry.Second.ContentSHA256 {
+		t.Fatal("content-only mismatch retained equal content digests")
+	}
+	if entry.First.MetadataSHA256 != entry.Second.MetadataSHA256 {
+		t.Fatal("content-only mismatch changed metadata digest")
+	}
+	raw := mustJSON(t, report)
+	if bytes.Contains(raw, firstBody) || bytes.Contains(raw, secondBody) {
+		t.Fatalf("raw layer content leaked into report: %s", raw)
+	}
+
+	dir, contract = makeLayerDiagnosticEvidence(t, func(repetition int) ([]byte, string) {
+		mode := int64(0644)
+		if repetition == 2 {
+			mode = 0600
+		}
+		return makeLayerTar(t, []layerEntryFixture{{name: "etc/app.conf", mode: mode, body: []byte("same")}}, false), layerMediaTar
+	})
+	report = VerifyDirectory(dir, contract)
+	entry = report.LayerDiffs[0].Entries[0]
+	if entry.First.ContentSHA256 != entry.Second.ContentSHA256 || entry.First.MetadataSHA256 == entry.Second.MetadataSHA256 || entry.First.Mode != "0644" || entry.Second.Mode != "0600" {
+		t.Fatalf("metadata-only mismatch not isolated: %#v", entry)
+	}
+}
+
+func TestLayerDiffGzipOrderingAndTruncation(t *testing.T) {
+	oldDiffs := maxLayerDiffs
+	maxLayerDiffs = 2
+	defer func() { maxLayerDiffs = oldDiffs }()
+	dir, contract := makeLayerDiagnosticEvidence(t, func(repetition int) ([]byte, string) {
+		suffix := byte('a' + repetition - 1)
+		entries := []layerEntryFixture{
+			{name: "z-last", mode: 0644, body: []byte{suffix}},
+			{name: "a-first", mode: 0644, body: []byte{suffix}},
+			{name: "m-middle", mode: 0644, body: []byte{suffix}},
+		}
+		return makeLayerTar(t, entries, true), layerMediaTarGzip
+	})
+	report := VerifyDirectory(dir, contract)
+	if report.Valid || len(report.LayerDiffs) != 1 {
+		t.Fatalf("gzip layer mismatch diagnostic missing: %#v", report)
+	}
+	layer := report.LayerDiffs[0]
+	if !layer.Truncated || len(layer.Entries) != 2 || layer.Entries[0].Path != "a-first" || layer.Entries[1].Path != "m-middle" {
+		t.Fatalf("layer diff order/bound is not deterministic: %#v", layer)
+	}
+}
+
+func TestLayerDiffAddedRemovedAndEqual(t *testing.T) {
+	dir, contract := makeLayerDiagnosticEvidence(t, func(repetition int) ([]byte, string) {
+		entries := []layerEntryFixture{{name: "shared", mode: 0644, body: []byte("same")}}
+		if repetition == 1 {
+			entries = append(entries, layerEntryFixture{name: "removed", mode: 0644, body: []byte("old")})
+		} else {
+			entries = append(entries, layerEntryFixture{name: "added", mode: 0644, body: []byte("new")})
+		}
+		return makeLayerTar(t, entries, false), layerMediaTar
+	})
+	report := VerifyDirectory(dir, contract)
+	if len(report.LayerDiffs) != 1 || len(report.LayerDiffs[0].Entries) != 2 {
+		t.Fatalf("added/removed paths missing: %#v", report.LayerDiffs)
+	}
+	if first := report.LayerDiffs[0].Entries[0]; first.Path != "added" || first.Change != "added" || first.First != nil || first.Second == nil {
+		t.Fatalf("added path report invalid: %#v", first)
+	}
+	if second := report.LayerDiffs[0].Entries[1]; second.Path != "removed" || second.Change != "removed" || second.First == nil || second.Second != nil {
+		t.Fatalf("removed path report invalid: %#v", second)
+	}
+
+	equalLayer := makeLayerTar(t, []layerEntryFixture{{name: "equal", mode: 0644, body: []byte("same")}}, false)
+	dir, contract = makeLayerDiagnosticEvidence(t, func(int) ([]byte, string) { return equalLayer, layerMediaTar })
+	report = VerifyDirectory(dir, contract)
+	if !report.Valid || len(report.LayerDiffs) != 0 {
+		t.Fatalf("equal layers produced diagnostics: %#v", report)
+	}
+}
+
+func TestLayerDiffAdversarialInputsFailClosed(t *testing.T) {
+	tests := []struct {
+		name       string
+		configure  func() func()
+		layer      func(*testing.T, int) ([]byte, string)
+		wantReason string
+	}{
+		{
+			name: "unsafe path",
+			layer: func(t *testing.T, repetition int) ([]byte, string) {
+				return makeLayerTar(t, []layerEntryFixture{{name: "../escape", mode: 0644, body: []byte{byte(repetition)}}}, false), layerMediaTar
+			},
+			wantReason: "unsafe layer path",
+		},
+		{
+			name: "duplicate path",
+			layer: func(t *testing.T, repetition int) ([]byte, string) {
+				return makeLayerTar(t, []layerEntryFixture{{name: "dup", mode: 0644, body: []byte("a")}, {name: "dup", mode: 0644, body: []byte{byte(repetition)}}}, false), layerMediaTar
+			},
+			wantReason: "duplicate layer path",
+		},
+		{
+			name: "unsupported compression",
+			layer: func(t *testing.T, repetition int) ([]byte, string) {
+				return makeLayerTar(t, []layerEntryFixture{{name: "file", mode: 0644, body: []byte{byte(repetition)}}}, false), layerMediaTar + "+zstd"
+			},
+			wantReason: "unsupported layer media type",
+		},
+		{
+			name: "stream bound",
+			configure: func() func() {
+				old := maxLayerStreamBytes
+				maxLayerStreamBytes = 512
+				return func() { maxLayerStreamBytes = old }
+			},
+			layer: func(t *testing.T, repetition int) ([]byte, string) {
+				return makeLayerTar(t, []layerEntryFixture{{name: "file", mode: 0644, body: bytes.Repeat([]byte{byte(repetition)}, 2048)}}, true), layerMediaTarGzip
+			},
+			wantReason: "layer stream byte bound",
+		},
+		{
+			name: "entry bound",
+			configure: func() func() {
+				old := maxLayerEntries
+				maxLayerEntries = 1
+				return func() { maxLayerEntries = old }
+			},
+			layer: func(t *testing.T, repetition int) ([]byte, string) {
+				return makeLayerTar(t, []layerEntryFixture{{name: "one", mode: 0644, body: []byte("1")}, {name: "two", mode: 0644, body: []byte{byte(repetition)}}}, false), layerMediaTar
+			},
+			wantReason: "layer entry bound",
+		},
+	}
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			restore := func() {}
+			if test.configure != nil {
+				restore = test.configure()
+			}
+			defer restore()
+			dir, contract := makeLayerDiagnosticEvidence(t, func(repetition int) ([]byte, string) { return test.layer(t, repetition) })
+			report := VerifyDirectory(dir, contract)
+			if report.Valid || len(report.LayerDiffs) != 0 || !strings.Contains(strings.Join(report.Violations, " "), test.wantReason) {
+				t.Fatalf("adversarial layer did not fail closed: %#v", report)
+			}
+		})
+	}
+}
+
+func TestLayerEntryMetadataAndDescriptorBoundaries(t *testing.T) {
+	raw := makeLayerTar(t, []layerEntryFixture{
+		{name: "dir", typeflag: tar.TypeDir, mode: 0755},
+		{name: "dir/symlink", typeflag: tar.TypeSymlink, mode: 0777, linkname: "/target"},
+		{name: "dir/hardlink", typeflag: tar.TypeLink, mode: 0644, linkname: "dir/file"},
+		{name: "char", typeflag: tar.TypeChar, mode: 0600},
+		{name: "block", typeflag: tar.TypeBlock, mode: 0600},
+		{name: "fifo", typeflag: tar.TypeFifo, mode: 0600},
+		{name: "dir/file", mode: 0644, uname: "root", gname: "root", pax: map[string]string{"comment": "bounded"}, xattrs: map[string]string{"user.test": "value"}, body: []byte("body")},
+	}, false)
+	entries, err := readLayerTar(bytes.NewReader(raw))
+	if err != nil || len(entries) != 7 || entries["dir/symlink"].LinkTarget != "/target" || entries["dir/file"].MetadataSHA256 == "" {
+		t.Fatalf("supported layer metadata rejected: %v %#v", err, entries)
+	}
+
+	unsupported := makeLayerTar(t, []layerEntryFixture{{name: "unknown", typeflag: tar.TypeCont, mode: 0600}}, false)
+	if _, err = readLayerTar(bytes.NewReader(unsupported)); err == nil || !strings.Contains(err.Error(), "unsupported layer entry type") {
+		t.Fatalf("unsupported tar type accepted: %v", err)
+	}
+
+	oldPath, oldLink, oldMetadata := maxLayerPathBytes, maxLayerLinkBytes, maxLayerMetadataBytes
+	defer func() { maxLayerPathBytes, maxLayerLinkBytes, maxLayerMetadataBytes = oldPath, oldLink, oldMetadata }()
+	maxLayerPathBytes = 3
+	if _, err = readLayerTar(bytes.NewReader(makeLayerTar(t, []layerEntryFixture{{name: "long-path", mode: 0600}}, false))); err == nil || !strings.Contains(err.Error(), "layer path bound") {
+		t.Fatalf("oversized path accepted: %v", err)
+	}
+	maxLayerPathBytes = oldPath
+	maxLayerLinkBytes = 3
+	if _, err = readLayerTar(bytes.NewReader(makeLayerTar(t, []layerEntryFixture{{name: "link", typeflag: tar.TypeSymlink, mode: 0777, linkname: "long-target"}}, false))); err == nil || !strings.Contains(err.Error(), "layer link target bound") {
+		t.Fatalf("oversized link target accepted: %v", err)
+	}
+	maxLayerLinkBytes = oldLink
+	maxLayerMetadataBytes = 3
+	if _, err = readLayerTar(bytes.NewReader(makeLayerTar(t, []layerEntryFixture{{name: "file", mode: 0600, uname: "long-owner"}}, false))); err == nil || !strings.Contains(err.Error(), "layer metadata bound") {
+		t.Fatalf("oversized metadata accepted: %v", err)
+	}
+
+	validDescriptor := Descriptor{Digest: "sha256:" + strings.Repeat("a", 64), Size: json.Number("1")}
+	if digest, size, err := layerDescriptorIdentity(validDescriptor); err != nil || digest != strings.Repeat("a", 64) || size != 1 {
+		t.Fatalf("valid layer descriptor rejected: %q %d %v", digest, size, err)
+	}
+	for _, descriptor := range []Descriptor{
+		{Digest: "md5:" + strings.Repeat("a", 32), Size: json.Number("1")},
+		{Digest: "sha256:bad", Size: json.Number("1")},
+		{Digest: "sha256:" + strings.Repeat("a", 64), Size: json.Number("-1")},
+	} {
+		if _, _, err := layerDescriptorIdentity(descriptor); err == nil {
+			t.Fatalf("unsafe layer descriptor accepted: %#v", descriptor)
+		}
 	}
 }
 
@@ -317,6 +538,134 @@ func writeOCIArchiveFixture(t *testing.T, filePath, arch, identity string, varia
 	}
 	if unsafe {
 		if err = writer.WriteHeader(&tar.Header{Name: "unsafe-link", Typeflag: tar.TypeSymlink, Linkname: "../outside"}); err != nil {
+			t.Fatal(err)
+		}
+	}
+	if err = writer.Close(); err != nil {
+		t.Fatal(err)
+	}
+	if err = handle.Close(); err != nil {
+		t.Fatal(err)
+	}
+}
+
+type layerEntryFixture struct {
+	name     string
+	typeflag byte
+	mode     int64
+	uid      int
+	gid      int
+	linkname string
+	uname    string
+	gname    string
+	pax      map[string]string
+	xattrs   map[string]string
+	body     []byte
+}
+
+func makeLayerTar(t *testing.T, entries []layerEntryFixture, compressed bool) []byte {
+	t.Helper()
+	var raw bytes.Buffer
+	writer := tar.NewWriter(&raw)
+	for _, entry := range entries {
+		typeflag := entry.typeflag
+		if typeflag == 0 {
+			typeflag = tar.TypeReg
+		}
+		header := &tar.Header{
+			Name: entry.name, Mode: entry.mode, Uid: entry.uid, Gid: entry.gid,
+			Typeflag: typeflag, Linkname: entry.linkname, Uname: entry.uname,
+			Gname: entry.gname, PAXRecords: entry.pax, Xattrs: entry.xattrs,
+			ModTime: time.Unix(0, 0),
+		}
+		if typeflag == tar.TypeReg || typeflag == tar.TypeRegA {
+			header.Size = int64(len(entry.body))
+		}
+		if err := writer.WriteHeader(header); err != nil {
+			t.Fatal(err)
+		}
+		if len(entry.body) > 0 {
+			if _, err := writer.Write(entry.body); err != nil {
+				t.Fatal(err)
+			}
+		}
+	}
+	if err := writer.Close(); err != nil {
+		t.Fatal(err)
+	}
+	if !compressed {
+		return append([]byte(nil), raw.Bytes()...)
+	}
+	var encoded bytes.Buffer
+	gzipWriter := gzip.NewWriter(&encoded)
+	gzipWriter.Header.ModTime = time.Unix(0, 0)
+	if _, err := gzipWriter.Write(raw.Bytes()); err != nil {
+		t.Fatal(err)
+	}
+	if err := gzipWriter.Close(); err != nil {
+		t.Fatal(err)
+	}
+	return encoded.Bytes()
+}
+
+func makeLayerDiagnosticEvidence(t *testing.T, layerFor func(int) ([]byte, string)) (string, string) {
+	t.Helper()
+	dir, contract, bundle := makeEvidence(t, "linux/amd64")
+	for buildIndex := range bundle.Targets[0].Builds {
+		build := &bundle.Targets[0].Builds[buildIndex]
+		layer, mediaType := layerFor(buildIndex + 1)
+		archive := filepath.Join(dir, build.File)
+		writeOCIArchiveWithLayer(t, archive, "amd64", layer, mediaType)
+		build.SHA256 = mustHash(t, archive)
+	}
+	writeJSON(t, filepath.Join(dir, "oci-evidence.json"), bundle)
+	return dir, contract
+}
+
+func writeOCIArchiveWithLayer(t *testing.T, filePath, arch string, layer []byte, mediaType string) {
+	t.Helper()
+	config := []byte(`{"architecture":"` + arch + `","os":"linux","rootfs":{"type":"layers","diff_ids":[]}}`)
+	layerHash := byteHash(layer)
+	configHash := byteHash(config)
+	manifest := mustJSON(t, map[string]any{
+		"schemaVersion": 2,
+		"mediaType":     "application/vnd.oci.image.manifest.v1+json",
+		"config": map[string]any{
+			"mediaType": "application/vnd.oci.image.config.v1+json", "digest": "sha256:" + configHash, "size": len(config),
+		},
+		"layers": []map[string]any{{
+			"mediaType": mediaType, "digest": "sha256:" + layerHash, "size": len(layer),
+		}},
+	})
+	manifestHash := byteHash(manifest)
+	index := mustJSON(t, map[string]any{
+		"schemaVersion": 2,
+		"mediaType":     "application/vnd.oci.image.index.v1+json",
+		"manifests": []map[string]any{{
+			"mediaType": "application/vnd.oci.image.manifest.v1+json", "digest": "sha256:" + manifestHash, "size": len(manifest), "platform": map[string]any{"architecture": arch, "os": "linux"},
+		}},
+	})
+	entries := []struct {
+		name string
+		data []byte
+	}{
+		{"oci-layout", []byte(`{"imageLayoutVersion":"1.0.0"}`)},
+		{"index.json", index},
+		{"blobs/sha256/" + configHash, config},
+		{"blobs/sha256/" + layerHash, layer},
+		{"blobs/sha256/" + manifestHash, manifest},
+	}
+	handle, err := os.Create(filePath)
+	if err != nil {
+		t.Fatal(err)
+	}
+	writer := tar.NewWriter(handle)
+	for _, entry := range entries {
+		header := &tar.Header{Name: entry.name, Mode: 0600, Size: int64(len(entry.data)), ModTime: time.Unix(0, 0)}
+		if err = writer.WriteHeader(header); err != nil {
+			t.Fatal(err)
+		}
+		if _, err = writer.Write(entry.data); err != nil {
 			t.Fatal(err)
 		}
 	}

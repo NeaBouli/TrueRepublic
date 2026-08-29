@@ -38,7 +38,7 @@ deployment, production or rollout-credit change is present.
    prototype and third-party materials are not silently included.
 7. README, landing page, roadmap, whitepapers, Alpha/V4 architecture, local
    wiki sources and status JSON expose the same current project state.
-8. Public arithmetic remains 2,084 tests, rollout 35/59, phase work 35/51,
+8. Public arithmetic remains 2,094 tests, rollout 35/59, phase work 35/51,
    Phase 6 at 6/7 and production false; GH-219 earns no rollout checkbox.
 9. The policy is portable to macOS Bash 3.2 and passes 31 positive/adversarial
    fixtures, including wrong-decision-record and conflicting-identity cases.

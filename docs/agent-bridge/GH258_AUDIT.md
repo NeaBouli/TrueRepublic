@@ -96,6 +96,28 @@ count.
   **APPROVE** with no P0/P1/P2 finding after its own contract, Vet and full-root
   checks. Native repeated amd64/arm64 verification of the pushed exact head is
   the sole remaining merge gate.
+- The fourth protected exact-head run `33275792489` kept that gate closed. Both
+  client pairs, both repeated daemon binaries, docs, security and release
+  evidence pass. On both architectures, only daemon layer index 1 still differs
+  and all other ordered layers match. The next diagnostic therefore compares
+  entries inside that one layer using paths, metadata and content digests only;
+  it must not emit file contents or retain/publish OCI archives.
+- The bounded per-entry diagnostic is implemented for tar and gzip layers. It
+  streams content directly into SHA-256, normalizes paths, sorts all reported
+  differences and metadata-map inputs, and rejects traversal, duplicates,
+  unsupported types/compression, digest/size drift and every configured bound.
+  It adds 10 standard-suite events, taking OCI evidence to 35 cases at 81.3%
+  coverage and public arithmetic to 2,094 = 1,749 Go + 26 Rust + 319 client.
+- **Audit result:** 0 FAIL / 3 LOW residual resource notes / all reviewed
+  security boundaries PASS. Kimi K3 returned **APPROVE** with no P0/P1/P2
+  finding after reproducing Vet, 35 tests, 81.3% coverage, docs consistency and
+  diff validation. The low notes concern only theoretical maximum memory/report
+  size and repeated archive scans on hostile bounded evidence; no raw content,
+  image, archive, tag, signature or deployment is produced.
+- Sol then ran `make reproducible-oci-contract-test`, Vet and the complete
+  CGO-enabled package-scoped Go suite. Every package passed, including root,
+  `ocievidence`, policy/evidence modules, Treasury, DEX and TrueDemocracy.
+  Documentation consistency and diff validation pass as well.
 
 ## Residual risks
 

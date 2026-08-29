@@ -1,5 +1,36 @@
 # Project State
 
+GH-258's bounded layer diagnostic now passes the complete local Go integration
+chain in addition to focused/Vet/docs and Kimi APPROVE. The exact pushed head
+must still pass native amd64/arm64 repeated OCI verification before merge.
+Rollout remains 35-of-59, Phase 6 remains 6-of-7 and production false.
+
+Updated: 2026-08-29 EEST
+
+---
+
+GH-258 now has a fail-closed digest-only per-entry layer diagnostic for the sole
+remaining daemon mismatch. It passes 35 OCI-evidence events at 81.3% coverage,
+Vet, docs consistency and independent Kimi **APPROVE** with no P0/P1/P2 finding.
+Public arithmetic is 2,094 = 1,749 Go + 26 Rust + 319 maintained-client. Full
+local integration and the next exact-head protected run remain; rollout stays
+35-of-59, Phase 6 stays 6-of-7 and production false. No merge/publication/signing
+or deployment occurred.
+
+Updated: 2026-08-29 EEST
+
+---
+
+PR #259 exact head `3f66899` passed docs, security, release evidence and both
+native repeated daemon-binary jobs. Both client OCI pairs match. The daemon OCI
+pairs still differ only at ordered layer index 1 on amd64 and arm64; all five
+other daemon layers match. A digest-only per-entry diagnostic is next. No merge
+occurred; rollout remains 35-of-59, Phase 6 remains 6-of-7 and production false.
+
+Updated: 2026-08-29 EEST
+
+---
+
 The GH-258 layer-1 package/account cleanup passes focused OCI/evidence tests,
 the full root suite, Vet, docs consistency and diff validation. Kimi K3 returned
 APPROVE with no P0/P1/P2 finding after independent verification. PR #259 now

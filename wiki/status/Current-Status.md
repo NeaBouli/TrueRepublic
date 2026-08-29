@@ -44,7 +44,7 @@
   checksums, metadata, normalized SBOM and unsigned-provenance bindings, pinned
   release tools/platforms and container bases, without publishing or signing
   an artifact or claiming production rollout.
-- 2,084 recovery-verified tests: 1,739 Go, 26 Rust, and 319 maintained-client,
+- 2,094 recovery-verified tests: 1,749 Go, 26 Rust, and 319 maintained-client,
   plus the separately gated GH-175/GH-178/GH-181 two-chain IBC packet/channel/compatible-restart recovery and GH-172
   contention/replay/restart process proofs.
 - GH-258 requires native same-job double OCI exports for daemon and `client-web`

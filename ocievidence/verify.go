@@ -114,6 +114,7 @@ func VerifyDirectory(evidenceDir, contractPath string) Report {
 			continue
 		}
 		identities := make([]imageIdentity, 0, len(target.Builds))
+		archivePaths := make([]string, 0, len(target.Builds))
 		for _, build := range target.Builds {
 			if !hexDigestRE.MatchString(build.SHA256) {
 				fail("OCI archive digest is malformed for " + target.ID)
@@ -140,12 +141,18 @@ func VerifyDirectory(evidenceDir, contractPath string) Report {
 				continue
 			}
 			identities = append(identities, identity)
+			archivePaths = append(archivePaths, archivePath)
 		}
 		if len(identities) == contract.Repetitions && !sameIdentity(identities[0], identities[1]) {
 			for repetition, identity := range identities {
 				report.Images = append(report.Images, reportIdentity(target.ID, repetition+1, identity))
 			}
 			fail("repeated OCI image digests differ for " + target.ID)
+			diffs, problems := diagnoseRepeatedLayers(target.ID, archivePaths[0], archivePaths[1], identities[0], identities[1])
+			report.LayerDiffs = append(report.LayerDiffs, diffs...)
+			for _, problem := range problems {
+				fail(problem)
+			}
 		} else if len(identities) == contract.Repetitions {
 			report.Images = append(report.Images, reportIdentity(target.ID, 0, identities[0]))
 		}
@@ -404,6 +411,7 @@ func inspectOCIArchive(filePath, platform string) (imageIdentity, error) {
 		return imageIdentity{}, errors.New("config JSON")
 	}
 	layers := make([]string, 0, len(manifest.Layers))
+	layerDescriptors := make([]Descriptor, 0, len(manifest.Layers))
 	for _, descriptor := range manifest.Layers {
 		if !strings.HasPrefix(descriptor.MediaType, "application/vnd.oci.image.layer.v1.tar") {
 			return imageIdentity{}, errors.New("layer media type")
@@ -413,9 +421,10 @@ func inspectOCIArchive(filePath, platform string) (imageIdentity, error) {
 			return imageIdentity{}, errors.New("layer descriptor")
 		}
 		layers = append(layers, layerHash)
+		layerDescriptors = append(layerDescriptors, descriptor)
 	}
 	indexSum := sha256.Sum256(indexRaw)
-	return imageIdentity{Index: hex.EncodeToString(indexSum[:]), Manifest: manifestHash, Config: configHash, Layers: layers}, nil
+	return imageIdentity{Index: hex.EncodeToString(indexSum[:]), Manifest: manifestHash, Config: configHash, Layers: layers, LayerDescriptors: layerDescriptors}, nil
 }
 
 func normalizedTarPath(raw string, directory bool) (string, error) {

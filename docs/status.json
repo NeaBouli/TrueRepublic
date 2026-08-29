@@ -20,8 +20,8 @@
   },
   "tests": {
     "status": "recovery_verified_locally",
-    "total": 2084,
-    "go": 1739,
+    "total": 2094,
+    "go": 1749,
     "rust": 26,
     "frontend": 319,
     "historical_total": 577
@@ -81,7 +81,7 @@
     "releaseevidence": 20,
     "installlifecycle": 24,
     "sovereignv4protocol": 36,
-    "ocievidence": 25
+    "ocievidence": 35
   },
   "token": {
     "symbol": "PNYX",
