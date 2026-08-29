@@ -15,8 +15,10 @@ COPY go.mod go.sum ./
 RUN go mod download
 
 COPY . .
-RUN CGO_ENABLED=1 go build \
-    -ldflags="-s -w -X main.version=${VERSION}" \
+RUN CGO_ENABLED=1 GOFLAGS=-mod=readonly go build \
+    -trimpath \
+    -buildvcs=false \
+    -ldflags="-s -w -buildid= -X main.version=${VERSION} -X main.upgradePlan=v0.4.1 -linkmode=external -extldflags=-Wl,--build-id=none" \
     -o /usr/local/bin/truerepublicd \
     ./
 RUN set -eux; \
@@ -36,8 +38,10 @@ FROM debian:bookworm-slim@sha256:abd67ffcfa541b485a3dff59865ab629aa048a6c613e639
 RUN apt-get update \
     && apt-get install --yes --no-install-recommends ca-certificates libgcc-s1 wget \
     && rm -rf /var/lib/apt/lists/* \
+    && rm -f /var/log/dpkg.log /var/log/apt/*.log /var/log/alternatives.log \
     && groupadd --system truerepublic \
     && useradd --system --gid truerepublic --home-dir /home/truerepublic --create-home truerepublic \
+    && sed -i -E '/^truerepublic:/ s/^([^:]*:[^:]*):[0-9]+:/\1::/' /etc/shadow \
     && mkdir -p /home/truerepublic/.truerepublic \
     && chown -R truerepublic:truerepublic /home/truerepublic
 

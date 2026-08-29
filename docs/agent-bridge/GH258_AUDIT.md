@@ -57,6 +57,23 @@ count.
   exports remain the authoritative real-image evidence and must pass before
   merge.
 
+## Hosted diagnosis and correction
+
+- The first PR #259 native run passed the fail-closed verifier and all repeated
+  `client-web` identities, but rejected both daemon pairs because their OCI
+  manifests/configs differed between repetitions.
+- Hosted logs and independent Kimi review isolated wall-clock content written by
+  APT/DPKG in the final Debian layer. BuildKit timestamp rewriting normalizes
+  filesystem metadata, not timestamps embedded inside `/var/log/dpkg.log` and
+  APT log content.
+- The Dockerfile now removes package-manager logs in the same layer, normalizes
+  the service-account shadow date, and aligns the in-image CGO build with the
+  existing deterministic daemon flags (`-trimpath`, no VCS/build IDs, readonly
+  modules and fixed upgrade/version bindings). The repository contract prevents
+  silent removal of these controls. Focused/full root, deterministic-contract,
+  Vet and docs gates pass; Kimi's final fix-diff verdict is **APPROVE** with no
+  P0/P1/P2 finding. A fully green hosted rerun remains mandatory.
+
 ## Residual risks
 
 - The GitHub runner labels and runner-provided Buildx/BuildKit versions float.

@@ -186,6 +186,20 @@ func reproducibleOCIRepositoryViolations(contract repositoryOCIContract, workflo
 			violations = append(violations, "workflow trigger mismatch: "+trigger)
 		}
 	}
+	daemon := dockerfiles["Dockerfile"]
+	for _, required := range []string{
+		"GOFLAGS=-mod=readonly go build",
+		"-trimpath",
+		"-buildvcs=false",
+		"-buildid=",
+		"-extldflags=-Wl,--build-id=none",
+		"rm -f /var/log/dpkg.log /var/log/apt/*.log /var/log/alternatives.log",
+		"/^truerepublic:/ s/^([^:]*:[^:]*):[0-9]+:/\\1::/",
+	} {
+		if !strings.Contains(daemon, required) {
+			violations = append(violations, "daemon Dockerfile lacks reproducibility control: "+required)
+		}
+	}
 	jobStart := strings.Index(workflow, "  reproducible-oci:")
 	if jobStart < 0 {
 		violations = append(violations, "OCI job is missing")

@@ -1,5 +1,27 @@
 # TrueRepublic Agent Bridge
 
+## 2026-08-29 GH-258 hosted daemon nondeterminism → Fix candidate
+
+- **Observed:** PR #259's first native run passed the strict contract and both
+  repeated `client-web` image pairs, while both daemon pairs failed identity
+  parity. Existing deterministic daemon amd64/arm64 jobs and all completed
+  release/security/docs checks remained green.
+- **Root cause:** the final Debian install layer retained APT/DPKG logs whose
+  file content embeds wall-clock time; BuildKit `rewrite-timestamp=true`
+  normalizes tar metadata but not embedded text. This explains different
+  daemon manifests/configs on both architectures while the Alpine client was
+  identical. Kimi's independent diagnosis reached the same conclusion.
+- **Correction:** remove package-manager logs in the creating layer, normalize
+  the locked service user's shadow date, align the container CGO build with the
+  deterministic daemon flags, and bind those controls into the repository test.
+- **Review/local gates:** focused OCI/repository tests, full root tests, adjacent
+  deterministic contract, Vet and docs consistency pass. Kimi's final fix-diff
+  verdict is `APPROVE` with no P0/P1/P2 finding.
+- **Gate:** protected exact-head rerun remains before merge. Rollout stays 35/59
+  and production false; no image was retained, published, signed or deployed.
+
+---
+
 ## 2026-08-29 GH-258 reproducible maintained OCI images → Local PASS / Hosted pending
 
 - **Implemented:** a versioned four-target OCI build contract, strict bounded

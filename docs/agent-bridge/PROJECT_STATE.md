@@ -1,5 +1,20 @@
 # Project State
 
+GH-258 PR #259 correctly rejected daemon OCI nondeterminism on its first native
+amd64/arm64 run while both repeated maintained-client pairs and every completed
+existing release/security/docs gate passed. Hosted logs and Kimi's independent
+review identify APT/DPKG wall-clock log content in the final Debian layer as the
+cause; BuildKit only rewrites metadata timestamps. A bounded fix candidate now
+removes those logs, normalizes the locked service-user shadow date, aligns the
+container CGO binary with the deterministic daemon flags and locks the controls
+in the repository contract. Local/full and protected exact-head reruns remain.
+Rollout stays 35-of-59, Phase 6 stays 6-of-7 and production false; no image,
+tag, publication, signing or deployment occurred.
+
+Updated: 2026-08-29 EEST
+
+---
+
 GH-258 is locally approved on exact base
 `6ef4f31af2ac7f5c8b9aad4894636ffdd80eb055`. The versioned four-target OCI
 contract, strict bounded offline verifier, adversarial fixtures and protected

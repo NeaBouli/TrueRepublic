@@ -1,5 +1,22 @@
 # Action Log
 
+## 2026-08-29 - GH-258 first hosted run rejected daemon nondeterminism
+
+- PR #259 proved that both repeated maintained-client OCI identities match on
+  native amd64 and arm64. Both daemon pairs were correctly rejected while the
+  pre-existing deterministic daemon jobs stayed green.
+- Exact logs showed different daemon manifests/configs. The final Debian layer
+  retained APT/DPKG logs containing per-build wall-clock text, which metadata
+  timestamp rewriting cannot normalize. Kimi independently confirmed this as
+  the high-confidence cause and identified service-user shadow dates plus
+  container build flags as adjacent reproducibility gaps.
+- Applied the bounded candidate: remove package logs in the same layer,
+  normalize the locked service account date, use the maintained deterministic
+  CGO build flags, and enforce every control through the repository contract.
+  Focused/full root tests, adjacent deterministic contract, Vet and docs pass;
+  Kimi's final fix-diff verdict is `APPROVE` without P0/P1/P2. No image, tag,
+  release, signature, publication or deployment occurred.
+
 ## 2026-08-29 - GH-258 locally verified; protected OCI matrix pending
 
 - Added the exact four-target OCI contract, strict bounded offline verifier,
