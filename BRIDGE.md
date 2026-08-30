@@ -8393,3 +8393,26 @@ exclusion, CI wiring, and documentation boundaries.
 - **Pending:** push replacement head, resolve both review threads, complete all
   protected reruns, then merge and synchronize exact main/GH-29/Wiki/Bridges.
   Rollout remains 35/59 and production false; no tag/release/deploy action.
+
+## 2026-08-30 GH-261 unified simulated-tag candidate evidence → Done
+
+- **Protected PR:** [#262](https://github.com/NeaBouli/TrueRepublic/pull/262)
+  final head `e3c758a5` passed all 25 hosted contexts. Both CodeRabbit threads
+  were answered and resolved before merge.
+- **Merge/issue:** authorized squash merge
+  `7b45c7a9522b79601ba6d32b0d8a84609fcadff8` is exact remote main;
+  [GH-261](https://github.com/NeaBouli/TrueRepublic/issues/261) is closed and
+  the remote feature branch is deleted.
+- **Exact main:** Go CI `33286839624`, Reproducible Linux Daemon `33286839598`,
+  Security `33286839603`, Docs `33286839602`, and Pages `33286839220` PASS.
+- **Public synchronization:** live Wiki `2305c63` and
+  [GH-29](https://github.com/NeaBouli/TrueRepublic/issues/29#issuecomment-5466191666)
+  record the verified metadata-only boundary. Rollout stays 35/59, phase work
+  35/51, Phase 6 6/7, and production false.
+- **Roles/tests:** Kimi K3's final verdict is **APPROVE**, no P0/P1/P2 finding.
+  Claude Code exhausted its bounded local budget, returned no report and made
+  no change. Sol verified 2,187 = 1,842 Go + 26 Rust + 319 maintained-client
+  plus every relevant protected exact-head and exact-main gate.
+- **Boundary:** no real tag/ref push, release, signing, publication, image or
+  artifact upload, deployment, production, key/fund, go/no-go, or rollout
+  credit occurred. Cross-time hermeticity and the real release gate remain open.

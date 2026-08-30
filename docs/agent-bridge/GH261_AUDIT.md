@@ -72,10 +72,26 @@ node, handles no real key or fund, and grants no rollout or production credit.
 - Public arithmetic is 2,187 = 1,842 Go + 26 Rust + 319 maintained-client.
   Rollout remains 35/59, phase work 35/51, Phase 6 6/7, production false.
 
-## Residual risks and hosted gate
+## Protected closeout evidence
 
-- Protected CI must still execute real native amd64/arm64 double builds and OCI
-  exports for the exact PR head before merge; local tests use synthetic evidence.
+- PR #262 final head `e3c758a5a24da84a94162378072d68a55245ad84`
+  passed all 25 reported hosted contexts. Both CodeRabbit review threads were
+  answered and resolved before the authorized squash merge.
+- The implementation merged as exact main
+  `7b45c7a9522b79601ba6d32b0d8a84609fcadff8`; GH-261 closed and the remote
+  feature branch was deleted.
+- Exact merged main passed Go CI `33286839624`, Reproducible Linux Daemon
+  `33286839598`, Security `33286839603`, Docs `33286839602`, and Pages
+  `33286839220`.
+- The live GitHub Wiki is synchronized at
+  `2305c63dbab6928979c423a09a01aa2cc7fd8ef3`. GH-29 issue comment
+  `5466191666` records the boundary without changing rollout credit.
+
+## Residual risks and release gate
+
+- Protected CI executed real native amd64/arm64 double builds and OCI exports
+  for the exact PR head and exact merged main. That same-run evidence is green;
+  it is not a substitute for a separately authorized real tagged release.
 - Runner/BuildKit identities float and daemon Debian packages come from live
   repositories, so cross-time hermetic reproducibility remains unproven.
 - Standalone retained JSON has no authenticated workflow-run identity. The
