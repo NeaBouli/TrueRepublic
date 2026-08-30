@@ -1,5 +1,21 @@
 # Action Log
 
+## 2026-08-30 - GH-261 merged, exact main and public state verified
+
+- PR #262 final head `e3c758a` passed 25/25 hosted contexts with both
+  CodeRabbit review threads resolved, then squash-merged as `7b45c7a`; GH-261
+  is closed and its remote feature branch is deleted.
+- Exact merged main passed Go CI `33286839624`, Reproducible Linux Daemon
+  `33286839598`, Security `33286839603`, Docs `33286839602`, and Pages
+  `33286839220`.
+- The real GitHub Wiki was synchronized at `2305c63`, preserving its flattened
+  link layout. GH-29 issue comment `5466191666` records all evidence without
+  checking the still-open combined tagged-binary/image rollout gate.
+- Public arithmetic is 2,187 = 1,842 Go + 26 Rust + 319 maintained-client.
+  Rollout remains 35/59, phase work 35/51, Phase 6 6/7, production false.
+- No real tag, release, signature, publication, image push, deployment,
+  production, key/fund, go/no-go, or rollout-credit action occurred.
+
 ## 2026-08-29 - GH-261 locally approved; protected evidence pending
 
 - Implemented strict exact-commit plus simulated-`v0.5.0` candidate aggregation
