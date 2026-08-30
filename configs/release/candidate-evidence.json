@@ -1,0 +1,32 @@
+{
+  "schema": "truerepublic.release-candidate/v1",
+  "source": {
+    "commit_kind": "git-commit",
+    "commit_pattern": "^[0-9a-f]{40}$",
+    "tag_kind": "simulated-future-tag",
+    "tag_pattern": "^v(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)$"
+  },
+  "binary_contract_sha256": "e33f1fc588b2372197f682cc5f656befe5468f825b19523ad2d4d5ed405cb4b8",
+  "oci_contract_sha256": "6c5d4bb80334f46c0496ab4db0dded904f9443e7ab8fb9e5914fa006c0f75e09",
+  "binary_targets": [
+    {
+      "id": "linux-amd64",
+      "artifact": "truerepublicd-linux-amd64",
+      "ci_runner": "ubuntu-24.04",
+      "runner_arch": "x86_64"
+    },
+    {
+      "id": "linux-arm64",
+      "artifact": "truerepublicd-linux-arm64",
+      "ci_runner": "ubuntu-24.04-arm",
+      "runner_arch": "aarch64"
+    }
+  ],
+  "oci_repetitions": 2,
+  "oci_targets": [
+    {"id": "daemon-linux-amd64", "platform": "linux/amd64"},
+    {"id": "client-web-linux-amd64", "platform": "linux/amd64"},
+    {"id": "daemon-linux-arm64", "platform": "linux/arm64"},
+    {"id": "client-web-linux-arm64", "platform": "linux/arm64"}
+  ]
+}

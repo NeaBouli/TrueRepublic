@@ -8334,3 +8334,44 @@ exclusion, CI wiring, and documentation boundaries.
 - **Risk:** Residual release-engineering work remains explicitly open. No tag,
   release, image/artifact publication, signature, deployment, real key/fund,
   production or go/no-go action occurred.
+
+## 2026-08-29 GH-261 unified simulated-tag candidate evidence → In Progress
+
+- **Branch:** `feat/GH-261-release-candidate-evidence`
+- **Issue:** [GH-261](https://github.com/NeaBouli/TrueRepublic/issues/261)
+- **Base:** exact clean remote main
+  `ebbc4e716aee0a96ad1fa1a0ea5588aa34dd0ac0` after GH-258 closeout.
+- **Scope:** add a strict digest-only release-candidate manifest that binds one
+  explicitly simulated future tag string and exact commit to both deterministic
+  daemon target records and all four repeated OCI target identities. Protected
+  CI may aggregate metadata/JSON only; binaries and OCI archives are excluded.
+- **Roles:** Kimi K3 owns the bounded Go/config/CLI/fixture core. Sol owns schema
+  and security decisions, CI integration, docs/status arithmetic, every diff
+  review, complete tests, GitHub writes, merge and closure. Claude Code remains
+  available only for a later small helper slice.
+- **Boundary:** no real ref or tag creation/push, release, signature, provenance
+  authentication, binary/image publication, deployment, BuildKit/runner/APT
+  hermeticity claim, cron drift probe, real key/fund, production or go/no-go.
+  GH-29 stays 35/59 and production false.
+
+## 2026-08-29 GH-261 unified simulated-tag candidate evidence → Local PASS
+
+- **Implemented:** strict schema/config, offline Go verifier/CLI, deterministic
+  fail-closed generator, adversarial fixtures, repository/security contracts,
+  protected same-run metadata aggregation, and synchronized public docs/status.
+- **Independent review:** Kimi K3 found a protected-CI OCI artifact layout
+  mismatch; Sol moved report/evidence JSON under one common upload root and
+  bound that producer/download/consumer layout in the repository contract.
+  Final Kimi verdict: **APPROVE**, no P0/P1/P2 finding. Claude Code's bounded
+  helper exhausted its local USD 0.25 budget, returned no report, and made no
+  change.
+- **Sol verification:** complete Go Build/Vet/Test/Race/Coverage PASS (1,842),
+  Rust fmt/Clippy/26 tests/audit PASS, maintained client lint/319 tests/build/
+  npm audit PASS, pinned vulnerability/static/secret scans PASS, adjacent
+  release contracts, docs/JSON/shell/diff gates PASS. Total: 2,187.
+- **Pending:** protected exact-head native daemon/OCI evidence, PR review, merge,
+  exact-main checks, GH-29/Wiki/public/Bridge synchronization. Rollout remains
+  35/59, phase work 35/51, Phase 6 6/7 and production false.
+- **Boundary:** no real tag/ref push, release, signature, publication, binary or
+  OCI archive upload, deployment, production, key/fund, rollout credit or
+  go/no-go action occurred.

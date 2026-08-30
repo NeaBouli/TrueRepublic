@@ -1,0 +1,39 @@
+{
+  "claims": {
+    "production": false,
+    "published": false,
+    "signed": false
+  },
+  "contract_sha256": "6c5d4bb80334f46c0496ab4db0dded904f9443e7ab8fb9e5914fa006c0f75e09",
+  "platform": "linux/amd64",
+  "schema": "truerepublic.oci-evidence/v1",
+  "source_ref": "0123456789abcdef0123456789abcdef01234567",
+  "targets": [
+    {
+      "builds": [
+        {
+          "file": "daemon-linux-amd64-1.oci.tar",
+          "sha256": "be3fd87fee62034a155bf4de52ad8820227bb1cab5fc0a35ef70d3c8b78edddc"
+        },
+        {
+          "file": "daemon-linux-amd64-2.oci.tar",
+          "sha256": "3583fc37e408bc9db15fba6f8543d1ef89fda57737d5128dba95eeb45eb47bcc"
+        }
+      ],
+      "id": "daemon-linux-amd64"
+    },
+    {
+      "builds": [
+        {
+          "file": "client-web-linux-amd64-1.oci.tar",
+          "sha256": "f6268ab204b6ec5aa5fc843e40fe2ba658a12c8d3e03d3d5a078185a68636cd1"
+        },
+        {
+          "file": "client-web-linux-amd64-2.oci.tar",
+          "sha256": "9d8aa8fd26470ea7e29cd4b985bc64707911690b566c8ab70b46c10731e0411c"
+        }
+      ],
+      "id": "client-web-linux-amd64"
+    }
+  ]
+}

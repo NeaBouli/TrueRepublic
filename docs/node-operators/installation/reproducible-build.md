@@ -55,3 +55,8 @@ same-job identity parity, not a cross-time hermetic rebuild: the runner/BuildKit
 identity is intentionally recorded as unpinned and Debian packages are resolved
 from live repositories. No image is tagged, pushed, signed, attested, deployed,
 or approved for rollout.
+
+GH-261 then aggregates the two daemon metadata/checksum artifacts and both OCI
+evidence/report artifacts under one exact commit and explicitly simulated
+future tag. See [Release-candidate evidence](candidate-evidence.md). This
+additional check still creates no real tag and publishes no binary or image.

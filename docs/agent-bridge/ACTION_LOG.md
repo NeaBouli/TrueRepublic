@@ -1,5 +1,21 @@
 # Action Log
 
+## 2026-08-29 - GH-261 locally approved; protected evidence pending
+
+- Implemented strict exact-commit plus simulated-`v0.5.0` candidate aggregation
+  across two deterministic daemon records and four repeated OCI identities.
+  All tag/push/sign/publish/deploy/production claims are mandatory and false.
+- Complete local Go/Rust/client/security and adjacent release-contract gates
+  pass at 2,187 = 1,842 + 26 + 319 cases. Candidate evidence has 77 events at
+  86.6% coverage; root has 207 at 73.6%.
+- Kimi K3 found and Sol fixed a real OCI upload-artifact layout mismatch by
+  co-locating evidence/report JSON under one common artifact root. Final Kimi
+  verdict is **APPROVE**, no P0/P1/P2 finding. Claude Code's bounded helper
+  exhausted its local USD 0.25 budget, returned no report, and changed nothing.
+- Protected exact-head native build/OCI evidence, PR review, merge and public
+  synchronization remain. No real tag, release, signing, publication,
+  deployment, production, key/fund, rollout credit or go/no-go action occurred.
+
 ## 2026-08-29 - GH-258 merged and exact main verified
 
 - PR #259 exact head `f26d63d` passed 22 reported contexts with no unresolved

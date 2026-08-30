@@ -202,12 +202,22 @@ registry output. The offline verifier requires the two exports to agree on the
 OCI index, manifest, config, and ordered layer digests, and CI retains only the
 JSON digest evidence for 14 days. The image archives are not uploaded.
 
+GH-261 adds a strict release-candidate contract and offline verifier above
+those controls. Protected CI downloads only the two daemon metadata/checksum
+artifacts and the two OCI evidence/report artifacts, verifies their exact
+contract, commit, platform and target bindings, and emits a deterministic
+manifest for the exact commit plus an explicitly simulated future tag. The
+candidate artifact contains only the manifest and its verification report; the
+source metadata remains in the same short-lived protected workflow run. Every
+real-tag, ref-push, signing, publication, deployment and production claim must
+be present and false. This is evidence aggregation, not a release action.
+
 This proves same-commit, same-job OCI identity parity under the runner and
 package repositories available during that job. It does not establish a
 cross-time hermetic rebuild: GitHub runner images and their BuildKit versions
 are floating, and the daemon Dockerfile still resolves Debian packages from
 live repositories. It also does not authenticate who created a bundle or
-whether every SBOM component is truthful, create a tag, publish or sign an
+whether every SBOM component is truthful, create a real tag, publish or sign an
 artifact, issue authenticated provenance, deploy a candidate, or approve
 rollout. The combined tagged-binaries-and-container-images Phase 7 checkbox
 therefore remains open.

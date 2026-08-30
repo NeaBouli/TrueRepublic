@@ -1,5 +1,18 @@
 # Project State
 
+GH-261 is locally approved on `feat/GH-261-release-candidate-evidence`. The
+strict candidate manifest binds simulated `v0.5.0` and one exact commit to two
+native daemon records and four repeated OCI identities while every promotion
+claim remains false. The complete local Go/Rust/client/security/release gate set
+passes at 2,187 cases. Kimi K3 returned APPROVE with no P0/P1/P2 finding after
+its OCI artifact-layout finding was corrected and regression-bound. Protected
+exact-head CI, PR review, merge, exact-main verification, GH-29, Wiki and Bridge
+synchronization remain. Rollout stays 35/59, Phase 6 6/7, production false.
+
+Updated: 2026-08-29 EEST
+
+---
+
 GH-258 is Done. PR #259 exact head `f26d63d` passed all 22 reported contexts
 with zero review threads and squash-merged as `faf1215f`; GH-258 is closed.
 Exact merged main passed Docs `33279817849`, Security `33279817875`, Go CI

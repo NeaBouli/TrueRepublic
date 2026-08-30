@@ -1,0 +1,108 @@
+{
+  "binary_targets": [
+    {
+      "artifact": "truerepublicd-linux-amd64",
+      "artifact_sha256": "b7f2ac214cc7ad6a7aa737752f63195a15764586d4d65b1b7be33fb6c9f50f4a",
+      "checksums": {
+        "file": "checksums-linux-amd64.sha256",
+        "sha256": "ed63eb9b54285410a39b4a4fd6bb2d242c983d4773ede5b9cc21d64a21a30267"
+      },
+      "id": "linux-amd64",
+      "metadata": {
+        "file": "build-metadata-linux-amd64.json",
+        "sha256": "6db9f21bf2de727de7c13dcca2c6be7c953152757aca6d89cd1dcd0b747ddd10"
+      }
+    },
+    {
+      "artifact": "truerepublicd-linux-arm64",
+      "artifact_sha256": "dd2050ec2d4649707cb51eb84206885d9e25f6897f486b7c314ad5a1f97907d3",
+      "checksums": {
+        "file": "checksums-linux-arm64.sha256",
+        "sha256": "35061356e51301040173efc6e861092e41828e431b39c0cfdbe4081746c752af"
+      },
+      "id": "linux-arm64",
+      "metadata": {
+        "file": "build-metadata-linux-arm64.json",
+        "sha256": "d9660201e893e8d9178d1e63b9a7ca0375b976a48ea6d1b8805bfe0d4a143a22"
+      }
+    }
+  ],
+  "claims": {
+    "deployed": false,
+    "production": true,
+    "published": false,
+    "real_tag_created": false,
+    "ref_pushed": false,
+    "signed": false
+  },
+  "contract_sha256": "92d9932b4bc1084a05c38e3aeb5f00a322098225f5c5ced14bf19f9581a82ef0",
+  "oci_platforms": [
+    {
+      "evidence": {
+        "file": "oci-evidence-amd64.json",
+        "sha256": "9e13098a6c86fc2e5676bc413b93326e821f1fa7f0354a5e8d8be19cb199e940"
+      },
+      "platform": "linux/amd64",
+      "report": {
+        "file": "oci-report-amd64.json",
+        "sha256": "006c1b55f3426ff4a7c54f326ecb87e52e9a345cf98469216e990c5654530781"
+      },
+      "targets": [
+        {
+          "config_sha256": "8aa997987ba793a1414d427ceeecdcdf244d976a2d49ea6f6df75063dc5c3856",
+          "id": "daemon-linux-amd64",
+          "index_sha256": "3cf010dbcd87cc84d38f43dd2b59426e853326787e1d0acdf35b26759cce72da",
+          "layer_sha256": [
+            "a7b247d23772aced8f19f7116680f2678e0d87c7424485dbc904e1613ab08e8f"
+          ],
+          "manifest_sha256": "d96a4f33f32818d1530d60834d51c364569d2102d6763b5c006d3082b4ab5759"
+        },
+        {
+          "config_sha256": "d968ae6ce39074030879d7c5ec918995e808609eabdf08d8a5a00347bdc7d64b",
+          "id": "client-web-linux-amd64",
+          "index_sha256": "af2d34bb4c7529fbcab8decaf965e1677a6eff56ee5a9841e6c76e656797daab",
+          "layer_sha256": [
+            "3b386d97962c3e8fb1933067e3faabdf9108c1ac6031545661aae0e020056fb8"
+          ],
+          "manifest_sha256": "01fe6d724a575bd0458209bae6031971644dedfb2c0f2199f12f7726b24310ea"
+        }
+      ]
+    },
+    {
+      "evidence": {
+        "file": "oci-evidence-arm64.json",
+        "sha256": "6b2db2c4e537264883b15ec1022b00a618f5f81d0086f231144ff7bc51c4d25a"
+      },
+      "platform": "linux/arm64",
+      "report": {
+        "file": "oci-report-arm64.json",
+        "sha256": "89e013ab953b9c3d665cac13a69e1b83c5cc5852ca18f4a90acbbf47d1b7fbb1"
+      },
+      "targets": [
+        {
+          "config_sha256": "7fb92b16378422e745450239df897bf4541eb9c62014269bb46894c216cc91ff",
+          "id": "daemon-linux-arm64",
+          "index_sha256": "5b6bb50517d3570ac6e869c32369128ffbfa68fafcc2bc0e1c8996e67dea0905",
+          "layer_sha256": [
+            "081d2a561b816826bb95bbae5e3ba21fc66cd116201d2f314b2c0b627c14fc99"
+          ],
+          "manifest_sha256": "eaf6ca074c6805a1e2aaeb307ce8592df3c9440f6203821538f7ebc7f09a5daf"
+        },
+        {
+          "config_sha256": "a60ac7f28354c17804bb1828243069ac6c7348878293d1c0e4fba7843adf0ac1",
+          "id": "client-web-linux-arm64",
+          "index_sha256": "70749816024483dfd32ea07eed6fab4944eee34e8d6773b9069c50f3c96803a0",
+          "layer_sha256": [
+            "e211ce542ff9a486d5713a428f978901ef897cc773c22142877f992342e9fcf7"
+          ],
+          "manifest_sha256": "c27aae7cea4bf23b89ec123911715ce013a393dc846e055163e7d482e47a78b0"
+        }
+      ]
+    }
+  ],
+  "schema": "truerepublic.release-candidate-evidence/v1",
+  "source": {
+    "commit": "0123456789abcdef0123456789abcdef01234567",
+    "tag": "v0.5.0"
+  }
+}

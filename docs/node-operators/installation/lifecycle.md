@@ -165,5 +165,6 @@ step completed. Prepare a new empty prefix from verified evidence, or follow an
 explicit reviewed recovery plan.
 
 See also [Offline Release Evidence](release-evidence.md),
+[Release-Candidate Evidence](candidate-evidence.md),
 [Governed Application Upgrades and Rollback](../operations/upgrades.md), and
 [Backup & Recovery](../operations/backup-recovery.md).

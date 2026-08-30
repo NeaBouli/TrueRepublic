@@ -1,0 +1,26 @@
+{
+  "artifact": "truerepublicd-linux-arm64",
+  "build_flags": {
+    "buildid": "",
+    "buildvcs": false,
+    "linker_build_id": "none",
+    "mod": "readonly",
+    "trimpath": true,
+    "version_variable": "main.version"
+  },
+  "cgo_enabled": "1",
+  "ci_runner": "ubuntu-24.04-arm",
+  "contract_schema": "truerepublic.daemon-build/v1",
+  "contract_sha256": "e33f1fc588b2372197f682cc5f656befe5468f825b19523ad2d4d5ed405cb4b8",
+  "go_version": "1.26.6",
+  "reproducible_pair_sha256": [
+    "dd2050ec2d4649707cb51eb84206885d9e25f6897f486b7c314ad5a1f97907d3",
+    "dd2050ec2d4649707cb51eb84206885d9e25f6897f486b7c314ad5a1f97907d3"
+  ],
+  "runner_arch": "aarch64",
+  "schema": "truerepublic.daemon-build-evidence/v1",
+  "sha256": "dd2050ec2d4649707cb51eb84206885d9e25f6897f486b7c314ad5a1f97907d3",
+  "source_date_epoch": 1767225600,
+  "source_ref": "0123456789abcdef0123456789abcdef01234567",
+  "target": "linux-arm64"
+}

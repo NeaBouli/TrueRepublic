@@ -68,6 +68,12 @@ layer digests. Only JSON evidence is retained for 14 days; image archives are
 not uploaded or pushed. Floating runner/BuildKit versions and live Debian
 package sources remain explicit cross-time reproducibility limits.
 
+GH-261 adds the final repository-only aggregation step documented in
+[Release-candidate evidence](candidate-evidence.md). It binds both native
+daemon records and both-platform OCI reports to one exact commit and simulated
+future tag while requiring all real tag, push, signing, publication,
+deployment and production claims to remain false.
+
 The provenance file is intentionally unsigned. Every bundle must explicitly
 state `signed: false`, `published: false`, and `production: false`. The
 verifier proves internal digest and contract consistency; it does not prove

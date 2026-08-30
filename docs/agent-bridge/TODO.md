@@ -1,5 +1,17 @@
 # Recovery Queue
 
+## In progress - GH-261 unified simulated-tag candidate evidence
+
+- [x] Define and verify an exact simulated-tag plus commit candidate contract.
+- [x] Cross-bind deterministic daemon and repeated OCI digest evidence for all
+  maintained native platforms and targets without retaining build payloads.
+- [x] Aggregate protected-CI metadata paths into one deterministic manifest with
+  explicit all-false tag/push/sign/publish/deploy/production claims.
+- [x] Add adversarial fixtures, repository/workflow contracts, docs/status and
+  independent Kimi plus complete Sol verification.
+- [ ] Merge through protected review, verify exact main and synchronize GH-29,
+  Wiki and both Bridges without rollout credit.
+
 ## Completed - GH-258 reproducible maintained OCI images
 
 - [x] Define and validate an exact versioned daemon/client OCI build contract.
