@@ -218,15 +218,21 @@ JSON register.
   without authenticated SBOM or provenance. Verified: deterministic Linux
   build contract, reproducible-build CI, and GH-212's strict repository-only
   two-target checksums, metadata, normalized SBOM and explicitly unsigned
-  provenance bindings. Blocked: signing, authenticated provenance, tagged
+  provenance bindings. GH-261 additionally cross-binds both native daemon
+  records and both-platform OCI reports to one exact commit and an explicitly
+  simulated future tag, with every promotion claim false. Blocked: a real tag,
+  signing, authenticated provenance, tagged
   publication, staged qualification and rollout do not exist and are not
-  claimed.
+  claimed. Protected workflow scope supplies same-run artifact selection; the
+  standalone JSON does not authenticate a GitHub run identity.
 - **TM-REL-002** (medium/low, mitigated): non-deterministic build drift.
   Verified: pinned build/release/SBOM toolchains, supported native Linux
   platforms, digest-pinned maintained container bases, repository-owned
   deterministic build script, lockfiles bound into the security contract, and
   GH-258's native no-cache double-export contract requiring daemon/client OCI
-  index, manifest, config, and ordered-layer parity. Cross-time hermetic image
+  index, manifest, config, and ordered-layer parity. GH-261 aggregates those
+  reports with both daemon targets under one exact commit/simulated-tag
+  manifest and rejects undeclared payload members. Cross-time hermetic image
   rebuilding remains unproven because runner/BuildKit identities float and the
   daemon image resolves Debian packages from live repositories.
 

@@ -1,12 +1,13 @@
 # Testing Status
 
-The current **v0.4.0 recovery** source of truth records **2,094 verified
+The current **v0.4.0 recovery** source of truth records **2,187 verified
 standard-suite cases**. This arithmetic excludes the separately run opt-in
 GH-175/GH-178/GH-181 IBC two-chain and GH-184 governed-upgrade gates.
 
 | Suite | Passing cases |
 |---|---:|
-| Go root/application | 191 |
+| Go root/application | 207 |
+| Go candidate evidence | 77 |
 | Go rollout genesis evidence | 68 |
 | Go capacity policy | 48 |
 | Go deployment evidence | 71 |
@@ -27,18 +28,19 @@ GH-175/GH-178/GH-181 IBC two-chain and GH-184 governed-upgrade gates.
 | Go OCI evidence | 35 |
 | Rust/CosmWasm | 26 |
 | Maintained client | 319 |
-| **Total** | **2,094** |
+| **Total** | **2,187** |
 
 The published total is the reproducible standard-suite baseline; the opt-in
 GH-175/GH-178/GH-181 IBC recovery, GH-184 upgrade, and GH-206 Go/WASM
 compatibility (`./scripts/test-zkp-wasm-client.sh`) gates are additional
-evidence and are not counted in the 1,749 Go subtotal.
+evidence and are not counted in the 1,842 Go subtotal.
 
 ## Current Go coverage
 
 | Package | Statements |
 |---|---:|
 | root/application | 73.6% |
+| candidate evidence | 87.3% |
 | rollout genesis evidence | 84.2% |
 | capacity policy | 85.5% |
 | deployment evidence | 90.8% |
@@ -99,6 +101,13 @@ image is exported twice without cache and must match on OCI index, manifest,
 config, and ordered layer digests. Only JSON evidence is retained; floating
 runner/BuildKit versions and live Debian package sources leave cross-time
 hermetic rebuilding open.
+
+GH-261 adds 77 candidate-evidence cases and 16 root repository-contract events.
+The verifier binds two deterministic daemon records and four OCI target
+identities to one exact commit and explicitly simulated tag, rejects promoted
+claims and undeclared payload members, and is exercised by the protected
+metadata-only aggregation job. No real tag, release, signature, publication,
+deployment, or rollout credit is created.
 
 Green tests are recovery evidence, not an external security or production
 approval. See [Current Status](Current-Status) for remaining gates.

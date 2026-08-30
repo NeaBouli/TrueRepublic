@@ -587,6 +587,8 @@
         "Deterministic Linux daemon build contract reproduces artifacts byte-for-byte",
         "Reproducible-build CI compares independent builds before any release claim",
         "Strict offline release evidence binds both supported artifacts, checksums, metadata, normalized SBOMs, and explicitly unsigned provenance",
+        "Strict candidate evidence cross-binds both native daemon metadata records and both-platform OCI digest reports to one exact commit and explicitly simulated future tag",
+        "Candidate aggregation rejects real tag, ref push, signing, publication, deployment, and production claims unless every claim is explicitly false",
         "Signing, authenticated provenance, artifact publication, and rollout stay explicitly outside current gates"
       ],
       "evidence": [
@@ -595,9 +597,12 @@
         "configs/release/tool-platform.json",
         "scripts/verify-release-evidence.sh",
         "releaseevidence/verify.go",
+        "configs/release/candidate-evidence.json",
+        "scripts/verify-candidate-evidence.sh",
+        "candidateevidence/verify.go",
         "docs/ROLLOUT_ROADMAP.md"
       ],
-      "residual_risk": "Repository-only SBOM and unsigned provenance consistency exist, but no artifact signing, authenticated provenance, tagged release, publication, or staged rollout exists or is claimed.",
+      "residual_risk": "Repository-only SBOM/unsigned provenance consistency and exact-commit simulated-tag aggregation exist, but no real tag, artifact signing, authenticated provenance, publication, or staged rollout exists or is claimed. Protected workflow scope supplies same-run artifact selection; the standalone JSON schemas do not authenticate a GitHub run identity.",
       "residual_severity": "high",
       "owner": "security-maintainers",
       "next_gate": "GH-29 Phase 7: authenticate and sign the exact tagged artifacts and provenance, publish them, and complete staged qualification before any release",
@@ -616,7 +621,8 @@
         "Reproducible Linux build evidence recorded for merged release candidates",
         "Exact dependency lockfiles bound into the security gate contract",
         "Repository contract cross-binds maintained Dockerfile FROM references to the release tool/platform contract",
-        "Native no-cache daemon and maintained-client OCI double exports require equal index, manifest, config, and ordered layer digests"
+        "Native no-cache daemon and maintained-client OCI double exports require equal index, manifest, config, and ordered layer digests",
+        "Candidate evidence binds all native daemon and OCI digest records to one exact commit and simulated future tag without retaining binary or image payloads"
       ],
       "evidence": [
         "configs/build/deterministic-linux-daemon.json",
@@ -626,10 +632,13 @@
         "scripts/verify-reproducible-oci.sh",
         "ocievidence/verify.go",
         "reproducible_oci_repository_test.go",
+        "configs/release/candidate-evidence.json",
+        "candidateevidence/verify.go",
+        "release_candidate_repository_test.go",
         ".github/workflows/reproducible-daemon.yml",
         "client_docker_repository_test.go"
       ],
-      "residual_risk": "Linux daemon binaries are byte-reproducible and maintained daemon/client OCI identities match across two same-job exports. Floating runner and BuildKit versions plus live Debian package repositories prevent a cross-time hermetic image claim; tagged and other artifact classes remain uncovered.",
+      "residual_risk": "Linux daemon binaries are byte-reproducible, maintained daemon/client OCI identities match across two same-job exports, and their metadata is commit-bound under a simulated candidate tag. Floating runner and BuildKit versions plus live Debian package repositories prevent a cross-time hermetic image claim; no real tagged candidate or other artifact classes are covered.",
       "residual_severity": "low",
       "owner": "security-maintainers",
       "next_gate": "Pin or snapshot runner, BuildKit and OS package inputs, repeat from a tagged commit, and extend deterministic coverage to remaining artifact classes under GH-29 Phase 7",

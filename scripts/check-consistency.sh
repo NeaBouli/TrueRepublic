@@ -333,6 +333,7 @@ while IFS='|' read -r module label; do
   fi
 done <<'MODULES'
 root|root/application
+candidateevidence|candidate evidence
 genesisevidence|rollout genesis evidence
 capacitypolicy|capacity policy
 deploymentevidence|deployment evidence

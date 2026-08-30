@@ -11,6 +11,7 @@ production or public-network approval.
 - [Native Build](installation/native-build.md)
 - [Reproducible Build](installation/reproducible-build.md)
 - [Offline Release Evidence](installation/release-evidence.md)
+- [Release-Candidate Evidence](installation/candidate-evidence.md)
 - [Artifact Lifecycle](installation/lifecycle.md)
 
 ### Configuration

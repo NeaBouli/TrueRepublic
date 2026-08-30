@@ -1,0 +1,27 @@
+{
+  "images": [
+    {
+      "config_sha256": "7fb92b16378422e745450239df897bf4541eb9c62014269bb46894c216cc91ff",
+      "id": "daemon-linux-arm64",
+      "index_sha256": "5b6bb50517d3570ac6e869c32369128ffbfa68fafcc2bc0e1c8996e67dea0905",
+      "layer_sha256": [
+        "081d2a561b816826bb95bbae5e3ba21fc66cd116201d2f314b2c0b627c14fc99"
+      ],
+      "manifest_sha256": "eaf6ca074c6805a1e2aaeb307ce8592df3c9440f6203821538f7ebc7f09a5daf"
+    },
+    {
+      "config_sha256": "a60ac7f28354c17804bb1828243069ac6c7348878293d1c0e4fba7843adf0ac1",
+      "id": "client-web-linux-arm64",
+      "index_sha256": "70749816024483dfd32ea07eed6fab4944eee34e8d6773b9069c50f3c96803a0",
+      "layer_sha256": [
+        "e211ce542ff9a486d5713a428f978901ef897cc773c22142877f992342e9fcf7"
+      ],
+      "manifest_sha256": "c27aae7cea4bf23b89ec123911715ce013a393dc846e055163e7d482e47a78b0"
+    }
+  ],
+  "platform": "linux/arm64",
+  "schema": "truerepublic.oci-evidence-report/v1",
+  "targets": 2,
+  "valid": true,
+  "violations": []
+}

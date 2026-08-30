@@ -145,12 +145,20 @@ There is no supported native mobile client.
 Fork the repo, create a branch, write tests, and submit a PR. See [Developer Docs](developers/README.md).
 
 ### Where are the tests?
-The recovery baseline has 2,094 verified standard-suite cases: 1,749 Go, 26
+The recovery baseline has 2,187 verified standard-suite cases: 1,842 Go, 26
 Rust, and 319 maintained-client tests. This total excludes the separate opt-in
 GH-175/GH-178/GH-181 IBC gate (`make ibc-two-chain`), GH-184 governed-upgrade
 gate, and GH-206 compatibility gate (`./scripts/test-zkp-wasm-client.sh`). Run
 `./scripts/go-packages.sh go test -race -cover -count=1` and see
 `docs/status.json` for the authoritative breakdown.
+
+### Does GH-261 create a new release tag?
+No. The existing `v0.4.0` tag remains historical. GH-261 uses the uncreated
+`v0.5.0` string only as an explicitly **simulated** future identity together
+with the exact commit so protected CI can reject stale or mixed binary/OCI
+metadata. It does not create or push that tag, sign or publish an artifact,
+deploy a node, or approve production. See
+[Release-candidate evidence](node-operators/installation/candidate-evidence.md).
 
 ### How do I integrate with CosmJS?
 See [CosmJS Examples](developers/integration-guide/cosmjs-examples.md) for complete code samples.

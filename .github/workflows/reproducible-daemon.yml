@@ -51,6 +51,13 @@ on:
       - 'client-web/package.json'
       - 'client-web/package-lock.json'
       - 'reproducible_oci_repository_test.go'
+      - 'candidateevidence/**'
+      - 'cmd/candidate-evidence/**'
+      - 'testdata/candidateevidence/**'
+      - 'scripts/generate-candidate-evidence.sh'
+      - 'scripts/test-candidate-evidence.sh'
+      - 'scripts/verify-candidate-evidence.sh'
+      - 'release_candidate_repository_test.go'
       - '.github/workflows/reproducible-daemon.yml'
   pull_request:
     paths:
@@ -100,6 +107,13 @@ on:
       - 'client-web/package.json'
       - 'client-web/package-lock.json'
       - 'reproducible_oci_repository_test.go'
+      - 'candidateevidence/**'
+      - 'cmd/candidate-evidence/**'
+      - 'testdata/candidateevidence/**'
+      - 'scripts/generate-candidate-evidence.sh'
+      - 'scripts/test-candidate-evidence.sh'
+      - 'scripts/verify-candidate-evidence.sh'
+      - 'release_candidate_repository_test.go'
       - '.github/workflows/reproducible-daemon.yml'
 
 permissions:
@@ -295,7 +309,7 @@ jobs:
             --argjson targets "$targets" \
             '{schema:"truerepublic.oci-evidence/v1",source_ref:$source_ref,contract_sha256:$contract_digest,platform:$platform,claims:{signed:false,published:false,production:false},targets:$targets}' \
             >"${evidence}/oci-evidence.json"
-          ./scripts/verify-reproducible-oci.sh --evidence "$evidence" --output json | tee "${RUNNER_TEMP}/oci-evidence-report-${PLATFORM_SUFFIX}.json"
+          ./scripts/verify-reproducible-oci.sh --evidence "$evidence" --output json | tee "${evidence}/oci-evidence-report-${PLATFORM_SUFFIX}.json"
 
       - name: Upload repository-only OCI digest evidence
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
@@ -303,6 +317,74 @@ jobs:
           name: truerepublic-oci-${{ matrix.suffix }}-${{ github.sha }}
           path: |
             ${{ runner.temp }}/oci-evidence-${{ matrix.suffix }}/oci-evidence.json
-            ${{ runner.temp }}/oci-evidence-report-${{ matrix.suffix }}.json
+            ${{ runner.temp }}/oci-evidence-${{ matrix.suffix }}/oci-evidence-report-${{ matrix.suffix }}.json
+          if-no-files-found: error
+          retention-days: 14
+
+  candidate-evidence:
+    name: release candidate evidence
+    needs: [deterministic-build, reproducible-oci]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
+        with:
+          go-version: '1.26.6'
+
+      - name: Download deterministic amd64 metadata
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: truerepublic-linux-amd64-${{ github.sha }}
+          path: ${{ runner.temp }}/candidate-input/truerepublic-linux-amd64
+
+      - name: Download deterministic arm64 metadata
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: truerepublic-linux-arm64-${{ github.sha }}
+          path: ${{ runner.temp }}/candidate-input/truerepublic-linux-arm64
+
+      - name: Download OCI amd64 digest evidence
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: truerepublic-oci-amd64-${{ github.sha }}
+          path: ${{ runner.temp }}/candidate-input/truerepublic-oci-amd64
+
+      - name: Download OCI arm64 digest evidence
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: truerepublic-oci-arm64-${{ github.sha }}
+          path: ${{ runner.temp }}/candidate-input/truerepublic-oci-arm64
+
+      - name: Verify fail-closed candidate evidence contract offline
+        run: ./scripts/test-candidate-evidence.sh
+
+      - name: Assemble and verify simulated-tag candidate evidence
+        env:
+          CANDIDATE_TAG: v0.5.0
+        run: |
+          set -euo pipefail
+          ./scripts/generate-candidate-evidence.sh \
+            --tag "$CANDIDATE_TAG" \
+            --commit "$GITHUB_SHA" \
+            --amd64-dir "${RUNNER_TEMP}/candidate-input/truerepublic-linux-amd64" \
+            --arm64-dir "${RUNNER_TEMP}/candidate-input/truerepublic-linux-arm64" \
+            --oci-amd64-dir "${RUNNER_TEMP}/candidate-input/truerepublic-oci-amd64" \
+            --oci-arm64-dir "${RUNNER_TEMP}/candidate-input/truerepublic-oci-arm64" \
+            --output-dir "${RUNNER_TEMP}/candidate-evidence"
+          ./scripts/verify-candidate-evidence.sh \
+            --evidence "${RUNNER_TEMP}/candidate-evidence" \
+            --output json | tee "${RUNNER_TEMP}/candidate-evidence-report.json"
+
+      - name: Upload repository-only candidate evidence
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: truerepublic-candidate-${{ github.sha }}
+          path: |
+            ${{ runner.temp }}/candidate-evidence/candidate-evidence.json
+            ${{ runner.temp }}/candidate-evidence-report.json
           if-no-files-found: error
           retention-days: 14

@@ -19,10 +19,10 @@ intentionally more granular than the public 59-item tracker.
 
 - The ordered recovery merge chain is on `main`.
 - The maximum supply is fixed at 21,000,000 PNYX.
-- The source of truth records 2,094 recovery-verified tests: 1,749 Go, 26 Rust,
+- The source of truth records 2,187 recovery-verified tests: 1,842 Go, 26 Rust,
   and 319 maintained-client tests. The Go total includes GH-244's strict
-  offline rollout-genesis qualification contract, GH-258's strict repeated-OCI
-  evidence contract, GH-225's release-
+  offline rollout-genesis qualification contract, GH-261's strict simulated-tag
+  candidate aggregation, GH-258's repeated-OCI evidence contract, GH-225's release-
   compatibility contract, GH-209's recipient-
   binding and atomic-payout adversarial coverage plus GH-206's pinned,
   test-only ZKP circuit/encoding freeze. GH-121's real registered browser-query
@@ -341,7 +341,10 @@ failure using the published runbooks and telemetry.
   ([GH-212](https://github.com/NeaBouli/TrueRepublic/issues/212)); the strict
   offline bundle/SBOM/unsigned-provenance contract is repository-only. GH-258
   adds native same-job daemon/client OCI index, manifest, config and
-  ordered-layer parity. Floating runner/BuildKit versions and live Debian
+  ordered-layer parity. GH-261 cross-binds both native daemon metadata records
+  and both-platform OCI digest reports to one exact commit and explicitly
+  simulated future tag in protected CI. All tag/push/sign/publish/deploy/
+  production claims remain false. Floating runner/BuildKit versions and live Debian
   package indexes still leave cross-time hermetic rebuilding unproven. These do
   not complete tagged builds, signing, publication, long-term reproducibility,
   deployment, or go/no-go approval.
