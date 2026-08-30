@@ -47,12 +47,18 @@ node, handles no real key or fund, and grants no rollout or production credit.
   repository probes without added test events, explicit workflow-vs-JSON trust
   boundaries, and a common OCI artifact root. Kimi's final read-only verdict is
   **APPROVE** with no P0/P1/P2 finding.
+- CodeRabbit's protected review found two minor but valid coverage/error-path
+  gaps. The checksum mutations now refresh the enclosing member digest so the
+  strict checksum parser is actually reached; the text CLI now fails closed on
+  output write errors. The related fixture assertion and two dead-code nits were
+  also corrected without changing test-event arithmetic. Focused, Vet,
+  staticcheck, complete Go and Race/Coverage gates pass after remediation.
 
 ## Reproduced local evidence
 
 - Go build, Vet, normal tests, and Race/Coverage pass across every maintained Go
   package. The authoritative total is 1,842 test events; root is 207 at 73.6%
-  statement coverage and `candidateevidence` is 77 at 86.6%.
+  statement coverage and `candidateevidence` is 77 at 87.3%.
 - Rust formatting, strict Clippy, all 26 tests, and `cargo audit` pass. Cargo
   audit reports five allowed transitive maintenance/unsoundness warnings and no
   blocking vulnerability.

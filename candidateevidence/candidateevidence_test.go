@@ -5,6 +5,7 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 	"encoding/json"
+	"errors"
 	"os"
 	"path/filepath"
 	"strings"
@@ -17,6 +18,10 @@ const (
 )
 
 var testContract = filepath.Join("..", "configs", "release", "candidate-evidence.json")
+
+type failingWriter struct{}
+
+func (failingWriter) Write([]byte) (int, error) { return 0, errors.New("write rejected") }
 
 func TestValidEvidence(t *testing.T) {
 	dir, _ := makeEvidence(t)
@@ -36,6 +41,8 @@ func TestCommittedFixtures(t *testing.T) {
 	}
 	if report := VerifyDirectory(filepath.Join(fixtures, "invalid-claims"), testContract); report.Valid {
 		t.Fatal("committed true-claims fixture accepted")
+	} else if !strings.Contains(strings.Join(report.Violations, "\n"), "candidate status claims must remain false") {
+		t.Fatalf("true-claims fixture rejected for the wrong reason: %v", report.Violations)
 	}
 }
 
@@ -116,6 +123,7 @@ func TestAdversarialEvidenceRejected(t *testing.T) {
 		}},
 		{"checksum drift", func(t *testing.T, dir string, m *Manifest) {
 			writeFile(t, filepath.Join(dir, m.BinaryTargets[0].Checksums.File), []byte(strings.Repeat("0", 64)+"  "+m.BinaryTargets[0].Artifact+"\n"))
+			m.BinaryTargets[0].Checksums.SHA256 = fileHash(t, dir, m.BinaryTargets[0].Checksums.File)
 		}},
 		{"checksum extra line", func(t *testing.T, dir string, m *Manifest) {
 			path := filepath.Join(dir, m.BinaryTargets[0].Checksums.File)
@@ -124,6 +132,7 @@ func TestAdversarialEvidenceRejected(t *testing.T) {
 				t.Fatal(err)
 			}
 			writeFile(t, path, append(raw, raw...))
+			m.BinaryTargets[0].Checksums.SHA256 = fileHash(t, dir, m.BinaryTargets[0].Checksums.File)
 		}},
 		{"OCI bundle source mismatch", func(t *testing.T, dir string, m *Manifest) {
 			mutateOCIEvidence(t, dir, m, 0, func(v map[string]any) { v["source_ref"] = strings.Repeat("f", 40) })
@@ -307,6 +316,9 @@ func TestRunCLI(t *testing.T) {
 	var report Report
 	if err := json.Unmarshal(bytes.TrimSpace(stdout.Bytes()), &report); err != nil || !report.Valid || report.BinaryTargets != 2 || report.OCITargets != 4 {
 		t.Fatalf("JSON report is invalid: %s", stdout.String())
+	}
+	if code := Run([]string{"verify", "--evidence", dir, "--contract", testContract, "--output", "text"}, failingWriter{}, &stderr); code != 1 {
+		t.Fatal("text report write failure was ignored")
 	}
 	m.Claims.Production = true
 	writeJSON(t, filepath.Join(dir, "candidate-evidence.json"), m)

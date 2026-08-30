@@ -29,7 +29,10 @@ func Run(args []string, stdout, stderr io.Writer) int {
 			return 1
 		}
 	} else {
-		_, _ = fmt.Fprintln(stdout, formatViolations(report))
+		if _, err := fmt.Fprintln(stdout, formatViolations(report)); err != nil {
+			_, _ = fmt.Fprintln(stderr, "write candidate evidence report:", err)
+			return 1
+		}
 	}
 	if !report.Valid {
 		return 1

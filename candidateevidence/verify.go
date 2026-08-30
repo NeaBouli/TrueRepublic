@@ -203,8 +203,8 @@ func VerifyDirectory(evidenceDir, contractPath string) Report {
 	}
 
 	seenFiles := map[string]bool{"candidate-evidence.json": true}
-	verifyBinaryTargets(&report, fail, base, &manifest, &contract, seenFiles)
-	verifyOCIPlatforms(&report, fail, base, &manifest, &contract, seenFiles)
+	verifyBinaryTargets(fail, base, &manifest, &contract, seenFiles)
+	verifyOCIPlatforms(fail, base, &manifest, &contract, seenFiles)
 	verifyExactMembers(fail, base, seenFiles)
 
 	report.Valid = len(report.Violations) == 0
@@ -275,7 +275,7 @@ func ociTargetsEqual(got, want []ContractOCITarget) bool {
 	return true
 }
 
-func verifyBinaryTargets(report *Report, fail func(string), base string, manifest *Manifest, contract *Contract, seenFiles map[string]bool) {
+func verifyBinaryTargets(fail func(string), base string, manifest *Manifest, contract *Contract, seenFiles map[string]bool) {
 	if len(manifest.BinaryTargets) != len(contract.BinaryTargets) {
 		fail("binary target count mismatch")
 	}
@@ -286,7 +286,7 @@ func verifyBinaryTargets(report *Report, fail func(string), base string, manifes
 			continue
 		}
 		expected := contract.BinaryTargets[index]
-		if binding.ID != expected.ID || seen[binding.ID] {
+		if seen[binding.ID] {
 			fail("binary target set mismatch")
 			continue
 		}
@@ -350,7 +350,7 @@ func metadataMatches(m daemonMetadata, binding BinaryTargetBinding, expected Con
 		m.BuildFlags.BuildID == "" && m.BuildFlags.LinkerBuildID == "none" && m.BuildFlags.VersionVariable == "main.version"
 }
 
-func verifyOCIPlatforms(report *Report, fail func(string), base string, manifest *Manifest, contract *Contract, seenFiles map[string]bool) {
+func verifyOCIPlatforms(fail func(string), base string, manifest *Manifest, contract *Contract, seenFiles map[string]bool) {
 	platforms := expectedOCIPlatforms()
 	if len(manifest.OCIPlatforms) != len(platforms) {
 		fail("OCI platform count mismatch")

@@ -8375,3 +8375,21 @@ exclusion, CI wiring, and documentation boundaries.
 - **Boundary:** no real tag/ref push, release, signature, publication, binary or
   OCI archive upload, deployment, production, key/fund, rollout credit or
   go/no-go action occurred.
+
+## 2026-08-29 GH-261 protected review remediation → Local PASS
+
+- **Hosted first head:** PR #262 head `f864e1e` passed all 24 reported contexts,
+  including native deterministic binaries, repeated amd64/arm64 OCI identity,
+  the new release-candidate aggregation, full Go/process/security/docs gates,
+  DeepScan and CodeRabbit.
+- **Review:** CodeRabbit opened two valid minor threads: checksum mutations did
+  not reach the strict checksum parser, and text output write failures were
+  ignored. Sol corrected both and applied the three associated trivial cleanup
+  notes without adding a test event.
+- **Replacement local verification:** candidate/repository contracts, Vet,
+  pinned staticcheck, full Go, Race/Coverage, exact 207 root plus 77 candidate
+  events, docs/status arithmetic and diff hygiene PASS. Candidate coverage is
+  now 87.3%; total remains 2,187 = 1,842 + 26 + 319.
+- **Pending:** push replacement head, resolve both review threads, complete all
+  protected reruns, then merge and synchronize exact main/GH-29/Wiki/Bridges.
+  Rollout remains 35/59 and production false; no tag/release/deploy action.

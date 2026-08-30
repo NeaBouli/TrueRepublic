@@ -7,11 +7,16 @@
   All tag/push/sign/publish/deploy/production claims are mandatory and false.
 - Complete local Go/Rust/client/security and adjacent release-contract gates
   pass at 2,187 = 1,842 + 26 + 319 cases. Candidate evidence has 77 events at
-  86.6% coverage; root has 207 at 73.6%.
+  87.3% coverage; root has 207 at 73.6%.
 - Kimi K3 found and Sol fixed a real OCI upload-artifact layout mismatch by
   co-locating evidence/report JSON under one common artifact root. Final Kimi
   verdict is **APPROVE**, no P0/P1/P2 finding. Claude Code's bounded helper
   exhausted its local USD 0.25 budget, returned no report, and changed nothing.
+- The first exact head passed all 24 hosted contexts, including both native OCI
+  repetitions and the new candidate aggregation. CodeRabbit then reported two
+  valid minor error-path/coverage gaps. Sol corrected both plus three trivial
+  cleanup notes without adding test events; focused, Vet, staticcheck, full Go,
+  Race/Coverage, docs, arithmetic and diff gates pass on the replacement diff.
 - Protected exact-head native build/OCI evidence, PR review, merge and public
   synchronization remain. No real tag, release, signing, publication,
   deployment, production, key/fund, rollout credit or go/no-go action occurred.

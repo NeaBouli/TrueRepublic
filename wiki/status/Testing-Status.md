@@ -40,7 +40,7 @@ evidence and are not counted in the 1,842 Go subtotal.
 | Package | Statements |
 |---|---:|
 | root/application | 73.6% |
-| candidate evidence | 86.6% |
+| candidate evidence | 87.3% |
 | rollout genesis evidence | 84.2% |
 | capacity policy | 85.5% |
 | deployment evidence | 90.8% |
