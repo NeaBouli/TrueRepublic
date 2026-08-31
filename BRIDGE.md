@@ -8519,3 +8519,48 @@ exclusion, CI wiring, and documentation boundaries.
   deployment, real key/fund, go/no-go, or rollout-credit action occurred.
 
 `TRUEREPUBLIC GH-266 DONE — EXACT MAIN AND PUBLIC SURFACES VERIFIED`
+
+## 2026-09-01 01:18 EEST GH-269 dependency reconciliation → In Progress
+
+- **Branch:** `chore/GH-269-grpc-reconciliation`
+- **Issue:** [GH-269](https://github.com/NeaBouli/TrueRepublic/issues/269)
+- **Base:** exact clean main
+  `9b65bc5e1d9c0ee6179dfeaf019ff75330c77eaf`.
+- **Scope:** rebuild Dependabot PR #264's exact gRPC 1.82.1 → 1.82.2
+  security patch on current main, verify source/checksums/license/module graph
+  and the complete node/recovery/security matrix, then merge and verify exact
+  main before starting the separately bounded PR #265 client update.
+- **Changed:** `go.mod` and `go.sum` currently contain only the exact #264
+  patch. Bridge/TODO/Action Log record the active current-main integration.
+- **Roles:** Kimi K3 performs a bounded secret-free read-only dependency/diff
+  review. Sol owns the rebuilt diff, security decision, all tests, GitHub
+  writes, protected review, merge and closure.
+- **Risk:** Medium. gRPC is node-facing and direct production dependency;
+  consensus behavior must remain unchanged. No release, tag, signing,
+  publication, deployment, production, key/fund or rollout-credit action is
+  allowed.
+- **Ready for:** focused dependency validation and complete Sol verification.
+
+---
+
+## 2026-09-01 02:20 EEST GH-269 gRPC replacement → Local PASS
+
+- **Diff:** exact gRPC 1.82.1 → 1.82.2 source/sum update plus synchronized
+  Apache-2.0 dependency inventory; no graph, runtime or consensus change.
+- **Independent review:** Kimi K3 **APPROVE**, zero P0/P1/P2 findings.
+- **Local PASS:** focused/full Go Build/Vet/Race/Coverage; all eight
+  multi-validator cases; governed-upgrade recovery; two-chain IBC; concurrency
+  replay/restart; maintained client tests/lint/build/budget/audit; Rust
+  fmt/clippy/tests/audit policy; vulnerability/static/secret/security gates;
+  deterministic-daemon, OCI-evidence, candidate-evidence, consistency, license
+  and diff contracts.
+- **Environment boundary:** Docker is not installed locally, so native repeated
+  OCI builds are not claimed and remain mandatory protected-CI evidence.
+- **Pending:** commit/push, exact-head protected checks/review, authorized merge,
+  exact-main verification and stale PR #264 closure before PR #265 begins.
+- **Truth boundary:** rollout remains 35/59 and production false. No tag,
+  release, signing, publication, deployment, key/fund or production action.
+
+`TRUEREPUBLIC GH-269 GRPC LOCAL PASS — PROTECTED PR PENDING`
+
+---

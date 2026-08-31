@@ -1,5 +1,20 @@
 # Project State
 
+GH-269's first sequential slice is locally complete on exact-base branch
+`chore/GH-269-grpc-reconciliation`: gRPC 1.82.1 → 1.82.2, exact upstream sums,
+Apache-2.0 inventory references, and no dependency-graph drift. Kimi K3 returned
+APPROVE with zero P0/P1/P2 finding. Focused/full Go, Build/Vet/Race/Coverage,
+all eight multi-validator recovery cases, governed upgrade, two-chain IBC,
+concurrency replay, client, Rust, vulnerability, static, secret, security and
+release-evidence contracts pass. Docker is not installed locally, so native
+repeated OCI evidence remains a protected-CI gate. Commit/push, exact-head
+protected review, merge, exact-main verification and stale PR #264 closure
+remain. Rollout stays 35/59 and production false.
+
+Updated: 2026-09-01 EEST
+
+---
+
 GH-266 is Done. PR #267 final head `f736948` passed all 29 hosted contexts with
 all four review threads resolved and squash-merged as exact main `735f42a`;
 GH-266 is closed. Exact merged main passed Docs `33436474061`, Client

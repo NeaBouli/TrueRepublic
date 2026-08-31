@@ -1,5 +1,41 @@
 # Action Log
 
+## 2026-09-01 - GH-269 gRPC integration local PASS
+
+- Exact upstream gRPC v1.82.2 source, sums, unchanged module requirements and
+  Apache-2.0 license pass independent verification. The maintained legal
+  inventory and pinned license URL now use v1.82.2. The security patch rejects
+  malformed requests lacking both `:authority` and `Host`; maintained code has
+  no custom gRPC dialer/server or proxy that relies on that invalid shape.
+- Kimi K3 returned APPROVE with zero P0/P1/P2 finding and recommended the
+  conservative multi-validator matrix plus exact-head protected review.
+- PASS: `make verify`; focused DEX/governance tests; all eight gated
+  multi-validator recovery/rollback/slashing/key-rotation/state-sync/failover
+  cases; governed-upgrade recovery; three two-chain IBC recovery cases;
+  concurrent replay/restart; client policy/Vitest 309 pass + 4 expected skips,
+  lint, build/budget and audit; Rust fmt/clippy/workspace tests; static, secret,
+  govulncheck and positive/negative vulnerability gates; security, deterministic
+  daemon, OCI-evidence and candidate-evidence repository contracts; consistency,
+  license policy and diff hygiene.
+- Local Docker is not installed (`docker` exit 127), so no local native OCI
+  build is claimed. Protected exact-head CI must provide that evidence before
+  merge. Rollout remains 35/59 and production remains false; no tag, signing,
+  publication, deployment, key/fund or production action occurred.
+
+## 2026-09-01 - GH-269 gRPC integration started
+
+- GH-269 tracks the sequential current-main reconciliation of stale Dependabot
+  PRs #264 and #265. The gRPC security patch is first and the client-only
+  development updates may start only after exact-main verification.
+- PR #264 is two main commits behind but has a clean merge tree. Its exact
+  two-file dependency/sum diff is staged on branch
+  `chore/GH-269-grpc-reconciliation` from exact base `9b65bc5`.
+- Kimi K3 is performing an independent bounded read-only dependency review;
+  Sol owns source/license/checksum analysis, integration, complete tests,
+  GitHub writes and closure.
+- No consensus behavior, rollout count, release, tag, signing, publication,
+  deployment, production, key or fund action is included.
+
 ## 2026-08-31 - GH-266 protected closeout complete
 
 - PR #267 final head `f736948` passed all 29 hosted contexts with every review
