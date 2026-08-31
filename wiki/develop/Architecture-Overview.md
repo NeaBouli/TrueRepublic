@@ -218,7 +218,7 @@ x/truedemocracy/
 ```
 x/dex/
 ├── keeper.go         ← CreatePool, Swap (x*y=k), AddLiquidity, RemoveLiquidity
-├── msgs.go           ← 4 message types
+├── msgs.go           ← 7 transaction message types
 ├── msg_server.go     ← gRPC message handlers
 ├── cli.go            ← 7 tx + 9 query CLI commands
 ├── query_server.go   ← gRPC query handlers
@@ -233,7 +233,7 @@ x/dex/
 
 **5 equations, 36 standard-suite cases**
 
-```
+```text
 treasury/keeper/
 ├── rewards.go        ← All 5 whitepaper tokenomics equations
 └── rewards_test.go   ← 36 standard-suite cases

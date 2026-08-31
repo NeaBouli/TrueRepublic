@@ -148,6 +148,7 @@ func decodeWASMHandoffStrict(data []byte) (zkpWASMHandoff, error) {
 	return handoff, nil
 }
 
+// isWASMLowerHex accepts only non-empty canonical lowercase hexadecimal text.
 func isWASMLowerHex(value string) bool {
 	if value == "" {
 		return false
@@ -271,6 +272,7 @@ type wasmKeeperRatingCall struct {
 	recipient string
 }
 
+// rate submits one deliberately mutable rating call through the real keeper boundary.
 func (call wasmKeeperRatingCall) rate(k Keeper, ctx sdk.Context, handoff zkpWASMHandoff) error {
 	_, err := k.RateProposalWithZKPPayout(
 		ctx, handoff.DomainName, handoff.IssueName, handoff.SuggestionName,
@@ -279,6 +281,7 @@ func (call wasmKeeperRatingCall) rate(k Keeper, ctx sdk.Context, handoff zkpWASM
 	return err
 }
 
+// TestWASMClientProofTraversesKeeperRewardBoundary proves atomic payout and fail-closed replay behavior.
 func TestWASMClientProofTraversesKeeperRewardBoundary(t *testing.T) {
 	handoff, vector, vkBytes := loadVerifiedWASMHandoff(t)
 
@@ -453,6 +456,7 @@ func TestWASMClientProofTraversesKeeperRewardBoundary(t *testing.T) {
 	})
 }
 
+// TestWASMClientHandoffStrictDecoding rejects malformed or drifted maintained-client handoffs.
 func TestWASMClientHandoffStrictDecoding(t *testing.T) {
 	path := os.Getenv(zkpWASMHandoffEnv)
 	if path == "" {

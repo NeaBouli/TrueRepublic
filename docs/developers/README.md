@@ -42,7 +42,7 @@ Technical documentation for developers building on or contributing to TrueRepubl
 
 ## Project Structure
 
-```
+```text
 TrueRepublic/
 ├── app.go                  # Cosmos SDK application entry point
 ├── go.mod                  # Go module (SDK v0.50.15)

@@ -8480,3 +8480,20 @@ exclusion, CI wiring, and documentation boundaries.
   rollout-credit action occurred.
 
 `TRUEREPUBLIC GH-266 FINAL LOCAL APPROVE — PROTECTED PR PENDING`
+
+## 2026-08-31 GH-266 PR #267 first head green → review remediation Local PASS
+
+- **First protected head:** `5d8205b` passed all 29 hosted contexts, including
+  CodeRabbit, DeepScan, ZKP/WASM keeper, Go/recovery, client, security,
+  reproducibility and docs.
+- **Review:** CodeRabbit opened four valid minor documentation threads. Sol
+  corrected the GH-206/GH-266 gate distinction, recipient trust boundary, two
+  Markdown text fences and the last duplicate governance/DEX module counts.
+- **Replacement local PASS:** dedicated keeper replay, documentation consistency
+  and diff hygiene pass. Replacement exact-head CI and thread resolution remain
+  before authorized merge.
+- **Boundary:** rollout remains 35/59 and production false; no ceremony,
+  release, deployment, key/fund, submission, production or rollout-credit
+  action occurred.
+
+`TRUEREPUBLIC GH-266 REVIEW FIXES LOCAL PASS — REPLACEMENT CI PENDING`

@@ -18,8 +18,10 @@ dedicated ZKP/WASM, security/static/vulnerability/secret, coverage/generative,
 release/reproducibility/license, retirement, documentation and diff gates pass.
 Independent final Kimi review returned APPROVE with no unresolved P0-P3 finding
 after fresh 36 treasury, 138 DEX, 614 governance and 1,842 full-Go recounts.
-Protected PR evidence, merge, exact-main, GH-29, Wiki, Pages, and Bridge closeout
-remain.
+PR #267 first head `5d8205b` passed all 29 hosted contexts. Four minor
+CodeRabbit documentation threads are locally corrected with focused gates green;
+replacement exact-head evidence and thread resolution precede merge. Exact-main,
+GH-29, Wiki, Pages, and Bridge closeout then remain.
 
 Updated: 2026-08-31 EEST
 

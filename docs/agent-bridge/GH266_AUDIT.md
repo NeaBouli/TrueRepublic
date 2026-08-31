@@ -105,6 +105,10 @@ client keeps `isSubmittable` hard false.
 ## Protected closeout evidence
 
 Local implementation, full final gates and independent Kimi approval are
-complete. Pending: exact-head PR checks and review, authorized merge, exact-main
-workflows, GH-29 comment, live Wiki/Pages synchronization, and both Bridge
-closeouts.
+complete. PR #267 first head `5d8205b` passed all 29 hosted contexts. CodeRabbit
+then opened four minor documentation threads; Sol corrected the GH-206/GH-266
+gate wording, recipient trust-boundary label, Markdown language tags and two
+remaining duplicate module counts. The dedicated keeper gate, documentation
+consistency and diff hygiene pass on the replacement draft. Pending: replacement
+exact-head checks, thread resolution, authorized merge, exact-main workflows,
+GH-29 comment, live Wiki/Pages synchronization, and both Bridge closeouts.

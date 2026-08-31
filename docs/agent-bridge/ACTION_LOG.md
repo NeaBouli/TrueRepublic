@@ -1,5 +1,19 @@
 # Action Log
 
+## 2026-08-31 - GH-266 first protected head green; review fixes local PASS
+
+- PR #267 exact first head `5d8205b` passed all 29 hosted contexts, including
+  CodeRabbit, DeepScan, the dedicated ZKP/WASM keeper gate, full Go/recovery,
+  client, security, reproducibility and documentation checks.
+- CodeRabbit opened four valid minor documentation threads. Sol separated the
+  GH-206 native-verifier and GH-266 keeper-replay wording, added recipient
+  binding to the threat boundary, tagged both requested Markdown text blocks,
+  and synchronized the final duplicate governance/DEX module counts.
+- Focused keeper replay, documentation consistency and diff hygiene pass on the
+  replacement draft. Replacement exact-head checks, review-thread resolution,
+  merge and exact-main/public closeout remain. No rollout credit or production
+  action occurred.
+
 ## 2026-08-31 - GH-266 independent final review APPROVE
 
 - Kimi K3 completed the final read-only review of all 26 modified and two new

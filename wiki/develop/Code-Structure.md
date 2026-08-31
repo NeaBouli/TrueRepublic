@@ -18,7 +18,7 @@ TrueRepublic/
 ├── SECURITY.md                     # Security policy
 │
 ├── x/                              # Custom Cosmos SDK modules
-│   ├── truedemocracy/              # Core governance (23 msg types, 533 recovery cases)
+│   ├── truedemocracy/              # Core governance (26 transaction message types, 614 standard-suite cases)
 │   │   ├── keeper.go               #   Domain CRUD, proposals, anonymous ratings
 │   │   ├── anonymity.go            #   Permission register, domain key pairs (WP S4)
 │   │   ├── stones.go               #   VoteToEarn, stone voting, list sorting (WP S3.1)

@@ -80,7 +80,7 @@ validator, RPC, or private roles under documented policy.
 - **Module ↔ bank custody** — exact escrow/stake/fee/reward/slash bank
   movements, DEX settlement and canonical burns, every-block crisis
   invariants.
-- **ZKP prover ↔ on-chain verifier** — versioned chain/proposal/rating-bound
+- **ZKP prover ↔ on-chain verifier** — versioned chain/proposal/rating/recipient-bound
   signals, nullifier publication, genesis-pinned verification key. GH-266
   verifies a fresh synthetic Go/WASM proof through the real keeper payout
   boundary, but no production-qualified prover exists and clients stay
