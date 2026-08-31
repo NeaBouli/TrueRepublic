@@ -2,7 +2,8 @@
 
 The current **v0.4.0 recovery** source of truth records **2,187 verified
 standard-suite cases**. This arithmetic excludes the separately run opt-in
-GH-175/GH-178/GH-181 IBC two-chain and GH-184 governed-upgrade gates.
+GH-266 Go/WASM-to-keeper replay, GH-175/GH-178/GH-181 IBC two-chain, and
+GH-184 governed-upgrade gates.
 
 | Suite | Passing cases |
 |---|---:|
@@ -31,8 +32,8 @@ GH-175/GH-178/GH-181 IBC two-chain and GH-184 governed-upgrade gates.
 | **Total** | **2,187** |
 
 The published total is the reproducible standard-suite baseline; the opt-in
-GH-175/GH-178/GH-181 IBC recovery, GH-184 upgrade, and GH-206 Go/WASM
-compatibility (`./scripts/test-zkp-wasm-client.sh`) gates are additional
+GH-175/GH-178/GH-181 IBC recovery, GH-184 upgrade, and GH-206/GH-266 Go/WASM
+native-verifier plus keeper-replay (`./scripts/test-zkp-wasm-client.sh`) gates are additional
 evidence and are not counted in the 1,842 Go subtotal.
 
 ## Current Go coverage
@@ -67,6 +68,7 @@ TRUEREPUBLIC_MULTI_VALIDATOR_SMOKE=1 go test . \
   -run '^TestMultiValidatorConsensusRecovery$' -count=1 -timeout=300s -v
 ./scripts/go-packages.sh go vet
 CGO_ENABLED=1 ./scripts/go-packages.sh go build
+./scripts/test-zkp-wasm-client.sh
 ./scripts/check-consistency.sh
 ```
 
@@ -108,6 +110,15 @@ identities to one exact commit and explicitly simulated tag, rejects promoted
 claims and undeclared payload members, and is exercised by the protected
 metadata-only aggregation job. No real tag, release, signature, publication,
 deployment, or rollout credit is created.
+
+GH-266 extends the separate GH-206 compatibility command with a strict
+versioned handoff and two env-gated keeper tests. The fresh maintained-client
+proof must pay the bound recipient exactly once through
+`RateProposalWithZKPPayout`; replay, proof corruption, chain/rating/root drift,
+recipient substitution, blocked/noncanonical recipients, and malformed
+handoffs must leave nullifier, rating, treasury, escrow, and balances unchanged.
+Because these tests skip in the ordinary package suite and run only in the
+dedicated gate, they add evidence without changing the 1,842 Go subtotal.
 
 Green tests are recovery evidence, not an external security or production
 approval. See [Current Status](Current-Status) for remaining gates.

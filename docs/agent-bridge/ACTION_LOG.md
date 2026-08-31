@@ -1,5 +1,48 @@
 # Action Log
 
+## 2026-08-31 - GH-266 independent final review APPROVE
+
+- Kimi K3 completed the final read-only review of all 26 modified and two new
+  files and returned APPROVE with zero unresolved P0/P1/P2/P3 finding.
+- Fresh independent recounts reproduce 36 treasury, 138 DEX, 614 governance
+  pass events plus three expected skips, and 1,842 complete Go standard-suite
+  pass events. Documentation consistency and diff hygiene pass after the final
+  reviewed edit.
+- Local implementation and verification are complete. Protected exact-head PR
+  evidence, review, merge, exact-main verification and GH-29/Wiki/Pages/Bridge
+  synchronization remain. Rollout and production state are unchanged.
+
+## 2026-08-31 - GH-266 local implementation and focused gates PASS
+
+- The GH-206 maintained-client integration now writes an exact versioned,
+  bounded handoff containing the pinned chain/proposal/rating/recipient context
+  plus proof, root, nullifier, and public signals. Strict Go decoding rejects
+  missing, unknown, duplicate, trailing, oversized, noncanonical, or drifted
+  input before keeper replay.
+- The fresh synthetic v2 proof passes the real
+  `RateProposalWithZKPPayout` boundary. The bound recipient receives exactly one
+  reward; nullifier, rating, treasury, module balance, total payouts, and escrow
+  parity are verified. Exact replay plus corrupted proof, recipient
+  substitution, rating/chain/root drift, uppercase recipient, and blocked module
+  recipient all fail closed without state or balance mutation.
+- Kimi K3 implemented the bounded test harness. Sol reviewed every changed line
+  and corrected two hardening gaps: all handoff fields are now explicitly
+  required, and an ordinary skipped package run cannot mutate the process-global
+  SDK Bech32 prefix. Claude Code provided the small read-only documentation and
+  command inventory and changed nothing.
+- PASS: dedicated Go/WASM client/native-verifier/keeper gate, focused and full
+  `x/truedemocracy` plus `internal/zkpprover`, Vet, changed-file ESLint, docs
+  consistency, and diff checks. A package JSON recount reproduces 614 passing
+  governance events; the two new env-gated tests skip in the standard suite, so
+  public arithmetic remains 2,187 = 1,842 Go + 26 Rust + 319 client.
+- Full local Go/Race/Coverage, client, Rust, ZKP/WASM, vulnerability, static,
+  secret, coverage, generative, release/reproducibility/license, retirement,
+  documentation, JSON/shell, and diff gates pass. Independent final Kimi
+  review, protected PR/merge, exact-main and live public synchronization remain.
+  Rollout stays 35/59,
+  phase work 35/51, Phase 6 6/7, and production false. No runtime, consensus,
+  ceremony, release, deployment, real key/fund, or production action occurred.
+
 ## 2026-08-30 - GH-261 merged, exact main and public state verified
 
 - PR #262 final head `e3c758a` passed 25/25 hosted contexts with both

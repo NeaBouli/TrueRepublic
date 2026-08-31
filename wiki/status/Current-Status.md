@@ -15,7 +15,9 @@
 - Chain/proposal/rating-bound ZKP statement and pinned genesis verification-key
   identity; GH-206 generates a real proof through isolated Go/WASM from exact
   synthetic toxic-waste fixtures and proves native verifier compatibility,
-  while GH-209 binds an atomic anonymous reward to one canonical recipient
+  GH-266 strictly replays that fresh proof through the real keeper payout
+  boundary and proves atomic one-time payout plus fail-closed replay/context/
+  recipient handling, while GH-209 binds the reward to one canonical recipient
   without changing the circuit/setup artifacts or recipient-independent
   nullifier. Direct payout is publicly linkable; mock and transaction
   submission remain fail-closed.
@@ -45,7 +47,8 @@
   release tools/platforms and container bases, without publishing or signing
   an artifact or claiming production rollout.
 - 2,187 recovery-verified tests: 1,842 Go, 26 Rust, and 319 maintained-client,
-  plus the separately gated GH-175/GH-178/GH-181 two-chain IBC packet/channel/compatible-restart recovery and GH-172
+  plus the separately gated GH-266 Go/WASM-to-keeper replay,
+  GH-175/GH-178/GH-181 two-chain IBC packet/channel/compatible-restart recovery and GH-172
   contention/replay/restart process proofs.
 - GH-258 requires native same-job double OCI exports for daemon and `client-web`
   to match on index, manifest, config, and ordered layer digests. It publishes no
@@ -76,7 +79,7 @@ reviewed, verified, and merged to `main` in this order.
   tagged-candidate qualification, and staged deployment evidence; GH-212 is an
   unsigned repository-only foundation, GH-258 is same-job OCI parity, and
   GH-261 is simulated-tag metadata aggregation—not completion of these gates.
-- Production-qualified Groth16 client prover, ceremony, submission path, and external circuit review.
+- Production-qualified Groth16 client prover, ceremony, submission path, and external circuit review; GH-266 is synthetic keeper-boundary evidence only.
 - Independent privacy review of the implemented recipient binding and its
   documented direct-payout linkability.
 - IBC/consensus-breaking migration recovery, external paging drills,

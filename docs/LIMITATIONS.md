@@ -254,7 +254,11 @@ isolated Go/WASM command consumes only those exact
 artifacts, generates a fresh proof through the maintained-client adapter, and
 proves native Go verification. It is not shipped in the production bundle, has
 no wallet/RPC/broadcast capability, and does not change the hard-false
-`isSubmittable` guard.
+`isSubmittable` guard. GH-266 takes that fresh proof through the actual keeper
+payout boundary and verifies exact reward delivery, one-time nullifier use,
+replay rejection, escrow parity, and fail-closed proof/context/recipient/handoff
+drift. This remains isolated synthetic compatibility evidence, not a production
+ceremony, prover, audited submission path, or privacy approval.
 **Future:** Production ceremony artifacts, audited prover/submission integration, and independent circuit review
 
 ## Workarounds
@@ -270,8 +274,9 @@ fresh-genesis v0.4.1 baseline. Pre-GH-184 store introduction and IBC client
 upgrades remain unsupported.
 
 ### For ZKP
-Do not submit anonymous votes from the web client. GH-206 is synthetic test-only
-compatibility evidence, not a production prover. The GH-209 recipient binding
+Do not submit anonymous votes from the web client. GH-206 and GH-266 are
+synthetic test-only verifier/keeper compatibility evidence, not a production
+prover. The GH-209 recipient binding
 covers both anonymous rating paths chain-side, but anonymous submission still
 requires ceremony and independent review before it can be enabled.
 

@@ -133,7 +133,23 @@ integration('real maintained-client Groth16 WASM compatibility', () => {
       vector.external_nullifier_hex,
       v2Vector.signal_hash_hex,
     ]);
-    writeFileSync(resultPath, `${JSON.stringify(result)}\n`, {
+    // GH-266: the keeper gate strictly decodes this handoff and cross-checks
+    // the vote context against the pinned fixtures, so the exact bound
+    // context travels with the fresh proof.
+    const handoff = {
+      schema: 'truerepublic/zkp-wasm-handoff/v1',
+      chainId: inputs.chainId,
+      domainName: inputs.domainName,
+      issueName: inputs.issueName,
+      suggestionName: inputs.suggestionName,
+      rating: inputs.rating,
+      rewardRecipient: inputs.rewardRecipient,
+      proof: result.proof,
+      nullifierHash: result.nullifierHash,
+      merkleRoot: result.merkleRoot,
+      publicSignals: result.publicSignals,
+    };
+    writeFileSync(resultPath, `${JSON.stringify(handoff)}\n`, {
       encoding: 'utf8',
       mode: 0o600,
     });

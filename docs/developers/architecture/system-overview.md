@@ -12,10 +12,10 @@
 │  Smart Contract Layer (CosmWasm)                     │
 │  governance.rs  │  treasury.rs                       │
 ├─────────────────────────────────────────────────────┤
-│  Application Layer (Cosmos SDK v0.50.13)             │
+│  Application Layer (Cosmos SDK v0.50.15)             │
 │  truedemocracy  │  dex  │  treasury                  │
 ├─────────────────────────────────────────────────────┤
-│  Consensus Layer (CometBFT v0.38.21)                 │
+│  Consensus Layer (CometBFT v0.38.26)                 │
 │  Proof of Domain (PoD) validator selection           │
 ├─────────────────────────────────────────────────────┤
 │  Storage Layer                                       │
@@ -97,7 +97,7 @@ The core governance module implementing the whitepaper specification.
 | `stones.go` | VoteToEarn rewards, stone voting, list sorting |
 | `lifecycle.go` | Suggestion green/yellow/red zones, auto-delete, fast-delete |
 | `governance.go` | Admin election, member exclusion (2/3 vote), inactivity cleanup |
-| `msgs.go` | 13 SDK message types with validation |
+| `msgs.go` | 26 SDK transaction message types with validation |
 | `cli.go` | CLI transaction and query commands |
 | `query_server.go` | Registered protobuf query handlers |
 | `types.go` | Data structures: Domain, Validator, Issue, Suggestion, Rating |
@@ -113,7 +113,7 @@ AMM-based decentralized exchange with constant-product formula.
 | File | Responsibility |
 |------|---------------|
 | `keeper.go` | CreatePool, Swap, AddLiquidity, RemoveLiquidity |
-| `msgs.go` | 4 SDK message types |
+| `msgs.go` | 7 SDK transaction message types |
 | `cli.go` | CLI commands |
 | `types.go` | Pool type, fee constants (SwapFeeBps=30, BurnBps=100) |
 | `module.go` | SDK module wiring |
@@ -127,7 +127,7 @@ Tokenomics equations from the whitepaper.
 | File | Responsibility |
 |------|---------------|
 | `rewards.go` | All 5 whitepaper equations for token economics |
-| `rewards_test.go` | 31 equation validation tests |
+| `rewards_test.go` | 36 standard-suite equation cases |
 
 ## Data Models
 
@@ -201,14 +201,14 @@ type Pool struct {
 }
 ```
 
-## Test Coverage
+## Core Module Test Baseline
 
-| Module | Tests | Test Lines |
-|--------|-------|------------|
-| truedemocracy | 116 | 2,077 |
-| dex | 24 | 423 |
-| treasury | 31 | 205 |
-| **Total** | **182** | **2,705** |
+| Module | Standard-suite cases |
+|--------|---------------------:|
+| truedemocracy | 614 |
+| dex | 138 |
+| treasury | 36 |
+| **Core-module subtotal** | **788** |
 
 ## Next Steps
 

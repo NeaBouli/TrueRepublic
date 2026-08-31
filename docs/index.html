@@ -347,7 +347,7 @@
                 <div class="feature-card">
                     <div class="feature-icon">&#x1F510;</div>
                     <h3>ZKP Anonymous Voting</h3>
-                    <p>Groth16 membership architecture with chain-, proposal-, and rating-bound proofs plus persisted nullifier protection. GH-206 verifies real synthetic Go/WASM proof compatibility; production ceremony, submission, and external cryptographic review remain required.</p>
+                    <p>Groth16 membership architecture with chain-, proposal-, rating-, and recipient-bound proofs plus persisted nullifier protection. GH-266 replays a fresh synthetic Go/WASM proof through the real keeper payout boundary with atomic payout and replay checks; production ceremony, submission, and external cryptographic review remain required.</p>
                 </div>
                 <div class="feature-card">
                     <div class="feature-icon">&#x1F4B0;</div>
@@ -544,6 +544,7 @@
                         <li>Frozen circuit, inputs, encodings, and artifacts</li>
                         <li>Reproducible ceremony and key provenance</li>
                         <li><strong>Verified locally:</strong> GH-209 front-running-safe recipient binding and atomic treasury payout; direct-payout linkability and independent privacy review remain</li>
+                        <li><strong>Verified locally:</strong> GH-266 fresh synthetic Go/WASM proof replay through the strict keeper payout boundary, including one-time nullifier and fail-closed adversarial checks; no production or rollout credit</li>
                         <li>Independent cryptographic and privacy review</li>
                     </ul>
                 </article>

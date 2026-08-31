@@ -32,7 +32,7 @@ API LAYER
 └── WebSocket (port 26657/websocket) ← Real-time events
     ↓
 APPLICATION LAYER (Cosmos SDK v0.50.15)
-├── x/truedemocracy ← Core governance (25 msg types, 552 recovery cases)
+├── x/truedemocracy ← Core governance (26 tx message types, 614 standard-suite cases)
 │   ├── keeper.go ← Domain CRUD, proposals, ratings
 │   ├── anonymity.go ← Permission register, domain key pairs (WP S4)
 │   ├── stones.go ← VoteToEarn, stone voting, list sorting (WP S3.1)
@@ -45,7 +45,7 @@ APPLICATION LAYER (Cosmos SDK v0.50.15)
 ├── treasury/keeper ← Tokenomics equations 1-5 (36 tests)
 │   └── rewards.go ← Domain interest, staking rewards, decay
 ├── CosmWasm ← Smart contracts (governance.rs, treasury.rs)
-└── Standard modules (auth, bank, staking, etc.)
+└── Standard modules (auth, bank, crisis, consensus, capability, IBC, transfer, wasm, upgrade; staking/distribution unmounted)
     ↓
 CONSENSUS LAYER (CometBFT v0.38.26)
 ├── Byzantine Fault Tolerance (instant finality)
@@ -72,7 +72,7 @@ STORAGE LAYER
 | **Why Go?** | Cosmos SDK requirement, excellent performance, strong concurrency |
 | **Key Libraries** | Cosmos SDK, CometBFT, Cobra CLI, LevelDB |
 | **Build** | `make build` produces `truerepublicd` binary |
-| **Test** | `CGO_ENABLED=1 ./scripts/go-packages.sh go test -race -cover -count=1 -timeout=600s` (1,842 standard-suite Go cases, including GH-261 candidate evidence, GH-258 repeated-OCI evidence, GH-244 rollout-genesis qualification, GH-225 release compatibility, GH-222 install-lifecycle, GH-209 recipient-binding and GH-206 test-only prover coverage; separate GH-206/GH-209 Go/WASM, GH-175/GH-178/GH-181 IBC, and GH-184 upgrade gates excluded) |
+| **Test** | `CGO_ENABLED=1 ./scripts/go-packages.sh go test -race -cover -count=1 -timeout=600s` (1,842 standard-suite Go cases, including GH-261 candidate evidence, GH-258 repeated-OCI evidence, GH-244 rollout-genesis qualification, GH-225 release compatibility, GH-222 install-lifecycle, GH-209 recipient binding and GH-206 test-only prover coverage; separate GH-266 keeper replay, GH-206 native-verifier, GH-175/GH-178/GH-181 IBC, and GH-184 upgrade gates excluded) |
 
 ### Framework: Cosmos SDK v0.50.15
 
@@ -182,7 +182,7 @@ citizen-node, mobile-verification, civic-workflow and domain-app slices. It is
 implemented only through GH-241's unwired V4-0 canonical Go protocol package;
 no client/runtime is active and the track grants no rollout credit.
 
-**23 message types, 505 recovery cases**
+**26 transaction message types, 614 standard-suite cases**
 
 ```
 x/truedemocracy/
@@ -193,9 +193,9 @@ x/truedemocracy/
 ├── governance.go     ← Admin election, member exclusion, inactivity cleanup
 ├── validator.go      ← PoD registration, staking, transfer limits
 ├── slashing.go       ← Double-sign (5%), downtime (1%), jailing
-├── msgs.go           ← 13 SDK message types with validation
+├── msgs.go           ← 26 SDK transaction message types with validation
 ├── msg_server.go     ← gRPC message handlers
-├── cli.go            ← 24 tx + 7 query CLI commands
+├── cli.go            ← 26 tx + 9 query CLI commands
 ├── query_server.go   ← gRPC query handlers
 ├── types.go          ← Domain, Validator, Issue, Suggestion, Rating
 ├── tree.go           ← Hierarchical node tree for vote propagation
@@ -213,7 +213,7 @@ x/truedemocracy/
 
 ### x/dex -- Decentralized Exchange
 
-**7 message types, 124 recovery cases**
+**7 message types, 138 standard-suite cases**
 
 ```
 x/dex/
@@ -231,12 +231,12 @@ x/dex/
 
 ### treasury -- Tokenomics
 
-**5 equations, 31 tests**
+**5 equations, 36 standard-suite cases**
 
 ```
 treasury/keeper/
 ├── rewards.go        ← All 5 whitepaper tokenomics equations
-└── rewards_test.go   ← 31 equation validation tests
+└── rewards_test.go   ← 36 standard-suite cases
 ```
 
 **Constants:** CDom=2, CPut=15, CEarn=1000, StakeMin=100,000, SupplyMax=21,000,000, ApyDom=25%, ApyNode=10%

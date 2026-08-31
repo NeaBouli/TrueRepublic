@@ -24,9 +24,9 @@ Detailed documentation of all TrueRepublic modules, their message types, handler
 
 **Path:** `x/truedemocracy/`
 **Purpose:** Core governance -- domains, proposals, voting, validators
-**Messages:** 13 transaction types
-**Queries:** 4 query endpoints
-**Tests:** 116 unit tests across 6 test files
+**Messages:** 26 transaction types
+**Queries:** 9 query endpoints
+**Tests:** 614 standard-suite cases across 33 test files
 
 ### Data Types
 
@@ -340,6 +340,11 @@ Implemented in `x/truedemocracy/anonymity.go`.
 | Domains | `/truedemocracy.Query/Domains` | Array of all domains as JSON bytes |
 | Validator | `/truedemocracy.Query/Validator` | Single Validator JSON bytes |
 | Validators | `/truedemocracy.Query/Validators` | Array of all validators as JSON bytes |
+| Nullifier | `/truedemocracy.Query/Nullifier` | Whether a domain-scoped nullifier is used |
+| PurgeSchedule | `/truedemocracy.Query/PurgeSchedule` | Domain purge schedule |
+| ZKPState | `/truedemocracy.Query/ZKPState` | Pinned circuit and Merkle-root state |
+| MerkleProof | `/truedemocracy.Query/MerkleProof` | Membership proof for a commitment |
+| PayToPut | `/truedemocracy.Query/PayToPut` | Current domain PayToPut price |
 
 **CLI:**
 ```bash
@@ -347,6 +352,11 @@ truerepublicd query truedemocracy domain [name]
 truerepublicd query truedemocracy domains
 truerepublicd query truedemocracy validator [addr]
 truerepublicd query truedemocracy validators
+truerepublicd query truedemocracy nullifier [domain] [nullifier-hex]
+truerepublicd query truedemocracy purge-schedule [domain]
+truerepublicd query truedemocracy zkp-state [domain]
+truerepublicd query truedemocracy merkle-proof [domain] [commitment-hex]
+truerepublicd query truedemocracy pay-to-put [domain]
 ```
 
 ---
@@ -385,9 +395,9 @@ EndBlock(ctx, req):
 **Path:** `x/dex/`
 **Purpose:** Decentralized exchange with AMM
 **Formula:** x * y = k (constant product)
-**Messages:** 4 transaction types
-**Queries:** 2 query endpoints
-**Tests:** 24 unit tests
+**Messages:** 7 transaction types
+**Queries:** 10 query endpoints
+**Tests:** 138 standard-suite cases
 
 ### Data Types
 
@@ -490,6 +500,14 @@ asset_out = asset_reserve * shares / total_shares
 |-------|-------------|---------|
 | Pool | `/dex.Query/Pool` | Single Pool JSON bytes |
 | Pools | `/dex.Query/Pools` | Array of all pools as JSON bytes |
+| RegisteredAssets | `/dex.Query/RegisteredAssets` | Registered asset list |
+| AssetByDenom | `/dex.Query/AssetByDenom` | Asset metadata by IBC denomination |
+| AssetBySymbol | `/dex.Query/AssetBySymbol` | Asset metadata by display symbol |
+| EstimateSwap | `/dex.Query/EstimateSwap` | Expected output and swap route |
+| PoolStats | `/dex.Query/PoolStats` | Pool reserves, shares, and volume state |
+| SpotPrice | `/dex.Query/SpotPrice` | Current pool spot price |
+| LiquidityDepth | `/dex.Query/LiquidityDepth` | Available depth for a trade size |
+| LPPosition | `/dex.Query/LPPosition` | Provider-owned liquidity position |
 
 ---
 
@@ -497,7 +515,7 @@ asset_out = asset_reserve * shares / total_shares
 
 **Path:** `treasury/keeper/`
 **Purpose:** Whitepaper tokenomics equations 1-5
-**Tests:** 31 unit tests
+**Tests:** 36 standard-suite cases
 
 ### Constants
 
@@ -589,8 +607,8 @@ truerepublicd tx wasm instantiate $CODE_ID '{}' \
           │                   │                  │
 ┌─────────┴─────────┐ ┌──────┴──────┐ ┌─────────┴─────────┐
 │  x/truedemocracy  │ │   x/dex     │ │  treasury/keeper  │
-│  13 msg types     │ │  4 msg types│ │  5 equations      │
-│  116 tests        │ │  24 tests   │ │  31 tests         │
+│  26 tx msg types  │ │  7 msg types│ │  5 equations      │
+│  614 cases        │ │  138 cases  │ │  36 cases         │
 │                   │ │             │ │                   │
 │  Domains          │ │  Pools      │ │  Domain interest  │
 │  Proposals        │ │  Swaps      │ │  Staking rewards  │

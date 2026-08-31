@@ -143,7 +143,9 @@ Transaction execution never generates trusted setup; a missing configured VK
 fails closed.
 
 The maintained and legacy web clients reject mock proof generation and
-submission. GH-206 verifies only synthetic test compatibility. Anonymous
+submission. GH-206 verifies only synthetic native-verifier compatibility;
+GH-266 replays the same fresh synthetic proof through the real keeper payout
+boundary with strict handoff and atomic replay checks. Anonymous
 voting is not production-approved until production qualification, ceremony,
 submission integration, reward-recipient binding, and independent
 cryptographic review are complete.

@@ -27,9 +27,9 @@ TrueRepublic/
 │   │   ├── validator.go            #   PoD registration, staking, transfer limits
 │   │   ├── slashing.go             #   Double-sign (5%), downtime (1%), jailing
 │   │   ├── types.go                #   Domain, Validator, Issue, Suggestion, Rating types
-│   │   ├── msgs.go                 #   13 SDK message types with validation
-│   │   ├── msg_server.go           #   gRPC message handlers (all 13)
-│   │   ├── cli.go                  #   24 tx + 7 query CLI commands
+│   │   ├── msgs.go                 #   26 SDK transaction message types with validation
+│   │   ├── msg_server.go           #   gRPC message handlers (all 26)
+│   │   ├── cli.go                  #   26 tx + 9 query CLI commands
 │   │   ├── query_server.go         #   gRPC query handlers
 │   │   ├── tree.go                 #   Hierarchical node tree for vote propagation
 │   │   ├── module.go               #   SDK module wiring, InitGenesis, EndBlock

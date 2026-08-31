@@ -39,8 +39,21 @@ TRUEREPUBLIC_WASM_EXEC_PATH="$WASM_EXEC_PATH" \
 TRUEREPUBLIC_ZKP_RESULT_PATH="$RESULT_PATH" \
   ./node_modules/.bin/vitest run src/services/zkpWasmProver.integration.test.ts
 
+if [[ ! -s "$RESULT_PATH" ]]; then
+  echo "maintained-client integration produced no keeper handoff at $RESULT_PATH" >&2
+  exit 1
+fi
+
 cd "$ROOT_DIR"
 TRUEREPUBLIC_ZKP_RESULT_PATH="$RESULT_PATH" \
   go test ./internal/zkpprover \
     -run '^TestWASMClientOutputIsAcceptedByNativeVerifier$' \
     -count=1 -timeout=60s -v
+
+# GH-266: the fresh client proof must also traverse the real keeper reward
+# boundary. The env var is set above, so these tests run rather than skip;
+# a missing or malformed handoff fails the gate.
+TRUEREPUBLIC_ZKP_RESULT_PATH="$RESULT_PATH" \
+  go test ./x/truedemocracy \
+    -run '^TestWASMClient' \
+    -count=1 -timeout=300s -v

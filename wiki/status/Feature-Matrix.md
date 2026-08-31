@@ -15,3 +15,7 @@ architected surface area must not be interpreted as rollout approval.
 | GH-212 offline release evidence | Exact checksums, metadata, normalized SBOM and unsigned provenance contract | Signing, authenticated provenance and publication |
 | GH-258 repeated OCI evidence | Native same-job daemon/client index, manifest, config and ordered-layer parity | Cross-time runner/BuildKit/APT hermeticity |
 | GH-261 candidate evidence | Exact commit plus simulated-tag binding across both daemon records and four OCI identities; metadata/JSON only; all promotion claims false | Real tag, signed/published artifacts, deployment and go/no-go |
+
+| ZKP compatibility control | Verified boundary | Still open |
+|---|---|---|
+| GH-206/GH-266 maintained-client proof gate | Fresh proof from the isolated synthetic Go/WASM prover reaches the native verifier and the real atomic keeper payout boundary; strict handoff, recipient binding, nullifier single-use, replay rejection, and fail-closed adversarial cases | Production ceremony/artifacts, audited submission, independent cryptographic/privacy review, shielded payout privacy, and rollout approval |

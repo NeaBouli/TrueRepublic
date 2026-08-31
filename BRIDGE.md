@@ -8416,3 +8416,67 @@ exclusion, CI wiring, and documentation boundaries.
 - **Boundary:** no real tag/ref push, release, signing, publication, image or
   artifact upload, deployment, production, key/fund, go/no-go, or rollout
   credit occurred. Cross-time hermeticity and the real release gate remain open.
+
+## 2026-08-31 GH-266 maintained-client WASM proof keeper replay → In Progress
+
+- **Branch:** `test/GH-266-zkp-keeper-replay`
+- **Issue:** [GH-266](https://github.com/NeaBouli/TrueRepublic/issues/266)
+- **Base:** exact clean remote main
+  `01af4831f902cb8ffb34818d1d19022ba1942018`.
+- **Scope:** extend the existing dedicated Go/WASM compatibility gate so the
+  fresh maintained-client v2 proof crosses the real truedemocracy keeper
+  boundary, including pinned VK validation, v2 signal/recipient binding,
+  nullifier single-use and atomic reward payout.
+- **Roles:** Kimi K3 owns the bounded test-harness implementation and later
+  independent deep review. Claude Code completed the small read-only docs/test
+  inventory and changed nothing. Sol owns architecture, cryptographic boundary,
+  every diff review, integration, full tests, GitHub writes and closure.
+- **Risk:** High because this tests cryptographic and token-accounting seams.
+  No consensus/runtime change, ceremony, artifact generation, submission,
+  wallet/RPC/broadcast, release, deployment, real key/fund or production action
+  is allowed. Synthetic single-party fixtures remain test-only; rollout stays
+  35/59 and production false.
+
+## 2026-08-31 GH-266 maintained-client WASM proof keeper replay → Local PASS
+
+- **Implementation:** the maintained-client integration emits a strict
+  `truerepublic/zkp-wasm-handoff/v1`; the dedicated gate replays its fresh v2
+  proof through `RateProposalWithZKPPayout` with the pinned VK and exact vote,
+  root, nullifier, signal, and canonical-recipient bindings.
+- **Safety evidence:** exact atomic reward delivery, one-time nullifier use,
+  replay rejection and escrow parity pass. Corrupted proof, recipient
+  substitution, rating/chain/root drift, uppercase/noncanonical recipient,
+  blocked module recipient, and malformed/missing/duplicate/extra/trailing/
+  oversized handoffs fail closed without payout, rating or nullifier mutation.
+- **Review roles:** Kimi K3 implemented the bounded test harness. Sol reviewed
+  every line and hardened explicit required-field checks plus the global Bech32
+  test-prefix skip boundary. Claude Code completed the bounded read-only docs/
+  command inventory and made no change. Independent final Kimi review remains.
+- **PASS:** dedicated maintained-client WASM/native-verifier/keeper gate;
+  complete Go build/Vet/Race/Coverage; client lint/319 tests/build/audit; Rust
+  format/Clippy/build/26 tests/audit; pinned vulnerability/static/secret gates;
+  critical coverage, generative/fuzz, release/reproducibility/license,
+  retirement, docs/JSON/shell and diff contracts.
+- **Truth:** the two new keeper tests are opt-in and skipped in the standard
+  package suite. Arithmetic remains 2,187 = 1,842 Go + 26 Rust + 319 client;
+  rollout 35/59, phase work 35/51, Phase 6 6/7, production false.
+- **Pending:** independent Kimi final review, protected exact-head PR/checks,
+  merge, exact-main workflows, GH-29, live Wiki/Pages and both Bridge closeout.
+  No consensus/runtime, ceremony, release, deploy, real key/fund, submission,
+  production or rollout-credit action occurred.
+
+## 2026-08-31 GH-266 independent review → APPROVE
+
+- **Final reviewer:** Kimi K3 inspected the final 26 modified plus two new files
+  read-only and returned **APPROVE** with zero unresolved P0/P1/P2/P3 finding.
+- **Independent recounts:** treasury 36, DEX 138, truedemocracy 614 pass events
+  plus three expected opt-in skips, and the full standard Go suite 1,842.
+- **Final local gates:** documentation consistency and `git diff --check` pass
+  after the last reviewed edit. Public arithmetic stays 2,187 = 1,842 + 26 +
+  319; rollout stays 35/59 and production false.
+- **Pending:** commit/push, protected exact-head PR checks and review, authorized
+  merge, exact-main workflows, GH-29, live Wiki/Pages and both Bridge closeout.
+  No ceremony, release, deployment, real key/fund, submission, production or
+  rollout-credit action occurred.
+
+`TRUEREPUBLIC GH-266 FINAL LOCAL APPROVE — PROTECTED PR PENDING`
