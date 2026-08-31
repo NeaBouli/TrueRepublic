@@ -1,5 +1,20 @@
 # Action Log
 
+## 2026-08-31 - GH-266 protected closeout complete
+
+- PR #267 final head `f736948` passed all 29 hosted contexts with every review
+  thread resolved and merged as exact main `735f42a`; GH-266 is closed.
+- Exact main passed Docs `33436474061`, Client `33436474049`, Go CI
+  `33436474108`, Security `33436474119`, Reproducible Linux Daemon
+  `33436474216`, and Pages `33436472010`.
+- Live Wiki `b1cf839`, Landing Page/status JSON, and GH-29 comment
+  `5484406635` publish the verified test-only boundary. Arithmetic remains
+  2,187 cases, rollout 35/59, Phase 6 6/7, and production false.
+- Kimi final verdict is APPROVE with zero unresolved P0-P3; Claude Code made no
+  write. Only isolated test-runtime execution occurred; no production-runtime,
+  ceremony, submission, release, deploy, key/fund, go/no-go, or rollout-credit
+  action occurred.
+
 ## 2026-08-31 - GH-266 first protected head green; review fixes local PASS
 
 - PR #267 exact first head `5d8205b` passed all 29 hosted contexts, including

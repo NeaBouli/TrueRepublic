@@ -8497,3 +8497,25 @@ exclusion, CI wiring, and documentation boundaries.
   action occurred.
 
 `TRUEREPUBLIC GH-266 REVIEW FIXES LOCAL PASS — REPLACEMENT CI PENDING`
+
+## 2026-08-31 GH-266 maintained-client WASM keeper replay → Done
+
+- **Protected delivery:** PR #267 final head `f736948` passed all 29 hosted
+  contexts with all four review threads resolved and squash-merged as exact
+  main `735f42af889a21643d7c37d42128b0fea11d9800`; GH-266 is closed.
+- **Exact-main PASS:** Docs `33436474061`, Client `33436474049`, Go CI
+  `33436474108`, Security `33436474119`, Reproducible Linux Daemon
+  `33436474216`, and Pages `33436472010`.
+- **Public synchronization:** live Wiki `b1cf839ac8daacfc2649e4304af15279de908d23`,
+  cache-busted Landing Page/status JSON, and GH-29 comment `5484406635` record
+  the strict test-only keeper replay boundary.
+- **Roles/evidence:** Kimi K3 implemented the bounded harness and returned final
+  APPROVE with zero unresolved P0-P3. Claude Code supplied the bounded read-only
+  inventory and changed nothing. Sol completed hardening, integration, full
+  local/hosted verification, review remediation, merge, and publication.
+- **Truth boundary:** 2,187 = 1,842 Go + 26 Rust + 319 client; rollout 35/59,
+  phase work 35/51, Phase 6 6/7, production false. Only isolated test-runtime
+  execution occurred; no production-runtime, ceremony, submission, release,
+  deployment, real key/fund, go/no-go, or rollout-credit action occurred.
+
+`TRUEREPUBLIC GH-266 DONE — EXACT MAIN AND PUBLIC SURFACES VERIFIED`

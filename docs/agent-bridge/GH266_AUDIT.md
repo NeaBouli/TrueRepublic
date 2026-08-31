@@ -16,7 +16,9 @@ client keeps `isSubmittable` hard false.
 - `client-web/src/services/zkpWasmProver.integration.test.ts` writes
   `truerepublic/zkp-wasm-handoff/v1` with the exact chain, domain, issue,
   suggestion, rating, canonical reward recipient, proof, Merkle root, nullifier,
-  and four public signals used to generate the fresh proof.
+  and four public signals used to generate the fresh proof. This v1 label is
+  the replay-handoff schema version; the carried proof uses the separately
+  versioned recipient-bound v2 public-signal contract.
 - `x/truedemocracy/zkp_wasm_keeper_test.go` bounds the handoff at 16 KiB and
   rejects missing/unknown/duplicate/trailing JSON, noncanonical lowercase hex,
   noncanonical BN254 field elements, wrong proof length, invalid recipients,
@@ -104,11 +106,13 @@ client keeps `isSubmittable` hard false.
 
 ## Protected closeout evidence
 
-Local implementation, full final gates and independent Kimi approval are
-complete. PR #267 first head `5d8205b` passed all 29 hosted contexts. CodeRabbit
-then opened four minor documentation threads; Sol corrected the GH-206/GH-266
-gate wording, recipient trust-boundary label, Markdown language tags and two
-remaining duplicate module counts. The dedicated keeper gate, documentation
-consistency and diff hygiene pass on the replacement draft. Pending: replacement
-exact-head checks, thread resolution, authorized merge, exact-main workflows,
-GH-29 comment, live Wiki/Pages synchronization, and both Bridge closeouts.
+PR #267 final head `f736948` passed all 29 hosted contexts. All four CodeRabbit
+threads were answered and resolved before the authorized squash merge. Exact
+main `735f42af889a21643d7c37d42128b0fea11d9800` passed Docs
+`33436474061`, Client `33436474049`, Go CI `33436474108`, Security
+`33436474119`, Reproducible Linux Daemon `33436474216`, and Pages
+`33436472010`; GH-266 is closed. The live Wiki is synchronized at
+`b1cf839ac8daacfc2649e4304af15279de908d23`, the cache-busted Landing Page and
+`status.json` expose the test-only keeper boundary, and GH-29 records the
+evidence in comment `5484406635`. No rollout credit or production action
+occurred.
