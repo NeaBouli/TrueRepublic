@@ -91,7 +91,7 @@ Alle Vorschläge, Bewertungen und Abstimmungen erfolgen offen, überprüfbar und
 
 ## 7. Roadmap & Offene Punkte
 ### Phase 1 (MVP)
-- Blockchain (Cosmos SDK, v0.50.13)
+- Blockchain (Cosmos SDK, v0.50.15)
 - Basis-Module: Democracy, Treasury
 - gepflegter Web-Client mit recovery-getestetem lokalem Wallet- und
   Transaktionspfad; die Prüfung eines Produktions-Signers bleibt offen

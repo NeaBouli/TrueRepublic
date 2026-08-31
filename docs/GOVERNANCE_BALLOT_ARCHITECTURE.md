@@ -13,7 +13,7 @@ from binding decision rules and supports public, pseudonymous and private
 participation profiles.
 
 Architecture documentation earns no rollout checkbox. The published state
-remains 1,941 recovery-verified tests, rollout 35/59, phase work 35/51, Phase 6
+remains 2,187 recovery-verified tests, rollout 35/59, phase work 35/51, Phase 6
 6/7 and `production_ready: false`.
 
 ## 1. Goals and non-goals

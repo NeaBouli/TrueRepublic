@@ -80,9 +80,11 @@ validator, RPC, or private roles under documented policy.
 - **Module ↔ bank custody** — exact escrow/stake/fee/reward/slash bank
   movements, DEX settlement and canonical burns, every-block crisis
   invariants.
-- **ZKP prover ↔ on-chain verifier** — versioned chain/proposal/rating-bound
-  signals, nullifier publication, genesis-pinned verification key. No real
-  prover exists; clients stay fail-closed.
+- **ZKP prover ↔ on-chain verifier** — versioned chain/proposal/rating/recipient-bound
+  signals, nullifier publication, genesis-pinned verification key. GH-266
+  verifies a fresh synthetic Go/WASM proof through the real keeper payout
+  boundary, but no production-qualified prover exists and clients stay
+  fail-closed.
 - **Client ↔ RPC** — registered protobuf gRPC-over-ABCI queries and the
   centralized simulate/sign/deliver flow. The configured provider is trusted
   for completeness until a light client exists; this trust is an explicit
@@ -147,7 +149,9 @@ JSON register.
 
 - **TM-ZKP-001** (critical/high, blocked → GH-29): no production-qualified Groth16 prover.
   Verified: fail-closed clients, pinned genesis VK, no randomized consensus
-  setup, and GH-206 real synthetic Go/WASM-to-native-verifier compatibility.
+  setup, GH-206 real synthetic Go/WASM-to-native-verifier compatibility, and
+  GH-266 strict replay of that fresh proof through the atomic keeper payout
+  path with nullifier/replay/context/recipient failure checks.
   Blocked: no production ceremony, no reproducible proving artifacts for
   production, no audited submission path, or real-network browser-to-chain
   evidence is claimed.
@@ -238,7 +242,7 @@ JSON register.
 
 ## Explicitly not claimed
 
-This model does not claim: a real ZKP prover or ceremony; any independent
+This model does not claim: a production-qualified ZKP prover or ceremony; any independent
 external audit; wallet custody proof; IBC or testnet evidence; private
 topology, firewall, or DNS deployment; release artifact signing or
 authenticated provenance; production or mainnet readiness; or

@@ -148,7 +148,8 @@ Fork the repo, create a branch, write tests, and submit a PR. See [Developer Doc
 The recovery baseline has 2,187 verified standard-suite cases: 1,842 Go, 26
 Rust, and 319 maintained-client tests. This total excludes the separate opt-in
 GH-175/GH-178/GH-181 IBC gate (`make ibc-two-chain`), GH-184 governed-upgrade
-gate, and GH-206 compatibility gate (`./scripts/test-zkp-wasm-client.sh`). Run
+gate, and separate GH-206 native-verifier and GH-266 keeper-replay gates
+(`./scripts/test-zkp-wasm-client.sh`). Run
 `./scripts/go-packages.sh go test -race -cover -count=1` and see
 `docs/status.json` for the authoritative breakdown.
 

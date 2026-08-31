@@ -14,7 +14,7 @@
 | **CometBFT** | The Byzantine Fault Tolerant consensus engine (formerly Tendermint) |
 | **Constant-Product** | AMM formula x*y=k that determines swap prices in liquidity pools |
 | **CosmJS** | JavaScript library for interacting with Cosmos SDK blockchains |
-| **Cosmos SDK** | The Go framework TrueRepublic is built on (v0.50.13) |
+| **Cosmos SDK** | The Go framework TrueRepublic is built on (v0.50.15) |
 | **CosmWasm** | WebAssembly smart contract platform for Cosmos chains |
 | **CPut** | Tokenomics constant (15) that caps the PayToPut price |
 | **CDom** | Tokenomics constant (2) used as domain creation cost multiplier |

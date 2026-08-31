@@ -32,26 +32,26 @@ Technical documentation for developers building on or contributing to TrueRepubl
 
 | Layer | Technology | Version |
 |-------|-----------|---------|
-| Consensus | CometBFT | v0.38.21 |
-| Application | Cosmos SDK | v0.50.13 |
-| Language | Go | 1.23.5 |
+| Consensus | CometBFT | v0.38.26 |
+| Application | Cosmos SDK | v0.50.15 |
+| Language | Go | 1.26.6 |
 | Smart Contracts | CosmWasm | cosmwasm-std 3 |
 | Web Frontend | React | 18.2 |
-| Blockchain Client | CosmJS | 0.32-0.38 |
+| Blockchain Client | CosmJS | 0.39.0 |
 | CSS Framework | Tailwind CSS | 3.4 |
 
 ## Project Structure
 
-```
+```text
 TrueRepublic/
 ├── app.go                  # Cosmos SDK application entry point
-├── go.mod                  # Go module (SDK v0.50.13)
+├── go.mod                  # Go module (SDK v0.50.15)
 ├── Makefile                # Build targets
 ├── Dockerfile              # Multi-stage Docker build
 ├── docker-compose.yml      # Full stack deployment
 ├── x/
-│   ├── truedemocracy/      # Governance module (13 msg types)
-│   └── dex/                # DEX module (4 msg types)
+│   ├── truedemocracy/      # Governance module (26 tx message types)
+│   └── dex/                # DEX module (7 message types)
 ├── treasury/
 │   └── keeper/
 │       └── rewards.go      # Tokenomics equations 1-5
@@ -70,7 +70,7 @@ git clone https://github.com/NeaBouli/TrueRepublic.git
 cd TrueRepublic
 go mod tidy
 make build
-make test    # Run 182 tests
+make test    # Run 1,842 standard-suite Go cases
 ```
 
 ### Run the Maintained Web Client

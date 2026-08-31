@@ -145,6 +145,16 @@ genesis. This protocol
 binding alone does not complete the production prover, ceremony, submission,
 or independent-review checkboxes above.
 
+GH-266 extends the same isolated compatibility gate from the native verifier
+through the actual `RateProposalWithZKPPayout` keeper boundary. A strict,
+versioned and size-bounded handoff binds the fresh maintained-client proof to
+the pinned circuit, chain, proposal, rating, root, nullifier, public signals,
+and canonical reward recipient. The gate proves exact atomic payout, one-time
+nullifier consumption, replay rejection, escrow parity, and fail-closed
+handling of malformed or drifted inputs. It still uses the forge-capable
+single-party test setup, keeps `isSubmittable` false, and therefore completes
+no production Phase 2 checkbox or rollout item.
+
 **Exit gate:** a real maintained-client proof must verify on-chain under the
 published circuit identity, with no unresolved critical or high audit finding.
 

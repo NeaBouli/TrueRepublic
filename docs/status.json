@@ -109,13 +109,13 @@
   },
   "features": {
     "zkp": {
-      "status": "recipient_binding_and_test_only_real_wasm_compatibility_verified_client_submission_disabled",
+      "status": "recipient_binding_and_test_only_real_wasm_keeper_replay_verified_client_submission_disabled",
       "client": "real_test_only_groth16_wasm_harness_mock_and_submission_fail_closed",
       "proof_system": "groth16",
       "circuit_binding": "chain_proposal_rating_reward_recipient_signal_on_gh209",
       "nullifier": "chain_proposal_scoped_rating_independent_on_pr22",
       "verifying_key": "genesis_circuit_id_sha256_shape_pinned_on_pr22",
-      "note": "GH-203 pins the test-only circuit and encoding identity with deterministic constraint-system parity. GH-206 adds an isolated real Go/WASM Groth16 prover that uses only the exact pinned synthetic single-party toxic-waste artifacts; its fresh maintained-client proof is accepted by the native Go verifier. GH-209 binds the exact rating and one canonical reward recipient into the existing public SignalHash, preserves the recipient-independent nullifier and frozen circuit/setup bytes, and pays only that bound recipient atomically. Direct payout remains publicly linkable, the maintained client is excluded from production submission paths, isSubmittable remains hard false, and production ceremony, reproducible keys, independent cryptographic/privacy review, and audited submission remain required."
+      "note": "GH-203 pins the test-only circuit and encoding identity with deterministic constraint-system parity. GH-206 adds an isolated real Go/WASM Groth16 prover that uses only the exact pinned synthetic single-party toxic-waste artifacts; its fresh maintained-client proof is accepted by the native Go verifier. GH-209 binds the exact rating and one canonical reward recipient into the existing public SignalHash, preserves the recipient-independent nullifier and frozen circuit/setup bytes, and pays only that bound recipient atomically. GH-266 strictly replays the fresh maintained-client proof through the real keeper payout boundary and proves one-time nullifier consumption, exact atomic payout, and fail-closed context, proof, recipient, root, replay, and handoff handling. Direct payout remains publicly linkable, the maintained client is excluded from production submission paths, isSubmittable remains hard false, and production ceremony, reproducible keys, independent cryptographic/privacy review, and audited submission remain required."
     },
     "cosmwasm": {
       "status": "recovery_verified_locally",

@@ -157,7 +157,7 @@ npm run dev
 ```
 
 - Wallet: Create/import, encrypted storage, send PNYX
-- Governance: Browse domains and create suggestions; GH-206 proves test-only Go/WASM compatibility while anonymous submission remains disabled pending production ceremony and review
+- Governance: Browse domains and create suggestions; GH-266 extends the test-only Go/WASM proof gate through the real keeper payout boundary while anonymous submission remains disabled pending production ceremony and review
 - DEX: Swap tokens, provide liquidity, manage LP positions
 - Membership: Join domains, 2-step onboarding
 - Admin: Domain management, member verification
@@ -176,7 +176,7 @@ TrueRepublic/
 ├── Makefile                    Build targets (build, test, lint, docker)
 ├── INSTALLATION.md             Quick install guide
 ├── x/
-│   ├── truedemocracy/          Governance module (26 msg types, 552 test cases)
+│   ├── truedemocracy/          Governance module (26 tx message types, 614 standard-suite cases)
 │   └── dex/                    DEX module (7 msg types, 138 test cases)
 ├── treasury/keeper/            Tokenomics equations 1-5 (36 test cases)
 ├── contracts/                  CosmWasm workspace (7 crates, 26 tests)
@@ -213,7 +213,7 @@ TrueRepublic/
 | Domain Interest (25% APY) | ✅ | `treasury/keeper/rewards.go` (eq.4) |
 | Release Decay | ✅ | `treasury/keeper/rewards.go` |
 | Anonymous Suggestion Ratings (WP S4) | 🟡 Recovery backend verified | Permission-register and test-only Groth16 paths; formal secret ballots and production ZKP qualification remain future work |
-| Zero-Knowledge Proofs (Groth16) | 🟡 Test-only compatibility verified | Chain/rating binding, fail-closed VK, and real synthetic Go/WASM proof compatibility; production ceremony, submission, and external review pending |
+| Zero-Knowledge Proofs (Groth16) | 🟡 Test-only keeper compatibility verified | Chain/rating/recipient binding, fail-closed VK, and fresh synthetic Go/WASM proof replay through atomic keeper payout; production ceremony, submission, and external review pending |
 | CosmWasm Smart Contracts | ✅ | `x/truedemocracy/wasm_bindings.go` |
 | Domain-Bank Bridge | ✅ | `x/truedemocracy/treasury_bridge.go` |
 | IBC Transfer (ICS-20) | 🟡 Two-chain lifecycle, channel replacement, compatible restart, and governed fresh-genesis app-upgrade recovery verified locally through GH-184; external relayer and IBC client-upgrade evidence pending | `app.go` (ibc-go v8.7.0) |
@@ -225,7 +225,7 @@ TrueRepublic/
 | Admin Election (WP S3.6) | ✅ | `x/truedemocracy/governance.go` |
 | Member Exclusion (2/3 vote) | ✅ | `x/truedemocracy/governance.go` |
 | PoD Transfer Limit (10%, WP S7) | ✅ | `x/truedemocracy/validator.go` |
-| CLI Commands (26 tx + 7 query) | ✅ | `x/truedemocracy/cli.go` |
+| CLI Commands (26 tx + 9 query) | ✅ | `x/truedemocracy/cli.go` |
 | DEX CLI (7 tx + 9 query) | ✅ | `x/dex/cli.go` |
 | CosmWasm Contracts (7 crates) | ✅ | `contracts/` (workspace) |
 | Maintained Web Client | 🟡 Recovery verified | `client-web/` |
@@ -267,7 +267,7 @@ cd client-web && npm ci && npm run lint && npm test -- --run && npm run build
 | Native mobile client | — | Retired under GH-102; replacement pending |
 | Local encrypted test wallet + CosmJS | 0.39 | Maintained v0.4 client |
 
-**Known Limitations:** TrueRepublic uses PoD and does not mount `x/staking` or `x/distribution`; GH-187 makes every required IBC/CosmWasm compatibility adapter reject those unsupported surfaces fail-closed. GH-184 wires real `x/upgrade` for the exact governed fresh-genesis v0.4.1 path, but pre-GH-184 store introduction and IBC client upgrades remain unsupported. GH-206 verifies only synthetic test compatibility. GH-209 implements front-running-safe recipient-bound anonymous rewards while documenting direct-payout linkability; production ZKP qualification, ceremony, submission integration, and independent cryptographic/privacy review remain pending. GH-93 provides a strict synthetic incident-command and rehearsal contract, but a private live operator rehearsal remains pending. GH-85 provides dashboard/application runtime evidence, alert rules, recovery/testnet objectives, and role ownership. GH-89 adds a strict synthetic topology qualification contract. GH-97 adds bounded four-validator load, resource, retention, restart, and ledger evidence; it does not establish production sizing or multi-day soak behavior. GH-101 adds a digest-bound offline deployment-evidence envelope and verifier; it does not prove or perform a live deployment. GH-212 pins release tools, supported platforms and maintained container bases and adds strict unsigned offline release evidence. GH-258 adds native same-job double-build OCI identity evidence for daemon and `client-web`. GH-261 binds the exact commit and an explicitly simulated future tag to both native daemon metadata records and both-platform OCI digest reports in protected CI, retaining metadata/JSON only. Floating runner/BuildKit versions and live Debian package indexes still prevent a cross-time hermetic reproducibility claim. These controls create no real tag, publish or sign no artifact, authenticate no provenance, deploy nothing, and approve no rollout. Real seed/sentry/validator/RPC deployment, firewall/TLS/DNS evidence, external paging drills, private-environment capacity evidence, and independent live operations review remain open. See [LIMITATIONS.md](docs/LIMITATIONS.md).
+**Known Limitations:** TrueRepublic uses PoD and does not mount `x/staking` or `x/distribution`; GH-187 makes every required IBC/CosmWasm compatibility adapter reject those unsupported surfaces fail-closed. GH-184 wires real `x/upgrade` for the exact governed fresh-genesis v0.4.1 path, but pre-GH-184 store introduction and IBC client upgrades remain unsupported. GH-206 verifies only synthetic test compatibility, and GH-266 extends that evidence through the real keeper payout boundary without creating a production prover or submission path. GH-209 implements front-running-safe recipient-bound anonymous rewards while documenting direct-payout linkability; production ZKP qualification, ceremony, submission integration, and independent cryptographic/privacy review remain pending. GH-93 provides a strict synthetic incident-command and rehearsal contract, but a private live operator rehearsal remains pending. GH-85 provides dashboard/application runtime evidence, alert rules, recovery/testnet objectives, and role ownership. GH-89 adds a strict synthetic topology qualification contract. GH-97 adds bounded four-validator load, resource, retention, restart, and ledger evidence; it does not establish production sizing or multi-day soak behavior. GH-101 adds a digest-bound offline deployment-evidence envelope and verifier; it does not prove or perform a live deployment. GH-212 pins release tools, supported platforms and maintained container bases and adds strict unsigned offline release evidence. GH-258 adds native same-job double-build OCI identity evidence for daemon and `client-web`. GH-261 binds the exact commit and an explicitly simulated future tag to both native daemon metadata records and both-platform OCI digest reports in protected CI, retaining metadata/JSON only. Floating runner/BuildKit versions and live Debian package indexes still prevent a cross-time hermetic reproducibility claim. These controls create no real tag, publish or sign no artifact, authenticate no provenance, deploy nothing, and approve no rollout. Real seed/sentry/validator/RPC deployment, firewall/TLS/DNS evidence, external paging drills, private-environment capacity evidence, and independent live operations review remain open. See [LIMITATIONS.md](docs/LIMITATIONS.md).
 
 ---
 
@@ -280,7 +280,7 @@ approval. Current evidence, risks, and commands are maintained in
 [`BRIDGE.md`](BRIDGE.md) and the active
 [rollout tracker #29](https://github.com/NeaBouli/TrueRepublic/issues/29).
 
-- 🟡 2,187 tests recovery-verified locally (1,842 Go, including GH-261's strict candidate-evidence contract, GH-258's OCI build/evidence contract, GH-244's rollout-genesis qualification contract, GH-225's release-compatibility contract, GH-222's verified install-lifecycle and repository contracts, GH-209's recipient-binding and atomic-payout adversarial coverage, + 26 Rust + 319 maintained-client, including its v2 encoding and canonical-recipient validation), plus the separately gated GH-206/GH-209 real Go/WASM-to-native-verifier compatibility proof, GH-175/GH-178/GH-181 IBC proof and GH-184 governed-upgrade recovery proof, GH-172 shared-state contention/exact-replay/restart proof, GH-145 bounded live fuzz campaigns, GH-193 maintained-client wallet/signing-safety proof, GH-190 maintained-client IBC transfer/recovery proof, GH-131 real submitted-history pagination proof, GH-121 real browser-query boundary, GH-115 local client-chain delivery proof, GH-56 rotation, GH-59 slashing, GH-60 inactive-validator genesis, GH-61 legacy-authority migration, GH-93 incident rehearsal, and GH-97 sustained-load process harnesses; production rollout evidence remains required
+- 🟡 2,187 tests recovery-verified locally (1,842 Go, including GH-261's strict candidate-evidence contract, GH-258's OCI build/evidence contract, GH-244's rollout-genesis qualification contract, GH-225's release-compatibility contract, GH-222's verified install-lifecycle and repository contracts, GH-209's recipient-binding and atomic-payout adversarial coverage, + 26 Rust + 319 maintained-client, including its v2 encoding and canonical-recipient validation), plus the separately gated GH-266 fresh Go/WASM-to-keeper payout/replay proof, GH-206 native-verifier compatibility proof, GH-175/GH-178/GH-181 IBC proof and GH-184 governed-upgrade recovery proof, GH-172 shared-state contention/exact-replay/restart proof, GH-145 bounded live fuzz campaigns, GH-193 maintained-client wallet/signing-safety proof, GH-190 maintained-client IBC transfer/recovery proof, GH-131 real submitted-history pagination proof, GH-121 real browser-query boundary, GH-115 local client-chain delivery proof, GH-56 rotation, GH-59 slashing, GH-60 inactive-validator genesis, GH-61 legacy-authority migration, GH-93 incident rehearsal, and GH-97 sustained-load process harnesses; production rollout evidence remains required
 - 🟡 GH-212 verifies exact release tool/platform/container-base pins, repeated
   normalized SBOM parity and a strict unsigned two-target evidence bundle.
   GH-258 additionally requires two native no-cache OCI exports per daemon and
@@ -294,7 +294,7 @@ approval. Current evidence, risks, and commands are maintained in
 - ✅ Core blockchain compiles and runs
 - 🟡 Tokenomics, exact custom genesis, and every-block ledger invariants are recovery-verified and merged through PR #19
 - 🟡 Governance escrow/auth recovery is verified and merged; independent release review remains open
-- 🟡 Groth16 voting backend, synthetic Go/WASM proof compatibility, and recipient-bound atomic rewards tested; production ceremony, audited submission, and independent cryptographic/privacy review remain open
+- 🟡 Groth16 voting backend, fresh synthetic Go/WASM proof replay through the real keeper payout boundary, one-time nullifier enforcement, and recipient-bound atomic rewards tested; production ceremony, audited submission, and independent cryptographic/privacy review remain open
 - ✅ CosmWasm smart contract integration (wasmd v0.53.4)
 - 🟡 Domain-Bank escrow recovery implemented and merged via PR #16
 - 🟡 IBC transfer on ibc-go v8.7.0 has local proof-driven two-chain transfer,
@@ -320,7 +320,7 @@ approval. Current evidence, risks, and commands are maintained in
   failure/restart/catch-up, partition, state-sync, and sanitized backup/restore
   gates plus compatible binary upgrade/fail-before-open rollback evidence;
   consensus-breaking migrations and broader multi-node operations remain open
-- 🟡 ZKP UI remains a clearly disabled preview; GH-206's real prover is isolated to synthetic test-only compatibility and cannot submit
+- 🟡 ZKP UI remains a clearly disabled preview; GH-266's keeper replay uses GH-206's isolated synthetic test-only prover and cannot submit
 - ✅ Developer Tooling: 4 CosmWasm example contracts, shared bindings, testing utils
 - 🟡 DEX burns reduce canonical bank supply via merged PR #18
 - ✅ Canonical v0.4 web client with 3-column governance UI
@@ -345,7 +345,7 @@ approval. Current evidence, risks, and commands are maintained in
   - ✅ Wallet Foundation (create/import/encrypt/send)
   - ✅ Governance UI (domains, issues, suggestions, stones)
   - ✅ DEX Interface (swap, liquidity, LP positions)
-  - 🟡 ZKP Anonymous Voting (GH-206 test-only compatibility and GH-209 recipient-bound rewards verified; production qualification, ceremony, submission, and independent review pending)
+  - 🟡 ZKP Anonymous Voting (GH-266 keeper replay, GH-206 test-only proving compatibility, and GH-209 recipient-bound rewards verified; production qualification, ceremony, submission, and independent review pending)
   - ✅ Domain Membership & Onboarding
   - ✅ Admin Dashboard (member management, stats)
   - ✅ Network Explorer (validators, blocks, IBC)

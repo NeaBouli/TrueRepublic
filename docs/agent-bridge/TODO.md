@@ -1,5 +1,23 @@
 # Recovery Queue
 
+## In progress - GH-266 maintained-client WASM proof keeper replay
+
+- [x] Extend the GH-206 handoff with an exact versioned vote context while
+  preserving the existing native-verifier consumer.
+- [x] Strictly bound and replay the fresh v2 proof through the real atomic
+  keeper payout boundary using only pinned synthetic test fixtures.
+- [x] Prove exact one-time payout, nullifier replay rejection, escrow parity,
+  and fail-closed proof, context, root, recipient, module-account, and handoff
+  adversarial cases without changing runtime/consensus behavior.
+- [x] Complete Kimi implementation, Claude inventory, Sol diff/security
+  hardening, focused Go/client/WASM gates, and public documentation draft.
+- [x] Complete full local build/test/lint/race/security/docs gates and
+  independent Kimi final review with no unresolved P0-P3 finding.
+- [ ] Publish through protected exact-head review, merge, verify exact main,
+  and synchronize GH-266/GH-29/Wiki/Pages/both Bridges without rollout credit.
+- [ ] Keep `isSubmittable=false`; perform no ceremony, production artifact,
+  wallet/RPC/broadcast, release, deployment, real key/fund, or go/no-go action.
+
 ## Completed - GH-261 unified simulated-tag candidate evidence
 
 - [x] Define and verify an exact simulated-tag plus commit candidate contract.
