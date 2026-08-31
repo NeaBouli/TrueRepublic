@@ -8514,8 +8514,8 @@ exclusion, CI wiring, and documentation boundaries.
   inventory and changed nothing. Sol completed hardening, integration, full
   local/hosted verification, review remediation, merge, and publication.
 - **Truth boundary:** 2,187 = 1,842 Go + 26 Rust + 319 client; rollout 35/59,
-  phase work 35/51, Phase 6 6/7, production false. No runtime, ceremony,
-  submission, release, deployment, real key/fund, go/no-go, or rollout-credit
-  action occurred.
+  phase work 35/51, Phase 6 6/7, production false. Only isolated test-runtime
+  execution occurred; no production-runtime, ceremony, submission, release,
+  deployment, real key/fund, go/no-go, or rollout-credit action occurred.
 
 `TRUEREPUBLIC GH-266 DONE — EXACT MAIN AND PUBLIC SURFACES VERIFIED`

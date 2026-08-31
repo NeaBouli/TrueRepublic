@@ -11,8 +11,9 @@
   `5484406635` publish the verified test-only boundary. Arithmetic remains
   2,187 cases, rollout 35/59, Phase 6 6/7, and production false.
 - Kimi final verdict is APPROVE with zero unresolved P0-P3; Claude Code made no
-  write. No runtime, ceremony, submission, release, deploy, key/fund, go/no-go,
-  or rollout-credit action occurred.
+  write. Only isolated test-runtime execution occurred; no production-runtime,
+  ceremony, submission, release, deploy, key/fund, go/no-go, or rollout-credit
+  action occurred.
 
 ## 2026-08-31 - GH-266 first protected head green; review fixes local PASS
 

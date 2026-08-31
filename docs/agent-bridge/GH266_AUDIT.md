@@ -16,7 +16,9 @@ client keeps `isSubmittable` hard false.
 - `client-web/src/services/zkpWasmProver.integration.test.ts` writes
   `truerepublic/zkp-wasm-handoff/v1` with the exact chain, domain, issue,
   suggestion, rating, canonical reward recipient, proof, Merkle root, nullifier,
-  and four public signals used to generate the fresh proof.
+  and four public signals used to generate the fresh proof. This v1 label is
+  the replay-handoff schema version; the carried proof uses the separately
+  versioned recipient-bound v2 public-signal contract.
 - `x/truedemocracy/zkp_wasm_keeper_test.go` bounds the handoff at 16 KiB and
   rejects missing/unknown/duplicate/trailing JSON, noncanonical lowercase hex,
   noncanonical BN254 field elements, wrong proof length, invalid recipients,

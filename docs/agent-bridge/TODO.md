@@ -4,8 +4,9 @@
 
 - [x] Extend the GH-206 handoff with an exact versioned vote context while
   preserving the existing native-verifier consumer.
-- [x] Strictly bound and replay the fresh v2 proof through the real atomic
-  keeper payout boundary using only pinned synthetic test fixtures.
+- [x] Strictly bound and replay the fresh recipient-bound v2 proof signal,
+  carried by the `truerepublic/zkp-wasm-handoff/v1` replay schema, through the
+  real atomic keeper payout boundary using only pinned synthetic test fixtures.
 - [x] Prove exact one-time payout, nullifier replay rejection, escrow parity,
   and fail-closed proof, context, root, recipient, module-account, and handoff
   adversarial cases without changing runtime/consensus behavior.
