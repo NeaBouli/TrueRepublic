@@ -1,27 +1,19 @@
 # Project State
 
-GH-266 is locally implemented and focused-verified on branch
-`test/GH-266-zkp-keeper-replay` from exact main `01af483`. The maintained-client
-integration now emits a strict `truerepublic/zkp-wasm-handoff/v1` record and the
-dedicated gate replays its fresh v2 proof through the actual
-`RateProposalWithZKPPayout` keeper boundary. Exact atomic reward delivery,
-one-time nullifier consumption, replay safety, escrow parity, and adversarial
-proof/context/root/recipient/handoff rejection pass. Kimi K3 implemented the
-bounded test harness; Sol reviewed and hardened required-field decoding and the
-process-global Bech32 test-prefix skip boundary. Claude Code completed a small
-read-only documentation/test inventory and changed nothing. Standard arithmetic
-remains 2,187 = 1,842 Go + 26 Rust + 319 client because the two new keeper tests
-run only in the separate gate. Rollout remains 35/59, phase work 35/51, Phase 6
-6/7, and production false. Full local Go build/Vet/Race/Coverage, maintained
-client lint/319 tests/build/audit, Rust format/Clippy/build/26 tests/audit,
-dedicated ZKP/WASM, security/static/vulnerability/secret, coverage/generative,
-release/reproducibility/license, retirement, documentation and diff gates pass.
-Independent final Kimi review returned APPROVE with no unresolved P0-P3 finding
-after fresh 36 treasury, 138 DEX, 614 governance and 1,842 full-Go recounts.
-PR #267 first head `5d8205b` passed all 29 hosted contexts. Four minor
-CodeRabbit documentation threads are locally corrected with focused gates green;
-replacement exact-head evidence and thread resolution precede merge. Exact-main,
-GH-29, Wiki, Pages, and Bridge closeout then remain.
+GH-266 is Done. PR #267 final head `f736948` passed all 29 hosted contexts with
+all four review threads resolved and squash-merged as exact main `735f42a`;
+GH-266 is closed. Exact merged main passed Docs `33436474061`, Client
+`33436474049`, Go CI `33436474108`, Security `33436474119`, Reproducible Linux
+Daemon `33436474216`, and Pages `33436472010`. The live Wiki is synchronized at
+`b1cf839`, Landing Page/status JSON expose the test-only keeper boundary, and
+GH-29 records the evidence in comment `5484406635`. Kimi K3 implemented the
+bounded harness and returned final APPROVE with zero unresolved P0-P3; Claude
+Code supplied the bounded read-only inventory; Sol completed hardening,
+integration, full verification, hosted-review remediation, and publication.
+Standard arithmetic remains 2,187 = 1,842 Go + 26 Rust + 319 client, rollout
+35/59, phase work 35/51, Phase 6 6/7, and production false. No runtime,
+ceremony, submission, release, deployment, key/fund, go/no-go, or rollout-credit
+action occurred.
 
 Updated: 2026-08-31 EEST
 

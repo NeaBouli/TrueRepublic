@@ -1,6 +1,6 @@
 # Recovery Queue
 
-## In progress - GH-266 maintained-client WASM proof keeper replay
+## Completed - GH-266 maintained-client WASM proof keeper replay
 
 - [x] Extend the GH-206 handoff with an exact versioned vote context while
   preserving the existing native-verifier consumer.
@@ -13,9 +13,9 @@
   hardening, focused Go/client/WASM gates, and public documentation draft.
 - [x] Complete full local build/test/lint/race/security/docs gates and
   independent Kimi final review with no unresolved P0-P3 finding.
-- [ ] Publish through protected exact-head review, merge, verify exact main,
+- [x] Publish through protected exact-head review, merge, verify exact main,
   and synchronize GH-266/GH-29/Wiki/Pages/both Bridges without rollout credit.
-- [ ] Keep `isSubmittable=false`; perform no ceremony, production artifact,
+- [x] Keep `isSubmittable=false`; perform no ceremony, production artifact,
   wallet/RPC/broadcast, release, deployment, real key/fund, or go/no-go action.
 
 ## Completed - GH-261 unified simulated-tag candidate evidence
