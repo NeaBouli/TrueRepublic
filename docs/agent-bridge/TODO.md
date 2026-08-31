@@ -1,5 +1,21 @@
 # Recovery Queue
 
+## In progress - GH-269 sequential dependency reconciliation
+
+- [x] Rebuild and verify PR #264's exact gRPC 1.82.1 → 1.82.2 security patch
+  from exact current main, including source, sums, license, graph, Go,
+  recovery, release-contract, vulnerability, static and secret gates. Docker
+  is unavailable locally; native repeated OCI remains protected-CI evidence.
+- [ ] Publish the gRPC replacement through protected exact-head review, merge,
+  verify exact main and close stale #264 as superseded.
+- [ ] Only then rebuild PR #265's four maintained-client development updates
+  from the resulting exact main and pass lockfile, license, forbidden-version,
+  lint, 319-test, browser, build/budget and audit gates.
+- [ ] Publish the client replacement through protected exact-head review,
+  merge, verify exact main and close stale #265 as superseded.
+- [ ] Close GH-269 and synchronize both Bridges without rollout credit or any
+  release/deployment/production action.
+
 ## Completed - GH-266 maintained-client WASM proof keeper replay
 
 - [x] Extend the GH-206 handoff with an exact versioned vote context while

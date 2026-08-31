@@ -164,7 +164,7 @@ sources in Section 9):
 | gnark / gnark-crypto | v0.14.0 / v0.19.2 | Apache-2.0 (verified) |
 | cosmos-db | v1.1.3 | Apache-2.0 |
 | gogoproto | v1.7.2 | BSD-3-Clause |
-| grpc / protobuf | v1.82.1 / v1.36.12 | Apache-2.0 / BSD-3-Clause |
+| grpc / protobuf | v1.82.2 / v1.36.12 | Apache-2.0 / BSD-3-Clause |
 | grpc-gateway v1 | v1.16.0 | BSD-3-Clause |
 | prometheus client_golang | v1.21.1 | Apache-2.0 |
 | cobra / viper / zerolog / testify | — | Apache-2.0 / MIT / MIT / MIT |
@@ -510,7 +510,7 @@ Dependency licenses (pinned upstream LICENSE files):
 - gnark-crypto (Apache-2.0): <https://github.com/consensys/gnark-crypto/blob/v0.19.2/LICENSE>
 - cosmos-db (Apache-2.0): <https://github.com/cosmos/cosmos-db/blob/v1.1.3/LICENSE>
 - gogoproto (BSD-3-Clause): <https://github.com/cosmos/gogoproto/blob/v1.7.2/LICENSE>
-- grpc-go (Apache-2.0): <https://github.com/grpc/grpc-go/blob/v1.82.1/LICENSE>
+- grpc-go (Apache-2.0): <https://github.com/grpc/grpc-go/blob/v1.82.2/LICENSE>
 - protobuf-go (BSD-3-Clause): <https://github.com/protocolbuffers/protobuf-go/blob/v1.36.12/LICENSE>
 - grpc-gateway v1 (BSD-3-Clause): <https://github.com/grpc-ecosystem/grpc-gateway/blob/v1.16.0/LICENSE>
 - cobra (Apache-2.0): <https://github.com/spf13/cobra/blob/v1.9.1/LICENSE>
