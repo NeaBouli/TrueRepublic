@@ -16,7 +16,8 @@ GH-276 is active from exact main
 with the canonical GH-29 tracker. The denominator remains 59 overall / 51 phase
 work, completed counts remain 35, and production remains false. Phase 7 is
 3/10; release freeze and accountable go/no-go are two mandatory subchecks of
-one counted tracker item. Local and protected verification remain pending.
+one counted tracker item. Protected exact-head review, GH-29 synchronization,
+merge, and live Pages/Wiki verification remain pending.
 
 Updated: 2026-09-01 EEST
 

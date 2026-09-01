@@ -140,8 +140,24 @@ else
   echo "  FAIL roadmap Phase 7 is ${PHASE_7_ROADMAP_COMPLETED}/${PHASE_7_ROADMAP_TOTAL}, status records ${ROLLOUT_PHASE_7_COMPLETED}/${ROLLOUT_PHASE_7_TOTAL}"
   ERRORS=$((ERRORS+1))
 fi
-if grep -Fq '  - [ ] Freeze the release candidate while final evidence is reviewed.' docs/ROLLOUT_ROADMAP.md &&
-   grep -Fq '  - [ ] Record an explicit go/no-go decision and accountable approvers.' docs/ROLLOUT_ROADMAP.md; then
+PHASE_7_FINAL_REVIEW_BLOCK_VALID=$(awk '
+  /^- \[ \] Complete final release review and accountable launch authorization\.$/ {
+    parents++
+    in_parent = 1
+    next
+  }
+  in_parent && /^  - \[ \] Freeze the release candidate while final evidence is reviewed\.$/ {
+    freeze++
+    next
+  }
+  in_parent && /^  - \[ \] Record an explicit go\/no-go decision and accountable approvers\.$/ {
+    go_no_go++
+    next
+  }
+  in_parent && /^- \[[ x]\]/ { in_parent = 0 }
+  END { print (parents == 1 && freeze == 1 && go_no_go == 1) ? 1 : 0 }
+' docs/ROLLOUT_ROADMAP.md)
+if [ "$PHASE_7_FINAL_REVIEW_BLOCK_VALID" -eq 1 ]; then
   echo "  OK release freeze and go/no-go remain nested mandatory subchecks"
 else
   echo "  FAIL Phase 7 final tracker item must retain both nested subchecks"
@@ -422,6 +438,12 @@ grep -Fq "Phase 7 is ${ROLLOUT_PHASE_7_COMPLETED}/${ROLLOUT_PHASE_7_TOTAL}" READ
 grep -Fq "Phase 7: **${ROLLOUT_PHASE_7_COMPLETED}/${ROLLOUT_PHASE_7_TOTAL}**" wiki/status/Roadmap.md &&
   echo "  OK Wiki Phase 7" ||
   { echo "  FAIL Wiki Phase 7"; ERRORS=$((ERRORS+1)); }
+grep -Fq "Phase 7 is ${ROLLOUT_PHASE_7_COMPLETED}/${ROLLOUT_PHASE_7_TOTAL}" wiki/Home.md &&
+  echo "  OK Wiki Home Phase 7" ||
+  { echo "  FAIL Wiki Home Phase 7"; ERRORS=$((ERRORS+1)); }
+grep -Fq "Phase 7 is ${ROLLOUT_PHASE_7_COMPLETED}/${ROLLOUT_PHASE_7_TOTAL}" wiki/status/Current-Status.md &&
+  echo "  OK Wiki Current Status Phase 7" ||
+  { echo "  FAIL Wiki Current Status Phase 7"; ERRORS=$((ERRORS+1)); }
 echo ""
 
 if [ "$ERRORS" -gt 0 ]; then
