@@ -20,8 +20,8 @@
   },
   "tests": {
     "status": "recovery_verified_locally",
-    "total": 2187,
-    "go": 1842,
+    "total": 2314,
+    "go": 1969,
     "rust": 26,
     "frontend": 319,
     "historical_total": 577
@@ -63,8 +63,9 @@
     "production_ready": false
   },
   "modules": {
-    "root": 207,
+    "root": 231,
     "candidateevidence": 77,
+    "crossrunevidence": 103,
     "genesisevidence": 68,
     "capacitypolicy": 48,
     "deploymentevidence": 71,
@@ -159,6 +160,7 @@
       "deployment_evidence": "strict_secret_free_digest_bound_offline_envelope_and_verifier_merged_on_gh101",
       "release_evidence": "strict_two_target_offline_checksums_metadata_sbom_and_unsigned_provenance_contract_verified_locally_on_gh212",
       "release_candidate_evidence": "exact_commit_and_simulated_tag_cross_binding_of_native_daemon_and_repeated_oci_metadata_verified_locally_on_gh261_all_release_claims_false",
+      "cross_run_rebuild_evidence": "strict_two_distinct_workflow_dispatch_same_exact_commit_metadata_comparison_capability_verified_locally_on_gh273_all_release_and_long_term_hermetic_claims_false",
       "multi_validator_recovery": "failure_restart_catchup_partition_state_sync_backup_restore_export_import_compatible_binary_upgrade_fail_before_open_rollback_and_app_hash_agreement_merged_on_gh32_gh41_gh43_gh45_gh53",
       "consensus_key_rotation": "authenticated_atomic_h_plus_2_rotation_permanent_revocation_and_separate_operator_authority_merged_on_gh56",
       "consensus_slashing": "abci_plus_plus_equivocation_downtime_replay_exit_hold_and_four_process_recovery_merged_on_gh59",
@@ -215,7 +217,7 @@
     "ibc_transfers_ui": "canonical native ICS-20 signing and source-chain evidence recovery verified locally on GH-190; external relayer and public counterparty delivery remain unqualified",
     "browser_wallet_custody": "local AES-GCM/PBKDF2 recovery store and live-session invalidation verified on GH-193; same-origin XSS, compromised browsers, hardware custody, real keys/funds, and production wallet operation remain unqualified",
     "node_bootstrap": "init-node wrapper delegates exclusively to generated CometBFT-key, exact bank-backed PoD genesis; independent multi-node operations review pending",
-    "release_engineering": "GH-212 repository-only unsigned release evidence and pinned inputs, GH-258 native same-job repeated OCI identity parity, and GH-261 exact-commit plus simulated-tag candidate aggregation are verified. GH-261 retains digest/metadata JSON only and requires real tag, push, signing, publication, deployment and production claims to remain false. Floating runner/BuildKit versions and live Debian package indexes prevent a cross-time hermetic container claim; no real tag, signed artifact, published binary/image, deployment, or rollout approval is claimed"
+    "release_engineering": "GH-212 repository-only unsigned release evidence and pinned inputs, GH-258 native same-job repeated OCI identity parity, GH-261 exact-commit plus simulated-tag candidate aggregation, and GH-273's strict two-distinct-run same-exact-commit comparison capability are verified locally. GH-273 retains bounded digest/metadata JSON only and requires real tag, ref push, signing, attestation, publication, deployment, production and long-term-hermetic claims to remain false. A pair-scoped hosted result is recorded only after two successful exact-main workflow_dispatch runs. Floating runner/BuildKit versions and live Debian package indexes prevent a cross-time or long-term hermetic container claim; no real tag, signed artifact, published binary/image, deployment, or rollout approval is claimed"
   },
   "branding": {
     "logo_main": "https://raw.githubusercontent.com/NeaBouli/TrueRepublic/main/assets/logo.png",

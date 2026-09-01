@@ -1,0 +1,9 @@
+{
+  "binary_targets": 2,
+  "commit": "0123456789abcdef0123456789abcdef01234567",
+  "oci_targets": 4,
+  "schema": "truerepublic.release-candidate-report/v1",
+  "tag": "v0.5.0",
+  "valid": true,
+  "violations": []
+}

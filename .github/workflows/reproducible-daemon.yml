@@ -2,6 +2,11 @@ name: Reproducible Linux Daemon
 
 on:
   workflow_dispatch:
+    inputs:
+      baseline_run_id:
+        description: 'Optional baseline run ID of an earlier workflow_dispatch execution of the same exact main commit for the GH-273 cross-run rebuild comparison'
+        required: false
+        type: string
   push:
     branches: [main]
     paths:
@@ -58,6 +63,14 @@ on:
       - 'scripts/test-candidate-evidence.sh'
       - 'scripts/verify-candidate-evidence.sh'
       - 'release_candidate_repository_test.go'
+      - 'configs/release/cross-run-rebuild.json'
+      - 'crossrunevidence/**'
+      - 'cmd/cross-run-evidence/**'
+      - 'testdata/crossrunevidence/**'
+      - 'scripts/generate-cross-run-evidence.sh'
+      - 'scripts/test-cross-run-evidence.sh'
+      - 'scripts/verify-cross-run-evidence.sh'
+      - 'cross_run_repository_test.go'
       - '.github/workflows/reproducible-daemon.yml'
   pull_request:
     paths:
@@ -114,6 +127,14 @@ on:
       - 'scripts/test-candidate-evidence.sh'
       - 'scripts/verify-candidate-evidence.sh'
       - 'release_candidate_repository_test.go'
+      - 'configs/release/cross-run-rebuild.json'
+      - 'crossrunevidence/**'
+      - 'cmd/cross-run-evidence/**'
+      - 'testdata/crossrunevidence/**'
+      - 'scripts/generate-cross-run-evidence.sh'
+      - 'scripts/test-cross-run-evidence.sh'
+      - 'scripts/verify-cross-run-evidence.sh'
+      - 'cross_run_repository_test.go'
       - '.github/workflows/reproducible-daemon.yml'
 
 permissions:
@@ -172,6 +193,9 @@ jobs:
 
       - name: Verify rollout genesis qualification contract
         run: make rollout-genesis-contract-test
+
+      - name: Verify fail-closed cross-run evidence contract offline
+        run: make cross-run-evidence-contract-test
 
   deterministic-build:
     name: ${{ matrix.target }}
@@ -386,5 +410,173 @@ jobs:
           path: |
             ${{ runner.temp }}/candidate-evidence/candidate-evidence.json
             ${{ runner.temp }}/candidate-evidence-report.json
+          if-no-files-found: error
+          retention-days: 14
+
+  cross-run-comparison:
+    name: cross-run rebuild comparison
+    needs: [candidate-evidence]
+    if: github.event_name == 'workflow_dispatch' && github.event.inputs.baseline_run_id != ''
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    permissions:
+      contents: read
+      actions: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
+        with:
+          go-version: '1.26.6'
+
+      - name: Guard and bind the baseline run
+        env:
+          GH_TOKEN: ${{ github.token }}
+          BASELINE_RUN_ID: ${{ github.event.inputs.baseline_run_id }}
+        run: |
+          set -euo pipefail
+          [[ "$BASELINE_RUN_ID" =~ ^[1-9][0-9]{0,18}$ ]]
+          test "$BASELINE_RUN_ID" != "$GITHUB_RUN_ID"
+          contract=configs/release/cross-run-rebuild.json
+          test "$(jq -er '.schema' "$contract")" = "truerepublic.cross-run-rebuild/v1"
+          workflow_path=$(jq -er '.source.workflow_path' "$contract")
+          test "$workflow_path" = ".github/workflows/reproducible-daemon.yml"
+          test "$(jq -er '.source.repository' "$contract")" = "$GITHUB_REPOSITORY"
+          test "$(jq -er '.source.branch' "$contract")" = "main"
+          test "$(jq -er '.source.event' "$contract")" = "workflow_dispatch"
+          test "$(jq -er '.source.retention_days' "$contract")" = "14"
+          run_json="${RUNNER_TEMP}/baseline-run.json"
+          gh api "repos/$GITHUB_REPOSITORY/actions/runs/$BASELINE_RUN_ID" >"$run_json"
+          test "$(jq -er '.repository.full_name' "$run_json")" = "$GITHUB_REPOSITORY"
+          test "$(jq -er '.path' "$run_json")" = "$workflow_path"
+          test "$(jq -er '.head_branch' "$run_json")" = "main"
+          test "$(jq -er '.event' "$run_json")" = "workflow_dispatch"
+          test "$(jq -er '.head_sha' "$run_json")" = "$GITHUB_SHA"
+          test "$(jq -er '.status' "$run_json")" = "completed"
+          test "$(jq -er '.conclusion' "$run_json")" = "success"
+          baseline_created=$(jq -er '.created_at' "$run_json")
+          baseline_epoch=$(date -u -d "$baseline_created" +%s)
+          now_epoch=$(date -u +%s)
+          test "$baseline_epoch" -le "$now_epoch"
+          test $((now_epoch - baseline_epoch)) -le 1209600
+          artifact_name="truerepublic-candidate-$GITHUB_SHA"
+          artifacts_json="${RUNNER_TEMP}/baseline-artifacts.json"
+          gh api "repos/$GITHUB_REPOSITORY/actions/runs/$BASELINE_RUN_ID/artifacts?name=$artifact_name&per_page=100" >"$artifacts_json"
+          test "$(jq -er '.total_count' "$artifacts_json")" = "1"
+          test "$(jq --arg name "$artifact_name" '[.artifacts[] | select(.name == $name and (.expired | not))] | length' "$artifacts_json")" = "1"
+          mkdir -p "${RUNNER_TEMP}/cross-run-receipts"
+          jq -n -S \
+            --arg repository "$GITHUB_REPOSITORY" \
+            --arg workflow_path "$workflow_path" \
+            --arg run_id "$BASELINE_RUN_ID" \
+            --argjson run_attempt "$(jq -er '.run_attempt' "$run_json")" \
+            --arg head_sha "$GITHUB_SHA" \
+            --arg created_at "$baseline_created" \
+            --arg artifact_name "$artifact_name" \
+            --argjson artifact_id "$(jq -er --arg name "$artifact_name" '[.artifacts[] | select(.name == $name and (.expired | not))][0].id' "$artifacts_json")" \
+            --arg artifact_digest "$(jq -er --arg name "$artifact_name" '[.artifacts[] | select(.name == $name and (.expired | not))][0].digest' "$artifacts_json")" \
+            --arg artifact_created_at "$(jq -er --arg name "$artifact_name" '[.artifacts[] | select(.name == $name and (.expired | not))][0].created_at' "$artifacts_json")" \
+            --arg artifact_expires_at "$(jq -er --arg name "$artifact_name" '[.artifacts[] | select(.name == $name and (.expired | not))][0].expires_at' "$artifacts_json")" \
+            '{schema:"truerepublic.cross-run-receipt/v1",repository:$repository,workflow_path:$workflow_path,branch:"main",event:"workflow_dispatch",run_id:$run_id,run_attempt:$run_attempt,head_sha:$head_sha,created_at:$created_at,status:"completed",conclusion:"success",artifact:{name:$artifact_name,id:$artifact_id,digest:$artifact_digest,created_at:$artifact_created_at,expires_at:$artifact_expires_at,expired:false}}' \
+            >"${RUNNER_TEMP}/cross-run-receipts/receipt-baseline.json"
+
+      - name: Bind the current run
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          workflow_path=$(jq -er '.source.workflow_path' configs/release/cross-run-rebuild.json)
+          run_json="${RUNNER_TEMP}/current-run.json"
+          gh api "repos/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID" >"$run_json"
+          test "$(jq -er '.repository.full_name' "$run_json")" = "$GITHUB_REPOSITORY"
+          test "$(jq -er '.path' "$run_json")" = "$workflow_path"
+          test "$(jq -er '.head_branch' "$run_json")" = "main"
+          test "$(jq -er '.event' "$run_json")" = "workflow_dispatch"
+          test "$(jq -er '.head_sha' "$run_json")" = "$GITHUB_SHA"
+          test "$(jq -er '.status' "$run_json")" = "in_progress"
+          test "$(jq -r '.conclusion' "$run_json")" = "null"
+          artifact_name="truerepublic-candidate-$GITHUB_SHA"
+          artifacts_json="${RUNNER_TEMP}/current-artifacts.json"
+          gh api "repos/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID/artifacts?name=$artifact_name&per_page=100" >"$artifacts_json"
+          test "$(jq -er '.total_count' "$artifacts_json")" = "1"
+          test "$(jq --arg name "$artifact_name" '[.artifacts[] | select(.name == $name and (.expired | not))] | length' "$artifacts_json")" = "1"
+          jq -n -S \
+            --arg repository "$GITHUB_REPOSITORY" \
+            --arg workflow_path "$workflow_path" \
+            --arg run_id "$GITHUB_RUN_ID" \
+            --argjson run_attempt "$GITHUB_RUN_ATTEMPT" \
+            --arg head_sha "$GITHUB_SHA" \
+            --arg created_at "$(jq -er '.created_at' "$run_json")" \
+            --arg artifact_name "$artifact_name" \
+            --argjson artifact_id "$(jq -er --arg name "$artifact_name" '[.artifacts[] | select(.name == $name and (.expired | not))][0].id' "$artifacts_json")" \
+            --arg artifact_digest "$(jq -er --arg name "$artifact_name" '[.artifacts[] | select(.name == $name and (.expired | not))][0].digest' "$artifacts_json")" \
+            --arg artifact_created_at "$(jq -er --arg name "$artifact_name" '[.artifacts[] | select(.name == $name and (.expired | not))][0].created_at' "$artifacts_json")" \
+            --arg artifact_expires_at "$(jq -er --arg name "$artifact_name" '[.artifacts[] | select(.name == $name and (.expired | not))][0].expires_at' "$artifacts_json")" \
+            '{schema:"truerepublic.cross-run-receipt/v1",repository:$repository,workflow_path:$workflow_path,branch:"main",event:"workflow_dispatch",run_id:$run_id,run_attempt:$run_attempt,head_sha:$head_sha,created_at:$created_at,status:"in_progress",conclusion:"",artifact:{name:$artifact_name,id:$artifact_id,digest:$artifact_digest,created_at:$artifact_created_at,expires_at:$artifact_expires_at,expired:false}}' \
+            >"${RUNNER_TEMP}/cross-run-receipts/receipt-current.json"
+
+      - name: Download baseline candidate evidence
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: truerepublic-candidate-${{ github.sha }}
+          path: ${{ runner.temp }}/cross-run-input/baseline
+          github-token: ${{ github.token }}
+          repository: ${{ github.repository }}
+          run-id: ${{ github.event.inputs.baseline_run_id }}
+          digest-mismatch: error
+
+      - name: Download current candidate evidence
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: truerepublic-candidate-${{ github.sha }}
+          path: ${{ runner.temp }}/cross-run-input/current
+          digest-mismatch: error
+
+      - name: Verify fail-closed cross-run evidence contract offline
+        run: ./scripts/test-cross-run-evidence.sh
+
+      - name: Assemble and compare cross-run rebuild evidence
+        env:
+          BASELINE_RUN_ID: ${{ github.event.inputs.baseline_run_id }}
+        run: |
+          set -euo pipefail
+          workflow_path=$(jq -er '.source.workflow_path' configs/release/cross-run-rebuild.json)
+          ./scripts/generate-cross-run-evidence.sh \
+            --baseline-receipt "${RUNNER_TEMP}/cross-run-receipts/receipt-baseline.json" \
+            --current-receipt "${RUNNER_TEMP}/cross-run-receipts/receipt-current.json" \
+            --baseline-dir "${RUNNER_TEMP}/cross-run-input/baseline" \
+            --current-dir "${RUNNER_TEMP}/cross-run-input/current" \
+            --output-dir "${RUNNER_TEMP}/cross-run-evidence" \
+            --repository "$GITHUB_REPOSITORY" \
+            --workflow-path "$workflow_path" \
+            --branch main \
+            --commit "$GITHUB_SHA" \
+            --baseline-run-id "$BASELINE_RUN_ID" \
+            --current-run-id "$GITHUB_RUN_ID"
+          ./scripts/verify-cross-run-evidence.sh \
+            --evidence "${RUNNER_TEMP}/cross-run-evidence" \
+            --repository "$GITHUB_REPOSITORY" \
+            --workflow-path "$workflow_path" \
+            --branch main \
+            --commit "$GITHUB_SHA" \
+            --baseline-run-id "$BASELINE_RUN_ID" \
+            --current-run-id "$GITHUB_RUN_ID" \
+            --output json | tee "${RUNNER_TEMP}/cross-run-report.json"
+
+      - name: Upload repository-only cross-run comparison evidence
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: truerepublic-cross-run-${{ github.sha }}-${{ github.run_id }}
+          path: |
+            ${{ runner.temp }}/cross-run-evidence/cross-run-evidence.json
+            ${{ runner.temp }}/cross-run-evidence/receipt-baseline.json
+            ${{ runner.temp }}/cross-run-evidence/receipt-current.json
+            ${{ runner.temp }}/cross-run-evidence/candidate-manifest-baseline.json
+            ${{ runner.temp }}/cross-run-evidence/candidate-report-baseline.json
+            ${{ runner.temp }}/cross-run-evidence/candidate-manifest-current.json
+            ${{ runner.temp }}/cross-run-evidence/candidate-report-current.json
+            ${{ runner.temp }}/cross-run-report.json
           if-no-files-found: error
           retention-days: 14

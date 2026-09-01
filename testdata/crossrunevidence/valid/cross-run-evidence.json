@@ -1,0 +1,50 @@
+{
+  "baseline": {
+    "candidate_manifest": {
+      "file": "candidate-manifest-baseline.json",
+      "sha256": "975ee97a2893a7d5ed3946b8f096643667e572e4e200d1c25fec5a5c54cc7f99"
+    },
+    "candidate_report": {
+      "file": "candidate-report-baseline.json",
+      "sha256": "804239332fef6b6ba5f6c5e4c73adb1478f215b0ee7f3f2864f3400297fca399"
+    },
+    "receipt": {
+      "file": "receipt-baseline.json",
+      "sha256": "ecfa2889587c1b2fb4ca7b35cf26ede4611bf61814430d04cd05c8870b6ce9ce"
+    }
+  },
+  "claims": {
+    "attested": false,
+    "deployed": false,
+    "long_term_hermetic": false,
+    "production": false,
+    "published": false,
+    "real_tag_created": false,
+    "ref_pushed": false,
+    "signed": false
+  },
+  "comparison": {
+    "baseline_run_id": "33400000001",
+    "branch": "main",
+    "commit": "0123456789abcdef0123456789abcdef01234567",
+    "current_run_id": "33400000002",
+    "repository": "NeaBouli/TrueRepublic",
+    "workflow_path": ".github/workflows/reproducible-daemon.yml"
+  },
+  "contract_sha256": "0717f2ce599b4df310579bacd0d2565ae611266758e7cfc8637cc1b52791f8eb",
+  "current": {
+    "candidate_manifest": {
+      "file": "candidate-manifest-current.json",
+      "sha256": "975ee97a2893a7d5ed3946b8f096643667e572e4e200d1c25fec5a5c54cc7f99"
+    },
+    "candidate_report": {
+      "file": "candidate-report-current.json",
+      "sha256": "804239332fef6b6ba5f6c5e4c73adb1478f215b0ee7f3f2864f3400297fca399"
+    },
+    "receipt": {
+      "file": "receipt-current.json",
+      "sha256": "62d6a783f8db5481569cd01ed8962832304fc191170de6985155cb6e4c2321ef"
+    }
+  },
+  "schema": "truerepublic.cross-run-evidence/v1"
+}

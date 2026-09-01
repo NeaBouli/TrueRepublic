@@ -182,7 +182,7 @@ infrastructure is deployed. The Phase 6 production-topology gate remains open.
 
 ## Release Engineering
 
-**Status:** Repository-only unsigned evidence plus same-run OCI parity; no release published
+**Status:** Repository-only unsigned evidence plus same-job, same-run and bounded cross-run comparison; no release published
 
 GH-212 pins the supported native Linux amd64/arm64 runners, release and SBOM
 tools, and the four maintained container-base manifests. It adds a strict
@@ -212,9 +212,19 @@ source metadata remains in the same short-lived protected workflow run. Every
 real-tag, ref-push, signing, publication, deployment and production claim must
 be present and false. This is evidence aggregation, not a release action.
 
-This proves same-commit, same-job OCI identity parity under the runner and
-package repositories available during that job. It does not establish a
-cross-time hermetic rebuild: GitHub runner images and their BuildKit versions
+GH-273 adds a strict comparison capability for two distinct protected
+`workflow_dispatch` executions of the unchanged exact `main` commit. It binds
+the GitHub repository/workflow/branch/event/run/artifact metadata and re-parses
+both candidate manifests and reports before comparing both daemon digests and
+all four ordered OCI identity vectors. The retained artifact contains only the
+seven bounded JSON evidence members and report. This is a pair-scoped result,
+not independent authentication of GitHub or a general cross-time guarantee;
+all tag, ref-push, signing, attestation, publication, deployment, production
+and long-term-hermetic claims remain false.
+
+These controls can prove same-commit identity parity within one job and across
+one specifically recorded pair of protected runs. They do not establish a
+long-term hermetic rebuild: GitHub runner images and their BuildKit versions
 are floating, and the daemon Dockerfile still resolves Debian packages from
 live repositories. It also does not authenticate who created a bundle or
 whether every SBOM component is truthful, create a real tag, publish or sign an

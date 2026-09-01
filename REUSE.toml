@@ -19,8 +19,10 @@ version = 1
 path = [
     # Go daemon, modules and tools.
     "*.go",
+    "candidateevidence/**/*.go",
     "capacitypolicy/**/*.go",
     "cmd/**/*.go",
+    "crossrunevidence/**/*.go",
     "deploymentevidence/**/*.go",
     "genesisevidence/**/*.go",
     "healthcheck/**/*.go",
@@ -30,6 +32,7 @@ path = [
     "migration/**/*.go",
     "networkpolicy/**/*.go",
     "observability/**/*.go",
+    "ocievidence/**/*.go",
     "releaseevidence/**/*.go",
     "sovereignv4/**/*.go",
     "token/**/*.go",
@@ -78,6 +81,8 @@ path = [
     ".codex/**",
     # Repository-authored configuration, CI and monitoring surfaces.
     "configs/**",
+    "testdata/candidateevidence/**",
+    "testdata/crossrunevidence/**",
     ".github/**",
     "monitoring/**",
     "nginx/**",

@@ -334,6 +334,7 @@ while IFS='|' read -r module label; do
 done <<'MODULES'
 root|root/application
 candidateevidence|candidate evidence
+crossrunevidence|cross-run evidence
 genesisevidence|rollout genesis evidence
 capacitypolicy|capacity policy
 deploymentevidence|deployment evidence

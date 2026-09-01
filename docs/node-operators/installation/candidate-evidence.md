@@ -63,6 +63,9 @@ The workflow-scoped downloads provide the same-run guarantee in protected CI.
 The offline JSON schemas themselves bind commit, contract, platform and target,
 but carry no authenticated GitHub run identifier; manually mixing two otherwise
 valid same-commit runs is therefore outside the standalone verifier's claim.
+GH-273 closes that comparison gap for a specifically recorded pair of distinct
+protected executions by re-parsing both candidate records and binding their run
+and artifact metadata. See [Cross-run rebuild evidence](cross-run-evidence.md).
 
 ## Security and rollout boundary
 

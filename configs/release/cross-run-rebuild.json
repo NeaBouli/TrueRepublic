@@ -1,0 +1,12 @@
+{
+  "schema": "truerepublic.cross-run-rebuild/v1",
+  "candidate_contract_sha256": "92d9932b4bc1084a05c38e3aeb5f00a322098225f5c5ced14bf19f9581a82ef0",
+  "source": {
+    "repository": "NeaBouli/TrueRepublic",
+    "workflow_path": ".github/workflows/reproducible-daemon.yml",
+    "branch": "main",
+    "event": "workflow_dispatch",
+    "run_id_pattern": "^[1-9][0-9]{0,18}$",
+    "retention_days": 14
+  }
+}

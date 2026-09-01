@@ -1,7 +1,7 @@
 # TrueRepublic Cross-System Threat Model
 
 Model: `truerepublic-cross-system-threat-model` · Version:
-`truerepublic.threat-model/v1` · Updated: 2026-08-09
+`truerepublic.threat-model/v1` · Updated: 2026-09-01
 
 The canonical, machine-readable register is
 [`configs/security/threat-model.json`](../../configs/security/threat-model.json).
@@ -225,10 +225,15 @@ JSON register.
   provenance bindings. GH-261 additionally cross-binds both native daemon
   records and both-platform OCI reports to one exact commit and an explicitly
   simulated future tag, with every promotion claim false. Blocked: a real tag,
-  signing, authenticated provenance, tagged
-  publication, staged qualification and rollout do not exist and are not
-  claimed. Protected workflow scope supplies same-run artifact selection; the
-  standalone JSON does not authenticate a GitHub run identity.
+  signing, authenticated provenance, tagged publication, staged qualification
+  and rollout do not exist and are not claimed. GH-273 adds a strict
+  metadata-only comparison capability for two distinct protected
+  `workflow_dispatch` executions of the same exact `main` commit. It re-parses
+  both candidate records, binds GitHub run and artifact metadata, and keeps tag,
+  ref-push, signing, attestation, publication, deployment, production and
+  long-term-hermetic claims false. Those receipts remain evidence inside the
+  protected GitHub Actions trust boundary, not independent authentication of
+  GitHub or its runners.
 - **TM-REL-002** (medium/low, mitigated): non-deterministic build drift.
   Verified: pinned build/release/SBOM toolchains, supported native Linux
   platforms, digest-pinned maintained container bases, repository-owned
@@ -236,9 +241,11 @@ JSON register.
   GH-258's native no-cache double-export contract requiring daemon/client OCI
   index, manifest, config, and ordered-layer parity. GH-261 aggregates those
   reports with both daemon targets under one exact commit/simulated-tag
-  manifest and rejects undeclared payload members. Cross-time hermetic image
-  rebuilding remains unproven because runner/BuildKit identities float and the
-  daemon image resolves Debian packages from live repositories.
+  manifest and rejects undeclared payload members. GH-273 can compare all six
+  ordered identities across two distinct executions of that exact commit while
+  retaining bounded JSON only. Cross-time and long-term hermetic image rebuilding
+  remain unproven because runner/BuildKit identities float and the daemon image
+  resolves Debian packages from live repositories.
 
 ## Explicitly not claimed
 

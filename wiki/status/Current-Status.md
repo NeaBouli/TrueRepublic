@@ -46,7 +46,7 @@
   checksums, metadata, normalized SBOM and unsigned-provenance bindings, pinned
   release tools/platforms and container bases, without publishing or signing
   an artifact or claiming production rollout.
-- 2,187 recovery-verified tests: 1,842 Go, 26 Rust, and 319 maintained-client,
+- 2,314 recovery-verified tests: 1,969 Go, 26 Rust, and 319 maintained-client,
   plus the separately gated GH-266 Go/WASM-to-keeper replay,
   GH-175/GH-178/GH-181 two-chain IBC packet/channel/compatible-restart recovery and GH-172
   contention/replay/restart process proofs.
@@ -57,6 +57,11 @@
   to one exact commit and explicitly simulated tag. The protected job retains
   metadata/JSON only and requires every tag/push/sign/publish/deploy/production
   claim to remain false.
+- GH-273 adds a strict bounded-JSON comparison capability for two distinct
+  protected runs of the unchanged exact commit. It compares both daemon and all
+  four ordered OCI identities; the result is pair-scoped and every tag,
+  ref-push, sign, attest, publish, deploy, production and long-term-hermetic
+  claim remains false.
 - Community-governed Apache-2.0 publication is recorded on
   [GH-219](https://github.com/NeaBouli/TrueRepublic/issues/219#issuecomment-5423337355).
   Individual contributors retain copyright; “TrueRepublic contributors” is the
