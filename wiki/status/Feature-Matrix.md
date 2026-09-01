@@ -7,8 +7,9 @@ The human-readable delivery boundary is maintained in the
 and [limitations](https://github.com/NeaBouli/TrueRepublic/blob/main/docs/LIMITATIONS.md).
 
 Current headline state: 2,319 verified standard-suite cases, 35/59 rollout
-items complete, Phase 6 at 6/7, and `production_ready=false`. Implemented or
-architected surface area must not be interpreted as rollout approval.
+items complete, Phase 6 at 6/7, Phase 7 at 3/10, and
+`production_ready=false`. Implemented or architected surface area must not be
+interpreted as rollout approval.
 
 | Release-engineering control | Verified boundary | Still open |
 |---|---|---|

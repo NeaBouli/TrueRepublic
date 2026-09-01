@@ -1,5 +1,28 @@
 # Project State
 
+GH-276 is locally approved. Public and machine-readable Phase-7 accounting is
+3/10, with exact roadmap top-level enumeration and mandatory nested release-
+freeze/go-no-go guards enforced by `scripts/check-consistency.sh`. JSON, Bash
+syntax, docs consistency, license, maintained-tree secret and diff gates pass.
+Protected PR/merge, GH-29 synchronization and live Pages/Wiki remain. Rollout
+stays 35/59 overall, 35/51 phase work, and production false.
+
+Updated: 2026-09-01 EEST
+
+---
+
+GH-276 is active from exact main
+`f808f2e72a125a41be89a62d7c35ffc6785e7e87` to align public Phase-7 accounting
+with the canonical GH-29 tracker. The denominator remains 59 overall / 51 phase
+work, completed counts remain 35, and production remains false. Phase 7 is
+3/10; release freeze and accountable go/no-go are two mandatory subchecks of
+one counted tracker item. Protected exact-head review, GH-29 synchronization,
+merge, and live Pages/Wiki verification remain pending.
+
+Updated: 2026-09-01 EEST
+
+---
+
 GH-273 implementation PR #274 is merged as exact main
 `3b0d1639bb40c7df6733dd13a86252e1c8c9efd3`; all exact-main workflows passed.
 Protected baseline run 33465480131 and comparison run 33466167289 succeeded on

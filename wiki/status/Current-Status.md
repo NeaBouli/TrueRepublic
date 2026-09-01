@@ -66,6 +66,9 @@
   `3b0d1639bb40c7df6733dd13a86252e1c8c9efd3`. The result is pair-scoped and
   every tag, ref-push, sign, attest, publish, deploy, production and
   long-term-hermetic claim remains false.
+- Canonical rollout accounting remains 35/59 overall and 35/51 phase work.
+  Phase 6 is 6/7 and Phase 7 is 3/10; release freeze and accountable go/no-go
+  are separate mandatory subchecks of one counted Phase-7 tracker item.
 - Community-governed Apache-2.0 publication is recorded on
   [GH-219](https://github.com/NeaBouli/TrueRepublic/issues/219#issuecomment-5423337355).
   Individual contributors retain copyright; “TrueRepublic contributors” is the

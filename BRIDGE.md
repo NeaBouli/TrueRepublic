@@ -8836,3 +8836,52 @@ exclusion, CI wiring, and documentation boundaries.
 `TRUEREPUBLIC GH-273 ACTIVE — CLOSEOUT SHA PRECISION FIXED — RERUN REQUIRED`
 
 ---
+
+## 2026-09-01 EEST GH-276 Phase-7 accounting alignment → In Progress
+
+- **Branch:** `docs/GH-276-phase7-accounting`
+- **Issue:** [GH-276](https://github.com/NeaBouli/TrueRepublic/issues/276)
+- **Changed:** task opened before documentation edits; exact base is
+  `f808f2e72a125a41be89a62d7c35ffc6785e7e87`.
+- **Tests:** not run yet; documentation consistency, JSON, license, maintained-
+  tree secret and diff gates are required before review.
+- **Risk:** low — public accounting/documentation only. The 59/51 denominators,
+  35 completed items and `production_ready=false` must remain unchanged.
+- **Ready for:** Sol implementation and verification.
+
+### Delegate notes
+
+No delegation is used because this is smaller than the handoff overhead. Phase
+7 must become explicit as 3/10. Release freeze and accountable go/no-go remain
+two mandatory subchecks of one counted GitHub-tracker item.
+
+### Sol review feedback
+
+Pending implementation and local gates.
+
+---
+
+## 2026-09-01 EEST GH-276 Phase-7 accounting alignment → Approved
+
+- **Branch:** `docs/GH-276-phase7-accounting`
+- **Issue:** [GH-276](https://github.com/NeaBouli/TrueRepublic/issues/276)
+- **Changed:** `docs/status.json`, roadmap, README, Pages landing, Wiki status,
+  `scripts/check-consistency.sh`, durable agent state and this Bridge.
+- **Tests:** `./scripts/check-consistency.sh` passed, including exact Phase-7
+  3/10 top-level arithmetic and nested freeze/go-no-go guards; `bash -n`, JSON,
+  Apache-2.0 license policy, maintained-tree secret scan and `git diff --check`
+  all passed. Direct enumeration returned `phase7=3/10`.
+- **Risk:** low — accounting/documentation only. Rollout remains 35/59 overall,
+  35/51 phase work, Phase 6 6/7, Phase 7 3/10 and production false.
+- **Ready for:** protected GitHub review and merge.
+
+### Delegate notes
+
+No delegate was used; the task remained below handoff overhead.
+
+### Sol review feedback
+
+Approved locally. Protected exact-head checks, merge, GH-29 synchronization,
+exact-main checks and live Pages/Wiki readback remain mandatory before Done.
+
+---
