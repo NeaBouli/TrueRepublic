@@ -1,5 +1,45 @@
 # Project State
 
+GH-269's maintained-client replacement has independent Kimi K3 APPROVE with no
+P0/P1/P2 finding. The exact PR #265 package/lockfile delta, all 14 registry
+integrities, MIT licenses, peer/engine constraints, package counts, local test
+arithmetic and the unchanged 35/59 boundary were independently verified.
+Protected exact-head gitleaks, Linux WebKit and real chain integration remain
+mandatory before merge; then exact-main verification and stale #265 closure
+remain. Production stays false and no runtime, release, tag, signing,
+publication, deployment, key or fund action occurred.
+
+Updated: 2026-09-01 EEST
+
+---
+
+GH-269's maintained-client replacement is locally verified on exact-base branch
+`chore/GH-269-client-reconciliation`. Exact target versions, lockfile integrity,
+10 Node policy plus 309 Vitest passes with four expected skips, lint,
+production build/budgets, zero-advisory audit, ZKP/WASM/native-verifier/keeper
+replay, 26 Chromium/Firefox browser passes with one expected mobile skip, docs,
+license, secret and diff gates pass. This macOS 12 host cannot run Playwright's
+frozen WebKit port; real WebKit and opt-in chain integration remain mandatory
+protected-CI gates. Final Kimi review, commit/push, exact-head protected review,
+merge, exact-main verification and stale #265 closure remain. Rollout stays
+35/59 and production false.
+
+Updated: 2026-09-01 EEST
+
+---
+
+GH-269's gRPC slice is merged and exact-main green at `c157b1e`. The second
+sequential slice is active from that exact base on branch
+`chore/GH-269-client-reconciliation`: PR #265's exact four maintained-client
+development updates are staged, with no runtime dependency or application-code
+change. Lockfile/license/integrity, maintained-client, browser, chain, WASM,
+security and protected exact-head verification remain. Rollout stays 35/59 and
+production false.
+
+Updated: 2026-09-01 EEST
+
+---
+
 GH-269's first sequential slice is locally complete on exact-base branch
 `chore/GH-269-grpc-reconciliation`: gRPC 1.82.1 → 1.82.2, exact upstream sums,
 Apache-2.0 inventory references, and no dependency-graph drift. Kimi K3 returned

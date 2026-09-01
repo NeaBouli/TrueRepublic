@@ -8564,3 +8564,68 @@ exclusion, CI wiring, and documentation boundaries.
 `TRUEREPUBLIC GH-269 GRPC LOCAL PASS — PROTECTED PR PENDING`
 
 ---
+
+## 2026-09-01 EEST GH-269 client replacement → In Progress
+
+- **Precondition complete:** PR #270 passed 30/30 exact-head contexts, merged
+  as exact main `c157b1ebe8b9680667cdf9d554d9b8a18f95f63b`, and every exact-main
+  Docs/Client/Go/Security/Reproducibility/Pages/dependency workflow passed.
+- **Scope:** rebuild stale PR #265 from that exact main with only four dev-only
+  client updates and expected typescript-eslint internal lockstep packages.
+- **Independent preflight:** Kimi K3 APPROVE, zero P0/P1/P2; MIT licenses and
+  registry integrity verified. Sol owns final diff, testing, review and merge.
+- **Pending:** lockfile/forbidden-version verification; maintained client,
+  browser, chain, WASM, audit, license, docs and security gates; protected
+  exact-head review; merge; exact-main verification; stale #265 closure.
+- **Truth boundary:** rollout remains 35/59 and production false. No runtime,
+  tag, release, signing, publication, deployment, key/fund or production action.
+
+`TRUEREPUBLIC GH-269 CLIENT REPLACEMENT ACTIVE — EXACT BASE c157b1e`
+
+---
+
+## 2026-09-01 EEST GH-269 client replacement → Local PASS
+
+- **Exact diff:** four dev-only/MIT client updates and expected
+  typescript-eslint lockstep packages; registry-integrity preflight approved;
+  no application/runtime code, axios package, rollout or production change.
+- **PASS:** `npm ci`; 10 Node policy + 309 Vitest pass with four expected skips;
+  lint; production build/budgets; zero-advisory audit; ZKP/WASM/client/native
+  verifier/keeper replay; 26 Chromium/Firefox desktop/mobile browser cases with
+  one expected mobile skip; docs, license, secret and diff gates.
+- **Environment boundary:** macOS 12 receives Playwright's frozen WebKit port,
+  whose unsupported protocol fails all 18 WebKit cases before page execution.
+  Local chain integration has three expected no-node skips. Protected Linux
+  WebKit and real chain-integration jobs are mandatory before merge.
+- **Pending:** final Kimi review, commit/push, protected exact-head checks and
+  review, authorized merge, exact-main verification and stale #265 closure.
+- **Truth boundary:** rollout remains 35/59 and production false. No runtime,
+  tag, release, signing, publication, deployment, key/fund or production action.
+
+`TRUEREPUBLIC GH-269 CLIENT LOCAL PASS — PROTECTED WEBKIT/CHAIN REQUIRED`
+
+---
+
+## 2026-09-01 EEST GH-269 client replacement → Review APPROVED
+
+- **Independent final review:** Kimi K3 **APPROVE**, with no P0/P1/P2
+  finding. The review independently matched PR #265's exact two-file
+  dependency delta, all 14 registry integrity values, MIT licenses, package
+  count, peer/engine constraints, test arithmetic and the unchanged 35/59
+  rollout boundary.
+- **Reviewer reruns:** 10 Node policy tests, 309 Vitest passes plus four
+  expected skips, lint, build/budgets, audit, docs consistency, license policy
+  and diff hygiene passed. The reviewer host also lacks `gitleaks`; Sol's
+  earlier local secret scan remains recorded, and protected gitleaks CI is
+  mandatory before merge.
+- **Environment boundary unchanged:** macOS 12 cannot execute the frozen
+  Playwright WebKit port, and the local chain job has no node. Protected Linux
+  WebKit and real chain-integration evidence remain required.
+- **Pending:** commit/push, exact-head protected checks and review, authorized
+  merge, exact-main verification and stale PR #265 closure.
+- **Truth boundary:** rollout remains 35/59 and production false. No runtime,
+  tag, release, signing, publication, deployment, key/fund or production action.
+
+`TRUEREPUBLIC GH-269 CLIENT REVIEW APPROVED — PROTECTED CI PENDING`
+
+---
