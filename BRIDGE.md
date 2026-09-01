@@ -8629,3 +8629,27 @@ exclusion, CI wiring, and documentation boundaries.
 `TRUEREPUBLIC GH-269 CLIENT REVIEW APPROVED — PROTECTED CI PENDING`
 
 ---
+
+## 2026-09-01 EEST GH-269 sequential dependency reconciliation → Done
+
+- **gRPC slice:** replacement PR #270 passed its complete exact-head matrix,
+  merged as `c157b1ebe8b9680667cdf9d554d9b8a18f95f63b`, passed exact-main
+  verification and superseded stale PR #264.
+- **Client slice:** replacement PR #271 exact head
+  `1fab8c57574bc7e4a98ac1d1df15a00eacce113e` passed all 21 reported
+  contexts with no review threads and merged as exact main
+  `f0246849d048e9dc9f00474ff4897feb9fc08343`; stale PR #265 is closed as
+  superseded.
+- **Exact-main PASS:** Client `33454623960`, Docs `33454623971`, Security
+  `33454624016`, Reproducible Linux Daemon `33454623995`, and Pages
+  `33454622994` all completed successfully on `f024684`.
+- **Result:** gRPC 1.82.2 plus the four maintained-client development updates
+  are reconciled on current main. The canonical local checkout is clean and
+  exact with `origin/main`.
+- **Truth boundary:** rollout remains 35/59 and production false. No runtime
+  feature, tag, release, signing, publication, deployment, key/fund or
+  production action occurred.
+
+`TRUEREPUBLIC GH-269 DONE — EXACT MAIN f024684 VERIFIED`
+
+---

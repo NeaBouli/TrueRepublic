@@ -1,5 +1,19 @@
 # Project State
 
+GH-269 is complete. Current-main replacements #270 and #271 reconciled gRPC
+1.82.2 and the four maintained-client development updates sequentially. PR #271
+exact head `1fab8c5` passed all 21 reported contexts with no review threads and
+merged as exact main `f024684`; stale Dependabot PRs #264/#265 are closed.
+Exact-main Client `33454623960`, Docs `33454623971`, Security `33454624016`,
+Reproducible Linux Daemon `33454623995`, and Pages `33454622994` pass. The
+canonical checkout is clean and synchronized. Rollout stays 35/59 and
+production false; no runtime feature, tag, release, signing, publication,
+deployment, key or fund action occurred.
+
+Updated: 2026-09-01 EEST
+
+---
+
 GH-269's maintained-client replacement has independent Kimi K3 APPROVE with no
 P0/P1/P2 finding. The exact PR #265 package/lockfile delta, all 14 registry
 integrities, MIT licenses, peer/engine constraints, package counts, local test
