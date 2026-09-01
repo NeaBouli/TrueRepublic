@@ -25,7 +25,9 @@ if ! jq -e '
   ($rollout.phase_work_completed | nonnegative_integer) and
   ($rollout.phase_work_total | positive_integer) and
   ($rollout.phase_6_completed | nonnegative_integer) and
-  ($rollout.phase_6_total | positive_integer)
+  ($rollout.phase_6_total | positive_integer) and
+  ($rollout.phase_7_completed | nonnegative_integer) and
+  ($rollout.phase_7_total | positive_integer)
 ' "$STATUS_FILE" >/dev/null; then
   echo "FAIL Rollout counts must be nonnegative integers and totals must be positive integers"
   exit 1
@@ -54,6 +56,8 @@ ROLLOUT_PHASE_WORK_COMPLETED=$(jq -r '.rollout.phase_work_completed' "$STATUS_FI
 ROLLOUT_PHASE_WORK_TOTAL=$(jq -r '.rollout.phase_work_total' "$STATUS_FILE")
 ROLLOUT_PHASE_6_COMPLETED=$(jq -r '.rollout.phase_6_completed' "$STATUS_FILE")
 ROLLOUT_PHASE_6_TOTAL=$(jq -r '.rollout.phase_6_total' "$STATUS_FILE")
+ROLLOUT_PHASE_7_COMPLETED=$(jq -r '.rollout.phase_7_completed' "$STATUS_FILE")
+ROLLOUT_PHASE_7_TOTAL=$(jq -r '.rollout.phase_7_total' "$STATUS_FILE")
 COSMOS_SDK_VERSION=$(jq -r '.tech.cosmos_sdk' "$STATUS_FILE")
 COMETBFT_VERSION=$(jq -r '.tech.cometbft' "$STATUS_FILE")
 WASMD_VERSION=$(jq -r '.tech.cosmwasm' "$STATUS_FILE")
@@ -64,6 +68,7 @@ VITE_SERIES=${VITE_VERSION%.*}
 ROLLOUT_PERCENT=$(((ROLLOUT_COMPLETED * 100 + ROLLOUT_TOTAL / 2) / ROLLOUT_TOTAL))
 ROLLOUT_PHASE_WORK_PERCENT=$(((ROLLOUT_PHASE_WORK_COMPLETED * 100 + ROLLOUT_PHASE_WORK_TOTAL / 2) / ROLLOUT_PHASE_WORK_TOTAL))
 ROLLOUT_PHASE_6_PERCENT=$(((ROLLOUT_PHASE_6_COMPLETED * 100 + ROLLOUT_PHASE_6_TOTAL / 2) / ROLLOUT_PHASE_6_TOTAL))
+ROLLOUT_PHASE_7_PERCENT=$(((ROLLOUT_PHASE_7_COMPLETED * 100 + ROLLOUT_PHASE_7_TOTAL / 2) / ROLLOUT_PHASE_7_TOTAL))
 
 format_integer() {
   local remaining="$1"
@@ -109,10 +114,40 @@ if [ $((SUPPLY * 10 ** DECIMALS)) -ne "$BASE_CAP" ]; then
 fi
 if [ "$ROLLOUT_COMPLETED" -gt "$ROLLOUT_TOTAL" ] ||
    [ "$ROLLOUT_PHASE_WORK_COMPLETED" -gt "$ROLLOUT_PHASE_WORK_TOTAL" ] ||
-   [ "$ROLLOUT_PHASE_6_COMPLETED" -gt "$ROLLOUT_PHASE_6_TOTAL" ]; then
+   [ "$ROLLOUT_PHASE_6_COMPLETED" -gt "$ROLLOUT_PHASE_6_TOTAL" ] ||
+   [ "$ROLLOUT_PHASE_7_COMPLETED" -gt "$ROLLOUT_PHASE_7_TOTAL" ]; then
   echo "FAIL Rollout completed counts exceed their totals"
   ERRORS=$((ERRORS+1))
 fi
+
+PHASE_7_ROADMAP_COMPLETED=$(awk '
+  /^## Phase 7 / { in_phase = 1; next }
+  /^## Rollout sequence/ { in_phase = 0 }
+  in_phase && /^- \[x\]/ { completed++ }
+  END { print completed + 0 }
+' docs/ROLLOUT_ROADMAP.md)
+PHASE_7_ROADMAP_TOTAL=$(awk '
+  /^## Phase 7 / { in_phase = 1; next }
+  /^## Rollout sequence/ { in_phase = 0 }
+  in_phase && /^- \[[ x]\]/ { total++ }
+  END { print total + 0 }
+' docs/ROLLOUT_ROADMAP.md)
+echo "Checking Phase 7 tracker accounting..."
+if [ "$PHASE_7_ROADMAP_COMPLETED" -eq "$ROLLOUT_PHASE_7_COMPLETED" ] &&
+   [ "$PHASE_7_ROADMAP_TOTAL" -eq "$ROLLOUT_PHASE_7_TOTAL" ]; then
+  echo "  OK roadmap top-level Phase 7 count"
+else
+  echo "  FAIL roadmap Phase 7 is ${PHASE_7_ROADMAP_COMPLETED}/${PHASE_7_ROADMAP_TOTAL}, status records ${ROLLOUT_PHASE_7_COMPLETED}/${ROLLOUT_PHASE_7_TOTAL}"
+  ERRORS=$((ERRORS+1))
+fi
+if grep -Fq '  - [ ] Freeze the release candidate while final evidence is reviewed.' docs/ROLLOUT_ROADMAP.md &&
+   grep -Fq '  - [ ] Record an explicit go/no-go decision and accountable approvers.' docs/ROLLOUT_ROADMAP.md; then
+  echo "  OK release freeze and go/no-go remain nested mandatory subchecks"
+else
+  echo "  FAIL Phase 7 final tracker item must retain both nested subchecks"
+  ERRORS=$((ERRORS+1))
+fi
+echo ""
 
 echo "Checking technology source of truth..."
 if ! GO_MODULE_METADATA=$(go mod edit -json); then
@@ -366,6 +401,9 @@ grep -Fq "${ROLLOUT_PHASE_WORK_COMPLETED} of ${ROLLOUT_PHASE_WORK_TOTAL}" docs/i
 grep -Fq "${ROLLOUT_PHASE_6_COMPLETED} of ${ROLLOUT_PHASE_6_TOTAL}" docs/index.html &&
   echo "  OK Phase 6" ||
   { echo "  FAIL Phase 6"; ERRORS=$((ERRORS+1)); }
+grep -Fq "${ROLLOUT_PHASE_7_COMPLETED} of ${ROLLOUT_PHASE_7_TOTAL}" docs/index.html &&
+  echo "  OK Phase 7" ||
+  { echo "  FAIL Phase 7"; ERRORS=$((ERRORS+1)); }
 grep -Fq "${ROLLOUT_PERCENT}%" docs/index.html &&
   echo "  OK Rounded rollout percentage" ||
   { echo "  FAIL Rounded rollout percentage"; ERRORS=$((ERRORS+1)); }
@@ -375,6 +413,15 @@ grep -Fq "${ROLLOUT_PHASE_WORK_PERCENT}%" docs/index.html &&
 grep -Fq "${ROLLOUT_PHASE_6_PERCENT}%" docs/index.html &&
   echo "  OK Rounded Phase 6 percentage" ||
   { echo "  FAIL Rounded Phase 6 percentage"; ERRORS=$((ERRORS+1)); }
+grep -Fq "${ROLLOUT_PHASE_7_PERCENT}%" docs/index.html &&
+  echo "  OK Rounded Phase 7 percentage" ||
+  { echo "  FAIL Rounded Phase 7 percentage"; ERRORS=$((ERRORS+1)); }
+grep -Fq "Phase 7 is ${ROLLOUT_PHASE_7_COMPLETED}/${ROLLOUT_PHASE_7_TOTAL}" README.md &&
+  echo "  OK README Phase 7" ||
+  { echo "  FAIL README Phase 7"; ERRORS=$((ERRORS+1)); }
+grep -Fq "Phase 7: **${ROLLOUT_PHASE_7_COMPLETED}/${ROLLOUT_PHASE_7_TOTAL}**" wiki/status/Roadmap.md &&
+  echo "  OK Wiki Phase 7" ||
+  { echo "  FAIL Wiki Phase 7"; ERRORS=$((ERRORS+1)); }
 echo ""
 
 if [ "$ERRORS" -gt 0 ]; then

@@ -1,5 +1,16 @@
 # Recovery Queue
 
+## In progress - GH-276 Phase-7 accounting alignment
+
+- [x] Confirm GH-29 has 10 counted Phase-7 items, 3 complete, within the
+  unchanged 51 phase-work / 59 overall denominators.
+- [x] Add explicit Phase-7 3/10 machine/public status and make release freeze
+  plus accountable go/no-go nested subchecks of one counted roadmap item.
+- [x] Pass complete local documentation/license/secret/diff gates.
+- [ ] Pass protected exact-head review.
+- [ ] Merge, verify exact main and live Pages/Wiki, update GH-29 and both
+  Bridges, then close GH-276 without rollout credit.
+
 ## Completed - GH-273 cross-run exact-commit rebuild comparison
 
 - [x] Define a strict versioned cross-run contract and offline verifier that

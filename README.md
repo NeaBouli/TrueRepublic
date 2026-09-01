@@ -282,6 +282,10 @@ approval. Current evidence, risks, and commands are maintained in
 [rollout tracker #29](https://github.com/NeaBouli/TrueRepublic/issues/29).
 
 - 🟡 2,319 tests recovery-verified locally (1,974 Go, including GH-273's strict cross-run evidence contract, GH-261's candidate-evidence contract, GH-258's OCI build/evidence contract, GH-244's rollout-genesis qualification contract, GH-225's release-compatibility contract, GH-222's verified install-lifecycle and repository contracts, GH-209's recipient-binding and atomic-payout adversarial coverage, + 26 Rust + 319 maintained-client, including its v2 encoding and canonical-recipient validation), plus the separately gated GH-266 fresh Go/WASM-to-keeper payout/replay proof, GH-206 native-verifier compatibility proof, GH-175/GH-178/GH-181 IBC proof and GH-184 governed-upgrade recovery proof, GH-172 shared-state contention/exact-replay/restart proof, GH-145 bounded live fuzz campaigns, GH-193 maintained-client wallet/signing-safety proof, GH-190 maintained-client IBC transfer/recovery proof, GH-131 real submitted-history pagination proof, GH-121 real browser-query boundary, GH-115 local client-chain delivery proof, GH-56 rotation, GH-59 slashing, GH-60 inactive-validator genesis, GH-61 legacy-authority migration, GH-93 incident rehearsal, and GH-97 sustained-load process harnesses; production rollout evidence remains required
+- 🟡 Rollout accounting remains 35/59 overall and 35/51 phase work. Phase 6
+  is 6/7 and Phase 7 is 3/10; release freeze and accountable go/no-go are two
+  mandatory subchecks of one counted Phase-7 tracker item. Production remains
+  false.
 - 🟡 GH-212 verifies exact release tool/platform/container-base pins, repeated
   normalized SBOM parity and a strict unsigned two-target evidence bundle.
   GH-258 additionally requires two native no-cache OCI exports per daemon and

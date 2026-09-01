@@ -13,7 +13,9 @@ parent recovery record remains
 Published progress arithmetic follows the canonical issue #29 tracker. This
 detailed roadmap splits its combined dashboard/alerts/objectives/ownership
 item into two evidence bullets, so raw checkbox counts in this file are
-intentionally more granular than the public 59-item tracker.
+intentionally more granular than the public 59-item tracker. Phase 7 preserves
+its final release-review/authorization item as one counted top-level task with
+separate mandatory release-freeze and accountable go/no-go subchecks.
 
 ## Current baseline
 
@@ -51,7 +53,7 @@ intentionally more granular than the public 59-item tracker.
   third-party materials remain excluded unless an applicable file-specific
   notice exists or provenance and permission are documented. This
   repository-governance foundation earns no rollout checkbox and does not
-  change 35/59, 35/51, Phase 6 at 6/7, or production false.
+  change 35/59, 35/51, Phase 6 at 6/7, Phase 7 at 3/10, or production false.
 
 The baseline is suitable for continued engineering. It is not a rollout
 approval.
@@ -344,6 +346,11 @@ failure using the published runbooks and telemetry.
 
 ## Phase 7 — Release engineering and staged rollout
 
+**Tracker accounting:** 3 of 10 Phase-7 items are complete. The final counted
+item contains two mandatory subchecks—release freeze and accountable go/no-go—
+so both must pass without increasing the canonical 51 phase-work / 59 overall
+denominators.
+
 - [ ] Produce reproducible binaries and container images from a tagged commit.
 - [ ] Publish signed artifacts, checksums, software bill of materials (SBOM),
   provenance, and dependency reports.
@@ -383,8 +390,9 @@ failure using the published runbooks and telemetry.
 - [ ] Run a private multi-validator testnet and complete failure drills.
 - [ ] Run a public testnet or controlled canary with monitoring and a defined
   rollback window.
-- [ ] Freeze the release candidate while final evidence is reviewed.
-- [ ] Record an explicit go/no-go decision and accountable approvers.
+- [ ] Complete final release review and accountable launch authorization.
+  - [ ] Freeze the release candidate while final evidence is reviewed.
+  - [ ] Record an explicit go/no-go decision and accountable approvers.
 
 **Exit gate:** the exact signed release candidate survives the staged rollout
 and all earlier phase gates remain satisfied.

@@ -60,6 +60,8 @@
     "phase_work_total": 51,
     "phase_6_completed": 6,
     "phase_6_total": 7,
+    "phase_7_completed": 3,
+    "phase_7_total": 10,
     "production_ready": false
   },
   "modules": {

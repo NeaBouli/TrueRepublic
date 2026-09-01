@@ -10,6 +10,8 @@ with checkbox authority in
 - Overall tracker: **35/59** complete.
 - Phase work: **35/51** complete.
 - Phase 6: **6/7** complete.
+- Phase 7: **3/10** complete. Release freeze and accountable go/no-go are two
+  mandatory subchecks of one counted tracker item.
 - Production-ready: **no**.
 
 ## Delivery order

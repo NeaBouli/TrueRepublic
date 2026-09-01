@@ -1,5 +1,26 @@
 # Action Log
 
+## 2026-09-01 - GH-276 local accounting gates passed
+
+- Machine status, roadmap, README, landing, Wiki source and durable state now
+  state Phase 7 as 3/10 without changing 35/59 or 35/51.
+- `scripts/check-consistency.sh` now derives the Phase-7 top-level roadmap count,
+  compares it to status JSON, requires both final nested subchecks, and checks
+  README, landing percentages/counts and Wiki roadmap synchronization.
+- PASS: exact enumeration `phase7=3/10`, docs consistency, JSON, Bash syntax,
+  Apache-2.0 policy, maintained-tree secret scan and diff hygiene. Protected
+  review/merge and live-source synchronization remain.
+
+## 2026-09-01 - GH-276 Phase-7 accounting alignment started
+
+- GH-29 remains the canonical 59-item tracker: 51 phase-work items plus eight
+  final exit criteria. Its Phase 7 has 10 counted items, 3 complete.
+- The detailed roadmap had rendered release freeze and go/no-go as two
+  top-level items, making Phase 7 appear to contain 11. GH-276 keeps both as
+  mandatory subchecks of one counted item and adds explicit 3/10 status.
+- Scope is documentation/status consistency only. No rollout credit, runtime,
+  release, tag, signing, publication, deployment or production action occurs.
+
 ## 2026-09-01 - GH-273 implementation and hosted pair verified
 
 - PR #274 merged as exact main
