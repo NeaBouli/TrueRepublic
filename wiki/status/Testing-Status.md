@@ -113,6 +113,13 @@ claims and undeclared payload members, and is exercised by the protected
 metadata-only aggregation job. No real tag, release, signature, publication,
 deployment, or rollout credit is created.
 
+GH-273 adds 107 cross-run-evidence cases and its protected repository contract.
+Hosted baseline run 33465480131 and comparison run 33466167289 matched both
+daemon and all four OCI target identities on exact commit
+`3b0d1639bb40c7df6733dd13a86252e1c8c9efd3`; the bounded pair report is valid
+with zero violations. This is pair-scoped evidence, not a tagged, signed,
+published, deployed, production, or long-term-hermetic release claim.
+
 GH-266 extends the separate GH-206 compatibility command with a strict
 versioned handoff and two env-gated keeper tests. The fresh maintained-client
 proof must pay the bound recipient exactly once through

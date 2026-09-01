@@ -355,7 +355,13 @@ failure using the published runbooks and telemetry.
   and both-platform OCI digest reports to one exact commit and explicitly
   simulated future tag in protected CI. GH-273 adds a strict metadata-only
   comparison capability for two distinct protected workflow executions of the
-  unchanged exact commit; a hosted result is valid only for its recorded pair.
+  unchanged exact commit. Hosted baseline run
+  [33465480131](https://github.com/NeaBouli/TrueRepublic/actions/runs/33465480131)
+  and comparison run
+  [33466167289](https://github.com/NeaBouli/TrueRepublic/actions/runs/33466167289)
+  matched both daemon and all four OCI identities on exact commit
+  `3b0d1639bb40c7df6733dd13a86252e1c8c9efd3`; the result is valid only for
+  this recorded pair.
   All tag/ref-push/sign/attest/publish/deploy/production/long-term-hermetic
   claims remain false. Floating runner/BuildKit versions and live Debian package
   indexes still leave cross-time hermetic rebuilding unproven. These do not

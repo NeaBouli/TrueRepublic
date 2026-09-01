@@ -8791,3 +8791,48 @@ exclusion, CI wiring, and documentation boundaries.
 `TRUEREPUBLIC GH-273 ACTIVE — CORRECTED LOCAL GREEN — PUSH NEXT`
 
 ---
+
+## 2026-09-01 EEST GH-273 hosted pair verified — Closeout In Progress
+
+- Implementation PR [#274](https://github.com/NeaBouli/TrueRepublic/pull/274)
+  merged as exact main `3b0d1639bb40c7df6733dd13a86252e1c8c9efd3` after every
+  applicable protected check passed. Exact-main Go `33464556692`, Reproducible
+  Linux Daemon `33464556701`, Docs `33464556713`, Security `33464556731`, and
+  Pages `33464555897` all succeeded.
+- Two distinct protected `workflow_dispatch` executions then succeeded on that
+  unchanged exact commit: baseline
+  [33465480131](https://github.com/NeaBouli/TrueRepublic/actions/runs/33465480131)
+  and comparison
+  [33466167289](https://github.com/NeaBouli/TrueRepublic/actions/runs/33466167289).
+- The comparison artifact `9785138134` contains exactly the seven declared
+  bounded evidence JSON members plus `cross-run-report.json`. Its report is
+  valid with zero violations and matches both daemon targets plus all four OCI
+  target identities. The baseline/current candidate manifest and report pairs
+  are byte-identical; their SHA-256 values are respectively
+  `9a1aa898fa078e3938daae7d15ee48ea529b44ae7bd8456444e2afd13e2c5bb9`
+  and `27a133ca663cda17a180a40610e8b0b44e2a42f3dd7ee8281217726183e706b3`.
+- Every real-tag/ref-push/sign/attest/publish/deploy/production/
+  long-term-hermetic claim remains explicitly false. GitHub retains these
+  artifacts for 14 days; the observed expiry timestamps are one second before
+  the nominal boundary and satisfy the documented tolerance.
+- Public-source synchronization, protected closeout, live Pages/Wiki and issue
+  closure are now in progress. Rollout remains 35/59, phase work 35/51, Phase 6
+  6/7, and production false.
+
+`TRUEREPUBLIC GH-273 ACTIVE — HOSTED PAIR VALID — PUBLIC CLOSEOUT IN PROGRESS`
+
+---
+
+## 2026-09-01 EEST GH-273 closeout review — Exact SHA Remediation
+
+- CodeRabbit's sole closeout finding correctly identified that the Pages
+  landing used the abbreviated commit `3b0d163` while every audit source used
+  the exact 40-character commit identity.
+- Sol replaced the abbreviated value with
+  `3b0d1639bb40c7df6733dd13a86252e1c8c9efd3`. No evidence, rollout, release or
+  production claim changed. A fresh protected exact-head matrix is required
+  before merge.
+
+`TRUEREPUBLIC GH-273 ACTIVE — CLOSEOUT SHA PRECISION FIXED — RERUN REQUIRED`
+
+---

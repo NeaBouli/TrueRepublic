@@ -1,5 +1,18 @@
 # Project State
 
+GH-273 implementation PR #274 is merged as exact main
+`3b0d1639bb40c7df6733dd13a86252e1c8c9efd3`; all exact-main workflows passed.
+Protected baseline run 33465480131 and comparison run 33466167289 succeeded on
+that unchanged commit. Pair artifact 9785138134 is valid with zero violations,
+contains only the eight declared bounded JSON files, and matches both daemon
+plus all four OCI identities. Public closeout, final exact-main Pages/Wiki and
+ticket synchronization remain. Rollout stays 35/59, phase work 35/51, Phase 6
+6/7, production false; every promotion and long-term-hermetic claim is false.
+
+Updated: 2026-09-01 EEST
+
+---
+
 GH-273 protected review remediation is independently approved with no P0-P2.
 The final post-review standard arithmetic is 2,319 = 1,974 Go + 26 Rust + 319
 client, including root/application 232 and cross-run evidence 107; final

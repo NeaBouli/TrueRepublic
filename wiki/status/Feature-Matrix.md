@@ -15,7 +15,7 @@ architected surface area must not be interpreted as rollout approval.
 | GH-212 offline release evidence | Exact checksums, metadata, normalized SBOM and unsigned provenance contract | Signing, authenticated provenance and publication |
 | GH-258 repeated OCI evidence | Native same-job daemon/client index, manifest, config and ordered-layer parity | Cross-time runner/BuildKit/APT hermeticity |
 | GH-261 candidate evidence | Exact commit plus simulated-tag binding across both daemon records and four OCI identities; metadata/JSON only; all promotion claims false | Real tag, signed/published artifacts, deployment and go/no-go |
-| GH-273 cross-run rebuild evidence | Strict comparison of two distinct protected executions of one exact commit across both daemon and all four ordered OCI identities; bounded JSON only | Long-term hermeticity, real tag, signing/attestation, publication, deployment and go/no-go |
+| GH-273 cross-run rebuild evidence | Hosted runs 33465480131 and 33466167289 strictly matched both daemon and all four ordered OCI identities on exact commit `3b0d1639bb40c7df6733dd13a86252e1c8c9efd3`; bounded JSON only | Long-term hermeticity, real tag, signing/attestation, publication, deployment and go/no-go |
 
 | ZKP compatibility control | Verified boundary | Still open |
 |---|---|---|

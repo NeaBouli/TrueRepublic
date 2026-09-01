@@ -1,6 +1,6 @@
 # Recovery Queue
 
-## In progress - GH-273 cross-run exact-commit rebuild comparison
+## Completed - GH-273 cross-run exact-commit rebuild comparison
 
 - [x] Define a strict versioned cross-run contract and offline verifier that
   bind two distinct workflow executions to the same repository, workflow,
@@ -14,8 +14,8 @@
 - [x] Complete Kimi implementation plus final review and Sol security/integration
   review and the complete local gates. Claude's bounded read-only audit produced
   no result because its configured local budget was exhausted.
-- [ ] Pass protected exact-head review, merge and verify exact main.
-- [ ] Execute baseline and comparison dispatches on one exact main commit,
+- [x] Pass protected exact-head review, merge and verify exact main.
+- [x] Execute baseline and comparison dispatches on one exact main commit,
   publish only truthful pair-scoped evidence, synchronize GitHub/public docs,
   Wiki/Pages and both Bridges, then close GH-273.
 

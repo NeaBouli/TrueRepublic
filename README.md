@@ -289,9 +289,13 @@ approval. Current evidence, risks, and commands are maintained in
   digests. GH-261 aggregates their digest reports with both deterministic daemon
   metadata records under one exact commit and simulated-tag manifest. GH-273
   adds a strict metadata-only comparison capability for two distinct protected
-  executions of the unchanged exact commit. It proves only a recorded pair;
-  long-term hermetic rebuilds, a real tag, signing, attestation, publication and
-  staged rollout remain open.
+  executions of the unchanged exact commit. Hosted runs
+  [33465480131](https://github.com/NeaBouli/TrueRepublic/actions/runs/33465480131)
+  and [33466167289](https://github.com/NeaBouli/TrueRepublic/actions/runs/33466167289)
+  verified both daemon identities and all four OCI identities on exact commit
+  `3b0d1639bb40c7df6733dd13a86252e1c8c9efd3`. This proves only that recorded
+  pair; long-term hermetic rebuilds, a real tag, signing, attestation,
+  publication and staged rollout remain open.
 - ✅ Maintained-client production build remains within budget at 355.17 kB
   total JavaScript gzip, with a 71.16 kB entry and 4.94 kB largest lazy route
 - ✅ Core blockchain compiles and runs
