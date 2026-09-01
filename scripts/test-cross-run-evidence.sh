@@ -100,7 +100,19 @@ expect_generator_failure "a missing input directory" --baseline-dir "$tmp/does-n
 expect_generator_failure "duplicate input directories" --current-dir "$tmp/in-main-baseline"
 expect_generator_failure "aliased duplicate input directories" --current-dir "$tmp/in-main-baseline/."
 mkdir "$tmp/already-exists"
-expect_generator_failure "an existing output directory" --output-dir "$tmp/already-exists"
+printf 'preserve\n' >"$tmp/already-exists/sentinel"
+if generate "$tmp/unused-existing-output" --output-dir "$tmp/already-exists" >/dev/null 2>&1; then
+  echo "cross-run generator accepted an existing output directory" >&2
+  exit 1
+fi
+[[ -f "$tmp/already-exists/sentinel" && $(find "$tmp/already-exists" -mindepth 1 -maxdepth 1 | wc -l | tr -d ' ') -eq 1 ]] || {
+  echo "cross-run generator mutated the effective existing output directory" >&2
+  exit 1
+}
+[[ ! -e "$tmp/unused-existing-output" ]] || {
+  echo "cross-run generator created the shadowed output directory" >&2
+  exit 1
+}
 expect_generator_failure "identical run IDs" --current-run-id "$BASELINE_RUN_ID"
 expect_generator_failure "a zero run ID" --baseline-run-id 0
 expect_generator_failure "a malformed run ID" --baseline-run-id run-1

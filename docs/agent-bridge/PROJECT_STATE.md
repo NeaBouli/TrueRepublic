@@ -1,5 +1,17 @@
 # Project State
 
+GH-273 protected review remediation is independently approved with no P0-P2.
+The final post-review standard arithmetic is 2,319 = 1,974 Go + 26 Rust + 319
+client, including root/application 232 and cross-run evidence 107; final
+Cross-run Race/Coverage is 86.5%. Full corrected local Go, focused contracts,
+YAML, docs, license and diff gates pass. Corrected push, fresh protected review,
+merge and the two unchanged-exact-main dispatches remain; no hosted pair is
+claimed. Rollout remains 35/59 and production false.
+
+Updated: 2026-09-01 EEST
+
+---
+
 GH-273 is fully green locally and has independent Kimi APPROVE with no P0-P2.
 All complete Go, client, Rust, security, vulnerability, secret, contract,
 coverage/fuzz, docs, license and diff gates pass. The maintained Fixture REUSE

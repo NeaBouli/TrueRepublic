@@ -402,14 +402,20 @@ jobs:
           ./scripts/verify-candidate-evidence.sh \
             --evidence "${RUNNER_TEMP}/candidate-evidence" \
             --output json | tee "${RUNNER_TEMP}/candidate-evidence-report.json"
+          mkdir "${RUNNER_TEMP}/candidate-artifact"
+          cp "${RUNNER_TEMP}/candidate-evidence/candidate-evidence.json" \
+            "${RUNNER_TEMP}/candidate-artifact/candidate-evidence.json"
+          cp "${RUNNER_TEMP}/candidate-evidence-report.json" \
+            "${RUNNER_TEMP}/candidate-artifact/candidate-evidence-report.json"
+          test "$(find "${RUNNER_TEMP}/candidate-artifact" -mindepth 1 -maxdepth 1 -type f | wc -l)" -eq 2
 
       - name: Upload repository-only candidate evidence
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: truerepublic-candidate-${{ github.sha }}
           path: |
-            ${{ runner.temp }}/candidate-evidence/candidate-evidence.json
-            ${{ runner.temp }}/candidate-evidence-report.json
+            ${{ runner.temp }}/candidate-artifact/candidate-evidence.json
+            ${{ runner.temp }}/candidate-artifact/candidate-evidence-report.json
           if-no-files-found: error
           retention-days: 14
 

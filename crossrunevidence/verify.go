@@ -330,7 +330,10 @@ func validateArtifact(fail func(string), side string, artifact ArtifactBinding, 
 		fail(prefix + "timestamps are malformed")
 		return
 	}
-	if expires.Sub(created) != retentionSeconds*time.Second {
+	retention := expires.Sub(created)
+	want := retentionSeconds * time.Second
+	tolerance := retentionTolerance * time.Second
+	if retention < want-tolerance || retention > want+tolerance {
 		fail(prefix + "retention window mismatch")
 	}
 }
@@ -413,8 +416,7 @@ func validateCandidateSide(fail func(string), side, candidateContractHash, commi
 }
 
 func candidateClaimsFalse(claims candidate.Claims) bool {
-	return !claims.RealTagCreated && !claims.RefPushed && !claims.Signed &&
-		!claims.Published && !claims.Deployed && !claims.Production
+	return claims.ExplicitFalse()
 }
 
 func countOCITargets(manifest candidate.Manifest) int {

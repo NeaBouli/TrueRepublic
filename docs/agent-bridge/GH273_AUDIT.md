@@ -32,14 +32,23 @@ long-term hermeticity.
 - Kimi's independent final read-only review returned **APPROVE**, with no P0,
   P1 or P2 finding. Its sole P3 observation was closed by adding the maintained
   Candidate/Cross-run fixtures to the Apache-2.0 REUSE annotation.
+- Protected review of PR #274 then identified the candidate-artifact layout,
+  omitted-candidate-claims, timestamp-tolerance and premature Pages wording
+  defects plus three test/inspection hardenings. Sol corrected all confirmed
+  findings. The invalid-claims current receipt intentionally remains
+  `in_progress` with an empty conclusion because that is the workflow-bound
+  verifier state while the comparison run executes.
+- Kimi independently re-reviewed the exact remediation and returned
+  **APPROVE**, with no P0, P1 or P2 finding. Its focused package, repository,
+  script, YAML and diff reruns all passed.
 
 ## Local evidence
 
 - `make verify`: Go package selector, build, Vet and complete Race/Coverage pass.
-- Standard enumeration: 1,969 Go cases, including root/application 231 and
-  `crossrunevidence` 103. With 26 Rust and 319 maintained-client cases, the
-  authoritative standard total is 2,314.
-- `crossrunevidence` coverage: 86.1%.
+- Final post-review enumeration: 1,974 Go cases, including root/application 232
+  and `crossrunevidence` 107. With 26 Rust and 319 maintained-client cases, the
+  authoritative standard total is 2,319.
+- `crossrunevidence` coverage: 86.5%.
 - Client: `npm ci`, lint, 319 tests, production build/budget, and high-level
   audit pass with zero vulnerabilities.
 - Rust: format, Clippy with warnings denied, 26 tests pass; Cargo audit reports

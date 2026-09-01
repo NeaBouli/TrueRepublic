@@ -28,6 +28,7 @@ const (
 	maxRunAttempt        = 10000
 	maxArtifactID        = 1 << 53
 	retentionSeconds     = RetentionDays * 24 * 60 * 60
+	retentionTolerance   = 60
 	candidateArtifactPfx = "truerepublic-candidate-"
 )
 

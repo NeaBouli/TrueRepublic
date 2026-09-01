@@ -104,7 +104,9 @@ func (c *Claims) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-func (c Claims) explicitFalse() bool {
+// ExplicitFalse reports whether every required candidate claim was present in
+// the decoded JSON object and explicitly set to false.
+func (c Claims) ExplicitFalse() bool {
 	return c.present && !c.RealTagCreated && !c.RefPushed && !c.Signed && !c.Published && !c.Deployed && !c.Production
 }
 

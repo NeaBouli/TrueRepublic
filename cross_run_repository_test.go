@@ -76,13 +76,19 @@ func TestCrossRunRepositoryContract(t *testing.T) {
 	if violations := crossRunRepositoryViolations(contract, makefile, scripts, cli, workflow, candidateHash); len(violations) != 0 {
 		t.Fatalf("cross-run repository contract violations:\n- %s", strings.Join(violations, "\n- "))
 	}
+	t.Run("isolates the cross-run job from later siblings", func(t *testing.T) {
+		withSibling := workflow + "\n  future-release-job:\n    permissions:\n      contents: write\n"
+		if violations := crossRunRepositoryViolations(contract, makefile, scripts, cli, withSibling, candidateHash); len(violations) != 0 {
+			t.Fatalf("later sibling leaked into cross-run validation:\n- %s", strings.Join(violations, "\n- "))
+		}
+	})
 
 	mutateJob := func(change func(string) string) string {
-		index := strings.Index(workflow, crossRunJobMarker)
-		if index < 0 {
+		start, end, ok := crossRunJobBounds(workflow)
+		if !ok {
 			t.Fatal("cross-run job missing")
 		}
-		return workflow[:index] + change(workflow[index:])
+		return workflow[:start] + change(workflow[start:end]) + workflow[end:]
 	}
 	rejectJobMutation := func(name string, change func(string) string) {
 		t.Helper()
@@ -318,12 +324,12 @@ func crossRunRepositoryViolations(contract repositoryCrossRunContract, makefile 
 		}
 	}
 
-	index := strings.Index(workflow, crossRunJobMarker)
-	if index < 0 {
+	start, end, ok := crossRunJobBounds(workflow)
+	if !ok {
 		violations = append(violations, "cross-run comparison job is missing")
 		return violations
 	}
-	job := workflow[index:]
+	job := workflow[start:end]
 	for _, required := range []string{
 		"needs: [candidate-evidence]",
 		"if: github.event_name == 'workflow_dispatch' && github.event.inputs.baseline_run_id != ''",
@@ -410,6 +416,29 @@ func crossRunRepositoryViolations(contract repositoryCrossRunContract, makefile 
 		violations = append(violations, "cross-run comparison upload is missing")
 	}
 	return violations
+}
+
+// crossRunJobBounds isolates the cross-run job from any later top-level job,
+// so security assertions cannot be satisfied or tripped by a sibling block.
+func crossRunJobBounds(workflow string) (int, int, bool) {
+	start := strings.Index(workflow, crossRunJobMarker)
+	if start < 0 {
+		return 0, 0, false
+	}
+	rest := workflow[start+len(crossRunJobMarker):]
+	offset := len(crossRunJobMarker)
+	for _, line := range strings.SplitAfter(rest, "\n") {
+		offset += len(line)
+		trimmed := strings.TrimSuffix(strings.TrimSuffix(line, "\n"), "\r")
+		if !strings.HasPrefix(trimmed, "  ") || strings.HasPrefix(trimmed, "   ") || !strings.HasSuffix(trimmed, ":") {
+			continue
+		}
+		key := strings.TrimSuffix(strings.TrimSpace(trimmed), ":")
+		if key != "" && !strings.ContainsAny(key, " \t") {
+			return start, start + offset - len(line), true
+		}
+	}
+	return start, len(workflow), true
 }
 
 // crossRunUploadBlocks extracts the step bodies of every upload-artifact use

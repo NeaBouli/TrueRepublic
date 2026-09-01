@@ -58,6 +58,31 @@ func TestValidEvidence(t *testing.T) {
 	}
 }
 
+func TestArtifactRetentionTolerance(t *testing.T) {
+	t.Run("accepts narrow GitHub timestamp skew", func(t *testing.T) {
+		dir, manifest := makeEvidence(t)
+		mutateReceipt(t, dir, &manifest, "baseline", func(v map[string]any) {
+			v["artifact"].(map[string]any)["expires_at"] = "2026-09-13T10:20:59Z"
+		})
+		writeJSON(t, filepath.Join(dir, "cross-run-evidence.json"), manifest)
+		if report := Compare(dir, testContract, testCandidateContract, testExpected()); !report.Valid {
+			t.Fatalf("narrow timestamp skew rejected: %v", report.Violations)
+		}
+	})
+
+	t.Run("rejects timestamp skew outside tolerance", func(t *testing.T) {
+		dir, manifest := makeEvidence(t)
+		mutateReceipt(t, dir, &manifest, "baseline", func(v map[string]any) {
+			v["artifact"].(map[string]any)["expires_at"] = "2026-09-13T10:21:01Z"
+		})
+		writeJSON(t, filepath.Join(dir, "cross-run-evidence.json"), manifest)
+		report := Compare(dir, testContract, testCandidateContract, testExpected())
+		if report.Valid || !strings.Contains(strings.Join(report.Violations, "\n"), "retention window mismatch") {
+			t.Fatalf("timestamp skew outside tolerance was not rejected precisely: %v", report.Violations)
+		}
+	})
+}
+
 func TestCommittedFixtures(t *testing.T) {
 	fixtures := filepath.Join("..", "testdata", "crossrunevidence")
 	expected := testExpected()
@@ -186,6 +211,9 @@ func TestAdversarialEvidenceRejected(t *testing.T) {
 			mutateCandidateManifest(t, dir, m, "current", func(v map[string]any) {
 				v["source"].(map[string]any)["commit"] = strings.Repeat("f", 40)
 			})
+		}},
+		{"candidate claims omitted", func(t *testing.T, dir string, m *Manifest) {
+			mutateCandidateManifest(t, dir, m, "current", func(v map[string]any) { delete(v, "claims") })
 		}},
 		{"candidate tag drift", func(t *testing.T, dir string, m *Manifest) {
 			mutateCandidateManifest(t, dir, m, "current", func(v map[string]any) {
@@ -498,8 +526,9 @@ func TestStrictJSONBoundary(t *testing.T) {
 	var v struct {
 		Schema string `json:"schema"`
 	}
-	if parseBytes(make([]byte, MaxJSONBytes+1), &v) == nil {
-		t.Fatal("oversized JSON accepted")
+	oversized := []byte(`{"schema":"` + strings.Repeat("x", MaxJSONBytes) + `"}`)
+	if err := parseBytes(oversized, &v); err == nil || !strings.Contains(err.Error(), "byte limit") {
+		t.Fatalf("oversized valid JSON did not hit the byte limit: %v", err)
 	}
 	var claims Claims
 	if parseBytes([]byte(`{"real_tag_created":false,"ref_pushed":false,"signed":false,"attested":false,"published":false,"deployed":false,"production":false}`), &claims) == nil {

@@ -1,5 +1,18 @@
 # Action Log
 
+## 2026-09-01 - GH-273 protected review remediation passed locally
+
+- PR #274 passed 23 applicable protected technical jobs on head `95711bf`.
+  CodeRabbit then found the broken Candidate artifact layout, omitted-claims
+  acceptance and premature Pages wording plus timestamp and test hardenings.
+- Sol corrected all confirmed findings and retained the intentional current-run
+  `in_progress`/empty receipt state. Kimi independently returned APPROVE with no
+  P0-P2 and reproduced focused package, script, repository, YAML and diff gates.
+- Full corrected Build/Vet/Race/Coverage passes. Fresh enumeration is 1,974 Go
+  (root 232, cross-run evidence 107) and 2,319 total with 26 Rust plus 319
+  maintained-client; Cross-run coverage is 86.5%. Corrected push and protected
+  rerun remain before merge and the two exact-main dispatches.
+
 ## 2026-09-01 - GH-273 full local gates and final review passed
 
 - Complete Go Build/Vet/Race/Coverage, client, Rust, security, vulnerability,
