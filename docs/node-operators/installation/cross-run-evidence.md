@@ -67,6 +67,28 @@ The retained comparison artifact contains only the seven bounded evidence JSON
 members and the verifier report. A successful hosted pair proves equality only
 for those two recorded runs and that exact commit.
 
+## Recorded hosted qualification
+
+The repository records one successful protected pair on exact commit
+`3b0d1639bb40c7df6733dd13a86252e1c8c9efd3`:
+
+- baseline run
+  [33465480131](https://github.com/NeaBouli/TrueRepublic/actions/runs/33465480131),
+  candidate artifact `9784898032`;
+- comparison run
+  [33466167289](https://github.com/NeaBouli/TrueRepublic/actions/runs/33466167289),
+  candidate artifact `9785126589` and pair artifact `9785138134`;
+- report schema `truerepublic.cross-run-report/v1`, valid with zero violations,
+  two daemon targets and four OCI targets;
+- byte-identical baseline/current candidate manifests and reports, with
+  SHA-256 `9a1aa898fa078e3938daae7d15ee48ea529b44ae7bd8456444e2afd13e2c5bb9`
+  and `27a133ca663cda17a180a40610e8b0b44e2a42f3dd7ee8281217726183e706b3`;
+- all eight required false claims remain explicit and false.
+
+The GitHub artifact ZIP digests differ because the archives contain
+run-specific packaging metadata; GH-273 compares the verified inner candidate
+identities, not ZIP container bytes. All three artifacts use 14-day retention.
+
 ## Security and rollout boundary
 
 This capability does not make the builds long-term hermetic. GitHub runner

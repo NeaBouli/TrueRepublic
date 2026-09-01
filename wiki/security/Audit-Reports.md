@@ -19,7 +19,7 @@ The repository contains scoped, evidence-backed reports for the ordered stack:
 - PR #22 — ZKP authentication and replay resistance
 - PR #23 — persistent PoD node lifecycle
 
-Reports live under [`docs/agent-bridge/`](https://github.com/NeaBouli/TrueRepublic/tree/fix/GH-8-docs-final/docs/agent-bridge).
+Reports live under [`docs/agent-bridge/`](https://github.com/NeaBouli/TrueRepublic/tree/main/docs/agent-bridge).
 They document local and GitHub evidence but do not substitute for independent
 review.
 

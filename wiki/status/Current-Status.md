@@ -58,10 +58,14 @@
   metadata/JSON only and requires every tag/push/sign/publish/deploy/production
   claim to remain false.
 - GH-273 adds a strict bounded-JSON comparison capability for two distinct
-  protected runs of the unchanged exact commit. It compares both daemon and all
-  four ordered OCI identities; the result is pair-scoped and every tag,
-  ref-push, sign, attest, publish, deploy, production and long-term-hermetic
-  claim remains false.
+  protected runs of the unchanged exact commit. Hosted baseline run
+  [33465480131](https://github.com/NeaBouli/TrueRepublic/actions/runs/33465480131)
+  and comparison run
+  [33466167289](https://github.com/NeaBouli/TrueRepublic/actions/runs/33466167289)
+  matched both daemon and all four ordered OCI identities on exact commit
+  `3b0d1639bb40c7df6733dd13a86252e1c8c9efd3`. The result is pair-scoped and
+  every tag, ref-push, sign, attest, publish, deploy, production and
+  long-term-hermetic claim remains false.
 - Community-governed Apache-2.0 publication is recorded on
   [GH-219](https://github.com/NeaBouli/TrueRepublic/issues/219#issuecomment-5423337355).
   Individual contributors retain copyright; “TrueRepublic contributors” is the

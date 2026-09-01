@@ -1,12 +1,14 @@
 # GH-273 audit — cross-run exact-commit rebuild evidence
 
-Status: implementation locally verified; protected PR/merge and hosted pair
-pending.
+Status: implementation merged and hosted exact-commit pair verified; public
+closeout in progress.
 
 ## Scope and base
 
 - Issue: [GH-273](https://github.com/NeaBouli/TrueRepublic/issues/273)
-- Branch: `feat/GH-273-cross-run-evidence`
+- Implementation PR: [#274](https://github.com/NeaBouli/TrueRepublic/pull/274)
+- Final implementation head: `1e7635f4ae4e16cfe080a6c8229a30596b663f4c`
+- Exact merge/main commit: `3b0d1639bb40c7df6733dd13a86252e1c8c9efd3`
 - Exact base: `f13c1148b3ed979b4e65c0fe36e559d03312bf2d`
 - Rollout remains 35/59; phase work 35/51; Phase 6 6/7;
   `production_ready=false`.
@@ -60,10 +62,43 @@ long-term hermeticity.
   install lifecycle, release compatibility, rollout genesis, coverage, quality/
   fuzz, docs consistency, license policy/negative fixtures and diff gates pass.
 
-## Hosted evidence pending
+## Protected merge and exact-main evidence
 
-The implementation must still pass protected exact-head review and merge. Only
-then may two distinct `workflow_dispatch` executions run on unchanged exact
-`main`: first without a baseline, second with the successful first run ID. The
-exact commit, run IDs, artifact IDs/digests and pair report will be appended
-here after both runs succeed. Until then no hosted pair parity is claimed.
+- PR #274 passed its complete applicable exact-head matrix with all review
+  threads resolved and merged as
+  `3b0d1639bb40c7df6733dd13a86252e1c8c9efd3`.
+- Exact-main Go `33464556692`, Reproducible Linux Daemon `33464556701`, Docs
+  `33464556713`, Security `33464556731`, and Pages `33464555897` succeeded.
+
+## Hosted exact-commit pair
+
+- Baseline run
+  [33465480131](https://github.com/NeaBouli/TrueRepublic/actions/runs/33465480131):
+  successful protected `workflow_dispatch` on exact main, candidate artifact
+  `9784898032`, digest
+  `sha256:64a3a4dafa6ec1bacbd377d46855ee65f7e38dd21a11804d06017e6be4410514`.
+- Comparison run
+  [33466167289](https://github.com/NeaBouli/TrueRepublic/actions/runs/33466167289):
+  successful protected `workflow_dispatch` on the same exact main, candidate
+  artifact `9785126589`, digest
+  `sha256:8a2f19714df68d160ec17ff7a0f088fbb328fb5f687326d9bc22509e4d737dfc`.
+- Pair artifact `9785138134`, digest
+  `sha256:cb646d73943223699705d01a904ea2b043deb37cd1aaddfe613185780ca24292`,
+  contains exactly `cross-run-report.json` plus the seven declared evidence
+  JSON members. No undeclared member or payload exists.
+- Report schema `truerepublic.cross-run-report/v1` is valid with zero
+  violations. Repository, workflow, branch, event and exact commit match; both
+  daemon targets and all four OCI target identity vectors match.
+- Baseline/current candidate manifests are byte-identical with SHA-256
+  `9a1aa898fa078e3938daae7d15ee48ea529b44ae7bd8456444e2afd13e2c5bb9`;
+  reports are byte-identical with SHA-256
+  `27a133ca663cda17a180a40610e8b0b44e2a42f3dd7ee8281217726183e706b3`.
+- All real-tag, ref-push, signing, attestation, publication, deployment,
+  production and long-term-hermetic claims are explicitly false. The 14-day
+  hosted expiry is one second before the nominal timestamp boundary in both
+  runs, within the contract's documented 60-second GitHub tolerance.
+
+The different candidate artifact ZIP digests reflect run-specific archive
+packaging. GH-273 deliberately compares the verified inner candidate
+identities. This pair does not prove long-term hermeticity or complete any
+tagged/signed/published/deployed release gate; rollout remains unchanged.

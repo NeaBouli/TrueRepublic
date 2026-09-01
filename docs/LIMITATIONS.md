@@ -222,6 +222,16 @@ not independent authentication of GitHub or a general cross-time guarantee;
 all tag, ref-push, signing, attestation, publication, deployment, production
 and long-term-hermetic claims remain false.
 
+The recorded hosted qualification uses baseline run
+[33465480131](https://github.com/NeaBouli/TrueRepublic/actions/runs/33465480131)
+and comparison run
+[33466167289](https://github.com/NeaBouli/TrueRepublic/actions/runs/33466167289)
+on exact commit `3b0d1639bb40c7df6733dd13a86252e1c8c9efd3`. Pair artifact
+`9785138134` is valid with zero violations and matches both daemon targets and
+all four OCI target identities. It retains exactly the declared bounded JSON
+evidence plus its report for 14 days; it does not retain build payloads or
+extend the claim beyond this pair.
+
 These controls can prove same-commit identity parity within one job and across
 one specifically recorded pair of protected runs. They do not establish a
 long-term hermetic rebuild: GitHub runner images and their BuildKit versions

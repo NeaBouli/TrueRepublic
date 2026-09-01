@@ -1,5 +1,19 @@
 # Action Log
 
+## 2026-09-01 - GH-273 implementation and hosted pair verified
+
+- PR #274 merged as exact main
+  `3b0d1639bb40c7df6733dd13a86252e1c8c9efd3`; exact-main Go, reproducible
+  daemon, Docs, Security and Pages workflows all passed.
+- Protected baseline `33465480131` and comparison `33466167289` succeeded on
+  that unchanged commit. Pair artifact `9785138134` is valid with zero
+  violations, contains exactly the seven evidence JSON members plus report,
+  and matches both daemon plus all four OCI identities.
+- Inner candidate manifest/report pairs are byte-identical. All tag, ref-push,
+  sign, attest, publish, deploy, production and long-term-hermetic claims stay
+  false. Public closeout and final live-source synchronization are next;
+  rollout remains 35/59.
+
 ## 2026-09-01 - GH-273 protected review remediation passed locally
 
 - PR #274 passed 23 applicable protected technical jobs on head `95711bf`.
