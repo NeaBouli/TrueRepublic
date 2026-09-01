@@ -1,5 +1,56 @@
 # Action Log
 
+## 2026-09-01 - GH-269 maintained-client independent review approved
+
+- Kimi K3 returned APPROVE with no P0/P1/P2 finding after independently
+  matching PR #265's exact package and lockfile delta, all 14 changed registry
+  integrity values, MIT licenses, unchanged package count, peer/engine
+  constraints, test arithmetic and the unchanged 35/59 rollout boundary.
+- Reviewer reruns passed Node policy, Vitest, lint, build/budgets, audit, docs,
+  license and diff hygiene. The review host lacks `gitleaks`; protected secret
+  scanning, Linux WebKit and real chain integration therefore remain mandatory
+  exact-head merge gates.
+- No code or dependency correction was requested. Commit/push, protected
+  exact-head verification, merge, exact-main verification and stale #265
+  closure remain.
+
+## 2026-09-01 - GH-269 maintained-client integration local PASS
+
+- `npm ci` resolves exactly user-event 14.6.6, Vite React plugin 6.1.1,
+  happy-dom 20.11.12 and typescript-eslint 8.68.0. All are dev-only/MIT;
+  expected typescript-eslint internals move in lockstep, no axios package is
+  present, and `npm audit` reports zero vulnerabilities.
+- PASS: 10 Node policy tests; 309 Vitest cases plus four expected skips; ESLint;
+  production TypeScript/Vite build and unchanged bundle budget; ZKP/WASM client,
+  native verifier, keeper reward/replay and strict-handoff tests; docs
+  consistency; Apache-2.0 policy; secret scan; diff hygiene.
+- After installing the exact Playwright browser revisions, Chromium desktop,
+  Firefox desktop and Chromium mobile pass 26 cases with one expected mobile
+  keyboard skip. This macOS 12 host receives a frozen incompatible WebKit port,
+  so its 18 cases fail before page execution on unsupported protocol commands;
+  protected Linux browser CI remains mandatory. Local chain integration also
+  records its three expected opt-in skips without a node; protected CI owns the
+  real chain job.
+- Final independent Kimi review and the complete exact-head protected workflow
+  set remain before merge. Rollout remains 35/59 and production false; no tag,
+  release, signing, publication, deployment, key/fund or production action.
+
+## 2026-09-01 - GH-269 maintained-client integration started
+
+- PR #270 passed all 30 exact-head contexts and merged the gRPC slice as exact
+  main `c157b1e`; exact-main Docs, Client, Go, Security, Reproducible Linux
+  Daemon, Pages and dependency graph/update workflows all passed. Original
+  #264 is closed as superseded.
+- Branch `chore/GH-269-client-reconciliation` starts from that exact main and
+  carries only PR #265's four development updates: user-event 14.6.6,
+  Vite React plugin 6.1.1, happy-dom 20.11.12 and typescript-eslint 8.68.0
+  plus its expected version-locked internal packages.
+- Kimi K3's independent preflight found no P0/P1/P2 issue and verified expected
+  dev-only MIT scope and registry integrity. Sol owns exact lockfile review,
+  all client/browser/chain/WASM/security gates, protected PR and closeout.
+- No application runtime, rollout, release, tag, signing, publication,
+  deployment, production, key or fund action is included.
+
 ## 2026-09-01 - GH-269 gRPC integration local PASS
 
 - Exact upstream gRPC v1.82.2 source, sums, unchanged module requirements and
