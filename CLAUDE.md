@@ -12,7 +12,7 @@ source of current security or production-readiness claims.
 - Recovery epic: GitHub issue #4
 - Continuous handoff: `BRIDGE.md` and `docs/agent-bridge/`
 - Authoritative machine-readable status: `docs/status.json`
-- Verified recovery total: 2,187 standard-suite cases (1,842 Go, 26 Rust, 319
+- Verified recovery total: 2,319 standard-suite cases (1,974 Go, 26 Rust, 319
   maintained-client); run the separate opt-in IBC recovery gate with
   `make ibc-two-chain`
 - PNYX cap: 21,000,000 PNYX = 21,000,000,000,000 `upnyx`

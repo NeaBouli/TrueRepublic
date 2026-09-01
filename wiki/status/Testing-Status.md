@@ -1,14 +1,15 @@
 # Testing Status
 
-The current **v0.4.0 recovery** source of truth records **2,187 verified
+The current **v0.4.0 recovery** source of truth records **2,319 verified
 standard-suite cases**. This arithmetic excludes the separately run opt-in
 GH-266 Go/WASM-to-keeper replay, GH-175/GH-178/GH-181 IBC two-chain, and
 GH-184 governed-upgrade gates.
 
 | Suite | Passing cases |
 |---|---:|
-| Go root/application | 207 |
+| Go root/application | 232 |
 | Go candidate evidence | 77 |
+| Go cross-run evidence | 107 |
 | Go rollout genesis evidence | 68 |
 | Go capacity policy | 48 |
 | Go deployment evidence | 71 |
@@ -29,12 +30,12 @@ GH-184 governed-upgrade gates.
 | Go OCI evidence | 35 |
 | Rust/CosmWasm | 26 |
 | Maintained client | 319 |
-| **Total** | **2,187** |
+| **Total** | **2,319** |
 
 The published total is the reproducible standard-suite baseline; the opt-in
 GH-175/GH-178/GH-181 IBC recovery, GH-184 upgrade, and GH-206/GH-266 Go/WASM
 native-verifier plus keeper-replay (`./scripts/test-zkp-wasm-client.sh`) gates are additional
-evidence and are not counted in the 1,842 Go subtotal.
+evidence and are not counted in the 1,974 Go subtotal.
 
 ## Current Go coverage
 
@@ -42,6 +43,7 @@ evidence and are not counted in the 1,842 Go subtotal.
 |---|---:|
 | root/application | 73.6% |
 | candidate evidence | 87.3% |
+| cross-run evidence | 86.5% |
 | rollout genesis evidence | 84.2% |
 | capacity policy | 85.5% |
 | deployment evidence | 90.8% |
@@ -52,7 +54,7 @@ evidence and are not counted in the 1,842 Go subtotal.
 | observability | 80.3% |
 | OCI evidence | 81.3% |
 | release evidence | 74.5% |
-| install lifecycle | 77.2% |
+| install lifecycle | 77.1% |
 | token | 95.6% |
 | topology policy | 85.8% |
 | treasury | 97.0% |
@@ -118,7 +120,7 @@ proof must pay the bound recipient exactly once through
 recipient substitution, blocked/noncanonical recipients, and malformed
 handoffs must leave nullifier, rating, treasury, escrow, and balances unchanged.
 Because these tests skip in the ordinary package suite and run only in the
-dedicated gate, they add evidence without changing the 1,842 Go subtotal.
+dedicated gate, they add evidence without changing the 1,974 Go subtotal.
 
 Green tests are recovery evidence, not an external security or production
 approval. See [Current Status](Current-Status) for remaining gates.

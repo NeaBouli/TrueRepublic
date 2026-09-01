@@ -198,7 +198,7 @@ func VerifyDirectory(evidenceDir, contractPath string) Report {
 	if manifest.ContractSHA256 != contractHash {
 		fail("candidate contract digest mismatch")
 	}
-	if !manifest.Claims.explicitFalse() {
+	if !manifest.Claims.ExplicitFalse() {
 		fail("candidate status claims must remain false")
 	}
 

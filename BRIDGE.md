@@ -8653,3 +8653,141 @@ exclusion, CI wiring, and documentation boundaries.
 `TRUEREPUBLIC GH-269 DONE — EXACT MAIN f024684 VERIFIED`
 
 ---
+
+## 2026-09-01 EEST GH-273 cross-run rebuild comparison → In Progress
+
+- **Issue:** [GH-273](https://github.com/NeaBouli/TrueRepublic/issues/273)
+- **Branch/base:** `feat/GH-273-cross-run-evidence` from exact clean main
+  `f13c1148b3ed979b4e65c0fe36e559d03312bf2d` after GH-269 closeout.
+- **Scope:** add a repository-only, metadata/digest-only fail-closed comparison
+  of two distinct protected workflow executions on the same exact commit,
+  building on GH-258 and GH-261.
+- **Architecture:** a versioned contract and offline verifier bind repository,
+  workflow, main branch, event, run identity, exact commit, candidate manifest
+  and report plus all two binary and four OCI digest identities. A separate
+  optional workflow-dispatch comparison job receives only `actions: read` and
+  `contents: read`.
+- **Roles:** Kimi K3 owns the bounded implementation core without Bridge/public
+  docs; Claude Code may perform one small read-only workflow/fixture audit; Sol
+  owns architecture, security/privilege decisions, integration, all tests,
+  external writes, merge, two-run execution and closure.
+- **Truth boundary:** rollout remains 35/59 and production false. Floating
+  runner/BuildKit/APT inputs keep long-term hermeticity unproven. No real tag,
+  ref push, signing, attestation, publication, deployment, key/fund,
+  go/no-go or production action is allowed.
+
+`TRUEREPUBLIC GH-273 ACTIVE — EXACT BASE f13c114 — KIMI CORE NEXT`
+
+---
+
+## 2026-09-01 EEST GH-273 implementation + Sol integration → In Progress
+
+- Kimi K3 implemented the bounded contract, strict Go verifier/CLI, generator,
+  verifier and adversarial test scripts, committed fixtures, Make target,
+  semantic workflow mutation contract and least-privilege comparison job. Kimi
+  changed no Bridge/public documentation and performed no external action.
+- Kimi focused results: new package/CLI, Make contract, all root repository
+  contracts, existing candidate/OCI suites, Vet, formatting, YAML parse,
+  consistency and diff checks passed. Claude Code's earlier small read-only
+  audit produced no result because its configured local budget was exhausted.
+- Sol independently reviewed the complete delegated diff and strengthened two
+  points: both GitHub artifact queries now filter by exact name and require
+  `total_count == 1`; the retained comparison artifact now contains the seven
+  exact bounded JSON evidence members plus report, never binaries or OCI
+  archives.
+- Sol re-ran the focused contract and all root repository contracts after those
+  corrections. The fresh complete standard-suite enumeration passes with
+  1,969 Go cases: root/application 231 and new `crossrunevidence` 103. With 26
+  Rust and 319 maintained-client cases the truthful total is 2,314.
+- `docs/status.json`, README, FAQ, Quickstart, rollout roadmap, Pages landing,
+  Wiki, operator guides, limitations, threat model and licensing annotation are
+  synchronized to the capability. Rollout remains 35/59, phase work 35/51,
+  Phase 6 6/7 and production false; no hosted two-run pair is claimed yet.
+
+`TRUEREPUBLIC GH-273 ACTIVE — LOCAL INTEGRATION REVIEWED — FULL GATES NEXT`
+
+---
+
+## 2026-09-01 EEST GH-273 full local gates + final review → Passed
+
+- `make verify` passes complete package selection, build, Vet and Race/Coverage.
+  Root/application is 73.6%; `crossrunevidence` is 86.1%.
+- Maintained client passes clean install, lint, 319 tests, production build/
+  budget and audit with zero vulnerabilities. Rust passes format, warnings-as-
+  errors Clippy and 26 tests; Cargo audit exposes only five policy-allowed
+  warnings.
+- Pinned Staticcheck v0.7.0, Gitleaks v8.30.1, Govulncheck v1.6.0, vulnerability
+  fixtures, security contract, coverage/quality/fuzz, deterministic daemon,
+  repeated OCI, candidate, cross-run, install, compatibility, rollout genesis,
+  docs, license and diff gates all pass.
+- Kimi K3 independent final review: **APPROVE**, no P0-P2. Its only P3 note
+  concerned the pre-existing Fixture REUSE convention; Sol closed it by adding
+  maintained Candidate/Cross-run JSON fixtures to the Apache-2.0 annotation,
+  then re-ran license, consistency, Staticcheck, secret, focused and diff gates.
+- Audit record: `docs/agent-bridge/GH273_AUDIT.md`. Protected PR/merge and the
+  two unchanged-exact-main dispatches remain pending. No hosted pair is claimed.
+
+`TRUEREPUBLIC GH-273 ACTIVE — LOCAL GREEN + KIMI APPROVE — PR NEXT`
+
+---
+
+## 2026-09-01 EEST GH-273 protected review findings → Remediation In Progress
+
+- Implementation PR [#274](https://github.com/NeaBouli/TrueRepublic/pull/274)
+  passed all 23 applicable protected technical jobs on exact head `95711bf`;
+  the comparison job correctly skipped for the pull-request event.
+- CodeRabbit completed its exact-head review with five actionable and three
+  maintainability findings. Sol confirmed the artifact-layout, missing-claims,
+  timestamp-tolerance and premature Pages wording findings, plus the three
+  test/inspection hardenings. The invalid-claims current receipt remains
+  intentionally `in_progress` with an empty conclusion because that is the
+  verifier's required state while the current comparison run is executing.
+- No merge occurred. Sol is applying the confirmed corrections, will rerun the
+  complete relevant local gates, then require a fresh protected exact-head
+  matrix and zero unresolved review threads.
+- Rollout remains 35/59 and production false. No tag, release, signing,
+  publication, deployment, key/fund or production action occurred.
+
+`TRUEREPUBLIC GH-273 ACTIVE — HOSTED REVIEW REMEDIATION BEFORE MERGE`
+
+---
+
+## 2026-09-01 EEST GH-273 remediation review → Approved
+
+- Sol implemented all seven confirmed CodeRabbit corrections: a flat exact-two
+  candidate artifact, presence-aware candidate claims, a documented 60-second
+  GitHub expiration-timestamp tolerance with boundary tests, truthful pending
+  Pages wording, bounded sibling-job extraction, a real valid-JSON size-limit
+  regression and effective-output cleanup assertions.
+- The current invalid-claims receipt remains `in_progress` with empty
+  conclusion because workflow API guards and the verifier intentionally require
+  that truthful state while the current comparison run is active.
+- Focused Candidate/Cross-run package, CLI, script, repository contract, YAML,
+  docs, license and diff gates pass. Kimi K3 independently reviewed the exact
+  remediation and returned **APPROVE**, with no P0/P1/P2 finding; Kimi also
+  re-ran both packages, both repository contracts, the full Cross-run script,
+  focused adversarial cases, YAML and diff checks successfully.
+- The corrected head is not merged yet. Sol will complete the full relevant
+  local rerun, push, require a fresh protected matrix/review and resolve every
+  hosted thread before merge.
+
+`TRUEREPUBLIC GH-273 ACTIVE — REMEDIATION APPROVED — FULL RERUN NEXT`
+
+---
+
+## 2026-09-01 EEST GH-273 corrected full gates → Passed
+
+- Final corrected `make verify` passes package selection, Build, Vet and full
+  Race/Coverage. Fresh standard enumeration is 1,974 Go cases: root/application
+  232 and Cross-run evidence 107; with 26 Rust and 319 maintained-client cases
+  the truthful standard total is 2,319. Cross-run coverage is now 86.5%.
+- Public source-of-truth arithmetic, Wiki source, Pages landing, audit,
+  PROJECT_STATE and ACTION_LOG are synchronized. Rollout remains 35/59, phase
+  work 35/51, Phase 6 6/7 and production false.
+- Corrected commit/push, fresh protected exact-head matrix/review, merge and the
+  two unchanged-exact-main dispatches remain before pair-scoped evidence may be
+  claimed.
+
+`TRUEREPUBLIC GH-273 ACTIVE — CORRECTED LOCAL GREEN — PUSH NEXT`
+
+---

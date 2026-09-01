@@ -145,7 +145,7 @@ There is no supported native mobile client.
 Fork the repo, create a branch, write tests, and submit a PR. See [Developer Docs](developers/README.md).
 
 ### Where are the tests?
-The recovery baseline has 2,187 verified standard-suite cases: 1,842 Go, 26
+The recovery baseline has 2,319 verified standard-suite cases: 1,974 Go, 26
 Rust, and 319 maintained-client tests. This total excludes the separate opt-in
 GH-175/GH-178/GH-181 IBC gate (`make ibc-two-chain`), GH-184 governed-upgrade
 gate, and separate GH-206 native-verifier and GH-266 keeper-replay gates
@@ -160,6 +160,15 @@ with the exact commit so protected CI can reject stale or mixed binary/OCI
 metadata. It does not create or push that tag, sign or publish an artifact,
 deploy a node, or approve production. See
 [Release-candidate evidence](node-operators/installation/candidate-evidence.md).
+
+### Does GH-273 prove long-term reproducible releases?
+No. GH-273 can compare bounded metadata from two distinct protected
+`workflow_dispatch` runs of the same exact `main` commit and reject any binary
+or ordered OCI digest drift. A successful pair proves only those two recorded
+runs. Floating runner images, BuildKit, and live Debian package indexes remain
+outside the pinned input set, so long-term hermeticity, signing, publication,
+deployment, and production approval remain unproven. See
+[Cross-run rebuild evidence](node-operators/installation/cross-run-evidence.md).
 
 ### How do I integrate with CosmJS?
 See [CosmJS Examples](developers/integration-guide/cosmjs-examples.md) for complete code samples.

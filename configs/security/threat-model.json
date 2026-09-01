@@ -2,7 +2,7 @@
   "model": {
     "name": "truerepublic-cross-system-threat-model",
     "version": "truerepublic.threat-model/v1",
-    "updated": "2026-08-15"
+    "updated": "2026-09-01"
   },
   "production_ready": false,
   "safety_boundary": "Recovery-only repository threat model covering documentation, configuration, and tests. This register is not an independent external audit and does not authorize or claim consensus-state, cryptography, wallet-custody, key, signing, funds, deployment, mainnet, migration, release, or production activity. The repository holds no secrets, private keys, real topology, or customer data; all committed configuration is synthetic.",
@@ -589,6 +589,7 @@
         "Strict offline release evidence binds both supported artifacts, checksums, metadata, normalized SBOMs, and explicitly unsigned provenance",
         "Strict candidate evidence cross-binds both native daemon metadata records and both-platform OCI digest reports to one exact commit and explicitly simulated future tag",
         "Candidate aggregation rejects real tag, ref push, signing, publication, deployment, and production claims unless every claim is explicitly false",
+        "Strict cross-run evidence re-parses two distinct workflow-dispatch candidate records for one exact main commit, binds GitHub run and artifact metadata, retains bounded JSON only, and keeps every promotion and long-term-hermetic claim false",
         "Signing, authenticated provenance, artifact publication, and rollout stay explicitly outside current gates"
       ],
       "evidence": [
@@ -600,9 +601,13 @@
         "configs/release/candidate-evidence.json",
         "scripts/verify-candidate-evidence.sh",
         "candidateevidence/verify.go",
+        "configs/release/cross-run-rebuild.json",
+        "scripts/verify-cross-run-evidence.sh",
+        "crossrunevidence/verify.go",
+        "cross_run_repository_test.go",
         "docs/ROLLOUT_ROADMAP.md"
       ],
-      "residual_risk": "Repository-only SBOM/unsigned provenance consistency and exact-commit simulated-tag aggregation exist, but no real tag, artifact signing, authenticated provenance, publication, or staged rollout exists or is claimed. Protected workflow scope supplies same-run artifact selection; the standalone JSON schemas do not authenticate a GitHub run identity.",
+      "residual_risk": "Repository-only SBOM/unsigned provenance consistency, exact-commit simulated-tag aggregation, and a strict two-run exact-commit comparison capability exist, but no real tag, artifact signing, authenticated provenance, publication, or staged rollout exists or is claimed. GitHub API receipts and artifact digests bind a qualified hosted pair only within the protected workflow trust boundary; standalone JSON is evidence data, not independent authentication of GitHub or its runners.",
       "residual_severity": "high",
       "owner": "security-maintainers",
       "next_gate": "GH-29 Phase 7: authenticate and sign the exact tagged artifacts and provenance, publish them, and complete staged qualification before any release",
@@ -622,7 +627,8 @@
         "Exact dependency lockfiles bound into the security gate contract",
         "Repository contract cross-binds maintained Dockerfile FROM references to the release tool/platform contract",
         "Native no-cache daemon and maintained-client OCI double exports require equal index, manifest, config, and ordered layer digests",
-        "Candidate evidence binds all native daemon and OCI digest records to one exact commit and simulated future tag without retaining binary or image payloads"
+        "Candidate evidence binds all native daemon and OCI digest records to one exact commit and simulated future tag without retaining binary or image payloads",
+        "Cross-run evidence compares two distinct protected workflow-dispatch executions of one exact main commit across both daemon and all four ordered OCI identity vectors"
       ],
       "evidence": [
         "configs/build/deterministic-linux-daemon.json",
@@ -635,10 +641,13 @@
         "configs/release/candidate-evidence.json",
         "candidateevidence/verify.go",
         "release_candidate_repository_test.go",
+        "configs/release/cross-run-rebuild.json",
+        "crossrunevidence/verify.go",
+        "cross_run_repository_test.go",
         ".github/workflows/reproducible-daemon.yml",
         "client_docker_repository_test.go"
       ],
-      "residual_risk": "Linux daemon binaries are byte-reproducible, maintained daemon/client OCI identities match across two same-job exports, and their metadata is commit-bound under a simulated candidate tag. Floating runner and BuildKit versions plus live Debian package repositories prevent a cross-time hermetic image claim; no real tagged candidate or other artifact classes are covered.",
+      "residual_risk": "Linux daemon binaries are byte-reproducible, maintained daemon/client OCI identities match across two same-job exports, and the cross-run capability can compare their metadata across two protected executions of one exact commit. Floating runner and BuildKit versions plus live Debian package repositories prevent a long-term hermetic image claim; no real tagged candidate or other artifact classes are covered.",
       "residual_severity": "low",
       "owner": "security-maintainers",
       "next_gate": "Pin or snapshot runner, BuildKit and OS package inputs, repeat from a tagged commit, and extend deterministic coverage to remaining artifact classes under GH-29 Phase 7",

@@ -19,7 +19,7 @@ intentionally more granular than the public 59-item tracker.
 
 - The ordered recovery merge chain is on `main`.
 - The maximum supply is fixed at 21,000,000 PNYX.
-- The source of truth records 2,187 recovery-verified tests: 1,842 Go, 26 Rust,
+- The source of truth records 2,319 recovery-verified tests: 1,974 Go, 26 Rust,
   and 319 maintained-client tests. The Go total includes GH-244's strict
   offline rollout-genesis qualification contract, GH-261's strict simulated-tag
   candidate aggregation, GH-258's repeated-OCI evidence contract, GH-225's release-
@@ -353,10 +353,13 @@ failure using the published runbooks and telemetry.
   adds native same-job daemon/client OCI index, manifest, config and
   ordered-layer parity. GH-261 cross-binds both native daemon metadata records
   and both-platform OCI digest reports to one exact commit and explicitly
-  simulated future tag in protected CI. All tag/push/sign/publish/deploy/
-  production claims remain false. Floating runner/BuildKit versions and live Debian
-  package indexes still leave cross-time hermetic rebuilding unproven. These do
-  not complete tagged builds, signing, publication, long-term reproducibility,
+  simulated future tag in protected CI. GH-273 adds a strict metadata-only
+  comparison capability for two distinct protected workflow executions of the
+  unchanged exact commit; a hosted result is valid only for its recorded pair.
+  All tag/ref-push/sign/attest/publish/deploy/production/long-term-hermetic
+  claims remain false. Floating runner/BuildKit versions and live Debian package
+  indexes still leave cross-time hermetic rebuilding unproven. These do not
+  complete tagged builds, signing, publication, long-term reproducibility,
   deployment, or go/no-go approval.
 - [x] Provide installation, configuration, migration, upgrade, rollback, and
   uninstallation instructions

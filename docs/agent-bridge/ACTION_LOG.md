@@ -1,5 +1,52 @@
 # Action Log
 
+## 2026-09-01 - GH-273 protected review remediation passed locally
+
+- PR #274 passed 23 applicable protected technical jobs on head `95711bf`.
+  CodeRabbit then found the broken Candidate artifact layout, omitted-claims
+  acceptance and premature Pages wording plus timestamp and test hardenings.
+- Sol corrected all confirmed findings and retained the intentional current-run
+  `in_progress`/empty receipt state. Kimi independently returned APPROVE with no
+  P0-P2 and reproduced focused package, script, repository, YAML and diff gates.
+- Full corrected Build/Vet/Race/Coverage passes. Fresh enumeration is 1,974 Go
+  (root 232, cross-run evidence 107) and 2,319 total with 26 Rust plus 319
+  maintained-client; Cross-run coverage is 86.5%. Corrected push and protected
+  rerun remain before merge and the two exact-main dispatches.
+
+## 2026-09-01 - GH-273 full local gates and final review passed
+
+- Complete Go Build/Vet/Race/Coverage, client, Rust, security, vulnerability,
+  secret, contract, fuzz/coverage, docs, license and diff gates pass.
+- Kimi K3 final read-only review returned APPROVE with no P0-P2. Sol closed its
+  sole P3 Fixture-REUSE observation and re-ran affected gates successfully.
+- `docs/agent-bridge/GH273_AUDIT.md` records the evidence. Protected PR/merge
+  and the two exact-main dispatches remain; no hosted pair claim exists yet.
+
+## 2026-09-01 - GH-273 local implementation integrated
+
+- Kimi K3 delivered the bounded cross-run contract/verifier/scripts/fixtures/
+  workflow core. Sol reviewed every changed file, expanded the metadata-only
+  upload to the complete seven-member JSON evidence set plus report, and made
+  both artifact API lookups exact-name plus `total_count == 1` fail-closed.
+- Focused contracts remain green. Fresh standard enumeration is 1,969 Go cases
+  (root 231, cross-run evidence 103), so the synchronized standard total is
+  2,314 = 1,969 Go + 26 Rust + 319 client.
+- Public docs, status, Wiki/Pages, threat model and operator guidance now state
+  the capability and residual limits. Full gates, protected PR/merge and the two
+  exact-main dispatches remain pending. Rollout stays 35/59; production false.
+
+## 2026-09-01 - GH-273 cross-run rebuild comparison started
+
+- GH-273 starts from exact clean main `f13c114` after GH-269's implementation,
+  closeout and exact-main workflows completed.
+- The new bounded layer compares digest/metadata evidence from two distinct
+  workflow executions of one exact commit. It binds run identity to GH-261's
+  complete candidate identities and rejects drift or promoted claims fail
+  closed; it does not claim long-term hermeticity.
+- Kimi K3 receives the implementation core. Sol owns security/privilege design,
+  integration, full verification, GitHub actions and the later exact-main
+  two-dispatch qualification. Rollout stays 35/59 and production false.
+
 ## 2026-09-01 - GH-269 sequential dependency reconciliation complete
 
 - PR #270 reconciled gRPC 1.82.2 and merged as `c157b1e`; PR #271 reconciled

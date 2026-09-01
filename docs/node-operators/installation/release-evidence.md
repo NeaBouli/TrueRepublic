@@ -73,6 +73,9 @@ GH-261 adds the final repository-only aggregation step documented in
 daemon records and both-platform OCI reports to one exact commit and simulated
 future tag while requiring all real tag, push, signing, publication,
 deployment and production claims to remain false.
+GH-273 then compares two distinct protected executions of the unchanged exact
+commit while retaining bounded JSON only. See
+[Cross-run rebuild evidence](cross-run-evidence.md).
 
 The provenance file is intentionally unsigned. Every bundle must explicitly
 state `signed: false`, `published: false`, and `production: false`. The

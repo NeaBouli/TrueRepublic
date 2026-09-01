@@ -70,7 +70,7 @@ git clone https://github.com/NeaBouli/TrueRepublic.git
 cd TrueRepublic
 go mod tidy
 make build
-make test    # Run 1,842 standard-suite Go cases
+make test    # Run 1,974 standard-suite Go cases
 ```
 
 ### Run the Maintained Web Client

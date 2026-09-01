@@ -247,8 +247,8 @@ func TestReleaseCandidateRepositoryContract(t *testing.T) {
 		}
 		mutated["reproducible-daemon.yml"] = strings.Replace(
 			mutated["reproducible-daemon.yml"],
-			"${{ runner.temp }}/candidate-evidence-report.json\n",
-			"${{ runner.temp }}/candidate-evidence-report.json\n            ${{ runner.temp }}/candidate-evidence/sbom.cdx.json\n", 1)
+			"${{ runner.temp }}/candidate-artifact/candidate-evidence-report.json\n",
+			"${{ runner.temp }}/candidate-artifact/candidate-evidence-report.json\n            ${{ runner.temp }}/candidate-artifact/sbom.cdx.json\n", 1)
 		if len(candidateRepositoryViolations(contract, makefile, scripts, cli, mutated, binaryHash, ociHash, gates.Actions)) == 0 {
 			t.Fatal("workflow accepted a candidate upload outside the metadata allowlist")
 		}
@@ -376,6 +376,11 @@ func candidateRepositoryViolations(contract repositoryCandidateContract, makefil
 		`--tag "$CANDIDATE_TAG"`,
 		`--commit "$GITHUB_SHA"`,
 		"./scripts/generate-candidate-evidence.sh",
+		`cp "${RUNNER_TEMP}/candidate-evidence/candidate-evidence.json"`,
+		`"${RUNNER_TEMP}/candidate-artifact/candidate-evidence.json"`,
+		`cp "${RUNNER_TEMP}/candidate-evidence-report.json"`,
+		`"${RUNNER_TEMP}/candidate-artifact/candidate-evidence-report.json"`,
+		`test "$(find "${RUNNER_TEMP}/candidate-artifact" -mindepth 1 -maxdepth 1 -type f | wc -l)" -eq 2`,
 		"name: truerepublic-candidate-${{ github.sha }}",
 	} {
 		if !strings.Contains(daemonWorkflow, required) {
@@ -400,8 +405,8 @@ func candidateRepositoryViolations(contract repositoryCandidateContract, makefil
 			continue
 		}
 		allowed := map[string]bool{
-			"${{ runner.temp }}/candidate-evidence/candidate-evidence.json": false,
-			"${{ runner.temp }}/candidate-evidence-report.json":             false,
+			"${{ runner.temp }}/candidate-artifact/candidate-evidence.json":        false,
+			"${{ runner.temp }}/candidate-artifact/candidate-evidence-report.json": false,
 		}
 		for _, line := range strings.Split(block, "\n") {
 			trimmed := strings.TrimSpace(line)

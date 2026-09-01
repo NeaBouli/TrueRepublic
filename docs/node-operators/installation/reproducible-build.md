@@ -60,3 +60,5 @@ GH-261 then aggregates the two daemon metadata/checksum artifacts and both OCI
 evidence/report artifacts under one exact commit and explicitly simulated
 future tag. See [Release-candidate evidence](candidate-evidence.md). This
 additional check still creates no real tag and publishes no binary or image.
+GH-273 adds a bounded comparison of two distinct protected executions of that
+same exact commit. See [Cross-run rebuild evidence](cross-run-evidence.md).

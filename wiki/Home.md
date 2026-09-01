@@ -14,8 +14,8 @@
 | Item | Verified state |
 |---|---|
 | Version label | v0.4.0 recovery |
-| Tests | 2,187 standard-suite total: 1,842 Go (including GH-261 candidate evidence, GH-258 repeated-OCI evidence, GH-244 rollout-genesis qualification, GH-225 release compatibility, GH-222 install-lifecycle, GH-209 recipient-binding and GH-206 pinned test-only prover coverage), 26 Rust, 319 maintained-client; separate GH-266 keeper replay, GH-206 native-verifier, GH-175/GH-178/GH-181 IBC, and GH-184 governed-upgrade gates excluded |
-| Release candidate | GH-261 binds both native daemon records and both-platform OCI digest reports to one exact commit and explicitly simulated tag; all real tag/push/sign/publish/deploy/production claims remain false |
+| Tests | 2,319 standard-suite total: 1,974 Go (including GH-273 cross-run evidence, GH-261 candidate evidence, GH-258 repeated-OCI evidence, GH-244 rollout-genesis qualification, GH-225 release compatibility, GH-222 install-lifecycle, GH-209 recipient-binding and GH-206 pinned test-only prover coverage), 26 Rust, 319 maintained-client; separate GH-266 keeper replay, GH-206 native-verifier, GH-175/GH-178/GH-181 IBC, and GH-184 governed-upgrade gates excluded |
+| Release candidate | GH-273 can compare two distinct protected runs of one exact commit; GH-261 binds both native daemon records and four OCI identities to that commit and a simulated tag; all tag/ref-push/sign/attest/publish/deploy/production/long-term-hermetic claims remain false |
 | PNYX cap | 21,000,000 PNYX = 21,000,000,000,000 `upnyx` |
 | Node | Restart, four-validator recovery, state sync, sanitized backup/restore, compatible binary rollback, cold identity failover, secret-safe JSON logs, private metrics, and the GH-85 dashboard/alert/objective baseline verified |
 | ZKP client | Fresh synthetic Go/WASM proof reaches the native verifier on GH-206 and the real atomic keeper payout boundary on GH-266; recipient-bound rewards are verified on GH-209 and production submission remains hard-disabled |

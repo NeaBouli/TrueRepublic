@@ -1,5 +1,24 @@
 # Recovery Queue
 
+## In progress - GH-273 cross-run exact-commit rebuild comparison
+
+- [x] Define a strict versioned cross-run contract and offline verifier that
+  bind two distinct workflow executions to the same repository, workflow,
+  branch, exact commit, candidate contract and complete binary/OCI identities.
+- [x] Add bounded generator/verify/test scripts, positive/adversarial fixtures,
+  a Make target and semantic repository/workflow mutation tests.
+- [x] Add an optional `workflow_dispatch` baseline run ID and a separate
+  least-privilege metadata-only comparison job with exact API/artifact guards.
+- [x] Keep every promotion and long-term-hermetic claim explicitly false; retain
+  no binary, OCI archive or production artifact and grant no rollout credit.
+- [x] Complete Kimi implementation plus final review and Sol security/integration
+  review and the complete local gates. Claude's bounded read-only audit produced
+  no result because its configured local budget was exhausted.
+- [ ] Pass protected exact-head review, merge and verify exact main.
+- [ ] Execute baseline and comparison dispatches on one exact main commit,
+  publish only truthful pair-scoped evidence, synchronize GitHub/public docs,
+  Wiki/Pages and both Bridges, then close GH-273.
+
 ## Completed - GH-269 sequential dependency reconciliation
 
 - [x] Rebuild and verify PR #264's exact gRPC 1.82.1 → 1.82.2 security patch

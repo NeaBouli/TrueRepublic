@@ -1,5 +1,53 @@
 # Project State
 
+GH-273 protected review remediation is independently approved with no P0-P2.
+The final post-review standard arithmetic is 2,319 = 1,974 Go + 26 Rust + 319
+client, including root/application 232 and cross-run evidence 107; final
+Cross-run Race/Coverage is 86.5%. Full corrected local Go, focused contracts,
+YAML, docs, license and diff gates pass. Corrected push, fresh protected review,
+merge and the two unchanged-exact-main dispatches remain; no hosted pair is
+claimed. Rollout remains 35/59 and production false.
+
+Updated: 2026-09-01 EEST
+
+---
+
+GH-273 is fully green locally and has independent Kimi APPROVE with no P0-P2.
+All complete Go, client, Rust, security, vulnerability, secret, contract,
+coverage/fuzz, docs, license and diff gates pass. The maintained Fixture REUSE
+scope is explicit. Protected PR/merge and two distinct unchanged-exact-main
+dispatches remain pending; no hosted pair is claimed. Audit:
+`docs/agent-bridge/GH273_AUDIT.md`. Rollout remains 35/59 and production false.
+
+Updated: 2026-09-01 EEST
+
+---
+
+GH-273's local implementation and Sol integration review are complete. The
+strict capability compares bounded digest/metadata JSON from two distinct
+protected executions of one exact commit; exact-name artifact queries and the
+complete seven-member evidence set are fail-closed. Fresh standard arithmetic
+is 2,314 = 1,969 Go + 26 Rust + 319 client, including root 231 and new
+cross-run evidence 103. Full gates, protected merge and the hosted pair remain
+pending. No pair parity, long-term hermeticity, release or production claim is
+made. Rollout remains 35/59.
+
+Updated: 2026-09-01 EEST
+
+---
+
+GH-273 is active from exact clean main `f13c114`. The bounded repository-only
+task adds a strict digest/metadata comparison across two distinct protected
+workflow executions of the same exact commit, extending GH-258/GH-261 without
+retaining payloads or claiming long-term hermeticity. Kimi K3 owns the
+implementation core; Sol owns architecture, security, integration, full tests,
+GitHub publication, the later two-dispatch qualification and closure. Rollout
+remains 35/59 and production false.
+
+Updated: 2026-09-01 EEST
+
+---
+
 GH-269 is complete. Current-main replacements #270 and #271 reconciled gRPC
 1.82.2 and the four maintained-client development updates sequentially. PR #271
 exact head `1fab8c5` passed all 21 reported contexts with no review threads and
