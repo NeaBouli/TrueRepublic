@@ -8822,3 +8822,17 @@ exclusion, CI wiring, and documentation boundaries.
 `TRUEREPUBLIC GH-273 ACTIVE — HOSTED PAIR VALID — PUBLIC CLOSEOUT IN PROGRESS`
 
 ---
+
+## 2026-09-01 EEST GH-273 closeout review — Exact SHA Remediation
+
+- CodeRabbit's sole closeout finding correctly identified that the Pages
+  landing used the abbreviated commit `3b0d163` while every audit source used
+  the exact 40-character commit identity.
+- Sol replaced the abbreviated value with
+  `3b0d1639bb40c7df6733dd13a86252e1c8c9efd3`. No evidence, rollout, release or
+  production claim changed. A fresh protected exact-head matrix is required
+  before merge.
+
+`TRUEREPUBLIC GH-273 ACTIVE — CLOSEOUT SHA PRECISION FIXED — RERUN REQUIRED`
+
+---
