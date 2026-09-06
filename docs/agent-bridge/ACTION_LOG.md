@@ -5420,3 +5420,32 @@
   standard-suite cases. Rollout remains 35/59 overall, Phase 6 6/7, Phase 7
   3/10, and production false; no tag, signing, publication, deployment,
   genesis, key/fund, go/no-go or rollout-credit action occurred.
+
+## 2026-09-06 19:19 EEST - GH-285 dependency reconciliation started
+
+- Umbrella issue GH-285 maps source PRs #280-#283. All were generated from
+  pre-closeout main `d21300f`; current exact main is `aa1234d`.
+- #280 and #282 resolve the same Cargo lock differently and must be replaced
+  by one coherent CosmWasm 3.0.9 lock. Go #283 and client #281 follow only
+  after each previous replacement is merged and exact-main green.
+- No dependency has changed yet. Upstream release/license/advisory inspection,
+  Kimi implementation/review, Sol verification and protected publication are
+  required. Rollout and production truth remain unchanged.
+
+## 2026-09-06 19:33 EEST - GH-285 combined CosmWasm slice verified locally
+
+- Cargo-native resolution updates `cosmwasm-core`, `cosmwasm-crypto`,
+  `cosmwasm-derive`, `cosmwasm-std`, `cosmwasm-vm`, `cosmwasm-vm-derive`,
+  `cw-schema` and `cw-schema-derive` from 3.0.4 to 3.0.9. It also deduplicates
+  the compatible Windows-only `windows-sys` 0.61.2 entry onto already-locked
+  0.59.0; every other locked package version is unchanged.
+- Kimi implemented only `contracts/Cargo.lock`, checked upstream release notes,
+  checksums, Apache-2.0 crate licenses and the dependency graph, then passed
+  fmt, denied-warning Clippy, build, 26 unit tests and cargo audit. Sol reviewed
+  the complete diff and independently repeated the same Rust gates.
+- `cargo audit` exits 0 with zero vulnerabilities and five warning-class
+  findings already present in the 3.0.4 base lock. Repository license policy,
+  documentation consistency, secret scan with positive/negative fixtures and
+  `git diff --check` also pass.
+- No production, rollout-credit, tag, release, deployment, genesis or key/fund
+  action occurred. Protected PR publication and hosted checks remain required.
