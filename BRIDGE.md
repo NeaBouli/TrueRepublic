@@ -9081,3 +9081,66 @@ claim changed.
 `TRUEREPUBLIC GH-285 RUST SLICE REVIEW — LOCAL GREEN — PRODUCTION FALSE`
 
 ---
+
+## 2026-09-06 19:40 EEST GH-285 CosmWasm merged / Go slice → In Progress
+
+- **Branch:** `chore/GH-285-prometheus-client-model`
+- **Issue:** [GH-285](https://github.com/NeaBouli/TrueRepublic/issues/285)
+- **Base:** exact clean main `edf30be2e050c57cb8074515de8c362e61bb1eb3`.
+- **Changed:** PR #286 passed every hosted context and merged; source PRs #280
+  and #282 are closed as superseded. Go implementation has not changed yet.
+- **Tests:** hosted #286 PASS — Rust CI, Docs Consistency, eight Security Scan
+  jobs, DeepScan and CodeRabbit; no unresolved review thread.
+- **Risk:** low-to-medium supply-chain/protobuf compatibility for the next
+  single-module update. Exact origin, sums, license, module graph, generated
+  protobuf compatibility and full repository gates remain required.
+- **Ready for:** bounded Kimi implementation/review of Prometheus client model
+  0.6.3 followed by independent Sol verification and protected publication.
+
+### Delegate notes
+
+Kimi may modify only `go.mod` and `go.sum`, must preserve all coordination
+records, and may perform no Git/GitHub write or further delegation.
+
+### Sol review feedback
+
+Pending exact module update and complete verification.
+
+`TRUEREPUBLIC GH-285 GO SLICE ACTIVE — EXACT MAIN edf30be — PRODUCTION FALSE`
+
+---
+
+## 2026-09-06 20:24 EEST GH-285 Prometheus Go slice → Review
+
+- **Branch:** `chore/GH-285-prometheus-client-model`
+- **Issue:** [GH-285](https://github.com/NeaBouli/TrueRepublic/issues/285)
+- **Base:** exact clean main `edf30be2e050c57cb8074515de8c362e61bb1eb3`.
+- **Changed:** `go.mod` and `go.sum` only for client model 0.6.2 to 0.6.3,
+  plus current GH-285 coordination evidence. The dependency delta is byte-equal
+  to source PR #283; no other module selection or source file changes.
+- **Tests:** PASS — `go mod verify`; tidy diff; build; full 32-package build,
+  Vet, Race and Coverage; pinned govulncheck/staticcheck/gitleaks and secret
+  fixtures; license policy; docs consistency; security repository contract;
+  governed-upgrade recovery. Kimi additionally passed the complete eight-case
+  gated multi-validator matrix in 1,062 seconds.
+- **Kimi contribution:** reproduced the exact Go-native diff, verified official
+  tag/hash/sums/license/graph and byte-identical generated protobuf, then ran
+  the full extended verification without Git or GitHub writes.
+- **Risk:** low. v0.6.3 changes no published Go code or protobuf field/wire
+  definition; hosted exact-head checks remain mandatory.
+- **Ready for:** protected replacement PR, review and merge. Client #281 stays
+  queued until the resulting exact main is proven green.
+
+### Delegate notes
+
+Kimi reports no P0/P1/P2 finding and left all Sol coordination files untouched.
+
+### Sol review feedback
+
+Accepted after exact diff review and independent module, build, Vet,
+Race/Coverage, vulnerability, static, secret, license, documentation and
+security-contract verification. No unrelated module or source delta exists.
+
+`TRUEREPUBLIC GH-285 GO SLICE REVIEW — LOCAL GREEN — PRODUCTION FALSE`
+
+---

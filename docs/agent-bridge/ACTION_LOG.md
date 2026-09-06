@@ -5449,3 +5449,31 @@
   `git diff --check` also pass.
 - No production, rollout-credit, tag, release, deployment, genesis or key/fund
   action occurred. Protected PR publication and hosted checks remain required.
+
+## 2026-09-06 19:40 EEST - GH-285 CosmWasm merged; Go slice started
+
+- Replacement PR #286 passed Rust CI, Docs Consistency, all eight Security Scan
+  jobs, DeepScan and CodeRabbit, with no unresolved review thread. It
+  squash-merged as exact main `edf30be`; source PRs #280 and #282 were closed as
+  superseded with traceable comments.
+- Branch `chore/GH-285-prometheus-client-model` starts from that exact clean
+  main. Scope is only Prometheus client model 0.6.2 to 0.6.3, authentic go.sum
+  changes and current GH-285 coordination evidence.
+- No production, rollout-credit, tag, release, deployment, genesis or key/fund
+  action occurred.
+
+## 2026-09-06 20:24 EEST - GH-285 Prometheus Go slice local PASS
+
+- Go-native `go get` plus tidy reproduces Dependabot #283 exactly: only
+  `github.com/prometheus/client_model` 0.6.2 to 0.6.3 and its two authenticated
+  sums change. Official tag/hash, Apache-2.0 license and Go 1.23 minimum were
+  verified; TrueRepublic already pins protobuf 1.36.12 and Go 1.26.6.
+- Upstream generated `go/metrics.pb.go` is byte-identical between releases; the
+  proto source delta is comment-only, so no field, wire or Go API change occurs.
+- Kimi passed build, complete 32-package Race/Coverage verification,
+  govulncheck, staticcheck, secret/license/docs/security gates, governed-upgrade
+  recovery and all eight gated multi-validator scenarios. Sol reviewed the two
+  dependency files byte-for-byte and independently repeated module integrity,
+  full verify and every applicable security/documentation gate.
+- No technical local blocker remains. Protected PR checks/review and merge are
+  mandatory before the client slice. Rollout and production truth are unchanged.

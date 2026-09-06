@@ -6,7 +6,7 @@
   for source PRs #280-#283; retain no compromised Axios version.
 - [x] Replace overlapping Cargo PRs #280/#282 with one exact-main CosmWasm
   3.0.9 lock update and pass the complete Rust plus adjacent security gates.
-- [ ] Rebuild and verify Go PR #283 from the resulting exact main.
+- [x] Rebuild and verify Go PR #283 from the resulting exact main.
 - [ ] Rebuild and verify maintained-client PR #281 from the resulting exact
   main using only `npm ci` and the complete client/browser/security gates.
 - [ ] Complete Kimi deep review, Sol integration review, protected sequential
