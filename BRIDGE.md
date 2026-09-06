@@ -8885,3 +8885,97 @@ Approved locally. Protected exact-head checks, merge, GH-29 synchronization,
 exact-main checks and live Pages/Wiki readback remain mandatory before Done.
 
 ---
+
+## 2026-09-06 13:18 EEST GH-278 hermetic release-tool bootstrap → In Progress
+
+- **Branch:** `feat/GH-278-hermetic-ci-tools`
+- **Issue:** [GH-278](https://github.com/NeaBouli/TrueRepublic/issues/278)
+- **Base:** exact clean local/remote main
+  `a244a1a4ddb8513c2f5807f0c05d3df187adf57b`; no open PR existed.
+- **Changed:** ticket and durable coordination only. Kimi K3 independently
+  confirmed the unpinned-transitive `npm install --global` release-SBOM path
+  and recommended locked tool bootstrap before genesis-freeze readiness.
+- **Tests:** not run yet. Focused bootstrap/evidence tests and the complete
+  relevant Go/client/Rust/security/release/docs/diff gates are required.
+- **Risk:** medium — CI/release supply-chain and evidence integrity. Runtime,
+  consensus, genesis, wallets, token state and production are unchanged.
+- **Ready for:** bounded Kimi implementation core, then Sol review.
+
+### Delegate notes
+
+Kimi may change only repository-owned tool bootstrap/evidence code, the two
+affected workflows, exact repository tests and directly necessary docs. Kimi
+must not update Bridge/public rollout numbers, call agents or perform external
+actions.
+
+### Sol review feedback
+
+Pending implementation and complete independent verification.
+
+---
+
+## 2026-09-06 15:20 EEST GH-278 hermetic release-tool bootstrap → Approved locally
+
+- **Branch:** `feat/GH-278-hermetic-ci-tools`
+- **Issue:** [GH-278](https://github.com/NeaBouli/TrueRepublic/issues/278)
+- **Changed:** repository-owned Go/npm tool locks; allowlisted fail-closed
+  bootstrap; strict twice-built composition evidence; workflow, Dependabot,
+  package-selection, REUSE, test and synchronized public-documentation updates.
+- **Tests:** final `make verify` Build/Vet/Race/Coverage passed. Standard Go is
+  2,008 cases (root 244; tool-bootstrap evidence 22); client lint, 319 tests,
+  build/budgets and audit passed; Rust fmt, denied-warning Clippy, 26 tests,
+  build and audit policy passed. Real five-tool double-build/evidence plus
+  vulnerability, static, secret, SBOM, docs, license and diff gates passed.
+- **Risk:** medium and bounded to CI/release supply-chain behavior. Rollout
+  remains 35/59, phase work 35/51, Phase 6 6/7, Phase 7 3/10 and production
+  false. No tag, signing, publication, deployment, genesis, key or fund action.
+- **Ready for:** protected GitHub PR review, merge, exact-main verification and
+  live Pages/Wiki plus GH-29/both-Bridge closeout.
+
+### Delegate notes
+
+Kimi K3 implemented the bounded core, identified seven hardening/documentation
+edges across implementation and first review, and then re-reviewed the stable
+remediated tree read-only. Final verdict: `APPROVE`, no P0/P1/P2.
+
+### Sol review feedback
+
+Approved locally after all findings were closed and every relevant local gate
+was rerun on the final stable diff. Structured audit:
+`docs/agent-bridge/GH278_AUDIT.md`.
+
+`TRUEREPUBLIC GH-278 ACTIVE — LOCALLY APPROVED — PROTECTED REVIEW REQUIRED`
+
+---
+
+## 2026-09-06 15:43 EEST GH-278 protected review remediation → Approved locally
+
+- **PR:** [#279](https://github.com/NeaBouli/TrueRepublic/pull/279)
+- **First head:** `6812bf31a5c93dbbb8a356b7331482727c67a1d9`
+- **Changed:** upgraded the Gitleaks-transitive `go-git` tool dependency from
+  vulnerable v5.16.2 to patched v5.16.5; guarded every option-value shift with
+  deterministic usage exit 2; added adversarial CLI coverage; split completed
+  local work from pending protected closeout in the durable queue.
+- **Tests:** `go mod verify`, readonly tool graph and a real Gitleaks 8.30.1
+  build passed. Focused tool-bootstrap/release, docs, license and diff gates
+  passed. Final `make verify` Build/Vet/Race/Coverage passed on the remediation.
+- **Risk:** no P0/P1/P2 remains locally. The first-head protected matrix is
+  superseded; every required check and review thread must pass again on the
+  replacement exact head before merge.
+- **Ready for:** remediation commit/push, review replies/resolution and fresh
+  protected exact-head verification.
+
+### Delegate notes
+
+No new delegated write occurred. Sol verified the hosted security finding
+against the official Go vulnerability record and upstream go-git advisory,
+then implemented and tested the minimal lock/script/queue correction.
+
+### Sol review feedback
+
+Both actionable CodeRabbit findings and the related CLI nit were valid and are
+closed in the local diff. Rollout and production truth remain unchanged.
+
+`TRUEREPUBLIC GH-278 ACTIVE — REVIEW REMEDIATED — FRESH HEAD REQUIRED`
+
+---

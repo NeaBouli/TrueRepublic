@@ -58,7 +58,13 @@ func TestReleaseToolContractConsistency(t *testing.T) {
 	}
 	workflow := string(workflowBytes)
 
-	if violations := releaseToolConsistencyViolations(platform, gates, build.GoVersion, workflow); len(violations) != 0 {
+	buildScriptBytes, err := os.ReadFile("scripts/build-ci-tool.sh")
+	if err != nil {
+		t.Fatal(err)
+	}
+	buildScript := string(buildScriptBytes)
+
+	if violations := releaseToolConsistencyViolations(platform, gates, build.GoVersion, workflow, buildScript); len(violations) != 0 {
 		t.Fatalf("release tool pin drift:\n- %s", strings.Join(violations, "\n- "))
 	}
 
@@ -69,7 +75,7 @@ func TestReleaseToolContractConsistency(t *testing.T) {
 			mutated.Tools[name] = version
 		}
 		mutated.Tools["cyclonedx_gomod"] = "v0.0.0"
-		if violations := releaseToolConsistencyViolations(platform, mutated, build.GoVersion, workflow); len(violations) == 0 {
+		if violations := releaseToolConsistencyViolations(platform, mutated, build.GoVersion, workflow, buildScript); len(violations) == 0 {
 			t.Fatal("security gate cyclonedx-gomod drift was not detected")
 		}
 	})
@@ -81,7 +87,7 @@ func TestReleaseToolContractConsistency(t *testing.T) {
 			mutated.Toolchains[name] = version
 		}
 		mutated.Toolchains["node"] = "0.0.0"
-		if violations := releaseToolConsistencyViolations(platform, mutated, build.GoVersion, workflow); len(violations) == 0 {
+		if violations := releaseToolConsistencyViolations(platform, mutated, build.GoVersion, workflow, buildScript); len(violations) == 0 {
 			t.Fatal("node toolchain drift was not detected")
 		}
 	})
@@ -89,16 +95,27 @@ func TestReleaseToolContractConsistency(t *testing.T) {
 	t.Run("rejects hardcoded workflow tool install", func(t *testing.T) {
 		mutated := strings.Replace(
 			workflow,
-			"jq -er '.tools.cyclonedx_gomod' configs/security/gates.json",
-			"echo v1.10.0", 1,
+			"./scripts/build-ci-tool.sh --tool cyclonedx-gomod",
+			"go install github.com/CycloneDX/cyclonedx-gomod/cmd/cyclonedx-gomod@v1.10.0", 1,
 		)
-		if violations := releaseToolConsistencyViolations(platform, gates, build.GoVersion, mutated); len(violations) == 0 {
+		if violations := releaseToolConsistencyViolations(platform, gates, build.GoVersion, mutated, buildScript); len(violations) == 0 {
 			t.Fatal("a hardcoded workflow tool install was not detected")
+		}
+	})
+
+	t.Run("rejects build script without gate binding", func(t *testing.T) {
+		mutated := strings.Replace(
+			buildScript,
+			`expected=$(jq -er --arg key "$gates_key" '.tools[$key]' "$GATES")`,
+			`expected=v1.10.0`, 1,
+		)
+		if violations := releaseToolConsistencyViolations(platform, gates, build.GoVersion, workflow, mutated); len(violations) == 0 {
+			t.Fatal("a build script without security gate binding was not detected")
 		}
 	})
 }
 
-func releaseToolConsistencyViolations(platform releaseToolPlatformContract, gates securityGateContract, buildGoVersion, workflow string) []string {
+func releaseToolConsistencyViolations(platform releaseToolPlatformContract, gates securityGateContract, buildGoVersion, workflow, buildScript string) []string {
 	var violations []string
 	if platform.Schema != "truerepublic.release-tool-platform/v1" {
 		violations = append(violations, "release tool contract schema mismatch")
@@ -114,9 +131,23 @@ func releaseToolConsistencyViolations(platform releaseToolPlatformContract, gate
 	if gates.Toolchains["go"] == "" || gates.Toolchains["go"] != buildGoVersion {
 		violations = append(violations, "security/build Go toolchain mismatch")
 	}
-	for _, tool := range []string{"cyclonedx_gomod", "cyclonedx_npm", "npm"} {
-		if !strings.Contains(workflow, "jq -er '.tools."+tool+"' configs/security/gates.json") {
-			violations = append(violations, "reproducible-daemon workflow must install "+tool+" from the security gate contract")
+	for _, tool := range []string{"cyclonedx-gomod", "cyclonedx-npm"} {
+		if !strings.Contains(workflow, "./scripts/build-ci-tool.sh --tool "+tool) {
+			violations = append(violations, "reproducible-daemon workflow must build "+tool+" through the locked repository bootstrap")
+		}
+	}
+	if !strings.Contains(workflow, "jq -er '.tools.npm' configs/security/gates.json") {
+		violations = append(violations, "reproducible-daemon workflow must check npm against the security gate contract")
+	}
+	for _, binding := range []string{
+		"configs/security/gates.json",
+		"go mod verify",
+		"-mod=readonly",
+		"npm ci --ignore-scripts",
+		`expected=$(jq -er --arg key "$gates_key" '.tools[$key]' "$GATES")`,
+	} {
+		if !strings.Contains(buildScript, binding) {
+			violations = append(violations, "locked tool bootstrap script missing "+binding)
 		}
 	}
 	if !strings.Contains(workflow, "go-version: '"+gates.Toolchains["go"]+"'") {

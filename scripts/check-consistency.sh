@@ -386,6 +386,7 @@ done <<'MODULES'
 root|root/application
 candidateevidence|candidate evidence
 crossrunevidence|cross-run evidence
+toolbootstrapevidence|tool-bootstrap evidence
 genesisevidence|rollout genesis evidence
 capacitypolicy|capacity policy
 deploymentevidence|deployment evidence

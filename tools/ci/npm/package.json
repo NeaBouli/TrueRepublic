@@ -1,0 +1,9 @@
+{
+  "name": "truerepublic-ci-tools",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Repository-owned locked CI/release npm tool bootstrap (GH-278). Installed only via npm ci.",
+  "dependencies": {
+    "@cyclonedx/cyclonedx-npm": "6.0.1"
+  }
+}

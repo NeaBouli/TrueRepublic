@@ -38,6 +38,7 @@ type dependabotConfig struct {
 
 type dependabotUpdate struct {
 	Ecosystem string                      `yaml:"package-ecosystem"`
+	Directory string                      `yaml:"directory"`
 	Groups    map[string]dependabotGroup  `yaml:"groups"`
 	Ignore    []dependabotIgnoreCondition `yaml:"ignore"`
 }
@@ -465,49 +466,55 @@ func dependabotPolicyViolations(content string) []string {
 	}
 
 	expectedGroups := map[string]string{
-		"github-actions": "github-actions",
-		"gomod":          "go-maintenance",
-		"cargo":          "rust-maintenance",
-		"npm":            "client-maintenance",
+		"github-actions /":  "github-actions",
+		"gomod /":           "go-maintenance",
+		"cargo /contracts":  "rust-maintenance",
+		"npm /client-web":   "client-maintenance",
+		"npm /tools/ci/npm": "ci-tool-maintenance",
 	}
 	expectedUpdateTypes := map[string][]string{
-		"github-actions": {"minor", "patch"},
-		"gomod":          {"patch"},
-		"cargo":          {"minor", "patch"},
-		"npm":            {"minor", "patch"},
+		"github-actions /":  {"minor", "patch"},
+		"gomod /":           {"patch"},
+		"cargo /contracts":  {"minor", "patch"},
+		"npm /client-web":   {"minor", "patch"},
+		"npm /tools/ci/npm": {"minor", "patch"},
 	}
 	expectedIgnores := map[string][]dependabotIgnoreCondition{
-		"github-actions": {
+		"github-actions /": {
 			{DependencyName: "*", UpdateTypes: []string{"version-update:semver-major"}},
 		},
-		"gomod": {
+		"gomod /": {
 			{DependencyName: "*", UpdateTypes: []string{"version-update:semver-major", "version-update:semver-minor"}},
 		},
-		"cargo": {
+		"cargo /contracts": {
 			{DependencyName: "*", UpdateTypes: []string{"version-update:semver-major"}},
 			{DependencyName: "cosmwasm-*", UpdateTypes: []string{"version-update:semver-major", "version-update:semver-minor"}},
 		},
-		"npm": {
+		"npm /client-web": {
 			{DependencyName: "*", UpdateTypes: []string{"version-update:semver-major"}},
 			{DependencyName: "@playwright/test", UpdateTypes: []string{"version-update:semver-major", "version-update:semver-minor", "version-update:semver-patch"}},
 			{DependencyName: "eslint-plugin-react-refresh", UpdateTypes: []string{"version-update:semver-major", "version-update:semver-minor"}},
+		},
+		"npm /tools/ci/npm": {
+			{DependencyName: "*", UpdateTypes: []string{"version-update:semver-major"}},
 		},
 	}
 	seen := make(map[string]bool, len(expectedGroups))
 	var violations []string
 	for _, update := range config.Updates {
-		groupName, expected := expectedGroups[update.Ecosystem]
-		if !expected || seen[update.Ecosystem] {
-			violations = append(violations, "Dependabot policy contains an unexpected or duplicate ecosystem "+update.Ecosystem)
+		key := update.Ecosystem + " " + update.Directory
+		groupName, expected := expectedGroups[key]
+		if !expected || seen[key] {
+			violations = append(violations, "Dependabot policy contains an unexpected or duplicate ecosystem "+key)
 			continue
 		}
-		seen[update.Ecosystem] = true
+		seen[key] = true
 		group, exists := update.Groups[groupName]
 		if !exists || group.AppliesTo != "version-updates" || strings.Join(group.Patterns, ",") != "*" {
 			violations = append(violations, "Dependabot policy must configure grouped version updates for "+update.Ecosystem)
 			continue
 		}
-		if !slicesEqualInsensitive(group.UpdateTypes, expectedUpdateTypes[update.Ecosystem]) {
+		if !slicesEqualInsensitive(group.UpdateTypes, expectedUpdateTypes[key]) {
 			violations = append(violations, "Dependabot policy must use exact grouped update-types for "+update.Ecosystem)
 		}
 		if update.Ecosystem == "cargo" {
@@ -517,13 +524,13 @@ func dependabotPolicyViolations(content string) []string {
 		} else if len(group.Exclude) != 0 {
 			violations = append(violations, "Dependabot policy must not set exclude-patterns for "+update.Ecosystem)
 		}
-		if !dependabotIgnoreConditionsEqual(update.Ignore, expectedIgnores[update.Ecosystem]) {
+		if !dependabotIgnoreConditionsEqual(update.Ignore, expectedIgnores[key]) {
 			violations = append(violations, "Dependabot policy must use exact exception set for "+update.Ecosystem)
 		}
 	}
-	for ecosystem := range expectedGroups {
-		if !seen[ecosystem] {
-			violations = append(violations, "Dependabot policy missing compatible update rules for "+ecosystem)
+	for key := range expectedGroups {
+		if !seen[key] {
+			violations = append(violations, "Dependabot policy missing compatible update rules for "+key)
 		}
 	}
 	return violations

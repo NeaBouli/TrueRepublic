@@ -13,6 +13,7 @@ production or public-network approval.
 - [Offline Release Evidence](installation/release-evidence.md)
 - [Release-Candidate Evidence](installation/candidate-evidence.md)
 - [Cross-Run Rebuild Evidence](installation/cross-run-evidence.md)
+- [Locked CI Tool Bootstrap](installation/ci-tool-bootstrap.md)
 - [Artifact Lifecycle](installation/lifecycle.md)
 
 ### Configuration

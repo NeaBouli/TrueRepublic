@@ -15,5 +15,52 @@
     "debian:bookworm-slim@sha256:abd67ffcfa541b485a3dff59865ab629aa048a6c613e639d36e7456b0b229241",
     "node:22.22.2-alpine@sha256:8ea2348b068a9544dae7317b4f3aafcdc032df1647bb7d768a05a5cad1a7683f",
     "nginx:alpine@sha256:4a73073bd557c65b759505da037898b61f1be6cbcc3c2c3aeac22d2a470c1752"
-  ]
+  ],
+  "bootstrap": {
+    "go_module": "tools/ci/go.mod",
+    "go_sum": "tools/ci/go.sum",
+    "npm_package": "tools/ci/npm/package.json",
+    "npm_lock": "tools/ci/npm/package-lock.json",
+    "tools": [
+      {
+        "id": "cyclonedx-gomod",
+        "kind": "go",
+        "package": "github.com/CycloneDX/cyclonedx-gomod/cmd/cyclonedx-gomod",
+        "module": "github.com/CycloneDX/cyclonedx-gomod",
+        "gates_key": "cyclonedx_gomod",
+        "artifact": "cyclonedx-gomod"
+      },
+      {
+        "id": "govulncheck",
+        "kind": "go",
+        "package": "golang.org/x/vuln/cmd/govulncheck",
+        "module": "golang.org/x/vuln",
+        "gates_key": "govulncheck",
+        "artifact": "govulncheck"
+      },
+      {
+        "id": "staticcheck",
+        "kind": "go",
+        "package": "honnef.co/go/tools/cmd/staticcheck",
+        "module": "honnef.co/go/tools",
+        "gates_key": "staticcheck",
+        "artifact": "staticcheck"
+      },
+      {
+        "id": "gitleaks",
+        "kind": "go",
+        "package": "github.com/zricethezav/gitleaks/v8",
+        "module": "github.com/zricethezav/gitleaks/v8",
+        "gates_key": "gitleaks",
+        "artifact": "gitleaks"
+      },
+      {
+        "id": "cyclonedx-npm",
+        "kind": "npm",
+        "package": "@cyclonedx/cyclonedx-npm",
+        "gates_key": "cyclonedx_npm",
+        "artifact": "node_modules/@cyclonedx/cyclonedx-npm/package.json"
+      }
+    ]
+  }
 }

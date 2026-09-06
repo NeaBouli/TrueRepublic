@@ -9,7 +9,9 @@ collect_packages() {
       [[ -f "$ROOT_DIR/$source" ]] || continue
 
       case "/$source/" in
-        */node_modules/* | */vendor/*)
+        */node_modules/* | */vendor/* | /tools/ci/*)
+          # tools/ci is a nested tool-only module locked by its own
+          # go.mod/go.sum (GH-278); it is not part of the root module.
           continue
           ;;
       esac

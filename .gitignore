@@ -14,6 +14,16 @@ contracts/target/
 
 # Node.js
 node_modules/
+# GH-278's tiny synthetic verifier fixtures deliberately model the locked npm
+# artifact path. Unignore only those fixture directories/files; real installs
+# remain ignored everywhere, including tools/ci/npm/node_modules.
+!testdata/toolbootstrapevidence/*/artifacts/cyclonedx-npm/node_modules/
+testdata/toolbootstrapevidence/*/artifacts/cyclonedx-npm/node_modules/*
+!testdata/toolbootstrapevidence/*/artifacts/cyclonedx-npm/node_modules/@cyclonedx/
+testdata/toolbootstrapevidence/*/artifacts/cyclonedx-npm/node_modules/@cyclonedx/*
+!testdata/toolbootstrapevidence/*/artifacts/cyclonedx-npm/node_modules/@cyclonedx/cyclonedx-npm/
+testdata/toolbootstrapevidence/*/artifacts/cyclonedx-npm/node_modules/@cyclonedx/cyclonedx-npm/*
+!testdata/toolbootstrapevidence/*/artifacts/cyclonedx-npm/node_modules/@cyclonedx/cyclonedx-npm/package.json
 npm-debug.log*
 yarn-error.log*
 

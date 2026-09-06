@@ -1,5 +1,29 @@
 # Recovery Queue
 
+## In progress - GH-278 hermetic CI/release-tool bootstrap
+
+- [x] Add repository-owned Go module/go.sum and npm package-lock coverage for
+  the release/security tools in scope.
+- [x] Replace live `go install ...@version` and `npm install --global` workflow
+  bootstraps with verified `go build -mod=readonly` and `npm ci` paths.
+- [x] Bind versions and lockfile composition into deterministic fail-closed
+  bootstrap evidence with signed/published/production claims false.
+- [x] Add adversarial repository/contract tests, CI wiring, Dependabot coverage
+  and precise non-production documentation.
+- [x] Complete Kimi implementation/review, Sol diff/security review and all
+  local gates.
+- [ ] Complete protected PR review, merge, exact-main verification, live
+  Pages/Wiki readback and GH-29/both-Bridge closeout.
+- [ ] Keep rollout 35/59, phase work 35/51, Phase 6 6/7, Phase 7 3/10 and
+  production false; create no tag, signature, publication or deployment.
+
+## Completed - GH-276 Phase-7 accounting alignment
+
+- [x] PR #277 merged as exact main
+  `a244a1a4ddb8513c2f5807f0c05d3df187adf57b`; GH-276 is closed.
+- [x] Exact-main Docs, Security, Reproducible Linux and Pages passed; live
+  Pages/Wiki and GH-29 publish 35/59 overall and Phase 7 3/10.
+
 ## In progress - GH-276 Phase-7 accounting alignment
 
 - [x] Confirm GH-29 has 10 counted Phase-7 items, 3 complete, within the

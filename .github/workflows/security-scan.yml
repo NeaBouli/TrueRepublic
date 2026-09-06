@@ -25,15 +25,14 @@ jobs:
         with:
           go-version: '1.26.6'
 
-      - name: Install govulncheck
+      - name: Build locked govulncheck from the repository-owned module
         run: |
-          version=$(jq -er '.tools.govulncheck' configs/security/gates.json)
-          GOBIN="${RUNNER_TEMP}/security-tools" \
-            go install "golang.org/x/vuln/cmd/govulncheck@${version}"
+          mkdir -p "${RUNNER_TEMP}/security-tools"
+          ./scripts/build-ci-tool.sh --tool govulncheck --output-dir "${RUNNER_TEMP}/security-tools/govulncheck"
 
       - name: Run govulncheck
         env:
-          GOVULNCHECK_BIN: ${{ runner.temp }}/security-tools/govulncheck
+          GOVULNCHECK_BIN: ${{ runner.temp }}/security-tools/govulncheck/govulncheck
         run: ./scripts/check-go-vulnerabilities.sh
 
       - name: Verify Go vulnerability failure semantics
@@ -54,19 +53,21 @@ jobs:
       - name: Verify module checksums
         run: go mod verify
 
-      - name: Install staticcheck
+      - name: Build locked staticcheck from the repository-owned module
         run: |
-          version=$(jq -er '.tools.staticcheck' configs/security/gates.json)
-          GOBIN="${RUNNER_TEMP}/security-tools" \
-            go install "honnef.co/go/tools/cmd/staticcheck@${version}"
+          mkdir -p "${RUNNER_TEMP}/security-tools"
+          ./scripts/build-ci-tool.sh --tool staticcheck --output-dir "${RUNNER_TEMP}/security-tools/staticcheck"
 
       - name: Run blocking Go static analysis
         env:
-          STATICCHECK_BIN: ${{ runner.temp }}/security-tools/staticcheck
+          STATICCHECK_BIN: ${{ runner.temp }}/security-tools/staticcheck/staticcheck
         run: ./scripts/check-static-analysis.sh
 
       - name: Verify repository security-gate contract
         run: go test . -run '^TestSecurityGateRepositoryContract$' -count=1
+
+      - name: Verify repository CI-tool bootstrap contract
+        run: go test . -run '^TestCIToolBootstrapRepositoryContract$' -count=1
 
   secret-scan:
     runs-on: ubuntu-latest
@@ -80,20 +81,19 @@ jobs:
         with:
           go-version: '1.26.6'
 
-      - name: Install gitleaks
+      - name: Build locked gitleaks from the repository-owned module
         run: |
-          version=$(jq -er '.tools.gitleaks' configs/security/gates.json)
-          GOBIN="${RUNNER_TEMP}/security-tools" \
-            go install "github.com/zricethezav/gitleaks/v8@${version}"
+          mkdir -p "${RUNNER_TEMP}/security-tools"
+          ./scripts/build-ci-tool.sh --tool gitleaks --output-dir "${RUNNER_TEMP}/security-tools/gitleaks"
 
       - name: Scan maintained repository tree
         env:
-          GITLEAKS_BIN: ${{ runner.temp }}/security-tools/gitleaks
+          GITLEAKS_BIN: ${{ runner.temp }}/security-tools/gitleaks/gitleaks
         run: ./scripts/check-secret-scan.sh
 
       - name: Verify secret-scan failure semantics
         env:
-          GITLEAKS_BIN: ${{ runner.temp }}/security-tools/gitleaks
+          GITLEAKS_BIN: ${{ runner.temp }}/security-tools/gitleaks/gitleaks
         run: ./scripts/test-secret-scan.sh
 
   rust-audit:
