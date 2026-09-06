@@ -5477,3 +5477,37 @@
   full verify and every applicable security/documentation gate.
 - No technical local blocker remains. Protected PR checks/review and merge are
   mandatory before the client slice. Rollout and production truth are unchanged.
+
+## 2026-09-06 20:40 EEST - GH-285 Prometheus merged; client slice started
+
+- Replacement PR #287 passed every hosted context, including full Go build/test,
+  multi-validator recovery, both reproducible OCI architectures and release
+  evidence. With no review thread open, it squash-merged as exact main `fcb951d`;
+  source PR #283 was closed as superseded with the replacement and merge linked.
+- Branch `chore/GH-285-client-maintenance` starts from that exact clean main.
+  Scope is limited to postcss 8.5.27, react-router and react-router-dom 7.18.3,
+  @testing-library/user-event 14.6.7, happy-dom 20.13.2 and typescript-eslint
+  8.69.0 plus the authentic npm lockfile graph and current coordination evidence.
+- Kimi may change only the two client dependency manifests. Sol retains diff,
+  security, integration, Git/GitHub and final verification responsibility.
+- Rollout/accounting and production truth remain unchanged; no release,
+  deployment, genesis, key/fund or production action occurred.
+
+## 2026-09-06 21:04 EEST - GH-285 maintained-client slice local review PASS
+
+- The two client dependency files are byte-identical to stale source PR #281
+  while now based on exact main `fcb951d`: five declared direct updates, router
+  and typescript-eslint lockstep movement, nested ignore 7.0.8 and no package
+  additions/removals or Axios entry.
+- Kimi and Sol independently verified official MIT metadata and integrity, npm
+  clean installation/audit, 10 policy plus 309 unit tests, lint, build and bundle
+  budgets, 3/3 client-chain delivery, ZKP-WASM/native boundary, documentation,
+  license and diff hygiene. Sol additionally passed the pinned full-tree secret
+  scan and its positive/negative fixture contract.
+- The full local browser run passes Chromium/Firefox (26 pass, one intended
+  mobile keyboard skip); all 18 WebKit cases fail before app code on the frozen
+  macOS host with unsupported Playwright protocol settings. Kimi reproduced the
+  identical failure against unmodified base. Protected Linux WebKit is therefore
+  the mandatory exact-head acceptance gate, not waived.
+- No technical dependency finding remains. Protected PR/review/merge and exact-
+  main closeout remain; rollout and production truth are unchanged.
