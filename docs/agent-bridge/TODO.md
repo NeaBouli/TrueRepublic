@@ -1,17 +1,17 @@
 # Recovery Queue
 
-## In progress - GH-285 sequential dependency reconciliation
+## Completed - GH-285 sequential dependency reconciliation
 
 - [x] Verify upstream release, checksum, license, graph and advisory evidence
   for source PRs #280-#283; retain no compromised Axios version.
 - [x] Replace overlapping Cargo PRs #280/#282 with one exact-main CosmWasm
   3.0.9 lock update and pass the complete Rust plus adjacent security gates.
 - [x] Rebuild and verify Go PR #283 from the resulting exact main.
-- [ ] Rebuild and verify maintained-client PR #281 from the resulting exact
+- [x] Rebuild and verify maintained-client PR #281 from the resulting exact
   main using only `npm ci` and the complete client/browser/security gates.
-- [ ] Complete Kimi deep review, Sol integration review, protected sequential
+- [x] Complete Kimi deep review, Sol integration review, protected sequential
   merges, exact-main verification and source-PR supersession/closure.
-- [ ] Synchronize GH-285 and both Bridges without rollout credit, release,
+- [x] Synchronize GH-285 and both Bridges without rollout credit, release,
   deployment, genesis, real key/fund or production action.
 
 ## Completed - GH-278 hermetic CI/release-tool bootstrap

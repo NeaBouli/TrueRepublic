@@ -1,18 +1,16 @@
 # Project State
 
-GH-285 is active from exact clean main
-`fcb951dc77e659a809d27cc37332ae148fe4a8d7`. Combined CosmWasm replacement
-PR #286 and Prometheus client-model replacement PR #287 passed all protected
-contexts and merged; source PRs #280/#282/#283 are closed as superseded. The
-maintained-client replacement for #281 is now the only dependency slice in
-progress. Its two dependency files are byte-identical to #281 on current main:
-five declared direct updates, lockstep router/typescript-eslint movement and no
-Axios. Kimi and Sol independently passed npm integrity, 309 unit tests plus 10
-policy tests, lint, build/budget, audit, 3/3 live client-chain delivery, ZKP-WASM,
-license, docs and secret gates. Chromium/Firefox pass locally; both agents
-reproduced the documented frozen-host WebKit protocol incompatibility before app
-code, so protected Linux WebKit remains the authoritative mandatory gate before
-merge.
+GH-285 is complete on exact clean main
+`876c4a4d171bf0853e9e3bff2d2b7b0ad2d2adb2`. Sequential replacement PRs
+#286, #287 and #288 passed their full protected exact-head matrices and merged;
+stale source PRs #280-#283 are closed with replacement and merge evidence.
+CosmWasm/schema 3.0.9, Prometheus client model 0.6.3 and the five maintained-
+client updates are reconciled without unrelated graph drift or a compromised
+Axios version. Kimi and Sol independently reviewed every ecosystem slice; the
+final client head passed Linux Chromium/Firefox/WebKit, live client-chain,
+ZKP-WASM, security, documentation and reproducible OCI gates with its only
+review finding fixed and resolved. Public status surfaces need no content change
+because version, test inventory, product behavior and rollout did not change.
 Rollout remains 35/59 overall, Phase 6 6/7, Phase 7 3/10, production false.
 
 Updated: 2026-09-06 EEST
