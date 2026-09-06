@@ -5391,3 +5391,19 @@
   35/59 overall, 35/51 phase work, Phase 6 6/7, Phase 7 3/10 and production
   false. Protected PR review, merge, exact-main checks and live Pages/Wiki
   verification remain before Done.
+
+## 2026-09-06 15:43 EEST - GH-278 protected first-head review remediated
+
+- PR #279 first head `6812bf31a5c93dbbb8a356b7331482727c67a1d9`
+  passed the new real five-tool bootstrap evidence job, Docs, DeepScan,
+  security, deterministic Linux and OCI gates before review remediation.
+- CodeRabbit correctly identified indirect `go-git` v5.16.2 as affected by
+  GO-2026-4473/GHSA-37cx-329c-33x3. The repository-owned tool module now locks
+  patched v5.16.5; `go mod verify`, readonly graph resolution and a real
+  Gitleaks 8.30.1 build pass.
+- Missing option values now return deterministic usage status 2 in both build
+  and generator scripts with adversarial regression coverage. The GH-278 TODO
+  separates completed local verification from remaining protected closeout.
+- Focused bootstrap/release, consistency, license and diff gates plus final
+  Build/Vet/Race/Coverage pass on the remediated diff. A replacement exact head
+  and complete fresh protected matrix remain mandatory before merge.

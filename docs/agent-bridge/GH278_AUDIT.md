@@ -115,6 +115,11 @@ changes.
 
 - Kimi K3 implemented the bounded secret-free core, then performed two
   independent read-only reviews. Final verdict: `APPROVE`, no P0/P1/P2.
+- Protected first-head review identified a vulnerable indirect
+  `github.com/go-git/go-git/v5` version and imprecise CLI/TODO failure-state
+  handling. The tool lock now uses patched v5.16.5, missing option values exit
+  with usage status 2, the queue separates completed local work from hosted
+  closeout, and focused plus complete Race/Coverage verification passes.
 - `make verify`: build, vet and full Race/Coverage passed; root 73.6%, release
   evidence 74.5%, tool-bootstrap evidence 79.6%.
 - Full standard Go enumeration: 2,008 passing cases; root 244 and

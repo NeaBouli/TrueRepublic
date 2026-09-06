@@ -8947,3 +8947,35 @@ was rerun on the final stable diff. Structured audit:
 `TRUEREPUBLIC GH-278 ACTIVE — LOCALLY APPROVED — PROTECTED REVIEW REQUIRED`
 
 ---
+
+## 2026-09-06 15:43 EEST GH-278 protected review remediation → Approved locally
+
+- **PR:** [#279](https://github.com/NeaBouli/TrueRepublic/pull/279)
+- **First head:** `6812bf31a5c93dbbb8a356b7331482727c67a1d9`
+- **Changed:** upgraded the Gitleaks-transitive `go-git` tool dependency from
+  vulnerable v5.16.2 to patched v5.16.5; guarded every option-value shift with
+  deterministic usage exit 2; added adversarial CLI coverage; split completed
+  local work from pending protected closeout in the durable queue.
+- **Tests:** `go mod verify`, readonly tool graph and a real Gitleaks 8.30.1
+  build passed. Focused tool-bootstrap/release, docs, license and diff gates
+  passed. Final `make verify` Build/Vet/Race/Coverage passed on the remediation.
+- **Risk:** no P0/P1/P2 remains locally. The first-head protected matrix is
+  superseded; every required check and review thread must pass again on the
+  replacement exact head before merge.
+- **Ready for:** remediation commit/push, review replies/resolution and fresh
+  protected exact-head verification.
+
+### Delegate notes
+
+No new delegated write occurred. Sol verified the hosted security finding
+against the official Go vulnerability record and upstream go-git advisory,
+then implemented and tested the minimal lock/script/queue correction.
+
+### Sol review feedback
+
+Both actionable CodeRabbit findings and the related CLI nit were valid and are
+closed in the local diff. Rollout and production truth remain unchanged.
+
+`TRUEREPUBLIC GH-278 ACTIVE — REVIEW REMEDIATED — FRESH HEAD REQUIRED`
+
+---

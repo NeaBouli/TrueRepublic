@@ -10,8 +10,10 @@
   bootstrap evidence with signed/published/production claims false.
 - [x] Add adversarial repository/contract tests, CI wiring, Dependabot coverage
   and precise non-production documentation.
-- [ ] Complete Kimi implementation/review, Sol diff/security review, all local
-  gates, protected PR, exact-main verification and both-Bridge closeout.
+- [x] Complete Kimi implementation/review, Sol diff/security review and all
+  local gates.
+- [ ] Complete protected PR review, merge, exact-main verification, live
+  Pages/Wiki readback and GH-29/both-Bridge closeout.
 - [ ] Keep rollout 35/59, phase work 35/51, Phase 6 6/7, Phase 7 3/10 and
   production false; create no tag, signature, publication or deployment.
 

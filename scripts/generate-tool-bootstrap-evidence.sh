@@ -20,9 +20,12 @@ OUTPUT_DIR=
 usage() { echo "usage: $0 --artifacts-a <dir> --artifacts-b <dir> --output-dir <new-dir> [--contract <file>] [--gates <file>] [--locks-root <dir>]" >&2; }
 while [[ $# -gt 0 ]]; do
   case "$1" in
-    --artifacts-a) ARTIFACTS_A=${2-}; shift 2;; --artifacts-b) ARTIFACTS_B=${2-}; shift 2;;
-    --output-dir) OUTPUT_DIR=${2-}; shift 2;; --contract) CONTRACT=${2-}; shift 2;;
-    --gates) GATES=${2-}; shift 2;; --locks-root) LOCKS_ROOT=${2-}; shift 2;;
+    --artifacts-a) [[ $# -ge 2 ]] || { usage; exit 2; }; ARTIFACTS_A=$2; shift 2;;
+    --artifacts-b) [[ $# -ge 2 ]] || { usage; exit 2; }; ARTIFACTS_B=$2; shift 2;;
+    --output-dir) [[ $# -ge 2 ]] || { usage; exit 2; }; OUTPUT_DIR=$2; shift 2;;
+    --contract) [[ $# -ge 2 ]] || { usage; exit 2; }; CONTRACT=$2; shift 2;;
+    --gates) [[ $# -ge 2 ]] || { usage; exit 2; }; GATES=$2; shift 2;;
+    --locks-root) [[ $# -ge 2 ]] || { usage; exit 2; }; LOCKS_ROOT=$2; shift 2;;
     *) usage; exit 2;;
   esac
 done

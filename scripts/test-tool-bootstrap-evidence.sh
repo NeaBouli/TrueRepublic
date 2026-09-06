@@ -16,6 +16,23 @@ bash -n scripts/generate-tool-bootstrap-evidence.sh
 bash -n scripts/verify-tool-bootstrap-evidence.sh
 bash -n scripts/test-tool-bootstrap-evidence.sh
 
+expect_usage_exit_2() {
+  local script=$1 option=$2 status
+  set +e
+  "$script" "$option" >/dev/null 2>&1
+  status=$?
+  set -e
+  [[ "$status" -eq 2 ]] || {
+    echo "$script returned $status instead of usage exit 2 for $option without a value" >&2
+    exit 1
+  }
+}
+expect_usage_exit_2 ./scripts/build-ci-tool.sh --tool
+expect_usage_exit_2 ./scripts/build-ci-tool.sh --output-dir
+for option in --artifacts-a --artifacts-b --output-dir --contract --gates --locks-root; do
+  expect_usage_exit_2 ./scripts/generate-tool-bootstrap-evidence.sh "$option"
+done
+
 go test ./toolbootstrapevidence ./cmd/tool-bootstrap-evidence -count=1
 
 FIXTURES="$ROOT_DIR/testdata/toolbootstrapevidence"

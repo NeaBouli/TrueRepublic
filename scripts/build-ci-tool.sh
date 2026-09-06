@@ -18,8 +18,8 @@ OUTPUT_DIR=
 usage() { echo "usage: $0 --tool <id> --output-dir <new-dir>" >&2; }
 while [[ $# -gt 0 ]]; do
   case "$1" in
-    --tool) TOOL=${2-}; shift 2;;
-    --output-dir) OUTPUT_DIR=${2-}; shift 2;;
+    --tool) [[ $# -ge 2 ]] || { usage; exit 2; }; TOOL=$2; shift 2;;
+    --output-dir) [[ $# -ge 2 ]] || { usage; exit 2; }; OUTPUT_DIR=$2; shift 2;;
     *) usage; exit 2;;
   esac
 done
