@@ -9144,3 +9144,80 @@ security-contract verification. No unrelated module or source delta exists.
 `TRUEREPUBLIC GH-285 GO SLICE REVIEW — LOCAL GREEN — PRODUCTION FALSE`
 
 ---
+
+## 2026-09-06 20:40 EEST GH-285 Go merged / client slice → In Progress
+
+- **Branch:** `chore/GH-285-client-maintenance`
+- **Issue:** [GH-285](https://github.com/NeaBouli/TrueRepublic/issues/285)
+- **Base:** exact clean main `fcb951dc77e659a809d27cc37332ae148fe4a8d7`.
+- **Completed:** replacement PR #287 passed every hosted context, including
+  the 14-minute multi-validator recovery job, full Go build/test, reproducible
+  OCI for amd64/arm64 and release evidence. It squash-merged as exact main;
+  source PR #283 is closed as superseded.
+- **Current scope:** reproduce source PR #281 on current main with only postcss
+  8.5.27, react-router-dom 7.18.3, @testing-library/user-event 14.6.7,
+  happy-dom 20.13.2 and typescript-eslint 8.69.0 plus their authentic npm
+  lockfile graph. No unrelated dependency drift is allowed.
+- **Tests:** pending Kimi implementation and Sol's independent npm integrity,
+  unit, lint, build/budget, browser, chain, ZKP-WASM, audit and repository
+  security gates.
+- **Safety:** rollout remains 35/59 overall, Phase 6 6/7, Phase 7 3/10;
+  production false. No release, deployment, genesis or real key/fund action.
+
+### Delegate notes
+
+Kimi may modify only `client-web/package.json` and
+`client-web/package-lock.json`, may not touch coordination state, and may
+perform no Git/GitHub write, production action or further delegation.
+
+### Sol review feedback
+
+Pending exact client dependency reproduction and complete verification.
+
+`TRUEREPUBLIC GH-285 CLIENT SLICE ACTIVE — EXACT MAIN fcb951d — PRODUCTION FALSE`
+
+---
+
+## 2026-09-06 21:04 EEST GH-285 maintained-client slice → Review
+
+- **Branch:** `chore/GH-285-client-maintenance`
+- **Issue:** [GH-285](https://github.com/NeaBouli/TrueRepublic/issues/285)
+- **Base:** exact clean main `fcb951dc77e659a809d27cc37332ae148fe4a8d7`.
+- **Changed:** `client-web/package.json` and `client-web/package-lock.json`
+  exactly reproduce source PR #281 byte-for-byte on current main: postcss
+  8.5.27, react-router-dom/router 7.18.3, user-event 14.6.7, happy-dom 20.13.2,
+  typescript-eslint family 8.69.0 and nested ignore 7.0.8. Package count is
+  unchanged; Axios and forbidden Axios versions are absent.
+- **Tests:** PASS — clean `npm ci` with zero vulnerabilities; 10 Node policy and
+  309 Vitest cases pass with four intended skips; lint; build plus entry/route/
+  total bundle budgets; high/critical audit; 3/3 real client-chain delivery;
+  ZKP-WASM/native and keeper-boundary cases; pinned gitleaks full-tree scan plus
+  positive/negative fixtures; license policy plus fixtures; docs consistency;
+  security repository contract; diff hygiene.
+- **Browser evidence:** Chromium desktop/mobile and Firefox desktop pass locally
+  (26 cases; one intended mobile keyboard skip). All 18 local WebKit cases stop
+  before application code on the documented frozen macOS host due unsupported
+  Playwright protocol settings. Kimi reproduced the identical error against the
+  unmodified base. Protected Linux WebKit remains mandatory and authoritative.
+- **Kimi contribution:** performed registry/engine/license/integrity and graph
+  review, prevented semver overshoot and unrelated npm metadata churn, built the
+  exact two-file update, and ran the complete delegated client/integration chain.
+- **Risk:** low dependency risk. No app or chain source changed. Protected exact-
+  head CI/review and merge remain required; no browser gate is waived.
+- **Safety:** rollout remains 35/59 overall, Phase 6 6/7, Phase 7 3/10;
+  production false. No release, deployment, genesis or real key/fund action.
+
+### Delegate notes
+
+Kimi reports no dependency or application finding and respected two-file write
+ownership. The frozen-host WebKit limitation is separately proven pre-existing.
+
+### Sol review feedback
+
+Accepted after byte comparison with #281, full dependency-graph inspection and
+independent npm, unit, lint, build, audit, chain, WASM, secret, license, docs and
+browser verification. Publish only through protected exact-head review.
+
+`TRUEREPUBLIC GH-285 CLIENT SLICE REVIEW — LOCAL GREEN — PRODUCTION FALSE`
+
+---
