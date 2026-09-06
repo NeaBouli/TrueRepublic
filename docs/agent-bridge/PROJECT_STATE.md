@@ -1,5 +1,20 @@
 # Project State
 
+GH-285 is active from exact clean main
+`aa1234d858905efbc7ae1d56c8912c75350b497d`. The replacement for overlapping
+source PRs #280/#282 now resolves the complete CosmWasm family from 3.0.4 to
+3.0.9 in one Cargo-native lock update. Kimi K3 and Sol independently verified
+the diff; Rust fmt, denied-warning Clippy, build, 26 unit tests, cargo audit,
+license policy, docs consistency and secret-scan gates pass. Cargo audit has
+zero vulnerabilities and five warning-class findings already present on the
+base lock. The Go #283 and maintained-client #281 replacements remain queued
+sequentially from each newly verified exact main. Rollout remains 35/59
+overall, Phase 6 6/7, Phase 7 3/10, and production false.
+
+Updated: 2026-09-06 EEST
+
+---
+
 GH-278 is complete. PR #279 final head `528a770` passed 26 successful hosted
 contexts plus the intentional cross-run skip with every review thread resolved,
 then squash-merged as exact main `d21300f`. Exact-main Docs `34034752034`,

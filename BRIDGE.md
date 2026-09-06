@@ -9013,3 +9013,71 @@ readback. Structured audit: `docs/agent-bridge/GH278_AUDIT.md`.
 `TRUEREPUBLIC GH-278 DONE — EXACT MAIN d21300f VERIFIED — PRODUCTION FALSE`
 
 ---
+
+## 2026-09-06 19:19 EEST GH-285 sequential dependency reconciliation → In Progress
+
+- **Branch:** `chore/GH-285-cosmwasm-reconciliation`
+- **Issue:** [GH-285](https://github.com/NeaBouli/TrueRepublic/issues/285)
+- **Base:** exact clean main
+  `aa1234d858905efbc7ae1d56c8912c75350b497d`.
+- **Changed:** ticket and durable coordination only. Source PRs #280/#282
+  overlap on `contracts/Cargo.lock`; #283 updates one Go module; #281 updates
+  five maintained-client development/runtime packages.
+- **Tests:** not run for GH-285 yet. Exact upstream, checksum, license,
+  advisory and dependency-graph validation plus complete ecosystem gates are
+  required.
+- **Risk:** medium — dependency supply chain and CosmWasm/runtime
+  compatibility. No consensus logic, application behavior, public status or
+  production state is intentionally changed.
+- **Ready for:** combined CosmWasm 3.0.9 replacement, Kimi analysis and Sol
+  verification; Go and client slices follow sequentially.
+
+### Delegate notes
+
+Kimi may modify only `contracts/Cargo.lock` for the first slice and must not
+perform Git/GitHub writes, delegate, read secrets, or change public status.
+
+### Sol review feedback
+
+Pending implementation, dependency provenance review and complete gates.
+
+`TRUEREPUBLIC GH-285 ACTIVE — RUST SLICE FIRST — PRODUCTION FALSE`
+
+---
+
+## 2026-09-06 19:33 EEST GH-285 combined CosmWasm slice → Review
+
+- **Branch:** `chore/GH-285-cosmwasm-reconciliation`
+- **Issue:** [GH-285](https://github.com/NeaBouli/TrueRepublic/issues/285)
+- **Base:** exact main `aa1234d858905efbc7ae1d56c8912c75350b497d`.
+- **Changed:** `contracts/Cargo.lock` resolves all eight CosmWasm/schema family
+  packages from 3.0.4 to 3.0.9 and Cargo-deduplicates a compatible Windows-only
+  `windows-sys` entry. Coordination records are updated with actual evidence.
+- **Tests:** PASS — Cargo 1.95.0 fmt; locked workspace Clippy with denied
+  warnings; locked workspace build; locked workspace tests (26 passed, 0
+  failed); cargo-audit 0.22.2 (0 vulnerabilities, 5 base-existing allowed
+  warnings); repository license policy; documentation consistency; gitleaks
+  scan and its positive/negative fixtures; `git diff --check`.
+- **Kimi contribution:** bounded Cargo-native lock resolution, upstream and
+  crate-license/dependency-graph analysis, and initial full Rust verification.
+  Kimi changed only the permitted Cargo lock and performed no GitHub write.
+- **Risk:** the five audit warnings predate this diff and remain separate debt.
+  The valid `windows-sys` dedup is target-Windows-only and awaits hosted Linux
+  protected checks plus any platform matrix supplied by GitHub.
+- **Ready for:** protected replacement PR, hosted checks, Sol review and merge;
+  only then may Go #283 be rebuilt from the new exact main.
+
+### Delegate notes
+
+Kimi reports no P0-P3 defect in its bounded implementation. It explicitly
+preserved Sol's four pre-existing coordination-file changes.
+
+### Sol review feedback
+
+Accepted locally after line-by-line diff review and an independent complete
+gate rerun. No unrelated package version, runtime source file or public rollout
+claim changed.
+
+`TRUEREPUBLIC GH-285 RUST SLICE REVIEW — LOCAL GREEN — PRODUCTION FALSE`
+
+---
