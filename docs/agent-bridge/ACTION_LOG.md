@@ -5485,7 +5485,7 @@
   evidence. With no review thread open, it squash-merged as exact main `fcb951d`;
   source PR #283 was closed as superseded with the replacement and merge linked.
 - Branch `chore/GH-285-client-maintenance` starts from that exact clean main.
-  Scope is limited to postcss 8.5.27, react-router-dom 7.18.3,
+  Scope is limited to postcss 8.5.27, react-router and react-router-dom 7.18.3,
   @testing-library/user-event 14.6.7, happy-dom 20.13.2 and typescript-eslint
   8.69.0 plus the authentic npm lockfile graph and current coordination evidence.
 - Kimi may change only the two client dependency manifests. Sol retains diff,
