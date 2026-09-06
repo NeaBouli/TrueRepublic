@@ -6,7 +6,7 @@ DETERMINISTIC_TARGET ?= linux-amd64
 SOURCE_REF           ?= $(shell git rev-parse HEAD)
 DETERMINISTIC_OUT    ?= $(BUILD_DIR)/deterministic/$(DETERMINISTIC_TARGET)
 
-.PHONY: build critical-coverage quality-depth concurrency-replay ibc-two-chain governed-upgrade security-contract go-vuln static-analysis secret-scan deterministic-linux-daemon deterministic-build-contract-test reproducible-oci-contract-test candidate-evidence-contract-test cross-run-evidence-contract-test install-lifecycle-contract-test release-compatibility-contract-test rollout-genesis-contract-test license-policy-contract-test verify test lint clean docker-build docker-up docker-down proto-gen
+.PHONY: build critical-coverage quality-depth concurrency-replay ibc-two-chain governed-upgrade security-contract go-vuln static-analysis secret-scan deterministic-linux-daemon deterministic-build-contract-test reproducible-oci-contract-test candidate-evidence-contract-test cross-run-evidence-contract-test ci-tool-bootstrap-contract-test install-lifecycle-contract-test release-compatibility-contract-test rollout-genesis-contract-test license-policy-contract-test verify test lint clean docker-build docker-up docker-down proto-gen
 
 build:
 	@echo "Building $(BINARY)..."
@@ -68,6 +68,10 @@ candidate-evidence-contract-test:
 cross-run-evidence-contract-test:
 	./scripts/test-cross-run-evidence.sh
 	go test . -run '^TestCrossRunRepositoryContract$$' -count=1
+
+ci-tool-bootstrap-contract-test:
+	./scripts/test-tool-bootstrap-evidence.sh
+	go test . -run '^TestCIToolBootstrapRepositoryContract$$' -count=1
 
 install-lifecycle-contract-test:
 	go test ./installlifecycle ./cmd/install-lifecycle

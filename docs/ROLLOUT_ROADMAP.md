@@ -21,8 +21,9 @@ separate mandatory release-freeze and accountable go/no-go subchecks.
 
 - The ordered recovery merge chain is on `main`.
 - The maximum supply is fixed at 21,000,000 PNYX.
-- The source of truth records 2,319 recovery-verified tests: 1,974 Go, 26 Rust,
-  and 319 maintained-client tests. The Go total includes GH-244's strict
+- The source of truth records 2,353 recovery-verified tests: 2,008 Go, 26 Rust,
+  and 319 maintained-client tests. The Go total includes GH-278's locked
+  CI-tool bootstrap evidence, GH-244's strict
   offline rollout-genesis qualification contract, GH-261's strict simulated-tag
   candidate aggregation, GH-258's repeated-OCI evidence contract, GH-225's release-
   compatibility contract, GH-209's recipient-
@@ -362,7 +363,10 @@ denominators.
   and both-platform OCI digest reports to one exact commit and explicitly
   simulated future tag in protected CI. GH-273 adds a strict metadata-only
   comparison capability for two distinct protected workflow executions of the
-  unchanged exact commit. Hosted baseline run
+  unchanged exact commit. GH-278 replaces live-resolved release/security tool
+  installation with repository-owned Go/npm locked bootstraps plus
+  deterministic fail-closed same-job tool-composition evidence
+  ([details](node-operators/installation/ci-tool-bootstrap.md)). Hosted baseline run
   [33465480131](https://github.com/NeaBouli/TrueRepublic/actions/runs/33465480131)
   and comparison run
   [33466167289](https://github.com/NeaBouli/TrueRepublic/actions/runs/33466167289)

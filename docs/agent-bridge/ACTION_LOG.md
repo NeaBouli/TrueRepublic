@@ -5361,3 +5361,33 @@
 - The local closeout tree was clean before this append-only audit entry. No
   release, tag, artifact/signature, deployment, production, genesis, key/fund
   or go/no-go action occurred.
+
+## 2026-09-06 13:18 EEST - GH-278 hermetic release-tool bootstrap started
+
+- Exact local/remote main is clean at
+  `a244a1a4ddb8513c2f5807f0c05d3df187adf57b`; GH-278 is the sole new bounded
+  task and branch `feat/GH-278-hermetic-ci-tools` is isolated from main.
+- Sol found live `npm install --global` in release SBOM generation. Kimi's two
+  read-only reviews independently prioritized a repository-owned npm lock and
+  Go tool module before the later rollout-genesis freeze-readiness block.
+- Axios 1.14.1 and 0.30.4 are absent from maintained lockfiles. No build/test
+  ran yet and no product, tag, signing, publication, deployment or rollout
+  state changed.
+
+## 2026-09-06 15:20 EEST - GH-278 locally approved
+
+- Added repository-owned Go/npm locks for all five release/security tools in
+  scope, deterministic twice-built composition evidence, a strict bounded
+  offline verifier, semantic repository guards and protected workflow wiring.
+- Kimi K3 implemented the bounded core and completed two independent read-only
+  reviews. Sol closed every P1-P3 finding and Kimi returned final `APPROVE`
+  with no P0/P1/P2 remaining. Audit: `docs/agent-bridge/GH278_AUDIT.md`.
+- `make verify` passes final Build/Vet/Race/Coverage. Standard enumeration is
+  2,008 Go; client lint, 319 tests, build/budgets and audit pass; Rust fmt,
+  denied-warning Clippy, 26 tests, build and audit policy pass. Exact tool
+  double-build/evidence, security, SBOM, consistency, license and diff gates
+  pass.
+- Public accounting is synchronized to 2,353 tests while rollout remains
+  35/59 overall, 35/51 phase work, Phase 6 6/7, Phase 7 3/10 and production
+  false. Protected PR review, merge, exact-main checks and live Pages/Wiki
+  verification remain before Done.

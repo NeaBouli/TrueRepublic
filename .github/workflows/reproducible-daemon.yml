@@ -71,6 +71,15 @@ on:
       - 'scripts/test-cross-run-evidence.sh'
       - 'scripts/verify-cross-run-evidence.sh'
       - 'cross_run_repository_test.go'
+      - 'tools/ci/**'
+      - 'toolbootstrapevidence/**'
+      - 'cmd/tool-bootstrap-evidence/**'
+      - 'testdata/toolbootstrapevidence/**'
+      - 'scripts/build-ci-tool.sh'
+      - 'scripts/generate-tool-bootstrap-evidence.sh'
+      - 'scripts/test-tool-bootstrap-evidence.sh'
+      - 'scripts/verify-tool-bootstrap-evidence.sh'
+      - 'ci_tool_bootstrap_repository_test.go'
       - '.github/workflows/reproducible-daemon.yml'
   pull_request:
     paths:
@@ -135,6 +144,15 @@ on:
       - 'scripts/test-cross-run-evidence.sh'
       - 'scripts/verify-cross-run-evidence.sh'
       - 'cross_run_repository_test.go'
+      - 'tools/ci/**'
+      - 'toolbootstrapevidence/**'
+      - 'cmd/tool-bootstrap-evidence/**'
+      - 'testdata/toolbootstrapevidence/**'
+      - 'scripts/build-ci-tool.sh'
+      - 'scripts/generate-tool-bootstrap-evidence.sh'
+      - 'scripts/test-tool-bootstrap-evidence.sh'
+      - 'scripts/verify-tool-bootstrap-evidence.sh'
+      - 'ci_tool_bootstrap_repository_test.go'
       - '.github/workflows/reproducible-daemon.yml'
 
 permissions:
@@ -160,20 +178,21 @@ jobs:
           cache: npm
           cache-dependency-path: client-web/package-lock.json
 
-      - name: Install exact SBOM generators outside the repository
+      - name: Verify exact npm toolchain
+        run: test "$(npm --version)" = "$(jq -er '.tools.npm' configs/security/gates.json)"
+
+      - name: Build locked SBOM generators from repository-owned locks
         run: |
-          test "$(npm --version)" = "$(jq -er '.tools.npm' configs/security/gates.json)"
-          GOBIN="${RUNNER_TEMP}/release-tools" \
-            go install "github.com/CycloneDX/cyclonedx-gomod/cmd/cyclonedx-gomod@$(jq -er '.tools.cyclonedx_gomod' configs/security/gates.json)"
-          npm install --global --prefix "${RUNNER_TEMP}/cyclonedx-npm" \
-            "@cyclonedx/cyclonedx-npm@$(jq -er '.tools.cyclonedx_npm' configs/security/gates.json)"
+          mkdir "${RUNNER_TEMP}/release-tools"
+          ./scripts/build-ci-tool.sh --tool cyclonedx-gomod --output-dir "${RUNNER_TEMP}/release-tools/cyclonedx-gomod"
+          ./scripts/build-ci-tool.sh --tool cyclonedx-npm --output-dir "${RUNNER_TEMP}/release-tools/cyclonedx-npm"
 
       - name: Generate each maintained-source SBOM twice
         run: |
-          "${RUNNER_TEMP}/release-tools/cyclonedx-gomod" mod -json -output-version 1.6 -output "${RUNNER_TEMP}/go-a.json" .
-          "${RUNNER_TEMP}/release-tools/cyclonedx-gomod" mod -json -output-version 1.6 -output "${RUNNER_TEMP}/go-b.json" .
-          "${RUNNER_TEMP}/cyclonedx-npm/bin/cyclonedx-npm" --package-lock-only --spec-version 1.6 --output-format JSON --output-file "${RUNNER_TEMP}/client-a.json" client-web/package.json
-          "${RUNNER_TEMP}/cyclonedx-npm/bin/cyclonedx-npm" --package-lock-only --spec-version 1.6 --output-format JSON --output-file "${RUNNER_TEMP}/client-b.json" client-web/package.json
+          "${RUNNER_TEMP}/release-tools/cyclonedx-gomod/cyclonedx-gomod" mod -json -output-version 1.6 -output "${RUNNER_TEMP}/go-a.json" .
+          "${RUNNER_TEMP}/release-tools/cyclonedx-gomod/cyclonedx-gomod" mod -json -output-version 1.6 -output "${RUNNER_TEMP}/go-b.json" .
+          "${RUNNER_TEMP}/release-tools/cyclonedx-npm/node_modules/.bin/cyclonedx-npm" --package-lock-only --spec-version 1.6 --output-format JSON --output-file "${RUNNER_TEMP}/client-a.json" client-web/package.json
+          "${RUNNER_TEMP}/release-tools/cyclonedx-npm/node_modules/.bin/cyclonedx-npm" --package-lock-only --spec-version 1.6 --output-format JSON --output-file "${RUNNER_TEMP}/client-b.json" client-web/package.json
           for component in go client; do
             jq -cS 'del(.serialNumber, .metadata.timestamp)' "${RUNNER_TEMP}/${component}-a.json" >"${RUNNER_TEMP}/${component}-normalized-a.json"
             jq -cS 'del(.serialNumber, .metadata.timestamp)' "${RUNNER_TEMP}/${component}-b.json" >"${RUNNER_TEMP}/${component}-normalized-b.json"
@@ -196,6 +215,59 @@ jobs:
 
       - name: Verify fail-closed cross-run evidence contract offline
         run: make cross-run-evidence-contract-test
+
+  tool-bootstrap-evidence:
+    name: tool bootstrap evidence
+    runs-on: ubuntu-24.04
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
+        with:
+          go-version: '1.26.6'
+
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: '22.22.2'
+          cache: npm
+          cache-dependency-path: tools/ci/npm/package-lock.json
+
+      - name: Verify exact npm toolchain
+        run: test "$(npm --version)" = "$(jq -er '.tools.npm' configs/security/gates.json)"
+
+      - name: Verify fail-closed tool-bootstrap contract offline
+        run: make ci-tool-bootstrap-contract-test
+
+      - name: Build every locked CI tool twice and bind the composition evidence
+        run: |
+          set -euo pipefail
+          for round in a b; do
+            mkdir "${RUNNER_TEMP}/ci-tools-${round}"
+            for tool in cyclonedx-gomod govulncheck staticcheck gitleaks cyclonedx-npm; do
+              ./scripts/build-ci-tool.sh --tool "$tool" --output-dir "${RUNNER_TEMP}/ci-tools-${round}/${tool}"
+            done
+          done
+          ./scripts/generate-tool-bootstrap-evidence.sh \
+            --artifacts-a "${RUNNER_TEMP}/ci-tools-a" \
+            --artifacts-b "${RUNNER_TEMP}/ci-tools-b" \
+            --output-dir "${RUNNER_TEMP}/tool-bootstrap-evidence"
+          ./scripts/verify-tool-bootstrap-evidence.sh \
+            --evidence "${RUNNER_TEMP}/tool-bootstrap-evidence" \
+            --artifacts "${RUNNER_TEMP}/ci-tools-b" \
+            --output json | tee "${RUNNER_TEMP}/tool-bootstrap-report.json"
+
+      - name: Upload repository-only tool-bootstrap evidence
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: truerepublic-tool-bootstrap-${{ github.sha }}
+          path: |
+            ${{ runner.temp }}/tool-bootstrap-evidence/tool-bootstrap-evidence.json
+            ${{ runner.temp }}/tool-bootstrap-report.json
+          if-no-files-found: error
+          retention-days: 14
 
   deterministic-build:
     name: ${{ matrix.target }}

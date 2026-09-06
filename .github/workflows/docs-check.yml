@@ -53,6 +53,8 @@ jobs:
         run: |
           make license-policy-contract-test
           ./scripts/test-license-policy.sh
+      - name: Check CI Tool Bootstrap Contract
+        run: make ci-tool-bootstrap-contract-test
       - name: Check Consistency
         run: ./scripts/check-consistency.sh
       - name: Check Mobile Retirement

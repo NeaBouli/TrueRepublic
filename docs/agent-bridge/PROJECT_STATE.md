@@ -1,5 +1,30 @@
 # Project State
 
+GH-278 is locally approved with independent Kimi K3 `APPROVE` and no P0/P1/P2
+finding. Repository-owned Go/npm tool locks, five-tool deterministic bootstrap
+evidence, strict adversarial verification, workflow integration and synchronized
+2,353-test public status all pass the complete relevant local chain. Protected
+PR review, merge, exact-main workflows and live Pages/Wiki readback remain.
+Rollout stays 35/59 overall, 35/51 phase work, Phase 6 6/7, Phase 7 3/10, and
+production false. Audit: `docs/agent-bridge/GH278_AUDIT.md`.
+
+Updated: 2026-09-06 EEST
+
+---
+
+GH-278 is active from exact clean main
+`a244a1a4ddb8513c2f5807f0c05d3df187adf57b`. It replaces live-resolved
+release/security Go and npm tool installation with repository-owned locked
+bootstraps plus deterministic fail-closed composition evidence. Kimi K3 owns
+the bounded secret-free implementation core; Sol owns architecture, security,
+integration, complete verification and GitHub closure. GH-276 is verified Done
+through PR #277 and exact-main workflows. Rollout remains 35/59 overall, 35/51
+phase work, Phase 6 6/7, Phase 7 3/10, and production false.
+
+Updated: 2026-09-06 EEST
+
+---
+
 GH-276 is locally approved. Public and machine-readable Phase-7 accounting is
 3/10, with exact roadmap top-level enumeration and mandatory nested release-
 freeze/go-no-go guards enforced by `scripts/check-consistency.sh`. JSON, Bash

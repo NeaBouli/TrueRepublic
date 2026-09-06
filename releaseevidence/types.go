@@ -2,7 +2,11 @@
 // deterministic daemon-build and release tool/platform contracts.
 package releaseevidence
 
-import "errors"
+import (
+	"errors"
+
+	"truerepublic/toolbootstrapevidence"
+)
 
 const (
 	Schema              = "truerepublic.release-evidence/v1"
@@ -82,10 +86,11 @@ type SBOM struct {
 }
 
 type ToolContract struct {
-	Schema     string     `json:"schema"`
-	Tools      Tools      `json:"tools"`
-	Platforms  []Platform `json:"platforms"`
-	BaseImages []string   `json:"base_images"`
+	Schema     string                          `json:"schema"`
+	Tools      Tools                           `json:"tools"`
+	Platforms  []Platform                      `json:"platforms"`
+	BaseImages []string                        `json:"base_images"`
+	Bootstrap  toolbootstrapevidence.Bootstrap `json:"bootstrap"`
 }
 
 type Platform struct {
