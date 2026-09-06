@@ -5511,3 +5511,21 @@
   the mandatory exact-head acceptance gate, not waived.
 - No technical dependency finding remains. Protected PR/review/merge and exact-
   main closeout remain; rollout and production truth are unchanged.
+
+## 2026-09-06 21:28 EEST - GH-285 dependency reconciliation complete
+
+- Maintained-client replacement PR #288 final head `db7b2e7` passed 21 hosted
+  contexts plus the intentional cross-run skip: Linux browser coverage including
+  WebKit, build/budget, 3/3 client-chain delivery, ZKP-WASM, docs, Go/Rust/npm
+  security, amd64/arm64 builds, reproducible OCI and release-evidence contracts.
+- CodeRabbit's only finding was verified and fixed by explicitly recording both
+  lockstep router packages; the thread is resolved. Kimi's independent review
+  remained APPROVE with no P0/P1/P2 finding.
+- PR #288 squash-merged as exact main
+  `876c4a4d171bf0853e9e3bff2d2b7b0ad2d2adb2`; source PR #281 was closed as
+  superseded with the replacement and exact merge linked. Together with merged
+  PRs #286/#287 and closed source PRs #280/#282/#283, all GH-285 slices are
+  complete and traceable.
+- No public README, Landing Page or Wiki content changed: this maintenance adds
+  no feature, standard-suite test, rollout credit or production claim. Rollout
+  remains 35/59 overall, Phase 6 6/7, Phase 7 3/10, production false.

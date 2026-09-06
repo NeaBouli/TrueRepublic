@@ -9221,3 +9221,42 @@ browser verification. Publish only through protected exact-head review.
 `TRUEREPUBLIC GH-285 CLIENT SLICE REVIEW — LOCAL GREEN — PRODUCTION FALSE`
 
 ---
+
+## 2026-09-06 21:28 EEST GH-285 sequential dependency reconciliation → Done
+
+- **Issue:** [GH-285](https://github.com/NeaBouli/TrueRepublic/issues/285)
+- **Merged chain:** CosmWasm PR #286 → `edf30be`; Prometheus client-model PR
+  #287 → `fcb951d`; maintained-client PR #288 → exact main
+  `876c4a4d171bf0853e9e3bff2d2b7b0ad2d2adb2`.
+- **Source cleanup:** Dependabot PRs #280/#281/#282/#283 are all closed as
+  superseded with exact replacement and merge evidence; no dependency PR from
+  this reconciliation remains ambiguous or open.
+- **Final hosted verification:** PR #288 final head `db7b2e7` passed 21 checks
+  plus one intentional cross-run skip, including Linux Chromium/Firefox/WebKit,
+  3/3 client-chain delivery, ZKP-WASM, Go/Rust/npm security, secret scanning,
+  amd64/arm64 builds, reproducible OCI and release-evidence contracts. The only
+  documentation review finding was fixed and its thread resolved.
+- **Kimi contribution:** implemented and deeply reviewed the bounded ecosystem
+  slices, prevented semver overshoot/unrelated lock churn, and reported no
+  P0/P1/P2 finding. Sol independently reviewed every diff, reran all relevant
+  local gates and owned protected publication, review remediation and merges.
+- **Public surfaces:** README, Landing Page and Wiki require no textual update
+  because dependency maintenance changed no public version, test count, feature,
+  architecture or rollout state.
+- **Status:** no technical blocker. Rollout remains 35/59 overall, Phase 6 6/7,
+  Phase 7 3/10; production false. No release, deployment, genesis, signing,
+  publication or real key/fund action occurred.
+
+### Delegate notes
+
+Kimi's final independent client review was APPROVE with zero P0/P1/P2 findings.
+Claude Code was unavailable and not required for the completed bounded work.
+
+### Sol review feedback
+
+Accepted on exact main after complete local and protected verification. GH-285
+may close after this append-only closeout passes protected review and merges.
+
+`TRUEREPUBLIC GH-285 DONE — EXACT MAIN 876c4a4 — PRODUCTION FALSE`
+
+---
