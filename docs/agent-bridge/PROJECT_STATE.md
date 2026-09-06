@@ -1,15 +1,15 @@
 # Project State
 
 GH-285 is active from exact clean main
-`aa1234d858905efbc7ae1d56c8912c75350b497d`. The replacement for overlapping
-source PRs #280/#282 now resolves the complete CosmWasm family from 3.0.4 to
-3.0.9 in one Cargo-native lock update. Kimi K3 and Sol independently verified
-the diff; Rust fmt, denied-warning Clippy, build, 26 unit tests, cargo audit,
-license policy, docs consistency and secret-scan gates pass. Cargo audit has
-zero vulnerabilities and five warning-class findings already present on the
-base lock. The Go #283 and maintained-client #281 replacements remain queued
-sequentially from each newly verified exact main. Rollout remains 35/59
-overall, Phase 6 6/7, Phase 7 3/10, and production false.
+`edf30be2e050c57cb8074515de8c362e61bb1eb3`. Combined CosmWasm replacement
+PR #286 passed all protected contexts and merged; source PRs #280/#282 are
+closed as superseded. The Go replacement for #283 now contains only
+`github.com/prometheus/client_model` 0.6.2 to 0.6.3 and authentic module sums.
+Kimi and Sol independently verified the exact diff, all 32 maintained packages
+with Race/Coverage, vulnerability/static/secret/license/docs gates, governed
+upgrade recovery, and Kimi's complete 8/8 multi-validator matrix. Protected
+publication remains before the maintained-client #281 replacement can start.
+Rollout remains 35/59 overall, Phase 6 6/7, Phase 7 3/10, production false.
 
 Updated: 2026-09-06 EEST
 
