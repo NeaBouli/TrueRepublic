@@ -5407,3 +5407,16 @@
 - Focused bootstrap/release, consistency, license and diff gates plus final
   Build/Vet/Race/Coverage pass on the remediated diff. A replacement exact head
   and complete fresh protected matrix remain mandatory before merge.
+
+## 2026-09-06 16:15 EEST - GH-278 protected publication and public sync complete
+
+- PR #279 final head `528a770` passed 26 successful hosted contexts plus the
+  intentional cross-run skip, with both review threads resolved, and merged as
+  exact main `d21300f`; GH-278 closed automatically.
+- Exact-main Docs `34034752034`, Security `34034751986`, Reproducible Linux
+  Daemon `34034751976`, Go CI `34034752131`, and Pages `34034750689` pass. The
+  canonical checkout is clean and synchronized.
+- Live Wiki `b8606a1`, cache-busted raw status and Landing Page expose 2,353
+  standard-suite cases. Rollout remains 35/59 overall, Phase 6 6/7, Phase 7
+  3/10, and production false; no tag, signing, publication, deployment,
+  genesis, key/fund, go/no-go or rollout-credit action occurred.

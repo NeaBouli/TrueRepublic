@@ -1,5 +1,18 @@
 # Project State
 
+GH-278 is complete. PR #279 final head `528a770` passed 26 successful hosted
+contexts plus the intentional cross-run skip with every review thread resolved,
+then squash-merged as exact main `d21300f`. Exact-main Docs `34034752034`,
+Security `34034751986`, Reproducible Linux Daemon `34034751976`, Go CI
+`34034752131`, and Pages `34034750689` pass. The live Wiki is synchronized at
+`b8606a1`; cache-busted raw status, Landing Page, and Wiki readback expose 2,353
+standard-suite cases while rollout remains 35/59 overall, 35/51 phase work,
+Phase 6 6/7, Phase 7 3/10, and production false. No promotion action occurred.
+
+Updated: 2026-09-06 EEST
+
+---
+
 GH-278 is locally approved with independent Kimi K3 `APPROVE` and no P0/P1/P2
 finding. Repository-owned Go/npm tool locks, five-tool deterministic bootstrap
 evidence, strict adversarial verification, workflow integration and synchronized

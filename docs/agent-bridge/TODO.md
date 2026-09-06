@@ -1,6 +1,6 @@
 # Recovery Queue
 
-## In progress - GH-278 hermetic CI/release-tool bootstrap
+## Completed - GH-278 hermetic CI/release-tool bootstrap
 
 - [x] Add repository-owned Go module/go.sum and npm package-lock coverage for
   the release/security tools in scope.
@@ -12,9 +12,9 @@
   and precise non-production documentation.
 - [x] Complete Kimi implementation/review, Sol diff/security review and all
   local gates.
-- [ ] Complete protected PR review, merge, exact-main verification, live
+- [x] Complete protected PR review, merge, exact-main verification, live
   Pages/Wiki readback and GH-29/both-Bridge closeout.
-- [ ] Keep rollout 35/59, phase work 35/51, Phase 6 6/7, Phase 7 3/10 and
+- [x] Keep rollout 35/59, phase work 35/51, Phase 6 6/7, Phase 7 3/10 and
   production false; create no tag, signature, publication or deployment.
 
 ## Completed - GH-276 Phase-7 accounting alignment

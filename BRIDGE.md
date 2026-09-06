@@ -8979,3 +8979,37 @@ closed in the local diff. Rollout and production truth remain unchanged.
 `TRUEREPUBLIC GH-278 ACTIVE — REVIEW REMEDIATED — FRESH HEAD REQUIRED`
 
 ---
+
+## 2026-09-06 16:15 EEST GH-278 hermetic release-tool bootstrap → Done
+
+- **Protected publication:** PR #279 exact head
+  `528a770781a54878553fc47521503d88c6c51b7e` passed 26 successful contexts
+  plus the intentional cross-run skip with both review threads resolved, then
+  squash-merged as `d21300f2f65e6fa94017e328307b6af3b1a52307`;
+  GH-278 closed automatically.
+- **Exact-main PASS:** Docs `34034752034`, Security `34034751986`,
+  Reproducible Linux Daemon `34034751976`, Go CI `34034752131`, and Pages
+  `34034750689` all completed successfully on exact `d21300f`.
+- **Public synchronization:** live Wiki
+  `b8606a1dea513f530ba435b41fd8a347d239ff61`, cache-busted raw status and
+  Landing Page expose 2,353 standard-suite cases: 2,008 Go, 26 Rust and 319
+  maintained-client. The canonical checkout is clean and exact with main.
+- **Boundary:** rollout remains 35/59 overall, 35/51 phase work, Phase 6 6/7,
+  Phase 7 3/10 and production false. No real tag, release, signing,
+  publication, deployment, genesis, key/fund, go/no-go or rollout-credit
+  action occurred.
+
+### Delegate notes
+
+Kimi K3 implemented the bounded core and independently approved the final
+remediated tree with no P0/P1/P2 finding. Sol reviewed every write, closed the
+hosted findings and owned all tests, integration and external actions.
+
+### Sol review feedback
+
+Done after protected exact-head and exact-main verification plus live public
+readback. Structured audit: `docs/agent-bridge/GH278_AUDIT.md`.
+
+`TRUEREPUBLIC GH-278 DONE — EXACT MAIN d21300f VERIFIED — PRODUCTION FALSE`
+
+---
