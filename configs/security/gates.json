@@ -19,26 +19,26 @@
   "go_vulnerability_exceptions": [
     {
       "id": "GO-2026-5932",
-      "approved_on": "2026-08-09",
-      "expires": "2026-09-08",
+      "approved_on": "2026-09-13",
+      "expires": "2026-10-13",
       "reason": "Reachable through an upstream Cosmos SDK dependency; no fixed version is published."
     },
     {
       "id": "GO-2026-4740",
-      "approved_on": "2026-08-09",
-      "expires": "2026-09-08",
+      "approved_on": "2026-09-13",
+      "expires": "2026-10-13",
       "reason": "Reachable through an upstream Cosmos SDK dependency; no fixed version is published."
     },
     {
       "id": "GO-2023-1881",
-      "approved_on": "2026-08-09",
-      "expires": "2026-09-08",
+      "approved_on": "2026-09-13",
+      "expires": "2026-10-13",
       "reason": "Reachable in the pinned Cosmos SDK release; no fixed version is published."
     },
     {
       "id": "GO-2023-1821",
-      "approved_on": "2026-08-09",
-      "expires": "2026-09-08",
+      "approved_on": "2026-09-13",
+      "expires": "2026-10-13",
       "reason": "Reachable in the pinned Cosmos SDK release; no fixed version is published."
     }
   ],

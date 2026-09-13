@@ -1,5 +1,30 @@
 # Project State
 
+The bounded GH-291 Go policy renewal has Kimi APPROVE with no P0-P2 finding,
+and the policy's full positive/negative fixture suite passes. A post-patch real
+scan repeat was interrupted solely by local disk exhaustion; the preceding
+fresh scan already proved the same four reachable no-fix IDs. The policy commit
+will therefore be evaluated by a fresh authoritative hosted `go-vuln` job and
+the entire exact-head matrix before merge. No cache was deleted and no foreign
+artifact was touched. Rollout and production truth remain unchanged.
+
+Updated: 2026-09-13 EEST
+
+---
+
+PR #292's first hosted matrix exposed a pre-existing Go policy expiry: the four
+exact no-fix vulnerability exceptions expired on 2026-09-08. Current scanning
+still finds only the same four IDs and official records still publish no fixed
+version. GH-291 therefore includes one bounded policy renewal for those IDs
+only, from 2026-09-13 through 2026-10-13, plus the matching fail-closed fixture
+clock. Kimi reviews this delta read-only; Sol owns the security decision and
+fresh complete verification. The dependency patch itself remains locally
+green. Rollout and production truth remain unchanged.
+
+Updated: 2026-09-13 EEST
+
+---
+
 GH-291 has passed independent local review. Kimi's bounded implementation
 changes only postcss 8.5.28, happy-dom 20.14.0 and transitive js-yaml 4.3.2 in
 the maintained-client manifest/lockfile. Current npm audit is zero; client

@@ -9351,3 +9351,42 @@ Pending independent Kimi review and complete Sol verification.
 `TRUEREPUBLIC GH-291 LOCAL REVIEW PASS — HOSTED EXACT-HEAD REVIEW PENDING`
 
 ---
+
+## 2026-09-13 EEST GH-291 hosted Go policy expiry → Changes Requested
+
+- **Hosted evidence:** PR #292's fresh `go-vuln` job failed because all four
+  existing exact no-fix exceptions expired on 2026-09-08. This is pre-existing
+  policy drift on base main, not a dependency-patch regression.
+- **Current scan:** exact PR head still reports only GO-2026-5932,
+  GO-2026-4740, GO-2023-1881 and GO-2023-1821. The official Go vulnerability
+  records still publish no fixed version for each finding.
+- **Bounded remediation:** renew only those same four IDs for one maximum
+  30-day window, 2026-09-13 through 2026-10-13, and move the fail-closed policy
+  fixture clock to the same review date. No new exception or weakened rule is
+  permitted.
+- **Division:** Sol owns the security decision and patch; Kimi performs an
+  independent read-only review of only this policy delta. Fresh real scan,
+  negative fixtures and the entire hosted exact-head matrix are mandatory.
+
+`TRUEREPUBLIC GH-291 GO POLICY RENEWAL IN REVIEW — NO NEW EXCEPTIONS`
+
+---
+
+## 2026-09-13 EEST GH-291 Go policy renewal → Local Review PASS
+
+- **Kimi review:** APPROVE with no P0-P2 finding. It confirmed the unchanged
+  four-ID set, exact 30-day window, coherent fixture clock, unchanged checker
+  semantics and complete negative-fixture coverage.
+- **Sol verification:** the positive and negative vulnerability-policy fixture
+  suite passes. The preceding fresh real scan established the same four
+  reachable no-fix IDs; a post-patch repeat was interrupted only when the local
+  disk filled during concurrent Go analysis, not by a policy mismatch.
+- **Resource boundary:** the task-created temporary Go cache is 4.2 GB. It was
+  not deleted because destructive cleanup requires separate exact approval.
+  No foreign cache, process or artifact was touched.
+- **Decision:** publish the bounded policy commit and require the fresh hosted
+  `go-vuln` job plus the entire exact-head matrix to pass before merge.
+
+`TRUEREPUBLIC GH-291 POLICY LOCAL REVIEW PASS — HOSTED GATE AUTHORITATIVE`
+
+---

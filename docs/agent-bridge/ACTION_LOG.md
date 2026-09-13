@@ -5576,3 +5576,27 @@
   dependency regression. Hosted exact-head checks remain required.
 - Documentation consistency, license policy plus fixtures, and secret scan
   plus fixtures passed. No rollout credit or production claim was added.
+
+## 2026-09-13 EEST - GH-291 hosted gate exposes expired Go exception window
+
+- PR #292's current `go-vuln` job failed because the four existing exact
+  no-fix exceptions expired on 2026-09-08. A fresh real scan still returns only
+  GO-2026-5932, GO-2026-4740, GO-2023-1881 and GO-2023-1821; official records
+  still provide no fixed version.
+- Sol bounded remediation to renewing only those four IDs from 2026-09-13
+  through 2026-10-13 and updating the fail-closed fixture clock. No new ID,
+  dependency, weakened policy, rollout credit or production action is allowed.
+- Kimi owns only a read-only policy-delta review. Sol will rerun the real scan,
+  negative fixtures and the complete hosted exact-head matrix before merge.
+
+## 2026-09-13 EEST - GH-291 Go policy delta approved locally
+
+- Kimi returned APPROVE with no P0-P2 finding after verifying the exact four-ID
+  set, 30-day boundary and every positive/negative fixture path.
+- Sol's policy fixture suite passed. A post-patch real-scan repeat was stopped
+  by local disk exhaustion during concurrent Go compilation; the earlier fresh
+  scan already established the unchanged reachable set. The fresh hosted
+  `go-vuln` job and full exact-head matrix remain authoritative before merge.
+- No cleanup was performed: the 4.2 GB task-created temporary Go cache remains
+  intact because deletion needs separate exact approval. No foreign artifact or
+  process was changed.

@@ -10,6 +10,9 @@
   review without duplicating implementation work.
 - [x] Pass clean lockfile install, client policy/unit, lint, build/budget,
   browser, chain, ZKP-WASM and adjacent repository security gates.
+- [ ] Renew only the four still-reachable no-fix Go vulnerability exceptions
+  for 2026-09-13 through 2026-10-13, pass Kimi read-only review, the real scan
+  and all fail-closed policy fixtures.
 - [ ] Merge only after current exact-head hosted checks and zero unresolved
   review threads; close #290 as superseded, then verify exact main and close
   GH-291.
