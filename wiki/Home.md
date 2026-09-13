@@ -14,11 +14,11 @@
 | Item | Verified state |
 |---|---|
 | Version label | v0.4.0 recovery |
-| Tests | 2,400 standard-suite total: 2,055 Go (including GH-294 security-review readiness, GH-278 locked CI-tool bootstrap evidence, GH-273 cross-run evidence, GH-261 candidate evidence, GH-258 repeated-OCI evidence, GH-244 rollout-genesis qualification, GH-225 release compatibility, GH-222 install-lifecycle, GH-209 recipient-binding and GH-206 pinned test-only prover coverage), 26 Rust, 319 maintained-client; separate GH-266 keeper replay, GH-206 native-verifier, GH-175/GH-178/GH-181 IBC, and GH-184 governed-upgrade gates excluded |
+| Tests | 2,462 standard-suite total: 2,117 Go (including GH-294 security-review readiness, GH-278 locked CI-tool bootstrap evidence, GH-273 cross-run evidence, GH-261 candidate evidence, GH-258 repeated-OCI evidence, GH-244 rollout-genesis qualification, GH-225 release compatibility, GH-222 install-lifecycle, GH-209 recipient-binding and GH-206 pinned test-only prover coverage), 26 Rust, 319 maintained-client; separate GH-266 keeper replay, GH-206 native-verifier, GH-175/GH-178/GH-181 IBC, and GH-184 governed-upgrade gates excluded |
 | Release candidate | Phase 7 is 3/10 in the canonical tracker. GH-273 hosted runs 33465480131 and 33466167289 matched both daemon and all four OCI identities on exact commit `3b0d1639bb40c7df6733dd13a86252e1c8c9efd3`; the evidence is pair-scoped and all tag/ref-push/sign/attest/publish/deploy/production/long-term-hermetic claims remain false |
 | PNYX cap | 21,000,000 PNYX = 21,000,000,000,000 `upnyx` |
 | Node | Restart, four-validator recovery, state sync, sanitized backup/restore, compatible binary rollback, cold identity failover, secret-safe JSON logs, private metrics, and the GH-85 dashboard/alert/objective baseline verified |
-| ZKP client | Fresh synthetic Go/WASM proof reaches the native verifier on GH-206 and the real atomic keeper payout boundary on GH-266; recipient-bound rewards are verified on GH-209 and production submission remains hard-disabled |
+| ZKP client | GH-297 freezes the digest-bound v2 candidate protocol and change control; fresh synthetic Go/WASM proof reaches the native verifier on GH-206 and the real atomic keeper payout boundary on GH-266; recipient-bound rewards are verified on GH-209 and production submission remains hard-disabled |
 | Maintained client | `client-web` |
 | Legacy clients | Web and mobile prototypes retired under GH-112/GH-102; Git history only |
 | Project licensing | Maintained source and documentation are Apache-2.0; individual contributors retain copyright, collectively attributed as “TrueRepublic contributors”; brand/art assets, historical PDFs, archived evidence, and third-party material remain excluded unless an applicable file-specific notice exists or provenance and permission are documented |
@@ -27,6 +27,8 @@ Authoritative machine status: [`docs/status.json`](https://github.com/NeaBouli/T
 Completed recovery foundation:
 [Issue #4](https://github.com/NeaBouli/TrueRepublic/issues/4). Active rollout
 tracking: [Issue #29](https://github.com/NeaBouli/TrueRepublic/issues/29).
+Canonical rollout accounting is 36/59 overall and 36/51 phase work; Phase 7 is
+3/10 and production readiness remains false.
 The exact community licensing decision is recorded in
 [GH-219](https://github.com/NeaBouli/TrueRepublic/issues/219#issuecomment-5423337355).
 

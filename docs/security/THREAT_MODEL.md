@@ -1,7 +1,7 @@
 # TrueRepublic Cross-System Threat Model
 
 Model: `truerepublic-cross-system-threat-model` · Version:
-`truerepublic.threat-model/v1` · Updated: 2026-09-01
+`truerepublic.threat-model/v1` · Updated: 2026-09-13
 
 The canonical, machine-readable register is
 [`configs/security/threat-model.json`](../../configs/security/threat-model.json).
@@ -80,10 +80,11 @@ validator, RPC, or private roles under documented policy.
 - **Module ↔ bank custody** — exact escrow/stake/fee/reward/slash bank
   movements, DEX settlement and canonical burns, every-block crisis
   invariants.
-- **ZKP prover ↔ on-chain verifier** — versioned chain/proposal/rating/recipient-bound
-  signals, nullifier publication, genesis-pinned verification key. GH-266
-  verifies a fresh synthetic Go/WASM proof through the real keeper payout
-  boundary, but no production-qualified prover exists and clients stay
+- **ZKP prover ↔ on-chain verifier** — GH-297 freezes versioned
+  chain/proposal/rating/recipient-bound signals, nullifier publication,
+  canonical field encoding and the genesis-pinned verification-key identity.
+  GH-266 verifies a fresh synthetic Go/WASM proof through the real keeper
+  payout boundary, but no production-qualified prover exists and clients stay
   fail-closed.
 - **Client ↔ RPC** — registered protobuf gRPC-over-ABCI queries and the
   centralized simulate/sign/deliver flow. The configured provider is trusted
@@ -149,16 +150,18 @@ JSON register.
 
 - **TM-ZKP-001** (critical/high, blocked → GH-29): no production-qualified Groth16 prover.
   Verified: fail-closed clients, pinned genesis VK, no randomized consensus
-  setup, GH-206 real synthetic Go/WASM-to-native-verifier compatibility, and
-  GH-266 strict replay of that fresh proof through the atomic keeper payout
-  path with nullifier/replay/context/recipient failure checks.
+  setup, GH-297's digest-bound immutable candidate protocol, GH-206 real
+  synthetic Go/WASM-to-native-verifier compatibility, and GH-266 strict replay
+  of that fresh proof through the atomic keeper payout path with
+  nullifier/replay/context/recipient failure checks.
   Blocked: no production ceremony, no reproducible proving artifacts for
   production, no audited submission path, or real-network browser-to-chain
   evidence is claimed.
 - **TM-ZKP-002** (high/medium, deferred → GH-7): compromised or unaudited
   trusted setup or circuit. Verified: genesis ceremony artifacts pinned as
-  trust anchor. Deferred: ceremony provenance and independent cryptographic,
-  privacy, and trusted-setup review are absent and not claimed.
+  trust anchor plus GH-297's explicit new-version/migration rule for any
+  review-forced change. Deferred: ceremony provenance and independent
+  cryptographic, privacy, and trusted-setup review are absent and not claimed.
 
 ### ibc_upgrades
 

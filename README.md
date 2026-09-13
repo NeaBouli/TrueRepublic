@@ -16,7 +16,7 @@
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/tests-2400%20recovery--verified-orange" alt="Recovery-verified tests"/>
+  <img src="https://img.shields.io/badge/tests-2462%20recovery--verified-orange" alt="Recovery-verified tests"/>
   <img src="https://img.shields.io/badge/release-unreleased-orange" alt="Unreleased recovery candidate"/>
   <img src="https://img.shields.io/badge/recovery-active-orange" alt="Recovery active"/>
   <img src="https://img.shields.io/badge/Go-1.26.6-00ADD8?logo=go" alt="Go"/>
@@ -134,7 +134,7 @@ See [INSTALLATION.md](INSTALLATION.md) for detailed instructions.
 | **Domains** | Community-governed spaces for specific topics | [Governance Tutorial](docs/user-manual/governance-tutorial.md) |
 | **Systemic Consensing** | Rate proposals -5 to +5 instead of Yes/No | [SC Explained](docs/user-manual/systemic-consensing-explained.md) |
 | **Stones Voting** | Highlight importance, elect admins, earn rewards | [Stones Guide](docs/user-manual/stones-voting-guide.md) |
-| **Anonymous Suggestion Ratings** | Domain key pairs for unlinkable suggestion ratings (WP S4) | [Architecture](docs/developers/architecture/module-reference.md) |
+| **Anonymous Suggestion Ratings** | Frozen v2 protocol profile with domain keys; production proving/submission remains disabled | [ZKP Protocol Freeze](docs/security/ZKP_PROTOCOL_FREEZE.md) |
 | **Proof of Domain** | Validators must be active domain members | [Validator Guide](docs/validators/README.md) |
 | **DEX (stacked recovery)** | PR #18 adds custody/LP ownership/burns; PR #19 reconciles genesis and checks reserves/shares every block | [DEX Guide](docs/user-manual/dex-trading-guide.md) |
 | **VoteToEarn** | Earn PNYX rewards for active participation | [Stones Guide](docs/user-manual/stones-voting-guide.md) |
@@ -241,7 +241,7 @@ TrueRepublic/
 ```bash
 # Blockchain (the committed module graph remains unchanged)
 ./scripts/go-packages.sh go build
-CGO_ENABLED=1 ./scripts/go-packages.sh go test -race -cover -count=1 -timeout=600s    # 2,055 Go cases
+CGO_ENABLED=1 ./scripts/go-packages.sh go test -race -cover -count=1 -timeout=600s    # 2,117 Go cases
 make cross-run-evidence-contract-test                                  # metadata-only GH-273 contract
 make ci-tool-bootstrap-contract-test                                   # locked GH-278 CI tool bootstrap contract
 make ibc-two-chain                                                     # separate GH-175/GH-178/GH-181 proof gate
@@ -270,7 +270,7 @@ cd client-web && npm ci && npm run lint && npm test -- --run && npm run build
 | Native mobile client | — | Retired under GH-102; replacement pending |
 | Local encrypted test wallet + CosmJS | 0.39 | Maintained v0.4 client |
 
-**Known Limitations:** TrueRepublic uses PoD and does not mount `x/staking` or `x/distribution`; GH-187 makes every required IBC/CosmWasm compatibility adapter reject those unsupported surfaces fail-closed. GH-184 wires real `x/upgrade` for the exact governed fresh-genesis v0.4.1 path, but pre-GH-184 store introduction and IBC client upgrades remain unsupported. GH-206 verifies only synthetic test compatibility, and GH-266 extends that evidence through the real keeper payout boundary without creating a production prover or submission path. GH-209 implements front-running-safe recipient-bound anonymous rewards while documenting direct-payout linkability; production ZKP qualification, ceremony, submission integration, and independent cryptographic/privacy review remain pending. GH-93 provides a strict synthetic incident-command and rehearsal contract, but a private live operator rehearsal remains pending. GH-85 provides dashboard/application runtime evidence, alert rules, recovery/testnet objectives, and role ownership. GH-89 adds a strict synthetic topology qualification contract. GH-97 adds bounded four-validator load, resource, retention, restart, and ledger evidence; it does not establish production sizing or multi-day soak behavior. GH-101 adds a digest-bound offline deployment-evidence envelope and verifier; it does not prove or perform a live deployment. GH-212 pins release tools, supported platforms and maintained container bases and adds strict unsigned offline release evidence. GH-258 adds native same-job double-build OCI identity evidence for daemon and `client-web`. GH-261 binds the exact commit and an explicitly simulated future tag to both native daemon metadata records and both-platform OCI digest reports in protected CI, retaining metadata/JSON only. Floating runner/BuildKit versions and live Debian package indexes still prevent a cross-time hermetic reproducibility claim. These controls create no real tag, publish or sign no artifact, authenticate no provenance, deploy nothing, and approve no rollout. Real seed/sentry/validator/RPC deployment, firewall/TLS/DNS evidence, external paging drills, private-environment capacity evidence, and independent live operations review remain open. See [LIMITATIONS.md](docs/LIMITATIONS.md).
+**Known Limitations:** TrueRepublic uses PoD and does not mount `x/staking` or `x/distribution`; GH-187 makes every required IBC/CosmWasm compatibility adapter reject those unsupported surfaces fail-closed. GH-184 wires real `x/upgrade` for the exact governed fresh-genesis v0.4.1 path, but pre-GH-184 store introduction and IBC client upgrades remain unsupported. GH-297 freezes the exact candidate ZKP protocol and change-control rules without promoting GH-198's forge-capable test artifacts. GH-206 verifies only synthetic test compatibility, and GH-266 extends that evidence through the real keeper payout boundary without creating a production prover or submission path. GH-209 implements front-running-safe recipient-bound anonymous rewards while documenting direct-payout linkability; production ZKP artifacts, ceremony, submission integration, and independent cryptographic/privacy review remain pending. GH-93 provides a strict synthetic incident-command and rehearsal contract, but a private live operator rehearsal remains pending. GH-85 provides dashboard/application runtime evidence, alert rules, recovery/testnet objectives, and role ownership. GH-89 adds a strict synthetic topology qualification contract. GH-97 adds bounded four-validator load, resource, retention, restart, and ledger evidence; it does not establish production sizing or multi-day soak behavior. GH-101 adds a digest-bound offline deployment-evidence envelope and verifier; it does not prove or perform a live deployment. GH-212 pins release tools, supported platforms and maintained container bases and adds strict unsigned offline release evidence. GH-258 adds native same-job double-build OCI identity evidence for daemon and `client-web`. GH-261 binds the exact commit and an explicitly simulated future tag to both native daemon metadata records and both-platform OCI digest reports in protected CI, retaining metadata/JSON only. Floating runner/BuildKit versions and live Debian package indexes still prevent a cross-time hermetic reproducibility claim. These controls create no real tag, publish or sign no artifact, authenticate no provenance, deploy nothing, and approve no rollout. Real seed/sentry/validator/RPC deployment, firewall/TLS/DNS evidence, external paging drills, private-environment capacity evidence, and independent live operations review remain open. See [LIMITATIONS.md](docs/LIMITATIONS.md).
 
 ---
 
@@ -283,8 +283,15 @@ approval. Current evidence, risks, and commands are maintained in
 [`BRIDGE.md`](BRIDGE.md) and the active
 [rollout tracker #29](https://github.com/NeaBouli/TrueRepublic/issues/29).
 
-- 🟡 2,400 tests recovery-verified locally (2,055 Go, including GH-294's security-review readiness contract, GH-278's locked CI-tool bootstrap evidence, GH-273's strict cross-run evidence contract, GH-261's candidate-evidence contract, GH-258's OCI build/evidence contract, GH-244's rollout-genesis qualification contract, GH-225's release-compatibility contract, GH-222's verified install-lifecycle and repository contracts, GH-209's recipient-binding and atomic-payout adversarial coverage, + 26 Rust + 319 maintained-client, including its v2 encoding and canonical-recipient validation), plus the separately gated GH-266 fresh Go/WASM-to-keeper payout/replay proof, GH-206 native-verifier compatibility proof, GH-175/GH-178/GH-181 IBC proof and GH-184 governed-upgrade recovery proof, GH-172 shared-state contention/exact-replay/restart proof, GH-145 bounded live fuzz campaigns, GH-193 maintained-client wallet/signing-safety proof, GH-190 maintained-client IBC transfer/recovery proof, GH-131 real submitted-history pagination proof, GH-121 real browser-query boundary, GH-115 local client-chain delivery proof, GH-56 rotation, GH-59 slashing, GH-60 inactive-validator genesis, GH-61 legacy-authority migration, GH-93 incident rehearsal, and GH-97 sustained-load process harnesses; production rollout evidence remains required
-- 🟡 Rollout accounting remains 35/59 overall and 35/51 phase work. Phase 6
+GH-297 contributes 62 fail-closed Go contract cases to the standard-suite
+arithmetic by pinning the frozen protocol manifest, source-spec digest,
+Go/client parity, evidence paths and adversarial drift handling.
+
+- 🟡 2,462 tests recovery-verified locally (2,117 Go, including GH-294's security-review readiness contract, GH-278's locked CI-tool bootstrap evidence, GH-273's strict cross-run evidence contract, GH-261's candidate-evidence contract, GH-258's OCI build/evidence contract, GH-244's rollout-genesis qualification contract, GH-225's release-compatibility contract, GH-222's verified install-lifecycle and repository contracts, GH-209's recipient-binding and atomic-payout adversarial coverage, + 26 Rust + 319 maintained-client, including its v2 encoding and canonical-recipient validation), plus the separately gated GH-266 fresh Go/WASM-to-keeper payout/replay proof, GH-206 native-verifier compatibility proof, GH-175/GH-178/GH-181 IBC proof and GH-184 governed-upgrade recovery proof, GH-172 shared-state contention/exact-replay/restart proof, GH-145 bounded live fuzz campaigns, GH-193 maintained-client wallet/signing-safety proof, GH-190 maintained-client IBC transfer/recovery proof, GH-131 real submitted-history pagination proof, GH-121 real browser-query boundary, GH-115 local client-chain delivery proof, GH-56 rotation, GH-59 slashing, GH-60 inactive-validator genesis, GH-61 legacy-authority migration, GH-93 incident rehearsal, and GH-97 sustained-load process harnesses; production rollout evidence remains required
+- 🟡 Rollout accounting is 36/59 overall and 36/51 phase work. GH-297 earns
+  exactly the frozen/versioned Phase-2 protocol-contract item; its separate
+  prover, production-artifact, ceremony, browser-to-chain and independent-review
+  gates remain open. Phase 6
   is 6/7 and Phase 7 is 3/10; release freeze and accountable go/no-go are two
   mandatory subchecks of one counted Phase-7 tracker item. Production remains
   false.
@@ -378,8 +385,8 @@ approval. Current evidence, risks, and commands are maintained in
   reproducible clients and chain artifacts, staged networks, and explicit
   go/no-go approval are still required.
 
-> Historical test count: 577. The authoritative recovery-verified total is 2,400
-> (2,055 Go + 26 Rust + 319 maintained-client), reproduced from fresh
+> Historical test count: 577. The authoritative recovery-verified total is 2,462
+> (2,117 Go + 26 Rust + 319 maintained-client), reproduced from fresh
 > package-scoped output using the established passing-case method.
 
 ---

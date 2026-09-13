@@ -114,6 +114,7 @@ path = [
     "docs/ROLLOUT_ROADMAP.md",
     "docs/SOVEREIGN_ALPHA_ARCHITECTURE.md",
     "docs/SOVEREIGN_V4_EDGE_ARCHITECTURE.md",
+    "docs/security/ZKP_PROTOCOL_FREEZE.md",
     "docs/V0.3.0_ROADMAP.md",
     "docs/V0.4.0_OPTIONAL_INDEXER_STACK.md",
     "docs/VALIDATOR_GUIDE.md",

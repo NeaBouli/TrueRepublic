@@ -1,5 +1,21 @@
 # Action Log
 
+## 2026-09-13 - GH-297 ZKP protocol freeze locally approved
+
+- Added a digest-bound immutable candidate protocol manifest and explanatory
+  security decision without promoting the existing single-party test setup.
+- Kimi K3 implemented only the strict Go repository contract; Sol reviewed it,
+  fixed the initially non-matching Make test selector, and integrated Security
+  CI, client path triggers, threat model, rollout tracker, README, Landing and
+  Wiki sources.
+- PASS: 62 focused contract events, focused race/coverage, 676 governance and
+  2,117 complete serial Go events, repository Vet, security-review/threat/gate
+  contracts, consistency, Apache-2.0 policy, JSON and diff hygiene. Kimi final
+  read-only review: APPROVE, no blocker/high/medium finding.
+- Candidate accounting is 2,462 tests and 36/59 after merge. Protected CI and
+  final-main/public readback remain; production/submission stay false.
+
+
 ## 2026-09-13 - PR #295 hosted review remediated locally
 
 - Confirmed all three CodeRabbit comments: duplicate object members could

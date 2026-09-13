@@ -46,7 +46,7 @@
   checksums, metadata, normalized SBOM and unsigned-provenance bindings, pinned
   release tools/platforms and container bases, without publishing or signing
   an artifact or claiming production rollout.
-- 2,400 recovery-verified tests: 2,055 Go, 26 Rust, and 319 maintained-client,
+- 2,462 recovery-verified tests: 2,117 Go, 26 Rust, and 319 maintained-client,
   plus the separately gated GH-266 Go/WASM-to-keeper replay,
   GH-175/GH-178/GH-181 two-chain IBC packet/channel/compatible-restart recovery and GH-172
   contention/replay/restart process proofs.
@@ -66,7 +66,10 @@
   `3b0d1639bb40c7df6733dd13a86252e1c8c9efd3`. The result is pair-scoped and
   every tag, ref-push, sign, attest, publish, deploy, production and
   long-term-hermetic claim remains false.
-- Canonical rollout accounting remains 35/59 overall and 35/51 phase work.
+- Canonical rollout accounting is 36/59 overall and 36/51 phase work. GH-297
+  completes only the frozen/versioned ZKP protocol item; production prover,
+  artifacts, ceremony, browser-to-chain compatibility and independent review
+  remain open.
   Phase 6 is 6/7 and Phase 7 is 3/10; release freeze and accountable go/no-go
   are separate mandatory subchecks of one counted Phase-7 tracker item.
 - Community-governed Apache-2.0 publication is recorded on

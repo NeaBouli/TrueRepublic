@@ -1,5 +1,59 @@
 # TrueRepublic Agent Bridge
 
+## 2026-09-13 EEST GH-297 locally approved → Protected PR pending
+
+- Frozen manifest, change-control documentation, strict 62-case Go contract,
+  threat-model integration, Make/CI wiring and public candidate status are
+  complete. No circuit/runtime/consensus/submission behavior changed.
+- PASS: 62/62 focused cases; focused race/coverage; 676/676 governance and
+  2,117/2,117 complete serial Go events; repo-wide Vet; composed security
+  contracts; consistency; license; JSON and diff hygiene.
+- Kimi K3 authored only `x/truedemocracy/zkp_protocol_freeze_test.go`. Sol
+  independently reviewed/integrated it and corrected the Make regex so the
+  maintained target executes every freeze test. Kimi's final read-only review
+  returned APPROVE with no blocker or high/medium issue.
+- Host free space stayed near 1 GiB. No foreign process/cache was touched;
+  staticcheck, secret scan, full race, client/Rust reruns and exact-head checks
+  remain protected-CI gates.
+- Candidate arithmetic is 2,462 = 2,117 Go + 26 Rust + 319 client and 36/59
+  rollout after merge. Canonical main remains 35/59 until protected merge and
+  final-main/public readback. Production, submission, ceremony, deployment,
+  release, keys and funds remain excluded.
+
+`TRUEREPUBLIC GH-297 LOCAL APPROVE — PRODUCTION/SUBMISSION FALSE`
+
+---
+
+
+## 2026-09-13 EEST GH-297 ZKP protocol freeze started → In Progress
+
+- **Branch:** `feature/GH-297-zkp-protocol-freeze` from exact clean main
+  `58e902f8ef9123f2f14fec0a3070af844aa9de94`.
+- **Issue:** [#297](https://github.com/NeaBouli/TrueRepublic/issues/297), parent
+  rollout tracker [#29](https://github.com/NeaBouli/TrueRepublic/issues/29).
+- **Scope:** create one strict production-target protocol-freeze contract that
+  digest-binds the existing test-only circuit spec and freezes versioned public
+  inputs, field encoding, vote signal and nullifier semantics plus fail-closed
+  change-control rules. No circuit, consensus or submission behavior changes.
+- **Division:** Kimi K3 owns the bounded read-only GH-198/GH-203/GH-206/GH-209
+  gap review and, after Sol fixes the schema, only a separately named verifier
+  implementation slice. Sol owns schema/security decisions, manifest,
+  integration, tracker/public claims, complete tests, external writes and
+  closure. There is no overlapping writer.
+- **Boundary:** ceremony, PK/VK production artifacts, production prover,
+  browser-to-chain submission, independent cryptographic/privacy review,
+  release, deployment, migration execution, real keys/funds and production
+  remain excluded. `isSubmittable=false` and `production_ready=false` stay
+  mandatory.
+- **Tests:** pending implementation; existing GH-203/GH-206 evidence is a
+  baseline, not completion evidence for GH-297.
+- **Rollout:** remains 35/59 overall and Phase 2 1/7 until the exact protected
+  implementation merges and final-main/public evidence passes.
+
+`TRUEREPUBLIC GH-297 ACTIVE — PROTOCOL FREEZE ONLY — PRODUCTION FALSE`
+
+---
+
 ## 2026-09-13 PR #295 hosted review remediation locally verified
 
 - CodeRabbit's three actionable findings were confirmed and fixed: nested and
