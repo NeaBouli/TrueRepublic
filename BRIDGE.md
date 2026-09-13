@@ -1,5 +1,37 @@
 # TrueRepublic Agent Bridge
 
+## 2026-09-13 EEST GH-297 ZKP protocol freeze → Done on exact main
+
+- **Implementation:** PR [#298](https://github.com/NeaBouli/TrueRepublic/pull/298)
+  exact head `0124e7b447b9bf91897241f93315603063cafed2` passed every
+  applicable protected context and squash-merged as exact implementation main
+  `c5d949f8b55a7f323df1867d6b9578f8bec1cf17`; GH-297 closed automatically.
+- **Result:** the repository now carries a strict digest-bound ZKP candidate
+  protocol freeze plus 62 fail-closed contract cases. Circuit identity, public
+  input order, canonical BN254 encoding, v1 nullifier scope, v2
+  recipient-bound signal and governed version activation are pinned without a
+  runtime, consensus or submission-path change.
+- **Review:** Kimi K3 authored only the bounded Go contract test; Sol reviewed
+  every write, corrected the integration selector and owned the manifest,
+  security policy, CI, documentation and external actions. Kimi's final
+  read-only review approved the integrated result with no blocker or
+  high/medium issue. CodeRabbit and DeepScan passed with no actionable finding
+  and the hosted review-thread count was zero.
+- **Evidence:** exact-main Go CI `34763125331`, Reproducible Linux Daemon
+  `34763125335`, Security `34763125336`, Client `34763125337`, Docs
+  `34763125338` and Pages `34763124791` all pass. The live Wiki is synchronized
+  at `e4497216768db9bedf6f28b154e0edc2150c25ee`; raw main, Landing and Wiki
+  readbacks expose 2,462 = 2,117 Go + 26 Rust + 319 client tests and 36/59.
+- **Boundary:** only the frozen/versioned Phase-2 item is complete. Production
+  prover, reproducible production artifacts, ceremony, browser-to-chain
+  compatibility and external cryptographic/privacy review remain open.
+  Production, submission, release, deployment, migration, real keys and funds
+  remain false/excluded.
+
+`TRUEREPUBLIC GH-297 DONE — 36/59 — PRODUCTION/SUBMISSION FALSE`
+
+---
+
 ## 2026-09-13 EEST GH-297 locally approved → Protected PR pending
 
 - Frozen manifest, change-control documentation, strict 62-case Go contract,

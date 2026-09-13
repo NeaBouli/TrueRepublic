@@ -1,6 +1,6 @@
 # Recovery Queue
 
-## Active - GH-297 production-target ZKP protocol freeze
+## Completed - GH-297 production-target ZKP protocol freeze
 
 - [x] Add a strict versioned freeze manifest binding the existing ZKP circuit
   spec digest and exact circuit/consensus/context/input/field/nullifier profiles.
@@ -12,8 +12,8 @@
   review as separate open Phase-2 gates; change no runtime behavior.
 - [x] Pass focused and complete local verification plus independent Kimi
   review with no blocker or high/medium issue.
-- [ ] Pass protected exact-head CI, merge, final-main and public readback.
-- [ ] Credit exactly one Phase-2/overall rollout item only after all gates pass;
+- [x] Pass protected exact-head CI, merge, final-main and public readback.
+- [x] Credit exactly one Phase-2/overall rollout item only after all gates pass;
   keep production false.
 
 

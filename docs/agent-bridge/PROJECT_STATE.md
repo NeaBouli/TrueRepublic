@@ -1,5 +1,24 @@
 # Project State
 
+GH-297 is complete on exact implementation main
+`c5d949f8b55a7f323df1867d6b9578f8bec1cf17`. PR #298 exact head `0124e7b`
+passed every applicable protected context, CodeRabbit and DeepScan without an
+actionable finding, and merged with zero review threads. Exact-main Go
+`34763125331`, Reproducible Linux `34763125335`, Security `34763125336`, Client
+`34763125337`, Docs `34763125338` and Pages `34763124791` pass. The live Wiki is
+synchronized at `e4497216768db9bedf6f28b154e0edc2150c25ee`; raw main, Landing
+and Wiki expose 2,462 tests and 36/59. Kimi authored only the bounded 62-case
+contract test and independently approved the final tree; Sol reviewed every
+write and owned integration, security decisions, full verification and
+external actions. Only the frozen/versioned Phase-2 item is complete;
+production prover/artifacts, ceremony, browser-to-chain compatibility and
+external cryptographic/privacy review remain open. Production and submission
+remain false.
+
+Updated: 2026-09-13 EEST
+
+---
+
 GH-297 is locally approved on isolated branch
 `feature/GH-297-zkp-protocol-freeze`. The candidate freeze digest-binds the
 existing toxic-waste test specification and pins exact protocol/version/input/

@@ -1,5 +1,24 @@
 # Action Log
 
+## 2026-09-13 - GH-297 merged, exact main and public state verified
+
+- PR #298 exact head `0124e7b` passed the complete protected matrix with zero
+  review threads, then squash-merged as `c5d949f`; GH-297 closed automatically
+  and GH-29 now credits exactly the frozen/versioned Phase-2 item.
+- Exact-main Go CI `34763125331`, Reproducible Linux Daemon `34763125335`,
+  Security `34763125336`, Client `34763125337`, Docs `34763125338` and Pages
+  `34763124791` pass.
+- The real GitHub Wiki was synchronized at `e449721`; cache-busted raw status,
+  Landing and Wiki readbacks expose 2,462 = 2,117 Go + 26 Rust + 319 client
+  tests, 36/59 overall, 36/51 phase work and production false.
+- Kimi authored only the bounded 62-case Go contract and returned final
+  APPROVE; Sol reviewed every write, corrected its Make integration and owned
+  the manifest, security decisions, full tests and GitHub closure. CodeRabbit
+  and DeepScan produced no actionable finding.
+- Production prover/artifacts, ceremony, browser-to-chain proof compatibility
+  and external cryptographic/privacy review remain open. No release,
+  deployment, migration, real key/fund or production action occurred.
+
 ## 2026-09-13 - GH-297 ZKP protocol freeze locally approved
 
 - Added a digest-bound immutable candidate protocol manifest and explanatory
