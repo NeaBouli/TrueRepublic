@@ -5661,3 +5661,20 @@
 - No README, Landing Page or Wiki semantic update is required: this maintenance
   changes no feature, public version/test count, rollout accounting or
   production state. Rollout remains 35/59, Phase 6 6/7, Phase 7 3/10.
+
+## 2026-09-13 EEST - GH-294 merged, exact main and public state verified
+
+- PR #295 final head `fc53a6f` passed the complete protected matrix with all
+  three hosted review threads resolved, then squash-merged as `aef489c`;
+  GH-294 closed automatically.
+- Exact-main Go CI `34758119879`, Reproducible Linux Daemon `34758119872`,
+  Security `34758119849`, Docs `34758119846` and Pages `34758119100` pass.
+- The real GitHub Wiki was synchronized at `4aa1dad`; cache-busted raw status,
+  Landing and Wiki readbacks expose 2,400 = 2,055 Go + 26 Rust + 319 client
+  tests and the independent-review preparation boundary.
+- Kimi supplied the initial read-only gap analysis but made no file change;
+  its later calls failed before access with local `EMFILE`. Sol implemented,
+  integrated and verified the package, and remediated all independent and
+  hosted findings without an overlapping writer.
+- GH-294 adds no rollout credit and is not an independent audit. Phase 5 stays
+  open; rollout remains 35/59, Phase 6 6/7, Phase 7 3/10, production false.
