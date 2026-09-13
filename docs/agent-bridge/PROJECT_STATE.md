@@ -1,5 +1,20 @@
 # Project State
 
+GH-291 implementation is complete on exact main
+`4ee581137d813d53fa816e7e48e4945c3bbe9033`. Replacement PR #292 passed every
+current exact-head gate: client build/browser/chain/WASM, npm/Go/Rust/static and
+secret security, docs, deterministic linux-amd64/linux-arm64, reproducible OCI,
+tool bootstrap, release and candidate evidence; CodeRabbit and DeepScan passed,
+with zero review threads. It merged the reviewed postcss/happy-dom updates,
+transitive js-yaml 4.3.2 fix, and the same four no-fix Go exceptions renewed
+only through 2026-10-13. Source PR #290 is closed as superseded. This closeout
+adds no feature, rollout credit, release, deployment or production claim.
+Rollout remains 35/59 overall, Phase 6 6/7, Phase 7 3/10, production false.
+
+Updated: 2026-09-13 EEST
+
+---
+
 The bounded GH-291 Go policy renewal has Kimi APPROVE with no P0-P2 finding,
 and the policy's full positive/negative fixture suite passes. A post-patch real
 scan repeat was interrupted solely by local disk exhaustion; the preceding

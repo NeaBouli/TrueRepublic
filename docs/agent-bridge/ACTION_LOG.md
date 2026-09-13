@@ -5600,3 +5600,16 @@
 - No cleanup was performed: the 4.2 GB task-created temporary Go cache remains
   intact because deletion needs separate exact approval. No foreign artifact or
   process was changed.
+
+## 2026-09-13 EEST - GH-291 replacement merged and source PR closed
+
+- PR #292 passed its complete exact-head hosted matrix with zero review threads
+  and merged as `4ee581137d813d53fa816e7e48e4945c3bbe9033`.
+- Main now carries postcss 8.5.28, happy-dom 20.14.0, transitive js-yaml 4.3.2
+  and only the existing four no-fix Go exceptions renewed through 2026-10-13.
+  Hosted npm and Go vulnerability gates both pass.
+- Dependabot PR #290 was closed without merge as superseded, with a traceable
+  comment linking its stale audit evidence to the current replacement.
+- No README, Landing Page or Wiki semantic update is required: this maintenance
+  changes no feature, public version/test count, rollout accounting or
+  production state. Rollout remains 35/59, Phase 6 6/7, Phase 7 3/10.

@@ -9390,3 +9390,31 @@ Pending independent Kimi review and complete Sol verification.
 `TRUEREPUBLIC GH-291 POLICY LOCAL REVIEW PASS — HOSTED GATE AUTHORITATIVE`
 
 ---
+
+## 2026-09-13 EEST GH-291 implementation → Done on exact main
+
+- **Replacement:** PR [#292](https://github.com/NeaBouli/TrueRepublic/pull/292)
+  merged as `4ee581137d813d53fa816e7e48e4945c3bbe9033` after every current
+  exact-head gate passed. Review-thread count was zero.
+- **Dependency result:** postcss 8.5.28, happy-dom 20.14.0 and transitive-only
+  js-yaml 4.3.2 are on main; npm audit is zero and no root js-yaml dependency,
+  override or Axios entry was added.
+- **Security result:** the fresh hosted Go vulnerability scan passes with only
+  the same four official no-fix IDs renewed for the bounded 2026-09-13 through
+  2026-10-13 window. Kimi approved the policy delta with no P0-P2 finding.
+- **Hosted matrix:** client build, browser, chain, ZKP-WASM, docs, npm audit,
+  Go vulnerability/static, Rust audit, secret scan, retired-surface gates,
+  linux-amd64/linux-arm64 deterministic builds, reproducible OCI, tool
+  bootstrap, release/candidate evidence, CodeRabbit and DeepScan all PASS.
+  Cross-run rebuild comparison is intentionally skipped by workflow policy.
+- **Supersession:** source PR #290 was closed without merge with traceability to
+  #292 because its September 7 audit evidence was stale.
+- **Boundary:** no rollout credit, version/test-count change, release,
+  deployment, genesis, Guardian, server, migration, real key/fund, paid action
+  or production action occurred. Rollout remains 35/59 overall, Phase 6 6/7,
+  Phase 7 3/10 and production false. The 4.2 GB task-created temporary Go cache
+  remains untouched pending separate cleanup authorization.
+
+`TRUEREPUBLIC GH-291 DONE — EXACT IMPLEMENTATION MAIN 4EE5811 — PRODUCTION FALSE`
+
+---
