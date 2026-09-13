@@ -1,6 +1,6 @@
 # Recovery Queue
 
-## In progress - GH-291 maintained-client dependency review
+## Completed - GH-291 maintained-client dependency review
 
 - [x] Verify source PR #290's postcss 8.5.28 and happy-dom 20.14.0 releases,
   registry integrity, licenses, engines, peer constraints and exact lock graph.
@@ -10,13 +10,13 @@
   review without duplicating implementation work.
 - [x] Pass clean lockfile install, client policy/unit, lint, build/budget,
   browser, chain, ZKP-WASM and adjacent repository security gates.
-- [ ] Renew only the four still-reachable no-fix Go vulnerability exceptions
+- [x] Renew only the four still-reachable no-fix Go vulnerability exceptions
   for 2026-09-13 through 2026-10-13, pass Kimi read-only review, the real scan
   and all fail-closed policy fixtures.
-- [ ] Merge only after current exact-head hosted checks and zero unresolved
+- [x] Merge only after current exact-head hosted checks and zero unresolved
   review threads; close #290 as superseded, then verify exact main and close
   GH-291.
-- [ ] Synchronize both Bridges without rollout credit, release, deployment,
+- [x] Synchronize both Bridges without rollout credit, release, deployment,
   genesis, real key/fund, Guardian or production action.
 
 ## Completed - GH-285 sequential dependency reconciliation
