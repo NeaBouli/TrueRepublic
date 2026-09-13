@@ -9483,3 +9483,38 @@ Pending independent Kimi review and complete Sol verification.
 `TRUEREPUBLIC GH-291 DONE — EXACT IMPLEMENTATION MAIN 4EE5811 — PRODUCTION FALSE`
 
 ---
+
+## 2026-09-13 EEST GH-294 review-readiness package → Done on exact main
+
+- **Implementation:** PR [#295](https://github.com/NeaBouli/TrueRepublic/pull/295)
+  final head `fc53a6fa369e913271261d7ed9784e805c47b1ea` passed every
+  applicable protected context. All three hosted review threads were answered
+  and resolved before squash merge as exact implementation main
+  `aef489ca2d31dcb94dd29fb100ead10e7a4f25c7`; GH-294 is closed.
+- **Result:** the repository now carries strict versioned review-scope and
+  findings manifests, canonical threat/evidence bindings, a bounded fail-closed
+  verifier and CLI, adversarial lifecycle tests, composed Make/CI contracts,
+  reviewer guidance and an internal audit record. External independence and
+  production readiness remain explicitly false.
+- **Review:** four independent read-only findings and three CodeRabbit findings
+  were remediated. Duplicate JSON members, ambiguous threat binding,
+  internal-only verified closure, incomplete contract composition, success
+  output failure and the open-time file-identity boundary all fail closed.
+- **Agent accounting:** Kimi K3 supplied only the initial architecture/gap
+  analysis. Its later bounded implementation and final-review calls stopped
+  before file access with the local `EMFILE` watcher failure; Kimi changed no
+  file. Sol owned all writes, integration, security decisions and complete
+  verification; a separate read-only reviewer supplied the four diff findings.
+- **Evidence:** exact-main Go CI `34758119879`, Reproducible Linux Daemon
+  `34758119872`, Security `34758119849`, Docs `34758119846` and Pages
+  `34758119100` all pass. The live Wiki is synchronized at `4aa1dadfd7e8b52725949de468846880d668cc2c`;
+  raw main, Pages and Wiki readback expose 2,400 tests and the review-ready,
+  non-production boundary.
+- **Boundary:** this prepares an independent review; it does not perform one or
+  close Phase 5. No rollout credit, release, deployment, migration, real
+  key/fund, Guardian, server or production action occurred. Rollout remains
+  35/59 overall, Phase 6 6/7, Phase 7 3/10 and production false.
+
+`TRUEREPUBLIC GH-294 DONE — REVIEW READY, NOT INDEPENDENTLY REVIEWED — PRODUCTION FALSE`
+
+---

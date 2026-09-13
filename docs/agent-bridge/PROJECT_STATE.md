@@ -1,5 +1,21 @@
 # Project State
 
+GH-294 is complete on exact implementation main
+`aef489ca2d31dcb94dd29fb100ead10e7a4f25c7`. PR #295 final head `fc53a6f`
+passed every applicable protected context and merged after all three hosted
+review threads were resolved. Exact-main Go `34758119879`, Reproducible Linux
+`34758119872`, Security `34758119849`, Docs `34758119846` and Pages
+`34758119100` pass. The live Wiki is synchronized at `4aa1dad`; raw main,
+Landing and Wiki readbacks expose 2,400 tests and the review-ready boundary.
+The package prepares but does not perform an independent audit, so the Phase-5
+external-finding gate remains open. Kimi supplied the initial gap analysis;
+later Kimi calls failed pre-access with local `EMFILE` and changed nothing.
+Rollout remains 35/59 overall, Phase 6 6/7, Phase 7 3/10, production false.
+
+Updated: 2026-09-13 EEST
+
+---
+
 PR #295 hosted review produced three valid findings, now fixed locally:
 duplicate JSON members fail closed at every object depth, CLI success-output
 failure returns nonzero, and the active TODO state is no longer duplicated.

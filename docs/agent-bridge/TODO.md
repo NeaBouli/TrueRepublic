@@ -1,6 +1,6 @@
 # Recovery Queue
 
-## Locally completed - GH-294 review-readiness package
+## Completed - GH-294 independent security-review readiness
 
 - [x] Add strict versioned scope and findings manifests bound to canonical
   threat IDs and repository evidence.
@@ -15,26 +15,11 @@
 - [x] Complete independent read-only diff review and resolve all four findings.
 - [x] Pass focused race/Vet/static, all 2,055 serial Go events, vulnerability,
   secret, license, consistency, JSON and diff gates.
-- [x] Publish protected PR #295 at exact head `a9c5f25`.
-- [ ] Require its complete exact-head matrix, resolve review threads, merge,
+- [x] Publish protected PR #295 at initial head `a9c5f25`; advance it after
+  review hardening to final exact head `fc53a6f`.
+- [x] Require its complete exact-head matrix, resolve review threads, merge,
   verify exact main, synchronize live Wiki/Pages and close GH-294.
 - [x] Keep rollout 35/59, Phase 6 6/7, Phase 7 3/10 and production false.
-
-
-## Active - GH-294 independent security-review readiness
-
-- [x] Add versioned, machine-readable review-scope and findings manifests that
-  cross-reference existing threats and repository evidence without duplication.
-- [x] Add a strict fail-closed verifier and adversarial fixtures for malformed,
-  unsafe, drifting and invalid finding-lifecycle inputs.
-- [x] Pin external independence and production readiness false; require real
-  remediation evidence for critical/high closure and bounded accepted risk.
-- [x] Add the reviewer guide, supersede stale audit claims and wire repository,
-  Make, CI, documentation and security contracts.
-- [ ] Complete protected exact-head PR checks and review remediation, then
-  merge, run exact-main checks, synchronize Pages/Wiki and close both Bridges.
-- [x] Keep rollout at 35/59 with no Phase-5 checkbox, production, release,
-  deployment, consensus, cryptography, wallet, token, DEX or GH-232 change.
 
 
 ## Completed - GH-291 maintained-client dependency review
