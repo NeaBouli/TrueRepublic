@@ -1,5 +1,41 @@
 # Recovery Queue
 
+## Locally completed - GH-294 review-readiness package
+
+- [x] Add strict versioned scope and findings manifests bound to canonical
+  threat IDs and repository evidence.
+- [x] Add bounded parsing/path enforcement, adversarial lifecycle tests and a
+  repository CLI that pins independence and production claims false.
+- [x] Require remediation evidence plus distinct externally attributed
+  verification evidence before `verified_closed` is accepted.
+- [x] Compose complete threat-model, security-gate and review repository
+  contracts in Make, security CI and documentation consistency.
+- [x] Reconcile historical/current audit wording and synchronize README,
+  roadmap, Landing and Wiki sources to 2,400 total / 2,055 Go cases.
+- [x] Complete independent read-only diff review and resolve all four findings.
+- [x] Pass focused race/Vet/static, all 2,055 serial Go events, vulnerability,
+  secret, license, consistency, JSON and diff gates.
+- [ ] Publish the protected PR, require its complete exact-head matrix, merge,
+  verify exact main, synchronize live Wiki/Pages and close GH-294.
+- [x] Keep rollout 35/59, Phase 6 6/7, Phase 7 3/10 and production false.
+
+
+## Active - GH-294 independent security-review readiness
+
+- [ ] Add versioned, machine-readable review-scope and findings manifests that
+  cross-reference existing threats and repository evidence without duplication.
+- [ ] Add a strict fail-closed verifier and adversarial fixtures for malformed,
+  unsafe, drifting and invalid finding-lifecycle inputs.
+- [ ] Pin external independence and production readiness false; require real
+  remediation evidence for critical/high closure and bounded accepted risk.
+- [ ] Add the reviewer guide, supersede stale audit claims and wire repository,
+  Make, CI, documentation and security contracts.
+- [ ] Complete Kimi implementation/review, Sol line-by-line security review,
+  full relevant local gates, protected PR, exact-main checks and both Bridges.
+- [ ] Keep rollout at 35/59 with no Phase-5 checkbox, production, release,
+  deployment, consensus, cryptography, wallet, token, DEX or GH-232 change.
+
+
 ## Completed - GH-291 maintained-client dependency review
 
 - [x] Verify source PR #290's postcss 8.5.28 and happy-dom 20.14.0 releases,

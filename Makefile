@@ -6,7 +6,7 @@ DETERMINISTIC_TARGET ?= linux-amd64
 SOURCE_REF           ?= $(shell git rev-parse HEAD)
 DETERMINISTIC_OUT    ?= $(BUILD_DIR)/deterministic/$(DETERMINISTIC_TARGET)
 
-.PHONY: build critical-coverage quality-depth concurrency-replay ibc-two-chain governed-upgrade security-contract go-vuln static-analysis secret-scan deterministic-linux-daemon deterministic-build-contract-test reproducible-oci-contract-test candidate-evidence-contract-test cross-run-evidence-contract-test ci-tool-bootstrap-contract-test install-lifecycle-contract-test release-compatibility-contract-test rollout-genesis-contract-test license-policy-contract-test verify test lint clean docker-build docker-up docker-down proto-gen
+.PHONY: build critical-coverage quality-depth concurrency-replay ibc-two-chain governed-upgrade security-contract security-review-contract-test go-vuln static-analysis secret-scan deterministic-linux-daemon deterministic-build-contract-test reproducible-oci-contract-test candidate-evidence-contract-test cross-run-evidence-contract-test ci-tool-bootstrap-contract-test install-lifecycle-contract-test release-compatibility-contract-test rollout-genesis-contract-test license-policy-contract-test verify test lint clean docker-build docker-up docker-down proto-gen
 
 build:
 	@echo "Building $(BINARY)..."
@@ -36,6 +36,11 @@ governed-upgrade:
 
 security-contract:
 	go test . -run '^TestSecurityGateRepositoryContract$$' -count=1
+
+security-review-contract-test:
+	go test ./securityreview ./cmd/security-review -count=1
+	go test . -run '^(TestSecurityReviewRepositoryContract|TestThreatModelRepositoryContract|TestSecurityGateRepositoryContract)$$' -count=1
+	go run ./cmd/security-review --repo-root . --scope configs/security/review-scope.json --findings configs/security/review-findings.json
 
 go-vuln:
 	./scripts/check-go-vulnerabilities.sh

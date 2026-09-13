@@ -1,5 +1,35 @@
 # Project State
 
+GH-294 is locally approved after independent read-only review and remediation.
+The package now binds scope, invariants, evidence, findings and canonical threat
+IDs; verified closure requires separately attributed external evidence, and the
+Make gate composes the complete threat-model and security-gate contracts.
+Focused race/Vet/static analysis, all 2,055 serial Go pass events, consistency,
+vulnerability, secret, license, JSON and diff gates pass. The local repo-wide
+race link exhausted host disk without a test assertion; protected exact-head CI
+must finish it. Kimi supplied the architecture/gap analysis, while later Kimi
+invocations failed before file access with `EMFILE`; Sol authored/integrated the
+diff and resolved all four independent review findings. PR publication, CI,
+merge and live Pages/Wiki readback remain. Rollout is unchanged at 35/59,
+Phase 6 6/7, Phase 7 3/10, production false.
+
+Updated: 2026-09-13 EEST
+
+---
+
+GH-294 is active from exact clean main
+`77f07b8bcf8abcd7780b90526bb7da6f89f044e6` in an isolated task worktree. It
+adds a repository-prepared security-review scope/evidence package and a strict
+findings lifecycle without claiming an independent audit or rollout credit.
+Kimi K3 owns only the new verifier package/command/fixtures; Sol owns manifests,
+security policy, repository integration, documentation, tests and GitHub
+closure. Rollout remains 35/59 overall, Phase 6 6/7, Phase 7 3/10, production
+false.
+
+Updated: 2026-09-13 EEST
+
+---
+
 GH-291 implementation is complete on exact main
 `4ee581137d813d53fa816e7e48e4945c3bbe9033`. Replacement PR #292 passed every
 current exact-head gate: client build/browser/chain/WASM, npm/Go/Rust/static and

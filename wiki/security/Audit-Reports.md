@@ -6,6 +6,12 @@ TrueRepublic is in an internal recovery audit. There is no completed external
 mainnet, cryptographic, consensus, or operations audit and no production
 approval.
 
+GH-294 adds a machine-verifiable
+[independent-review preparation package](https://github.com/NeaBouli/TrueRepublic/blob/main/docs/security/INDEPENDENT_REVIEW_GUIDE.md)
+with a versioned scope, evidence index and findings lifecycle. It is prepared
+by the project and does not claim reviewer independence or complete the open
+Phase-5 gate.
+
 ## Internal recovery artifacts
 
 The repository contains scoped, evidence-backed reports for the ordered stack:
@@ -22,6 +28,10 @@ The repository contains scoped, evidence-backed reports for the ordered stack:
 Reports live under [`docs/agent-bridge/`](https://github.com/NeaBouli/TrueRepublic/tree/main/docs/agent-bridge).
 They document local and GitHub evidence but do not substitute for independent
 review.
+
+The root `CODEX_AUDIT.md` is a retained July 2026 historical snapshot. Its
+current-status claims are superseded by the GH-294 review guide, threat model,
+and findings register; the original content remains available for provenance.
 
 ## Required independent work
 

@@ -1,5 +1,36 @@
 # Security Notes
 
+## GH-294 verified-closure and filesystem boundary
+
+- A finding's `source` records origin only. `verified_closed` additionally
+  requires `verification_source=external`, separate verification evidence and
+  finding-ID linkage; internal remediation alone cannot represent independent
+  closure.
+- Every finding has one or more unique canonical threat IDs. The maintained
+  Make/CI target composes the complete threat-model and security-gate repository
+  contracts, so deeper register drift cannot hide behind a matching version.
+- Repository references reject unsafe paths, traversal, symlinks, non-regular
+  or oversized files and detectable replacement between `Lstat` and open. A
+  real review must still use a clean immutable exact-commit checkout with no
+  concurrent writer; this verifier is not a hostile-filesystem sandbox.
+- The package is a project-authored readiness input, not an external audit,
+  production approval or Phase-5 completion. Its five current critical/high
+  internal blockers remain open and `production_ready` remains false.
+
+
+## GH-294 independent-review readiness boundary
+
+- The new package may describe and verify repository review scope, existing
+  evidence and finding-state rules only. It cannot certify independence,
+  production readiness, rollout completion or external reviewer approval.
+- External independence and production-ready claims remain structurally false.
+  Critical/high findings require repository-verifiable remediation evidence;
+  accepted risk requires an explicit owner and bounded expiry.
+- Existing threat IDs, security gates and evidence remain canonical and are
+  cross-referenced rather than copied. No product consensus, cryptography,
+  wallet, token, DEX, auth, migration or genesis behavior changes in this task.
+
+
 ## GH-209 recipient-bound anonymous reward boundary
 
 - `TrueRepublic/vote/v2` length-prefixes chain, domain, issue, suggestion and

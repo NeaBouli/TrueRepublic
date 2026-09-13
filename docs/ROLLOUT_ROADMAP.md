@@ -1,6 +1,6 @@
 # TrueRepublic Road to Rollout
 
-Updated: 2026-08-29
+Updated: 2026-09-13
 
 TrueRepublic has a recovered and CI-verified v0.4 engineering foundation. It
 is **not production-ready, mainnet-ready, or approved for real funds or keys**.
@@ -21,8 +21,9 @@ separate mandatory release-freeze and accountable go/no-go subchecks.
 
 - The ordered recovery merge chain is on `main`.
 - The maximum supply is fixed at 21,000,000 PNYX.
-- The source of truth records 2,353 recovery-verified tests: 2,008 Go, 26 Rust,
-  and 319 maintained-client tests. The Go total includes GH-278's locked
+- The source of truth records 2,400 recovery-verified tests: 2,055 Go, 26 Rust,
+  and 319 maintained-client tests. The Go total includes GH-294's strict
+  security-review readiness contract and GH-278's locked
   CI-tool bootstrap evidence, GH-244's strict
   offline rollout-genesis qualification contract, GH-261's strict simulated-tag
   candidate aggregation, GH-258's repeated-OCI evidence contract, GH-225's release-
@@ -303,7 +304,9 @@ legal/process gates. This design work changes neither **35/59** nor
   repository contract
   ([GH-169](https://github.com/NeaBouli/TrueRepublic/issues/169)).
 - [ ] Complete an independent security review and resolve every critical/high
-  finding.
+  finding. GH-294 provides a versioned repository-prepared scope, evidence
+  index and fail-closed findings lifecycle; it is not the independent review
+  and grants no rollout credit.
 
 **Exit gate:** the release matrix is reproducibly green, critical paths have
 defensible coverage, and no unresolved critical/high security finding remains.
