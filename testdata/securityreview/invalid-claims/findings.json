@@ -1,0 +1,30 @@
+{
+  "document": {
+    "name": "invalid-promoted-review-findings",
+    "version": "truerepublic.security-review-findings/v1",
+    "updated": "2026-09-13"
+  },
+  "external_independence_claim": false,
+  "production_ready": true,
+  "findings": [
+    {
+      "id": "SRF-CON-001",
+      "severity": "high",
+      "status": "open",
+      "source": "internal",
+      "title": "Synthetic invalid claim fixture",
+      "threat_ids": [
+        "TM-CON-001"
+      ],
+      "affected_paths": [
+        "module"
+      ],
+      "remediation_evidence": [],
+      "verification_source": "",
+      "verification_evidence": [],
+      "owner": "security-maintainers",
+      "accepted_on": "",
+      "expires": ""
+    }
+  ]
+}

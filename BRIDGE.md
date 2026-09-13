@@ -1,5 +1,70 @@
 # TrueRepublic Agent Bridge
 
+## 2026-09-13 PR #295 hosted review remediation locally verified
+
+- CodeRabbit's three actionable findings were confirmed and fixed: nested and
+  top-level duplicate JSON members now fail closed, the CLI returns failure if
+  its success record cannot be written, and the active TODO checklist now
+  reflects only genuinely remaining protected closeout work.
+- Adversarial duplicate-member and failed-writer checks were added without
+  changing published event arithmetic. Focused race/coverage (82.9%), Vet,
+  staticcheck, review contracts, docs consistency, diff hygiene and the renewed
+  complete serial suite (2,055/2,055) pass.
+- The first exact-head matrix was otherwise green, including the hosted
+  repo-wide race suite that local disk could not complete. A correction commit,
+  thread resolution and the fresh exact-head matrix remain before merge.
+- No overlapping writer, rollout credit, release, deployment or production
+  action occurred. Rollout stays 35/59 and production remains false.
+
+---
+
+## 2026-09-13 GH-294 locally approved after independent diff remediation
+
+- The complete repository-prepared review package is implemented: strict
+  versioned scope/findings manifests, a bounded verifier and CLI, adversarial
+  fixtures, composed threat/gate/repository contracts, CI wiring, reviewer
+  guide, internal audit record and synchronized public status.
+- Independent read-only diff review requested four corrections. Sol resolved
+  all four: external closure now needs separate external verification evidence,
+  every finding binds to unique canonical threat IDs, the Make gate composes
+  the complete threat/gate contracts, and open-time file identity plus a
+  documented immutable-checkout precondition harden filesystem handling.
+- **Verified:** 2,055/2,055 serial Go pass events; focused `-race` at 83.2%
+  security-review coverage; Vet/staticcheck; review contracts; documentation
+  consistency; exact govuln policy and fixtures; maintained-tree secret scan
+  and fixtures; Apache-2.0 policy; JSON and diff hygiene.
+- **Agent accounting correction:** Kimi K3 delivered the initial architecture/
+  gap analysis only. Its bounded implementation and final-review invocations
+  failed before reading or writing files with local `EMFILE` watcher errors.
+  Sol implemented and reviewed the diff; the separate read-only reviewer found
+  the four remediated issues. No duplicate writer touched the worktree.
+- The local repo-wide race/link step exhausted the host's free disk without a
+  project assertion failure. No cache or foreign artifact was deleted; the
+  protected PR race matrix is mandatory before merge.
+- GitHub publication, protected exact-head CI/review, merge and exact-main
+  Pages/Wiki readback remain. Rollout stays 35/59, Phase 6 6/7, Phase 7 3/10,
+  production false, and the Phase-5 independent-review item remains open.
+
+---
+
+## 2026-09-13 GH-294 security-review readiness started
+
+- GH-294 starts from exact clean `origin/main` `77f07b8` in an isolated
+  worktree; no open PR or unrelated working-tree change is being reused.
+- The bounded repository-only scope is a versioned review manifest, findings
+  lifecycle, fail-closed verifier, reviewer guide and stale-audit
+  reconciliation. It prepares but does not perform or claim an independent
+  security review.
+- Kimi K3 owns only the new `securityreview/` verifier package, its command and
+  fixtures. Sol owns the schema/security decisions, manifests, repository/CI
+  contracts, documentation, integration, complete tests and GitHub closure.
+- Rollout remains 35/59, Phase 6 remains 6/7, Phase 7 remains 3/10 and
+  production remains false. No consensus, cryptography, wallet, token, DEX,
+  auth, migration, genesis, release, deployment, Guardian or Operator-A action
+  is in scope.
+
+---
+
 ## 2026-08-29 GH-258 exact aux-cache fix locally approved
 
 - The aux-cache is removed after package post-install hooks in layer 1 and

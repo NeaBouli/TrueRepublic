@@ -1,0 +1,116 @@
+{
+  "document": {
+    "name": "truerepublic-security-review-findings",
+    "version": "truerepublic.security-review-findings/v1",
+    "updated": "2026-09-13"
+  },
+  "external_independence_claim": false,
+  "production_ready": false,
+  "findings": [
+    {
+      "id": "SRF-REV-001",
+      "severity": "high",
+      "status": "open",
+      "source": "internal",
+      "title": "Independent security review has not been completed",
+      "threat_ids": [
+        "TM-ZKP-002",
+        "TM-REL-001"
+      ],
+      "affected_paths": [
+        "docs/ROLLOUT_ROADMAP.md",
+        "CODEX_AUDIT.md"
+      ],
+      "remediation_evidence": [],
+      "verification_source": "",
+      "verification_evidence": [],
+      "owner": "security-maintainers",
+      "accepted_on": "",
+      "expires": ""
+    },
+    {
+      "id": "SRF-ZKP-001",
+      "severity": "critical",
+      "status": "open",
+      "source": "internal",
+      "title": "Production-qualified Groth16 prover and ceremony artifacts are absent",
+      "threat_ids": [
+        "TM-ZKP-001",
+        "TM-ZKP-002"
+      ],
+      "affected_paths": [
+        "configs/security/zkp-circuit.json",
+        "x/truedemocracy",
+        "client-web"
+      ],
+      "remediation_evidence": [],
+      "verification_source": "",
+      "verification_evidence": [],
+      "owner": "cryptography-review-maintainers",
+      "accepted_on": "",
+      "expires": ""
+    },
+    {
+      "id": "SRF-CLI-001",
+      "severity": "high",
+      "status": "open",
+      "source": "internal",
+      "title": "Production wallet custody and trust-minimized RPC review are incomplete",
+      "threat_ids": [
+        "TM-CLI-001",
+        "TM-CLI-002"
+      ],
+      "affected_paths": [
+        "client-web"
+      ],
+      "remediation_evidence": [],
+      "verification_source": "",
+      "verification_evidence": [],
+      "owner": "client-security-maintainers",
+      "accepted_on": "",
+      "expires": ""
+    },
+    {
+      "id": "SRF-OPS-001",
+      "severity": "high",
+      "status": "open",
+      "source": "internal",
+      "title": "No reviewed live production topology or staged network evidence exists",
+      "threat_ids": [
+        "TM-CON-001",
+        "TM-OPS-001"
+      ],
+      "affected_paths": [
+        "networkpolicy",
+        "observability",
+        "docs/ROLLOUT_ROADMAP.md"
+      ],
+      "remediation_evidence": [],
+      "verification_source": "",
+      "verification_evidence": [],
+      "owner": "operations-security-maintainers",
+      "accepted_on": "",
+      "expires": ""
+    },
+    {
+      "id": "SRF-REL-001",
+      "severity": "high",
+      "status": "open",
+      "source": "internal",
+      "title": "Signed and published release provenance has not been qualified",
+      "threat_ids": [
+        "TM-REL-001"
+      ],
+      "affected_paths": [
+        "releaseevidence",
+        "docs/ROLLOUT_ROADMAP.md"
+      ],
+      "remediation_evidence": [],
+      "verification_source": "",
+      "verification_evidence": [],
+      "owner": "release-security-maintainers",
+      "accepted_on": "",
+      "expires": ""
+    }
+  ]
+}

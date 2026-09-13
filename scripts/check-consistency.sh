@@ -6,6 +6,13 @@ set -euo pipefail
 
 echo "Checking Documentation Consistency..."
 
+echo "Checking security-review readiness contract..."
+go run ./cmd/security-review \
+  --repo-root . \
+  --scope configs/security/review-scope.json \
+  --findings configs/security/review-findings.json
+echo ""
+
 # Load status.json as source of truth
 STATUS_FILE="docs/status.json"
 
@@ -384,6 +391,7 @@ while IFS='|' read -r module label; do
   fi
 done <<'MODULES'
 root|root/application
+securityreview|security review
 candidateevidence|candidate evidence
 crossrunevidence|cross-run evidence
 toolbootstrapevidence|tool-bootstrap evidence

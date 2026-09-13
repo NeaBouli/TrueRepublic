@@ -1,0 +1,33 @@
+{
+  "document": {
+    "name": "invalid-promoted-review-scope",
+    "version": "truerepublic.security-review-scope/v1",
+    "updated": "2026-09-13"
+  },
+  "external_independence_claim": true,
+  "production_ready": false,
+  "threat_model_path": "configs/security/threat-model.json",
+  "security_gate_path": "configs/security/gates.json",
+  "in_scope": [
+    "module"
+  ],
+  "invariants": [
+    {
+      "id": "SR-INV-001",
+      "description": "Synthetic invalid claim fixture.",
+      "source_path": "module/invariant.go",
+      "source_anchor": "InvariantAnchor",
+      "threat_ids": [
+        "TM-CON-001"
+      ]
+    }
+  ],
+  "evidence": [
+    {
+      "id": "SR-EVD-001",
+      "path": "evidence_test.go",
+      "kind": "contract_test",
+      "required_anchor": "TestInvariantEvidence"
+    }
+  ]
+}

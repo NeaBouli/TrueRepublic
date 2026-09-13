@@ -1,0 +1,196 @@
+{
+  "document": {
+    "name": "truerepublic-independent-review-scope",
+    "version": "truerepublic.security-review-scope/v1",
+    "updated": "2026-09-13"
+  },
+  "external_independence_claim": false,
+  "production_ready": false,
+  "threat_model_path": "configs/security/threat-model.json",
+  "security_gate_path": "configs/security/gates.json",
+  "in_scope": [
+    "app.go",
+    "genesis.go",
+    "token",
+    "treasury/keeper",
+    "x/truedemocracy",
+    "x/dex",
+    "migration",
+    "networkpolicy",
+    "observability",
+    "client-web",
+    "contracts"
+  ],
+  "invariants": [
+    {
+      "id": "SR-INV-001",
+      "description": "Canonical PNYX supply cannot exceed 21,000,000 whole tokens in six-decimal base units.",
+      "source_path": "token/denom.go",
+      "source_anchor": "MaxSupplyWhole      int64 = 21_000_000",
+      "threat_ids": [
+        "TM-TOK-001"
+      ]
+    },
+    {
+      "id": "SR-INV-002",
+      "description": "Governance treasury and stake claims remain exactly backed by module bank escrow.",
+      "source_path": "x/truedemocracy/module.go",
+      "source_anchor": "escrow-parity",
+      "threat_ids": [
+        "TM-GOV-001",
+        "TM-TOK-001"
+      ]
+    },
+    {
+      "id": "SR-INV-003",
+      "description": "DEX provider LP shares and pool totals remain conserved against canonical custody.",
+      "source_path": "x/dex/module.go",
+      "source_anchor": "ValidateLPConservation",
+      "threat_ids": [
+        "TM-TOK-002"
+      ]
+    },
+    {
+      "id": "SR-INV-004",
+      "description": "A proposal-scoped anonymous-vote nullifier cannot be consumed twice.",
+      "source_path": "x/truedemocracy/keeper.go",
+      "source_anchor": "nullifier already used (double-vote prevented)",
+      "threat_ids": [
+        "TM-GOV-002",
+        "TM-ZKP-001"
+      ]
+    },
+    {
+      "id": "SR-INV-005",
+      "description": "Anonymous vote verification uses the genesis-pinned Groth16 verifying key and rejects invalid proof bindings.",
+      "source_path": "x/truedemocracy/zkp.go",
+      "source_anchor": "ValidateMembershipVerifyingKey",
+      "threat_ids": [
+        "TM-ZKP-001",
+        "TM-ZKP-002"
+      ]
+    }
+  ],
+  "evidence": [
+    {
+      "id": "SR-EVD-001",
+      "path": "threat_model_repository_test.go",
+      "kind": "contract_test",
+      "required_anchor": "TestThreatModelRepositoryContract"
+    },
+    {
+      "id": "SR-EVD-002",
+      "path": "security_gate_repository_test.go",
+      "kind": "contract_test",
+      "required_anchor": "TestSecurityGateRepositoryContract"
+    },
+    {
+      "id": "SR-EVD-003",
+      "path": "token/issuance_test.go",
+      "kind": "test",
+      "required_anchor": "TestSupplyCapInvariantDetectsCanonicalOverflow"
+    },
+    {
+      "id": "SR-EVD-004",
+      "path": "concurrency_replay_harness_test.go",
+      "kind": "test",
+      "required_anchor": "TestConcurrentSharedStateReplayRestart"
+    },
+    {
+      "id": "SR-EVD-005",
+      "path": "ibc_two_chain_harness_test.go",
+      "kind": "test",
+      "required_anchor": "TestIBCTwoChainTransferAcknowledgementTimeoutReplayRecovery"
+    },
+    {
+      "id": "SR-EVD-006",
+      "path": "governed_upgrade_harness_test.go",
+      "kind": "test",
+      "required_anchor": "TestGovernedUpgradeMultiValidatorHaltFailureRecovery"
+    },
+    {
+      "id": "SR-EVD-007",
+      "path": "x/truedemocracy/zkp_genesis_security_test.go",
+      "kind": "test",
+      "required_anchor": "TestValidateGenesisPinsMembershipVerifyingKey"
+    },
+    {
+      "id": "SR-EVD-008",
+      "path": "release_candidate_repository_test.go",
+      "kind": "contract_test",
+      "required_anchor": "TestReleaseCandidateRepositoryContract"
+    },
+    {
+      "id": "SR-EVD-009",
+      "path": "reproducible_oci_repository_test.go",
+      "kind": "contract_test",
+      "required_anchor": "TestReproducibleOCIRepositoryContract"
+    },
+    {
+      "id": "SR-EVD-010",
+      "path": "cross_run_repository_test.go",
+      "kind": "contract_test",
+      "required_anchor": "TestCrossRunRepositoryContract"
+    },
+    {
+      "id": "SR-EVD-011",
+      "path": "rollout_genesis_repository_test.go",
+      "kind": "contract_test",
+      "required_anchor": "TestRolloutGenesisRepositoryContract"
+    },
+    {
+      "id": "SR-EVD-012",
+      "path": "docs/agent-bridge/PR15_AUDIT.md",
+      "kind": "audit_record",
+      "required_anchor": "Canonical PNYX Denomination and Genesis Cap"
+    },
+    {
+      "id": "SR-EVD-013",
+      "path": "docs/agent-bridge/GH172_AUDIT.md",
+      "kind": "audit_record",
+      "required_anchor": "Concurrency, Replay, and Restart Audit"
+    },
+    {
+      "id": "SR-EVD-014",
+      "path": "docs/agent-bridge/GH175_AUDIT.md",
+      "kind": "audit_record",
+      "required_anchor": "IBC Two-Chain Packet and Recovery Audit"
+    },
+    {
+      "id": "SR-EVD-015",
+      "path": "docs/agent-bridge/GH184_AUDIT.md",
+      "kind": "audit_record",
+      "required_anchor": "GH-184 Governed Upgrade Audit"
+    },
+    {
+      "id": "SR-EVD-016",
+      "path": "docs/agent-bridge/GH258_AUDIT.md",
+      "kind": "audit_record",
+      "required_anchor": "Reproducible OCI Evidence Audit"
+    },
+    {
+      "id": "SR-EVD-017",
+      "path": "docs/agent-bridge/GH273_AUDIT.md",
+      "kind": "audit_record",
+      "required_anchor": "cross-run exact-commit rebuild evidence"
+    },
+    {
+      "id": "SR-EVD-018",
+      "path": "SECURITY.md",
+      "kind": "policy",
+      "required_anchor": "Reporting a vulnerability"
+    },
+    {
+      "id": "SR-EVD-019",
+      "path": "docs/ROLLOUT_ROADMAP.md",
+      "kind": "policy",
+      "required_anchor": "Complete an independent security review"
+    },
+    {
+      "id": "SR-EVD-020",
+      "path": "docs/agent-bridge/GH294_AUDIT.md",
+      "kind": "audit_record",
+      "required_anchor": "TrueRepublic GH-294 — Audit"
+    }
+  ]
+}

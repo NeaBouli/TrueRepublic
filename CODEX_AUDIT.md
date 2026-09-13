@@ -1,6 +1,19 @@
 # TrueRepublic — Recovery Foundation Audit
 > Scope: `treasury/keeper`, `x/truedemocracy`, `x/dex`, app wiring, genesis, ZKP authentication, maintained-client safety, node lifecycle, and current rollout evidence  ·  Date: 2026-07-23  ·  Result: 0 FAIL / 2 WARN / 18 PASS
 
+> **Historical snapshot — superseded for current status.** This point-in-time
+> recovery audit is retained as evidence and was not an independent external
+> review. Several items described below as open were subsequently closed by
+> merged repository evidence: recipient binding (GH-209), client bundle
+> splitting (GH-128), consensus-key rotation (GH-56), network policy (GH-71),
+> IBC recovery (GH-175/GH-178/GH-181), topology/load/deployment evidence
+> (GH-89/GH-97/GH-101), and monitoring/alerts (GH-80/GH-85). Use the
+> [current independent-review guide](docs/security/INDEPENDENT_REVIEW_GUIDE.md),
+> [threat register](configs/security/threat-model.json), and
+> [findings register](configs/security/review-findings.json) for current
+> boundaries. The independent review, production ZKP qualification, live
+> deployment, signed release and staged rollout remain open.
+
 ## Summary
 
 The recovery foundation on `main` defines one six-decimal `upnyx` base denomination,

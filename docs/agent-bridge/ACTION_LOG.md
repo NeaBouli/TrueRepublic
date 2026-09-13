@@ -1,5 +1,53 @@
 # Action Log
 
+## 2026-09-13 - PR #295 hosted review remediated locally
+
+- Confirmed all three CodeRabbit comments: duplicate object members could
+  override earlier values, the CLI ignored a failed success-message write, and
+  the active checklist duplicated completed work.
+- Added a token-level recursive duplicate-member guard plus top-level/nested
+  adversarial checks, made success output fail closed with a synthetic writer
+  test, and synchronized the current checklist.
+- PASS after fixes: focused race/coverage (82.9%), Vet, staticcheck, composed
+  review contracts, documentation consistency, diff hygiene, and exactly
+  2,055/2,055 serial Go pass events. Fresh exact-head CI is required.
+
+
+## 2026-09-13 - GH-294 local implementation and review complete
+
+- Implemented strict review scope/findings schemas, bounded verifier/CLI,
+  adversarial fixtures, repository and CI contracts, review guide, audit record
+  and synchronized public documentation.
+- Independent read-only review found four issues: internal-only verified
+  closure, missing finding-to-threat bindings, incomplete threat/gate contract
+  composition, and a check/open race boundary. All four are resolved and the
+  affected gates were rerun.
+- PASS: 2,055 serial Go pass events; focused security-review race/coverage
+  (83.2%); Vet/staticcheck; review/threat/gate contracts; docs consistency;
+  govuln real policy plus negative fixtures; gitleaks maintained tree plus
+  fixtures; Apache-2.0 policy; JSON and diff checks.
+- Kimi K3 supplied initial architecture/gap review. Later Kimi implementation
+  and final-review calls failed pre-write with local `EMFILE`; Sol owned all
+  writes and integration, and the separate read-only reviewer supplied the
+  actionable final review. No overlapping writer or unrelated change exists.
+- Repo-wide local race linking stopped only for insufficient host disk. No
+  cleanup or foreign-process action was taken; protected PR CI owns that gate.
+  No release, signing, publication, deployment or production action occurred.
+
+
+## 2026-09-13 - GH-294 independent security-review readiness started
+
+- Confirmed exact clean main `77f07b8`, no open PR and no duplicate active
+  implementation ticket; created GH-294 under rollout tracker GH-29.
+- Kimi K3 completed a bounded read-only gap review and identified the missing
+  canonical audit scope/evidence index, findings register and stale root audit.
+- Work is split without overlap: Kimi implements only the new verifier
+  package/command/fixtures; Sol owns policy, manifests, integration, docs,
+  complete verification and external GitHub actions.
+- This package is self-prepared evidence, not an independent audit. Rollout
+  stays 35/59 and production false; no release or operational action occurs.
+
+
 ## 2026-09-01 - GH-276 local accounting gates passed
 
 - Machine status, roadmap, README, landing, Wiki source and durable state now
