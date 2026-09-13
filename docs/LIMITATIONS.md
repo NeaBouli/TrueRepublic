@@ -23,7 +23,7 @@ approved for production or real funds during this audit.
   exists yet. GH-236's [V4 edge architecture](SOVEREIGN_V4_EDGE_ARCHITECTURE.md)
   further specifies citizen-node, mobile-verification, civic-workflow and
   domain-app gates; it adds no implementation, foreign chain or bridge.
-  `client-web` remains the Beta, and the rollout count is 35/59.
+  `client-web` remains the Beta, and the rollout count is 36/59.
 - The community decision in
   [GH-219](https://github.com/NeaBouli/TrueRepublic/issues/219#issuecomment-5423337355)
   publishes Apache-2.0 for maintained source and maintained documentation.

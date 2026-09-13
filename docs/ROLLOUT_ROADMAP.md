@@ -21,8 +21,9 @@ separate mandatory release-freeze and accountable go/no-go subchecks.
 
 - The ordered recovery merge chain is on `main`.
 - The maximum supply is fixed at 21,000,000 PNYX.
-- The source of truth records 2,400 recovery-verified tests: 2,055 Go, 26 Rust,
-  and 319 maintained-client tests. The Go total includes GH-294's strict
+- The source of truth records 2,462 recovery-verified tests: 2,117 Go, 26 Rust,
+  and 319 maintained-client tests. The Go total includes GH-297's 62-case
+  frozen ZKP protocol contract, GH-294's strict
   security-review readiness contract and GH-278's locked
   CI-tool bootstrap evidence, GH-244's strict
   offline rollout-genesis qualification contract, GH-261's strict simulated-tag
@@ -55,7 +56,8 @@ separate mandatory release-freeze and accountable go/no-go subchecks.
   third-party materials remain excluded unless an applicable file-specific
   notice exists or provenance and permission are documented. This
   repository-governance foundation earns no rollout checkbox and does not
-  change 35/59, 35/51, Phase 6 at 6/7, Phase 7 at 3/10, or production false.
+  change the now-current 36/59, 36/51, Phase 6 at 6/7, Phase 7 at 3/10, or
+  production false.
 
 The baseline is suitable for continued engineering. It is not a rollout
 approval.
@@ -113,8 +115,9 @@ recovery, upgrade, and rollback results on clean infrastructure.
 ## Phase 2 — Production ZKP and privacy path
 
 - [ ] Integrate a compatible real Groth16 prover into the maintained client.
-- [ ] Freeze and version the circuit, public-input order, field encodings,
-  nullifier rules, and chain/proposal/rating binding.
+- [x] Freeze and version the circuit, public-input order, field encodings,
+  nullifier rules, and chain/proposal/rating/recipient binding
+  ([GH-297](https://github.com/NeaBouli/TrueRepublic/issues/297)).
 - [ ] Produce reproducible circuit, proving-key, verification-key, and checksum
   artifacts.
 - [ ] Document ceremony provenance, participant assumptions, and artifact
@@ -158,6 +161,17 @@ nullifier consumption, replay rejection, escrow parity, and fail-closed
 handling of malformed or drifted inputs. It still uses the forge-capable
 single-party test setup, keeps `isSubmittable` false, and therefore completes
 no production Phase 2 checkbox or rollout item.
+
+GH-297 freezes the production-candidate protocol specification without
+promoting the synthetic artifacts. Its digest-bound manifest fixes the circuit
+identity, consensus/profile versions, four public inputs and canonical BN254
+encoding, the proposal-scoped rating-independent nullifier and the
+recipient-bound v2 signal. Any semantic change requires an explicit new
+circuit/profile/nullifier version and fresh genesis or a governed consensus
+upgrade. The existing CS/PK/VK remain forge-capable single-party test
+fixtures; real prover integration, reproducible production artifacts, ceremony
+provenance, browser-to-chain compatibility and independent review stay open.
+Client submission and production readiness remain false.
 
 **Exit gate:** a real maintained-client proof must verify on-chain under the
 published circuit identity, with no unresolved critical or high audit finding.
@@ -242,7 +256,7 @@ security, recovery and distribution gates.
 
 This is a separate future delivery program, not retroactive evidence for the
 current 59-item rollout tracker. Architecture documentation changes neither
-the **35/59** status nor `production_ready: false`. Whether an optional web
+the **36/59** status nor `production_ready: false`. Whether an optional web
 interface remains after Alpha qualification is deliberately deferred. See
 [SOVEREIGN_ALPHA_ARCHITECTURE.md](SOVEREIGN_ALPHA_ARCHITECTURE.md) for the
 component model, trust boundaries, delivery slices and future issue breakdown.
@@ -254,7 +268,7 @@ into a [native edge architecture](SOVEREIGN_V4_EDGE_ARCHITECTURE.md): TRChain
 remains the sole settlement/governance chain while pruned citizen nodes, mobile
 verification, local-first bill/discussion workflows and sandboxed domain apps
 are qualified in reversible slices. It rejects a Minima dependency, second
-chain/token and bridge commitment. This documentation changes neither **35/59**
+chain/token and bridge commitment. This documentation changes neither **36/59**
 nor `production_ready: false`.
 
 [GH-241](https://github.com/NeaBouli/TrueRepublic/issues/241) implements the
@@ -271,7 +285,7 @@ systemic-consensing, yes/no/abstain, person-election and hybrid
 consensing-to-ratification ballots. Future implementation is tracked by
 [GH-232](https://github.com/NeaBouli/TrueRepublic/issues/232) and is deferred
 until rollout stabilization plus the applicable consensus, ZKP, privacy and
-legal/process gates. This design work changes neither **35/59** nor
+legal/process gates. This design work changes neither **36/59** nor
 `production_ready: false`.
 
 ## Phase 5 — Quality and security depth

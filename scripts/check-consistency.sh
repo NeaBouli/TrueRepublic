@@ -6,6 +6,10 @@ set -euo pipefail
 
 echo "Checking Documentation Consistency..."
 
+echo "Checking frozen ZKP protocol contract..."
+go test ./x/truedemocracy -run '^TestZKPProtocolFreeze' -count=1
+echo ""
+
 echo "Checking security-review readiness contract..."
 go run ./cmd/security-review \
   --repo-root . \

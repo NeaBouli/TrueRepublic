@@ -7,8 +7,11 @@ with checkbox authority in
 
 ## Current rollout position
 
-- Overall tracker: **35/59** complete.
-- Phase work: **35/51** complete.
+- Overall tracker: **36/59** complete.
+- Phase work: **36/51** complete.
+- Phase 2: **2/7** canonical tracker items complete. GH-297 freezes the
+  versioned protocol contract only; prover, production artifacts, ceremony,
+  browser-to-chain compatibility and independent review remain open.
 - Phase 6: **6/7** complete.
 - Phase 7: **3/10** complete. Release freeze and accountable go/no-go are two
   mandatory subchecks of one counted tracker item.

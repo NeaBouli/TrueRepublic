@@ -1,5 +1,24 @@
 # Security Notes
 
+## GH-297 frozen ZKP protocol boundary
+
+- The production-candidate specification now has one strict, digest-bound
+  manifest for the exact circuit ID, consensus/profile versions, four ordered
+  public inputs, canonical BN254 field encoding, proposal-scoped nullifier and
+  recipient-bound rating signal.
+- Semantic changes cannot be made in place. Circuit, protocol and nullifier
+  keyspace changes require the corresponding new version; consensus activation
+  requires fresh genesis or an explicit governed upgrade with deterministic
+  migration evidence.
+- The bound circuit artifacts remain forge-capable single-party toxic-waste
+  fixtures and are not production keys. Real prover integration, reproducible
+  production artifacts, ceremony provenance, browser-to-chain proof evidence
+  and independent cryptographic/privacy review remain open.
+- Maintained-client submission stays hard false and direct payout remains
+  publicly linkable. This freeze claims neither production readiness nor
+  shielded payout, coercion-resistance or vote-buying protection.
+
+
 ## GH-294 duplicate-member and CLI-report boundary
 
 - Strict decoding now rejects duplicate object member names recursively before

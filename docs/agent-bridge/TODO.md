@@ -1,5 +1,22 @@
 # Recovery Queue
 
+## Active - GH-297 production-target ZKP protocol freeze
+
+- [x] Add a strict versioned freeze manifest binding the existing ZKP circuit
+  spec digest and exact circuit/consensus/context/input/field/nullifier profiles.
+- [x] Enforce explicit version bumps, governed activation and non-reused
+  nullifier keyspaces for every future semantic change.
+- [x] Cross-check Go behavior, existing spec, maintained-client encoder and
+  hard-false submission guard with fail-closed adversarial drift tests.
+- [x] Keep production artifacts, ceremony, prover, submission and independent
+  review as separate open Phase-2 gates; change no runtime behavior.
+- [x] Pass focused and complete local verification plus independent Kimi
+  review with no blocker or high/medium issue.
+- [ ] Pass protected exact-head CI, merge, final-main and public readback.
+- [ ] Credit exactly one Phase-2/overall rollout item only after all gates pass;
+  keep production false.
+
+
 ## Completed - GH-294 independent security-review readiness
 
 - [x] Add strict versioned scope and findings manifests bound to canonical

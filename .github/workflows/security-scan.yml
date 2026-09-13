@@ -72,6 +72,9 @@ jobs:
       - name: Verify security-review readiness contract
         run: make security-review-contract-test
 
+      - name: Verify frozen ZKP protocol contract
+        run: make zkp-protocol-freeze-contract-test
+
   secret-scan:
     runs-on: ubuntu-latest
     timeout-minutes: 15

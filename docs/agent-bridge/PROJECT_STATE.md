@@ -1,5 +1,23 @@
 # Project State
 
+GH-297 is locally approved on isolated branch
+`feature/GH-297-zkp-protocol-freeze`. The candidate freeze digest-binds the
+existing toxic-waste test specification and pins exact protocol/version/input/
+encoding/nullifier/signal/change-control semantics without runtime, consensus
+or submission change. All 62 focused cases, focused race/coverage, 676
+governance and 2,117 complete serial Go events, repository Vet, composed
+security contracts, consistency, licensing, JSON and diff gates pass. Kimi K3
+authored only the bounded contract test and independently returned APPROVE;
+Sol reviewed and integrated the diff. Protected PR/CI, merge, exact-main and
+public synchronization remain. Candidate accounting is 2,462 tests and 36/59;
+canonical main remains 35/59 until merge. Production and submission remain
+false.
+
+Updated: 2026-09-13 EEST
+
+---
+
+
 GH-294 is complete on exact implementation main
 `aef489ca2d31dcb94dd29fb100ead10e7a4f25c7`. PR #295 final head `fc53a6f`
 passed every applicable protected context and merged after all three hosted

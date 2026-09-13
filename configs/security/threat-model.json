@@ -2,7 +2,7 @@
   "model": {
     "name": "truerepublic-cross-system-threat-model",
     "version": "truerepublic.threat-model/v1",
-    "updated": "2026-09-01"
+    "updated": "2026-09-13"
   },
   "production_ready": false,
   "safety_boundary": "Recovery-only repository threat model covering documentation, configuration, and tests. This register is not an independent external audit and does not authorize or claim consensus-state, cryptography, wallet-custody, key, signing, funds, deployment, mainnet, migration, release, or production activity. The repository holds no secrets, private keys, real topology, or customer data; all committed configuration is synthetic.",
@@ -341,9 +341,12 @@
       "controls": [
         "Anonymous submission stays fail-closed in the maintained client and mock proof submission is rejected",
         "Consensus never runs randomized setup; genesis pins circuit ID, VK fingerprint, curve, and public-input shape",
-        "Versioned signals bind chain, proposal, and rating context"
+        "The frozen production-candidate protocol manifest digest-binds the test-only circuit specification and exact versioned public-input, field-encoding, nullifier, signal, and change-control semantics",
+        "Versioned signals bind chain, proposal, rating, and canonical reward-recipient context"
       ],
       "evidence": [
+        "configs/security/zkp-protocol-freeze.json",
+        "docs/security/ZKP_PROTOCOL_FREEZE.md",
         "x/truedemocracy/anonymity.go",
         "client-web/src/services/zkp.ts",
         "client-web/src/services/zkpEncoding.test.ts",
@@ -351,7 +354,7 @@
         "x/truedemocracy/testdata/zkp/manifest.json",
         "docs/agent-bridge/SECURITY_NOTES.md"
       ],
-      "residual_risk": "GH-198 pins forge-capable single-party test artifacts and cross-language synthetic proof vectors, but no production ceremony artifact, maintained-browser prover, or enabled browser-to-chain anonymous submission exists; this register claims none.",
+      "residual_risk": "GH-297 freezes the candidate protocol but deliberately does not promote GH-198's forge-capable single-party test artifacts. No production ceremony artifact, maintained-browser prover, or enabled browser-to-chain anonymous submission exists; this register claims none.",
       "residual_severity": "critical",
       "owner": "security-maintainers",
       "next_gate": "GH-29 Phase 2 exit gate: a real maintained-client proof verifies on-chain under the published circuit identity",
@@ -368,9 +371,12 @@
       "controls": [
         "Genesis ceremony artifacts are treated as the trust anchor with pinned fingerprints",
         "Identity roots are recomputed from canonical commitments and nullifier state survives export/import",
+        "Frozen protocol semantics require a new version and migration plan when independent review forces a change",
         "Enabling any real prover is gated on external review"
       ],
       "evidence": [
+        "configs/security/zkp-protocol-freeze.json",
+        "docs/security/ZKP_PROTOCOL_FREEZE.md",
         "x/truedemocracy/zkp.go",
         "docs/ROLLOUT_ROADMAP.md",
         "CODEX_AUDIT.md"

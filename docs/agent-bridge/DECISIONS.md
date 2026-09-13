@@ -1,5 +1,23 @@
 # Decisions
 
+## 2026-09-13 - Freeze the current anonymous-rating protocol without promoting artifacts
+
+- `configs/security/zkp-protocol-freeze.json` is the immutable
+  production-candidate protocol authority for the current v2 anonymous-rating
+  semantics. It digest-binds the existing test-only circuit specification.
+- The exact circuit, public-input order, canonical BN254 encoding, v1
+  proposal-scoped nullifier and v2 recipient-bound signal are frozen. No
+  semantic field may change in place; the manifest defines when a new circuit,
+  protocol profile or nullifier keyspace is mandatory.
+- Consensus activation is limited to fresh genesis or an explicit governed
+  upgrade with deterministic migration evidence. External-review corrections
+  require a new version and migration plan.
+- The existing proving artifacts retain their single-party toxic-waste
+  classification. Production prover, artifacts, ceremony, browser-to-chain
+  submission and independent review remain separate gates;
+  `submission_allowed=false` and `production_ready=false` remain binding.
+
+
 ## 2026-08-23 - Basic rollout precedes V4-1 runtime work
 
 - Complete the Basic TrueRepublic 59-item rollout foundation and its

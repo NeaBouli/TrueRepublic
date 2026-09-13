@@ -1,7 +1,8 @@
 # Testing Status
 
-The current **v0.4.0 recovery** source of truth records **2,400 verified
-standard-suite cases**. This arithmetic excludes the separately run opt-in
+The current **v0.4.0 recovery** source of truth records **2,462 verified
+standard-suite cases**. The Go subtotal includes GH-297's 62-case frozen ZKP
+protocol contract. This arithmetic excludes the separately run opt-in
 GH-266 Go/WASM-to-keeper replay, GH-175/GH-178/GH-181 IBC two-chain, and
 GH-184 governed-upgrade gates.
 
@@ -24,7 +25,7 @@ GH-184 governed-upgrade gates.
 | Go topology policy | 56 |
 | Go treasury | 36 |
 | Go DEX | 138 |
-| Go governance | 614 |
+| Go governance | 676 |
 | Go test-only ZKP prover | 8 |
 | Go release evidence | 20 |
 | Go install lifecycle | 24 |
@@ -32,12 +33,12 @@ GH-184 governed-upgrade gates.
 | Go OCI evidence | 35 |
 | Rust/CosmWasm | 26 |
 | Maintained client | 319 |
-| **Total** | **2,400** |
+| **Total** | **2,462** |
 
 The published total is the reproducible standard-suite baseline; the opt-in
 GH-175/GH-178/GH-181 IBC recovery, GH-184 upgrade, and GH-206/GH-266 Go/WASM
 native-verifier plus keeper-replay (`./scripts/test-zkp-wasm-client.sh`) gates are additional
-evidence and are not counted in the 2,055 Go subtotal.
+evidence and are not counted in the 2,117 Go subtotal.
 
 ## Current Go coverage
 
@@ -130,7 +131,7 @@ proof must pay the bound recipient exactly once through
 recipient substitution, blocked/noncanonical recipients, and malformed
 handoffs must leave nullifier, rating, treasury, escrow, and balances unchanged.
 Because these tests skip in the ordinary package suite and run only in the
-dedicated gate, they add evidence without changing the 2,055 Go subtotal.
+dedicated gate, they add evidence without changing the 2,117 Go subtotal.
 
 Green tests are recovery evidence, not an external security or production
 approval. See [Current Status](Current-Status) for remaining gates.

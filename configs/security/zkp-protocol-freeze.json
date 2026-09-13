@@ -1,0 +1,105 @@
+{
+  "schema": "truerepublic/zkp-protocol-freeze/v1",
+  "status": "frozen",
+  "classification": "FROZEN PRODUCTION-CANDIDATE SPECIFICATION",
+  "production_ready": false,
+  "submission_allowed": false,
+  "rollout_item": "phase-2-frozen-versioned-circuit-inputs-encodings-nullifier-rules",
+  "source_spec": {
+    "path": "configs/security/zkp-circuit.json",
+    "schema": "truerepublic/zkp-circuit/v2",
+    "sha256": "27fb8e4eaeb365706535f107c0d6a39a282e423f01385c14495f3f06414c4ab7",
+    "artifact_classification": "TEST-ONLY SINGLE-PARTY TOXIC WASTE",
+    "artifact_production_allowed": false
+  },
+  "profiles": {
+    "protocol": "truerepublic/anonymous-rating/v2",
+    "circuit": "truerepublic/membership-vote/v2-bn254-mimc-depth20",
+    "consensus_version": 2,
+    "public_inputs": "truerepublic/zkp-public-inputs/v1",
+    "field_encoding": "truerepublic/bn254-field-be32-canonical/v1",
+    "nullifier_scope": "TrueRepublic/vote/v1",
+    "signal": "TrueRepublic/vote/v2",
+    "reward_recipient": "truerepublic/bech32-canonical-recipient/v1"
+  },
+  "semantics": {
+    "public_input_order": [
+      "merkle_root",
+      "nullifier_hash",
+      "external_nullifier",
+      "signal_hash"
+    ],
+    "field_element_encoding": "exactly 32-byte big-endian canonical BN254 scalar field element",
+    "nullifier_bound_fields": [
+      "chain_id",
+      "domain_name",
+      "issue_name",
+      "suggestion_name"
+    ],
+    "nullifier_excluded_fields": [
+      "rating",
+      "reward_recipient"
+    ],
+    "signal_bound_fields": [
+      "chain_id",
+      "domain_name",
+      "issue_name",
+      "suggestion_name",
+      "rating",
+      "reward_recipient"
+    ],
+    "legacy_context": {
+      "profile": "TrueRepublic/vote/v1",
+      "use": "nullifier-scope derivation and frozen synthetic fixture compatibility only",
+      "production_signal": false
+    },
+    "candidate_context": {
+      "profile": "TrueRepublic/vote/v2",
+      "use": "canonical recipient-bound anonymous-rating signal",
+      "production_signal": true
+    }
+  },
+  "change_control": {
+    "in_place_semantic_change_allowed": false,
+    "circuit_id_bump_required_for": [
+      "constraint_system",
+      "curve",
+      "hash_construction",
+      "merkle_depth",
+      "identity_commitment",
+      "nullifier_hash",
+      "public_input_order"
+    ],
+    "protocol_profile_bump_required_for": [
+      "field_element_encoding",
+      "vote_context_domain",
+      "vote_context_field_order",
+      "rating_encoding",
+      "reward_recipient_encoding"
+    ],
+    "new_nullifier_keyspace_required_for": [
+      "nullifier_scope_domain",
+      "nullifier_bound_fields",
+      "nullifier_hash_construction"
+    ],
+    "activation": "fresh genesis or an explicit governed consensus upgrade with deterministic migration evidence",
+    "review_forced_change": "publish a new version and migration plan; never mutate this frozen profile in place"
+  },
+  "open_gates": [
+    "compatible real Groth16 maintained-client prover",
+    "reproducible production proving and verification artifacts",
+    "ceremony provenance and artifact rotation policy",
+    "browser-to-chain production proof compatibility",
+    "independent cryptographic privacy and setup review"
+  ],
+  "evidence": [
+    "configs/security/zkp-circuit.json",
+    "x/truedemocracy/zkpcircuit/circuit.go",
+    "x/truedemocracy/zkp.go",
+    "x/truedemocracy/merkle.go",
+    "x/truedemocracy/zkp_circuit_spec_test.go",
+    "x/truedemocracy/zkp_genesis_security_test.go",
+    "client-web/src/services/zkpEncoding.ts",
+    "client-web/src/services/zkp.ts"
+  ]
+}
