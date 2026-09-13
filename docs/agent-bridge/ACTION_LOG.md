@@ -5529,3 +5529,50 @@
 - No public README, Landing Page or Wiki content changed: this maintenance adds
   no feature, standard-suite test, rollout credit or production claim. Rollout
   remains 35/59 overall, Phase 6 6/7, Phase 7 3/10, production false.
+
+## 2026-09-13 EEST - GH-291 maintained-client dependency review started
+
+- Exact clean baseline is `33a1b810`; GitHub issue #291 binds the work and
+  Dependabot PR #290 is the only open repository PR.
+- Scope is read/review/test/integrate only for postcss 8.5.28 and happy-dom
+  20.14.0 in the two maintained-client dependency files. No replacement patch
+  will be produced unless review proves the source PR requires remediation.
+- Kimi receives the bounded secret-free provenance/compatibility/graph review.
+  Sol independently reviews the diff and runs the complete relevant client,
+  chain, WASM, browser and repository security gates before any merge.
+- Rollout/accounting and production truth are unchanged. No Guardian, server,
+  release, deployment, genesis, key/fund, migration or paid action is in scope.
+
+## 2026-09-13 EEST - GH-291 current audit blocks direct PR #290 merge
+
+- Sol reproduced exact PR head `97c578a` with `npm ci`: 388 packages installed,
+  then npm reported one High vulnerability. `npm audit --json` identifies
+  js-yaml 4.3.1, transitively selected by eslint/@eslint/eslintrc, as affected
+  by GHSA-2883-xcg3-v3hh; 4.3.2 is the compatible fix.
+- The same js-yaml 4.3.1 lock entry exists on base main, so the advisory is
+  pre-existing rather than introduced by postcss/happy-dom. Nevertheless the
+  September 7 hosted audit is stale and direct merge is fail-closed.
+- Kimi's initial static dependency review approved the two declared bumps and
+  found no P0-P2 issue, but did not execute the current audit. Sol overrides
+  that incomplete approval and assigns a bounded replacement: exact #290 diff
+  plus only js-yaml 4.3.2; no unrelated npm resolution is allowed.
+- No production, Guardian, server, deployment, release, migration, key/fund or
+  paid action occurred. Rollout remains unchanged.
+
+## 2026-09-13 EEST - GH-291 bounded replacement passes local review
+
+- Kimi changed only the maintained-client manifest and lockfile for postcss
+  8.5.28, happy-dom 20.14.0 and transitive js-yaml 4.3.2. Sol independently
+  verified the exact graph, 413-entry lock count, absence of a root js-yaml
+  dependency/override, absence of Axios and the line-level diff.
+- Clean install, current npm audit (zero vulnerabilities), blocking audit,
+  policy/unit tests (10/10 plus 309 passed / 4 skipped), lint, production build
+  and bundle budget all passed.
+- Local chain integration passed 3/3, ZKP-WASM passed 1/1, `make build` passed,
+  and `make verify` passed its Go build/vet/race/coverage matrix.
+- Browser QA produced 42 passed, 2 expected mobile keyboard skips and one
+  WebKit-desktop keyboard-focus failure; that exact failure reproduced on
+  untouched main, proving it is the known local macOS baseline rather than a
+  dependency regression. Hosted exact-head checks remain required.
+- Documentation consistency, license policy plus fixtures, and secret scan
+  plus fixtures passed. No rollout credit or production claim was added.

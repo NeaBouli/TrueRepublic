@@ -1,5 +1,21 @@
 # Recovery Queue
 
+## In progress - GH-291 maintained-client dependency review
+
+- [x] Verify source PR #290's postcss 8.5.28 and happy-dom 20.14.0 releases,
+  registry integrity, licenses, engines, peer constraints and exact lock graph.
+- [x] Replace the now-stale source head with those exact two updates plus only
+  the compatible transitive js-yaml 4.3.2 fix for GHSA-2883-xcg3-v3hh.
+- [x] Complete bounded Kimi deep review plus independent Sol diff/security
+  review without duplicating implementation work.
+- [x] Pass clean lockfile install, client policy/unit, lint, build/budget,
+  browser, chain, ZKP-WASM and adjacent repository security gates.
+- [ ] Merge only after current exact-head hosted checks and zero unresolved
+  review threads; close #290 as superseded, then verify exact main and close
+  GH-291.
+- [ ] Synchronize both Bridges without rollout credit, release, deployment,
+  genesis, real key/fund, Guardian or production action.
+
 ## Completed - GH-285 sequential dependency reconciliation
 
 - [x] Verify upstream release, checksum, license, graph and advisory evidence

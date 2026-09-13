@@ -1,5 +1,45 @@
 # Project State
 
+GH-291 has passed independent local review. Kimi's bounded implementation
+changes only postcss 8.5.28, happy-dom 20.14.0 and transitive js-yaml 4.3.2 in
+the maintained-client manifest/lockfile. Current npm audit is zero; client
+policy/unit, lint, build/budget, local chain 3/3, ZKP-WASM 1/1, Go build and
+full Go verify, documentation consistency, license and secret gates pass. The
+browser matrix is 42 passed / 2 expected mobile skips / one WebKit-desktop
+focus failure reproduced identically on untouched main, so it is not a GH-291
+regression. Replacement PR publication and protected exact-head review are
+next. Rollout and production truth remain unchanged.
+
+Updated: 2026-09-13 EEST
+
+---
+
+GH-291 found one current High advisory while reproducing PR #290: `npm ci`
+installs js-yaml 4.3.1 through eslint/@eslint/eslintrc, and current
+`npm audit --json` reports GHSA-2883-xcg3-v3hh (fixed in 4.3.2). The same
+transitive version exists on base main, so #290 did not introduce it, but its
+September 7 green audit is stale and direct merge is rejected. The bounded
+replacement scope is now the exact two #290 updates plus only js-yaml 4.3.2.
+Kimi implements those dependency files; Sol owns diff/security review and full
+verification. Rollout and production truth remain unchanged.
+
+Updated: 2026-09-13 EEST
+
+---
+
+GH-291 is active from exact clean main
+`33a1b81016e24c7193cf3d147ca7e32682f75313`. Dependabot PR #290 is the sole
+open repository PR and changes only the maintained client's package manifest
+and lockfile for postcss 8.5.28 and happy-dom 20.14.0. Kimi owns a bounded
+secret-free provenance, compatibility, graph and diff review; Sol owns all
+writes, independent security/integration verification, protected merge and
+closeout. No dependency file has been changed by this task yet.
+Rollout remains 35/59 overall, Phase 6 6/7, Phase 7 3/10, production false.
+
+Updated: 2026-09-13 EEST
+
+---
+
 GH-285 is complete on exact clean main
 `876c4a4d171bf0853e9e3bff2d2b7b0ad2d2adb2`. Sequential replacement PRs
 #286, #287 and #288 passed their full protected exact-head matrices and merged;

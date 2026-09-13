@@ -9260,3 +9260,94 @@ may close after this append-only closeout passes protected review and merges.
 `TRUEREPUBLIC GH-285 DONE — EXACT MAIN 876c4a4 — PRODUCTION FALSE`
 
 ---
+
+## 2026-09-13 EEST GH-291 maintained-client dependency review → In Progress
+
+- **Branch:** `chore/GH-291-client-maintenance` for append-only coordination;
+  source dependency diff remains untouched in PR #290.
+- **Issue:** [GH-291](https://github.com/NeaBouli/TrueRepublic/issues/291)
+- **Base:** exact clean main `33a1b81016e24c7193cf3d147ca7e32682f75313`.
+- **Scope:** verify and, only if clean, integrate postcss 8.5.28 plus happy-dom
+  20.14.0 from Dependabot PR #290. No duplicate dependency implementation is
+  planned.
+- **Division:** Kimi performs secret-free provenance, integrity/license,
+  engine/peer, dependency-graph and API-risk review. Sol owns all writes,
+  independent diff/security review, complete relevant tests, GitHub review,
+  merge, exact-main verification and closure.
+- **Tests:** pending exact-head reproduction and local verification.
+- **Risk:** low-to-medium dependency/supply-chain risk; application and chain
+  source are unchanged. Rollout remains 35/59 overall, Phase 6 6/7, Phase 7
+  3/10 and production false.
+- **Excluded:** Guardian/Operator-A, shared servers, production, deploy/restart,
+  release, genesis, migrations, secrets, real keys/funds and paid actions.
+
+### Delegate notes
+
+Kimi may review only the two dependency files and public upstream/package
+metadata, must not write, delegate, use secrets or perform external actions.
+
+### Sol review feedback
+
+Pending independent Kimi review and complete Sol verification.
+
+`TRUEREPUBLIC GH-291 ACTIVE — PR #290 REVIEW ONLY — PRODUCTION FALSE`
+
+---
+
+## 2026-09-13 EEST GH-291 current npm advisory → Changes Requested
+
+- **Evidence:** exact PR #290 reproduced with `npm ci` (388 packages); current
+  `npm audit --json` reports one High finding, GHSA-2883-xcg3-v3hh, against
+  transitive js-yaml 4.3.1 from eslint/@eslint/eslintrc. The advisory fix is
+  4.3.2 and the parent range `^4.3.0` is compatible.
+- **Root cause:** base main already locks js-yaml 4.3.1. PR #290 did not add the
+  vulnerability, but its September 7 audit predates the current advisory and
+  can no longer authorize a merge.
+- **Decision:** no direct #290 merge. Build one current-main replacement with
+  the exact postcss/happy-dom diff plus only js-yaml 4.3.2; reject all unrelated
+  lock movement and close #290 as superseded only after the replacement merges.
+- **Kimi feedback:** initial read-only review APPROVE remains valid for the two
+  declared package updates, but is incomplete for current security because it
+  used static lock validation rather than a real audit. Kimi now owns only the
+  bounded three-package dependency-file implementation.
+- **Sol responsibility:** verify every changed lock entry, rerun clean audit and
+  the complete maintained-client/browser/chain/WASM/security gates, then own
+  protected publication and closure.
+- **Status:** technical fix identified; no external blocker. Rollout remains
+  35/59 overall, Phase 6 6/7, Phase 7 3/10 and production false.
+
+`TRUEREPUBLIC GH-291 CHANGES REQUESTED — JS-YAML HIGH MUST BE PATCHED`
+
+---
+
+## 2026-09-13 EEST GH-291 bounded replacement → Local Review PASS
+
+- **Kimi implementation:** changed only `client-web/package.json` and
+  `client-web/package-lock.json`: postcss `8.5.27 -> 8.5.28`, happy-dom
+  `20.13.2 -> 20.14.0`, and transitive-only js-yaml `4.3.1 -> 4.3.2`.
+  No root js-yaml dependency or override was added; the lockfile remains at
+  413 package entries and Axios remains absent.
+- **Sol diff review:** PASS. The dependency diff is limited to the two root
+  spec mirrors and the version/resolved/integrity triples for those three
+  packages. `git diff --check` is clean. Kimi preserved all Sol coordination
+  files and did not commit or publish.
+- **Client gates:** clean `npm ci` (388 packages); `npm audit --json` reports
+  0 vulnerabilities; `npm run audit:high` PASS; policy tests 10/10; Vitest
+  309 passed / 4 skipped; lint PASS; production build and bundle budget PASS.
+- **Integration gates:** local client-to-chain integration 3/3 PASS with the
+  freshly built daemon; ZKP-WASM 1/1 PASS; `make build` PASS; `make verify`
+  PASS including Go build, vet, race and coverage across all selected packages.
+- **Browser gate:** 42 passed / 2 mobile physical-keyboard cases skipped / one
+  WebKit-desktop focus case failed. The identical single failure reproduces on
+  untouched exact main and is therefore a documented local macOS WebKit
+  baseline, not a GH-291 regression. Current hosted exact-head checks remain
+  mandatory before merge.
+- **Repository gates:** documentation consistency, decided Apache-2.0 license
+  policy and its fixtures, secret scan and its fixtures all PASS.
+- **Status:** ready for one bounded replacement PR and current hosted review.
+  Source PR #290 remains open until the replacement merges. Rollout remains
+  35/59 overall, Phase 6 6/7, Phase 7 3/10 and production false.
+
+`TRUEREPUBLIC GH-291 LOCAL REVIEW PASS — HOSTED EXACT-HEAD REVIEW PENDING`
+
+---
