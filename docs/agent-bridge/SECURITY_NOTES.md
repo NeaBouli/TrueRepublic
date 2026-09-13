@@ -1,5 +1,16 @@
 # Security Notes
 
+## GH-294 duplicate-member and CLI-report boundary
+
+- Strict decoding now rejects duplicate object member names recursively before
+  typed decoding. A later `production_ready`, independence claim, finding
+  field, threat link or nested identity member cannot silently override an
+  earlier value.
+- A successful repository verification returns zero only if its success record
+  is written. Broken stdout now returns failure; existing parse/contract and
+  usage exit codes remain unchanged.
+
+
 ## GH-294 verified-closure and filesystem boundary
 
 - A finding's `source` records origin only. `verified_closed` additionally

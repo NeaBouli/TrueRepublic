@@ -1,5 +1,23 @@
 # TrueRepublic Agent Bridge
 
+## 2026-09-13 PR #295 hosted review remediation locally verified
+
+- CodeRabbit's three actionable findings were confirmed and fixed: nested and
+  top-level duplicate JSON members now fail closed, the CLI returns failure if
+  its success record cannot be written, and the active TODO checklist now
+  reflects only genuinely remaining protected closeout work.
+- Adversarial duplicate-member and failed-writer checks were added without
+  changing published event arithmetic. Focused race/coverage (82.9%), Vet,
+  staticcheck, review contracts, docs consistency, diff hygiene and the renewed
+  complete serial suite (2,055/2,055) pass.
+- The first exact-head matrix was otherwise green, including the hosted
+  repo-wide race suite that local disk could not complete. A correction commit,
+  thread resolution and the fresh exact-head matrix remain before merge.
+- No overlapping writer, rollout credit, release, deployment or production
+  action occurred. Rollout stays 35/59 and production remains false.
+
+---
+
 ## 2026-09-13 GH-294 locally approved after independent diff remediation
 
 - The complete repository-prepared review package is implemented: strict

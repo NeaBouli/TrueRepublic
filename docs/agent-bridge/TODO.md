@@ -15,24 +15,25 @@
 - [x] Complete independent read-only diff review and resolve all four findings.
 - [x] Pass focused race/Vet/static, all 2,055 serial Go events, vulnerability,
   secret, license, consistency, JSON and diff gates.
-- [ ] Publish the protected PR, require its complete exact-head matrix, merge,
+- [x] Publish protected PR #295 at exact head `a9c5f25`.
+- [ ] Require its complete exact-head matrix, resolve review threads, merge,
   verify exact main, synchronize live Wiki/Pages and close GH-294.
 - [x] Keep rollout 35/59, Phase 6 6/7, Phase 7 3/10 and production false.
 
 
 ## Active - GH-294 independent security-review readiness
 
-- [ ] Add versioned, machine-readable review-scope and findings manifests that
+- [x] Add versioned, machine-readable review-scope and findings manifests that
   cross-reference existing threats and repository evidence without duplication.
-- [ ] Add a strict fail-closed verifier and adversarial fixtures for malformed,
+- [x] Add a strict fail-closed verifier and adversarial fixtures for malformed,
   unsafe, drifting and invalid finding-lifecycle inputs.
-- [ ] Pin external independence and production readiness false; require real
+- [x] Pin external independence and production readiness false; require real
   remediation evidence for critical/high closure and bounded accepted risk.
-- [ ] Add the reviewer guide, supersede stale audit claims and wire repository,
+- [x] Add the reviewer guide, supersede stale audit claims and wire repository,
   Make, CI, documentation and security contracts.
-- [ ] Complete Kimi implementation/review, Sol line-by-line security review,
-  full relevant local gates, protected PR, exact-main checks and both Bridges.
-- [ ] Keep rollout at 35/59 with no Phase-5 checkbox, production, release,
+- [ ] Complete protected exact-head PR checks and review remediation, then
+  merge, run exact-main checks, synchronize Pages/Wiki and close both Bridges.
+- [x] Keep rollout at 35/59 with no Phase-5 checkbox, production, release,
   deployment, consensus, cryptography, wallet, token, DEX or GH-232 change.
 
 

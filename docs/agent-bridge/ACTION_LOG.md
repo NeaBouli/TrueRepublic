@@ -1,5 +1,18 @@
 # Action Log
 
+## 2026-09-13 - PR #295 hosted review remediated locally
+
+- Confirmed all three CodeRabbit comments: duplicate object members could
+  override earlier values, the CLI ignored a failed success-message write, and
+  the active checklist duplicated completed work.
+- Added a token-level recursive duplicate-member guard plus top-level/nested
+  adversarial checks, made success output fail closed with a synthetic writer
+  test, and synchronized the current checklist.
+- PASS after fixes: focused race/coverage (82.9%), Vet, staticcheck, composed
+  review contracts, documentation consistency, diff hygiene, and exactly
+  2,055/2,055 serial Go pass events. Fresh exact-head CI is required.
+
+
 ## 2026-09-13 - GH-294 local implementation and review complete
 
 - Implemented strict review scope/findings schemas, bounded verifier/CLI,

@@ -16,13 +16,15 @@ func Run(args []string, stdout, stderr io.Writer) int {
 		return 2
 	}
 	if flags.NArg() != 0 || *repoRoot == "" || *scopePath == "" || *findingsPath == "" {
-		fmt.Fprintln(stderr, "usage: security-review --repo-root DIR --scope PATH --findings PATH")
+		_, _ = fmt.Fprintln(stderr, "usage: security-review --repo-root DIR --scope PATH --findings PATH")
 		return 2
 	}
 	if err := VerifyFiles(*repoRoot, *scopePath, *findingsPath); err != nil {
-		fmt.Fprintln(stderr, err)
+		_, _ = fmt.Fprintln(stderr, err)
 		return 1
 	}
-	fmt.Fprintln(stdout, "security review readiness contract verified; independent review and production claims remain false")
+	if _, err := fmt.Fprintln(stdout, "security review readiness contract verified; independent review and production claims remain false"); err != nil {
+		return 1
+	}
 	return 0
 }

@@ -6,8 +6,9 @@
 GH-294 provides a strict, versioned independent-review readiness package and
 keeps both reviewer-independence and production-readiness claims explicitly
 false. An independent read-only diff review initially found four lifecycle,
-threat-binding, contract-composition, and filesystem-race gaps; all four were
-addressed before this audit was recorded. The block is suitable for protected
+threat-binding, contract-composition, and filesystem-race gaps; hosted review
+then found duplicate-member parsing, CLI output, and TODO-state gaps. All seven
+were addressed before this audit was finalized. The block is suitable for protected
 CI and maintainer review, but it is not an independent security audit and
 grants no rollout credit. The remaining warnings concern the immutable-checkout
 operating precondition and a repo-wide race run that must complete in protected
@@ -18,8 +19,8 @@ CI because the local host had insufficient free disk.
 ### Schema and parser boundary — PASS
 
 - **[PASS] Strict bounded input contract** — `securityreview/parse.go`
-  - What: JSON documents are size-bounded, reject unknown fields and trailing
-    values, and require explicit safety claims.
+  - What: JSON documents are size-bounded, reject duplicate/unknown members and
+    trailing values, and require explicit safety claims.
   - Path: malformed, oversized, extended, or claim-promoting documents fail
     before repository evidence is accepted.
   - Fix: none.

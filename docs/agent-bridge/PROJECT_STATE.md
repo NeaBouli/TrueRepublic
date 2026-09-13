@@ -1,5 +1,19 @@
 # Project State
 
+PR #295 hosted review produced three valid findings, now fixed locally:
+duplicate JSON members fail closed at every object depth, CLI success-output
+failure returns nonzero, and the active TODO state is no longer duplicated.
+Focused race/Vet/staticcheck, review contracts, consistency, diff hygiene and
+all 2,055 serial Go events pass after the changes. The initial exact-head matrix
+was otherwise green, including hosted repo-wide race, reproducible OCI,
+security, release and recovery checks. Correction push, thread resolution,
+fresh exact-head CI, merge and live Pages/Wiki readback remain. Rollout stays
+35/59, Phase 6 6/7, Phase 7 3/10, production false.
+
+Updated: 2026-09-13 EEST
+
+---
+
 GH-294 is locally approved after independent read-only review and remediation.
 The package now binds scope, invariants, evidence, findings and canonical threat
 IDs; verified closure requires separately attributed external evidence, and the

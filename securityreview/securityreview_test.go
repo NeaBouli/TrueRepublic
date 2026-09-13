@@ -3,6 +3,7 @@ package securityreview
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"os"
 	"path/filepath"
 	"strings"
@@ -39,6 +40,14 @@ func TestStrictParsersRejectMalformedTrailingUnknownAndOversizeJSON(t *testing.T
 		t.Fatal(err)
 	}
 	assertViolation(t, Verify(root, scope, invalidFindings), "production_ready")
+	duplicateTop := bytes.Replace(scopeJSON, []byte(`"production_ready":false`), []byte(`"production_ready":true,"production_ready":false`), 1)
+	if _, err := ParseScope(duplicateTop); err == nil || !strings.Contains(err.Error(), "duplicate JSON object member") {
+		t.Fatalf("duplicate top-level member error=%v", err)
+	}
+	duplicateNested := bytes.Replace(findingsJSON, []byte(`"name":"test-security-review-findings"`), []byte(`"name":"forged","name":"test-security-review-findings"`), 1)
+	if _, err := ParseFindings(duplicateNested); err == nil || !strings.Contains(err.Error(), "duplicate JSON object member") {
+		t.Fatalf("duplicate nested member error=%v", err)
+	}
 
 	for _, tc := range []struct {
 		name  string
@@ -200,6 +209,9 @@ func TestVerifyFilesAndCommand(t *testing.T) {
 	if !strings.Contains(stdout.String(), "independent review and production claims remain false") {
 		t.Fatalf("unexpected output %q", stdout.String())
 	}
+	if code := Run([]string{"--repo-root", root, "--scope", "scope.json", "--findings", "findings.json"}, failingWriter{}, &stderr); code != 1 {
+		t.Fatalf("failed success-message write code=%d, want 1", code)
+	}
 	stderr.Reset()
 	if code := Run([]string{"--repo-root", root}, &stdout, &stderr); code != 2 {
 		t.Fatalf("missing flags code=%d, want 2", code)
@@ -254,6 +266,12 @@ func validContract(t *testing.T) (string, Scope, Findings) {
 }
 
 func boolPointer(value bool) *bool { return &value }
+
+type failingWriter struct{}
+
+func (failingWriter) Write([]byte) (int, error) {
+	return 0, errors.New("synthetic write failure")
+}
 
 func writeFile(t *testing.T, root, rel string, data []byte) {
 	t.Helper()
