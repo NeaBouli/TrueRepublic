@@ -1,5 +1,26 @@
 # Action Log
 
+## 2026-09-19 - GH-305 rustls remediation locally approved
+
+- Applied the canonical four-line `Cargo.lock` correction: rustls 0.23.38 to
+  exact minimum patched 0.23.45 and the only forced companion rustls-webpki
+  0.103.13 to Cargo-selected compatible 0.103.15. No duplicate rustls or other
+  graph change remains.
+- PASS: Cargo format; workspace Clippy with warnings denied; 26/26 Rust unit
+  tests plus doc tests; real cargo audit with zero vulnerabilities; docs
+  consistency; Apache-2.0 license policy; security-review readiness; pinned
+  gitleaks secret scan; diff hygiene.
+- Kimi's bounded implementation attempt reached no write because its wrapper
+  reported an exhausted five-hour quota. Sol therefore implemented and reviewed
+  the minimal lockfile diff. Claude Code independently returned APPROVE after
+  verifying advisory data, dependency path, checksums, graph uniqueness and
+  runtime isolation.
+- Protected exact-head CI/review, merge, exact-main verification and refresh of
+  blocked PRs remain. No ignore, deployment, migration, release, production,
+  real-key or fund action occurred. Rollout remains 36/59.
+
+---
+
 ## 2026-09-19 - GH-305 rustls security reconciliation started
 
 - Confirmed hosted Rust security evidence rejects `rustls 0.23.38` for

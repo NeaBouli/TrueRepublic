@@ -1,5 +1,31 @@
 # TrueRepublic Agent Bridge
 
+## 2026-09-19 EEST GH-305 rustls security reconciliation → Locally Approved
+
+- **Result:** the only dependency change is `rustls 0.23.38 -> 0.23.45`
+  plus Cargo's one forced compatible companion `rustls-webpki 0.103.13 ->
+  0.103.15`; both checksums changed canonically. Exactly one `rustls` remains.
+- **Path:** `truerepublic-contracts` dev dependency -> `cosmwasm-vm 3.0.9` ->
+  `wasmer 5.0.6` -> build dependency `ureq 2.12.1` -> `rustls 0.23.45`.
+  No first-party Rust source, contract runtime or consensus behavior changed.
+- **Evidence:** `cargo fmt --check`, Clippy with warnings denied, all 26 Rust
+  tests and doc tests, real `cargo audit`, documentation consistency, license
+  policy, security-review readiness, secret scan and diff hygiene pass. The
+  audit reports zero vulnerabilities and only the same five pre-existing
+  allowed warnings.
+- **Review:** Kimi K3 was assigned the bounded implementation but its wrapper
+  stopped before any write because its five-hour quota was exhausted. Sol
+  applied and verified the four-line lockfile change. Claude Code independently
+  returned APPROVE; its only informational note concerns Cargo choosing the
+  latest compatible webpki patch, not an additional dependency or risk.
+- **Pending:** commit/push, protected exact-head CI/review, merge, exact-main
+  verification and refresh of the blocked PR chain. Rollout remains 36/59;
+  production remains false.
+
+`TRUEREPUBLIC GH-305 LOCAL APPROVE — SECURITY DEPENDENCY ONLY — PRODUCTION FALSE`
+
+---
+
 ## 2026-09-19 EEST GH-305 rustls security reconciliation → In Progress
 
 - **Branch:** `fix/GH-305-rustls` from exact clean main

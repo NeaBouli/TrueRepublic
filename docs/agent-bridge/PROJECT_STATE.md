@@ -1,5 +1,21 @@
 # Project State
 
+GH-305 is locally approved on isolated branch `fix/GH-305-rustls`. The
+four-line lockfile correction selects exact patched `rustls 0.23.45` and Cargo's
+forced compatible `rustls-webpki 0.103.15`; exactly one rustls remains through
+the dev/build-only `cosmwasm-vm -> wasmer -> ureq` path. Format, Clippy with
+warnings denied, all 26 Rust tests and doc tests, real cargo audit, consistency,
+license, security-review, secret and diff gates pass. Cargo audit reports zero
+vulnerabilities and the same five allowed pre-existing warnings. Kimi's assigned
+implementation stopped before any write because its five-hour quota was
+exhausted; Sol implemented and verified the minimal diff, and Claude Code
+independently approved it. Protected PR/CI/review, merge and exact-main
+verification remain. Rollout stays 36/59 and production remains false.
+
+Updated: 2026-09-19 EEST
+
+---
+
 GH-305 is active on isolated branch `fix/GH-305-rustls` from exact clean main
 `f5de5a150b9ff0edc51d68411b7829e78bcf78e6`. The bounded objective is to
 replace vulnerable `rustls 0.23.38` with the smallest compatible patched graph
