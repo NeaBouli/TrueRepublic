@@ -1,9 +1,11 @@
 package truedemocracy
 
 import (
+	"errors"
 	"testing"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 )
 
 // requireGovMsgEvent fails the test unless the context event manager recorded
@@ -183,7 +185,7 @@ func TestMsgServerAddMemberAuthorization(t *testing.T) {
 	k.CreateDomain(ctx, "Gov", admin, sdk.NewCoins(sdk.NewInt64Coin(PNYXDenom, 1_000)))
 
 	if _, err := server.AddMember(goCtx, &MsgAddMember{
-		Sender: sdk.AccAddress("member-attacker"), DomainName: "Gov", NewMember: "mallory",
+		Sender: sdk.AccAddress("member-attacker"), DomainName: "Gov", NewMember: sdk.AccAddress("mallory").String(),
 	}); err == nil {
 		t.Fatal("non-admin added a member")
 	}
@@ -191,29 +193,55 @@ func TestMsgServerAddMemberAuthorization(t *testing.T) {
 		t.Fatal("unauthorized add mutated membership")
 	}
 
+	newMember := sdk.AccAddress("new-member").String()
 	if _, err := server.AddMember(goCtx, &MsgAddMember{
-		Sender: admin, DomainName: "Gov", NewMember: "new-member",
+		Sender: admin, DomainName: "Gov", NewMember: newMember,
 	}); err != nil {
 		t.Fatalf("admin add member failed: %v", err)
 	}
 	domain, _ := k.GetDomain(ctx, "Gov")
-	if len(domain.Members) != 2 || domain.Members[1] != "new-member" {
+	if len(domain.Members) != 2 || domain.Members[1] != newMember {
 		t.Fatalf("members = %v, want admin plus new-member", domain.Members)
 	}
 	requireGovMsgEvent(t, ctx, "add_member")
 
 	if _, err := server.AddMember(goCtx, &MsgAddMember{
-		Sender: admin, DomainName: "Gov", NewMember: "new-member",
+		Sender: admin, DomainName: "Gov", NewMember: newMember,
 	}); err == nil {
 		t.Fatal("duplicate member was accepted")
 	}
 	if _, err := server.AddMember(goCtx, &MsgAddMember{
-		Sender: admin, DomainName: "NoSuchDomain", NewMember: "ghost",
+		Sender: admin, DomainName: "NoSuchDomain", NewMember: sdk.AccAddress("ghost").String(),
 	}); err == nil {
 		t.Fatal("add member on a missing domain succeeded")
 	}
 	if domain, _ := k.GetDomain(ctx, "Gov"); len(domain.Members) != 2 {
 		t.Fatal("rejected adds mutated membership")
+	}
+}
+
+// TestMsgServerAddMemberRejectsInvalidMemberBech32 proves the direct
+// msg-server path runs ValidateBasic: a non-bech32 new_member is rejected with
+// a deterministic invalid-address error before the keeper is touched, and
+// membership stays unchanged (GH-304).
+func TestMsgServerAddMemberRejectsInvalidMemberBech32(t *testing.T) {
+	k, ctx, _ := setupKeeperWithBank(t)
+	server := NewMsgServer(k)
+	goCtx := ctx
+	admin := sdk.AccAddress("member-admin")
+	k.CreateDomain(ctx, "Gov", admin, sdk.NewCoins(sdk.NewInt64Coin(PNYXDenom, 1_000)))
+
+	_, err := server.AddMember(goCtx, &MsgAddMember{
+		Sender: admin, DomainName: "Gov", NewMember: "not-a-bech32-address",
+	})
+	if err == nil {
+		t.Fatal("non-bech32 new_member was accepted")
+	}
+	if !errors.Is(err, sdkerrors.ErrInvalidAddress) {
+		t.Fatalf("AddMember error = %v, want wrapped ErrInvalidAddress", err)
+	}
+	if domain, _ := k.GetDomain(ctx, "Gov"); len(domain.Members) != 1 {
+		t.Fatal("rejected add mutated membership")
 	}
 }
 

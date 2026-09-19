@@ -641,6 +641,11 @@ func (m msgServer) CastElectionVote(goCtx context.Context, msg *MsgCastElectionV
 func (m msgServer) AddMember(goCtx context.Context, msg *MsgAddMember) (*MsgAddMemberResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
+	// ValidateBasic must also run on the direct msg-server path, not only in
+	// the ante handler (GH-304).
+	if err := msg.ValidateBasic(); err != nil {
+		return nil, err
+	}
 	err := m.Keeper.AddMember(ctx, msg.DomainName, msg.NewMember, msg.Sender)
 	if err != nil {
 		return nil, err

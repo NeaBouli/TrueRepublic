@@ -1,5 +1,272 @@
 # TrueRepublic Agent Bridge
 
+## 2026-09-19 EEST GH-304 unblocked and synchronized → Protected re-review
+
+- **Base:** GH-318/GH-305/GH-321 security stack is complete on exact main
+  `b26b2b9ec18ea16922b894f4cfe33a5dfa2a203c`; all post-merge Go, Rust,
+  client, security, docs, reproducibility and Pages workflows pass.
+- **Sync:** `origin/main` was merged into `fix/GH-304-elect-admin`. The only
+  conflicts were append-only Bridge/State histories; both histories were
+  retained. No Go implementation or test conflict occurred.
+- **Evidence after sync:** `bash scripts/check-consistency.sh` passes and
+  `go test ./x/truedemocracy` passes. Full exact-head protected CI/review is
+  required after push; earlier pre-sync evidence is not treated as final.
+- **Agent division:** Kimi was assigned the non-overlapping read-only deep
+  review of the synchronized GH-304 diff, but its provider again returned HTTP
+  403 for the five-hour quota before analysis began. Kimi produced no review or
+  write. Sol owns sync, diff/security review, full verification and GitHub
+  closure; no duplicate writer exists.
+- **Boundary:** this PR prevents new corruption and detects/quarantines legacy
+  corruption read-only. It performs no silent repair, migration, deployment,
+  release or live-chain mutation. Rollout remains 36/59; production false.
+
+`TRUEREPUBLIC GH-304 UNBLOCKED — EXACT-HEAD RE-REVIEW PENDING — NO MIGRATION`
+
+---
+
+## 2026-09-19 EEST GH-304 critical fix locally verified → GH-318 blocks protected merge
+
+- **Implementation:** real-bech32 elections now compare against
+  `domain.Admin.String()` and decode the winner before mutation. Corrupt stored
+  admins are detected read-only, quarantined domain-locally without silent
+  repair, and reported through a stable event. Valid domains still commit in
+  one cache-context pass; non-quarantine errors abort without partial writes.
+- **Invariant hardening:** normal `MsgAddMember` entry rejects non-bech32
+  members, and exclusion votes cannot remove the current admin or write a vote
+  key; a replacement must be elected first. Existing corrupt state is never
+  mutated by this change. Repair/migration remains separately approval-gated.
+- **Behavior proved:** real-bech32 no-change/tie/winner semantics, invalid
+  legacy candidates, corrupt-domain quarantine, EndBlock continuation,
+  AddMember, treasury, permission register, export/import, full-store detector
+  immutability and replacement-admin exclusion semantics all pass.
+- **Agent division:** Kimi K3 implemented the bounded governance/test block and
+  the final cache-event/admin-exclusion corrections. Sol independently reviewed
+  the complete diff, required multi-domain atomicity and no-auto-repair
+  semantics, integrated the result and owns all full gates and external writes.
+  Claude's earlier read-only review found the invalid-member halt risk, silent
+  repair risk and admin-exclusion invariant gap; all are remediated and covered.
+- **PASS:** focused GH-304 race test; full `make verify` with repository build,
+  Vet and race/coverage (root 73.6%, DEX 51.1%, governance 64.6%); critical
+  coverage thresholds; security-review contract; staticcheck; gitleaks (no
+  leaks); documentation consistency; Apache-2.0 policy; `git diff --check`.
+- **Recovery PASS:** all eight protected-equivalent multi-validator scenarios
+  passed in 889.560s: legacy-authority rollback, consensus recovery, trusted
+  snapshot state sync, backup/restore export-import, persisted-binary
+  upgrade/rollback, identity cold failover, consensus-key rotation and
+  slashing recovery.
+- **Only blocking gate:** the real vulnerability scan rejects newly reachable
+  `GO-2026-6348` in gRPC v1.82.2. The four older reachable IDs match the active
+  no-fix policy. Exact remediation is already isolated in
+  [GH-318](https://github.com/NeaBouli/TrueRepublic/issues/318); no allowlist or
+  dependency change is mixed into GH-304.
+- **Next:** commit and push this exact candidate, publish a protected GH-304 PR
+  marked as blocked by GH-318, land GH-318 separately, refresh GH-304 on fixed
+  main, then require the complete exact-head CI/review matrix before merge.
+  Rollout remains 36/59 and production remains false.
+
+`TRUEREPUBLIC GH-304 LOCAL CODE APPROVE — MERGE BLOCKED BY GH-318 — NO MIGRATION`
+
+---
+
+## 2026-09-19 EEST GH-304 ElectAdmin corruption recovery → In Progress
+
+- **Branch:** `fix/GH-304-elect-admin` from exact clean `origin/main`
+  `f5de5a150b9ff0edc51d68411b7829e78bcf78e6` in an isolated worktree.
+- **Issue:** [GH-304](https://github.com/NeaBouli/TrueRepublic/issues/304),
+  audit register [GH-303](https://github.com/NeaBouli/TrueRepublic/issues/303),
+  rollout tracker [GH-29](https://github.com/NeaBouli/TrueRepublic/issues/29).
+- **Scope:** reproduce and minimally repair TRR-01: ElectAdmin must compare and
+  store canonical SDK addresses, fail deterministically before any partial
+  mutation, preserve admin/member/treasury/export-import behavior, and expose a
+  read-only detector for already-corrupted domain-admin state.
+- **Division:** Kimi K3 owns only the bounded governance implementation and
+  focused regression/invariant tests. Sol owns reproduction confirmation,
+  architecture and recovery semantics, every diff review, detector/CLI
+  integration decisions, full repository and recovery verification, GitHub
+  writes, protected PR, merge and closure. No overlapping writer.
+- **Safety:** Critical consensus/state path. No legacy-state mutation, repair,
+  migration, deployment, release, live-chain action, real key or real fund is
+  authorized. A detector may only read and report.
+- **Preservation:** the dirty `feature/GH-300-browser-zkp-prover` checkout and
+  all unrelated worktrees are untouched and are not merge sources.
+- **Status:** implementation and focused tests pending. Rollout remains 36/59;
+  production remains false.
+
+## 2026-09-19 21:42 EEST GH-318/GH-305/GH-321 security stack → Protected main-base verification
+
+- **Merged stack steps:** PR #323 (GH-321 npm audit diagnostics) was squash-
+  merged into `fix/GH-305-rustls`; PR #322 (GH-305 rustls remediation) then
+  passed its exact cumulative head matrix with zero unresolved review threads
+  and was squash-merged into `fix/GH-318-grpc-security` as
+  `f854bdca6ce5eeaf9b45a6de52bcba34e6b434ab`.
+- **Current gate:** draft PR #320 now carries the reviewed gRPC, rustls and npm
+  audit-gate changes against `main`. Its complete main-base Go, Rust, client,
+  security, docs, IBC, recovery and reproducibility matrix is running; it will
+  not be marked ready or merged before exact-head checks and review threads are
+  clean.
+- **Agent division:** Sol owns this integration/merge chain and all external
+  writes. Kimi was assigned a non-overlapping read-only GH-304 deep review, but
+  the provider returned HTTP 403 for the five-hour quota before analysis began;
+  Kimi produced no diff or review output. GH-304 remains untouched and reserved
+  for the next block once the provider is actually available.
+- **Boundary:** no deployment, migration, restart, release, live-network action,
+  real key/fund operation or rollout credit. Rollout remains 36/59 and
+  production remains false.
+
+`TRUEREPUBLIC SECURITY STACK ACTIVE — EXACT-HEAD MAIN MATRIX — PRODUCTION FALSE`
+
+---
+
+## 2026-09-19 EEST GH-321 npm audit-gate diagnostics → Locally Approved
+
+- **Result:** npm operational/error JSON, spawn/signal/buffer failures,
+  malformed JSON, invalid schemas and contradictory exit statuses now fail
+  closed with bounded non-secret diagnostics. Valid advisory reports still
+  evaluate normally when npm exits 1.
+- **Hardening:** report/advisory shapes must be plain objects, inherited
+  property lookups cannot satisfy exceptions, malformed vulnerability records
+  block, and audit output remains bounded at 32 MiB.
+- **Evidence:** 15/15 focused audit-gate cases and all 19 Node cases pass; all
+  309 Vitest cases pass; lint, production build/bundle budgets, live npm audit,
+  docs consistency, license policy, security-review readiness, secret scan and
+  diff hygiene pass.
+- **Integration:** nine new Node cases raise the maintained-client total from
+  319 to 328 and the canonical standard-suite total from 2,462 to 2,471. README,
+  Landing, roadmap, FAQ, active architecture and Wiki sources are synchronized;
+  rollout remains 36/59 and production false.
+- **Review:** Claude Code authored only the two-file parser/test block. Sol
+  reviewed every write, added the contradictory-status fail-closed guard and
+  integrated/verified public status. Protected PR/CI/review and merge remain.
+
+`TRUEREPUBLIC GH-321 LOCAL APPROVE — FAIL-CLOSED AUDIT GATE — PRODUCTION FALSE`
+
+---
+
+## 2026-09-19 EEST GH-321 npm audit-gate diagnostics → In Progress
+
+- **Branch:** `fix/GH-321-npm-audit-gate` from exact clean main
+  `f5de5a150b9ff0edc51d68411b7829e78bcf78e6`.
+- **Issue:** [#321](https://github.com/NeaBouli/TrueRepublic/issues/321).
+- **Scope:** keep the maintained-client audit gate fail-closed while separating
+  npm operational/error JSON from valid advisory reports and adding deterministic
+  parser/process fixtures. No advisory bypass or unrelated dependency update.
+- **Division:** Claude Code owns only the small parser/test implementation.
+  Sol owns security semantics, diff review, full client/repository integration,
+  CI, GitHub actions and closure. Kimi is unavailable due its five-hour quota;
+  no overlapping writer exists.
+- **Boundary:** no retry that hides persistent failure, workflow weakening,
+  deployment, migration, release or production action. Rollout remains 36/59.
+
+`TRUEREPUBLIC GH-321 ACTIVE — FAIL-CLOSED CI DIAGNOSTICS — PRODUCTION FALSE`
+
+---
+
+## 2026-09-19 EEST GH-305 rustls security reconciliation → Locally Approved
+
+- **Result:** the only dependency change is `rustls 0.23.38 -> 0.23.45`
+  plus Cargo's one forced compatible companion `rustls-webpki 0.103.13 ->
+  0.103.15`; both checksums changed canonically. Exactly one `rustls` remains.
+- **Path:** `truerepublic-contracts` dev dependency -> `cosmwasm-vm 3.0.9` ->
+  `wasmer 5.0.6` -> build dependency `ureq 2.12.1` -> `rustls 0.23.45`.
+  No first-party Rust source, contract runtime or consensus behavior changed.
+- **Evidence:** `cargo fmt --check`, Clippy with warnings denied, all 26 Rust
+  tests and doc tests, real `cargo audit`, documentation consistency, license
+  policy, security-review readiness, secret scan and diff hygiene pass. The
+  audit reports zero vulnerabilities and only the same five pre-existing
+  allowed warnings.
+- **Review:** Kimi K3 was assigned the bounded implementation but its wrapper
+  stopped before any write because its five-hour quota was exhausted. Sol
+  applied and verified the four-line lockfile change. Claude Code independently
+  returned APPROVE; its only informational note concerns Cargo choosing the
+  latest compatible webpki patch, not an additional dependency or risk.
+- **Pending:** commit/push, protected exact-head CI/review, merge, exact-main
+  verification and refresh of the blocked PR chain. Rollout remains 36/59;
+  production remains false.
+
+`TRUEREPUBLIC GH-305 LOCAL APPROVE — SECURITY DEPENDENCY ONLY — PRODUCTION FALSE`
+
+---
+
+## 2026-09-19 EEST GH-305 rustls security reconciliation → In Progress
+
+- **Branch:** `fix/GH-305-rustls` from exact clean main
+  `f5de5a150b9ff0edc51d68411b7829e78bcf78e6`.
+- **Issue:** [#305](https://github.com/NeaBouli/TrueRepublic/issues/305),
+  parent audit register [#303](https://github.com/NeaBouli/TrueRepublic/issues/303).
+- **Scope:** resolve RUSTSEC-2026-0285 by selecting the smallest compatible
+  `rustls >=0.23.45` graph, account for every lockfile change and restore the
+  hosted Rust security gate without an ignore or exception.
+- **Division:** Kimi K3 owns the bounded Cargo graph update and focused Rust
+  verification. Sol owns upstream/advisory validation, complete diff and
+  security review, repository integration, protected CI, GitHub actions and
+  closure. No overlapping writer is assigned.
+- **Boundary:** no contract behavior change, instantiation, migration, release,
+  deployment, production action, real keys or funds. Rollout remains 36/59 and
+  production remains false.
+- **Tests:** pending implementation. Existing red hosted evidence identifies
+  `rustls 0.23.38` and RUSTSEC-2026-0285; it is not completion evidence.
+
+`TRUEREPUBLIC GH-305 ACTIVE — RUST DEPENDENCY SECURITY ONLY — PRODUCTION FALSE`
+---
+
+## 2026-09-19 EEST GH-318 gRPC reconciliation locally approved → Protected review pending
+
+- **Security result:** the directly pinned gRPC moved from vulnerable v1.82.2
+  to v1.83.2. v1.83.1 was tested first and removed GO-2026-6348, but the real
+  scanner exposed GO-2026-6443, whose official fixed range starts at v1.83.2.
+  v1.83.2 is therefore the smallest release that clears both current findings.
+- **Graph:** `go mod tidy` records only unavoidable gRPC/MVS consequences:
+  cel/expr 0.25.2, SPIFFE 2.7.0, OpenTelemetry 1.44 family and detector 1.33,
+  Genproto API/RPC `3dc84a4a5aaa`, plus x/crypto 0.55, x/net 0.58, x/sync
+  0.22, x/sys 0.47, x/term 0.45, x/text 0.41 and x/mod 0.38. No other
+  package, policy, source, workflow or tool module changed.
+- **Agent division:** Kimi K3 owned the official release/module analysis,
+  bounded `go.mod`/`go.sum` implementation and focused transport checks. Sol
+  independently reviewed official Go/gRPC advisories, required canonical tidy,
+  discovered the v1.83.1 follow-on advisory through the real gate, reviewed the
+  complete graph/diff and ran all integration/security gates. No overlapping
+  writer or delegated external action occurred.
+- **PASS:** `go mod tidy -diff`, `go mod verify`, effective graph/absence
+  checks, focused gRPC/network tests, readonly build, full `make verify`
+  Build/Vet/Race/Coverage (root 73.6%, DEX 51.1%, governance 64.3%), critical
+  coverage, security-review contract, staticcheck, gitleaks, documentation
+  consistency, Apache-2.0 policy and diff hygiene.
+- **Vulnerability PASS:** the real gate plus its positive/negative fixtures now
+  passes with only the four exact active no-fix IDs; neither GO-2026-6348 nor
+  GO-2026-6443 is reachable and no exception was added.
+- **Transport/recovery PASS:** all three IBC two-chain scenarios passed in
+  45.542s. All eight multi-validator recovery scenarios passed in 993.048s,
+  including migration rollback, consensus recovery, snapshot state sync,
+  backup/restore export-import, persisted-binary upgrade/rollback, cold
+  failover, key rotation and slashing recovery.
+- **Next:** commit and push the exact candidate, open a draft protected PR,
+  require current exact-head CI/review and zero unresolved threads, then merge
+  and rerun blocked PRs #319 and #317 on fixed main. No rollout credit,
+  deployment, migration, release or production action occurred; 36/59 remains.
+
+`TRUEREPUBLIC GH-318 LOCAL APPROVE — PROTECTED CI/REVIEW PENDING — PRODUCTION FALSE`
+
+---
+
+## 2026-09-19 EEST GH-318 gRPC security reconciliation → In Progress
+
+- **Branch:** `fix/GH-318-grpc-security` from exact clean `origin/main`
+  `f5de5a150b9ff0edc51d68411b7829e78bcf78e6` in an isolated worktree.
+- **Issue:** [GH-318](https://github.com/NeaBouli/TrueRepublic/issues/318),
+  prerequisite for GH-304 draft PR #319 and status PR #317.
+- **Scope:** update only the direct gRPC dependency and unavoidable module-graph
+  consequences to the smallest compatible release that fixes GO-2026-6348;
+  verify upstream compatibility, graph, networking, IBC, recovery and every
+  security/dependency gate. No unrelated dependency reconciliation.
+- **Division:** Kimi K3 owns the bounded dependency/release analysis and the
+  `go.mod`/`go.sum` implementation with focused tests. Sol owns scope and
+  security judgment, every diff/graph review, complete integration gates,
+  GitHub writes, merge and exact-main closeout. No overlapping writer.
+- **Boundary:** no vulnerability allowlist, production deployment, restart,
+  migration, release, live network, real key or real fund action is authorized.
+- **Status:** implementation pending. Rollout remains 36/59; production false.
+---
+
 ## 2026-09-13 EEST GH-297 ZKP protocol freeze → Done on exact main
 
 - **Implementation:** PR [#298](https://github.com/NeaBouli/TrueRepublic/pull/298)
@@ -9602,5 +9869,53 @@ Pending independent Kimi review and complete Sol verification.
   35/59 overall, Phase 6 6/7, Phase 7 3/10 and production false.
 
 `TRUEREPUBLIC GH-294 DONE — REVIEW READY, NOT INDEPENDENTLY REVIEWED — PRODUCTION FALSE`
+
+---
+
+## 2026-09-19 22:43 EEST GH-304 authoritative recount → Local PASS
+
+- **Fresh evidence:** package-scoped `go test -json -count=1` records exactly
+  2,132 Go pass events; `x/truedemocracy` records 691, an increase of 15 over
+  the 676-case main baseline. With unchanged 26 Rust and 328 maintained-client
+  cases, the candidate standard-suite total is 2,486.
+- **Public synchronization:** machine status, README/badge, Landing, roadmap,
+  FAQ, Quickstart, architecture/developer references and maintained Wiki status
+  sources all expose 2,486 = 2,132 + 26 + 328. Documentation consistency and
+  `git diff --check` pass; the complete governance Race suite (81.336s) and
+  governance Vet also pass.
+- **Agent accounting:** Kimi's bounded review stopped before repository access
+  with provider HTTP 403 and made no write. The disjoint Claude read-only review
+  stopped with its monthly CLI limit and produced no output. Sol owns the
+  integration/security review and complete verification; no duplicate writer
+  exists.
+- **Remaining gate:** commit/push this replacement head, require the complete
+  protected exact-head matrix, hosted review and zero unresolved threads, then
+  merge and verify exact main. No legacy repair/migration, rollout credit,
+  release, deployment or production action occurred. Rollout remains 36/59 and
+  production false.
+
+`TRUEREPUBLIC GH-304 LOCAL COUNT PASS — PROTECTED EXACT-HEAD REVIEW NEXT`
+
+---
+
+## 2026-09-19 22:58 EEST GH-304 canonical identity review → Corrected / PASS
+
+- **Finding:** the Cosmos decoder accepts all-uppercase bech32, but domain
+  membership is string-keyed. A decodable noncanonical member spelling could
+  compare unequal to the same decoded `Admin` and recreate an integrity split.
+- **Correction:** normal onboarding and genesis import require exact canonical
+  address re-encoding; `ElectAdmin` ignores noncanonical legacy candidates;
+  `VoteToExclude` protects the current admin by decoded identity rather than raw
+  text. No legacy state is silently repaired.
+- **Evidence:** focused canonical-boundary regressions pass; fresh governance
+  enumeration remains 691; complete governance Race (48.122s), Vet,
+  documentation consistency and diff hygiene pass. Public arithmetic therefore
+  remains 2,486 = 2,132 Go + 26 Rust + 328 maintained-client.
+- **CI discipline:** superseded exact-head runs were cancelled. The corrected
+  replacement head still requires the full protected matrix, hosted review,
+  zero unresolved threads, merge and exact-main verification. Rollout remains
+  36/59 and production false.
+
+`TRUEREPUBLIC GH-304 CANONICAL BECH32 HARDENED — REPLACEMENT HEAD NEXT`
 
 ---

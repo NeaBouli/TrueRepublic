@@ -6,7 +6,7 @@
 without replacing its Beta-to-Alpha safety gates.
 
 > **Accounting boundary:** this document changes no code, dependency, protocol,
-> token, release or deployment. Status remains 2,462 verified cases, rollout
+> token, release or deployment. Status remains 2,486 verified cases, rollout
 > 36/59, phase work 36/51, Phase 6 at 6/7 and `production_ready: false`.
 
 ## 1. Decision

@@ -20,10 +20,10 @@
   },
   "tests": {
     "status": "recovery_verified_locally",
-    "total": 2462,
-    "go": 2117,
+    "total": 2486,
+    "go": 2132,
     "rust": 26,
-    "frontend": 319,
+    "frontend": 328,
     "historical_total": 577
   },
   "web_client": {
@@ -82,7 +82,7 @@
     "topologypolicy": 56,
     "treasury": 36,
     "dex": 138,
-    "truedemocracy": 676,
+    "truedemocracy": 691,
     "zkpprover": 8,
     "releaseevidence": 20,
     "installlifecycle": 24,

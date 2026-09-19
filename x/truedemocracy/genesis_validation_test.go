@@ -66,6 +66,17 @@ func TestValidateGenesisStateRejectsMalformedAndDuplicateDemocracyState(t *testi
 			}
 		})
 	}
+
+	// Cosmos bech32 decoding accepts all-uppercase encodings, but domain
+	// membership is string-keyed. Import must reject noncanonical spellings so
+	// a later election cannot produce an admin that is semantically equal yet
+	// textually absent from Members (GH-304).
+	genesis := validDemocracyGenesis()
+	other := sdk.AccAddress("uppercase-genesis-member").String()
+	genesis.Domains[0].Members = append(genesis.Domains[0].Members, strings.ToUpper(other))
+	if err := ValidateGenesisState(genesis); err == nil || !strings.Contains(err.Error(), "not canonical bech32") {
+		t.Fatalf("uppercase noncanonical genesis member error = %v, want canonical-bech32 rejection", err)
+	}
 }
 
 func TestValidateGenesisStateRejectsMalformedSoftwareUpgradeState(t *testing.T) {

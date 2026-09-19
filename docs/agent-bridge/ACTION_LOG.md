@@ -1,5 +1,189 @@
 # Action Log
 
+## 2026-09-19 - GH-304 canonical bech32 identity edge hardened
+
+- Sol's integration review confirmed Cosmos bech32 decoding accepts an
+  all-uppercase address, while domain membership uses exact strings. A decoded
+  but noncanonical member could therefore diverge from `Admin.String()`.
+- Normal `MsgAddMember` and genesis import now require exact canonical
+  re-encoding; elections ignore unparseable and noncanonical legacy candidates;
+  the current-admin exclusion guard compares decoded address identity rather
+  than raw spelling.
+- Regression coverage proves uppercase onboarding/genesis rejection, legacy
+  candidate filtering and legacy-spelled admin exclusion without vote writes.
+  Focused tests, 691 governance pass events, full governance Race/Vet,
+  consistency and diff hygiene pass. Standard totals remain 2,486 / 2,132 Go.
+- The prior CI generation was cancelled as superseded. A replacement commit,
+  complete exact-head CI/review and merge remain; no state repair, migration,
+  rollout credit, deployment, release or production action occurred.
+
+---
+
+## 2026-09-19 - GH-304 authoritative test recount and public synchronization
+
+- Fresh package-scoped `go test -json -count=1` enumeration records 2,132 Go
+  pass events. The governance module records 691, a 15-event increase over the
+  676-case main baseline. With unchanged 26 Rust and 328 maintained-client
+  cases, the exact candidate total is 2,486.
+- Synchronized `docs/status.json`, README, Landing, roadmap, FAQ, Quickstart,
+  developer/architecture references and all maintained Wiki status surfaces.
+  Complete governance Race and Vet, documentation consistency and diff hygiene
+  pass on the synchronized tree.
+- Kimi produced no review or write because the configured provider returned
+  HTTP 403 before repository access. Claude's disjoint read-only review also
+  produced no output because its local monthly CLI budget is exhausted. Sol
+  continues the integration/security review and complete verification.
+- Protected exact-head CI, external hosted review, zero unresolved threads,
+  merge and exact-main verification remain. No rollout credit, repair,
+  migration, deployment, release or production action occurred.
+
+---
+
+## 2026-09-19 - GH-304 refreshed on fixed exact main
+
+- Merged exact main `b26b2b9` into GH-304 after the dependency/security stack
+  passed all post-merge workflows. Only append-only coordination files
+  conflicted; both histories were preserved and no implementation file
+  conflicted.
+- Post-sync documentation consistency and the complete truedemocracy package
+  test pass. Protected exact-head CI and external review remain mandatory.
+- Kimi's bounded read-only review was attempted again, but the provider
+  returned HTTP 403 before work. No Kimi output or duplicate write exists.
+- No repair/migration, deployment, release, rollout credit or production action
+  occurred.
+
+---
+
+## 2026-09-19 - GH-304 critical governance fix locally verified
+
+- Kimi K3 implemented the bounded real-bech32 ElectAdmin correction,
+  read-only legacy-state detector, domain-local quarantine behavior and focused
+  regression/invariant coverage. Sol reviewed every changed file, required
+  cache-context atomicity, rejected silent legacy repair and added the
+  current-admin exclusion invariant before integration.
+- Claude's independent read-only pass exposed three material edge cases:
+  invalid member strings halting elections, automatic mutation of already
+  corrupt state, and exclusion of the current admin. All three are now blocked
+  at normal entry/governance boundaries and covered with real-bech32 tests.
+- PASS: focused race, full repository Build/Vet/Race/Coverage, critical
+  coverage (73.6% root, 51.1% DEX, 64.6% governance), security-review contract,
+  staticcheck, gitleaks, consistency, license policy and diff hygiene.
+- PASS: all eight multi-validator recovery scenarios in 889.560s, including
+  state sync, export/import backup/restore, upgrade/rollback, identity failover,
+  key rotation and slashing.
+- The real vulnerability gate fails only because `GO-2026-6348` reaches the
+  currently pinned gRPC v1.82.2. GH-318 owns the narrow dependency remediation;
+  GH-304 does not weaken policy or mix dependency changes into consensus work.
+- No migration, live repair, deployment, release, production, real-key or
+  real-fund action occurred. Rollout remains 36/59 and production false.
+
+---
+
+## 2026-09-19 - GH-321 npm audit-gate hardening locally approved
+
+- Added bounded fail-closed classification for npm error JSON, malformed/schema
+  output, spawn/signal/buffer failures and inconsistent process statuses while
+  retaining valid exit-1 advisory evaluation and the reviewed SPA exception.
+- Hardened plain-object and own-property validation so malformed entries and
+  prototype-borrowed chains cannot pass silently; diagnostics expose only short
+  machine codes, never raw registry output or credential-bearing URLs.
+- PASS: 15 focused audit-gate cases, 19/19 Node cases, 309/309 Vitest cases,
+  lint, production build/bundle budget, live npm audit, docs consistency,
+  license, security-review, pinned secret scan and diff hygiene.
+- Claude Code authored the bounded two-file parser/test slice. Sol reviewed every
+  write, added the contradictory-status fail-closed cases and synchronized the
+  candidate arithmetic to 2,471 = 2,117 Go + 26 Rust + 328 client across README,
+  Landing, roadmap, FAQ, architecture and Wiki sources.
+- Protected PR/CI/review and merge remain. No bypass, retry, dependency change,
+  rollout credit, deployment, migration, release or production action occurred.
+
+---
+
+## 2026-09-19 - GH-321 npm audit-gate diagnostics started
+
+- PR #320 exposed two unrelated npm audit job failures after lint, tests and
+  build passed. Read-only reproduction proved npm operational failures can emit
+  valid error JSON without `vulnerabilities`, which the current gate safely but
+  misleadingly labels `invalid npm audit report`.
+- Created isolated branch/worktree `fix/GH-321-npm-audit-gate` from exact clean
+  main `f5de5a1`. GH-305/#322, GH-318/#320 and GH-304/#319 remain separate.
+- Claude Code receives only the small parser/test implementation. Sol owns
+  fail-closed semantics, diff review, full gates and closure. Kimi is unavailable
+  due its five-hour quota; no overlapping writer exists.
+- No bypass, dependency refresh, deployment, migration, release or production
+  action is in scope. Rollout remains 36/59.
+
+---
+
+## 2026-09-19 - GH-305 rustls remediation locally approved
+
+- Applied the canonical four-line `Cargo.lock` correction: rustls 0.23.38 to
+  exact minimum patched 0.23.45 and the only forced companion rustls-webpki
+  0.103.13 to Cargo-selected compatible 0.103.15. No duplicate rustls or other
+  graph change remains.
+- PASS: Cargo format; workspace Clippy with warnings denied; 26/26 Rust unit
+  tests plus doc tests; real cargo audit with zero vulnerabilities; docs
+  consistency; Apache-2.0 license policy; security-review readiness; pinned
+  gitleaks secret scan; diff hygiene.
+- Kimi's bounded implementation attempt reached no write because its wrapper
+  reported an exhausted five-hour quota. Sol therefore implemented and reviewed
+  the minimal lockfile diff. Claude Code independently returned APPROVE after
+  verifying advisory data, dependency path, checksums, graph uniqueness and
+  runtime isolation.
+- Protected exact-head CI/review, merge, exact-main verification and refresh of
+  blocked PRs remain. No ignore, deployment, migration, release, production,
+  real-key or fund action occurred. Rollout remains 36/59.
+
+---
+
+## 2026-09-19 - GH-305 rustls security reconciliation started
+
+- Confirmed hosted Rust security evidence rejects `rustls 0.23.38` for
+  RUSTSEC-2026-0285 and requires `rustls >=0.23.45`; no ignore or exception is
+  permitted.
+- Created isolated branch/worktree `fix/GH-305-rustls` from exact clean main
+  `f5de5a1`; dirty GH-300 and active GH-304/GH-318 work remain untouched.
+- Kimi K3 receives only the bounded Cargo graph update and focused Rust
+  verification. Sol owns upstream/security decisions, full diff review,
+  repository gates, protected CI and GitHub closure.
+- No contract behavior, deployment, migration, release, production, real-key or
+  fund action is in scope. Rollout remains 36/59 and production false.
+---
+
+## 2026-09-19 - GH-318 gRPC security update locally verified
+
+- Kimi first reconciled gRPC v1.82.2 to the then-advertised smallest fix
+  v1.83.1 and its exact MVS graph. Sol's real vulnerability gate proved that
+  version still reaches newly catalogued GO-2026-6443. Official Go data fixes
+  the second issue at v1.83.2, so Kimi applied the bounded correction and Sol
+  reviewed the expanded x/* graph plus canonical tidy state.
+- The final graph selects gRPC v1.83.2 and contains no v1.82.x, v1.83.0 or
+  v1.83.1 gRPC. The real vulnerability policy and adversarial fixtures pass;
+  no allowlist entry or policy weakening was added.
+- PASS: focused gRPC/network packages; readonly build; full repository
+  Build/Vet/Race/Coverage; critical coverage at 73.6/51.1/64.3%; security,
+  static, secret, docs, license and diff gates; IBC two-chain 3/3 in 45.542s;
+  multi-validator recovery 8/8 in 993.048s.
+- Only root `go.mod` and `go.sum` plus task coordination records changed. No
+  source, policy, workflow, deployment, migration, release, live-network,
+  real-key/fund or production action occurred. Rollout remains 36/59.
+
+---
+
+## 2026-09-19 - GH-318 gRPC security reconciliation started
+
+- Confirmed the real local and hosted vulnerability gate rejects
+  GO-2026-6348 against directly pinned gRPC v1.82.2; this is not a GitHub
+  Actions quota/rate-limit error.
+- Created isolated branch/worktree `fix/GH-318-grpc-security` from exact clean
+  main `f5de5a1`; dirty GH-300 and active GH-304 work remain untouched.
+- Kimi K3 receives only the narrow upstream/dependency implementation and
+  focused verification. Sol owns security/compatibility decisions, complete
+  graph and diff review, integration/recovery gates and external actions.
+- No exception, deployment, migration, release or production action is in
+  scope. Rollout remains 36/59 and production false.
+---
+
 ## 2026-09-13 - GH-297 merged, exact main and public state verified
 
 - PR #298 exact head `0124e7b` passed the complete protected matrix with zero
@@ -5713,3 +5897,17 @@
   hosted findings without an overlapping writer.
 - GH-294 adds no rollout credit and is not an independent audit. Phase 5 stays
   open; rollout remains 35/59, Phase 6 6/7, Phase 7 3/10, production false.
+
+## 2026-09-19 EEST - GH-304 critical ElectAdmin remediation started
+
+- Created isolated branch `fix/GH-304-elect-admin` from exact clean main
+  `f5de5a150b9ff0edc51d68411b7829e78bcf78e6`; the dirty GH-300 checkout and
+  every unrelated worktree remain untouched.
+- Bound work to GH-304/TRR-01: real-bech32 reproduction, canonical compare and
+  parse-before-mutation, atomic deterministic failure, admin/member/treasury/
+  export-import regression evidence and a read-only corrupt-state detector.
+- Kimi K3 owns only the bounded implementation and focused tests. Sol owns
+  architecture, recovery semantics, diff/security review, complete gates and
+  every Git/GitHub action. No implementation overlap is allowed.
+- No state repair, migration, deployment, release, production action, real key
+  or real fund is authorized. Rollout remains 36/59 and production false.

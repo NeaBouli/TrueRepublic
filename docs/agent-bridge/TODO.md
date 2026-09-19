@@ -1,5 +1,96 @@
 # Recovery Queue
 
+## In review - GH-304 ElectAdmin corruption and legacy-state detection
+
+- [x] Land GH-318/GH-305/GH-321 and verify exact main.
+- [x] Merge fixed exact main into GH-304 without implementation conflicts.
+- [x] Preserve both append-only Bridge/State histories and pass documentation
+  consistency plus the complete truedemocracy package after sync.
+- [x] Push the synchronized exact-main merge head to PR #319.
+- [ ] Push the authoritative test-count/public-status synchronization and pass
+  the complete protected exact-head matrix, external review and zero unresolved
+  review-thread gate on that replacement head.
+- [ ] Merge, verify exact main and close GH-304/audit-register references.
+- [ ] Keep any mutating legacy repair or migration in a separate explicitly
+  approved task; GH-304 remains detector/quarantine-only for legacy state.
+
+---
+
+## In progress - GH-304 ElectAdmin corruption and legacy-state detection
+
+- [x] Reproduce TRR-01 with real bech32 SDK addresses on the frozen main
+  baseline.
+- [x] Compare elected/admin identity canonically and parse the elected winner
+  with `sdk.AccAddressFromBech32` before state mutation.
+- [x] Fail deterministically without panic or partial domain mutation; quarantine
+  pre-existing corrupt domains without silently repairing them or halting healthy
+  domains.
+- [x] Prevent normal member onboarding or admin exclusion from creating new
+  corrupt admin/member state.
+- [x] Prove member, treasury, permission-register and export/import behavior
+  remains valid after election.
+- [x] Add a read-only detector for already-corrupted domain-admin state and
+  prove the complete module store stays byte-identical during a scan.
+- [x] Keep repair/migration, deployment, release and live-chain actions out of
+  scope pending a separate exact approval.
+- [x] Complete Kimi bounded implementation, Sol line-by-line review and focused
+  plus full Go/race/coverage/recovery/security verification.
+- [ ] Commit/push the exact candidate and publish the protected GH-304 PR.
+- [ ] Land the separately scoped GH-318 gRPC fix and restore the real
+  vulnerability gate; do not add GO-2026-6348 to the no-fix allowlist.
+- [ ] Refresh GH-304 on fixed main, pass protected exact-head CI/review, merge,
+  verify exact main and close the audit/register references.
+
+## Paused - GH-300 maintained-browser Groth16 prover integration
+
+- GH-300's uncommitted local checkout is preserved untouched while the P0
+  audit remediation sequence begins with GH-304. Resume only after the
+  GH-304 first-response block and with GH-309 identity-safety boundaries.
+
+## In progress - GH-321 npm audit-gate diagnostics
+
+- [x] Distinguish npm operational/error JSON and spawn/schema failures from a
+  valid advisory report without weakening fail-closed behavior.
+- [x] Preserve real advisory handling when npm exits nonzero with a valid report.
+- [x] Add deterministic node:test coverage for clean/advisory/error/malformed/
+  invalid-shape and process-failure paths.
+- [x] Complete bounded Claude implementation and Sol security/integration review.
+- [x] Pass full local client, real audit and repository consistency/security
+  gates; protected exact-head CI/review remains before merge.
+- [x] Record local evidence in both Bridges without rollout credit or production
+  claims.
+
+## In progress - GH-305 rustls security reconciliation
+
+- [x] Verify RUSTSEC-2026-0285, the direct dependency path, compatible patched
+  releases and the smallest canonical Cargo lockfile diff.
+- [x] Update the graph so no vulnerable `rustls` remains, without an audit
+  ignore, exception or unrelated dependency refresh.
+- [x] Run Cargo format, clippy with warnings denied, all contract tests, real
+  cargo audit and applicable repository security/license/consistency gates.
+- [x] Record the unavailable Kimi implementation attempt and complete Sol
+  implementation plus independent Claude diff/graph/security review.
+- [ ] Pass protected exact-head CI and review, merge, verify exact main and then
+  refresh the dependency-blocked PR chain.
+- [x] Record local evidence in both Bridges without rollout credit or production
+  claims.
+
+## In progress - GH-318 gRPC security reconciliation
+
+- [x] Verify GO-2026-6348 plus the follow-on GO-2026-6443, the smallest common
+  fixed gRPC release, release notes,
+  license, Go/toolchain compatibility and current effective module graph.
+- [x] Update only `google.golang.org/grpc` and unavoidable transitive module
+  metadata; account for every `go.mod` and `go.sum` change.
+- [x] Prove the affected gRPC versions are absent and rerun the real vulnerability
+  gate without adding a new exception.
+- [x] Run focused networking/gRPC tests, IBC two-chain, full Go verification,
+  static/security/secret/license/docs gates and the multi-validator matrix.
+- [x] Complete Kimi implementation and Sol diff/graph/security review.
+- [ ] Commit/push the exact candidate and pass protected exact-head CI/review
+  with zero unresolved review threads before merge.
+- [ ] Merge, verify exact main, rerun blocked PRs #319 and #317, and update both
+  Bridges without rollout credit or production claims.
 ## Completed - GH-297 production-target ZKP protocol freeze
 
 - [x] Add a strict versioned freeze manifest binding the existing ZKP circuit
