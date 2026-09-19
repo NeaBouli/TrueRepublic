@@ -36,6 +36,75 @@
 
 ---
 
+## 2026-09-19 - GH-305 rustls remediation locally approved
+
+- Applied the canonical four-line `Cargo.lock` correction: rustls 0.23.38 to
+  exact minimum patched 0.23.45 and the only forced companion rustls-webpki
+  0.103.13 to Cargo-selected compatible 0.103.15. No duplicate rustls or other
+  graph change remains.
+- PASS: Cargo format; workspace Clippy with warnings denied; 26/26 Rust unit
+  tests plus doc tests; real cargo audit with zero vulnerabilities; docs
+  consistency; Apache-2.0 license policy; security-review readiness; pinned
+  gitleaks secret scan; diff hygiene.
+- Kimi's bounded implementation attempt reached no write because its wrapper
+  reported an exhausted five-hour quota. Sol therefore implemented and reviewed
+  the minimal lockfile diff. Claude Code independently returned APPROVE after
+  verifying advisory data, dependency path, checksums, graph uniqueness and
+  runtime isolation.
+- Protected exact-head CI/review, merge, exact-main verification and refresh of
+  blocked PRs remain. No ignore, deployment, migration, release, production,
+  real-key or fund action occurred. Rollout remains 36/59.
+
+---
+
+## 2026-09-19 - GH-305 rustls security reconciliation started
+
+- Confirmed hosted Rust security evidence rejects `rustls 0.23.38` for
+  RUSTSEC-2026-0285 and requires `rustls >=0.23.45`; no ignore or exception is
+  permitted.
+- Created isolated branch/worktree `fix/GH-305-rustls` from exact clean main
+  `f5de5a1`; dirty GH-300 and active GH-304/GH-318 work remain untouched.
+- Kimi K3 receives only the bounded Cargo graph update and focused Rust
+  verification. Sol owns upstream/security decisions, full diff review,
+  repository gates, protected CI and GitHub closure.
+- No contract behavior, deployment, migration, release, production, real-key or
+  fund action is in scope. Rollout remains 36/59 and production false.
+---
+
+## 2026-09-19 - GH-318 gRPC security update locally verified
+
+- Kimi first reconciled gRPC v1.82.2 to the then-advertised smallest fix
+  v1.83.1 and its exact MVS graph. Sol's real vulnerability gate proved that
+  version still reaches newly catalogued GO-2026-6443. Official Go data fixes
+  the second issue at v1.83.2, so Kimi applied the bounded correction and Sol
+  reviewed the expanded x/* graph plus canonical tidy state.
+- The final graph selects gRPC v1.83.2 and contains no v1.82.x, v1.83.0 or
+  v1.83.1 gRPC. The real vulnerability policy and adversarial fixtures pass;
+  no allowlist entry or policy weakening was added.
+- PASS: focused gRPC/network packages; readonly build; full repository
+  Build/Vet/Race/Coverage; critical coverage at 73.6/51.1/64.3%; security,
+  static, secret, docs, license and diff gates; IBC two-chain 3/3 in 45.542s;
+  multi-validator recovery 8/8 in 993.048s.
+- Only root `go.mod` and `go.sum` plus task coordination records changed. No
+  source, policy, workflow, deployment, migration, release, live-network,
+  real-key/fund or production action occurred. Rollout remains 36/59.
+
+---
+
+## 2026-09-19 - GH-318 gRPC security reconciliation started
+
+- Confirmed the real local and hosted vulnerability gate rejects
+  GO-2026-6348 against directly pinned gRPC v1.82.2; this is not a GitHub
+  Actions quota/rate-limit error.
+- Created isolated branch/worktree `fix/GH-318-grpc-security` from exact clean
+  main `f5de5a1`; dirty GH-300 and active GH-304 work remain untouched.
+- Kimi K3 receives only the narrow upstream/dependency implementation and
+  focused verification. Sol owns security/compatibility decisions, complete
+  graph and diff review, integration/recovery gates and external actions.
+- No exception, deployment, migration, release or production action is in
+  scope. Rollout remains 36/59 and production false.
+---
+
 ## 2026-09-13 - GH-297 merged, exact main and public state verified
 
 - PR #298 exact head `0124e7b` passed the complete protected matrix with zero

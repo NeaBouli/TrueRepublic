@@ -44,6 +44,112 @@
 
 ---
 
+## 2026-09-19 EEST GH-305 rustls security reconciliation → Locally Approved
+
+- **Result:** the only dependency change is `rustls 0.23.38 -> 0.23.45`
+  plus Cargo's one forced compatible companion `rustls-webpki 0.103.13 ->
+  0.103.15`; both checksums changed canonically. Exactly one `rustls` remains.
+- **Path:** `truerepublic-contracts` dev dependency -> `cosmwasm-vm 3.0.9` ->
+  `wasmer 5.0.6` -> build dependency `ureq 2.12.1` -> `rustls 0.23.45`.
+  No first-party Rust source, contract runtime or consensus behavior changed.
+- **Evidence:** `cargo fmt --check`, Clippy with warnings denied, all 26 Rust
+  tests and doc tests, real `cargo audit`, documentation consistency, license
+  policy, security-review readiness, secret scan and diff hygiene pass. The
+  audit reports zero vulnerabilities and only the same five pre-existing
+  allowed warnings.
+- **Review:** Kimi K3 was assigned the bounded implementation but its wrapper
+  stopped before any write because its five-hour quota was exhausted. Sol
+  applied and verified the four-line lockfile change. Claude Code independently
+  returned APPROVE; its only informational note concerns Cargo choosing the
+  latest compatible webpki patch, not an additional dependency or risk.
+- **Pending:** commit/push, protected exact-head CI/review, merge, exact-main
+  verification and refresh of the blocked PR chain. Rollout remains 36/59;
+  production remains false.
+
+`TRUEREPUBLIC GH-305 LOCAL APPROVE — SECURITY DEPENDENCY ONLY — PRODUCTION FALSE`
+
+---
+
+## 2026-09-19 EEST GH-305 rustls security reconciliation → In Progress
+
+- **Branch:** `fix/GH-305-rustls` from exact clean main
+  `f5de5a150b9ff0edc51d68411b7829e78bcf78e6`.
+- **Issue:** [#305](https://github.com/NeaBouli/TrueRepublic/issues/305),
+  parent audit register [#303](https://github.com/NeaBouli/TrueRepublic/issues/303).
+- **Scope:** resolve RUSTSEC-2026-0285 by selecting the smallest compatible
+  `rustls >=0.23.45` graph, account for every lockfile change and restore the
+  hosted Rust security gate without an ignore or exception.
+- **Division:** Kimi K3 owns the bounded Cargo graph update and focused Rust
+  verification. Sol owns upstream/advisory validation, complete diff and
+  security review, repository integration, protected CI, GitHub actions and
+  closure. No overlapping writer is assigned.
+- **Boundary:** no contract behavior change, instantiation, migration, release,
+  deployment, production action, real keys or funds. Rollout remains 36/59 and
+  production remains false.
+- **Tests:** pending implementation. Existing red hosted evidence identifies
+  `rustls 0.23.38` and RUSTSEC-2026-0285; it is not completion evidence.
+
+`TRUEREPUBLIC GH-305 ACTIVE — RUST DEPENDENCY SECURITY ONLY — PRODUCTION FALSE`
+---
+
+## 2026-09-19 EEST GH-318 gRPC reconciliation locally approved → Protected review pending
+
+- **Security result:** the directly pinned gRPC moved from vulnerable v1.82.2
+  to v1.83.2. v1.83.1 was tested first and removed GO-2026-6348, but the real
+  scanner exposed GO-2026-6443, whose official fixed range starts at v1.83.2.
+  v1.83.2 is therefore the smallest release that clears both current findings.
+- **Graph:** `go mod tidy` records only unavoidable gRPC/MVS consequences:
+  cel/expr 0.25.2, SPIFFE 2.7.0, OpenTelemetry 1.44 family and detector 1.33,
+  Genproto API/RPC `3dc84a4a5aaa`, plus x/crypto 0.55, x/net 0.58, x/sync
+  0.22, x/sys 0.47, x/term 0.45, x/text 0.41 and x/mod 0.38. No other
+  package, policy, source, workflow or tool module changed.
+- **Agent division:** Kimi K3 owned the official release/module analysis,
+  bounded `go.mod`/`go.sum` implementation and focused transport checks. Sol
+  independently reviewed official Go/gRPC advisories, required canonical tidy,
+  discovered the v1.83.1 follow-on advisory through the real gate, reviewed the
+  complete graph/diff and ran all integration/security gates. No overlapping
+  writer or delegated external action occurred.
+- **PASS:** `go mod tidy -diff`, `go mod verify`, effective graph/absence
+  checks, focused gRPC/network tests, readonly build, full `make verify`
+  Build/Vet/Race/Coverage (root 73.6%, DEX 51.1%, governance 64.3%), critical
+  coverage, security-review contract, staticcheck, gitleaks, documentation
+  consistency, Apache-2.0 policy and diff hygiene.
+- **Vulnerability PASS:** the real gate plus its positive/negative fixtures now
+  passes with only the four exact active no-fix IDs; neither GO-2026-6348 nor
+  GO-2026-6443 is reachable and no exception was added.
+- **Transport/recovery PASS:** all three IBC two-chain scenarios passed in
+  45.542s. All eight multi-validator recovery scenarios passed in 993.048s,
+  including migration rollback, consensus recovery, snapshot state sync,
+  backup/restore export-import, persisted-binary upgrade/rollback, cold
+  failover, key rotation and slashing recovery.
+- **Next:** commit and push the exact candidate, open a draft protected PR,
+  require current exact-head CI/review and zero unresolved threads, then merge
+  and rerun blocked PRs #319 and #317 on fixed main. No rollout credit,
+  deployment, migration, release or production action occurred; 36/59 remains.
+
+`TRUEREPUBLIC GH-318 LOCAL APPROVE — PROTECTED CI/REVIEW PENDING — PRODUCTION FALSE`
+
+---
+
+## 2026-09-19 EEST GH-318 gRPC security reconciliation → In Progress
+
+- **Branch:** `fix/GH-318-grpc-security` from exact clean `origin/main`
+  `f5de5a150b9ff0edc51d68411b7829e78bcf78e6` in an isolated worktree.
+- **Issue:** [GH-318](https://github.com/NeaBouli/TrueRepublic/issues/318),
+  prerequisite for GH-304 draft PR #319 and status PR #317.
+- **Scope:** update only the direct gRPC dependency and unavoidable module-graph
+  consequences to the smallest compatible release that fixes GO-2026-6348;
+  verify upstream compatibility, graph, networking, IBC, recovery and every
+  security/dependency gate. No unrelated dependency reconciliation.
+- **Division:** Kimi K3 owns the bounded dependency/release analysis and the
+  `go.mod`/`go.sum` implementation with focused tests. Sol owns scope and
+  security judgment, every diff/graph review, complete integration gates,
+  GitHub writes, merge and exact-main closeout. No overlapping writer.
+- **Boundary:** no vulnerability allowlist, production deployment, restart,
+  migration, release, live network, real key or real fund action is authorized.
+- **Status:** implementation pending. Rollout remains 36/59; production false.
+---
+
 ## 2026-09-13 EEST GH-297 ZKP protocol freeze → Done on exact main
 
 - **Implementation:** PR [#298](https://github.com/NeaBouli/TrueRepublic/pull/298)
