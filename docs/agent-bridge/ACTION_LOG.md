@@ -1,5 +1,41 @@
 # Action Log
 
+## 2026-09-19 - GH-321 npm audit-gate hardening locally approved
+
+- Added bounded fail-closed classification for npm error JSON, malformed/schema
+  output, spawn/signal/buffer failures and inconsistent process statuses while
+  retaining valid exit-1 advisory evaluation and the reviewed SPA exception.
+- Hardened plain-object and own-property validation so malformed entries and
+  prototype-borrowed chains cannot pass silently; diagnostics expose only short
+  machine codes, never raw registry output or credential-bearing URLs.
+- PASS: 15 focused audit-gate cases, 19/19 Node cases, 309/309 Vitest cases,
+  lint, production build/bundle budget, live npm audit, docs consistency,
+  license, security-review, pinned secret scan and diff hygiene.
+- Claude Code authored the bounded two-file parser/test slice. Sol reviewed every
+  write, added the contradictory-status fail-closed cases and synchronized the
+  candidate arithmetic to 2,471 = 2,117 Go + 26 Rust + 328 client across README,
+  Landing, roadmap, FAQ, architecture and Wiki sources.
+- Protected PR/CI/review and merge remain. No bypass, retry, dependency change,
+  rollout credit, deployment, migration, release or production action occurred.
+
+---
+
+## 2026-09-19 - GH-321 npm audit-gate diagnostics started
+
+- PR #320 exposed two unrelated npm audit job failures after lint, tests and
+  build passed. Read-only reproduction proved npm operational failures can emit
+  valid error JSON without `vulnerabilities`, which the current gate safely but
+  misleadingly labels `invalid npm audit report`.
+- Created isolated branch/worktree `fix/GH-321-npm-audit-gate` from exact clean
+  main `f5de5a1`. GH-305/#322, GH-318/#320 and GH-304/#319 remain separate.
+- Claude Code receives only the small parser/test implementation. Sol owns
+  fail-closed semantics, diff review, full gates and closure. Kimi is unavailable
+  due its five-hour quota; no overlapping writer exists.
+- No bypass, dependency refresh, deployment, migration, release or production
+  action is in scope. Rollout remains 36/59.
+
+---
+
 ## 2026-09-19 - GH-305 rustls remediation locally approved
 
 - Applied the canonical four-line `Cargo.lock` correction: rustls 0.23.38 to

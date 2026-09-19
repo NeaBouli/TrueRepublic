@@ -1,6 +1,6 @@
 # Testing Status
 
-The current **v0.4.0 recovery** source of truth records **2,462 verified
+The current **v0.4.0 recovery** source of truth records **2,471 verified
 standard-suite cases**. The Go subtotal includes GH-297's 62-case frozen ZKP
 protocol contract. This arithmetic excludes the separately run opt-in
 GH-266 Go/WASM-to-keeper replay, GH-175/GH-178/GH-181 IBC two-chain, and
@@ -32,8 +32,8 @@ GH-184 governed-upgrade gates.
 | Go Sovereign V4 protocol | 36 |
 | Go OCI evidence | 35 |
 | Rust/CosmWasm | 26 |
-| Maintained client | 319 |
-| **Total** | **2,462** |
+| Maintained client | 328 |
+| **Total** | **2,471** |
 
 The published total is the reproducible standard-suite baseline; the opt-in
 GH-175/GH-178/GH-181 IBC recovery, GH-184 upgrade, and GH-206/GH-266 Go/WASM
@@ -78,9 +78,9 @@ CGO_ENABLED=1 ./scripts/go-packages.sh go build
 ./scripts/check-consistency.sh
 ```
 
-The maintained client is verified with `npm ci`, lint, 319 passing cases (309
-Vitest plus ten Node policy/budget cases), production build, and guarded live
-audit. The CosmWasm workspace is verified with tests, formatting,
+The maintained client is verified with `npm ci`, lint, 328 passing cases (309
+Vitest plus nineteen Node policy/budget/audit-gate cases), production build,
+and guarded live audit. The CosmWasm workspace is verified with tests, formatting,
 Clippy, build, and audit.
 
 GH-32/GH-41/GH-43/GH-45/GH-53/GH-55/GH-56/GH-60/GH-61/GH-93/GH-97 add the separately gated

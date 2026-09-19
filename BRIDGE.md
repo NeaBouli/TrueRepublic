@@ -1,5 +1,49 @@
 # TrueRepublic Agent Bridge
 
+## 2026-09-19 EEST GH-321 npm audit-gate diagnostics → Locally Approved
+
+- **Result:** npm operational/error JSON, spawn/signal/buffer failures,
+  malformed JSON, invalid schemas and contradictory exit statuses now fail
+  closed with bounded non-secret diagnostics. Valid advisory reports still
+  evaluate normally when npm exits 1.
+- **Hardening:** report/advisory shapes must be plain objects, inherited
+  property lookups cannot satisfy exceptions, malformed vulnerability records
+  block, and audit output remains bounded at 32 MiB.
+- **Evidence:** 15/15 focused audit-gate cases and all 19 Node cases pass; all
+  309 Vitest cases pass; lint, production build/bundle budgets, live npm audit,
+  docs consistency, license policy, security-review readiness, secret scan and
+  diff hygiene pass.
+- **Integration:** nine new Node cases raise the maintained-client total from
+  319 to 328 and the canonical standard-suite total from 2,462 to 2,471. README,
+  Landing, roadmap, FAQ, active architecture and Wiki sources are synchronized;
+  rollout remains 36/59 and production false.
+- **Review:** Claude Code authored only the two-file parser/test block. Sol
+  reviewed every write, added the contradictory-status fail-closed guard and
+  integrated/verified public status. Protected PR/CI/review and merge remain.
+
+`TRUEREPUBLIC GH-321 LOCAL APPROVE — FAIL-CLOSED AUDIT GATE — PRODUCTION FALSE`
+
+---
+
+## 2026-09-19 EEST GH-321 npm audit-gate diagnostics → In Progress
+
+- **Branch:** `fix/GH-321-npm-audit-gate` from exact clean main
+  `f5de5a150b9ff0edc51d68411b7829e78bcf78e6`.
+- **Issue:** [#321](https://github.com/NeaBouli/TrueRepublic/issues/321).
+- **Scope:** keep the maintained-client audit gate fail-closed while separating
+  npm operational/error JSON from valid advisory reports and adding deterministic
+  parser/process fixtures. No advisory bypass or unrelated dependency update.
+- **Division:** Claude Code owns only the small parser/test implementation.
+  Sol owns security semantics, diff review, full client/repository integration,
+  CI, GitHub actions and closure. Kimi is unavailable due its five-hour quota;
+  no overlapping writer exists.
+- **Boundary:** no retry that hides persistent failure, workflow weakening,
+  deployment, migration, release or production action. Rollout remains 36/59.
+
+`TRUEREPUBLIC GH-321 ACTIVE — FAIL-CLOSED CI DIAGNOSTICS — PRODUCTION FALSE`
+
+---
+
 ## 2026-09-19 EEST GH-305 rustls security reconciliation → Locally Approved
 
 - **Result:** the only dependency change is `rustls 0.23.38 -> 0.23.45`
