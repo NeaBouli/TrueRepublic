@@ -1,5 +1,53 @@
 # Project State
 
+GH-304 is on synchronized branch head `330f0e1` with a fresh, reproducible
+standard-suite recount: 2,132 Go pass events, including 691 governance pass
+events. With 26 Rust and 328 maintained-client cases, the candidate total is
+2,486. README, machine status, Landing, roadmap, architecture and Wiki sources
+now carry the same values; documentation consistency and diff hygiene pass.
+The complete governance race suite and governance Vet also pass on this tree.
+Sol's integration review then found that the SDK accepts all-uppercase bech32
+while membership identity is string-keyed. Normal onboarding and genesis now
+require exact canonical re-encoding, elections ignore noncanonical legacy
+candidates, and admin exclusion compares decoded address identity. Focused
+regressions, the unchanged 691-event recount, full governance Race/Vet and
+documentation consistency pass after the correction.
+Kimi's requested review still produced no work because its provider returned
+HTTP 403 before repository access, and the narrowly separated Claude read-only
+review likewise produced no result because its monthly CLI budget is exhausted.
+Sol therefore owns the current integration review and verification without a
+duplicate external write. Protected exact-head CI/review and merge remain.
+Rollout stays 36/59; production remains false; no legacy repair or migration is
+authorized.
+
+---
+
+GH-304 is now unblocked and synchronized with exact green main `b26b2b9`.
+The merge introduced no Go-code conflict; only append-only coordination
+histories required union. Documentation consistency and the complete
+`x/truedemocracy` package pass after sync. The branch still requires full
+protected exact-head CI, external review and zero unresolved threads before
+merge. Kimi's requested read-only deep review could not start because the
+provider still returns HTTP 403 for its five-hour quota; Kimi made no write.
+No legacy repair/migration, deployment or production action is authorized.
+Rollout remains 36/59 and production false.
+
+---
+
+GH-304's critical TRR-01 implementation is locally verified on isolated branch
+`fix/GH-304-elect-admin`. Elections use canonical decoded addresses; corrupt
+stored admins are detected read-only and quarantined without silent repair;
+healthy domains continue atomically; normal onboarding and exclusion cannot
+create the admin/member corruption. Kimi K3 authored the bounded implementation
+and tests, Claude supplied the independent edge-case review, and Sol reviewed
+and integrated every write. Full Build/Vet/Race/Coverage, critical coverage,
+security/static/secret/docs/license gates and all eight multi-validator recovery
+scenarios pass. The only red gate is the repository-wide pre-existing
+`GO-2026-6348` gRPC vulnerability, isolated in GH-318. GH-304 must not merge
+until GH-318 lands and the refreshed exact head passes protected CI. No legacy
+repair, migration, deployment or production action is authorized. Rollout stays
+36/59 and production false.
+
 GH-321 is locally approved on isolated branch `fix/GH-321-npm-audit-gate`.
 The audit gate now separates operational/error JSON, malformed/schema and
 spawn/process failures from valid advisory reports while remaining fail-closed;

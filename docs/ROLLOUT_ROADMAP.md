@@ -1,6 +1,6 @@
 # TrueRepublic Road to Rollout
 
-Updated: 2026-09-13
+Updated: 2026-09-19
 
 TrueRepublic has a recovered and CI-verified v0.4 engineering foundation. It
 is **not production-ready, mainnet-ready, or approved for real funds or keys**.
@@ -21,8 +21,9 @@ separate mandatory release-freeze and accountable go/no-go subchecks.
 
 - The ordered recovery merge chain is on `main`.
 - The maximum supply is fixed at 21,000,000 PNYX.
-- The source of truth records 2,471 recovery-verified tests: 2,117 Go, 26 Rust,
-  and 328 maintained-client tests. The Go total includes GH-297's 62-case
+- The source of truth records 2,486 recovery-verified tests: 2,132 Go, 26 Rust,
+  and 328 maintained-client tests. The Go total includes GH-304's 15-case
+  real-bech32 ElectAdmin integrity/quarantine regression increment and GH-297's 62-case
   frozen ZKP protocol contract, GH-294's strict
   security-review readiness contract and GH-278's locked
   CI-tool bootstrap evidence, GH-244's strict

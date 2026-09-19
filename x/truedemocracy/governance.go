@@ -1,6 +1,8 @@
 package truedemocracy
 
 import (
+	"errors"
+	"fmt"
 	"sort"
 
 	errorsmod "cosmossdk.io/errors"
@@ -105,8 +107,39 @@ func (k Keeper) SortMembersByStones(ctx sdk.Context, domain Domain) []MemberRank
 
 // --- Admin Election (WP §3.6) ---
 
+// EventTypeDomainAdminQuarantine is emitted by ProcessGovernance when a domain
+// is quarantined because its stored admin failed the read-only integrity
+// classifier (GH-304). Attributes: "domain" and "reason" (a stable
+// DomainAdminReason* code).
+const EventTypeDomainAdminQuarantine = "domain_admin_quarantine"
+
+// domainAdminIntegrityError fails an election closed when the domain's stored
+// current admin does not pass the read-only integrity classifier (GH-304).
+// Unwrap exposes sdkerrors.ErrInvalidAddress so callers keep deterministic
+// invalid-address semantics, while errors.As lets ProcessGovernance quarantine
+// exactly this failure domain-locally instead of halting the chain — unrelated
+// invalid-address errors still abort the whole pass.
+type domainAdminIntegrityError struct {
+	DomainName string
+	Reason     string
+}
+
+func (e *domainAdminIntegrityError) Error() string {
+	return fmt.Sprintf("domain %s stored admin failed integrity classification: %s", e.DomainName, e.Reason)
+}
+
+func (e *domainAdminIntegrityError) Unwrap() error { return sdkerrors.ErrInvalidAddress }
+
 // ElectAdmin sets the domain admin to the member with the most stones when
-// AdminElectable is true. If no member has stones, admin remains unchanged.
+// AdminElectable is true. If no valid member has stones, admin remains
+// unchanged. Members are stored as canonical bech32 strings while Admin holds
+// the decoded address bytes, so the winner is compared against Admin.String()
+// and decoded with sdk.AccAddressFromBech32 before any state mutation (GH-304).
+// Legacy member strings that are not parseable bech32 are ignored while
+// ranking candidates so they can never halt the chain. A stored current admin
+// that fails the read-only integrity classifier fails the election closed with
+// a deterministic domainAdminIntegrityError before any mutation — elections
+// never silently repair corrupted admin state (GH-304).
 func (k Keeper) ElectAdmin(ctx sdk.Context, domainName string) error {
 	domain, found := k.GetDomain(ctx, domainName)
 	if !found {
@@ -117,26 +150,45 @@ func (k Keeper) ElectAdmin(ctx sdk.Context, domainName string) error {
 		return nil
 	}
 
+	// Fail closed before any state change when the stored current admin is
+	// corrupt; repair/migration is a separate explicitly approved action.
+	if reason := classifyDomainAdmin(domain); reason != "" {
+		return &domainAdminIntegrityError{DomainName: domainName, Reason: reason}
+	}
+
 	counts := k.countMemberStones(ctx, domain)
 	if len(counts) == 0 {
 		return nil // no stones placed yet
 	}
 
-	// Find member with most stones. Stable: first member with max wins.
+	// Find valid member with most stones. Stable: first member with max wins.
+	// Unparseable legacy member entries can never become admin and are
+	// ignored so they cannot halt the chain (GH-304).
 	bestAddr := ""
 	bestCount := 0
 	for _, member := range domain.Members {
+		memberAddr, err := sdk.AccAddressFromBech32(member)
+		if err != nil || memberAddr.String() != member {
+			continue
+		}
 		if counts[member] > bestCount {
 			bestCount = counts[member]
 			bestAddr = member
 		}
 	}
 
-	if bestAddr == "" || bestAddr == string(domain.Admin) {
+	if bestAddr == "" || bestAddr == domain.Admin.String() {
 		return nil // no change
 	}
 
-	domain.Admin = sdk.AccAddress(bestAddr)
+	// Defense in depth: the winner was already parsed while ranking, but the
+	// address is decoded again immediately before the mutation.
+	newAdmin, err := sdk.AccAddressFromBech32(bestAddr)
+	if err != nil {
+		return errorsmod.Wrapf(sdkerrors.ErrInvalidAddress, "domain %s elected admin member %q is not a valid bech32 address", domainName, bestAddr)
+	}
+
+	domain.Admin = newAdmin
 	store := ctx.KVStore(k.StoreKey)
 	bz := k.cdc.MustMarshalLengthPrefixed(&domain)
 	store.Set([]byte("domain:"+domainName), bz)
@@ -148,6 +200,11 @@ func (k Keeper) ElectAdmin(ctx sdk.Context, domainName string) error {
 // VoteToExclude records a vote to exclude a member from the domain. When 2/3
 // of members have voted, the target is removed from the member list and their
 // stones are cleaned up. Returns (excluded bool, error).
+// The current domain admin can never be excluded: the vote is rejected with a
+// deterministic invalid-request error before any vote key or other state is
+// written, so normal governance cannot create admin_not_in_members/quarantined
+// state. A replacement admin must be elected first; the former admin is then
+// an ordinary member and excludable under the same threshold (GH-304).
 func (k Keeper) VoteToExclude(ctx sdk.Context, domainName, targetMember, voterAddr string) (bool, error) {
 	if domainName == ReservedGovernanceDomain {
 		return false, errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "governance electorate is immutable after genesis")
@@ -167,6 +224,14 @@ func (k Keeper) VoteToExclude(ctx sdk.Context, domainName, targetMember, voterAd
 
 	if voterAddr == targetMember {
 		return false, errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "cannot vote to exclude yourself")
+	}
+
+	// The admin ∈ Members invariant (GH-304): normal governance must never
+	// exclude the current domain admin. Reject before any vote key or domain
+	// state is written; a replacement admin must be elected first.
+	targetAddr, targetErr := sdk.AccAddressFromBech32(targetMember)
+	if targetErr == nil && targetAddr.Equals(domain.Admin) {
+		return false, errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "cannot exclude the current domain admin: elect a replacement admin first")
 	}
 
 	store := ctx.KVStore(k.StoreKey)
@@ -333,15 +398,44 @@ func (k Keeper) ValidateStakeTransfer(ctx sdk.Context, domainName, operatorAddr 
 }
 
 // ProcessGovernance runs admin election and inactivity cleanup for all domains.
-// Called from EndBlock.
-func (k Keeper) ProcessGovernance(ctx sdk.Context) {
+// Called from EndBlock. All election and cleanup work runs in a single cache
+// context and is committed only after every domain is processed (GH-304).
+// A domain whose stored admin fails the integrity classifier is quarantined
+// domain-locally: a stable event records the domain and reason, election and
+// cleanup are skipped for that domain only, processing continues with the
+// remaining domains, and the valid domains' work still commits atomically.
+// The quarantine event is emitted on the cache context, so events and
+// valid-domain state share the same atomic commit boundary: write() flushes
+// both to the parent context, and any future non-quarantine abort discards
+// both. Any other error aborts the pass without committing, so EndBlock fails
+// closed instead of persisting partial governance work.
+func (k Keeper) ProcessGovernance(ctx sdk.Context) error {
 	var domainNames []string
 	k.IterateDomains(ctx, func(d Domain) bool {
 		domainNames = append(domainNames, d.Name)
 		return false
 	})
+
+	cacheCtx, write := ctx.CacheContext()
 	for _, name := range domainNames {
-		k.ElectAdmin(ctx, name)
-		k.CleanupInactiveIssues(ctx, name)
+		if err := k.ElectAdmin(cacheCtx, name); err != nil {
+			var integrityErr *domainAdminIntegrityError
+			if errors.As(err, &integrityErr) {
+				// Emit on the cache context: write() flushes the event together
+				// with the valid domains' state, and an abort discards both.
+				cacheCtx.EventManager().EmitEvent(sdk.NewEvent(
+					EventTypeDomainAdminQuarantine,
+					sdk.NewAttribute("domain", integrityErr.DomainName),
+					sdk.NewAttribute("reason", integrityErr.Reason),
+				))
+				continue
+			}
+			return err
+		}
+		if err := k.CleanupInactiveIssues(cacheCtx, name); err != nil {
+			return err
+		}
 	}
+	write()
+	return nil
 }

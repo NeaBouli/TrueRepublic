@@ -1,5 +1,52 @@
 # Recovery Queue
 
+## In review - GH-304 ElectAdmin corruption and legacy-state detection
+
+- [x] Land GH-318/GH-305/GH-321 and verify exact main.
+- [x] Merge fixed exact main into GH-304 without implementation conflicts.
+- [x] Preserve both append-only Bridge/State histories and pass documentation
+  consistency plus the complete truedemocracy package after sync.
+- [x] Push the synchronized exact-main merge head to PR #319.
+- [ ] Push the authoritative test-count/public-status synchronization and pass
+  the complete protected exact-head matrix, external review and zero unresolved
+  review-thread gate on that replacement head.
+- [ ] Merge, verify exact main and close GH-304/audit-register references.
+- [ ] Keep any mutating legacy repair or migration in a separate explicitly
+  approved task; GH-304 remains detector/quarantine-only for legacy state.
+
+---
+
+## In progress - GH-304 ElectAdmin corruption and legacy-state detection
+
+- [x] Reproduce TRR-01 with real bech32 SDK addresses on the frozen main
+  baseline.
+- [x] Compare elected/admin identity canonically and parse the elected winner
+  with `sdk.AccAddressFromBech32` before state mutation.
+- [x] Fail deterministically without panic or partial domain mutation; quarantine
+  pre-existing corrupt domains without silently repairing them or halting healthy
+  domains.
+- [x] Prevent normal member onboarding or admin exclusion from creating new
+  corrupt admin/member state.
+- [x] Prove member, treasury, permission-register and export/import behavior
+  remains valid after election.
+- [x] Add a read-only detector for already-corrupted domain-admin state and
+  prove the complete module store stays byte-identical during a scan.
+- [x] Keep repair/migration, deployment, release and live-chain actions out of
+  scope pending a separate exact approval.
+- [x] Complete Kimi bounded implementation, Sol line-by-line review and focused
+  plus full Go/race/coverage/recovery/security verification.
+- [ ] Commit/push the exact candidate and publish the protected GH-304 PR.
+- [ ] Land the separately scoped GH-318 gRPC fix and restore the real
+  vulnerability gate; do not add GO-2026-6348 to the no-fix allowlist.
+- [ ] Refresh GH-304 on fixed main, pass protected exact-head CI/review, merge,
+  verify exact main and close the audit/register references.
+
+## Paused - GH-300 maintained-browser Groth16 prover integration
+
+- GH-300's uncommitted local checkout is preserved untouched while the P0
+  audit remediation sequence begins with GH-304. Resume only after the
+  GH-304 first-response block and with GH-309 identity-safety boundaries.
+
 ## In progress - GH-321 npm audit-gate diagnostics
 
 - [x] Distinguish npm operational/error JSON and spawn/schema failures from a

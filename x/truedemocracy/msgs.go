@@ -503,6 +503,13 @@ func (m MsgAddMember) ValidateBasic() error {
 	if m.DomainName == "" || m.NewMember == "" {
 		return sdkerrors.ErrInvalidRequest.Wrap("domain_name and new_member are required")
 	}
+	// New members are stored as canonical bech32 strings; reject anything
+	// else at the entry point so corrupt member values can never enter
+	// state through normal transactions (GH-304).
+	member, err := sdk.AccAddressFromBech32(m.NewMember)
+	if err != nil || member.String() != m.NewMember {
+		return sdkerrors.ErrInvalidAddress.Wrap("new_member must be a canonical bech32 address")
+	}
 	return nil
 }
 

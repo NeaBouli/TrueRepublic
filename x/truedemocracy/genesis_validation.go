@@ -607,8 +607,12 @@ func validateGenesisDomain(domain Domain) error {
 		return fmt.Errorf("domain %q admin is not a member", domain.Name)
 	}
 	for _, member := range domain.Members {
-		if _, err := sdk.AccAddressFromBech32(member); err != nil {
+		addr, err := sdk.AccAddressFromBech32(member)
+		if err != nil {
 			return fmt.Errorf("domain %q member %q is invalid: %w", domain.Name, member, err)
+		}
+		if addr.String() != member {
+			return fmt.Errorf("domain %q member %q is not canonical bech32", domain.Name, member)
 		}
 	}
 	if err := validateUniqueStrings(domain.Name, "permission entry", domain.PermissionReg); err != nil {
