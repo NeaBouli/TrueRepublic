@@ -31,7 +31,7 @@ findings below are new and map to threat-model IDs where applicable.
 | 2 | [ZKP, cryptography & contracts](trr-zkp-crypto-contracts-audit-2026-09-15.md) | TRR-13…22 | 2/2/4/1/1 | `4e380d50eefa5883a80e36a862c6534e8b992a588e02a95283eeb9d352ee0e52` |
 | 3 | [Integration & surfaces](trr-integration-surfaces-audit-2026-09-15.md) | TRR-23…28 | 0/0/3/2/1 | `99f5d30b10ecc1a139c1947bf02f67d43a2c4176070a1a36cf6448694ab971cc` |
 | 4 | [Content & coherence](trr-content-coherence-audit-2026-09-15.md) | TRR-29…37 | 0/0/3/5/1 | `0a0b6c51bac84daf62c8140220a1463617e38971cd40003378f0ed0d24563ba9` |
-| 5 | [AI-readiness & landing quality](trr-ai-readiness-landing-audit-2026-09-15.md) | TRR-38…42 | 0/0/0/4/1 | `03ab95584c39d5a7e4d966ac50d64b243572ab25c01f85fb166d27c8cfbf395f` |
+| 5 | [AI-readiness & landing quality](trr-ai-readiness-landing-audit-2026-09-15.md) | TRR-38…42 | 0/0/0/4/1 | `f8154754fd7137fdd016a16e39ca2e7bc947d83009b0c470d8fa8e69f13e36db` |
 
 ## Headline findings
 
@@ -71,4 +71,5 @@ client ZKP fail-closed (submission disabled, tx-registry omission); bundle
 budget CI-gated (GH-128 closure real); zero third-party scripts on the landing;
 headline numbers CI-pinned and independently re-verified (2,462 decomposition,
 issue #29 arithmetic); wiki↔repo-wiki sync; license stack machine-enforced;
-no secrets/keys/hosts anywhere in repo (grep-verified).
+no secrets, private keys, or active infrastructure credentials found
+(grep-verified).
