@@ -1,5 +1,97 @@
 # TrueRepublic Agent Bridge
 
+## 2026-09-19 EEST GH-321 npm audit-gate diagnostics → Locally Approved
+
+- **Result:** npm operational/error JSON, spawn/signal/buffer failures,
+  malformed JSON, invalid schemas and contradictory exit statuses now fail
+  closed with bounded non-secret diagnostics. Valid advisory reports still
+  evaluate normally when npm exits 1.
+- **Hardening:** report/advisory shapes must be plain objects, inherited
+  property lookups cannot satisfy exceptions, malformed vulnerability records
+  block, and audit output remains bounded at 32 MiB.
+- **Evidence:** 15/15 focused audit-gate cases and all 19 Node cases pass; all
+  309 Vitest cases pass; lint, production build/bundle budgets, live npm audit,
+  docs consistency, license policy, security-review readiness, secret scan and
+  diff hygiene pass.
+- **Integration:** nine new Node cases raise the maintained-client total from
+  319 to 328 and the canonical standard-suite total from 2,462 to 2,471. README,
+  Landing, roadmap, FAQ, active architecture and Wiki sources are synchronized;
+  rollout remains 36/59 and production false.
+- **Review:** Claude Code authored only the two-file parser/test block. Sol
+  reviewed every write, added the contradictory-status fail-closed guard and
+  integrated/verified public status. Protected PR/CI/review and merge remain.
+
+`TRUEREPUBLIC GH-321 LOCAL APPROVE — FAIL-CLOSED AUDIT GATE — PRODUCTION FALSE`
+
+---
+
+## 2026-09-19 EEST GH-321 npm audit-gate diagnostics → In Progress
+
+- **Branch:** `fix/GH-321-npm-audit-gate` from exact clean main
+  `f5de5a150b9ff0edc51d68411b7829e78bcf78e6`.
+- **Issue:** [#321](https://github.com/NeaBouli/TrueRepublic/issues/321).
+- **Scope:** keep the maintained-client audit gate fail-closed while separating
+  npm operational/error JSON from valid advisory reports and adding deterministic
+  parser/process fixtures. No advisory bypass or unrelated dependency update.
+- **Division:** Claude Code owns only the small parser/test implementation.
+  Sol owns security semantics, diff review, full client/repository integration,
+  CI, GitHub actions and closure. Kimi is unavailable due its five-hour quota;
+  no overlapping writer exists.
+- **Boundary:** no retry that hides persistent failure, workflow weakening,
+  deployment, migration, release or production action. Rollout remains 36/59.
+
+`TRUEREPUBLIC GH-321 ACTIVE — FAIL-CLOSED CI DIAGNOSTICS — PRODUCTION FALSE`
+
+---
+
+## 2026-09-19 EEST GH-305 rustls security reconciliation → Locally Approved
+
+- **Result:** the only dependency change is `rustls 0.23.38 -> 0.23.45`
+  plus Cargo's one forced compatible companion `rustls-webpki 0.103.13 ->
+  0.103.15`; both checksums changed canonically. Exactly one `rustls` remains.
+- **Path:** `truerepublic-contracts` dev dependency -> `cosmwasm-vm 3.0.9` ->
+  `wasmer 5.0.6` -> build dependency `ureq 2.12.1` -> `rustls 0.23.45`.
+  No first-party Rust source, contract runtime or consensus behavior changed.
+- **Evidence:** `cargo fmt --check`, Clippy with warnings denied, all 26 Rust
+  tests and doc tests, real `cargo audit`, documentation consistency, license
+  policy, security-review readiness, secret scan and diff hygiene pass. The
+  audit reports zero vulnerabilities and only the same five pre-existing
+  allowed warnings.
+- **Review:** Kimi K3 was assigned the bounded implementation but its wrapper
+  stopped before any write because its five-hour quota was exhausted. Sol
+  applied and verified the four-line lockfile change. Claude Code independently
+  returned APPROVE; its only informational note concerns Cargo choosing the
+  latest compatible webpki patch, not an additional dependency or risk.
+- **Pending:** commit/push, protected exact-head CI/review, merge, exact-main
+  verification and refresh of the blocked PR chain. Rollout remains 36/59;
+  production remains false.
+
+`TRUEREPUBLIC GH-305 LOCAL APPROVE — SECURITY DEPENDENCY ONLY — PRODUCTION FALSE`
+
+---
+
+## 2026-09-19 EEST GH-305 rustls security reconciliation → In Progress
+
+- **Branch:** `fix/GH-305-rustls` from exact clean main
+  `f5de5a150b9ff0edc51d68411b7829e78bcf78e6`.
+- **Issue:** [#305](https://github.com/NeaBouli/TrueRepublic/issues/305),
+  parent audit register [#303](https://github.com/NeaBouli/TrueRepublic/issues/303).
+- **Scope:** resolve RUSTSEC-2026-0285 by selecting the smallest compatible
+  `rustls >=0.23.45` graph, account for every lockfile change and restore the
+  hosted Rust security gate without an ignore or exception.
+- **Division:** Kimi K3 owns the bounded Cargo graph update and focused Rust
+  verification. Sol owns upstream/advisory validation, complete diff and
+  security review, repository integration, protected CI, GitHub actions and
+  closure. No overlapping writer is assigned.
+- **Boundary:** no contract behavior change, instantiation, migration, release,
+  deployment, production action, real keys or funds. Rollout remains 36/59 and
+  production remains false.
+- **Tests:** pending implementation. Existing red hosted evidence identifies
+  `rustls 0.23.38` and RUSTSEC-2026-0285; it is not completion evidence.
+
+`TRUEREPUBLIC GH-305 ACTIVE — RUST DEPENDENCY SECURITY ONLY — PRODUCTION FALSE`
+---
+
 ## 2026-09-19 EEST GH-318 gRPC reconciliation locally approved → Protected review pending
 
 - **Security result:** the directly pinned gRPC moved from vulnerable v1.82.2
@@ -56,7 +148,6 @@
 - **Boundary:** no vulnerability allowlist, production deployment, restart,
   migration, release, live network, real key or real fund action is authorized.
 - **Status:** implementation pending. Rollout remains 36/59; production false.
-
 ---
 
 ## 2026-09-13 EEST GH-297 ZKP protocol freeze → Done on exact main

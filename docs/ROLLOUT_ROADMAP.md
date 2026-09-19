@@ -21,8 +21,8 @@ separate mandatory release-freeze and accountable go/no-go subchecks.
 
 - The ordered recovery merge chain is on `main`.
 - The maximum supply is fixed at 21,000,000 PNYX.
-- The source of truth records 2,462 recovery-verified tests: 2,117 Go, 26 Rust,
-  and 319 maintained-client tests. The Go total includes GH-297's 62-case
+- The source of truth records 2,471 recovery-verified tests: 2,117 Go, 26 Rust,
+  and 328 maintained-client tests. The Go total includes GH-297's 62-case
   frozen ZKP protocol contract, GH-294's strict
   security-review readiness contract and GH-278's locked
   CI-tool bootstrap evidence, GH-244's strict

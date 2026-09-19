@@ -1,5 +1,54 @@
 # Project State
 
+GH-321 is locally approved on isolated branch `fix/GH-321-npm-audit-gate`.
+The audit gate now separates operational/error JSON, malformed/schema and
+spawn/process failures from valid advisory reports while remaining fail-closed;
+valid nonzero advisory reports still evaluate normally. Fifteen focused audit
+cases, all 19 Node cases, 309 Vitest cases, lint, build/budgets, live audit,
+consistency, license, security-review, secret and diff gates pass. Nine new Node
+cases raise the maintained-client total to 328 and the standard-suite total to
+2,471; current README, Landing, roadmap, FAQ, architecture and Wiki sources are
+synchronized. Claude authored only the parser/test slice; Sol reviewed it,
+added contradictory-status hardening and integrated all status updates.
+Protected PR/CI/review and merge remain. Rollout stays 36/59; production false.
+---
+
+GH-305 is locally approved on isolated branch `fix/GH-305-rustls`. The
+four-line lockfile correction selects exact patched `rustls 0.23.45` and Cargo's
+forced compatible `rustls-webpki 0.103.15`; exactly one rustls remains through
+the dev/build-only `cosmwasm-vm -> wasmer -> ureq` path. Format, Clippy with
+warnings denied, all 26 Rust tests and doc tests, real cargo audit, consistency,
+license, security-review, secret and diff gates pass. Cargo audit reports zero
+vulnerabilities and the same five allowed pre-existing warnings. Kimi's assigned
+implementation stopped before any write because its five-hour quota was
+exhausted; Sol implemented and verified the minimal diff, and Claude Code
+independently approved it. Protected PR/CI/review, merge and exact-main
+verification remain. Rollout stays 36/59 and production remains false.
+Updated: 2026-09-19 EEST
+
+---
+
+GH-321 is active on isolated branch `fix/GH-321-npm-audit-gate` from exact clean
+main `f5de5a150b9ff0edc51d68411b7829e78bcf78e6`. It will keep npm auditing
+fail-closed while correctly classifying npm operational/error JSON and invalid
+schemas, with deterministic node:test coverage and no advisory bypass. Claude
+Code owns only the small parser/test implementation; Sol owns security semantics,
+integration, full verification and external actions. Kimi is quota-blocked and
+has no writer assignment. Tests are pending. Rollout stays 36/59 and production
+remains false.
+
+---
+
+GH-305 is active on isolated branch `fix/GH-305-rustls` from exact clean main
+`f5de5a150b9ff0edc51d68411b7829e78bcf78e6`. The bounded objective is to
+replace vulnerable `rustls 0.23.38` with the smallest compatible patched graph
+for RUSTSEC-2026-0285, without an audit exception or runtime/contract behavior
+change. Kimi owns only the Cargo graph implementation and focused Rust checks;
+Sol owns advisory validation, full diff/security review, integration, external
+actions and closure. Tests and protected CI are pending. Rollout remains 36/59
+and production remains false.
+---
+
 GH-318 is locally approved on isolated branch `fix/GH-318-grpc-security`.
 Official and real-scanner evidence required gRPC v1.83.2: v1.83.1 fixes
 GO-2026-6348 but remains affected by GO-2026-6443. The final canonical module
@@ -10,7 +59,6 @@ bounded dependency implementation; Sol reviewed official advisories, every
 graph change and all complete gates. Protected PR review, merge, exact-main
 verification and reruns of blocked PRs #319/#317 remain. Rollout stays 36/59;
 production false.
-
 Updated: 2026-09-19 EEST
 
 ---

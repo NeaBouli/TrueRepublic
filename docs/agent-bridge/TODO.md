@@ -1,5 +1,33 @@
 # Recovery Queue
 
+## In progress - GH-321 npm audit-gate diagnostics
+
+- [x] Distinguish npm operational/error JSON and spawn/schema failures from a
+  valid advisory report without weakening fail-closed behavior.
+- [x] Preserve real advisory handling when npm exits nonzero with a valid report.
+- [x] Add deterministic node:test coverage for clean/advisory/error/malformed/
+  invalid-shape and process-failure paths.
+- [x] Complete bounded Claude implementation and Sol security/integration review.
+- [x] Pass full local client, real audit and repository consistency/security
+  gates; protected exact-head CI/review remains before merge.
+- [x] Record local evidence in both Bridges without rollout credit or production
+  claims.
+
+## In progress - GH-305 rustls security reconciliation
+
+- [x] Verify RUSTSEC-2026-0285, the direct dependency path, compatible patched
+  releases and the smallest canonical Cargo lockfile diff.
+- [x] Update the graph so no vulnerable `rustls` remains, without an audit
+  ignore, exception or unrelated dependency refresh.
+- [x] Run Cargo format, clippy with warnings denied, all contract tests, real
+  cargo audit and applicable repository security/license/consistency gates.
+- [x] Record the unavailable Kimi implementation attempt and complete Sol
+  implementation plus independent Claude diff/graph/security review.
+- [ ] Pass protected exact-head CI and review, merge, verify exact main and then
+  refresh the dependency-blocked PR chain.
+- [x] Record local evidence in both Bridges without rollout credit or production
+  claims.
+
 ## In progress - GH-318 gRPC security reconciliation
 
 - [x] Verify GO-2026-6348 plus the follow-on GO-2026-6443, the smallest common
@@ -16,7 +44,6 @@
   with zero unresolved review threads before merge.
 - [ ] Merge, verify exact main, rerun blocked PRs #319 and #317, and update both
   Bridges without rollout credit or production claims.
-
 ## Completed - GH-297 production-target ZKP protocol freeze
 
 - [x] Add a strict versioned freeze manifest binding the existing ZKP circuit

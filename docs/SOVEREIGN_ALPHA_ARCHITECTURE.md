@@ -13,8 +13,8 @@ this document. **This document does not create an Alpha product, does not claim
 production readiness, and does not select a production network.**
 
 **Rollout accounting note:** This architecture block earns no rollout checkbox.
-Published arithmetic is **2,462 recovery-verified tests** (2,117 Go +
-26 Rust + 319 maintained client), **rollout 36/59**, phase work 36/51, and
+Published arithmetic is **2,471 recovery-verified tests** (2,117 Go +
+26 Rust + 328 maintained client), **rollout 36/59**, phase work 36/51, and
 **production false**, exactly as recorded in
 [`docs/agent-bridge/PROJECT_STATE.md`](agent-bridge/PROJECT_STATE.md) and
 [`docs/ROLLOUT_ROADMAP.md`](ROLLOUT_ROADMAP.md).
@@ -124,7 +124,7 @@ This audit cites exact repository evidence and states limitations plainly.
 ### 2.2 Beta client (`client-web`)
 
 - Stack: React 18 + TypeScript 5.9 + Vite 8.2 + CosmJS 0.39 + Zustand
-  (`client-web/README.md`). 319 recovery-verified client tests.
+  (`client-web/README.md`). 328 recovery-verified client tests.
 - **Wallet**: BIP-39 (12/24 words), AES-GCM-256 with PBKDF2-HMAC-SHA-256 at
   600,000 iterations, encrypted payloads in browser `localStorage`
   (`client-web/src/services/wallet.ts:15-17,289,368-472`). GH-193 verifies
@@ -871,7 +871,7 @@ rollback is uninstalling the Alpha.
 This document proposes an architecture. It does **not** imply that any Alpha
 code, native app, production network, ceremony, security audit, or real key/
 fund handling exists. It does not change the recovery-track status: rollout
-**36/59**, phase work 36/51, production **false**, test arithmetic **2,462**
+**36/59**, phase work 36/51, production **false**, test arithmetic **2,471**
 unchanged. Every external claim herein is either cited to primary upstream
 sources (Sections 3–4) or marked as a decision gate/open decision. The Beta —
 `client-web` — remains the only supported client.
