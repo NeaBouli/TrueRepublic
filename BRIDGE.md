@@ -9871,3 +9871,29 @@ Pending independent Kimi review and complete Sol verification.
 `TRUEREPUBLIC GH-294 DONE — REVIEW READY, NOT INDEPENDENTLY REVIEWED — PRODUCTION FALSE`
 
 ---
+
+## 2026-09-19 22:43 EEST GH-304 authoritative recount → Local PASS
+
+- **Fresh evidence:** package-scoped `go test -json -count=1` records exactly
+  2,132 Go pass events; `x/truedemocracy` records 691, an increase of 15 over
+  the 676-case main baseline. With unchanged 26 Rust and 328 maintained-client
+  cases, the candidate standard-suite total is 2,486.
+- **Public synchronization:** machine status, README/badge, Landing, roadmap,
+  FAQ, Quickstart, architecture/developer references and maintained Wiki status
+  sources all expose 2,486 = 2,132 + 26 + 328. Documentation consistency and
+  `git diff --check` pass; the complete governance Race suite (81.336s) and
+  governance Vet also pass.
+- **Agent accounting:** Kimi's bounded review stopped before repository access
+  with provider HTTP 403 and made no write. The disjoint Claude read-only review
+  stopped with its monthly CLI limit and produced no output. Sol owns the
+  integration/security review and complete verification; no duplicate writer
+  exists.
+- **Remaining gate:** commit/push this replacement head, require the complete
+  protected exact-head matrix, hosted review and zero unresolved threads, then
+  merge and verify exact main. No legacy repair/migration, rollout credit,
+  release, deployment or production action occurred. Rollout remains 36/59 and
+  production false.
+
+`TRUEREPUBLIC GH-304 LOCAL COUNT PASS — PROTECTED EXACT-HEAD REVIEW NEXT`
+
+---

@@ -1,5 +1,21 @@
 # Project State
 
+GH-304 is on synchronized branch head `330f0e1` with a fresh, reproducible
+standard-suite recount: 2,132 Go pass events, including 691 governance pass
+events. With 26 Rust and 328 maintained-client cases, the candidate total is
+2,486. README, machine status, Landing, roadmap, architecture and Wiki sources
+now carry the same values; documentation consistency and diff hygiene pass.
+The complete governance race suite and governance Vet also pass on this tree.
+Kimi's requested review still produced no work because its provider returned
+HTTP 403 before repository access, and the narrowly separated Claude read-only
+review likewise produced no result because its monthly CLI budget is exhausted.
+Sol therefore owns the current integration review and verification without a
+duplicate external write. Protected exact-head CI/review and merge remain.
+Rollout stays 36/59; production remains false; no legacy repair or migration is
+authorized.
+
+---
+
 GH-304 is now unblocked and synchronized with exact green main `b26b2b9`.
 The merge introduced no Go-code conflict; only append-only coordination
 histories required union. Documentation consistency and the complete

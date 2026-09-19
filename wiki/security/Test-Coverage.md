@@ -6,12 +6,12 @@ and summarized in [Testing Status](../status/Testing-Status).
 
 ## Recovery suites
 
-- Go: 2,117 passing standard-suite cases across the maintained application and
+- Go: 2,132 passing standard-suite cases across the maintained application and
   evidence packages.
 - Rust/CosmWasm: 26 passing cases.
 - Maintained `client-web`: 328 passing cases plus lint, production build,
   enforced bundle budgets, and guarded live audit.
-- Standard-suite total: 2,471. Separately gated multi-process, IBC, governed
+- Standard-suite total: 2,486. Separately gated multi-process, IBC, governed
   upgrade, Go/WASM verifier, and keeper-replay proofs are additional evidence
   and are not counted in that total.
 - Legacy clients are retired and are not part of the maintained evidence.

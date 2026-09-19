@@ -1,5 +1,25 @@
 # Action Log
 
+## 2026-09-19 - GH-304 authoritative test recount and public synchronization
+
+- Fresh package-scoped `go test -json -count=1` enumeration records 2,132 Go
+  pass events. The governance module records 691, a 15-event increase over the
+  676-case main baseline. With unchanged 26 Rust and 328 maintained-client
+  cases, the exact candidate total is 2,486.
+- Synchronized `docs/status.json`, README, Landing, roadmap, FAQ, Quickstart,
+  developer/architecture references and all maintained Wiki status surfaces.
+  Complete governance Race and Vet, documentation consistency and diff hygiene
+  pass on the synchronized tree.
+- Kimi produced no review or write because the configured provider returned
+  HTTP 403 before repository access. Claude's disjoint read-only review also
+  produced no output because its local monthly CLI budget is exhausted. Sol
+  continues the integration/security review and complete verification.
+- Protected exact-head CI, external hosted review, zero unresolved threads,
+  merge and exact-main verification remain. No rollout credit, repair,
+  migration, deployment, release or production action occurred.
+
+---
+
 ## 2026-09-19 - GH-304 refreshed on fixed exact main
 
 - Merged exact main `b26b2b9` into GH-304 after the dependency/security stack
