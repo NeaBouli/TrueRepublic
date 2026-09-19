@@ -1,5 +1,21 @@
 # Project State
 
+GH-321 is locally approved on isolated branch `fix/GH-321-npm-audit-gate`.
+The audit gate now separates operational/error JSON, malformed/schema and
+spawn/process failures from valid advisory reports while remaining fail-closed;
+valid nonzero advisory reports still evaluate normally. Fifteen focused audit
+cases, all 19 Node cases, 309 Vitest cases, lint, build/budgets, live audit,
+consistency, license, security-review, secret and diff gates pass. Nine new Node
+cases raise the maintained-client total to 328 and the standard-suite total to
+2,471; current README, Landing, roadmap, FAQ, architecture and Wiki sources are
+synchronized. Claude authored only the parser/test slice; Sol reviewed it,
+added contradictory-status hardening and integrated all status updates.
+Protected PR/CI/review and merge remain. Rollout stays 36/59; production false.
+
+Updated: 2026-09-19 EEST
+
+---
+
 GH-321 is active on isolated branch `fix/GH-321-npm-audit-gate` from exact clean
 main `f5de5a150b9ff0edc51d68411b7829e78bcf78e6`. It will keep npm auditing
 fail-closed while correctly classifying npm operational/error JSON and invalid

@@ -1,5 +1,25 @@
 # Action Log
 
+## 2026-09-19 - GH-321 npm audit-gate hardening locally approved
+
+- Added bounded fail-closed classification for npm error JSON, malformed/schema
+  output, spawn/signal/buffer failures and inconsistent process statuses while
+  retaining valid exit-1 advisory evaluation and the reviewed SPA exception.
+- Hardened plain-object and own-property validation so malformed entries and
+  prototype-borrowed chains cannot pass silently; diagnostics expose only short
+  machine codes, never raw registry output or credential-bearing URLs.
+- PASS: 15 focused audit-gate cases, 19/19 Node cases, 309/309 Vitest cases,
+  lint, production build/bundle budget, live npm audit, docs consistency,
+  license, security-review, pinned secret scan and diff hygiene.
+- Claude Code authored the bounded two-file parser/test slice. Sol reviewed every
+  write, added the contradictory-status fail-closed cases and synchronized the
+  candidate arithmetic to 2,471 = 2,117 Go + 26 Rust + 328 client across README,
+  Landing, roadmap, FAQ, architecture and Wiki sources.
+- Protected PR/CI/review and merge remain. No bypass, retry, dependency change,
+  rollout credit, deployment, migration, release or production action occurred.
+
+---
+
 ## 2026-09-19 - GH-321 npm audit-gate diagnostics started
 
 - PR #320 exposed two unrelated npm audit job failures after lint, tests and

@@ -1,5 +1,30 @@
 # TrueRepublic Agent Bridge
 
+## 2026-09-19 EEST GH-321 npm audit-gate diagnostics → Locally Approved
+
+- **Result:** npm operational/error JSON, spawn/signal/buffer failures,
+  malformed JSON, invalid schemas and contradictory exit statuses now fail
+  closed with bounded non-secret diagnostics. Valid advisory reports still
+  evaluate normally when npm exits 1.
+- **Hardening:** report/advisory shapes must be plain objects, inherited
+  property lookups cannot satisfy exceptions, malformed vulnerability records
+  block, and audit output remains bounded at 32 MiB.
+- **Evidence:** 15/15 focused audit-gate cases and all 19 Node cases pass; all
+  309 Vitest cases pass; lint, production build/bundle budgets, live npm audit,
+  docs consistency, license policy, security-review readiness, secret scan and
+  diff hygiene pass.
+- **Integration:** nine new Node cases raise the maintained-client total from
+  319 to 328 and the canonical standard-suite total from 2,462 to 2,471. README,
+  Landing, roadmap, FAQ, active architecture and Wiki sources are synchronized;
+  rollout remains 36/59 and production false.
+- **Review:** Claude Code authored only the two-file parser/test block. Sol
+  reviewed every write, added the contradictory-status fail-closed guard and
+  integrated/verified public status. Protected PR/CI/review and merge remain.
+
+`TRUEREPUBLIC GH-321 LOCAL APPROVE — FAIL-CLOSED AUDIT GATE — PRODUCTION FALSE`
+
+---
+
 ## 2026-09-19 EEST GH-321 npm audit-gate diagnostics → In Progress
 
 - **Branch:** `fix/GH-321-npm-audit-gate` from exact clean main
