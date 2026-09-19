@@ -1,5 +1,88 @@
 # TrueRepublic Agent Bridge
 
+## 2026-09-19 13:04 EEST GH-316 hosted security reconciliation → Blocked by GH-318
+
+- **Published work:** commit `36359113a66b02dc5d161168eb1a2833d592878d`
+  is pushed on `docs/GH-316-comprehensive-status`; protected PR
+  [#317](https://github.com/NeaBouli/TrueRepublic/pull/317) is open.
+- **Hosted passes:** DeepScan, retirement contracts, Node audit and secret scan
+  pass on the first exact PR head, resolving the missing local gitleaks evidence.
+- **New exact finding:** hosted Security Scan run `35436172419`, `go-vuln` job
+  `105879089103`, rejects newly published reachable GO-2026-6348. Main directly
+  pins `google.golang.org/grpc` 1.82.2; the official fix begins at 1.83.1.
+- **Classification:** this is a real dependency-security gate, not an Actions
+  rate-limit or quota failure. It was absent from the bounded four-ID no-fix
+  policy and therefore failed closed as designed.
+- **Ticket:** opened [GH-318](https://github.com/NeaBouli/TrueRepublic/issues/318)
+  with narrow upgrade, module-graph, transport, multi-validator, IBC and full
+  security acceptance criteria. No ignore/allowlist exception was added.
+- **Report correction:** the durable status now records 18 open issues, three
+  open PRs, both dependency advisories, GH-318 and the dependency-aware merge
+  sequence for PRs #302/#317.
+- **Boundary:** documentation/coordination only. No dependency, runtime,
+  consensus, deployment, migration, key/fund or production change occurred.
+  PR #317 must remain unmerged until GH-318 lands and exact-head CI is green.
+- **Rollout:** unchanged at 36/59; production remains false. Kimi remains
+  unused because the operator reported it unavailable until 17:45.
+
+---
+
+## 2026-09-19 13:02 EEST GH-316 comprehensive status checkpoint → Local Verified / PR pending
+
+- **Branch:** `docs/GH-316-comprehensive-status` from exact clean main
+  `f5de5a150b9ff0edc51d68411b7829e78bcf78e6`.
+- **Issue:** [GH-316](https://github.com/NeaBouli/TrueRepublic/issues/316).
+- **Changed:**
+  - `docs/status/COMPREHENSIVE_PROJECT_STATUS_2026-09-19.md` — 800+ line
+    evidence-backed current state, all remaining Basic-59 gates, all 42 audit
+    findings, issue/PR dispositions, GH-300, Alpha/V4/GH-232 and completion path.
+  - `README.md` — durable link to the point-in-time checkpoint.
+  - `BRIDGE.md` and `docs/agent-bridge/ACTION_LOG.md` — append-only task evidence.
+- **Review:** bounded Terra read-only review found no P0 contradiction or
+  arithmetic error. All six P1 clarity/completeness notes were incorporated.
+  Kimi was not used because the operator reported it unavailable until 17:45.
+- **Tests:**
+  - `GOCACHE=/tmp/tr-status-go-build ./scripts/check-consistency.sh` → PASS,
+    all documentation/status/Phase-7/security-review checks consistent.
+  - `make license-policy-contract-test` → PASS.
+  - local Markdown link inventory → 21 links, zero unresolved local targets.
+  - `git diff --check` → PASS.
+  - `make secret-scan` → not run locally: pinned `gitleaks` executable is not
+    installed. The protected Security Scan remains mandatory before merge.
+- **Risk:** Low runtime risk; documentation-only. High status-governance impact,
+  so protected Docs/Security/review checks and exact-main readback are mandatory.
+- **Rollout:** unchanged at 36/59; production remains false.
+- **Ready for:** commit, push and protected PR. No implementation, dependency,
+  rollout, release, deployment, migration, key/fund or production action.
+
+---
+
+## 2026-09-19 12:41 EEST GH-316 comprehensive status checkpoint → In Progress
+
+- **Branch:** `docs/GH-316-comprehensive-status` from exact clean
+  `origin/main` `f5de5a150b9ff0edc51d68411b7829e78bcf78e6` in an isolated
+  worktree; the dirty GH-300 checkout is preserved and untouched.
+- **Issue:** [GH-316](https://github.com/NeaBouli/TrueRepublic/issues/316).
+- **Scope:** publish a durable, evidence-backed status quo and complete
+  dependency-aware backlog. Reconcile Basic-59, audit remediation, open PRs,
+  GH-300, Alpha, V4 and GH-232 without implementation or rollout credit.
+- **Changed:** `docs/status/COMPREHENSIVE_PROJECT_STATUS_2026-09-19.md` plus
+  append-only coordination entries.
+- **Current evidence:** canonical main remains 36/59 and production false; 17
+  open issues including GH-316 and two open PRs. PR #301 fails only its Vite
+  documentation
+  consistency check; PR #302 fails rust-audit on RUSTSEC-2026-0285. GitHub API
+  quota is 5000/5000 and Actions is not rate-limited.
+- **Risk:** Low for runtime behavior; high informational impact because the
+  report controls prioritization and production claims.
+- **Coordination:** Kimi K3 is unavailable until 17:45 and has not been used.
+  This documentation task introduces no overlapping implementation writer.
+- **Next:** run documentation/consistency/diff validation, independent report
+  completeness review if available, publish protected PR and synchronize this
+  block with exact results.
+
+---
+
 ## 2026-09-13 EEST GH-297 ZKP protocol freeze → Done on exact main
 
 - **Implementation:** PR [#298](https://github.com/NeaBouli/TrueRepublic/pull/298)

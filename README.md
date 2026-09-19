@@ -282,6 +282,10 @@ The checklist below records implemented surface area, not a production security
 approval. Current evidence, risks, and commands are maintained in
 [`BRIDGE.md`](BRIDGE.md) and the active
 [rollout tracker #29](https://github.com/NeaBouli/TrueRepublic/issues/29).
+The point-in-time inventory of completed foundations, every open rollout gate,
+the 42-finding audit queue and the later Alpha/V4/ballot programs is preserved
+in the
+[2026-09-19 comprehensive project-status checkpoint](docs/status/COMPREHENSIVE_PROJECT_STATUS_2026-09-19.md).
 
 GH-297 contributes 62 fail-closed Go contract cases to the standard-suite
 arithmetic by pinning the frozen protocol manifest, source-spec digest,
