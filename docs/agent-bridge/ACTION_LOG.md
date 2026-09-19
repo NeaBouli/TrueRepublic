@@ -1,5 +1,20 @@
 # Action Log
 
+## 2026-09-19 - GH-304 refreshed on fixed exact main
+
+- Merged exact main `b26b2b9` into GH-304 after the dependency/security stack
+  passed all post-merge workflows. Only append-only coordination files
+  conflicted; both histories were preserved and no implementation file
+  conflicted.
+- Post-sync documentation consistency and the complete truedemocracy package
+  test pass. Protected exact-head CI and external review remain mandatory.
+- Kimi's bounded read-only review was attempted again, but the provider
+  returned HTTP 403 before work. No Kimi output or duplicate write exists.
+- No repair/migration, deployment, release, rollout credit or production action
+  occurred.
+
+---
+
 ## 2026-09-19 - GH-304 critical governance fix locally verified
 
 - Kimi K3 implemented the bounded real-bech32 ElectAdmin correction,

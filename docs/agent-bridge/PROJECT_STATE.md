@@ -1,5 +1,17 @@
 # Project State
 
+GH-304 is now unblocked and synchronized with exact green main `b26b2b9`.
+The merge introduced no Go-code conflict; only append-only coordination
+histories required union. Documentation consistency and the complete
+`x/truedemocracy` package pass after sync. The branch still requires full
+protected exact-head CI, external review and zero unresolved threads before
+merge. Kimi's requested read-only deep review could not start because the
+provider still returns HTTP 403 for its five-hour quota; Kimi made no write.
+No legacy repair/migration, deployment or production action is authorized.
+Rollout remains 36/59 and production false.
+
+---
+
 GH-304's critical TRR-01 implementation is locally verified on isolated branch
 `fix/GH-304-elect-admin`. Elections use canonical decoded addresses; corrupt
 stored admins are detected read-only and quarantined without silent repair;

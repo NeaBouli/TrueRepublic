@@ -1,5 +1,29 @@
 # TrueRepublic Agent Bridge
 
+## 2026-09-19 EEST GH-304 unblocked and synchronized → Protected re-review
+
+- **Base:** GH-318/GH-305/GH-321 security stack is complete on exact main
+  `b26b2b9ec18ea16922b894f4cfe33a5dfa2a203c`; all post-merge Go, Rust,
+  client, security, docs, reproducibility and Pages workflows pass.
+- **Sync:** `origin/main` was merged into `fix/GH-304-elect-admin`. The only
+  conflicts were append-only Bridge/State histories; both histories were
+  retained. No Go implementation or test conflict occurred.
+- **Evidence after sync:** `bash scripts/check-consistency.sh` passes and
+  `go test ./x/truedemocracy` passes. Full exact-head protected CI/review is
+  required after push; earlier pre-sync evidence is not treated as final.
+- **Agent division:** Kimi was assigned the non-overlapping read-only deep
+  review of the synchronized GH-304 diff, but its provider again returned HTTP
+  403 for the five-hour quota before analysis began. Kimi produced no review or
+  write. Sol owns sync, diff/security review, full verification and GitHub
+  closure; no duplicate writer exists.
+- **Boundary:** this PR prevents new corruption and detects/quarantines legacy
+  corruption read-only. It performs no silent repair, migration, deployment,
+  release or live-chain mutation. Rollout remains 36/59; production false.
+
+`TRUEREPUBLIC GH-304 UNBLOCKED — EXACT-HEAD RE-REVIEW PENDING — NO MIGRATION`
+
+---
+
 ## 2026-09-19 EEST GH-304 critical fix locally verified → GH-318 blocks protected merge
 
 - **Implementation:** real-bech32 elections now compare against

@@ -1,5 +1,19 @@
 # Recovery Queue
 
+## In review - GH-304 ElectAdmin corruption and legacy-state detection
+
+- [x] Land GH-318/GH-305/GH-321 and verify exact main.
+- [x] Merge fixed exact main into GH-304 without implementation conflicts.
+- [x] Preserve both append-only Bridge/State histories and pass documentation
+  consistency plus the complete truedemocracy package after sync.
+- [ ] Push the synchronized head and pass the complete protected exact-head
+  matrix, external review and zero unresolved review-thread gate.
+- [ ] Merge, verify exact main and close GH-304/audit-register references.
+- [ ] Keep any mutating legacy repair or migration in a separate explicitly
+  approved task; GH-304 remains detector/quarantine-only for legacy state.
+
+---
+
 ## In progress - GH-304 ElectAdmin corruption and legacy-state detection
 
 - [x] Reproduce TRR-01 with real bech32 SDK addresses on the frozen main
