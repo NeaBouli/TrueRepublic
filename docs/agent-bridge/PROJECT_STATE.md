@@ -1,5 +1,18 @@
 # Project State
 
+GH-321 is active on isolated branch `fix/GH-321-npm-audit-gate` from exact clean
+main `f5de5a150b9ff0edc51d68411b7829e78bcf78e6`. It will keep npm auditing
+fail-closed while correctly classifying npm operational/error JSON and invalid
+schemas, with deterministic node:test coverage and no advisory bypass. Claude
+Code owns only the small parser/test implementation; Sol owns security semantics,
+integration, full verification and external actions. Kimi is quota-blocked and
+has no writer assignment. Tests are pending. Rollout stays 36/59 and production
+remains false.
+
+Updated: 2026-09-19 EEST
+
+---
+
 GH-297 is complete on exact implementation main
 `c5d949f8b55a7f323df1867d6b9578f8bec1cf17`. PR #298 exact head `0124e7b`
 passed every applicable protected context, CodeRabbit and DeepScan without an

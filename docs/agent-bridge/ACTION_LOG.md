@@ -1,5 +1,21 @@
 # Action Log
 
+## 2026-09-19 - GH-321 npm audit-gate diagnostics started
+
+- PR #320 exposed two unrelated npm audit job failures after lint, tests and
+  build passed. Read-only reproduction proved npm operational failures can emit
+  valid error JSON without `vulnerabilities`, which the current gate safely but
+  misleadingly labels `invalid npm audit report`.
+- Created isolated branch/worktree `fix/GH-321-npm-audit-gate` from exact clean
+  main `f5de5a1`. GH-305/#322, GH-318/#320 and GH-304/#319 remain separate.
+- Claude Code receives only the small parser/test implementation. Sol owns
+  fail-closed semantics, diff review, full gates and closure. Kimi is unavailable
+  due its five-hour quota; no overlapping writer exists.
+- No bypass, dependency refresh, deployment, migration, release or production
+  action is in scope. Rollout remains 36/59.
+
+---
+
 ## 2026-09-13 - GH-297 merged, exact main and public state verified
 
 - PR #298 exact head `0124e7b` passed the complete protected matrix with zero

@@ -1,5 +1,18 @@
 # Recovery Queue
 
+## In progress - GH-321 npm audit-gate diagnostics
+
+- [ ] Distinguish npm operational/error JSON and spawn/schema failures from a
+  valid advisory report without weakening fail-closed behavior.
+- [ ] Preserve real advisory handling when npm exits nonzero with a valid report.
+- [ ] Add deterministic node:test coverage for clean/advisory/error/malformed/
+  invalid-shape and process-failure paths.
+- [ ] Complete bounded Claude implementation and Sol security/integration review.
+- [ ] Pass full client, real audit, repository consistency/security and protected
+  exact-head CI/review before merge.
+- [ ] Record exact evidence in both Bridges without rollout credit or production
+  claims.
+
 ## Completed - GH-297 production-target ZKP protocol freeze
 
 - [x] Add a strict versioned freeze manifest binding the existing ZKP circuit

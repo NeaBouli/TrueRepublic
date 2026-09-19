@@ -1,5 +1,24 @@
 # TrueRepublic Agent Bridge
 
+## 2026-09-19 EEST GH-321 npm audit-gate diagnostics → In Progress
+
+- **Branch:** `fix/GH-321-npm-audit-gate` from exact clean main
+  `f5de5a150b9ff0edc51d68411b7829e78bcf78e6`.
+- **Issue:** [#321](https://github.com/NeaBouli/TrueRepublic/issues/321).
+- **Scope:** keep the maintained-client audit gate fail-closed while separating
+  npm operational/error JSON from valid advisory reports and adding deterministic
+  parser/process fixtures. No advisory bypass or unrelated dependency update.
+- **Division:** Claude Code owns only the small parser/test implementation.
+  Sol owns security semantics, diff review, full client/repository integration,
+  CI, GitHub actions and closure. Kimi is unavailable due its five-hour quota;
+  no overlapping writer exists.
+- **Boundary:** no retry that hides persistent failure, workflow weakening,
+  deployment, migration, release or production action. Rollout remains 36/59.
+
+`TRUEREPUBLIC GH-321 ACTIVE — FAIL-CLOSED CI DIAGNOSTICS — PRODUCTION FALSE`
+
+---
+
 ## 2026-09-13 EEST GH-297 ZKP protocol freeze → Done on exact main
 
 - **Implementation:** PR [#298](https://github.com/NeaBouli/TrueRepublic/pull/298)
