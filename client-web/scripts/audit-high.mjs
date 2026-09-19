@@ -11,6 +11,13 @@ export const ALLOWED_ADVISORIES = new Set([
 ]);
 
 const BLOCKING_SEVERITIES = new Set(['high', 'critical']);
+
+// npm audit JSON for a large dependency tree exceeds the 1 MiB spawnSync
+// default. The cap stays bounded so a runaway child cannot exhaust memory;
+// exceeding it surfaces as a spawn failure and therefore fails closed.
+const AUDIT_MAX_BUFFER_BYTES = 32 * 1024 * 1024;
+const MAX_DIAGNOSTIC_CHARS = 400;
+const SAFE_CODE_PATTERN = /^[A-Za-z0-9_.-]{1,64}$/;
 const ROUTER_IMPORT_ALLOWLIST = new Set([
   'BrowserRouter',
   'MemoryRouter',
@@ -150,13 +157,110 @@ function sourceFiles(directory) {
   return files;
 }
 
+export function isPlainObject(value) {
+  if (typeof value !== 'object' || value === null || Array.isArray(value)) return false;
+  const prototype = Object.getPrototypeOf(value);
+  return prototype === Object.prototype || prototype === null;
+}
+
+// npm error output can embed registry URLs carrying credentials. Only short,
+// well-formed machine codes are echoed; everything else is dropped so the gate
+// never turns a failure into a secret disclosure.
+export function safeDiagnostic(value) {
+  if (typeof value !== 'string') return 'unavailable';
+  const trimmed = value.trim();
+  if (trimmed === '') return 'unavailable';
+  if (!SAFE_CODE_PATTERN.test(trimmed)) return 'redacted';
+  return trimmed.slice(0, MAX_DIAGNOSTIC_CHARS);
+}
+
+function auditReportIsOperationalError(parsed) {
+  return Object.hasOwn(parsed, 'error');
+}
+
+/**
+ * Classify a spawnSync result into exactly one outcome. Only `report` may be
+ * evaluated; every other outcome fails the gate closed. A nonzero npm exit
+ * status is deliberately not an outcome of its own: `npm audit` exits nonzero
+ * whenever it finds advisories at or above the audit level, and those runs
+ * still carry a valid report that must be evaluated normally.
+ */
+export function classifyAuditResult(result) {
+  if (typeof result !== 'object' || result === null) {
+    return { kind: 'spawn-failure', detail: 'npm audit returned no result' };
+  }
+
+  if (result.error) {
+    return {
+      kind: 'spawn-failure',
+      detail: `npm audit could not be executed (${safeDiagnostic(result.error.code)})`,
+    };
+  }
+
+  if (result.signal) {
+    return {
+      kind: 'spawn-failure',
+      detail: `npm audit was terminated by signal ${safeDiagnostic(result.signal)}`,
+    };
+  }
+
+  if (typeof result.stdout !== 'string' || result.stdout.trim() === '') {
+    return { kind: 'malformed', detail: 'npm audit produced no JSON on stdout' };
+  }
+
+  let parsed;
+  try {
+    parsed = JSON.parse(result.stdout);
+  } catch {
+    return { kind: 'malformed', detail: 'npm audit output was not valid JSON' };
+  }
+
+  if (!isPlainObject(parsed)) {
+    return { kind: 'malformed', detail: 'npm audit output was not a JSON object' };
+  }
+
+  if (auditReportIsOperationalError(parsed)) {
+    const code = isPlainObject(parsed.error)
+      ? safeDiagnostic(parsed.error.code)
+      : safeDiagnostic(parsed.error);
+    return { kind: 'operational', detail: `npm audit reported an operational error (${code})` };
+  }
+
+  if (!isPlainObject(parsed.vulnerabilities)) {
+    return {
+      kind: 'malformed',
+      detail: 'npm audit report has no valid vulnerabilities object',
+    };
+  }
+
+  if (!Number.isInteger(result.status) || result.status < 0) {
+    return { kind: 'spawn-failure', detail: 'npm audit returned no valid exit status' };
+  }
+
+  if (result.status > 1) {
+    return {
+      kind: 'operational',
+      detail: `npm audit exited with unexpected status ${result.status}`,
+    };
+  }
+
+  if (result.status === 1 && Object.keys(parsed.vulnerabilities).length === 0) {
+    return {
+      kind: 'operational',
+      detail: 'npm audit exited unsuccessfully without reporting an advisory',
+    };
+  }
+
+  return { kind: 'report', report: parsed };
+}
+
 function vulnerabilityIsAllowed(name, vulnerabilities, visiting = new Set()) {
   if (visiting.has(name)) return false;
+  if (!Object.hasOwn(vulnerabilities, name)) return false;
 
   const vulnerability = vulnerabilities[name];
-  if (!vulnerability || !Array.isArray(vulnerability.via) || vulnerability.via.length === 0) {
-    return false;
-  }
+  if (!isPlainObject(vulnerability)) return false;
+  if (!Array.isArray(vulnerability.via) || vulnerability.via.length === 0) return false;
 
   const nextVisiting = new Set(visiting).add(name);
   return vulnerability.via.every((via) => {
@@ -168,17 +272,23 @@ function vulnerabilityIsAllowed(name, vulnerabilities, visiting = new Set()) {
 }
 
 export function evaluateAudit(report) {
-  if (!report || typeof report !== 'object' || !report.vulnerabilities) {
+  if (!isPlainObject(report) || !isPlainObject(report.vulnerabilities)) {
     return { ok: false, accepted: [], blockers: ['invalid npm audit report'] };
   }
 
-  const blocking = Object.entries(report.vulnerabilities).filter(([, vulnerability]) =>
-    BLOCKING_SEVERITIES.has(vulnerability?.severity)
-  );
   const accepted = [];
   const blockers = [];
 
-  for (const [name] of blocking) {
+  for (const [name, vulnerability] of Object.entries(report.vulnerabilities)) {
+    // An entry that is not a well-formed advisory record cannot be shown to be
+    // below the blocking severities, so it blocks rather than being skipped.
+    if (!isPlainObject(vulnerability) || typeof vulnerability.severity !== 'string') {
+      blockers.push(name);
+      continue;
+    }
+
+    if (!BLOCKING_SEVERITIES.has(vulnerability.severity)) continue;
+
     if (vulnerabilityIsAllowed(name, report.vulnerabilities)) {
       accepted.push(name);
     } else {
@@ -199,17 +309,18 @@ function run() {
   const result = spawnSync('npm', ['audit', '--json', '--audit-level=high'], {
     cwd: process.cwd(),
     encoding: 'utf8',
+    maxBuffer: AUDIT_MAX_BUFFER_BYTES,
   });
 
-  let report;
-  try {
-    report = JSON.parse(result.stdout);
-  } catch {
-    process.stderr.write(result.stderr || 'npm audit did not return valid JSON\n');
+  // A nonzero npm exit status is expected whenever advisories are present, so
+  // the classification - not the status - decides whether a report exists.
+  const outcome = classifyAuditResult(result);
+  if (outcome.kind !== 'report') {
+    process.stderr.write(`npm audit gate failed closed [${outcome.kind}]: ${outcome.detail}\n`);
     process.exit(1);
   }
 
-  const evaluation = evaluateAudit(report);
+  const evaluation = evaluateAudit(outcome.report);
   if (!evaluation.ok) {
     process.stderr.write(
       `Blocking high/critical npm advisories: ${evaluation.blockers.join(', ')}\n`
