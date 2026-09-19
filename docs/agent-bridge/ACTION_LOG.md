@@ -1,5 +1,25 @@
 # Action Log
 
+## 2026-09-19 - GH-318 gRPC security update locally verified
+
+- Kimi first reconciled gRPC v1.82.2 to the then-advertised smallest fix
+  v1.83.1 and its exact MVS graph. Sol's real vulnerability gate proved that
+  version still reaches newly catalogued GO-2026-6443. Official Go data fixes
+  the second issue at v1.83.2, so Kimi applied the bounded correction and Sol
+  reviewed the expanded x/* graph plus canonical tidy state.
+- The final graph selects gRPC v1.83.2 and contains no v1.82.x, v1.83.0 or
+  v1.83.1 gRPC. The real vulnerability policy and adversarial fixtures pass;
+  no allowlist entry or policy weakening was added.
+- PASS: focused gRPC/network packages; readonly build; full repository
+  Build/Vet/Race/Coverage; critical coverage at 73.6/51.1/64.3%; security,
+  static, secret, docs, license and diff gates; IBC two-chain 3/3 in 45.542s;
+  multi-validator recovery 8/8 in 993.048s.
+- Only root `go.mod` and `go.sum` plus task coordination records changed. No
+  source, policy, workflow, deployment, migration, release, live-network,
+  real-key/fund or production action occurred. Rollout remains 36/59.
+
+---
+
 ## 2026-09-19 - GH-318 gRPC security reconciliation started
 
 - Confirmed the real local and hosted vulnerability gate rejects
