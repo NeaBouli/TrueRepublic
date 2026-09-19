@@ -1,5 +1,27 @@
 # Recovery Queue
 
+## In progress - GH-304 ElectAdmin corruption and legacy-state detection
+
+- [ ] Reproduce TRR-01 with real bech32 SDK addresses on the frozen main
+  baseline.
+- [ ] Compare elected/admin identity canonically and parse the elected winner
+  with `sdk.AccAddressFromBech32` before state mutation.
+- [ ] Fail deterministically without panic or partial domain mutation.
+- [ ] Prove member, treasury, permission-register and export/import behavior
+  remains valid after election.
+- [ ] Add a read-only detector for already-corrupted domain-admin state.
+- [ ] Keep repair/migration, deployment, release and live-chain actions out of
+  scope pending a separate exact approval.
+- [ ] Complete Kimi bounded implementation, Sol line-by-line review, focused
+  and full Go/race/coverage/recovery/security verification, protected CI and
+  exact-main closeout.
+
+## Paused - GH-300 maintained-browser Groth16 prover integration
+
+- GH-300's uncommitted local checkout is preserved untouched while the P0
+  audit remediation sequence begins with GH-304. Resume only after the
+  GH-304 first-response block and with GH-309 identity-safety boundaries.
+
 ## Completed - GH-297 production-target ZKP protocol freeze
 
 - [x] Add a strict versioned freeze manifest binding the existing ZKP circuit

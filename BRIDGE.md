@@ -1,5 +1,31 @@
 # TrueRepublic Agent Bridge
 
+## 2026-09-19 EEST GH-304 ElectAdmin corruption recovery → In Progress
+
+- **Branch:** `fix/GH-304-elect-admin` from exact clean `origin/main`
+  `f5de5a150b9ff0edc51d68411b7829e78bcf78e6` in an isolated worktree.
+- **Issue:** [GH-304](https://github.com/NeaBouli/TrueRepublic/issues/304),
+  audit register [GH-303](https://github.com/NeaBouli/TrueRepublic/issues/303),
+  rollout tracker [GH-29](https://github.com/NeaBouli/TrueRepublic/issues/29).
+- **Scope:** reproduce and minimally repair TRR-01: ElectAdmin must compare and
+  store canonical SDK addresses, fail deterministically before any partial
+  mutation, preserve admin/member/treasury/export-import behavior, and expose a
+  read-only detector for already-corrupted domain-admin state.
+- **Division:** Kimi K3 owns only the bounded governance implementation and
+  focused regression/invariant tests. Sol owns reproduction confirmation,
+  architecture and recovery semantics, every diff review, detector/CLI
+  integration decisions, full repository and recovery verification, GitHub
+  writes, protected PR, merge and closure. No overlapping writer.
+- **Safety:** Critical consensus/state path. No legacy-state mutation, repair,
+  migration, deployment, release, live-chain action, real key or real fund is
+  authorized. A detector may only read and report.
+- **Preservation:** the dirty `feature/GH-300-browser-zkp-prover` checkout and
+  all unrelated worktrees are untouched and are not merge sources.
+- **Status:** implementation and focused tests pending. Rollout remains 36/59;
+  production remains false.
+
+---
+
 ## 2026-09-13 EEST GH-297 ZKP protocol freeze → Done on exact main
 
 - **Implementation:** PR [#298](https://github.com/NeaBouli/TrueRepublic/pull/298)

@@ -5713,3 +5713,17 @@
   hosted findings without an overlapping writer.
 - GH-294 adds no rollout credit and is not an independent audit. Phase 5 stays
   open; rollout remains 35/59, Phase 6 6/7, Phase 7 3/10, production false.
+
+## 2026-09-19 EEST - GH-304 critical ElectAdmin remediation started
+
+- Created isolated branch `fix/GH-304-elect-admin` from exact clean main
+  `f5de5a150b9ff0edc51d68411b7829e78bcf78e6`; the dirty GH-300 checkout and
+  every unrelated worktree remain untouched.
+- Bound work to GH-304/TRR-01: real-bech32 reproduction, canonical compare and
+  parse-before-mutation, atomic deterministic failure, admin/member/treasury/
+  export-import regression evidence and a read-only corrupt-state detector.
+- Kimi K3 owns only the bounded implementation and focused tests. Sol owns
+  architecture, recovery semantics, diff/security review, complete gates and
+  every Git/GitHub action. No implementation overlap is allowed.
+- No state repair, migration, deployment, release, production action, real key
+  or real fund is authorized. Rollout remains 36/59 and production false.
