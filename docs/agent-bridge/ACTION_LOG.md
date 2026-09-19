@@ -5713,3 +5713,45 @@
   hosted findings without an overlapping writer.
 - GH-294 adds no rollout credit and is not an independent audit. Phase 5 stays
   open; rollout remains 35/59, Phase 6 6/7, Phase 7 3/10, production false.
+
+---
+
+## 2026-09-19 12:41 EEST — GH-316 comprehensive status checkpoint started
+
+- Opened GH-316 and created isolated branch
+  `docs/GH-316-comprehensive-status` from exact clean main `f5de5a1`.
+- Reconciled live GitHub: 16 pre-existing open issues plus new GH-316, two open
+  PRs, API quota 5000/5000, and no Actions rate-limit blocker. PR #301's exact
+  failure is Vite 8.3.0
+  lockfile versus 8.2.2 status documentation; PR #302's exact failure is
+  RUSTSEC-2026-0285.
+- Drafted the durable status report under `docs/status/`, including 36/59
+  arithmetic, all 42 audit findings, issues #304-#315, GH-300, Basic rollout
+  exit work, Alpha/V4/GH-232 and the dependency-aware completion sequence.
+- No code, dependency, consensus, wallet, contract, deployment, release,
+  migration, key/fund or production state was changed. GH-300 local work was
+  not touched.
+- A bounded Terra read-only review found no P0 contradiction or arithmetic
+  error. Its six P1 clarity/completeness notes were incorporated: independent
+  audit closure wording, exact V4-0 qualification, the non-counted Phase-2
+  fail-closed control, and complete Alpha/V4/ballot decision gates.
+
+---
+
+## 2026-09-19 13:02 EEST — GH-316 local verification complete
+
+- Terra's independent read-only reconciliation found no P0 contradiction,
+  arithmetic error or missing primary program. Six P1 wording/detail notes were
+  incorporated across audit closure, Phase-2 accounting, V4-0, Alpha, V4 and
+  ballot gates.
+- `GOCACHE=/tmp/tr-status-go-build ./scripts/check-consistency.sh` passes every
+  status, technology, rollout, security-review and documentation contract.
+  `make license-policy-contract-test`, 21-link local-target validation and
+  `git diff --check` pass.
+- Local `make secret-scan` could not start because the pinned `gitleaks`
+  executable is absent. No exception is introduced; protected Security Scan is
+  required before merge.
+- The report is linked from README. Rollout remains 36/59 and production false.
+  Commit, push, PR, exact-head checks and final closeout remain.
+
+---
