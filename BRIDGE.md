@@ -1,5 +1,30 @@
 # TrueRepublic Agent Bridge
 
+## 2026-09-19 21:42 EEST GH-318/GH-305/GH-321 security stack → Protected main-base verification
+
+- **Merged stack steps:** PR #323 (GH-321 npm audit diagnostics) was squash-
+  merged into `fix/GH-305-rustls`; PR #322 (GH-305 rustls remediation) then
+  passed its exact cumulative head matrix with zero unresolved review threads
+  and was squash-merged into `fix/GH-318-grpc-security` as
+  `f854bdca6ce5eeaf9b45a6de52bcba34e6b434ab`.
+- **Current gate:** draft PR #320 now carries the reviewed gRPC, rustls and npm
+  audit-gate changes against `main`. Its complete main-base Go, Rust, client,
+  security, docs, IBC, recovery and reproducibility matrix is running; it will
+  not be marked ready or merged before exact-head checks and review threads are
+  clean.
+- **Agent division:** Sol owns this integration/merge chain and all external
+  writes. Kimi was assigned a non-overlapping read-only GH-304 deep review, but
+  the provider returned HTTP 403 for the five-hour quota before analysis began;
+  Kimi produced no diff or review output. GH-304 remains untouched and reserved
+  for the next block once the provider is actually available.
+- **Boundary:** no deployment, migration, restart, release, live-network action,
+  real key/fund operation or rollout credit. Rollout remains 36/59 and
+  production remains false.
+
+`TRUEREPUBLIC SECURITY STACK ACTIVE — EXACT-HEAD MAIN MATRIX — PRODUCTION FALSE`
+
+---
+
 ## 2026-09-19 EEST GH-321 npm audit-gate diagnostics → Locally Approved
 
 - **Result:** npm operational/error JSON, spawn/signal/buffer failures,
