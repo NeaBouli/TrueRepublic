@@ -36,7 +36,9 @@ The project must nevertheless remain `production_ready=false` because:
 1. the external audit report identifies seven unresolved Critical/High
    findings, including a reachable Critical domain-admin corruption defect;
 2. the maintained browser ZKP path and production trusted setup are incomplete;
-3. one dependency advisory currently makes PR #302's `rust-audit` red;
+3. two current dependency advisories block the documentation/audit publication
+   path: RUSTSEC-2026-0285 in rustls and the newly published reachable
+   GO-2026-6348 in gRPC;
 4. real private topology, operational rehearsal and sizing evidence do not
    exist;
 5. tagged, signed and published release artifacts do not exist;
@@ -95,8 +97,8 @@ programs and must not be counted as Basic rollout progress.
 | Retired clients | `web-wallet` and `mobile-wallet` exist only in Git history |
 | Release state | `recovery_active` |
 | Production/mainnet | false / not authorized |
-| Open issues | 17 including this checkpoint: #29, #232, #300, #303-#316 |
-| Open pull requests | Two: #301 and #302 |
+| Open issues | 18 including this checkpoint and the newly catalogued gRPC advisory: #29, #232, #300, #303-#316 and #318 |
+| Open pull requests | Three: #301, #302 and this report in #317 |
 
 The repository is monorepo-style: one Git repository contains the Go daemon
 and modules, Rust/CosmWasm workspace, TypeScript client, V4 protocol package,
@@ -463,6 +465,7 @@ no evidence that those contracts were instantiated.
 |---|---|---|---|
 | [#304](https://github.com/NeaBouli/TrueRepublic/issues/304) | ElectAdmin corruption and legacy-state detector/recovery design | Real bech32 regression, canonical parse/store, no partial mutation, admin/treasury/export/import proof, read-only detector | **P0, first** |
 | [#305](https://github.com/NeaBouli/TrueRepublic/issues/305) | rustls advisory | Minimal patched lock, no vulnerable duplicate, complete Rust/security gates | Before PR #302 merge |
+| [#318](https://github.com/NeaBouli/TrueRepublic/issues/318) | Newly published reachable gRPC advisory GO-2026-6348 | Minimal compatible update to at least gRPC 1.83.1, clean effective graph, focused transport/integration coverage and complete Go/security gates | Before PR #317 or any fresh security-gated publication merge |
 | [#306](https://github.com/NeaBouli/TrueRepublic/issues/306) | Validator exit and stone rewards | Slash-safe exit semantics, bounded non-farmable rewards, conservation/recovery tests | Critical/High closure |
 | [#307](https://github.com/NeaBouli/TrueRepublic/issues/307) | One-member authority/revocation | Versioned key rule, one vote/reward, exclusion/purge/rotation semantics | Critical/High closure; feeds future ballot invariants |
 | [#308](https://github.com/NeaBouli/TrueRepublic/issues/308) | Unsafe legacy/example contracts | Prove deployment status, quarantine/remove/rewrite, adversarial tests, cw2/migration if retained | Critical/High closure |
@@ -509,6 +512,22 @@ merged only if all checks are green.
 - Keep unmerged until GH-305 fixes the base dependency without an ignore.
 - Then rebase/rerun exact head and merge the report through normal review.
 
+### PR #317 — this comprehensive status checkpoint
+
+- Publishes this report, links it from the root README and records the work in
+  the append-only Bridge/action log.
+- Local documentation consistency, license-policy, link-target and diff checks
+  pass.
+- Hosted DeepScan, retirement, Node-audit and secret-scan checks pass.
+- The fresh hosted `go-vuln` job correctly fails on newly published reachable
+  [GO-2026-6348](https://pkg.go.dev/vuln/GO-2026-6348), an HTTP/2 DATA-frame
+  fragmentation memory-exhaustion vulnerability affecting
+  `google.golang.org/grpc` before 1.83.1. Main directly pins 1.82.2.
+- GH-318 now owns the narrow dependency remediation and full transport,
+  multi-validator, IBC and security re-verification.
+- This failure is useful new evidence from the checkpoint. PR #317 must remain
+  unmerged until GH-318 lands and the complete exact-head matrix is green.
+
 ### CI and rate limits
 
 - GitHub API core quota was 5,000/5,000 remaining at this checkpoint.
@@ -518,9 +537,10 @@ merged only if all checks are green.
   [GitHub Actions billing](https://docs.github.com/en/billing/concepts/product-billing/github-actions).
 - The visible failures are real repository checks, not a run-rate limit.
 
-Main's latest recorded scheduled security run is green only because it ran
-before the new rustls advisory entered the database. The next fresh scan is
-expected to expose the advisory until GH-305 lands.
+Main's latest recorded scheduled security run predates these current database
+results. Fresh exact-head scans now expose the rustls and gRPC advisories; the
+relevant gates must remain red until GH-305 and GH-318 land. Neither finding is
+an Actions quota or rate-limit condition.
 
 ---
 
@@ -675,12 +695,13 @@ development permission is not production or infrastructure permission.
 3. Specify legacy repair separately; do not execute migration.
 4. Full Go, race/coverage, export/import, recovery and independent review.
 
-### Block 2 — Restore security gate and publish audit
+### Block 2 — Restore dependency security gates and publish documentation
 
 1. GH-305 minimally update rustls.
-2. Run full Rust and repository security gates.
-3. Rebase/rerun PR #302.
-4. Merge audit reports only when exact head is green.
+2. GH-318 minimally update gRPC to a compatible patched release.
+3. Run full Go, Rust, transport/integration and repository security gates.
+4. Rebase/rerun PRs #302 and #317.
+5. Merge audit/status documentation only when each exact head is green.
 
 ### Block 3 — Close Critical/High governance/contracts findings
 
@@ -818,6 +839,8 @@ Until then, the only accurate statement is:
 - [Audit report PR #302](https://github.com/NeaBouli/TrueRepublic/pull/302)
 - [Audit register #303](https://github.com/NeaBouli/TrueRepublic/issues/303)
 - [Status checkpoint issue #316](https://github.com/NeaBouli/TrueRepublic/issues/316)
+- [Status checkpoint PR #317](https://github.com/NeaBouli/TrueRepublic/pull/317)
+- [gRPC advisory remediation #318](https://github.com/NeaBouli/TrueRepublic/issues/318)
 - `docs/status.json`
 - `docs/ROLLOUT_ROADMAP.md`
 - `docs/LIMITATIONS.md`

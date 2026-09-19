@@ -5755,3 +5755,19 @@
   Commit, push, PR, exact-head checks and final closeout remain.
 
 ---
+
+## 2026-09-19 13:04 EEST — GH-316 hosted security finding catalogued
+
+- Pushed commit `36359113a66b02dc5d161168eb1a2833d592878d` and opened protected
+  PR #317. DeepScan, retirement, Node-audit and secret-scan jobs pass.
+- The fresh hosted `go-vuln` job failed closed on newly published reachable
+  GO-2026-6348 in the directly pinned gRPC 1.82.2 dependency; patched releases
+  begin at 1.83.1. This is a real security result, not an Actions quota issue.
+- Opened GH-318 with a narrow dependency-remediation and full transport,
+  multi-validator, IBC and security re-verification contract. No scanner
+  exception or production action was introduced.
+- Updated the comprehensive report with the new advisory, 18-issue/three-PR
+  inventory and corrected dependency-aware sequence. PR #317 remains blocked
+  pending GH-318 and complete green exact-head CI.
+
+---

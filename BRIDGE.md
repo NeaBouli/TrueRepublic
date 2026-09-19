@@ -1,5 +1,32 @@
 # TrueRepublic Agent Bridge
 
+## 2026-09-19 13:04 EEST GH-316 hosted security reconciliation → Blocked by GH-318
+
+- **Published work:** commit `36359113a66b02dc5d161168eb1a2833d592878d`
+  is pushed on `docs/GH-316-comprehensive-status`; protected PR
+  [#317](https://github.com/NeaBouli/TrueRepublic/pull/317) is open.
+- **Hosted passes:** DeepScan, retirement contracts, Node audit and secret scan
+  pass on the first exact PR head, resolving the missing local gitleaks evidence.
+- **New exact finding:** hosted Security Scan run `35436172419`, `go-vuln` job
+  `105879089103`, rejects newly published reachable GO-2026-6348. Main directly
+  pins `google.golang.org/grpc` 1.82.2; the official fix begins at 1.83.1.
+- **Classification:** this is a real dependency-security gate, not an Actions
+  rate-limit or quota failure. It was absent from the bounded four-ID no-fix
+  policy and therefore failed closed as designed.
+- **Ticket:** opened [GH-318](https://github.com/NeaBouli/TrueRepublic/issues/318)
+  with narrow upgrade, module-graph, transport, multi-validator, IBC and full
+  security acceptance criteria. No ignore/allowlist exception was added.
+- **Report correction:** the durable status now records 18 open issues, three
+  open PRs, both dependency advisories, GH-318 and the dependency-aware merge
+  sequence for PRs #302/#317.
+- **Boundary:** documentation/coordination only. No dependency, runtime,
+  consensus, deployment, migration, key/fund or production change occurred.
+  PR #317 must remain unmerged until GH-318 lands and exact-head CI is green.
+- **Rollout:** unchanged at 36/59; production remains false. Kimi remains
+  unused because the operator reported it unavailable until 17:45.
+
+---
+
 ## 2026-09-19 13:02 EEST GH-316 comprehensive status checkpoint → Local Verified / PR pending
 
 - **Branch:** `docs/GH-316-comprehensive-status` from exact clean main
