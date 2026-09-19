@@ -1,5 +1,18 @@
 # Project State
 
+GH-305 is active on isolated branch `fix/GH-305-rustls` from exact clean main
+`f5de5a150b9ff0edc51d68411b7829e78bcf78e6`. The bounded objective is to
+replace vulnerable `rustls 0.23.38` with the smallest compatible patched graph
+for RUSTSEC-2026-0285, without an audit exception or runtime/contract behavior
+change. Kimi owns only the Cargo graph implementation and focused Rust checks;
+Sol owns advisory validation, full diff/security review, integration, external
+actions and closure. Tests and protected CI are pending. Rollout remains 36/59
+and production remains false.
+
+Updated: 2026-09-19 EEST
+
+---
+
 GH-297 is complete on exact implementation main
 `c5d949f8b55a7f323df1867d6b9578f8bec1cf17`. PR #298 exact head `0124e7b`
 passed every applicable protected context, CodeRabbit and DeepScan without an

@@ -1,5 +1,20 @@
 # Action Log
 
+## 2026-09-19 - GH-305 rustls security reconciliation started
+
+- Confirmed hosted Rust security evidence rejects `rustls 0.23.38` for
+  RUSTSEC-2026-0285 and requires `rustls >=0.23.45`; no ignore or exception is
+  permitted.
+- Created isolated branch/worktree `fix/GH-305-rustls` from exact clean main
+  `f5de5a1`; dirty GH-300 and active GH-304/GH-318 work remain untouched.
+- Kimi K3 receives only the bounded Cargo graph update and focused Rust
+  verification. Sol owns upstream/security decisions, full diff review,
+  repository gates, protected CI and GitHub closure.
+- No contract behavior, deployment, migration, release, production, real-key or
+  fund action is in scope. Rollout remains 36/59 and production false.
+
+---
+
 ## 2026-09-13 - GH-297 merged, exact main and public state verified
 
 - PR #298 exact head `0124e7b` passed the complete protected matrix with zero

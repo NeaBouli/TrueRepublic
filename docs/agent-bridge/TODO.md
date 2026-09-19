@@ -1,5 +1,19 @@
 # Recovery Queue
 
+## In progress - GH-305 rustls security reconciliation
+
+- [ ] Verify RUSTSEC-2026-0285, the direct dependency path, compatible patched
+  releases and the smallest canonical Cargo lockfile diff.
+- [ ] Update the graph so no vulnerable `rustls` remains, without an audit
+  ignore, exception or unrelated dependency refresh.
+- [ ] Run Cargo format, clippy with warnings denied, all contract tests, real
+  cargo audit and applicable repository security/license/consistency gates.
+- [ ] Complete Kimi implementation and Sol diff/graph/security review.
+- [ ] Pass protected exact-head CI and review, merge, verify exact main and then
+  refresh the dependency-blocked PR chain.
+- [ ] Record exact evidence in both Bridges without rollout credit or production
+  claims.
+
 ## Completed - GH-297 production-target ZKP protocol freeze
 
 - [x] Add a strict versioned freeze manifest binding the existing ZKP circuit

@@ -1,5 +1,28 @@
 # TrueRepublic Agent Bridge
 
+## 2026-09-19 EEST GH-305 rustls security reconciliation → In Progress
+
+- **Branch:** `fix/GH-305-rustls` from exact clean main
+  `f5de5a150b9ff0edc51d68411b7829e78bcf78e6`.
+- **Issue:** [#305](https://github.com/NeaBouli/TrueRepublic/issues/305),
+  parent audit register [#303](https://github.com/NeaBouli/TrueRepublic/issues/303).
+- **Scope:** resolve RUSTSEC-2026-0285 by selecting the smallest compatible
+  `rustls >=0.23.45` graph, account for every lockfile change and restore the
+  hosted Rust security gate without an ignore or exception.
+- **Division:** Kimi K3 owns the bounded Cargo graph update and focused Rust
+  verification. Sol owns upstream/advisory validation, complete diff and
+  security review, repository integration, protected CI, GitHub actions and
+  closure. No overlapping writer is assigned.
+- **Boundary:** no contract behavior change, instantiation, migration, release,
+  deployment, production action, real keys or funds. Rollout remains 36/59 and
+  production remains false.
+- **Tests:** pending implementation. Existing red hosted evidence identifies
+  `rustls 0.23.38` and RUSTSEC-2026-0285; it is not completion evidence.
+
+`TRUEREPUBLIC GH-305 ACTIVE — RUST DEPENDENCY SECURITY ONLY — PRODUCTION FALSE`
+
+---
+
 ## 2026-09-13 EEST GH-297 ZKP protocol freeze → Done on exact main
 
 - **Implementation:** PR [#298](https://github.com/NeaBouli/TrueRepublic/pull/298)
