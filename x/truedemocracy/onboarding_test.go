@@ -3,6 +3,7 @@ package truedemocracy
 import (
 	"encoding/hex"
 	"errors"
+	"strings"
 	"testing"
 
 	"github.com/cosmos/cosmos-sdk/crypto/keys/ed25519"
@@ -62,6 +63,20 @@ func TestMsgAddMemberValidateBasic(t *testing.T) {
 			t.Fatalf("ValidateBasic error = %v, want wrapped ErrInvalidAddress", err)
 		}
 	})
+
+	// Bech32 decoding accepts all-uppercase encodings, but persisted member
+	// identity is string-keyed and must match AccAddress.String() exactly.
+	// Reject a semantically valid but noncanonical spelling before it can make
+	// admin membership comparisons diverge (GH-304).
+	canonical := sdk.AccAddress("uppercase-member").String()
+	msg := MsgAddMember{
+		Sender:     sdk.AccAddress("admin1"),
+		DomainName: "TestDomain",
+		NewMember:  strings.ToUpper(canonical),
+	}
+	if err := msg.ValidateBasic(); err == nil || !errors.Is(err, sdkerrors.ErrInvalidAddress) {
+		t.Fatalf("uppercase noncanonical member error = %v, want wrapped ErrInvalidAddress", err)
+	}
 }
 
 // ---------- MsgOnboardToDomain ValidateBasic ----------

@@ -167,7 +167,8 @@ func (k Keeper) ElectAdmin(ctx sdk.Context, domainName string) error {
 	bestAddr := ""
 	bestCount := 0
 	for _, member := range domain.Members {
-		if _, err := sdk.AccAddressFromBech32(member); err != nil {
+		memberAddr, err := sdk.AccAddressFromBech32(member)
+		if err != nil || memberAddr.String() != member {
 			continue
 		}
 		if counts[member] > bestCount {
@@ -228,7 +229,8 @@ func (k Keeper) VoteToExclude(ctx sdk.Context, domainName, targetMember, voterAd
 	// The admin ∈ Members invariant (GH-304): normal governance must never
 	// exclude the current domain admin. Reject before any vote key or domain
 	// state is written; a replacement admin must be elected first.
-	if targetMember == domain.Admin.String() {
+	targetAddr, targetErr := sdk.AccAddressFromBech32(targetMember)
+	if targetErr == nil && targetAddr.Equals(domain.Admin) {
 		return false, errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "cannot exclude the current domain admin: elect a replacement admin first")
 	}
 

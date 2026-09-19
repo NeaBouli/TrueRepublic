@@ -342,6 +342,23 @@ func TestVoteToExcludeRejectsCurrentAdmin(t *testing.T) {
 
 	before, _ := k.GetDomain(ctx, "AdminExclusionDomain")
 
+	// A legacy all-uppercase member spelling is semantically the same address.
+	// The admin guard must compare decoded identity, not raw text, and reject
+	// before writing an exclusion vote. Restore canonical state afterward so
+	// the remainder exercises the normal election/exclusion flow.
+	legacy := before
+	legacy.Members = append([]string(nil), before.Members...)
+	legacy.Members[0] = strings.ToUpper(admin.String())
+	saveDomain(t, k, ctx, legacy)
+	legacyTarget := legacy.Members[0]
+	if excluded, err := k.VoteToExclude(ctx, "AdminExclusionDomain", legacyTarget, replacement.String()); err == nil || excluded {
+		t.Fatalf("legacy-spelled current admin exclusion = (%t, %v), want rejected", excluded, err)
+	}
+	if key := excludeVoteKey("AdminExclusionDomain", legacyTarget, replacement.String()); ctx.KVStore(k.StoreKey).Has(key) {
+		t.Fatalf("legacy-spelled admin vote key %q must not be written", key)
+	}
+	saveDomain(t, k, ctx, before)
+
 	// 10 members → 9 eligible voters → the 2/3 threshold is 7 votes
 	// (7*10000 >= 9*6667). Every vote targeting the current admin must be
 	// rejected before any state is written.
@@ -769,17 +786,28 @@ func requireQuarantineEvent(t *testing.T, ctx sdk.Context, domainName, reason st
 	t.Fatalf("quarantine event for domain %s with reason %s not emitted; got %v", domainName, reason, ctx.EventManager().Events())
 }
 
-// TestElectAdminIgnoresInvalidLegacyCandidate proves an unparseable legacy
-// member string never halts the election and never wins: the valid candidate
-// with the next-highest stone count is elected deterministically (GH-304).
+// TestElectAdminIgnoresInvalidLegacyCandidate proves unparseable and
+// noncanonical legacy member strings never halt the election and never win:
+// the valid candidate with the next-highest stone count is elected
+// deterministically (GH-304).
 func TestElectAdminIgnoresInvalidLegacyCandidate(t *testing.T) {
 	k, ctx := setupKeeper(t)
-	addrs := realTestAddrs(4)
-	admin, alice, bob, carol := addrs[0], addrs[1], addrs[2], addrs[3]
+	addrs := realTestAddrs(6)
+	admin, alice, bob, carol, dave, erin := addrs[0], addrs[1], addrs[2], addrs[3], addrs[4], addrs[5]
 	setupBech32ElectionDomain(t, k, ctx, "LegacyDomain", addrs)
 
-	// The invalid entry would win 2:1 over bob if it were ranked.
+	// Both invalid entries would beat bob 2:1 if either were ranked. Full
+	// uppercase bech32 decodes successfully but is not canonical storage text.
 	addInvalidMemberWithStones(t, k, ctx, "LegacyDomain", alice, carol)
+	uppercaseCandidate := strings.ToUpper(dave.String())
+	domain, _ := k.GetDomain(ctx, "LegacyDomain")
+	domain.Members = append(domain.Members, uppercaseCandidate)
+	saveDomain(t, k, ctx, domain)
+	for _, voter := range []sdk.AccAddress{dave, erin} {
+		if err := k.PlaceStoneOnMember(ctx, "LegacyDomain", uppercaseCandidate, voter.String()); err != nil {
+			t.Fatalf("place stone on noncanonical member: %v", err)
+		}
+	}
 	if err := k.PlaceStoneOnMember(ctx, "LegacyDomain", bob.String(), admin.String()); err != nil {
 		t.Fatalf("place stone on bob: %v", err)
 	}
@@ -787,7 +815,7 @@ func TestElectAdminIgnoresInvalidLegacyCandidate(t *testing.T) {
 	if err := k.ElectAdmin(ctx, "LegacyDomain"); err != nil {
 		t.Fatalf("ElectAdmin must ignore the invalid candidate, got %v", err)
 	}
-	domain, _ := k.GetDomain(ctx, "LegacyDomain")
+	domain, _ = k.GetDomain(ctx, "LegacyDomain")
 	if !domain.Admin.Equals(bob) {
 		t.Fatalf("admin = %q, want highest-count valid candidate %s", domain.Admin.String(), bob.String())
 	}

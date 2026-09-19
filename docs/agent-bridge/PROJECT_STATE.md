@@ -6,6 +6,12 @@ events. With 26 Rust and 328 maintained-client cases, the candidate total is
 2,486. README, machine status, Landing, roadmap, architecture and Wiki sources
 now carry the same values; documentation consistency and diff hygiene pass.
 The complete governance race suite and governance Vet also pass on this tree.
+Sol's integration review then found that the SDK accepts all-uppercase bech32
+while membership identity is string-keyed. Normal onboarding and genesis now
+require exact canonical re-encoding, elections ignore noncanonical legacy
+candidates, and admin exclusion compares decoded address identity. Focused
+regressions, the unchanged 691-event recount, full governance Race/Vet and
+documentation consistency pass after the correction.
 Kimi's requested review still produced no work because its provider returned
 HTTP 403 before repository access, and the narrowly separated Claude read-only
 review likewise produced no result because its monthly CLI budget is exhausted.

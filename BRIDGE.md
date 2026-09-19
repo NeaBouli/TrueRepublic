@@ -9897,3 +9897,25 @@ Pending independent Kimi review and complete Sol verification.
 `TRUEREPUBLIC GH-304 LOCAL COUNT PASS — PROTECTED EXACT-HEAD REVIEW NEXT`
 
 ---
+
+## 2026-09-19 22:58 EEST GH-304 canonical identity review → Corrected / PASS
+
+- **Finding:** the Cosmos decoder accepts all-uppercase bech32, but domain
+  membership is string-keyed. A decodable noncanonical member spelling could
+  compare unequal to the same decoded `Admin` and recreate an integrity split.
+- **Correction:** normal onboarding and genesis import require exact canonical
+  address re-encoding; `ElectAdmin` ignores noncanonical legacy candidates;
+  `VoteToExclude` protects the current admin by decoded identity rather than raw
+  text. No legacy state is silently repaired.
+- **Evidence:** focused canonical-boundary regressions pass; fresh governance
+  enumeration remains 691; complete governance Race (48.122s), Vet,
+  documentation consistency and diff hygiene pass. Public arithmetic therefore
+  remains 2,486 = 2,132 Go + 26 Rust + 328 maintained-client.
+- **CI discipline:** superseded exact-head runs were cancelled. The corrected
+  replacement head still requires the full protected matrix, hosted review,
+  zero unresolved threads, merge and exact-main verification. Rollout remains
+  36/59 and production false.
+
+`TRUEREPUBLIC GH-304 CANONICAL BECH32 HARDENED — REPLACEMENT HEAD NEXT`
+
+---

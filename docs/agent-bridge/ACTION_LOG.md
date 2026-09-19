@@ -1,5 +1,24 @@
 # Action Log
 
+## 2026-09-19 - GH-304 canonical bech32 identity edge hardened
+
+- Sol's integration review confirmed Cosmos bech32 decoding accepts an
+  all-uppercase address, while domain membership uses exact strings. A decoded
+  but noncanonical member could therefore diverge from `Admin.String()`.
+- Normal `MsgAddMember` and genesis import now require exact canonical
+  re-encoding; elections ignore unparseable and noncanonical legacy candidates;
+  the current-admin exclusion guard compares decoded address identity rather
+  than raw spelling.
+- Regression coverage proves uppercase onboarding/genesis rejection, legacy
+  candidate filtering and legacy-spelled admin exclusion without vote writes.
+  Focused tests, 691 governance pass events, full governance Race/Vet,
+  consistency and diff hygiene pass. Standard totals remain 2,486 / 2,132 Go.
+- The prior CI generation was cancelled as superseded. A replacement commit,
+  complete exact-head CI/review and merge remain; no state repair, migration,
+  rollout credit, deployment, release or production action occurred.
+
+---
+
 ## 2026-09-19 - GH-304 authoritative test recount and public synchronization
 
 - Fresh package-scoped `go test -json -count=1` enumeration records 2,132 Go

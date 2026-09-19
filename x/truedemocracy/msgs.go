@@ -506,8 +506,9 @@ func (m MsgAddMember) ValidateBasic() error {
 	// New members are stored as canonical bech32 strings; reject anything
 	// else at the entry point so corrupt member values can never enter
 	// state through normal transactions (GH-304).
-	if _, err := sdk.AccAddressFromBech32(m.NewMember); err != nil {
-		return sdkerrors.ErrInvalidAddress.Wrap("new_member must be a valid bech32 address")
+	member, err := sdk.AccAddressFromBech32(m.NewMember)
+	if err != nil || member.String() != m.NewMember {
+		return sdkerrors.ErrInvalidAddress.Wrap("new_member must be a canonical bech32 address")
 	}
 	return nil
 }
