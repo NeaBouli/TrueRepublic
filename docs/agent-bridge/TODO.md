@@ -15,6 +15,22 @@
 - [x] Record local evidence in both Bridges without rollout credit or production
   claims.
 
+## In progress - GH-318 gRPC security reconciliation
+
+- [x] Verify GO-2026-6348 plus the follow-on GO-2026-6443, the smallest common
+  fixed gRPC release, release notes,
+  license, Go/toolchain compatibility and current effective module graph.
+- [x] Update only `google.golang.org/grpc` and unavoidable transitive module
+  metadata; account for every `go.mod` and `go.sum` change.
+- [x] Prove the affected gRPC versions are absent and rerun the real vulnerability
+  gate without adding a new exception.
+- [x] Run focused networking/gRPC tests, IBC two-chain, full Go verification,
+  static/security/secret/license/docs gates and the multi-validator matrix.
+- [x] Complete Kimi implementation and Sol diff/graph/security review.
+- [ ] Commit/push the exact candidate and pass protected exact-head CI/review
+  with zero unresolved review threads before merge.
+- [ ] Merge, verify exact main, rerun blocked PRs #319 and #317, and update both
+  Bridges without rollout credit or production claims.
 ## Completed - GH-297 production-target ZKP protocol freeze
 
 - [x] Add a strict versioned freeze manifest binding the existing ZKP circuit

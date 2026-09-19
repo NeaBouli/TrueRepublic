@@ -24,7 +24,18 @@ change. Kimi owns only the Cargo graph implementation and focused Rust checks;
 Sol owns advisory validation, full diff/security review, integration, external
 actions and closure. Tests and protected CI are pending. Rollout remains 36/59
 and production remains false.
+---
 
+GH-318 is locally approved on isolated branch `fix/GH-318-grpc-security`.
+Official and real-scanner evidence required gRPC v1.83.2: v1.83.1 fixes
+GO-2026-6348 but remains affected by GO-2026-6443. The final canonical module
+graph clears both without an allowlist change. Full Build/Vet/Race/Coverage,
+critical coverage, vulnerability/static/secret/security/docs/license gates,
+IBC two-chain 3/3 and multi-validator recovery 8/8 pass. Kimi K3 owned only the
+bounded dependency implementation; Sol reviewed official advisories, every
+graph change and all complete gates. Protected PR review, merge, exact-main
+verification and reruns of blocked PRs #319/#317 remain. Rollout stays 36/59;
+production false.
 Updated: 2026-09-19 EEST
 
 ---

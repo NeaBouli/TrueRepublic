@@ -46,7 +46,64 @@
   `rustls 0.23.38` and RUSTSEC-2026-0285; it is not completion evidence.
 
 `TRUEREPUBLIC GH-305 ACTIVE — RUST DEPENDENCY SECURITY ONLY — PRODUCTION FALSE`
+---
 
+## 2026-09-19 EEST GH-318 gRPC reconciliation locally approved → Protected review pending
+
+- **Security result:** the directly pinned gRPC moved from vulnerable v1.82.2
+  to v1.83.2. v1.83.1 was tested first and removed GO-2026-6348, but the real
+  scanner exposed GO-2026-6443, whose official fixed range starts at v1.83.2.
+  v1.83.2 is therefore the smallest release that clears both current findings.
+- **Graph:** `go mod tidy` records only unavoidable gRPC/MVS consequences:
+  cel/expr 0.25.2, SPIFFE 2.7.0, OpenTelemetry 1.44 family and detector 1.33,
+  Genproto API/RPC `3dc84a4a5aaa`, plus x/crypto 0.55, x/net 0.58, x/sync
+  0.22, x/sys 0.47, x/term 0.45, x/text 0.41 and x/mod 0.38. No other
+  package, policy, source, workflow or tool module changed.
+- **Agent division:** Kimi K3 owned the official release/module analysis,
+  bounded `go.mod`/`go.sum` implementation and focused transport checks. Sol
+  independently reviewed official Go/gRPC advisories, required canonical tidy,
+  discovered the v1.83.1 follow-on advisory through the real gate, reviewed the
+  complete graph/diff and ran all integration/security gates. No overlapping
+  writer or delegated external action occurred.
+- **PASS:** `go mod tidy -diff`, `go mod verify`, effective graph/absence
+  checks, focused gRPC/network tests, readonly build, full `make verify`
+  Build/Vet/Race/Coverage (root 73.6%, DEX 51.1%, governance 64.3%), critical
+  coverage, security-review contract, staticcheck, gitleaks, documentation
+  consistency, Apache-2.0 policy and diff hygiene.
+- **Vulnerability PASS:** the real gate plus its positive/negative fixtures now
+  passes with only the four exact active no-fix IDs; neither GO-2026-6348 nor
+  GO-2026-6443 is reachable and no exception was added.
+- **Transport/recovery PASS:** all three IBC two-chain scenarios passed in
+  45.542s. All eight multi-validator recovery scenarios passed in 993.048s,
+  including migration rollback, consensus recovery, snapshot state sync,
+  backup/restore export-import, persisted-binary upgrade/rollback, cold
+  failover, key rotation and slashing recovery.
+- **Next:** commit and push the exact candidate, open a draft protected PR,
+  require current exact-head CI/review and zero unresolved threads, then merge
+  and rerun blocked PRs #319 and #317 on fixed main. No rollout credit,
+  deployment, migration, release or production action occurred; 36/59 remains.
+
+`TRUEREPUBLIC GH-318 LOCAL APPROVE — PROTECTED CI/REVIEW PENDING — PRODUCTION FALSE`
+
+---
+
+## 2026-09-19 EEST GH-318 gRPC security reconciliation → In Progress
+
+- **Branch:** `fix/GH-318-grpc-security` from exact clean `origin/main`
+  `f5de5a150b9ff0edc51d68411b7829e78bcf78e6` in an isolated worktree.
+- **Issue:** [GH-318](https://github.com/NeaBouli/TrueRepublic/issues/318),
+  prerequisite for GH-304 draft PR #319 and status PR #317.
+- **Scope:** update only the direct gRPC dependency and unavoidable module-graph
+  consequences to the smallest compatible release that fixes GO-2026-6348;
+  verify upstream compatibility, graph, networking, IBC, recovery and every
+  security/dependency gate. No unrelated dependency reconciliation.
+- **Division:** Kimi K3 owns the bounded dependency/release analysis and the
+  `go.mod`/`go.sum` implementation with focused tests. Sol owns scope and
+  security judgment, every diff/graph review, complete integration gates,
+  GitHub writes, merge and exact-main closeout. No overlapping writer.
+- **Boundary:** no vulnerability allowlist, production deployment, restart,
+  migration, release, live network, real key or real fund action is authorized.
+- **Status:** implementation pending. Rollout remains 36/59; production false.
 ---
 
 ## 2026-09-13 EEST GH-297 ZKP protocol freeze → Done on exact main
