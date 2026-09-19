@@ -2,19 +2,28 @@
 
 ## In progress - GH-304 ElectAdmin corruption and legacy-state detection
 
-- [ ] Reproduce TRR-01 with real bech32 SDK addresses on the frozen main
+- [x] Reproduce TRR-01 with real bech32 SDK addresses on the frozen main
   baseline.
-- [ ] Compare elected/admin identity canonically and parse the elected winner
+- [x] Compare elected/admin identity canonically and parse the elected winner
   with `sdk.AccAddressFromBech32` before state mutation.
-- [ ] Fail deterministically without panic or partial domain mutation.
-- [ ] Prove member, treasury, permission-register and export/import behavior
+- [x] Fail deterministically without panic or partial domain mutation; quarantine
+  pre-existing corrupt domains without silently repairing them or halting healthy
+  domains.
+- [x] Prevent normal member onboarding or admin exclusion from creating new
+  corrupt admin/member state.
+- [x] Prove member, treasury, permission-register and export/import behavior
   remains valid after election.
-- [ ] Add a read-only detector for already-corrupted domain-admin state.
-- [ ] Keep repair/migration, deployment, release and live-chain actions out of
+- [x] Add a read-only detector for already-corrupted domain-admin state and
+  prove the complete module store stays byte-identical during a scan.
+- [x] Keep repair/migration, deployment, release and live-chain actions out of
   scope pending a separate exact approval.
-- [ ] Complete Kimi bounded implementation, Sol line-by-line review, focused
-  and full Go/race/coverage/recovery/security verification, protected CI and
-  exact-main closeout.
+- [x] Complete Kimi bounded implementation, Sol line-by-line review and focused
+  plus full Go/race/coverage/recovery/security verification.
+- [ ] Commit/push the exact candidate and publish the protected GH-304 PR.
+- [ ] Land the separately scoped GH-318 gRPC fix and restore the real
+  vulnerability gate; do not add GO-2026-6348 to the no-fix allowlist.
+- [ ] Refresh GH-304 on fixed main, pass protected exact-head CI/review, merge,
+  verify exact main and close the audit/register references.
 
 ## Paused - GH-300 maintained-browser Groth16 prover integration
 

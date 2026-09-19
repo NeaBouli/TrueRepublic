@@ -2,10 +2,12 @@ package truedemocracy
 
 import (
 	"encoding/hex"
+	"errors"
 	"testing"
 
 	"github.com/cosmos/cosmos-sdk/crypto/keys/ed25519"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 )
 
 // ---------- MsgAddMember ValidateBasic ----------
@@ -15,7 +17,7 @@ func TestMsgAddMemberValidateBasic(t *testing.T) {
 		msg := MsgAddMember{
 			Sender:     sdk.AccAddress("admin1"),
 			DomainName: "TestDomain",
-			NewMember:  "alice",
+			NewMember:  sdk.AccAddress("alice").String(),
 		}
 		if err := msg.ValidateBasic(); err != nil {
 			t.Fatalf("unexpected error: %v", err)
@@ -26,7 +28,7 @@ func TestMsgAddMemberValidateBasic(t *testing.T) {
 		msg := MsgAddMember{
 			Sender:     sdk.AccAddress("admin1"),
 			DomainName: "",
-			NewMember:  "alice",
+			NewMember:  sdk.AccAddress("alice").String(),
 		}
 		if err := msg.ValidateBasic(); err == nil {
 			t.Fatal("expected error for empty domain_name")
@@ -41,6 +43,23 @@ func TestMsgAddMemberValidateBasic(t *testing.T) {
 		}
 		if err := msg.ValidateBasic(); err == nil {
 			t.Fatal("expected error for empty new_member")
+		}
+	})
+
+	// GH-304: normal transaction entry must reject non-bech32 member values
+	// with a deterministic invalid-address error.
+	t.Run("non-bech32 member rejected", func(t *testing.T) {
+		msg := MsgAddMember{
+			Sender:     sdk.AccAddress("admin1"),
+			DomainName: "TestDomain",
+			NewMember:  "not-a-bech32-address",
+		}
+		err := msg.ValidateBasic()
+		if err == nil {
+			t.Fatal("expected error for non-bech32 new_member")
+		}
+		if !errors.Is(err, sdkerrors.ErrInvalidAddress) {
+			t.Fatalf("ValidateBasic error = %v, want wrapped ErrInvalidAddress", err)
 		}
 	})
 }

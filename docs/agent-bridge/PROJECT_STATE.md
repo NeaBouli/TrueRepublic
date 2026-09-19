@@ -1,5 +1,23 @@
 # Project State
 
+GH-304's critical TRR-01 implementation is locally verified on isolated branch
+`fix/GH-304-elect-admin`. Elections use canonical decoded addresses; corrupt
+stored admins are detected read-only and quarantined without silent repair;
+healthy domains continue atomically; normal onboarding and exclusion cannot
+create the admin/member corruption. Kimi K3 authored the bounded implementation
+and tests, Claude supplied the independent edge-case review, and Sol reviewed
+and integrated every write. Full Build/Vet/Race/Coverage, critical coverage,
+security/static/secret/docs/license gates and all eight multi-validator recovery
+scenarios pass. The only red gate is the repository-wide pre-existing
+`GO-2026-6348` gRPC vulnerability, isolated in GH-318. GH-304 must not merge
+until GH-318 lands and the refreshed exact head passes protected CI. No legacy
+repair, migration, deployment or production action is authorized. Rollout stays
+36/59 and production false.
+
+Updated: 2026-09-19 EEST
+
+---
+
 GH-297 is complete on exact implementation main
 `c5d949f8b55a7f323df1867d6b9578f8bec1cf17`. PR #298 exact head `0124e7b`
 passed every applicable protected context, CodeRabbit and DeepScan without an

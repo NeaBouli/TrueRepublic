@@ -317,8 +317,12 @@ func (am AppModule) EndBlock(goCtx context.Context) ([]abci.ValidatorUpdate, err
 	// 4. Evaluate suggestion lifecycle zones (green/yellow/red → auto-delete).
 	am.keeper.ProcessAllLifecycles(ctx)
 
-	// 5. Governance: admin election and inactivity cleanup.
-	am.keeper.ProcessGovernance(ctx)
+	// 5. Governance: admin election and inactivity cleanup. A corrupt stored
+	// domain admin is quarantined domain-locally and never halts the block;
+	// any other election error still aborts the block (GH-304).
+	if err := am.keeper.ProcessGovernance(ctx); err != nil {
+		return nil, err
+	}
 
 	// 6. Check and execute Big Purges (WP S4: periodic permission register cleanup).
 	am.keeper.CheckAndExecuteBigPurges(ctx)

@@ -1,5 +1,30 @@
 # Action Log
 
+## 2026-09-19 - GH-304 critical governance fix locally verified
+
+- Kimi K3 implemented the bounded real-bech32 ElectAdmin correction,
+  read-only legacy-state detector, domain-local quarantine behavior and focused
+  regression/invariant coverage. Sol reviewed every changed file, required
+  cache-context atomicity, rejected silent legacy repair and added the
+  current-admin exclusion invariant before integration.
+- Claude's independent read-only pass exposed three material edge cases:
+  invalid member strings halting elections, automatic mutation of already
+  corrupt state, and exclusion of the current admin. All three are now blocked
+  at normal entry/governance boundaries and covered with real-bech32 tests.
+- PASS: focused race, full repository Build/Vet/Race/Coverage, critical
+  coverage (73.6% root, 51.1% DEX, 64.6% governance), security-review contract,
+  staticcheck, gitleaks, consistency, license policy and diff hygiene.
+- PASS: all eight multi-validator recovery scenarios in 889.560s, including
+  state sync, export/import backup/restore, upgrade/rollback, identity failover,
+  key rotation and slashing.
+- The real vulnerability gate fails only because `GO-2026-6348` reaches the
+  currently pinned gRPC v1.82.2. GH-318 owns the narrow dependency remediation;
+  GH-304 does not weaken policy or mix dependency changes into consensus work.
+- No migration, live repair, deployment, release, production, real-key or
+  real-fund action occurred. Rollout remains 36/59 and production false.
+
+---
+
 ## 2026-09-13 - GH-297 merged, exact main and public state verified
 
 - PR #298 exact head `0124e7b` passed the complete protected matrix with zero

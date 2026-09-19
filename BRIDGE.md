@@ -1,5 +1,49 @@
 # TrueRepublic Agent Bridge
 
+## 2026-09-19 EEST GH-304 critical fix locally verified → GH-318 blocks protected merge
+
+- **Implementation:** real-bech32 elections now compare against
+  `domain.Admin.String()` and decode the winner before mutation. Corrupt stored
+  admins are detected read-only, quarantined domain-locally without silent
+  repair, and reported through a stable event. Valid domains still commit in
+  one cache-context pass; non-quarantine errors abort without partial writes.
+- **Invariant hardening:** normal `MsgAddMember` entry rejects non-bech32
+  members, and exclusion votes cannot remove the current admin or write a vote
+  key; a replacement must be elected first. Existing corrupt state is never
+  mutated by this change. Repair/migration remains separately approval-gated.
+- **Behavior proved:** real-bech32 no-change/tie/winner semantics, invalid
+  legacy candidates, corrupt-domain quarantine, EndBlock continuation,
+  AddMember, treasury, permission register, export/import, full-store detector
+  immutability and replacement-admin exclusion semantics all pass.
+- **Agent division:** Kimi K3 implemented the bounded governance/test block and
+  the final cache-event/admin-exclusion corrections. Sol independently reviewed
+  the complete diff, required multi-domain atomicity and no-auto-repair
+  semantics, integrated the result and owns all full gates and external writes.
+  Claude's earlier read-only review found the invalid-member halt risk, silent
+  repair risk and admin-exclusion invariant gap; all are remediated and covered.
+- **PASS:** focused GH-304 race test; full `make verify` with repository build,
+  Vet and race/coverage (root 73.6%, DEX 51.1%, governance 64.6%); critical
+  coverage thresholds; security-review contract; staticcheck; gitleaks (no
+  leaks); documentation consistency; Apache-2.0 policy; `git diff --check`.
+- **Recovery PASS:** all eight protected-equivalent multi-validator scenarios
+  passed in 889.560s: legacy-authority rollback, consensus recovery, trusted
+  snapshot state sync, backup/restore export-import, persisted-binary
+  upgrade/rollback, identity cold failover, consensus-key rotation and
+  slashing recovery.
+- **Only blocking gate:** the real vulnerability scan rejects newly reachable
+  `GO-2026-6348` in gRPC v1.82.2. The four older reachable IDs match the active
+  no-fix policy. Exact remediation is already isolated in
+  [GH-318](https://github.com/NeaBouli/TrueRepublic/issues/318); no allowlist or
+  dependency change is mixed into GH-304.
+- **Next:** commit and push this exact candidate, publish a protected GH-304 PR
+  marked as blocked by GH-318, land GH-318 separately, refresh GH-304 on fixed
+  main, then require the complete exact-head CI/review matrix before merge.
+  Rollout remains 36/59 and production remains false.
+
+`TRUEREPUBLIC GH-304 LOCAL CODE APPROVE — MERGE BLOCKED BY GH-318 — NO MIGRATION`
+
+---
+
 ## 2026-09-19 EEST GH-304 ElectAdmin corruption recovery → In Progress
 
 - **Branch:** `fix/GH-304-elect-admin` from exact clean `origin/main`
