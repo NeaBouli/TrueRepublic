@@ -1,5 +1,20 @@
 # Recovery Queue
 
+## In progress - GH-318 gRPC security reconciliation
+
+- [ ] Verify GO-2026-6348, the smallest fixed gRPC release, release notes,
+  license, Go/toolchain compatibility and current effective module graph.
+- [ ] Update only `google.golang.org/grpc` and unavoidable transitive module
+  metadata; account for every `go.mod` and `go.sum` change.
+- [ ] Prove the affected gRPC version is absent and rerun the real vulnerability
+  gate without adding a new exception.
+- [ ] Run focused networking/gRPC tests, IBC two-chain, full Go verification,
+  static/security/secret/license/docs gates and the multi-validator matrix.
+- [ ] Complete Kimi implementation, Sol diff/graph/security review and
+  protected exact-head CI before merge.
+- [ ] Merge, verify exact main, rerun blocked PRs #319 and #317, and update both
+  Bridges without rollout credit or production claims.
+
 ## Completed - GH-297 production-target ZKP protocol freeze
 
 - [x] Add a strict versioned freeze manifest binding the existing ZKP circuit

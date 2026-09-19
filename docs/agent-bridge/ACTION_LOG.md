@@ -1,5 +1,20 @@
 # Action Log
 
+## 2026-09-19 - GH-318 gRPC security reconciliation started
+
+- Confirmed the real local and hosted vulnerability gate rejects
+  GO-2026-6348 against directly pinned gRPC v1.82.2; this is not a GitHub
+  Actions quota/rate-limit error.
+- Created isolated branch/worktree `fix/GH-318-grpc-security` from exact clean
+  main `f5de5a1`; dirty GH-300 and active GH-304 work remain untouched.
+- Kimi K3 receives only the narrow upstream/dependency implementation and
+  focused verification. Sol owns security/compatibility decisions, complete
+  graph and diff review, integration/recovery gates and external actions.
+- No exception, deployment, migration, release or production action is in
+  scope. Rollout remains 36/59 and production false.
+
+---
+
 ## 2026-09-13 - GH-297 merged, exact main and public state verified
 
 - PR #298 exact head `0124e7b` passed the complete protected matrix with zero

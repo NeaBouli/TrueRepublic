@@ -1,5 +1,25 @@
 # TrueRepublic Agent Bridge
 
+## 2026-09-19 EEST GH-318 gRPC security reconciliation → In Progress
+
+- **Branch:** `fix/GH-318-grpc-security` from exact clean `origin/main`
+  `f5de5a150b9ff0edc51d68411b7829e78bcf78e6` in an isolated worktree.
+- **Issue:** [GH-318](https://github.com/NeaBouli/TrueRepublic/issues/318),
+  prerequisite for GH-304 draft PR #319 and status PR #317.
+- **Scope:** update only the direct gRPC dependency and unavoidable module-graph
+  consequences to the smallest compatible release that fixes GO-2026-6348;
+  verify upstream compatibility, graph, networking, IBC, recovery and every
+  security/dependency gate. No unrelated dependency reconciliation.
+- **Division:** Kimi K3 owns the bounded dependency/release analysis and the
+  `go.mod`/`go.sum` implementation with focused tests. Sol owns scope and
+  security judgment, every diff/graph review, complete integration gates,
+  GitHub writes, merge and exact-main closeout. No overlapping writer.
+- **Boundary:** no vulnerability allowlist, production deployment, restart,
+  migration, release, live network, real key or real fund action is authorized.
+- **Status:** implementation pending. Rollout remains 36/59; production false.
+
+---
+
 ## 2026-09-13 EEST GH-297 ZKP protocol freeze → Done on exact main
 
 - **Implementation:** PR [#298](https://github.com/NeaBouli/TrueRepublic/pull/298)
