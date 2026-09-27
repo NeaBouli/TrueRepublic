@@ -1,0 +1,31 @@
+# TrueRepublic Fleet Plan
+
+## Active milestone
+
+GH-327 — publish a bounded architecture map and remaining-work execution plan before the next implementation block.
+
+## Current verified baseline
+
+- Base: `origin/main` at `1283a4452d36784ea962f7fc8ba13f9ad45472cd`.
+- Current product implementation remains on the preserved dirty GH-306 worktree and is out of scope here.
+- Canonical rollout remains 36/59 and production readiness remains false.
+- Hosted CI quota is expected to reset on 2026-10-01; this documentation block must not trigger avoidable hosted runs before then.
+
+## Parallel briefs
+
+1. `GH327A` — Claude Code owns the code-grounded architecture map and PlantUML sources.
+2. `GH327B` — Kimi owns the comprehensive remaining-work plan, dependency ordering, agent allocation, and Cloudflare-derived audit timing decision.
+
+The briefs have disjoint write ownership. Neither worker may edit product code, Bridge history, public status, workflows, or GitHub.
+
+## Integration gate
+
+- Worker report is valid and within the brief.
+- Documentation is internally consistent and references real files/symbols or explicitly marks nodes open.
+- PlantUML sources parse when a local renderer exists; Mermaid remains visible without it.
+- No rollout credit, production claim, deployment, live probe, or feature implementation.
+- Codex integrates, updates append-only coordination, and decides publication timing around the CI reset.
+
+## Next milestone after GH-327
+
+Complete GH-306 from its preserved candidate, then use the map as the mandatory boundary for the next audit-remediation node. Security priority and exact order are determined by GH327B and the audit register, not by adding new feature scope.
