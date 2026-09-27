@@ -403,6 +403,13 @@ parallel with Lane G where worker availability allows.
 
 - One issue = one brief = one branch; briefs list exact paths; no exploratory
   repo reads beyond them.
+- Use `jev` only for one small secret-free yes/no, choice, or score decision
+  over public task/report metadata. Its numeric answer is advisory and cannot
+  waive a required Security, architecture, migration, deployment or release
+  review; record the exact question and value when it changes routing.
+- Route a bounded task to Grok only when it has an explicit outcome, normally
+  touches at most five files, and requires neither repository exploration nor
+  architecture ownership. Grok never merges or deploys.
 - Bulk evidence collection goes through bounded subagent passes (as this
   plan's research did), not repeated orchestrator reads.
 - Review threads resolved before re-push → one hosted matrix per candidate.

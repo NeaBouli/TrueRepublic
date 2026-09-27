@@ -6,6 +6,7 @@
 - **Review:** required cross-reviews verified the traced hops and ticket arithmetic; all requested corrections are integrated. No product code or public status changed.
 - **Boundary:** the Cloudflare-derived full audit runs only on a stable exact commit after GH-306/#307/#308/#309, not against the current dirty candidate. GH-306 remains preserved and is the next implementation milestone.
 - **Gate:** local documentation verification is required now; push/PR and hosted CI wait for the reported 2026-10-01 quota reset. Rollout remains 36/59 and production false.
+- **Routing:** JEV may advise small secret-free routing/triage decisions; Grok is reserved for narrow tasks of normally at most five files. Neither may waive Security or release gates.
 
 `TRUEREPUBLIC GH-327 LOCAL APPROVE — ARCHITECTURE BOUNDARY SET — NO FEATURE CODE`
 

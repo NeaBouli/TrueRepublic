@@ -18,6 +18,12 @@ GH-327 — publish a bounded architecture map and remaining-work execution plan 
 
 The briefs have disjoint write ownership. Neither worker may edit product code, Bridge history, public status, workflows, or GitHub.
 
+## Decision and small-task routing
+
+- `jev` may cheaply support one bounded yes/no, choice, or score decision when the context is public and secret-free. It receives no source code, diff, security finding, internal host, credential, private log, or non-public document. Its numeric answer is advisory; Codex retains the decision and records the question/value when it materially affects routing.
+- Grok is Worker C for small, explicit tasks with a narrow file set (normally no more than five files), no repository exploration, no architecture ownership, and no merge/deploy authority.
+- JEV can trigger an additional review but cannot waive deterministic Security, migration, cryptography, payment, authentication, deployment, or release gates.
+
 ## Integration gate
 
 - Worker report is valid and within the brief.
