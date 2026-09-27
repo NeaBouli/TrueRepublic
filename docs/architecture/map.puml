@@ -1,0 +1,95 @@
+' GH-327 architecture map: mindmap + component diagram.
+' Source of truth: docs/architecture/MAP.md. Documentation only.
+
+@startmindmap map-mindmap
+* Paid suggestion:\nclient-web to bank-backed governance state
+** client-web UI
+*** built: CreateSuggestion.tsx::handleSubmit
+*** gap: description not sent
+** client-web wallet session
+*** partial: WalletService.getWalletForSigning
+*** open: production custody
+** client-web governance service
+*** built: GovernanceTxService.calculatePayToPut
+*** built: GovernanceTxService.createSuggestion
+** client-web module query
+*** built: ModuleQueryClient.query
+** client-web signing
+*** built: connectSigningClient
+*** built: deliverMessages
+*** built: createTxRegistry
+left side
+** app composition
+*** built: app.go::NewTrueRepublicApp
+*** built: makeInterfaceRegistry
+** truedemocracy tx surface
+*** built: MsgSubmitProposal.ValidateBasic
+*** built: msgServer.SubmitProposal
+** truedemocracy escrow
+*** built: Keeper.SubmitProposalWithEscrow
+*** built: Keeper.ValidateEscrowParity
+** truedemocracy governance state
+*** built: Keeper.SubmitProposal
+*** gap: no member check
+*** gap: CoinBurnRequired unsatisfiable
+** truedemocracy query
+*** built: Keeper.PayToPut
+** treasury equations
+*** built: CalcPutPrice
+*** built: CalcDomainCost
+** token cap
+*** built: SupplyCapInvariant
+** x/bank and x/crisis
+*** built: SendCoinsFromAccountToModule
+*** built: crisis invariant period 1
+** quarantined
+*** ZKP submission disabled
+*** legacy web-wallet and mobile-wallet
+** deferred
+*** optional ballots GH-232
+*** Sovereign V4 edge GH-236
+*** Sovereign Alpha GH-215
+@endmindmap
+
+@startuml map-components
+skinparam componentStyle rectangle
+
+package "client-web (maintained)" {
+  [client-web UI\nCreateSuggestion.tsx] as UI
+  [wallet session\nwallet.ts] as Wallet
+  [governance service\ngovernanceTx.ts] as GovSvc
+  [module query\nmoduleQuery.ts] as Query
+  [signing\nsigningClient.ts] as Signing
+  [tx registry\ntxRegistry.ts] as Registry
+}
+
+package "truerepublicd" {
+  [app composition\napp.go] as App
+  [truedemocracy tx surface\nmsgs.go / signing.go / msg_server.go] as TxSurface
+  [truedemocracy escrow\nescrow.go] as Escrow
+  [truedemocracy governance state\nkeeper.go] as GovState
+  [truedemocracy query\nquery_server.go] as TdQuery
+  [treasury equations\ntreasury/keeper/rewards.go] as Treasury
+  [x/bank (SDK)] as Bank
+  [token cap\ntoken/invariant.go] as Token
+  [x/crisis (SDK)] as Crisis
+}
+
+UI --> GovSvc : calculatePayToPut
+GovSvc --> Query : ModuleQueryClient.query
+Query --> TdQuery : abci_query PayToPut
+TdQuery --> Treasury : CalcPutPrice
+UI --> Wallet : getWalletForSigning
+UI --> GovSvc : createSuggestion
+GovSvc --> Signing : connectSigningClient
+Signing --> Registry : createTxRegistry
+GovSvc --> Signing : deliverMessages
+Signing --> App : signAndBroadcast
+App --> TxSurface : ValidateBasic / msgServer.SubmitProposal
+TxSurface --> Escrow : SubmitProposalWithEscrow
+Escrow --> GovState : Keeper.SubmitProposal
+GovState --> Treasury : CalcPutPrice / CalcDomainCost
+Escrow --> Bank : SendCoinsFromAccountToModule
+Crisis --> Escrow : ValidateEscrowParity
+Crisis --> Token : SupplyCapInvariant
+@enduml

@@ -1,0 +1,68 @@
+' GH-327 traced path: create a paid suggestion.
+' Hop IDs match docs/architecture/MAP.md section 2. Documentation only.
+
+@startuml main-path
+autonumber
+actor Member
+participant "client-web UI\nCreateSuggestion.tsx" as UI
+participant "wallet session\nwallet.ts" as Wallet
+participant "governance service\ngovernanceTx.ts" as GovSvc
+participant "module query\nmoduleQuery.ts" as Query
+participant "signing\nsigningClient.ts" as Signing
+participant "tx registry\ntxRegistry.ts" as Registry
+participant "app composition\napp.go" as App
+participant "truedemocracy tx surface\nmsgs.go / msg_server.go" as TxSurface
+participant "truedemocracy escrow\nescrow.go" as Escrow
+participant "truedemocracy governance state\nkeeper.go" as GovState
+participant "truedemocracy query\nquery_server.go" as TdQuery
+participant "treasury equations\nrewards.go" as Treasury
+participant "x/bank (SDK)" as Bank
+participant "x/crisis (SDK)" as Crisis
+participant "token cap\ninvariant.go" as Token
+
+== Price quote (Q1-Q5) ==
+Member -> UI : open /governance/domain/:domainId/issue/:issueId/create
+UI -> GovSvc : calculatePayToPut(domainId)
+GovSvc -> Query : query(/truedemocracy.Query/PayToPut, domain)
+Query -> TdQuery : abci_query (prove=false)
+TdQuery -> Treasury : CalcReward, CalcPutPrice(treasury, members)
+Treasury --> TdQuery : put price
+TdQuery --> Query : JSON base_cost, final_cost, formula
+Query --> GovSvc : decoded record
+GovSvc --> UI : finalCost
+
+== Submit and settle (W1-W15) ==
+Member -> UI : handleSubmit(title)
+UI -> Wallet : getWalletForSigning(address, password)
+Wallet --> UI : session-bound signer
+UI -> GovSvc : createSuggestion(domain, issue, title, fee, "")
+GovSvc -> Signing : connectSigningClient(config, signer)
+Signing -> Registry : createTxRegistry()
+Registry --> Signing : fail-closed registry
+Signing --> GovSvc : client (prefix + chain ID checked)
+GovSvc -> Signing : deliverMessages([MsgSubmitProposal])
+Signing -> App : simulate + signAndBroadcast
+App -> TxSurface : signer via RegisterCustomGetSigners;\nMsgSubmitProposal.ValidateBasic
+TxSurface -> TxSurface : msgServer.SubmitProposal
+TxSurface -> Escrow : SubmitProposalWithEscrow
+Escrow -> Escrow : validatePNYXCoins, requireSignerClaim;\nCacheContext
+Escrow -> GovState : Keeper.SubmitProposal
+GovState -> Treasury : CalcPutPrice (and CalcDomainCost if CoinBurnRequired)
+Treasury --> GovState : thresholds
+GovState -> GovState : store domain:<name>\n(Treasury += fee, append Suggestion)
+GovState --> Escrow : ok
+Escrow -> Bank : SendCoinsFromAccountToModule(sender, truedemocracy, fee)
+Bank --> Escrow : ok
+Escrow -> Escrow : write()
+Escrow --> TxSurface : ok
+TxSurface -> TxSurface : emit submit_proposal
+TxSurface --> App : MsgSubmitProposalResponse
+App --> Signing : DeliverTxResponse (code 0)
+Signing --> GovSvc : TransactionResult
+GovSvc --> UI : hash, height
+
+== EndBlock invariants (W16) ==
+App -> Crisis : EndBlock (crisis ordered last)
+Crisis -> Escrow : ValidateEscrowParity
+Crisis -> Token : SupplyCapInvariant
+@enduml
