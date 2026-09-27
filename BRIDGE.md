@@ -1,5 +1,16 @@
 # TrueRepublic Agent Bridge
 
+## 2026-09-27 EEST GH-327 architecture and execution boundary → Locally Approved
+
+- **Result:** Claude mapped one real client-to-chain paid-suggestion path in PlantUML/Mermaid; Kimi produced the ordered GH-306-to-go/no-go execution plan and Cloudflare-audit timing decision.
+- **Review:** required cross-reviews verified the traced hops and ticket arithmetic; all requested corrections are integrated. No product code or public status changed.
+- **Boundary:** the Cloudflare-derived full audit runs only on a stable exact commit after GH-306/#307/#308/#309, not against the current dirty candidate. GH-306 remains preserved and is the next implementation milestone.
+- **Gate:** local documentation verification is required now; push/PR and hosted CI wait for the reported 2026-10-01 quota reset. Rollout remains 36/59 and production false.
+
+`TRUEREPUBLIC GH-327 LOCAL APPROVE — ARCHITECTURE BOUNDARY SET — NO FEATURE CODE`
+
+---
+
 ## 2026-09-19 EEST GH-304 unblocked and synchronized → Protected re-review
 
 - **Base:** GH-318/GH-305/GH-321 security stack is complete on exact main

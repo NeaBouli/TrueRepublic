@@ -5911,3 +5911,11 @@
   every Git/GitHub action. No implementation overlap is allowed.
 - No state repair, migration, deployment, release, production action, real key
   or real fund is authorized. Rollout remains 36/59 and production false.
+
+## 2026-09-27 EEST - GH-327 bounded architecture and remaining-work plan locally approved
+
+- Created clean planning branch from exact main `1283a44`; preserved the dirty GH-306 candidate and all unrelated worktrees unchanged.
+- Claude delivered the code-grounded paid-suggestion PlantUML/Mermaid map. Kimi delivered the GH-306-to-go/no-go execution plan, disjoint agent lanes, CI strategy and Cloudflare-derived audit timing decision.
+- Required cross-reviews verified the traced code path and plan sources. Sol integrated the bounded evidence, status-enum, wording, lane-ownership and rollout-arithmetic corrections.
+- Full Cloudflare-derived audit is deferred until GH-306/#307/#308/#309 are merged on a stable exact commit; no endpoint was probed and no audit run started.
+- Publication waits for the reported 2026-10-01 hosted-CI reset. No product code, rollout credit, release, deployment, migration, live key/fund or production action occurred; rollout remains 36/59.

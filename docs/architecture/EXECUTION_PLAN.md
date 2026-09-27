@@ -220,18 +220,18 @@ All critical/high register items (#306/#307/#308) merged → Phase-5
 critical/high resolution complete. §8 verification run + external evidence per
 GH-294; #303 register reconciled per finding. Phase 5: 6/6.
 
-**M5 — Phase 2 + Phase 4 completion → 39/59**
+**M5 — Phase 2 + Phase 4 completion → 43/59**
 #300 resumed (compatibility-only). Production prover integration, reproducible
 PK/VK artifacts, ceremony provenance + rotation policy, browser-to-chain real
 -proof compatibility, independent cryptographic/privacy/setup review →
-P2 7/7 (38/59). Connect the audited real ZKP path, remove preview dead paths →
-P4 8/8 (39/59). Anonymous submission stays fail-closed until the P2 exit gate.
+P2 7/7 (42/59). Connect the audited real ZKP path, remove preview dead paths →
+P4 8/8 (43/59). Anonymous submission stays fail-closed until the P2 exit gate.
 
-**M6 — Phase 6 topology → 40/59**
+**M6 — Phase 6 topology → 44/59**
 Real private seed/sentry/validator/RPC deployment with abuse protection and
 live operator rehearsal evidence → P6 7/7.
 
-**M7 — Phase 7 staged release → 51/51**
+**M7 — Phase 7 staged release → 50/59 overall; 50/51 phase work**
 Reproducible tagged binaries/images; signed artifacts + SBOM + provenance;
 genesis/chain-ID/parameters/authorities/allocations freeze + independent
 review; genesis re-qualification via the GH-244 contract against the exact
@@ -375,7 +375,7 @@ Cloudflare-infrastructure, WAF, or rate-limit scheduling constraint —
 | T (harness) | #324+#325 | `server_lifecycle_test.go`, multi-validator/governed-upgrade test harnesses | G or C |
 | G (Go consensus) | #306 → #307 → #310 → #311 | `x/truedemocracy/**`, `x/dex/**`, `token/**`, app wiring | K (Sol integrates #306 candidate) |
 | R (contracts) | #308 | `contracts/**` | C |
-| C (client) | #309 → #312 → #300 resume; #326 reconciliation | `client-web/**` | K after Lane G, else C |
+| C (client) | #309 → #312 → #300 resume; #326 reconciliation | `client-web/**` | C primary; K only after Lane G if explicitly reassigned |
 | D (docs) | #313, #314, #315 | `docs/**` (operator/wiki sources), whitepapers, `docs/index.html` — disjoint per ticket | G |
 | S (status) | #316/#317, #303/#29 hygiene | `docs/status/`, register/tracker bodies, `docs/status.json`, BRIDGE/agent-bridge | Sol only |
 
@@ -393,8 +393,9 @@ parallel with Lane G where worker availability allows.
   cryptographic surface (#300).
 - Docs-lane and harness-lane merges: Sol review only.
 - A clean `status: ok` report with empty `risks`/`security` is accepted
-  without re-review (fleet-orchestration rule); `partial`/`failed` or filled
-  risk fields trigger triage, not routine re-work.
+  without a second independent review; Sol's integration review remains
+  mandatory. `partial`/`failed` or filled risk fields trigger triage, not
+  routine re-work.
 - No delegated agent delegates further; no worker touches secrets, production,
   or external writes.
 

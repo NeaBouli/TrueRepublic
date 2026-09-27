@@ -3,7 +3,7 @@
 **Scope:** one traced maintained user path — creating a paid suggestion in
 `client-web` — from the browser into chain governance state and bank-backed
 settlement. Every hop below was opened at the cited call site. Anything not
-opened is marked `open` or `not traced`; it is not simulated.
+opened is marked `open`; it is not simulated.
 
 **Accounting boundary:** this map is documentation only. It earns no rollout
 credit and changes no code, dependency, protocol or public status. The
@@ -18,8 +18,8 @@ Diagram sources:
 ## 1. Ground idea
 
 1. TrueRepublic is a Cosmos SDK chain for domain-based governance with a
-   capped PNYX token, a multi-asset DEX and CosmWasm — `README.md` (header),
-   `docs/ARCHITECTURE.md` (System Overview).
+   multi-asset DEX and CosmWasm — `docs/ARCHITECTURE.md` (System Overview);
+   the PNYX cap is enforced by `token/invariant.go::SupplyCapInvariant`.
 2. Members of a domain act by submitting issues/suggestions, placing stones and
    rating suggestions — `docs/ARCHITECTURE.md` (x/truedemocracy Key
    Components); the maintained client exposes suggestion creation and stones —
@@ -91,9 +91,9 @@ Route: `client-web/src/routes.tsx` maps
 | truedemocracy governance state | Apply proposal rules and persist the domain | `x/truedemocracy/keeper.go::Keeper.SubmitProposal` | built (see gaps G3, G4) |
 | truedemocracy query | Serve the Pay-to-Put quote from the same equations | `x/truedemocracy/query_server.go::Keeper.PayToPut` | built |
 | treasury equations | Deterministic reward/put-price equations | `treasury/keeper/rewards.go::CalcPutPrice` | built |
-| x/bank (SDK) | Canonical coin custody | `SendCoinsFromAccountToModule` (Cosmos SDK) | built (external) |
+| x/bank (SDK) | Canonical coin custody | `SendCoinsFromAccountToModule` (Cosmos SDK) | built |
 | token cap | Assert canonical supply ≤ 21,000,000,000,000 `upnyx` | `token/invariant.go::SupplyCapInvariant` | built |
-| x/crisis (SDK) | Run registered invariants every block | `app.go` (`crisiskeeper.NewKeeper`, period 1) | built (external) |
+| x/crisis (SDK) | Run registered invariants every block | `app.go` (`crisiskeeper.NewKeeper`, period 1) | built |
 | client↔chain integration test | Opt-in delivery of every maintained tx family against a local node | `client-web/src/services/clientChain.integration.test.ts` | test-only (`TRUEREPUBLIC_CLIENT_CHAIN_INTEGRATION=1`) |
 | Go path tests | Msg-server escrow boundary, quote/submit equality, wire vectors | `x/truedemocracy/msg_server_test.go::TestMsgServerSubmitProposalEscrowBoundary`, `query_merkle_paytoput_test.go::TestQueryPayToPutMatchesSubmitProposalCalculation`, `client_custom_tx_codec_test.go::TestClientCustomTxVectorsMatchGoWireEncoding` | test-only |
 | client ZKP voting (neighbor) | Preview anonymous rating; submission disabled | `client-web/src/services/zkp.ts`, `client-web/src/components/zkp/VotingPanel.tsx` | quarantined |
@@ -101,7 +101,7 @@ Route: `client-web/src/routes.tsx` maps
 | optional domain ballots (GH-231/GH-232) | Formal ballots with frozen policy/electorate | `docs/GOVERNANCE_BALLOT_ARCHITECTURE.md` | deferred |
 | Sovereign V4 edge (GH-236) | Local-first edge layer around TRChain | `docs/SOVEREIGN_V4_EDGE_ARCHITECTURE.md`; unwired package `sovereignv4/protocol` | deferred (V4-0 code exists, no importer outside `sovereignv4/`) |
 | Sovereign Alpha (GH-215) | Installable native client | `docs/SOVEREIGN_ALPHA_ARCHITECTURE.md` | deferred |
-| suggestion lifecycle EndBlock (neighbor) | Zone transitions / auto-delete of stored suggestions | `docs/ARCHITECTURE.md` (EndBlock order) | not traced |
+| suggestion lifecycle EndBlock (neighbor) | Zone transitions / auto-delete of stored suggestions | `docs/ARCHITECTURE.md` (EndBlock order) | open (not traced) |
 
 ## 4. Wiring (one sentence per edge)
 
@@ -127,9 +127,9 @@ Route: `client-web/src/routes.tsx` maps
 
 Recorded as found; no narrative is preferred.
 
-- **C1 — "V3" naming.** The GH-327 brief speaks of a "V3 ballot". No file in
-  `docs/`, `wiki/` or `README.md` uses "V3"; the repository calls this the
-  optional domain ballot (GH-231 design, GH-232 deferred implementation).
+- **C1 — "V3" naming.** The GH-327 brief speaks of a "V3 ballot". The active
+  ballot architecture and roadmap do not use that product-version label; they
+  call it the optional domain ballot (GH-231 design, GH-232 deferred implementation).
 - **C2 — ballot status wording.** `docs/GOVERNANCE_BALLOT_ARCHITECTURE.md`
   says "implementation-ready proposal"; `docs/ROLLOUT_ROADMAP.md` (Delivery
   priority) and `AGENTS.md` say GH-232 stays deferred behind rollout gates.

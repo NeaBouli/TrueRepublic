@@ -1,5 +1,9 @@
 # Project State
 
+GH-327 is locally approved on clean branch `docs/GH-327-architecture-execution-map` from exact main `1283a44`. Claude produced a code-grounded PlantUML/Mermaid map of the maintained paid-suggestion path; Kimi produced the remaining-work plan from GH-306 through release authorization. Triggered cross-reviews verified the path and corrected milestone arithmetic and evidence wording. No product code, rollout credit, deployment, live audit, or production action occurred. Publication and hosted CI wait for the reported 2026-10-01 quota reset. GH-306 remains the next implementation milestone; rollout stays 36/59 and production false.
+
+---
+
 GH-304 is on synchronized branch head `330f0e1` with a fresh, reproducible
 standard-suite recount: 2,132 Go pass events, including 691 governance pass
 events. With 26 Rust and 328 maintained-client cases, the candidate total is

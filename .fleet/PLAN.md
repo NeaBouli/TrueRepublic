@@ -29,3 +29,7 @@ The briefs have disjoint write ownership. Neither worker may edit product code, 
 ## Next milestone after GH-327
 
 Complete GH-306 from its preserved candidate, then use the map as the mandatory boundary for the next audit-remediation node. Security priority and exact order are determined by GH327B and the audit register, not by adding new feature scope.
+
+## Local result — 2026-09-27 EEST
+
+GH327A and GH327B are integrated locally. Required cross-reviews found only bounded documentation corrections, now applied. Publication remains intentionally deferred until the 2026-10-01 hosted-CI reset. Next implementation milestone: reconcile and close GH-306 on exact main.

@@ -1,5 +1,15 @@
 # Recovery Queue
 
+## Locally approved - GH-327 bounded architecture and execution plan
+
+- [x] Produce a code-grounded PlantUML/Mermaid map without feature code.
+- [x] Reconcile the remaining tickets, audit blocks, CI timing and agent lanes.
+- [x] Complete required cross-reviews and integrate their documentation fixes.
+- [ ] Publish after the 2026-10-01 hosted-CI reset and verify protected docs checks.
+- [ ] Resume GH-306 as the next implementation milestone on the mapped governance hop.
+
+---
+
 ## In review - GH-304 ElectAdmin corruption and legacy-state detection
 
 - [x] Land GH-318/GH-305/GH-321 and verify exact main.
