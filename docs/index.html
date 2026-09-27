@@ -236,6 +236,180 @@
         }
         .rollout-gate h3 { color: #ffd27a; margin-bottom: 0.75rem; }
         .rollout-actions { margin-top: 2rem; text-align: center; }
+        .architecture { padding: 5rem 0; background: var(--bg); }
+        .architecture .section-title { margin-bottom: 1rem; }
+        .arch-intro {
+            max-width: 820px;
+            margin: 0 auto 2rem;
+            text-align: center;
+            color: var(--text-light);
+            font-size: 1.08rem;
+        }
+        .arch-baseline {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1rem;
+            max-width: 820px;
+            margin: 0 auto 3rem;
+        }
+        .arch-baseline-item {
+            padding: 1rem 1.25rem;
+            text-align: center;
+            background: var(--bg-alt);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+        }
+        .arch-baseline-value { display: block; color: var(--primary); font-size: 1.6rem; font-weight: 800; line-height: 1.2; }
+        .arch-baseline-label { color: var(--text-light); font-size: 0.92rem; }
+        .architecture h3 { color: var(--primary); }
+        .arch-subtitle { font-size: 1.35rem; margin-bottom: 1rem; text-align: center; }
+        .arch-flow {
+            list-style: none;
+            display: grid;
+            grid-template-columns: repeat(5, minmax(0, 1fr));
+            gap: 1.75rem;
+            margin: 0 0 3rem;
+            counter-reset: arch-step;
+        }
+        .arch-flow li {
+            position: relative;
+            padding: 1rem;
+            background: white;
+            border: 1px solid var(--border);
+            border-top: 4px solid var(--primary);
+            border-radius: 6px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            counter-increment: arch-step;
+        }
+        .arch-flow li:last-child { border-top-color: var(--accent); }
+        .arch-flow li::before {
+            content: counter(arch-step);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 28px;
+            height: 28px;
+            margin-bottom: 0.5rem;
+            border-radius: 50%;
+            background: var(--primary);
+            color: white;
+            font-weight: 700;
+            font-size: 0.9rem;
+        }
+        .arch-flow li:not(:last-child)::after {
+            content: "\2192" / "";
+            position: absolute;
+            top: 50%;
+            right: -1.4rem;
+            transform: translateY(-50%);
+            color: var(--primary);
+            font-size: 1.25rem;
+            font-weight: 700;
+        }
+        .arch-flow strong { display: block; color: var(--primary-dark); overflow-wrap: anywhere; }
+        .arch-flow span { display: block; color: var(--text-light); font-size: 0.9rem; line-height: 1.5; }
+        .arch-legend {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 0.75rem;
+            list-style: none;
+            margin: 0 0 2rem;
+        }
+        .arch-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            padding: 0.2rem 0.65rem;
+            border: 2px solid;
+            border-radius: 999px;
+            font-size: 0.82rem;
+            font-weight: 700;
+            line-height: 1.4;
+            white-space: nowrap;
+        }
+        .arch-status-implemented { color: #1d5e2f; background: #e7f5eb; border-style: solid; }
+        .arch-status-partial { color: #7a4600; background: #fff3d6; border-style: solid; }
+        .arch-status-test { color: #1a3a6e; background: #e8eefa; border-style: double; border-width: 3px; }
+        .arch-status-quarantined { color: #8f1d1d; background: #fdeaea; border-style: dashed; }
+        .arch-status-deferred { color: #454e5c; background: #eef0f3; border-style: dotted; }
+        .arch-strands {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.25rem;
+        }
+        .arch-strand {
+            background: var(--bg-alt);
+            border: 1px solid var(--border);
+            border-top: 4px solid var(--primary);
+            border-radius: 6px;
+            padding: 1.5rem;
+            min-width: 0;
+        }
+        .arch-strand-kicker {
+            color: var(--text-light);
+            font-size: 0.78rem;
+            font-weight: 800;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+        }
+        .arch-strand h3 { margin: 0.3rem 0 1rem; font-size: 1.25rem; }
+        .arch-strand ul { list-style: none; }
+        .arch-strand li {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.35rem;
+            padding: 0.7rem 0;
+            border-top: 1px solid var(--border);
+            color: var(--text);
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+        .arch-strand li:first-child { border-top: 0; padding-top: 0; }
+        .arch-boundary {
+            margin-top: 2rem;
+            padding: 1.5rem;
+            border: 1px solid #d6dbe1;
+            border-left: 4px solid var(--accent);
+            background: #fffaf0;
+            border-radius: 6px;
+        }
+        .arch-boundary h3 { margin-bottom: 0.5rem; }
+        .arch-boundary p + p { margin-top: 0.5rem; }
+        .arch-actions {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+        .arch-actions .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 44px;
+            min-width: 44px;
+            text-align: center;
+        }
+        .arch-actions .btn-primary { background: var(--primary); color: white; }
+        .arch-actions .btn-secondary { background: white; color: var(--primary); border: 2px solid var(--primary); }
+        .arch-actions .btn-secondary:hover { background: var(--bg-alt); }
+        .architecture a:focus-visible {
+            outline: 3px solid var(--accent);
+            outline-offset: 3px;
+        }
+        @media (max-width: 1000px) {
+            .arch-flow { grid-template-columns: minmax(0, 1fr); gap: 1.75rem; }
+            .arch-flow li:not(:last-child)::after {
+                content: "\2193" / "";
+                top: auto;
+                bottom: -1.65rem;
+                right: auto;
+                left: 50%;
+                transform: translateX(-50%);
+            }
+        }
         .cta-section {
             padding: 5rem 0;
             background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 100%);
@@ -625,6 +799,87 @@
             <div class="rollout-actions">
                 <a href="https://github.com/NeaBouli/TrueRepublic/blob/main/docs/ROLLOUT_ROADMAP.md" class="btn btn-primary">Full Rollout Checklist</a>
                 <a href="https://github.com/NeaBouli/TrueRepublic/issues/29" class="btn btn-secondary">Track GitHub Issue #29</a>
+            </div>
+        </div>
+    </section>
+
+    <section id="architecture" class="architecture" aria-labelledby="architecture-title">
+        <div class="container">
+            <h2 id="architecture-title" class="section-title">Architecture &amp; Remaining Work</h2>
+            <p class="arch-intro">A code-grounded map of one traced maintained path, from the React Beta client into bank-backed governance state, and the ordered plan for the remaining rollout work. Both are documentation only: they change no code or status and earn no rollout credit.</p>
+            <div class="arch-baseline" aria-label="Unchanged rollout baseline">
+                <p class="arch-baseline-item"><span class="arch-baseline-value">36/59</span> <span class="arch-baseline-label">Canonical rollout items &mdash; unchanged by this map</span></p>
+                <p class="arch-baseline-item"><span class="arch-baseline-value">false</span> <span class="arch-baseline-label">Production readiness &mdash; not approved for real funds</span></p>
+            </div>
+
+            <h3 class="arch-subtitle">Strict delivery rule</h3>
+            <ol class="arch-flow" aria-label="Delivery rule, in order">
+                <li><strong>Architecture boundary</strong><span>The map names the module and hop before any change.</span></li>
+                <li><strong>One owned implementation node</strong><span>A single issue changes a single mapped node.</span></li>
+                <li><strong>Verification</strong><span>Focused tests, then the complete relevant gate.</span></li>
+                <li><strong>Integration</strong><span>Reviewed and merged one change at a time.</span></li>
+                <li><strong>Release gate</strong><span>Evidence-based go/no-go; green CI alone is not approval.</span></li>
+            </ol>
+
+            <h3 class="arch-subtitle">Four delivery strands</h3>
+            <ul class="arch-legend" aria-label="Status legend">
+                <li><span class="arch-status arch-status-implemented"><span aria-hidden="true">&#x2713;</span> Implemented</span></li>
+                <li><span class="arch-status arch-status-partial"><span aria-hidden="true">&#x25D0;</span> Partial</span></li>
+                <li><span class="arch-status arch-status-test"><span aria-hidden="true">&#x25C7;</span> Test-only</span></li>
+                <li><span class="arch-status arch-status-quarantined"><span aria-hidden="true">&#x2298;</span> Quarantined</span></li>
+                <li><span class="arch-status arch-status-deferred"><span aria-hidden="true">&#x25CB;</span> Deferred</span></li>
+            </ul>
+            <div class="arch-strands">
+                <article class="arch-strand" aria-labelledby="strand-design">
+                    <div class="arch-strand-kicker">Strand 1</div>
+                    <h3 id="strand-design">Design</h3>
+                    <ul>
+                        <li><span class="arch-status arch-status-implemented"><span aria-hidden="true">&#x2713;</span> Implemented</span> Code-grounded architecture map of the paid-suggestion path</li>
+                        <li><span class="arch-status arch-status-implemented"><span aria-hidden="true">&#x2713;</span> Implemented</span> Remaining-work execution plan with milestones and stop conditions</li>
+                        <li><span class="arch-status arch-status-deferred"><span aria-hidden="true">&#x25CB;</span> Deferred</span> Optional domain ballots (V3 ballot privacy) &mdash; no consensus or client code</li>
+                        <li><span class="arch-status arch-status-deferred"><span aria-hidden="true">&#x25CB;</span> Deferred</span> Sovereign V4 edge &mdash; V4-0 protocol exists but stays unwired</li>
+                    </ul>
+                </article>
+                <article class="arch-strand" aria-labelledby="strand-implementation">
+                    <div class="arch-strand-kicker">Strand 2</div>
+                    <h3 id="strand-implementation">Implementation</h3>
+                    <ul>
+                        <li><span class="arch-status arch-status-implemented"><span aria-hidden="true">&#x2713;</span> Implemented</span> Governance, escrow and treasury path with bank-backed custody</li>
+                        <li><span class="arch-status arch-status-implemented"><span aria-hidden="true">&#x2713;</span> Implemented</span> Maintained client quote, signing and delivery path</li>
+                        <li><span class="arch-status arch-status-partial"><span aria-hidden="true">&#x25D0;</span> Partial</span> Wallet session &mdash; local test wallet only; production custody open</li>
+                        <li><span class="arch-status arch-status-quarantined"><span aria-hidden="true">&#x2298;</span> Quarantined</span> Anonymous ZKP vote submission &mdash; disabled in the client</li>
+                        <li><span class="arch-status arch-status-quarantined"><span aria-hidden="true">&#x2298;</span> Quarantined</span> Retired legacy wallet prototypes &mdash; Git history only</li>
+                    </ul>
+                </article>
+                <article class="arch-strand" aria-labelledby="strand-verification">
+                    <div class="arch-strand-kicker">Strand 3</div>
+                    <h3 id="strand-verification">Simulation &amp; Verification</h3>
+                    <ul>
+                        <li><span class="arch-status arch-status-implemented"><span aria-hidden="true">&#x2713;</span> Implemented</span> Per-block supply-cap and escrow-parity invariants</li>
+                        <li><span class="arch-status arch-status-test"><span aria-hidden="true">&#x25C7;</span> Test-only</span> Go path tests for escrow, quote/submit equality and wire vectors</li>
+                        <li><span class="arch-status arch-status-test"><span aria-hidden="true">&#x25C7;</span> Test-only</span> Opt-in client-to-chain integration suite against a local node</li>
+                        <li><span class="arch-status arch-status-partial"><span aria-hidden="true">&#x25D0;</span> Partial</span> Real proof generation, ceremony and independent cryptographic review</li>
+                    </ul>
+                </article>
+                <article class="arch-strand" aria-labelledby="strand-release">
+                    <div class="arch-strand-kicker">Strand 4</div>
+                    <h3 id="strand-release">Release</h3>
+                    <ul>
+                        <li><span class="arch-status arch-status-partial"><span aria-hidden="true">&#x25D0;</span> Partial</span> Phase 7 release &amp; staged launch &mdash; 3 of 10 tracker tasks</li>
+                        <li><span class="arch-status arch-status-deferred"><span aria-hidden="true">&#x25CB;</span> Deferred</span> Staged testnet or canary and the recorded go/no-go &mdash; held until every earlier gate has evidence</li>
+                    </ul>
+                </article>
+            </div>
+
+            <div class="arch-boundary">
+                <h3>Outside the Basic rollout</h3>
+                <p>V3 ballot privacy (the optional domain-ballot track) and V4 edge work are deferred and outside the Basic rollout. The V4-0 protocol foundation stays unwired, and neither track earns rollout credit.</p>
+                <p>This overview is a summary. The linked documents are authoritative for scope, status and ordering.</p>
+            </div>
+
+            <div class="arch-actions">
+                <a href="architecture/MAP.md" class="btn btn-primary">Read the architecture map</a>
+                <a href="architecture/EXECUTION_PLAN.md" class="btn btn-secondary">Read the remaining-work execution plan</a>
             </div>
         </div>
     </section>
