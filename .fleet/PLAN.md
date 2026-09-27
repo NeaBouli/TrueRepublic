@@ -2,7 +2,7 @@
 
 ## Active milestone
 
-GH-327 — publish a bounded architecture map and remaining-work execution plan before the next implementation block.
+GH-328 — publish the bounded GH-327 architecture and execution map as an accessible, responsive visualization on the maintained GitHub Pages landing surface.
 
 ## Current verified baseline
 
@@ -17,6 +17,12 @@ GH-327 — publish a bounded architecture map and remaining-work execution plan 
 2. `GH327B` — Kimi owns the comprehensive remaining-work plan, dependency ordering, agent allocation, and Cloudflare-derived audit timing decision.
 
 The briefs have disjoint write ownership. Neither worker may edit product code, Bridge history, public status, workflows, or GitHub.
+
+## Authorized plan amendment — GH-328
+
+Gio requested that the completed architecture boundary be visible on the landing page. This is a bounded publication node, not a feature or rollout milestone. `GH328A` is assigned to Claude Code with exclusive ownership of the landing visualization, its deterministic contract audit, responsive evidence, and worker report. No second worker duplicates the implementation. Codex integrates and performs the required screenshot inspection.
+
+The visualization must remain static and local: no CDN, telemetry, remote runtime, or new JavaScript dependency. It must link to the authoritative GH-327 map and execution plan, preserve the canonical 36/59 rollout value and production-false status, and must not claim closure of audit work.
 
 ## Decision and small-task routing
 
@@ -39,3 +45,5 @@ Complete GH-306 from its preserved candidate, then use the map as the mandatory 
 ## Local result — 2026-09-27 EEST
 
 GH327A and GH327B are integrated locally. Required cross-reviews found only bounded documentation corrections, now applied. Publication remains intentionally deferred until the 2026-10-01 hosted-CI reset. Next implementation milestone: reconcile and close GH-306 on exact main.
+
+GH-328 was added on 2026-09-27 EEST as a maintainer-authorized publication amendment. It does not alter the post-publication implementation order: GH-306 remains the next product-code milestone.
