@@ -47,3 +47,7 @@ Complete GH-306 from its preserved candidate, then use the map as the mandatory 
 GH327A and GH327B are integrated locally. Required cross-reviews found only bounded documentation corrections, now applied. Publication remains intentionally deferred until the 2026-10-01 hosted-CI reset. Next implementation milestone: reconcile and close GH-306 on exact main.
 
 GH-328 was added on 2026-09-27 EEST as a maintainer-authorized publication amendment. It does not alter the post-publication implementation order: GH-306 remains the next product-code milestone.
+
+## GH-328 local result — 2026-09-27 EEST
+
+Claude Code delivered the bounded landing visualization, deterministic 69-assertion contract audit, and responsive evidence for 1440x1000, 1180x820, 820x1180, and 390x844. Codex inspected all architecture, full-page, and focus-state screenshots and reproduced the contract audit plus repository documentation consistency. Kimi's triggered review approved scope, claims, checks, and visual evidence; the only retained release condition is post-deploy readback of the two GitHub Pages documentation links. No rollout credit or production claim was added. Publication still waits for the 2026-10-01 hosted-CI window; GH-306 remains next after publication.

@@ -1,0 +1,9 @@
+verdict: ok
+Diff = Commits d622506 + 61c7c17; nur Write-Ownership-Pfade (docs/index.html, Audit-Skript, 12 Screenshots, Report). Keine Scope-Verletzung.
+Content-Contract 1-8 erfuellt und durch das neue Audit-Skript statisch erzwungen: 4 Straenge, 5 Status mit Text+Glyph+Rahmenstil+Farbe, 5-Schritte-Lieferregel als ol, relative Links architecture/MAP.md + EXECUTION_PLAN.md (existieren im Branch), 36/59 und production_ready false deckungsgleich mit docs/status.json, V3/V4 als deferred/outside Basic rollout, keine Bridge-Pfade/Worker/Hosts/Finding-IDs.
+Inhaltliche Aussagen der Sektion stichprobenartig gegen MAP.md/EXECUTION_PLAN.md verifiziert (Escrow-Parity, Supply-Cap, Quote/Submit-Gleichheit, Wire-Vektoren, opt-in Integration Suite, Phase 7 3/10, V4-0 unwired) - keine Ueberzeichnung, kein Rollout-Kredit.
+Reproduziert: node scripts/landing-architecture-contract-audit.mjs -> PASSED 69/69; Mutations-Stichprobe (36/59 -> 37/59) -> exit 1 mit korrekten FAILs, Worktree danach sauber; ./scripts/check-consistency.sh -> exit 0; git diff --check -> clean.
+Screenshots (desktop/mobile, architektur + focus-state) eingesehen: kein Overflow/Overlap, mobile Stapplung mit vertikalen Pfeilen, Legendenumbruch sauber, sichtbarer Fokus-Rahmen.
+Sicherheit: kein Script/CDN/Font/Inline-Handler in der Sektion, Denylist-Assertions greifen; keine Secrets. status: ok im Report ist durch die Belege gedeckt.
+Risiken korrekt deklariert, keiner davon review-blockierend: Jekyll koennte .md-Links auf GitHub Pages als .html publizieren (Brief verlangte relative .md-Links; Post-Deploy-Readback als Gate benannt); ~10 MB Screenshot-PNGs.
+Minor, kein Changes-Bedarf: Sektion nicht aus der Seitennavigation verlinkt (Brief forderte es nicht); 44px-Messung nur fuer neue Sektion (explizit out of scope deklariert).

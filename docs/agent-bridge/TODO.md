@@ -1,5 +1,16 @@
 # Recovery Queue
 
+## Locally approved - GH-328 landing architecture visualization
+
+- [x] Add the four-strand architecture and remaining-work visualization to the maintained landing page without feature code or status inflation.
+- [x] Preserve canonical rollout 36/59, production false, and the V3/V4 deferred boundaries.
+- [x] Pass 69 deterministic content/security/accessibility assertions and repository documentation consistency.
+- [x] Inspect desktop, landscape-tablet, portrait-tablet and mobile screenshots plus visible keyboard-focus evidence.
+- [x] Complete the risk-triggered Kimi review with an `ok` verdict and no requested change.
+- [ ] Publish after the 2026-10-01 hosted-CI reset, pass protected checks, and verify the two documentation links on live GitHub Pages.
+
+---
+
 ## Locally approved - GH-327 bounded architecture and execution plan
 
 - [x] Produce a code-grounded PlantUML/Mermaid map without feature code.

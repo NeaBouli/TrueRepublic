@@ -5919,3 +5919,12 @@
 - Required cross-reviews verified the traced code path and plan sources. Sol integrated the bounded evidence, status-enum, wording, lane-ownership and rollout-arithmetic corrections.
 - Full Cloudflare-derived audit is deferred until GH-306/#307/#308/#309 are merged on a stable exact commit; no endpoint was probed and no audit run started.
 - Publication waits for the reported 2026-10-01 hosted-CI reset. No product code, rollout credit, release, deployment, migration, live key/fund or production action occurred; rollout remains 36/59.
+
+## 2026-09-27 EEST - GH-328 landing architecture visualization locally approved
+
+- Opened GH-328 as a bounded publication extension of GH-327 and assigned Claude Code sole implementation ownership; no audit or GH-306 work was duplicated or mixed into the block.
+- Added a static, semantic landing visualization for the strict delivery rule and the design, implementation, simulation/verification and release strands. Status remains visible by text, glyph, border and color; V3 ballot privacy and V4 edge work remain explicitly outside the Basic rollout.
+- The new contract audit passed 69/69 assertions, repository documentation consistency passed, and `git diff --check` remained clean. Canonical rollout stays 36/59 and production readiness stays false.
+- Codex inspected full-page, architecture-detail and keyboard-focus screenshots at 1440x1000, 1180x820, 820x1180 and 390x844. No clipping, overlap, horizontal overflow or illegible state was observed; mobile stacking and focus visibility are intact.
+- Kimi's risk-triggered review returned `ok`, reproduced the contract and consistency gates, and found no scope or security violation. The declared GitHub Pages Markdown-link behavior remains a mandatory post-deploy readback gate.
+- Publication remains deferred until the 2026-10-01 hosted-CI reset. No push, PR, merge, deployment, release, migration, live key/fund or production action occurred.
