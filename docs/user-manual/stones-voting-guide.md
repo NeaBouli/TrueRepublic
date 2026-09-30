@@ -12,7 +12,7 @@ A **stone** is a vote you place on an issue, suggestion, or member to signal tha
 
 1. **One stone at a time** -- You can only have one active stone per category
 2. **Moving your stone** -- Placing a new stone automatically removes your previous one
-3. **VoteToEarn** -- Placing stones earns you PNYX rewards from the domain treasury
+3. **VoteToEarn** -- Your first placement in each voting scope can earn one PNYX reward from the domain treasury; moving a stone never pays again
 4. **Sorting** -- Items with more stones appear higher in lists
 
 ### Where You Can Place Stones
@@ -54,7 +54,11 @@ The member with the most stones becomes the domain admin.
 
 ## VoteToEarn Rewards (WP S3.1)
 
-Every time you place a stone, you earn a PNYX reward from the domain treasury:
+Your **first placement per member and voting scope** earns at most one PNYX
+reward from the domain treasury. The domain issue list is one scope; every
+issue's suggestion list is a separate scope. Moving an existing stone, leaving
+and rejoining a domain, or restoring an exported state never earns that scope's
+reward again.
 
 ```
 reward = domain_treasury / CEarn
@@ -63,12 +67,14 @@ reward = domain_treasury / CEarn
 
 **Example:** If a domain treasury holds 500,000 PNYX:
 ```
-reward = 500,000 / 1,000 = 500 PNYX per stone placement
+reward = 500,000 / 1,000 = 500 PNYX for the first eligible placement
 ```
 
 ### Important Notes
 
 - Rewards come from the **domain treasury**, not from token inflation
+- Reward eligibility is consumed by the first placement even when the treasury is too small to produce a positive payout
+- Moving a stone changes ranking only; it does not pay another reward
 - As the treasury shrinks, rewards decrease proportionally
 - This creates a self-regulating economy
 - Active domains with larger treasuries offer better rewards

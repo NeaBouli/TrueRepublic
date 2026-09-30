@@ -224,6 +224,12 @@ func (k Keeper) recordValidatorSignature(ctx sdk.Context, operatorAddr string, c
 }
 
 func (k Keeper) reducePendingTransferAccounting(ctx sdk.Context, removal PendingValidatorRemoval, penalty int64) error {
+	// Budget-exempt holds (GH-306) never incremented TransferredStake at exit,
+	// so slashing them must not decrement unrelated historical accounting.
+	// Legacy holds without the marker retain the legacy symmetric accounting.
+	if removal.BudgetExempt {
+		return nil
+	}
 	if penalty <= 0 || len(removal.Validator.Domains) == 0 {
 		return nil
 	}

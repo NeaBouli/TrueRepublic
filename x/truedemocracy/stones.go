@@ -1,7 +1,9 @@
 package truedemocracy
 
 import (
+	"encoding/binary"
 	"sort"
+	"strings"
 
 	errorsmod "cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -18,6 +20,11 @@ import (
 //   - One stone per suggestion list (one per issue)
 //
 // Placing a stone on a new entry automatically moves it from the old one.
+//
+// The first-placement VoteToEarn reward (GH-306) is tracked separately with
+// persistent consumed markers that survive moves, exclusion cleanup, and
+// genesis export/import:
+//   "stone-reward:" + scope byte + uint32-length-prefixed fields → StoneRewardRecord
 
 func issueStoneKey(domainName, memberAddr string) []byte {
 	return []byte("stone:i:" + domainName + ":" + memberAddr)
@@ -27,10 +34,132 @@ func suggestionStoneKey(domainName, issueName, memberAddr string) []byte {
 	return []byte("stone:s:" + domainName + ":" + issueName + ":" + memberAddr)
 }
 
+const stoneRewardRecordPrefix = "stone-reward:"
+
+// stoneRewardRecordKey derives the consumed-marker key for one member and
+// voting scope. An empty IssueName selects the domain issue-list scope.
+func stoneRewardRecordKey(record StoneRewardRecord) []byte {
+	appendPart := func(key []byte, value string) []byte {
+		var size [4]byte
+		binary.BigEndian.PutUint32(size[:], uint32(len(value)))
+		key = append(key, size[:]...)
+		return append(key, value...)
+	}
+	key := []byte(stoneRewardRecordPrefix)
+	if record.IssueName == "" {
+		key = append(key, 'i')
+		key = appendPart(key, record.DomainName)
+		return appendPart(key, record.MemberAddr)
+	}
+	key = append(key, 's')
+	key = appendPart(key, record.DomainName)
+	key = appendPart(key, record.IssueName)
+	return appendPart(key, record.MemberAddr)
+}
+
+// HasStoneRewardRecord reports whether the first-placement reward for the
+// member's voting scope was already consumed.
+func (k Keeper) HasStoneRewardRecord(ctx sdk.Context, record StoneRewardRecord) bool {
+	return ctx.KVStore(k.StoreKey).Has(stoneRewardRecordKey(record))
+}
+
+// SetStoneRewardRecord persists the consumed marker. The marshaled record is
+// stored as the value so export never has to parse ambiguous key segments.
+func (k Keeper) SetStoneRewardRecord(ctx sdk.Context, record StoneRewardRecord) {
+	ctx.KVStore(k.StoreKey).Set(stoneRewardRecordKey(record), k.cdc.MustMarshalLengthPrefixed(&record))
+}
+
+// IterateStoneRewardRecords visits every consumed marker in deterministic
+// store key order. Returning true stops iteration.
+func (k Keeper) IterateStoneRewardRecords(ctx sdk.Context, fn func(StoneRewardRecord) bool) {
+	store := ctx.KVStore(k.StoreKey)
+	prefix := []byte(stoneRewardRecordPrefix)
+	iter := store.Iterator(prefix, prefixEnd(prefix))
+	defer iter.Close()
+	for ; iter.Valid(); iter.Next() {
+		var record StoneRewardRecord
+		k.cdc.MustUnmarshalLengthPrefixed(iter.Value(), &record)
+		if fn(record) {
+			return
+		}
+	}
+}
+
+// BaselineStoneRewardMarkers is the deterministic GH-306 2→3 migration step:
+// every stone that exists at the upgrade boundary is marked as already
+// rewarded, so a legacy placement can never earn the first-placement reward a
+// second time. Keys are scanned globally and resolved against known domain
+// names, so lifecycle-cleaned suggestion scopes are included and names
+// containing ':' remain deterministic. The step is idempotent: existing
+// markers are left untouched.
+func (k Keeper) BaselineStoneRewardMarkers(ctx sdk.Context) {
+	store := ctx.KVStore(k.StoreKey)
+	baseline := func(record StoneRewardRecord) {
+		if key := stoneRewardRecordKey(record); !store.Has(key) {
+			store.Set(key, k.cdc.MustMarshalLengthPrefixed(&record))
+		}
+	}
+	var domainNames []string
+	k.IterateDomains(ctx, func(domain Domain) bool {
+		domainNames = append(domainNames, domain.Name)
+		return false
+	})
+	issuePrefix := []byte("stone:i:")
+	issueIter := store.Iterator(issuePrefix, prefixEnd(issuePrefix))
+	for ; issueIter.Valid(); issueIter.Next() {
+		rest := string(issueIter.Key()[len(issuePrefix):])
+		for _, domainName := range domainNames {
+			prefix := domainName + ":"
+			if !strings.HasPrefix(rest, prefix) {
+				continue
+			}
+			member := strings.TrimPrefix(rest, prefix)
+			// Runtime member addresses cannot contain ':'. Skipping the shorter
+			// ambiguous prefix therefore selects the only valid issue-key split.
+			if member != "" && !strings.ContainsRune(member, ':') {
+				baseline(StoneRewardRecord{DomainName: domainName, MemberAddr: member})
+			}
+		}
+	}
+	issueIter.Close()
+
+	// Lifecycle cleanup can leave suggestion-stone keys whose issue no longer
+	// exists. They still consumed their first-placement reward and must be
+	// baselined at the version boundary.
+	suggestionPrefix := []byte("stone:s:")
+	suggestionIter := store.Iterator(suggestionPrefix, prefixEnd(suggestionPrefix))
+	for ; suggestionIter.Valid(); suggestionIter.Next() {
+		rest := string(suggestionIter.Key()[len(suggestionPrefix):])
+		for _, domainName := range domainNames {
+			prefix := domainName + ":"
+			if !strings.HasPrefix(rest, prefix) {
+				continue
+			}
+			scopeAndMember := strings.TrimPrefix(rest, prefix)
+			lastSeparator := strings.LastIndexByte(scopeAndMember, ':')
+			if lastSeparator <= 0 || lastSeparator == len(scopeAndMember)-1 {
+				continue
+			}
+			// Legacy delimiter keys can be ambiguous when domain and issue
+			// names contain ':'. Baselining every valid interpretation is the
+			// conservative, deterministic choice: it can only consume a reward,
+			// never create a second payout.
+			baseline(StoneRewardRecord{
+				DomainName: domainName,
+				IssueName:  scopeAndMember[:lastSeparator],
+				MemberAddr: scopeAndMember[lastSeparator+1:],
+			})
+		}
+	}
+	suggestionIter.Close()
+}
+
 // PlaceStoneOnIssue places (or moves) the member's stone on an issue in the
 // domain's issue list. If the member already has a stone on a different issue,
-// it is moved automatically (old issue -1, new issue +1). A VoteToEarn reward
-// is paid from the domain treasury (whitepaper eq.2).
+// it is moved automatically (old issue -1, new issue +1). The VoteToEarn
+// reward (whitepaper eq.2) is paid from the domain treasury at most once per
+// member and scope: only the very first placement earns it; moves and
+// re-entries after cleanup never pay again (GH-306).
 func (k Keeper) PlaceStoneOnIssue(ctx sdk.Context, domainName, issueName, memberAddr string) (sdk.Coins, error) {
 	domain, found := k.GetDomain(ctx, domainName)
 	if !found {
@@ -50,6 +179,7 @@ func (k Keeper) PlaceStoneOnIssue(ctx sdk.Context, domainName, issueName, member
 	key := issueStoneKey(domainName, memberAddr)
 
 	// Check if member already has a stone placed.
+	firstPlacement := true
 	if existing := store.Get(key); existing != nil {
 		oldIssue := string(existing)
 		if oldIssue == issueName {
@@ -62,6 +192,7 @@ func (k Keeper) PlaceStoneOnIssue(ctx sdk.Context, domainName, issueName, member
 				break
 			}
 		}
+		firstPlacement = false
 	}
 
 	// Increment target issue and update activity.
@@ -69,8 +200,15 @@ func (k Keeper) PlaceStoneOnIssue(ctx sdk.Context, domainName, issueName, member
 	domain.Issues[targetIdx].LastActivityAt = ctx.BlockTime().Unix()
 	store.Set(key, []byte(issueName))
 
-	// VoteToEarn reward (eq.2).
-	reward := k.payStoneReward(&domain)
+	// VoteToEarn reward (eq.2) only for the first placement in this scope.
+	reward := sdk.Coins{}
+	if firstPlacement {
+		record := StoneRewardRecord{DomainName: domainName, MemberAddr: memberAddr}
+		if !k.HasStoneRewardRecord(ctx, record) {
+			reward = k.payStoneReward(&domain)
+			k.SetStoneRewardRecord(ctx, record)
+		}
+	}
 
 	bz := k.cdc.MustMarshalLengthPrefixed(&domain)
 	store.Set([]byte("domain:"+domainName), bz)
@@ -104,6 +242,7 @@ func (k Keeper) PlaceStoneOnSuggestion(ctx sdk.Context, domainName, issueName, s
 	key := suggestionStoneKey(domainName, issueName, memberAddr)
 
 	// Check if member already has a stone in this suggestion list.
+	firstPlacement := true
 	if existing := store.Get(key); existing != nil {
 		oldSugg := string(existing)
 		if oldSugg == suggestionName {
@@ -116,6 +255,7 @@ func (k Keeper) PlaceStoneOnSuggestion(ctx sdk.Context, domainName, issueName, s
 				break
 			}
 		}
+		firstPlacement = false
 	}
 
 	// Increment target suggestion and update issue activity.
@@ -123,8 +263,15 @@ func (k Keeper) PlaceStoneOnSuggestion(ctx sdk.Context, domainName, issueName, s
 	domain.Issues[issueIdx].LastActivityAt = ctx.BlockTime().Unix()
 	store.Set(key, []byte(suggestionName))
 
-	// VoteToEarn reward (eq.2).
-	reward := k.payStoneReward(&domain)
+	// VoteToEarn reward (eq.2) only for the first placement in this scope.
+	reward := sdk.Coins{}
+	if firstPlacement {
+		record := StoneRewardRecord{DomainName: domainName, IssueName: issueName, MemberAddr: memberAddr}
+		if !k.HasStoneRewardRecord(ctx, record) {
+			reward = k.payStoneReward(&domain)
+			k.SetStoneRewardRecord(ctx, record)
+		}
+	}
 
 	bz := k.cdc.MustMarshalLengthPrefixed(&domain)
 	store.Set([]byte("domain:"+domainName), bz)

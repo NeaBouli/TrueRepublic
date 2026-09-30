@@ -16,7 +16,7 @@
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/tests-2486%20recovery--verified-orange" alt="Recovery-verified tests"/>
+  <img src="https://img.shields.io/badge/tests-2501%20recovery--verified-orange" alt="Recovery-verified tests"/>
   <img src="https://img.shields.io/badge/release-unreleased-orange" alt="Unreleased recovery candidate"/>
   <img src="https://img.shields.io/badge/recovery-active-orange" alt="Recovery active"/>
   <img src="https://img.shields.io/badge/Go-1.26.6-00ADD8?logo=go" alt="Go"/>
@@ -137,7 +137,7 @@ See [INSTALLATION.md](INSTALLATION.md) for detailed instructions.
 | **Anonymous Suggestion Ratings** | Frozen v2 protocol profile with domain keys; production proving/submission remains disabled | [ZKP Protocol Freeze](docs/security/ZKP_PROTOCOL_FREEZE.md) |
 | **Proof of Domain** | Validators must be active domain members | [Validator Guide](docs/validators/README.md) |
 | **DEX (stacked recovery)** | PR #18 adds custody/LP ownership/burns; PR #19 reconciles genesis and checks reserves/shares every block | [DEX Guide](docs/user-manual/dex-trading-guide.md) |
-| **VoteToEarn** | Earn PNYX rewards for active participation | [Stones Guide](docs/user-manual/stones-voting-guide.md) |
+| **VoteToEarn** | One treasury-funded reward for a member's first Stone placement in each voting scope; moves never repay | [Stones Guide](docs/user-manual/stones-voting-guide.md) |
 | **Suggestion Lifecycle** | Green/yellow/red zones with auto-delete | [Governance](docs/user-manual/governance-tutorial.md) |
 | **IBC Transfers** | GH-175/GH-178/GH-181 locally verify packet and compatible-restart recovery; GH-184 adds governed fresh-genesis application-upgrade recovery. External relayer and IBC client-upgrade qualification remain open | [IBC Setup](docs/IBC_RELAYER_SETUP.md) |
 
@@ -219,13 +219,13 @@ TrueRepublic/
 | Domain-Bank Bridge | ✅ | `x/truedemocracy/treasury_bridge.go` |
 | IBC Transfer (ICS-20) | 🟡 Two-chain lifecycle, channel replacement, compatible restart, and governed fresh-genesis app-upgrade recovery verified locally through GH-184; external relayer and IBC client-upgrade evidence pending | `app.go` (ibc-go v8.7.0) |
 | Stones Voting (WP S3.1) | ✅ | `x/truedemocracy/stones.go` |
-| VoteToEarn Rewards | ✅ | `x/truedemocracy/stones.go` |
+| VoteToEarn Rewards | ✅ First-placement-only per member/scope (GH-306) | `x/truedemocracy/stones.go` |
 | Suggestion Lifecycle (WP S3.1.2) | ✅ | `x/truedemocracy/lifecycle.go` |
 | Green/Yellow/Red Zones | ✅ | `x/truedemocracy/lifecycle.go` |
 | Auto-Delete & Fast Delete (2/3) | ✅ | `x/truedemocracy/lifecycle.go` |
 | Admin Election (WP S3.6) | ✅ | `x/truedemocracy/governance.go` |
 | Member Exclusion (2/3 vote) | ✅ | `x/truedemocracy/governance.go` |
-| PoD Transfer Limit (10%, WP S7) | ✅ | `x/truedemocracy/validator.go` |
+| PoD Transfer Limit (10%, WP S7) | ✅ Legacy/partial accounting retained; authenticated full exits use slashable budget-exempt holds (GH-306) | `x/truedemocracy/validator.go`, `x/truedemocracy/escrow.go` |
 | CLI Commands (26 tx + 9 query) | ✅ | `x/truedemocracy/cli.go` |
 | DEX CLI (7 tx + 9 query) | ✅ | `x/dex/cli.go` |
 | CosmWasm Contracts (7 crates) | ✅ | `contracts/` (workspace) |
@@ -241,7 +241,7 @@ TrueRepublic/
 ```bash
 # Blockchain (the committed module graph remains unchanged)
 ./scripts/go-packages.sh go build
-CGO_ENABLED=1 ./scripts/go-packages.sh go test -race -cover -count=1 -timeout=600s    # 2,132 Go cases
+CGO_ENABLED=1 ./scripts/go-packages.sh go test -race -cover -count=1 -timeout=600s    # 2,147 Go cases
 make cross-run-evidence-contract-test                                  # metadata-only GH-273 contract
 make ci-tool-bootstrap-contract-test                                   # locked GH-278 CI tool bootstrap contract
 make ibc-two-chain                                                     # separate GH-175/GH-178/GH-181 proof gate
@@ -287,7 +287,7 @@ GH-297 contributes 62 fail-closed Go contract cases to the standard-suite
 arithmetic by pinning the frozen protocol manifest, source-spec digest,
 Go/client parity, evidence paths and adversarial drift handling.
 
-- 🟡 2,486 tests recovery-verified locally (2,132 Go, including GH-304's real-bech32 ElectAdmin integrity/quarantine regressions, GH-294's security-review readiness contract, GH-278's locked CI-tool bootstrap evidence, GH-273's strict cross-run evidence contract, GH-261's candidate-evidence contract, GH-258's OCI build/evidence contract, GH-244's rollout-genesis qualification contract, GH-225's release-compatibility contract, GH-222's verified install-lifecycle and repository contracts, GH-209's recipient-binding and atomic-payout adversarial coverage, + 26 Rust + 328 maintained-client, including its fail-closed audit-gate diagnostics, v2 encoding and canonical-recipient validation), plus the separately gated GH-266 fresh Go/WASM-to-keeper payout/replay proof, GH-206 native-verifier compatibility proof, GH-175/GH-178/GH-181 IBC proof and GH-184 governed-upgrade recovery proof, GH-172 shared-state contention/exact-replay/restart proof, GH-145 bounded live fuzz campaigns, GH-193 maintained-client wallet/signing-safety proof, GH-190 maintained-client IBC transfer/recovery proof, GH-131 real submitted-history pagination proof, GH-121 real browser-query boundary, GH-115 local client-chain delivery proof, GH-56 rotation, GH-59 slashing, GH-60 inactive-validator genesis, GH-61 legacy-authority migration, GH-93 incident rehearsal, and GH-97 sustained-load process harnesses; production rollout evidence remains required
+- 🟡 2,501 tests recovery-verified locally (2,147 Go, including GH-306's budget-exempt full-exit, legacy-accounting, first-placement Stone-reward, genesis and version-migration regressions, GH-304's real-bech32 ElectAdmin integrity/quarantine regressions, GH-294's security-review readiness contract, GH-278's locked CI-tool bootstrap evidence, GH-273's strict cross-run evidence contract, GH-261's candidate-evidence contract, GH-258's OCI build/evidence contract, GH-244's rollout-genesis qualification contract, GH-225's release-compatibility contract, GH-222's verified install-lifecycle and repository contracts, GH-209's recipient-binding and atomic-payout adversarial coverage, + 26 Rust + 328 maintained-client, including its fail-closed audit-gate diagnostics, v2 encoding and canonical-recipient validation), plus the separately gated GH-266 fresh Go/WASM-to-keeper payout/replay proof, GH-206 native-verifier compatibility proof, GH-175/GH-178/GH-181 IBC proof and GH-184 governed-upgrade recovery proof, GH-172 shared-state contention/exact-replay/restart proof, GH-145 bounded live fuzz campaigns, GH-193 maintained-client wallet/signing-safety proof, GH-190 maintained-client IBC transfer/recovery proof, GH-131 real submitted-history pagination proof, GH-121 real browser-query boundary, GH-115 local client-chain delivery proof, GH-56 rotation, GH-59 slashing, GH-60 inactive-validator genesis, GH-61 legacy-authority migration, GH-93 incident rehearsal, and GH-97 sustained-load process harnesses; production rollout evidence remains required
 - 🟡 Rollout accounting is 36/59 overall and 36/51 phase work. GH-297 earns
   exactly the frozen/versioned Phase-2 protocol-contract item; its separate
   prover, production-artifact, ceremony, browser-to-chain and independent-review
@@ -385,8 +385,8 @@ Go/client parity, evidence paths and adversarial drift handling.
   reproducible clients and chain artifacts, staged networks, and explicit
   go/no-go approval are still required.
 
-> Historical test count: 577. The authoritative recovery-verified total is 2,486
-> (2,132 Go + 26 Rust + 328 maintained-client), reproduced from fresh
+> Historical test count: 577. The authoritative recovery-verified total is 2,501
+> (2,147 Go + 26 Rust + 328 maintained-client), reproduced from fresh
 > package-scoped output using the established passing-case method.
 
 ---

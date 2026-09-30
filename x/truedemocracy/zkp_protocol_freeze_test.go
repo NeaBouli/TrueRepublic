@@ -9,6 +9,7 @@ import (
 	"math/big"
 	"os"
 	"path/filepath"
+	"reflect"
 	"regexp"
 	"strconv"
 	"strings"
@@ -27,8 +28,10 @@ import (
 // hard false.
 
 const (
-	zkpProtocolFreezePath   = "../../configs/security/zkp-protocol-freeze.json"
+	zkpProtocolFreezePath   = "../../configs/security/zkp-protocol-freeze-cv3.json"
+	zkpHistoricalFreezePath = "../../configs/security/zkp-protocol-freeze.json"
 	zkpProtocolFreezeSchema = "truerepublic/zkp-protocol-freeze/v1"
+	zkpHistoricalFreezeSHA  = "63ae946b699c1b847827cc3c1040c7fadcba48ab640f00afebd1b63b02e851d6"
 
 	zkpFreezeStatus         = "frozen"
 	zkpFreezeClassification = "FROZEN PRODUCTION-CANDIDATE SPECIFICATION"
@@ -46,7 +49,7 @@ const (
 	zkpFreezeNullifierScope    = "TrueRepublic/vote/v1"
 	zkpFreezeSignalProfile     = "TrueRepublic/vote/v2"
 	zkpFreezeProfileRecipient  = "truerepublic/bech32-canonical-recipient/v1"
-	zkpFreezeConsensusVersion  = 2
+	zkpFreezeConsensusVersion  = 3
 	zkpFreezeFieldElementCanon = "exactly 32-byte big-endian canonical BN254 scalar field element"
 	zkpFreezeLegacyUse         = "nullifier-scope derivation and frozen synthetic fixture compatibility only"
 	zkpFreezeCandidateUse      = "canonical recipient-bound anonymous-rating signal"
@@ -339,6 +342,34 @@ func loadZKPProtocolFreeze(t *testing.T) (zkpProtocolFreezeManifest, []byte, zkp
 	return manifest, sourceBytes, spec
 }
 
+// TestZKPProtocolFreezeRetainsHistoricalConsensusV2 proves GH-306 published a
+// new consensus-v3 authority instead of rewriting the immutable GH-297
+// consensus-v2 artifact in place. Only the activation consensus version may
+// differ; the frozen circuit, public inputs, encodings, nullifier, signal,
+// safety classification and open gates remain field-for-field equivalent.
+func TestZKPProtocolFreezeRetainsHistoricalConsensusV2(t *testing.T) {
+	current, _, _ := loadZKPProtocolFreeze(t)
+	raw, err := os.ReadFile(zkpHistoricalFreezePath)
+	if err != nil {
+		t.Fatal(err)
+	}
+	digest := sha256.Sum256(raw)
+	if got := hex.EncodeToString(digest[:]); got != zkpHistoricalFreezeSHA {
+		t.Fatalf("historical consensus-v2 freeze digest = %s, want %s", got, zkpHistoricalFreezeSHA)
+	}
+	var historical zkpProtocolFreezeManifest
+	if err := strictJSON(raw, &historical); err != nil {
+		t.Fatalf("strict historical freeze decode: %v", err)
+	}
+	if historical.Profiles.ConsensusVersion != 2 {
+		t.Fatalf("historical freeze consensus version = %d, want 2", historical.Profiles.ConsensusVersion)
+	}
+	historical.Profiles.ConsensusVersion = current.Profiles.ConsensusVersion
+	if !reflect.DeepEqual(historical, current) {
+		t.Fatal("consensus-v3 freeze changed ZKP semantics beyond the activation consensus version")
+	}
+}
+
 func TestZKPProtocolFreezeManifestStrictContract(t *testing.T) {
 	loadZKPProtocolFreeze(t)
 }
@@ -559,8 +590,8 @@ func TestZKPProtocolFreezeRejectsDrift(t *testing.T) {
 		"wrong circuit profile": func(m *zkpProtocolFreezeManifest) {
 			m.Profiles.Circuit = "truerepublic/membership-vote/v3-bn254-mimc-depth20"
 		},
-		"consensus version downgrade":   func(m *zkpProtocolFreezeManifest) { m.Profiles.ConsensusVersion = 1 },
-		"consensus version skip":        func(m *zkpProtocolFreezeManifest) { m.Profiles.ConsensusVersion = 3 },
+		"consensus version downgrade":   func(m *zkpProtocolFreezeManifest) { m.Profiles.ConsensusVersion = 2 },
+		"consensus version skip":        func(m *zkpProtocolFreezeManifest) { m.Profiles.ConsensusVersion = 4 },
 		"wrong public inputs profile":   func(m *zkpProtocolFreezeManifest) { m.Profiles.PublicInputs = "truerepublic/zkp-public-inputs/v2" },
 		"wrong field encoding profile":  func(m *zkpProtocolFreezeManifest) { m.Profiles.FieldEncoding = "truerepublic/bn254-field-le32/v1" },
 		"nullifier scope swapped to v2": func(m *zkpProtocolFreezeManifest) { m.Profiles.NullifierScope = zkpFreezeSignalProfile },

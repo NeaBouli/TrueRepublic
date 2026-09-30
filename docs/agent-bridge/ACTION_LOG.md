@@ -5911,3 +5911,26 @@
   every Git/GitHub action. No implementation overlap is allowed.
 - No state repair, migration, deployment, release, production action, real key
   or real fund is authorized. Rollout remains 36/59 and production false.
+
+## 2026-09-19 EEST - GH-306 validator-exit and stone-reward block started
+
+- Created isolated branch `fix/GH-306-validator-exit-rewards` from exact main
+  `1283a4452d36784ea962f7fc8ba13f9ad45472cd` after the external audit reports
+  merged. The original dirty checkout and every unrelated worktree remain
+  untouched.
+- Kimi K3 completed the primary read-only source/test analysis. Sol froze the
+  minimum safe scope: full exits remain slashable through the existing dual
+  evidence-window hold but no longer consume the 10% payout-based transfer
+  budget; partial withdrawals remain fail-closed; a stone reward is eligible
+  only for the first placement by one member in one voting scope and never for
+  a move.
+- Existing stones are treated as already rewarded at the version boundary.
+  Jailed validators may still exit; the recipient remains the authenticated
+  operator; evidence remains fail-closed; no generalized partial-unbonding
+  queue is introduced in this block.
+- Work split is non-overlapping: Kimi owns the bounded chain implementation and
+  focused regression tests. Sol owns Bridge/docs, architecture and migration
+  review, complete integration gates, Git/GitHub actions and closure.
+- No deployment, live-chain repair, state migration execution, production
+  activation, real key/fund action or rollout credit is authorized. Rollout
+  remains 36/59 and production readiness remains false.

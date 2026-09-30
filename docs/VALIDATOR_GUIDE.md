@@ -50,15 +50,23 @@ TrueRepublic uses Proof of Domain instead of traditional Proof of Stake:
 - Validators removed from all domains are **automatically evicted**
 - Domain participation is verified on-chain
 
-### Transfer Limit (WP S7)
+### Transfer Limit and Full Exit (WP S7)
 
-Stake withdrawals are capped at **10% of the domain's cumulative total payouts**:
+Partial stake withdrawals are currently disabled because a generalized
+unbonding queue must keep every withdrawn claim slashable through the CometBFT
+evidence window. The historical transfer-accounting path remains capped at
+**10% of the domain's cumulative total payouts**:
 
 ```
 max_withdrawal = domain_total_payouts * 0.10
 ```
 
-This prevents validators from extracting more value than the domain generates.
+Authenticated **full exits are not withdrawals against this budget**. Since
+GH-306 they bypass the 10% cap, do not increment `TransferredStake`, and move
+the complete stake into the existing slashable dual height/time evidence hold.
+Only the authenticated operator receives the stake after both evidence limits
+expire; key rotation, re-registration and evidence processing remain
+fail-closed while the hold is pending.
 
 ## Staking Rewards
 

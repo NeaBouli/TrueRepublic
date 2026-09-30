@@ -244,7 +244,11 @@ therefore remains open.
 
 Partial validator stake withdrawals are disabled until generalized slashable
 unbonding can retain the withdrawn claim through the CometBFT evidence window.
-Full validator exits remain supported through the evidence-window escrow hold.
+Since GH-306, authenticated full exits bypass the payout-based 10% transfer
+budget and do not increment `TransferredStake`; the complete stake remains in
+the existing dual height/time evidence-window hold, remains slashable, and can
+only pay the authenticated operator after both evidence limits expire. Legacy
+holds retain their historical transfer-accounting behavior.
 
 ## ZKP Client
 
@@ -264,9 +268,15 @@ canonical bech32 reward recipient into the domain-separated
 `TrueRepublic/vote/v2` signal covered by both anonymous rating paths and
 replaces deferred rewards with an atomic treasury-funded payout to only the
 bound recipient; the one-vote nullifier stays recipient-independent. This
-handler change raises the `truedemocracy` module consensus version to 2, so an
-existing supported chain requires the registered governed no-op store migration
+handler change raised the `truedemocracy` module consensus version to 2, so an
+existing supported chain required the registered governed no-op store migration
 or fresh genesis — version 1 payloads fail closed and are never dual-accepted.
+GH-306 subsequently raises the module version to 3 for unrelated validator-exit
+and first-placement Stone-reward state. Its deterministic 2→3 migration does
+not change the frozen ZKP semantics: the consensus-v2 manifest remains
+immutable and SHA-256 pinned, while a separately published consensus-v3
+authority carries the identical circuit, encoding, nullifier and signal
+profile.
 Direct payout publicly links
 the vote/nullifier event to the chosen payout address; fresh addresses reduce
 address-reuse linkage but do not create shielded payout privacy. GH-206's

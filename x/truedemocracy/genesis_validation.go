@@ -246,11 +246,16 @@ func ValidateGenesisState(genesis GenesisState) error {
 		if _, found := domains[domainName]; !found {
 			return fmt.Errorf("pending removal for %q references missing domain %q", operator, domainName)
 		}
-		pendingStake := math.ZeroInt()
-		if existing, found := pendingStakeByDomain[domainName]; found {
-			pendingStake = existing
+		// Budget-exempt holds (GH-306) never incremented TransferredStake, so
+		// they require no transferred-stake coverage. Legacy holds keep the
+		// legacy coverage obligation.
+		if !removal.BudgetExempt {
+			pendingStake := math.ZeroInt()
+			if existing, found := pendingStakeByDomain[domainName]; found {
+				pendingStake = existing
+			}
+			pendingStakeByDomain[domainName] = pendingStake.Add(removal.Validator.Stake.AmountOf(PNYXDenom))
 		}
-		pendingStakeByDomain[domainName] = pendingStake.Add(removal.Validator.Stake.AmountOf(PNYXDenom))
 		if removal.RemovedAtHeight < 0 ||
 			removal.ConsensusRetiredHeight <= removal.RemovedAtHeight ||
 			removal.ReleaseAfterHeight < removal.ConsensusRetiredHeight {
@@ -433,6 +438,29 @@ func ValidateGenesisState(genesis GenesisState) error {
 			return fmt.Errorf("duplicate used nullifier for domain %q", record.DomainName)
 		}
 		usedNullifiers[key] = struct{}{}
+	}
+
+	// Consumed first-placement stone reward markers (GH-306) deliberately
+	// outlive issues and memberships, so they are not required to reference an
+	// existing issue or a current member — only an existing domain and a
+	// canonical member address.
+	stoneRewards := make(map[string]struct{}, len(genesis.StoneRewardRecords))
+	for _, record := range genesis.StoneRewardRecords {
+		if _, exists := domains[record.DomainName]; !exists {
+			return fmt.Errorf("stone reward record references missing domain %q", record.DomainName)
+		}
+		member, err := sdk.AccAddressFromBech32(record.MemberAddr)
+		if err != nil {
+			return fmt.Errorf("stone reward record member %q is invalid: %w", record.MemberAddr, err)
+		}
+		if member.String() != record.MemberAddr {
+			return fmt.Errorf("stone reward record member %q is not canonical bech32", record.MemberAddr)
+		}
+		key := record.DomainName + "\x00" + record.IssueName + "\x00" + record.MemberAddr
+		if _, exists := stoneRewards[key]; exists {
+			return fmt.Errorf("duplicate stone reward record for domain %q", record.DomainName)
+		}
+		stoneRewards[key] = struct{}{}
 	}
 
 	if genesis.VerifyingKeyHex == "" {

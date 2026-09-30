@@ -276,6 +276,22 @@ type PendingValidatorRemoval struct {
 	ConsensusRetiredAtNanos int64     `json:"consensus_retired_at_nanos,omitempty"`
 	ReleaseAfterHeight      int64     `json:"release_after_height"`
 	ReleaseAfterTimeNanos   int64     `json:"release_after_time_nanos,omitempty"`
+	// BudgetExempt marks a hold created after GH-306: the full exit bypassed
+	// the WP §7 transfer budget and never incremented TransferredStake, so
+	// slashing it must never decrement unrelated historical TransferredStake.
+	// Legacy holds (field absent) keep the legacy slash-accounting symmetry.
+	BudgetExempt bool `json:"budget_exempt,omitempty"`
+}
+
+// StoneRewardRecord is the persistent GH-306 marker that the first-placement
+// VoteToEarn reward for one member in one voting scope has been consumed.
+// IssueName is empty for the domain issue-list scope and set for a suggestion
+// list. The marker survives stone moves, exclusion cleanup, and genesis
+// export/import so a scope never pays twice.
+type StoneRewardRecord struct {
+	DomainName string `json:"domain_name"`
+	IssueName  string `json:"issue_name,omitempty"`
+	MemberAddr string `json:"member_addr"`
 }
 
 type GenesisState struct {
@@ -287,6 +303,7 @@ type GenesisState struct {
 	ValidatorSigningInfos      []ValidatorSigningInfo         `json:"validator_signing_infos,omitempty"`
 	ProcessedInfractions       []ProcessedInfraction          `json:"processed_infractions,omitempty"`
 	PendingValidatorRemovals   []PendingValidatorRemoval      `json:"pending_validator_removals,omitempty"`
+	StoneRewardRecords         []StoneRewardRecord            `json:"stone_reward_records,omitempty"`
 	LastCommitCursor           LastCommitCursor               `json:"last_commit_cursor,omitempty"`
 	BootstrapOperatorAddresses []string                       `json:"bootstrap_operator_addresses,omitempty"`
 	UsedNullifiers             []NullifierRecord              `json:"used_nullifiers"`
@@ -319,6 +336,7 @@ func RegisterCodec(cdc *codec.LegacyAmino) {
 	cdc.RegisterConcrete(ProcessedInfraction{}, "truedemocracy/ProcessedInfraction", nil)
 	cdc.RegisterConcrete(LastCommitCursor{}, "truedemocracy/LastCommitCursor", nil)
 	cdc.RegisterConcrete(PendingValidatorRemoval{}, "truedemocracy/PendingValidatorRemoval", nil)
+	cdc.RegisterConcrete(StoneRewardRecord{}, "truedemocracy/StoneRewardRecord", nil)
 	cdc.RegisterConcrete(SoftwareUpgradeProposal{}, "truedemocracy/SoftwareUpgradeProposal", nil)
 	cdc.RegisterConcrete(SoftwareUpgradeCancelProposal{}, "truedemocracy/SoftwareUpgradeCancelProposal", nil)
 
@@ -361,5 +379,6 @@ func DefaultGenesisState() GenesisState {
 		ValidatorSigningInfos:     []ValidatorSigningInfo{},
 		ProcessedInfractions:      []ProcessedInfraction{},
 		PendingValidatorRemovals:  []PendingValidatorRemoval{},
+		StoneRewardRecords:        []StoneRewardRecord{},
 	}
 }

@@ -21,9 +21,10 @@ separate mandatory release-freeze and accountable go/no-go subchecks.
 
 - The ordered recovery merge chain is on `main`.
 - The maximum supply is fixed at 21,000,000 PNYX.
-- The source of truth records 2,486 recovery-verified tests: 2,132 Go, 26 Rust,
-  and 328 maintained-client tests. The Go total includes GH-304's 15-case
-  real-bech32 ElectAdmin integrity/quarantine regression increment and GH-297's 62-case
+- The source of truth records 2,501 recovery-verified tests: 2,147 Go, 26 Rust,
+  and 328 maintained-client tests. The Go total includes GH-306's 15-event
+  exit/reward-economics increment, GH-304's 15-case real-bech32 ElectAdmin
+  integrity/quarantine regression increment and GH-297's 62-case
   frozen ZKP protocol contract, GH-294's strict
   security-review readiness contract and GH-278's locked
   CI-tool bootstrap evidence, GH-244's strict
@@ -147,9 +148,10 @@ domain-separated `TrueRepublic/vote/v2` signal, and the treasury pays only
 that bound recipient atomically while the nullifier stays recipient- and
 rating-independent. Direct payout publicly links the vote/nullifier event to
 the chosen payout address; fresh addresses reduce address-reuse linkage but do
-not create shielded payout privacy. The module consensus version rises to 2,
-so adoption requires the registered governed no-op store migration or fresh
-genesis. This protocol
+not create shielded payout privacy. GH-209 raised the module consensus version
+to 2; GH-306 raises it to 3 for deterministic validator-exit and Stone-reward
+state migration without changing the frozen ZKP semantics. Adoption requires
+the registered governed migration chain or fresh genesis. This protocol
 binding alone does not complete the production prover, ceremony, submission,
 or independent-review checkboxes above.
 

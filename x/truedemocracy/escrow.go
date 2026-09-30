@@ -176,7 +176,11 @@ func (k Keeper) WithdrawStakeWithEscrow(ctx sdk.Context, sender sdk.AccAddress, 
 
 // RemoveValidatorWithEscrow is a full authenticated exit. It atomically
 // removes validator power but retains the stake in module escrow until the
-// CometBFT evidence window has expired.
+// CometBFT evidence window has expired. Since GH-306 a full exit bypasses the
+// WP §7 transfer budget: it neither checks the 10% payout limit nor
+// increments TransferredStake, and the resulting budget-exempt hold never
+// decrements that historical accounting when slashed. Partial withdrawals
+// remain disabled in WithdrawStakeWithEscrow.
 func (k Keeper) RemoveValidatorWithEscrow(ctx sdk.Context, sender sdk.AccAddress, operatorAddr string) error {
 	if err := requireBankKeeper(k.bankKeeper); err != nil {
 		return err
@@ -202,7 +206,7 @@ func (k Keeper) RemoveValidatorWithEscrow(ctx sdk.Context, sender sdk.AccAddress
 	}
 
 	cacheCtx, write := ctx.CacheContext()
-	if err := k.WithdrawStake(cacheCtx, operatorAddr, amount.Int64()); err != nil {
+	if err := k.RemoveValidator(cacheCtx, operatorAddr); err != nil {
 		return err
 	}
 	k.SetPendingValidatorRemoval(cacheCtx, removal)
