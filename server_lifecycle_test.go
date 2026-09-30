@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"bytes"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -240,7 +241,7 @@ func TestNodeStartsStopsAndRestartsFromPersistentHome(t *testing.T) {
 	apiPort := freeTCPPort(t)
 	rpcURL := fmt.Sprintf("http://127.0.0.1:%d/status", rpcPort)
 	metricsURL := fmt.Sprintf("http://127.0.0.1:%d/metrics?format=prometheus", apiPort)
-	start := func(telemetryEnabled bool) (*exec.Cmd, *os.File) {
+	start := func(telemetryEnabled bool) *lifecycleNode {
 		t.Helper()
 		logFile, err := os.CreateTemp(t.TempDir(), "node-*.log")
 		if err != nil {
@@ -272,46 +273,45 @@ func TestNodeStartsStopsAndRestartsFromPersistentHome(t *testing.T) {
 		)
 		cmd.Stdout = logFile
 		cmd.Stderr = logFile
-		if err := cmd.Start(); err != nil {
+		node, err := startLifecycleNode(cmd, logFile)
+		if err != nil {
 			_ = logFile.Close()
 			t.Fatal(err)
 		}
-		return cmd, logFile
+		return node
 	}
-	stop := func(cmd *exec.Cmd, logFile *os.File) {
+	stop := func(node *lifecycleNode) {
 		t.Helper()
-		if err := cmd.Process.Signal(os.Interrupt); err != nil {
-			_ = cmd.Process.Kill()
+		if err := node.cmd.Process.Signal(os.Interrupt); err != nil {
+			_ = node.cmd.Process.Kill()
 		}
-		done := make(chan error, 1)
-		go func() { done <- cmd.Wait() }()
 		select {
-		case err := <-done:
-			if err != nil {
-				_ = logFile.Close()
-				content, _ := os.ReadFile(logFile.Name())
-				t.Fatalf("node did not stop cleanly: %v\n%s", err, content)
+		case <-node.exited:
+			if node.err != nil {
+				_ = node.logFile.Close()
+				content, _ := os.ReadFile(node.logFile.Name())
+				t.Fatalf("node did not stop cleanly: %v\n%s", node.err, content)
 			}
 		case <-time.After(15 * time.Second):
-			_ = cmd.Process.Kill()
-			_ = logFile.Close()
+			node.kill()
+			_ = node.logFile.Close()
 			t.Fatal("node did not stop within 15 seconds")
 		}
-		_ = logFile.Close()
+		_ = node.logFile.Close()
 	}
 
-	first, firstLog := start(true)
-	firstHeight := waitForNodeHeight(t, rpcURL, 1, first, firstLog)
-	firstMetrics := waitForApplicationMetrics(t, metricsURL, firstHeight, first, firstLog)
-	firstLogPath := firstLog.Name()
-	stop(first, firstLog)
+	first := start(true)
+	firstHeight := waitForNodeHeight(t, rpcURL, 1, first)
+	firstMetrics := waitForApplicationMetrics(t, metricsURL, firstHeight, first)
+	firstLogPath := first.logFile.Name()
+	stop(first)
 	assertStructuredNodeLogs(t, firstLogPath)
 
-	second, secondLog := start(true)
-	secondHeight := waitForNodeHeight(t, rpcURL, firstHeight+1, second, secondLog)
-	secondMetrics := waitForApplicationMetrics(t, metricsURL, secondHeight, second, secondLog)
-	secondLogPath := secondLog.Name()
-	stop(second, secondLog)
+	second := start(true)
+	secondHeight := waitForNodeHeight(t, rpcURL, firstHeight+1, second)
+	secondMetrics := waitForApplicationMetrics(t, metricsURL, secondHeight, second)
+	secondLogPath := second.logFile.Name()
+	stop(second)
 	assertStructuredNodeLogs(t, secondLogPath)
 	if secondHeight <= firstHeight {
 		t.Fatalf("restart did not advance height: first=%d second=%d", firstHeight, secondHeight)
@@ -324,11 +324,11 @@ func TestNodeStartsStopsAndRestartsFromPersistentHome(t *testing.T) {
 		)
 	}
 
-	disabled, disabledLog := start(false)
-	disabledHeight := waitForNodeHeight(t, rpcURL, secondHeight+1, disabled, disabledLog)
-	waitForApplicationMetricsDisabled(t, metricsURL, disabled, disabledLog)
-	disabledLogPath := disabledLog.Name()
-	stop(disabled, disabledLog)
+	disabled := start(false)
+	disabledHeight := waitForNodeHeight(t, rpcURL, secondHeight+1, disabled)
+	waitForApplicationMetricsDisabled(t, metricsURL, disabled)
+	disabledLogPath := disabled.logFile.Name()
+	stop(disabled)
 	assertStructuredNodeLogs(t, disabledLogPath)
 
 	exportCmd := exec.Command(binary, "export", "--home", home)
@@ -363,8 +363,7 @@ func waitForApplicationMetrics(
 	t *testing.T,
 	url string,
 	minimumHeight int64,
-	cmd *exec.Cmd,
-	logFile *os.File,
+	node *lifecycleNode,
 ) applicationMetricsSnapshot {
 	t.Helper()
 	client := &http.Client{Timeout: time.Second}
@@ -387,15 +386,15 @@ func waitForApplicationMetrics(
 				}
 			}
 		}
-		if cmd.ProcessState != nil && cmd.ProcessState.Exited() {
-			break
+		if node.hasExited() {
+			_ = node.logFile.Close()
+			t.Fatal(node.exitReport())
 		}
 		time.Sleep(250 * time.Millisecond)
 	}
-	_ = cmd.Process.Kill()
-	_ = cmd.Wait()
-	_ = logFile.Close()
-	content, _ := os.ReadFile(logFile.Name())
+	node.kill()
+	_ = node.logFile.Close()
+	content, _ := os.ReadFile(node.logFile.Name())
 	t.Fatalf("application metrics did not reach height %d\n%s", minimumHeight, content)
 	return applicationMetricsSnapshot{}
 }
@@ -458,7 +457,7 @@ truerepublic_token_pnyx_supply_headroom_base_units 21000000000000
 	}
 }
 
-func waitForApplicationMetricsDisabled(t *testing.T, url string, cmd *exec.Cmd, logFile *os.File) {
+func waitForApplicationMetricsDisabled(t *testing.T, url string, node *lifecycleNode) {
 	t.Helper()
 	client := &http.Client{Timeout: time.Second}
 	deadline := time.Now().Add(10 * time.Second)
@@ -482,15 +481,15 @@ func waitForApplicationMetricsDisabled(t *testing.T, url string, cmd *exec.Cmd, 
 		} else {
 			lastErr = err
 		}
-		if cmd.ProcessState != nil && cmd.ProcessState.Exited() {
-			break
+		if node.hasExited() {
+			_ = node.logFile.Close()
+			t.Fatal(node.exitReport())
 		}
 		time.Sleep(250 * time.Millisecond)
 	}
-	_ = cmd.Process.Kill()
-	_ = cmd.Wait()
-	_ = logFile.Close()
-	content, _ := os.ReadFile(logFile.Name())
+	node.kill()
+	_ = node.logFile.Close()
+	content, _ := os.ReadFile(node.logFile.Name())
 	if exposed {
 		t.Fatalf("disabled application telemetry exposed the metrics endpoint\n%s", content)
 	}
@@ -535,10 +534,23 @@ func assertStructuredNodeLogs(t *testing.T, path string) {
 	}
 }
 
-func waitForNodeHeight(t *testing.T, url string, minimum int64, cmd *exec.Cmd, logFile *os.File) int64 {
+func waitForNodeHeight(t *testing.T, url string, minimum int64, node *lifecycleNode) int64 {
 	t.Helper()
+	height, err := nodeHeightWithin(url, minimum, node, 60*time.Second)
+	if err != nil {
+		node.kill()
+		_ = node.logFile.Close()
+		t.Fatal(err)
+	}
+	return height
+}
+
+// nodeHeightWithin polls the node status until it reaches minimum. It returns
+// immediately with the log tail when the owned child process exits, and with
+// the full log when the unchanged deadline expires (GH-325 F3).
+func nodeHeightWithin(url string, minimum int64, node *lifecycleNode, timeout time.Duration) (int64, error) {
 	client := &http.Client{Timeout: time.Second}
-	deadline := time.Now().Add(60 * time.Second)
+	deadline := time.Now().Add(timeout)
 	for time.Now().Before(deadline) {
 		response, err := client.Get(url)
 		if err == nil {
@@ -554,21 +566,59 @@ func waitForNodeHeight(t *testing.T, url string, minimum int64, cmd *exec.Cmd, l
 			if decodeErr == nil {
 				height, parseErr := strconv.ParseInt(status.Result.SyncInfo.LatestBlockHeight, 10, 64)
 				if parseErr == nil && height >= minimum {
-					return height
+					return height, nil
 				}
 			}
 		}
-		if cmd.ProcessState != nil && cmd.ProcessState.Exited() {
-			break
+		if node.hasExited() {
+			return 0, errors.New(node.exitReport())
 		}
 		time.Sleep(250 * time.Millisecond)
 	}
-	_ = cmd.Process.Kill()
-	_ = cmd.Wait()
-	_ = logFile.Close()
-	content, _ := os.ReadFile(logFile.Name())
-	t.Fatalf("node did not reach height %d\n%s", minimum, content)
-	return 0
+	content, _ := os.ReadFile(node.logFile.Name())
+	return 0, fmt.Errorf("node did not reach height %d\n%s", minimum, content)
+}
+
+// lifecycleNode owns the single cmd.Wait of a started node. Before GH-325 F3
+// the waiters checked cmd.ProcessState, which stays nil until Wait returns, so
+// a node that died at startup was only reported at the deadline.
+type lifecycleNode struct {
+	cmd     *exec.Cmd
+	logFile *os.File
+	exited  chan struct{}
+	err     error
+}
+
+func startLifecycleNode(cmd *exec.Cmd, logFile *os.File) (*lifecycleNode, error) {
+	if err := cmd.Start(); err != nil {
+		return nil, err
+	}
+	node := &lifecycleNode{cmd: cmd, logFile: logFile, exited: make(chan struct{})}
+	go func() {
+		node.err = cmd.Wait()
+		close(node.exited)
+	}()
+	return node, nil
+}
+
+func (node *lifecycleNode) hasExited() bool {
+	select {
+	case <-node.exited:
+		return true
+	default:
+		return false
+	}
+}
+
+// kill terminates the node and waits for the owned Wait to finish, so no
+// second Wait is issued and the goroutine never leaks.
+func (node *lifecycleNode) kill() {
+	_ = node.cmd.Process.Kill()
+	<-node.exited
+}
+
+func (node *lifecycleNode) exitReport() string {
+	return fmt.Sprintf("node process exited unexpectedly: %v\nlog tail:\n%s", node.err, smokeLogTail(node.logFile.Name(), 80))
 }
 
 func TestBindGenesisValidatorKeyUsesGeneratedNodeKey(t *testing.T) {

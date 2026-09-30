@@ -364,3 +364,56 @@ func TestSmokeValidatorExitIsReportedWithLogTail(t *testing.T) {
 		t.Fatal("exit state survived stop")
 	}
 }
+
+// TestLifecycleNodeExitFailsFastWithLogTail is the GH-325 F3 regression: a
+// single node that dies at startup must be reported immediately with its log
+// tail, not after the unchanged 60-second height deadline.
+func TestLifecycleNodeExitFailsFastWithLogTail(t *testing.T) {
+	if runtime.GOOS == "windows" {
+		t.Skip("uses a POSIX shell stub")
+	}
+	dir := t.TempDir()
+	binary := filepath.Join(dir, "exiting-node")
+	script := "#!/bin/sh\necho 'panic: bind: address already in use'\nexit 3\n"
+	if err := os.WriteFile(binary, []byte(script), 0o700); err != nil {
+		t.Fatal(err)
+	}
+	logFile, err := os.Create(filepath.Join(dir, "node.log"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	cmd := exec.Command(binary)
+	cmd.Stdout = logFile
+	cmd.Stderr = logFile
+	node, err := startLifecycleNode(cmd, logFile)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer logFile.Close()
+
+	url := fmt.Sprintf("http://127.0.0.1:%d/status", freeTCPPort(t))
+	started := time.Now()
+	_, err = nodeHeightWithin(url, 1, node, 60*time.Second)
+	elapsed := time.Since(started)
+	if err == nil {
+		t.Fatal("exited node reported a height")
+	}
+	if elapsed > 10*time.Second {
+		t.Fatalf("exit detected after %s; the old path waited for the 60s deadline", elapsed)
+	}
+	if !strings.Contains(err.Error(), "node process exited unexpectedly") ||
+		!strings.Contains(err.Error(), "bind: address already in use") {
+		t.Fatalf("report lacks exit or log tail: %v", err)
+	}
+	// kill after exit must not block, double-Wait or panic.
+	done := make(chan struct{})
+	go func() {
+		node.kill()
+		close(done)
+	}()
+	select {
+	case <-done:
+	case <-time.After(5 * time.Second):
+		t.Fatal("kill after exit blocked")
+	}
+}
