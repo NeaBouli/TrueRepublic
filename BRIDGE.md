@@ -9962,8 +9962,9 @@ Pending independent Kimi review and complete Sol verification.
   bind probe; smoke validators fail fast with the child log tail. Assertions and timeouts
   unchanged; test-only.
 - **Evidence so far:** 4 new allocator/fail-fast tests pass with `-race`;
-  `make governed-upgrade` 3/3 pass; legacy-authority migration rollback 3/3 pass. Full
-  multi-validator CI gate, capacity and concurrency-replay were still running at hand-back.
+  `make governed-upgrade` 3/3 pass; legacy-authority migration rollback 3/3 pass; full
+  multi-validator CI gate (8 tests) pass; capacity and concurrency-replay were still
+  running at hand-back.
 - **Open:** test counts not yet bumped for the 4 new tests; finding F3
   (`waitForNodeHeight` exit check never fires) recorded, not fixed.
 - Codex is asked to evaluate the stand-in work (GH-306 reconcile + F1, #324/#325) before
