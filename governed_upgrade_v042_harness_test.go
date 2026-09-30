@@ -33,13 +33,17 @@ const governedUpgradeV042BaseCommit = "1283a4452d36784ea962f7fc8ba13f9ad45472cd"
 const governedUpgradeV042StoneDomain = "V042Stones"
 
 type governedUpgradeV042State struct {
-	height        int64
-	marker        []byte
-	doneHeight    int64
-	planFound     bool
-	moduleVersion uint64
-	rewardRecords []truedemocracy.StoneRewardRecord
+	Height        int64                             `json:"height"`
+	Marker        []byte                            `json:"marker"`
+	DoneHeight    int64                             `json:"done_height"`
+	PlanFound     bool                              `json:"plan_found"`
+	ModuleVersion uint64                            `json:"module_version"`
+	RewardRecords []truedemocracy.StoneRewardRecord `json:"reward_records"`
 }
+
+const governedUpgradeV042ProbeHomeEnv = "TRUEREPUBLIC_V042_STATE_PROBE_HOME"
+
+const governedUpgradeV042ProbePrefix = "V042_STATE_PROBE "
 
 // TestGovernedUpgradeV042FromVersion2MultiValidator proves the GH-306 F2 fix on
 // persisted multi-validator state: a version-2 chain built from the pre-GH-306
@@ -120,8 +124,8 @@ func TestGovernedUpgradeV042FromVersion2MultiValidator(t *testing.T) {
 	}
 	stopGovernedUpgradeValidators(t, validators)
 	for _, validator := range validators {
-		state := readGovernedUpgradeV042State(t, validator.home)
-		if state.moduleVersion != governedUpgradeV042FromVersion || len(state.marker) != 0 || len(state.rewardRecords) != 0 {
+		state := readGovernedUpgradeV042StateIsolated(t, ctx, validator.home)
+		if state.ModuleVersion != governedUpgradeV042FromVersion || len(state.Marker) != 0 || len(state.RewardRecords) != 0 {
 			t.Fatalf("%s halted state is not the untouched version-2 state: %+v", validator.name, state)
 		}
 	}
@@ -136,8 +140,8 @@ func TestGovernedUpgradeV042FromVersion2MultiValidator(t *testing.T) {
 	}
 	stopGovernedUpgradeValidators(t, validators)
 	for _, validator := range validators {
-		state := readGovernedUpgradeV042State(t, validator.home)
-		if state.moduleVersion != governedUpgradeV042FromVersion || len(state.marker) != 0 || state.doneHeight != 0 {
+		state := readGovernedUpgradeV042StateIsolated(t, ctx, validator.home)
+		if state.ModuleVersion != governedUpgradeV042FromVersion || len(state.Marker) != 0 || state.DoneHeight != 0 {
 			t.Fatalf("%s failed v0.4.2 migration leaked state: %+v", validator.name, state)
 		}
 	}
@@ -170,14 +174,14 @@ func TestGovernedUpgradeV042FromVersion2MultiValidator(t *testing.T) {
 			t.Fatalf("stop %s exact-once v0.4.2 candidate: %v", validator.name, err)
 		}
 		state := readGovernedUpgradeV042State(t, validator.home)
-		if state.height < finalHeight || !bytes.Equal(state.marker, []byte{1}) || state.doneHeight != targetHeight || state.planFound {
+		if state.Height < finalHeight || !bytes.Equal(state.Marker, []byte{1}) || state.DoneHeight != targetHeight || state.PlanFound {
 			t.Fatalf("%s replayed or resurrected completed v0.4.2 upgrade: %+v", validator.name, state)
 		}
-		if state.moduleVersion != 3 {
-			t.Fatalf("%s truedemocracy module version = %d, want 3", validator.name, state.moduleVersion)
+		if state.ModuleVersion != 3 {
+			t.Fatalf("%s truedemocracy module version = %d, want 3", validator.name, state.ModuleVersion)
 		}
-		if len(state.rewardRecords) != 1 || state.rewardRecords[0] != wantRecord {
-			t.Fatalf("%s 2→3 baseline records = %+v, want exactly %+v", validator.name, state.rewardRecords, wantRecord)
+		if len(state.RewardRecords) != 1 || state.RewardRecords[0] != wantRecord {
+			t.Fatalf("%s 2→3 baseline records = %+v, want exactly %+v", validator.name, state.RewardRecords, wantRecord)
 		}
 	}
 }
@@ -286,17 +290,17 @@ func readGovernedUpgradeV042State(t *testing.T, home string) governedUpgradeV042
 	}
 	app := NewTrueRepublicApp(log.NewNopLogger(), database, home)
 	defer func() { _ = app.Close() }()
-	state := governedUpgradeV042State{height: app.LastBlockHeight()}
-	ctx := app.NewUncachedContext(false, cmtproto.Header{Height: state.height})
-	state.marker = append([]byte(nil), ctx.KVStore(app.keys[truedemocracy.ModuleName]).Get(governedUpgradeMarkerV042)...)
-	state.doneHeight, err = app.upgradeKeeper.GetDoneHeight(ctx, governedUpgradePlanV042)
+	state := governedUpgradeV042State{Height: app.LastBlockHeight()}
+	ctx := app.NewUncachedContext(false, cmtproto.Header{Height: state.Height})
+	state.Marker = append([]byte(nil), ctx.KVStore(app.keys[truedemocracy.ModuleName]).Get(governedUpgradeMarkerV042)...)
+	state.DoneHeight, err = app.upgradeKeeper.GetDoneHeight(ctx, governedUpgradePlanV042)
 	if err != nil {
 		t.Fatal(err)
 	}
 	_, err = app.upgradeKeeper.GetUpgradePlan(ctx)
 	switch {
 	case err == nil:
-		state.planFound = true
+		state.PlanFound = true
 	case errors.Is(err, upgradetypes.ErrNoUpgradePlanFound):
 	default:
 		t.Fatal(err)
@@ -305,10 +309,49 @@ func readGovernedUpgradeV042State(t *testing.T, home string) governedUpgradeV042
 	if err != nil {
 		t.Fatal(err)
 	}
-	state.moduleVersion = versions[truedemocracy.ModuleName]
+	state.ModuleVersion = versions[truedemocracy.ModuleName]
 	app.tdKeeper.IterateStoneRewardRecords(ctx, func(record truedemocracy.StoneRewardRecord) bool {
-		state.rewardRecords = append(state.rewardRecords, record)
+		state.RewardRecords = append(state.RewardRecords, record)
 		return false
 	})
 	return state
+}
+
+// readGovernedUpgradeV042StateIsolated reads a stopped node's state in a
+// short-lived child test process. Opening the app in-process would keep the
+// CosmWasm VM lock on <home>/wasm for the rest of the test and block the next
+// binary that starts on that home.
+func readGovernedUpgradeV042StateIsolated(t *testing.T, ctx context.Context, home string) governedUpgradeV042State {
+	t.Helper()
+	command := exec.CommandContext(ctx, os.Args[0], "-test.run=^TestGovernedUpgradeV042StateProbe$", "-test.count=1")
+	command.Env = append(os.Environ(), governedUpgradeV042ProbeHomeEnv+"="+home)
+	output, err := command.CombinedOutput()
+	if err != nil {
+		t.Fatalf("state probe for %s: %v\n%s", home, err, output)
+	}
+	for _, line := range strings.Split(string(output), "\n") {
+		if payload, found := strings.CutPrefix(strings.TrimSpace(line), governedUpgradeV042ProbePrefix); found {
+			var state governedUpgradeV042State
+			if err := json.Unmarshal([]byte(payload), &state); err != nil {
+				t.Fatalf("decode state probe for %s: %v", home, err)
+			}
+			return state
+		}
+	}
+	t.Fatalf("state probe for %s printed no state\n%s", home, output)
+	return governedUpgradeV042State{}
+}
+
+// TestGovernedUpgradeV042StateProbe is the child side of
+// readGovernedUpgradeV042StateIsolated; it is a no-op unless the probe home is set.
+func TestGovernedUpgradeV042StateProbe(t *testing.T) {
+	home := os.Getenv(governedUpgradeV042ProbeHomeEnv)
+	if home == "" {
+		t.Skip("state probe runs only as a child of the v0.4.2 upgrade harness")
+	}
+	encoded, err := json.Marshal(readGovernedUpgradeV042State(t, home))
+	if err != nil {
+		t.Fatal(err)
+	}
+	fmt.Println(governedUpgradeV042ProbePrefix + string(encoded))
 }
