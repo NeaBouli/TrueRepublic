@@ -9919,3 +9919,29 @@ Pending independent Kimi review and complete Sol verification.
 `TRUEREPUBLIC GH-304 CANONICAL BECH32 HARDENED — REPLACEMENT HEAD NEXT`
 
 ---
+
+---
+
+## 2026-10-01 02:35 EEST [AUTOR: CC]
+### TYPE: MEMO — GH306C1 checkpoint (v0.4.2 plan; release binding pending)
+
+- **Branch:** `agent/claude/GH306-reconcile` @ `c89a151` (not pushed).
+- **Done:** governed `v0.4.2` plan (`upgrade_handlers.go`) accepts only
+  truedemocracy version 2, runs the 2→3 stone-reward baseline, records its own
+  marker and fails closed for wrong plan, wrong source version and repeated
+  execution; `v0.4.1` unchanged. Operator/security docs name `v0.4.2`.
+- **Evidence:** `TestGovernedUpgradeV042FromVersion2MultiValidator` PASS (453.56s;
+  v2 base binary from `git archive 1283a445`, pre-upgrade stone, halt, failing
+  fixture discarded, 2→3 exactly once, common app hash, exactly one reward record);
+  focused `-race` handler/plan-identity tests; truedemocracy `-race`
+  genesis/migration/stone/exit tests; `make governed-upgrade` (v0.4.1) 482s;
+  `make verify`; candidate-evidence contract; `check-consistency.sh`;
+  `git diff --check`. Recovery matrix 8/8: six tests in one 1500s invocation
+  before a package timeout under host load, then KeyRotation 101.88s and Slashing
+  196.25s in a second invocation with the same timeout.
+- **Pending (Codex decision 2026-09-30 22:59 UTC):** bind the next release artifact
+  to `main.upgradePlan=v0.4.2` (build contract, release evidence, compatibility).
+  Public test counts stay unchanged until final evidence. Independent consensus
+  review still owed.
+
+`TRUEREPUBLIC GH306C1 CHECKPOINT — RELEASE BINDING NEXT (AFTER GH331A)`
