@@ -1,6 +1,7 @@
 package truedemocracy
 
 import (
+	"encoding/json"
 	"testing"
 	"time"
 
@@ -226,5 +227,71 @@ func TestPendingRemovalSlashAccountingLegacyVsExempt(t *testing.T) {
 	}
 	if err := keeper.ValidateEscrowParity(ctx); err != nil {
 		t.Fatalf("parity after mixed slashes: %v", err)
+	}
+}
+
+// TestDomainlessBudgetExemptExitRoundTripsGenesis covers an excluded validator
+// that kept custody but no domain membership (the GH-60 "excluded claim"). The
+// GH-306 full exit must not fund-lock it, and the resulting budget-exempt hold
+// must survive export, validation and import. A legacy hold without an
+// accounting domain stays invalid.
+func TestDomainlessBudgetExemptExitRoundTripsGenesis(t *testing.T) {
+	keeper, ctx, bank := setupKeeperWithBank(t)
+	operator := sdk.AccAddress("domainless-exit-operator")
+	stake := int64(rewards.StakeMin)
+	ctx = withEvidenceWindow(ctx.WithBlockHeight(50), 5, 10*time.Minute)
+	bank.fundAccount(operator, sdk.NewCoins(sdk.NewInt64Coin(PNYXDenom, stake+1)))
+	if err := keeper.CreateDomainWithEscrow(ctx, "Excluded", operator, sdk.NewCoins(sdk.NewInt64Coin(PNYXDenom, 1))); err != nil {
+		t.Fatal(err)
+	}
+	if err := keeper.RegisterValidatorWithEscrow(
+		ctx,
+		operator,
+		operator.String(),
+		testPubKey("domainless-exit-key"),
+		sdk.NewCoins(sdk.NewInt64Coin(PNYXDenom, stake)),
+		"Excluded",
+	); err != nil {
+		t.Fatal(err)
+	}
+	excluded, _ := keeper.GetValidator(ctx, operator.String())
+	excluded.Domains = nil
+	excluded.Jailed = true
+	excluded.Power = 0
+	keeper.SetValidator(ctx, excluded)
+
+	if err := keeper.RemoveValidatorWithEscrow(ctx, operator, operator.String()); err != nil {
+		t.Fatalf("domain-less full exit blocked: %v", err)
+	}
+	removal, found := keeper.GetPendingValidatorRemoval(ctx, operator.String())
+	if !found || !removal.BudgetExempt || len(removal.Validator.Domains) != 0 {
+		t.Fatalf("unexpected hold: found=%v removal=%+v", found, removal)
+	}
+
+	exported := NewAppModule(keeper.cdc, keeper).ExportGenesis(ctx, nil)
+	var genesis GenesisState
+	if err := json.Unmarshal(exported, &genesis); err != nil {
+		t.Fatal(err)
+	}
+	if err := ValidateGenesisState(genesis); err != nil {
+		t.Fatalf("export with domain-less budget-exempt hold is invalid: %v", err)
+	}
+	am2, k2, ctx2 := setupModuleForGenesis(t)
+	am2.InitGenesis(ctx2, nil, exported)
+	if imported, found := k2.GetPendingValidatorRemoval(ctx2, operator.String()); !found || !imported.BudgetExempt {
+		t.Fatalf("hold lost on import: found=%v removal=%+v", found, imported)
+	}
+
+	legacy := genesis
+	legacy.PendingValidatorRemovals = append([]PendingValidatorRemoval(nil), genesis.PendingValidatorRemovals...)
+	legacy.PendingValidatorRemovals[0].BudgetExempt = false
+	if err := ValidateGenesisState(legacy); err == nil {
+		t.Fatal("legacy hold without an accounting domain was accepted")
+	}
+	missing := genesis
+	missing.PendingValidatorRemovals = append([]PendingValidatorRemoval(nil), genesis.PendingValidatorRemovals...)
+	missing.PendingValidatorRemovals[0].Validator.Domains = []string{"NoSuchDomain"}
+	if err := ValidateGenesisState(missing); err == nil {
+		t.Fatal("budget-exempt hold referencing a missing domain was accepted")
 	}
 }

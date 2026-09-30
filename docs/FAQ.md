@@ -145,7 +145,7 @@ There is no supported native mobile client.
 Fork the repo, create a branch, write tests, and submit a PR. See [Developer Docs](developers/README.md).
 
 ### Where are the tests?
-The recovery baseline has 2,501 verified standard-suite cases: 2,147 Go, 26
+The recovery baseline has 2,502 verified standard-suite cases: 2,148 Go, 26
 Rust, and 328 maintained-client tests. This total excludes the separate opt-in
 GH-175/GH-178/GH-181 IBC gate (`make ibc-two-chain`), GH-184 governed-upgrade
 gate, and separate GH-206 native-verifier and GH-266 keeper-replay gates

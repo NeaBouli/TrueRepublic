@@ -21,7 +21,7 @@ separate mandatory release-freeze and accountable go/no-go subchecks.
 
 - The ordered recovery merge chain is on `main`.
 - The maximum supply is fixed at 21,000,000 PNYX.
-- The source of truth records 2,501 recovery-verified tests: 2,147 Go, 26 Rust,
+- The source of truth records 2,502 recovery-verified tests: 2,148 Go, 26 Rust,
   and 328 maintained-client tests. The Go total includes GH-306's 15-event
   exit/reward-economics increment, GH-304's 15-case real-bech32 ElectAdmin
   integrity/quarantine regression increment and GH-297's 62-case

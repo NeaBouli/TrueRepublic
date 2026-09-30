@@ -239,17 +239,25 @@ func ValidateGenesisState(genesis GenesisState) error {
 		if !removal.Validator.Stake.AmountOf(PNYXDenom).IsInt64() {
 			return fmt.Errorf("pending removal stake for %q exceeds supported range", operator)
 		}
-		if len(removal.Validator.Domains) != 1 {
-			return fmt.Errorf("pending removal for %q must reference exactly one accounting domain", operator)
-		}
-		domainName := removal.Validator.Domains[0]
-		if _, found := domains[domainName]; !found {
-			return fmt.Errorf("pending removal for %q references missing domain %q", operator, domainName)
-		}
 		// Budget-exempt holds (GH-306) never incremented TransferredStake, so
-		// they require no transferred-stake coverage. Legacy holds keep the
-		// legacy coverage obligation.
-		if !removal.BudgetExempt {
+		// they need no accounting domain and no transferred-stake coverage; any
+		// listed domain must still exist. An excluded validator without remaining domain membership can therefore
+		// exit and still round-trip through export/import. Legacy holds keep
+		// the exactly-one accounting domain and coverage obligation.
+		if removal.BudgetExempt {
+			for _, domainName := range removal.Validator.Domains {
+				if _, found := domains[domainName]; !found {
+					return fmt.Errorf("pending removal for %q references missing domain %q", operator, domainName)
+				}
+			}
+		} else {
+			if len(removal.Validator.Domains) != 1 {
+				return fmt.Errorf("pending removal for %q must reference exactly one accounting domain", operator)
+			}
+			domainName := removal.Validator.Domains[0]
+			if _, found := domains[domainName]; !found {
+				return fmt.Errorf("pending removal for %q references missing domain %q", operator, domainName)
+			}
 			pendingStake := math.ZeroInt()
 			if existing, found := pendingStakeByDomain[domainName]; found {
 				pendingStake = existing
