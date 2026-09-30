@@ -39,11 +39,11 @@
     "evidence": ["configs/release/install-lifecycle.json", "installlifecycle/command.go", "docs/node-operators/installation/lifecycle.md"]
   },
   "governed_upgrade": {
-    "plan_name": "v0.4.1",
+    "plan_name": "v0.4.2",
     "authority": "non-signing truedemocracy module account",
     "approval": "two-thirds immutable genesis-governance electorate",
-    "boundary": "fresh-genesis chains with the upgrade store; arbitrary plans, pre-GH-184 store introduction and IBC client upgrades are unsupported",
-    "evidence": ["upgrade_handlers.go", "governed_upgrade_harness_test.go", "docs/node-operators/operations/upgrades.md"]
+    "boundary": "chains with the upgrade store whose truedemocracy module is at version 2; other source versions fail closed; arbitrary plans, pre-GH-184 store introduction and IBC client upgrades are unsupported",
+    "evidence": ["upgrade_handlers.go", "governed_upgrade_harness_test.go", "governed_upgrade_v042_harness_test.go", "docs/node-operators/operations/upgrades.md"]
   },
   "protocol": {
     "supported": [
@@ -72,7 +72,7 @@
     {"id": "COMPAT-004", "category": "breaking_api", "summary": "Legacy custom ABCI query aliases are removed.", "operator_actions": [], "user_actions": ["Use registered protobuf gRPC methods through the maintained CometBFT transport."], "evidence": ["query_protocol_boundary_test.go", "docs/developers/api-reference/abci-queries.md"]},
     {"id": "COMPAT-005", "category": "breaking_client", "summary": "Anonymous ZKP submission is disabled despite synthetic prover compatibility.", "operator_actions": [], "user_actions": ["Do not submit mock or synthetic proofs to a live chain."], "evidence": ["client-web/src/services/zkpWasmProver.ts", "docs/LIMITATIONS.md"]},
     {"id": "COMPAT-006", "category": "breaking_operations", "summary": "Native install, upgrade, rollback and uninstall require the verified lifecycle.", "operator_actions": ["Keep operator state outside the managed prefix and run pre-start before service activation."], "user_actions": [], "evidence": ["configs/release/install-lifecycle.json", "docs/node-operators/installation/lifecycle.md"]},
-    {"id": "COMPAT-007", "category": "breaking_operations", "summary": "Daemon identity is the exact source commit; only the exact v0.4.1 governed migration is registered.", "operator_actions": ["Verify the source commit and schedule only the reviewed v0.4.1 plan within its documented boundary."], "user_actions": [], "evidence": ["configs/build/deterministic-linux-daemon.json", "upgrade_handlers.go"]},
+    {"id": "COMPAT-007", "category": "breaking_operations", "summary": "Daemon identity is the exact source commit; the release artifact registers only the exact v0.4.2 governed migration (truedemocracy version 2 to 3); the historical v0.4.1 handler remains a separate build identity.", "operator_actions": ["Verify the source commit and schedule only the reviewed v0.4.2 plan on a chain whose truedemocracy module is at version 2, within its documented boundary."], "user_actions": [], "evidence": ["configs/build/deterministic-linux-daemon.json", "upgrade_handlers.go", "governed_upgrade_v042_harness_test.go"]},
     {"id": "COMPAT-008", "category": "compatible", "summary": "ICS-20 packet and compatible-restart recovery are verified only inside the local two-chain boundary.", "operator_actions": [], "user_actions": [], "evidence": ["ibc_two_chain_harness_test.go", "docs/status.json"]}
   ],
   "historical": [

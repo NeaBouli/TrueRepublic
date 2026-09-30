@@ -10,7 +10,7 @@
       "id": "linux-amd64",
       "metadata": {
         "file": "build-metadata-linux-amd64.json",
-        "sha256": "6db9f21bf2de727de7c13dcca2c6be7c953152757aca6d89cd1dcd0b747ddd10"
+        "sha256": "80c7eb55c339f177458406f70564942f738287b7a259d7c28d6b9be3ba0bb4da"
       }
     },
     {
@@ -23,7 +23,7 @@
       "id": "linux-arm64",
       "metadata": {
         "file": "build-metadata-linux-arm64.json",
-        "sha256": "d9660201e893e8d9178d1e63b9a7ca0375b976a48ea6d1b8805bfe0d4a143a22"
+        "sha256": "16ee73f810595c8eee3d063cb2d10dde0f045c427176e6a622b2ca3f58eb798a"
       }
     }
   ],
@@ -35,7 +35,7 @@
     "ref_pushed": false,
     "signed": false
   },
-  "contract_sha256": "92d9932b4bc1084a05c38e3aeb5f00a322098225f5c5ced14bf19f9581a82ef0",
+  "contract_sha256": "8d875b6d603891bdf4a2e729bc546aab28c3b7ffc635a3cded4b3a8277433d34",
   "oci_platforms": [
     {
       "evidence": {

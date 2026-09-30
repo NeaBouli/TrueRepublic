@@ -168,7 +168,8 @@ func TestReleaseCompatibilityRepositoryContract(t *testing.T) {
 		"stale Go":            func(c *releaseCompatibilityContract) { c.Toolchains.Go = "0.0.0" },
 		"stale client":        func(c *releaseCompatibilityContract) { c.MaintainedClient.PackageVersion = "0.0.0" },
 		"stale lifecycle":     func(c *releaseCompatibilityContract) { c.InstallLifecycle.Schema = "v0" },
-		"stale upgrade":       func(c *releaseCompatibilityContract) { c.GovernedUpgrade.PlanName = "v0.4.2" },
+		"stale upgrade":       func(c *releaseCompatibilityContract) { c.GovernedUpgrade.PlanName = "v0.4.1" },
+		"unknown upgrade":     func(c *releaseCompatibilityContract) { c.GovernedUpgrade.PlanName = "v0.4.3" },
 		"unsafe evidence":     func(c *releaseCompatibilityContract) { c.Changes[0].Evidence = []string{"../secret"} },
 		"missing evidence":    func(c *releaseCompatibilityContract) { c.Changes[0].Evidence = []string{"does-not-exist"} },
 		"duplicate change":    func(c *releaseCompatibilityContract) { c.Changes[1].ID = c.Changes[0].ID },
@@ -362,7 +363,7 @@ func releaseCompatibilityViolations(c releaseCompatibilityContract) []string {
 	add(c.MaintainedClient.Status == "maintained_beta", "maintained client status mismatch")
 	add(c.InstallLifecycle.Schema == lifecycle.Schema, "lifecycle schema mismatch")
 	add(releaseStringsEqual(c.InstallLifecycle.Operations, []string{"install", "status", "pre-start", "upgrade", "rollback", "uninstall"}), "lifecycle operations mismatch")
-	add(c.GovernedUpgrade.PlanName == governedUpgradePlanV041 && strings.Contains(strings.Join(build.BuildFlags.LDFlags, " "), "main.upgradePlan="+c.GovernedUpgrade.PlanName), "governed upgrade mismatch")
+	add(c.GovernedUpgrade.PlanName == governedUpgradePlanV042 && strings.Contains(strings.Join(build.BuildFlags.LDFlags, " "), "main.upgradePlan="+c.GovernedUpgrade.PlanName), "governed upgrade mismatch")
 	add(c.GovernedUpgrade.Authority != "" && c.GovernedUpgrade.Approval != "" && c.GovernedUpgrade.Boundary != "", "governed upgrade statement incomplete")
 	validCategories := map[string]bool{"breaking_chain_state": true, "breaking_api": true, "breaking_client": true, "breaking_operations": true, "compatible": true, "unsupported_surface": true}
 	seen := map[string]bool{}

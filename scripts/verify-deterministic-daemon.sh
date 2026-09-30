@@ -41,7 +41,7 @@ validate_contract() {
         "-X",
         "main.version={{source_ref}}",
         "-X",
-        "main.upgradePlan=v0.4.1",
+        "main.upgradePlan=v0.4.2",
         "-linkmode=external",
         "-extldflags=-Wl,--build-id=none"
       ]
