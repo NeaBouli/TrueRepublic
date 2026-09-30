@@ -29,6 +29,9 @@ Goal: continue exactly from the hand-back point without re-research.
 | 2026-09-30 | GH-306 | Finding F1 fixed (below) + regression test + count bump | `192dccf`; Go pass events 2148 (truedemocracy 707) via the jq `pass` event method; full suite + race + consistency pass |
 | 2026-09-30 | GH-306 | Plan M0 gate `make verify` (race + cover, all packages) on `192dccf` | exit 0, no FAIL; truedemocracy coverage 65.3% |
 | 2026-09-30 | GH-324/325 | Shared harness port fix on exact main `1283a445`: `agent/claude/GH324-325-port-harness` `b5c7a1a` (worktree `~/Desktop/repos/TrueRepublic-wt/claude-GH324-325`) | new `harness_port_allocator_test.go` + fail-fast in `multi_validator_harness_test.go`; old `freeTCPPort` removed from `server_lifecycle_test.go`; 4 new tests pass under `-race`; `make governed-upgrade` 3/3 pass (379s/544s/268s); `TestMultiValidatorLegacyAuthorityMigrationRollback` 3/3 pass (424s/199s/186s); full CI multi-validator gate (8 tests, 1409s) pass; capacity qualification pass (287s; policy verify valid, 4 validators, 96 committed, 0 violations); `make concurrency-replay` pass (152s) — all affected harnesses green |
+| 2026-10-01 | GH324C1 | F3 + counts, report status partial | branch @ 994da7c; Codex pushed, Draft PR #330 |
+| 2026-10-01 | GH331A | client brace-expansion override 5.0.9 -> 5.0.12 | agent/claude/GH331-client-audit @ 84ea15a; Codex accepted |
+| 2026-10-01 | GH306C1 | v0.4.2 plan, v2->v3 harness, release binding | agent/claude/GH306-reconcile @ 79bb33f; report status partial (final verify ENOSPC, review owed) |
 
 ## Current state
 - Worktrees (own): `~/Desktop/repos/TrueRepublic-wt/claude-GH306` (`agent/claude/GH306-reconcile`,

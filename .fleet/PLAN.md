@@ -56,3 +56,4 @@ Claude Code delivered the bounded landing visualization, deterministic 69-assert
 
 - GH-306 | agent/claude/GH306-reconcile @ 192dccf | snapshot of Codex candidate on exact main + F1 genesis fix | local gates pass | review owed to Codex; F2 upgrade-plan decision open. Handover: `.fleet/HANDOVER-CLAUDE-2026-09-30.md`.
 - GH-324/325 | agent/claude/GH324-325-port-harness @ b5c7a1a | shared reserved-port allocator + fail-fast smoke waits | governed-upgrade 3/3 + migration 3/3 pass; full gate 8/8, capacity, concurrency-replay pass | counts + BRIDGE evidence open; Codex evaluation requested.
+- GH306C1 | agent/claude/GH306-reconcile @ 79bb33f | v0.4.2 plan + v2->v3 harness + release binding | partial (final verify ENOSPC, review owed) | report .fleet/reports/GH306C1.md
