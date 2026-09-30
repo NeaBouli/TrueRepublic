@@ -5934,3 +5934,25 @@
 - No deployment, live-chain repair, state migration execution, production
   activation, real key/fund action or rollout credit is authorized. Rollout
   remains 36/59 and production readiness remains false.
+
+## 2026-10-01 EEST - GH-306 stand-in completion (GH306C1/GH306C2, Claude Code)
+
+- Claude Code stood in for Sol (Codex paused) on branch
+  `agent/claude/GH306-reconcile` from exact main `1283a445`: `ee7a004` imports
+  the preserved uncommitted candidate verbatim; `192dccf` fixes F1 (a
+  domain-less budget-exempt exit hold no longer breaks genesis validation).
+- F2 closed in code: `22702f7` adds the distinct governed `v0.4.2` plan that
+  accepts only truedemocracy version 2, runs the 2→3 stone-reward baseline,
+  records its own marker and fails closed for wrong plan, source version or
+  repeated execution; `v0.4.1` is unchanged. `dce536f`/`ed2661a` add the v2→v3
+  four-validator harness (v2 base from `git archive 1283a445`, halt, discarded
+  failing fixture, exact-once migration, common app hash, one reward record).
+- `79bb33f` binds the next release artifact to `main.upgradePlan=v0.4.2` with
+  the dependent candidate/cross-run digest chain; `c331c65` (GH306C2) syncs the
+  threat-model residual risk and `docs/status.json` `ibc_upgrade`.
+- Evidence and open items are in `.fleet/reports/GH306C1.md` on the stand-in
+  branch: final `make verify` on the release-binding head hit ENOSPC and was not
+  repeated; public counts and the digest fixpoint stay provisional until PRs
+  #330/#331 land; independent consensus/security review remains required.
+- No push, PR, merge, migration execution, deployment or rollout credit.
+  Rollout remains 36/59 and production readiness remains false.
