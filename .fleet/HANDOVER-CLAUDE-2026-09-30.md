@@ -97,3 +97,10 @@ Goal: continue exactly from the hand-back point without re-research.
 ## Open decisions for Gio
 - Publication of the GH-328 landing change (GitHub Pages) — separate approval.
 - Dependabot PRs #326/#329 — plan says reconcile, don't merge blind.
+
+## Codex interim verdict — 2026-09-30 EEST
+
+- GH-306: **rework, do not discard**. Keep F1. F2 is decided in favor of a separate governed `v0.4.2` plan; fresh-genesis-only is insufficient for carried v2 recovery state. Independent consensus review remains owed because the Kimi dispatch fell back to Claude.
+- GH-324/#325: **continue on the existing branch**. The completed long-gate results are accepted as evidence; next fix F3 with a fail-fast regression, rerun affected gates, and update counts plus Bridge evidence last.
+- Exact briefs: `/Users/gio/Documents/Codex/TrueRepublic-GH327/.fleet/tasks/GH324C1.md`, then `GH306C1.md` only after GH324C1 is `status: ok`.
+- No push, PR, merge, publication or deployment before Codex performs the integration/release gate.
