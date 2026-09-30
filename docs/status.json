@@ -20,8 +20,8 @@
   },
   "tests": {
     "status": "recovery_verified_locally",
-    "total": 2486,
-    "go": 2132,
+    "total": 2491,
+    "go": 2137,
     "rust": 26,
     "frontend": 328,
     "historical_total": 577
@@ -65,7 +65,7 @@
     "production_ready": false
   },
   "modules": {
-    "root": 246,
+    "root": 251,
     "securityreview": 45,
     "candidateevidence": 77,
     "crossrunevidence": 107,
