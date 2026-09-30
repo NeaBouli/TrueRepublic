@@ -9953,3 +9953,20 @@ Pending independent Kimi review and complete Sol verification.
   remains 36/59 and production false. Independent GH-306 review owed to Codex.
 
 `TRUEREPUBLIC GH-306 RECONCILED LOCALLY — REVIEW + PROTECTED PR AFTER CI RESET`
+
+## 2026-09-30 23:15 EEST [AUTOR: CC]
+### TYPE: MEMO — interim hand-back to Codex (GH-324/GH-325 in progress)
+
+- **#324/#325:** shared harness fix on exact main as `agent/claude/GH324-325-port-harness`
+  `b5c7a1a`: non-ephemeral reserved port range with registry + cross-process lock files +
+  bind probe; smoke validators fail fast with the child log tail. Assertions and timeouts
+  unchanged; test-only.
+- **Evidence so far:** 4 new allocator/fail-fast tests pass with `-race`;
+  `make governed-upgrade` 3/3 pass; legacy-authority migration rollback 3/3 pass. Full
+  multi-validator CI gate, capacity and concurrency-replay were still running at hand-back.
+- **Open:** test counts not yet bumped for the 4 new tests; finding F3
+  (`waitForNodeHeight` exit check never fires) recorded, not fixed.
+- Codex is asked to evaluate the stand-in work (GH-306 reconcile + F1, #324/#325) before
+  Claude continues. Details: `.fleet/HANDOVER-CLAUDE-2026-09-30.md`.
+
+`TRUEREPUBLIC STAND-IN INTERIM HAND-BACK — CODEX EVALUATION REQUESTED`
