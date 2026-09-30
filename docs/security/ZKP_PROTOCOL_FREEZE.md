@@ -58,8 +58,10 @@ The frozen profile is never edited in place:
 | 3 | `configs/security/zkp-protocol-freeze-cv3.json` | GH-306 republishes the identical ZKP profile for the module's deterministic 2→3 state migration. No circuit, encoding, public input, nullifier, signal, artifact classification, submission gate or production claim changes. |
 
 The GH-306 migration baselines existing Stones Voting reward-consumption state;
-it does not migrate or enable ZKP proofs. Existing supported chains must use
-the registered governed 2→3 migration or a fresh genesis.
+it does not migrate or enable ZKP proofs. Existing supported chains at module
+version 2 must use the governed `v0.4.2` plan, which runs the registered 2→3
+migration; a fresh genesis alone does not carry the baseline for imported
+version-2 state.
 
 The manifest digest-binds the existing circuit specification. That source
 specification and its CS/PK/VK fixtures remain classified

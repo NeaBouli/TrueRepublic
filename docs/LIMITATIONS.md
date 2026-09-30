@@ -86,7 +86,8 @@ keeper required by ibc-go returns the stable unsupported-surface error.
 
 ### IBC Upgrade
 **Status:** Application upgrade supported for the exact fresh-genesis v0.4.1
-path; IBC client upgrade unsupported
+path and the GH-306 v0.4.2 path (truedemocracy version 2→3); IBC client
+upgrade unsupported
 **Reason:** GH-184 replaces the IBC upgrade stub with the real `x/upgrade`
 keeper and a `truedemocracy` two-thirds governance adapter
 **Impact:** Pre-GH-184 chains still need a separate store-loader transition;
