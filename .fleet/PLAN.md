@@ -51,3 +51,7 @@ GH-328 was added on 2026-09-27 EEST as a maintainer-authorized publication amend
 ## GH-328 local result — 2026-09-27 EEST
 
 Claude Code delivered the bounded landing visualization, deterministic 69-assertion contract audit, and responsive evidence for 1440x1000, 1180x820, 820x1180, and 390x844. Codex inspected all architecture, full-page, and focus-state screenshots and reproduced the contract audit plus repository documentation consistency. Kimi's triggered review approved scope, claims, checks, and visual evidence; the only retained release condition is post-deploy readback of the two GitHub Pages documentation links. No rollout credit or production claim was added. Publication still waits for the 2026-10-01 hosted-CI window; GH-306 remains next after publication.
+
+## Stand-in — 2026-09-30 (Claude Code, Codex paused)
+
+- GH-306 | agent/claude/GH306-reconcile @ 192dccf | snapshot of Codex candidate on exact main + F1 genesis fix | local gates pass | review owed to Codex; F2 upgrade-plan decision open. Handover: `.fleet/HANDOVER-CLAUDE-2026-09-30.md`.

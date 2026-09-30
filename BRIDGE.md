@@ -9931,3 +9931,25 @@ Pending independent Kimi review and complete Sol verification.
 `TRUEREPUBLIC GH-304 CANONICAL BECH32 HARDENED — REPLACEMENT HEAD NEXT`
 
 ---
+
+---
+
+## 2026-09-30 [AUTOR: CC]
+### TYPE: DECISION — Claude stand-in (Codex paused, token limit)
+
+- **Scope:** Codex thread `019f5012`; handover `.fleet/HANDOVER-CLAUDE-2026-09-30.md`
+  on `agent/claude/truerepublic-standin-20260930`.
+- **GH-306 (plan M0):** the preserved uncommitted Codex candidate was snapshotted
+  verbatim onto `origin/main` `1283a445` as `agent/claude/GH306-reconcile` `ee7a004`
+  (Codex worktree untouched). Build, vet, full Go suite, race, `make verify` (exit 0), docs consistency pass.
+- **Finding F1, fixed in `192dccf`:** a domain-less (excluded) validator's
+  budget-exempt exit hold failed genesis validation, breaking export/import.
+  Budget-exempt holds now require only that listed domains exist; legacy holds keep
+  the exactly-one rule. Regression test added; counts 2,502 = 2,148 Go + 26 Rust +
+  328 maintained-client (governance 707).
+- **Finding F2, open for Codex:** no upgrade plan runs the 2→3 migration for a chain
+  already at module version 2 (only `v0.4.1` from version 1).
+- No push, PR, merge, deployment, migration execution or rollout credit. Rollout
+  remains 36/59 and production false. Independent GH-306 review owed to Codex.
+
+`TRUEREPUBLIC GH-306 RECONCILED LOCALLY — REVIEW + PROTECTED PR AFTER CI RESET`
