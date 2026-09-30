@@ -6,7 +6,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"net"
 	"net/http"
 	"os"
 	"os/exec"
@@ -534,16 +533,6 @@ func assertStructuredNodeLogs(t *testing.T, path string) {
 	if lines == 0 {
 		t.Fatal("node emitted no structured log lines")
 	}
-}
-
-func freeTCPPort(t *testing.T) int {
-	t.Helper()
-	listener, err := net.Listen("tcp", "127.0.0.1:0")
-	if err != nil {
-		t.Fatal(err)
-	}
-	defer listener.Close()
-	return listener.Addr().(*net.TCPAddr).Port
 }
 
 func waitForNodeHeight(t *testing.T, url string, minimum int64, cmd *exec.Cmd, logFile *os.File) int64 {
