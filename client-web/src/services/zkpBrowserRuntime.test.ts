@@ -422,3 +422,68 @@ describe('GH-300 worker runtime bounds, abort and capabilities', () => {
     expect(ZKP_WORKER_MAX_ERROR_CHARS).toBe(512);
   });
 });
+
+// GH300B2a: callbacks are bound to their exact worker instance.
+describe('GH-300 worker callbacks bound to their instance', () => {
+  it('ignores a late response from a recycled worker after timeout -> new request', async () => {
+    const { factory, workers } = makeFactory();
+    const runtime = new ZKPWorkerProverRuntime(factory, artifacts, 5);
+    const first = runtime.prove('a');
+    // Capture the old worker's callback before the timeout detaches it, as a
+    // real Worker may still deliver an already queued event afterwards.
+    const lateMessage = workers[0].onmessage;
+    await expect(first).rejects.toThrow('timed out');
+
+    const second = runtime.prove('b');
+    expect(workers).toHaveLength(2);
+    lateMessage?.({ data: okResult(1, 'stale') });
+    expect(workers[1].terminated).toBe(false);
+    workers[1].reply(okResult(2, 'fresh'));
+    await expect(second).resolves.toBe('fresh');
+  });
+
+  it('ignores a late error from a recycled worker after timeout -> new request', async () => {
+    const { factory, workers } = makeFactory();
+    const runtime = new ZKPWorkerProverRuntime(factory, artifacts, 5);
+    const first = runtime.prove('a');
+    const lateError = workers[0].onerror;
+    await expect(first).rejects.toThrow('timed out');
+
+    const second = runtime.prove('b');
+    lateError?.({ message: 'stale worker crashed' });
+    expect(workers[1].terminated).toBe(false);
+    workers[1].reply(okResult(2, 'fresh'));
+    await expect(second).resolves.toBe('fresh');
+  });
+
+  it('ignores a late response after a successful proof recycled the worker', async () => {
+    const { factory, workers } = makeFactory();
+    const runtime = new ZKPWorkerProverRuntime(factory, artifacts, 60_000);
+    const first = runtime.prove('a');
+    const queued = runtime.prove('b');
+    const oldHandler = workers[0].onmessage;
+    workers[0].reply(okResult(1, 'ra'));
+    await expect(first).resolves.toBe('ra');
+    // The queued request is now in flight on a fresh worker.
+    expect(workers).toHaveLength(2);
+    oldHandler?.({ data: okResult(1, 'duplicate') });
+    expect(workers[1].terminated).toBe(false);
+    workers[1].reply(okResult(2, 'rb'));
+    await expect(queued).resolves.toBe('rb');
+  });
+
+  it('documents the worker scope and fails closed when a capability survives suppression', () => {
+    const source = readFileSync(resolve(process.cwd(), 'browser-quality/zkp-browser-worker.js'), 'utf8');
+    expect(source).toContain('NOT a general sandbox');
+    expect(source).toContain("if (typeof self[name] !== 'undefined') unsuppressed.push(name);");
+    expect(source.indexOf('unsuppressed.length !== 0')).toBeLessThan(source.indexOf('if (handled)'));
+  });
+
+  it('pins the trusted Go 1.26.6 wasm_exec.js digest in the test integration before the browser starts', () => {
+    const source = readFileSync(resolve(process.cwd(), 'scripts/zkp-browser-integration.mjs'), 'utf8');
+    expect(source).toContain(
+      "const TRUSTED_WASM_EXEC_SHA256 = '0c949f4996f9a89698e4b5c586de32249c3b69b7baadb64d220073cc04acba14';"
+    );
+    expect(source.indexOf('TRUSTED_WASM_EXEC_SHA256) {')).toBeLessThan(source.indexOf('chromium.launch'));
+  });
+});

@@ -1,10 +1,15 @@
 // GH-300 test-only browser prover Worker (module worker).
 //
-// Loads the Go WASM runtime glue through one fixed same-origin static import
-// (no importScripts, eval or dynamic URL), then neutralizes every network,
-// storage and script-loading capability before any message is handled. It
-// proves exactly one request, zeroes its copies of the artifacts and closes;
-// it has no signing, wallet, storage, RPC or broadcast surface.
+// Scope: a test-only Worker with fail-closed suppression of the enumerated
+// capabilities below and pinned trusted Go glue. It is NOT a general sandbox
+// for hostile code. The Go WASM runtime glue is loaded through one fixed
+// same-origin static import (no importScripts, eval or dynamic URL); it runs
+// before this module body, so the test integration verifies its pinned
+// SHA-256 before the Worker can start. The enumerated network, storage and
+// script-loading globals are then replaced and verified; if any of them stays
+// usable the Worker refuses every request. It proves exactly one request,
+// zeroes its artifact copies and closes; it has no signing, wallet, storage,
+// RPC or broadcast surface.
 import '/__zkp/wasm_exec.js';
 
 const REQUEST_SCHEMA = 'truerepublic/zkp-worker-request/v1';
@@ -23,7 +28,7 @@ const REQUEST_KEYS = [
   'wasm',
 ];
 
-for (const name of [
+const SUPPRESSED_CAPABILITIES = [
   'fetch',
   'XMLHttpRequest',
   'WebSocket',
@@ -33,12 +38,17 @@ for (const name of [
   'indexedDB',
   'caches',
   'importScripts',
-]) {
+];
+
+// Names that could not be replaced or that remain usable; any entry blocks all requests.
+const unsuppressed = [];
+for (const name of SUPPRESSED_CAPABILITIES) {
   try {
     Object.defineProperty(self, name, { value: undefined, writable: false, configurable: false });
   } catch {
-    // A non-configurable host property stays; the prover never uses it.
+    // Verified below; a capability that survives fails the Worker closed.
   }
+  if (typeof self[name] !== 'undefined') unsuppressed.push(name);
 }
 
 let handled = false;
@@ -76,6 +86,9 @@ self.onmessage = async (event) => {
   const request = event.data;
   const requestId = Number.isSafeInteger(request?.request_id) ? request.request_id : 0;
   try {
+    if (unsuppressed.length !== 0) {
+      throw new Error(`browser worker capability suppression failed: ${unsuppressed.join(', ')}`);
+    }
     if (handled) {
       throw new Error('browser worker accepts exactly one request');
     }

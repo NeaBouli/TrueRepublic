@@ -1,3 +1,4 @@
+import { createHash } from 'node:crypto';
 import { chmodSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -10,6 +11,16 @@ const repositoryDirectory = resolve(clientDirectory, '..');
 const wasmPath = requiredEnvironment('TRUEREPUBLIC_ZKP_BROWSER_WASM_PATH');
 const wasmExecPath = requiredEnvironment('TRUEREPUBLIC_WASM_EXEC_PATH');
 const resultPath = requiredEnvironment('TRUEREPUBLIC_ZKP_RESULT_PATH');
+
+// The Worker's Go runtime glue executes before its capability suppression, so
+// only the exact trusted Go 1.26.6 lib/wasm/wasm_exec.js may be served.
+const TRUSTED_WASM_EXEC_SHA256 = '0c949f4996f9a89698e4b5c586de32249c3b69b7baadb64d220073cc04acba14';
+const wasmExecDigest = createHash('sha256').update(readFileSync(wasmExecPath)).digest('hex');
+if (wasmExecDigest !== TRUSTED_WASM_EXEC_SHA256) {
+  throw new Error(
+    `untrusted Go wasm_exec.js glue: sha256 ${wasmExecDigest} is not the pinned Go 1.26.6 digest`
+  );
+}
 
 const routes = new Map([
   ['/__zkp/manifest.json', resolve(repositoryDirectory, 'configs/security/zkp-browser-artifacts.json')],

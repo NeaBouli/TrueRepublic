@@ -5,7 +5,9 @@ import type {
 
 /**
  * GH-300: deterministic coordinator that drives the test-only Go/WASM prover
- * inside an injected Worker-like port. No Worker global is touched at module
+ * inside an injected Worker-like port. The Worker is test-only with fail-closed
+ * suppression of an enumerated set of capabilities and pinned trusted Go glue;
+ * it is not a general sandbox for hostile code. No Worker global is touched at module
  * import or construction time; the factory runs lazily on the first prove.
  * The coordinator proves only: it has no signing, RPC, or broadcast surface.
  */
@@ -224,8 +226,16 @@ export class ZKPWorkerProverRuntime implements TestOnlyZKPRuntime {
     ) {
       throw new Error('worker factory returned an invalid port');
     }
-    candidate.onmessage = (event) => this.handleMessage(event);
-    candidate.onerror = (event) => this.handleWorkerError(event);
+    // Callbacks are bound to this exact instance: a late message or error from
+    // a recycled worker is inert and can never touch a newer request.
+    candidate.onmessage = (event) => {
+      if (this.worker !== candidate) return;
+      this.handleMessage(event);
+    };
+    candidate.onerror = (event) => {
+      if (this.worker !== candidate) return;
+      this.handleWorkerError(event);
+    };
     this.worker = candidate;
     return candidate;
   }
