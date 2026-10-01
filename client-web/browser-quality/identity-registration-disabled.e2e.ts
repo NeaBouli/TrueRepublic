@@ -19,7 +19,7 @@ const RPC_ORIGIN = 'http://localhost:26657';
 const DOMAIN_QUERY_PATH = '/truedemocracy.Query/Domain';
 const BANK_ALL_BALANCES_PATH = '/cosmos.bank.v1beta1.Query/AllBalances';
 // Playwright runs from client-web/; evidence stays in the ignored local cache, never in Git.
-const EVIDENCE_DIR = resolve(process.cwd(), 'node_modules/.cache/gh309-visual-evidence');
+const EVIDENCE_DIR = resolve(process.cwd(), 'node_modules/.cache/gh309b1c1-final-evidence');
 const DISABLED_LABEL = 'Registration Disabled in Preview';
 const MIN_TEXT_CONTRAST = 4.5;
 
@@ -40,8 +40,10 @@ const viewports = [
 
 // Minimal protobuf helpers mirroring moduleQuery.ts: the request carries the
 // domain name as field 1 (string); the response result is field 1 (bytes)
-// holding the module's JSON. The production client decodes the response, so a
-// wrong encoding cannot reach the asserted state.
+// holding the module's JSON. Both directions are checked by the production
+// codecs on every run: the page's encodeRequest output must equal this body
+// byte for byte (otherwise it is a violation), and only the page's
+// decodeResult/expectChainDomain can turn the response into the target state.
 function varint(value: number): number[] {
   const out: number[] = [];
   let rest = value;
@@ -147,11 +149,9 @@ async function routeRpc(page: Page, member: () => string, ledger: RpcLedger): Pr
 for (const viewport of viewports) {
   test(`identity registration is unavailable at ${viewport.name}`, async ({ page }) => {
     await page.setViewportSize({ width: viewport.width, height: viewport.height });
-    const violations: string[] = [];
-    const bootstrapCalls: string[] = [];
-    const domainQueries = { served: 0 };
+    const ledger: RpcLedger = { allowed: [], broadcasts: [], violations: [] };
     let memberAddress = '';
-    await mockDomainQuery(page, () => memberAddress, violations, bootstrapCalls, domainQueries);
+    await routeRpc(page, () => memberAddress, ledger);
 
     // Ephemeral local test wallet; the only full navigation in this contract.
     await page.goto('/create');
