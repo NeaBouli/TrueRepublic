@@ -103,6 +103,7 @@ function problemFromError(error: unknown): IdentityProblem {
   if (error instanceof IdentityVaultError) {
     if (error.code === 'locked') return 'wrong-password';
     if (error.code === 'corrupt') return 'vault-corrupt';
+    if (error.code === 'kind-mismatch') return 'vault-conflict';
     return 'storage';
   }
   if (error instanceof IdentityMigrationError) {

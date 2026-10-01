@@ -314,7 +314,8 @@ export class LegacyIdentityMigration {
       if (error instanceof IdentityMigrationError) throw error;
       if (error instanceof IdentityVaultError) {
         if (error.code === 'locked') throw new IdentityMigrationError('locked');
-        if (error.code === 'conflict') throw new IdentityMigrationError('conflict');
+        // A canonical record (or a concurrent write) occupies the address: never overwrite it.
+        if (error.code === 'conflict' || error.code === 'kind-mismatch') throw new IdentityMigrationError('conflict');
       }
       throw new IdentityMigrationError('storage');
     }
