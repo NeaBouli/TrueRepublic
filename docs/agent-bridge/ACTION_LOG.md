@@ -5911,3 +5911,20 @@
   every Git/GitHub action. No implementation overlap is allowed.
 - No state repair, migration, deployment, release, production action, real key
   or real fund is authorized. Rollout remains 36/59 and production false.
+
+## 2026-10-01 EEST - GH-335 ModuleQuery fetch receiver (GH335A, Claude Code)
+
+- Branch `agent/claude/GH335-modulequery-fetch` from exact main `1283a445`; commit
+  `db89aac`. `ModuleQueryClient`'s default fetch is now
+  `(input, init) => globalThis.fetch(input, init)` (same pattern as `network.ts`);
+  previously every typed module query failed in real browsers with "Illegal
+  invocation" before sending (found by the GH309B1 Chromium contract run).
+- New receiver-sensitive test in `moduleQuery.test.ts`: fails on the parent
+  implementation with the Illegal-invocation TypeError, passes with the fix; global
+  fetch is restored in `finally`.
+- Gates (7.6-7.9 GiB free, no other TrueRepublic build): `npm ci`; focused
+  `moduleQuery.test.ts` 8/8; `npm run lint`; `tsc -b --noEmit`; `npm test -- --run`
+  (310 passed, 4 skipped); `npm run build` with bundle budget; `npm run audit:high`
+  fails only on the known brace-expansion advisories (propagated through minimatch to
+  eslint/typescript-eslint dependents), fixed separately by PR #332. No dependency,
+  UI, codec or configuration change; no push or PR.
