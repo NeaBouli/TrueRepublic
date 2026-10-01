@@ -5911,3 +5911,26 @@
   every Git/GitHub action. No implementation overlap is allowed.
 - No state repair, migration, deployment, release, production action, real key
   or real fund is authorized. Rollout remains 36/59 and production false.
+
+## 2026-10-01 EEST - GH-335 ModuleQuery fetch receiver (GH335A, Claude Code)
+
+- Branch `agent/claude/GH335-modulequery-fetch` from exact main `1283a445`; commit
+  `db89aac`. `ModuleQueryClient`'s default fetch is now
+  `(input, init) => globalThis.fetch(input, init)` (same pattern as `network.ts`);
+  previously every typed module query failed in real browsers with "Illegal
+  invocation" before sending (found by the GH309B1 Chromium contract run).
+- New receiver-sensitive test in `moduleQuery.test.ts`: fails on the parent
+  implementation with the Illegal-invocation TypeError, passes with the fix; global
+  fetch is restored in `finally`.
+- Gates (7.6-7.9 GiB free, no other TrueRepublic build): `npm ci`; focused
+  `moduleQuery.test.ts` 8/8; `npm run lint`; `tsc -b --noEmit`; `npm test -- --run`
+  (310 passed, 4 skipped); `npm run build` with bundle budget; `npm run audit:high`
+  fails only on the known brace-expansion advisories (propagated through minimatch to
+  eslint/typescript-eslint dependents), fixed separately by PR #332. No dependency,
+  UI, codec or configuration change; no push or PR.
+
+## 2026-10-01 GH335A1 — pin the receiver assertion (Claude Code)
+
+- Commit b520d76 on agent/claude/GH335-modulequery-fetch: moduleQuery.test.ts #335 test asserts `expect(receivers).toEqual([globalThis])` instead of `toHaveLength(1)`. Receiver-sensitive fake, finally-restoration and all source unchanged.
+- Mutation proof (temporary, reverted; source diff empty afterwards): unbound call (`const unbound = globalThis.fetch; return unbound(input, init)`) fails with "expected [ undefined ] to deeply equal [ globalThis ]"; parent implementation (`fetchImpl: Fetch = globalThis.fetch`) fails with TypeError "Illegal invocation" at moduleQuery.ts:410. With the fix: moduleQuery.test.ts 8/8 pass.
+- Gates: npm run lint rc 0; tsc -b --noEmit rc 0; git diff --check clean. Full suite/build not repeated per brief (GH335A evidence stands). No push.
