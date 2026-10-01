@@ -4,9 +4,11 @@ import process from 'node:process';
 import type { Page, Request, Route } from '@playwright/test';
 import { expect, test } from './fixtures';
 
-// GH-309 visual release contract: a member with a preview identity reaches the
-// former identity-registration step, which must be unavailable, keyboard-safe,
-// at least 44x44 CSS px and never reach the registration service. The only
+// GH-309 visual release contract (rewritten in GH309B2D1): a wallet without a
+// preview identity reaches the onboarding identity step, where creating an
+// identity is unavailable until GH309C. The disabled control must be
+// keyboard-safe, at least 44x44 CSS px and never generate an identity or reach
+// the registration service (registration containment stays unit-tested). The only
 // chain call answered with data is the exact typed Domain abci_query. Creating
 // the wallet bootstraps a balance refresh whose canonical Comet `status` call
 // (empty params object, nothing else) is answered with a controlled JSON-RPC
@@ -19,14 +21,16 @@ const DOMAIN = 'GH309';
 const RPC_ORIGIN = 'http://localhost:26657';
 const DOMAIN_QUERY_PATH = '/truedemocracy.Query/Domain';
 // Playwright runs from client-web/; evidence stays in the ignored local cache, never in Git.
-const EVIDENCE_DIR = resolve(process.cwd(), 'node_modules/.cache/gh309b1c1-a-final-evidence');
-const DISABLED_LABEL = 'Registration Disabled in Preview';
+const EVIDENCE_DIR = resolve(process.cwd(), 'node_modules/.cache/gh309b2d1-onboarding-evidence');
+const DISABLED_LABEL = 'Identity Creation Disabled in Preview';
+const TARGET_HEADING = 'Identity Creation Unavailable';
+const NOTICE_TEST_ID = 'identity-creation-disabled-notice';
 const MIN_TEXT_CONTRAST = 4.5;
 
 type RpcCategory = 'status' | 'abci_query Domain';
 // Observed and required sequence: one bootstrap status, then the Domain query on
-// entering /onboard and again after the identity is created.
-const EXPECTED_RPC_SEQUENCE: RpcCategory[] = ['status', 'abci_query Domain', 'abci_query Domain'];
+// entering /onboard. No identity is created, so no second Domain query follows.
+const EXPECTED_RPC_SEQUENCE: RpcCategory[] = ['status', 'abci_query Domain'];
 
 interface RpcLedger {
   allowed: RpcCategory[];
@@ -169,7 +173,7 @@ async function routeRpc(page: Page, member: () => string, ledger: RpcLedger): Pr
 }
 
 for (const viewport of viewports) {
-  test(`identity registration is unavailable at ${viewport.name}`, async ({ page }) => {
+  test(`identity creation is unavailable at ${viewport.name}`, async ({ page }) => {
     await page.setViewportSize({ width: viewport.width, height: viewport.height });
     const ledger: RpcLedger = { allowed: [], broadcasts: [], violations: [] };
     let memberAddress = '';
@@ -194,19 +198,19 @@ for (const viewport of viewports) {
       window.history.pushState({}, '', path);
       window.dispatchEvent(new PopStateEvent('popstate'));
     }, `/onboard/${DOMAIN}`);
-    await page.getByRole('button', { name: 'Create Anonymous Identity' }).click();
+    await expect(page.getByRole('button', { name: 'Create Anonymous Identity' })).toHaveCount(0);
 
-    await expect(page.getByRole('heading', { name: 'Identity Registration Unavailable' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: TARGET_HEADING })).toBeVisible();
     const control = page.getByRole('button', { name: DISABLED_LABEL });
     await expect(control).toBeDisabled();
-    await expect(page.getByTestId('identity-registration-disabled-notice')).toContainText('No transaction is sent');
+    await expect(page.getByTestId(NOTICE_TEST_ID)).toContainText('disabled in this preview (issue #309)');
     const urlBefore = page.url();
     const boxBefore = await control.boundingBox();
 
     // Tab order: every tabbable element is visited in DOM order and the disabled control never is.
     // The traversal starts from an explicit focus anchor on the first tabbable element: browsers
-    // differ in where sequential navigation starts after the clicked "Create Anonymous Identity"
-    // button is removed (Firefox keeps that position), so a blur() start is not browser-neutral.
+    // differ in where sequential navigation starts after client-side navigation removes the
+    // previously focused control (Firefox keeps that position), so a blur() start is not browser-neutral.
     const tabbableCount = await page.evaluate((label) => {
       const selector = 'a[href], button, input, select, textarea, [tabindex]';
       const tabbable = [...document.querySelectorAll<HTMLElement>(selector)].filter(
@@ -247,7 +251,7 @@ for (const viewport of viewports) {
     await page.keyboard.press('Enter');
     await page.keyboard.press('Space');
     await page.waitForTimeout(250);
-    await expect(page.getByRole('heading', { name: 'Identity Registration Unavailable' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: TARGET_HEADING })).toBeVisible();
     await expect(control).toBeDisabled();
     expect(page.url()).toBe(urlBefore);
     expect(await control.boundingBox()).toEqual(boxBefore);
@@ -256,10 +260,10 @@ for (const viewport of viewports) {
       const button = [...document.querySelectorAll('button')].find(
         (element) => element.textContent?.trim() === label
       );
-      const notice = document.querySelector('[data-testid="identity-registration-disabled-notice"]');
+      const notice = document.querySelector('[data-testid="identity-creation-disabled-notice"]');
       const card = notice?.closest('.card');
       const text = notice?.querySelector('p');
-      if (!button || !notice || !card || !text) throw new Error('registration-disabled elements missing');
+      if (!button || !notice || !card || !text) throw new Error('identity-creation-disabled elements missing');
       const box = (element: Element) => element.getBoundingClientRect();
       const b = box(button);
       const n = box(notice);
@@ -328,13 +332,13 @@ for (const viewport of viewports) {
       broadcasts: ledger.broadcasts.length,
       violations: ledger.violations.length,
     };
-    console.log(`GH309B1C1a ${viewport.name} layout=${JSON.stringify(layout)} rpc=${JSON.stringify(rpc)}`);
+    console.log(`GH309B2D1 onboarding ${viewport.name} layout=${JSON.stringify(layout)} rpc=${JSON.stringify(rpc)}`);
 
     expect(ledger.broadcasts).toEqual([]);
     expect(ledger.violations).toEqual([]);
     expect(ledger.allowed).toEqual(EXPECTED_RPC_SEQUENCE);
-    // GH-335: the typed Domain query leaves the page and its decoded state drives the target step.
-    expect(rpc.domain).toBeGreaterThanOrEqual(1);
+    // GH-335: the typed Domain query still leaves the page on the identity step.
+    expect(rpc.domain).toBe(1);
   });
 }
 
