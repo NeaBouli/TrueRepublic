@@ -37,6 +37,30 @@ const RECORD_ALG = 'AES-GCM-256';
 const RECORD_KDF = 'PBKDF2-SHA256';
 const HEX_32_BYTES = /^[0-9a-f]{64}$/;
 const RECORD_KEYS = ['alg', 'createdAt', 'envelope', 'iter', 'kdf', 'v'];
+const RECORD_V2_KEYS = ['alg', 'createdAt', 'envelope', 'iter', 'kdf', 'kind', 'v'];
+const CANONICAL_IDENTITY_KEYS = ['commitment', 'createdAt', 'kind', 'secret'];
+const RECORD_V1 = 1;
+const RECORD_V2 = 2;
+
+/** Authenticated custody record kinds (GH309C1). record-v1 is always preview-v0. */
+export const PREVIEW_IDENTITY_KIND = 'preview-v0';
+export const CANONICAL_IDENTITY_KIND = 'canonical-bn254-mimc-v1';
+export type IdentityKind = typeof PREVIEW_IDENTITY_KIND | typeof CANONICAL_IDENTITY_KIND;
+
+/** Historical preview identity as opened from a record-v1 (FNV placeholder values). */
+export interface PreviewCustodyIdentity extends Identity {
+  kind: typeof PREVIEW_IDENTITY_KIND;
+}
+
+/** Canonical identity: commitment = BN254 MiMC(secret); no stored per-identity nullifier. */
+export interface CanonicalIdentity {
+  kind: typeof CANONICAL_IDENTITY_KIND;
+  secret: string;
+  commitment: string;
+  createdAt: number;
+}
+
+export type CustodyIdentity = PreviewCustodyIdentity | CanonicalIdentity;
 const DOCUMENT_KEYS = ['records', 'v'];
 const IDENTITY_KEYS = ['commitment', 'createdAt', 'nullifier', 'secret'];
 
@@ -46,6 +70,7 @@ export type IdentityVaultErrorCode =
   | 'invalid-password'
   | 'corrupt'
   | 'conflict'
+  | 'kind-mismatch'
   | 'locked'
   | 'storage';
 
@@ -55,6 +80,7 @@ const ERROR_MESSAGES: Record<IdentityVaultErrorCode, string> = {
   'invalid-password': 'Identity vault requires the wallet password',
   corrupt: 'Identity vault data is corrupted or unsupported',
   conflict: 'An identity is already stored for this wallet or the vault changed',
+  'kind-mismatch': 'The stored identity for this wallet is not a preview identity',
   locked: 'Incorrect password or corrupted identity data',
   storage: 'Identity vault storage is unavailable',
 };
@@ -93,14 +119,21 @@ interface WebLocks {
   request<T>(name: string, options: { mode: 'exclusive' }, callback: () => Promise<T>): Promise<T>;
 }
 
-interface VaultRecord {
-  v: typeof IDENTITY_VAULT_VERSION;
+interface VaultRecordV1 {
+  v: typeof RECORD_V1;
   alg: typeof RECORD_ALG;
   kdf: typeof RECORD_KDF;
   iter: typeof CURRENT_PBKDF2_ITERATIONS;
   envelope: string;
   createdAt: number;
 }
+
+interface VaultRecordV2 extends Omit<VaultRecordV1, 'v'> {
+  v: typeof RECORD_V2;
+  kind: typeof CANONICAL_IDENTITY_KIND;
+}
+
+type VaultRecord = VaultRecordV1 | VaultRecordV2;
 
 interface VaultDocument {
   v: typeof IDENTITY_VAULT_VERSION;
@@ -167,15 +200,59 @@ export function serializeIdentity(identity: Identity): string {
   });
 }
 
+/** record-v1 (preview-v0) AAD; unchanged since GH309B2B. */
 export function identityAad(address: string): string {
   return `truerepublic/identity/v1|${address}`;
 }
 
-function isValidRecord(value: unknown): value is VaultRecord {
+/** record-v2 AAD binds the record version, the exact kind and the canonical address. */
+export function canonicalIdentityAad(address: string): string {
+  return `truerepublic/identity/v2|${CANONICAL_IDENTITY_KIND}|${address}`;
+}
+
+/** Exact canonical plaintext; contains no preview nullifier. */
+export function serializeCanonicalIdentity(identity: CanonicalIdentity): string {
+  return JSON.stringify({
+    kind: CANONICAL_IDENTITY_KIND,
+    secret: identity.secret,
+    commitment: identity.commitment,
+    createdAt: identity.createdAt,
+  });
+}
+
+function isCanonicalIdentityShape(value: unknown): value is CanonicalIdentity {
+  return !(
+    !isPlainObject(value) ||
+    !hasExactKeys(value, CANONICAL_IDENTITY_KEYS) ||
+    value.kind !== CANONICAL_IDENTITY_KIND ||
+    typeof value.secret !== 'string' ||
+    !HEX_32_BYTES.test(value.secret) ||
+    typeof value.commitment !== 'string' ||
+    !HEX_32_BYTES.test(value.commitment) ||
+    !Number.isSafeInteger(value.createdAt) ||
+    (value.createdAt as number) < 0
+  );
+}
+
+/**
+ * Canonical identity: exact shape, field-element secret and commitment =
+ * mimcBn254([secret]). The MiMC code is loaded only here, after the cheap
+ * shape checks, so normal startup and record-v1 never pull it into the entry
+ * chunk. A module-load failure rejects (operational), it is not a verdict.
+ */
+export async function isValidCanonicalIdentity(value: unknown): Promise<boolean> {
+  if (!isCanonicalIdentityShape(value)) return false;
+  const { bytesToHex, hexToBytes, mimcBn254 } = await import('./zkpEncoding');
+  try {
+    return bytesToHex(mimcBn254([hexToBytes(value.secret)])) === value.commitment;
+  } catch {
+    // Secrets outside the BN254 scalar field are not canonical.
+    return false;
+  }
+}
+
+function isValidRecordCommon(value: Record<string, unknown>): boolean {
   return (
-    isPlainObject(value) &&
-    hasExactKeys(value, RECORD_KEYS) &&
-    value.v === IDENTITY_VAULT_VERSION &&
     value.alg === RECORD_ALG &&
     value.kdf === RECORD_KDF &&
     value.iter === CURRENT_PBKDF2_ITERATIONS &&
@@ -185,6 +262,14 @@ function isValidRecord(value: unknown): value is VaultRecord {
     Number.isSafeInteger(value.createdAt) &&
     (value.createdAt as number) >= 0
   );
+}
+
+/** Strict union: v1 with the v1 key set, or v2 with exactly the canonical kind. */
+function isValidRecord(value: unknown): value is VaultRecord {
+  if (!isPlainObject(value) || !isValidRecordCommon(value)) return false;
+  if (value.v === RECORD_V1) return hasExactKeys(value, RECORD_KEYS);
+  if (value.v === RECORD_V2) return hasExactKeys(value, RECORD_V2_KEYS) && value.kind === CANONICAL_IDENTITY_KIND;
+  return false;
 }
 
 function parseDocument(raw: string | null): VaultDocument {
@@ -366,7 +451,7 @@ export class IdentityVault {
       records: {
         ...document.records,
         [address]: {
-          v: IDENTITY_VAULT_VERSION,
+          v: RECORD_V1,
           alg: RECORD_ALG,
           kdf: RECORD_KDF,
           iter: CURRENT_PBKDF2_ITERATIONS,
@@ -378,21 +463,24 @@ export class IdentityVault {
   }
 
   /**
-   * Decrypt the identity stored for the address with the wallet password.
-   * Returns null when no identity exists. Wrong password, wrong address,
-   * swapped or tampered records fail with one bounded error.
+   * Decrypt the identity stored for the address with the wallet password and
+   * return it with its authenticated kind. record-v1 opens as preview-v0
+   * (storage is never rewritten); record-v2 opens only as the canonical kind
+   * under its own AAD. Wrong password, wrong address, swapped
+   * address/version/kind or tampered records fail with one bounded error.
    */
-  async openIdentity(address: string, password: string): Promise<Identity | null> {
+  async openCustodyIdentity(address: string, password: string): Promise<CustodyIdentity | null> {
     assertAddress(address);
     assertPassword(password);
     const { records } = parseDocument(this.readRaw());
     if (!Object.prototype.hasOwnProperty.call(records, address)) return null;
     const record = records[address];
+    const canonical = record.v === RECORD_V2;
 
     let plaintext: string;
     try {
       ({ plaintext } = await openEnvelope(record.envelope, password, {
-        aad: identityAad(address),
+        aad: canonical ? canonicalIdentityAad(address) : identityAad(address),
         maxEnvelopeChars: MAX_RECORD_ENVELOPE_CHARS,
       }));
     } catch {
@@ -405,10 +493,36 @@ export class IdentityVault {
     } catch {
       throw new IdentityVaultError('corrupt');
     }
+    if (canonical) {
+      let valid: boolean;
+      try {
+        valid = await isValidCanonicalIdentity(identity);
+      } catch {
+        // The canonical validator chunk could not be loaded: operational, not corrupt or locked.
+        throw new IdentityVaultError('storage');
+      }
+      if (!valid || serializeCanonicalIdentity(identity as CanonicalIdentity) !== plaintext) {
+        throw new IdentityVaultError('corrupt');
+      }
+      return identity as CanonicalIdentity;
+    }
     if (!isValidIdentity(identity) || serializeIdentity(identity) !== plaintext) {
       throw new IdentityVaultError('corrupt');
     }
-    return identity;
+    return { ...identity, kind: PREVIEW_IDENTITY_KIND };
+  }
+
+  /**
+   * Preview-only view used by the preview custody flows: returns the record-v1
+   * identity without its kind tag, null when absent, and refuses a canonical
+   * record with 'kind-mismatch' instead of reinterpreting it.
+   */
+  async openIdentity(address: string, password: string): Promise<Identity | null> {
+    const opened = await this.openCustodyIdentity(address, password);
+    if (!opened) return null;
+    if (opened.kind !== PREVIEW_IDENTITY_KIND) throw new IdentityVaultError('kind-mismatch');
+    const { secret, commitment, nullifier, createdAt } = opened;
+    return { secret, commitment, nullifier, createdAt };
   }
 
   /** Remove the entry for the address on explicit caller request, under the vault lock. */
