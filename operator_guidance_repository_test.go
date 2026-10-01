@@ -54,11 +54,6 @@ var operatorGuidanceCommandRuleExclusions = map[string]bool{
 	"docs/developers/README.md":                   true,
 	"docs/developers/smart-contracts/cosmwasm.md": true,
 	"wiki/develop/Module-Deep-Dive.md":            true,
-	// Known command/config defects outside the GH313C1 writable set, recorded
-	// as open in .fleet/reports/GH313C1.md for the follow-up block.
-	"docs/node-operators/installation/docker-setup.md":    true,
-	"docs/node-operators/configuration/genesis-params.md": true,
-	"docs/V0.4.0_OPTIONAL_INDEXER_STACK.md":               true,
 }
 
 var (

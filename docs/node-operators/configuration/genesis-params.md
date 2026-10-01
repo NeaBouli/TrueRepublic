@@ -74,12 +74,12 @@ The default genesis includes:
       "domains": [
         {
           "name": "TestParty",
-          "treasury": "500000pnyx"
+          "treasury": "500000000000upnyx"
         }
       ],
       "validators": [
         {
-          "stake": "100000pnyx"
+          "stake": "100000000000upnyx"
         }
       ]
     },
