@@ -9919,3 +9919,10 @@ Pending independent Kimi review and complete Sol verification.
 `TRUEREPUBLIC GH-304 CANONICAL BECH32 HARDENED — REPLACEMENT HEAD NEXT`
 
 ---
+
+## 2026-10-02 EEST — GH300B1a local hardening complete; review pending
+
+- Fleet dispatch/probe returned `solo_mode_required`; Codex used isolated branch `agent/codex/GH300B1a` from `64a61ba` and no worker wrote product code.
+- The test-only browser artifact loader now requires a readable bounded stream and exposes closed typed failure codes. The pinned manifest, SHA-256 integrity, same-origin and test-only boundaries are unchanged.
+- Evidence: focused 43/43; full client 443 passed / 4 skipped; lint, typecheck, build/budget (entry 77,931 gzip), Go artifact contract, consistency and diff-check pass. Two guard/classification mutations failed as intended and were restored. The audit failure remains the known repository-wide #332 advisory set.
+- Independent security review remains mandatory before any push. GH300B2 has not started.

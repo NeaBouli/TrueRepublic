@@ -5,6 +5,7 @@ import {
   parseZKPArtifactManifest,
   parseZKPArtifactManifestJSON,
   fetchZKPArtifacts,
+  ZKPArtifactError,
   ZKP_ARTIFACT_CLASSIFICATION,
   ZKP_ARTIFACT_MANIFEST_SCHEMA,
   type ZKPArtifactFetch,
@@ -129,10 +130,6 @@ function makeFetch(
                 };
               },
             },
-      arrayBuffer: () => {
-        const copy = new Uint8Array(route.bytes);
-        return Promise.resolve(copy.buffer);
-      },
     };
     return Promise.resolve(response);
   };
@@ -166,6 +163,16 @@ describe('GH-300 artifact manifest parsing', () => {
     expect(manifest.circuit_id).toBe(MEMBERSHIP_CIRCUIT_ID);
     expect(manifest.production_allowed).toBe(false);
     expect(manifest.wasm.path).toBe('zkp/prover.wasm');
+  });
+
+  it('reports manifest failures through the typed public error contract', () => {
+    try {
+      parseZKPArtifactManifest(null);
+      expect.fail('invalid manifests must fail');
+    } catch (error: unknown) {
+      expect(error).toBeInstanceOf(ZKPArtifactError);
+      expect(error).toMatchObject({ code: 'manifest' });
+    }
   });
 
   it('parses from JSON text and rejects invalid JSON', () => {
@@ -350,7 +357,7 @@ describe('GH-300 same-origin bounded artifact loading', () => {
     expect(loaded.wasm).toEqual(WASM_BYTES);
   });
 
-  it('loads multi-chunk streams and the arrayBuffer fallback', async () => {
+  it('loads multi-chunk streams and rejects a body-less response without buffering', async () => {
     const calls: RecordedCall[] = [];
     const streamed = await fetchZKPArtifacts(validManifest(), {
       fetchImpl: makeFetch(
@@ -361,19 +368,28 @@ describe('GH-300 same-origin bounded artifact loading', () => {
     });
     expect(streamed.wasm).toEqual(WASM_BYTES);
 
-    const buffered = await fetchZKPArtifacts(validManifest(), {
-      fetchImpl: makeFetch(
-        standardRoutes({
-          'zkp/prover.wasm': {
-            bytes: WASM_BYTES,
-            options: { streamBody: false },
-          },
-        }),
-        []
-      ),
-      baseOrigin: BASE_ORIGIN,
+    let arrayBufferCalled = false;
+    const bodyless: ZKPArtifactFetch = () =>
+      Promise.resolve({
+        ok: true,
+        status: 200,
+        headers: { get: () => String(CS_BYTES.byteLength) },
+        body: null,
+        arrayBuffer: () => {
+          arrayBufferCalled = true;
+          return Promise.resolve(CS_BYTES.buffer);
+        },
+      });
+    await expect(
+      fetchZKPArtifacts(validManifest(), {
+        fetchImpl: bodyless,
+        baseOrigin: BASE_ORIGIN,
+      })
+    ).rejects.toMatchObject({
+      code: 'environment',
+      message: 'constraint_system: a readable response stream is required',
     });
-    expect(buffered.wasm).toEqual(WASM_BYTES);
+    expect(arrayBufferCalled).toBe(false);
   });
 
   it('rejects a Content-Length that does not match the manifest', async () => {
@@ -422,7 +438,7 @@ describe('GH-300 same-origin bounded artifact loading', () => {
         ),
         baseOrigin: BASE_ORIGIN,
       })
-    ).rejects.toThrow('status 404');
+    ).rejects.toMatchObject({ code: 'http', message: expect.stringContaining('status 404') });
   });
 
   it('rejects a body shorter or longer than the declared size', async () => {
@@ -474,7 +490,7 @@ describe('GH-300 same-origin bounded artifact loading', () => {
         baseOrigin: BASE_ORIGIN,
         digester: makeCapturingDigester(captured),
       })
-    ).rejects.toThrow('SHA-256');
+    ).rejects.toMatchObject({ code: 'integrity', message: expect.stringContaining('SHA-256') });
     expect(captured).toHaveLength(4);
     for (const bytes of captured) {
       expect(bytes.every((byte) => byte === 0)).toBe(true);
@@ -522,7 +538,7 @@ describe('GH-300 same-origin bounded artifact loading', () => {
         signal: controller.signal,
         digester: makeCapturingDigester(captured),
       })
-    ).rejects.toThrow('aborted');
+    ).rejects.toMatchObject({ code: 'aborted', message: expect.stringContaining('aborted') });
     expect(captured).toHaveLength(2);
     for (const bytes of captured) {
       expect(bytes.every((byte) => byte === 0)).toBe(true);
@@ -530,14 +546,39 @@ describe('GH-300 same-origin bounded artifact loading', () => {
   });
 
   it('propagates a fetch transport failure', async () => {
-    const failing: ZKPArtifactFetch = () =>
-      Promise.reject(new Error('network down'));
+    const cause = new Error('network down');
+    const failing: ZKPArtifactFetch = () => Promise.reject(cause);
     await expect(
       fetchZKPArtifacts(validManifest(), {
         fetchImpl: failing,
         baseOrigin: BASE_ORIGIN,
       })
-    ).rejects.toThrow('network down');
+    ).rejects.toMatchObject({
+      code: 'network',
+      message: 'constraint_system: artifact request failed',
+      cause,
+    });
+  });
+
+  it('wraps stream setup failures without exposing their message', async () => {
+    const cause = new Error('sensitive transport detail');
+    const failing: ZKPArtifactFetch = () =>
+      Promise.resolve({
+        ok: true,
+        status: 200,
+        headers: { get: () => String(CS_BYTES.byteLength) },
+        body: { getReader: () => { throw cause; } },
+      });
+    await expect(
+      fetchZKPArtifacts(validManifest(), {
+        fetchImpl: failing,
+        baseOrigin: BASE_ORIGIN,
+      })
+    ).rejects.toMatchObject({
+      code: 'network',
+      message: 'constraint_system: artifact request failed',
+      cause,
+    });
   });
 
   it('destroy() zeroes every retained array and blocks further access', async () => {

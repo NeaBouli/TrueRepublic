@@ -6076,3 +6076,12 @@
 - Finding (not changed, source hash preserved): redirects rely on the fetch option redirect:'error'; the loader does not additionally reject response.redirected or a foreign response.url. Errors are plain Error with deterministic messages (no typed error class).
 - Tests: go test -run TestZKPBrowserArtifact ./x/truedemocracy ok; mutations of the manifest (classification, production_allowed true, pk digest, vk size, vk traversal path, unknown field) all FAIL the Go contract; restored hash 876fc2446b53. Vitest zkpArtifacts 41/41; mutation removing the '.'/'..' traversal check fails 3 tests; restored hash e496441a82a4.
 - Gates: npm test -- --run 441 passed / 4 skipped twice; a first run showed 1 unidentified failing test that did not recur in two consecutive full runs (flaky, reported). lint rc 0; tsc -b --noEmit rc 0; npm run build + bundle budget passed (entry 77932 gzip, total JS 369149 — zkpArtifacts not in the entry); audit:high only the known brace-expansion/minimatch advisory (#332); git diff --check clean. Free disk 21 GiB. No push.
+
+## 2026-10-02 GH300B1a bounded artifact-loader hardening (Codex solo fallback)
+
+- Fleet dispatch and the corrected Claude probe returned `solo_mode_required`; no worker changed product files. Codex continued on isolated branch `agent/codex/GH300B1a` from accepted GH300B1 head `64a61ba`.
+- `zkpArtifacts.ts` now rejects a response without a readable stream before any fallback allocation, exposes the closed `ZKPArtifactError` code contract, wraps public loader failures without response-body disclosure, and zeroes bytes if digest computation fails. Manifest, digest, size, same-origin and `redirect: 'error'` contracts remain unchanged.
+- Focused loader tests pass 43/43. Two temporary mutations were restored after proving that bypassing the body-stream guard fails one test and changing transport classification fails two tests. Full client evidence is 443 passed / 4 skipped; lint, typecheck, build/budget (entry 77,931 gzip), Go artifact contract, consistency and diff hygiene pass. `audit:high` reports only the repository-wide dependency set already owned by #332.
+- Security review is required before push. No runtime/Worker wiring, artifact, manifest, identity, UI, dependency, budget, production claim or external write occurred.
+
+`TRUEREPUBLIC GH300B1A LOCALLY GREEN — INDEPENDENT SECURITY REVIEW PENDING`
