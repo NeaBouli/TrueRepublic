@@ -5955,3 +5955,12 @@
   build`, browser/visual gate with screenshots at 1440x1000, 1180x820, 820x1180 and
   390x844. Custody, persistence, cryptography and chain-side risks remain open;
   issue #309 is not closed. No push, PR or deployment.
+
+## 2026-10-01 GH309B1 visual gate (Claude Code)
+
+- Branch agent/claude/GH309-client-containment rebased onto GH335 af0608b (only the append-only Action Log conflict merged, both entries kept): 56ba76e implementation, 28fe3dd log, d1a36aa visual contract.
+- d1a36aa: new client-web/browser-quality/identity-registration-disabled.e2e.ts; OnboardingFlow disabled button gets `disabled:bg-gray-200 disabled:text-gray-600` (local to this control; global .btn-primary unchanged).
+- Chromium (Playwright 1.55.1, build 1193), project chromium-desktop, 4/4 pass at 1440x1000, 1180x820, 820x1180, 390x844: documentOverflow 0; button 44px high (590/590/590/308 wide), inside card; notice inside card, no text overflow; cursor not-allowed; not focusable; click/Enter/Space inert; contrast rgb(75,85,99) on rgb(229,231,235) ~6.1:1; typed Domain query served >= 1; bootstrap calls observed: status only (answered as controlled JSON-RPC error, no data); no violations, no broadcast_tx.
+- Contrast mutation: previous styling (white on gray-300) fails the contract with 1.47:1.
+- Screenshots (inspected, untracked local evidence): screenshots/ux/GH309B1-registration-disabled/{desktop-1440x1000,tablet-landscape-1180x820,tablet-portrait-820x1180,mobile-390x844}.png.
+- Gates: lint rc 0; tsc -b --noEmit rc 0; npm test -- --run 22 files passed/2 skipped, 314 passed/4 skipped; build via Playwright webServer; git diff --check clean. Firefox/WebKit projects not run (only Chromium installed locally). No push.
