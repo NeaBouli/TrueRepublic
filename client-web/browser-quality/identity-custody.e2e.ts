@@ -115,6 +115,8 @@ async function reachState(page: Page, state: CustodyState): Promise<void> {
     await page.getByRole('button', { name: 'Encrypt Into This Wallet' }).click();
   }
   await expect(page.getByRole('heading', { name: heading, exact: true })).toBeVisible({ timeout: 20_000 });
+  if (state === 'ready') await expect(page.getByTestId('identity-ready-marker')).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Checking Preview Identity' })).toHaveCount(0);
 }
 
 for (const viewport of viewports) {
@@ -220,7 +222,17 @@ for (const viewport of viewports) {
           buttons: buttons.map((button) => {
             const box = button.getBoundingClientRect();
             return {
-              name: button.textContent?.trim() ?? '',
+              // Accessible name: aria-labelledby, then aria-label, then text content.
+              name: (
+                (button.getAttribute('aria-labelledby') ?? '')
+                  .split(/\s+/)
+                  .map((id) => document.getElementById(id)?.textContent ?? '')
+                  .join(' ')
+                  .trim() ||
+                button.getAttribute('aria-label') ||
+                button.textContent ||
+                ''
+              ).trim(),
               width: Math.round(box.width),
               height: Math.round(box.height),
               disabled: button.disabled,
@@ -256,6 +268,8 @@ for (const viewport of viewports) {
       expect(audit.secretInDom).toBe(false);
 
       mkdirSync(EVIDENCE_DIR, { recursive: true });
+      // Evidence shows the resting state, not the focus left by the keyboard checks.
+      await page.evaluate(() => (document.activeElement as HTMLElement | null)?.blur());
       await page.screenshot({ path: resolve(EVIDENCE_DIR, `${state}-${viewport.name}.png`), fullPage: true });
 
       if (state === 'ready') {
