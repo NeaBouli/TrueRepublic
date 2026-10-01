@@ -1,13 +1,11 @@
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useWalletStore } from '@/stores/walletStore';
 import { useIdentityStore } from '@/stores/identityStore';
 import { useMembershipStore } from '@/stores/membershipStore';
-import { MembershipService } from '@/services/membership';
-import { WalletService } from '@/services/wallet';
+import { PREVIEW_IDENTITY_REGISTRATION_DISABLED } from '@/services/membership';
 import { Card } from '@/components/common/Card';
 import { Button } from '@/components/common/Button';
-import { DEFAULT_CHAIN } from '@/config/chains';
 import {
   ArrowLeftIcon,
   CheckCircleIcon,
@@ -19,13 +17,9 @@ import {
 export function OnboardingFlow() {
   const navigate = useNavigate();
   const { domainId } = useParams<{ domainId: string }>();
-  const { currentWallet, password } = useWalletStore();
+  const { currentWallet } = useWalletStore();
   const { identity, hasIdentity, createIdentity } = useIdentityStore();
   const { memberships, loadMembership } = useMembershipStore();
-
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [error, setError] = useState('');
-  const [txHash, setTxHash] = useState('');
 
   const membership = domainId ? memberships[domainId] : null;
   const step = !hasIdentity
@@ -54,42 +48,6 @@ export function OnboardingFlow() {
 
   const handleCreateIdentity = () => {
     createIdentity();
-  };
-
-  const handleRegisterIdentity = async () => {
-    if (!currentWallet || !password || !identity || !domainId) return;
-
-    setIsSubmitting(true);
-    setError('');
-
-    try {
-      const membershipService = new MembershipService(DEFAULT_CHAIN);
-      const wallet = await WalletService.getWalletForSigning(
-        currentWallet.address,
-        password
-      );
-
-      const result = await membershipService.registerIdentity(
-        wallet,
-        domainId,
-        identity.commitment
-      );
-
-      if (!result.success) {
-        throw new Error(result.error || 'Identity registration failed');
-      }
-
-      setTxHash(result.hash);
-      await loadMembership(
-        domainId,
-        currentWallet.address,
-        identity.commitment
-      );
-    } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : 'Registration failed');
-    } finally {
-      setIsSubmitting(false);
-    }
   };
 
   if (!domainId) {
@@ -154,19 +112,12 @@ export function OnboardingFlow() {
           </Card>
         )}
 
-        {/* Submit Step — register identity commitment on-chain */}
+        {/* Submit Step — identity registration is disabled in the preview (issue #309) */}
         {step === 'submit' && (
           <Card>
             <h2 className="text-2xl font-bold mb-6">
-              Register Identity Commitment
+              Identity Registration Unavailable
             </h2>
-
-            {error && (
-              <div className="bg-red-50 border border-red-200 rounded-lg p-3 mb-4 flex items-start gap-2">
-                <XCircleIcon className="h-5 w-5 text-red-600 flex-shrink-0 mt-0.5" />
-                <p className="text-sm text-red-800">{error}</p>
-              </div>
-            )}
 
             <div className="space-y-4 mb-6">
               <div className="flex items-start gap-3">
@@ -180,26 +131,40 @@ export function OnboardingFlow() {
               </div>
 
               <div className="flex items-start gap-3">
-                <div className="flex-shrink-0 w-6 h-6 bg-primary-100 text-primary-700 rounded-full flex items-center justify-center text-xs font-bold">
+                <div className="flex-shrink-0 w-6 h-6 bg-gray-100 text-gray-600 rounded-full flex items-center justify-center text-xs font-bold">
                   2
                 </div>
                 <div className="flex-1">
-                  <h3 className="font-semibold">Register ZKP Identity</h3>
+                  <h3 className="font-semibold">Identity Registration</h3>
                   <p className="text-sm text-gray-600">
-                    Submit your identity commitment to the Merkle tree for
-                    anonymous voting
+                    Not available in this preview
                   </p>
                 </div>
               </div>
             </div>
 
-            <Button
-              onClick={handleRegisterIdentity}
-              isLoading={isSubmitting}
-              className="w-full"
+            <div
+              className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6"
+              data-testid="identity-registration-disabled-notice"
             >
-              Register Identity Commitment
+              <p className="text-sm text-yellow-900 break-words">
+                {PREVIEW_IDENTITY_REGISTRATION_DISABLED} No transaction is sent,
+                nothing is registered on-chain and anonymous voting is not
+                available in this client.
+              </p>
+            </div>
+
+            <Button
+              type="button"
+              disabled
+              aria-describedby="identity-registration-disabled-reason"
+              className="w-full min-h-[44px]"
+            >
+              Registration Disabled in Preview
             </Button>
+            <p id="identity-registration-disabled-reason" className="sr-only">
+              {PREVIEW_IDENTITY_REGISTRATION_DISABLED}
+            </p>
           </Card>
         )}
 
@@ -215,17 +180,6 @@ export function OnboardingFlow() {
                 Your membership request has been submitted
               </p>
             </div>
-
-            {txHash && (
-              <div className="bg-gray-50 rounded-lg p-4 mb-6">
-                <div className="text-xs text-gray-600 mb-1">
-                  Transaction Hash
-                </div>
-                <code className="text-xs font-mono break-all text-gray-700">
-                  {txHash}
-                </code>
-              </div>
-            )}
 
             <div className="space-y-4 mb-6">
               <div className="flex items-start gap-3">
