@@ -5928,3 +5928,9 @@
   fails only on the known brace-expansion advisories (propagated through minimatch to
   eslint/typescript-eslint dependents), fixed separately by PR #332. No dependency,
   UI, codec or configuration change; no push or PR.
+
+## 2026-10-01 GH335A1 — pin the receiver assertion (Claude Code)
+
+- Commit b520d76 on agent/claude/GH335-modulequery-fetch: moduleQuery.test.ts #335 test asserts `expect(receivers).toEqual([globalThis])` instead of `toHaveLength(1)`. Receiver-sensitive fake, finally-restoration and all source unchanged.
+- Mutation proof (temporary, reverted; source diff empty afterwards): unbound call (`const unbound = globalThis.fetch; return unbound(input, init)`) fails with "expected [ undefined ] to deeply equal [ globalThis ]"; parent implementation (`fetchImpl: Fetch = globalThis.fetch`) fails with TypeError "Illegal invocation" at moduleQuery.ts:410. With the fix: moduleQuery.test.ts 8/8 pass.
+- Gates: npm run lint rc 0; tsc -b --noEmit rc 0; git diff --check clean. Full suite/build not repeated per brief (GH335A evidence stands). No push.
