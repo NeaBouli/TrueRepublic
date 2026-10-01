@@ -8,6 +8,8 @@ import type {
   TransactionResult,
 } from '@/types/transaction';
 import { WalletService } from '@/services/wallet';
+import { IdentityVault, IdentityVaultError } from '@/services/identityVault';
+import { useIdentityStore, type IdentitySession } from './identityStore';
 import { DEFAULT_CHAIN } from '@/config/chains';
 
 interface WalletStore {
@@ -56,10 +58,46 @@ let transactionService: Promise<import('@/services/transaction').TransactionServ
 let historyAbortController: AbortController | null = null;
 let walletSessionGeneration = 0;
 
+export const WALLET_DELETE_BLOCKED_BY_IDENTITY =
+  'This wallet still has an encrypted preview identity (or its identity storage cannot be read safely), so it cannot be deleted in this preview.';
+
 function beginWalletSessionTransition(): number {
   walletSessionGeneration += 1;
+  // Drop any decrypted identity synchronously, before the caller's first await.
+  useIdentityStore.getState().invalidate();
   WalletService.invalidateSigningSession();
   return walletSessionGeneration;
+}
+
+/** Session binding for identity work: same generation, same address, still unlocked. */
+function identitySessionFor(address: string, password: string, generation: number): IdentitySession {
+  return {
+    address,
+    password,
+    isCurrent: () => {
+      const state = useWalletStore.getState();
+      return (
+        generation === walletSessionGeneration &&
+        !state.isLocked &&
+        state.currentWallet?.address === address &&
+        state.password === password
+      );
+    },
+  };
+}
+
+/** The identity session for the currently unlocked wallet, or null while locked. */
+export function currentIdentitySession(): IdentitySession | null {
+  const { currentWallet, password, isLocked } = useWalletStore.getState();
+  if (isLocked || !currentWallet || !password) return null;
+  return identitySessionFor(currentWallet.address, password, walletSessionGeneration);
+}
+
+function startIdentitySession(address: string, password: string, generation: number): void {
+  void useIdentityStore
+    .getState()
+    .load(identitySessionFor(address, password, generation))
+    .catch(() => undefined);
 }
 
 function invalidateIbcTransferSession(): void {
@@ -174,6 +212,7 @@ export const useWalletStore = create<WalletStore>()(
             isLoading: false,
           }));
 
+          startIdentitySession(wallet.address, password, generation);
           get().refreshBalance();
           return wallet;
         } catch (error: unknown) {
@@ -214,6 +253,7 @@ export const useWalletStore = create<WalletStore>()(
             isLoading: false,
           }));
 
+          startIdentitySession(wallet.address, password, generation);
           get().refreshBalance();
           return wallet;
         } catch (error: unknown) {
@@ -253,6 +293,7 @@ export const useWalletStore = create<WalletStore>()(
             isLoading: false,
           });
 
+          startIdentitySession(wallet.address, password, generation);
           get().refreshBalance();
         } catch (error: unknown) {
           const message = error instanceof Error ? error.message : 'Failed to switch wallet';
@@ -264,6 +305,18 @@ export const useWalletStore = create<WalletStore>()(
       },
 
       deleteWallet: (address: string) => {
+        // Never orphan an encrypted identity: refuse while the vault holds (or
+        // cannot be read safely for) this address. Malformed historical
+        // addresses cannot own a vault record and stay deletable.
+        try {
+          if (new IdentityVault().hasIdentity(address)) {
+            throw new Error(WALLET_DELETE_BLOCKED_BY_IDENTITY);
+          }
+        } catch (error) {
+          if (!(error instanceof IdentityVaultError && error.code === 'invalid-address')) {
+            throw new Error(WALLET_DELETE_BLOCKED_BY_IDENTITY);
+          }
+        }
         WalletService.deleteWallet(address);
         const removingCurrent = get().currentWallet?.address === address;
         if (removingCurrent) get().clearHistory();

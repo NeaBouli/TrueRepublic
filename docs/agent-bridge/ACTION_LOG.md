@@ -5912,6 +5912,86 @@
 - No state repair, migration, deployment, release, production action, real key
   or real fund is authorized. Rollout remains 36/59 and production false.
 
+## 2026-10-01 EEST - GH-335 ModuleQuery fetch receiver (GH335A, Claude Code)
+
+- Branch `agent/claude/GH335-modulequery-fetch` from exact main `1283a445`; commit
+  `db89aac`. `ModuleQueryClient`'s default fetch is now
+  `(input, init) => globalThis.fetch(input, init)` (same pattern as `network.ts`);
+  previously every typed module query failed in real browsers with "Illegal
+  invocation" before sending (found by the GH309B1 Chromium contract run).
+- New receiver-sensitive test in `moduleQuery.test.ts`: fails on the parent
+  implementation with the Illegal-invocation TypeError, passes with the fix; global
+  fetch is restored in `finally`.
+- Gates (7.6-7.9 GiB free, no other TrueRepublic build): `npm ci`; focused
+  `moduleQuery.test.ts` 8/8; `npm run lint`; `tsc -b --noEmit`; `npm test -- --run`
+  (310 passed, 4 skipped); `npm run build` with bundle budget; `npm run audit:high`
+  fails only on the known brace-expansion advisories (propagated through minimatch to
+  eslint/typescript-eslint dependents), fixed separately by PR #332. No dependency,
+  UI, codec or configuration change; no push or PR.
+
+## 2026-10-01 GH335A1 — pin the receiver assertion (Claude Code)
+
+- Commit b520d76 on agent/claude/GH335-modulequery-fetch: moduleQuery.test.ts #335 test asserts `expect(receivers).toEqual([globalThis])` instead of `toHaveLength(1)`. Receiver-sensitive fake, finally-restoration and all source unchanged.
+- Mutation proof (temporary, reverted; source diff empty afterwards): unbound call (`const unbound = globalThis.fetch; return unbound(input, init)`) fails with "expected [ undefined ] to deeply equal [ globalThis ]"; parent implementation (`fetchImpl: Fetch = globalThis.fetch`) fails with TypeError "Illegal invocation" at moduleQuery.ts:410. With the fix: moduleQuery.test.ts 8/8 pass.
+- Gates: npm run lint rc 0; tsc -b --noEmit rc 0; git diff --check clean. Full suite/build not repeated per brief (GH335A evidence stands). No push.
+
+## 2026-10-01 EEST - GH-309 preview identity registration fail-closed (GH309B1, Claude Code)
+
+- Branch `agent/claude/GH309-client-containment` from exact main `1283a445`; commit
+  `aa98b96`. `MembershipService.registerIdentity` returns the stable
+  `PREVIEW_IDENTITY_REGISTRATION_DISABLED` error before any wallet account, signing
+  client or `deliverMessages` call. `OnboardingFlow` no longer has a registration
+  handler; its submit step shows "Identity Registration Unavailable", a disabled
+  44px control and wording that sends nothing and promises no anonymity. The
+  `MsgRegisterIdentity` codec/registry and `ZKPService.isSubmittable === false` are
+  unchanged; no second activation flag was added.
+- Tests: new `membership.test.ts` (service never touches wallet/signing/delivery) and
+  `OnboardingFlow.test.tsx` (disabled, non-focusable control; no signing or service
+  call). Restoring the original service path fails 1 test; restoring the original
+  component fails 2 tests. `npm ci`, focused tests 4/4, `npm run lint`, typecheck and
+  `npm test -- --run` (313 passed, 4 skipped) pass; `npm run audit:high` fails only on
+  the known global brace-expansion advisory fixed by PR #332.
+- Pending (data volume ~3.0 GiB free, below the 5 GiB build threshold): `npm run
+  build`, browser/visual gate with screenshots at 1440x1000, 1180x820, 820x1180 and
+  390x844. Custody, persistence, cryptography and chain-side risks remain open;
+  issue #309 is not closed. No push, PR or deployment.
+
+## 2026-10-01 GH309B1 visual gate (Claude Code)
+
+- Branch agent/claude/GH309-client-containment rebased onto GH335 af0608b (only the append-only Action Log conflict merged, both entries kept): 56ba76e implementation, 28fe3dd log, d1a36aa visual contract.
+- d1a36aa: new client-web/browser-quality/identity-registration-disabled.e2e.ts; OnboardingFlow disabled button gets `disabled:bg-gray-200 disabled:text-gray-600` (local to this control; global .btn-primary unchanged).
+- Chromium (Playwright 1.55.1, build 1193), project chromium-desktop, 4/4 pass at 1440x1000, 1180x820, 820x1180, 390x844: documentOverflow 0; button 44px high (590/590/590/308 wide), inside card; notice inside card, no text overflow; cursor not-allowed; not focusable; click/Enter/Space inert; contrast rgb(75,85,99) on rgb(229,231,235) ~6.1:1; typed Domain query served >= 1; bootstrap calls observed: status only (answered as controlled JSON-RPC error, no data); no violations, no broadcast_tx.
+- Contrast mutation: previous styling (white on gray-300) fails the contract with 1.47:1.
+- Screenshots (inspected, untracked local evidence): screenshots/ux/GH309B1-registration-disabled/{desktop-1440x1000,tablet-landscape-1180x820,tablet-portrait-820x1180,mobile-390x844}.png.
+- Gates: lint rc 0; tsc -b --noEmit rc 0; npm test -- --run 22 files passed/2 skipped, 314 passed/4 skipped; build via Playwright webServer; git diff --check clean. Firefox/WebKit projects not run (only Chromium installed locally). No push.
+
+## 2026-10-01 GH309B1C1 final visual gate (Claude Code, sole owner) — supersedes the GH309B1 visual-gate entry above
+
+- The previous entry (fca0d36) is superseded: its commit d1a36aa contained a mixed spec (a parallel dispatched worker rewrote the file between that run and the commit; Codex stopped the worker and made this stand-in the sole owner). Its screenshots are not evidence for any current head. No reset, revert, amend or force-push; corrected by commit fbf24d4.
+- Branch agent/claude/GH309-client-containment stacked on GH335 af0608b: 56ba76e implementation, 28fe3dd log, 887b7bf submit-card test hardening (dispatched worker; mutation re-checked: dropping "not" fails 1 test, restored 2/2), d1a36aa contrast fix + mixed spec, fca0d36 superseded log, fbf24d4 spec repair.
+- Spec checks: eslint browser-quality/ rc 0; strict standalone tsc --noEmit of the spec + fixtures rc 0 (browser-quality is outside the project tsconfig).
+- Chromium 1193 (Playwright 1.55.1, chromium-desktop), 4/4 pass, all four viewports: documentOverflow 0; disabled control 44px high (590/590/590/308 wide), inside card, label without overflow; notice text inside notice/card, no overflow; tab order equals DOM order and never reaches the disabled control; click/Enter/Space inert, URL and box unchanged; cursor not-allowed; disabled label rgb(75,85,99) on rgb(229,231,235) contrast 6.1 (>= 4.5); warning text contrast 8.38. RPC per viewport: status 1, AllBalances 0, Domain 2 (GH-335 typed query leaves the page and its decoded state reaches the target step), broadcasts 0, violations 0.
+- Contrast mutation: old disabled styling (white on gray-300) fails the final contract with 1.47.
+- New screenshots (inspected): client-web/node_modules/.cache/gh309b1c1-final-evidence/{desktop-1440x1000,tablet-landscape-1180x820,tablet-portrait-820x1180,mobile-390x844}.png, sha256 377b99d5…, 3f8bb99d…, 001f85e5…, 47947aaa… (copy in the stand-in scratchpad).
+- Gates: npm test -- --run 22 passed/2 skipped files, 314 passed/4 skipped; npm run build incl. tsc -b and bundle budget (entry 73168 gzip, total JS 363863); npm run audit:high fails only on the known brace-expansion/minimatch advisory (PR #332); git diff --check clean. Firefox/WebKit not run (only Chromium installed). No push.
+
+## 2026-10-01 GH309B1C1a RPC allowlist hardening (Claude Code, sole owner) — supersedes the GH309B1C1 RPC-policy evidence above
+
+- Codex final review P2: status accepted null/array params and AllBalances was allowed regardless of data/prove/extra fields. Fixed by commit 01968ee (spec only, no product file).
+- Policy now, in order: any broadcast_tx* (method, path or anywhere in the body, incl. batches) is recorded as a broadcast; non-POST, non-root path or non-canonical envelope (exactly jsonrpc "2.0", safe-integer id, string method, params) is a violation; status only with a non-null, non-array empty params object (controlled no-data error); the exact Domain body (synthetic state); everything else a violation. The bank AllBalances exception is removed (the real run never sent it).
+- Browser contract asserts the exact ordered sequence [status, abci_query Domain, abci_query Domain] plus zero broadcasts and zero violations.
+- 19 page-free negative/positive policy cases: status with null, array, extra params, missing params, extra top-level field, string id, wrong jsonrpc, batched; bank AllBalances and Balance; Domain with other id or prove true; other method; GET and other path; broadcast_tx_sync/async/commit and batched broadcast. Mutation: restoring the old `Object.keys(params ?? {})` status check fails exactly the null and array cases; restored 19/19.
+- Spec: eslint browser-quality/ rc 0; strict standalone tsc rc 0; npm run lint rc 0; git diff --check clean.
+- Chromium 1193, chromium-desktop: 23/23 pass (4 viewports + 19 policy). Viewport measurements unchanged from GH309B1C1 (overflow 0, 44px control, contrast 6.1, warning 8.38, tab order = DOM, inert activation). RPC per viewport: sequence [status, Domain, Domain], broadcasts 0, violations 0.
+- New evidence folder client-web/node_modules/.cache/gh309b1c1-a-final-evidence/ (copy + SHA256SUMS in the stand-in scratchpad); all four opened and inspected. The PNGs are byte-identical to the GH309B1C1 run (same product source, deterministic rendering).
+- Unit suite/build not repeated: no product, config or dependency file changed since the GH309B1C1 gates (314/4, build + bundle budget). No push.
+
+## 2026-10-01 GH309B1C1b browser-neutral tab-order anchor (Claude Code, sole owner)
+
+- Hosted CI on PR #337 (run 36826238887, job 110252443763): 156 passed, 2 skipped, 2 failed, only [firefox-desktop] at 820x1180 and 390x844, tab order expected [0,1] received [1,1]. Cause: two tabbables (Back link, floating menu) at those widths and Firefox keeping the sequential-focus start point at the removed "Create Anonymous Identity" button after blur(). Not a product defect.
+- Commit 2fca9ca (spec only): focus the first tabbable explicitly, assert index 0, Tab forward through all tabbables in DOM order, Shift+Tab back in reverse; disabled control and positive tabindex still rejected.
+- Local: eslint browser-quality/ rc 0; strict standalone spec tsc rc 0; Playwright chromium-desktop + chromium-mobile 46/46 pass (2-tabbable path exercised at 820/390). Firefox/WebKit are not installed locally; Hosted-CI Firefox verification and push are Codex's. No product file changed; no push.
+
 ## 2026-10-01 GH309B2B custody primitive and identity vault core (Claude Code, sole owner)
 
 - Branch agent/claude/GH309-custody-core from exact origin/main 1283a445. Gio-confirmed policy (2026-10-01): no unattended plaintext removal, no QUARANTINED deletion in GH309B2, no new mock preview identities before GH309C — none of these paths exist in this core.
@@ -5954,3 +6034,21 @@
 - d087158: identityMigration.ts — parseMarker accepts exactly 14 state/address/reason combinations (DETECTED null/null; PENDING/WRITTEN/VERIFIED canonical address + null reason; QUARANTINED null address + one of oversized/not-json/schema/non-canonical/preview-hash-mismatch; ERROR canonical address + vault-conflict/verify-mismatch/vault-corrupt, or legacy-changed with canonical or null address); anything else is corrupt-marker and left untouched. classifyLegacyIdentity quarantines (preview-hash-mismatch) any canonical record whose commitment != hash(secret) or nullifier != hash(secret + "00"); no vault write, plaintext kept. mimcBn254 is never used in production code. Identity-bytes encryption and full-raw SHA-256 binding unchanged.
 - Tests (identityMigration.test.ts 24): frozen vectors from the pre-extraction ZKPService (secret a1x32 -> e10df405x8 / ab84528dx8, empty -> 811c9dc5x8) and generator delegation; commitment-only, nullifier-only, swapped and BN254-MiMC commitments quarantined; migration-level mismatch -> QUARANTINED with one marker write and no vault; exhaustive 6x3x11 = 198 marker combinations, exactly 14 legal; a complete contradictory marker stays untouched on migrate. All prior transition/crash/lock/session tests kept (fixtures now FNV-consistent). Mutations caught: no hash check (2 fail), nullifier check removed (2), marker semantics disabled (1), helper seed changed (16).
 - Gates: npm run lint rc 0; tsc -b --noEmit rc 0; npm test -- --run 23 files passed / 2 skipped, 364 passed / 4 skipped; npm run build with bundle budget (entry 73515, total JS 364355); git diff --check clean. npm run audit:high hung twice (>10 min, then >3 min; registry reachable) and was stopped — not re-classified in this run; package.json/package-lock.json are identical to main, whose audit result on this branch 30 min earlier was only the known #332 advisory. Free disk 3.9 GiB (below the 5 GiB rule). No push.
+
+## 2026-10-01 GH309B2D1 custody lifecycle and recovery UI — partial (Claude Code, sole owner)
+
+- Branch agent/claude/GH309-lifecycle-ui = #337 head bbc067d + merge of #339 head d7e9249 (6bca794; only the append-only Action Log conflicted, both histories kept; both heads verified as ancestors).
+- 9ae110a (store + UI, atomic): stores/identityStore.ts memory-only (no persist middleware; `identity-store` never hydrated/rewritten/removed), states locked/loading/absent/legacy-pending/quarantined/error/ready, token-guarded load/migrateLegacy, file exports with bounded warnings, no create/import/clear API. stores/walletStore.ts: identity invalidated synchronously inside beginWalletSessionTransition (create/import/switch/lock/delete-current) before any await; startIdentitySession after successful create/import/switch with isCurrent = same generation + address + unlocked + password; exported currentIdentitySession and WALLET_DELETE_BLOCKED_BY_IDENTITY; deleteWallet refuses on an existing, corrupt or unreadable vault (invalid historical addresses stay deletable). UI: new IdentityCustodyNotice (all states, Encrypt Into This Wallet only on explicit click, Download Unencrypted Data File / Download Identity Backup File, disabled creation and deletion controls with descriptions); IdentitySetup and IdentityManager reduced to it; OnboardingFlow identity step shows "Identity Creation Unavailable" with a disabled control; utils/identityDownload.ts (Blob download, no clipboard).
+- Tests: stores/identityStore.test.ts 10 (reload never hydrates; absent; detect -> explicit migrate -> ready with plaintext kept and no secret in other storage keys; vault open memory-only; quarantined/corrupt/no-locks states; wrong password keeps wallet unlocked; synchronous invalidation on lock/switch/create/import/delete-current; stale completions dropped; delete refusal incl. corrupt vault; file exports only on request; generator/registration/clipboard never called). IdentityCustodyNotice.test.tsx 9; OnboardingFlow.test.tsx +1 (no creation, generator not called). Full suite 27 files passed / 2 skipped, 389 passed / 4 skipped; lint rc 0; tsc -b rc 0; git diff --check clean.
+- 926fe25: browser contracts written, lint and strict tsc clean, NOT YET EXECUTED: identity-custody.e2e.ts (6 states x 4 viewports) and the rewritten #337 contract (identity-creation-unavailable step, RPC sequence [status, Domain]).
+- Blocker: the lockfile-matched Chromium headless_shell-1193 was removed from ~/Library/Caches/ms-playwright when another project installed chromium-1228/1243 (11:42-11:55). Codex: reinstall only with >= 5 GiB free; currently 3.1 GiB. Build/budget, audit and the visual gate are pending. No push.
+
+## 2026-10-01 GH309B2D1 visual gate completed (Claude Code, sole owner) — supersedes the partial entry above
+
+- Preflight 10:15Z: 8.4-9.1 GiB free, no TrueRepublic build (only an orphaned Chrome from another session). Codex-approved `npx playwright install chromium --only-shell` restored the lockfile-matched Chromium Headless Shell 140.0.7339.186 (build 1193, 75 MiB). Builds took ~90 s under load, so the preview was started from the fresh build and reused by Playwright (reuseExistingServer); each product change was rebuilt before rerunning.
+- Visual-inspection fixes, 041c64a: distinct loading heading "Checking Preview Identity" (the first ready screenshot had captured the loading screen because both headings were "Preview Identity"); header aligned to the card width; last notice without trailing gap; header icons flex-shrink-0; onboarding identity step uses ShieldExclamationIcon (yellow) instead of a success checkmark.
+- Spec fixes, 4fea10c: accessible names from aria-labelledby / aria-label / text (the floating menu has aria-label "Navigation menu"); the ready state waits for its own marker and no loading heading may remain; keyboard focus cleared before the evidence screenshot.
+- Inventory, 0d31936: docs/status.json web_client components 44 -> 45, services 17 -> 21 (stores 9, routes 23 unchanged), matching scripts/check-consistency.sh counts.
+- Chromium (chromium-desktop): identity-custody.e2e.ts 24/24 (locked, absent, legacy-pending, quarantined, error, ready x 1440x1000, 1180x820, 820x1180, 390x844) and identity-registration-disabled.e2e.ts 23/23 (4 viewports + 19 RPC policy cases) = 47 passed. Every state: documentOverflow 0; all visible buttons >= 44x44 CSS px, text/button contrast >= 4.5 (min text contrast 5.02), no label or text overflow, texts inside the card; disabled controls inert for click/Enter/Space and absent from the tab order; tab order equals DOM order; aria-describedby targets resolve; role=status present except ready; the synthetic secret never in DOM or console; zero clipboard calls; RPC only canonical status (1 per wallet flow), zero violations/broadcasts; ready download = truerepublic-preview-identity.json with canonical:false and the warning. Onboarding RPC sequence [status, Domain].
+- All 28 final screenshots opened and inspected (4 onboarding + 24 custody); evidence copies with SHA256SUMS in the stand-in scratchpad gh309b2d1-final-evidence/.
+- Gates on the final head: npm test -- --run 27 files passed / 2 skipped, 389 passed / 4 skipped; npm run lint rc 0; tsc -b --noEmit rc 0; npm run build with bundle budget passed (entry 77557 gzip, total JS 367895; entry grew ~4 KiB because walletStore now imports the custody/migration core); git diff --check clean. npm run audit:high hung again locally (>4 min, stopped); package.json/package-lock.json are identical to main, so the hosted node-audit-client/build audit remains authoritative (expected: only the #332 advisory). Firefox/WebKit via Hosted CI. No push.
