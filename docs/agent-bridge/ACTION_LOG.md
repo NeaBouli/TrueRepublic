@@ -5985,3 +5985,9 @@
 - Chromium 1193, chromium-desktop: 23/23 pass (4 viewports + 19 policy). Viewport measurements unchanged from GH309B1C1 (overflow 0, 44px control, contrast 6.1, warning 8.38, tab order = DOM, inert activation). RPC per viewport: sequence [status, Domain, Domain], broadcasts 0, violations 0.
 - New evidence folder client-web/node_modules/.cache/gh309b1c1-a-final-evidence/ (copy + SHA256SUMS in the stand-in scratchpad); all four opened and inspected. The PNGs are byte-identical to the GH309B1C1 run (same product source, deterministic rendering).
 - Unit suite/build not repeated: no product, config or dependency file changed since the GH309B1C1 gates (314/4, build + bundle budget). No push.
+
+## 2026-10-01 GH309B1C1b browser-neutral tab-order anchor (Claude Code, sole owner)
+
+- Hosted CI on PR #337 (run 36826238887, job 110252443763): 156 passed, 2 skipped, 2 failed, only [firefox-desktop] at 820x1180 and 390x844, tab order expected [0,1] received [1,1]. Cause: two tabbables (Back link, floating menu) at those widths and Firefox keeping the sequential-focus start point at the removed "Create Anonymous Identity" button after blur(). Not a product defect.
+- Commit 2fca9ca (spec only): focus the first tabbable explicitly, assert index 0, Tab forward through all tabbables in DOM order, Shift+Tab back in reverse; disabled control and positive tabindex still rejected.
+- Local: eslint browser-quality/ rc 0; strict standalone spec tsc rc 0; Playwright chromium-desktop + chromium-mobile 46/46 pass (2-tabbable path exercised at 820/390). Firefox/WebKit are not installed locally; Hosted-CI Firefox verification and push are Codex's. No product file changed; no push.
