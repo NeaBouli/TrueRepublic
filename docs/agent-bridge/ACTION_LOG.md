@@ -5978,3 +5978,10 @@
   `--profile=<name>` forms (one negative fixture), as approved.
 - Tests not run: data volume had 4.6 GiB free after the patch (threshold 5 GiB);
   handed over as partial. No push, PR, Wiki push or rollout credit.
+- GH313C1a gates (2026-10-01, 7.5 GiB free, no other TrueRepublic build): `go vet .`;
+  `go test -p 1 -run '^TestOperatorGuidance' -v .` PASS (24 negative, 9 positive
+  fixtures); security/license/repository/network-policy/observability/incident/
+  install-lifecycle tests PASS; `make security-review-contract-test` (readiness
+  contract verified); license policy, `check-consistency.sh`, custom-query
+  retirement PASS; `git diff --check` clean; zero stale root-home, lowercase
+  `pnyx` amount or Compose v1 matches in the three files.
