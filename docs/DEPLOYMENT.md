@@ -130,7 +130,7 @@ sed -i 's/seeds = ""/seeds = "abc123def456@node1-ip:26656"/' \
   ~/.truerepublic/config/config.toml
 
 # Copy genesis from node1
-scp node1:/root/.truerepublic/config/genesis.json \
+scp node1:~/.truerepublic/config/genesis.json \
   ~/.truerepublic/config/genesis.json
 
 ./build/truerepublicd start
@@ -150,7 +150,8 @@ scp node1:/root/.truerepublic/config/genesis.json \
 
 ```bash
 # Create or join a domain first
-./build/truerepublicd tx truedemocracy create-domain my-domain "My Domain" \
+# create-domain takes [name] [initial-coins]
+./build/truerepublicd tx truedemocracy create-domain my-domain 100000000000upnyx \
   --from validator-key
 
 # Register as validator
@@ -265,10 +266,10 @@ sudo su - truerepublic
 | Node P2P | 26656 | Peer-to-peer networking |
 | Node RPC | 26657 | CometBFT RPC |
 | Node LCD | 1317 | REST API |
-| Node gRPC | 9090 | gRPC endpoint |
+| Node gRPC | 9090 | gRPC endpoint (native nodes only; disabled in the Compose stack) |
 | Node Metrics | 26660 | Prometheus metrics |
 | Maintained Web Client | 3001 | React/Vite frontend |
-| Nginx | 80/443 | Reverse proxy |
+| Nginx | 8080 (host loopback) | Reverse proxy for `/rpc/` and `/api/` in the Compose stack |
 | Prometheus | 9091 | Metrics collection |
 | Grafana | 3000 | Dashboards |
 

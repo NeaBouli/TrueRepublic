@@ -39,6 +39,44 @@ var (
 	operatorGuidanceTemplateRewardRE = regexp.MustCompile(`(?i)bounty|reward`)
 )
 
+// GH-313C1 executable-command contract. server_lifecycle.go registers tx/query
+// subcommands only for these modules.
+var operatorGuidanceRegisteredModules = map[string]bool{"truedemocracy": true, "dex": true}
+
+// GH308-owned guides still carry their own quarantined contract recipes on this
+// base; GH313D removes this exclusion after GH-308 lands.
+var operatorGuidanceCommandRuleExclusions = map[string]bool{
+	"README.md":                                   true,
+	"INSTALLATION.md":                             true,
+	"docs/INSTALL.md":                             true,
+	"docs/QUICKSTART.md":                          true,
+	"docs/ARCHITECTURE.md":                        true,
+	"docs/developers/README.md":                   true,
+	"docs/developers/smart-contracts/cosmwasm.md": true,
+	"wiki/develop/Module-Deep-Dive.md":            true,
+	// Known command/config defects outside the GH313C1 writable set, recorded
+	// as open in .fleet/reports/GH313C1.md for the follow-up block.
+	"docs/node-operators/installation/docker-setup.md":    true,
+	"docs/node-operators/configuration/genesis-params.md": true,
+	"docs/V0.4.0_OPTIONAL_INDEXER_STACK.md":               true,
+}
+
+var (
+	operatorGuidanceModuleCmdRE      = regexp.MustCompile(`truerepublicd\s+(tx|query|q)\s+([a-z][a-z0-9-]*)`)
+	operatorGuidanceGenesisCmdRE     = regexp.MustCompile(`truerepublicd\s+genesis\s+(add-genesis-account|gentx|collect-gentxs)\b`)
+	operatorGuidanceRegisterRE       = regexp.MustCompile(`truedemocracy\s+register-validator((?:[ \t]+(?:\\\r?\n)?[ \t]*[^\s\\-][^\s\\]*)*)`)
+	operatorGuidanceStakeArgRE       = regexp.MustCompile(`^(\d+upnyx|[<\[][^>\]]*stake[^>\]]*[>\]](upnyx)?|\$\{?[A-Za-z_]+\}?(upnyx)?|"\$[A-Za-z_]+")$`)
+	operatorGuidanceWithdrawSuffixRE = regexp.MustCompile(`withdraw-stake\s+(\d+|[<\[][^>\]\s]*[>\]]|\$\{?[A-Za-z_]+\}?)upnyx\b`)
+	operatorGuidanceCmdSubstRE       = regexp.MustCompile(`\$\([^)]*\)`)
+	operatorGuidancePnyxAmountRE     = regexp.MustCompile(`\b\d[\d,_]*pnyx\b`)
+	operatorGuidanceFictionalEnvRE   = regexp.MustCompile(`(?m)^\s*(EXTERNAL_IP|RPC_PORT|REST_PORT|GRPC_PORT|DB_BACKEND|PRUNING[A-Z_]*|PROMETHEUS_PORT|SNAPSHOT_URL|STATE_SYNC_[A-Z_]+|LOG_LEVEL|LOG_FORMAT)=`)
+	operatorGuidanceComposeV1RE      = regexp.MustCompile(`\bdocker-compose\s+(up|down|logs|ps|pull|restart|stop|start|exec|build|--version)\b`)
+	operatorGuidancePublishedImageRE = regexp.MustCompile(`(?i)ghcr\.io/neabouli`)
+	operatorGuidanceRootHomeRE       = regexp.MustCompile(`/root/\.truerepublic`)
+	operatorGuidanceDefaultGrafanaRE = regexp.MustCompile("(?i)admin\\s*/\\s*admin|password:\\s*`admin`")
+	operatorGuidanceFaucetRE         = regexp.MustCompile(`(?i)/faucet\b|#faucet\b`)
+)
+
 type operatorGuidanceInputs struct {
 	maintained map[string]string // maintained guidance/config text -> content
 	templates  map[string]string // .github/ISSUE_TEMPLATE/* except config.yml
@@ -70,6 +108,45 @@ func TestOperatorGuidanceTrustAndReportingContract(t *testing.T) {
 		"reward amount in security guidance": func(in *operatorGuidanceInputs) {
 			in.maintained["wiki/security/Audit-Reports.md"] += "\nValid reports earn rewards: 500 PNYX\n"
 		},
+		"unregistered bank command": func(in *operatorGuidanceInputs) {
+			in.maintained["wiki/operations/Validator-Guide.md"] += "\n```bash\ntruerepublicd query bank balances cosmos1abc\n```\n"
+		},
+		"unregistered staking command": func(in *operatorGuidanceInputs) {
+			in.maintained["docs/VALIDATOR_GUIDE.md"] += "\ntruerepublicd tx staking edit-validator --from v\n"
+		},
+		"unregistered ibc command": func(in *operatorGuidanceInputs) {
+			in.maintained["docs/IBC_RELAYER_SETUP.md"] += "\ntruerepublicd query ibc channel channels\n"
+		},
+		"unregistered genesis command": func(in *operatorGuidanceInputs) {
+			in.maintained["docs/IBC_RELAYER_SETUP.md"] += "\ntruerepublicd genesis add-genesis-account a 1upnyx\n"
+		},
+		"two-argument register-validator": func(in *operatorGuidanceInputs) {
+			in.maintained["wiki/users/Installation-Wizards.md"] += "\ntruerepublicd tx truedemocracy register-validator \\\n    my-domain \\\n    100000000000upnyx \\\n    --from validator\n"
+		},
+		"withdraw-stake with denom": func(in *operatorGuidanceInputs) {
+			in.maintained["docs/validators/README.md"] += "\ntruerepublicd tx truedemocracy withdraw-stake 5upnyx\n"
+		},
+		"pnyx amount": func(in *operatorGuidanceInputs) {
+			in.maintained["docs/API_REFERENCE.md"] += "\ndeposit-to-domain my-domain 1000pnyx\n"
+		},
+		"fictional env variable": func(in *operatorGuidanceInputs) {
+			in.maintained["wiki/operations/Node-Setup.md"] += "\n```bash\nEXTERNAL_IP=1.2.3.4\n```\n"
+		},
+		"compose v1 command": func(in *operatorGuidanceInputs) {
+			in.maintained["wiki/operations/Troubleshooting.md"] += "\ndocker-compose logs -f truerepublic-node\n"
+		},
+		"published image": func(in *operatorGuidanceInputs) {
+			in.maintained["wiki/operations/Deployment-Options.md"] += "\nimage: ghcr.io/neabouli/truerepublic:latest\n"
+		},
+		"root home volume": func(in *operatorGuidanceInputs) {
+			in.maintained["docs/DEPLOYMENT.md"] += "\n- ./data:/root/.truerepublic\n"
+		},
+		"default grafana password": func(in *operatorGuidanceInputs) {
+			in.maintained["wiki/users/Installation-Wizards.md"] += "\nLogin admin/admin\n"
+		},
+		"faucet": func(in *operatorGuidanceInputs) {
+			in.maintained["wiki/users/Installation-Wizards.md"] += "\nType `/faucet <address>`\n"
+		},
 		"public bounty template": func(in *operatorGuidanceInputs) {
 			in.templates[".github/ISSUE_TEMPLATE/bug_bounty.md"] = "# Bug Bounty Submission\nBTC or PNYX address (for Reward)\n"
 		},
@@ -92,6 +169,21 @@ func TestOperatorGuidanceTrustAndReportingContract(t *testing.T) {
 		},
 		"protocol reward economics": func(in *operatorGuidanceInputs) {
 			in.maintained["docs/user-manual/stones-voting-guide.md"] += "\nVoteToEarn reward = 5% of the domain treasury\n"
+		},
+		"protocol staking terminology": func(in *operatorGuidanceInputs) {
+			in.maintained["wiki/users/How-It-Works.md"] += "\nStaking rewards follow the distribution of stones; no bank module query.\n"
+		},
+		"negated unregistered command": func(in *operatorGuidanceInputs) {
+			in.maintained["wiki/operations/Validator-Guide.md"] += "\nThere is no `query bank` or `tx staking` command in truerepublicd.\n"
+		},
+		"compose file name and v2 command": func(in *operatorGuidanceInputs) {
+			in.maintained["wiki/operations/Deployment-Options.md"] += "\nSee docker-compose.yml; run docker compose up -d\n"
+		},
+		"three-argument register-validator": func(in *operatorGuidanceInputs) {
+			in.maintained["docs/VALIDATOR_GUIDE.md"] += "\ntruerepublicd tx truedemocracy register-validator \\\n    \"$PUBKEY_HEX\" \\\n    100000000000upnyx \\\n    my-domain \\\n    --from validator\n"
+		},
+		"native rpc and upnyx amounts": func(in *operatorGuidanceInputs) {
+			in.maintained["docs/validators/README.md"] += "\ncurl http://127.0.0.1:26657/status\ntruerepublicd tx dex swap upnyx 1000 atom\n"
 		},
 		"operator-supplied endpoint placeholder": func(in *operatorGuidanceInputs) {
 			in.maintained["wiki/operations/Node-Setup.md"] += "\nseeds = \"<node-id>@<qualified-seed-host>:26656\"\n"
@@ -157,6 +249,10 @@ func operatorGuidanceMaintained(path string) bool {
 		if strings.HasPrefix(path, prefix) {
 			return false
 		}
+	}
+	// Release notes describe a past version and are historical records.
+	if strings.HasPrefix(path, "RELEASE_NOTES_") {
+		return false
 	}
 	return path != "BRIDGE.md"
 }
@@ -235,6 +331,9 @@ func operatorGuidanceViolations(in operatorGuidanceInputs) []string {
 		if match := operatorGuidanceReportingPromiseRE.FindString(content); match != "" {
 			out = append(out, path+": reporting promise or contact outside SECURITY.md ("+match+")")
 		}
+		if strings.HasSuffix(path, ".md") && !operatorGuidanceCommandRuleExclusions[path] {
+			out = append(out, operatorGuidanceCommandViolations(path, content)...)
+		}
 		if operatorGuidanceSecurityScope(path) {
 			if match := operatorGuidanceSecurityRewardRE.FindString(content); match != "" {
 				out = append(out, path+": security guidance promises a reward ("+match+")")
@@ -255,6 +354,50 @@ func operatorGuidanceViolations(in operatorGuidanceInputs) []string {
 	for _, path := range operatorGuidanceCaveatGuides {
 		if !strings.Contains(in.maintained[path], operatorGuidanceCaveatMarker) {
 			out = append(out, path+": missing non-production caveat")
+		}
+	}
+	return out
+}
+
+// operatorGuidanceCommandViolations checks one maintained guide against the
+// registered CLI and repository-owned runtime configuration.
+func operatorGuidanceCommandViolations(path, content string) []string {
+	var out []string
+	add := func(reason, match string) { out = append(out, path+": "+reason+" ("+match+")") }
+	for _, match := range operatorGuidanceModuleCmdRE.FindAllStringSubmatch(content, -1) {
+		if !operatorGuidanceRegisteredModules[match[2]] {
+			add("command for an unregistered module", match[0])
+		}
+	}
+	if match := operatorGuidanceGenesisCmdRE.FindString(content); match != "" {
+		add("unregistered genesis command", match)
+	}
+	for _, match := range operatorGuidanceRegisterRE.FindAllStringSubmatch(content, -1) {
+		normalized := operatorGuidanceCmdSubstRE.ReplaceAllString(match[1], "$$SUBST")
+		args := strings.Fields(strings.ReplaceAll(normalized, "\\", " "))
+		if len(args) == 0 || strings.HasPrefix(args[0], "[pubkey") && len(args) < 3 {
+			continue // prose mention or the bare usage line
+		}
+		if len(args) < 3 || !operatorGuidanceStakeArgRE.MatchString(args[1]) {
+			add("register-validator must take [pubkey-hex] [stake] [domain]", strings.Join(args, " "))
+		}
+	}
+	checks := []struct {
+		re     *regexp.Regexp
+		reason string
+	}{
+		{operatorGuidanceWithdrawSuffixRE, "withdraw-stake takes a plain integer upnyx amount"},
+		{operatorGuidancePnyxAmountRE, "amount must use the upnyx base denomination"},
+		{operatorGuidanceFictionalEnvRE, "environment variable not defined by .env.example"},
+		{operatorGuidanceComposeV1RE, "Compose v1 command; use docker compose"},
+		{operatorGuidancePublishedImageRE, "no published image exists"},
+		{operatorGuidanceRootHomeRE, "the image runs as non-root /home/truerepublic"},
+		{operatorGuidanceDefaultGrafanaRE, "Grafana has no default password"},
+		{operatorGuidanceFaucetRE, "no faucet is operated"},
+	}
+	for _, check := range checks {
+		if match := check.re.FindString(content); match != "" {
+			add(check.reason, match)
 		}
 	}
 	return out
