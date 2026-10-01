@@ -1,10 +1,12 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import {
   MAX_ARTIFACT_PATH_LENGTH,
   MAX_ARTIFACT_SIZE_BYTES,
   parseZKPArtifactManifest,
   parseZKPArtifactManifestJSON,
   fetchZKPArtifacts,
+  LoadedZKPArtifacts,
+  ZKPArtifactError,
   ZKP_ARTIFACT_CLASSIFICATION,
   ZKP_ARTIFACT_MANIFEST_SCHEMA,
   type ZKPArtifactFetch,
@@ -81,6 +83,8 @@ interface FakeRouteOptions {
   streamBody?: boolean;
 }
 
+const arrayBufferTrap = vi.fn(() => Promise.reject(new Error('unbounded arrayBuffer read must not be used')));
+
 function makeFetch(
   routes: Record<string, { bytes: Uint8Array; options?: FakeRouteOptions }>,
   calls: RecordedCall[]
@@ -129,11 +133,9 @@ function makeFetch(
                 };
               },
             },
-      arrayBuffer: () => {
-        const copy = new Uint8Array(route.bytes);
-        return Promise.resolve(copy.buffer);
-      },
     };
+    // Trap: the loader must never fall back to an unbounded whole-body read.
+    Object.assign(response, { arrayBuffer: arrayBufferTrap });
     return Promise.resolve(response);
   };
 }
@@ -350,7 +352,7 @@ describe('GH-300 same-origin bounded artifact loading', () => {
     expect(loaded.wasm).toEqual(WASM_BYTES);
   });
 
-  it('loads multi-chunk streams and the arrayBuffer fallback', async () => {
+  it('loads multi-chunk streams and fails closed for a response without a body stream', async () => {
     const calls: RecordedCall[] = [];
     const streamed = await fetchZKPArtifacts(validManifest(), {
       fetchImpl: makeFetch(
@@ -361,19 +363,17 @@ describe('GH-300 same-origin bounded artifact loading', () => {
     });
     expect(streamed.wasm).toEqual(WASM_BYTES);
 
-    const buffered = await fetchZKPArtifacts(validManifest(), {
+    arrayBufferTrap.mockClear();
+    const bodyless = fetchZKPArtifacts(validManifest(), {
       fetchImpl: makeFetch(
-        standardRoutes({
-          'zkp/prover.wasm': {
-            bytes: WASM_BYTES,
-            options: { streamBody: false },
-          },
-        }),
+        standardRoutes({ 'zkp/prover.wasm': { bytes: WASM_BYTES, options: { streamBody: false } } }),
         []
       ),
       baseOrigin: BASE_ORIGIN,
     });
-    expect(buffered.wasm).toEqual(WASM_BYTES);
+    await expect(bodyless).rejects.toBeInstanceOf(ZKPArtifactError);
+    await expect(bodyless).rejects.toMatchObject({ code: 'network', message: 'wasm: response has no readable body stream' });
+    expect(arrayBufferTrap).not.toHaveBeenCalled();
   });
 
   it('rejects a Content-Length that does not match the manifest', async () => {
@@ -529,15 +529,15 @@ describe('GH-300 same-origin bounded artifact loading', () => {
     }
   });
 
-  it('propagates a fetch transport failure', async () => {
-    const failing: ZKPArtifactFetch = () =>
-      Promise.reject(new Error('network down'));
-    await expect(
-      fetchZKPArtifacts(validManifest(), {
-        fetchImpl: failing,
-        baseOrigin: BASE_ORIGIN,
-      })
-    ).rejects.toThrow('network down');
+  it('wraps a fetch transport failure as a typed network error keeping the cause', async () => {
+    const transport = new Error('network down');
+    const failing: ZKPArtifactFetch = () => Promise.reject(transport);
+    const result = fetchZKPArtifacts(validManifest(), {
+      fetchImpl: failing,
+      baseOrigin: BASE_ORIGIN,
+    });
+    await expect(result).rejects.toBeInstanceOf(ZKPArtifactError);
+    await expect(result).rejects.toMatchObject({ code: 'network', cause: transport });
   });
 
   it('destroy() zeroes every retained array and blocks further access', async () => {
@@ -567,5 +567,77 @@ describe('GH-300 same-origin bounded artifact loading', () => {
     });
     const origins = calls.map((call) => new URL(call.url).origin);
     expect(new Set(origins)).toEqual(new Set([BASE_ORIGIN]));
+  });
+});
+
+// GH300B1a: every public loader failure is a ZKPArtifactError with a closed code.
+describe('GH-300 typed artifact loader failures', () => {
+  async function failure(promise: Promise<unknown>): Promise<ZKPArtifactError> {
+    const error = await promise.then(
+      () => null,
+      (caught: unknown) => caught
+    );
+    expect(error).toBeInstanceOf(ZKPArtifactError);
+    return error as ZKPArtifactError;
+  }
+
+  const load = (fetchImpl: ZKPArtifactFetch, extra: Record<string, unknown> = {}) =>
+    fetchZKPArtifacts(validManifest(), { fetchImpl, baseOrigin: BASE_ORIGIN, ...extra });
+
+  it('classifies manifest, environment, http, size and integrity failures', async () => {
+    expect((await failure(Promise.resolve().then(() => parseZKPArtifactManifestJSON('not json')))).code).toBe('manifest');
+    expect(
+      (await failure(Promise.resolve().then(() => parseZKPArtifactManifest({ ...validManifestPlain(), extra: 1 })))).code
+    ).toBe('manifest');
+    expect(
+      (await failure(fetchZKPArtifacts(validManifest(), { fetchImpl: makeFetch(standardRoutes(), []), baseOrigin: 'null' }))).code
+    ).toBe('environment');
+    expect(
+      (await failure(load(makeFetch(standardRoutes({ 'zkp/prover.wasm': { bytes: WASM_BYTES, options: { ok: false, status: 404 } } }), []))))
+        .code
+    ).toBe('http');
+    expect(
+      (await failure(load(makeFetch(standardRoutes({ 'zkp/prover.wasm': { bytes: WASM_BYTES, options: { contentLength: '1' } } }), []))))
+        .code
+    ).toBe('size');
+    const tampered = new Uint8Array(WASM_BYTES);
+    tampered[0] ^= 0x01;
+    expect((await failure(load(makeFetch(standardRoutes({ 'zkp/prover.wasm': { bytes: tampered } }), []))) ).code).toBe('integrity');
+  });
+
+  it('wraps fetch rejections as network or abort with a safe cause', async () => {
+    const transport = new TypeError('Failed to fetch');
+    const network = await failure(load(() => Promise.reject(transport)));
+    expect(network).toMatchObject({ code: 'network', message: 'constraint_system: fetch failed' });
+    expect((network as Error & { cause?: unknown }).cause).toBe(transport);
+
+    const controller = new AbortController();
+    controller.abort();
+    const aborted = await failure(
+      load(() => Promise.reject(new DOMException('aborted', 'AbortError')), { signal: controller.signal })
+    );
+    expect(aborted.code).toBe('abort');
+  });
+
+  it('wraps stream read failures and zeroes partially read bytes', async () => {
+    const streamFailure = new Error('connection reset');
+    const fetchImpl: ZKPArtifactFetch = (url, init) =>
+      makeFetch(standardRoutes(), [])(url, init).then((response) => ({
+        ...response,
+        body: { getReader: () => ({ read: () => Promise.reject(streamFailure), cancel: () => Promise.resolve(undefined) }) },
+      }));
+    const error = await failure(load(fetchImpl));
+    expect(error).toMatchObject({ code: 'network', message: 'constraint_system: reading the response stream failed' });
+    expect(error.message).not.toContain('TRUEREPUBLIC');
+  });
+
+  it('maps a failing digester to environment and destroyed artifacts to destroyed', async () => {
+    const digester: ZKPDigester = { digest: () => Promise.reject(new Error('crypto unavailable')) };
+    expect((await failure(load(makeFetch(standardRoutes(), []), { digester }))).code).toBe('environment');
+
+    const loaded = await load(makeFetch(standardRoutes(), []));
+    expect(loaded).toBeInstanceOf(LoadedZKPArtifacts);
+    loaded.destroy();
+    expect((await failure(Promise.resolve().then(() => loaded.wasm))).code).toBe('destroyed');
   });
 });

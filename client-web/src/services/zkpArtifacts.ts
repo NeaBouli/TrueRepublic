@@ -12,6 +12,50 @@ export const ZKP_ARTIFACT_CLASSIFICATION =
 export const MAX_ARTIFACT_PATH_LENGTH = 256;
 export const MAX_ARTIFACT_SIZE_BYTES = 128 * 1024 * 1024;
 
+/** Closed set of loader failure classes; every public loader failure uses one. */
+export type ZKPArtifactErrorCode =
+  | 'environment'
+  | 'network'
+  | 'http'
+  | 'abort'
+  | 'size'
+  | 'integrity'
+  | 'manifest'
+  | 'destroyed';
+
+/**
+ * The only error type the artifact loader throws. Messages are deterministic
+ * and never contain artifact bytes or response bodies; `cause` keeps the
+ * original transport error where it helps diagnosis.
+ */
+export class ZKPArtifactError extends Error {
+  readonly code: ZKPArtifactErrorCode;
+
+  constructor(code: ZKPArtifactErrorCode, message: string, options?: { cause?: unknown }) {
+    super(message);
+    this.name = 'ZKPArtifactError';
+    this.code = code;
+    if (options && 'cause' in options) {
+      Object.defineProperty(this, 'cause', { value: options.cause, enumerable: false });
+    }
+  }
+}
+
+function isAbort(error: unknown, signal: AbortSignal | undefined): boolean {
+  return (
+    signal?.aborted === true ||
+    (typeof error === 'object' && error !== null && (error as { name?: unknown }).name === 'AbortError')
+  );
+}
+
+/** Converts any non-loader failure into a typed transport error. */
+function toArtifactError(label: string, action: string, error: unknown, signal: AbortSignal | undefined): ZKPArtifactError {
+  if (error instanceof ZKPArtifactError) return error;
+  return isAbort(error, signal)
+    ? new ZKPArtifactError('abort', `${label}: ${action} was aborted`, { cause: error })
+    : new ZKPArtifactError('network', `${label}: ${action} failed`, { cause: error });
+}
+
 export interface ZKPArtifactDescriptor {
   path: string;
   size_bytes: number;
@@ -45,19 +89,19 @@ const DESCRIPTOR_KEYS = ['path', 'sha256_hex', 'size_bytes'];
 /** Parses and fully validates a v1 manifest; rejects anything malformed. */
 export function parseZKPArtifactManifest(value: unknown): ZKPArtifactManifest {
   if (!isRecord(value) || !hasExactKeys(value, MANIFEST_KEYS)) {
-    throw new Error('artifact manifest contains missing or unknown fields');
+    throw new ZKPArtifactError('manifest', 'artifact manifest contains missing or unknown fields');
   }
   if (value.schema !== ZKP_ARTIFACT_MANIFEST_SCHEMA) {
-    throw new Error('artifact manifest has an unsupported schema');
+    throw new ZKPArtifactError('manifest', 'artifact manifest has an unsupported schema');
   }
   if (value.circuit_id !== MEMBERSHIP_CIRCUIT_ID) {
-    throw new Error('artifact manifest binds an unsupported circuit');
+    throw new ZKPArtifactError('manifest', 'artifact manifest binds an unsupported circuit');
   }
   if (value.classification !== ZKP_ARTIFACT_CLASSIFICATION) {
-    throw new Error('artifact manifest has an unexpected classification');
+    throw new ZKPArtifactError('manifest', 'artifact manifest has an unexpected classification');
   }
   if (value.production_allowed !== false) {
-    throw new Error('artifact manifest must set production_allowed to false');
+    throw new ZKPArtifactError('manifest', 'artifact manifest must set production_allowed to false');
   }
   const constraintSystem = parseDescriptor(
     value.constraint_system,
@@ -71,10 +115,10 @@ export function parseZKPArtifactManifest(value: unknown): ZKPArtifactManifest {
   const digests = new Set<string>();
   for (const descriptor of descriptors) {
     if (paths.has(descriptor.path)) {
-      throw new Error('artifact manifest reuses an artifact path');
+      throw new ZKPArtifactError('manifest', 'artifact manifest reuses an artifact path');
     }
     if (digests.has(descriptor.sha256_hex)) {
-      throw new Error('artifact manifest reuses an artifact digest');
+      throw new ZKPArtifactError('manifest', 'artifact manifest reuses an artifact digest');
     }
     paths.add(descriptor.path);
     digests.add(descriptor.sha256_hex);
@@ -97,17 +141,17 @@ export function parseZKPArtifactManifestJSON(text: string): ZKPArtifactManifest 
   try {
     value = JSON.parse(text);
   } catch {
-    throw new Error('artifact manifest is not valid JSON');
+    throw new ZKPArtifactError('manifest', 'artifact manifest is not valid JSON');
   }
   return parseZKPArtifactManifest(value);
 }
 
 function parseDescriptor(value: unknown, label: string): ZKPArtifactDescriptor {
   if (!isRecord(value) || !hasExactKeys(value, DESCRIPTOR_KEYS)) {
-    throw new Error(`${label}: descriptor contains missing or unknown fields`);
+    throw new ZKPArtifactError('manifest', `${label}: descriptor contains missing or unknown fields`);
   }
   if (typeof value.path !== 'string') {
-    throw new Error(`${label}: path must be a string`);
+    throw new ZKPArtifactError('manifest', `${label}: path must be a string`);
   }
   validateArtifactPath(value.path, label);
   if (
@@ -116,7 +160,7 @@ function parseDescriptor(value: unknown, label: string): ZKPArtifactDescriptor {
     value.size_bytes <= 0 ||
     value.size_bytes > MAX_ARTIFACT_SIZE_BYTES
   ) {
-    throw new Error(
+    throw new ZKPArtifactError('manifest',
       `${label}: size_bytes must be a positive safe integer within the size bound`
     );
   }
@@ -124,7 +168,7 @@ function parseDescriptor(value: unknown, label: string): ZKPArtifactDescriptor {
     typeof value.sha256_hex !== 'string' ||
     !/^[0-9a-f]{64}$/u.test(value.sha256_hex)
   ) {
-    throw new Error(`${label}: sha256_hex must be 64 lowercase hex characters`);
+    throw new ZKPArtifactError('manifest', `${label}: sha256_hex must be 64 lowercase hex characters`);
   }
   return {
     path: value.path,
@@ -139,12 +183,12 @@ function parseDescriptor(value: unknown, label: string): ZKPArtifactDescriptor {
  */
 function validateArtifactPath(path: string, label: string): void {
   if (path.length === 0 || path.length > MAX_ARTIFACT_PATH_LENGTH) {
-    throw new Error(`${label}: path length is outside the allowed bound`);
+    throw new ZKPArtifactError('manifest', `${label}: path length is outside the allowed bound`);
   }
   for (let index = 0; index < path.length; index += 1) {
     const code = path.charCodeAt(index);
     if (code < 0x20 || code === 0x7f) {
-      throw new Error(`${label}: path contains a control character`);
+      throw new ZKPArtifactError('manifest', `${label}: path contains a control character`);
     }
   }
   if (
@@ -156,13 +200,13 @@ function validateArtifactPath(path: string, label: string): void {
     path.includes('#') ||
     path.includes('@')
   ) {
-    throw new Error(
+    throw new ZKPArtifactError('manifest',
       `${label}: path must be a relative same-origin path without URL syntax`
     );
   }
   for (const segment of path.split('/')) {
     if (segment === '' || segment === '.' || segment === '..') {
-      throw new Error(`${label}: path contains a traversal or empty segment`);
+      throw new ZKPArtifactError('manifest', `${label}: path contains a traversal or empty segment`);
     }
   }
 }
@@ -184,7 +228,6 @@ export interface ZKPArtifactResponse {
   status: number;
   headers: { get(name: string): string | null };
   body: { getReader(): ZKPArtifactReader } | null;
-  arrayBuffer(): Promise<ArrayBufferLike>;
 }
 
 export type ZKPArtifactFetch = (
@@ -251,7 +294,7 @@ export class LoadedZKPArtifacts {
 
   private assertLive(): void {
     if (this.destroyedFlag) {
-      throw new Error('loaded artifacts have been destroyed');
+      throw new ZKPArtifactError('destroyed', 'loaded artifacts have been destroyed');
     }
   }
 }
@@ -268,7 +311,7 @@ export async function fetchZKPArtifacts(
   const fetchImpl = options.fetchImpl ?? defaultFetch;
   const digester = options.digester ?? globalThis.crypto?.subtle;
   if (digester === undefined) {
-    throw new Error('WebCrypto SHA-256 is unavailable in this environment');
+    throw new ZKPArtifactError('environment', 'WebCrypto SHA-256 is unavailable in this environment');
   }
   const base = resolveBaseOrigin(options.baseOrigin);
   const loaded: Uint8Array[] = [];
@@ -317,7 +360,7 @@ export async function fetchZKPArtifacts(
     );
   } catch (error: unknown) {
     for (const bytes of loaded) bytes.fill(0);
-    throw error;
+    throw toArtifactError('artifacts', 'loading', error, options.signal);
   }
 }
 
@@ -331,31 +374,43 @@ async function loadArtifact(
 ): Promise<Uint8Array> {
   const url = new URL(descriptor.path, `${base.origin}/`);
   if (url.origin !== base.origin) {
-    throw new Error(`${label}: path escapes the same-origin boundary`);
+    throw new ZKPArtifactError('manifest', `${label}: path escapes the same-origin boundary`);
   }
-  const response = await fetchImpl(url.href, {
-    credentials: 'omit',
-    redirect: 'error',
-    cache: 'no-store',
-    signal,
-  });
+  let response: ZKPArtifactResponse;
+  try {
+    response = await fetchImpl(url.href, {
+      credentials: 'omit',
+      redirect: 'error',
+      cache: 'no-store',
+      signal,
+    });
+  } catch (error: unknown) {
+    throw toArtifactError(label, 'fetch', error, signal);
+  }
   if (!response.ok) {
-    throw new Error(`${label}: fetch failed with status ${response.status}`);
+    throw new ZKPArtifactError('http', `${label}: fetch failed with status ${response.status}`);
   }
   enforceContentLength(label, descriptor, response.headers.get('content-length'));
-  const bytes =
-    response.body === null
-      ? await readViaArrayBuffer(label, response)
-      : await readViaStream(label, descriptor, response.body);
+  // No unbounded fallback: without a readable stream nothing is allocated.
+  if (response.body === null || typeof response.body?.getReader !== 'function') {
+    throw new ZKPArtifactError('network', `${label}: response has no readable body stream`);
+  }
+  const bytes = await readViaStream(label, descriptor, response.body, signal);
   if (bytes.byteLength !== descriptor.size_bytes) {
     bytes.fill(0);
-    throw new Error(`${label}: byte length does not match the manifest size`);
+    throw new ZKPArtifactError('size', `${label}: byte length does not match the manifest size`);
   }
-  const digest = new Uint8Array(await digester.digest('SHA-256', bytes));
+  let digest: Uint8Array;
+  try {
+    digest = new Uint8Array(await digester.digest('SHA-256', bytes));
+  } catch (error: unknown) {
+    bytes.fill(0);
+    throw new ZKPArtifactError('environment', `${label}: SHA-256 computation failed`, { cause: error });
+  }
   if (toHex(digest) !== descriptor.sha256_hex) {
     bytes.fill(0);
     digest.fill(0);
-    throw new Error(`${label}: SHA-256 digest does not match the manifest`);
+    throw new ZKPArtifactError('integrity', `${label}: SHA-256 digest does not match the manifest`);
   }
   digest.fill(0);
   return bytes;
@@ -368,14 +423,14 @@ function enforceContentLength(
 ): void {
   if (contentLength === null) return;
   if (!/^\d+$/u.test(contentLength)) {
-    throw new Error(`${label}: Content-Length header is malformed`);
+    throw new ZKPArtifactError('size', `${label}: Content-Length header is malformed`);
   }
   const declared = Number(contentLength);
   if (
     !Number.isSafeInteger(declared) ||
     declared !== descriptor.size_bytes
   ) {
-    throw new Error(
+    throw new ZKPArtifactError('size',
       `${label}: Content-Length does not match the manifest size`
     );
   }
@@ -385,7 +440,8 @@ function enforceContentLength(
 async function readViaStream(
   label: string,
   descriptor: ZKPArtifactDescriptor,
-  body: { getReader(): ZKPArtifactReader }
+  body: { getReader(): ZKPArtifactReader },
+  signal: AbortSignal | undefined
 ): Promise<Uint8Array<ArrayBuffer>> {
   const buffer = new Uint8Array(descriptor.size_bytes);
   let offset = 0;
@@ -401,55 +457,35 @@ async function readViaStream(
         } catch {
           // cancellation is best-effort; the overflow error is authoritative
         }
-        throw new Error(`${label}: stream exceeds the declared artifact size`);
+        throw new ZKPArtifactError('size', `${label}: stream exceeds the declared artifact size`);
       }
       buffer.set(chunk.value, offset);
       offset += chunk.value.byteLength;
     }
   } catch (error: unknown) {
     buffer.fill(0);
-    throw error;
+    throw toArtifactError(label, 'reading the response stream', error, signal);
   }
   if (offset !== buffer.byteLength) {
     buffer.fill(0);
-    throw new Error(`${label}: byte length does not match the manifest size`);
+    throw new ZKPArtifactError('size', `${label}: byte length does not match the manifest size`);
   }
   return buffer;
-}
-
-async function readViaArrayBuffer(
-  label: string,
-  response: ZKPArtifactResponse
-): Promise<Uint8Array<ArrayBuffer>> {
-  let raw: ArrayBufferLike;
-  try {
-    raw = await response.arrayBuffer();
-  } catch (error: unknown) {
-    throw new Error(
-      `${label}: reading the response body failed: ${
-        error instanceof Error ? error.message : 'unknown error'
-      }`
-    );
-  }
-  if (!(raw instanceof ArrayBuffer)) {
-    throw new Error(`${label}: response body is not an ArrayBuffer`);
-  }
-  return new Uint8Array(raw);
 }
 
 function resolveBaseOrigin(baseOrigin: string | undefined): URL {
   const candidate = baseOrigin ?? globalThis.location?.origin;
   if (candidate === undefined || candidate === 'null') {
-    throw new Error('no same-origin base URL is available');
+    throw new ZKPArtifactError('environment', 'no same-origin base URL is available');
   }
   let parsed: URL;
   try {
     parsed = new URL(candidate);
   } catch {
-    throw new Error('the base origin is not a valid URL');
+    throw new ZKPArtifactError('environment', 'the base origin is not a valid URL');
   }
   if (parsed.origin === 'null') {
-    throw new Error('the base origin must be an absolute origin');
+    throw new ZKPArtifactError('environment', 'the base origin must be an absolute origin');
   }
   return parsed;
 }
