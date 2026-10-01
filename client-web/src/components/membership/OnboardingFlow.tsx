@@ -12,7 +12,7 @@ import {
   CheckCircleIcon,
   ClockIcon,
   XCircleIcon,
-  ShieldCheckIcon,
+  ShieldExclamationIcon,
 } from '@heroicons/react/24/outline';
 
 export function OnboardingFlow() {
@@ -83,7 +83,7 @@ export function OnboardingFlow() {
         {step === 'identity' && (
           <Card>
             <div className="text-center mb-6">
-              <ShieldCheckIcon className="h-16 w-16 text-primary-600 mx-auto mb-4" />
+              <ShieldExclamationIcon className="h-16 w-16 text-yellow-600 mx-auto mb-4" aria-hidden="true" />
               <h2 className="text-2xl font-bold mb-2">
                 Identity Creation Unavailable
               </h2>

@@ -41,7 +41,7 @@ function Notice({ tone, children, testId }: { tone: 'info' | 'warning'; children
       ? 'bg-yellow-50 border border-yellow-200 text-yellow-900'
       : 'bg-blue-50 border border-blue-200 text-blue-900';
   return (
-    <div className={`${classes} rounded-lg p-4 mb-6 text-sm break-words`} data-testid={testId}>
+    <div className={`${classes} rounded-lg p-4 mb-6 last:mb-0 text-sm break-words`} data-testid={testId}>
       {children}
     </div>
   );
@@ -85,7 +85,7 @@ export function IdentityCustodyNotice() {
     return (
       <Card>
         <div className="flex items-center gap-3 mb-4">
-          <LockClosedIcon className="h-8 w-8 text-gray-500" aria-hidden="true" />
+          <LockClosedIcon className="h-8 w-8 flex-shrink-0 text-gray-500" aria-hidden="true" />
           <h2 className="text-xl font-bold">Preview Identity Locked</h2>
         </div>
         <p role="status" className="text-gray-700">
@@ -98,7 +98,7 @@ export function IdentityCustodyNotice() {
   if (status === 'loading') {
     return (
       <Card>
-        <h2 className="text-xl font-bold mb-4">Preview Identity</h2>
+        <h2 className="text-xl font-bold mb-4">Checking Preview Identity</h2>
         <p role="status" className="text-gray-700">
           Checking this wallet&apos;s preview identity…
         </p>
@@ -132,7 +132,7 @@ export function IdentityCustodyNotice() {
     return (
       <Card>
         <div className="flex items-center gap-3 mb-4">
-          <ExclamationTriangleIcon className="h-8 w-8 text-yellow-600" aria-hidden="true" />
+          <ExclamationTriangleIcon className="h-8 w-8 flex-shrink-0 text-yellow-600" aria-hidden="true" />
           <h2 className="text-xl font-bold">Unencrypted Preview Identity Found</h2>
         </div>
         <Notice tone="warning" testId="identity-legacy-notice">
@@ -156,7 +156,7 @@ export function IdentityCustodyNotice() {
     return (
       <Card>
         <div className="flex items-center gap-3 mb-4">
-          <ExclamationTriangleIcon className="h-8 w-8 text-red-600" aria-hidden="true" />
+          <ExclamationTriangleIcon className="h-8 w-8 flex-shrink-0 text-red-600" aria-hidden="true" />
           <h2 className="text-xl font-bold">
             {status === 'quarantined' ? 'Preview Identity Not Used' : 'Preview Identity Unavailable'}
           </h2>
@@ -167,7 +167,7 @@ export function IdentityCustodyNotice() {
             not used. Your wallet stays unlocked.
           </p>
         </Notice>
-        <div className="space-y-3">{legacyExportButton}</div>
+        {legacyExportButton && <div className="space-y-3">{legacyExportButton}</div>}
         {legacyWarning}
       </Card>
     );
@@ -181,10 +181,12 @@ export function IdentityCustodyNotice() {
   return (
     <Card>
       <div className="flex items-center gap-3 mb-6">
-        <ShieldCheckIcon className="h-8 w-8 text-green-600" aria-hidden="true" />
+        <ShieldCheckIcon className="h-8 w-8 flex-shrink-0 text-green-600" aria-hidden="true" />
         <div>
           <h2 className="text-xl font-bold">Preview Identity</h2>
-          <p className="text-sm text-green-700 font-medium">Encrypted in this wallet</p>
+          <p className="text-sm text-green-700 font-medium" data-testid="identity-ready-marker">
+            Encrypted in this wallet
+          </p>
         </div>
       </div>
       {identity && (
