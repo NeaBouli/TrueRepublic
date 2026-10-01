@@ -5959,3 +5959,25 @@
   `check-consistency.sh`, `git diff --check`. `cargo test --workspace` and a real
   wasm32 compile-fail CI proof remain open (ENOSPC, target not installed); GH-308
   stays partial. No Rust source/Cargo change, push, PR or rollout credit.
+
+## 2026-10-01 EEST - GH-308 local gates and real wasm32 verifier (GH308D1, Claude Code)
+
+- Host gates on `9c07b91` (preflight 6.1 GiB free, no other TrueRepublic build):
+  `cargo test --offline --locked --workspace -j 2` PASS (26 passed, 0 failed, 329 s);
+  `cargo fmt --check`, `cargo clippy --offline --locked --workspace -- -D warnings`,
+  `cargo build --offline --locked --workspace` PASS. This closes the GH308B ENOSPC gap.
+- `9a2ec0b`: `scripts/verify-contract-quarantine-wasm.sh` runs a locked wasm32
+  `cargo check` for exactly `truerepublic-contracts`, `governance-dao`,
+  `zkp-aggregator`, `dex-bot`, `token-vesting` and fails unless each fails with
+  `QUARANTINED (TrueRepublic #308)` (success, markerless failure or missing package
+  fail; private temp dir removed by trap). `.github/workflows/rust-ci.yml` installs
+  `wasm32-unknown-unknown` on the pinned 1.95.0 toolchain, runs the verifier after
+  the host tests and triggers on verifier changes; pinned actions, read-only
+  permissions, host steps and the 20-minute timeout are unchanged. The quarantine
+  repository contract requires target, step, trigger and exact package coverage
+  and rejects seven drift mutations. `bash -n` OK.
+- Authorized cleanup: `cargo clean` in this worktree's `contracts/` removed 1.6 GiB
+  of this task's own build output (`CARGO_TARGET_DIR` unset, no Cargo config
+  redirect). Single post-cleanup check: 4.2 GiB free (< 5 GiB) -> Go/repository
+  gates not run; status partial. The real wasm32 proof can only turn green on
+  exact-head hosted CI. No push, PR or rollout credit.
