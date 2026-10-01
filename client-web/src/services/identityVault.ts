@@ -71,6 +71,22 @@ export class IdentityVaultError extends Error {
 
 export type IdentityVaultStorage = Pick<Storage, 'getItem' | 'setItem' | 'removeItem'>;
 
+/**
+ * Operations available only inside IdentityVault.runExclusive, i.e. while the
+ * vault Web Lock is held. The handle is invalid once the callback settles.
+ */
+export interface IdentityVaultTransaction {
+  hasIdentity(address: string): boolean;
+  openIdentity(address: string, password: string): Promise<Identity | null>;
+  /** Create-if-absent; `beforeWrite` runs after sealing, immediately before the write, and may throw to abort. */
+  createIdentity(
+    address: string,
+    password: string,
+    identity: Identity,
+    beforeWrite?: () => void
+  ): Promise<void>;
+}
+
 // The subset of the Web Locks API the vault needs. Deliberately not exported
 // and not injectable: production mutations only ever use navigator.locks.
 interface WebLocks {
@@ -100,7 +116,7 @@ function hasExactKeys(value: Record<string, unknown>, keys: string[]): boolean {
   return actual.length === keys.length && actual.every((key, index) => key === keys[index]);
 }
 
-function isCanonicalAddress(address: unknown): address is string {
+export function isCanonicalAddress(address: unknown): address is string {
   if (typeof address !== 'string' || address.length === 0 || address.length > MAX_ADDRESS_CHARS) {
     return false;
   }
@@ -126,7 +142,7 @@ function assertPassword(password: string): void {
   }
 }
 
-function isValidIdentity(value: unknown): value is Identity {
+export function isValidIdentity(value: unknown): value is Identity {
   return (
     isPlainObject(value) &&
     hasExactKeys(value, IDENTITY_KEYS) &&
@@ -271,7 +287,57 @@ export class IdentityVault {
     await this.withMutationLock(() => this.createLocked(address, password, identity));
   }
 
-  private async createLocked(address: string, password: string, identity: Identity): Promise<void> {
+  /**
+   * Run a multi-step transaction under the single vault lock (Web Locks are not
+   * re-entrant). Errors thrown by `work` itself propagate unchanged; the
+   * transaction handle rejects every call after the callback has settled.
+   */
+  async runExclusive<T>(work: (tx: IdentityVaultTransaction) => Promise<T>): Promise<T> {
+    let failure: { error: unknown } | null = null;
+    const result = await this.withMutationLock(async () => {
+      let active = true;
+      const guard = () => {
+        if (!active) throw new IdentityVaultError('storage');
+      };
+      const tx: IdentityVaultTransaction = {
+        hasIdentity: (address) => {
+          guard();
+          return this.hasIdentity(address);
+        },
+        openIdentity: async (address, password) => {
+          guard();
+          return this.openIdentity(address, password);
+        },
+        createIdentity: async (address, password, identity, beforeWrite) => {
+          guard();
+          assertAddress(address);
+          assertPassword(password);
+          if (!isValidIdentity(identity)) throw new IdentityVaultError('invalid-identity');
+          await this.createLocked(address, password, identity, () => {
+            guard();
+            beforeWrite?.();
+          });
+        },
+      };
+      try {
+        return await work(tx);
+      } catch (error) {
+        failure = { error };
+        return undefined;
+      } finally {
+        active = false;
+      }
+    });
+    if (failure) throw (failure as { error: unknown }).error;
+    return result as T;
+  }
+
+  private async createLocked(
+    address: string,
+    password: string,
+    identity: Identity,
+    beforeWrite?: () => void
+  ): Promise<void> {
     const before = this.readRaw();
     const document = parseDocument(before);
     if (Object.prototype.hasOwnProperty.call(document.records, address)) {
@@ -293,6 +359,7 @@ export class IdentityVault {
 
     // Key derivation is asynchronous: refuse to write over anything that changed meanwhile.
     if (this.readRaw() !== before) throw new IdentityVaultError('conflict');
+    beforeWrite?.();
 
     this.writeDocument({
       v: IDENTITY_VAULT_VERSION,
