@@ -234,6 +234,66 @@ func TestOperatorGuidanceTrustAndReportingContract(t *testing.T) {
 	runOperatorGuidanceFixtures(t, inputs, allowed, false)
 }
 
+// operatorGuidanceSupersededRoadmap is the only versioned planning record
+// excluded by exact path; the exclusion holds only while the file itself
+// declares that it is superseded and points to the canonical roadmap/status.
+const operatorGuidanceSupersededRoadmap = "docs/V0.3.0_ROADMAP.md"
+
+func operatorGuidanceSupersededRoadmapViolations(content string) []string {
+	lines := strings.SplitN(content, "\n", 16)
+	if len(lines) > 15 {
+		lines = lines[:15]
+	}
+	head := strings.Join(lines, "\n")
+	var out []string
+	for _, required := range []string{
+		"**Historical planning record — superseded.**",
+		"**Status:** Historical — superseded",
+		"**Former target:**",
+		"no current commitment",
+		"(ROLLOUT_ROADMAP.md)",
+		"(status.json)",
+	} {
+		if !strings.Contains(head, required) {
+			out = append(out, operatorGuidanceSupersededRoadmap+": first 15 lines must contain "+required)
+		}
+	}
+	if strings.Contains(content, "**Status:** Planned") {
+		out = append(out, operatorGuidanceSupersededRoadmap+": must not claim Status: Planned")
+	}
+	return out
+}
+
+// TestOperatorGuidanceSupersededRoadmapContract binds the exact-path exclusion of
+// the v0.3.0 roadmap to its own superseded banner.
+func TestOperatorGuidanceSupersededRoadmapContract(t *testing.T) {
+	content, err := os.ReadFile(operatorGuidanceSupersededRoadmap)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if violations := operatorGuidanceSupersededRoadmapViolations(string(content)); len(violations) != 0 {
+		t.Fatalf("superseded roadmap contract violations:\n- %s", strings.Join(violations, "\n- "))
+	}
+	for name, mutate := range map[string]func(string) string{
+		"banner removed": func(s string) string {
+			return strings.Replace(s, "**Historical planning record — superseded.**", "", 1)
+		},
+		"status planned": func(s string) string {
+			return strings.Replace(s, "**Status:** Historical — superseded by the recovery rollout roadmap", "**Status:** Planned", 1)
+		},
+		"active target": func(s string) string {
+			return strings.Replace(s, "**Former target:** Q3 2026 (no current commitment)", "**Target:** Q3 2026", 1)
+		},
+		"canonical links removed": func(s string) string {
+			return strings.Replace(strings.Replace(s, "(ROLLOUT_ROADMAP.md)", "", 1), "(status.json)", "", 1)
+		},
+	} {
+		if len(operatorGuidanceSupersededRoadmapViolations(mutate(string(content)))) == 0 {
+			t.Fatalf("superseded roadmap mutation %q accepted", name)
+		}
+	}
+}
+
 // TestOperatorGuidanceExcludesHistoricalRecords proves the scan boundary: dated
 // audit reports and append-only coordination logs may quote the historical
 // domain and are never treated as maintained guidance.
@@ -291,8 +351,9 @@ func operatorGuidanceMaintained(path string) bool {
 			return false
 		}
 	}
-	// Release notes and the roadmap of a past version are historical records.
-	if strings.HasPrefix(path, "RELEASE_NOTES_") || path == "docs/V0.3.0_ROADMAP.md" {
+	// Release notes are historical records; the superseded v0.3.0 roadmap is
+	// excluded by exact path only while its banner contract holds.
+	if strings.HasPrefix(path, "RELEASE_NOTES_") || path == operatorGuidanceSupersededRoadmap {
 		return false
 	}
 	return path != "BRIDGE.md"
