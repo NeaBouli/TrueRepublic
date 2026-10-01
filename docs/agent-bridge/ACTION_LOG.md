@@ -5964,3 +5964,17 @@
   treasury example), `docs/V0.4.0_OPTIONAL_INDEXER_STACK.md` (Compose v1);
   `RELEASE_NOTES_v0.3.0.md` treated as historical. No push, PR, Wiki push or
   rollout credit.
+
+## 2026-10-01 EEST - GH-313 executable-guidance exclusions closed (GH313C1a, Claude Code)
+
+- Source `38fcab2`: `docs/node-operators/installation/docker-setup.md` mounts node
+  data at `/home/truerepublic/.truerepublic` and the warning no longer repeats the
+  root-home literal; `docs/node-operators/configuration/genesis-params.md` uses
+  `500000000000upnyx` / `100000000000upnyx` for the 500,000 / 100,000 PNYX
+  examples; `docs/V0.4.0_OPTIONAL_INDEXER_STACK.md` uses `docker compose` for both
+  invocations. The three files are removed from the command-rule exclusions;
+  GH308-owned and release-note exclusions are unchanged.
+- Test `585a0b5`: the Compose v1 rule also matches the `--profile <name>` and
+  `--profile=<name>` forms (one negative fixture), as approved.
+- Tests not run: data volume had 4.6 GiB free after the patch (threshold 5 GiB);
+  handed over as partial. No push, PR, Wiki push or rollout credit.
