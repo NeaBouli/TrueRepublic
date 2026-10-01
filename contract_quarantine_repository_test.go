@@ -27,13 +27,24 @@ const contractQuarantineGuardMarker = `compile_error!(
 
 var (
 	contractQuarantinePublishRE = regexp.MustCompile(`(?m)^publish = false$`)
-	// Any packaging reference to a wasm build, an optimizer or a quarantined
-	// crate name in CI, images or release contracts.
-	contractQuarantinePackagingRE = regexp.MustCompile(
-		`wasm32-unknown-unknown|workspace-optimizer|rust-optimizer|optimizer-arm64|` +
-			`truerepublic-contracts|truerepublic_contracts|governance-dao|governance_dao|` +
-			`zkp-aggregator|zkp_aggregator|dex-bot|dex_bot|token-vesting|token_vesting`)
-	contractQuarantineDeployRE = regexp.MustCompile(`tx wasm (store|instantiate2?|migrate)\b|cargo wasm\b`)
+	// A crate-level cfg can compile the whole crate, guard included, out of a
+	// wasm32 build; a [lib] path override can point the build at an unguarded
+	// file. Both bypass the unconditional guard. Plain host-only features are
+	// allowed.
+	contractQuarantineCrateCfgRE = regexp.MustCompile(`(?m)^\s*#!\[cfg(_attr)?\(`)
+	contractQuarantineLibPathRE  = regexp.MustCompile(`(?m)^\[lib\][^\[]*^\s*path\s*=`)
+	// Wasm artifacts of the quarantined crates, and package/build commands
+	// that name one of them.
+	contractQuarantineArtifactRE = regexp.MustCompile(
+		`\b(truerepublic_contracts|governance_dao|zkp_aggregator|dex_bot|token_vesting|governance|treasury)\.wasm\b`)
+	contractQuarantinePackageCmdRE = regexp.MustCompile(
+		`cargo[^\n]*\b(build|publish|wasm)\b[^\n]*(-p|--package)[ =](truerepublic-contracts|governance-dao|zkp-aggregator|dex-bot|token-vesting)\b`)
+	// A wasm build or optimizer run is a packaging path for the quarantined
+	// crates only when it targets the contracts workspace or one of them.
+	contractQuarantineWasmBuildRE = regexp.MustCompile(`wasm32-unknown-unknown|workspace-optimizer|rust-optimizer|cargo wasm\b`)
+	contractQuarantineWorkspaceRE = regexp.MustCompile(
+		`(?m)working-directory:\s*\.?/?contracts\s*$|cd \.?/?contracts(/(core|examples/[a-z-]+))?\b|contracts/Cargo\.toml|contracts/(core|examples/(governance-dao|zkp-aggregator|dex-bot|token-vesting))\b`)
+	contractQuarantineDeployRE = regexp.MustCompile(`tx wasm (store|instantiate2?|migrate)\b`)
 )
 
 type contractQuarantineInputs struct {
@@ -54,8 +65,9 @@ func TestContractQuarantineRepositoryContract(t *testing.T) {
 		"published crate": func(in *contractQuarantineInputs) {
 			in.cargo["contracts/core"] = strings.Replace(in.cargo["contracts/core"], "publish = false\n", "", 1)
 		},
-		"opt-in feature": func(in *contractQuarantineInputs) {
-			in.cargo["contracts/examples/governance-dao"] += "\n[features]\nunsafe-prototype-entrypoints = []\n"
+		"lib path override": func(in *contractQuarantineInputs) {
+			in.cargo["contracts/examples/governance-dao"] = strings.Replace(in.cargo["contracts/examples/governance-dao"],
+				"[lib]\n", "[lib]\npath = \"src/unguarded.rs\"\n", 1)
 		},
 		"missing wasm32 guard": func(in *contractQuarantineInputs) {
 			in.lib["contracts/examples/zkp-aggregator"] = strings.Replace(in.lib["contracts/examples/zkp-aggregator"], contractQuarantineGuardCfg, "", 1)
@@ -64,18 +76,52 @@ func TestContractQuarantineRepositoryContract(t *testing.T) {
 			in.lib["contracts/examples/dex-bot"] = strings.Replace(in.lib["contracts/examples/dex-bot"],
 				contractQuarantineGuardCfg, `#[cfg(all(target_arch = "wasm32", not(feature = "unsafe")))]`, 1)
 		},
+		"crate-level cfg bypass": func(in *contractQuarantineInputs) {
+			in.lib["contracts/examples/token-vesting"] = "#![cfg(not(target_arch = \"wasm32\"))]\n" + in.lib["contracts/examples/token-vesting"]
+		},
 		"wasm build in CI": func(in *contractQuarantineInputs) {
 			in.packaging[".github/workflows/rust-ci.yml"] += "\n        run: cargo build --release --target wasm32-unknown-unknown\n"
 		},
-		"crate in release contract": func(in *contractQuarantineInputs) {
+		"artifact in release contract": func(in *contractQuarantineInputs) {
 			in.packaging["configs/release/compatibility.json"] += `{"artifact": "governance_dao.wasm"}`
 		},
+		"crate publish command": func(in *contractQuarantineInputs) {
+			in.packaging["Dockerfile"] += "\nRUN cargo publish -p zkp-aggregator\n"
+		},
 		"deploy recipe in guide": func(in *contractQuarantineInputs) {
-			in.guides["docs/QUICKSTART.md"] += "\ntruerepublicd tx wasm store governance_dao.wasm --from alice\n"
+			in.guides["docs/QUICKSTART.md"] += "\n\n```bash\ntruerepublicd tx wasm store governance_dao.wasm --from alice\n```\n"
+		},
+		"wasm build recipe in guide": func(in *contractQuarantineInputs) {
+			in.guides["INSTALLATION.md"] += "\n\n```bash\ncd contracts\ncargo build --release --target wasm32-unknown-unknown\n```\n"
 		},
 		"contracts in image context": func(in *contractQuarantineInputs) {
 			in.ignore = strings.ReplaceAll(in.ignore, "contracts", "")
 		},
+	}
+	allowed := map[string]func(*contractQuarantineInputs){
+		"host-only feature": func(in *contractQuarantineInputs) {
+			in.cargo["contracts/examples/governance-dao"] += "\n[features]\nhost-fixtures = []\n"
+		},
+		"crate name in review metadata": func(in *contractQuarantineInputs) {
+			in.packaging["configs/release/compatibility.json"] += `{"note": "governance-dao and zkp-aggregator stay quarantined under #308"}`
+		},
+		"reviewed contract deploy guide": func(in *contractQuarantineInputs) {
+			in.guides["docs/developers/smart-contracts/cosmwasm.md"] += "\n\n```bash\ntruerepublicd tx wasm store reviewed_escrow.wasm --from wallet\n```\n"
+		},
+	}
+	allowedNames := make([]string, 0, len(allowed))
+	for name := range allowed {
+		allowedNames = append(allowedNames, name)
+	}
+	sort.Strings(allowedNames)
+	for _, name := range allowedNames {
+		t.Run("allows "+name, func(t *testing.T) {
+			clone := cloneContractQuarantineInputs(inputs)
+			allowed[name](&clone)
+			if violations := contractQuarantineViolations(clone); len(violations) != 0 {
+				t.Fatalf("harmless change rejected:\n- %s", strings.Join(violations, "\n- "))
+			}
+		})
 	}
 	names := make([]string, 0, len(mutations))
 	for name := range mutations {
@@ -162,25 +208,41 @@ func contractQuarantineViolations(in contractQuarantineInputs) []string {
 		if !contractQuarantinePublishRE.MatchString(cargo) {
 			out = append(out, crate+": Cargo.toml must set publish = false")
 		}
-		if strings.Contains(cargo, "[features]") {
-			out = append(out, crate+": no feature may re-enable a deployable prototype build")
+		if contractQuarantineLibPathRE.MatchString(cargo) {
+			out = append(out, crate+": a [lib] path override can bypass the wasm32 guard")
 		}
-		guard := strings.Index(lib, contractQuarantineGuardCfg+"\n"+contractQuarantineGuardMarker)
-		if guard < 0 {
+		if !strings.Contains(lib, contractQuarantineGuardCfg+"\n"+contractQuarantineGuardMarker) {
 			out = append(out, crate+": src/lib.rs lacks the unconditional wasm32 quarantine compile_error guard")
+		}
+		if contractQuarantineCrateCfgRE.MatchString(lib) {
+			out = append(out, crate+": a crate-level cfg can compile the wasm32 guard out")
 		}
 	}
 	for _, path := range sortedContractQuarantineKeys(in.packaging) {
-		if match := contractQuarantinePackagingRE.FindString(in.packaging[path]); match != "" {
-			out = append(out, path+": packages or builds quarantined contracts ("+match+")")
+		content := in.packaging[path]
+		if match := contractQuarantineArtifactRE.FindString(content); match != "" {
+			out = append(out, path+": packages a quarantined contract artifact ("+match+")")
+		}
+		if match := contractQuarantinePackageCmdRE.FindString(content); match != "" {
+			out = append(out, path+": builds or publishes a quarantined crate ("+match+")")
+		}
+		if contractQuarantineWasmBuildRE.MatchString(content) && contractQuarantineWorkspaceRE.MatchString(content) {
+			out = append(out, path+": builds the quarantined contracts workspace for wasm")
 		}
 	}
 	if !regexp.MustCompile(`(?m)^contracts/?$`).MatchString(in.ignore) {
 		out = append(out, ".dockerignore must exclude contracts from the daemon image context")
 	}
 	for _, path := range sortedContractQuarantineKeys(in.guides) {
-		if match := contractQuarantineDeployRE.FindString(in.guides[path]); match != "" {
-			out = append(out, path+": maintained guide instructs contract deployment ("+match+")")
+		// Judge each paragraph/code block on its own, so documentation for a
+		// separately reviewed contract elsewhere in a guide stays allowed.
+		for _, block := range strings.Split(in.guides[path], "\n\n") {
+			deploysPrototype := contractQuarantineDeployRE.MatchString(block) && contractQuarantineArtifactRE.MatchString(block)
+			buildsPrototype := contractQuarantineWasmBuildRE.MatchString(block) && contractQuarantineWorkspaceRE.MatchString(block)
+			if deploysPrototype || buildsPrototype {
+				out = append(out, path+": maintained guide builds or deploys a quarantined prototype")
+				break
+			}
 		}
 	}
 	return out

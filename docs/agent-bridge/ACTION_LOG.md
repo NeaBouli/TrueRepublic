@@ -5939,3 +5939,23 @@
   (target not installed); the guard is verified statically and needs a CI gate.
 - Out of scope: chain upload/instantiate permissions (#333). No upload,
   instantiation, migration, deployment, push, PR or rollout/test-count credit.
+
+## 2026-10-01 EEST - GH-308 quarantine contract narrowed (GH308C, Claude Code)
+
+- Codex review of `a73df19` (verdict: changes) found the repository contract
+  over-broad. `contract_quarantine_repository_test.go` now rejects only paths that
+  weaken or bypass the unconditional wasm32 guard (missing or feature-gated guard,
+  crate-level `#![cfg…]`, `[lib] path` override, `publish = false` removed), actual
+  Wasm artifacts/build/publish commands for the five quarantined crates or the
+  contracts workspace in CI, images and build/release contracts, and guide blocks
+  that build or deploy a quarantined prototype. Host-only features, crate-name
+  mentions in review/status metadata and deployment documentation for a separately
+  reviewed contract are allowed; 11 negative and 3 positive fixtures prove both.
+- `INSTALLATION.md`, `docs/INSTALL.md` and `docs/developers/README.md` replace the
+  stale generic `wasm32` build with host-only guidance linking
+  `contracts/QUARANTINE.md`.
+- Low-disk gates green: focused contract test with all fixtures, `go vet`,
+  security/license/repository tests, `securityreview`, license policy,
+  `check-consistency.sh`, `git diff --check`. `cargo test --workspace` and a real
+  wasm32 compile-fail CI proof remain open (ENOSPC, target not installed); GH-308
+  stays partial. No Rust source/Cargo change, push, PR or rollout credit.
