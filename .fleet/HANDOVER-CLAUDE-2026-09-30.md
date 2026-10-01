@@ -32,6 +32,13 @@ Goal: continue exactly from the hand-back point without re-research.
 | 2026-10-01 | GH324C1 | F3 + counts, report status partial | branch @ 994da7c; Codex pushed, Draft PR #330 |
 | 2026-10-01 | GH331A | client brace-expansion override 5.0.9 -> 5.0.12 | agent/claude/GH331-client-audit @ 84ea15a; Codex accepted |
 | 2026-10-01 | GH306C1 | v0.4.2 plan, v2->v3 harness, release binding | agent/claude/GH306-reconcile @ 79bb33f; report status partial (final verify ENOSPC, review owed) |
+| 2026-10-01 | GH308A | read-only quarantine reachability analysis | report .fleet/reports/GH308A.md; accepted; #333 opened for wasm permissions |
+| 2026-10-01 | GH308B/C/D1 | fail-closed quarantine, narrowed contract, real wasm32 CI verifier | agent/claude/GH308-quarantine @ b3a0122; Draft PR #334 (Rust CI incl. wasm32 proof green); accepted |
+| 2026-10-01 | GH313A | operator-guidance defect inventory | report GH313A.md; accepted |
+| 2026-10-01 | GH313B | fictional domain + unsafe public reporting removed | agent/claude/GH313-operator-docs @ e193e0e; accepted |
+| 2026-10-01 | GH313C1/C1a | executable commands/config reconciled; exclusions closed | @ 3a497aa; accepted |
+| 2026-10-01 | GH313C2/C2a | conceptual status/architecture limits; superseded v0.3.0 roadmap | @ GH313C2a head; accepted, GH313C closed |
+| 2026-10-01 | CI-RESET-A1 | read-only PR-chain snapshot (#332/#330) | report CI-RESET-A1.md; accepted; #332 blocked on review (same-account) |
 
 ## Current state
 - Worktrees (own): `~/Desktop/repos/TrueRepublic-wt/claude-GH306` (`agent/claude/GH306-reconcile`,
@@ -87,6 +94,12 @@ Goal: continue exactly from the hand-back point without re-research.
 - GH-306 is consensus/economics code (TRR-02/TRR-04). The candidate was authored by Codex
   and only reviewed by Claude here; F1 is Claude-authored. Independent review is still
   required by the issue acceptance criteria before the protected PR.
+
+## Open for Codex/Gio (2026-10-01)
+- #332 needs an approving review from another collaborator account or an explicit admin-bypass decision (Gio); then refresh #330 (BRIDGE append conflict + patched lock), then GH306 PR, #334 after its gates.
+- GH306 independent review (GH306R1) still open: Kimi token_limited; the dispatcher fallback to Claude is not accepted as independent.
+- GH313D (four GH308-owned files) waits for GH-308 to land; GitHub-Wiki sync is a post-merge Codex/Gio action.
+- Local disk pressure (often < 5 GiB) blocks heavy local gates; hosted CI is the authoritative path.
 
 ## Next step (exact)
 1. Review `agent/claude/GH306-reconcile` (`ee7a004..192dccf`); decide F2.
