@@ -97,6 +97,10 @@ Route: `client-web/src/routes.tsx` maps
 | client↔chain integration test | Opt-in delivery of every maintained tx family against a local node | `client-web/src/services/clientChain.integration.test.ts` | test-only (`TRUEREPUBLIC_CLIENT_CHAIN_INTEGRATION=1`) |
 | Go path tests | Msg-server escrow boundary, quote/submit equality, wire vectors | `x/truedemocracy/msg_server_test.go::TestMsgServerSubmitProposalEscrowBoundary`, `query_merkle_paytoput_test.go::TestQueryPayToPutMatchesSubmitProposalCalculation`, `client_custom_tx_codec_test.go::TestClientCustomTxVectorsMatchGoWireEncoding` | test-only |
 | client ZKP voting (neighbor) | Preview anonymous rating; submission disabled | `client-web/src/services/zkp.ts`, `client-web/src/components/zkp/VotingPanel.tsx` | quarantined |
+| client custody envelope (GH-309) | One WebCrypto PBKDF2-SHA256/AES-GCM envelope with optional AAD for wallet and identity custody | `client-web/src/services/custodyEnvelope.ts::sealEnvelope`/`openEnvelope` | built (branch `agent/claude/GH309-custody-core`, draft PR #338) |
+| client identity vault (GH-309) | Address-bound encrypted identity records under the exclusive vault Web Lock | `client-web/src/services/identityVault.ts::IdentityVault` | built, unwired (PR #338) |
+| client legacy identity migration (GH-309) | Crash-safe move of the plaintext `identity-store` record into the vault | `client-web/src/services/identityMigration.ts::LegacyIdentityMigration` | partial (branch `agent/claude/GH309-migration-core`, unwired) |
+| historical preview hash (GH-309, neighbor) | Pure, explicitly preview/mock FNV helper used to generate and to check legacy preview identities; never BN254-MiMC | to be extracted from `client-web/src/services/zkp.ts::ZKPService.mockMiMCHash` (GH309B2C1) | quarantined (preview only) |
 | legacy clients | `web-wallet`, `mobile-wallet` prototypes | Git history only | quarantined |
 | optional domain ballots (GH-231/GH-232) | Formal ballots with frozen policy/electorate | `docs/GOVERNANCE_BALLOT_ARCHITECTURE.md` | deferred |
 | Sovereign V4 edge (GH-236) | Local-first edge layer around TRChain | `docs/SOVEREIGN_V4_EDGE_ARCHITECTURE.md`; unwired package `sovereignv4/protocol` | deferred (V4-0 code exists, no importer outside `sovereignv4/`) |
@@ -122,6 +126,7 @@ Route: `client-web/src/routes.tsx` maps
 - `Keeper.SubmitProposalWithEscrow` moves the fee to the module account through `x/bank` and commits only if that transfer succeeds.
 - `msgServer.SubmitProposal` emits a `submit_proposal` event after the escrowed commit.
 - At EndBlock, `x/crisis` runs `ValidateEscrowParity` and `SupplyCapInvariant` after the custom modules.
+- GH-309 custody neighbor: `LegacyIdentityMigration.migrate` accepts only the canonical legacy preview bytes, then checks with the historical preview hash that commitment = hash(secret) and nullifier = hash(secret + "00"); a mismatch classifies the record QUARANTINED without a vault write, otherwise it continues to `IdentityVault.runExclusive` and the custody envelope.
 
 ## 5. Contradictions and gaps
 
