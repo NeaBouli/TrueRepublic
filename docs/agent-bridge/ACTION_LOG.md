@@ -5935,3 +5935,32 @@
   network-policy/observability/incident/install-lifecycle tests, `securityreview`,
   license policy, `check-consistency.sh`, custom-query retirement, `git diff
   --check`. No GitHub-Wiki push, DNS, deployment, push, PR or rollout credit.
+
+## 2026-10-01 EEST - GH-313 executable operator guidance (GH313C1, Claude Code)
+
+- Branch `agent/claude/GH313-operator-docs` on accepted GH313B head `e193e0e`;
+  implementation commit `8740f16`. Eleven writable guides (Validator-Guide,
+  Installation-Wizards, Node-Setup, Deployment-Options, Troubleshooting,
+  DEPLOYMENT, IBC_RELAYER_SETUP, API_REFERENCE, VALIDATOR_GUIDE,
+  validators/README, cli-commands) now match `server_lifecycle.go` command
+  registration, `x/truedemocracy`/`x/dex` CLI argument contracts,
+  `.env.example`, `docker-compose.yml`, `Dockerfile` and the operator runbooks.
+  Unavailable operations are stated as unavailable; no command, endpoint, image,
+  faucet, seed or checksum was invented. GH313B caveats are preserved.
+- Found while reconciling: `rate-with-proof` and `withdraw-from-domain` examples
+  had wrong argument order/count, and `withdraw-stake` examples appended a denom
+  to an integer argument.
+- `operator_guidance_repository_test.go` adds narrow rules (registered tx/query
+  modules, genesis commands, register-validator shape, withdraw-stake integer,
+  upnyx amounts, .env.example keys, Compose v2, no published image, non-root home,
+  no default Grafana password, no faucet) with 23 negative and 9 positive fixtures.
+- Gates: `go vet`, focused operator-guidance tests, security/license/repository/
+  network-policy/observability/incident/install-lifecycle tests,
+  `make security-review-contract-test` (readiness contract verified), license
+  policy, `check-consistency.sh`, custom-query retirement, `git diff --check`.
+- Open (outside the writable set, excluded from the new rules with a pointer to
+  the report): `docs/node-operators/installation/docker-setup.md` (`/root`
+  mount), `docs/node-operators/configuration/genesis-params.md` (`pnyx`
+  treasury example), `docs/V0.4.0_OPTIONAL_INDEXER_STACK.md` (Compose v1);
+  `RELEASE_NOTES_v0.3.0.md` treated as historical. No push, PR, Wiki push or
+  rollout credit.
