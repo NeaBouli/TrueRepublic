@@ -53,6 +53,57 @@ type contractQuarantineInputs struct {
 	packaging map[string]string // CI/image/release file -> content
 	guides    map[string]string // maintained guide -> content
 	ignore    string            // .dockerignore
+	verifier  string            // scripts/verify-contract-quarantine-wasm.sh
+}
+
+// The rust-ci workflow installs the wasm32 target only to prove the quarantine:
+// this exact toolchain line is the one wasm32 reference allowed in CI, and only
+// while the verifier step and trigger are present (GH308D1).
+const (
+	contractQuarantineWorkflowPath   = ".github/workflows/rust-ci.yml"
+	contractQuarantineVerifierPath   = "scripts/verify-contract-quarantine-wasm.sh"
+	contractQuarantineWasmTargetLine = "          targets: wasm32-unknown-unknown\n"
+	contractQuarantineVerifierStep   = "        run: ../scripts/verify-contract-quarantine-wasm.sh\n"
+	contractQuarantineVerifierPathRE = "      - 'scripts/verify-contract-quarantine-wasm.sh'\n"
+)
+
+var contractQuarantinePackageNames = []string{"truerepublic-contracts", "governance-dao", "zkp-aggregator", "dex-bot", "token-vesting"}
+
+// contractQuarantineVerifierViolations checks that the wasm32 verifier covers
+// exactly the five quarantined packages, requires the marker and fails on success.
+func contractQuarantineVerifierViolations(script string) []string {
+	var out []string
+	add := func(reason string) { out = append(out, contractQuarantineVerifierPath+": "+reason) }
+	start := strings.Index(script, "PACKAGES=(\n")
+	end := -1
+	if start >= 0 {
+		end = strings.Index(script[start:], "\n)\n")
+	}
+	if start < 0 || end < 0 {
+		add("missing PACKAGES array")
+	} else {
+		listed := strings.Fields(script[start+len("PACKAGES=(\n") : start+end])
+		if strings.Join(listed, ",") != strings.Join(contractQuarantinePackageNames, ",") {
+			add("must cover exactly " + strings.Join(contractQuarantinePackageNames, ", ") + "; got " + strings.Join(listed, ", "))
+		}
+	}
+	for _, required := range []string{
+		`MARKER="QUARANTINED (TrueRepublic #308)"`,
+		`TARGET="wasm32-unknown-unknown"`,
+		`cargo check --locked --package "$package"`,
+		`--target "$TARGET"`,
+		`echo "FAIL $package compiled for $TARGET`,
+		`grep -Fq "$MARKER" "$log"`,
+		`trap cleanup EXIT`,
+	} {
+		if !strings.Contains(script, required) {
+			add("must contain " + required)
+		}
+	}
+	if strings.Count(script, "failures=$((failures + 1))") < 2 {
+		add("both a successful build and a markerless failure must count as failures")
+	}
+	return out
 }
 
 func TestContractQuarantineRepositoryContract(t *testing.T) {
@@ -93,6 +144,28 @@ func TestContractQuarantineRepositoryContract(t *testing.T) {
 		},
 		"wasm build recipe in guide": func(in *contractQuarantineInputs) {
 			in.guides["INSTALLATION.md"] += "\n\n```bash\ncd contracts\ncargo build --release --target wasm32-unknown-unknown\n```\n"
+		},
+		"verifier target removed": func(in *contractQuarantineInputs) {
+			in.packaging[contractQuarantineWorkflowPath] = strings.Replace(in.packaging[contractQuarantineWorkflowPath], contractQuarantineWasmTargetLine, "", 1)
+		},
+		"verifier step removed": func(in *contractQuarantineInputs) {
+			in.packaging[contractQuarantineWorkflowPath] = strings.Replace(in.packaging[contractQuarantineWorkflowPath], contractQuarantineVerifierStep, "", 1)
+		},
+		"verifier trigger removed": func(in *contractQuarantineInputs) {
+			in.packaging[contractQuarantineWorkflowPath] = strings.Replace(in.packaging[contractQuarantineWorkflowPath], contractQuarantineVerifierPathRE, "", 1)
+		},
+		"extra wasm build step in CI": func(in *contractQuarantineInputs) {
+			in.packaging[contractQuarantineWorkflowPath] += "\n      - run: cargo build --release --target wasm32-unknown-unknown\n"
+		},
+		"verifier package omitted": func(in *contractQuarantineInputs) {
+			in.verifier = strings.Replace(in.verifier, "  token-vesting\n", "", 1)
+		},
+		"verifier accepts success": func(in *contractQuarantineInputs) {
+			in.verifier = strings.Replace(in.verifier, `echo "FAIL $package compiled for $TARGET; the quarantine guard is not effective" >&2
+    failures=$((failures + 1))`, `echo "OK   $package compiled for $TARGET"`, 1)
+		},
+		"verifier marker weakened": func(in *contractQuarantineInputs) {
+			in.verifier = strings.Replace(in.verifier, `MARKER="QUARANTINED (TrueRepublic #308)"`, `MARKER="QUARANTINED"`, 1)
 		},
 		"contracts in image context": func(in *contractQuarantineInputs) {
 			in.ignore = strings.ReplaceAll(in.ignore, "contracts", "")
@@ -155,6 +228,7 @@ func loadContractQuarantineInputs(t *testing.T) contractQuarantineInputs {
 		packaging: map[string]string{},
 		guides:    map[string]string{},
 		ignore:    read(".dockerignore"),
+		verifier:  read(contractQuarantineVerifierPath),
 	}
 	for _, crate := range quarantinedContractCrates {
 		in.cargo[crate] = read(filepath.Join(crate, "Cargo.toml"))
@@ -218,8 +292,19 @@ func contractQuarantineViolations(in contractQuarantineInputs) []string {
 			out = append(out, crate+": a crate-level cfg can compile the wasm32 guard out")
 		}
 	}
+	workflow := in.packaging[contractQuarantineWorkflowPath]
+	if !strings.Contains(workflow, contractQuarantineWasmTargetLine) ||
+		!strings.Contains(workflow, contractQuarantineVerifierStep) ||
+		strings.Count(workflow, contractQuarantineVerifierPathRE) != 2 {
+		out = append(out, contractQuarantineWorkflowPath+": must install wasm32-unknown-unknown, run the quarantine verifier and trigger on its changes")
+	}
+	out = append(out, contractQuarantineVerifierViolations(in.verifier)...)
 	for _, path := range sortedContractQuarantineKeys(in.packaging) {
 		content := in.packaging[path]
+		if path == contractQuarantineWorkflowPath {
+			// The verifier's toolchain target is the only allowed wasm32 use.
+			content = strings.Replace(content, contractQuarantineWasmTargetLine, "", 1)
+		}
 		if match := contractQuarantineArtifactRE.FindString(content); match != "" {
 			out = append(out, path+": packages a quarantined contract artifact ("+match+")")
 		}
@@ -258,6 +343,7 @@ func cloneContractQuarantineInputs(in contractQuarantineInputs) contractQuaranti
 	}
 	return contractQuarantineInputs{
 		cargo: clone(in.cargo), lib: clone(in.lib), packaging: clone(in.packaging), guides: clone(in.guides), ignore: in.ignore,
+		verifier: in.verifier,
 	}
 }
 

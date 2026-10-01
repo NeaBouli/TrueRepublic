@@ -8,10 +8,12 @@ on:
     paths:
       - 'contracts/**'
       - '.github/workflows/rust-ci.yml'
+      - 'scripts/verify-contract-quarantine-wasm.sh'
   pull_request:
     paths:
       - 'contracts/**'
       - '.github/workflows/rust-ci.yml'
+      - 'scripts/verify-contract-quarantine-wasm.sh'
 
 permissions:
   contents: read
@@ -32,6 +34,7 @@ jobs:
         with:
           toolchain: '1.95.0'
           components: rustfmt, clippy
+          targets: wasm32-unknown-unknown
 
       - name: Format check
         run: cargo fmt --check
@@ -44,3 +47,6 @@ jobs:
 
       - name: Test
         run: cargo test --locked --workspace
+
+      - name: Verify wasm32 quarantine (issue #308)
+        run: ../scripts/verify-contract-quarantine-wasm.sh
