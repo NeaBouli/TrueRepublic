@@ -204,6 +204,9 @@ for (const viewport of viewports) {
     const boxBefore = await control.boundingBox();
 
     // Tab order: every tabbable element is visited in DOM order and the disabled control never is.
+    // The traversal starts from an explicit focus anchor on the first tabbable element: browsers
+    // differ in where sequential navigation starts after the clicked "Create Anonymous Identity"
+    // button is removed (Firefox keeps that position), so a blur() start is not browser-neutral.
     const tabbableCount = await page.evaluate((label) => {
       const selector = 'a[href], button, input, select, textarea, [tabindex]';
       const tabbable = [...document.querySelectorAll<HTMLElement>(selector)].filter(
@@ -216,20 +219,26 @@ for (const viewport of viewports) {
       if (tabbable.some((element) => element.textContent?.trim() === label)) throw new Error('disabled control is tabbable');
       if (tabbable.some((element) => element.tabIndex > 0)) throw new Error('positive tabindex breaks DOM order');
       (window as unknown as { gh309Tabbable: HTMLElement[] }).gh309Tabbable = tabbable;
-      (document.activeElement as HTMLElement | null)?.blur();
+      tabbable[0]?.focus();
       return tabbable.length;
     }, DISABLED_LABEL);
-    const visited: number[] = [];
-    for (let step = 0; step < tabbableCount; step += 1) {
-      await page.keyboard.press('Tab');
-      visited.push(
-        await page.evaluate(() =>
-          (window as unknown as { gh309Tabbable: Element[] }).gh309Tabbable.indexOf(document.activeElement as Element)
-        )
+    const focusedIndex = () =>
+      page.evaluate(() =>
+        (window as unknown as { gh309Tabbable: Element[] }).gh309Tabbable.indexOf(document.activeElement as Element)
       );
-    }
     expect(tabbableCount).toBeGreaterThan(0);
-    expect(visited).toEqual([...Array(tabbableCount).keys()]);
+    const forward: number[] = [await focusedIndex()];
+    for (let step = 1; step < tabbableCount; step += 1) {
+      await page.keyboard.press('Tab');
+      forward.push(await focusedIndex());
+    }
+    expect(forward).toEqual([...Array(tabbableCount).keys()]);
+    const backward: number[] = [];
+    for (let step = 1; step < tabbableCount; step += 1) {
+      await page.keyboard.press('Shift+Tab');
+      backward.push(await focusedIndex());
+    }
+    expect(backward).toEqual([...Array(tabbableCount - 1).keys()].reverse());
 
     // No activation by focus, pointer, Enter or Space.
     await control.focus();
