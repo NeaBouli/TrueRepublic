@@ -5934,3 +5934,24 @@
 - Commit b520d76 on agent/claude/GH335-modulequery-fetch: moduleQuery.test.ts #335 test asserts `expect(receivers).toEqual([globalThis])` instead of `toHaveLength(1)`. Receiver-sensitive fake, finally-restoration and all source unchanged.
 - Mutation proof (temporary, reverted; source diff empty afterwards): unbound call (`const unbound = globalThis.fetch; return unbound(input, init)`) fails with "expected [ undefined ] to deeply equal [ globalThis ]"; parent implementation (`fetchImpl: Fetch = globalThis.fetch`) fails with TypeError "Illegal invocation" at moduleQuery.ts:410. With the fix: moduleQuery.test.ts 8/8 pass.
 - Gates: npm run lint rc 0; tsc -b --noEmit rc 0; git diff --check clean. Full suite/build not repeated per brief (GH335A evidence stands). No push.
+
+## 2026-10-01 EEST - GH-309 preview identity registration fail-closed (GH309B1, Claude Code)
+
+- Branch `agent/claude/GH309-client-containment` from exact main `1283a445`; commit
+  `aa98b96`. `MembershipService.registerIdentity` returns the stable
+  `PREVIEW_IDENTITY_REGISTRATION_DISABLED` error before any wallet account, signing
+  client or `deliverMessages` call. `OnboardingFlow` no longer has a registration
+  handler; its submit step shows "Identity Registration Unavailable", a disabled
+  44px control and wording that sends nothing and promises no anonymity. The
+  `MsgRegisterIdentity` codec/registry and `ZKPService.isSubmittable === false` are
+  unchanged; no second activation flag was added.
+- Tests: new `membership.test.ts` (service never touches wallet/signing/delivery) and
+  `OnboardingFlow.test.tsx` (disabled, non-focusable control; no signing or service
+  call). Restoring the original service path fails 1 test; restoring the original
+  component fails 2 tests. `npm ci`, focused tests 4/4, `npm run lint`, typecheck and
+  `npm test -- --run` (313 passed, 4 skipped) pass; `npm run audit:high` fails only on
+  the known global brace-expansion advisory fixed by PR #332.
+- Pending (data volume ~3.0 GiB free, below the 5 GiB build threshold): `npm run
+  build`, browser/visual gate with screenshots at 1440x1000, 1180x820, 820x1180 and
+  390x844. Custody, persistence, cryptography and chain-side risks remain open;
+  issue #309 is not closed. No push, PR or deployment.
