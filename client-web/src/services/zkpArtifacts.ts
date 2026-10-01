@@ -443,9 +443,16 @@ async function readViaStream(
   body: { getReader(): ZKPArtifactReader },
   signal: AbortSignal | undefined
 ): Promise<Uint8Array<ArrayBuffer>> {
+  // Obtain the reader before allocating: a failing getReader() leaves no
+  // artifact-sized buffer outside the zeroing boundary and is typed.
+  let reader: ZKPArtifactReader;
+  try {
+    reader = body.getReader();
+  } catch (error: unknown) {
+    throw toArtifactError(label, 'opening the response stream', error, signal);
+  }
   const buffer = new Uint8Array(descriptor.size_bytes);
   let offset = 0;
-  const reader = body.getReader();
   try {
     for (;;) {
       const chunk = await reader.read();

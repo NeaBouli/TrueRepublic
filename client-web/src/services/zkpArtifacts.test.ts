@@ -631,6 +631,27 @@ describe('GH-300 typed artifact loader failures', () => {
     expect(error.message).not.toContain('TRUEREPUBLIC');
   });
 
+  it('types a throwing getReader() before any artifact buffer is allocated (GH300B1a1)', async () => {
+    const readerFailure = new TypeError('ReadableStream is locked');
+    const fetchImpl: ZKPArtifactFetch = (url, init) =>
+      makeFetch(standardRoutes(), [])(url, init).then((response) => ({
+        ...response,
+        body: {
+          getReader: () => {
+            throw readerFailure;
+          },
+        },
+      }));
+    const error = await failure(load(fetchImpl));
+    // The per-artifact label proves the failure is typed at the reader step,
+    // not merely re-wrapped by the outer loader catch ('artifacts: loading failed').
+    expect(error).toMatchObject({
+      code: 'network',
+      message: 'constraint_system: opening the response stream failed',
+      cause: readerFailure,
+    });
+  });
+
   it('maps a failing digester to environment and destroyed artifacts to destroyed', async () => {
     const digester: ZKPDigester = { digest: () => Promise.reject(new Error('crypto unavailable')) };
     expect((await failure(load(makeFetch(standardRoutes(), []), { digester }))).code).toBe('environment');
