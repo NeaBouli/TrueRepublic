@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { fireEvent, render, screen } from '@testing-library/react';
+import { fireEvent, render, screen, within } from '@testing-library/react';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { useWalletStore } from '@/stores/walletStore';
 import { useIdentityStore } from '@/stores/identityStore';
@@ -10,6 +10,16 @@ import { OnboardingFlow } from './OnboardingFlow';
 
 const DOMAIN = 'GH309';
 const ADDRESS = 'truerepublic1previewmember';
+const NEGATIVE_SUBMIT_STATE =
+  'No transaction is sent, nothing is registered on-chain and anonymous voting is not available in this client.';
+// Positive promises the original registration card made; none may survive in the submit card.
+const POSITIVE_ANONYMITY_PROMISES = [
+  /for\s+anonymous\s+voting/i,
+  /vote\s+anonymously/i,
+  /submit\s+your\s+identity\s+commitment/i,
+  /register\s+(zkp\s+)?identity\s+commitment/i,
+  /register\s+zkp\s+identity/i,
+];
 
 // Synthetic preview identity only; never a real secret.
 const SYNTHETIC_IDENTITY = {
@@ -61,14 +71,18 @@ describe('OnboardingFlow identity registration step (issue #309)', () => {
 
   it('presents registration as unavailable without promising anonymity', () => {
     renderSubmitStep();
-    expect(screen.getByRole('heading', { name: 'Identity Registration Unavailable' })).toBeInTheDocument();
-    expect(screen.getByTestId('identity-registration-disabled-notice')).toHaveTextContent(
-      PREVIEW_IDENTITY_REGISTRATION_DISABLED
+    const heading = screen.getByRole('heading', { name: 'Identity Registration Unavailable' });
+    expect(screen.getByTestId('identity-registration-disabled-notice').textContent?.replace(/\s+/g, ' ').trim()).toBe(
+      `${PREVIEW_IDENTITY_REGISTRATION_DISABLED} ${NEGATIVE_SUBMIT_STATE}`
     );
-    expect(screen.getByTestId('identity-registration-disabled-notice')).toHaveTextContent(
-      'No transaction is sent'
-    );
-    expect(screen.queryByText(/anonymous voting\s*$/i)).not.toBeInTheDocument();
+
+    const card = heading.closest('.card');
+    expect(card).not.toBeNull();
+    const cardText = (card?.textContent ?? '').replace(/\s+/g, ' ');
+    for (const promise of POSITIVE_ANONYMITY_PROMISES) {
+      expect(cardText).not.toMatch(promise);
+    }
+    expect(within(card as HTMLElement).queryByText(/anonymous voting\s*$/i)).not.toBeInTheDocument();
   });
 
   it('renders a disabled control that can never reach signing or the service', () => {
