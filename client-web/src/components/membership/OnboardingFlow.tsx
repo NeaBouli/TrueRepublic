@@ -1,10 +1,11 @@
 import { useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useWalletStore } from '@/stores/walletStore';
-import { useIdentityStore } from '@/stores/identityStore';
+import { IDENTITY_CREATION_DISABLED, useIdentityStore } from '@/stores/identityStore';
 import { useMembershipStore } from '@/stores/membershipStore';
 import { PREVIEW_IDENTITY_REGISTRATION_DISABLED } from '@/services/membership';
 import { Card } from '@/components/common/Card';
+
 import { Button } from '@/components/common/Button';
 import {
   ArrowLeftIcon,
@@ -18,7 +19,7 @@ export function OnboardingFlow() {
   const navigate = useNavigate();
   const { domainId } = useParams<{ domainId: string }>();
   const { currentWallet } = useWalletStore();
-  const { identity, hasIdentity, createIdentity } = useIdentityStore();
+  const { identity, hasIdentity } = useIdentityStore();
   const { memberships, loadMembership } = useMembershipStore();
 
   const membership = domainId ? memberships[domainId] : null;
@@ -45,10 +46,6 @@ export function OnboardingFlow() {
 
     return () => clearInterval(interval);
   }, [step, domainId, currentWallet, identity?.commitment, loadMembership]);
-
-  const handleCreateIdentity = () => {
-    createIdentity();
-  };
 
   if (!domainId) {
     return (
@@ -88,27 +85,34 @@ export function OnboardingFlow() {
             <div className="text-center mb-6">
               <ShieldCheckIcon className="h-16 w-16 text-primary-600 mx-auto mb-4" />
               <h2 className="text-2xl font-bold mb-2">
-                Anonymous Identity Required
+                Identity Creation Unavailable
               </h2>
               <p className="text-gray-600">
-                Create an anonymous identity to join this domain
+                This wallet has no preview identity for this domain
               </p>
             </div>
 
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
-              <h3 className="font-semibold text-blue-900 mb-2">
-                Why do you need this?
-              </h3>
-              <p className="text-sm text-blue-800">
-                Your identity commitment will be stored in the domain's Merkle
-                tree, allowing you to vote anonymously while proving you're a
-                member.
+            <div
+              className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6"
+              data-testid="identity-creation-disabled-notice"
+            >
+              <p className="text-sm text-yellow-900 break-words">
+                {IDENTITY_CREATION_DISABLED} Joining with an anonymous identity
+                is not available in this client.
               </p>
             </div>
 
-            <Button onClick={handleCreateIdentity} className="w-full">
-              Create Anonymous Identity
+            <Button
+              type="button"
+              disabled
+              aria-describedby="onboarding-identity-creation-disabled-reason"
+              className="w-full min-h-[44px] disabled:bg-gray-200 disabled:text-gray-600"
+            >
+              Identity Creation Disabled in Preview
             </Button>
+            <p id="onboarding-identity-creation-disabled-reason" className="sr-only">
+              {IDENTITY_CREATION_DISABLED}
+            </p>
           </Card>
         )}
 
