@@ -32,7 +32,10 @@ var (
 	// Affirmative reporting promises that SECURITY.md excludes. Negated policy
 	// sentences ("does not promise a bug-bounty payment") stay allowed.
 	operatorGuidanceReportingPromiseRE = regexp.MustCompile(
-		`(?i)bug[- ]bounty (program|submission)|\brewards?\s*[:=]?\s*\d|response time:\s*\d|\bsecurity@[a-z0-9.-]+`)
+		`(?i)bug[- ]bounty (program|submission)|response time:\s*\d|\bsecurity@[a-z0-9.-]+`)
+	// Reward amounts are protocol economics in most guides (VoteToEarn, staking
+	// rewards); only in security guidance do they promise a bounty payment.
+	operatorGuidanceSecurityRewardRE = regexp.MustCompile(`(?i)\brewards?\s*[:=]?\s*\d`)
 	operatorGuidanceTemplateRewardRE = regexp.MustCompile(`(?i)bounty|reward`)
 )
 
@@ -64,6 +67,9 @@ func TestOperatorGuidanceTrustAndReportingContract(t *testing.T) {
 		"bounty promise": func(in *operatorGuidanceInputs) {
 			in.maintained["wiki/security/Best-Practices.md"] += "\nBug bounty program with Rewards: 100 PNYX\n"
 		},
+		"reward amount in security guidance": func(in *operatorGuidanceInputs) {
+			in.maintained["wiki/security/Audit-Reports.md"] += "\nValid reports earn rewards: 500 PNYX\n"
+		},
 		"public bounty template": func(in *operatorGuidanceInputs) {
 			in.templates[".github/ISSUE_TEMPLATE/bug_bounty.md"] = "# Bug Bounty Submission\nBTC or PNYX address (for Reward)\n"
 		},
@@ -83,6 +89,9 @@ func TestOperatorGuidanceTrustAndReportingContract(t *testing.T) {
 		},
 		"ordinary bug report template": func(in *operatorGuidanceInputs) {
 			in.templates[".github/ISSUE_TEMPLATE/bug_report.md"] += "\n## Steps to reproduce\n1. Run the node\n"
+		},
+		"protocol reward economics": func(in *operatorGuidanceInputs) {
+			in.maintained["docs/user-manual/stones-voting-guide.md"] += "\nVoteToEarn reward = 5% of the domain treasury\n"
 		},
 		"operator-supplied endpoint placeholder": func(in *operatorGuidanceInputs) {
 			in.maintained["wiki/operations/Node-Setup.md"] += "\nseeds = \"<node-id>@<qualified-seed-host>:26656\"\n"
@@ -152,6 +161,13 @@ func operatorGuidanceMaintained(path string) bool {
 	return path != "BRIDGE.md"
 }
 
+// operatorGuidanceSecurityScope reports whether a path is security guidance,
+// where a reward amount can only mean a bounty promise.
+func operatorGuidanceSecurityScope(path string) bool {
+	return strings.HasPrefix(path, "wiki/security/") || strings.HasPrefix(path, "docs/security/") ||
+		path == "SECURITY.md" || path == ".github/SECURITY.md"
+}
+
 func loadOperatorGuidanceInputs(t *testing.T) operatorGuidanceInputs {
 	t.Helper()
 	in := operatorGuidanceInputs{maintained: map[string]string{}, templates: map[string]string{}}
@@ -218,6 +234,11 @@ func operatorGuidanceViolations(in operatorGuidanceInputs) []string {
 		}
 		if match := operatorGuidanceReportingPromiseRE.FindString(content); match != "" {
 			out = append(out, path+": reporting promise or contact outside SECURITY.md ("+match+")")
+		}
+		if operatorGuidanceSecurityScope(path) {
+			if match := operatorGuidanceSecurityRewardRE.FindString(content); match != "" {
+				out = append(out, path+": security guidance promises a reward ("+match+")")
+			}
 		}
 	}
 	for _, path := range sortedOperatorGuidanceKeys(in.templates) {

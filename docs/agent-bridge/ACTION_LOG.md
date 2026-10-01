@@ -5911,3 +5911,27 @@
   every Git/GitHub action. No implementation overlap is allowed.
 - No state repair, migration, deployment, release, production action, real key
   or real fund is authorized. Rollout remains 36/59 and production false.
+
+## 2026-10-01 EEST - GH-313 trust and reporting boundary (GH313B, Claude Code)
+
+- Branch `agent/claude/GH313-operator-docs` from exact main `1283a445`. All 13
+  maintained `truerepublic.network` seed, snapshot, state-sync, API, status and
+  security-contact references (8 files) are removed; examples require
+  operator-supplied, independently qualified endpoints and link the topology and
+  multi-validator recovery guides. No replacement endpoint was invented; external
+  DNS state remains unverified.
+- `wiki/security/Security-Architecture.md` now states the exact `SECURITY.md`
+  private-reporting boundary (no email, response SLA or bounty). The public
+  `.github/ISSUE_TEMPLATE/bug_bounty.md` (fictional API repro, reward address) is
+  deleted as authorized; `.github/ISSUE_TEMPLATE/config.yml` keeps community issues
+  open and routes security reports to the security policy. Six touched high-risk
+  guides carry a non-production caveat.
+- `operator_guidance_repository_test.go` enforces the contract over maintained
+  docs, wiki, `.github`, configs, nginx and root guides (historical audits,
+  archives and append-only logs excluded) with 10 negative and 4 positive
+  fixtures; a first run caught that a generic reward-amount rule flagged protocol
+  economics, so reward amounts are now checked only in security guidance.
+- Gates: `go vet`, focused operator-guidance tests, security/license/repository/
+  network-policy/observability/incident/install-lifecycle tests, `securityreview`,
+  license policy, `check-consistency.sh`, custom-query retirement, `git diff
+  --check`. No GitHub-Wiki push, DNS, deployment, push, PR or rollout credit.
