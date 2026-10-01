@@ -32,7 +32,7 @@
     "components": 45,
     "routes": 23,
     "stores": 9,
-    "services": 22,
+    "services": 23,
     "build_size_gzip": "355.17 kB total JavaScript",
     "initial_entry_gzip": "71.16 kB",
     "max_lazy_route_gzip": "4.94 kB",
