@@ -65,7 +65,7 @@ var (
 	operatorGuidanceCmdSubstRE       = regexp.MustCompile(`\$\([^)]*\)`)
 	operatorGuidancePnyxAmountRE     = regexp.MustCompile(`\b\d[\d,_]*pnyx\b`)
 	operatorGuidanceFictionalEnvRE   = regexp.MustCompile(`(?m)^\s*(EXTERNAL_IP|RPC_PORT|REST_PORT|GRPC_PORT|DB_BACKEND|PRUNING[A-Z_]*|PROMETHEUS_PORT|SNAPSHOT_URL|STATE_SYNC_[A-Z_]+|LOG_LEVEL|LOG_FORMAT)=`)
-	operatorGuidanceComposeV1RE      = regexp.MustCompile(`\bdocker-compose\s+(up|down|logs|ps|pull|restart|stop|start|exec|build|--version)\b`)
+	operatorGuidanceComposeV1RE      = regexp.MustCompile(`\bdocker-compose\s+(?:--profile(?:=|\s+)\S+\s+)?(up|down|logs|ps|pull|restart|stop|start|exec|build|--version)\b`)
 	operatorGuidancePublishedImageRE = regexp.MustCompile(`(?i)ghcr\.io/neabouli`)
 	operatorGuidanceRootHomeRE       = regexp.MustCompile(`/root/\.truerepublic`)
 	operatorGuidanceDefaultGrafanaRE = regexp.MustCompile("(?i)admin\\s*/\\s*admin|password:\\s*`admin`")
@@ -126,6 +126,9 @@ func TestOperatorGuidanceTrustAndReportingContract(t *testing.T) {
 		},
 		"fictional env variable": func(in *operatorGuidanceInputs) {
 			in.maintained["wiki/operations/Node-Setup.md"] += "\n```bash\nEXTERNAL_IP=1.2.3.4\n```\n"
+		},
+		"compose v1 profiled command": func(in *operatorGuidanceInputs) {
+			in.maintained["docs/V0.4.0_OPTIONAL_INDEXER_STACK.md"] += "\ndocker-compose --profile indexer up -d\ndocker-compose --profile=indexer up -d\n"
 		},
 		"compose v1 command": func(in *operatorGuidanceInputs) {
 			in.maintained["wiki/operations/Troubleshooting.md"] += "\ndocker-compose logs -f truerepublic-node\n"
