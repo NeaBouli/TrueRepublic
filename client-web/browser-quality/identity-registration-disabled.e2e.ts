@@ -8,22 +8,25 @@ import { expect, test } from './fixtures';
 // former identity-registration step, which must be unavailable, keyboard-safe,
 // at least 44x44 CSS px and never reach the registration service. The only
 // chain call answered with data is the exact typed Domain abci_query. Creating
-// the wallet bootstraps a balance refresh, so exactly the Comet `status` call
-// and the `/cosmos.bank.v1beta1.Query/AllBalances` abci_query are expected and
-// answered as controlled JSON-RPC errors without data. The policy is evaluated
-// in order: broadcast_tx* always fails, then status, bank AllBalances, the
-// exact Domain query; any other method, path or payload fails the test.
+// the wallet bootstraps a balance refresh whose canonical Comet `status` call
+// (empty params object, nothing else) is answered with a controlled JSON-RPC
+// error without data; the refresh then stops, so no bank query is allowed.
+// The policy is evaluated in order: broadcast_tx* always fails, then canonical
+// status, then the exact Domain query; any other method, path, shape or
+// payload fails the test, and the observed RPC sequence must match exactly.
 
 const DOMAIN = 'GH309';
 const RPC_ORIGIN = 'http://localhost:26657';
 const DOMAIN_QUERY_PATH = '/truedemocracy.Query/Domain';
-const BANK_ALL_BALANCES_PATH = '/cosmos.bank.v1beta1.Query/AllBalances';
 // Playwright runs from client-web/; evidence stays in the ignored local cache, never in Git.
-const EVIDENCE_DIR = resolve(process.cwd(), 'node_modules/.cache/gh309b1c1-final-evidence');
+const EVIDENCE_DIR = resolve(process.cwd(), 'node_modules/.cache/gh309b1c1-a-final-evidence');
 const DISABLED_LABEL = 'Registration Disabled in Preview';
 const MIN_TEXT_CONTRAST = 4.5;
 
-type RpcCategory = 'status' | 'abci_query AllBalances' | 'abci_query Domain';
+type RpcCategory = 'status' | 'abci_query Domain';
+// Observed and required sequence: one bootstrap status, then the Domain query on
+// entering /onboard and again after the identity is created.
+const EXPECTED_RPC_SEQUENCE: RpcCategory[] = ['status', 'abci_query Domain', 'abci_query Domain'];
 
 interface RpcLedger {
   allowed: RpcCategory[];
@@ -72,32 +75,51 @@ function expectedDomainQueryBody(): string {
   });
 }
 
+function isPlainObject(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value !== null && !Array.isArray(value);
+}
+
+// Canonical JSON-RPC 2.0 envelope: exactly jsonrpc, id, method and params.
+function hasCanonicalEnvelope(parsed: Record<string, unknown>): boolean {
+  const keys = Object.keys(parsed).sort();
+  return (
+    keys.join(',') === 'id,jsonrpc,method,params' &&
+    parsed.jsonrpc === '2.0' &&
+    Number.isSafeInteger(parsed.id) &&
+    typeof parsed.method === 'string'
+  );
+}
+
 // Ordered RPC policy. Returns the allowed category, or records a broadcast or
 // violation and returns null.
-function classifyRpc(request: Request, body: string, ledger: RpcLedger): { id: unknown; category: RpcCategory } | null {
-  const url = new URL(request.url());
-  let parsed: { jsonrpc?: unknown; id?: unknown; method?: unknown; params?: Record<string, unknown> } | null = null;
+function classifyRpc(
+  httpMethod: string,
+  rawUrl: string,
+  body: string,
+  ledger: RpcLedger
+): { id: unknown; category: RpcCategory } | null {
+  const url = new URL(rawUrl);
+  let parsed: unknown = null;
   try {
     parsed = JSON.parse(body);
   } catch {
     parsed = null;
   }
-  const method = typeof parsed?.method === 'string' ? parsed.method : '';
-  if (method.startsWith('broadcast_tx') || url.pathname.includes('broadcast_tx')) {
-    ledger.broadcasts.push(`${request.method()} ${url.href} ${method}`);
+  const method = isPlainObject(parsed) && typeof parsed.method === 'string' ? parsed.method : '';
+  // Also catches batched or otherwise wrapped broadcasts.
+  if (method.startsWith('broadcast_tx') || url.pathname.includes('broadcast_tx') || body.includes('broadcast_tx')) {
+    ledger.broadcasts.push(`${httpMethod} ${url.href} ${method}`);
     return null;
   }
   const reject = () => {
-    ledger.violations.push(`${request.method()} ${url.href} ${body.slice(0, 200)}`);
+    ledger.violations.push(`${httpMethod} ${url.href} ${body.slice(0, 200)}`);
     return null;
   };
-  if (request.method() !== 'POST' || url.pathname !== '/' || !parsed || parsed.jsonrpc !== '2.0') return reject();
-  const params = parsed.params ?? {};
-  if (method === 'status' && Object.keys(params).length === 0) {
-    return { id: parsed.id, category: 'status' };
+  if (httpMethod !== 'POST' || url.pathname !== '/' || !isPlainObject(parsed) || !hasCanonicalEnvelope(parsed)) {
+    return reject();
   }
-  if (method === 'abci_query' && params.path === BANK_ALL_BALANCES_PATH) {
-    return { id: parsed.id, category: 'abci_query AllBalances' };
+  if (method === 'status' && isPlainObject(parsed.params) && Object.keys(parsed.params).length === 0) {
+    return { id: parsed.id, category: 'status' };
   }
   if (body === expectedDomainQueryBody()) {
     return { id: parsed.id, category: 'abci_query Domain' };
@@ -109,7 +131,7 @@ async function routeRpc(page: Page, member: () => string, ledger: RpcLedger): Pr
   // Registered after the network guard, so it takes precedence for the RPC origin.
   await page.route(`${RPC_ORIGIN}/**`, async (route: Route, request: Request) => {
     const body = request.postData() ?? '';
-    const allowed = classifyRpc(request, body, ledger);
+    const allowed = classifyRpc(request.method(), request.url(), body, ledger);
     if (!allowed) {
       await route.fulfill({ status: 500, body: 'forbidden RPC request in GH-309 visual contract' });
       return;
@@ -291,17 +313,77 @@ for (const viewport of viewports) {
     mkdirSync(EVIDENCE_DIR, { recursive: true });
     await page.screenshot({ path: resolve(EVIDENCE_DIR, `${viewport.name}.png`), fullPage: true });
     const rpc = {
+      sequence: ledger.allowed,
       status: ledger.allowed.filter((category) => category === 'status').length,
-      allBalances: ledger.allowed.filter((category) => category === 'abci_query AllBalances').length,
       domain: ledger.allowed.filter((category) => category === 'abci_query Domain').length,
       broadcasts: ledger.broadcasts.length,
       violations: ledger.violations.length,
     };
-    console.log(`GH309B1C1 ${viewport.name} layout=${JSON.stringify(layout)} rpc=${JSON.stringify(rpc)}`);
+    console.log(`GH309B1C1a ${viewport.name} layout=${JSON.stringify(layout)} rpc=${JSON.stringify(rpc)}`);
 
     expect(ledger.broadcasts).toEqual([]);
     expect(ledger.violations).toEqual([]);
+    expect(ledger.allowed).toEqual(EXPECTED_RPC_SEQUENCE);
     // GH-335: the typed Domain query leaves the page and its decoded state drives the target step.
     expect(rpc.domain).toBeGreaterThanOrEqual(1);
   });
 }
+
+// Pure policy contract (no page): every widened or non-canonical bootstrap
+// variant and every bank query must be rejected, broadcasts must be recorded.
+test.describe('GH-309 RPC policy', () => {
+  const rpcUrl = `${RPC_ORIGIN}/`;
+  const envelope = (method: string, params: unknown, extra: Record<string, unknown> = {}) =>
+    JSON.stringify({ jsonrpc: '2.0', id: 7, method, params, ...extra });
+  const classify = (body: string, httpMethod = 'POST', url = rpcUrl) => {
+    const ledger: RpcLedger = { allowed: [], broadcasts: [], violations: [] };
+    const result = classifyRpc(httpMethod, url, body, ledger);
+    return { category: result?.category ?? null, ledger };
+  };
+
+  test('allows only the canonical status and the exact Domain query', () => {
+    expect(classify(envelope('status', {})).category).toBe('status');
+    expect(classify(expectedDomainQueryBody()).category).toBe('abci_query Domain');
+  });
+
+  const rejected: Array<[string, string]> = [
+    ['status with null params', envelope('status', null)],
+    ['status with array params', envelope('status', [])],
+    ['status with extra params', envelope('status', { height: '1' })],
+    ['status without params', JSON.stringify({ jsonrpc: '2.0', id: 7, method: 'status' })],
+    ['status with extra top-level field', envelope('status', {}, { extra: true })],
+    ['status with string id', JSON.stringify({ jsonrpc: '2.0', id: '7', method: 'status', params: {} })],
+    ['status with wrong jsonrpc', JSON.stringify({ jsonrpc: '1.0', id: 7, method: 'status', params: {} })],
+    ['batched status', JSON.stringify([{ jsonrpc: '2.0', id: 7, method: 'status', params: {} }])],
+    ['bank AllBalances', envelope('abci_query', { path: '/cosmos.bank.v1beta1.Query/AllBalances', data: '', prove: false })],
+    ['bank Balance', envelope('abci_query', { path: '/cosmos.bank.v1beta1.Query/Balance', data: '', prove: false })],
+    ['Domain with other id', expectedDomainQueryBody().replace('"id":1', '"id":2')],
+    ['Domain with prove true', expectedDomainQueryBody().replace('"prove":false', '"prove":true')],
+    ['other method', envelope('abci_info', {})],
+  ];
+  for (const [name, body] of rejected) {
+    test(`rejects ${name}`, () => {
+      const { category, ledger } = classify(body);
+      expect(category).toBeNull();
+      expect(ledger.violations).toHaveLength(1);
+      expect(ledger.broadcasts).toEqual([]);
+    });
+  }
+
+  test('rejects canonical status over GET or another path', () => {
+    expect(classify(envelope('status', {}), 'GET').category).toBeNull();
+    expect(classify(envelope('status', {}), 'POST', `${RPC_ORIGIN}/status`).category).toBeNull();
+  });
+
+  for (const method of ['broadcast_tx_sync', 'broadcast_tx_async', 'broadcast_tx_commit']) {
+    test(`records ${method} as a broadcast`, () => {
+      const { category, ledger } = classify(envelope(method, { tx: 'AA==' }));
+      expect(category).toBeNull();
+      expect(ledger.broadcasts).toHaveLength(1);
+    });
+  }
+  test('records a batched broadcast', () => {
+    const { ledger } = classify(JSON.stringify([{ jsonrpc: '2.0', id: 7, method: 'broadcast_tx_sync', params: {} }]));
+    expect(ledger.broadcasts).toHaveLength(1);
+  });
+});
