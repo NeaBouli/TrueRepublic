@@ -8,6 +8,7 @@ import {
   type IdentityVaultStorage,
   type IdentityVaultTransaction,
 } from './identityVault';
+import { previewMockIdentityHash } from './previewIdentityHash';
 
 /**
  * Crash-safe legacy identity migration core (issue #309, GH309B2C).
@@ -40,7 +41,7 @@ const SHA256_HEX = /^[0-9a-f]{64}$/;
 
 export type MigrationState = 'DETECTED' | 'PENDING' | 'WRITTEN' | 'VERIFIED' | 'QUARANTINED' | 'ERROR';
 
-export type QuarantineReason = 'oversized' | 'not-json' | 'schema' | 'non-canonical';
+export type QuarantineReason = 'oversized' | 'not-json' | 'schema' | 'non-canonical' | 'preview-hash-mismatch';
 export type MigrationErrorReason = 'vault-conflict' | 'legacy-changed' | 'verify-mismatch' | 'vault-corrupt';
 export type MigrationFailureCode =
   | 'session-changed'
@@ -97,16 +98,9 @@ type LegacyClassification =
   | { kind: 'valid'; raw: string; identity: Identity; identityBytes: string };
 
 const STATES: readonly MigrationState[] = ['DETECTED', 'PENDING', 'WRITTEN', 'VERIFIED', 'QUARANTINED', 'ERROR'];
-const REASONS: readonly string[] = [
-  'oversized',
-  'not-json',
-  'schema',
-  'non-canonical',
-  'vault-conflict',
-  'legacy-changed',
-  'verify-mismatch',
-  'vault-corrupt',
-];
+const QUARANTINE_REASONS: readonly string[] = ['oversized', 'not-json', 'schema', 'non-canonical', 'preview-hash-mismatch'];
+// ERROR reasons whose marker always names the migration target address.
+const ADDRESSED_ERROR_REASONS: readonly string[] = ['vault-conflict', 'verify-mismatch', 'vault-corrupt'];
 const MARKER_KEYS = ['address', 'legacyDigest', 'reason', 'state', 'updatedAt', 'v'];
 
 function isPlainObject(value: unknown): value is Record<string, unknown> {
@@ -150,6 +144,14 @@ export function classifyLegacyIdentity(raw: string | null): LegacyClassification
   if (raw !== `{"state":{"identity":${identityBytes}},"version":0}`) {
     return { kind: 'quarantined', raw, reason: 'non-canonical' };
   }
+  // Historical preview consistency only (FNV placeholder, never BN254-MiMC): a record whose
+  // commitment or nullifier was not produced from its own secret is not migrated.
+  if (
+    identity.commitment !== previewMockIdentityHash(identity.secret) ||
+    identity.nullifier !== previewMockIdentityHash(`${identity.secret}00`)
+  ) {
+    return { kind: 'quarantined', raw, reason: 'preview-hash-mismatch' };
+  }
   return { kind: 'valid', raw, identity, identityBytes };
 }
 
@@ -174,13 +176,32 @@ function parseMarker(raw: string | null): MigrationMarker | null {
     !STATES.includes(parsed.state as MigrationState) ||
     typeof parsed.legacyDigest !== 'string' ||
     !SHA256_HEX.test(parsed.legacyDigest) ||
-    !(parsed.address === null || (typeof parsed.address === 'string' && parsed.address.length <= 128)) ||
-    !(parsed.reason === null || REASONS.includes(parsed.reason as string)) ||
-    !Number.isSafeInteger(parsed.updatedAt)
+    !(parsed.address === null || isCanonicalAddress(parsed.address)) ||
+    !Number.isSafeInteger(parsed.updatedAt) ||
+    !isConsistentMarker(parsed.state as MigrationState, parsed.address as string | null, parsed.reason)
   ) {
     throw new IdentityMigrationError('corrupt-marker');
   }
   return parsed as unknown as MigrationMarker;
+}
+
+/** The only legal state/address/reason combinations a marker may carry. */
+function isConsistentMarker(state: MigrationState, address: string | null, reason: unknown): boolean {
+  switch (state) {
+    case 'DETECTED':
+      return address === null && reason === null;
+    case 'PENDING':
+    case 'WRITTEN':
+    case 'VERIFIED':
+      return address !== null && reason === null;
+    case 'QUARANTINED':
+      return address === null && typeof reason === 'string' && QUARANTINE_REASONS.includes(reason);
+    case 'ERROR':
+      if (reason === 'legacy-changed') return true; // keeps the superseded marker's address or null
+      return address !== null && typeof reason === 'string' && ADDRESSED_ERROR_REASONS.includes(reason);
+    default:
+      return false;
+  }
 }
 
 export class LegacyIdentityMigration {

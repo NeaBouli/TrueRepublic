@@ -12,18 +12,37 @@ import {
   type MigrationSession,
 } from './identityMigration';
 import { IDENTITY_VAULT_LOCK_NAME, IDENTITY_VAULT_STORAGE_KEY, IdentityVault, serializeIdentity } from './identityVault';
+import { previewMockIdentityHash } from './previewIdentityHash';
+import { ZKPService } from './zkp';
+import { bytesToHex, mimcBn254 } from './zkpEncoding';
+import { DEFAULT_CHAIN } from '@/config/chains';
 
 // Synthetic material only; never a real identity, wallet or password.
 const PASSWORD = 'synthetic-migration-password';
 const ADDRESS_A = toBech32('truerepublic', new Uint8Array(20).fill(3));
 const ADDRESS_B = toBech32('truerepublic', new Uint8Array(20).fill(4));
+// Frozen historical preview vector, captured from the pre-extraction
+// ZKPService.mockMiMCHash (main 1283a445): FNV-1a placeholder, not MiMC.
+const FROZEN_SECRET = 'a1'.repeat(32);
+const FROZEN_COMMITMENT = 'e10df405'.repeat(8);
+const FROZEN_NULLIFIER = 'ab84528d'.repeat(8);
+const FROZEN_EMPTY = '811c9dc5'.repeat(8);
 const IDENTITY: Identity = {
-  secret: 'a1'.repeat(32),
-  commitment: 'b2'.repeat(32),
-  nullifier: 'c3'.repeat(32),
+  secret: FROZEN_SECRET,
+  commitment: FROZEN_COMMITMENT,
+  nullifier: FROZEN_NULLIFIER,
   createdAt: 1_700_000_000_000,
 };
-const OTHER_IDENTITY: Identity = { ...IDENTITY, secret: 'd4'.repeat(32) };
+function previewIdentity(secret: string): Identity {
+  return {
+    secret,
+    commitment: previewMockIdentityHash(secret),
+    nullifier: previewMockIdentityHash(`${secret}00`),
+    createdAt: 1_700_000_000_000,
+  };
+}
+const OTHER_IDENTITY: Identity = previewIdentity('d4'.repeat(32));
+const legacyRawFor = (identity: Identity) => `{"state":{"identity":${serializeIdentity(identity)}},"version":0}`;
 const LEGACY_RAW = `{"state":{"identity":${serializeIdentity(IDENTITY)}},"version":0}`;
 
 class FifoLocks {
@@ -107,6 +126,17 @@ async function expectFailure(promise: Promise<unknown>, code: MigrationFailureCo
   expect((error as IdentityMigrationError).code).toBe(code);
 }
 
+describe('historical preview hash', () => {
+  it('matches the frozen pre-extraction vectors and backs ZKPService.generateIdentity', () => {
+    expect(previewMockIdentityHash(FROZEN_SECRET)).toBe(FROZEN_COMMITMENT);
+    expect(previewMockIdentityHash(`${FROZEN_SECRET}00`)).toBe(FROZEN_NULLIFIER);
+    expect(previewMockIdentityHash('')).toBe(FROZEN_EMPTY);
+    const generated = new ZKPService(DEFAULT_CHAIN).generateIdentity();
+    expect(generated.commitment).toBe(previewMockIdentityHash(generated.secret));
+    expect(generated.nullifier).toBe(previewMockIdentityHash(`${generated.secret}00`));
+  });
+});
+
 describe('legacy identity classification', () => {
   it('accepts only the exact persisted schema and byte layout', () => {
     expect(classifyLegacyIdentity(null)).toEqual({ kind: 'absent' });
@@ -132,6 +162,24 @@ describe('legacy identity classification', () => {
     for (const [raw, reason] of cases) {
       expect(classifyLegacyIdentity(raw)).toMatchObject({ kind: 'quarantined', reason });
     }
+  });
+
+  it('quarantines records whose commitment or nullifier does not follow the preview hash', () => {
+    // A real BN254-MiMC output (canonical field element input) must never pass as a preview commitment.
+    const bn254Commitment = bytesToHex(mimcBn254([new Uint8Array(32).fill(1)]));
+    expect(bn254Commitment).toMatch(/^[0-9a-f]{64}$/);
+    for (const identity of [
+      { ...IDENTITY, commitment: `${'0'}${FROZEN_COMMITMENT.slice(1)}` },
+      { ...IDENTITY, nullifier: `${'0'}${FROZEN_NULLIFIER.slice(1)}` },
+      { ...IDENTITY, commitment: FROZEN_NULLIFIER, nullifier: FROZEN_COMMITMENT },
+      { ...IDENTITY, commitment: bn254Commitment },
+    ]) {
+      expect(classifyLegacyIdentity(legacyRawFor(identity))).toMatchObject({
+        kind: 'quarantined',
+        reason: 'preview-hash-mismatch',
+      });
+    }
+    expect(classifyLegacyIdentity(legacyRawFor(OTHER_IDENTITY)).kind).toBe('valid');
   });
 });
 
@@ -249,6 +297,75 @@ describe('legacy identity migration', { timeout: 120_000 }, () => {
     expect(storage.data.has(IDENTITY_VAULT_STORAGE_KEY)).toBe(false);
   });
 
+  it('quarantines a preview-hash mismatch without a vault write or plaintext deletion', async () => {
+    const forged = legacyRawFor({ ...IDENTITY, nullifier: OTHER_IDENTITY.nullifier });
+    storage.data.set(LEGACY_IDENTITY_STORAGE_KEY, forged);
+    await expect(migration.migrate(session())).resolves.toMatchObject({
+      state: 'QUARANTINED',
+      reason: 'preview-hash-mismatch',
+      address: null,
+    });
+    expect(storage.writes).toEqual([LEGACY_MIGRATION_MARKER_KEY]);
+    expect(storage.data.has(IDENTITY_VAULT_STORAGE_KEY)).toBe(false);
+    expect(storage.data.get(LEGACY_IDENTITY_STORAGE_KEY)).toBe(forged);
+  });
+
+  it('accepts only the legal marker state/address/reason combinations', async () => {
+    const digest = await sha256Hex(LEGACY_RAW);
+    const states = ['DETECTED', 'PENDING', 'WRITTEN', 'VERIFIED', 'QUARANTINED', 'ERROR'];
+    const addresses = [null, ADDRESS_A, ADDRESS_A.toUpperCase()];
+    const reasons = [
+      null,
+      'oversized',
+      'not-json',
+      'schema',
+      'non-canonical',
+      'preview-hash-mismatch',
+      'vault-conflict',
+      'legacy-changed',
+      'verify-mismatch',
+      'vault-corrupt',
+      'unknown',
+    ];
+    const legal = new Set([
+      'DETECTED|null|null',
+      ...['PENDING', 'WRITTEN', 'VERIFIED'].map((state) => `${state}|${ADDRESS_A}|null`),
+      ...['oversized', 'not-json', 'schema', 'non-canonical', 'preview-hash-mismatch'].map(
+        (reason) => `QUARANTINED|null|${reason}`
+      ),
+      ...['vault-conflict', 'verify-mismatch', 'vault-corrupt', 'legacy-changed'].map(
+        (reason) => `ERROR|${ADDRESS_A}|${reason}`
+      ),
+      'ERROR|null|legacy-changed',
+    ]);
+    let checked = 0;
+    for (const state of states) {
+      for (const address of addresses) {
+        for (const reason of reasons) {
+          const raw = JSON.stringify({ v: 1, state, legacyDigest: digest, address, reason, updatedAt: 1 });
+          storage.data.set(LEGACY_MIGRATION_MARKER_KEY, raw);
+          const key = `${state}|${address}|${reason}`;
+          if (legal.has(key)) {
+            expect(migration.inspect(), key).toMatchObject({ kind: 'legacy', marker: { state } });
+          } else {
+            expect(() => migration.inspect(), key).toThrow(IdentityMigrationError);
+          }
+          checked += 1;
+        }
+      }
+    }
+    expect(checked).toBe(198);
+    expect(legal.size).toBe(14);
+
+    // A contradictory but complete marker is left untouched by migrate().
+    const contradictory = JSON.stringify({ v: 1, state: 'VERIFIED', legacyDigest: digest, address: null, reason: null, updatedAt: 1 });
+    storage.data.set(LEGACY_MIGRATION_MARKER_KEY, contradictory);
+    const writes = storage.writes.length;
+    await expectFailure(migration.migrate(session()), 'corrupt-marker');
+    expect(storage.data.get(LEGACY_MIGRATION_MARKER_KEY)).toBe(contradictory);
+    expect(storage.writes.length).toBe(writes);
+  });
+
   it('detect() records DETECTED or QUARANTINED without touching the vault', async () => {
     await expect(migration.detect(() => true)).resolves.toMatchObject({ kind: 'legacy', marker: { state: 'DETECTED' } });
     expect(storage.writes).toEqual([LEGACY_MIGRATION_MARKER_KEY]);
@@ -307,7 +424,7 @@ describe('legacy identity migration', { timeout: 120_000 }, () => {
   it('keeps evidence when the legacy bytes change after VERIFIED', async () => {
     await migration.migrate(session());
     const verified = marker(storage)!;
-    const changed = `{"state":{"identity":${serializeIdentity(OTHER_IDENTITY)}},"version":0}`;
+    const changed = legacyRawFor(OTHER_IDENTITY);
     storage.data.set(LEGACY_IDENTITY_STORAGE_KEY, changed);
     await expect(migration.migrate(session())).resolves.toMatchObject({
       state: 'ERROR',
@@ -321,7 +438,7 @@ describe('legacy identity migration', { timeout: 120_000 }, () => {
 
   it('re-detects new bytes when nothing was written for the old ones', async () => {
     await migration.detect(() => true);
-    const changed = `{"state":{"identity":${serializeIdentity(OTHER_IDENTITY)}},"version":0}`;
+    const changed = legacyRawFor(OTHER_IDENTITY);
     storage.data.set(LEGACY_IDENTITY_STORAGE_KEY, changed);
     await expect(migration.migrate(session())).resolves.toMatchObject({
       state: 'VERIFIED',
