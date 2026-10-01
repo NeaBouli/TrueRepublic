@@ -5974,3 +5974,14 @@
 - Contrast mutation: old disabled styling (white on gray-300) fails the final contract with 1.47.
 - New screenshots (inspected): client-web/node_modules/.cache/gh309b1c1-final-evidence/{desktop-1440x1000,tablet-landscape-1180x820,tablet-portrait-820x1180,mobile-390x844}.png, sha256 377b99d5…, 3f8bb99d…, 001f85e5…, 47947aaa… (copy in the stand-in scratchpad).
 - Gates: npm test -- --run 22 passed/2 skipped files, 314 passed/4 skipped; npm run build incl. tsc -b and bundle budget (entry 73168 gzip, total JS 363863); npm run audit:high fails only on the known brace-expansion/minimatch advisory (PR #332); git diff --check clean. Firefox/WebKit not run (only Chromium installed). No push.
+
+## 2026-10-01 GH309B1C1a RPC allowlist hardening (Claude Code, sole owner) — supersedes the GH309B1C1 RPC-policy evidence above
+
+- Codex final review P2: status accepted null/array params and AllBalances was allowed regardless of data/prove/extra fields. Fixed by commit 01968ee (spec only, no product file).
+- Policy now, in order: any broadcast_tx* (method, path or anywhere in the body, incl. batches) is recorded as a broadcast; non-POST, non-root path or non-canonical envelope (exactly jsonrpc "2.0", safe-integer id, string method, params) is a violation; status only with a non-null, non-array empty params object (controlled no-data error); the exact Domain body (synthetic state); everything else a violation. The bank AllBalances exception is removed (the real run never sent it).
+- Browser contract asserts the exact ordered sequence [status, abci_query Domain, abci_query Domain] plus zero broadcasts and zero violations.
+- 19 page-free negative/positive policy cases: status with null, array, extra params, missing params, extra top-level field, string id, wrong jsonrpc, batched; bank AllBalances and Balance; Domain with other id or prove true; other method; GET and other path; broadcast_tx_sync/async/commit and batched broadcast. Mutation: restoring the old `Object.keys(params ?? {})` status check fails exactly the null and array cases; restored 19/19.
+- Spec: eslint browser-quality/ rc 0; strict standalone tsc rc 0; npm run lint rc 0; git diff --check clean.
+- Chromium 1193, chromium-desktop: 23/23 pass (4 viewports + 19 policy). Viewport measurements unchanged from GH309B1C1 (overflow 0, 44px control, contrast 6.1, warning 8.38, tab order = DOM, inert activation). RPC per viewport: sequence [status, Domain, Domain], broadcasts 0, violations 0.
+- New evidence folder client-web/node_modules/.cache/gh309b1c1-a-final-evidence/ (copy + SHA256SUMS in the stand-in scratchpad); all four opened and inspected. The PNGs are byte-identical to the GH309B1C1 run (same product source, deterministic rendering).
+- Unit suite/build not repeated: no product, config or dependency file changed since the GH309B1C1 gates (314/4, build + bundle budget). No push.
