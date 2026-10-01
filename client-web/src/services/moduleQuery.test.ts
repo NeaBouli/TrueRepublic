@@ -64,7 +64,7 @@ describe('ModuleQueryClient', () => {
           { number: 2, type: 'string', value: 'aabb' },
         ])
       ).resolves.toEqual({ used: false });
-      expect(receivers).toHaveLength(1);
+      expect(receivers).toEqual([globalThis]);
     } finally {
       globalThis.fetch = originalFetch;
     }
