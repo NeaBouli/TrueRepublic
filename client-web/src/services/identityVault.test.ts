@@ -1,5 +1,5 @@
 import { toBech32 } from '@cosmjs/encoding';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import type { Identity } from '@/types/zkp';
 import {
   IDENTITY_VAULT_LOCK_NAME,
@@ -10,7 +10,6 @@ import {
   identityAad,
   serializeIdentity,
   type IdentityVaultErrorCode,
-  type IdentityVaultLocks,
   type IdentityVaultStorage,
 } from './identityVault';
 import { WalletService } from './wallet';
@@ -58,7 +57,12 @@ describe('identity vault core', { timeout: 60_000 }, () => {
   beforeEach(() => {
     localStorage.clear();
     // happy-dom has no functional Web Locks; the FIFO model stands in for navigator.locks.
-    vault = new IdentityVault(undefined, new FifoLocks());
+    installLocks(new FifoLocks());
+    vault = new IdentityVault();
+  });
+
+  afterEach(() => {
+    vi.unstubAllGlobals();
   });
 
   it('round-trips an identity to the exact canonical bytes for the bound address', async () => {
@@ -127,7 +131,7 @@ describe('identity vault core', { timeout: 60_000 }, () => {
     storage.onRead = (read) => {
       if (read === 1) setTimeout(() => storage.data.set(IDENTITY_VAULT_STORAGE_KEY, foreign), 0);
     };
-    await expectVaultError(new IdentityVault(storage, new FifoLocks()).createIdentity(ADDRESS_A, PASSWORD, IDENTITY), 'conflict');
+    await expectVaultError(new IdentityVault(storage).createIdentity(ADDRESS_A, PASSWORD, IDENTITY), 'conflict');
     expect(storage.data.get(IDENTITY_VAULT_STORAGE_KEY)).toBe(foreign);
   });
 
@@ -245,7 +249,7 @@ describe('identity vault core', { timeout: 60_000 }, () => {
       },
       removeItem: (key) => void backing.delete(key),
     };
-    await expectVaultError(new IdentityVault(failingSet, new FifoLocks()).createIdentity(ADDRESS_A, PASSWORD, IDENTITY), 'storage');
+    await expectVaultError(new IdentityVault(failingSet).createIdentity(ADDRESS_A, PASSWORD, IDENTITY), 'storage');
     expect(backing.size).toBe(0);
 
     const blocked: IdentityVaultStorage = {
@@ -290,7 +294,16 @@ describe('identity vault core', { timeout: 60_000 }, () => {
 // there through the same lock manager. FifoLocks behaves like Web Locks
 // (exclusive, FIFO; a free lock is granted at once); NoLocks never
 // serializes and models the pre-GH309B2B1 behaviour as a negative control.
-class FifoLocks implements IdentityVaultLocks {
+interface TestLocks {
+  request<T>(name: string, options: { mode: 'exclusive' }, callback: () => Promise<T>): Promise<T>;
+}
+
+// Temporarily replace navigator.locks for one test; restored by vi.unstubAllGlobals().
+function installLocks(locks: TestLocks | null): void {
+  vi.stubGlobal('navigator', locks === null ? {} : { locks });
+}
+
+class FifoLocks implements TestLocks {
   held = false;
   names: string[] = [];
   private queue: Array<() => void> = [];
@@ -320,7 +333,7 @@ class FifoLocks implements IdentityVaultLocks {
   }
 }
 
-class NoLocks implements IdentityVaultLocks {
+class NoLocks implements TestLocks {
   request<T>(_name: string, _options: { mode: 'exclusive' }, callback: () => Promise<T>): Promise<T> {
     return callback();
   }
@@ -359,7 +372,7 @@ function recordsIn(storage: HookedStorage): string[] {
 
 // Another tab committing B through the same locked read-modify-write path.
 // Its storage reads must not re-trigger the creator's hook.
-function commitInOtherTab(locks: IdentityVaultLocks, storage: HookedStorage, record: Record<string, unknown>) {
+function commitInOtherTab(locks: TestLocks, storage: HookedStorage, record: Record<string, unknown>) {
   return locks.request(IDENTITY_VAULT_LOCK_NAME, { mode: 'exclusive' }, async () => {
     const raw = storage.data.get(IDENTITY_VAULT_STORAGE_KEY);
     const document = raw ? JSON.parse(raw) : { v: 1, records: {} };
@@ -369,20 +382,25 @@ function commitInOtherTab(locks: IdentityVaultLocks, storage: HookedStorage, rec
 }
 
 describe('identity vault cross-tab serialization (GH309B2B1)', { timeout: 60_000 }, () => {
+  afterEach(() => {
+    vi.unstubAllGlobals();
+  });
+
   async function sealedRecordFor(address: string): Promise<Record<string, unknown>> {
+    installLocks(new FifoLocks());
     const scratch = new HookedStorage();
-    await new IdentityVault(scratch, new FifoLocks()).createIdentity(address, PASSWORD, IDENTITY);
+    await new IdentityVault(scratch).createIdentity(address, PASSWORD, IDENTITY);
     return JSON.parse(scratch.data.get(IDENTITY_VAULT_STORAGE_KEY)!).records[address];
   }
 
   it('uses navigator.locks by default and fails closed when it is missing', async () => {
     localStorage.clear();
     const locks = new FifoLocks();
-    vi.stubGlobal('navigator', { locks });
+    installLocks(locks);
     try {
       await new IdentityVault().createIdentity(ADDRESS_A, PASSWORD, IDENTITY);
       expect(locks.names).toEqual([`${IDENTITY_VAULT_LOCK_NAME}:exclusive`]);
-      vi.stubGlobal('navigator', {});
+      installLocks(null);
       await expectVaultError(new IdentityVault().removeIdentity(ADDRESS_A), 'storage');
       expect(new IdentityVault().hasIdentity(ADDRESS_A)).toBe(true);
     } finally {
@@ -392,8 +410,9 @@ describe('identity vault cross-tab serialization (GH309B2B1)', { timeout: 60_000
   });
 
   it('fails closed without Web Locks and writes nothing', async () => {
+    installLocks(null);
     const storage = new HookedStorage();
-    const vault = new IdentityVault(storage, null);
+    const vault = new IdentityVault(storage);
     await expectVaultError(vault.createIdentity(ADDRESS_A, PASSWORD, IDENTITY), 'storage');
     await expectVaultError(vault.removeIdentity(ADDRESS_A), 'storage');
     expect(storage.data.size).toBe(0);
@@ -402,8 +421,9 @@ describe('identity vault cross-tab serialization (GH309B2B1)', { timeout: 60_000
 
   it('runs every mutation under the named exclusive lock and never writes outside it', async () => {
     const locks = new FifoLocks();
+    installLocks(locks);
     const storage = new HookedStorage(locks);
-    const vault = new IdentityVault(storage, locks);
+    const vault = new IdentityVault(storage);
     await vault.createIdentity(ADDRESS_A, PASSWORD, IDENTITY);
     await vault.removeIdentity(ADDRESS_A);
     expect(locks.names).toEqual([
@@ -415,14 +435,15 @@ describe('identity vault cross-tab serialization (GH309B2B1)', { timeout: 60_000
 
   it('create/create: a commit in the re-read-to-write window cannot be lost', async () => {
     const recordB = await sealedRecordFor(ADDRESS_B);
-    const run = async (locks: IdentityVaultLocks & Partial<FifoLocks>) => {
+    const run = async (locks: TestLocks) => {
+      installLocks(locks);
       const storage = new HookedStorage();
       let other: Promise<void> | null = null;
       // Read 1 = creator's initial read, read 2 = its final re-read.
       storage.onRead = (read) => {
         if (read === 2 && !other) other = commitInOtherTab(locks, storage, recordB);
       };
-      const created = new IdentityVault(storage, locks).createIdentity(ADDRESS_A, PASSWORD, IDENTITY);
+      const created = new IdentityVault(storage).createIdentity(ADDRESS_A, PASSWORD, IDENTITY);
       const outcome = await created.then(
         () => 'ok',
         (error: IdentityVaultError) => error.code
@@ -441,10 +462,11 @@ describe('identity vault cross-tab serialization (GH309B2B1)', { timeout: 60_000
 
   it('create/remove: a removal in the re-read-to-write window cannot be resurrected', async () => {
     const recordB = await sealedRecordFor(ADDRESS_B);
-    const run = async (locks: IdentityVaultLocks) => {
+    const run = async (locks: TestLocks) => {
+      installLocks(locks);
       const storage = new HookedStorage();
       storage.data.set(IDENTITY_VAULT_STORAGE_KEY, JSON.stringify({ v: 1, records: { [ADDRESS_B]: recordB } }));
-      const otherTab = new IdentityVault(storage, locks);
+      const otherTab = new IdentityVault(storage);
       let removal: Promise<boolean> | null = null;
       storage.onRead = (read) => {
         if (read === 2 && !removal) {
@@ -452,7 +474,7 @@ describe('identity vault cross-tab serialization (GH309B2B1)', { timeout: 60_000
           removal = otherTab.removeIdentity(ADDRESS_B);
         }
       };
-      await new IdentityVault(storage, locks).createIdentity(ADDRESS_A, PASSWORD, IDENTITY);
+      await new IdentityVault(storage).createIdentity(ADDRESS_A, PASSWORD, IDENTITY);
       const removed = await removal;
       return { removed, records: recordsIn(storage) };
     };
@@ -467,14 +489,30 @@ describe('identity vault cross-tab serialization (GH309B2B1)', { timeout: 60_000
 
   it('concurrent creates from two tabs keep both records', async () => {
     const locks = new FifoLocks();
+    installLocks(locks);
     const storage = new HookedStorage(locks);
     await Promise.all([
-      new IdentityVault(storage, locks).createIdentity(ADDRESS_A, PASSWORD, IDENTITY),
-      new IdentityVault(storage, locks).createIdentity(ADDRESS_B, PASSWORD, IDENTITY),
+      new IdentityVault(storage).createIdentity(ADDRESS_A, PASSWORD, IDENTITY),
+      new IdentityVault(storage).createIdentity(ADDRESS_B, PASSWORD, IDENTITY),
     ]);
     expect(recordsIn(storage)).toEqual([ADDRESS_A, ADDRESS_B].sort());
     expect(storage.writesOutsideLock).toBe(0);
-    await expect(new IdentityVault(storage, locks).openIdentity(ADDRESS_A, PASSWORD)).resolves.toEqual(IDENTITY);
-    await expect(new IdentityVault(storage, locks).openIdentity(ADDRESS_B, PASSWORD)).resolves.toEqual(IDENTITY);
+    await expect(new IdentityVault(storage).openIdentity(ADDRESS_A, PASSWORD)).resolves.toEqual(IDENTITY);
+    await expect(new IdentityVault(storage).openIdentity(ADDRESS_B, PASSWORD)).resolves.toEqual(IDENTITY);
+  });
+
+  it('accepts no lock provider from callers; a passed non-exclusive lock is ignored', async () => {
+    const recordB = await sealedRecordFor(ADDRESS_B);
+    installLocks(new FifoLocks());
+    const storage = new HookedStorage();
+    let other: Promise<void> | null = null;
+    storage.onRead = (read) => {
+      if (read === 2 && !other) other = commitInOtherTab(globalThis.navigator.locks as unknown as TestLocks, storage, recordB);
+    };
+    // @ts-expect-error lock injection is not part of the IdentityVault API
+    const vault = new IdentityVault(storage, new NoLocks());
+    await vault.createIdentity(ADDRESS_A, PASSWORD, IDENTITY);
+    await other;
+    expect(recordsIn(storage)).toEqual([ADDRESS_A, ADDRESS_B].sort());
   });
 });

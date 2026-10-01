@@ -71,8 +71,9 @@ export class IdentityVaultError extends Error {
 
 export type IdentityVaultStorage = Pick<Storage, 'getItem' | 'setItem' | 'removeItem'>;
 
-/** The subset of the Web Locks API the vault needs. */
-export interface IdentityVaultLocks {
+// The subset of the Web Locks API the vault needs. Deliberately not exported
+// and not injectable: production mutations only ever use navigator.locks.
+interface WebLocks {
   request<T>(name: string, options: { mode: 'exclusive' }, callback: () => Promise<T>): Promise<T>;
 }
 
@@ -200,24 +201,14 @@ function parseDocument(raw: string | null): VaultDocument {
 }
 
 export class IdentityVault {
-  /**
-   * @param locksOverride omit to use navigator.locks; pass null to model a
-   *   browser without Web Locks (mutations then fail closed).
-   */
-  constructor(
-    private readonly storageOverride?: IdentityVaultStorage,
-    private readonly locksOverride?: IdentityVaultLocks | null
-  ) {}
+  constructor(private readonly storageOverride?: IdentityVaultStorage) {}
 
   /**
    * Serialize a mutation across tabs. Without Web Locks no mutation runs, so
    * concurrent read-modify-write cycles can never lose or resurrect records.
    */
   private async withMutationLock<T>(mutation: () => Promise<T>): Promise<T> {
-    const locks =
-      this.locksOverride === undefined
-        ? (globalThis.navigator?.locks as IdentityVaultLocks | undefined)
-        : this.locksOverride;
+    const locks = globalThis.navigator?.locks as WebLocks | undefined;
     if (!locks || typeof locks.request !== 'function') throw new IdentityVaultError('storage');
     let result: Promise<T>;
     try {
