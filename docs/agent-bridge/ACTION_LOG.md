@@ -5911,3 +5911,31 @@
   every Git/GitHub action. No implementation overlap is allowed.
 - No state repair, migration, deployment, release, production action, real key
   or real fund is authorized. Rollout remains 36/59 and production false.
+
+## 2026-10-01 EEST - GH-308 prototype-contract quarantine (GH308B, Claude Code)
+
+- Branch `agent/claude/GH308-quarantine` from exact main `1283a445`. Six prototype
+  contract implementations in five crates (`truerepublic-contracts` governance +
+  treasury, `governance-dao`, `zkp-aggregator`, `dex-bot`, `token-vesting`) now set
+  `publish = false`, carry a non-production crate header and reject `wasm32`
+  compilation through an unconditional `compile_error!` guard; no feature re-enables
+  a deployable build. `truerepublic-bindings` and `truerepublic-testing-utils` are
+  unchanged. `contracts/QUARANTINE.md` records TRR-13…TRR-18 and the
+  archive/quarantine dispositions from GH308A; nothing was deleted.
+- The store/instantiate recipes in `docs/QUICKSTART.md`,
+  `docs/developers/smart-contracts/cosmwasm.md` and
+  `wiki/develop/Module-Deep-Dive.md` are replaced by the quarantine notice;
+  `README.md` and `docs/ARCHITECTURE.md` no longer present the contracts as ✅.
+- `contract_quarantine_repository_test.go` enforces unpublished, wasm32-fail-closed
+  crates, no wasm/crate packaging in workflows, Dockerfiles or build/release
+  contracts, `contracts` excluded from the daemon image context, and no maintained
+  deploy recipe; eight negative fixtures prove each rule.
+- Evidence: offline/locked `cargo fmt --check`, `cargo clippy --workspace -D
+  warnings`, `cargo build --workspace`; `cargo audit --no-fetch` 0 vulnerabilities
+  (5 pre-existing allowed warnings, cached DB 2026-09-19); new contract test,
+  security/license/repository tests, `securityreview`, license policy,
+  `check-consistency.sh`, `git diff --check`. `cargo test --workspace` aborted with
+  ENOSPC (~1 GiB free) and was not repeated. No real wasm32 build was attempted
+  (target not installed); the guard is verified statically and needs a CI gate.
+- Out of scope: chain upload/instantiate permissions (#333). No upload,
+  instantiation, migration, deployment, push, PR or rollout/test-count credit.

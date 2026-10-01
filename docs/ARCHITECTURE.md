@@ -212,15 +212,19 @@ PNYX Burn: 1% on PNYX output (100 bps)
 
 ### Contract Workspace (7 crates)
 
+The five contract crates are quarantined, non-production prototypes (issue
+#308; see `contracts/QUARANTINE.md`): they reject `wasm32` builds and are not
+deployable. Only the two library crates are maintained.
+
 | Crate | Path | Purpose |
 |-------|------|---------|
-| truerepublic-contracts | `core/` | Governance + treasury contracts |
+| truerepublic-contracts | `core/` | Quarantined prototype governance + treasury (TRR-13, TRR-16) |
 | truerepublic-bindings | `packages/bindings/` | Shared query/msg types |
 | truerepublic-testing-utils | `packages/testing-utils/` | Mock querier, AMM pool, fixtures |
-| governance-dao | `examples/governance-dao/` | DAO proposal lifecycle |
-| dex-bot | `examples/dex-bot/` | Limit orders, arbitrage detection |
-| zkp-aggregator | `examples/zkp-aggregator/` | Example ZKP rating aggregation; not a production ballot client |
-| token-vesting | `examples/token-vesting/` | Linear vesting with cliff |
+| governance-dao | `examples/governance-dao/` | Quarantined prototype DAO (TRR-15) |
+| dex-bot | `examples/dex-bot/` | Quarantined prototype order book (TRR-17) |
+| zkp-aggregator | `examples/zkp-aggregator/` | Quarantined prototype rating aggregation, no proof verification (TRR-14) |
+| token-vesting | `examples/token-vesting/` | Quarantined prototype vesting, unfunded schedules (TRR-18) |
 
 ### Domain↔Bank Bridge
 

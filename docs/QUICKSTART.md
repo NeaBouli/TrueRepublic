@@ -79,25 +79,16 @@ examples below require a separately funded account and are not a faucet flow.
   --from alice
 ```
 
-### Deploy Smart Contract
+### Smart Contracts
+
+The CosmWasm contracts in `contracts/` are quarantined, non-production
+prototypes (issue #308; see [`contracts/QUARANTINE.md`](../contracts/QUARANTINE.md)).
+They are not deployable: their crates reject `wasm32` builds, and they must not
+be stored, instantiated or migrated on any chain. Use the native modules
+instead. Contract code is only built and tested on the host:
 
 ```bash
-# Build contract
-cd contracts/examples/governance-dao
-cargo wasm
-
-# Store on chain
-./build/truerepublicd tx wasm store \
-  target/wasm32-unknown-unknown/release/governance_dao.wasm \
-  --from alice \
-  --gas 2000000
-
-# Instantiate (use code ID from store tx logs)
-./build/truerepublicd tx wasm instantiate 1 \
-  '{"domain_name":"governance","quorum_bps":5100,"threshold_bps":6700,"voting_period":86400}' \
-  --from alice \
-  --label "gov-dao" \
-  --no-admin
+cd contracts && cargo test --workspace
 ```
 
 ## Run Tests
