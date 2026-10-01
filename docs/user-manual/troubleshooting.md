@@ -1,5 +1,11 @@
 # Troubleshooting
 
+> **Non-production (recovery status).** TrueRepublic v0.4 is not approved for
+> production, mainnet, real keys or real funds, and the project operates no
+> public seeds, RPC, snapshot or status services. See
+> [`SECURITY.md`](https://github.com/NeaBouli/TrueRepublic/security/policy) and
+> the [rollout roadmap](https://github.com/NeaBouli/TrueRepublic/blob/main/docs/ROLLOUT_ROADMAP.md).
+
 Common issues and solutions for TrueRepublic users.
 
 ## Wallet Connection Issues
@@ -128,9 +134,9 @@ Common issues and solutions for TrueRepublic users.
 
 **Solutions:**
 1. Check your internet connection
-2. The public RPC may be experiencing high load -- wait and retry
-3. Try an alternative RPC endpoint if available
-4. Check [status page](https://status.truerepublic.network) for outages
+2. The project operates no public RPC or status page; check the RPC endpoint
+   you configured (your own node or one you have independently qualified)
+3. Try another independently qualified RPC endpoint if available
 
 ### Slow block times
 

@@ -182,8 +182,9 @@ docker compose logs truerepublic-node
 # Check peer connections
 curl http://localhost:26657/net_info | jq .result.n_peers
 
-# Check if seeds are reachable
-docker exec truerepublic-node ping seed1.truerepublic.network
+# Check if your declared, operator-qualified seeds are reachable
+# (the project operates no public seeds)
+docker exec truerepublic-node ping <qualified-seed-host>
 ```
 
 ### Suspected data corruption

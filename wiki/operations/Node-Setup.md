@@ -1,5 +1,11 @@
 # Node Setup Guide
 
+> **Non-production (recovery status).** TrueRepublic v0.4 is not approved for
+> production, mainnet, real keys or real funds, and the project operates no
+> public seeds, RPC, snapshot or status services. See
+> [`SECURITY.md`](https://github.com/NeaBouli/TrueRepublic/security/policy) and
+> the [rollout roadmap](https://github.com/NeaBouli/TrueRepublic/blob/main/docs/ROLLOUT_ROADMAP.md).
+
 Complete guide to deploying a TrueRepublic full node.
 
 ## Table of Contents
@@ -126,12 +132,14 @@ PROMETHEUS_PORT=26660
 
 **Optional settings:**
 ```bash
-# Snapshot download (fast sync)
-SNAPSHOT_URL=https://snapshots.truerepublic.network/latest.tar.gz
+# Snapshot download (fast sync): the project operates no snapshot service.
+# Use only a snapshot you produced or independently verified.
+SNAPSHOT_URL=<operator-qualified-snapshot-url>
 
-# State sync (ultra-fast sync)
+# State sync: the project operates no public RPC. Use only RPC nodes you
+# operate or have independently qualified.
 STATE_SYNC_ENABLED=true
-STATE_SYNC_RPC_SERVERS=rpc1.truerepublic.network:26657,rpc2.truerepublic.network:26657
+STATE_SYNC_RPC_SERVERS=<qualified-rpc-host-1>:26657,<qualified-rpc-host-2>:26657
 
 # Logging
 LOG_LEVEL=info
@@ -282,8 +290,9 @@ Key settings:
 laddr = "tcp://YOUR_INTERFACE_IP:26656"
 external_address = "tcp://YOUR_IP:26656"
 
-# Seed nodes (initial peers)
-seeds = "seed1@seed1.truerepublic.network:26656,seed2@seed2.truerepublic.network:26656"
+# Seed nodes (initial peers): the project operates no public seeds. Declare
+# only seeds from your qualified topology (docs/node-operators/configuration/topology-contract.md).
+seeds = "<node-id>@<qualified-seed-host>:26656"
 
 # Persistent peers (always connect)
 persistent_peers = ""
@@ -425,10 +434,11 @@ Enable state sync for ultra-fast sync:
 [statesync]
 enable = true
 
-rpc_servers = "rpc1.truerepublic.network:26657,rpc2.truerepublic.network:26657"
+rpc_servers = "<qualified-rpc-host-1>:26657,<qualified-rpc-host-2>:26657"
 
-# Get trust height and hash from RPC:
-# curl -s http://rpc1.truerepublic.network:26657/block | jq -r '.result.block.header.height + "," + .result.block_id.hash'
+# Take the trust height and hash only from an RPC node you operate or have
+# independently qualified (see docs/node-operators/operations/multi-validator-recovery.md):
+# curl -s http://<qualified-rpc-host-1>:26657/block | jq -r '.result.block.header.height + "," + .result.block_id.hash'
 
 trust_height = 1234567
 trust_hash = "ABC123..."

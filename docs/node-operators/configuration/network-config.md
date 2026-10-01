@@ -1,5 +1,11 @@
 # Network Configuration
 
+> **Non-production (recovery status).** TrueRepublic v0.4 is not approved for
+> production, mainnet, real keys or real funds, and the project operates no
+> public seeds, RPC, snapshot or status services. See
+> [`SECURITY.md`](https://github.com/NeaBouli/TrueRepublic/security/policy) and
+> the [rollout roadmap](https://github.com/NeaBouli/TrueRepublic/blob/main/docs/ROLLOUT_ROADMAP.md).
+
 ## Connecting to a Network
 
 ### Candidate network
@@ -148,7 +154,8 @@ Illustrative upstream wiring only:
 ```nginx
 server {
     listen 443 ssl;
-    server_name rpc.truerepublic.network;
+    # Your own operator-controlled hostname; the project operates no public RPC.
+    server_name <your-rpc-hostname>;
 
     location / {
         proxy_pass http://127.0.0.1:26657;
