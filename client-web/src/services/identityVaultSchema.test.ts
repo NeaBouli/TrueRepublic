@@ -179,11 +179,11 @@ describe('versioned identity custody schema (GH309C1)', { timeout: 60_000 }, () 
       createdAt: CANONICAL.createdAt,
     });
     expect(serializeCanonicalIdentity(CANONICAL)).not.toContain('nullifier');
-    expect(isValidCanonicalIdentity(CANONICAL)).toBe(true);
-    expect(isValidCanonicalIdentity({ ...CANONICAL, nullifier: '00'.repeat(32) })).toBe(false);
-    expect(isValidCanonicalIdentity({ ...CANONICAL, commitment: previewMockIdentityHash(CANONICAL.secret) })).toBe(false);
+    await expect(isValidCanonicalIdentity(CANONICAL)).resolves.toBe(true);
+    await expect(isValidCanonicalIdentity({ ...CANONICAL, nullifier: '00'.repeat(32) })).resolves.toBe(false);
+    await expect(isValidCanonicalIdentity({ ...CANONICAL, commitment: previewMockIdentityHash(CANONICAL.secret) })).resolves.toBe(false);
     const outOfField = BN254_SCALAR_MODULUS.toString(16).padStart(64, '0');
-    expect(isValidCanonicalIdentity({ ...CANONICAL, secret: outOfField, commitment: CANONICAL.commitment })).toBe(false);
+    await expect(isValidCanonicalIdentity({ ...CANONICAL, secret: outOfField, commitment: CANONICAL.commitment })).resolves.toBe(false);
 
     // A sealed canonical record whose commitment does not match is corrupt after decryption.
     storeRecords({ [ADDRESS_A]: await canonicalRecord(ADDRESS_A, { ...CANONICAL, commitment: '11'.repeat(32) }) });

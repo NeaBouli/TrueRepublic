@@ -7,7 +7,6 @@ import {
   openEnvelope,
   sealEnvelope,
 } from './custodyEnvelope';
-import { bytesToHex, hexToBytes, mimcBn254 } from './zkpEncoding';
 
 /**
  * Encrypted identity vault core (issue #309, GH309B2B).
@@ -221,9 +220,8 @@ export function serializeCanonicalIdentity(identity: CanonicalIdentity): string 
   });
 }
 
-/** Canonical identity: field-element secret and commitment = mimcBn254([secret]). */
-export function isValidCanonicalIdentity(value: unknown): value is CanonicalIdentity {
-  if (
+function isCanonicalIdentityShape(value: unknown): value is CanonicalIdentity {
+  return !(
     !isPlainObject(value) ||
     !hasExactKeys(value, CANONICAL_IDENTITY_KEYS) ||
     value.kind !== CANONICAL_IDENTITY_KIND ||
@@ -233,9 +231,18 @@ export function isValidCanonicalIdentity(value: unknown): value is CanonicalIden
     !HEX_32_BYTES.test(value.commitment) ||
     !Number.isSafeInteger(value.createdAt) ||
     (value.createdAt as number) < 0
-  ) {
-    return false;
-  }
+  );
+}
+
+/**
+ * Canonical identity: exact shape, field-element secret and commitment =
+ * mimcBn254([secret]). The MiMC code is loaded only here, after the cheap
+ * shape checks, so normal startup and record-v1 never pull it into the entry
+ * chunk. A module-load failure rejects (operational), it is not a verdict.
+ */
+export async function isValidCanonicalIdentity(value: unknown): Promise<boolean> {
+  if (!isCanonicalIdentityShape(value)) return false;
+  const { bytesToHex, hexToBytes, mimcBn254 } = await import('./zkpEncoding');
   try {
     return bytesToHex(mimcBn254([hexToBytes(value.secret)])) === value.commitment;
   } catch {
@@ -487,10 +494,17 @@ export class IdentityVault {
       throw new IdentityVaultError('corrupt');
     }
     if (canonical) {
-      if (!isValidCanonicalIdentity(identity) || serializeCanonicalIdentity(identity) !== plaintext) {
+      let valid: boolean;
+      try {
+        valid = await isValidCanonicalIdentity(identity);
+      } catch {
+        // The canonical validator chunk could not be loaded: operational, not corrupt or locked.
+        throw new IdentityVaultError('storage');
+      }
+      if (!valid || serializeCanonicalIdentity(identity as CanonicalIdentity) !== plaintext) {
         throw new IdentityVaultError('corrupt');
       }
-      return identity;
+      return identity as CanonicalIdentity;
     }
     if (!isValidIdentity(identity) || serializeIdentity(identity) !== plaintext) {
       throw new IdentityVaultError('corrupt');
