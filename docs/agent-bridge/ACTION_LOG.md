@@ -5985,3 +5985,26 @@
   contract verified); license policy, `check-consistency.sh`, custom-query
   retirement PASS; `git diff --check` clean; zero stale root-home, lowercase
   `pnyx` amount or Compose v1 matches in the three files.
+
+## 2026-10-01 EEST - GH-313 conceptual status and architecture limits (GH313C2, Claude Code)
+
+- Branch `agent/claude/GH313-operator-docs` on approved head `3a497aa`; commit `82b3264`.
+  Known-Issues now records GH-184, GH-56, GH-55 and GH-71 as completed per
+  `docs/ROLLOUT_ROADMAP.md`; zone guidance follows `x/truedemocracy/lifecycle.go`
+  and `types.go` (approval threshold, dwell time, recovery, 2/3 fast delete) with the
+  unimplemented whitepaper green-zone limit stated as a difference; contract paths
+  name `contracts/{core,packages,examples}` as quarantined prototypes (GH308 wording
+  authority unchanged); `make install`, stale per-file test/guide counts and the
+  hard-coded DEX count are removed (canonical `docs/status.json` counts pinned by
+  `check-consistency.sh` stay); CONTRIBUTING requires Go 1.26.6 and Node.js 22+;
+  FAQ/user manual drop faucet claims; six high-risk guides carry the recovery caveat.
+- `operator_guidance_repository_test.go`: C2 rules with 30 negative and 12 positive
+  fixtures; `docs/V0.3.0_ROADMAP.md` classified as a historical past-version record
+  (flagged for Codex confirmation).
+- Gates (6.7 GiB free, no other TrueRepublic build, `-p 1`): `go vet .`; focused
+  operator-guidance tests; security/license/repository/network-policy/observability/
+  incident/install-lifecycle tests; `make security-review-contract-test`; license
+  policy; `check-consistency.sh`; custom-query retirement; `git diff --check`;
+  static searches for age-based zones, `contracts/src/`, Node.js 18, make install,
+  DEX test counts and faucet claims in the writable set: 0.
+- No product code, GH308 file, external Wiki, push, PR or rollout credit.
