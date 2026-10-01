@@ -6008,3 +6008,18 @@
   static searches for age-based zones, `contracts/src/`, Node.js 18, make install,
   DEX test counts and faucet claims in the writable set: 0.
 - No product code, GH308 file, external Wiki, push, PR or rollout credit.
+
+## 2026-10-01 EEST - GH-313 superseded v0.3.0 roadmap (GH313C2a, Claude Code)
+
+- Commit `6e76037` on reviewed head `a182a21`: `docs/V0.3.0_ROADMAP.md` opens with
+  "Historical planning record — superseded", links `docs/ROLLOUT_ROADMAP.md` and
+  `docs/status.json`, states `Status: Historical — superseded` and a former Q3 2026
+  target with no current commitment; the body is unchanged history.
+- The exact-path exclusion is now bound to `TestOperatorGuidanceSupersededRoadmapContract`
+  (first 15 lines must carry marker, status, former-target wording and both links;
+  `Status: Planned` forbidden; four mutations rejected). No other rule, count, GH308
+  exclusion or document changed.
+- Gates (6.2 GiB free, `-p 1`): `go vet .`; operator-guidance tests; security/license/
+  repository/network-policy/observability/incident/install-lifecycle tests;
+  `make security-review-contract-test`; license policy; `check-consistency.sh`;
+  custom-query retirement; `git diff --check`. No push, PR or rollout credit.
