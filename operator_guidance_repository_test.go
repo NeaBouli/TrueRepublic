@@ -19,12 +19,18 @@ const operatorGuidanceCaveatMarker = "**Non-production (recovery status).**"
 
 // Guides touched by GH-313B that carry operator or security risk.
 var operatorGuidanceCaveatGuides = []string{
+	"docs/FAQ.md",
 	"docs/node-operators/configuration/network-config.md",
 	"docs/node-operators/configuration/node-config.md",
 	"docs/node-operators/operations/security.md",
+	"docs/user-manual/README.md",
 	"docs/user-manual/troubleshooting.md",
 	"wiki/operations/Node-Setup.md",
+	"wiki/security/Best-Practices.md",
+	"wiki/security/Known-Issues.md",
 	"wiki/security/Security-Architecture.md",
+	"wiki/users/How-It-Works.md",
+	"wiki/users/System-Overview.md",
 }
 
 var (
@@ -70,6 +76,16 @@ var (
 	operatorGuidanceRootHomeRE       = regexp.MustCompile(`/root/\.truerepublic`)
 	operatorGuidanceDefaultGrafanaRE = regexp.MustCompile("(?i)admin\\s*/\\s*admin|password:\\s*`admin`")
 	operatorGuidanceFaucetRE         = regexp.MustCompile(`(?i)/faucet\b|#faucet\b`)
+)
+
+// GH-313C2 conceptual/status drift classes.
+var (
+	operatorGuidanceAgeZoneRE        = regexp.MustCompile(`(?i)\b(green|yellow|red)\b[^\n]{0,20}\(\s*(0-7|7-30|30\+) days\)`)
+	operatorGuidanceContractsSrcRE   = regexp.MustCompile(`\bcontracts/src/`)
+	operatorGuidanceNode18RE         = regexp.MustCompile(`(?i)\bnode(\.js)?\s+18\+`)
+	operatorGuidanceMakeInstallRE    = regexp.MustCompile("\\bmake install\\b|\\|\\s*`install`\\s*\\|")
+	operatorGuidanceDexTestCountRE   = regexp.MustCompile(`\b\d+ DEX tests\b`)
+	operatorGuidanceResolvedAsOpenRE = regexp.MustCompile(`(?is)(consensus-breaking migration recovery|authenticated consensus-key rotation|network-policy drills)[^.]{0,200}remain\s+open`)
 )
 
 type operatorGuidanceInputs struct {
@@ -145,6 +161,24 @@ func TestOperatorGuidanceTrustAndReportingContract(t *testing.T) {
 		"faucet": func(in *operatorGuidanceInputs) {
 			in.maintained["wiki/users/Installation-Wizards.md"] += "\nType `/faucet <address>`\n"
 		},
+		"age-based zone ranges": func(in *operatorGuidanceInputs) {
+			in.maintained["wiki/users/System-Overview.md"] += "\n- YELLOW (7-30 days): Mature\n"
+		},
+		"obsolete contracts path": func(in *operatorGuidanceInputs) {
+			in.maintained["wiki/develop/Architecture-Overview.md"] += "\nSee contracts/src/governance.rs\n"
+		},
+		"node 18 requirement": func(in *operatorGuidanceInputs) {
+			in.maintained["CONTRIBUTING.md"] += "\n- Node.js 18+ (for frontend)\n"
+		},
+		"make install target": func(in *operatorGuidanceInputs) {
+			in.maintained["wiki/develop/Code-Structure.md"] += "\n| `install` | `go install .` | Install |\n"
+		},
+		"hard-coded dex test count": func(in *operatorGuidanceInputs) {
+			in.maintained["wiki/develop/Code-Structure.md"] += "\nkeeper_test.go # 24 DEX tests\n"
+		},
+		"completed work listed as open": func(in *operatorGuidanceInputs) {
+			in.maintained["wiki/security/Known-Issues.md"] += "\n- authenticated consensus-key rotation and network-policy drills remain open.\n"
+		},
 		"public bounty template": func(in *operatorGuidanceInputs) {
 			in.templates[".github/ISSUE_TEMPLATE/bug_bounty.md"] = "# Bug Bounty Submission\nBTC or PNYX address (for Reward)\n"
 		},
@@ -182,6 +216,15 @@ func TestOperatorGuidanceTrustAndReportingContract(t *testing.T) {
 		},
 		"native rpc and upnyx amounts": func(in *operatorGuidanceInputs) {
 			in.maintained["docs/validators/README.md"] += "\ncurl http://127.0.0.1:26657/status\ntruerepublicd tx dex swap upnyx 1000 atom\n"
+		},
+		"uppercase PNYX prose": func(in *operatorGuidanceInputs) {
+			in.maintained["docs/FAQ.md"] += "\nMaximum supply is 21,000,000 PNYX (100,000 PNYX minimum stake).\n"
+		},
+		"historical issue reference": func(in *operatorGuidanceInputs) {
+			in.maintained["wiki/security/Known-Issues.md"] += "\nGH-184 completed governed migration recovery; GH-56 completed key rotation.\n"
+		},
+		"non-executable architecture discussion": func(in *operatorGuidanceInputs) {
+			in.maintained["docs/developers/architecture/system-overview.md"] += "\ncontracts/core holds the prototype governance.rs; the yellow zone lasts one dwell time.\n"
 		},
 		"operator-supplied endpoint placeholder": func(in *operatorGuidanceInputs) {
 			in.maintained["wiki/operations/Node-Setup.md"] += "\nseeds = \"<node-id>@<qualified-seed-host>:26656\"\n"
@@ -248,8 +291,8 @@ func operatorGuidanceMaintained(path string) bool {
 			return false
 		}
 	}
-	// Release notes describe a past version and are historical records.
-	if strings.HasPrefix(path, "RELEASE_NOTES_") {
+	// Release notes and the roadmap of a past version are historical records.
+	if strings.HasPrefix(path, "RELEASE_NOTES_") || path == "docs/V0.3.0_ROADMAP.md" {
 		return false
 	}
 	return path != "BRIDGE.md"
@@ -396,6 +439,26 @@ func operatorGuidanceCommandViolations(path, content string) []string {
 	for _, check := range checks {
 		if match := check.re.FindString(content); match != "" {
 			add(check.reason, match)
+		}
+	}
+	conceptual := []struct {
+		re     *regexp.Regexp
+		reason string
+	}{
+		{operatorGuidanceAgeZoneRE, "zones follow approval and dwell time, not suggestion age"},
+		{operatorGuidanceContractsSrcRE, "contracts/src does not exist; use contracts/{core,packages,examples}"},
+		{operatorGuidanceNode18RE, "client-web requires Node.js 22+"},
+		{operatorGuidanceMakeInstallRE, "the Makefile has no install target"},
+		{operatorGuidanceDexTestCountRE, "hard-coded DEX test count; link docs/status.json"},
+	}
+	for _, check := range conceptual {
+		if match := check.re.FindString(content); match != "" {
+			add(check.reason, match)
+		}
+	}
+	if path == "wiki/security/Known-Issues.md" {
+		if match := operatorGuidanceResolvedAsOpenRE.FindString(content); match != "" {
+			add("completed roadmap work (GH-184/GH-56/GH-71) listed as open", strings.Fields(match)[0])
 		}
 	}
 	return out

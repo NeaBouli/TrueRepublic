@@ -1,5 +1,11 @@
 # User Manual
 
+> **Non-production (recovery status).** TrueRepublic v0.4 is not approved for
+> production, mainnet, real keys or real funds, and the project operates no
+> public seeds, RPC, snapshot or status services. See
+> [`SECURITY.md`](https://github.com/NeaBouli/TrueRepublic/security/policy) and
+> the [rollout roadmap](https://github.com/NeaBouli/TrueRepublic/blob/main/docs/ROLLOUT_ROADMAP.md).
+
 Welcome to the TrueRepublic User Manual. This guide helps you use TrueRepublic's blockchain-based direct democracy platform.
 
 ## Table of Contents
@@ -17,7 +23,7 @@ Welcome to the TrueRepublic User Manual. This guide helps you use TrueRepublic's
 
 1. **Open the maintained client** -- use only a local or explicitly approved test environment
 2. **Create or import a test wallet** -- never enter a real mnemonic while recovery is active
-3. **Use test PNYX** -- obtain tokens only through the approved test fixture or faucet
+3. **Use test PNYX** -- obtain tokens only from a test genesis allocation controlled by you or your test-network operator (the project operates no faucet)
 4. **Join a Domain** -- Browse domains and join communities that interest you
 5. **Start Participating** -- Submit proposals, vote, and place stones
 

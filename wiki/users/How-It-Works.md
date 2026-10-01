@@ -1,5 +1,11 @@
 # How It Works
 
+> **Non-production (recovery status).** TrueRepublic v0.4 is not approved for
+> production, mainnet, real keys or real funds, and the project operates no
+> public seeds, RPC, snapshot or status services. See
+> [`SECURITY.md`](https://github.com/NeaBouli/TrueRepublic/security/policy) and
+> the [rollout roadmap](https://github.com/NeaBouli/TrueRepublic/blob/main/docs/ROLLOUT_ROADMAP.md).
+
 Deep dive into TrueRepublic's mechanics.
 
 ## Table of Contents
@@ -398,75 +404,30 @@ PlaceStoneOnIssue/Suggestion handler:
 
 ### Zones
 
-```
-GREEN (0-7 days)
-    ↓ Time passes
-YELLOW (7-30 days)
-    ↓ Time passes
-RED (30+ days)
-    ↓ If 2/3 vote to delete
-DELETED
-```
+Zones depend on **approval (stones), not age**, as implemented in
+`x/truedemocracy/lifecycle.go` (constants in `x/truedemocracy/types.go`) and
+described in whitepaper §3.1.2:
 
-### Zone Details
+- **GREEN:** at least the domain's approval threshold of members placed a stone
+  on the suggestion (default 5% = 500 basis points; `stones * 10000 >= members *
+  threshold`). A green suggestion stays.
+- **YELLOW:** below the threshold. It stays yellow for the dwell time (default
+  86400 s = 1 day, configurable per domain).
+- **RED:** still below the threshold after the yellow dwell time. After another
+  dwell time it is deleted automatically.
+- A yellow or red suggestion returns to green as soon as it gains enough stones.
+- **Fast delete:** a suggestion is removed immediately once at least 2/3 of the
+  domain members vote to delete it, in any zone.
 
-**GREEN Zone (0-7 days):**
-- New proposal, high visibility
-- Encourage ratings and stones
-- VoteToEarn rewards active
-- Cannot be deleted yet
-
-**YELLOW Zone (7-30 days):**
-- Mature proposal
-- Decision time: implement if positive rating
-- Can be voted for deletion
-- Lower visibility in feeds
-
-**RED Zone (30+ days):**
-- Expiring proposal
-- Auto-delete if 2/3 majority votes to delete
-- Fast-delete: any suggestion in red with 2/3 delete votes removed immediately
-- Prevents clutter in domain
+Difference to note: the whitepaper also describes an optional limit on the
+number of entries in the green zone (example: 12); the current code does not
+implement such a limit.
 
 ### Lifecycle Management
 
-**EndBlock Hook (every block):**
-```
-For each suggestion in each domain:
-    age = current_time - created_at
-
-    if age < 7 days:
-        status = GREEN
-    else if age < 30 days:
-        status = YELLOW
-    else:
-        status = RED
-
-        // Check for auto-deletion
-        delete_votes = count votes to delete
-        total_members = domain member count
-        if delete_votes >= (total_members * 2/3):
-            delete suggestion
-```
-
-### Approval Threshold
-
-For a suggestion to be considered "approved":
-
-```
-Approval requires:
-- Rating average > 0 (net positive)
-- Approval threshold: 5% (500 basis points) of members must have rated
-- Not in RED zone or voted for deletion
-```
-
-### Why Zones Matter
-
-| Zone | Purpose | Action |
-|------|---------|--------|
-| GREEN | Gather initial feedback | Rate, discuss, stone |
-| YELLOW | Make decisions | Implement or archive |
-| RED | Clean up | Delete or force decision |
+Zones are re-evaluated in every `EndBlock`: a suggestion below the threshold
+enters yellow, moves to red after the yellow dwell time, and is deleted after
+the red dwell time; one that meets the threshold is set back to green.
 
 ---
 

@@ -1,5 +1,11 @@
 # Known Issues and Release Blockers
 
+> **Non-production (recovery status).** TrueRepublic v0.4 is not approved for
+> production, mainnet, real keys or real funds, and the project operates no
+> public seeds, RPC, snapshot or status services. See
+> [`SECURITY.md`](https://github.com/NeaBouli/TrueRepublic/security/policy) and
+> the [rollout roadmap](https://github.com/NeaBouli/TrueRepublic/blob/main/docs/ROLLOUT_ROADMAP.md).
+
 ## Critical release blockers
 
 ### Recovery foundation is not a production approval
@@ -22,10 +28,14 @@ review, privacy analysis, and audited submission path are still required.
 - Single-node native and Docker restart pass. Bounded four-validator failure,
   restart, catch-up, partition recovery, trusted state sync, and sanitized
   backup/restore/export/import, compatible binary rollback, and single-signer
-  identity failover now pass. IBC relaying/upgrades, persisted-state
-  consensus-breaking migration recovery, authenticated consensus-key rotation,
-  compromised consensus-key eviction/recovery, and network-policy drills remain
-  open.
+  identity failover now pass. Since then the canonical
+  [rollout roadmap](../../docs/ROLLOUT_ROADMAP.md) records as completed:
+  governed consensus-breaking migration with partial-migration rollback
+  (GH-184), authenticated consensus-key rotation with permanent old-key
+  revocation (GH-56), coupled key/signer custody and compromise containment
+  (GH-55), and the role-based peer/listener/firewall policy (GH-71). These are
+  local, bounded proofs; live multi-operator drills, external IBC relayers and
+  production operations remain open.
 - GH-187 makes unsupported IBC/CosmWasm staking and distribution adapters
   fail closed and proves `x/staking`/`x/distribution` remain unmounted. External
   relayers/counterparties, IBC client upgrades, and arbitrary migrations remain
