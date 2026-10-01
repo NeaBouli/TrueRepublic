@@ -1,6 +1,11 @@
 # CosmWasm Smart Contracts
 
-TrueRepublic includes CosmWasm smart contracts for governance and treasury operations.
+> **Quarantined, not deployable (issue #308).** The CosmWasm contracts in
+> `contracts/` are non-production prototypes kept only for host-side tests.
+> Their crates reject `wasm32` builds, and they must not be stored, instantiated
+> or migrated on any chain. See
+> [`contracts/QUARANTINE.md`](../../../contracts/QUARANTINE.md). The sections
+> below describe the historical prototype interfaces only.
 
 ## Overview
 
@@ -15,58 +20,22 @@ TrueRepublic includes CosmWasm smart contracts for governance and treasury opera
 |-----------|---------|
 | Rust | 1.75+ |
 | cosmwasm-std | 3 |
-| Target | wasm32-unknown-unknown |
+| Target | host only (`wasm32` is rejected by the quarantine guard) |
 
 ## Building Contracts
 
-### Prerequisites
-
-```bash
-# Install Rust
-curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
-
-# Add WASM target
-rustup target add wasm32-unknown-unknown
-```
-
-### Build
+Host-side build and tests only:
 
 ```bash
 cd contracts
-
-# Debug build
-cargo build
-
-# Production build (optimized WASM)
-cargo build --release --target wasm32-unknown-unknown
-
-# Output: target/wasm32-unknown-unknown/release/*.wasm
-```
-
-### Optimize (for deployment)
-
-```bash
-# Using cosmwasm optimizer
-docker run --rm -v "$(pwd)":/code \
-    cosmwasm/workspace-optimizer:0.15.0
+cargo build --workspace
+cargo test --workspace
 ```
 
 ## Deploying Contracts
 
-```bash
-# Store contract on chain
-truerepublicd tx wasm store governance.wasm \
-    --from wallet --gas auto --fees 10000pnyx
-
-# Get code ID from transaction result
-CODE_ID=1
-
-# Instantiate contract
-truerepublicd tx wasm instantiate $CODE_ID '{}' \
-    --from wallet --label "governance-v1" \
-    --admin $(truerepublicd keys show wallet -a) \
-    --gas auto --fees 10000pnyx
-```
+Not supported. The prototypes are quarantined (issue #308): there is no
+deployable artifact, and no store, instantiate or migrate recipe is maintained.
 
 ## Governance Contract
 

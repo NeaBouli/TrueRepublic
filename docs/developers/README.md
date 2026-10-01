@@ -81,11 +81,15 @@ npm ci
 npm run dev    # Development server on port 3001
 ```
 
-### Build Smart Contracts
+### Smart Contracts
+
+The contracts in `contracts/` are quarantined, non-production prototypes
+(issue #308; see [`contracts/QUARANTINE.md`](../../contracts/QUARANTINE.md)).
+Their crates reject `wasm32` builds and must not be deployed. Host-only:
 
 ```bash
 cd contracts
-cargo build --release --target wasm32-unknown-unknown
+cargo test --workspace
 ```
 
 ## Contributing

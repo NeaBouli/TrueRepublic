@@ -569,25 +569,12 @@ Treasury management:
 - Withdraw PNYX from treasury
 - Balance queries
 
-### Building
+### Building and deployment
 
-```bash
-cd contracts
-rustup target add wasm32-unknown-unknown
-cargo build --release --target wasm32-unknown-unknown
-```
-
-### Deploying
-
-```bash
-truerepublicd tx wasm store governance.wasm \
-    --from wallet --gas auto --fees 10000pnyx
-
-truerepublicd tx wasm instantiate $CODE_ID '{}' \
-    --from wallet --label "governance-v1" \
-    --admin $(truerepublicd keys show wallet -a) \
-    --gas auto --fees 10000pnyx
-```
+Quarantined, not deployable (issue #308; see `contracts/QUARANTINE.md`). The
+prototype crates reject `wasm32` builds and must not be stored, instantiated or
+migrated on any chain. They are only built and tested on the host with
+`cd contracts && cargo test --workspace`.
 
 ---
 

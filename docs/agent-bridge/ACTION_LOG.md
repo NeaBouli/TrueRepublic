@@ -5911,3 +5911,73 @@
   every Git/GitHub action. No implementation overlap is allowed.
 - No state repair, migration, deployment, release, production action, real key
   or real fund is authorized. Rollout remains 36/59 and production false.
+
+## 2026-10-01 EEST - GH-308 prototype-contract quarantine (GH308B, Claude Code)
+
+- Branch `agent/claude/GH308-quarantine` from exact main `1283a445`. Six prototype
+  contract implementations in five crates (`truerepublic-contracts` governance +
+  treasury, `governance-dao`, `zkp-aggregator`, `dex-bot`, `token-vesting`) now set
+  `publish = false`, carry a non-production crate header and reject `wasm32`
+  compilation through an unconditional `compile_error!` guard; no feature re-enables
+  a deployable build. `truerepublic-bindings` and `truerepublic-testing-utils` are
+  unchanged. `contracts/QUARANTINE.md` records TRR-13…TRR-18 and the
+  archive/quarantine dispositions from GH308A; nothing was deleted.
+- The store/instantiate recipes in `docs/QUICKSTART.md`,
+  `docs/developers/smart-contracts/cosmwasm.md` and
+  `wiki/develop/Module-Deep-Dive.md` are replaced by the quarantine notice;
+  `README.md` and `docs/ARCHITECTURE.md` no longer present the contracts as ✅.
+- `contract_quarantine_repository_test.go` enforces unpublished, wasm32-fail-closed
+  crates, no wasm/crate packaging in workflows, Dockerfiles or build/release
+  contracts, `contracts` excluded from the daemon image context, and no maintained
+  deploy recipe; eight negative fixtures prove each rule.
+- Evidence: offline/locked `cargo fmt --check`, `cargo clippy --workspace -D
+  warnings`, `cargo build --workspace`; `cargo audit --no-fetch` 0 vulnerabilities
+  (5 pre-existing allowed warnings, cached DB 2026-09-19); new contract test,
+  security/license/repository tests, `securityreview`, license policy,
+  `check-consistency.sh`, `git diff --check`. `cargo test --workspace` aborted with
+  ENOSPC (~1 GiB free) and was not repeated. No real wasm32 build was attempted
+  (target not installed); the guard is verified statically and needs a CI gate.
+- Out of scope: chain upload/instantiate permissions (#333). No upload,
+  instantiation, migration, deployment, push, PR or rollout/test-count credit.
+
+## 2026-10-01 EEST - GH-308 quarantine contract narrowed (GH308C, Claude Code)
+
+- Codex review of `a73df19` (verdict: changes) found the repository contract
+  over-broad. `contract_quarantine_repository_test.go` now rejects only paths that
+  weaken or bypass the unconditional wasm32 guard (missing or feature-gated guard,
+  crate-level `#![cfg…]`, `[lib] path` override, `publish = false` removed), actual
+  Wasm artifacts/build/publish commands for the five quarantined crates or the
+  contracts workspace in CI, images and build/release contracts, and guide blocks
+  that build or deploy a quarantined prototype. Host-only features, crate-name
+  mentions in review/status metadata and deployment documentation for a separately
+  reviewed contract are allowed; 11 negative and 3 positive fixtures prove both.
+- `INSTALLATION.md`, `docs/INSTALL.md` and `docs/developers/README.md` replace the
+  stale generic `wasm32` build with host-only guidance linking
+  `contracts/QUARANTINE.md`.
+- Low-disk gates green: focused contract test with all fixtures, `go vet`,
+  security/license/repository tests, `securityreview`, license policy,
+  `check-consistency.sh`, `git diff --check`. `cargo test --workspace` and a real
+  wasm32 compile-fail CI proof remain open (ENOSPC, target not installed); GH-308
+  stays partial. No Rust source/Cargo change, push, PR or rollout credit.
+
+## 2026-10-01 EEST - GH-308 local gates and real wasm32 verifier (GH308D1, Claude Code)
+
+- Host gates on `9c07b91` (preflight 6.1 GiB free, no other TrueRepublic build):
+  `cargo test --offline --locked --workspace -j 2` PASS (26 passed, 0 failed, 329 s);
+  `cargo fmt --check`, `cargo clippy --offline --locked --workspace -- -D warnings`,
+  `cargo build --offline --locked --workspace` PASS. This closes the GH308B ENOSPC gap.
+- `9a2ec0b`: `scripts/verify-contract-quarantine-wasm.sh` runs a locked wasm32
+  `cargo check` for exactly `truerepublic-contracts`, `governance-dao`,
+  `zkp-aggregator`, `dex-bot`, `token-vesting` and fails unless each fails with
+  `QUARANTINED (TrueRepublic #308)` (success, markerless failure or missing package
+  fail; private temp dir removed by trap). `.github/workflows/rust-ci.yml` installs
+  `wasm32-unknown-unknown` on the pinned 1.95.0 toolchain, runs the verifier after
+  the host tests and triggers on verifier changes; pinned actions, read-only
+  permissions, host steps and the 20-minute timeout are unchanged. The quarantine
+  repository contract requires target, step, trigger and exact package coverage
+  and rejects seven drift mutations. `bash -n` OK.
+- Authorized cleanup: `cargo clean` in this worktree's `contracts/` removed 1.6 GiB
+  of this task's own build output (`CARGO_TARGET_DIR` unset, no Cargo config
+  redirect). Single post-cleanup check: 4.2 GiB free (< 5 GiB) -> Go/repository
+  gates not run; status partial. The real wasm32 proof can only turn green on
+  exact-head hosted CI. No push, PR or rollout credit.
