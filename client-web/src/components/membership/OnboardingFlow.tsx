@@ -158,7 +158,7 @@ export function OnboardingFlow() {
               type="button"
               disabled
               aria-describedby="identity-registration-disabled-reason"
-              className="w-full min-h-[44px]"
+              className="w-full min-h-[44px] disabled:bg-gray-200 disabled:text-gray-600"
             >
               Registration Disabled in Preview
             </Button>
