@@ -33,20 +33,29 @@ import {
   QUERY_PATHS,
 } from './moduleQuery';
 import { previewMockIdentityHash } from './previewIdentityHash';
+import { bytesToHex, computeVoteNullifierScope, hexToBytes, mimcBn254 } from './zkpEncoding';
+
+const FIELD_HEX = /^[0-9a-f]{64}$/u;
 
 export class ZKPService {
   private wasmLoaded = false;
   private statusCallback?: (status: ProofGenerationStatus) => void;
   private readonly queries: ModuleQueryClient;
-  private readonly testProver?: Groth16Prover;
+  private readonly prover?: Groth16Prover;
+  private readonly chainId: string;
 
+  /**
+   * @param prover explicitly injected, reviewed Groth16 prover (test-only today).
+   *   Without it every proof path fails closed; nothing is constructed implicitly.
+   */
   constructor(
     config: ChainConfig,
     queries = new ModuleQueryClient(config),
-    testProver?: Groth16Prover
+    prover?: Groth16Prover
   ) {
     this.queries = queries;
-    this.testProver = testProver;
+    this.prover = prover;
+    this.chainId = config.chainId;
   }
 
   /**
@@ -56,11 +65,22 @@ export class ZKPService {
     onStatus?: (status: ProofGenerationStatus) => void
   ): Promise<void> {
     this.statusCallback = onStatus;
-    const message =
-      'Anonymous voting is preview-only: a compatible real Groth16 prover is not installed.';
     this.wasmLoaded = false;
-    this.updateStatus('error', 0, 'ZKP submission unavailable', message);
-    throw new Error(message);
+    if (!this.prover) {
+      const message =
+        'Anonymous voting is preview-only: a compatible real Groth16 prover is not installed.';
+      this.updateStatus('error', 0, 'ZKP submission unavailable', message);
+      throw new Error(message);
+    }
+    try {
+      await this.prover.initialize?.();
+    } catch {
+      const message = 'The injected Groth16 prover failed to initialize.';
+      this.updateStatus('error', 0, 'ZKP submission unavailable', message);
+      throw new Error(message);
+    }
+    this.wasmLoaded = true;
+    this.updateStatus('complete', 100, 'Test-only Groth16 prover ready; submission remains disabled');
   }
 
   get isReady(): boolean {
@@ -115,28 +135,33 @@ export class ZKPService {
   }
 
   /**
-   * Compute the external nullifier for a specific vote context.
-   * externalNullifier = MiMC(domainName + issueName + suggestionName)
-   * This matches Go ComputeExternalNullifier().
+   * Canonical chain-scoped external nullifier (frozen protocol):
+   * computeVoteNullifierScope(chainId, domain, issue, suggestion).
    */
   computeExternalNullifier(
     domainName: string,
     issueName: string,
     suggestionName: string
   ): string {
-    return this.mockMiMCHash(domainName + ':' + issueName + ':' + suggestionName);
+    return bytesToHex(computeVoteNullifierScope(this.chainId, domainName, issueName, suggestionName));
   }
 
   /**
-   * Preview-only nullifier placeholder for the disabled mock flow.
-   * It is not the canonical MiMC(identitySecret, externalNullifier) encoding;
-   * real proof generation and submission remain unavailable.
+   * Canonical vote nullifier hash = MiMC_BN254(identitySecret, externalNullifier).
+   * Both inputs must be canonical 32-byte BN254 field elements.
    */
   computeNullifierHash(
     identitySecret: string,
     externalNullifier: string
   ): string {
-    return this.mockMiMCHash(identitySecret + externalNullifier);
+    if (!FIELD_HEX.test(identitySecret) || !FIELD_HEX.test(externalNullifier)) {
+      throw new Error('identity secret and external nullifier must be exactly 32 bytes of lowercase hex');
+    }
+    try {
+      return bytesToHex(mimcBn254([hexToBytes(identitySecret), hexToBytes(externalNullifier)]));
+    } catch {
+      throw new Error('identity secret and external nullifier must be canonical BN254 field elements');
+    }
   }
 
   /**
@@ -171,11 +196,47 @@ export class ZKPService {
    * Real implementation calls gnark-wasm with the proving key.
    */
   async generateProof(inputs: ProofInputs): Promise<GeneratedProof> {
-    if (this.testProver) return this.testProver.generate(inputs);
-    const message =
-      'Mock proofs are not chain-compatible; real Groth16 proof generation is unavailable.';
-    this.updateStatus('error', 0, 'ZKP submission unavailable', message);
-    throw new Error(message);
+    if (!this.prover) {
+      const message =
+        'Mock proofs are not chain-compatible; real Groth16 proof generation is unavailable.';
+      this.updateStatus('error', 0, 'ZKP submission unavailable', message);
+      throw new Error(message);
+    }
+    if (!this.wasmLoaded) {
+      throw new Error('The injected Groth16 prover has not been initialized.');
+    }
+    this.assertCanonicalProofInputs(inputs);
+    return this.prover.generate(inputs);
+  }
+
+  /**
+   * Only a canonical identity can enter the prover: the secret must be a BN254
+   * field element whose MiMC commitment is the Merkle leaf, and the external
+   * nullifier must be this chain's scope for the vote context. Preview (FNV)
+   * identities fail here and are never promoted.
+   */
+  private assertCanonicalProofInputs(inputs: ProofInputs): void {
+    if (inputs.chainId !== this.chainId) {
+      throw new Error('proof inputs are bound to a different chain');
+    }
+    const secret = inputs.identitySecret;
+    const leaf = inputs.merkleProof?.leaf;
+    if (typeof secret !== 'string' || !FIELD_HEX.test(secret) || typeof leaf !== 'string' || !FIELD_HEX.test(leaf)) {
+      throw new Error('proof inputs require a 32-byte canonical identity secret and Merkle leaf');
+    }
+    let commitment: string;
+    try {
+      commitment = bytesToHex(mimcBn254([hexToBytes(secret)]));
+    } catch {
+      throw new Error('preview or non-canonical identity secrets cannot generate proofs');
+    }
+    if (commitment !== leaf) {
+      throw new Error('preview or non-canonical identity: commitment is not MiMC(secret)');
+    }
+    const expectedScope = this.computeExternalNullifier(inputs.domainName, inputs.issueName, inputs.suggestionName);
+    if (inputs.externalNullifier !== expectedScope) {
+      throw new Error('external nullifier does not match the canonical vote scope');
+    }
   }
 
   // ---------------------------------------------------------------
