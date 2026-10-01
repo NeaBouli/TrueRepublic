@@ -43,6 +43,33 @@ function rpcResult(value: unknown): Response {
 }
 
 describe('ModuleQueryClient', () => {
+  it('invokes the default global fetch with a valid receiver (#335)', async () => {
+    // Browsers reject Window.fetch when it is called with any receiver other
+    // than the global object (or none). This fake enforces the same rule.
+    const originalFetch = globalThis.fetch;
+    const receivers: unknown[] = [];
+    function receiverSensitiveFetch(this: unknown): Promise<Response> {
+      receivers.push(this);
+      if (this !== undefined && this !== globalThis) {
+        throw new TypeError("Failed to execute 'fetch' on 'Window': Illegal invocation");
+      }
+      return Promise.resolve(rpcResult({ used: false }));
+    }
+    globalThis.fetch = receiverSensitiveFetch as typeof globalThis.fetch;
+    try {
+      const client = new ModuleQueryClient(DEFAULT_CHAIN);
+      await expect(
+        client.query<{ used: boolean }>(QUERY_PATHS.truedemocracy.nullifier, [
+          { number: 1, type: 'string', value: 'Citizen' },
+          { number: 2, type: 'string', value: 'aabb' },
+        ])
+      ).resolves.toEqual({ used: false });
+      expect(receivers).toHaveLength(1);
+    } finally {
+      globalThis.fetch = originalFetch;
+    }
+  });
+
   it('encodes a registered typed request and decodes Result JSON bytes', async () => {
     const fetchImpl = vi.fn<TestFetch>(async () => rpcResult({ used: true }));
     const client = new ModuleQueryClient(DEFAULT_CHAIN, fetchImpl);
