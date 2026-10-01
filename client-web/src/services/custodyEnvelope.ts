@@ -37,7 +37,7 @@ export class CustodyEnvelopeError extends Error {
 export interface CustodyEnvelopeOptions {
   /** Associated data bound to the ciphertext; omit for the historical wallet format. */
   aad?: string;
-  /** Upper bound on the serialized envelope, checked before Base64 decode or KDF work. */
+  /** Narrower bound on the serialized envelope (<= 8192), checked before Base64 decode or KDF work. */
   maxEnvelopeChars?: number;
   /** Accept the unprefixed 100k payload (wallet storage only). */
   acceptLegacy?: boolean;
@@ -65,7 +65,8 @@ function aadBytes(options: CustodyEnvelopeOptions): Uint8Array | undefined {
 
 function maxEnvelopeChars(options: CustodyEnvelopeOptions): number {
   const max = options.maxEnvelopeChars ?? DEFAULT_MAX_ENVELOPE_CHARS;
-  if (!Number.isSafeInteger(max) || max <= CURRENT_PREFIX.length) {
+  // Callers may only narrow the hard default, never widen it.
+  if (!Number.isSafeInteger(max) || max <= CURRENT_PREFIX.length || max > DEFAULT_MAX_ENVELOPE_CHARS) {
     throw new CustodyEnvelopeError();
   }
   return max;

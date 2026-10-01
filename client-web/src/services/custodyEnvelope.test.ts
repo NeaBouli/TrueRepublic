@@ -128,6 +128,22 @@ describe('custody envelope', { timeout: 30_000 }, () => {
     expect(importKey).not.toHaveBeenCalled();
   });
 
+  it('only lets callers narrow the hard envelope limit, never widen it', async () => {
+    const importKey = vi.spyOn(crypto.subtle, 'importKey');
+    const atobSpy = vi.spyOn(globalThis, 'atob');
+    const oversized = `v2:${'A'.repeat(9_000)}`;
+    for (const maxEnvelopeChars of [8_193, 100_000, Number.MAX_SAFE_INTEGER]) {
+      await expectFailure(openEnvelope(oversized, PASSWORD, { maxEnvelopeChars }));
+      await expectFailure(openEnvelope(FIXTURE_V2, PASSWORD, { maxEnvelopeChars }));
+      await expectFailure(sealEnvelope(PLAINTEXT_V2, PASSWORD, { maxEnvelopeChars }));
+    }
+    expect(atobSpy).not.toHaveBeenCalled();
+    expect(importKey).not.toHaveBeenCalled();
+    await expect(openEnvelope(FIXTURE_V2, PASSWORD, { maxEnvelopeChars: 8_192 })).resolves.toMatchObject({
+      plaintext: PLAINTEXT_V2,
+    });
+  });
+
   it('rejects a well-formed payload shorter than salt, IV and tag before key derivation', async () => {
     const importKey = vi.spyOn(crypto.subtle, 'importKey');
     await expectFailure(openEnvelope(encodePayload(new Uint8Array(43)), PASSWORD));

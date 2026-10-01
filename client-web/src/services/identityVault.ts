@@ -27,6 +27,8 @@ export const IDENTITY_VAULT_STORAGE_KEY = 'truerepublic_identity_vault_v1';
 export const IDENTITY_VAULT_VERSION = 1;
 export const MAX_IDENTITY_VAULT_RECORDS = 16;
 export const MAX_IDENTITY_VAULT_CHARS = 64 * 1024;
+/** Every vault mutation in every tab runs under this exclusive Web Lock. */
+export const IDENTITY_VAULT_LOCK_NAME = 'truerepublic-identity-vault';
 const MAX_RECORD_ENVELOPE_CHARS = 1_024;
 const MAX_ADDRESS_CHARS = 128;
 const PASSWORD_MIN_LENGTH = 8; // mirrors the wallet encryption password policy
@@ -68,6 +70,11 @@ export class IdentityVaultError extends Error {
 }
 
 export type IdentityVaultStorage = Pick<Storage, 'getItem' | 'setItem' | 'removeItem'>;
+
+/** The subset of the Web Locks API the vault needs. */
+export interface IdentityVaultLocks {
+  request<T>(name: string, options: { mode: 'exclusive' }, callback: () => Promise<T>): Promise<T>;
+}
 
 interface VaultRecord {
   v: typeof IDENTITY_VAULT_VERSION;
@@ -193,7 +200,37 @@ function parseDocument(raw: string | null): VaultDocument {
 }
 
 export class IdentityVault {
-  constructor(private readonly storageOverride?: IdentityVaultStorage) {}
+  /**
+   * @param locksOverride omit to use navigator.locks; pass null to model a
+   *   browser without Web Locks (mutations then fail closed).
+   */
+  constructor(
+    private readonly storageOverride?: IdentityVaultStorage,
+    private readonly locksOverride?: IdentityVaultLocks | null
+  ) {}
+
+  /**
+   * Serialize a mutation across tabs. Without Web Locks no mutation runs, so
+   * concurrent read-modify-write cycles can never lose or resurrect records.
+   */
+  private async withMutationLock<T>(mutation: () => Promise<T>): Promise<T> {
+    const locks =
+      this.locksOverride === undefined
+        ? (globalThis.navigator?.locks as IdentityVaultLocks | undefined)
+        : this.locksOverride;
+    if (!locks || typeof locks.request !== 'function') throw new IdentityVaultError('storage');
+    let result: Promise<T>;
+    try {
+      result = locks.request(IDENTITY_VAULT_LOCK_NAME, { mode: 'exclusive' }, mutation);
+    } catch {
+      throw new IdentityVaultError('storage');
+    }
+    try {
+      return await result;
+    } catch (error) {
+      throw error instanceof IdentityVaultError ? error : new IdentityVaultError('storage');
+    }
+  }
 
   private get storage(): IdentityVaultStorage {
     const storage = this.storageOverride ?? globalThis.localStorage;
@@ -232,14 +269,18 @@ export class IdentityVault {
 
   /**
    * Store an identity for the address only if none exists. Existing entries
-   * are never overwritten; a concurrent change during sealing is a conflict.
+   * are never overwritten; the whole read-seal-write cycle holds the vault
+   * lock, and a change by a writer outside the lock is still a conflict.
    * On any error nothing is written.
    */
   async createIdentity(address: string, password: string, identity: Identity): Promise<void> {
     assertAddress(address);
     assertPassword(password);
     if (!isValidIdentity(identity)) throw new IdentityVaultError('invalid-identity');
+    await this.withMutationLock(() => this.createLocked(address, password, identity));
+  }
 
+  private async createLocked(address: string, password: string, identity: Identity): Promise<void> {
     const before = this.readRaw();
     const document = parseDocument(before);
     if (Object.prototype.hasOwnProperty.call(document.records, address)) {
@@ -312,9 +353,13 @@ export class IdentityVault {
     return identity;
   }
 
-  /** Remove the entry for the address on explicit caller request. */
-  removeIdentity(address: string): boolean {
+  /** Remove the entry for the address on explicit caller request, under the vault lock. */
+  async removeIdentity(address: string): Promise<boolean> {
     assertAddress(address);
+    return this.withMutationLock(async () => this.removeLocked(address));
+  }
+
+  private removeLocked(address: string): boolean {
     const document = parseDocument(this.readRaw());
     if (!Object.prototype.hasOwnProperty.call(document.records, address)) return false;
     const records = { ...document.records };
