@@ -1,0 +1,26 @@
+{
+  "schema": "truerepublic/zkp-artifact-manifest/v1",
+  "circuit_id": "truerepublic/membership-vote/v2-bn254-mimc-depth20",
+  "classification": "TEST-ONLY SINGLE-PARTY TOXIC WASTE",
+  "production_allowed": false,
+  "constraint_system": {
+    "path": "__zkp/membership_v2.cs",
+    "size_bytes": 1656948,
+    "sha256_hex": "2a9bc20a39f076fe39d931164c6b29b857f3372cb573c54e5381840f77abaa10"
+  },
+  "proving_key": {
+    "path": "__zkp/membership_v2.pk",
+    "size_bytes": 2382883,
+    "sha256_hex": "4775ed0a77f64e105a0a995958c45344eeda888ca26bafa07abf141b9d9952ed"
+  },
+  "verifying_key": {
+    "path": "__zkp/membership_v2.vk",
+    "size_bytes": 460,
+    "sha256_hex": "80b92df9562e48d4b25df9e7105e54f6d79250a3f35171250fcfd45c1489e289"
+  },
+  "wasm": {
+    "path": "__zkp/zkp-prover.wasm",
+    "size_bytes": 18778166,
+    "sha256_hex": "4771efb0fc6ca368bf9f3c79d7e1995eda2a24059d01309f77fe931a4e6552b4"
+  }
+}
