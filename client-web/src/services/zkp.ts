@@ -32,6 +32,7 @@ import {
   ModuleQueryClient,
   QUERY_PATHS,
 } from './moduleQuery';
+import { previewMockIdentityHash } from './previewIdentityHash';
 
 export class ZKPService {
   private wasmLoaded = false;
@@ -203,16 +204,8 @@ export class ZKPService {
    * Real implementation uses MiMC over BN254 scalar field.
    */
   private mockMiMCHash(input: string): string {
-    // Sync mock: simple deterministic hash for testing.
-    // Real MiMC operates on field elements; this is a placeholder.
-    let hash = 0x811c9dc5;
-    for (let i = 0; i < input.length; i++) {
-      hash ^= input.charCodeAt(i);
-      hash = Math.imul(hash, 0x01000193);
-    }
-    const hex = (hash >>> 0).toString(16).padStart(8, '0');
-    // Pad to 64 chars (32 bytes) for consistency with real hashes
-    return (hex + hex + hex + hex + hex + hex + hex + hex).slice(0, 64);
+    // Preview placeholder, not MiMC: see previewIdentityHash.ts.
+    return previewMockIdentityHash(input);
   }
 
 }
