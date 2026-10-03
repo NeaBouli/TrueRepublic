@@ -1,5 +1,14 @@
 # TrueRepublic Agent Bridge
 
+## 2026-10-03 EEST GH331C2 evidence metadata closed → final visual review
+
+- Authoritative before set `_evidence/GH331C/GH331C1/c1-before-2`; 6/6 crops
+  byte-identical to `c1-after`; the wallet tablet-landscape pair sheet was
+  regenerated from them; the stale first run is marked non-authoritative.
+- Evidence index: `_evidence/GH331C/GH331C1/EVIDENCE_INDEX.md`. Not pushed.
+
+---
+
 ## 2026-10-03 EEST GH331C/GH331C1 Tailwind v4 migration → final visual review
 
 - **Result:** `agent/claude/GH331-tailwind-v4` @ `c9ab60c` moves the client to

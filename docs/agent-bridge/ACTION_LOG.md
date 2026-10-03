@@ -1,5 +1,15 @@
 # Action Log
 
+## 2026-10-03 - GH331C2 authoritative Tailwind v4 evidence set
+
+- `_evidence/GH331C/GH331C1/c1-before-2` is the authoritative before set;
+  against `c1-after` all six viewport crops are byte- and pixel-identical.
+- Regenerated only `c1-pair-wallet-tablet-landscape-1180x820.png` from those
+  two sets; renamed the first run to `c1-before-NONAUTHORITATIVE-run1` with a
+  README. No recapture, build, product or threshold change.
+
+---
+
 ## 2026-10-03 - GH331C1 Tailwind v4 visual-evidence precision
 
 - Recaptured six states as literal viewport crops (create-phrase, network,
