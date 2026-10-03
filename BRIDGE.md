@@ -1,5 +1,14 @@
 # TrueRepublic Agent Bridge
 
+## 2026-10-04 EEST GH348A OpenTelemetry advisory remediation → review
+
+- 8354d9c updates the OpenTelemetry Go family to v1.45.0 and removes reachable
+  GO-2026-6505 without an allowlist; the four documented no-fix IDs remain
+  exactly. WASM prover bytes unchanged (no re-pin). PR #347 stays frozen
+  until this main security lane merges. Not pushed.
+
+---
+
 ## 2026-09-19 EEST GH-304 unblocked and synchronized → Protected re-review
 
 - **Base:** GH-318/GH-305/GH-321 security stack is complete on exact main
