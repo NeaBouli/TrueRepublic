@@ -40,7 +40,9 @@ export function VotingPanel({
   const [showIdentitySetup, setShowIdentitySetup] = useState(false);
 
   useEffect(() => {
-    if (!hasIdentity || !identity) return;
+    // GH300B3a: while submission is disabled there is no vote to check. Never
+    // derive a canonical nullifier from a preview secret or query the chain.
+    if (!zkpService.isSubmittable || !hasIdentity || !identity) return;
 
     let cancelled = false;
     const checkVoteStatus = async () => {
@@ -156,7 +158,10 @@ export function VotingPanel({
     );
   }
 
-  if (alreadyVoted) {
+  // Status results only exist for submittable proofs; never render stale ones.
+  const voteStatusEnabled = zkpService.isSubmittable;
+
+  if (voteStatusEnabled && alreadyVoted) {
     return (
       <Card>
         <div className="text-center py-8">
@@ -245,7 +250,7 @@ export function VotingPanel({
         </div>
       </div>
 
-      {voteStatusError && (
+      {voteStatusEnabled && voteStatusError && (
         <div className="bg-red-50 border border-red-300 rounded-lg p-4 mb-6 text-sm text-red-900">
           Nullifier status unavailable: {voteStatusError}
         </div>
@@ -254,7 +259,7 @@ export function VotingPanel({
       <Button
         onClick={handleVote}
         disabled={!zkpService.isSubmittable || voteStatusError !== null}
-        className="w-full flex items-center justify-center gap-2"
+        className="w-full min-h-[44px] flex items-center justify-center gap-2"
       >
         <ShieldCheckIcon className="h-5 w-5" />
         Anonymous Voting Unavailable
