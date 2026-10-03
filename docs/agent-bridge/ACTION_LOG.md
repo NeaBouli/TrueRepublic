@@ -1,5 +1,20 @@
 # Action Log
 
+## 2026-10-03 - GH331C1 Tailwind v4 visual-evidence precision
+
+- Recaptured six states as literal viewport crops (create-phrase, network,
+  wallet and ibc-transfer at 390x844; wallet and ibc-transfer at 1180x820):
+  before/after pixel-identical, PNG sizes equal the named viewports, no
+  horizontal overflow, all fixed elements inside the viewport.
+- Corrected the GH331C delta description: the four <= 2/255 differences sit on
+  the unfocused Password/Confirm Password input corner rows and mobile button
+  edges, not on the focused Wallet Name ring.
+- Recorded pre-existing P2 follow-ups (unchanged by the migration): mobile
+  recovery-phrase column collision and FAB overlap, wallet address/copy
+  overflow, broken header logo image. No product, dependency or config change.
+
+---
+
 ## 2026-10-03 - GH331C Tailwind CSS v4 migration removes unfixed braces chain
 
 - GHSA-vfj7-8cjw-p6xm (braces <= 3.0.3, high) has no patched release; it

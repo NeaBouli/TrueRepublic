@@ -1,5 +1,22 @@
 # TrueRepublic Agent Bridge
 
+## 2026-10-03 EEST GH331C/GH331C1 Tailwind v4 migration → final visual review
+
+- **Result:** `agent/claude/GH331-tailwind-v4` @ `c9ab60c` moves the client to
+  Tailwind CSS 4.3.3 and removes the unfixed braces chain
+  (GHSA-vfj7-8cjw-p6xm) without an exception; audits report zero
+  high/critical findings. The independent dependency review found no issues.
+- **Visual parity:** 98/102 base pairs and 24/24 GH300 B3 data/modal pairs are
+  pixel-identical; four input/button edge renders differ by <= 2/255. GH331C1
+  recaptured six states as exact viewport crops (identical).
+- **Follow-ups (pre-existing P2):** mobile recovery-phrase collision and FAB
+  overlap; wallet address/copy overflow; broken header logo image.
+- **Boundary:** not pushed; no deployment or rollout credit. Production false.
+
+`TRUEREPUBLIC GH331C TAILWIND V4 — EVIDENCE COMPLETE — AWAITING FINAL VISUAL REVIEW`
+
+---
+
 ## 2026-09-19 EEST GH-304 unblocked and synchronized → Protected re-review
 
 - **Base:** GH-318/GH-305/GH-321 security stack is complete on exact main
