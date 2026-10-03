@@ -59,7 +59,7 @@ export function IBCChannels() {
                     {channel.channel_id} ({channel.port_id})
                   </div>
                   <span
-                    className={`px-2 py-0.5 text-xs font-medium rounded ${getStateColor(channel.state)}`}
+                    className={`px-2 py-0.5 text-xs font-medium rounded-sm ${getStateColor(channel.state)}`}
                   >
                     {channel.state.replace('STATE_', '')}
                   </span>
@@ -78,7 +78,7 @@ export function IBCChannels() {
                 </div>
               </div>
 
-              <div className="flex-shrink-0 ml-4">
+              <div className="shrink-0 ml-4">
                 {isOpen ? (
                   <CheckCircleIcon className="h-8 w-8 text-green-500" />
                 ) : (

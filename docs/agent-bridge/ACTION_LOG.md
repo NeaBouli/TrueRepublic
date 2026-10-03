@@ -15,7 +15,80 @@
   deterministic-build, license and consistency contracts pass. The local
   -race run was stopped for disk headroom; hosted Go CI is authoritative.
   Not pushed.
+---
 
+## 2026-10-03 - GH331C4 client image copies the Tailwind palette bridge
+
+- PR #347 reproducible OCI (arm64, amd64) failed: Vite could not find
+  ./tailwind.v3-colors.js because client-web/Dockerfile copies configs
+  explicitly. Commit ba3f487 adds exactly that file to the existing config COPY.
+- Proof without Docker (5.0 GiB free, below the 5 GiB-plus-margin rule): an
+  exact build-context copy of the Dockerfile COPY set fails before the fix
+  with the CI error and builds after it (same CSS asset hash as the evaluated
+  build). OCI and release-candidate contract tests, release-evidence fixtures,
+  production build and consistency pass. Hosted exact-head OCI is
+  authoritative. Not pushed.
+
+---
+
+## 2026-10-03 - GH331C3 oxide-wasm32-wasi bundled lock graph
+
+- PR #347 release-evidence SBOM step failed: package-lock-only npm ls reported
+  six missing bundled children of optional @tailwindcss/oxide-wasm32-wasi.
+- Commit 2bdc156 adds exactly the six npm 10.9.7-generated inBundle entries
+  (@emnapi/core, @emnapi/runtime, @emnapi/wasi-threads, @napi-rs/wasm-runtime,
+  @tybys/wasm-util, tslib); package-lock.json +60 lines only.
+- Proof: lock-only npm ls rc 1 -> 0; pre-fix cyclonedx-npm SBOM rc 254 ->
+  post-fix SBOM generated twice per run, two runs, normalized outputs
+  identical; npm ci, npm ls --all, three audit gates (0), signatures,
+  license policy and consistency pass. Not pushed.
+
+---
+
+## 2026-10-03 - GH331C2 authoritative Tailwind v4 evidence set
+
+- `_evidence/GH331C/GH331C1/c1-before-2` is the authoritative before set;
+  against `c1-after` all six viewport crops are byte- and pixel-identical.
+- Regenerated only `c1-pair-wallet-tablet-landscape-1180x820.png` from those
+  two sets; renamed the first run to `c1-before-NONAUTHORITATIVE-run1` with a
+  README. No recapture, build, product or threshold change.
+
+---
+
+## 2026-10-03 - GH331C1 Tailwind v4 visual-evidence precision
+
+- Recaptured six states as literal viewport crops (create-phrase, network,
+  wallet and ibc-transfer at 390x844; wallet and ibc-transfer at 1180x820):
+  before/after pixel-identical, PNG sizes equal the named viewports, no
+  horizontal overflow, all fixed elements inside the viewport.
+- Corrected the GH331C delta description: the four <= 2/255 differences sit on
+  the unfocused Password/Confirm Password input corner rows and mobile button
+  edges, not on the focused Wallet Name ring.
+- Recorded pre-existing P2 follow-ups (unchanged by the migration): mobile
+  recovery-phrase column collision and FAB overlap, wallet address/copy
+  overflow, broken header logo image. No product, dependency or config change.
+
+---
+
+## 2026-10-03 - GH331C Tailwind CSS v4 migration removes unfixed braces chain
+
+- GHSA-vfj7-8cjw-p6xm (braces <= 3.0.3, high) has no patched release; it
+  reached the client only through Tailwind CSS 3.4.19 (chokidar, fast-glob,
+  micromatch). The client now uses Tailwind CSS 4.3.3 through
+  `@tailwindcss/postcss`; autoprefixer is dropped (v4 prefixes itself). The
+  braces/micromatch/chokidar/fast-glob chain is gone and full,
+  production-only and gate audits report zero high/critical advisories.
+- Design parity: the v3 palette for every used color family is pinned in
+  `tailwind.v3-colors.js`, and documented v3 Preflight defaults (border and
+  placeholder color, button cursor, form-control opacity and text-field
+  background) are restored in `src/index.css`. Removed/renamed v4 utilities
+  were mapped mechanically (`flex-shrink-0`, `rounded`, `shadow-sm`,
+  `outline-none`, `bg-opacity-50`, sRGB gradient interpolation).
+- Evidence: 102 deterministic before/after screenshots at four viewports are
+  pixel-identical except four focus-ring edge renders (max channel delta 2);
+  24 data-loaded/modal states verified identical on the GH300 B3 head. Lint,
+  TypeScript, 309 unit tests, build/budget, the browser suite (same result as
+  baseline), license policy and consistency pass. Not pushed.
 ---
 
 ## 2026-09-19 - GH-304 canonical bech32 identity edge hardened

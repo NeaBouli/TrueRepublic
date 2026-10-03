@@ -6,7 +6,51 @@
   GO-2026-6505 without an allowlist; the four documented no-fix IDs remain
   exactly. WASM prover bytes unchanged (no re-pin). PR #347 stays frozen
   until this main security lane merges. Not pushed.
+---
 
+## 2026-10-03 EEST GH331C4 Dockerfile palette copy → focused review
+
+- ba3f487 adds tailwind.v3-colors.js to the client Dockerfile config COPY (one
+  line). Build-context simulation proves the CI failure before and a clean
+  build after; local Docker was skipped for disk headroom, so hosted OCI is
+  authoritative. GH331C3 (2bdc156) stays a separate lockfile-only commit.
+
+---
+
+## 2026-10-03 EEST GH331C3 lock graph fixed → independent lock review
+
+- Exact-head CI on #347 found two real GH331C defects: incomplete bundled lock
+  graph (release evidence SBOM) and the client Dockerfile not copying
+  tailwind.v3-colors.js (reproducible OCI). GH331C3 (2bdc156) fixes the lock graph
+  only; the Dockerfile follows separately as GH331C4.
+- Lock-only npm ls and the SBOM double-generation contract now pass locally.
+  Not pushed.
+
+---
+
+## 2026-10-03 EEST GH331C2 evidence metadata closed → final visual review
+
+- Authoritative before set `_evidence/GH331C/GH331C1/c1-before-2`; 6/6 crops
+  byte-identical to `c1-after`; the wallet tablet-landscape pair sheet was
+  regenerated from them; the stale first run is marked non-authoritative.
+- Evidence index: `_evidence/GH331C/GH331C1/EVIDENCE_INDEX.md`. Not pushed.
+
+---
+
+## 2026-10-03 EEST GH331C/GH331C1 Tailwind v4 migration → final visual review
+
+- **Result:** `agent/claude/GH331-tailwind-v4` @ `c9ab60c` moves the client to
+  Tailwind CSS 4.3.3 and removes the unfixed braces chain
+  (GHSA-vfj7-8cjw-p6xm) without an exception; audits report zero
+  high/critical findings. The independent dependency review found no issues.
+- **Visual parity:** 98/102 base pairs and 24/24 GH300 B3 data/modal pairs are
+  pixel-identical; four input/button edge renders differ by <= 2/255. GH331C1
+  recaptured six states as exact viewport crops (identical).
+- **Follow-ups (pre-existing P2):** mobile recovery-phrase collision and FAB
+  overlap; wallet address/copy overflow; broken header logo image.
+- **Boundary:** not pushed; no deployment or rollout credit. Production false.
+
+`TRUEREPUBLIC GH331C TAILWIND V4 — EVIDENCE COMPLETE — AWAITING FINAL VISUAL REVIEW`
 ---
 
 ## 2026-09-19 EEST GH-304 unblocked and synchronized → Protected re-review

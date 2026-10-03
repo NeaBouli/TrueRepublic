@@ -102,7 +102,7 @@ function SuggestionCard({
           <span>{suggestion.ratingCount} ratings</span>
           <span>&middot;</span>
           <span
-            className={`px-2 py-0.5 rounded text-xs font-medium ${getZoneBadgeClass(suggestion.zone)}`}
+            className={`px-2 py-0.5 rounded-sm text-xs font-medium ${getZoneBadgeClass(suggestion.zone)}`}
           >
             {suggestion.zone.charAt(0).toUpperCase() +
               suggestion.zone.slice(1)}
@@ -241,7 +241,7 @@ export function SuggestionList() {
         );
         if (!stoneSuggestion) return null;
         return (
-          <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+          <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
             <div className="bg-white rounded-xl max-w-md w-full">
               <div className="border-b border-gray-200 px-6 py-4 flex items-center justify-between rounded-t-xl">
                 <h3 className="text-lg font-semibold">Place Stone</h3>
@@ -278,7 +278,7 @@ export function SuggestionList() {
 
       {/* Voting Modal */}
       {selectedForVoting && selectedSuggestion && domainId && issueId && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
           <div className="bg-white rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
             <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between rounded-t-xl">
               <h3 className="text-lg font-semibold">Anonymous Voting</h3>
