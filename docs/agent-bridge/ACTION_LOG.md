@@ -1,5 +1,25 @@
 # Action Log
 
+## 2026-10-03 - GH300B3a disabled preview voting status fixed
+
+- Codex's focused B3 review returned `changes` with one P3: while
+  `isSubmittable` is hard false, the VotingPanel still derived a canonical
+  nullifier from preview secrets (mostly outside the BN254 field), showing a
+  false red "Nullifier status unavailable" error and querying the chain.
+- The status effect now returns before any derivation or query while
+  submission is disabled, and stale status is never rendered. The vote control
+  has a 44px minimum height (it measured 40px on wide viewports).
+- Evidence: component regression (3 tests, two guard mutations caught), a new
+  browser contract at 1440x1000, 1180x820, 820x1180 and 390x844 on all five
+  engines (20 passed, zero Nullifier queries, no red status, inert control),
+  existing identity e2e on Chromium (47 passed), full client suite 490 passed /
+  4 skipped, lint, `tsc -b`, build and bundle budget (entry 77941, max route
+  6190).
+- No prover, runtime, identity, submission or readiness-text change; not
+  pushed.
+
+---
+
 ## 2026-09-19 - GH-304 canonical bech32 identity edge hardened
 
 - Sol's integration review confirmed Cosmos bech32 decoding accepts an
