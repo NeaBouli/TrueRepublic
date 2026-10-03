@@ -51,6 +51,8 @@ export interface GeneratedProof {
 
 /** Test seam for replaying compatible proof fixtures without enabling UI submission. */
 export interface Groth16Prover {
+  /** Optional readiness step; a rejection keeps the service fail-closed. */
+  initialize?(): Promise<void>;
   generate(inputs: ProofInputs): Promise<GeneratedProof>;
 }
 

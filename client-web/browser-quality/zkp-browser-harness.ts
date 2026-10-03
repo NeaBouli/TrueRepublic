@@ -11,6 +11,8 @@ import {
   type TestOnlyZKPArtifacts,
 } from '../src/services/zkpWasmProver';
 import type { ProofInputs } from '../src/types/zkp';
+import { ZKPService } from '../src/services/zkp';
+import { DEFAULT_CHAIN } from '../src/config/chains';
 
 interface GoldenVector {
   chain_id: string;
@@ -196,10 +198,15 @@ window.runTrueRepublicZKPBrowserProof = async () => {
       suggestionName: vector.suggestion_name,
       rewardRecipient: spec.vote_context_v2.vector.reward_recipient,
     };
-    const result = await new TestOnlyGroth16WasmProver(
-      runtime,
-      artifacts
-    ).generate(inputs);
+    // GH300B3: one real proof through the service boundary and its explicitly
+    // injected test-only prover (canonical binding checked by ZKPService).
+    const service = new ZKPService(
+      { ...DEFAULT_CHAIN, chainId: vector.chain_id },
+      undefined,
+      new TestOnlyGroth16WasmProver(runtime, artifacts)
+    );
+    await service.initialize();
+    const result = await service.generateProof(inputs);
     return {
       schema: 'truerepublic/zkp-wasm-handoff/v1',
       chainId: inputs.chainId,
