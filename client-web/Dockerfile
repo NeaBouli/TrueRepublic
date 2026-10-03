@@ -8,7 +8,7 @@ COPY package.json package-lock.json ./
 RUN npm ci
 
 COPY index.html vite.config.ts tsconfig.json tsconfig.app.json tsconfig.node.json \
-    postcss.config.js tailwind.config.js ./
+    postcss.config.js tailwind.config.js tailwind.v3-colors.js ./
 COPY scripts ./scripts
 COPY src ./src
 ARG VITE_TRUEREPUBLIC_RPC=/rpc
