@@ -12,6 +12,8 @@ import (
 	"strings"
 
 	"github.com/cosmos/cosmos-sdk/types/bech32"
+
+	"truerepublic/x/truedemocracy/zkpadmission"
 )
 
 var (
@@ -24,7 +26,7 @@ var (
 var checkNames = []string{
 	"manifest", "genesis-binding", "chain-identity", "consensus-validators",
 	"application-validators", "bank-supply", "governance-escrow",
-	"dex-custody", "module-isolation",
+	"dex-custody", "module-isolation", "zkp-verifying-key",
 }
 
 type state struct {
@@ -261,9 +263,11 @@ func (s *state) verifyGenesis(m Manifest, raw map[string]any) {
 	td, ok := g.AppState["truedemocracy"].(map[string]any)
 	if !ok {
 		s.fail("application-validators", "missing-truedemocracy-state")
+		s.fail("zkp-verifying-key", "missing-truedemocracy-state")
 	} else {
 		domains, domainsOK := s.verifyDomains(td)
 		s.verifyAppValidators(m, td, want, domains, domainsOK)
+		s.verifyZKPVerifyingKey(td)
 	}
 	bank, ok := g.AppState["bank"].(map[string]any)
 	if !ok {
@@ -888,4 +892,36 @@ func SortedCoins(coins map[string]string) []Coin {
 		out = append(out, Coin{Denom: k, Amount: coins[k]})
 	}
 	return out
+}
+
+// verifyZKPVerifyingKey classifies the genesis ZKP verifying-key triple with
+// the offline admission policy (GH300B4B). Only an explicitly recorded absent
+// key or a production-admitted key passes; consensus validation is unchanged.
+func (s *state) verifyZKPVerifyingKey(td map[string]any) {
+	fields := [3]string{}
+	for i, name := range []string{"zkp_circuit_id", "verifying_key_hex", "verifying_key_sha256"} {
+		value, present := td[name]
+		if !present {
+			continue
+		}
+		text, ok := value.(string)
+		if !ok {
+			s.fail("zkp-verifying-key", "invalid-verifying-key-field")
+			return
+		}
+		fields[i] = text
+	}
+	class, err := zkpadmission.DefaultPolicy().Classify(fields[0], fields[1], fields[2])
+	if err != nil {
+		s.fail("zkp-verifying-key", err.Error())
+		return
+	}
+	s.evidence.Checks[s.byName["zkp-verifying-key"]].Classification = string(class)
+	switch class {
+	case zkpadmission.Absent, zkpadmission.ProductionAdmitted:
+	case zkpadmission.TestOnlyDenied:
+		s.fail("zkp-verifying-key", "test-only-verifying-key")
+	default:
+		s.fail("zkp-verifying-key", "unadmitted-verifying-key")
+	}
 }
