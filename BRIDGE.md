@@ -9919,3 +9919,29 @@ Pending independent Kimi review and complete Sol verification.
 `TRUEREPUBLIC GH-304 CANONICAL BECH32 HARDENED — REPLACEMENT HEAD NEXT`
 
 ---
+
+---
+
+## 2026-10-01 02:40 EEST [AUTOR: CC]
+### TYPE: SECURITY — GH-331 maintained-client brace-expansion advisories
+
+- **Finding:** `npm run audit:high` blocked every PR (first seen on PR #330, run
+  36785225148): `brace-expansion` 5.0.9 (dev-only, via `eslint` → `minimatch`
+  10.2.5, both pinned by existing `overrides`) is affected by GHSA-q2hr-2g5m-vwhr
+  (<5.0.12), GHSA-qhr7-859c-m2p7 (<5.0.11) and GHSA-6j4f-fj2g-mc7p (<5.0.10), all
+  CPU/stack-exhaustion DoS; `minimatch` is reported only as the parent.
+- **Fix:** the existing exact `brace-expansion` override moves 5.0.9 → 5.0.12 and
+  only its lock entry changes (resolved URL + integrity
+  `sha512-YovQ3rzh…EimQ==`; MIT; engines `20 || >=22`; dependency
+  `balanced-match ^4.0.2` unchanged). `minimatch` stays 10.2.5 (`^5.0.5` accepts
+  5.0.12). No new override, exception or audit allowance; Vite and the PR #326
+  updates untouched. Same pattern as the earlier 5.0.8 → 5.0.9 reconciliation.
+- **Evidence (node 22.22.2, npm 10.9.7):** clean `npm ci`; `npm run audit:high`
+  "No high or critical npm advisories found"; `npm audit` 0 vulnerabilities;
+  `npm run lint`; `npm test -- --run` 309 passed / 4 skipped; `npm run build` with
+  bundle budget passed; `npm ls --all` clean; license policy check + fixtures;
+  locked gitleaks v8.30.1 secret scan + fixtures; `check-consistency.sh`;
+  `git diff --check`. `npm audit signatures` could not reach the registry locally.
+- No push, PR, merge, deployment or rollout credit.
+
+`TRUEREPUBLIC GH-331 CLIENT AUDIT FIXED LOCALLY — PROTECTED CI NEXT`
