@@ -1,5 +1,19 @@
 # Action Log
 
+## 2026-10-03 - GH331C4 client image copies the Tailwind palette bridge
+
+- PR #347 reproducible OCI (arm64, amd64) failed: Vite could not find
+  ./tailwind.v3-colors.js because client-web/Dockerfile copies configs
+  explicitly. Commit ba3f487 adds exactly that file to the existing config COPY.
+- Proof without Docker (5.0 GiB free, below the 5 GiB-plus-margin rule): an
+  exact build-context copy of the Dockerfile COPY set fails before the fix
+  with the CI error and builds after it (same CSS asset hash as the evaluated
+  build). OCI and release-candidate contract tests, release-evidence fixtures,
+  production build and consistency pass. Hosted exact-head OCI is
+  authoritative. Not pushed.
+
+---
+
 ## 2026-10-03 - GH331C3 oxide-wasm32-wasi bundled lock graph
 
 - PR #347 release-evidence SBOM step failed: package-lock-only npm ls reported

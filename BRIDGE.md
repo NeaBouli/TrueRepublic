@@ -1,5 +1,14 @@
 # TrueRepublic Agent Bridge
 
+## 2026-10-03 EEST GH331C4 Dockerfile palette copy → focused review
+
+- ba3f487 adds tailwind.v3-colors.js to the client Dockerfile config COPY (one
+  line). Build-context simulation proves the CI failure before and a clean
+  build after; local Docker was skipped for disk headroom, so hosted OCI is
+  authoritative. GH331C3 (2bdc156) stays a separate lockfile-only commit.
+
+---
+
 ## 2026-10-03 EEST GH331C3 lock graph fixed → independent lock review
 
 - Exact-head CI on #347 found two real GH331C defects: incomplete bundled lock
