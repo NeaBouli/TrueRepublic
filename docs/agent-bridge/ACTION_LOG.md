@@ -1,5 +1,19 @@
 # Action Log
 
+## 2026-10-03 - GH331C3 oxide-wasm32-wasi bundled lock graph
+
+- PR #347 release-evidence SBOM step failed: package-lock-only npm ls reported
+  six missing bundled children of optional @tailwindcss/oxide-wasm32-wasi.
+- Commit 2bdc156 adds exactly the six npm 10.9.7-generated inBundle entries
+  (@emnapi/core, @emnapi/runtime, @emnapi/wasi-threads, @napi-rs/wasm-runtime,
+  @tybys/wasm-util, tslib); package-lock.json +60 lines only.
+- Proof: lock-only npm ls rc 1 -> 0; pre-fix cyclonedx-npm SBOM rc 254 ->
+  post-fix SBOM generated twice per run, two runs, normalized outputs
+  identical; npm ci, npm ls --all, three audit gates (0), signatures,
+  license policy and consistency pass. Not pushed.
+
+---
+
 ## 2026-10-03 - GH331C2 authoritative Tailwind v4 evidence set
 
 - `_evidence/GH331C/GH331C1/c1-before-2` is the authoritative before set;

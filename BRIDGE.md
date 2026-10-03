@@ -1,5 +1,16 @@
 # TrueRepublic Agent Bridge
 
+## 2026-10-03 EEST GH331C3 lock graph fixed → independent lock review
+
+- Exact-head CI on #347 found two real GH331C defects: incomplete bundled lock
+  graph (release evidence SBOM) and the client Dockerfile not copying
+  tailwind.v3-colors.js (reproducible OCI). GH331C3 (2bdc156) fixes the lock graph
+  only; the Dockerfile follows separately as GH331C4.
+- Lock-only npm ls and the SBOM double-generation contract now pass locally.
+  Not pushed.
+
+---
+
 ## 2026-10-03 EEST GH331C2 evidence metadata closed → final visual review
 
 - Authoritative before set `_evidence/GH331C/GH331C1/c1-before-2`; 6/6 crops
