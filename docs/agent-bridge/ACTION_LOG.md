@@ -1,5 +1,27 @@
 # Action Log
 
+## 2026-10-03 - GH331C Tailwind CSS v4 migration removes unfixed braces chain
+
+- GHSA-vfj7-8cjw-p6xm (braces <= 3.0.3, high) has no patched release; it
+  reached the client only through Tailwind CSS 3.4.19 (chokidar, fast-glob,
+  micromatch). The client now uses Tailwind CSS 4.3.3 through
+  `@tailwindcss/postcss`; autoprefixer is dropped (v4 prefixes itself). The
+  braces/micromatch/chokidar/fast-glob chain is gone and full,
+  production-only and gate audits report zero high/critical advisories.
+- Design parity: the v3 palette for every used color family is pinned in
+  `tailwind.v3-colors.js`, and documented v3 Preflight defaults (border and
+  placeholder color, button cursor, form-control opacity and text-field
+  background) are restored in `src/index.css`. Removed/renamed v4 utilities
+  were mapped mechanically (`flex-shrink-0`, `rounded`, `shadow-sm`,
+  `outline-none`, `bg-opacity-50`, sRGB gradient interpolation).
+- Evidence: 102 deterministic before/after screenshots at four viewports are
+  pixel-identical except four focus-ring edge renders (max channel delta 2);
+  24 data-loaded/modal states verified identical on the GH300 B3 head. Lint,
+  TypeScript, 309 unit tests, build/budget, the browser suite (same result as
+  baseline), license policy and consistency pass. Not pushed.
+
+---
+
 ## 2026-09-19 - GH-304 canonical bech32 identity edge hardened
 
 - Sol's integration review confirmed Cosmos bech32 decoding accepts an
