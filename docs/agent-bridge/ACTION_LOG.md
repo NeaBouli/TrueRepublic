@@ -1,5 +1,22 @@
 # Action Log
 
+## 2026-10-04 - GH348A OpenTelemetry Go family to v1.45.0
+
+- GO-2026-6505 (CVE-2026-81870, OpenTelemetry exporter config logging may
+  leak endpoint URLs) became reachable on main. Commit 8354d9c updates the indirect
+  otel family (otel, metric, sdk, sdk/metric, trace) 1.44.0 -> 1.45.0; tidy
+  also moves go-logr/logr 1.4.3 -> 1.4.4 (required) and graph-only
+  otel/metric/x 0.66.0 -> 0.67.0. go mod tidy is idempotent; go mod verify ok.
+- Vulnerability gate: pre-fix found the four documented no-fix IDs plus
+  GO-2026-6505; post-fix passes with exactly the four. No allowlist change.
+- The test-only WASM prover builds byte-identical twice
+  (8126a270...c249, 18778166 bytes); it does not import OpenTelemetry, so no
+  pin changes. Go build, vet and the full test suite pass; evidence, OCI,
+  deterministic-build, license and consistency contracts pass. The local
+  -race run was stopped for disk headroom; hosted Go CI is authoritative.
+  Not pushed.
+---
+
 ## 2026-10-03 - GH331C4 client image copies the Tailwind palette bridge
 
 - PR #347 reproducible OCI (arm64, amd64) failed: Vite could not find
@@ -72,7 +89,6 @@
   24 data-loaded/modal states verified identical on the GH300 B3 head. Lint,
   TypeScript, 309 unit tests, build/budget, the browser suite (same result as
   baseline), license policy and consistency pass. Not pushed.
-
 ---
 
 ## 2026-09-19 - GH-304 canonical bech32 identity edge hardened

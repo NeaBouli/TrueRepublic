@@ -1,5 +1,13 @@
 # TrueRepublic Agent Bridge
 
+## 2026-10-04 EEST GH348A OpenTelemetry advisory remediation → review
+
+- 8354d9c updates the OpenTelemetry Go family to v1.45.0 and removes reachable
+  GO-2026-6505 without an allowlist; the four documented no-fix IDs remain
+  exactly. WASM prover bytes unchanged (no re-pin). PR #347 stays frozen
+  until this main security lane merges. Not pushed.
+---
+
 ## 2026-10-03 EEST GH331C4 Dockerfile palette copy → focused review
 
 - ba3f487 adds tailwind.v3-colors.js to the client Dockerfile config COPY (one
@@ -43,7 +51,6 @@
 - **Boundary:** not pushed; no deployment or rollout credit. Production false.
 
 `TRUEREPUBLIC GH331C TAILWIND V4 — EVIDENCE COMPLETE — AWAITING FINAL VISUAL REVIEW`
-
 ---
 
 ## 2026-09-19 EEST GH-304 unblocked and synchronized → Protected re-review
