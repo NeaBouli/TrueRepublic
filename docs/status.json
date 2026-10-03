@@ -33,8 +33,8 @@
     "routes": 23,
     "stores": 9,
     "services": 17,
-    "build_size_gzip": "355.17 kB total JavaScript",
-    "initial_entry_gzip": "71.16 kB",
+    "build_size_gzip": "355.41 kB total JavaScript",
+    "initial_entry_gzip": "71.45 kB",
     "max_lazy_route_gzip": "4.94 kB",
     "lazy_route_entries": 20,
     "bundle_budget": "enforced_during_build"
@@ -110,7 +110,7 @@
     "vite": "8.2.2",
     "cosmjs": "0.39.0",
     "zustand": "4.5",
-    "tailwindcss": "3.4"
+    "tailwindcss": "4.3"
   },
   "features": {
     "zkp": {
@@ -210,6 +210,12 @@
       "supported_clients": "daemon_cli_protobuf_grpc_and_browser_cometbft_abci_json_rpc",
       "grpc_gateway_custom_modules": false,
       "maintained_client_gateway_gap": "closed_locally_by_registered_grpc_over_abci_transport_on_gh121"
+    },
+    "dependency_security": {
+      "status": "no_blocking_high_or_critical_npm_or_reachable_go_advisory_on_merged_main",
+      "npm": "brace_expansion_patched_on_pr332_and_unfixed_braces_chain_removed_by_tailwindcss_4_3_on_pr347",
+      "go": "opentelemetry_family_1_45_0_removes_go_2026_6505_on_pr349_documented_no_fix_ids_unchanged",
+      "note": "Dependency remediation only. It adds no rollout credit and does not change production readiness."
     }
   },
   "limitations": {

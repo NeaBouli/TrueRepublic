@@ -647,3 +647,21 @@
   prove reproducible container images, deploy, or approve rollout. Production
   remains false. Fresh client build remains within budgets at 355.17 kB total JavaScript,
   71.16 kB entry and 4.94 kB maximum lazy route.
+
+## 2026-10-04 GH-331/GH-348 dependency-security remediation on main
+
+- PR #332 moved the brace-expansion override to 5.0.12 (three high DoS
+  advisories in a development-only lint path).
+- GHSA-vfj7-8cjw-p6xm (braces <= 3.0.3) has no patched release. PR #347 removed
+  the whole braces/micromatch/chokidar/fast-glob chain by migrating the
+  maintained client to Tailwind CSS 4.3 with pixel-parity visual evidence,
+  completed the optional oxide WASI lock graph and copied the palette bridge
+  into the client image build. No audit exception was added.
+- PR #349 updated the OpenTelemetry Go family to 1.45.0 for GO-2026-6505
+  (CVE-2026-81870); the four documented no-fix Go IDs are unchanged and the
+  test-only WASM prover stayed byte-identical.
+- Exact main 52aee79f reports no blocking high/critical npm advisory and only
+  the documented no-fix Go IDs. This is dependency hygiene only: no rollout
+  credit, deployment or production approval. Fresh client build remains within
+  budgets at 355.41 kB total JavaScript, 71.45 kB entry and 4.94 kB maximum lazy
+  route.

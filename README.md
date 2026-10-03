@@ -309,8 +309,8 @@ Go/client parity, evidence paths and adversarial drift handling.
   `3b0d1639bb40c7df6733dd13a86252e1c8c9efd3`. This proves only that recorded
   pair; long-term hermetic rebuilds, a real tag, signing, attestation,
   publication and staged rollout remain open.
-- ✅ Maintained-client production build remains within budget at 355.17 kB
-  total JavaScript gzip, with a 71.16 kB entry and 4.94 kB largest lazy route
+- ✅ Maintained-client production build remains within budget at 355.41 kB
+  total JavaScript gzip, with a 71.45 kB entry and 4.94 kB largest lazy route
 - ✅ Core blockchain compiles and runs
 - 🟡 Tokenomics, exact custom genesis, and every-block ledger invariants are recovery-verified and merged through PR #19
 - 🟡 Governance escrow/auth recovery is verified and merged; independent release review remains open

@@ -1,5 +1,22 @@
 # Action Log
 
+## 2026-10-04 - GH350A landing and status reconciliation
+
+- From exact main 52aee79f (after #332, #347 and #349): clean npm ci +
+  production build; bundle budget reports 363938 / 73168 / 5054 gzip bytes,
+  recorded with the existing KiB convention as 355.41 kB total JavaScript,
+  71.45 kB entry and 4.94 kB maximum lazy route.
+- status.json: web_client sizes, tech.tailwindcss 4.3 and a
+  features.dependency_security record; README and client README sizes/Tailwind;
+  landing Tailwind badge and one Phase 5 dependency-security line;
+  SECURITY_NOTES entry. Test totals unchanged (no aggregate verifier change).
+- Visual gate: landing rendered offline at 1440x1000, 1180x820, 820x1180 and
+  390x844 before/after: above-the-fold identical, changes limited to the badge
+  and the Phase 5 card, no horizontal overflow, clipped-text count identical
+  to before, no missing anchors. Not pushed.
+
+---
+
 ## 2026-10-04 - GH348A OpenTelemetry Go family to v1.45.0
 
 - GO-2026-6505 (CVE-2026-81870, OpenTelemetry exporter config logging may

@@ -1,5 +1,15 @@
 # TrueRepublic Agent Bridge
 
+## 2026-10-04 EEST GH350A landing/status refresh → independent review
+
+- Landing, status.json, README and SECURITY_NOTES now match exact main
+  52aee79f: Tailwind CSS 4.3, exact bundle sizes (355.41 / 71.45 / 4.94 kB) and
+  the merged dependency-security remediation (#332, #347, #349).
+- Rollout stays 36/59; production false; no test-total or rollout change.
+  Not pushed.
+
+---
+
 ## 2026-10-04 EEST GH348A OpenTelemetry advisory remediation → review
 
 - 8354d9c updates the OpenTelemetry Go family to v1.45.0 and removes reachable
