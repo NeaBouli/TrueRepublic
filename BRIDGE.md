@@ -1,5 +1,15 @@
 # TrueRepublic Agent Bridge
 
+## 2026-10-04 EEST GH350A landing/status refresh → independent review
+
+- Landing, status.json, README and SECURITY_NOTES now match exact main
+  52aee79f: Tailwind CSS 4.3, exact bundle sizes (355.41 / 71.45 / 4.94 kB) and
+  the merged dependency-security remediation (#332, #347, #349).
+- Rollout stays 36/59; production false; no test-total or rollout change.
+  Not pushed.
+
+---
+
 ## 2026-10-04 EEST GH348A OpenTelemetry advisory remediation → review
 
 - 8354d9c updates the OpenTelemetry Go family to v1.45.0 and removes reachable
@@ -9998,3 +10008,32 @@ Pending independent Kimi review and complete Sol verification.
 - No push, PR, merge, deployment or rollout credit.
 
 `TRUEREPUBLIC GH-331 CLIENT AUDIT FIXED LOCALLY — PROTECTED CI NEXT`
+
+---
+
+## 2026-10-04 [AUTOR: CC]
+### TYPE: DOCS — GH-350 GH350A1 dependency-security claim correction
+
+- **Finding:** `docs/status.json` (`delivery.dependency_security.status`) and the
+  Phase 5 landing card in `docs/index.html` claimed no reachable Go advisory on
+  main. `configs/security/gates.json` still carries four documented, bounded
+  no-fix reachable Go exceptions, so the absolute claim was false.
+- **Fix:** both claims now state no blocking high/critical npm advisory or
+  fixable reachable Go advisory, and name the four remaining exceptions:
+  GO-2023-1821, GO-2023-1881, GO-2026-4740, GO-2026-5932 (machine-readable as
+  `dependency_security.go_no_fix_exceptions`). Build metrics, versions, test
+  totals, rollout 36/59 and production false are unchanged.
+- **Evidence:** focused root repository contracts (security gate, release
+  compatibility/candidate, CI tool bootstrap, network policy) ok;
+  `securityreview` and `toolbootstrapevidence` packages ok;
+  `scripts/test-go-vulnerability-scan.sh` fixtures passed;
+  `check-consistency.sh` passed; `git diff --check` clean; landing card checked
+  at 1440x1000, 1180x820, 820x1180 and 390x844 with no overflow or clipping.
+- No push, PR, merge, deployment or rollout credit. Post-deploy GitHub Pages
+  recheck of the card remains open.
+
+## 2026-10-04 [AUTOR: CODEX]
+### TYPE: CORRECTION — GH-350 GH350A1 Bridge field path
+
+- The preceding finding's status path is `features.dependency_security.status`, not
+  `delivery.dependency_security.status`. The implementation, evidence and review outcome are unchanged.
