@@ -10054,3 +10054,12 @@ Pending independent Kimi review and complete Sol verification.
   regression test. All client gates green locally. Not pushed.
 
 ---
+
+## 2026-10-04 EEST status sync after GH-335/GH-353 → Codex publication
+
+- TODO and status.json now reflect merged PR #336 and PR #354. README and the
+  landing page were already current. Rollout 36/59; production false.
+- GitHub issue #356 now owns the three pre-existing P2 UI follow-ups: recovery-
+  phrase/FAB collision, wallet address/copy overflow and the broken header logo.
+
+---

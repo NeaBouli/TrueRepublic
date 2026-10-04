@@ -6073,3 +6073,12 @@
   unbound default fails the receiver assertion; full suite 310 passed / 4
   skipped (node 19/19); build + budget; audit:high clean; consistency PASSED;
   git diff --check clean. No push.
+
+## 2026-10-04 — status sync after GH-335/GH-353 merges (Claude Code)
+
+- TODO: GH-353 (PR #354, live-verified) and GH-335 (PR #336) marked complete.
+- status.json module_queries records the bound browser fetch receiver (PR #336).
+- README, landing and rollout figures already matched main; no other change.
+  check-consistency PASSED. Not pushed.
+- Codex opened issue #356 for the three pre-existing P2 UI follow-ups and linked
+  that owner from TODO before publication.
