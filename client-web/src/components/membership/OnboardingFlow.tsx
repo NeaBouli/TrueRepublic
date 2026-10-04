@@ -163,14 +163,14 @@ export function OnboardingFlow() {
 
             {error && (
               <div className="bg-red-50 border border-red-200 rounded-lg p-3 mb-4 flex items-start gap-2">
-                <XCircleIcon className="h-5 w-5 text-red-600 flex-shrink-0 mt-0.5" />
+                <XCircleIcon className="h-5 w-5 text-red-600 shrink-0 mt-0.5" />
                 <p className="text-sm text-red-800">{error}</p>
               </div>
             )}
 
             <div className="space-y-4 mb-6">
               <div className="flex items-start gap-3">
-                <CheckCircleIcon className="h-6 w-6 text-green-600 flex-shrink-0" />
+                <CheckCircleIcon className="h-6 w-6 text-green-600 shrink-0" />
                 <div className="flex-1">
                   <h3 className="font-semibold">Membership Approved</h3>
                   <p className="text-sm text-gray-600">
@@ -180,7 +180,7 @@ export function OnboardingFlow() {
               </div>
 
               <div className="flex items-start gap-3">
-                <div className="flex-shrink-0 w-6 h-6 bg-primary-100 text-primary-700 rounded-full flex items-center justify-center text-xs font-bold">
+                <div className="shrink-0 w-6 h-6 bg-primary-100 text-primary-700 rounded-full flex items-center justify-center text-xs font-bold">
                   2
                 </div>
                 <div className="flex-1">
@@ -229,7 +229,7 @@ export function OnboardingFlow() {
 
             <div className="space-y-4 mb-6">
               <div className="flex items-start gap-3">
-                <CheckCircleIcon className="h-6 w-6 text-green-600 flex-shrink-0" />
+                <CheckCircleIcon className="h-6 w-6 text-green-600 shrink-0" />
                 <div className="flex-1">
                   <h3 className="font-semibold">Step 1: Request Submitted</h3>
                   <p className="text-sm text-gray-600">
@@ -239,7 +239,7 @@ export function OnboardingFlow() {
               </div>
 
               <div className="flex items-start gap-3">
-                <ClockIcon className="h-6 w-6 text-yellow-600 flex-shrink-0 animate-pulse" />
+                <ClockIcon className="h-6 w-6 text-yellow-600 shrink-0 animate-pulse" />
                 <div className="flex-1">
                   <h3 className="font-semibold">Step 2: Waiting for Admin</h3>
                   <p className="text-sm text-gray-600">

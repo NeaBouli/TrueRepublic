@@ -1,5 +1,113 @@
 # Action Log
 
+## 2026-10-04 - GH350A landing and status reconciliation
+
+- From exact main 52aee79f (after #332, #347 and #349): clean npm ci +
+  production build; bundle budget reports 363938 / 73168 / 5054 gzip bytes,
+  recorded with the existing KiB convention as 355.41 kB total JavaScript,
+  71.45 kB entry and 4.94 kB maximum lazy route.
+- status.json: web_client sizes, tech.tailwindcss 4.3 and a
+  features.dependency_security record; README and client README sizes/Tailwind;
+  landing Tailwind badge and one Phase 5 dependency-security line;
+  SECURITY_NOTES entry. Test totals unchanged (no aggregate verifier change).
+- Visual gate: landing rendered offline at 1440x1000, 1180x820, 820x1180 and
+  390x844 before/after: above-the-fold identical, changes limited to the badge
+  and the Phase 5 card, no horizontal overflow, clipped-text count identical
+  to before, no missing anchors. Not pushed.
+
+---
+
+## 2026-10-04 - GH348A OpenTelemetry Go family to v1.45.0
+
+- GO-2026-6505 (CVE-2026-81870, OpenTelemetry exporter config logging may
+  leak endpoint URLs) became reachable on main. Commit 8354d9c updates the indirect
+  otel family (otel, metric, sdk, sdk/metric, trace) 1.44.0 -> 1.45.0; tidy
+  also moves go-logr/logr 1.4.3 -> 1.4.4 (required) and graph-only
+  otel/metric/x 0.66.0 -> 0.67.0. go mod tidy is idempotent; go mod verify ok.
+- Vulnerability gate: pre-fix found the four documented no-fix IDs plus
+  GO-2026-6505; post-fix passes with exactly the four. No allowlist change.
+- The test-only WASM prover builds byte-identical twice
+  (8126a270...c249, 18778166 bytes); it does not import OpenTelemetry, so no
+  pin changes. Go build, vet and the full test suite pass; evidence, OCI,
+  deterministic-build, license and consistency contracts pass. The local
+  -race run was stopped for disk headroom; hosted Go CI is authoritative.
+  Not pushed.
+---
+
+## 2026-10-03 - GH331C4 client image copies the Tailwind palette bridge
+
+- PR #347 reproducible OCI (arm64, amd64) failed: Vite could not find
+  ./tailwind.v3-colors.js because client-web/Dockerfile copies configs
+  explicitly. Commit ba3f487 adds exactly that file to the existing config COPY.
+- Proof without Docker (5.0 GiB free, below the 5 GiB-plus-margin rule): an
+  exact build-context copy of the Dockerfile COPY set fails before the fix
+  with the CI error and builds after it (same CSS asset hash as the evaluated
+  build). OCI and release-candidate contract tests, release-evidence fixtures,
+  production build and consistency pass. Hosted exact-head OCI is
+  authoritative. Not pushed.
+
+---
+
+## 2026-10-03 - GH331C3 oxide-wasm32-wasi bundled lock graph
+
+- PR #347 release-evidence SBOM step failed: package-lock-only npm ls reported
+  six missing bundled children of optional @tailwindcss/oxide-wasm32-wasi.
+- Commit 2bdc156 adds exactly the six npm 10.9.7-generated inBundle entries
+  (@emnapi/core, @emnapi/runtime, @emnapi/wasi-threads, @napi-rs/wasm-runtime,
+  @tybys/wasm-util, tslib); package-lock.json +60 lines only.
+- Proof: lock-only npm ls rc 1 -> 0; pre-fix cyclonedx-npm SBOM rc 254 ->
+  post-fix SBOM generated twice per run, two runs, normalized outputs
+  identical; npm ci, npm ls --all, three audit gates (0), signatures,
+  license policy and consistency pass. Not pushed.
+
+---
+
+## 2026-10-03 - GH331C2 authoritative Tailwind v4 evidence set
+
+- `_evidence/GH331C/GH331C1/c1-before-2` is the authoritative before set;
+  against `c1-after` all six viewport crops are byte- and pixel-identical.
+- Regenerated only `c1-pair-wallet-tablet-landscape-1180x820.png` from those
+  two sets; renamed the first run to `c1-before-NONAUTHORITATIVE-run1` with a
+  README. No recapture, build, product or threshold change.
+
+---
+
+## 2026-10-03 - GH331C1 Tailwind v4 visual-evidence precision
+
+- Recaptured six states as literal viewport crops (create-phrase, network,
+  wallet and ibc-transfer at 390x844; wallet and ibc-transfer at 1180x820):
+  before/after pixel-identical, PNG sizes equal the named viewports, no
+  horizontal overflow, all fixed elements inside the viewport.
+- Corrected the GH331C delta description: the four <= 2/255 differences sit on
+  the unfocused Password/Confirm Password input corner rows and mobile button
+  edges, not on the focused Wallet Name ring.
+- Recorded pre-existing P2 follow-ups (unchanged by the migration): mobile
+  recovery-phrase column collision and FAB overlap, wallet address/copy
+  overflow, broken header logo image. No product, dependency or config change.
+
+---
+
+## 2026-10-03 - GH331C Tailwind CSS v4 migration removes unfixed braces chain
+
+- GHSA-vfj7-8cjw-p6xm (braces <= 3.0.3, high) has no patched release; it
+  reached the client only through Tailwind CSS 3.4.19 (chokidar, fast-glob,
+  micromatch). The client now uses Tailwind CSS 4.3.3 through
+  `@tailwindcss/postcss`; autoprefixer is dropped (v4 prefixes itself). The
+  braces/micromatch/chokidar/fast-glob chain is gone and full,
+  production-only and gate audits report zero high/critical advisories.
+- Design parity: the v3 palette for every used color family is pinned in
+  `tailwind.v3-colors.js`, and documented v3 Preflight defaults (border and
+  placeholder color, button cursor, form-control opacity and text-field
+  background) are restored in `src/index.css`. Removed/renamed v4 utilities
+  were mapped mechanically (`flex-shrink-0`, `rounded`, `shadow-sm`,
+  `outline-none`, `bg-opacity-50`, sRGB gradient interpolation).
+- Evidence: 102 deterministic before/after screenshots at four viewports are
+  pixel-identical except four focus-ring edge renders (max channel delta 2);
+  24 data-loaded/modal states verified identical on the GH300 B3 head. Lint,
+  TypeScript, 309 unit tests, build/budget, the browser suite (same result as
+  baseline), license policy and consistency pass. Not pushed.
+---
+
 ## 2026-09-19 - GH-304 canonical bech32 identity edge hardened
 
 - Sol's integration review confirmed Cosmos bech32 decoding accepts an
@@ -5934,3 +6042,23 @@
 - Commit b520d76 on agent/claude/GH335-modulequery-fetch: moduleQuery.test.ts #335 test asserts `expect(receivers).toEqual([globalThis])` instead of `toHaveLength(1)`. Receiver-sensitive fake, finally-restoration and all source unchanged.
 - Mutation proof (temporary, reverted; source diff empty afterwards): unbound call (`const unbound = globalThis.fetch; return unbound(input, init)`) fails with "expected [ undefined ] to deeply equal [ globalThis ]"; parent implementation (`fetchImpl: Fetch = globalThis.fetch`) fails with TypeError "Illegal invocation" at moduleQuery.ts:410. With the fix: moduleQuery.test.ts 8/8 pass.
 - Gates: npm run lint rc 0; tsc -b --noEmit rc 0; git diff --check clean. Full suite/build not repeated per brief (GH335A evidence stands). No push.
+
+## 2026-10-04 — GH-350 GH350A1 dependency-security claim correction (CC)
+
+- Continued `agent/claude/GH350-landing-status-refresh @ 889cbfd` on worker
+  branch `agent/claude/GH350A1`.
+- Corrected only the absolute advisory-closure claims in `docs/status.json` and
+  the `docs/index.html` Phase 5 card: no blocking high/critical npm or fixable
+  reachable Go advisory; four documented bounded no-fix reachable Go exceptions
+  remain (GO-2023-1821, GO-2023-1881, GO-2026-4740, GO-2026-5932).
+- Focused contracts, consistency check, diff check and four-viewport card
+  layout check passed. No push, merge or deployment. Rollout remains 36/59 and
+  production false.
+
+## 2026-10-04 — GH-353 Phase-7 mobile hash containment (Codex)
+
+- Scoped long-token wrapping to `.rollout-card code`; content and status data are unchanged.
+- Added a repository consistency contract for the rule. The full consistency gate passes with a
+  private Go build cache after the global cache was sandbox-blocked.
+- Browser measurements at 1440x1000, 1180x820, 820x1180 and 390x844 show zero document overflow,
+  zero out-of-viewport elements and a readable/copyable wrapped hash. No rollout credit or deploy.

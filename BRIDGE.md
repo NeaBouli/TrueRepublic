@@ -1,5 +1,68 @@
 # TrueRepublic Agent Bridge
 
+## 2026-10-04 EEST GH350A landing/status refresh → independent review
+
+- Landing, status.json, README and SECURITY_NOTES now match exact main
+  52aee79f: Tailwind CSS 4.3, exact bundle sizes (355.41 / 71.45 / 4.94 kB) and
+  the merged dependency-security remediation (#332, #347, #349).
+- Rollout stays 36/59; production false; no test-total or rollout change.
+  Not pushed.
+
+---
+
+## 2026-10-04 EEST GH348A OpenTelemetry advisory remediation → review
+
+- 8354d9c updates the OpenTelemetry Go family to v1.45.0 and removes reachable
+  GO-2026-6505 without an allowlist; the four documented no-fix IDs remain
+  exactly. WASM prover bytes unchanged (no re-pin). PR #347 stays frozen
+  until this main security lane merges. Not pushed.
+---
+
+## 2026-10-03 EEST GH331C4 Dockerfile palette copy → focused review
+
+- ba3f487 adds tailwind.v3-colors.js to the client Dockerfile config COPY (one
+  line). Build-context simulation proves the CI failure before and a clean
+  build after; local Docker was skipped for disk headroom, so hosted OCI is
+  authoritative. GH331C3 (2bdc156) stays a separate lockfile-only commit.
+
+---
+
+## 2026-10-03 EEST GH331C3 lock graph fixed → independent lock review
+
+- Exact-head CI on #347 found two real GH331C defects: incomplete bundled lock
+  graph (release evidence SBOM) and the client Dockerfile not copying
+  tailwind.v3-colors.js (reproducible OCI). GH331C3 (2bdc156) fixes the lock graph
+  only; the Dockerfile follows separately as GH331C4.
+- Lock-only npm ls and the SBOM double-generation contract now pass locally.
+  Not pushed.
+
+---
+
+## 2026-10-03 EEST GH331C2 evidence metadata closed → final visual review
+
+- Authoritative before set `_evidence/GH331C/GH331C1/c1-before-2`; 6/6 crops
+  byte-identical to `c1-after`; the wallet tablet-landscape pair sheet was
+  regenerated from them; the stale first run is marked non-authoritative.
+- Evidence index: `_evidence/GH331C/GH331C1/EVIDENCE_INDEX.md`. Not pushed.
+
+---
+
+## 2026-10-03 EEST GH331C/GH331C1 Tailwind v4 migration → final visual review
+
+- **Result:** `agent/claude/GH331-tailwind-v4` @ `c9ab60c` moves the client to
+  Tailwind CSS 4.3.3 and removes the unfixed braces chain
+  (GHSA-vfj7-8cjw-p6xm) without an exception; audits report zero
+  high/critical findings. The independent dependency review found no issues.
+- **Visual parity:** 98/102 base pairs and 24/24 GH300 B3 data/modal pairs are
+  pixel-identical; four input/button edge renders differ by <= 2/255. GH331C1
+  recaptured six states as exact viewport crops (identical).
+- **Follow-ups (pre-existing P2):** mobile recovery-phrase collision and FAB
+  overlap; wallet address/copy overflow; broken header logo image.
+- **Boundary:** not pushed; no deployment or rollout credit. Production false.
+
+`TRUEREPUBLIC GH331C TAILWIND V4 — EVIDENCE COMPLETE — AWAITING FINAL VISUAL REVIEW`
+---
+
 ## 2026-09-19 EEST GH-304 unblocked and synchronized → Protected re-review
 
 - **Base:** GH-318/GH-305/GH-321 security stack is complete on exact main
@@ -9919,3 +9982,67 @@ Pending independent Kimi review and complete Sol verification.
 `TRUEREPUBLIC GH-304 CANONICAL BECH32 HARDENED — REPLACEMENT HEAD NEXT`
 
 ---
+
+---
+
+## 2026-10-01 02:40 EEST [AUTOR: CC]
+### TYPE: SECURITY — GH-331 maintained-client brace-expansion advisories
+
+- **Finding:** `npm run audit:high` blocked every PR (first seen on PR #330, run
+  36785225148): `brace-expansion` 5.0.9 (dev-only, via `eslint` → `minimatch`
+  10.2.5, both pinned by existing `overrides`) is affected by GHSA-q2hr-2g5m-vwhr
+  (<5.0.12), GHSA-qhr7-859c-m2p7 (<5.0.11) and GHSA-6j4f-fj2g-mc7p (<5.0.10), all
+  CPU/stack-exhaustion DoS; `minimatch` is reported only as the parent.
+- **Fix:** the existing exact `brace-expansion` override moves 5.0.9 → 5.0.12 and
+  only its lock entry changes (resolved URL + integrity
+  `sha512-YovQ3rzh…EimQ==`; MIT; engines `20 || >=22`; dependency
+  `balanced-match ^4.0.2` unchanged). `minimatch` stays 10.2.5 (`^5.0.5` accepts
+  5.0.12). No new override, exception or audit allowance; Vite and the PR #326
+  updates untouched. Same pattern as the earlier 5.0.8 → 5.0.9 reconciliation.
+- **Evidence (node 22.22.2, npm 10.9.7):** clean `npm ci`; `npm run audit:high`
+  "No high or critical npm advisories found"; `npm audit` 0 vulnerabilities;
+  `npm run lint`; `npm test -- --run` 309 passed / 4 skipped; `npm run build` with
+  bundle budget passed; `npm ls --all` clean; license policy check + fixtures;
+  locked gitleaks v8.30.1 secret scan + fixtures; `check-consistency.sh`;
+  `git diff --check`. `npm audit signatures` could not reach the registry locally.
+- No push, PR, merge, deployment or rollout credit.
+
+`TRUEREPUBLIC GH-331 CLIENT AUDIT FIXED LOCALLY — PROTECTED CI NEXT`
+
+---
+
+## 2026-10-04 [AUTOR: CC]
+### TYPE: DOCS — GH-350 GH350A1 dependency-security claim correction
+
+- **Finding:** `docs/status.json` (`delivery.dependency_security.status`) and the
+  Phase 5 landing card in `docs/index.html` claimed no reachable Go advisory on
+  main. `configs/security/gates.json` still carries four documented, bounded
+  no-fix reachable Go exceptions, so the absolute claim was false.
+- **Fix:** both claims now state no blocking high/critical npm advisory or
+  fixable reachable Go advisory, and name the four remaining exceptions:
+  GO-2023-1821, GO-2023-1881, GO-2026-4740, GO-2026-5932 (machine-readable as
+  `dependency_security.go_no_fix_exceptions`). Build metrics, versions, test
+  totals, rollout 36/59 and production false are unchanged.
+- **Evidence:** focused root repository contracts (security gate, release
+  compatibility/candidate, CI tool bootstrap, network policy) ok;
+  `securityreview` and `toolbootstrapevidence` packages ok;
+  `scripts/test-go-vulnerability-scan.sh` fixtures passed;
+  `check-consistency.sh` passed; `git diff --check` clean; landing card checked
+  at 1440x1000, 1180x820, 820x1180 and 390x844 with no overflow or clipping.
+- No push, PR, merge, deployment or rollout credit. Post-deploy GitHub Pages
+  recheck of the card remains open.
+
+## 2026-10-04 [AUTOR: CODEX]
+### TYPE: CORRECTION — GH-350 GH350A1 Bridge field path
+
+- The preceding finding's status path is `features.dependency_security.status`, not
+  `delivery.dependency_security.status`. The implementation, evidence and review outcome are unchanged.
+
+## 2026-10-04 [AUTOR: CODEX]
+### TYPE: UI FIX — GH-353 Phase-7 long hash containment
+
+- Added scoped `overflow-wrap: anywhere` for inline code inside rollout cards and a fail-closed
+  repository consistency check. No landing text, status, rollout or production value changed.
+- `check-consistency.sh` passes with a private Go cache; `git diff --check` is clean.
+- Four responsive browser viewports show zero horizontal overflow/outside elements; every screenshot
+  was inspected and the hash remains readable/copyable. Independent bugfix review is next; no push.
