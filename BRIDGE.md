@@ -10031,3 +10031,9 @@ Pending independent Kimi review and complete Sol verification.
   at 1440x1000, 1180x820, 820x1180 and 390x844 with no overflow or clipping.
 - No push, PR, merge, deployment or rollout credit. Post-deploy GitHub Pages
   recheck of the card remains open.
+
+## 2026-10-04 [AUTOR: CODEX]
+### TYPE: CORRECTION — GH-350 GH350A1 Bridge field path
+
+- The preceding finding's status path is `features.dependency_security.status`, not
+  `delivery.dependency_security.status`. The implementation, evidence and review outcome are unchanged.
