@@ -212,7 +212,8 @@
       "maintained_client_gateway_gap": "closed_locally_by_registered_grpc_over_abci_transport_on_gh121"
     },
     "dependency_security": {
-      "status": "no_blocking_high_or_critical_npm_or_reachable_go_advisory_on_merged_main",
+      "status": "no_blocking_high_or_critical_npm_or_fixable_reachable_go_advisory_on_merged_main_four_documented_bounded_no_fix_reachable_go_exceptions_remain",
+      "go_no_fix_exceptions": ["GO-2023-1821", "GO-2023-1881", "GO-2026-4740", "GO-2026-5932"],
       "npm": "brace_expansion_patched_on_pr332_and_unfixed_braces_chain_removed_by_tailwindcss_4_3_on_pr347",
       "go": "opentelemetry_family_1_45_0_removes_go_2026_6505_on_pr349_documented_no_fix_ids_unchanged",
       "note": "Dependency remediation only. It adds no rollout credit and does not change production readiness."

@@ -6019,3 +6019,15 @@
   every Git/GitHub action. No implementation overlap is allowed.
 - No state repair, migration, deployment, release, production action, real key
   or real fund is authorized. Rollout remains 36/59 and production false.
+
+## 2026-10-04 — GH-350 GH350A1 dependency-security claim correction (CC)
+
+- Continued `agent/claude/GH350-landing-status-refresh @ 889cbfd` on worker
+  branch `agent/claude/GH350A1`.
+- Corrected only the absolute advisory-closure claims in `docs/status.json` and
+  the `docs/index.html` Phase 5 card: no blocking high/critical npm or fixable
+  reachable Go advisory; four documented bounded no-fix reachable Go exceptions
+  remain (GO-2023-1821, GO-2023-1881, GO-2026-4740, GO-2026-5932).
+- Focused contracts, consistency check, diff check and four-viewport card
+  layout check passed. No push, merge or deployment. Rollout remains 36/59 and
+  production false.
