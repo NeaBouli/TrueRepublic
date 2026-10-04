@@ -209,7 +209,8 @@
       "status": "registered_grpc_over_abci_browser_transport_verified_locally_on_gh121",
       "supported_clients": "daemon_cli_protobuf_grpc_and_browser_cometbft_abci_json_rpc",
       "grpc_gateway_custom_modules": false,
-      "maintained_client_gateway_gap": "closed_locally_by_registered_grpc_over_abci_transport_on_gh121"
+      "maintained_client_gateway_gap": "closed_locally_by_registered_grpc_over_abci_transport_on_gh121",
+      "browser_fetch_receiver": "default_fetch_bound_to_globalthis_with_receiver_regression_on_gh335_pr336"
     },
     "dependency_security": {
       "status": "no_blocking_high_or_critical_npm_or_fixable_reachable_go_advisory_on_merged_main_four_documented_bounded_no_fix_reachable_go_exceptions_remain",

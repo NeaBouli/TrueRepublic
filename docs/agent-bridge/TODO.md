@@ -10,8 +10,10 @@
   changing the documented no-fix IDs (PR #349, integrated through #347).
 - [x] GH-350: landing and status reconciliation merged as PR #352 and verified
   on live GitHub Pages. No rollout credit; production remains false.
-- [ ] GH-353: Phase-7 long-hash mobile overflow fix is locally verified and
-  awaits independent bugfix review plus protected CI.
+- [x] GH-353: Phase-7 long-hash mobile overflow fix merged as PR #354 and
+  verified on live GitHub Pages.
+- [x] GH-335: ModuleQuery browser fetch receiver bound to globalThis (PR #336,
+  reconciled as GH335I1); exact-main CI green.
 - [ ] Follow-ups (pre-existing P2, unchanged by the migration): mobile
   recovery-phrase column collision and FAB overlap, wallet address/copy
   overflow, broken header logo image.
