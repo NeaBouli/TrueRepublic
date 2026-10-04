@@ -92,8 +92,20 @@ jobs:
       - name: Install browser engines
         run: npx playwright install --with-deps chromium firefox webkit
 
+      - name: Typecheck browser fixtures and assertions
+        run: ./node_modules/.bin/tsc -p browser-quality/tsconfig.json
+
       - name: Qualify maintained browser surfaces
         run: npm run test:browser
+
+      - name: Preserve browser measurements and screenshots
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: client-browser-quality
+          path: client-web/node_modules/.cache/playwright-results
+          include-hidden-files: true
+          retention-days: 14
 
   client-chain-integration:
     runs-on: ubuntu-latest

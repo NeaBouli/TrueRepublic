@@ -18,7 +18,8 @@ export function MobileNav() {
   const [isOpen, setIsOpen] = useState(false);
   const { currentWallet } = useWalletStore();
 
-  if (!currentWallet) return null;
+  // Keep the floating button from covering recovery words during creation.
+  if (!currentWallet || location.pathname === '/create') return null;
 
   const navItems = [
     { path: '/wallet', label: 'Wallet', icon: WalletIcon },
