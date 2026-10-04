@@ -10046,3 +10046,11 @@ Pending independent Kimi review and complete Sol verification.
 - `check-consistency.sh` passes with a private Go cache; `git diff --check` is clean.
 - Four responsive browser viewports show zero horizontal overflow/outside elements; every screenshot
   was inspected and the hash remains readable/copyable. Independent bugfix review is next; no push.
+
+## 2026-10-04 EEST GH335I1 PR #336 reconciled onto main → Codex publication
+
+- agent/claude/GH335-modulequery-fetch now contains main 2a60210b via merge
+  7248da6; product diff vs main is only the bound ModuleQuery fetch receiver and its
+  regression test. All client gates green locally. Not pushed.
+
+---

@@ -6062,3 +6062,14 @@
   private Go build cache after the global cache was sandbox-blocked.
 - Browser measurements at 1440x1000, 1180x820, 820x1180 and 390x844 show zero document overflow,
   zero out-of-viewport elements and a readable/copyable wrapped hash. No rollout credit or deploy.
+
+## 2026-10-04 — GH-335 GH335I1 reconcile PR #336 onto main (Claude Code)
+
+- Normal merge 7248da6 of main 2a60210b into agent/claude/GH335-modulequery-fetch
+  (af0608b); no rebase/reset/force-push. Only conflict: this append-only Action
+  Log (both histories kept, chronological). moduleQuery.ts/.test.ts are
+  byte-identical to af0608b; diff vs main = 1-line bound fetch + regression test.
+- Gates: npm ci; lint; tsc -b; moduleQuery.test.ts 8/8; reverting to the
+  unbound default fails the receiver assertion; full suite 310 passed / 4
+  skipped (node 19/19); build + budget; audit:high clean; consistency PASSED;
+  git diff --check clean. No push.
