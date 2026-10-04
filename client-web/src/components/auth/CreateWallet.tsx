@@ -75,11 +75,11 @@ export function CreateWallet() {
           </div>
 
           <div className="bg-yellow-50 border-2 border-yellow-200 rounded-lg p-6 mb-6">
-            <div className="grid grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 min-[400px]:grid-cols-2 sm:grid-cols-3 gap-4">
               {mnemonic.split(' ').map((word, i) => (
-                <div key={i} className="flex items-center gap-2">
-                  <span className="text-gray-400 text-sm w-6">{i + 1}.</span>
-                  <span className="font-mono font-medium">{word}</span>
+                <div key={i} className="flex items-center gap-2 min-w-0">
+                  <span className="text-gray-400 text-sm w-6 shrink-0">{i + 1}.</span>
+                  <span className="font-mono font-medium min-w-0 break-all">{word}</span>
                 </div>
               ))}
             </div>
@@ -100,7 +100,7 @@ export function CreateWallet() {
             </div>
           </div>
 
-          <Button onClick={handleConfirmSaved} className="w-full">
+          <Button onClick={handleConfirmSaved} className="w-full min-h-11">
             I Have Saved My Recovery Phrase
           </Button>
         </Card>

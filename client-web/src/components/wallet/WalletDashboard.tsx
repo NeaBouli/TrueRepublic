@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useWalletStore } from '@/stores/walletStore';
+import logoUrl from '@/assets/logo.png';
 import { AccountInfo } from './AccountInfo';
 import { BalanceCard } from './BalanceCard';
 import { TransactionHistory } from './TransactionHistory';
@@ -30,33 +31,36 @@ export function WalletDashboard() {
       {/* Header */}
       <header className="bg-white border-b border-gray-200">
         <div className="max-w-4xl mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
+          <div className="flex flex-wrap items-center justify-between gap-3">
             <div className="flex items-center gap-3">
               <img
-                src="https://raw.githubusercontent.com/NeaBouli/TrueRepublic/main/assets/logo.png"
+                src={logoUrl}
                 alt="TrueRepublic"
-                className="h-10"
+                width={40}
+                height={40}
+                className="h-10 w-10 shrink-0 object-contain"
               />
               <h1 className="text-xl font-bold text-gray-900">TrueRepublic</h1>
             </div>
             <div className="flex items-center gap-2">
               <button
                 onClick={() => navigate('/identity')}
-                className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                className="min-h-11 min-w-11 p-2 hover:bg-gray-100 rounded-lg transition-colors"
                 title="Anonymous Identity"
               >
                 <ShieldCheckIcon className="h-6 w-6 text-gray-600" />
               </button>
               <button
                 onClick={() => navigate('/network')}
-                className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                className="min-h-11 min-w-11 p-2 hover:bg-gray-100 rounded-lg transition-colors"
                 title="Network Explorer"
               >
                 <GlobeAltIcon className="h-6 w-6 text-gray-600" />
               </button>
               <button
+                aria-label="Settings"
                 onClick={() => navigate('/settings')}
-                className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                className="min-h-11 min-w-11 p-2 hover:bg-gray-100 rounded-lg transition-colors"
               >
                 <Cog6ToothIcon className="h-6 w-6 text-gray-600" />
               </button>
@@ -69,7 +73,7 @@ export function WalletDashboard() {
       <main className="max-w-4xl mx-auto px-4 py-8">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {/* Left Column - Account Info */}
-          <div className="md:col-span-1">
+          <div className="md:col-span-1 min-w-0">
             <AccountInfo />
 
             {/* Quick Actions */}
@@ -100,7 +104,7 @@ export function WalletDashboard() {
           </div>
 
           {/* Right Column - Balances */}
-          <div className="md:col-span-2">
+          <div className="md:col-span-2 min-w-0">
             <BalanceCard />
 
             {/* Feature Links */}

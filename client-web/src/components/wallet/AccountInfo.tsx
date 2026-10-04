@@ -32,10 +32,10 @@ export function AccountInfo() {
   return (
     <Card>
       <div className="flex items-center justify-between mb-4">
-        <h3 className="text-lg font-semibold">{currentWallet.name}</h3>
+        <h3 className="text-lg font-semibold min-w-0 break-words">{currentWallet.name}</h3>
         <button
           onClick={handleLock}
-          className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+          className="min-h-11 min-w-11 shrink-0 p-2 hover:bg-gray-100 rounded-lg transition-colors"
           title="Lock wallet"
         >
           <ArrowRightOnRectangleIcon className="h-5 w-5 text-gray-600" />
@@ -45,12 +45,13 @@ export function AccountInfo() {
       <div className="bg-gray-50 rounded-lg p-4">
         <div className="text-xs text-gray-600 mb-1">Address</div>
         <div className="flex items-center justify-between gap-2">
-          <code className="text-sm font-mono text-gray-900">
+          <code className="text-sm font-mono text-gray-900 min-w-0 break-all">
             {formatAddress(currentWallet.address, 12)}
           </code>
           <button
             onClick={handleCopy}
-            className="p-2 hover:bg-gray-200 rounded-sm transition-colors"
+            aria-label="Copy wallet address"
+            className="min-h-11 min-w-11 shrink-0 p-2 hover:bg-gray-200 rounded-sm transition-colors"
           >
             {copied ? (
               <CheckIcon className="h-4 w-4 text-green-600" />
