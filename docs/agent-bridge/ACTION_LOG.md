@@ -6080,3 +6080,5 @@
 - status.json module_queries records the bound browser fetch receiver (PR #336).
 - README, landing and rollout figures already matched main; no other change.
   check-consistency PASSED. Not pushed.
+- Codex opened issue #356 for the three pre-existing P2 UI follow-ups and linked
+  that owner from TODO before publication.

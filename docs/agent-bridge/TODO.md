@@ -14,7 +14,7 @@
   verified on live GitHub Pages.
 - [x] GH-335: ModuleQuery browser fetch receiver bound to globalThis (PR #336,
   reconciled as GH335I1); exact-main CI green.
-- [ ] Follow-ups (pre-existing P2, unchanged by the migration): mobile
+- [ ] GH-356 follow-ups (pre-existing P2, unchanged by the migration): mobile
   recovery-phrase column collision and FAB overlap, wallet address/copy
   overflow, broken header logo image.
 
