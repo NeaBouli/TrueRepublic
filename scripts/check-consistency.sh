@@ -421,6 +421,9 @@ MODULES
 echo ""
 
 echo "Checking rollout status (docs/index.html)..."
+grep -Fq '.rollout-card code { overflow-wrap: anywhere; }' docs/index.html &&
+  echo "  OK rollout-card long-token wrapping" ||
+  { echo "  FAIL rollout-card long-token wrapping"; ERRORS=$((ERRORS+1)); }
 grep -Fq "${ROLLOUT_COMPLETED} of ${ROLLOUT_TOTAL}" docs/index.html &&
   echo "  OK Full checklist" ||
   { echo "  FAIL Full checklist"; ERRORS=$((ERRORS+1)); }

@@ -10037,3 +10037,12 @@ Pending independent Kimi review and complete Sol verification.
 
 - The preceding finding's status path is `features.dependency_security.status`, not
   `delivery.dependency_security.status`. The implementation, evidence and review outcome are unchanged.
+
+## 2026-10-04 [AUTOR: CODEX]
+### TYPE: UI FIX — GH-353 Phase-7 long hash containment
+
+- Added scoped `overflow-wrap: anywhere` for inline code inside rollout cards and a fail-closed
+  repository consistency check. No landing text, status, rollout or production value changed.
+- `check-consistency.sh` passes with a private Go cache; `git diff --check` is clean.
+- Four responsive browser viewports show zero horizontal overflow/outside elements; every screenshot
+  was inspected and the hash remains readable/copyable. Independent bugfix review is next; no push.

@@ -8,9 +8,10 @@
   lock graph and the image-build palette copy (PR #347).
 - [x] Update the OpenTelemetry Go family to 1.45.0 for GO-2026-6505 without
   changing the documented no-fix IDs (PR #349, integrated through #347).
-- [ ] GH-350: landing and status reconciliation with exact main build values
-  (local, awaiting independent evidence/visual review). No rollout credit;
-  production remains false.
+- [x] GH-350: landing and status reconciliation merged as PR #352 and verified
+  on live GitHub Pages. No rollout credit; production remains false.
+- [ ] GH-353: Phase-7 long-hash mobile overflow fix is locally verified and
+  awaits independent bugfix review plus protected CI.
 - [ ] Follow-ups (pre-existing P2, unchanged by the migration): mobile
   recovery-phrase column collision and FAB overlap, wallet address/copy
   overflow, broken header logo image.
