@@ -6031,3 +6031,11 @@
 - Focused contracts, consistency check, diff check and four-viewport card
   layout check passed. No push, merge or deployment. Rollout remains 36/59 and
   production false.
+
+## 2026-10-04 — GH-353 Phase-7 mobile hash containment (Codex)
+
+- Scoped long-token wrapping to `.rollout-card code`; content and status data are unchanged.
+- Added a repository consistency contract for the rule. The full consistency gate passes with a
+  private Go build cache after the global cache was sandbox-blocked.
+- Browser measurements at 1440x1000, 1180x820, 820x1180 and 390x844 show zero document overflow,
+  zero out-of-viewport elements and a readable/copyable wrapped hash. No rollout credit or deploy.
