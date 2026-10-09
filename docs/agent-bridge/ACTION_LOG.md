@@ -6138,3 +6138,13 @@
   check-consistency PASSED. Not pushed.
 - Codex opened issue #356 for the three pre-existing P2 UI follow-ups and linked
   that owner from TODO before publication.
+
+## 2026-10-09 — GH309B1I1 direct Codex reconciliation
+
+- Normal merge `954fc94` from reviewed `bbc067d` + exact main `ff63e9d`; conflicts limited to
+  OnboardingFlow class/state reconciliation and preserving both Action Log histories.
+- Client 333 executed cases (314 Vitest + 19 Node), lint/typecheck/build/budget/consistency PASS.
+  Chromium contract 23 PASS and four screenshots inspected; Firefox 19 policy PASS / four
+  pre-target timeouts under load ~505. No timeout increase; remaining engines require Hosted CI.
+- Audit prerequisite #362 and additional Codex Security NOT RUN gate remain open. No custody/ZKP
+  activation, main merge, deployment, security-policy change or duplicate worker dispatch.
