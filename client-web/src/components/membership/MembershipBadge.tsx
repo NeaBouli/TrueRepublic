@@ -27,7 +27,7 @@ export function MembershipBadge({ domainId }: MembershipBadgeProps) {
 
   if (!membership || !membership.isMember) {
     return (
-      <span className="inline-flex items-center gap-1 px-2 py-1 bg-gray-100 text-gray-700 text-xs font-medium rounded">
+      <span className="inline-flex items-center gap-1 px-2 py-1 bg-gray-100 text-gray-700 text-xs font-medium rounded-sm">
         <XCircleIcon className="h-4 w-4" />
         Not a Member
       </span>
@@ -36,7 +36,7 @@ export function MembershipBadge({ domainId }: MembershipBadgeProps) {
 
   if (membership.isMember && membership.hasIdentityCommitment) {
     return (
-      <span className="inline-flex items-center gap-1 px-2 py-1 bg-green-100 text-green-800 text-xs font-medium rounded">
+      <span className="inline-flex items-center gap-1 px-2 py-1 bg-green-100 text-green-800 text-xs font-medium rounded-sm">
         <CheckCircleIcon className="h-4 w-4" />
         Member
       </span>
@@ -45,7 +45,7 @@ export function MembershipBadge({ domainId }: MembershipBadgeProps) {
 
   if (membership.hasIdentityCommitment === null) {
     return (
-      <span className="inline-flex items-center gap-1 px-2 py-1 bg-gray-100 text-gray-700 text-xs font-medium rounded">
+      <span className="inline-flex items-center gap-1 px-2 py-1 bg-gray-100 text-gray-700 text-xs font-medium rounded-sm">
         <ClockIcon className="h-4 w-4" />
         Member · Identity Unknown
       </span>
@@ -53,7 +53,7 @@ export function MembershipBadge({ domainId }: MembershipBadgeProps) {
   }
 
   return (
-    <span className="inline-flex items-center gap-1 px-2 py-1 bg-yellow-100 text-yellow-800 text-xs font-medium rounded animate-pulse">
+    <span className="inline-flex items-center gap-1 px-2 py-1 bg-yellow-100 text-yellow-800 text-xs font-medium rounded-sm animate-pulse">
       <ClockIcon className="h-4 w-4" />
       Pending Setup
     </span>

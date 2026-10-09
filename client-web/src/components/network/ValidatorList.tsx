@@ -56,11 +56,11 @@ export function ValidatorList() {
                     {formatAddress(validator.operator_addr, 16)}
                   </div>
                   {validator.jailed ? (
-                    <span className="px-2 py-0.5 bg-red-100 text-red-800 text-xs font-medium rounded">
+                    <span className="px-2 py-0.5 bg-red-100 text-red-800 text-xs font-medium rounded-sm">
                       Jailed
                     </span>
                   ) : (
-                    <span className="px-2 py-0.5 bg-green-100 text-green-800 text-xs font-medium rounded">
+                    <span className="px-2 py-0.5 bg-green-100 text-green-800 text-xs font-medium rounded-sm">
                       Active
                     </span>
                   )}
@@ -78,7 +78,7 @@ export function ValidatorList() {
                 </div>
               </div>
 
-              <div className="flex-shrink-0 ml-4">
+              <div className="shrink-0 ml-4">
                 {validator.jailed ? (
                   <XCircleIcon className="h-8 w-8 text-red-400" />
                 ) : (
