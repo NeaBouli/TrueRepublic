@@ -6080,6 +6080,8 @@
 - status.json module_queries records the bound browser fetch receiver (PR #336).
 - README, landing and rollout figures already matched main; no other change.
   check-consistency PASSED. Not pushed.
+- Codex opened issue #356 for the three pre-existing P2 UI follow-ups and linked
+  that owner from TODO before publication.
 
 ## 2026-10-10 02:30 EEST — GH314B content recovery source prepared (Codex)
 
@@ -6090,5 +6092,3 @@ Offline four-viewports/eight before-after states and8 inspected PNGs PASS, contr
 no overflow/clipping/overlap/egress. Actual full consistency/license remains running, not PASS.
 No runtime/custody/keys/state/status-count/deferred-feature/historical artifact/donation change,
 deletion, scan, rollout credit or production claim. Full #314 acceptance/live publication pending.
-- Codex opened issue #356 for the three pre-existing P2 UI follow-ups and linked
-  that owner from TODO before publication.
