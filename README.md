@@ -264,7 +264,7 @@ cd client-web && npm ci && npm run lint && npm test -- --run && npm run build
 | CosmWasm | v0.53.4 | Recovery verified |
 | ibc-go | v8.7.0 | Two-chain packet lifecycle verified locally; external relayer/upgrade unqualified |
 | gnark (ZKP) | v0.14.0 | On-chain recovery verified; client disabled |
-| Go | 1.26.9 | Recovery verified |
+| Go | 1.26.9 | Candidate; exact-head acceptance pending |
 | Rust | 1.75+ | Contracts |
 | React | 18.2 | Maintained v0.4 client |
 | Native mobile client | — | Retired under GH-102; replacement pending |

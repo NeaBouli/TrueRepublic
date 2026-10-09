@@ -6103,3 +6103,12 @@
   consumes that real completed report and is separately labeled; positive/negative fixtures pass.
 - Release fixture hash graph propagated from changed policy; final relevant gates running.
   No main merge, runtime/state change, production action or new exception. Codex Security NOT RUN.
+
+## 2026-10-09T22:27Z — GH364 publication and D1 review correction
+
+- Draft PR #365 head9200b568 read back on main base ff63e9d. Independent source review
+  found no source/policy/pin defect but one premature Go recovery claim; README now explicitly
+  says candidate/exact-head acceptance pending. Narrow closure check requested, no duplicate work.
+- Final evidence packages/script contracts, WASM native/keeper chain, consistency and license
+  policy PASS. Full normal Go gate still running. Initial hosted go-vuln and compatibility gates
+  PASS; full matrix/affected main acceptance remain open. Codex Security NOT RUN; goal ACTIVE.

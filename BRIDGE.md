@@ -10091,3 +10091,17 @@ Pending independent Kimi review and complete Sol verification.
 - Unmodified gate replay of completed bytes and all positive/negative fixtures PASS. Coupled
   fixture hash graph propagated; final contracts/full normal Go/WASM/native/keeper gates running.
   Main integration and independent review remain pending; Codex Security NOT RUN.
+
+### 2026-10-09T22:27Z — GH364 independent source review and evidence checkpoint
+
+- Draft PR #365 publishes 9200b568 from exact main ff63e9d. Native independent review found
+  one D1 claim defect: README Go1.26.9 said Recovery verified before complete acceptance.
+  Corrected to Candidate; exact-head acceptance pending. No runtime or gate change.
+- Final four evidence packages and six coupled script contracts PASS. Completed WASM-client
+  integration, native verifier, keeper reward/replay/strict-handoff tests PASS; consistency
+  and license policy PASS. Full normal Go session remains RUNNING, not PASS.
+- Initial hosted head: go-vuln, ZKP/native/client, IBC, governed-upgrade, concurrency and
+  release/tool/bootstrap/Linux contracts pass; remaining matrix still running. Client audit
+  failures are under classification, not waived. Codex Security NOT CONNECTED / NOT RUN.
+- Basic completion goal read back ACTIVE and unchanged. No main merge, deployment or rollout
+  credit. Next: exact-head gates and existing #363/OCI integration queue; Claude paused.
