@@ -983,6 +983,7 @@
 
 - [ ] #314: integrate versioned EN/DE recovery/vision and truthful PoD/fees/privacy/economics claims.
   Source/focused fixtures/independent review/offline visual PASS; full consistency/CI/live proof pending.
+  Update2026-10-10 02:46 EEST: full consistency/license PASS; draft publication and CI/live remain.
 - [ ] Complete remaining #314 historical/inventory/count corrections without duplicating retained
   #308/#313 work. No historical or binary deletion without separate bounded approval.
 - [ ] Keep current rollout/status machine figures unchanged; this documentation is not rollout credit.

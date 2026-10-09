@@ -6092,3 +6092,9 @@ Offline four-viewports/eight before-after states and8 inspected PNGs PASS, contr
 no overflow/clipping/overlap/egress. Actual full consistency/license remains running, not PASS.
 No runtime/custody/keys/state/status-count/deferred-feature/historical artifact/donation change,
 deletion, scan, rollout credit or production claim. Full #314 acceptance/live publication pending.
+
+## 2026-10-10 02:46 EEST — GH314B local validation completed (Codex)
+
+Full consistency/security-readiness/frozen-ZKP and license-policy session50647 finished exit0.
+The previously inspected content/layout source is unchanged. Publish a bounded draft for issue314;
+exact-head protected CI, independent acceptance and live Pages remain required, no rollout credit.
