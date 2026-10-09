@@ -10062,4 +10062,21 @@ Pending independent Kimi review and complete Sol verification.
 - GitHub issue #356 now owns the three pre-existing P2 UI follow-ups: recovery-
   phrase/FAB collision, wallet address/copy overflow and the broken header logo.
 
+## 2026-10-09T21:03Z — GH-362 compatible client dependency maintenance (Codex)
+
+- Owner-directed Codex implementation; Claude paused, no duplicate dispatch. Exact base main ff63e9d.
+- Issue #362 owns public upstream GHSA-68fv-2mgg-jv7q. Only source-map-js lock version, registry URL
+  and integrity change from 1.2.1 to compatible 1.2.2; package.json and all product sources unchanged.
+  Implementation commit 9938318. No new override, exception, major update or consensus change.
+- PASS: npm ci (lock unchanged), audit:high, full npm audit and production audit (zero findings),
+  342 registry signatures, npm ls including lock-only graph, lint, TypeScript, 19 Node + 310 Vitest
+  tests (4 explicit skips), build/budget (entry 73160, max lazy route 5050, total JS 363940 gzip bytes),
+  full check-consistency with private Go 1.26.6 caches and git diff --check.
+- Scoped self-review confirms exactly the three registry-pinned lock fields. Hosted exact-head
+  CI/OCI/SBOM/browser evidence and applicable independent acceptance remain pending.
+- Codex Security NOT RUN: no authorized access/destination/code/exclusions/cost ceiling. Main
+  integration HELD; no merge, deployment, policy renewal, rollout credit or public test-total change.
+- Separate CI triage: #337 hosted browser matrix passes; new Go toolchain advisories and registry
+  rate limits are not addressed by this npm-only patch. Track them separately; do not weaken gates.
+
 ---

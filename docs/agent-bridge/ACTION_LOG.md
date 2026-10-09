@@ -6082,3 +6082,13 @@
   check-consistency PASSED. Not pushed.
 - Codex opened issue #356 for the three pre-existing P2 UI follow-ups and linked
   that owner from TODO before publication.
+
+## 2026-10-09T21:03Z — GH-362 source-map-js maintenance (Codex)
+
+- Exact main ff63e9d, isolated agent/codex/GH362-source-map; implementation 9938318 changes only
+  the source-map-js lock version/registry URL/integrity to 1.2.2. Existing semver ranges accept it.
+- npm ci, three npm audits (zero findings), 342 signatures, complete/lock-only dependency graphs,
+  lint, typecheck, 329 tests (4 skipped), build/budget and full consistency pass. No package.json,
+  runtime source, override, exception, consensus or public status-count change.
+- Hosted exact-head gates pending; Codex Security NOT RUN and main integration HELD. Claude paused.
+  Separate upstream Go-advisory/OCI-rate-limit triage is not folded into this maintenance scope.
