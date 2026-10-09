@@ -388,7 +388,7 @@ func makeEvidence(t *testing.T) (string, Manifest) {
 			Artifact:        target.Artifact,
 			SHA256:          digest,
 			Reproducible:    []string{digest, digest},
-			GoVersion:       "1.26.6",
+			GoVersion:       "1.26.9",
 			CGOEnabled:      "1",
 			SourceDateEpoch: json.Number("1767225600"),
 		}

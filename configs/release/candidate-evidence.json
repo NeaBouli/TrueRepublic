@@ -6,8 +6,8 @@
     "tag_kind": "simulated-future-tag",
     "tag_pattern": "^v(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)$"
   },
-  "binary_contract_sha256": "e33f1fc588b2372197f682cc5f656befe5468f825b19523ad2d4d5ed405cb4b8",
-  "oci_contract_sha256": "6c5d4bb80334f46c0496ab4db0dded904f9443e7ab8fb9e5914fa006c0f75e09",
+  "binary_contract_sha256": "5bda3e39356338da2f4dc6fbc662b59eee02c805844e0a3df85c1341d80e48d9",
+  "oci_contract_sha256": "4e449228248bfb36d05ffa76781e29851684b2dcdfcd1b3c5c4dca965e480994",
   "binary_targets": [
     {
       "id": "linux-amd64",

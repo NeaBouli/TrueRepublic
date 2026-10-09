@@ -3,7 +3,7 @@
   "review_cadence_days": 7,
   "exception_max_days": 30,
   "toolchains": {
-    "go": "1.26.6",
+    "go": "1.26.9",
     "node": "22.22.2",
     "rust": "1.95.0"
   },
@@ -19,27 +19,21 @@
   "go_vulnerability_exceptions": [
     {
       "id": "GO-2026-5932",
-      "approved_on": "2026-08-09",
-      "expires": "2026-09-08",
-      "reason": "Reachable through an upstream Cosmos SDK dependency; no fixed version is published."
-    },
-    {
-      "id": "GO-2026-4740",
-      "approved_on": "2026-08-09",
-      "expires": "2026-09-08",
-      "reason": "Reachable through an upstream Cosmos SDK dependency; no fixed version is published."
+      "approved_on": "2026-10-09",
+      "expires": "2026-10-20",
+      "reason": "Fresh Go 1.26.9 / govulncheck v1.6.0 scan confirms reachability with no fixed version; official record and bounded approval evidence: docs/security/go-advisory-review-2026-10-09.md."
     },
     {
       "id": "GO-2023-1881",
-      "approved_on": "2026-08-09",
-      "expires": "2026-09-08",
-      "reason": "Reachable in the pinned Cosmos SDK release; no fixed version is published."
+      "approved_on": "2026-10-09",
+      "expires": "2026-10-20",
+      "reason": "Fresh Go 1.26.9 / govulncheck v1.6.0 scan confirms reachability with no fixed version; official record and bounded approval evidence: docs/security/go-advisory-review-2026-10-09.md."
     },
     {
       "id": "GO-2023-1821",
-      "approved_on": "2026-08-09",
-      "expires": "2026-09-08",
-      "reason": "Reachable in the pinned Cosmos SDK release; no fixed version is published."
+      "approved_on": "2026-10-09",
+      "expires": "2026-10-20",
+      "reason": "Fresh Go 1.26.9 / govulncheck v1.6.0 scan confirms reachability with no fixed version; official record and bounded approval evidence: docs/security/go-advisory-review-2026-10-09.md."
     }
   ],
   "actions": {

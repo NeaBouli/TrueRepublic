@@ -10063,3 +10063,31 @@ Pending independent Kimi review and complete Sol verification.
   phrase/FAB collision, wallet address/copy overflow and the broken header logo.
 
 ---
+
+## 2026-10-09T22:00Z — GH364 / GH355 → In Progress
+
+- Owner: Codex; Claude paused. Branch agent/codex/GH364-go-advisories, exact main base ff63e9d.
+  ACTIVE full Basic #29 release-readiness goal verified; no goal reset or deferred-feature expansion.
+- Changed: minimal Go1.26.9/x-net0.60 required graph, coupled pinned CI/image/build/release
+  contracts and fixtures, maintained toolchain docs, truthful Landing/status candidate claims.
+  Boundary: docs/architecture/GH364_BUILD_BOUNDARY.md B1-B5/D1; no chain-state/runtime change.
+- Tests PASS: four evidence packages, six coupled script contracts, tidy idempotence/module
+  verification; two byte-identical test-only WASM builds d2cf62c4...67d66 / 18,778,260 bytes.
+  Landing four viewports/eight states: zero overflow/errors/egress; twelve images inspected offline.
+- Tests RUNNING: fresh maintained-package vulnerability scan and full normal Go build/vet/test.
+  Interim scan output is not acceptance. #355's authorized renewal/removal is not yet applied.
+- Risk: security/build-artifact change; independent exact-head review and full protected CI required.
+  Codex Security NOT CONNECTED / NOT RUN. No main merge, deployment, rollout credit or production claim.
+- Next: finish scan, reconcile only evidence-backed exceptions and digest pins, qualify candidate,
+  then OCI reruns and existing integration queue. Report: coordinator .fleet/reports/GH364.md;
+  raw evidence: /Users/gio/Documents/Codex/TrueRepublic-GH364-evidence. Original worktrees preserved.
+
+### 2026-10-09T22:15Z — completed scan and authorized no-fix decision
+
+- Real govulncheck v1.6.0 / Go1.26.9 scan completed rc0: exactly three reachable no-fix IDs,
+  no new fixable IDs; raw SHA-256 be652dce938341c30cfcb132211bb4c4f511e97276fe12c7c95fbc34ea099799.
+- #355 removes withdrawn GO-2026-4740; remaining GO-2023-1821/1881 and GO-2026-5932
+  approved 2026-10-09 through 2026-10-20, next review 2026-10-16. No new IDs or weaker gate.
+- Unmodified gate replay of completed bytes and all positive/negative fixtures PASS. Coupled
+  fixture hash graph propagated; final contracts/full normal Go/WASM/native/keeper gates running.
+  Main integration and independent review remain pending; Codex Security NOT RUN.

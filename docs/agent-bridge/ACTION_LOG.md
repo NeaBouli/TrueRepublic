@@ -6082,3 +6082,24 @@
   check-consistency PASSED. Not pushed.
 - Codex opened issue #356 for the three pre-existing P2 UI follow-ups and linked
   that owner from TODO before publication.
+
+## 2026-10-09T22:00Z — GH364 verified continuation / goal readback
+
+- Existing app goal ACTIVE and correct for Basic #29 release readiness; no reset or scope expansion.
+- Four evidence packages and six coupled script contracts PASS; fresh scan/full normal Go still RUNNING.
+- Repeated Go1.26.9 test-only WASM builds byte-identical: d2cf62c436055de543562347f877554c631fbffbdafa26155c96c07d6dc67d66,
+  18,778,260 bytes. Incoming GH300 manifest not imported; its future pin reconciliation stays explicit.
+- Truthful Landing candidate state: offline eight states/four viewports PASS, twelve images inspected,
+  no overflow/errors/egress. Live Pages NOT RUN. #364 public checkpoint recorded; #359 only triaged.
+- #355 renewal waits for final scan evidence, not another owner permission. No main/production mutation.
+  Claude paused; Codex Security NOT CONNECTED / NOT RUN. Complete report retained in coordinator .fleet.
+
+## 2026-10-09T22:15Z — GH355 decision from completed real GH364 scan
+
+- Completed raw scan rc0: Go1.26.9/govulncheckv1.6.0, exact three no-fix IDs, all twelve new
+  fixable IDs absent. SHA-256 be652dce938341c30cfcb132211bb4c4f511e97276fe12c7c95fbc34ea099799.
+- Removed upstream-withdrawn GO-2026-4740 and renewed only remaining IDs through October20
+  under exact Gio authorization; October16 cadence, thirty-day maximum preserved. Policy replay
+  consumes that real completed report and is separately labeled; positive/negative fixtures pass.
+- Release fixture hash graph propagated from changed policy; final relevant gates running.
+  No main merge, runtime/state change, production action or new exception. Codex Security NOT RUN.

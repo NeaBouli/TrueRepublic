@@ -44,7 +44,7 @@ make docker-build
 ```
 
 This builds:
-- **truerepublic-node** -- pinned multi-stage Go 1.26.6 build on Debian Bookworm
+- **truerepublic-node** -- pinned multi-stage Go 1.26.9 build on Debian Bookworm
 - **client-web** -- maintained React/Vite build served by nginx
 
 ## Step 3: Start

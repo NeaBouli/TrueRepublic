@@ -665,3 +665,18 @@
   credit, deployment or production approval. Fresh client build remains within
   budgets at 355.41 kB total JavaScript, 71.45 kB entry and 4.94 kB maximum lazy
   route.
+
+## 2026-10-09 UTC — GH-364 / GH-355 candidate security maintenance
+
+- The completed symbol-level Go1.26.9 / govulncheck v1.6.0 scan clears the twelve newly
+  fixable Go/x-net findings and retains exactly GO-2023-1821, GO-2023-1881 and GO-2026-5932
+  with no published fixed version. The raw report digest is recorded in
+  docs/security/go-advisory-review-2026-10-09.md.
+- GO-2026-4740 was withdrawn upstream and is removed from the exact no-fix policy, not fixed
+  by an application change. Only the three remaining IDs are renewed through 2026-10-20;
+  approval 2026-10-09, next weekly review 2026-10-16. Maximum duration remains 30 days.
+- Completed-scan policy replay and adversarial fixtures pass without changing the scanner
+  or relaxing exact-ID/fixable/expiry/stale/duplicate/future-date rejection. Real exact-head CI
+  must rerun the scanner. No synthetic fixture is represented as a real scan.
+- Candidate pins/fixture hashes are coherent; full relevant gates and independent review remain
+  pending. Codex Security NOT CONNECTED / NOT RUN. Main acceptance and production are unchanged.
