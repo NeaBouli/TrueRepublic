@@ -6130,3 +6130,14 @@
   both histories. No extra stack, policy waiver, override or main mutation.
 - Combined local/protected gates pending. Original live Go26261 checkout untouched. Claude paused;
   Codex Security NOT RUN, access preparation separately requested, no scan/transfer/cost authorized.
+
+## 2026-10-09T23:20Z — GH364I1 protected draft submission decision
+
+Normal86ed32e+4900d589 composition independently reviewed. Coupled release/SBOM/consistency/license,
+three clean npm audits, signatures/attestations/graphs, lint/typecheck, Node19 and build/budget pass.
+Vitest309/4 skipped/1 unchanged wrong-password timeout15000ms under severe shared-host load;
+local suite explicitly NOT PASS. No test timeout/gate change or foreign-process/cache cleanup.
+One private-cache retry fixes npm signature EPERM; one supported Vitest invocation replaces an
+obsolete orchestration option. Original Go build passed/vet live. Publish existing draft365 for
+mandatory exact-head protected matrix; acceptance NOT GRANTED. Both authorized337/363 OCI retries
+success; Security setup-only0-cost approval recorded, scan NOT RUN and main/deployment held.

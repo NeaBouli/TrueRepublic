@@ -10134,3 +10134,21 @@ Pending independent Kimi review and complete Sol verification.
 - Independent composition review required before publication. Codex Security NOT RUN; official
   local plugin discovered available but not installed. Access preparation requested separately,
   no scan, code transfer, installation or additional cost performed. Main/deployment HELD.
+
+### 2026-10-09T23:20Z — GH364I1 locally qualified draft / exact-head CI required
+
+- Exact composition8d0df2f passed independent delta review; prior86ed32e source review retained.
+  Four evidence packages, twice-generated release/SBOM contract, consistency/license/diff PASS.
+- npm ci preserves lock; high/full/omit-dev audits0;342 signatures/100 attestations verified using
+  owned private cache after global-cache EPERM. Complete/lock-only graphs, lint, TypeScript,
+  Node19/19 and build/budget PASS (entry73160, max route5050, total JS363940 gzip bytes).
+- Vitest remaining-only corrected call:309 PASS/4 skipped/1 timeout at15000ms in wrong-password
+  test under host load527. Wallet source/test blobs exactly main/#363; no assertion or changed
+  wallet source. Local suite is NOT PASS; exact-head hosted test matrix remains mandatory.
+  Obsolete orchestration --minWorkers invocation never ran Vitest and is not counted as evidence.
+- Original local full Go26261: build completed, vet still LIVE, full test pending. Unchanged-source
+  earlier86ed32e hosted Go/race/recovery/compatibility/OCI/security gates PASS, not combined credit.
+- Authorized #337/#363 OCI attempts2 completed SUCCESS (each7 successful/1 conditional skip).
+  No additional retry. Publish this draft candidate for complete protected combined CI, not merge.
+- Gio approved Security setup/access preparation only at0 extra spend. Plugin available/not
+  installed; entitlement/cost unknown, scan NOT RUN, no code transfer. Main/deployment HELD.
