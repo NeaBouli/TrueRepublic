@@ -137,7 +137,7 @@ func makeBundle(t *testing.T) (string, Bundle) {
 		if err := os.WriteFile(filepath.Join(dir, checksum), []byte(h+"  "+d.Artifact+"\n"), 0600); err != nil {
 			t.Fatal(err)
 		}
-		m := map[string]any{"schema": BuildEvidenceSchema, "contract_schema": BuildSchema, "contract_sha256": bh, "source_ref": testSource, "target": d.ID, "ci_runner": d.CIRunner, "runner_arch": d.RunnerArch, "artifact": d.Artifact, "sha256": h, "reproducible_pair_sha256": []string{h, h}, "go_version": "1.26.6", "cgo_enabled": "1", "source_date_epoch": 123, "build_flags": map[string]any{"trimpath": true, "buildvcs": false, "mod": "readonly", "buildid": "", "linker_build_id": "none", "version_variable": "main.version"}}
+		m := map[string]any{"schema": BuildEvidenceSchema, "contract_schema": BuildSchema, "contract_sha256": bh, "source_ref": testSource, "target": d.ID, "ci_runner": d.CIRunner, "runner_arch": d.RunnerArch, "artifact": d.Artifact, "sha256": h, "reproducible_pair_sha256": []string{h, h}, "go_version": "1.26.9", "cgo_enabled": "1", "source_date_epoch": 123, "build_flags": map[string]any{"trimpath": true, "buildvcs": false, "mod": "readonly", "buildid": "", "linker_build_id": "none", "version_variable": "main.version"}}
 		writeJSON(t, filepath.Join(dir, metadataName), m)
 		b.Targets = append(b.Targets, Target{d.ID, d.Artifact, h, checksum, metadataName})
 		_ = i

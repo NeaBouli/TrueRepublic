@@ -19,7 +19,7 @@
   <img src="https://img.shields.io/badge/tests-2486%20recovery--verified-orange" alt="Recovery-verified tests"/>
   <img src="https://img.shields.io/badge/release-unreleased-orange" alt="Unreleased recovery candidate"/>
   <img src="https://img.shields.io/badge/recovery-active-orange" alt="Recovery active"/>
-  <img src="https://img.shields.io/badge/Go-1.26.6-00ADD8?logo=go" alt="Go"/>
+  <img src="https://img.shields.io/badge/Go-1.26.9-00ADD8?logo=go" alt="Go"/>
   <img src="https://img.shields.io/badge/Cosmos%20SDK-v0.50.15-5C4EE5" alt="Cosmos SDK"/>
   <img src="https://img.shields.io/badge/Rust-1.75+-orange?logo=rust" alt="Rust"/>
 </p>
@@ -264,7 +264,7 @@ cd client-web && npm ci && npm run lint && npm test -- --run && npm run build
 | CosmWasm | v0.53.4 | Recovery verified |
 | ibc-go | v8.7.0 | Two-chain packet lifecycle verified locally; external relayer/upgrade unqualified |
 | gnark (ZKP) | v0.14.0 | On-chain recovery verified; client disabled |
-| Go | 1.26.6 | Recovery verified |
+| Go | 1.26.9 | Candidate; exact-head acceptance pending |
 | Rust | 1.75+ | Contracts |
 | React | 18.2 | Maintained v0.4 client |
 | Native mobile client | — | Retired under GH-102; replacement pending |

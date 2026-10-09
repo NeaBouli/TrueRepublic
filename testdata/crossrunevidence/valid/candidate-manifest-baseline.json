@@ -35,7 +35,7 @@
     "ref_pushed": false,
     "signed": false
   },
-  "contract_sha256": "92d9932b4bc1084a05c38e3aeb5f00a322098225f5c5ced14bf19f9581a82ef0",
+  "contract_sha256": "40397c15379e01353ef9672ce01da1e156fda7906fc57c4b74e1e422b13d9ccb",
   "oci_platforms": [
     {
       "evidence": {
