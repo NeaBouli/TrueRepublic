@@ -10063,3 +10063,30 @@ Pending independent Kimi review and complete Sol verification.
   phrase/FAB collision, wallet address/copy overflow and the broken header logo.
 
 ---
+
+## 2026-10-10 02:08 EEST — GH314B / bounded documentation claim → In Progress
+
+- Codex exclusively, Claude paused; exact main ff63e9d, isolated agent/codex/GH314-whitepaper-recovery.
+- Existing #314 / TRR29-31,35: publication D2 mapped before source edits in coordinator MAP/diagrams;
+  product boundary docs/architecture/GH314_CONTENT_BOUNDARY.md. No new runtime node.
+- Limit source to EN/DE whitepapers, only Landing PoD sentence, narrow content-consistency guard.
+  Preserve licensing, machine counts/rollout, #308/#313 candidates, PDFs/binaries/history/donations.
+- Planned: versioned recovery/vision status, no absolute anonymity/live contracts/GG20/native-vault
+  or price guarantee; honest PoD provenance, DE trustee/DEX fee description. Not consensus enforcement.
+- Tests and four-viewport visual gate NOT RUN yet; live publication and remaining #314 acceptance open.
+  No deletion, scan, code transfer, rollout credit or main/deployment acceptance.
+
+### 2026-10-10 02:30 EEST — GH314B source / focused review and visual evidence
+
+- EN/DE recovery editionv1 qualifies historical models and removes the unsupported privacy,
+  TSS/native-vault/live-contract/financial/earned-only claims. Trustee deferred, DEX fees aligned;
+  only PoD sentence changed on Landing. No runtime/config/status count or historical asset edit.
+- Independent static review scopeOK;P3 overbroad text guard fixed and narrow closureOK. Actual
+  source function accepts2 truthful cases and rejects25 negative fixtures; bash/diff PASS.
+- Existing Chromium149/Playwright1.55.1 offline eight states/four viewports PASS; all8 images
+  opened/inspected. Overflow/outside/clipping/overlap0, inset33/32px, contrast5.45 unchanged,
+  errors/egress0. No controls changed; exact cards/text wrap legibly at390px.
+- Failed restricted browser startup and one brittle fixture-line selection disclosed in coordinator
+  reportGH314B; successful corrected gates above, no production rule relaxation/installation.
+- Full consistency/license50647 still LIVE; protected exact-head CI and live Pages NOT RUN.
+  Source is prepared, not Done; full #314 remains open for dependent history/count/inventory work.

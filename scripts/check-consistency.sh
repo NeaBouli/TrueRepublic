@@ -6,6 +6,28 @@ set -euo pipefail
 
 echo "Checking Documentation Consistency..."
 
+# GH314: publication claims must not outrun recovery/production evidence.
+check_whitepaper_claims() {
+  local file target
+  for file in docs/WhitePaper_TR_eng.md docs/WhitePaper_TR.md; do
+    grep -Fq 'Recovery edition v1 — 2026-10-10' "$file" || return 1
+    for target in status.json LIMITATIONS.md ROLLOUT_ROADMAP.md; do
+      grep -Fq "($target)" "$file" && test -f "docs/$target" || return 1
+    done
+    # Reject affirmative legacy sentences, not truthful negations or historical quotations.
+    if grep -Eq '^([[:space:]]*[-*]|[0-9]+[.])?[[:space:]]*(All user activities .* are anonymous|Only the respective user knows|Block-chain technology ensures .*safeguards user anonymity|TrueRepublic \(TR\) provides .*allows for anonymous voting|As a secure store of value|The total number of PNYX .*ensures a steady price increase|It does not peg or wrap assets.*Guaranteed arbitrage|The smart contracts are live|TRChain is .*GG20 Threshold Signature Scheme|TRNodes service .*funds were earned at a Domain|Staking amounts must originate|The first regulation .*ensuring that only active users|The voting activities .*Only the user|\*\*Anonymous and secure decision-making|Modul: .*Trustee-Logik|Gebührenmodell: Maker/Taker|Bürger können ihre Stimme einem)' "$file"; then
+      return 1
+    fi
+  done
+  grep -Fq 'Purchased coins are not categorically excluded; anti-whale control is a design goal, not a guarantee.' docs/index.html || return 1
+  ! grep -Fq 'Anti-whale validator mechanism ensures' docs/index.html
+}
+if ! check_whitepaper_claims; then
+  echo "FAIL whitepaper recovery status, evidence links or unsupported claims"
+  exit 1
+fi
+echo "  OK versioned whitepaper recovery claims"
+
 echo "Checking frozen ZKP protocol contract..."
 go test ./x/truedemocracy -run '^TestZKPProtocolFreeze' -count=1
 echo ""

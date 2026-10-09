@@ -1,5 +1,7 @@
 # TrueRepublic – White Paper
 
+**Recovery edition v1 — 2026-10-10.** Versionierte Vision/Recovery-Dokumentation, kein Produktionsnachweis. Historische Modelle, Parameter und Roadmaps sind keine freigegebene Netzwerk-Spezifikation. Maßgeblich sind [Status](status.json), [Einschränkungen](LIMITATIONS.md) und [Rollout](ROLLOUT_ROADMAP.md); Produktions-ZKP, Setup-Provenienz und unabhängige Abnahme bleiben offen.
+
 ## 1. Einleitung & Vision
 TrueRepublic (PNYX) ist eine Plattform für **direkte Demokratie**. Sie wurde entwickelt, um die Schwächen der repräsentativen Demokratie zu überwinden und den Bürgerinnen und Bürgern unmittelbare Mitbestimmung zu ermöglichen.
 
@@ -23,7 +25,7 @@ Lizenzgrundlage ändert weder den Rollout- noch den Produktionsstatus.
 - Bürger geben ihre Stimme ab, verlieren danach aber Einfluss.
 - Lobbyismus und Abhängigkeiten verzerren Entscheidungen.
 
-**TrueRepublic** setzt hier an: Es dreht das System um, ohne Verfassung und Grundordnung brechen zu müssen.
+**TrueRepublic** verfolgt direkte Beteiligung als Ziel. Die Zulässigkeit konkreter politischer oder rechtlicher Verfahren muss unabhängig und kontextbezogen geprüft werden; diese Vision garantiert keine Rechtskonformität.
 
 ---
 
@@ -32,10 +34,10 @@ Lizenzgrundlage ändert weder den Rollout- noch den Produktionsstatus.
 Eine digitale Partei, die als „Vehikel“ dient, um direkte Demokratie in bestehende Systeme einzuführen.
 
 ### 3.2 Trustee-Modell
-Bürger können ihre Stimme einem **Trustee** übertragen. Dieser handelt weisungsgebunden, die Stimme kann jederzeit zurückgenommen werden.
+Geplante, nicht implementierte Vision: Stimmen könnten künftig einem weisungsgebundenen **Trustee** zugeordnet und zurückgenommen werden. Der aktuelle Recovery-Stand stellt keine Trustee-Delegation bereit.
 
 ### 3.3 Proof-of-Domain
-Ein neuartiger Mechanismus, der die Legitimität von Abstimmungen und Entscheidungen kryptographisch absichert.
+Domänenbezogene Validator-/Stake-Regeln, keine Garantie rechtlich legitimer oder anonymer Abstimmungen. Gekaufte Coins sind nicht pauschal ausgeschlossen; siehe [Validator Guide](../wiki/operations/Validator-Guide.md). Produktions-ZKP und unabhängige Abnahme sind separate Voraussetzungen.
 
 ### 3.4 Schwarmintelligenz
 Alle Vorschläge, Bewertungen und Abstimmungen erfolgen offen, überprüfbar und ohne zentrale Kontrolle.
@@ -44,13 +46,13 @@ Alle Vorschläge, Bewertungen und Abstimmungen erfolgen offen, überprüfbar und
 
 ## 4. Systemarchitektur
 ### 4.1 Blockchain (Cosmos SDK)
-- Modul: `truedemocracy` (Abstimmungen, Trustee-Logik)
+- Modul: `truedemocracy` (Domänen, Bewertungen und Stones; keine implementierte Trustee-Delegation)
 - Modul: `dex` (dezentrale Börse für PNYX und IBC-Tokens)
 - Modul: `treasury` (Kassenverwaltung, Gebühren, Belohnungen)
 
 ### 4.2 Smart Contracts (CosmWasm)
-- Governance-Mechanismen (Proposals, Ratings, Tallying)
-- Erweiterungen für neue Features ohne Chain-Upgrade
+- Forschungsprototypen, keine belegten live betriebenen Produktionsverträge
+- Kein Nachweis produktiver Governance oder sicherer Erweiterungen ohne Chain-Upgrade; siehe [Einschränkungen](LIMITATIONS.md)
 
 ### 4.3 Wallets
 - **Web Client (React):** gepflegter Browser-Client unter `client-web`
@@ -63,21 +65,21 @@ Alle Vorschläge, Bewertungen und Abstimmungen erfolgen offen, überprüfbar und
 ## 5. Tokenomics
 ### 5.1 PNYX Token
 - Utility & Governance Token
-- Verwendung: Stimmen abgeben, Trustees beauftragen, Gebühren zahlen, Treasury finanzieren
+- Verwendung im Modell: Beteiligung, Gebühren und Domänen-Treasury; Trustee-Delegation bleibt geplant
 
 ### 5.2 Treasury
-- Einnahmen: Transaktionsgebühren, DEX-Gebühren
-- Ausgaben: Gemeinwohlprojekte, Entwicklung, Community-Belohnungen
+- Domänen-Einzahlungen und PayToPut finanzieren parametrisierte Beteiligungsbelohnungen; keine pauschale DEX-Gebühren-Weiterleitung an die Treasury wird behauptet
+- Gemeinwohlprojekte/Entwicklungsfinanzierung sind Nutzungsideen, kein automatisch implementierter Auszahlungsworkflow
 
 ### 5.3 DEX
 - AMM (Automated Market Maker)
 - Pools: PNYX/ATOM, PNYX/IBC-Tokens
-- Gebührenmodell: Maker/Taker + Treasury-Anteil
+- Gebührenmodell: 0,3% Swap-Gebühr plus 1% PNYX-Burn, kein Maker/Taker-Treasury-Modell; siehe [Modulreferenz](developers/architecture/module-reference.md#dex-module)
 
 ---
 
 ## 6. Sicherheit & Compliance
-- **Zensurresistenz:** Keine zentrale Stelle kann Stimmen blockieren.
+- **Zensurresistenz:** Architekturziel, keine absolute Garantie; Mitgliedschaft, Berechtigungen, Client- und Netzwerkgrenzen bleiben relevant.
 - **Transparenz:** Alle Transaktionen und Votes on-chain nachvollziehbar.
 - **Datenschutz:** Personenbezogene Identitätsdaten sollen off-chain bleiben;
   auf der Chain werden, soweit möglich, nur Commitments, Nullifier und

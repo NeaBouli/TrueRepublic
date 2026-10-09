@@ -16,6 +16,8 @@
 
 ## Project status and licensing
 
+**Recovery edition v1 — 2026-10-10.** This is a versioned vision/recovery document, not evidence of production readiness. Historical economics, launch allocations and onboarding examples are proposals, not a deployed-network specification. Current implementation and unresolved gates are recorded in [status](status.json), [limitations](LIMITATIONS.md) and the [rollout roadmap](ROLLOUT_ROADMAP.md). Production ZKP submission, ceremony provenance and independent review remain required; this edition does not activate them.
+
 TrueRepublic is a community-governed open-source project without a central
 corporate owner. Maintained source code and maintained documentation are
 Apache-2.0. Copyright remains with each contributor; the collective attribution
@@ -61,7 +63,7 @@ readiness.
 
 - **Domain structure:** different organizations or groups have their own domain within the protocol, with its own set of rules.
 
-- **Anonymous and secure decision-making:** anonymity and security in the evaluation and voting process, protecting the privacy of members' activities and preventing manipulation.
+- **Privacy-oriented decision-making (design goal):** pseudonymous domain keys are not an anonymity guarantee; production proof-based voting and independent privacy/security acceptance remain outstanding.
 
 - **Rewarding for engagement:** the economic model encourages engagement and quality.
 
@@ -81,7 +83,7 @@ Any organization, not just political parties, can benefit from transparency of w
 
 In connection with crypto-currencies, such economic models are called "tokenomics". The combination of incentives and decision-making sounds alarming because we associate this with corruption. However, when incentives are undirected (rules-based and neutral), then it's quite the opposite. Crypto and blockchain technology are a double-edged sword. It can be used as a tool for the better, but ignoring its potential will only turn it against us. A famous banker reportedly said "Give me control of a nation's money and I care not who makes its laws". Regardless of whether this quote is genuine, there is some truth to it: if centralized money printing can be used for top-down domination, a decentralized, fair and transparent economy with fixed supply can be used to strengthen freedom.
 
-TrueRepublic (TR) provides a way to connect people and enhance democracy by enabling better decision-making in a secure and transparent manner. It allows for anonymous voting, swarm intelligence and modern evaluation methods like systemic consensus. It is fully decentralized, community driven and open-source.
+TrueRepublic (TR) is a community-governed open-source blockchain governance project aimed at better collective decisions through systemic consensing. Anonymous voting and a fully sovereign client are design goals, not claims that the current recovery web client or production privacy gates are complete.
 
 ### 2.1 The 3-Pillars of TrueRepublic: Encouraged participation, Self-organization, Data security
 
@@ -95,7 +97,7 @@ The economic model enables self-organization and eliminates the need for moderat
 
 **Data security**
 
-Block-chain technology ensures data security by virtue of its distributed ledger system, which operates based on a consensus protocol. This safeguards user anonymity due to the decentralized nature of the network, where only the user knows their true identity and representation in the system. The Proof of Stake network is a community-driven initiative that is powered by an open-source code that can be run without any permission (see also chapter 7 Nodes).
+Consensus and a distributed ledger support verifiable state transitions; they do not make public transactions or metadata anonymous. Domain keys are pseudonymous and may be correlated. Production privacy requires separately accepted proof artifacts, setup provenance and independent review; see [limitations](LIMITATIONS.md). Running open-source code does not itself establish membership, validator eligibility or a production network.
 
 ---
 
@@ -217,14 +219,14 @@ In each domain, problem areas (issues) can be defined for which solution approac
 - Group members can put their ideas to surface and let peers evaluate them
 - Coins can be donated to the favorite domains in order to draw attention to them
 - Coins can be staked to secure the network and earn staking rewards by running a POS/POD validator node
-- As a secure store of value
+- Holding PNYX involves market and technical risk; no safe store of value or financial return is promised
 - Provide liquidity on Dex and earn fees
 
 #### 3.4.2 Coin supply and release
 
-The total number of PNYX is fixed with 21 million coins. The majority of coins will be released slowly over time through POS staking rewards and domain rewards (see 8.1). In order to secure the network, the stake of malicious nodes can be slashed. The same applies to the treasury wallet of domains which are inactive for a long period of time. Slashing takes coins out of circulation and slowly allocates them to active nodes and domains by the release mechanisms. The release in absolute terms is a function of the interest rates for domain and node staking multiplied with the total amount of staked coins. The interest rates of staking rewards depend on the fraction of released coins and is diminished proportionally if the release rate increases (see eq.5, Appendix). The relation between staking and coin release links inflation to the demand. Inflation decreases if the network is growing, which ensures a steady price increase, while reducing price volatility.
+PNYX has a 21-million-coin supply cap. The release, reward and slashing equations in this document describe the historical economics design; actual custody, issuance and rewards must be checked against current code and the frozen genesis. Neither a capped supply nor network growth guarantees price appreciation, low volatility, liquidity or investment returns.
 
-**Coin distribution at launch:**
+**Historical launch distribution proposal (not a released production genesis):**
 
 - 7 initial nodes (testnet) for team members (700,000 coins, 3.2%)
 - 500,000 coins loaded in the initial domain for testing (2.3%)
@@ -324,11 +326,11 @@ dependency, second chain or token, or bridge commitment. See the
 
 ## 4 Anonymity & Onboarding
 
-All user activities on the issue and suggestion list such as votes, ratings and suggestions are anonymous. Only the respective user knows what activities he has performed, as the system does not store the relation between avatar name and representation on the blockchain. This is possible because the onboarding process takes place in two separate steps.
+Anonymity is a design goal, not a guarantee of the current implementation. Public activity, pseudonymous keys and metadata can be linked. Production ZKP submission remains disabled pending setup/artifact and independent privacy acceptance. The two-key onboarding and Big Purge account below describe the historical design, not proof of unlinkability, Sybil resistance or completed revocation; those enforcement gaps are tracked in [GH-307](https://github.com/NeaBouli/TrueRepublic/issues/307).
 
 Each user has a global asymmetric key pair (public and private key) and additional (asymmetric) key pairs used for activities inside of domains. The global key pair is tied to the unique avatar name of the user. So the relationship between avatar name and global key is public. With the global key pair, the user can authorize public activities. E.g. he can accept an invitation to join a domain and prove ownership of the avatar name.
 
-The voting activities on the domain are authorized via the additional key pair. The goal is to ensure anonymous voting by not storing the relationship between avatar and representation on the domain. Only the user (client-software) knows that global and additional key pairs are controlled by the same entity. This is possible because the onboard process is divided into two steps:
+The historical design authorizes domain activity with an additional key pair and seeks to avoid an explicit avatar-to-domain-key mapping. Absence of that mapping alone does not prevent correlation or prove one-member-one-authority. Its proposed onboarding has two steps:
 
 1. Adding an avatar name and global public key to the domain's member list
 2. Allowing the user to add a public key to the "permission register" which allows him to execute activities on the domain
@@ -341,42 +343,33 @@ The 'permission register' is emptied periodically, but all members (on the 'memb
 
 ## 5 Dex
 
-It does not peg or wrap assets, it manages funds directly in on-chain vaults, and secures those funds using economic security. It could be described as a cross-chain automated market maker (AMM), like Uniswap V1. Each pool consists of PNYX and another asset. Users can exchange PNYX against BTC, ETH or LUSD. A small liquidity provider fee (0.3%) is taken out of each trade and added to the reserves. While the PNYX-Asset reserve ratio is constantly shifting, fees make sure that the total combined reserve size increases with every trade. This functions as a payout to liquidity providers that is collected when they burn their pool tokens to withdraw their portion of total reserves. Guaranteed arbitrage opportunities from price fluctuations should push a steady flow of transactions through the system and increase the amount of fee revenue generated.
+The recovery DEX is a Go AMM module for PNYX and assets represented in the chain's bank ledger. It is not evidence of native BTC/ETH/LUSD custody or cross-chain vault settlement. The documented swap fee is 0.3%, with a separate 1% PNYX burn; see the [module reference](developers/architecture/module-reference.md#dex-module). Liquidity provision, fees and arbitrage do not guarantee profit, reserve growth or available liquidity.
 
 In addition there is a 1% PNYX burning fee. This means that if 100 PNYX coins are purchased against one of the assets, only 99 PNYX are provided, while 1 PNYX is burned.
 
-The smart contracts are live on TRChain. Anyone can interact with them directly.
+The repository's CosmWasm contracts are research prototypes, not evidenced live production contracts. No public deployment or safe interaction with them is asserted; prototype containment and independent acceptance remain separate gates.
 
 **How to use it**
 
-The front-end is integrated into the TR-App which is open-source and designed to improve user experience when interacting with smart contracts. Anyone can use the source code to host an interface, or build their own. Hosted interfaces are independent of the TR-App, and should comply with their jurisdictional laws and regulations.
+The maintained interface is the recovery/beta `client-web`; an installable sovereign client is a deferred roadmap. Hosting the source does not establish a live contract deployment, production privacy or legal compliance. Operator and jurisdiction-specific acceptance remain separate.
 
 ---
 
 ## 6 TRChain
 
-TRChain is a decentralised cross-chain liquidity protocol which uses the Tendermint consensus engine, Cosmos-SDK state machine (https://v1.cosmos.network/resources/whitepaper) and GG20 Threshold Signature Scheme (TSS).
+The recovery node uses Cosmos SDK and CometBFT. No implemented or deployed GG20 threshold-signing system or native cross-chain vault protocol is evidenced by this repository; those former descriptions are not current capabilities.
 
 ---
 
 ## 7 Nodes
 
-TRNodes service the TRChain network, of which there is intended to be initially 7, but can scale to 175+. The design goal of TRChain is such that anyone can join the network with the required funds (permission-less) and be anonymous. TRChain takes this a step further by ensuring, that funds were earned at a Domain (Proof of Domain = PoD) and not bought.
+TRNodes are validator nodes for TRChain. Historical node-count targets are not proof of deployed topology or qualified capacity. Proof-of-Domain currently links validator eligibility to domains and stake/transfer rules; it does not categorically exclude exchange-bought coins or guarantee anonymous validators or anti-whale control. See the [Validator Guide](../wiki/operations/Validator-Guide.md) and open [GH-306](https://github.com/NeaBouli/TrueRepublic/issues/306) accounting/exit acceptance.
 
 Proof of Stake (PoS) serves as a consensus mechanism in blockchain networks such as Ethereum, where participants deposit a certain amount of cryptocurrency (stake) as collateral to qualify as a validator and earn rewards. Slashing acts as a penalty for validators' misconduct, involving the confiscation of a portion of their staked cryptocurrency. While PoS boasts benefits such as energy efficiency and reduced hardware costs compared to Proof of Work, it faces centralization risks; because only a minority of validators operate with their own capital and bear the associated risks themselves. The majority of validators has received their capital through a process known as "delegated staking".
 
 Delegated staking allows users who cannot afford their own stake to participate in network rewards by delegating their Ether to validators. However, unlike validators, they have no direct influence on network governance. This threatens the neutrality and permissionlessness of the network as power is concentrated in a limited number of actors.
 
-TrueRepublic's domain structure allows the introduction of two additional simple regulations to mitigate centralization risks:
-
-1. Staking amounts must originate from a domain wallet directly.
-2. The total transfer from a domain to the staking address should not exceed 10% of the domain's overall total payouts.
-
-The first regulation discourages investors from merely buying or lending large amounts of coins to establish numerous nodes. Instead, coins must be earned within a domain through ratings to make them qualify as a stake, ensuring that only active users become node operators later on. In addition, this regulation prevents delegated staking, as borrowed coins don't qualify.
-
-The second rule makes it very difficult and costly to circumvent the first rule: investors cannot simply buy coins and create a "fake domain" to "launder" their coins.
-
-In summary, while delegated PoS can lead to a decrease in coin supply and an increase in price, it comes at the expense of decentralization. Networks with real use cases do not require delegated PoS to create artificial demand at the expense of decentralization. POD offers these networks the ability to achieve security, decentralization and low energy consumption.
+The historical anti-concentration proposal restricted earned stake and domain-to-validator transfers. Current documentation instead distinguishes bought/self-generated coins from domain-sourced transfers and their 10% domain-payout limit. That distinction is not an earned-only stake rule, borrowed-coin exclusion or proof against fake domains. Stronger provenance/Sybil controls would require a separately approved consensus design, migration and independent review; this documentation change adds none.
 
 ---
 
