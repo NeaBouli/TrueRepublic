@@ -6148,3 +6148,68 @@
   pre-target timeouts under load ~505. No timeout increase; remaining engines require Hosted CI.
 - Audit prerequisite #362 and additional Codex Security NOT RUN gate remain open. No custody/ZKP
   activation, main merge, deployment, security-policy change or duplicate worker dispatch.
+
+## 2026-10-09T21:03Z — GH-362 source-map-js maintenance (Codex)
+
+- Exact main ff63e9d, isolated agent/codex/GH362-source-map; implementation 9938318 changes only
+  the source-map-js lock version/registry URL/integrity to 1.2.2. Existing semver ranges accept it.
+- npm ci, three npm audits (zero findings), 342 signatures, complete/lock-only dependency graphs,
+  lint, typecheck, 329 tests (4 skipped), build/budget and full consistency pass. No package.json,
+  runtime source, override, exception, consensus or public status-count change.
+- Hosted exact-head gates pending; Codex Security NOT RUN and main integration HELD. Claude paused.
+  Separate upstream Go-advisory/OCI-rate-limit triage is not folded into this maintenance scope.
+
+## 2026-10-09T22:00Z — GH364 verified continuation / goal readback
+
+- Existing app goal ACTIVE and correct for Basic #29 release readiness; no reset or scope expansion.
+- Four evidence packages and six coupled script contracts PASS; fresh scan/full normal Go still RUNNING.
+- Repeated Go1.26.9 test-only WASM builds byte-identical: d2cf62c436055de543562347f877554c631fbffbdafa26155c96c07d6dc67d66,
+  18,778,260 bytes. Incoming GH300 manifest not imported; its future pin reconciliation stays explicit.
+- Truthful Landing candidate state: offline eight states/four viewports PASS, twelve images inspected,
+  no overflow/errors/egress. Live Pages NOT RUN. #364 public checkpoint recorded; #359 only triaged.
+- #355 renewal waits for final scan evidence, not another owner permission. No main/production mutation.
+  Claude paused; Codex Security NOT CONNECTED / NOT RUN. Complete report retained in coordinator .fleet.
+
+## 2026-10-09T22:15Z — GH355 decision from completed real GH364 scan
+
+- Completed raw scan rc0: Go1.26.9/govulncheckv1.6.0, exact three no-fix IDs, all twelve new
+  fixable IDs absent. SHA-256 be652dce938341c30cfcb132211bb4c4f511e97276fe12c7c95fbc34ea099799.
+- Removed upstream-withdrawn GO-2026-4740 and renewed only remaining IDs through October20
+  under exact Gio authorization; October16 cadence, thirty-day maximum preserved. Policy replay
+  consumes that real completed report and is separately labeled; positive/negative fixtures pass.
+- Release fixture hash graph propagated from changed policy; final relevant gates running.
+  No main merge, runtime/state change, production action or new exception. Codex Security NOT RUN.
+
+## 2026-10-09T22:27Z — GH364 publication and D1 review correction
+
+- Draft PR #365 head9200b568 read back on main base ff63e9d. Independent source review
+  found no source/policy/pin defect but one premature Go recovery claim; README now explicitly
+  says candidate/exact-head acceptance pending. Narrow closure check requested, no duplicate work.
+- Final evidence packages/script contracts, WASM native/keeper chain, consistency and license
+  policy PASS. Full normal Go gate still running. Initial hosted go-vuln and compatibility gates
+  PASS; full matrix/affected main acceptance remain open. Codex Security NOT RUN; goal ACTIVE.
+
+## 2026-10-09T22:38Z — GH364I1 existing dependency prerequisites composed
+
+- Isolated staging branch merges reviewed86ed32e and4900d589 normally. The only product
+  delta is the exact existing source-map-js lock patch; chronological Action Log conflict retains
+  both histories. No extra stack, policy waiver, override or main mutation.
+- Combined local/protected gates pending. Original live Go26261 checkout untouched. Claude paused;
+  Codex Security NOT RUN, access preparation separately requested, no scan/transfer/cost authorized.
+
+## 2026-10-09T23:20Z — GH364I1 protected draft submission decision
+
+Normal86ed32e+4900d589 composition independently reviewed. Coupled release/SBOM/consistency/license,
+three clean npm audits, signatures/attestations/graphs, lint/typecheck, Node19 and build/budget pass.
+Vitest309/4 skipped/1 unchanged wrong-password timeout15000ms under severe shared-host load;
+local suite explicitly NOT PASS. No test timeout/gate change or foreign-process/cache cleanup.
+One private-cache retry fixes npm signature EPERM; one supported Vitest invocation replaces an
+obsolete orchestration option. Original Go build passed/vet live. Publish existing draft365 for
+mandatory exact-head protected matrix; acceptance NOT GRANTED. Both authorized337/363 OCI retries
+success; Security setup-only0-cost approval recorded, scan NOT RUN and main/deployment held.
+
+## 2026-10-09T23:54Z — GH309B1I2 normal prerequisite composition (Codex)
+
+Compose exact337head11dbd654 with exact365head6d1c79d. Preserve both log append histories;
+no product-source conflict, custody or canonical activation. New-head gates pending, no inherited
+CI acceptance or scan claim. Claude paused; no main merge, deployment or rollout credit.
