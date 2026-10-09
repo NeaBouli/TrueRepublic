@@ -6083,6 +6083,16 @@
 - Codex opened issue #356 for the three pre-existing P2 UI follow-ups and linked
   that owner from TODO before publication.
 
+## 2026-10-09T21:03Z — GH-362 source-map-js maintenance (Codex)
+
+- Exact main ff63e9d, isolated agent/codex/GH362-source-map; implementation 9938318 changes only
+  the source-map-js lock version/registry URL/integrity to 1.2.2. Existing semver ranges accept it.
+- npm ci, three npm audits (zero findings), 342 signatures, complete/lock-only dependency graphs,
+  lint, typecheck, 329 tests (4 skipped), build/budget and full consistency pass. No package.json,
+  runtime source, override, exception, consensus or public status-count change.
+- Hosted exact-head gates pending; Codex Security NOT RUN and main integration HELD. Claude paused.
+  Separate upstream Go-advisory/OCI-rate-limit triage is not folded into this maintenance scope.
+
 ## 2026-10-09T22:00Z — GH364 verified continuation / goal readback
 
 - Existing app goal ACTIVE and correct for Basic #29 release readiness; no reset or scope expansion.
@@ -6112,3 +6122,11 @@
 - Final evidence packages/script contracts, WASM native/keeper chain, consistency and license
   policy PASS. Full normal Go gate still running. Initial hosted go-vuln and compatibility gates
   PASS; full matrix/affected main acceptance remain open. Codex Security NOT RUN; goal ACTIVE.
+
+## 2026-10-09T22:38Z — GH364I1 existing dependency prerequisites composed
+
+- Isolated staging branch merges reviewed86ed32e and4900d589 normally. The only product
+  delta is the exact existing source-map-js lock patch; chronological Action Log conflict retains
+  both histories. No extra stack, policy waiver, override or main mutation.
+- Combined local/protected gates pending. Original live Go26261 checkout untouched. Claude paused;
+  Codex Security NOT RUN, access preparation separately requested, no scan/transfer/cost authorized.

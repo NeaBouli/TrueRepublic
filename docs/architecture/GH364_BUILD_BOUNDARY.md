@@ -12,6 +12,7 @@ paths, flags, wrappers and protocol changes are out of scope.
 | B4 | `.github/workflows/react-ci.yml` -> `scripts/test-zkp-wasm-client.sh` -> `cmd/zkp-prover-wasm` | exact Go version and synthetic WASM/native/keeper compatibility; artifacts remain test-only |
 | B5 | binary/OCI contracts -> `configs/release/candidate-evidence.json` -> `configs/release/cross-run-rebuild.json` -> corresponding testdata/verifiers | deliberate digest propagation to the fixed point, never stale or ignored pins |
 | D1 | verified dependency/CI evidence -> `docs/status.json::features.dependency_security` / `configs/security/threat-model.json` -> `docs/index.html` static status/Phase-5 card, Go badge and `docs/security/THREAT_MODEL.md` | truthful candidate/merged distinction and bounded residual risk; four-viewport render with no layout or rollout expansion |
+| C1 (GH364I1 / existing GH362) | `client-web/package-lock.json` PostCSS/Tailwind -> source-map-js resolution -> unchanged npm audit/build gate | compose the already verified 1.2.1 -> 1.2.2 three-field lock patch; no package.json, runtime, override or audit-policy change |
 
 The module graph update is minimal x/net 0.58.0 -> 0.60.0 plus only dependencies required by it.
 Go remains in the supported 1.26 family (1.26.9). Change the coupled CI, Docker, strict verifiers,
