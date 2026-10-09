@@ -133,7 +133,7 @@ export function IdentityManager() {
             ) : (
               <div className="bg-red-50 border border-red-200 rounded-lg p-4">
                 <div className="flex items-start gap-2 mb-3">
-                  <ExclamationTriangleIcon className="h-5 w-5 text-red-600 flex-shrink-0 mt-0.5" />
+                  <ExclamationTriangleIcon className="h-5 w-5 text-red-600 shrink-0 mt-0.5" />
                   <div>
                     <div className="font-medium text-red-900">
                       Delete Identity?

@@ -7,7 +7,7 @@
 
 ## Prerequisites
 
-- Go 1.26.6 (repository-pinned native toolchain)
+- Go 1.26.9 (repository-pinned native toolchain)
 - Docker and Docker Compose (for containerized deployment)
 - Rust toolchain (for CosmWasm contracts)
 - Node.js 22+ (for the maintained web client)

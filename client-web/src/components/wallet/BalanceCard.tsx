@@ -39,7 +39,7 @@ export function BalanceCard() {
       </div>
 
       {/* PNYX Balance */}
-      <div className="bg-gradient-to-br from-primary-500 to-primary-700 rounded-xl p-6 text-white mb-4">
+      <div className="bg-linear-to-br/srgb from-primary-500 to-primary-700 rounded-xl p-6 text-white mb-4">
         <div className="text-sm opacity-90 mb-1">PNYX Balance</div>
         <div className="text-4xl font-bold mb-1">
           {formatPnyx(pnyxBalance?.amount || '0')}

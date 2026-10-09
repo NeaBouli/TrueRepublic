@@ -344,7 +344,7 @@ func metadataMatches(m daemonMetadata, binding BinaryTargetBinding, expected Con
 		m.Artifact == binding.Artifact &&
 		m.SHA256 == binding.ArtifactSHA256 &&
 		len(m.Reproducible) == 2 && m.Reproducible[0] == binding.ArtifactSHA256 && m.Reproducible[1] == binding.ArtifactSHA256 &&
-		m.GoVersion == "1.26.6" &&
+		m.GoVersion == "1.26.9" &&
 		m.CGOEnabled == "1" &&
 		m.BuildFlags.Trimpath && !m.BuildFlags.BuildVCS && m.BuildFlags.Mod == "readonly" &&
 		m.BuildFlags.BuildID == "" && m.BuildFlags.LinkerBuildID == "none" && m.BuildFlags.VersionVariable == "main.version"

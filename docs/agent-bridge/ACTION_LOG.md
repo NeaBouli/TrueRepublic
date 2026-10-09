@@ -1,5 +1,113 @@
 # Action Log
 
+## 2026-10-04 - GH350A landing and status reconciliation
+
+- From exact main 52aee79f (after #332, #347 and #349): clean npm ci +
+  production build; bundle budget reports 363938 / 73168 / 5054 gzip bytes,
+  recorded with the existing KiB convention as 355.41 kB total JavaScript,
+  71.45 kB entry and 4.94 kB maximum lazy route.
+- status.json: web_client sizes, tech.tailwindcss 4.3 and a
+  features.dependency_security record; README and client README sizes/Tailwind;
+  landing Tailwind badge and one Phase 5 dependency-security line;
+  SECURITY_NOTES entry. Test totals unchanged (no aggregate verifier change).
+- Visual gate: landing rendered offline at 1440x1000, 1180x820, 820x1180 and
+  390x844 before/after: above-the-fold identical, changes limited to the badge
+  and the Phase 5 card, no horizontal overflow, clipped-text count identical
+  to before, no missing anchors. Not pushed.
+
+---
+
+## 2026-10-04 - GH348A OpenTelemetry Go family to v1.45.0
+
+- GO-2026-6505 (CVE-2026-81870, OpenTelemetry exporter config logging may
+  leak endpoint URLs) became reachable on main. Commit 8354d9c updates the indirect
+  otel family (otel, metric, sdk, sdk/metric, trace) 1.44.0 -> 1.45.0; tidy
+  also moves go-logr/logr 1.4.3 -> 1.4.4 (required) and graph-only
+  otel/metric/x 0.66.0 -> 0.67.0. go mod tidy is idempotent; go mod verify ok.
+- Vulnerability gate: pre-fix found the four documented no-fix IDs plus
+  GO-2026-6505; post-fix passes with exactly the four. No allowlist change.
+- The test-only WASM prover builds byte-identical twice
+  (8126a270...c249, 18778166 bytes); it does not import OpenTelemetry, so no
+  pin changes. Go build, vet and the full test suite pass; evidence, OCI,
+  deterministic-build, license and consistency contracts pass. The local
+  -race run was stopped for disk headroom; hosted Go CI is authoritative.
+  Not pushed.
+---
+
+## 2026-10-03 - GH331C4 client image copies the Tailwind palette bridge
+
+- PR #347 reproducible OCI (arm64, amd64) failed: Vite could not find
+  ./tailwind.v3-colors.js because client-web/Dockerfile copies configs
+  explicitly. Commit ba3f487 adds exactly that file to the existing config COPY.
+- Proof without Docker (5.0 GiB free, below the 5 GiB-plus-margin rule): an
+  exact build-context copy of the Dockerfile COPY set fails before the fix
+  with the CI error and builds after it (same CSS asset hash as the evaluated
+  build). OCI and release-candidate contract tests, release-evidence fixtures,
+  production build and consistency pass. Hosted exact-head OCI is
+  authoritative. Not pushed.
+
+---
+
+## 2026-10-03 - GH331C3 oxide-wasm32-wasi bundled lock graph
+
+- PR #347 release-evidence SBOM step failed: package-lock-only npm ls reported
+  six missing bundled children of optional @tailwindcss/oxide-wasm32-wasi.
+- Commit 2bdc156 adds exactly the six npm 10.9.7-generated inBundle entries
+  (@emnapi/core, @emnapi/runtime, @emnapi/wasi-threads, @napi-rs/wasm-runtime,
+  @tybys/wasm-util, tslib); package-lock.json +60 lines only.
+- Proof: lock-only npm ls rc 1 -> 0; pre-fix cyclonedx-npm SBOM rc 254 ->
+  post-fix SBOM generated twice per run, two runs, normalized outputs
+  identical; npm ci, npm ls --all, three audit gates (0), signatures,
+  license policy and consistency pass. Not pushed.
+
+---
+
+## 2026-10-03 - GH331C2 authoritative Tailwind v4 evidence set
+
+- `_evidence/GH331C/GH331C1/c1-before-2` is the authoritative before set;
+  against `c1-after` all six viewport crops are byte- and pixel-identical.
+- Regenerated only `c1-pair-wallet-tablet-landscape-1180x820.png` from those
+  two sets; renamed the first run to `c1-before-NONAUTHORITATIVE-run1` with a
+  README. No recapture, build, product or threshold change.
+
+---
+
+## 2026-10-03 - GH331C1 Tailwind v4 visual-evidence precision
+
+- Recaptured six states as literal viewport crops (create-phrase, network,
+  wallet and ibc-transfer at 390x844; wallet and ibc-transfer at 1180x820):
+  before/after pixel-identical, PNG sizes equal the named viewports, no
+  horizontal overflow, all fixed elements inside the viewport.
+- Corrected the GH331C delta description: the four <= 2/255 differences sit on
+  the unfocused Password/Confirm Password input corner rows and mobile button
+  edges, not on the focused Wallet Name ring.
+- Recorded pre-existing P2 follow-ups (unchanged by the migration): mobile
+  recovery-phrase column collision and FAB overlap, wallet address/copy
+  overflow, broken header logo image. No product, dependency or config change.
+
+---
+
+## 2026-10-03 - GH331C Tailwind CSS v4 migration removes unfixed braces chain
+
+- GHSA-vfj7-8cjw-p6xm (braces <= 3.0.3, high) has no patched release; it
+  reached the client only through Tailwind CSS 3.4.19 (chokidar, fast-glob,
+  micromatch). The client now uses Tailwind CSS 4.3.3 through
+  `@tailwindcss/postcss`; autoprefixer is dropped (v4 prefixes itself). The
+  braces/micromatch/chokidar/fast-glob chain is gone and full,
+  production-only and gate audits report zero high/critical advisories.
+- Design parity: the v3 palette for every used color family is pinned in
+  `tailwind.v3-colors.js`, and documented v3 Preflight defaults (border and
+  placeholder color, button cursor, form-control opacity and text-field
+  background) are restored in `src/index.css`. Removed/renamed v4 utilities
+  were mapped mechanically (`flex-shrink-0`, `rounded`, `shadow-sm`,
+  `outline-none`, `bg-opacity-50`, sRGB gradient interpolation).
+- Evidence: 102 deterministic before/after screenshots at four viewports are
+  pixel-identical except four focus-ring edge renders (max channel delta 2);
+  24 data-loaded/modal states verified identical on the GH300 B3 head. Lint,
+  TypeScript, 309 unit tests, build/budget, the browser suite (same result as
+  baseline), license policy and consistency pass. Not pushed.
+---
+
 ## 2026-09-19 - GH-304 canonical bech32 identity edge hardened
 
 - Sol's integration review confirmed Cosmos bech32 decoding accepts an
@@ -5936,3 +6044,205 @@
 - Tests stub/restore navigator.locks (vi.stubGlobal + unstubAllGlobals) and keep create/create, create/remove, concurrent creates, FIFO, never-write-outside-lock, default/missing-lock and both negative controls. New: a second constructor argument is a TypeScript error (@ts-expect-error; removing the directive yields 1 tsc error) and a passed non-exclusive lock is ignored at runtime (window test still keeps both records).
 - Proof of no bypass: no production file constructs IdentityVault or imports identityVault (grep outside *.test.ts: 0). Mutation bypassing navigator.locks in the implementation fails 6 tests; restored 18/18.
 - Gates: npm run lint rc 0; tsc -b --noEmit rc 0; npm test -- --run 22 files passed / 2 skipped, 340 passed / 4 skipped; npm run build with bundle budget (entry 73507 gzip, total JS 364289); audit:high only the known brace-expansion/minimatch advisory (PR #332); git diff --check clean. No push.
+
+## 2026-10-01 EEST - GH-335 ModuleQuery fetch receiver (GH335A, Claude Code)
+
+- Branch `agent/claude/GH335-modulequery-fetch` from exact main `1283a445`; commit
+  `db89aac`. `ModuleQueryClient`'s default fetch is now
+  `(input, init) => globalThis.fetch(input, init)` (same pattern as `network.ts`);
+  previously every typed module query failed in real browsers with "Illegal
+  invocation" before sending (found by the GH309B1 Chromium contract run).
+- New receiver-sensitive test in `moduleQuery.test.ts`: fails on the parent
+  implementation with the Illegal-invocation TypeError, passes with the fix; global
+  fetch is restored in `finally`.
+- Gates (7.6-7.9 GiB free, no other TrueRepublic build): `npm ci`; focused
+  `moduleQuery.test.ts` 8/8; `npm run lint`; `tsc -b --noEmit`; `npm test -- --run`
+  (310 passed, 4 skipped); `npm run build` with bundle budget; `npm run audit:high`
+  fails only on the known brace-expansion advisories (propagated through minimatch to
+  eslint/typescript-eslint dependents), fixed separately by PR #332. No dependency,
+  UI, codec or configuration change; no push or PR.
+
+## 2026-10-01 GH335A1 — pin the receiver assertion (Claude Code)
+
+- Commit b520d76 on agent/claude/GH335-modulequery-fetch: moduleQuery.test.ts #335 test asserts `expect(receivers).toEqual([globalThis])` instead of `toHaveLength(1)`. Receiver-sensitive fake, finally-restoration and all source unchanged.
+- Mutation proof (temporary, reverted; source diff empty afterwards): unbound call (`const unbound = globalThis.fetch; return unbound(input, init)`) fails with "expected [ undefined ] to deeply equal [ globalThis ]"; parent implementation (`fetchImpl: Fetch = globalThis.fetch`) fails with TypeError "Illegal invocation" at moduleQuery.ts:410. With the fix: moduleQuery.test.ts 8/8 pass.
+- Gates: npm run lint rc 0; tsc -b --noEmit rc 0; git diff --check clean. Full suite/build not repeated per brief (GH335A evidence stands). No push.
+
+## 2026-10-01 EEST - GH-309 preview identity registration fail-closed (GH309B1, Claude Code)
+
+- Branch `agent/claude/GH309-client-containment` from exact main `1283a445`; commit
+  `aa98b96`. `MembershipService.registerIdentity` returns the stable
+  `PREVIEW_IDENTITY_REGISTRATION_DISABLED` error before any wallet account, signing
+  client or `deliverMessages` call. `OnboardingFlow` no longer has a registration
+  handler; its submit step shows "Identity Registration Unavailable", a disabled
+  44px control and wording that sends nothing and promises no anonymity. The
+  `MsgRegisterIdentity` codec/registry and `ZKPService.isSubmittable === false` are
+  unchanged; no second activation flag was added.
+- Tests: new `membership.test.ts` (service never touches wallet/signing/delivery) and
+  `OnboardingFlow.test.tsx` (disabled, non-focusable control; no signing or service
+  call). Restoring the original service path fails 1 test; restoring the original
+  component fails 2 tests. `npm ci`, focused tests 4/4, `npm run lint`, typecheck and
+  `npm test -- --run` (313 passed, 4 skipped) pass; `npm run audit:high` fails only on
+  the known global brace-expansion advisory fixed by PR #332.
+- Pending (data volume ~3.0 GiB free, below the 5 GiB build threshold): `npm run
+  build`, browser/visual gate with screenshots at 1440x1000, 1180x820, 820x1180 and
+  390x844. Custody, persistence, cryptography and chain-side risks remain open;
+  issue #309 is not closed. No push, PR or deployment.
+
+## 2026-10-01 GH309B1 visual gate (Claude Code)
+
+- Branch agent/claude/GH309-client-containment rebased onto GH335 af0608b (only the append-only Action Log conflict merged, both entries kept): 56ba76e implementation, 28fe3dd log, d1a36aa visual contract.
+- d1a36aa: new client-web/browser-quality/identity-registration-disabled.e2e.ts; OnboardingFlow disabled button gets `disabled:bg-gray-200 disabled:text-gray-600` (local to this control; global .btn-primary unchanged).
+- Chromium (Playwright 1.55.1, build 1193), project chromium-desktop, 4/4 pass at 1440x1000, 1180x820, 820x1180, 390x844: documentOverflow 0; button 44px high (590/590/590/308 wide), inside card; notice inside card, no text overflow; cursor not-allowed; not focusable; click/Enter/Space inert; contrast rgb(75,85,99) on rgb(229,231,235) ~6.1:1; typed Domain query served >= 1; bootstrap calls observed: status only (answered as controlled JSON-RPC error, no data); no violations, no broadcast_tx.
+- Contrast mutation: previous styling (white on gray-300) fails the contract with 1.47:1.
+- Screenshots (inspected, untracked local evidence): screenshots/ux/GH309B1-registration-disabled/{desktop-1440x1000,tablet-landscape-1180x820,tablet-portrait-820x1180,mobile-390x844}.png.
+- Gates: lint rc 0; tsc -b --noEmit rc 0; npm test -- --run 22 files passed/2 skipped, 314 passed/4 skipped; build via Playwright webServer; git diff --check clean. Firefox/WebKit projects not run (only Chromium installed locally). No push.
+
+## 2026-10-01 GH309B1C1 final visual gate (Claude Code, sole owner) — supersedes the GH309B1 visual-gate entry above
+
+- The previous entry (fca0d36) is superseded: its commit d1a36aa contained a mixed spec (a parallel dispatched worker rewrote the file between that run and the commit; Codex stopped the worker and made this stand-in the sole owner). Its screenshots are not evidence for any current head. No reset, revert, amend or force-push; corrected by commit fbf24d4.
+- Branch agent/claude/GH309-client-containment stacked on GH335 af0608b: 56ba76e implementation, 28fe3dd log, 887b7bf submit-card test hardening (dispatched worker; mutation re-checked: dropping "not" fails 1 test, restored 2/2), d1a36aa contrast fix + mixed spec, fca0d36 superseded log, fbf24d4 spec repair.
+- Spec checks: eslint browser-quality/ rc 0; strict standalone tsc --noEmit of the spec + fixtures rc 0 (browser-quality is outside the project tsconfig).
+- Chromium 1193 (Playwright 1.55.1, chromium-desktop), 4/4 pass, all four viewports: documentOverflow 0; disabled control 44px high (590/590/590/308 wide), inside card, label without overflow; notice text inside notice/card, no overflow; tab order equals DOM order and never reaches the disabled control; click/Enter/Space inert, URL and box unchanged; cursor not-allowed; disabled label rgb(75,85,99) on rgb(229,231,235) contrast 6.1 (>= 4.5); warning text contrast 8.38. RPC per viewport: status 1, AllBalances 0, Domain 2 (GH-335 typed query leaves the page and its decoded state reaches the target step), broadcasts 0, violations 0.
+- Contrast mutation: old disabled styling (white on gray-300) fails the final contract with 1.47.
+- New screenshots (inspected): client-web/node_modules/.cache/gh309b1c1-final-evidence/{desktop-1440x1000,tablet-landscape-1180x820,tablet-portrait-820x1180,mobile-390x844}.png, sha256 377b99d5…, 3f8bb99d…, 001f85e5…, 47947aaa… (copy in the stand-in scratchpad).
+- Gates: npm test -- --run 22 passed/2 skipped files, 314 passed/4 skipped; npm run build incl. tsc -b and bundle budget (entry 73168 gzip, total JS 363863); npm run audit:high fails only on the known brace-expansion/minimatch advisory (PR #332); git diff --check clean. Firefox/WebKit not run (only Chromium installed). No push.
+
+## 2026-10-01 GH309B1C1a RPC allowlist hardening (Claude Code, sole owner) — supersedes the GH309B1C1 RPC-policy evidence above
+
+- Codex final review P2: status accepted null/array params and AllBalances was allowed regardless of data/prove/extra fields. Fixed by commit 01968ee (spec only, no product file).
+- Policy now, in order: any broadcast_tx* (method, path or anywhere in the body, incl. batches) is recorded as a broadcast; non-POST, non-root path or non-canonical envelope (exactly jsonrpc "2.0", safe-integer id, string method, params) is a violation; status only with a non-null, non-array empty params object (controlled no-data error); the exact Domain body (synthetic state); everything else a violation. The bank AllBalances exception is removed (the real run never sent it).
+- Browser contract asserts the exact ordered sequence [status, abci_query Domain, abci_query Domain] plus zero broadcasts and zero violations.
+- 19 page-free negative/positive policy cases: status with null, array, extra params, missing params, extra top-level field, string id, wrong jsonrpc, batched; bank AllBalances and Balance; Domain with other id or prove true; other method; GET and other path; broadcast_tx_sync/async/commit and batched broadcast. Mutation: restoring the old `Object.keys(params ?? {})` status check fails exactly the null and array cases; restored 19/19.
+- Spec: eslint browser-quality/ rc 0; strict standalone tsc rc 0; npm run lint rc 0; git diff --check clean.
+- Chromium 1193, chromium-desktop: 23/23 pass (4 viewports + 19 policy). Viewport measurements unchanged from GH309B1C1 (overflow 0, 44px control, contrast 6.1, warning 8.38, tab order = DOM, inert activation). RPC per viewport: sequence [status, Domain, Domain], broadcasts 0, violations 0.
+- New evidence folder client-web/node_modules/.cache/gh309b1c1-a-final-evidence/ (copy + SHA256SUMS in the stand-in scratchpad); all four opened and inspected. The PNGs are byte-identical to the GH309B1C1 run (same product source, deterministic rendering).
+- Unit suite/build not repeated: no product, config or dependency file changed since the GH309B1C1 gates (314/4, build + bundle budget). No push.
+
+## 2026-10-01 GH309B1C1b browser-neutral tab-order anchor (Claude Code, sole owner)
+
+- Hosted CI on PR #337 (run 36826238887, job 110252443763): 156 passed, 2 skipped, 2 failed, only [firefox-desktop] at 820x1180 and 390x844, tab order expected [0,1] received [1,1]. Cause: two tabbables (Back link, floating menu) at those widths and Firefox keeping the sequential-focus start point at the removed "Create Anonymous Identity" button after blur(). Not a product defect.
+- Commit 2fca9ca (spec only): focus the first tabbable explicitly, assert index 0, Tab forward through all tabbables in DOM order, Shift+Tab back in reverse; disabled control and positive tabindex still rejected.
+- Local: eslint browser-quality/ rc 0; strict standalone spec tsc rc 0; Playwright chromium-desktop + chromium-mobile 46/46 pass (2-tabbable path exercised at 820/390). Firefox/WebKit are not installed locally; Hosted-CI Firefox verification and push are Codex's. No product file changed; no push.
+## 2026-10-04 — GH-350 GH350A1 dependency-security claim correction (CC)
+
+- Continued `agent/claude/GH350-landing-status-refresh @ 889cbfd` on worker
+  branch `agent/claude/GH350A1`.
+- Corrected only the absolute advisory-closure claims in `docs/status.json` and
+  the `docs/index.html` Phase 5 card: no blocking high/critical npm or fixable
+  reachable Go advisory; four documented bounded no-fix reachable Go exceptions
+  remain (GO-2023-1821, GO-2023-1881, GO-2026-4740, GO-2026-5932).
+- Focused contracts, consistency check, diff check and four-viewport card
+  layout check passed. No push, merge or deployment. Rollout remains 36/59 and
+  production false.
+
+## 2026-10-04 — GH-353 Phase-7 mobile hash containment (Codex)
+
+- Scoped long-token wrapping to `.rollout-card code`; content and status data are unchanged.
+- Added a repository consistency contract for the rule. The full consistency gate passes with a
+  private Go build cache after the global cache was sandbox-blocked.
+- Browser measurements at 1440x1000, 1180x820, 820x1180 and 390x844 show zero document overflow,
+  zero out-of-viewport elements and a readable/copyable wrapped hash. No rollout credit or deploy.
+
+## 2026-10-04 — GH-335 GH335I1 reconcile PR #336 onto main (Claude Code)
+
+- Normal merge 7248da6 of main 2a60210b into agent/claude/GH335-modulequery-fetch
+  (af0608b); no rebase/reset/force-push. Only conflict: this append-only Action
+  Log (both histories kept, chronological). moduleQuery.ts/.test.ts are
+  byte-identical to af0608b; diff vs main = 1-line bound fetch + regression test.
+- Gates: npm ci; lint; tsc -b; moduleQuery.test.ts 8/8; reverting to the
+  unbound default fails the receiver assertion; full suite 310 passed / 4
+  skipped (node 19/19); build + budget; audit:high clean; consistency PASSED;
+  git diff --check clean. No push.
+
+## 2026-10-04 — status sync after GH-335/GH-353 merges (Claude Code)
+
+- TODO: GH-353 (PR #354, live-verified) and GH-335 (PR #336) marked complete.
+- status.json module_queries records the bound browser fetch receiver (PR #336).
+- README, landing and rollout figures already matched main; no other change.
+  check-consistency PASSED. Not pushed.
+- Codex opened issue #356 for the three pre-existing P2 UI follow-ups and linked
+  that owner from TODO before publication.
+
+## 2026-10-09 — GH309B1I1 direct Codex reconciliation
+
+- Normal merge `954fc94` from reviewed `bbc067d` + exact main `ff63e9d`; conflicts limited to
+  OnboardingFlow class/state reconciliation and preserving both Action Log histories.
+- Client 333 executed cases (314 Vitest + 19 Node), lint/typecheck/build/budget/consistency PASS.
+  Chromium contract 23 PASS and four screenshots inspected; Firefox 19 policy PASS / four
+  pre-target timeouts under load ~505. No timeout increase; remaining engines require Hosted CI.
+- Audit prerequisite #362 and additional Codex Security NOT RUN gate remain open. No custody/ZKP
+  activation, main merge, deployment, security-policy change or duplicate worker dispatch.
+
+## 2026-10-09T21:03Z — GH-362 source-map-js maintenance (Codex)
+
+- Exact main ff63e9d, isolated agent/codex/GH362-source-map; implementation 9938318 changes only
+  the source-map-js lock version/registry URL/integrity to 1.2.2. Existing semver ranges accept it.
+- npm ci, three npm audits (zero findings), 342 signatures, complete/lock-only dependency graphs,
+  lint, typecheck, 329 tests (4 skipped), build/budget and full consistency pass. No package.json,
+  runtime source, override, exception, consensus or public status-count change.
+- Hosted exact-head gates pending; Codex Security NOT RUN and main integration HELD. Claude paused.
+  Separate upstream Go-advisory/OCI-rate-limit triage is not folded into this maintenance scope.
+
+## 2026-10-09T22:00Z — GH364 verified continuation / goal readback
+
+- Existing app goal ACTIVE and correct for Basic #29 release readiness; no reset or scope expansion.
+- Four evidence packages and six coupled script contracts PASS; fresh scan/full normal Go still RUNNING.
+- Repeated Go1.26.9 test-only WASM builds byte-identical: d2cf62c436055de543562347f877554c631fbffbdafa26155c96c07d6dc67d66,
+  18,778,260 bytes. Incoming GH300 manifest not imported; its future pin reconciliation stays explicit.
+- Truthful Landing candidate state: offline eight states/four viewports PASS, twelve images inspected,
+  no overflow/errors/egress. Live Pages NOT RUN. #364 public checkpoint recorded; #359 only triaged.
+- #355 renewal waits for final scan evidence, not another owner permission. No main/production mutation.
+  Claude paused; Codex Security NOT CONNECTED / NOT RUN. Complete report retained in coordinator .fleet.
+
+## 2026-10-09T22:15Z — GH355 decision from completed real GH364 scan
+
+- Completed raw scan rc0: Go1.26.9/govulncheckv1.6.0, exact three no-fix IDs, all twelve new
+  fixable IDs absent. SHA-256 be652dce938341c30cfcb132211bb4c4f511e97276fe12c7c95fbc34ea099799.
+- Removed upstream-withdrawn GO-2026-4740 and renewed only remaining IDs through October20
+  under exact Gio authorization; October16 cadence, thirty-day maximum preserved. Policy replay
+  consumes that real completed report and is separately labeled; positive/negative fixtures pass.
+- Release fixture hash graph propagated from changed policy; final relevant gates running.
+  No main merge, runtime/state change, production action or new exception. Codex Security NOT RUN.
+
+## 2026-10-09T22:27Z — GH364 publication and D1 review correction
+
+- Draft PR #365 head9200b568 read back on main base ff63e9d. Independent source review
+  found no source/policy/pin defect but one premature Go recovery claim; README now explicitly
+  says candidate/exact-head acceptance pending. Narrow closure check requested, no duplicate work.
+- Final evidence packages/script contracts, WASM native/keeper chain, consistency and license
+  policy PASS. Full normal Go gate still running. Initial hosted go-vuln and compatibility gates
+  PASS; full matrix/affected main acceptance remain open. Codex Security NOT RUN; goal ACTIVE.
+
+## 2026-10-09T22:38Z — GH364I1 existing dependency prerequisites composed
+
+- Isolated staging branch merges reviewed86ed32e and4900d589 normally. The only product
+  delta is the exact existing source-map-js lock patch; chronological Action Log conflict retains
+  both histories. No extra stack, policy waiver, override or main mutation.
+- Combined local/protected gates pending. Original live Go26261 checkout untouched. Claude paused;
+  Codex Security NOT RUN, access preparation separately requested, no scan/transfer/cost authorized.
+
+## 2026-10-09T23:20Z — GH364I1 protected draft submission decision
+
+Normal86ed32e+4900d589 composition independently reviewed. Coupled release/SBOM/consistency/license,
+three clean npm audits, signatures/attestations/graphs, lint/typecheck, Node19 and build/budget pass.
+Vitest309/4 skipped/1 unchanged wrong-password timeout15000ms under severe shared-host load;
+local suite explicitly NOT PASS. No test timeout/gate change or foreign-process/cache cleanup.
+One private-cache retry fixes npm signature EPERM; one supported Vitest invocation replaces an
+obsolete orchestration option. Original Go build passed/vet live. Publish existing draft365 for
+mandatory exact-head protected matrix; acceptance NOT GRANTED. Both authorized337/363 OCI retries
+success; Security setup-only0-cost approval recorded, scan NOT RUN and main/deployment held.
+
+## 2026-10-09T23:54Z — GH309B1I2 normal prerequisite composition (Codex)
+
+Compose exact337head11dbd654 with exact365head6d1c79d. Preserve both log append histories;
+no product-source conflict, custody or canonical activation. New-head gates pending, no inherited
+CI acceptance or scan claim. Claude paused; no main merge, deployment or rollout credit.
+
+## 2026-10-10 03:17 EEST — GH309B2I1 custody-core prerequisite composition (Codex)
+
+Normal reviewed338379bb5c2 +337composition825e6f2. Conflict only Action Log append union and
+status inventory/services19 while retaining current merged-main metrics/365 pins. No custody
+source/API/crypto change; preserved reviewed byte/AAD/cap/WebLock behavior and337 containment.
+Focused/full/new protected gates pending, no inherited PASS. Claude paused; no migration/UI/
+canonical activation, scan, main merge, rollout credit or deployment.

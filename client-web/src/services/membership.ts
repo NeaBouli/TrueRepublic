@@ -12,6 +12,13 @@ import {
   QUERY_PATHS,
 } from './moduleQuery';
 
+/**
+ * Stable error returned while preview identity registration is disabled
+ * (issue #309).
+ */
+export const PREVIEW_IDENTITY_REGISTRATION_DISABLED =
+  'Identity registration is disabled in this preview client (issue #309): commitment custody and the browser prover have not passed review.';
+
 export class MembershipService {
   private readonly queries: ModuleQueryClient;
 
@@ -136,49 +143,31 @@ export class MembershipService {
   }
 
   /**
-   * Register ZKP identity commitment (after becoming a member).
-   * Go: MsgRegisterIdentity { sender, domain_name, commitment }
-   * Commitment must be 64 hex chars (32 bytes MiMC hash).
+   * Register a ZKP identity commitment (Go: MsgRegisterIdentity).
+   *
+   * Disabled in the preview client (issue #309): commitment custody and the
+   * browser prover have not passed review, and a registered commitment is
+   * irreversible until the domain's Big Purge. The call fails closed before any
+   * wallet account, signing client or message delivery is touched. The message
+   * codec stays registered for other clients and a separately reviewed
+   * activation.
    */
   async registerIdentity(
     wallet: DirectSecp256k1HdWallet,
     domainName: string,
     commitment: string
   ): Promise<TransactionResult> {
-    const [account] = await wallet.getAccounts();
-
-    let client: SigningStargateClient | undefined;
-
-    try {
-      client = await connectSigningClient(this.config, wallet);
-      const msg = {
-        typeUrl: '/truedemocracy.MsgRegisterIdentity',
-        value: {
-          sender: fromBech32(account.address).data,
-          domainName,
-          commitment,
-        },
-      };
-
-      return await deliverMessages(
-        client,
-        account.address,
-        [msg],
-        this.config.gasPrice
-      );
-    } catch (err: unknown) {
-      return {
-        hash: '',
-        height: 0,
-        success: false,
-        error:
-          err instanceof Error
-            ? err.message
-            : 'Identity registration failed',
-      };
-    } finally {
-      client?.disconnect();
-    }
+    // The signature stays stable for a later reviewed activation; no input is
+    // read, so nothing is signed or sent.
+    void wallet;
+    void domainName;
+    void commitment;
+    return {
+      hash: '',
+      height: 0,
+      success: false,
+      error: PREVIEW_IDENTITY_REGISTRATION_DISABLED,
+    };
   }
 
   /**
