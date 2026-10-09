@@ -212,8 +212,9 @@ JSON register.
 - **TM-DEP-001** (high/medium, accepted): reachable dependency
   vulnerabilities without upstream fixes. Verified: fail-closed
   govulncheck/cargo-audit/npm gates, exact-ID 30-day-bounded exceptions.
-  Accepted residual: four no-fix Go findings and monitored cargo warnings
-  stay visible under the weekly cadence.
+  Accepted residual: three no-fix Go findings and monitored cargo warnings
+  stay visible under the weekly cadence. GH-355 revalidates the exact Go IDs
+  through 2026-10-20; remove an allowance if upstream fixes or withdraws it.
 - **TM-DEP-002** (high/low, mitigated): CI poisoning through mutable Actions
   or credential persistence. Verified: full-SHA pins, contents-read
   permissions, per-job timeouts, contract-tested rejection of mutable or

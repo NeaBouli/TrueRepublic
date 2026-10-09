@@ -4,7 +4,7 @@
     "published": false,
     "signed": false
   },
-  "contract_sha256": "6c5d4bb80334f46c0496ab4db0dded904f9443e7ab8fb9e5914fa006c0f75e09",
+  "contract_sha256": "4e449228248bfb36d05ffa76781e29851684b2dcdfcd1b3c5c4dca965e480994",
   "platform": "linux/amd64",
   "schema": "truerepublic.oci-evidence/v1",
   "source_ref": "0123456789abcdef0123456789abcdef01234567",

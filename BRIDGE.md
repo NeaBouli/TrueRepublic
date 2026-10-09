@@ -10062,6 +10062,23 @@ Pending independent Kimi review and complete Sol verification.
 - GitHub issue #356 now owns the three pre-existing P2 UI follow-ups: recovery-
   phrase/FAB collision, wallet address/copy overflow and the broken header logo.
 
+## 2026-10-09T21:03Z — GH-362 compatible client dependency maintenance (Codex)
+
+- Owner-directed Codex implementation; Claude paused, no duplicate dispatch. Exact base main ff63e9d.
+- Issue #362 owns public upstream GHSA-68fv-2mgg-jv7q. Only source-map-js lock version, registry URL
+  and integrity change from 1.2.1 to compatible 1.2.2; package.json and all product sources unchanged.
+  Implementation commit 9938318. No new override, exception, major update or consensus change.
+- PASS: npm ci (lock unchanged), audit:high, full npm audit and production audit (zero findings),
+  342 registry signatures, npm ls including lock-only graph, lint, TypeScript, 19 Node + 310 Vitest
+  tests (4 explicit skips), build/budget (entry 73160, max lazy route 5050, total JS 363940 gzip bytes),
+  full check-consistency with private Go 1.26.6 caches and git diff --check.
+- Scoped self-review confirms exactly the three registry-pinned lock fields. Hosted exact-head
+  CI/OCI/SBOM/browser evidence and applicable independent acceptance remain pending.
+- Codex Security NOT RUN: no authorized access/destination/code/exclusions/cost ceiling. Main
+  integration HELD; no merge, deployment, policy renewal, rollout credit or public test-total change.
+- Separate CI triage: #337 hosted browser matrix passes; new Go toolchain advisories and registry
+  rate limits are not addressed by this npm-only patch. Track them separately; do not weaken gates.
+
 ---
 
 ## 2026-10-10 02:08 EEST — GH314B / bounded documentation claim → In Progress
@@ -10097,3 +10114,83 @@ Pending independent Kimi review and complete Sol verification.
   readiness contracts and licensing policy PASS. No source changed since inspected6a5d892.
 - Publish this bounded content slice as a draft PR; protected exact-head CI and live Pages remain
   NOT RUN. Full issue314 stays open for retained dependent corrections; no rollout credit.
+
+## 2026-10-09T22:00Z — GH364 / GH355 → In Progress
+
+- Owner: Codex; Claude paused. Branch agent/codex/GH364-go-advisories, exact main base ff63e9d.
+  ACTIVE full Basic #29 release-readiness goal verified; no goal reset or deferred-feature expansion.
+- Changed: minimal Go1.26.9/x-net0.60 required graph, coupled pinned CI/image/build/release
+  contracts and fixtures, maintained toolchain docs, truthful Landing/status candidate claims.
+  Boundary: docs/architecture/GH364_BUILD_BOUNDARY.md B1-B5/D1; no chain-state/runtime change.
+- Tests PASS: four evidence packages, six coupled script contracts, tidy idempotence/module
+  verification; two byte-identical test-only WASM builds d2cf62c4...67d66 / 18,778,260 bytes.
+  Landing four viewports/eight states: zero overflow/errors/egress; twelve images inspected offline.
+- Tests RUNNING: fresh maintained-package vulnerability scan and full normal Go build/vet/test.
+  Interim scan output is not acceptance. #355's authorized renewal/removal is not yet applied.
+- Risk: security/build-artifact change; independent exact-head review and full protected CI required.
+  Codex Security NOT CONNECTED / NOT RUN. No main merge, deployment, rollout credit or production claim.
+- Next: finish scan, reconcile only evidence-backed exceptions and digest pins, qualify candidate,
+  then OCI reruns and existing integration queue. Report: coordinator .fleet/reports/GH364.md;
+  raw evidence: /Users/gio/Documents/Codex/TrueRepublic-GH364-evidence. Original worktrees preserved.
+
+### 2026-10-09T22:15Z — completed scan and authorized no-fix decision
+
+- Real govulncheck v1.6.0 / Go1.26.9 scan completed rc0: exactly three reachable no-fix IDs,
+  no new fixable IDs; raw SHA-256 be652dce938341c30cfcb132211bb4c4f511e97276fe12c7c95fbc34ea099799.
+- #355 removes withdrawn GO-2026-4740; remaining GO-2023-1821/1881 and GO-2026-5932
+  approved 2026-10-09 through 2026-10-20, next review 2026-10-16. No new IDs or weaker gate.
+- Unmodified gate replay of completed bytes and all positive/negative fixtures PASS. Coupled
+  fixture hash graph propagated; final contracts/full normal Go/WASM/native/keeper gates running.
+  Main integration and independent review remain pending; Codex Security NOT RUN.
+
+### 2026-10-09T22:27Z — GH364 independent source review and evidence checkpoint
+
+- Draft PR #365 publishes 9200b568 from exact main ff63e9d. Native independent review found
+  one D1 claim defect: README Go1.26.9 said Recovery verified before complete acceptance.
+  Corrected to Candidate; exact-head acceptance pending. No runtime or gate change.
+- Final four evidence packages and six coupled script contracts PASS. Completed WASM-client
+  integration, native verifier, keeper reward/replay/strict-handoff tests PASS; consistency
+  and license policy PASS. Full normal Go session remains RUNNING, not PASS.
+- Initial hosted head: go-vuln, ZKP/native/client, IBC, governed-upgrade, concurrency and
+  release/tool/bootstrap/Linux contracts pass; remaining matrix still running. Client audit
+  failures are under classification, not waived. Codex Security NOT CONNECTED / NOT RUN.
+- Basic completion goal read back ACTIVE and unchanged. No main merge, deployment or rollout
+  credit. Next: exact-head gates and existing #363/OCI integration queue; Claude paused.
+
+### 2026-10-09T22:38Z — GH364I1 / GH362 prerequisite composition → In Progress
+
+- Owner Codex, isolated staging branch agent/codex/GH364-integrate-GH362. Normal merge of
+  reviewed86ed32e and4900d589; source-map-js lock blob exactly71a253ffb68abf27f3ddd1b0f3e40a095d0425f3.
+- Only lock resolution and mapped C1/documentation change. Action Log conflict preserves both
+  historical blocks chronologically; no custody/ZKP/wasmvm/Rust stack or policy waiver enters.
+- Combined local/protected gates pending. Original live Go26261 checkout remains untouched.
+  Existing337/363 failed-OCI reruns confirmed attempt2 LIVE, no duplicate retry.
+- Independent composition review required before publication. Codex Security NOT RUN; official
+  local plugin discovered available but not installed. Access preparation requested separately,
+  no scan, code transfer, installation or additional cost performed. Main/deployment HELD.
+
+### 2026-10-09T23:20Z — GH364I1 locally qualified draft / exact-head CI required
+
+- Exact composition8d0df2f passed independent delta review; prior86ed32e source review retained.
+  Four evidence packages, twice-generated release/SBOM contract, consistency/license/diff PASS.
+- npm ci preserves lock; high/full/omit-dev audits0;342 signatures/100 attestations verified using
+  owned private cache after global-cache EPERM. Complete/lock-only graphs, lint, TypeScript,
+  Node19/19 and build/budget PASS (entry73160, max route5050, total JS363940 gzip bytes).
+- Vitest remaining-only corrected call:309 PASS/4 skipped/1 timeout at15000ms in wrong-password
+  test under host load527. Wallet source/test blobs exactly main/#363; no assertion or changed
+  wallet source. Local suite is NOT PASS; exact-head hosted test matrix remains mandatory.
+  Obsolete orchestration --minWorkers invocation never ran Vitest and is not counted as evidence.
+- Original local full Go26261: build completed, vet still LIVE, full test pending. Unchanged-source
+  earlier86ed32e hosted Go/race/recovery/compatibility/OCI/security gates PASS, not combined credit.
+- Authorized #337/#363 OCI attempts2 completed SUCCESS (each7 successful/1 conditional skip).
+  No additional retry. Publish this draft candidate for complete protected combined CI, not merge.
+- Gio approved Security setup/access preparation only at0 extra spend. Plugin available/not
+  installed; entitlement/cost unknown, scan NOT RUN, no code transfer. Main/deployment HELD.
+
+### 2026-10-10 03:01 EEST — GH314I1 prerequisite refresh
+
+- Normal96371ac+6d1c79d composition; conflicts only two append logs, both histories preserved.
+  Whitepaper/content predicate untouched; Landing combines independent Go candidate and PoD text.
+  No new content/style/control or runtime change; existing inspected visual evidence retained.
+- Exact composed protected CI required; no previous PASS reassigned to this head. Main stillff63e9d,
+  Codex Security NOT RUN, no scan/transfer/production acceptance or full314/rollout closure.

@@ -30,7 +30,7 @@ make_target() {
   jq -n -S \
     --arg contract_hash "$build_hash" --arg source "$source_ref" --arg target "$id" \
     --arg runner "$runner" --arg runner_arch "$runner_arch" --arg artifact "$artifact" --arg digest "$digest" \
-    '{schema:"truerepublic.daemon-build-evidence/v1",contract_schema:"truerepublic.daemon-build/v1",contract_sha256:$contract_hash,source_ref:$source,target:$target,ci_runner:$runner,runner_arch:$runner_arch,artifact:$artifact,sha256:$digest,reproducible_pair_sha256:[$digest,$digest],go_version:"1.26.6",cgo_enabled:"1",source_date_epoch:1,build_flags:{trimpath:true,buildvcs:false,mod:"readonly",buildid:"",linker_build_id:"none",version_variable:"main.version"}}' \
+    '{schema:"truerepublic.daemon-build-evidence/v1",contract_schema:"truerepublic.daemon-build/v1",contract_sha256:$contract_hash,source_ref:$source,target:$target,ci_runner:$runner,runner_arch:$runner_arch,artifact:$artifact,sha256:$digest,reproducible_pair_sha256:[$digest,$digest],go_version:"1.26.9",cgo_enabled:"1",source_date_epoch:1,build_flags:{trimpath:true,buildvcs:false,mod:"readonly",buildid:"",linker_build_id:"none",version_variable:"main.version"}}' \
     >"$dir/build-metadata.json"
 }
 make_target linux-amd64 ubuntu-24.04 x86_64 truerepublicd-linux-amd64
