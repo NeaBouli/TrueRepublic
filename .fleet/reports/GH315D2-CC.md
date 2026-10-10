@@ -32,3 +32,4 @@ map: D2 header/nav -> existing anchors; content/footer -> landmarks/semantics (e
 - Applied: nav links min-width 44px (Kimi: "Wiki" was ~38-44px wide). Head now d3728f5a2360e52efc55f33471766f8ceb745ea4. Assertion tightened to 44x44.
 - Re-run: Playwright candidate PASS 9/9, base FAIL 9/9; consistency PASSED; diff --check clean; 390/1025 screenshots re-inspected.
 - Not applied (cosmetic/pre-existing): duplicate .nav-links a rule blocks; inline logo height 36px vs 40px rule.
+- GitHub docs-check run 38078994518 (workflow_dispatch, stacked branch) on d3728f5: success.

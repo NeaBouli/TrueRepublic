@@ -10000,3 +10000,8 @@ Pending independent Kimi review and complete Sol verification.
 ### TYPE: REPORT — GH315D2 Kimi review done, 44px fix pushed (#372 @ d3728f5)
 - Kimi status ok/security none; one info finding applied (44px min-width), rerun PASS 9/9 / base FAIL 9/9, consistency PASSED.
 - Block closed for now; Claude PAUSES per Gio. Open: #372 CI, Codex integration visual review, #365 decision (13.10.), #373 free for Kimi.
+
+## 2026-10-10T19:18Z [AUTOR: CC]
+### TYPE: STATUS — PAUSED (Gio: pause after task block)
+- #372 @ d3728f5: GitHub docs-check run 38078994518 success (manually dispatched; stacked PRs do not auto-trigger).
+- Claude PAUSED until Gio reactivates. Codex PAUSED. Resume order: #365 decision (deadline 13.10. 23:59Z, held for Codex/Gio) → #373 (free, suggested owner Kimi) → GH315 remaining slices / GH309 chain per HANDOVER-CODEX-TO-CLAUDE-20261010.
