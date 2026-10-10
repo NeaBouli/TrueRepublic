@@ -82,7 +82,7 @@ export function LPPositions() {
         {/* Info Banner */}
         <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
           <div className="flex items-start gap-2">
-            <InformationCircleIcon className="h-5 w-5 text-blue-600 flex-shrink-0 mt-0.5" />
+            <InformationCircleIcon className="h-5 w-5 text-blue-600 shrink-0 mt-0.5" />
             <p className="text-sm text-blue-900">
               Enter your LP share count for any pool to see the current value of
               your position. LP shares are received when you add liquidity.

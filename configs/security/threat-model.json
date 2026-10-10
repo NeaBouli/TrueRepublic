@@ -553,7 +553,7 @@
         "scripts/check-go-vulnerabilities.sh",
         ".github/workflows/security-scan.yml"
       ],
-      "residual_risk": "Four reachable no-fix Go findings and monitored cargo-audit warnings remain visible until upstream publishes fixes.",
+      "residual_risk": "Three reachable no-fix Go findings and monitored cargo-audit warnings remain visible; GH-355 revalidates exact IDs through 2026-10-20, with weekly review and removal if upstream fixes or withdraws a record.",
       "residual_severity": "medium",
       "owner": "security-maintainers",
       "next_gate": "Re-validate exceptions inside the 30-day expiry bound; escalate to GH-29 if a fix or exploit appears",

@@ -12,7 +12,7 @@ source of current security or production-readiness claims.
 - Recovery epic: GitHub issue #4
 - Continuous handoff: `BRIDGE.md` and `docs/agent-bridge/`
 - Authoritative machine-readable status: `docs/status.json`
-- Verified recovery total: 2,502 standard-suite cases (2,148 Go, 26 Rust, 328
+- Verified recovery total: 2,491 standard-suite cases (2,137 Go, 26 Rust, 328
   maintained-client); run the separate opt-in IBC recovery gate with
   `make ibc-two-chain`
 - PNYX cap: 21,000,000 PNYX = 21,000,000,000,000 `upnyx`
@@ -54,7 +54,7 @@ boundaries.
 
 ## Toolchain
 
-- Go toolchain 1.26.6
+- Go toolchain 1.26.9
 - Cosmos SDK v0.50.15
 - CometBFT v0.38.26
 - ibc-go v8.7.0

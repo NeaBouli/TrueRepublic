@@ -227,6 +227,7 @@
         .rollout-card h3 { margin: 0.4rem 0 0.9rem; font-size: 1.25rem; }
         .rollout-card ul { margin: 0; padding-left: 1.15rem; }
         .rollout-card li { margin: 0.45rem 0; color: rgba(255,255,255,0.78); }
+        .rollout-card code { overflow-wrap: anywhere; }
         .rollout-gate {
             margin-top: 2rem;
             padding: 1.5rem;
@@ -464,7 +465,7 @@
                     <div class="stat-label">Max PNYX Supply</div>
                 </div>
                 <div class="stat">
-                    <div class="stat-number">2,502</div>
+                    <div class="stat-number">2,491</div>
                     <div class="stat-label">Recovery-Verified Tests</div>
                 </div>
                 <div class="stat">
@@ -472,7 +473,7 @@
                     <div class="stat-label">Rollout Checklist</div>
                 </div>
                 <div class="stat">
-                    <div class="stat-number">Green</div>
+                    <div class="stat-number">Review</div>
                     <div class="stat-label">CI &amp; Security</div>
                 </div>
                 <div class="stat">
@@ -495,10 +496,10 @@
                 <span class="tech-badge">React 18 + TypeScript</span>
                 <span class="tech-badge">Vite 8.2</span>
                 <span class="tech-badge">CosmJS 0.39</span>
-                <span class="tech-badge">TailwindCSS 3.4</span>
-                <span class="tech-badge">Go 1.26.6</span>
+                <span class="tech-badge">TailwindCSS 4.3</span>
+                <span class="tech-badge">Go 1.26.9</span>
                 <span class="tech-badge">Rust</span>
-                <span class="tech-badge">2,502 recovery-verified tests</span>
+                <span class="tech-badge">2,491 recovery-verified tests</span>
             </div>
         </div>
     </section>
@@ -586,6 +587,7 @@
                         <li><strong>Verified:</strong> property, fuzz, invariant, race, shared-state contention, exact transaction replay rejection, and deterministic same-home restart evidence (GH-145/GH-172)</li>
                         <li><strong>Verified:</strong> versioned cross-system threat model with fail-closed repository contract (GH-169)</li>
                         <li><strong>Review-ready:</strong> versioned scope, evidence index, and fail-closed findings lifecycle (GH-294); the independent review and resolution of every critical/high finding remain open</li>
+                        <li><strong>Dependency review in progress:</strong> prior fixes #332, #347 and #349 are merged. New source-map-js (#362 / PR #363) and October Go/x/net (#364) updates still require exact-head acceptance. Existing no-fix approvals are being rechecked in #355; GO-2026-4740 was withdrawn upstream. This is not production approval.</li>
                     </ul>
                 </article>
                 <article class="rollout-card">

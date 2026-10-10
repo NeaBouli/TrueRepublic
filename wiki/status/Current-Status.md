@@ -5,6 +5,10 @@
 **Production-ready:** no
 **Project licensing:** Apache-2.0 for maintained source and documentation
 
+Test totals and coverage below are historical references from
+`6ca29b808a07f1b74b97ba1fbbf4cfd3f24543cc`, not a recount or runtime qualification
+of the GH306I2 composition. Combined qualification and recount remain pending.
+
 ## Verified foundation
 
 - Canonical `upnyx` base denomination with six decimals.
@@ -46,7 +50,7 @@
   checksums, metadata, normalized SBOM and unsigned-provenance bindings, pinned
   release tools/platforms and container bases, without publishing or signing
   an artifact or claiming production rollout.
-- 2,502 recovery-verified tests: 2,148 Go, 26 Rust, and 328 maintained-client,
+- 2,491 recovery-verified tests: 2,137 Go, 26 Rust, and 328 maintained-client,
   plus the separately gated GH-266 Go/WASM-to-keeper replay,
   GH-175/GH-178/GH-181 two-chain IBC packet/channel/compatible-restart recovery and GH-172
   contention/replay/restart process proofs.

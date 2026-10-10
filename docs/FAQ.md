@@ -135,7 +135,7 @@ Validator stake withdrawals are capped at **10% of the domain's total payouts**.
 ## Development
 
 ### What is the tech stack?
-Go 1.26.6, Cosmos SDK v0.50.15, CometBFT v0.38.26, React 18.2 +
+Go 1.26.9, Cosmos SDK v0.50.15, CometBFT v0.38.26, React 18.2 +
 TypeScript 5.9/Vite 8.2 for the maintained web client, and Rust/CosmWasm v0.53.4
 for contracts.
 The former Expo/React Native prototype was retired and removed under GH-102.
@@ -145,7 +145,7 @@ There is no supported native mobile client.
 Fork the repo, create a branch, write tests, and submit a PR. See [Developer Docs](developers/README.md).
 
 ### Where are the tests?
-The recovery baseline has 2,502 verified standard-suite cases: 2,148 Go, 26
+The recovery baseline has 2,491 verified standard-suite cases: 2,137 Go, 26
 Rust, and 328 maintained-client tests. This total excludes the separate opt-in
 GH-175/GH-178/GH-181 IBC gate (`make ibc-two-chain`), GH-184 governed-upgrade
 gate, and separate GH-206 native-verifier and GH-266 keeper-replay gates

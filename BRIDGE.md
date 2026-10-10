@@ -1,5 +1,68 @@
 # TrueRepublic Agent Bridge
 
+## 2026-10-04 EEST GH350A landing/status refresh → independent review
+
+- Landing, status.json, README and SECURITY_NOTES now match exact main
+  52aee79f: Tailwind CSS 4.3, exact bundle sizes (355.41 / 71.45 / 4.94 kB) and
+  the merged dependency-security remediation (#332, #347, #349).
+- Rollout stays 36/59; production false; no test-total or rollout change.
+  Not pushed.
+
+---
+
+## 2026-10-04 EEST GH348A OpenTelemetry advisory remediation → review
+
+- 8354d9c updates the OpenTelemetry Go family to v1.45.0 and removes reachable
+  GO-2026-6505 without an allowlist; the four documented no-fix IDs remain
+  exactly. WASM prover bytes unchanged (no re-pin). PR #347 stays frozen
+  until this main security lane merges. Not pushed.
+---
+
+## 2026-10-03 EEST GH331C4 Dockerfile palette copy → focused review
+
+- ba3f487 adds tailwind.v3-colors.js to the client Dockerfile config COPY (one
+  line). Build-context simulation proves the CI failure before and a clean
+  build after; local Docker was skipped for disk headroom, so hosted OCI is
+  authoritative. GH331C3 (2bdc156) stays a separate lockfile-only commit.
+
+---
+
+## 2026-10-03 EEST GH331C3 lock graph fixed → independent lock review
+
+- Exact-head CI on #347 found two real GH331C defects: incomplete bundled lock
+  graph (release evidence SBOM) and the client Dockerfile not copying
+  tailwind.v3-colors.js (reproducible OCI). GH331C3 (2bdc156) fixes the lock graph
+  only; the Dockerfile follows separately as GH331C4.
+- Lock-only npm ls and the SBOM double-generation contract now pass locally.
+  Not pushed.
+
+---
+
+## 2026-10-03 EEST GH331C2 evidence metadata closed → final visual review
+
+- Authoritative before set `_evidence/GH331C/GH331C1/c1-before-2`; 6/6 crops
+  byte-identical to `c1-after`; the wallet tablet-landscape pair sheet was
+  regenerated from them; the stale first run is marked non-authoritative.
+- Evidence index: `_evidence/GH331C/GH331C1/EVIDENCE_INDEX.md`. Not pushed.
+
+---
+
+## 2026-10-03 EEST GH331C/GH331C1 Tailwind v4 migration → final visual review
+
+- **Result:** `agent/claude/GH331-tailwind-v4` @ `c9ab60c` moves the client to
+  Tailwind CSS 4.3.3 and removes the unfixed braces chain
+  (GHSA-vfj7-8cjw-p6xm) without an exception; audits report zero
+  high/critical findings. The independent dependency review found no issues.
+- **Visual parity:** 98/102 base pairs and 24/24 GH300 B3 data/modal pairs are
+  pixel-identical; four input/button edge renders differ by <= 2/255. GH331C1
+  recaptured six states as exact viewport crops (identical).
+- **Follow-ups (pre-existing P2):** mobile recovery-phrase collision and FAB
+  overlap; wallet address/copy overflow; broken header logo image.
+- **Boundary:** not pushed; no deployment or rollout credit. Production false.
+
+`TRUEREPUBLIC GH331C TAILWIND V4 — EVIDENCE COMPLETE — AWAITING FINAL VISUAL REVIEW`
+---
+
 ## 2026-09-19 EEST GH-304 unblocked and synchronized → Protected re-review
 
 - **Base:** GH-318/GH-305/GH-321 security stack is complete on exact main
@@ -9945,3 +10008,236 @@ Pending independent Kimi review and complete Sol verification.
   review still owed.
 
 `TRUEREPUBLIC GH306C1 CHECKPOINT — RELEASE BINDING NEXT (AFTER GH331A)`
+
+---
+
+## 2026-10-01 02:40 EEST [AUTOR: CC]
+### TYPE: SECURITY — GH-331 maintained-client brace-expansion advisories
+
+- **Finding:** `npm run audit:high` blocked every PR (first seen on PR #330, run
+  36785225148): `brace-expansion` 5.0.9 (dev-only, via `eslint` → `minimatch`
+  10.2.5, both pinned by existing `overrides`) is affected by GHSA-q2hr-2g5m-vwhr
+  (<5.0.12), GHSA-qhr7-859c-m2p7 (<5.0.11) and GHSA-6j4f-fj2g-mc7p (<5.0.10), all
+  CPU/stack-exhaustion DoS; `minimatch` is reported only as the parent.
+- **Fix:** the existing exact `brace-expansion` override moves 5.0.9 → 5.0.12 and
+  only its lock entry changes (resolved URL + integrity
+  `sha512-YovQ3rzh…EimQ==`; MIT; engines `20 || >=22`; dependency
+  `balanced-match ^4.0.2` unchanged). `minimatch` stays 10.2.5 (`^5.0.5` accepts
+  5.0.12). No new override, exception or audit allowance; Vite and the PR #326
+  updates untouched. Same pattern as the earlier 5.0.8 → 5.0.9 reconciliation.
+- **Evidence (node 22.22.2, npm 10.9.7):** clean `npm ci`; `npm run audit:high`
+  "No high or critical npm advisories found"; `npm audit` 0 vulnerabilities;
+  `npm run lint`; `npm test -- --run` 309 passed / 4 skipped; `npm run build` with
+  bundle budget passed; `npm ls --all` clean; license policy check + fixtures;
+  locked gitleaks v8.30.1 secret scan + fixtures; `check-consistency.sh`;
+  `git diff --check`. `npm audit signatures` could not reach the registry locally.
+- No push, PR, merge, deployment or rollout credit.
+
+`TRUEREPUBLIC GH-331 CLIENT AUDIT FIXED LOCALLY — PROTECTED CI NEXT`
+
+---
+
+## 2026-10-04 [AUTOR: CC]
+### TYPE: DOCS — GH-350 GH350A1 dependency-security claim correction
+
+- **Finding:** `docs/status.json` (`delivery.dependency_security.status`) and the
+  Phase 5 landing card in `docs/index.html` claimed no reachable Go advisory on
+  main. `configs/security/gates.json` still carries four documented, bounded
+  no-fix reachable Go exceptions, so the absolute claim was false.
+- **Fix:** both claims now state no blocking high/critical npm advisory or
+  fixable reachable Go advisory, and name the four remaining exceptions:
+  GO-2023-1821, GO-2023-1881, GO-2026-4740, GO-2026-5932 (machine-readable as
+  `dependency_security.go_no_fix_exceptions`). Build metrics, versions, test
+  totals, rollout 36/59 and production false are unchanged.
+- **Evidence:** focused root repository contracts (security gate, release
+  compatibility/candidate, CI tool bootstrap, network policy) ok;
+  `securityreview` and `toolbootstrapevidence` packages ok;
+  `scripts/test-go-vulnerability-scan.sh` fixtures passed;
+  `check-consistency.sh` passed; `git diff --check` clean; landing card checked
+  at 1440x1000, 1180x820, 820x1180 and 390x844 with no overflow or clipping.
+- No push, PR, merge, deployment or rollout credit. Post-deploy GitHub Pages
+  recheck of the card remains open.
+
+## 2026-10-04 [AUTOR: CODEX]
+### TYPE: CORRECTION — GH-350 GH350A1 Bridge field path
+
+- The preceding finding's status path is `features.dependency_security.status`, not
+  `delivery.dependency_security.status`. The implementation, evidence and review outcome are unchanged.
+
+## 2026-10-04 [AUTOR: CODEX]
+### TYPE: UI FIX — GH-353 Phase-7 long hash containment
+
+- Added scoped `overflow-wrap: anywhere` for inline code inside rollout cards and a fail-closed
+  repository consistency check. No landing text, status, rollout or production value changed.
+- `check-consistency.sh` passes with a private Go cache; `git diff --check` is clean.
+- Four responsive browser viewports show zero horizontal overflow/outside elements; every screenshot
+  was inspected and the hash remains readable/copyable. Independent bugfix review is next; no push.
+
+## 2026-10-04 EEST GH335I1 PR #336 reconciled onto main → Codex publication
+
+- agent/claude/GH335-modulequery-fetch now contains main 2a60210b via merge
+  7248da6; product diff vs main is only the bound ModuleQuery fetch receiver and its
+  regression test. All client gates green locally. Not pushed.
+
+---
+
+## 2026-10-04 EEST status sync after GH-335/GH-353 → Codex publication
+
+- TODO and status.json now reflect merged PR #336 and PR #354. README and the
+  landing page were already current. Rollout 36/59; production false.
+- GitHub issue #356 now owns the three pre-existing P2 UI follow-ups: recovery-
+  phrase/FAB collision, wallet address/copy overflow and the broken header logo.
+
+## 2026-10-09T21:03Z — GH-362 compatible client dependency maintenance (Codex)
+
+- Owner-directed Codex implementation; Claude paused, no duplicate dispatch. Exact base main ff63e9d.
+- Issue #362 owns public upstream GHSA-68fv-2mgg-jv7q. Only source-map-js lock version, registry URL
+  and integrity change from 1.2.1 to compatible 1.2.2; package.json and all product sources unchanged.
+  Implementation commit 9938318. No new override, exception, major update or consensus change.
+- PASS: npm ci (lock unchanged), audit:high, full npm audit and production audit (zero findings),
+  342 registry signatures, npm ls including lock-only graph, lint, TypeScript, 19 Node + 310 Vitest
+  tests (4 explicit skips), build/budget (entry 73160, max lazy route 5050, total JS 363940 gzip bytes),
+  full check-consistency with private Go 1.26.6 caches and git diff --check.
+- Scoped self-review confirms exactly the three registry-pinned lock fields. Hosted exact-head
+  CI/OCI/SBOM/browser evidence and applicable independent acceptance remain pending.
+- Codex Security NOT RUN: no authorized access/destination/code/exclusions/cost ceiling. Main
+  integration HELD; no merge, deployment, policy renewal, rollout credit or public test-total change.
+- Separate CI triage: #337 hosted browser matrix passes; new Go toolchain advisories and registry
+  rate limits are not addressed by this npm-only patch. Track them separately; do not weaken gates.
+
+---
+
+## 2026-10-09T22:00Z — GH364 / GH355 → In Progress
+
+- Owner: Codex; Claude paused. Branch agent/codex/GH364-go-advisories, exact main base ff63e9d.
+  ACTIVE full Basic #29 release-readiness goal verified; no goal reset or deferred-feature expansion.
+- Changed: minimal Go1.26.9/x-net0.60 required graph, coupled pinned CI/image/build/release
+  contracts and fixtures, maintained toolchain docs, truthful Landing/status candidate claims.
+  Boundary: docs/architecture/GH364_BUILD_BOUNDARY.md B1-B5/D1; no chain-state/runtime change.
+- Tests PASS: four evidence packages, six coupled script contracts, tidy idempotence/module
+  verification; two byte-identical test-only WASM builds d2cf62c4...67d66 / 18,778,260 bytes.
+  Landing four viewports/eight states: zero overflow/errors/egress; twelve images inspected offline.
+- Tests RUNNING: fresh maintained-package vulnerability scan and full normal Go build/vet/test.
+  Interim scan output is not acceptance. #355's authorized renewal/removal is not yet applied.
+- Risk: security/build-artifact change; independent exact-head review and full protected CI required.
+  Codex Security NOT CONNECTED / NOT RUN. No main merge, deployment, rollout credit or production claim.
+- Next: finish scan, reconcile only evidence-backed exceptions and digest pins, qualify candidate,
+  then OCI reruns and existing integration queue. Report: coordinator .fleet/reports/GH364.md;
+  raw evidence: /Users/gio/Documents/Codex/TrueRepublic-GH364-evidence. Original worktrees preserved.
+
+### 2026-10-09T22:15Z — completed scan and authorized no-fix decision
+
+- Real govulncheck v1.6.0 / Go1.26.9 scan completed rc0: exactly three reachable no-fix IDs,
+  no new fixable IDs; raw SHA-256 be652dce938341c30cfcb132211bb4c4f511e97276fe12c7c95fbc34ea099799.
+- #355 removes withdrawn GO-2026-4740; remaining GO-2023-1821/1881 and GO-2026-5932
+  approved 2026-10-09 through 2026-10-20, next review 2026-10-16. No new IDs or weaker gate.
+- Unmodified gate replay of completed bytes and all positive/negative fixtures PASS. Coupled
+  fixture hash graph propagated; final contracts/full normal Go/WASM/native/keeper gates running.
+  Main integration and independent review remain pending; Codex Security NOT RUN.
+
+### 2026-10-09T22:27Z — GH364 independent source review and evidence checkpoint
+
+- Draft PR #365 publishes 9200b568 from exact main ff63e9d. Native independent review found
+  one D1 claim defect: README Go1.26.9 said Recovery verified before complete acceptance.
+  Corrected to Candidate; exact-head acceptance pending. No runtime or gate change.
+- Final four evidence packages and six coupled script contracts PASS. Completed WASM-client
+  integration, native verifier, keeper reward/replay/strict-handoff tests PASS; consistency
+  and license policy PASS. Full normal Go session remains RUNNING, not PASS.
+- Initial hosted head: go-vuln, ZKP/native/client, IBC, governed-upgrade, concurrency and
+  release/tool/bootstrap/Linux contracts pass; remaining matrix still running. Client audit
+  failures are under classification, not waived. Codex Security NOT CONNECTED / NOT RUN.
+- Basic completion goal read back ACTIVE and unchanged. No main merge, deployment or rollout
+  credit. Next: exact-head gates and existing #363/OCI integration queue; Claude paused.
+
+### 2026-10-09T22:38Z — GH364I1 / GH362 prerequisite composition → In Progress
+
+- Owner Codex, isolated staging branch agent/codex/GH364-integrate-GH362. Normal merge of
+  reviewed86ed32e and4900d589; source-map-js lock blob exactly71a253ffb68abf27f3ddd1b0f3e40a095d0425f3.
+- Only lock resolution and mapped C1/documentation change. Action Log conflict preserves both
+  historical blocks chronologically; no custody/ZKP/wasmvm/Rust stack or policy waiver enters.
+- Combined local/protected gates pending. Original live Go26261 checkout remains untouched.
+  Existing337/363 failed-OCI reruns confirmed attempt2 LIVE, no duplicate retry.
+- Independent composition review required before publication. Codex Security NOT RUN; official
+  local plugin discovered available but not installed. Access preparation requested separately,
+  no scan, code transfer, installation or additional cost performed. Main/deployment HELD.
+
+### 2026-10-09T23:20Z — GH364I1 locally qualified draft / exact-head CI required
+
+- Exact composition8d0df2f passed independent delta review; prior86ed32e source review retained.
+  Four evidence packages, twice-generated release/SBOM contract, consistency/license/diff PASS.
+- npm ci preserves lock; high/full/omit-dev audits0;342 signatures/100 attestations verified using
+  owned private cache after global-cache EPERM. Complete/lock-only graphs, lint, TypeScript,
+  Node19/19 and build/budget PASS (entry73160, max route5050, total JS363940 gzip bytes).
+- Vitest remaining-only corrected call:309 PASS/4 skipped/1 timeout at15000ms in wrong-password
+  test under host load527. Wallet source/test blobs exactly main/#363; no assertion or changed
+  wallet source. Local suite is NOT PASS; exact-head hosted test matrix remains mandatory.
+  Obsolete orchestration --minWorkers invocation never ran Vitest and is not counted as evidence.
+- Original local full Go26261: build completed, vet still LIVE, full test pending. Unchanged-source
+  earlier86ed32e hosted Go/race/recovery/compatibility/OCI/security gates PASS, not combined credit.
+- Authorized #337/#363 OCI attempts2 completed SUCCESS (each7 successful/1 conditional skip).
+  No additional retry. Publish this draft candidate for complete protected combined CI, not merge.
+- Gio approved Security setup/access preparation only at0 extra spend. Plugin available/not
+  installed; entitlement/cost unknown, scan NOT RUN, no code transfer. Main/deployment HELD.
+## 2026-10-01 01:20 EEST [AUTOR: CC]
+### TYPE: FIX — GH-324/GH-325 harness port reservation and fail-fast child exit
+
+- **Root cause:** `freeTCPPort` closed its `127.0.0.1:0` listener before the child bound
+  the kernel-assigned ephemeral port; a peer dial's ephemeral source port or another
+  allocation could take it (runs 35462066576 and 35466470548: `bind: address already in use`).
+- **Fix (test-only):** `harness_port_allocator_test.go` reserves ports in 20000–29999,
+  outside every default and the configured Linux ephemeral range, with a process
+  registry, per-port `O_EXCL` lock files across processes (stale owners reclaimed),
+  a bind probe, and `t.Cleanup` release. Smoke validators expose a non-consuming exit
+  signal; `waitForSmokeHeight`/`waitForSmokeRPC` fail immediately with the log tail.
+  F3: single-node waiters checked `cmd.ProcessState` (nil until `Wait`); `lifecycleNode`
+  now owns the one `Wait`. Deadlines, height and app-hash assertions are unchanged.
+- **Evidence on `b5c7a1a`:** `make governed-upgrade` 3/3; legacy-authority migration
+  rollback 3/3; full eight-test multi-validator gate (1409s); capacity + policy verify
+  (valid, 4 validators, 96 committed, 0 violations); `make concurrency-replay`.
+- **Evidence on `43ee1a3` (F3):** focused `-race` allocator/fail-fast tests;
+  `TestLifecycleNodeExitFailsFastWithLogTail` fails after 60.03s with the old check and
+  passes in 0.27s; `TestNodeStartsStopsAndRestartsFromPersistentHome`;
+  `make governed-upgrade`. Multi-validator gate: four tests passed before the 1500s
+  package timeout under host load average ~305; capacity aborted at link time with
+  `ENOSPC`; concurrency-replay and the four remaining multi-validator tests not run
+  locally — infrastructure-blocked, exact-head GitHub CI is authoritative.
+- **Counts:** `-p 1` pass-event run: 2,137 Go (root 251), 0 failures, 20 opt-in skips;
+  2,491 = 2,137 Go + 26 Rust + 328 maintained-client. `check-consistency.sh` PASS.
+- No push, PR, merge, deployment or rollout credit. Rollout remains 36/59.
+
+`TRUEREPUBLIC GH-324/325 LOCAL PARTIAL — EXACT-HEAD CI AUTHORITATIVE`
+
+## 2026-10-10T03:12:35Z — GH324/GH325 current-base reconciliation → In Progress
+
+Codex owns normal3656d1c79d+preserved330994da7c reconciliation; both append-only histories
+retained, three harness sources preserved at this merge step. Independent scoped review
+requires bounded corrections before acceptance; no unchanged integrationPASS. Historical2491
+count is provisional for this newcandidate and will be replaced only by an actual recount.
+Port policy separately held; mapped bounded cleanup work proceeds. Modern-head gates NOT RUN,
+official Codex Security NOT RUN; no main/protection/production/foreign cleanup action.
+---
+
+## 2026-10-10T04:05:15Z — T3 bounded shutdown candidate, runtime pending
+
+Codex sole writer; existing mapped T3 helper/regression scope only. Shutdown cleanup observes
+the caller's original absolute deadline and sole Wait owner, without a second Wait or extra
+grace period; pending reap/Kill failure is reported. Focused regression covers expired/future
+budgets and kill-after-exit. Source formatting/diff and independent scoped fix review OK.
+Actual focused race74259 still cold-compiling on the overloaded host; no terminal PASS.
+Source checkpoint only, no push/main acceptance or count credit; independent allocator policy
+and modern-head full harness/negative qualification remain open. No foreign process touched.
+
+## 2026-10-10T05:22:29Z — GH306I2 normal integration source checkpoint
+
+Codex sole writer integrates preserved GH306R2 tuple-key fix5c9a1d1 with modern harness/dependency
+parent6ca29b8 in an isolated normal merge. All34 conflicted paths/49 chunks were mapped before
+resolution; both Bridge/ActionLog histories retained. Genesis fix bytes remain exactly5c9a1d1;
+no new migration, upgrade plan, storage schema or GH300 browser stack. Go1.26.9 and existing
+v0.4.2 release binding are composed; historical v0.4.1 handler/tests remain.
+Fourteen formatting-preserving release/fixture pins reach the build/candidate/cross-run digest
+fixpoint; negative production/hermetic claims and distinct synthetic cross-run metadata remain.
+Historical count reference is entirely6ca29b8 (2491/2137; governance691), not a new recount.
+Independent source-composition review found no unexpected source deviation; final digest check
+and runtime/release/upgrade/recovery/negative-control/recount gates remain pending at this commit.
+Parent6ca Hosted Go38025452892 passed8/8 jobs; that is parent evidence, not GH306I2 qualification.
+Official Codex Security NOT RUN; no main merge, production action, rollout credit or gate waiver.

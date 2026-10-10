@@ -1,12 +1,16 @@
 # Feature Matrix
 
+Test totals and coverage below are historical references from
+`6ca29b808a07f1b74b97ba1fbbf4cfd3f24543cc`, not a recount or runtime qualification
+of the GH306I2 composition. Combined qualification and recount remain pending.
+
 The machine-readable project state is
 [`docs/status.json`](https://github.com/NeaBouli/TrueRepublic/blob/main/docs/status.json).
 The human-readable delivery boundary is maintained in the
 [rollout roadmap](https://github.com/NeaBouli/TrueRepublic/blob/main/docs/ROLLOUT_ROADMAP.md)
 and [limitations](https://github.com/NeaBouli/TrueRepublic/blob/main/docs/LIMITATIONS.md).
 
-Current headline state: 2,502 verified standard-suite cases, 36/59 rollout
+Current headline state: 2,491 verified standard-suite cases, 36/59 rollout
 items complete, Phase 6 at 6/7, Phase 7 at 3/10, and
 `production_ready=false`. Implemented or architected surface area must not be
 interpreted as rollout approval.

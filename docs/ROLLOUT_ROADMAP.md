@@ -19,12 +19,15 @@ separate mandatory release-freeze and accountable go/no-go subchecks.
 
 ## Current baseline
 
+Test totals and coverage below are historical references from
+`6ca29b808a07f1b74b97ba1fbbf4cfd3f24543cc`, not a recount or runtime qualification
+of the GH306I2 composition. Combined qualification and recount remain pending.
+
 - The ordered recovery merge chain is on `main`.
 - The maximum supply is fixed at 21,000,000 PNYX.
-- The source of truth records 2,502 recovery-verified tests: 2,148 Go, 26 Rust,
-  and 328 maintained-client tests. The Go total includes GH-306's 15-event
-  exit/reward-economics increment, GH-304's 15-case real-bech32 ElectAdmin
-  integrity/quarantine regression increment and GH-297's 62-case
+- The source of truth records 2,491 recovery-verified tests: 2,137 Go, 26 Rust,
+  and 328 maintained-client tests. The Go total includes GH-304's 15-case
+  real-bech32 ElectAdmin integrity/quarantine regression increment and GH-297's 62-case
   frozen ZKP protocol contract, GH-294's strict
   security-review readiness contract and GH-278's locked
   CI-tool bootstrap evidence, GH-244's strict

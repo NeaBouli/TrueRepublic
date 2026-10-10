@@ -11,8 +11,8 @@
   "cgo_enabled": "1",
   "ci_runner": "ubuntu-24.04",
   "contract_schema": "truerepublic.daemon-build/v1",
-  "contract_sha256": "60128d9866055e3fb7f9163448e1fec016dcf51a710ae90471e30bfb9fad76e7",
-  "go_version": "1.26.6",
+  "contract_sha256": "6899088d64a34eeffb4b14ef4fa2578313948398ea5cd21b8f83a7f22bf4aa4a",
+  "go_version": "1.26.9",
   "reproducible_pair_sha256": [
     "b7f2ac214cc7ad6a7aa737752f63195a15764586d4d65b1b7be33fb6c9f50f4a",
     "b7f2ac214cc7ad6a7aa737752f63195a15764586d4d65b1b7be33fb6c9f50f4a"

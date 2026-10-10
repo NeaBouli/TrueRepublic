@@ -1,6 +1,49 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+@config "../tailwind.config.js";
+
+/*
+ * Tailwind CSS v4 compatibility (GH331C): keep the v3 Preflight defaults this
+ * client was designed against, as documented in the official v4 upgrade guide.
+ */
+@layer base {
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: --theme(--color-gray-200);
+  }
+
+  input::placeholder,
+  textarea::placeholder {
+    color: --theme(--color-gray-400);
+  }
+
+  button:not(:disabled),
+  [role="button"]:not(:disabled) {
+    cursor: pointer;
+  }
+
+  /*
+   * v4 Preflight forces opacity: 1 on form controls and a transparent
+   * background on text fields; v3 kept the browser defaults for both.
+   */
+  button,
+  input,
+  select,
+  optgroup,
+  textarea,
+  ::file-selector-button {
+    opacity: revert;
+  }
+
+  input:where(:not([type="button"], [type="reset"], [type="submit"])),
+  select,
+  optgroup,
+  textarea {
+    background-color: revert;
+  }
+}
 
 @layer base {
   body {
@@ -11,7 +54,7 @@
 @layer components {
   .btn {
     @apply px-4 py-2 rounded-lg font-medium transition-colors
-           focus-visible:outline-none focus-visible:ring-2
+           focus-visible:outline-hidden focus-visible:ring-2
            focus-visible:ring-primary-500 focus-visible:ring-offset-2;
   }
 
@@ -27,20 +70,20 @@
 
   .input {
     @apply w-full px-4 py-2 border border-gray-300 rounded-lg
-           focus-visible:outline-none focus-visible:ring-2
+           focus-visible:outline-hidden focus-visible:ring-2
            focus-visible:ring-primary-500 focus-visible:border-transparent
            disabled:bg-gray-100 disabled:cursor-not-allowed;
   }
 
   .card {
-    @apply bg-white rounded-xl shadow-sm border border-gray-200 p-6;
+    @apply bg-white rounded-xl shadow-xs border border-gray-200 p-6;
   }
 }
 
 @layer base {
   a,
   button:not(.btn) {
-    @apply focus-visible:outline-none focus-visible:ring-2
+    @apply focus-visible:outline-hidden focus-visible:ring-2
            focus-visible:ring-primary-500 focus-visible:ring-offset-2;
   }
 }

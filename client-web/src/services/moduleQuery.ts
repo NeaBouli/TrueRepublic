@@ -387,7 +387,7 @@ export class ModuleQueryClient {
 
   constructor(
     private readonly config: Pick<ChainConfig, 'rpc'>,
-    fetchImpl: Fetch = globalThis.fetch,
+    fetchImpl: Fetch = (input, init) => globalThis.fetch(input, init),
     private readonly timeoutMs: number = 15_000
   ) {
     if (!Number.isSafeInteger(timeoutMs) || timeoutMs <= 0) {

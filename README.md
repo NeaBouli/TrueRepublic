@@ -16,10 +16,10 @@
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/tests-2502%20recovery--verified-orange" alt="Recovery-verified tests"/>
+  <img src="https://img.shields.io/badge/tests-2491%20recovery--verified-orange" alt="Recovery-verified tests"/>
   <img src="https://img.shields.io/badge/release-unreleased-orange" alt="Unreleased recovery candidate"/>
   <img src="https://img.shields.io/badge/recovery-active-orange" alt="Recovery active"/>
-  <img src="https://img.shields.io/badge/Go-1.26.6-00ADD8?logo=go" alt="Go"/>
+  <img src="https://img.shields.io/badge/Go-1.26.9-00ADD8?logo=go" alt="Go"/>
   <img src="https://img.shields.io/badge/Cosmos%20SDK-v0.50.15-5C4EE5" alt="Cosmos SDK"/>
   <img src="https://img.shields.io/badge/Rust-1.75+-orange?logo=rust" alt="Rust"/>
 </p>
@@ -38,6 +38,11 @@
 </p>
 
 ---
+
+> GH306I2 integration checkpoint: the test badge, totals and coverage below are
+> historical references from `6ca29b808a07f1b74b97ba1fbbf4cfd3f24543cc`, not a
+> recount or runtime qualification of this composition. Combined qualification
+> and recount remain pending.
 
 > [!WARNING]
 > **Recovery foundation verified; rollout still active:** the completed recovery
@@ -241,7 +246,7 @@ TrueRepublic/
 ```bash
 # Blockchain (the committed module graph remains unchanged)
 ./scripts/go-packages.sh go build
-CGO_ENABLED=1 ./scripts/go-packages.sh go test -race -cover -count=1 -timeout=600s    # 2,148 Go cases
+CGO_ENABLED=1 ./scripts/go-packages.sh go test -race -cover -count=1 -timeout=600s    # 2,137 Go cases
 make cross-run-evidence-contract-test                                  # metadata-only GH-273 contract
 make ci-tool-bootstrap-contract-test                                   # locked GH-278 CI tool bootstrap contract
 make ibc-two-chain                                                     # separate GH-175/GH-178/GH-181 proof gate
@@ -264,7 +269,7 @@ cd client-web && npm ci && npm run lint && npm test -- --run && npm run build
 | CosmWasm | v0.53.4 | Recovery verified |
 | ibc-go | v8.7.0 | Two-chain packet lifecycle verified locally; external relayer/upgrade unqualified |
 | gnark (ZKP) | v0.14.0 | On-chain recovery verified; client disabled |
-| Go | 1.26.6 | Recovery verified |
+| Go | 1.26.9 | Candidate; exact-head acceptance pending |
 | Rust | 1.75+ | Contracts |
 | React | 18.2 | Maintained v0.4 client |
 | Native mobile client | — | Retired under GH-102; replacement pending |
@@ -287,7 +292,7 @@ GH-297 contributes 62 fail-closed Go contract cases to the standard-suite
 arithmetic by pinning the frozen protocol manifest, source-spec digest,
 Go/client parity, evidence paths and adversarial drift handling.
 
-- 🟡 2,502 tests recovery-verified locally (2,148 Go, including GH-306's budget-exempt full-exit, legacy-accounting, first-placement Stone-reward, genesis and version-migration regressions, GH-304's real-bech32 ElectAdmin integrity/quarantine regressions, GH-294's security-review readiness contract, GH-278's locked CI-tool bootstrap evidence, GH-273's strict cross-run evidence contract, GH-261's candidate-evidence contract, GH-258's OCI build/evidence contract, GH-244's rollout-genesis qualification contract, GH-225's release-compatibility contract, GH-222's verified install-lifecycle and repository contracts, GH-209's recipient-binding and atomic-payout adversarial coverage, + 26 Rust + 328 maintained-client, including its fail-closed audit-gate diagnostics, v2 encoding and canonical-recipient validation), plus the separately gated GH-266 fresh Go/WASM-to-keeper payout/replay proof, GH-206 native-verifier compatibility proof, GH-175/GH-178/GH-181 IBC proof and GH-184 governed-upgrade recovery proof, GH-172 shared-state contention/exact-replay/restart proof, GH-145 bounded live fuzz campaigns, GH-193 maintained-client wallet/signing-safety proof, GH-190 maintained-client IBC transfer/recovery proof, GH-131 real submitted-history pagination proof, GH-121 real browser-query boundary, GH-115 local client-chain delivery proof, GH-56 rotation, GH-59 slashing, GH-60 inactive-validator genesis, GH-61 legacy-authority migration, GH-93 incident rehearsal, and GH-97 sustained-load process harnesses; production rollout evidence remains required
+- 🟡 2,491 tests recovery-verified locally (2,137 Go, including GH-304's real-bech32 ElectAdmin integrity/quarantine regressions, GH-294's security-review readiness contract, GH-278's locked CI-tool bootstrap evidence, GH-273's strict cross-run evidence contract, GH-261's candidate-evidence contract, GH-258's OCI build/evidence contract, GH-244's rollout-genesis qualification contract, GH-225's release-compatibility contract, GH-222's verified install-lifecycle and repository contracts, GH-209's recipient-binding and atomic-payout adversarial coverage, + 26 Rust + 328 maintained-client, including its fail-closed audit-gate diagnostics, v2 encoding and canonical-recipient validation), plus the separately gated GH-266 fresh Go/WASM-to-keeper payout/replay proof, GH-206 native-verifier compatibility proof, GH-175/GH-178/GH-181 IBC proof and GH-184 governed-upgrade recovery proof, GH-172 shared-state contention/exact-replay/restart proof, GH-145 bounded live fuzz campaigns, GH-193 maintained-client wallet/signing-safety proof, GH-190 maintained-client IBC transfer/recovery proof, GH-131 real submitted-history pagination proof, GH-121 real browser-query boundary, GH-115 local client-chain delivery proof, GH-56 rotation, GH-59 slashing, GH-60 inactive-validator genesis, GH-61 legacy-authority migration, GH-93 incident rehearsal, and GH-97 sustained-load process harnesses; production rollout evidence remains required
 - 🟡 Rollout accounting is 36/59 overall and 36/51 phase work. GH-297 earns
   exactly the frozen/versioned Phase-2 protocol-contract item; its separate
   prover, production-artifact, ceremony, browser-to-chain and independent-review
@@ -309,8 +314,8 @@ Go/client parity, evidence paths and adversarial drift handling.
   `3b0d1639bb40c7df6733dd13a86252e1c8c9efd3`. This proves only that recorded
   pair; long-term hermetic rebuilds, a real tag, signing, attestation,
   publication and staged rollout remain open.
-- ✅ Maintained-client production build remains within budget at 355.17 kB
-  total JavaScript gzip, with a 71.16 kB entry and 4.94 kB largest lazy route
+- ✅ Maintained-client production build remains within budget at 355.41 kB
+  total JavaScript gzip, with a 71.45 kB entry and 4.94 kB largest lazy route
 - ✅ Core blockchain compiles and runs
 - 🟡 Tokenomics, exact custom genesis, and every-block ledger invariants are recovery-verified and merged through PR #19
 - 🟡 Governance escrow/auth recovery is verified and merged; independent release review remains open
@@ -385,8 +390,8 @@ Go/client parity, evidence paths and adversarial drift handling.
   reproducible clients and chain artifacts, staged networks, and explicit
   go/no-go approval are still required.
 
-> Historical test count: 577. The authoritative recovery-verified total is 2,502
-> (2,148 Go + 26 Rust + 328 maintained-client), reproduced from fresh
+> Historical test count: 577. The authoritative recovery-verified total is 2,491
+> (2,137 Go + 26 Rust + 328 maintained-client), reproduced from fresh
 > package-scoped output using the established passing-case method.
 
 ---

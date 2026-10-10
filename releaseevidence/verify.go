@@ -251,7 +251,7 @@ func exactPlatforms(p []Platform) bool {
 	return len(p) == 2 && p[0] == (Platform{"linux-amd64", "ubuntu-24.04", "x86_64"}) && p[1] == (Platform{"linux-arm64", "ubuntu-24.04-arm", "aarch64"})
 }
 func exactImages(v []string) bool {
-	expected := []string{"golang:1.26.6-bookworm@sha256:116d58cbd88c1297624acc6e967a060012422bacf9930927e23fb719189c6f36", "debian:bookworm-slim@sha256:abd67ffcfa541b485a3dff59865ab629aa048a6c613e639d36e7456b0b229241", "node:22.22.2-alpine@sha256:8ea2348b068a9544dae7317b4f3aafcdc032df1647bb7d768a05a5cad1a7683f", "nginx:alpine@sha256:4a73073bd557c65b759505da037898b61f1be6cbcc3c2c3aeac22d2a470c1752"}
+	expected := []string{"golang:1.26.9-bookworm@sha256:d9c68c2c51161e12fd77e4c6320687c9cd86e1af1e3ad6e6cd63ff970641453c", "debian:bookworm-slim@sha256:abd67ffcfa541b485a3dff59865ab629aa048a6c613e639d36e7456b0b229241", "node:22.22.2-alpine@sha256:8ea2348b068a9544dae7317b4f3aafcdc032df1647bb7d768a05a5cad1a7683f", "nginx:alpine@sha256:4a73073bd557c65b759505da037898b61f1be6cbcc3c2c3aeac22d2a470c1752"}
 	return len(v) == len(expected) && strings.Join(v, "\x00") == strings.Join(expected, "\x00")
 }
 func provenanceMatches(p Provenance, b Bundle) bool {
@@ -271,7 +271,7 @@ func provenanceMatches(p Provenance, b Bundle) bool {
 	return true
 }
 func exactBuildContract(b BuildContract) bool {
-	return b.Binary == "truerepublicd" && b.MainPackage == "." && b.GoVersion == "1.26.6" && b.CGOEnabled == "1" && b.SourceRef.Kind == "git-commit" && b.SourceRef.Pattern == "^[0-9a-f]{40}$" && len(b.Targets) == 2 && b.Targets[0] == (BuildTarget{"linux-amd64", "linux", "amd64", "ubuntu-24.04", "x86_64", "truerepublicd-linux-amd64"}) && b.Targets[1] == (BuildTarget{"linux-arm64", "linux", "arm64", "ubuntu-24.04-arm", "aarch64", "truerepublicd-linux-arm64"}) && b.BuildFlags.Trimpath && !b.BuildFlags.BuildVCS && b.BuildFlags.Mod == "readonly" && strings.Join(b.BuildFlags.LDFlags, "\x00") == strings.Join([]string{"-s", "-w", "-buildid=", "-X", "main.version={{source_ref}}", "-X", "main.upgradePlan=v0.4.2", "-linkmode=external", "-extldflags=-Wl,--build-id=none"}, "\x00")
+	return b.Binary == "truerepublicd" && b.MainPackage == "." && b.GoVersion == "1.26.9" && b.CGOEnabled == "1" && b.SourceRef.Kind == "git-commit" && b.SourceRef.Pattern == "^[0-9a-f]{40}$" && len(b.Targets) == 2 && b.Targets[0] == (BuildTarget{"linux-amd64", "linux", "amd64", "ubuntu-24.04", "x86_64", "truerepublicd-linux-amd64"}) && b.Targets[1] == (BuildTarget{"linux-arm64", "linux", "arm64", "ubuntu-24.04-arm", "aarch64", "truerepublicd-linux-arm64"}) && b.BuildFlags.Trimpath && !b.BuildFlags.BuildVCS && b.BuildFlags.Mod == "readonly" && strings.Join(b.BuildFlags.LDFlags, "\x00") == strings.Join([]string{"-s", "-w", "-buildid=", "-X", "main.version={{source_ref}}", "-X", "main.upgradePlan=v0.4.2", "-linkmode=external", "-extldflags=-Wl,--build-id=none"}, "\x00")
 }
 func metadataMatches(m metadata, t Target, b BuildTarget, ch, source, goVersion string) bool {
 	epoch, err := strconv.ParseInt(m.SourceDateEpoch.String(), 10, 64)

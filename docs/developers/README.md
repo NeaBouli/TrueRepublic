@@ -34,7 +34,7 @@ Technical documentation for developers building on or contributing to TrueRepubl
 |-------|-----------|---------|
 | Consensus | CometBFT | v0.38.26 |
 | Application | Cosmos SDK | v0.50.15 |
-| Language | Go | 1.26.6 |
+| Language | Go | 1.26.9 |
 | Smart Contracts | CosmWasm | cosmwasm-std 3 |
 | Web Frontend | React | 18.2 |
 | Blockchain Client | CosmJS | 0.39.0 |
@@ -70,7 +70,7 @@ git clone https://github.com/NeaBouli/TrueRepublic.git
 cd TrueRepublic
 go mod tidy
 make build
-make test    # Run 2,148 standard-suite Go cases
+make test    # Run 2,137 standard-suite Go cases
 ```
 
 ### Run the Maintained Web Client

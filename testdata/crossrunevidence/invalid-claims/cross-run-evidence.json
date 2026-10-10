@@ -2,7 +2,7 @@
   "baseline": {
     "candidate_manifest": {
       "file": "candidate-manifest-baseline.json",
-      "sha256": "f54a932601650c7d0247f40aefe638f9a36f36762747dc40ec6e0463d46754f1"
+      "sha256": "32c59613c6d1d6f2e72aee3f6ff89ed795736e9f9ca65c2f365d30c9d4a3da10"
     },
     "candidate_report": {
       "file": "candidate-report-baseline.json",
@@ -31,11 +31,11 @@
     "repository": "NeaBouli/TrueRepublic",
     "workflow_path": ".github/workflows/reproducible-daemon.yml"
   },
-  "contract_sha256": "c7c99f1ced131f881b12a1971d84c6678465e8f67b16c33b4245ba3d785361b1",
+  "contract_sha256": "ee11f9b2d722ee54178bbf9d9bfe9f7704e295349e12e5de2a408fdd0aa37e29",
   "current": {
     "candidate_manifest": {
       "file": "candidate-manifest-current.json",
-      "sha256": "f54a932601650c7d0247f40aefe638f9a36f36762747dc40ec6e0463d46754f1"
+      "sha256": "32c59613c6d1d6f2e72aee3f6ff89ed795736e9f9ca65c2f365d30c9d4a3da10"
     },
     "candidate_report": {
       "file": "candidate-report-current.json",

@@ -43,7 +43,15 @@ type smokeValidator struct {
 	logPath      string
 	command      *exec.Cmd
 	done         chan error
+	exit         *smokeExit
 	logFile      *os.File
+}
+
+// smokeExit is closed when the child process exits, without consuming the
+// done channel that stop() reads (GH-325).
+type smokeExit struct {
+	closed chan struct{}
+	err    error
 }
 
 type smokeAccount struct {
@@ -1171,12 +1179,52 @@ func (validator *smokeValidator) startWithArgs(ctx context.Context, binary, peer
 		return err
 	}
 	validator.command = command
-	validator.done = make(chan error, 1)
+	done := make(chan error, 1)
+	exit := &smokeExit{closed: make(chan struct{})}
+	validator.done = done
+	validator.exit = exit
 	validator.logFile = logFile
 	go func() {
-		validator.done <- command.Wait()
+		err := command.Wait()
+		exit.err = err
+		close(exit.closed)
+		done <- err
 	}()
 	return nil
+}
+
+// failIfExited fails the test immediately with the log tail when a started
+// child process has already exited, instead of waiting for a height or RPC
+// deadline that can no longer be met (GH-325).
+func (validator *smokeValidator) failIfExited(t *testing.T) {
+	t.Helper()
+	if err := validator.exitedError(); err != nil {
+		t.Fatal(err)
+	}
+}
+
+func (validator *smokeValidator) exitedError() error {
+	if validator.exit == nil {
+		return nil
+	}
+	select {
+	case <-validator.exit.closed:
+		return fmt.Errorf("%s process exited unexpectedly: %v\nlog tail:\n%s", validator.name, validator.exit.err, smokeLogTail(validator.logPath, 80))
+	default:
+		return nil
+	}
+}
+
+func smokeLogTail(path string, lines int) string {
+	content, err := os.ReadFile(path)
+	if err != nil {
+		return fmt.Sprintf("log unavailable: %v", err)
+	}
+	all := strings.Split(strings.TrimRight(string(content), "\n"), "\n")
+	if len(all) > lines {
+		all = all[len(all)-lines:]
+	}
+	return strings.Join(all, "\n")
 }
 
 func (validator *smokeValidator) stop(requireClean bool) error {
@@ -1202,6 +1250,7 @@ func (validator *smokeValidator) stop(requireClean bool) error {
 	closeErr := validator.logFile.Close()
 	validator.command = nil
 	validator.done = nil
+	validator.exit = nil
 	validator.logFile = nil
 	if requireClean && processErr != nil {
 		return processErr
@@ -1225,6 +1274,7 @@ func waitForSmokeHeight(t *testing.T, validators []*smokeValidator, minimum int6
 	for time.Now().Before(deadline) {
 		ready := true
 		for _, validator := range validators {
+			validator.failIfExited(t)
 			height, err := querySmokeHeight(t.Context(), validator)
 			if err != nil || height < minimum {
 				ready = false
@@ -1244,6 +1294,7 @@ func waitForSmokeRPC(t *testing.T, validator *smokeValidator, timeout time.Durat
 	deadline := time.Now().Add(timeout)
 	var lastErr error
 	for time.Now().Before(deadline) {
+		validator.failIfExited(t)
 		if _, err := querySmokeHeight(t.Context(), validator); err == nil {
 			return
 		} else {

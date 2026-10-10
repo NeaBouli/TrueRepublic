@@ -59,7 +59,7 @@ npm run dev
 | Component | Requirement | Check |
 |-----------|-------------|-------|
 | **Docker** (Option A) | Docker 24.0+, Compose v2.20+ | `docker --version` |
-| **Go** (Option B) | Go 1.26.6 | `go version` |
+| **Go** (Option B) | Go 1.26.9 | `go version` |
 | **Node.js** (web client) | Node.js 22+ | `node --version` |
 | **Rust** (smart contracts) | Rust 1.75+ | `rustc --version` |
 

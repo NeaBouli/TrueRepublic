@@ -19,9 +19,11 @@
     ]
   },
   "tests": {
-    "status": "recovery_verified_locally",
-    "total": 2502,
-    "go": 2148,
+    "status": "historical_parent_reference_combined_qualification_pending",
+    "reference_commit": "6ca29b808a07f1b74b97ba1fbbf4cfd3f24543cc",
+    "qualification_note": "Historical parent counts only; not a recount or runtime qualification of the GH306I2 composition. Combined qualification and recount remain pending.",
+    "total": 2491,
+    "go": 2137,
     "rust": 26,
     "frontend": 328,
     "historical_total": 577
@@ -33,8 +35,8 @@
     "routes": 23,
     "stores": 9,
     "services": 17,
-    "build_size_gzip": "355.17 kB total JavaScript",
-    "initial_entry_gzip": "71.16 kB",
+    "build_size_gzip": "355.41 kB total JavaScript",
+    "initial_entry_gzip": "71.45 kB",
     "max_lazy_route_gzip": "4.94 kB",
     "lazy_route_entries": 20,
     "bundle_budget": "enforced_during_build"
@@ -65,7 +67,7 @@
     "production_ready": false
   },
   "modules": {
-    "root": 246,
+    "root": 251,
     "securityreview": 45,
     "candidateevidence": 77,
     "crossrunevidence": 107,
@@ -82,7 +84,7 @@
     "topologypolicy": 56,
     "treasury": 36,
     "dex": 138,
-    "truedemocracy": 707,
+    "truedemocracy": 691,
     "zkpprover": 8,
     "releaseevidence": 20,
     "installlifecycle": 24,
@@ -98,7 +100,7 @@
     "max_supply_base_units": 21000000000000
   },
   "tech": {
-    "go": "1.26.6",
+    "go": "1.26.9",
     "cosmos_sdk": "v0.50.15",
     "cometbft": "v0.38.26",
     "cosmwasm": "v0.53.4",
@@ -110,7 +112,7 @@
     "vite": "8.2.2",
     "cosmjs": "0.39.0",
     "zustand": "4.5",
-    "tailwindcss": "3.4"
+    "tailwindcss": "4.3"
   },
   "features": {
     "zkp": {
@@ -209,12 +211,20 @@
       "status": "registered_grpc_over_abci_browser_transport_verified_locally_on_gh121",
       "supported_clients": "daemon_cli_protobuf_grpc_and_browser_cometbft_abci_json_rpc",
       "grpc_gateway_custom_modules": false,
-      "maintained_client_gateway_gap": "closed_locally_by_registered_grpc_over_abci_transport_on_gh121"
+      "maintained_client_gateway_gap": "closed_locally_by_registered_grpc_over_abci_transport_on_gh121",
+      "browser_fetch_receiver": "default_fetch_bound_to_globalthis_with_receiver_regression_on_gh335_pr336"
+    },
+    "dependency_security": {
+      "status": "october_dependency_remediation_in_progress_exact_head_acceptance_pending",
+      "go_no_fix_exceptions": ["GO-2023-1821", "GO-2023-1881", "GO-2026-5932"],
+      "npm": "prior_pr332_and_pr347_fixes_merged_source_map_js_1_2_2_on_pr363_pending_integration",
+      "go": "prior_pr349_fix_merged_gh364_candidate_clears_new_fixable_ids_three_no_fix_exceptions_through_2026_10_20_exact_head_acceptance_pending",
+      "note": "Dependency remediation only. It adds no rollout credit and does not change production readiness."
     }
   },
   "limitations": {
     "ibc_staking": "explicitly unsupported fail-closed compatibility adapter on GH-187; PoD consensus instead",
-    "ibc_upgrade": "real x/upgrade keeper and governed fresh-genesis v0.4.1 application migration verified locally on GH-184; GH-306 governed v0.4.2 truedemocracy 2-to-3 migration verified locally and bound to the next release artifact; pre-GH-184 store introduction and IBC client upgrades unsupported",
+    "ibc_upgrade": "historical author evidence covers GH-184 fresh-genesis v0.4.1 and preserved GH-306 governed v0.4.2 truedemocracy 2-to-3 migration; the GH306I2 composition retains the v0.4.2 release binding but its migration, digest and release gates remain runtime-unqualified; pre-GH-184 store introduction and IBC client upgrades unsupported",
     "x_staking": "not mounted; standard staking/distribution query and transaction surfaces reject fail-closed on GH-187",
     "zkp_client": "GH-297 freezes the candidate protocol only; real Groth16 Go/WASM compatibility remains test-only on GH-206 and mock/transaction submission stay fail-closed and non-submittable pending production artifacts, ceremony and independent review",
     "tx_history": "submitted-only newest-first pagination verified on GH-131; incoming-only history is not claimed",
