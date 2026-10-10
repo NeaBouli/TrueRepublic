@@ -10178,3 +10178,18 @@ Pending independent Kimi review and complete Sol verification.
 - Existing prerequisite exact-head CI30SUCCESS/1conditionalSKIP/0failure retained, not inherited
   as this new head's qualification. Focused/full client, audit/build/docs and protected gates pending.
   Codex Security NOT RUN; setup-only0-cost approval is not scan/main/deployment acceptance.
+
+### 2026-10-10 03:17 EEST — GH309B2I1 existing custody core integration
+
+- Root sole writer normally composes reviewed338379bb5c2 +337825e6f2. Preserve services19,
+  current merged metrics and365 tool/dependency/security pins; union full Action Log histories.
+- Accepted custody source and inherited containment remain byte-identical; no new crypto,
+  migration/UI/activation or plaintext-removal policy. New-head gates/acceptance pending.
+  Claude paused, scan NOT RUN, no main/deployment or rollout claim.
+
+### 2026-10-10 — explicit wallet race completion barrier
+
+- Old full suite344PASS/1timeout/4SKIP is NOT PASS. Test-only synchronous deferred-entry
+  assertion replaces zero-delay timer; every security-state assertion/deadline remains unchanged.
+- Independent scoped reviewOK and focused casePASS352ms. Lint/typecheck/new full protected
+  qualification pending. No crypto/store/UI change, official scan, main/deploy or rollout credit.

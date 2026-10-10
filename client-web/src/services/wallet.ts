@@ -2,6 +2,7 @@ import type { DirectSecp256k1HdWallet } from '@cosmjs/proto-signing';
 import { fromBech32, toBech32 } from '@cosmjs/encoding';
 import { DEFAULT_CHAIN } from '@/config/chains';
 import type { Wallet, CreateWalletParams, ImportWalletParams } from '@/types/wallet';
+import { openEnvelope, sealEnvelope } from './custodyEnvelope';
 
 const DERIVATION_PATH = "m/44'/118'/0'/0/0"; // Cosmos standard
 const STORAGE_KEY = 'truerepublic_wallets';
@@ -11,11 +12,6 @@ const LEGACY_BECH32_PREFIX = 'true';
 // direct service callers fail closed even when the UI checks were bypassed.
 const PASSWORD_MIN_LENGTH = 8;
 const WALLET_NAME_MAX_LENGTH = 50;
-const ENCRYPTION_VERSION = 'v2';
-const CURRENT_PBKDF2_ITERATIONS = 600_000;
-const LEGACY_PBKDF2_ITERATIONS = 100_000;
-// salt (16) + iv (12) + minimum AES-GCM tag (16)
-const MIN_ENCRYPTED_PAYLOAD_BYTES = 44;
 
 async function loadSigningDependencies() {
   const [
@@ -365,33 +361,14 @@ export class WalletService {
   }
 
   /**
-   * Encrypt text using Web Crypto API (AES-GCM with PBKDF2-derived key)
+   * Encrypt text with the shared custody envelope (historical wallet format, no AAD).
    */
   private static async encrypt(text: string, password: string): Promise<string> {
-    const encoder = new TextEncoder();
-    const salt = crypto.getRandomValues(new Uint8Array(16));
-    const iv = crypto.getRandomValues(new Uint8Array(12));
-
-    const key = await this.deriveKey(password, salt, CURRENT_PBKDF2_ITERATIONS);
-
-    const plaintext = encoder.encode(text);
-    const encrypted = await crypto.subtle.encrypt(
-      { name: 'AES-GCM', iv: iv as ArrayBufferView<ArrayBuffer> },
-      key,
-      plaintext as ArrayBufferView<ArrayBuffer>
-    );
-
-    // Combine salt + iv + ciphertext
-    const combined = new Uint8Array(salt.length + iv.length + encrypted.byteLength);
-    combined.set(salt, 0);
-    combined.set(iv, salt.length);
-    combined.set(new Uint8Array(encrypted), salt.length + iv.length);
-
-    return `${ENCRYPTION_VERSION}:${btoa(String.fromCharCode(...combined))}`;
+    return sealEnvelope(text, password);
   }
 
   /**
-   * Decrypt text using Web Crypto API (AES-GCM with PBKDF2-derived key).
+   * Decrypt a stored wallet envelope (current v2 or legacy 100k payload).
    * Malformed payloads and authentication failures (wrong password or
    * tampered ciphertext) all surface as one bounded error; the raw Web
    * Crypto failure is never propagated into UI or logs.
@@ -400,78 +377,10 @@ export class WalletService {
     encrypted: string,
     password: string
   ): Promise<{ plaintext: string; needsUpgrade: boolean }> {
-    const failure = 'Incorrect password or corrupted wallet data';
-    const currentPrefix = `${ENCRYPTION_VERSION}:`;
-    const isCurrent = encrypted.startsWith(currentPrefix);
-    const payload = isCurrent ? encrypted.slice(currentPrefix.length) : encrypted;
-
-    let combined: Uint8Array;
     try {
-      combined = new Uint8Array(
-        atob(payload).split('').map((c) => c.charCodeAt(0))
-      );
+      return await openEnvelope(encrypted, password, { acceptLegacy: true });
     } catch {
-      throw new Error(failure);
+      throw new Error('Incorrect password or corrupted wallet data');
     }
-    if (combined.length < MIN_ENCRYPTED_PAYLOAD_BYTES) {
-      throw new Error(failure);
-    }
-
-    const salt = combined.slice(0, 16);
-    const iv = combined.slice(16, 28);
-    const ciphertext = combined.slice(28);
-
-    try {
-      const key = await this.deriveKey(
-        password,
-        salt,
-        isCurrent ? CURRENT_PBKDF2_ITERATIONS : LEGACY_PBKDF2_ITERATIONS
-      );
-
-      const decrypted = await crypto.subtle.decrypt(
-        { name: 'AES-GCM', iv: iv as ArrayBufferView<ArrayBuffer> },
-        key,
-        ciphertext as ArrayBufferView<ArrayBuffer>
-      );
-
-      return {
-        plaintext: new TextDecoder().decode(decrypted),
-        needsUpgrade: !isCurrent,
-      };
-    } catch {
-      throw new Error(failure);
-    }
-  }
-
-  /**
-   * Derive AES key from password using PBKDF2
-   */
-  private static async deriveKey(
-    password: string,
-    salt: Uint8Array,
-    iterations: number
-  ): Promise<CryptoKey> {
-    const encoder = new TextEncoder();
-    const passwordBytes = encoder.encode(password);
-    const keyMaterial = await crypto.subtle.importKey(
-      'raw',
-      passwordBytes as ArrayBufferView<ArrayBuffer>,
-      'PBKDF2',
-      false,
-      ['deriveKey']
-    );
-
-    return crypto.subtle.deriveKey(
-      {
-        name: 'PBKDF2',
-        salt: salt as ArrayBufferView<ArrayBuffer>,
-        iterations,
-        hash: 'SHA-256',
-      },
-      keyMaterial,
-      { name: 'AES-GCM', length: 256 },
-      false,
-      ['encrypt', 'decrypt']
-    );
   }
 }

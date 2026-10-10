@@ -407,3 +407,54 @@ describe('wallet creation and import hardening', { timeout: 15_000 }, () => {
     );
   });
 });
+
+// Byte-compatibility of the delegated custody envelope (GH309B2B). The frozen
+// payloads are shared with custodyEnvelope.test.ts; FIXTURE_V2 was produced by
+// the pre-extraction WalletService.encrypt. Synthetic material only.
+describe('wallet envelope compatibility fixtures', { timeout: 30_000 }, () => {
+  const FIXTURE_PASSWORD = 'synthetic-fixture-password';
+  const FIXTURE_V2 =
+    'v2:AQIDBAUGBwgJCgsMDQ4PEKChoqOkpaanqKmqq5yJEyOoHtqMLb7JPZBTOKTnrHOQYhZxKJhfcftN2YB9feKUB28xy4kH6EqN5y3Wr3gYOdU=';
+  const FIXTURE_LEGACY =
+    'MDEyMzQ1Njc4OTo7PD0+P1BRUlNUVVZXWFlaW/SiN6jy4N0EZ41Rh3sX8vAqD8Ear78jvuWOChQwwokTlBNlmvxexZNsWftrEyEf/E0=';
+  const ADDRESS = toBech32('truerepublic', new Uint8Array(20).fill(7));
+
+  function storeRecord(mnemonic: string): void {
+    localStorage.setItem(
+      STORAGE_KEY,
+      JSON.stringify([{ address: ADDRESS, name: 'Fixture', createdAt: 1, mnemonic }])
+    );
+  }
+
+  beforeEach(() => {
+    localStorage.clear();
+  });
+
+  it('decrypts the frozen v2 payload without rewriting it', async () => {
+    storeRecord(FIXTURE_V2);
+    await expect(WalletService.getWallet(ADDRESS, FIXTURE_PASSWORD)).resolves.toMatchObject({
+      mnemonic: 'synthetic fixture plaintext GH309B2B',
+    });
+    expect(WalletService.loadWallets()[0].mnemonic).toBe(FIXTURE_V2);
+  });
+
+  it('decrypts the frozen legacy payload and upgrades it to a v2 envelope', async () => {
+    storeRecord(FIXTURE_LEGACY);
+    await expect(WalletService.getWallet(ADDRESS, FIXTURE_PASSWORD)).resolves.toMatchObject({
+      mnemonic: 'synthetic legacy fixture GH309B2B',
+    });
+    const upgraded = WalletService.loadWallets()[0].mnemonic ?? '';
+    expect(upgraded.startsWith('v2:')).toBe(true);
+    await expect(WalletService.getWallet(ADDRESS, FIXTURE_PASSWORD)).resolves.toMatchObject({
+      mnemonic: 'synthetic legacy fixture GH309B2B',
+    });
+    expect(WalletService.loadWallets()[0].mnemonic).toBe(upgraded);
+  });
+
+  it('keeps the bounded wallet error for a wrong password', async () => {
+    storeRecord(FIXTURE_V2);
+    await expect(WalletService.getWallet(ADDRESS, 'wrong-fixture-password')).rejects.toThrow(
+      'Incorrect password or corrupted wallet data'
+    );
+  });
+});
