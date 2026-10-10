@@ -1,5 +1,11 @@
 # Security Hardening
 
+> **Non-production (recovery status).** TrueRepublic v0.4 is not approved for
+> production, mainnet, real keys or real funds, and the project operates no
+> public seeds, RPC, snapshot or status services. See
+> [`SECURITY.md`](https://github.com/NeaBouli/TrueRepublic/security/policy) and
+> the [rollout roadmap](https://github.com/NeaBouli/TrueRepublic/blob/main/docs/ROLLOUT_ROADMAP.md).
+
 ## System Security
 
 ### User Management
@@ -134,7 +140,8 @@ Always use TLS for public-facing endpoints:
 sudo apt install certbot python3-certbot-nginx
 
 # Get certificate
-sudo certbot --nginx -d rpc.truerepublic.network
+# Use your own operator-controlled hostname; the project operates no public RPC.
+sudo certbot --nginx -d <your-rpc-hostname>
 ```
 
 ## Monitoring for Security

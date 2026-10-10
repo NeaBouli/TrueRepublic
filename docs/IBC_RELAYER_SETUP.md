@@ -16,6 +16,15 @@ compatible candidate test binary, reopens the existing LevelDB state without
 recovery. It remains a test relay and compatible restart boundary, not daemon,
 external-relayer, `x/upgrade`, migration, or public-network qualification.
 
+**CLI boundary.** `truerepublicd` registers transaction and query commands only
+for `truedemocracy` and `dex`. It has no `ibc`, `ibc-transfer`, `bank` or
+`genesis` command, so IBC transfers, IBC state queries, balance checks and
+genesis-account funding cannot be done with this binary's CLI. The maintained,
+repository-owned evidence path is `make ibc-two-chain`, which builds funded test
+genesis states and submits the IBC messages programmatically. Any manual flow
+needs a separately qualified client or relayer tooling that this repository does
+not provide.
+
 ---
 
 ## Overview
@@ -57,7 +66,9 @@ truerepublicd init test-node-a --chain-id truerepublic-test-1 \
   --home ~/.truerepublic-a --bootstrap-operator "$OPERATOR_A"
 
 # Fund the genesis account
-truerepublicd genesis add-genesis-account validator-a 1000000000upnyx --keyring-backend test --home ~/.truerepublic-a
+# No genesis CLI is registered: add the validator-a account and its upnyx
+# balance to ~/.truerepublic-a/config/genesis.json with your own reviewed
+# tooling (make ibc-two-chain does this programmatically for its test chains).
 
 # Start chain A (default ports: RPC 26657, gRPC 9090)
 truerepublicd start --home ~/.truerepublic-a
@@ -73,7 +84,9 @@ truerepublicd init test-node-b --chain-id truerepublic-test-2 \
   --home ~/.truerepublic-b --bootstrap-operator "$OPERATOR_B"
 
 # Fund the genesis account
-truerepublicd genesis add-genesis-account validator-b 1000000000upnyx --keyring-backend test --home ~/.truerepublic-b
+# No genesis CLI is registered: add the validator-b account and its upnyx
+# balance to ~/.truerepublic-b/config/genesis.json with your own reviewed
+# tooling (make ibc-two-chain does this programmatically for its test chains).
 
 # Start chain B (offset ports to avoid conflicts)
 truerepublicd start --home ~/.truerepublic-b \
@@ -182,26 +195,9 @@ hermes start
 ### Test IBC Transfer
 
 ```bash
-# Set this to a valid chain-B account before executing the example.
-RECIPIENT_B="$(truerepublicd keys show validator-b -a --keyring-backend test --home ~/.truerepublic-b)"
-
-# Send 0.001 PNYX (1000 upnyx) from chain A to chain B
-truerepublicd tx ibc-transfer transfer \
-  transfer \
-  channel-0 \
-  "$RECIPIENT_B" \
-  1000upnyx \
-  --from validator-a \
-  --keyring-backend test \
-  --home ~/.truerepublic-a \
-  --chain-id truerepublic-test-1 \
-  --fees 10upnyx
-
-# Verify on chain B (after relayer processes the packet)
-truerepublicd query bank balances "$RECIPIENT_B" \
-  --home ~/.truerepublic-b \
-  --chain-id truerepublic-test-2
-
+# truerepublicd has no ibc-transfer or bank command. Send the ICS-20 transfer
+# (for example 1000upnyx over channel-0) with a separately qualified client,
+# then verify the recipient balance on chain B with that client.
 # Expected: ibc/<hash> denomination with 1000 base units
 # The IBC denom is: ibc/SHA256(transfer/channel-0/upnyx)
 ```
@@ -241,45 +237,19 @@ hermes start
 
 The relayer needs tokens on both chains to pay transaction fees:
 
-```bash
-# Fund relayer on TrueRepublic
-truerepublicd tx bank send validator relayer-address 100000upnyx --chain-id truerepublic-testnet-1
-
-# Fund relayer on target chain (use that chain's faucet or send tokens)
-```
+Fund the relayer account on TrueRepublic through the qualified genesis
+allocation or a separately qualified client; `truerepublicd` has no `bank send`
+command, and the project operates no faucet. Fund the counterparty account with
+that chain's own tooling.
 
 ---
 
 ## CLI Reference
 
-### IBC Transfer Commands
-
-```bash
-# Send tokens cross-chain
-truerepublicd tx ibc-transfer transfer [src-port] [src-channel] [receiver] [amount] [flags]
-
-# Example: Send 5000 PNYX to Cosmos Hub
-truerepublicd tx ibc-transfer transfer transfer channel-0 cosmos1abc... 5000pnyx --from user
-```
-
-### IBC Query Commands
-
-```bash
-# List all channels
-truerepublicd query ibc channel channels
-
-# List all connections
-truerepublicd query ibc connection connections
-
-# List all clients
-truerepublicd query ibc client states
-
-# Query denom traces (see IBC token origins)
-truerepublicd query ibc-transfer denom-traces
-
-# Query escrow address for a channel
-truerepublicd query ibc-transfer escrow-address transfer channel-0
-```
+Not available in `truerepublicd`: there are no `tx ibc-transfer`, `query ibc` or
+`query ibc-transfer` commands. Inspect channels, connections, clients and denom
+traces with your qualified relayer tooling or gRPC client, and keep transfer
+amounts in `upnyx` (the only base denomination).
 
 ---
 

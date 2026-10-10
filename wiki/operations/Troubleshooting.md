@@ -2,6 +2,10 @@
 
 Common issues and solutions for TrueRepublic nodes.
 
+The `localhost:26657` examples apply on a native node host. In the Docker
+Compose setup RPC is not published; use `http://127.0.0.1:8080/rpc/` instead
+(for example `curl -s http://127.0.0.1:8080/rpc/status`).
+
 ## Quick Diagnosis
 
 ```bash
@@ -15,7 +19,7 @@ curl localhost:26657/status | jq .result.sync_info.catching_up
 curl localhost:26657/net_info | jq .result.n_peers
 
 # Check logs
-docker-compose logs --tail=100 truerepublic-node
+docker compose logs --tail=100 truerepublic-node
 # or
 sudo journalctl -u truerepublicd --tail=100
 ```
@@ -47,14 +51,10 @@ sudo kill -9 <PID>
 
 **Solution:**
 
-```bash
-# Download genesis
-cd ~/.truerepublic/config
-wget https://raw.githubusercontent.com/NeaBouli/TrueRepublic/main/genesis.json
-
-# Verify checksum
-sha256sum genesis.json
-```
+The repository publishes no network genesis or official checksum. Restore the
+genesis from your network's coordinated rollout and re-verify it with the
+[rollout-genesis qualification](../../docs/node-operators/configuration/rollout-genesis-qualification.md)
+flow before restarting.
 
 ### Error: "out of memory"
 
@@ -102,7 +102,7 @@ curl localhost:26657/status | jq .result.sync_info.latest_block_height
 
 ```bash
 # Restart node
-docker-compose restart truerepublic-node
+docker compose restart truerepublic-node
 # or
 sudo systemctl restart truerepublicd
 ```
@@ -306,7 +306,7 @@ curl localhost:26657/net_info | jq '.result.peers[] | {ip: .remote_ip, latency: 
 
 ```bash
 # Check logs
-docker-compose logs truerepublic-node
+docker compose logs truerepublic-node
 
 # Check if port conflict
 docker ps

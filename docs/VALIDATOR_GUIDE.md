@@ -13,7 +13,7 @@
 
 ```bash
 # Create a new domain with initial treasury
-truerepublicd tx truedemocracy create-domain my-domain 200000pnyx \
+truerepublicd tx truedemocracy create-domain my-domain 200000000000upnyx \
     --from mykey --chain-id truerepublic-1
 
 # Or join an existing domain (domain admin must add you)

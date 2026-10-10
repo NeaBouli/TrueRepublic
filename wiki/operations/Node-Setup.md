@@ -1,5 +1,11 @@
 # Node Setup Guide
 
+> **Non-production (recovery status).** TrueRepublic v0.4 is not approved for
+> production, mainnet, real keys or real funds, and the project operates no
+> public seeds, RPC, snapshot or status services. See
+> [`SECURITY.md`](https://github.com/NeaBouli/TrueRepublic/security/policy) and
+> the [rollout roadmap](https://github.com/NeaBouli/TrueRepublic/blob/main/docs/ROLLOUT_ROADMAP.md).
+
 Complete guide to deploying a TrueRepublic full node.
 
 ## Table of Contents
@@ -42,7 +48,7 @@ Complete guide to deploying a TrueRepublic full node.
 
 ### Software Requirements
 
-- Docker 20.10+ (for Docker setup)
+- Docker 24.0+ with Compose v2.20+ (for Docker setup)
 - Go 1.26.9 (for native setup)
 - Git 2.30+
 
@@ -69,11 +75,11 @@ sudo sh get-docker.sh
 sudo usermod -aG docker $USER
 
 # Install Docker Compose
-sudo apt install -y docker-compose
+# Compose v2 ships as the docker compose plugin with current Docker packages
 
 # Verify
 docker --version
-docker-compose --version
+docker compose version
 ```
 
 **Logout and login** for group changes to take effect.
@@ -96,47 +102,24 @@ cp .env.example .env
 nano .env
 ```
 
-**Required settings:**
+**Settings:** `.env.example` defines exactly these keys; the stack reads no
+other variables (no `EXTERNAL_IP`, RPC/REST/gRPC port, database, pruning,
+snapshot, state-sync or logging variables). Peers are never taken from the
+environment; declare them in `config.toml` from your qualified topology.
 ```bash
-# Node configuration
-MONIKER=my-node-name
-EXTERNAL_IP=YOUR_SERVER_IP
-
-# Chain configuration
 CHAIN_ID=truerepublic-1
-
-# Network
+MONIKER=my-node-name
+MIN_GAS_PRICE=0upnyx
+BOOTSTRAP_OPERATOR=<independent operator address>
 P2P_PORT=26656
-RPC_PORT=26657
-REST_PORT=1317
-GRPC_PORT=9090
-
-# Database
-DB_BACKEND=goleveldb
-
-# Pruning (saves disk space)
-PRUNING=default
-PRUNING_KEEP_RECENT=100
-PRUNING_INTERVAL=10
-
-# Monitoring
 PROMETHEUS_ENABLED=true
-PROMETHEUS_PORT=26660
+GRAFANA_PASSWORD=<strong password>   # required; compose refuses to start without it
 ```
 
-**Optional settings:**
-```bash
-# Snapshot download (fast sync)
-SNAPSHOT_URL=https://snapshots.truerepublic.network/latest.tar.gz
-
-# State sync (ultra-fast sync)
-STATE_SYNC_ENABLED=true
-STATE_SYNC_RPC_SERVERS=rpc1.truerepublic.network:26657,rpc2.truerepublic.network:26657
-
-# Logging
-LOG_LEVEL=info
-LOG_FORMAT=json
-```
+State sync and snapshots are configured in `config.toml`/`app.toml` only from
+sources you operate or have independently qualified (see
+[State Sync](#state-sync-fast-sync) below); the project operates no snapshot or public
+RPC service.
 
 ### Step 4: Build Images
 
@@ -158,27 +141,31 @@ This builds:
 # Start all services
 make docker-up
 
-# Or with docker-compose directly:
-docker-compose up -d
+# Or with Docker Compose directly:
+docker compose up -d
 ```
 
 **Services started:**
 - truerepublic-node (blockchain node)
-- prometheus (port 9090)
-- grafana (port 3000)
-- nginx (port 80)
+- prometheus (host `127.0.0.1:9091`)
+- grafana (host `127.0.0.1:3000`)
+- nginx (host `127.0.0.1:8080`; `/rpc/` and `/api/`)
+- client-web (host `127.0.0.1:3001`)
+
+All published ports bind the host loopback; RPC and REST listen only inside the
+node container, and gRPC is disabled.
 
 ### Step 6: Check Logs
 
 ```bash
 # Follow node logs
-docker-compose logs -f truerepublic-node
+docker compose logs -f truerepublic-node
 
 # Check all services
-docker-compose ps
+docker compose ps
 
 # Last 100 lines
-docker-compose logs --tail=100 truerepublic-node
+docker compose logs --tail=100 truerepublic-node
 ```
 
 **What to look for:**
@@ -254,17 +241,12 @@ truerepublicd init my-node-name --chain-id truerepublic-1 \
 # ~/.truerepublic/data/
 ```
 
-### Step 4: Download Genesis
+### Step 4: Obtain a Qualified Genesis
 
-```bash
-# Download genesis file
-cd ~/.truerepublic/config
-wget https://raw.githubusercontent.com/NeaBouli/TrueRepublic/main/genesis.json
-
-# Verify checksum
-sha256sum genesis.json
-# Should match official checksum
-```
+The repository publishes no network genesis file or official checksum. Obtain
+the genesis from your network's coordinated rollout and verify it with the
+[rollout-genesis qualification](../../docs/node-operators/configuration/rollout-genesis-qualification.md)
+flow before replacing `~/.truerepublic/config/genesis.json`.
 
 ### Step 5: Configure Node
 
@@ -282,8 +264,9 @@ Key settings:
 laddr = "tcp://YOUR_INTERFACE_IP:26656"
 external_address = "tcp://YOUR_IP:26656"
 
-# Seed nodes (initial peers)
-seeds = "seed1@seed1.truerepublic.network:26656,seed2@seed2.truerepublic.network:26656"
+# Seed nodes (initial peers): the project operates no public seeds. Declare
+# only seeds from your qualified topology (docs/node-operators/configuration/topology-contract.md).
+seeds = "<node-id>@<qualified-seed-host>:26656"
 
 # Persistent peers (always connect)
 persistent_peers = ""
@@ -425,10 +408,11 @@ Enable state sync for ultra-fast sync:
 [statesync]
 enable = true
 
-rpc_servers = "rpc1.truerepublic.network:26657,rpc2.truerepublic.network:26657"
+rpc_servers = "<qualified-rpc-host-1>:26657,<qualified-rpc-host-2>:26657"
 
-# Get trust height and hash from RPC:
-# curl -s http://rpc1.truerepublic.network:26657/block | jq -r '.result.block.header.height + "," + .result.block_id.hash'
+# Take the trust height and hash only from an RPC node you operate or have
+# independently qualified (see docs/node-operators/operations/multi-validator-recovery.md):
+# curl -s http://<qualified-rpc-host-1>:26657/block | jq -r '.result.block.header.height + "," + .result.block_id.hash'
 
 trust_height = 1234567
 trust_hash = "ABC123..."
@@ -481,16 +465,16 @@ before treating this configuration as rollout evidence.
 make docker-up
 
 # Or
-docker-compose up -d
+docker compose up -d
 
 # Restart
-docker-compose restart truerepublic-node
+docker compose restart truerepublic-node
 
 # Stop
-docker-compose stop
+docker compose stop
 
 # Stop and remove
-docker-compose down
+docker compose down
 ```
 
 ### Native
@@ -515,8 +499,8 @@ truerepublicd start --home /path/to/data
 ### Check Sync Status
 
 ```bash
-# Using curl
-curl -s localhost:26657/status | jq .result.sync_info
+# Native node host (Docker setup: curl -s http://127.0.0.1:8080/rpc/status)
+curl -s http://127.0.0.1:26657/status | jq .result.sync_info
 
 # Output:
 {
@@ -534,7 +518,8 @@ curl -s localhost:26657/status | jq .result.sync_info
 ### Check Peers
 
 ```bash
-curl -s localhost:26657/net_info | jq .result.n_peers
+# Native node host (Docker setup: http://127.0.0.1:8080/rpc/net_info)
+curl -s http://127.0.0.1:26657/net_info | jq .result.n_peers
 
 # Should show: 10-40 peers
 ```
@@ -549,7 +534,7 @@ If 0 peers:
 
 ```bash
 # Watch logs for new blocks
-docker-compose logs -f truerepublic-node | grep "Executed block"
+docker compose logs -f truerepublic-node | grep "Executed block"
 
 # Or with systemd
 sudo journalctl -u truerepublicd -f | grep "Executed block"
@@ -560,18 +545,15 @@ sudo journalctl -u truerepublicd -f | grep "Executed block"
 ### Query Chain Data
 
 ```bash
-# Get latest block
-truerepublicd query block
-
-# Get node info
+# Get node info (includes the latest block height)
 truerepublicd status
-
-# Get account balance
-truerepublicd query bank balances cosmos1abc...
 
 # Query domains
 truerepublicd query truedemocracy domains
 ```
+
+`truerepublicd` registers only `truedemocracy` and `dex` queries; there is no
+`query block` or `query bank` command. Check balances with a qualified client.
 
 ---
 
@@ -676,13 +658,13 @@ git pull origin main
 make docker-build
 
 # Stop old version
-docker-compose down
+docker compose down
 
 # Start new version
-docker-compose up -d
+docker compose up -d
 
 # Check logs
-docker-compose logs -f truerepublic-node
+docker compose logs -f truerepublic-node
 ```
 
 ### Native Upgrade

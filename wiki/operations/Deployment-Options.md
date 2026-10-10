@@ -57,110 +57,44 @@ make build && truerepublicd start
 
 ### Architecture
 
-```
-docker-compose.yml
-├── truerepublic-node (blockchain)
-├── prometheus (monitoring)
-├── grafana (dashboards)
-├── nginx (reverse proxy)
-└── postgres (optional, for indexer)
-```
+The authoritative stack is the repository's
+[`docker-compose.yml`](https://github.com/NeaBouli/TrueRepublic/blob/main/docker-compose.yml);
+do not copy an older inline version. It defines `truerepublic-node`,
+`client-web`, `nginx`, `prometheus` and `grafana`, with every published port
+bound to the host loopback:
 
-### Full docker-compose.yml
+| Host binding | Service |
+|---|---|
+| `127.0.0.1:${P2P_PORT:-26656}` | node P2P |
+| `127.0.0.1:8080` | nginx (`/rpc/`, `/api/` reverse proxy) |
+| `127.0.0.1:9091` | Prometheus |
+| `127.0.0.1:3001` | client-web |
+| `127.0.0.1:3000` | Grafana (`GRAFANA_PASSWORD` required, no default) |
 
-```yaml
-version: '3.8'
-
-services:
-  truerepublic-node:
-    build: .
-    container_name: truerepublic-node
-    restart: unless-stopped
-    ports:
-      - "127.0.0.1:26656:26656"  # local-development P2P
-      - "127.0.0.1:9091:9090"    # Prometheus through the shared namespace
-    volumes:
-      - ./data:/root/.truerepublic
-      - ./config:/config
-    environment:
-      - MONIKER=${MONIKER}
-      - CHAIN_ID=${CHAIN_ID}
-    command:
-      - start
-      - --rpc.laddr=tcp://127.0.0.1:26657
-      - --grpc.enable=false
-      - --api.enable=false
-    networks:
-      - truerepublic-net
-
-  prometheus:
-    image: prom/prometheus:v3.13.1@sha256:3c42b892cf723fa54d2f262c37a0e1f80aa8c8ddb1da7b9b0df9455a35a7f893
-    container_name: prometheus
-    restart: unless-stopped
-    volumes:
-      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro
-      - ./monitoring/prometheus-alerts.yml:/etc/prometheus/prometheus-alerts.yml:ro
-      - prometheus-data:/prometheus
-    network_mode: "service:truerepublic-node"
-
-  grafana:
-    image: grafana/grafana:13.1.1@sha256:7cb8c64c4d57a57e734073f3cc94620adb24a0acb929bd80ba9f14017e3a975b
-    container_name: grafana
-    restart: unless-stopped
-    ports:
-      - "127.0.0.1:3000:3000"
-    volumes:
-      - grafana-data:/var/lib/grafana
-      - ./monitoring/grafana/dashboards:/var/lib/grafana/dashboards:ro
-      - ./monitoring/grafana/provisioning:/etc/grafana/provisioning:ro
-    environment:
-      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASSWORD:?set GRAFANA_PASSWORD}
-      - GF_USERS_ALLOW_SIGN_UP=false
-    networks:
-      - truerepublic-net
-
-  nginx:
-    image: nginx:alpine
-    container_name: nginx
-    restart: unless-stopped
-    ports:
-      - "80:80"
-      - "443:443"
-    volumes:
-      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
-      - ./nginx/ssl:/etc/nginx/ssl
-    depends_on:
-      - truerepublic-node
-    networks:
-      - truerepublic-net
-
-volumes:
-  prometheus-data:
-  grafana-data:
-
-networks:
-  truerepublic-net:
-    driver: bridge
-```
+RPC and REST listen only inside the node network namespace and gRPC is disabled.
+The node runs as the non-root `truerepublic` user with its home in the
+`node-data` volume at `/home/truerepublic/.truerepublic`.
 
 ### Usage
 
 ```bash
 # Start all services
-docker-compose up -d
+docker compose up -d
 
 # View logs
-docker-compose logs -f
+docker compose logs -f
 
 # Stop services
-docker-compose down
+docker compose down
 
-# Update
-docker-compose pull
-docker-compose up -d
+# Update: the node image is built locally from source (no published image);
+# pull the reviewed source revision, then rebuild
+git pull
+make docker-build
+docker compose up -d
 
 # Restart single service
-docker-compose restart truerepublic-node
+docker compose restart truerepublic-node
 ```
 
 **Pros:**
@@ -266,7 +200,9 @@ spec:
     spec:
       containers:
       - name: node
-        image: ghcr.io/neabouli/truerepublic:latest
+        # No image is published; build from source and push to your own
+        # registry under a reviewed, immutable tag
+        image: <your-registry>/truerepublic:<reviewed-tag>
         ports:
         - containerPort: 26656
           name: p2p
@@ -278,7 +214,7 @@ spec:
           name: grpc
         volumeMounts:
         - name: data
-          mountPath: /root/.truerepublic
+          mountPath: /home/truerepublic/.truerepublic
         - name: config
           mountPath: /config
         resources:
@@ -323,31 +259,27 @@ spec:
           storage: 500Gi
 ```
 
-**Service:**
+**Service:** expose only the roles your validated
+[network policy](../../docs/node-operators/configuration/network-policy.md)
+allows. A validator publishes no public port; a seed/sentry/RPC role publishes
+P2P, and RPC only through the reviewed sidecar proxy. Never publish 26657, 1317
+or 9090 directly (see above). The repository ships no Kubernetes manifests or
+ingress; the snippets here are illustrations you must review for your cluster.
 
 ```yaml
 apiVersion: v1
 kind: Service
 metadata:
-  name: truerepublic-node
+  name: truerepublic-node-p2p
   namespace: truerepublic
 spec:
-  type: LoadBalancer
+  type: ClusterIP   # publish externally only for a qualified seed/sentry role
   selector:
     app: truerepublic-node
   ports:
   - name: p2p
     port: 26656
     targetPort: 26656
-  - name: rpc
-    port: 26657
-    targetPort: 26657
-  - name: rest
-    port: 1317
-    targetPort: 1317
-  - name: grpc
-    port: 9090
-    targetPort: 9090
 ```
 
 ### Deployment Commands
@@ -403,7 +335,7 @@ Storage: 1 TB gp3 SSD
 Cost: ~$300/month
 ```
 
-**User Data Script:**
+**Bootstrap template (manual configuration required before startup):**
 
 ```bash
 #!/bin/bash
@@ -415,13 +347,20 @@ sh get-docker.sh
 git clone https://github.com/NeaBouli/TrueRepublic.git /opt/truerepublic
 cd /opt/truerepublic
 
-# Configure
+# Prepare configuration; do not insert secrets through shell substitutions.
 cp .env.example .env
-sed -i "s/MONIKER=.*/MONIKER=aws-node-1/" .env
-sed -i "s/EXTERNAL_IP=.*/EXTERNAL_IP=$(curl -s http://169.254.169.254/latest/meta-data/public-ipv4)/" .env
+```
 
+Before startup, configure `MONIKER` and the required `GRAFANA_PASSWORD` manually
+in the private `.env`, following the repository's `.env.example`. Retrieve the
+password from your secret store; preserve it literally, including `/`, `&` and
+backslashes. Do not use `sed`, print the password or commit `.env`. This template
+is not an unattended production deployment.
+
+```bash
 # Start
-docker-compose up -d
+make docker-build
+docker compose up -d
 ```
 
 ### Google Cloud Platform

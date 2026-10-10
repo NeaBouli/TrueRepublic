@@ -40,11 +40,11 @@ APPLICATION LAYER (Cosmos SDK v0.50.15)
 │   ├── governance.go ← Admin election, exclusion, cleanup (WP S3.6)
 │   ├── validator.go ← Proof of Domain, staking, transfer limits
 │   └── slashing.go ← Double-sign (5%), downtime (1%)
-├── x/dex ← AMM exchange (7 msg types, 138 recovery cases)
+├── x/dex ← AMM exchange (7 msg types; case counts in docs/status.json)
 │   └── keeper.go ← CreatePool, Swap (x*y=k), Add/RemoveLiquidity
-├── treasury/keeper ← Tokenomics equations 1-5 (36 tests)
+├── treasury/keeper ← Tokenomics equations 1-5
 │   └── rewards.go ← Domain interest, staking rewards, decay
-├── CosmWasm ← Smart contracts (governance.rs, treasury.rs)
+├── CosmWasm ← wasm module wired; repository contracts are quarantined prototypes (contracts/core, contracts/examples; #308), not deployed
 └── Standard modules (auth, bank, crisis, consensus, capability, IBC, transfer, wasm, upgrade; staking/distribution unmounted)
     ↓
 CONSENSUS LAYER (CometBFT v0.38.26)
@@ -98,7 +98,7 @@ STORAGE LAYER
 |--------|--------|
 | **Why Rust?** | Memory safety, no GC, prevents buffer overflows |
 | **Why CosmWasm?** | Wasm sandboxing, gas metering, Cosmos-native |
-| **Contracts** | `governance.rs` (proposals + SC voting), `treasury.rs` (deposit/withdraw) |
+| **Contracts** | Prototype workspace only: `contracts/core` (governance.rs, treasury.rs) and `contracts/examples/*`, quarantined and not deployable (#308); maintained libraries in `contracts/packages` |
 
 ### Frontend: React 18
 

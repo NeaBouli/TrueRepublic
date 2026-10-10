@@ -9,8 +9,8 @@
 │  Native Mobile Client (retired; replacement pending)│
 │  CLI (truerepublicd tx/query)                       │
 ├─────────────────────────────────────────────────────┤
-│  Smart Contract Layer (CosmWasm)                     │
-│  governance.rs  │  treasury.rs                       │
+│  Smart Contract Layer (CosmWasm module wired)        │
+│  repository contracts: quarantined prototypes (#308) │
 ├─────────────────────────────────────────────────────┤
 │  Application Layer (Cosmos SDK v0.50.15)             │
 │  truedemocracy  │  dex  │  treasury                  │

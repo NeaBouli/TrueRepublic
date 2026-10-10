@@ -9,7 +9,7 @@ TrueRepublic/
 │
 ├── app.go                          # Cosmos SDK application wiring (TrueRepublicApp)
 ├── go.mod / go.sum                 # Go module: SDK v0.50.15, CometBFT v0.38.26
-├── Makefile                        # Build: build, install, test, lint, docker-*
+├── Makefile                        # Build: build, test, lint, verify, docker-*, contract gates
 ├── Dockerfile                      # Multi-stage: Go 1.26.9 Bookworm → non-root Debian Bookworm slim
 ├── docker-compose.yml              # Full stack: node, client-web, nginx, prometheus, grafana
 ├── .env.example                    # Environment template
@@ -18,7 +18,7 @@ TrueRepublic/
 ├── SECURITY.md                     # Security policy
 │
 ├── x/                              # Custom Cosmos SDK modules
-│   ├── truedemocracy/              # Core governance (26 transaction message types, 614 standard-suite cases)
+│   ├── truedemocracy/              # Core governance (26 transaction message types; case counts: docs/status.json)
 │   │   ├── keeper.go               #   Domain CRUD, proposals, anonymous ratings
 │   │   ├── anonymity.go            #   Permission register, domain key pairs (WP S4)
 │   │   ├── stones.go               #   VoteToEarn, stone voting, list sorting (WP S3.1)
@@ -33,32 +33,32 @@ TrueRepublic/
 │   │   ├── query_server.go         #   gRPC query handlers
 │   │   ├── tree.go                 #   Hierarchical node tree for vote propagation
 │   │   ├── module.go               #   SDK module wiring, InitGenesis, EndBlock
-│   │   ├── stones_test.go          #   20 stone/VoteToEarn tests
-│   │   ├── lifecycle_test.go       #   22 lifecycle/zone tests
-│   │   ├── governance_test.go      #   27 governance/election/exclusion tests
-│   │   ├── anonymity_test.go       #   15 anonymity/permission register tests
-│   │   ├── validator_test.go       #   26 validator/PoD/transfer limit tests
-│   │   └── slashing_test.go        #   6 slashing tests
+│   │   ├── stones_test.go          #   stone/VoteToEarn tests
+│   │   ├── lifecycle_test.go       #   lifecycle/zone tests
+│   │   ├── governance_test.go      #   governance/election/exclusion tests
+│   │   ├── anonymity_test.go       #   anonymity/permission register tests
+│   │   ├── validator_test.go       #   validator/PoD/transfer limit tests
+│   │   └── slashing_test.go        #   slashing tests
 │   │
-│   └── dex/                        # DEX module (7 msg types, 138 recovery cases)
+│   └── dex/                        # DEX module (7 msg types; case counts: docs/status.json)
 │       ├── keeper.go               #   CreatePool, Swap (x*y=k), Add/RemoveLiquidity
 │       ├── types.go                #   Pool type, SwapFeeBps=30, BurnBps=100
-│       ├── msgs.go                 #   4 SDK message types
+│       ├── msgs.go                 #   7 SDK message types
 │       ├── msg_server.go           #   gRPC message handlers
 │       ├── cli.go                  #   7 tx + 9 query CLI commands
 │       ├── query_server.go         #   gRPC query handlers
 │       ├── module.go               #   SDK module wiring
-│       └── keeper_test.go          #   24 DEX tests (swap, liquidity, fees, burn)
+│       └── keeper_test.go          #   DEX tests (swap, liquidity, fees, burn)
 │
 ├── treasury/                       # Tokenomics
 │   └── keeper/
 │       ├── rewards.go              #   Whitepaper equations 1-5
-│       └── rewards_test.go         #   36 equation validation tests
+│       └── rewards_test.go         #   equation validation tests
 │
-├── contracts/                      # CosmWasm smart contracts (Rust)
-│   └── src/
-│       ├── governance.rs           #   On-chain proposals, systemic consensing
-│       └── treasury.rs             #   Deposit/withdraw treasury operations
+├── contracts/                      # CosmWasm workspace (Rust); prototype contracts, not deployed (#308)
+│   ├── core/src/                   #   Prototype governance.rs + treasury.rs
+│   ├── packages/                   #   bindings, testing-utils (maintained libraries)
+│   └── examples/                   #   Prototype governance-dao, dex-bot, zkp-aggregator, token-vesting
 │
 ├── client-web/                     # Maintained React/TypeScript/Vite client
 │   ├── src/components/             # Wallet, governance, DEX, ZKP and network UI
@@ -82,12 +82,12 @@ TrueRepublic/
 ├── nginx/
 │   └── nginx.conf                  # Reverse proxy configuration
 │
-├── docs/                           # Documentation (30+ files)
+├── docs/                           # Documentation
 │   ├── getting-started/
-│   ├── user-manual/                #   7 end-user guides
-│   ├── node-operators/             #   9 operator guides
+│   ├── user-manual/                #   End-user guides
+│   ├── node-operators/             #   Operator guides (installation, configuration, operations)
 │   ├── validators/                 #   Validator guide
-│   ├── developers/                 #   8 developer guides
+│   ├── developers/                 #   Developer guides
 │   ├── FAQ.md
 │   ├── GLOSSARY.md
 │   ├── ARCHITECTURE.md
@@ -269,7 +269,6 @@ import { fetchDomains, submitProposal } from "../services/api";
 | Target | Command | Description |
 |--------|---------|-------------|
 | `build` | `go build -o build/truerepublicd .` | Build binary |
-| `install` | `go install .` | Install to $GOPATH/bin |
 | `test` | `./scripts/go-packages.sh go test -race -cover` | Run all tests |
 | `lint` | `./scripts/go-packages.sh go vet && ./scripts/go-packages.sh staticcheck` | Static analysis |
 | `clean` | `rm -rf build/` | Clean build artifacts |

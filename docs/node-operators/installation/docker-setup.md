@@ -108,7 +108,7 @@ truerepublic-node:
     - "127.0.0.1:${P2P_PORT}:26656"
     - "127.0.0.1:8080:80"
   volumes:
-    - node-data:/root/.truerepublic
+    - node-data:/home/truerepublic/.truerepublic
   environment:
     - MONIKER=${MONIKER}
     - CHAIN_ID=${CHAIN_ID}
@@ -160,7 +160,8 @@ persistent_peers = "<canonical-persistent-peer-endpoints>"
    against the candidate home before restart.
 
 Do not inject peer topology through `.env`, copy a genesis over a running
-container, or use the obsolete `/root/.truerepublic` path.
+container, or mount node data anywhere other than the non-root
+`/home/truerepublic/.truerepublic` home the image uses.
 
 ## Troubleshooting
 
@@ -182,8 +183,9 @@ docker compose logs truerepublic-node
 # Check peer connections
 curl http://localhost:26657/net_info | jq .result.n_peers
 
-# Check if seeds are reachable
-docker exec truerepublic-node ping seed1.truerepublic.network
+# Check if your declared, operator-qualified seeds are reachable
+# (the project operates no public seeds)
+docker exec truerepublic-node ping <qualified-seed-host>
 ```
 
 ### Suspected data corruption
