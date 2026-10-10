@@ -35,7 +35,7 @@ const VPS = [[320,700],[390,844],[768,1024],[769,1024],[820,1180],[1024,768],[10
       noHOverflow: r.scrollW <= r.vw,
       navAllVisible: r.links.filter(l => !l.logo).length === 6 && r.links.every(l => l.vis),
       navInViewport: r.links.every(l => l.x >= 0 && l.r <= r.vw + 0.5),
-      touch44: r.links.filter(l => !l.logo).every(l => l.h >= 44 && l.w >= 24),
+      touch44: r.links.filter(l => !l.logo).every(l => l.h >= 44 && l.w >= 44),
       noLinkOverlap: r.overlap === 0,
       oneMain: r.mains === 1, navLabel: r.navLabel === 'Primary', oneH1: r.h1 === 1, noHeadingSkip: r.skip === 0,
       footerH2: r.footerH2 === 4 && r.footerH4 === 0, iconsDecorative: r.iconsHidden === 11 && r.useCaseEmojiHidden === 3,

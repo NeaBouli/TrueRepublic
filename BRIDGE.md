@@ -9995,3 +9995,8 @@ Pending independent Kimi review and complete Sol verification.
 - Finding F1 (pre-existing, out of scope): invisible secondary buttons in License section.
 - Kimi read-only review dispatched. Review owed to Codex: integration visual review. Not live.
 - Disk incident 18:4xZ: Data volume hit 108 MB free (system-wide); recovered to ~7.9 GB on its own (Claude deleted only its own scratch dir); cause not determined.
+
+## 2026-10-10T19:14Z [AUTOR: CC]
+### TYPE: REPORT — GH315D2 Kimi review done, 44px fix pushed (#372 @ d3728f5)
+- Kimi status ok/security none; one info finding applied (44px min-width), rerun PASS 9/9 / base FAIL 9/9, consistency PASSED.
+- Block closed for now; Claude PAUSES per Gio. Open: #372 CI, Codex integration visual review, #365 decision (13.10.), #373 free for Kimi.

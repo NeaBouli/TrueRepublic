@@ -6,7 +6,7 @@ ACK: 2026-10-10T18:32Z, coordinator branch agent/claude/truerepublic-standin-202
 ## Done
 - GH365 evidence pack: .fleet/reports/GH365-INTEGRATION-EVIDENCE-CC.md (decision held for Codex/Gio, deadline 13.10.)
 
-- GH315D2: Draft #372 @ 669e21c (docs/index.html; consistency PASS; Playwright 9/9, base 9/9 FAIL); report .fleet/reports/GH315D2-CC.md
+- GH315D2: Draft #372 @ d3728f5 (Kimi review ok, 44px fix) (docs/index.html; consistency PASS; Playwright 9/9, base 9/9 FAIL); report .fleet/reports/GH315D2-CC.md
 
 ## Open (ordered)
 1. #365 integration/authorization evidence (held: main merge + exception decision with Codex/Gio; deadline 13.10.).
