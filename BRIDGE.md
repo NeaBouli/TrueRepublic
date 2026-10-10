@@ -10152,3 +10152,41 @@ Pending independent Kimi review and complete Sol verification.
   No additional retry. Publish this draft candidate for complete protected combined CI, not merge.
 - Gio approved Security setup/access preparation only at0 extra spend. Plugin available/not
   installed; entitlement/cost unknown, scan NOT RUN, no code transfer. Main/deployment HELD.
+## 2026-10-01 01:20 EEST [AUTOR: CC]
+### TYPE: FIX — GH-324/GH-325 harness port reservation and fail-fast child exit
+
+- **Root cause:** `freeTCPPort` closed its `127.0.0.1:0` listener before the child bound
+  the kernel-assigned ephemeral port; a peer dial's ephemeral source port or another
+  allocation could take it (runs 35462066576 and 35466470548: `bind: address already in use`).
+- **Fix (test-only):** `harness_port_allocator_test.go` reserves ports in 20000–29999,
+  outside every default and the configured Linux ephemeral range, with a process
+  registry, per-port `O_EXCL` lock files across processes (stale owners reclaimed),
+  a bind probe, and `t.Cleanup` release. Smoke validators expose a non-consuming exit
+  signal; `waitForSmokeHeight`/`waitForSmokeRPC` fail immediately with the log tail.
+  F3: single-node waiters checked `cmd.ProcessState` (nil until `Wait`); `lifecycleNode`
+  now owns the one `Wait`. Deadlines, height and app-hash assertions are unchanged.
+- **Evidence on `b5c7a1a`:** `make governed-upgrade` 3/3; legacy-authority migration
+  rollback 3/3; full eight-test multi-validator gate (1409s); capacity + policy verify
+  (valid, 4 validators, 96 committed, 0 violations); `make concurrency-replay`.
+- **Evidence on `43ee1a3` (F3):** focused `-race` allocator/fail-fast tests;
+  `TestLifecycleNodeExitFailsFastWithLogTail` fails after 60.03s with the old check and
+  passes in 0.27s; `TestNodeStartsStopsAndRestartsFromPersistentHome`;
+  `make governed-upgrade`. Multi-validator gate: four tests passed before the 1500s
+  package timeout under host load average ~305; capacity aborted at link time with
+  `ENOSPC`; concurrency-replay and the four remaining multi-validator tests not run
+  locally — infrastructure-blocked, exact-head GitHub CI is authoritative.
+- **Counts:** `-p 1` pass-event run: 2,137 Go (root 251), 0 failures, 20 opt-in skips;
+  2,491 = 2,137 Go + 26 Rust + 328 maintained-client. `check-consistency.sh` PASS.
+- No push, PR, merge, deployment or rollout credit. Rollout remains 36/59.
+
+`TRUEREPUBLIC GH-324/325 LOCAL PARTIAL — EXACT-HEAD CI AUTHORITATIVE`
+
+## 2026-10-10T03:12:35Z — GH324/GH325 current-base reconciliation → In Progress
+
+Codex owns normal3656d1c79d+preserved330994da7c reconciliation; both append-only histories
+retained, three harness sources preserved at this merge step. Independent scoped review
+requires bounded corrections before acceptance; no unchanged integrationPASS. Historical2491
+count is provisional for this newcandidate and will be replaced only by an actual recount.
+Port policy separately held; mapped bounded cleanup work proceeds. Modern-head gates NOT RUN,
+official Codex Security NOT RUN; no main/protection/production/foreign cleanup action.
+---
