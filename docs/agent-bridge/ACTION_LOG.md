@@ -6082,3 +6082,12 @@
   check-consistency PASSED. Not pushed.
 - Codex opened issue #356 for the three pre-existing P2 UI follow-ups and linked
   that owner from TODO before publication.
+
+## 2026-10-10T07:37:38Z — GH315D1 D2 discovery subset
+
+Codex: four static discovery files plus the existing consistency regression;
+no rendered body/style/status/asset or application/dependency change. Parsing,
+XML, nine negative controls and exact baseline body/status equality PASS.
+Private-cache consistency11556rc0; initial global-cache denial is not a code failure.
+Non-rendered visual-gate exemption only; no live/whole-issue/main/release acceptance.
+No official Codex Security scan, deployment, tracking or third-party script added.

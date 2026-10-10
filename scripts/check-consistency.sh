@@ -462,6 +462,46 @@ grep -Fq "Phase 7 is ${ROLLOUT_PHASE_7_COMPLETED}/${ROLLOUT_PHASE_7_TOTAL}" wiki
   { echo "  FAIL Wiki Current Status Phase 7"; ERRORS=$((ERRORS+1)); }
 echo ""
 
+echo "Landing discovery metadata:"
+if python3 - <<'PY'
+import json, re, xml.etree.ElementTree as ET
+from html.parser import HTMLParser
+from pathlib import Path
+class Head(HTMLParser):
+    def __init__(self) -> None:
+        super().__init__(); self.tags: list[tuple[str, dict[str, str | None]]] = []
+    def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
+        self.tags.append((tag, dict(attrs)))
+html = Path('docs/index.html').read_text(); head = html.split('</head>', 1)[0]
+p = Head(); p.feed(head)
+def one(tag: str, key: str, value: str, attr: str) -> str:
+    found = [a.get(attr) for t, a in p.tags if t == tag and a.get(key) == value]
+    assert len(found) == 1 and isinstance(found[0], str), f'Unique {value} required'
+    return found[0]
+url = 'https://neabouli.github.io/TrueRepublic/'
+description = one('meta', 'name', 'description', 'content')
+assert 'Recovery-only' in description and 'production=false' in description
+assert one('link', 'rel', 'canonical', 'href') == one('meta', 'property', 'og:url', 'content') == url
+assert one('meta', 'property', 'og:type', 'content') == 'website'
+assert one('meta', 'name', 'twitter:card', 'content') == 'summary'
+for key, value in [('title', 'TrueRepublic - Democracy, Reimagined'), ('description', description), ('image', url + 'assets/images/logo.png')]:
+    assert one('meta', 'property', 'og:' + key, 'content') == one('meta', 'name', 'twitter:' + key, 'content') == value
+assert [a for t, a in p.tags if t == 'script'] == [{'type': 'application/ld+json'}], 'Only one inert JSON-LD script allowed'
+assert len(re.findall(r'<script\b', html, re.I)) == 1, 'Executable scripts are forbidden'
+data = json.loads(re.search(r'<script type="application/ld\+json">(.*?)</script>', head, re.S)[1])
+assert data == {'@context': 'https://schema.org', '@type': 'WebSite', 'name': 'TrueRepublic', 'url': url, 'description': description, 'sameAs': 'https://github.com/NeaBouli/TrueRepublic'}
+xml = ET.parse('docs/sitemap.xml').getroot()
+assert xml.tag == '{http://www.sitemaps.org/schemas/sitemap/0.9}urlset'
+assert [node.text for node in xml.findall('.//{http://www.sitemaps.org/schemas/sitemap/0.9}loc')] == [url]
+assert 'Sitemap: ' + url + 'sitemap.xml' in Path('docs/robots.txt').read_text()
+llms = Path('docs/llms.txt').read_text()
+assert description in llms
+assert re.findall(r'\]\((https://[^)]+)\)', llms) == [url, 'https://github.com/NeaBouli/TrueRepublic', url + 'status.json', 'https://github.com/NeaBouli/TrueRepublic/blob/main/docs/LIMITATIONS.md', 'https://github.com/NeaBouli/TrueRepublic/blob/main/docs/ROLLOUT_ROADMAP.md']
+assert all(Path(path).is_file() for path in ['docs/status.json', 'docs/LIMITATIONS.md', 'docs/ROLLOUT_ROADMAP.md', 'docs/assets/images/logo.png'])
+print('  OK truthful canonical/social/JSON-LD/static discovery contract')
+PY
+then :; else ERRORS=$((ERRORS+1)); fi
+
 if [ "$ERRORS" -gt 0 ]; then
   echo "FAILED: $ERRORS inconsistencies found"
   exit 1

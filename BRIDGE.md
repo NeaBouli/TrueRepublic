@@ -10063,3 +10063,27 @@ Pending independent Kimi review and complete Sol verification.
   phrase/FAB collision, wallet address/copy overflow and the broken header logo.
 
 ---
+
+## 2026-10-10T07:33:15Z — GH315D1 discovery subset claimed
+
+Codex owns agent/codex/GH315-discovery from exact mainff63; no overlapping worker.
+Scope: head metadata and sitemap/robots/llms plus a narrow consistency regression.
+Recovery-only/production=false, canonical GitHub Pages/repository references;
+no executable script, tracking, body/CSS/assets, chain/client or security-policy change.
+Navigation/design/live identity and origin-root robots policy remain unverified.
+No #315 closure, rollout credit, main merge or deployment follows from this subset.
+
+## 2026-10-10T07:37:38Z — GH315D1 local discovery qualification
+
+Added truthful canonical/Open Graph/Twitter/inert WebSite JSON-LD in the Landing
+head; sitemap/robots/llms reference the same canonical project. Existing logo is
+referenced unchanged; artwork provenance/license exclusions are not altered.
+Maintained consistency regression parses metadata/JSON/XML and rejects executable
+scripts, duplicate/foreign URLs and status drift. Exact baseline body/style and
+status.json byte equality PASS; candidate contract plus nine negative controls PASS.
+bash -n, xmllint, diff check PASS. Initial consistency invocation stopped before
+tests due sandbox global-cache access; private-cache retry11556 terminalrc0 includes
+frozen-ZKP/readiness/inventory/2486/21M/36of59 guards and the new discovery contract.
+Frontend visual skill: non-rendered-only exemption, not a new visual PASS. No screenshots,
+live link/byte identity, origin-root robots policy, main integration or rollout credit.
+Full #315 nav/semantics/design acceptance remains OPEN; official Codex Security NOT RUN.

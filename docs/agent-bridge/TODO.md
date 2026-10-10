@@ -978,3 +978,12 @@
 - [x] Complete Kimi review and final audit.
 - [x] Complete Sol verification, protected merge, exact-main/Pages and both-
   Bridge closeout while rollout stays 33/59 and production false.
+
+## 2026-10-10 — GH315D1 discovery subset
+
+- [x] Recovery-only/production=false canonical/social/inert JSON-LD metadata.
+- [x] Canonical sitemap/robots/llms and fail-closed consistency regression.
+- [x] Local parsing, XML, nine negative controls and unchanged body/CSS/status proof.
+- [ ] Exact published-head Docs CI and protected integration.
+- [ ] Full #315 mobile navigation, landmarks/semantics, design and live identity.
+No overall #315 or #29 closure; repo-path robots does not prove origin-root policy.
