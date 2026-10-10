@@ -111,7 +111,7 @@ func TestReleaseToolContractBindsMaintainedDockerBases(t *testing.T) {
 		mutated := cloneDockerfiles(dockerfiles)
 		mutated["Dockerfile"] = strings.Replace(
 			mutated["Dockerfile"],
-			"golang:1.26.6-bookworm@sha256:116d58cb", "golang:1.26.6-bookworm@sha256:016d58cb", 1,
+			"golang:1.26.9-bookworm@sha256:d9c68c2c", "golang:1.26.9-bookworm@sha256:09c68c2c", 1,
 		)
 		if violations := dockerBaseBindingViolations(contract.BaseImages, mutated); len(violations) == 0 {
 			t.Fatal("base image digest drift satisfied the release contract binding")

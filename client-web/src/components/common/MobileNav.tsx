@@ -48,7 +48,7 @@ export function MobileNav() {
       {isOpen && (
         <>
           <div
-            className="lg:hidden fixed inset-0 bg-black bg-opacity-50 z-40"
+            className="lg:hidden fixed inset-0 bg-black/50 z-40"
             onClick={() => setIsOpen(false)}
           />
           <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-white rounded-t-2xl shadow-2xl z-40 p-6 max-h-[80vh] overflow-y-auto">

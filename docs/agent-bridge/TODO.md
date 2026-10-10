@@ -1,5 +1,37 @@
 # Recovery Queue
 
+## In progress - GH-364 / GH-355 October dependency and no-fix maintenance
+
+- [x] Minimal Go 1.26.9 / x-net 0.60.0 graph, coherent pinned build/image/release contracts.
+- [x] Complete fresh govulncheck v1.6.0: twelve new fixable IDs absent; exactly three no-fix IDs.
+- [x] Remove withdrawn GO-2026-4740; renew only the three reachable no-fix IDs through
+  2026-10-20 under Gio's exact authorization. Next cadence review due 2026-10-16.
+- [x] Unmodified-policy completed-scan replay and fail-closed positive/negative fixtures pass.
+- [x] Two byte-identical test-only WASM builds; truthful offline Landing visual evidence.
+- [ ] Complete final relevant Go/race/runtime/WASM/release contracts and exact-head protected CI.
+- [ ] Independent exact-candidate review and separately authorized Codex Security acceptance.
+- [ ] Integrate in order with source-map-js #362/#363, verify exact main and live public status.
+- No rollout credit, production approval, new exception ID, protocol change or wasmvm update.
+
+## Completed - GH-331/GH-348 dependency-security remediation on main
+
+- [x] Patch brace-expansion via the existing override (PR #332).
+- [x] Remove the unfixed braces chain by migrating the maintained client to
+  Tailwind CSS 4.3 with pixel-parity visual evidence, a complete optional WASI
+  lock graph and the image-build palette copy (PR #347).
+- [x] Update the OpenTelemetry Go family to 1.45.0 for GO-2026-6505 without
+  changing the documented no-fix IDs (PR #349, integrated through #347).
+- [x] GH-350: landing and status reconciliation merged as PR #352 and verified
+  on live GitHub Pages. No rollout credit; production remains false.
+- [x] GH-353: Phase-7 long-hash mobile overflow fix merged as PR #354 and
+  verified on live GitHub Pages.
+- [x] GH-335: ModuleQuery browser fetch receiver bound to globalThis (PR #336,
+  reconciled as GH335I1); exact-main CI green.
+- [ ] GH-356 follow-ups (pre-existing P2, unchanged by the migration): mobile
+  recovery-phrase column collision and FAB overlap, wallet address/copy
+  overflow, broken header logo image.
+
+
 ## In review - GH-304 ElectAdmin corruption and legacy-state detection
 
 - [x] Land GH-318/GH-305/GH-321 and verify exact main.

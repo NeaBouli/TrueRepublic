@@ -1,3 +1,5 @@
+import { v3Colors } from './tailwind.v3-colors.js'
+
 /** @type {import('tailwindcss').Config} */
 export default {
   content: [
@@ -16,6 +18,7 @@ export default {
         },
       },
       colors: {
+        ...v3Colors,
         primary: {
           50: '#f0f4ff',
           100: '#e0e7ff',

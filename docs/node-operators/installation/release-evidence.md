@@ -14,7 +14,7 @@ release tool/platform contract, and a separate unsigned provenance record.
 | `linux-arm64` | `ubuntu-24.04-arm` | `aarch64` |
 
 The exact contract is `configs/release/tool-platform.json`. It pins Go
-1.26.6, Node 22.22.2, npm 10.9.7, `cyclonedx-gomod` v1.10.0,
+1.26.9, Node 22.22.2, npm 10.9.7, `cyclonedx-gomod` v1.10.0,
 `@cyclonedx/cyclonedx-npm` 6.0.1, and the manifest-list digests used by both
 maintained Dockerfiles. The image manifests cover Linux amd64 and arm64.
 GH-258 supplements these input pins with same-job OCI identity parity for both
