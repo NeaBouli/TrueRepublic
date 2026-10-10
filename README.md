@@ -181,10 +181,10 @@ TrueRepublic/
 │   └── dex/                    DEX module (7 msg types, 138 test cases)
 ├── treasury/keeper/            Tokenomics equations 1-5 (36 test cases)
 ├── contracts/                  CosmWasm workspace (7 crates, 26 tests)
-│   ├── core/                   Governance + treasury contracts
+│   ├── core/                   Quarantined prototype governance + treasury (#308)
 │   ├── packages/bindings/      TrueRepublic custom query/msg types
 │   ├── packages/testing-utils/ Mock querier, AMM pool, fixtures
-│   └── examples/               governance-dao, dex-bot, zkp-aggregator, token-vesting
+│   └── examples/               Quarantined prototypes (#308): governance-dao, dex-bot, zkp-aggregator, token-vesting
 ├── client-web/                 React 18 + TypeScript + Vite + CosmJS (v0.4.0)
 ├── docs/
 │   ├── getting-started/        Quick start guides
@@ -228,7 +228,7 @@ TrueRepublic/
 | PoD Transfer Limit (10%, WP S7) | ✅ | `x/truedemocracy/validator.go` |
 | CLI Commands (26 tx + 9 query) | ✅ | `x/truedemocracy/cli.go` |
 | DEX CLI (7 tx + 9 query) | ✅ | `x/dex/cli.go` |
-| CosmWasm Contracts (7 crates) | ✅ | `contracts/` (workspace) |
+| CosmWasm Contracts (7 crates) | ⛔ Prototype quarantine, not deployable (#308) | `contracts/QUARANTINE.md` |
 | Maintained Web Client | 🟡 Recovery verified | `client-web/` |
 | Legacy Web Wallet | ⚫ Retired and removed under GH-112 | Git history only |
 | Legacy Mobile Wallet | ⚫ Retired and removed under GH-102 | Git history only |
@@ -341,7 +341,7 @@ Go/client parity, evidence paths and adversarial drift handling.
   gates plus compatible binary upgrade/fail-before-open rollback evidence;
   consensus-breaking migrations and broader multi-node operations remain open
 - 🟡 ZKP UI remains a clearly disabled preview; GH-266's keeper replay uses GH-206's isolated synthetic test-only prover and cannot submit
-- ✅ Developer Tooling: 4 CosmWasm example contracts, shared bindings, testing utils
+- ⛔ CosmWasm prototype contracts (core + 4 examples) are quarantined and not deployable (#308); shared bindings and testing utils remain
 - 🟡 DEX burns reduce canonical bank supply via merged PR #18
 - ✅ Canonical v0.4 web client with 3-column governance UI
 - ⚫ Legacy mobile wallet retired and removed under GH-102

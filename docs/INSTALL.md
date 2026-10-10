@@ -83,14 +83,15 @@ eines echten Provers deaktiviert.
 
 ## CosmWasm-Verträge
 
+Die Verträge in `contracts/` sind gesperrte Prototypen ohne Produktionsfreigabe
+(Issue #308, siehe [`contracts/QUARANTINE.md`](../contracts/QUARANTINE.md)).
+Ihre Crates brechen einen `wasm32`-Build ab; sie dürfen nicht hochgeladen,
+instanziiert oder migriert werden. Gebaut und getestet wird nur auf dem Host:
+
 ```bash
 cd contracts
 cargo test --workspace
-cargo build --release --target wasm32-unknown-unknown
 ```
-
-Verträge erst nach einer bewusst konfigurierten Recovery-Testnet-Initialisierung
-hochladen. Gebühren werden in `upnyx` angegeben.
 
 ## Bekannte Grenzen
 
