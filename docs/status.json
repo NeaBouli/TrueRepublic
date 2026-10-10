@@ -213,11 +213,24 @@
       "browser_fetch_receiver": "default_fetch_bound_to_globalthis_with_receiver_regression_on_gh335_pr336"
     },
     "dependency_security": {
-      "status": "no_blocking_high_or_critical_npm_or_fixable_reachable_go_advisory_on_merged_main_four_documented_bounded_no_fix_reachable_go_exceptions_remain",
+      "status": "historical_merged_remediation_on_pr332_pr347_pr349_current_main_requalification_pending",
       "go_no_fix_exceptions": ["GO-2023-1821", "GO-2023-1881", "GO-2026-4740", "GO-2026-5932"],
       "npm": "brace_expansion_patched_on_pr332_and_unfixed_braces_chain_removed_by_tailwindcss_4_3_on_pr347",
       "go": "opentelemetry_family_1_45_0_removes_go_2026_6505_on_pr349_documented_no_fix_ids_unchanged",
-      "note": "Dependency remediation only. It adds no rollout credit and does not change production readiness."
+      "note": "Historical merged dependency remediation only. Current integration qualification is recorded separately; no rollout credit or production approval.",
+      "integration_checkpoint": {
+        "as_of_utc": "2026-10-10T00:52:00Z",
+        "main_commit": "ff63e9d087f1bbf09c01b3182b896ce30ac9116c",
+        "status": "checked_candidates_not_merged_main_acceptance_pending",
+        "qualified_candidates": ["PR365@6d1c79d", "PR337@825e6f2", "PR366@2c8fef8"],
+        "conditional_cross_run_comparisons": "SKIPPED_NOT_PASS",
+        "codex_security_scan": "NOT_RUN",
+        "candidate_go_allowances": "PR365_implements_GH355_three_no_fix_ids_expire_2026_10_20",
+        "main_go_allowances": "four_no_fix_ids_expire_2026_10_13_until_candidate_acceptance",
+        "basic_wasmvm": "2.2.8_retained_by_owner_PR359_declined_closed",
+        "rollout_credit": false,
+        "production_approval": false
+      }
     }
   },
   "limitations": {

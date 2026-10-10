@@ -6082,3 +6082,18 @@
   check-consistency PASSED. Not pushed.
 - Codex opened issue #356 for the three pre-existing P2 UI follow-ups and linked
   that owner from TODO before publication.
+
+## 2026-10-10 — D2 Landing/status checkpoint ownership (Codex)
+
+Bounded existing public documentation hop; only CI badge and dependency-status paragraph/JSON
+change. Checked immutable3656d1c79d/337825e6f2/3662c8fef8 candidates are not merged-main
+acceptance; conditional skip and official scan NOT RUN explicit. Main four expiryOct13 not
+prematurely replaced by candidate three expiryOct20. Owner retains2.2.8/declines359.
+Actual responsive/contract gates pending; no metric/rollout/production or live Pages claim.
+
+## 2026-10-10T01:22Z — Codex D2 visual verification
+
+Actual final capture8states/12images PASS; all12 opened by root. Four viewport geometry0,
+text/link contrast8.326:1; earlier1.343:1 failure retained and corrected only within new row.
+Consistency/license PASS, selected Go contractsRUNNING. Mainff63e9d unchanged; this is a
+separate docs candidate, not accepted publication, scan PASS or changed rollout readiness.

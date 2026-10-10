@@ -10062,4 +10062,33 @@ Pending independent Kimi review and complete Sol verification.
 - GitHub issue #356 now owns the three pre-existing P2 UI follow-ups: recovery-
   phrase/FAB collision, wallet address/copy overflow and the broken header logo.
 
+## 2026-10-10 — D2 public integration checkpoint candidate
+
+Codex owns a separate docs-only checkpoint based on exact main ff63e9d. Existing CI badge
+now says Review; existing dependency row/JSON distinguishes checked unmerged365/337/366 from
+main, conditional skips and separate official scan NOT RUN. Three candidate no-fix allowances
+throughOct20 vs four main throughOct13 remain distinct. Owner retains2.2.8;359declined/CLOSED.
+Headline/test/toolchain/rollout/production values unchanged. Responsive/gate/review evidence
+pending; no Pages publication or accepted main/security/production claim from this source edit.
+
+### D2 visual negative control and bounded link correction
+
+Initial offline layout8states passed geometry but root image inspection found new default-blue
+links hard to read. Added contrast check actually failed1.343:1; retain that negative evidence.
+Only the new checkpoint class inherits existing readable card text color; no global theme change.
+Final capture targets the entire changed paragraph, not a partial tall-card crop. Final visual
+and source checks remain pending; initial images are not accepted release evidence.
+
 ---
+
+## 2026-10-10T01:22Z — D2 final responsive evidence
+
+Final offline Chromium capture56826rc0:8 before/after states across1440x1000,1180x820,
+820x1180,390x844; root opened all12 final screenshots. Changed row is inside its card;
+overflow, clipping, overlaps, page errors and unexpected egress all0. Minimum measured
+text/link contrast8.326:1; the actual prior1.343:1 negative control remains retained.
+HTML SHA256dde1dfd237a27a3b16dcf8ee4dcc03cc5a8f80bcd4ccf3d354443d3a30129b10.
+check-consistency and license policy PASS; selected Go repository contracts16589 still
+RUNNING, not PASS. Source-delta review OK; no whole-site claim audit or live Pages proof.
+Public main re-read remainsff63e9d. Candidate only; protected publication and post-Pages
+critical layout/status assertions remain required. Rollout36/59 and productionfalse unchanged.
