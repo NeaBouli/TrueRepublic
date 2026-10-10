@@ -10194,3 +10194,17 @@ Pending independent Kimi review and complete Sol verification.
   semantics unchanged; no new generation, lifecycle UI, promotion or plaintext deletion.
 - New exact-head focused/full/protected qualification and independent delta review pending.
   Security scan NOT RUN; no main merge, deployment or rollout credit.
+
+### 2026-10-10 — explicit wallet race completion barrier
+
+- Old full suite344PASS/1timeout/4SKIP is NOT PASS. Test-only synchronous deferred-entry
+  assertion replaces zero-delay timer; every security-state assertion/deadline remains unchanged.
+- Independent scoped reviewOK and focused casePASS352ms. Lint/typecheck/new full protected
+  qualification pending. No crypto/store/UI change, official scan, main/deploy or rollout credit.
+
+### 2026-10-10 — migration qualification and prerequisite test-only merge
+
+- Full b98e8c2 client56572rc0:369Vitest/4SKIP+19Node, lint/typecheck/build/budget/audit/graph PASS.
+  Entry73508/maxroute5054/totalJS364253 gzipbytes. Normal merge of33886fc26f retains both
+  append histories and only its reviewed deterministic wallet test barrier; production unchanged.
+- New head focus/consistency and protected qualification pending; scan NOT RUN, main held.

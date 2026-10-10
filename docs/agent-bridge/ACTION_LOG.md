@@ -6272,3 +6272,17 @@ toolchain and security pins. No migration/preview-hash/vault transaction source 
 change; plaintext remains, no unattended removal or canonical activation. New-head focused,
 full and protected gates pending; independent composition review requested. Claude paused,
 Codex Security NOT RUN, no main/production action or rollout credit.
+
+## 2026-10-10 — GH309 deterministic wallet race test barrier (Codex)
+
+Old e356 full client344PASS/1wallet5000ms timeout/4SKIP, not PASS; subsequent build/audit
+not run. Replace unrelated zero-delay timer with explicit deferred getWallet entry assertion,
+then unchanged lock->resolve->reject/alllocked-state checks. No production/KDF/deadline change.
+Independent scoped test reviewOK; focused racePASS352ms. Lint/typecheck ongoing, full new-head
+qualification pending. No load-only verdict, security-scan claim, main merge or activation.
+
+## 2026-10-10 — GH309B3I1 prerequisite test completion reconciliation
+
+Full b98e8c2 client56572rc0PASS369Vitest/4SKIP+19Node; lint/typecheck/build/budget/audit/graph
+PASS. Normal merge33886fc26f changes only its reviewed wallet test barrier plus append histories,
+no production/KDF/migration semantics. New focus/consistency/protected gates pending; main held.
