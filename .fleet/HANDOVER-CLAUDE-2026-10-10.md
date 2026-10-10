@@ -4,7 +4,7 @@ Received packet: /Users/gio/Documents/Codex/TrueRepublic-GH327/.fleet/HANDOVER-C
 ACK: 2026-10-10T18:32Z, coordinator branch agent/claude/truerepublic-standin-20260930 @ 273ea2b.
 
 ## Done
-- (none yet)
+- GH365 evidence pack: .fleet/reports/GH365-INTEGRATION-EVIDENCE-CC.md (decision held for Codex/Gio, deadline 13.10.)
 
 ## Open (ordered)
 1. #365 integration/authorization evidence (held: main merge + exception decision with Codex/Gio; deadline 13.10.).
@@ -12,4 +12,4 @@ ACK: 2026-10-10T18:32Z, coordinator branch agent/claude/truerepublic-standin-202
 3. Further free Basic work in dependency order per PLAN.
 
 ## Review owed to Codex
-- (none yet)
+- GH365 evidence pack: .fleet/reports/GH365-INTEGRATION-EVIDENCE-CC.md (decision held for Codex/Gio, deadline 13.10.)

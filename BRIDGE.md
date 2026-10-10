@@ -9980,3 +9980,10 @@ Pending independent Kimi review and complete Sol verification.
 - First action: revalidate main Go-exception expiry (13.10.) and claims; prepare bounded #365 integration/authorization evidence for Codex/Gio (no rerun of valid gates).
 - Second: GH315D2 on own branch agent/claude/GH315D2-landing-semantics from #371 @ 5f99c25 (sole source writer).
 - Held, unchanged: main merge, release gate, official Codex Security scan, exception renewals, production/live.
+
+## 2026-10-10T18:34Z [AUTOR: CC]
+### TYPE: REPORT — GH365 integration evidence prepared (held decision)
+- Report: .fleet/reports/GH365-INTEGRATION-EVIDENCE-CC.md. #365 @ 6d1c79d: 29 success/1 conditional skip/0 fail, mergeable, Draft, REVIEW_REQUIRED.
+- Verified: main Go exceptions valid through 2026-10-13, rejected from 2026-10-14 UTC.
+- Held for Codex/Gio: scan authorization or bounded lead exception, then review + main merge. No gate rerun, no write to PR.
+- Next: GH315D2.
