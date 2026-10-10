@@ -98,12 +98,16 @@ Data directory: `~/.truerepublic/`
 | `make docker-up` | Start Docker Compose stack |
 | `make docker-down` | Stop Docker Compose stack |
 
-## Building Smart Contracts
+## Smart Contracts
+
+The CosmWasm contracts in `contracts/` are quarantined, non-production
+prototypes (issue #308; see [`contracts/QUARANTINE.md`](contracts/QUARANTINE.md)).
+Their crates reject `wasm32` builds and must not be deployed. Build and test
+them on the host only:
 
 ```bash
 cd contracts
-rustup target add wasm32-unknown-unknown
-cargo build --release --target wasm32-unknown-unknown
+cargo test --workspace
 ```
 
 ## Mobile Wallet
