@@ -10228,3 +10228,21 @@ Consistency12502rc0, frozen-protocol0.615s/readiness/public counts2486/inventory
 rollout guards PASS; JSON/diffPASS. Source/visual qualification now complete for
 this bounded documentation delta. Eight final images inspected. Existing367 normal
 publication follows; new-head protected/main/live/official-scan acceptance not implied.
+
+## 2026-10-10T07:05:19Z — C7 completed candidate-evidence checkpoint
+
+Mapped D2, sole owner Codex; only existing checkpoint row/JSON plus append-only logs.
+GH306 exact0c standard-only inventory2167namedPASS/0FAIL/22SKIP now complete;
+no opt-in double-counting and no main headline replacement. GH313 selected arity/
+negation expectedFAIL controls and exact restoredfourPASS complete. GH309338–341
+scoped receipts recorded;338 single failed-path retry terminalSUCCESS, cross-runSKIP.
+Draft370 API snapshot18SUCCESS/1conditionalSKIP, no protected-main acceptance.
+Mainff63 observed06:55:19 unchanged. Rollout36/59/prodfalse and metrics unchanged.
+Consistency13956 terminalrc0, JSON/diffPASS, native scoped claimsOK. Capture62673rc0:
+eight before5866c18/after images, four viewports individually opened; overflow/outside/
+overlaps/clipping/errors/egress0, rowsinside true, minimum contrast8.326207589.
+HTMLSHA256 07cf95d3886da780b092834d4306dd0a865fbf85748b49ef1bf7ccce94b05436.
+Missing shared browser caused prelaunch62072failure; existing pinned test-browser
+provision75483rc0 in own project cache only. Mistyped consistency path127 executed
+no test; corrected existing script passed. New-head/main/live/security acceptance
+remain separate; official scan NOT RUN. Normal existing367 publication follows.
