@@ -6246,3 +6246,11 @@ status inventory/services19 while retaining current merged-main metrics/365 pins
 source/API/crypto change; preserved reviewed byte/AAD/cap/WebLock behavior and337 containment.
 Focused/full/new protected gates pending, no inherited PASS. Claude paused; no migration/UI/
 canonical activation, scan, main merge, rollout credit or deployment.
+
+## 2026-10-10 — GH309 deterministic wallet race test barrier (Codex)
+
+Old e356 full client344PASS/1wallet5000ms timeout/4SKIP, not PASS; subsequent build/audit
+not run. Replace unrelated zero-delay timer with explicit deferred getWallet entry assertion,
+then unchanged lock->resolve->reject/alllocked-state checks. No production/KDF/deadline change.
+Independent scoped test reviewOK; focused racePASS352ms. Lint/typecheck ongoing, full new-head
+qualification pending. No load-only verdict, security-scan claim, main merge or activation.
