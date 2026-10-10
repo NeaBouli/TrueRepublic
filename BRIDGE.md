@@ -10154,3 +10154,15 @@ security-gate repository contracts PASS2.299s, JSONparse and diff-check PASS. Ei
 images and independent final claim review match unchanged HTML5ce0befa. License70973PASS;
 license surfaces untouched by final CI text. Normal Draft367 push next; exact-head protected,
 accepted main/live Pages and post-publication assertions remain open, official scan NOT RUN.
+
+### 2026-10-10T04:32:10Z — C3 exact-head status-source receipt
+
+Read-only04:22 snapshot:36625f69c7 has only2successful review bots, protected workflows absent;
+367ca2075d16SUCCESS/2dependencyFAIL/1conditionalSKIP on unchanged main. Earlier qualified
+3662c8fef8 receipt now explicitly SHA-scoped, no inherited current-headPASS. Two source files
+only; numbers/versions/36of59/prodfalse unchanged. Independent claim delta OK; JSON/diff PASS.
+Capture38060terminalrc0:8before/after images/fourviewports individually opened, layout/clipping/
+overlap/errors/egress0, contrast8.326. HTMLc2281d52, Chromium140.0.7339.186. Refreshed
+consistency29194rc0PASS incl. frozen protocol0.104s and security-review contract. Go/build/gate
+sources exactC2; no new full Go-suite PASS claimed. Normal existingDraft367 update only;
+newhead protected/main/live/official scan acceptance remain separate and open.
