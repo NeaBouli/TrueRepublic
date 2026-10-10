@@ -10092,3 +10092,25 @@ check-consistency and license policy PASS; selected Go repository contracts16589
 RUNNING, not PASS. Source-delta review OK; no whole-site claim audit or live Pages proof.
 Public main re-read remainsff63e9d. Candidate only; protected publication and post-Pages
 critical layout/status assertions remain required. Rollout36/59 and productionfalse unchanged.
+---
+
+## 2026-10-10T02:26:04Z — D2 C1 evidence refresh → Review
+
+Codex sole writer. Only docs/index.html and docs/status.json public source changes: scoped
+Rust361/client345/offlineadmission346 receipts, exact checkpoint time, and honest Phase4
+implemented-verifier/test-only candidate wording. No main/Pages/production/rollout credit.
+Owned offline capture50561rc0:8before/afterstates/20screenshots, all individually opened by
+root. Both changed Phase4/5 rows inside cards; overflow/clipping/overlap/errors/unexpected
+egress0; minimum measured text/linkcontrast8.326:1. Chromium140.0.7339.186/Playwright1.55.1.
+FinalHTMLSHA256d041c043acbb9eb7fb10cbe45cfc57bdb09b2e1469d4e10c0d8ab7871e949c52.
+Source consistency/license/selectedcontracts pending at this checkpoint; no unrun PASS.
+Priorbef20ed hosted two unchanged-main advisory failures remain real, fixed only by separate
+365/362 candidates after acceptance. Mainff63e9d,36/59, headline metrics remain unchanged.
+Separate officialCodexSecurityNOTRUN; live post-Pages verification still required.
+### 2026-10-10T02:40:26Z — C1 source consistency receipt
+
+check-consistency70325terminalrc0PASS, including frozenprotocol/securityreview readiness/
+maintainedinventory/roadmap/rollout/counts. JSONparse/license52210rc0/diff65259rc0PASS.
+Independent boundedclaimreviewOK; sourceHTMLd041c043 unchanged since20inspectedimages.
+SelectedRootcontracts82121RUNNING, not a newPASS. NormalDraftpublication only; main/Pages
+acceptance and liveverification remain open, officialCodexSecurityNOTRUN.

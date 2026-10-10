@@ -219,10 +219,15 @@
       "go": "opentelemetry_family_1_45_0_removes_go_2026_6505_on_pr349_documented_no_fix_ids_unchanged",
       "note": "Historical merged dependency remediation only. Current integration qualification is recorded separately; no rollout credit or production approval.",
       "integration_checkpoint": {
-        "as_of_utc": "2026-10-10T00:52:00Z",
+        "as_of_utc": "2026-10-10T02:22:24Z",
         "main_commit": "ff63e9d087f1bbf09c01b3182b896ce30ac9116c",
         "status": "checked_candidates_not_merged_main_acceptance_pending",
         "qualified_candidates": ["PR365@6d1c79d", "PR337@825e6f2", "PR366@2c8fef8"],
+        "scoped_candidate_evidence": {
+          "PR361@f931a53": "hosted_locked_rust_fmt_clippy_build_test_26_pass_0_fail",
+          "PR345@b2c0934": "client_490_pass_4_skip_node_19_pass_build_budget_audits_pass_local_voting_chromium_4_viewports_pass_images_inspected",
+          "PR346@a3307ac": "offline_admission_and_genesis_evidence_tests_pass_production_allowlist_empty_consensus_unchanged"
+        },
         "conditional_cross_run_comparisons": "SKIPPED_NOT_PASS",
         "codex_security_scan": "NOT_RUN",
         "candidate_go_allowances": "PR365_implements_GH355_three_no_fix_ids_expire_2026_10_20",

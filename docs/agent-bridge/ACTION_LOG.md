@@ -6097,3 +6097,16 @@ Actual final capture8states/12images PASS; all12 opened by root. Four viewport g
 text/link contrast8.326:1; earlier1.343:1 failure retained and corrected only within new row.
 Consistency/license PASS, selected Go contractsRUNNING. Mainff63e9d unchanged; this is a
 separate docs candidate, not accepted publication, scan PASS or changed rollout readiness.
+---
+
+## 2026-10-10T02:26:04Z — D2 C1 scoped public checkpoint (Codex)
+
+Refreshed only checked-source receipts in docs/status.json and Phase5; corrected Phase4
+auditedZKP implication to test-only candidate/openproduction qualification.20responsive
+screenshots inspected,8statesPASS,8.326contrast/geometry0. Sourceguards pending. No headline
+counts/metrics/rollout/main/live/scan/productioncredit; officialCodexSecurityNOTRUN.
+### 2026-10-10T02:40:26Z — C1 source guards (Codex)
+
+Consistency70325rc0PASS incl frozenprotocol/readiness/inventory/rollout; JSONparse/license/
+diffPASS. BoundedclaimreviewOK;20imageevidence unchanged. SelectedRoot82121RUNNING,
+protectedexacthead/livePages/officialscan remain separately unapproved orNOTRUN.
