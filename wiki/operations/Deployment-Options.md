@@ -335,7 +335,7 @@ Storage: 1 TB gp3 SSD
 Cost: ~$300/month
 ```
 
-**User Data Script:**
+**Bootstrap template (manual configuration required before startup):**
 
 ```bash
 #!/bin/bash
@@ -347,11 +347,17 @@ sh get-docker.sh
 git clone https://github.com/NeaBouli/TrueRepublic.git /opt/truerepublic
 cd /opt/truerepublic
 
-# Configure (GRAFANA_PASSWORD is required; supply it from your secret store)
+# Prepare configuration; do not insert secrets through shell substitutions.
 cp .env.example .env
-sed -i "s/MONIKER=.*/MONIKER=aws-node-1/" .env
-sed -i "s/^GRAFANA_PASSWORD=.*/GRAFANA_PASSWORD=${GRAFANA_PASSWORD:?set GRAFANA_PASSWORD}/" .env
+```
 
+Before startup, configure `MONIKER` and the required `GRAFANA_PASSWORD` manually
+in the private `.env`, following the repository's `.env.example`. Retrieve the
+password from your secret store; preserve it literally, including `/`, `&` and
+backslashes. Do not use `sed`, print the password or commit `.env`. This template
+is not an unattended production deployment.
+
+```bash
 # Start
 make docker-build
 docker compose up -d

@@ -6,7 +6,7 @@ Thank you for your interest in contributing to TrueRepublic!
 
 ### Prerequisites
 
-- Go 1.26.6 (repository-pinned toolchain, `go.mod`)
+- Go 1.26.9 (repository-pinned toolchain, `go.mod`)
 - Rust 1.75+ (for contracts)
 - Node.js 22+ (for frontend; required by `client-web/package.json`)
 - Git

@@ -39,6 +39,9 @@ var (
 	// sentences ("does not promise a bug-bounty payment") stay allowed.
 	operatorGuidanceReportingPromiseRE = regexp.MustCompile(
 		`(?i)bug[- ]bounty (program|submission)|response time:\s*\d|\bsecurity@[a-z0-9.-]+`)
+	// Remove only this complete truthful policy sentence, not a whole line
+	// that might also contain an affirmative reporting promise.
+	operatorGuidanceNoBountyProgramRE = regexp.MustCompile(`(?i)\bThe repository has no bug[- ]bounty program\.`)
 	// Reward amounts are protocol economics in most guides (VoteToEarn, staking
 	// rewards); only in security guidance do they promise a bounty payment.
 	operatorGuidanceSecurityRewardRE = regexp.MustCompile(`(?i)\brewards?\s*[:=]?\s*\d`)
@@ -65,7 +68,7 @@ var operatorGuidanceCommandRuleExclusions = map[string]bool{
 var (
 	operatorGuidanceModuleCmdRE      = regexp.MustCompile(`truerepublicd\s+(tx|query|q)\s+([a-z][a-z0-9-]*)`)
 	operatorGuidanceGenesisCmdRE     = regexp.MustCompile(`truerepublicd\s+genesis\s+(add-genesis-account|gentx|collect-gentxs)\b`)
-	operatorGuidanceRegisterRE       = regexp.MustCompile(`truedemocracy\s+register-validator((?:[ \t]+(?:\\\r?\n)?[ \t]*[^\s\\-][^\s\\]*)*)`)
+	operatorGuidanceRegisterRE       = regexp.MustCompile(`truedemocracy\s+register-validator((?:[ \t]+(?:\\\r?\n)?[ \t]*[^\s\\\x60|-][^\s\\\x60|]*)*)`)
 	operatorGuidanceStakeArgRE       = regexp.MustCompile(`^(\d+upnyx|[<\[][^>\]]*stake[^>\]]*[>\]](upnyx)?|\$\{?[A-Za-z_]+\}?(upnyx)?|"\$[A-Za-z_]+")$`)
 	operatorGuidanceWithdrawSuffixRE = regexp.MustCompile(`withdraw-stake\s+(\d+|[<\[][^>\]\s]*[>\]]|\$\{?[A-Za-z_]+\}?)upnyx\b`)
 	operatorGuidanceCmdSubstRE       = regexp.MustCompile(`\$\([^)]*\)`)
@@ -116,6 +119,9 @@ func TestOperatorGuidanceTrustAndReportingContract(t *testing.T) {
 		"bounty promise": func(in *operatorGuidanceInputs) {
 			in.maintained["wiki/security/Best-Practices.md"] += "\nBug bounty program with Rewards: 100 PNYX\n"
 		},
+		"negated policy followed by bounty promise": func(in *operatorGuidanceInputs) {
+			in.maintained["SECURITY.md"] += "\nThe repository has no bug-bounty program. Bug bounty program available.\n"
+		},
 		"reward amount in security guidance": func(in *operatorGuidanceInputs) {
 			in.maintained["wiki/security/Audit-Reports.md"] += "\nValid reports earn rewards: 500 PNYX\n"
 		},
@@ -133,6 +139,12 @@ func TestOperatorGuidanceTrustAndReportingContract(t *testing.T) {
 		},
 		"two-argument register-validator": func(in *operatorGuidanceInputs) {
 			in.maintained["wiki/users/Installation-Wizards.md"] += "\ntruerepublicd tx truedemocracy register-validator \\\n    my-domain \\\n    100000000000upnyx \\\n    --from validator\n"
+		},
+		"four-argument register-validator": func(in *operatorGuidanceInputs) {
+			in.maintained["docs/VALIDATOR_GUIDE.md"] += "\ntruerepublicd tx truedemocracy register-validator <pubkey-hex> 100000000000upnyx my-domain extra-argument\n"
+		},
+		"four-argument inline register-validator": func(in *operatorGuidanceInputs) {
+			in.maintained["docs/API.md"] += "\n| register-validator | `truerepublicd tx truedemocracy register-validator [pubkey-hex] [stake] [domain] extra` | Description |\n"
 		},
 		"withdraw-stake with denom": func(in *operatorGuidanceInputs) {
 			in.maintained["docs/validators/README.md"] += "\ntruerepublicd tx truedemocracy withdraw-stake 5upnyx\n"
@@ -193,6 +205,9 @@ func TestOperatorGuidanceTrustAndReportingContract(t *testing.T) {
 		},
 	}
 	allowed := map[string]func(*operatorGuidanceInputs){
+		"no bounty program policy sentence": func(in *operatorGuidanceInputs) {
+			in.maintained["SECURITY.md"] += "\nThe repository has no bug-bounty program.\n"
+		},
 		"negated bounty policy sentence": func(in *operatorGuidanceInputs) {
 			in.maintained["SECURITY.md"] += "\nThe repository does not promise a bug-bounty payment or response SLA.\n"
 		},
@@ -213,6 +228,9 @@ func TestOperatorGuidanceTrustAndReportingContract(t *testing.T) {
 		},
 		"three-argument register-validator": func(in *operatorGuidanceInputs) {
 			in.maintained["docs/VALIDATOR_GUIDE.md"] += "\ntruerepublicd tx truedemocracy register-validator \\\n    \"$PUBKEY_HEX\" \\\n    100000000000upnyx \\\n    my-domain \\\n    --from validator\n"
+		},
+		"inline register-validator table": func(in *operatorGuidanceInputs) {
+			in.maintained["docs/API.md"] += "\n| register-validator | `truerepublicd tx truedemocracy register-validator [pubkey-hex] [stake] [domain]` | Register as a PoD validator |\n"
 		},
 		"native rpc and upnyx amounts": func(in *operatorGuidanceInputs) {
 			in.maintained["docs/validators/README.md"] += "\ncurl http://127.0.0.1:26657/status\ntruerepublicd tx dex swap upnyx 1000 atom\n"
@@ -430,7 +448,8 @@ func operatorGuidanceViolations(in operatorGuidanceInputs) []string {
 		if match := operatorGuidanceFictionalDomainRE.FindString(content); match != "" {
 			out = append(out, path+": depends on unregistered infrastructure ("+match+")")
 		}
-		if match := operatorGuidanceReportingPromiseRE.FindString(content); match != "" {
+		reportingContent := operatorGuidanceNoBountyProgramRE.ReplaceAllString(content, "")
+		if match := operatorGuidanceReportingPromiseRE.FindString(reportingContent); match != "" {
 			out = append(out, path+": reporting promise or contact outside SECURITY.md ("+match+")")
 		}
 		if strings.HasSuffix(path, ".md") && !operatorGuidanceCommandRuleExclusions[path] {
@@ -480,7 +499,7 @@ func operatorGuidanceCommandViolations(path, content string) []string {
 		if len(args) == 0 || strings.HasPrefix(args[0], "[pubkey") && len(args) < 3 {
 			continue // prose mention or the bare usage line
 		}
-		if len(args) < 3 || !operatorGuidanceStakeArgRE.MatchString(args[1]) {
+		if len(args) != 3 || !operatorGuidanceStakeArgRE.MatchString(args[1]) {
 			add("register-validator must take [pubkey-hex] [stake] [domain]", strings.Join(args, " "))
 		}
 	}

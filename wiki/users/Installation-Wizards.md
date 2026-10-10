@@ -217,10 +217,18 @@ client you have independently qualified.
 ### Step 4: Register as Validator (10 min)
 
 `register-validator` takes `[pubkey-hex] [stake] [domain]`; the public key is
-this node's Ed25519 consensus key as hex:
+this node's Ed25519 consensus key as hex, not the signing account's public key.
+Query the running node's public status; do not read or copy validator private-key
+files. Choose the Docker or native status command for the actual node:
 
 ```bash
-PUBKEY_HEX=$(jq -r .pub_key.value ~/.truerepublic/config/priv_validator_key.json | base64 -d | xxd -p -c 64)
+set -euo pipefail
+# Docker node: query inside its container, not an unrelated host home.
+STATUS_JSON=$(docker compose exec -T truerepublic-node truerepublicd status --node tcp://127.0.0.1:26657 --output json)
+# Native alternative (replace the command above):
+# STATUS_JSON=$(truerepublicd status --node tcp://127.0.0.1:26657 --output json)
+PUBKEY_HEX=$(printf '%s' "$STATUS_JSON" | jq -er '.validator_info.pub_key | select(.type == "tendermint/PubKeyEd25519") | .value' | base64 -d | xxd -p -c 64)
+[[ "$PUBKEY_HEX" =~ ^[0-9a-f]{64}$ ]] || exit 1
 
 truerepublicd tx truedemocracy register-validator \
     "$PUBKEY_HEX" \
@@ -229,6 +237,10 @@ truerepublicd tx truedemocracy register-validator \
     --from validator \
     --chain-id truerepublic-1
 ```
+
+The signing account and its qualified client may live separately from the node.
+If public status is unavailable, obtain an independently confirmed public
+32-byte Ed25519 consensus key; do not substitute a key from another node or account.
 
 ### Step 5: Verify Validator Status (5 min)
 
