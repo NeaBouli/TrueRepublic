@@ -6141,3 +6141,11 @@ One private-cache retry fixes npm signature EPERM; one supported Vitest invocati
 obsolete orchestration option. Original Go build passed/vet live. Publish existing draft365 for
 mandatory exact-head protected matrix; acceptance NOT GRANTED. Both authorized337/363 OCI retries
 success; Security setup-only0-cost approval recorded, scan NOT RUN and main/deployment held.
+
+## 2026-10-10 — GH361I1 six-package patch reconciliation (Codex)
+
+Normal merge of exact3656d1c79d and36182371a7. Cargo.lock only: six CosmWasm/cw-schema
+3.0.9->3.0.10 pins/checksums, registry blob exact,316packages; VM3.0.9/Wasmer5.0.6 unchanged.
+Independent source deltaOK, locked Rust/audit/license/compatibility qualification pending.
+No source/feature/manifest/licence-policy/Go runtime change or360major graph uptake.
+Own target/cache only; no foreign cleanup, main acceptance, production or rollout claim.
