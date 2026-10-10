@@ -69,6 +69,9 @@
             transition: color 0.3s;
         }
         .nav-links a:hover { color: var(--primary); }
+        .nav-links a { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; min-width: 44px; white-space: nowrap; }
+        .nav-links a:focus-visible, .logo:focus-visible { outline: 3px solid var(--primary); outline-offset: 2px; }
+        main section[id] { scroll-margin-top: 88px; }
         .hero {
             background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
             color: white;
@@ -266,7 +269,7 @@
             gap: 2rem;
             margin-bottom: 2rem;
         }
-        .footer-section h4 { margin-bottom: 1rem; font-size: 1.2rem; }
+        .footer-section h2 { margin-bottom: 1rem; font-size: 1.2rem; }
         .footer-section ul { list-style: none; }
         .footer-section a {
             color: rgba(255,255,255,0.8);
@@ -292,20 +295,25 @@
         .stat { padding: 2rem; }
         .stat-number { font-size: 3rem; font-weight: 700; color: var(--primary); margin-bottom: 0.5rem; }
         .stat-label { color: var(--text-light); font-size: 1rem; }
+        @media (max-width: 1024px) {
+            header { position: static; }
+            nav { flex-wrap: wrap; justify-content: center; row-gap: 0.25rem; }
+            .nav-links { flex-wrap: wrap; justify-content: center; gap: 0 1rem; width: 100%; padding: 0; }
+            .nav-links a { padding: 0 0.25rem; }
+        }
         @media (max-width: 768px) {
             .hero h1 { font-size: 2.5rem; }
             .hero .subtitle { font-size: 1.2rem; }
             .section-title { font-size: 2rem; }
-            .nav-links { display: none; }
         }
     </style>
 </head>
 <body>
     <header>
         <div class="container">
-            <nav>
+            <nav aria-label="Primary">
                 <a href="#" class="logo">
-                    <img src="https://raw.githubusercontent.com/NeaBouli/TrueRepublic/main/assets/logo.png" alt="TrueRepublic Logo" style="height: 36px;">
+                    <img src="https://raw.githubusercontent.com/NeaBouli/TrueRepublic/main/assets/logo.png" alt="" style="height: 36px;">
                     <span>TrueRepublic</span>
                 </a>
                 <ul class="nav-links">
@@ -320,6 +328,7 @@
         </div>
     </header>
 
+    <main id="main">
     <section class="hero">
         <div class="container">
             <div style="margin: 0 auto 2rem; max-width: 860px; padding: 1rem 1.25rem; border-radius: 8px; background: #fff3cd; border: 1px solid #ffc107; color: #664d03;">
@@ -350,57 +359,57 @@
             <h2 class="section-title">Core Innovations</h2>
             <div class="features-grid">
                 <div class="feature-card">
-                    <div class="feature-icon">&#x1F4CA;</div>
+                    <div class="feature-icon" aria-hidden="true">&#x1F4CA;</div>
                     <h3>Systemic Consensing</h3>
                     <p>Move beyond binary voting with a -5 to +5 scale. Capture the intensity of preferences and find true consensus, not just majority rule.</p>
                 </div>
                 <div class="feature-card">
-                    <div class="feature-icon">&#x1F6E1;&#xFE0F;</div>
+                    <div class="feature-icon" aria-hidden="true">&#x1F6E1;&#xFE0F;</div>
                     <h3>Proof-of-Domain</h3>
                     <p>Anti-whale validator mechanism ensures network control stays with active community members, not wealthy investors.</p>
                 </div>
                 <div class="feature-card">
-                    <div class="feature-icon">&#x1F510;</div>
+                    <div class="feature-icon" aria-hidden="true">&#x1F510;</div>
                     <h3>ZKP Anonymous Voting</h3>
                     <p>Groth16 membership architecture with chain-, proposal-, rating-, and recipient-bound proofs plus persisted nullifier protection. GH-266 replays a fresh synthetic Go/WASM proof through the real keeper payout boundary with atomic payout and replay checks; production ceremony, submission, and external cryptographic review remain required.</p>
                 </div>
                 <div class="feature-card">
-                    <div class="feature-icon">&#x1F4B0;</div>
+                    <div class="feature-icon" aria-hidden="true">&#x1F4B0;</div>
                     <h3>VoteToEarn</h3>
                     <p>Incentivize participation through economic rewards. Quality content costs PNYX, voting earns PNYX.</p>
                 </div>
                 <div class="feature-card">
-                    <div class="feature-icon">&#x1F4DC;</div>
+                    <div class="feature-icon" aria-hidden="true">&#x1F4DC;</div>
                     <h3>Smart Contracts</h3>
                     <p>CosmWasm integration with custom bindings lets smart contracts query governance state and interact with domain treasuries.</p>
                 </div>
                 <div class="feature-card">
-                    <div class="feature-icon">&#x1F504;</div>
+                    <div class="feature-icon" aria-hidden="true">&#x1F504;</div>
                     <h3>Integrated DEX</h3>
                     <p>Merged PR #18 adds bank-backed custody, LP ownership, authority, and canonical burns. Merged PR #19 adds exact genesis reconciliation plus every-block supply, escrow, reserve, and LP invariants.</p>
                 </div>
                 <div class="feature-card">
-                    <div class="feature-icon">&#x1F310;</div>
+                    <div class="feature-icon" aria-hidden="true">&#x1F310;</div>
                     <h3>Self-Organizing Domains</h3>
                     <p>Communities organize into domains with custom governance rules, treasuries, and autonomous moderation.</p>
                 </div>
                 <div class="feature-card">
-                    <div class="feature-icon">&#x1F3E6;</div>
+                    <div class="feature-icon" aria-hidden="true">&#x1F3E6;</div>
                     <h3>Domain Treasury Bridge</h3>
                     <p>Dual accounting connects x/bank user wallets with domain treasuries. Deposit, withdraw, and manage community funds on-chain.</p>
                 </div>
                 <div class="feature-card">
-                    <div class="feature-icon">&#x1F30D;</div>
+                    <div class="feature-icon" aria-hidden="true">&#x1F30D;</div>
                     <h3>IBC Cross-Chain</h3>
                     <p>Transfer PNYX across any IBC-enabled Cosmos chain via ICS-20. Connect to Cosmos Hub, Osmosis, and beyond.</p>
                 </div>
                 <div class="feature-card">
-                    <div class="feature-icon">&#x1F6E0;&#xFE0F;</div>
+                    <div class="feature-icon" aria-hidden="true">&#x1F6E0;&#xFE0F;</div>
                     <h3>Developer Tooling</h3>
                     <p>Complete toolkit for building on TrueRepublic: 4 CosmWasm contract examples, shared bindings, and testing utilities with 26 Rust tests.</p>
                 </div>
                 <div class="feature-card">
-                    <div class="feature-icon">&#x1F4F1;</div>
+                    <div class="feature-icon" aria-hidden="true">&#x1F4F1;</div>
                     <h3>Beta Client / Sovereign Alpha</h3>
                     <p>The maintained React Beta provides wallet, governance, DEX, admin and explorer surfaces. GH-215 defines the installable Alpha; GH-236 evolves it into a native TRChain edge architecture. GH-241 adds only the unwired canonical V4-0 Go protocol and tests; no native client or edge runtime exists yet.</p>
                 </div>
@@ -441,7 +450,7 @@
             <h2 class="section-title">Use Cases</h2>
             <div class="use-case-grid">
                 <div class="use-case">
-                    <h3>&#x1F5F3;&#xFE0F; Proxy Parties</h3>
+                    <h3><span aria-hidden="true">&#x1F5F3;&#xFE0F;</span> Proxy Parties</h3>
                     <ul>
                         <li>Direct democracy within political organizations</li>
                         <li>Transparent member will representation</li>
@@ -449,7 +458,7 @@
                     </ul>
                 </div>
                 <div class="use-case">
-                    <h3>&#x1F3E2; DAOs &amp; Communities</h3>
+                    <h3><span aria-hidden="true">&#x1F3E2;</span> DAOs &amp; Communities</h3>
                     <ul>
                         <li>Corporate governance</li>
                         <li>Investment DAOs</li>
@@ -457,7 +466,7 @@
                     </ul>
                 </div>
                 <div class="use-case">
-                    <h3>&#x1F3AF; Organizations</h3>
+                    <h3><span aria-hidden="true">&#x1F3AF;</span> Organizations</h3>
                     <ul>
                         <li>NGO coordination</li>
                         <li>Social movements</li>
@@ -717,12 +726,13 @@
             </div>
         </div>
     </section>
+    </main>
 
     <footer>
         <div class="container">
             <div class="footer-content">
                 <div class="footer-section">
-                    <h4>Product</h4>
+                    <h2>Product</h2>
                     <ul>
                         <li><a href="https://github.com/NeaBouli/TrueRepublic/wiki/users-System-Overview">Overview</a></li>
                         <li><a href="https://github.com/NeaBouli/TrueRepublic/wiki/users-How-It-Works">How It Works</a></li>
@@ -730,7 +740,7 @@
                     </ul>
                 </div>
                 <div class="footer-section">
-                    <h4>Developers</h4>
+                    <h2>Developers</h2>
                     <ul>
                         <li><a href="https://github.com/NeaBouli/TrueRepublic">GitHub</a></li>
                         <li><a href="https://github.com/NeaBouli/TrueRepublic/wiki/develop-Architecture-Overview">Architecture</a></li>
@@ -740,7 +750,7 @@
                     </ul>
                 </div>
                 <div class="footer-section">
-                    <h4>Resources</h4>
+                    <h2>Resources</h2>
                     <ul>
                         <li><a href="https://github.com/NeaBouli/TrueRepublic/wiki">Documentation</a></li>
                         <li><a href="https://github.com/NeaBouli/TrueRepublic/blob/main/docs/WhitePaper_TR_eng.md">Whitepaper</a></li>
@@ -749,7 +759,7 @@
                     </ul>
                 </div>
                 <div class="footer-section">
-                    <h4>Community</h4>
+                    <h2>Community</h2>
                     <ul>
                         <li><a href="https://t.me/truerepublic">Telegram</a></li>
                         <li><a href="https://github.com/NeaBouli/TrueRepublic/issues">GitHub Issues</a></li>
@@ -759,7 +769,7 @@
                 </div>
             </div>
             <div class="footer-bottom">
-                <img src="https://raw.githubusercontent.com/NeaBouli/TrueRepublic/main/assets/logo.png" alt="TrueRepublic" style="width: 30px; height: 30px; vertical-align: middle; margin-right: 8px; opacity: 0.6;">
+                <img src="https://raw.githubusercontent.com/NeaBouli/TrueRepublic/main/assets/logo.png" alt="" style="width: 30px; height: 30px; vertical-align: middle; margin-right: 8px; opacity: 0.6;">
                 <p style="display: inline;">&copy; 2026 TrueRepublic contributors &bull; Community Open Source &bull; Apache-2.0 maintained code/docs</p>
             </div>
         </div>
