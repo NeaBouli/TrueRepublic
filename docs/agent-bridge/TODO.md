@@ -987,3 +987,13 @@
 - [ ] Exact published-head Docs CI and protected integration.
 - [ ] Full #315 mobile navigation, landmarks/semantics, design and live identity.
 No overall #315 or #29 closure; repo-path robots does not prove origin-root policy.
+
+## 2026-10-10T07:52:34Z — owner-requested pause after GH315D1
+
+- [x] Bounded D1 published as Draft371@daf270b with exact local consistency PASS.
+- [x] Record terminal Docs success without fabricating checkout/main acceptance.
+- [ ] Resolve #365 prerequisite acceptance, then ordered GH309/GH300 integrations.
+- [ ] Main allowance freshness/October13 expiry; unmerged renewal is not main policy.
+- [ ] GH315D2 navigation/semantics remains queued, NOT_STARTED until Gio resumes.
+- [ ] Full #315/main/Pages acceptance; Landing367 is candidate-only, productionfalse.
+No new implementation or automatic reactivation after closeout. Claude remains paused.
