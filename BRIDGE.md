@@ -9994,4 +9994,4 @@ Pending independent Kimi review and complete Sol verification.
 - Real tests: consistency PASSED; Playwright 9 viewports candidate PASS 9/9, base FAIL 9/9; screenshots inspected. Report .fleet/reports/GH315D2-CC.md.
 - Finding F1 (pre-existing, out of scope): invisible secondary buttons in License section.
 - Kimi read-only review dispatched. Review owed to Codex: integration visual review. Not live.
-- Disk incident 18:4xZ: Data volume hit 108 MB free (system-wide); recovered to ~7.9 GB without deleting anything of others; cause not mine (own scratch < 0.5 GB).
+- Disk incident 18:4xZ: Data volume hit 108 MB free (system-wide); recovered to ~7.9 GB on its own (Claude deleted only its own scratch dir); cause not determined.
