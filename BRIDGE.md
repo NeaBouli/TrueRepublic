@@ -10081,6 +10081,23 @@ Pending independent Kimi review and complete Sol verification.
 
 ---
 
+## 2026-10-09 — GH309B1I1 reconciliation (Codex) → Partial / integration held
+
+- Gio resumed direct Codex development; Claude is paused and receives no brief or fallback.
+- Normal merge `954fc94` has exact parents `bbc067d` and main `ff63e9d`; only OnboardingFlow and
+  append-only Action Log conflicted. Registration remains disabled before wallet/signing/delivery.
+  Service/tests/browser-contract blobs are unchanged; four Tailwind shrink names differ from
+  the reviewed component. No custody, canonical identity, GH300 or unrelated Fleet stack absorbed.
+- PASS: npm ci, lint, TypeScript, 4 focused cases; 19 Node + 314 Vitest (4 skips); build/budget
+  (gzip entry 73174, maximum lazy route 5054, total JS 363910); full docs consistency; diff hygiene.
+- Browser: Chromium desktop 23/23 PASS, four responsive screenshots inspected. Firefox 19 policy
+  cases PASS; four flows timed out before the target state on host load ~505. No assertion/timeout
+  weakened. Remaining local engines withheld at that capacity; exact-head Hosted CI is required.
+- npm audit/high FAIL on the separate public source-map-js prerequisite #362; no exception.
+- Codex Security NOT RUN: access not connected/verified, destination/code/exclusions/cost not
+  authorized. Existing specialist reviews are not a scan. Main integration remains held; no deploy.
+- Next: publish this exact candidate to existing PR #337, classify fresh CI, then reconcile #362
+  only after its own acceptance. Plaintext custody/canonical/prover work remains separately open.
 ## 2026-10-09T22:00Z — GH364 / GH355 → In Progress
 
 - Owner: Codex; Claude paused. Branch agent/codex/GH364-go-advisories, exact main base ff63e9d.
@@ -10152,3 +10169,12 @@ Pending independent Kimi review and complete Sol verification.
   No additional retry. Publish this draft candidate for complete protected combined CI, not merge.
 - Gio approved Security setup/access preparation only at0 extra spend. Plugin available/not
   installed; entitlement/cost unknown, scan NOT RUN, no code transfer. Main/deployment HELD.
+
+### 2026-10-09T23:54Z — GH309B1I2 prerequisite composition
+
+- Codex sole writer, Claude paused. Normal merge337head11dbd654 + protected365head6d1c79d.
+  Only Bridge/Action Log append conflicts; both complete histories retained. Mapped C4 onboarding
+  containment source/tests/browser contract untouched; no custody/canonical/GH300 stack absorbed.
+- Existing prerequisite exact-head CI30SUCCESS/1conditionalSKIP/0failure retained, not inherited
+  as this new head's qualification. Focused/full client, audit/build/docs and protected gates pending.
+  Codex Security NOT RUN; setup-only0-cost approval is not scan/main/deployment acceptance.

@@ -6043,6 +6043,62 @@
 - Mutation proof (temporary, reverted; source diff empty afterwards): unbound call (`const unbound = globalThis.fetch; return unbound(input, init)`) fails with "expected [ undefined ] to deeply equal [ globalThis ]"; parent implementation (`fetchImpl: Fetch = globalThis.fetch`) fails with TypeError "Illegal invocation" at moduleQuery.ts:410. With the fix: moduleQuery.test.ts 8/8 pass.
 - Gates: npm run lint rc 0; tsc -b --noEmit rc 0; git diff --check clean. Full suite/build not repeated per brief (GH335A evidence stands). No push.
 
+## 2026-10-01 EEST - GH-309 preview identity registration fail-closed (GH309B1, Claude Code)
+
+- Branch `agent/claude/GH309-client-containment` from exact main `1283a445`; commit
+  `aa98b96`. `MembershipService.registerIdentity` returns the stable
+  `PREVIEW_IDENTITY_REGISTRATION_DISABLED` error before any wallet account, signing
+  client or `deliverMessages` call. `OnboardingFlow` no longer has a registration
+  handler; its submit step shows "Identity Registration Unavailable", a disabled
+  44px control and wording that sends nothing and promises no anonymity. The
+  `MsgRegisterIdentity` codec/registry and `ZKPService.isSubmittable === false` are
+  unchanged; no second activation flag was added.
+- Tests: new `membership.test.ts` (service never touches wallet/signing/delivery) and
+  `OnboardingFlow.test.tsx` (disabled, non-focusable control; no signing or service
+  call). Restoring the original service path fails 1 test; restoring the original
+  component fails 2 tests. `npm ci`, focused tests 4/4, `npm run lint`, typecheck and
+  `npm test -- --run` (313 passed, 4 skipped) pass; `npm run audit:high` fails only on
+  the known global brace-expansion advisory fixed by PR #332.
+- Pending (data volume ~3.0 GiB free, below the 5 GiB build threshold): `npm run
+  build`, browser/visual gate with screenshots at 1440x1000, 1180x820, 820x1180 and
+  390x844. Custody, persistence, cryptography and chain-side risks remain open;
+  issue #309 is not closed. No push, PR or deployment.
+
+## 2026-10-01 GH309B1 visual gate (Claude Code)
+
+- Branch agent/claude/GH309-client-containment rebased onto GH335 af0608b (only the append-only Action Log conflict merged, both entries kept): 56ba76e implementation, 28fe3dd log, d1a36aa visual contract.
+- d1a36aa: new client-web/browser-quality/identity-registration-disabled.e2e.ts; OnboardingFlow disabled button gets `disabled:bg-gray-200 disabled:text-gray-600` (local to this control; global .btn-primary unchanged).
+- Chromium (Playwright 1.55.1, build 1193), project chromium-desktop, 4/4 pass at 1440x1000, 1180x820, 820x1180, 390x844: documentOverflow 0; button 44px high (590/590/590/308 wide), inside card; notice inside card, no text overflow; cursor not-allowed; not focusable; click/Enter/Space inert; contrast rgb(75,85,99) on rgb(229,231,235) ~6.1:1; typed Domain query served >= 1; bootstrap calls observed: status only (answered as controlled JSON-RPC error, no data); no violations, no broadcast_tx.
+- Contrast mutation: previous styling (white on gray-300) fails the contract with 1.47:1.
+- Screenshots (inspected, untracked local evidence): screenshots/ux/GH309B1-registration-disabled/{desktop-1440x1000,tablet-landscape-1180x820,tablet-portrait-820x1180,mobile-390x844}.png.
+- Gates: lint rc 0; tsc -b --noEmit rc 0; npm test -- --run 22 files passed/2 skipped, 314 passed/4 skipped; build via Playwright webServer; git diff --check clean. Firefox/WebKit projects not run (only Chromium installed locally). No push.
+
+## 2026-10-01 GH309B1C1 final visual gate (Claude Code, sole owner) — supersedes the GH309B1 visual-gate entry above
+
+- The previous entry (fca0d36) is superseded: its commit d1a36aa contained a mixed spec (a parallel dispatched worker rewrote the file between that run and the commit; Codex stopped the worker and made this stand-in the sole owner). Its screenshots are not evidence for any current head. No reset, revert, amend or force-push; corrected by commit fbf24d4.
+- Branch agent/claude/GH309-client-containment stacked on GH335 af0608b: 56ba76e implementation, 28fe3dd log, 887b7bf submit-card test hardening (dispatched worker; mutation re-checked: dropping "not" fails 1 test, restored 2/2), d1a36aa contrast fix + mixed spec, fca0d36 superseded log, fbf24d4 spec repair.
+- Spec checks: eslint browser-quality/ rc 0; strict standalone tsc --noEmit of the spec + fixtures rc 0 (browser-quality is outside the project tsconfig).
+- Chromium 1193 (Playwright 1.55.1, chromium-desktop), 4/4 pass, all four viewports: documentOverflow 0; disabled control 44px high (590/590/590/308 wide), inside card, label without overflow; notice text inside notice/card, no overflow; tab order equals DOM order and never reaches the disabled control; click/Enter/Space inert, URL and box unchanged; cursor not-allowed; disabled label rgb(75,85,99) on rgb(229,231,235) contrast 6.1 (>= 4.5); warning text contrast 8.38. RPC per viewport: status 1, AllBalances 0, Domain 2 (GH-335 typed query leaves the page and its decoded state reaches the target step), broadcasts 0, violations 0.
+- Contrast mutation: old disabled styling (white on gray-300) fails the final contract with 1.47.
+- New screenshots (inspected): client-web/node_modules/.cache/gh309b1c1-final-evidence/{desktop-1440x1000,tablet-landscape-1180x820,tablet-portrait-820x1180,mobile-390x844}.png, sha256 377b99d5…, 3f8bb99d…, 001f85e5…, 47947aaa… (copy in the stand-in scratchpad).
+- Gates: npm test -- --run 22 passed/2 skipped files, 314 passed/4 skipped; npm run build incl. tsc -b and bundle budget (entry 73168 gzip, total JS 363863); npm run audit:high fails only on the known brace-expansion/minimatch advisory (PR #332); git diff --check clean. Firefox/WebKit not run (only Chromium installed). No push.
+
+## 2026-10-01 GH309B1C1a RPC allowlist hardening (Claude Code, sole owner) — supersedes the GH309B1C1 RPC-policy evidence above
+
+- Codex final review P2: status accepted null/array params and AllBalances was allowed regardless of data/prove/extra fields. Fixed by commit 01968ee (spec only, no product file).
+- Policy now, in order: any broadcast_tx* (method, path or anywhere in the body, incl. batches) is recorded as a broadcast; non-POST, non-root path or non-canonical envelope (exactly jsonrpc "2.0", safe-integer id, string method, params) is a violation; status only with a non-null, non-array empty params object (controlled no-data error); the exact Domain body (synthetic state); everything else a violation. The bank AllBalances exception is removed (the real run never sent it).
+- Browser contract asserts the exact ordered sequence [status, abci_query Domain, abci_query Domain] plus zero broadcasts and zero violations.
+- 19 page-free negative/positive policy cases: status with null, array, extra params, missing params, extra top-level field, string id, wrong jsonrpc, batched; bank AllBalances and Balance; Domain with other id or prove true; other method; GET and other path; broadcast_tx_sync/async/commit and batched broadcast. Mutation: restoring the old `Object.keys(params ?? {})` status check fails exactly the null and array cases; restored 19/19.
+- Spec: eslint browser-quality/ rc 0; strict standalone tsc rc 0; npm run lint rc 0; git diff --check clean.
+- Chromium 1193, chromium-desktop: 23/23 pass (4 viewports + 19 policy). Viewport measurements unchanged from GH309B1C1 (overflow 0, 44px control, contrast 6.1, warning 8.38, tab order = DOM, inert activation). RPC per viewport: sequence [status, Domain, Domain], broadcasts 0, violations 0.
+- New evidence folder client-web/node_modules/.cache/gh309b1c1-a-final-evidence/ (copy + SHA256SUMS in the stand-in scratchpad); all four opened and inspected. The PNGs are byte-identical to the GH309B1C1 run (same product source, deterministic rendering).
+- Unit suite/build not repeated: no product, config or dependency file changed since the GH309B1C1 gates (314/4, build + bundle budget). No push.
+
+## 2026-10-01 GH309B1C1b browser-neutral tab-order anchor (Claude Code, sole owner)
+
+- Hosted CI on PR #337 (run 36826238887, job 110252443763): 156 passed, 2 skipped, 2 failed, only [firefox-desktop] at 820x1180 and 390x844, tab order expected [0,1] received [1,1]. Cause: two tabbables (Back link, floating menu) at those widths and Firefox keeping the sequential-focus start point at the removed "Create Anonymous Identity" button after blur(). Not a product defect.
+- Commit 2fca9ca (spec only): focus the first tabbable explicitly, assert index 0, Tab forward through all tabbables in DOM order, Shift+Tab back in reverse; disabled control and positive tabindex still rejected.
+- Local: eslint browser-quality/ rc 0; strict standalone spec tsc rc 0; Playwright chromium-desktop + chromium-mobile 46/46 pass (2-tabbable path exercised at 820/390). Firefox/WebKit are not installed locally; Hosted-CI Firefox verification and push are Codex's. No product file changed; no push.
 ## 2026-10-04 — GH-350 GH350A1 dependency-security claim correction (CC)
 
 - Continued `agent/claude/GH350-landing-status-refresh @ 889cbfd` on worker
@@ -6082,6 +6138,16 @@
   check-consistency PASSED. Not pushed.
 - Codex opened issue #356 for the three pre-existing P2 UI follow-ups and linked
   that owner from TODO before publication.
+
+## 2026-10-09 — GH309B1I1 direct Codex reconciliation
+
+- Normal merge `954fc94` from reviewed `bbc067d` + exact main `ff63e9d`; conflicts limited to
+  OnboardingFlow class/state reconciliation and preserving both Action Log histories.
+- Client 333 executed cases (314 Vitest + 19 Node), lint/typecheck/build/budget/consistency PASS.
+  Chromium contract 23 PASS and four screenshots inspected; Firefox 19 policy PASS / four
+  pre-target timeouts under load ~505. No timeout increase; remaining engines require Hosted CI.
+- Audit prerequisite #362 and additional Codex Security NOT RUN gate remain open. No custody/ZKP
+  activation, main merge, deployment, security-policy change or duplicate worker dispatch.
 
 ## 2026-10-09T21:03Z — GH-362 source-map-js maintenance (Codex)
 
@@ -6141,3 +6207,9 @@ One private-cache retry fixes npm signature EPERM; one supported Vitest invocati
 obsolete orchestration option. Original Go build passed/vet live. Publish existing draft365 for
 mandatory exact-head protected matrix; acceptance NOT GRANTED. Both authorized337/363 OCI retries
 success; Security setup-only0-cost approval recorded, scan NOT RUN and main/deployment held.
+
+## 2026-10-09T23:54Z — GH309B1I2 normal prerequisite composition (Codex)
+
+Compose exact337head11dbd654 with exact365head6d1c79d. Preserve both log append histories;
+no product-source conflict, custody or canonical activation. New-head gates pending, no inherited
+CI acceptance or scan claim. Claude paused; no main merge, deployment or rollout credit.
