@@ -6,8 +6,8 @@
     "published": true,
     "signed": false
   },
-  "contract_sha256": "5caf7aa63aa1c49b23403e6cd298906592118838f3bb8d82ed9d898b3b5f6c3a",
-  "gates_sha256": "0be87570b32476e6399b33fb57d07972ac7da184691c428f256045c4000db57b",
+  "contract_sha256": "51f474fa10daf5f7770a23ad58981306f9ec837651f95623a321883a4026ac0d",
+  "gates_sha256": "1ad0781a9537ce89d2340b9080f6cc6e4a276dd43724a146cfea62200e6a6655",
   "locks": {
     "go_module": {
       "file": "tools/ci/go.mod",

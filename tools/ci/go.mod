@@ -2,7 +2,7 @@ module truerepublic/tools/ci
 
 go 1.25.8
 
-toolchain go1.26.6
+toolchain go1.26.9
 
 require (
 	github.com/CycloneDX/cyclonedx-gomod v1.10.0

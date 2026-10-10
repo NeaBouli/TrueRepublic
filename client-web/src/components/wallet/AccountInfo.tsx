@@ -50,7 +50,7 @@ export function AccountInfo() {
           </code>
           <button
             onClick={handleCopy}
-            className="p-2 hover:bg-gray-200 rounded transition-colors"
+            className="p-2 hover:bg-gray-200 rounded-sm transition-colors"
           >
             {copied ? (
               <CheckIcon className="h-4 w-4 text-green-600" />

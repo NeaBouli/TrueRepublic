@@ -36,13 +36,13 @@ export function ToastContainer() {
           role={toast.type === 'error' ? 'alert' : 'status'}
           className={`flex items-start gap-3 p-4 rounded-lg border shadow-lg animate-slide-in ${colorMap[toast.type]}`}
         >
-          <div className="flex-shrink-0" aria-hidden="true">
+          <div className="shrink-0" aria-hidden="true">
             {iconMap[toast.type]}
           </div>
           <p className="flex-1 text-sm font-medium">{toast.message}</p>
           <button
             onClick={() => removeToast(toast.id)}
-            className="flex-shrink-0 hover:opacity-70 transition-opacity"
+            className="shrink-0 hover:opacity-70 transition-opacity"
             aria-label="Dismiss"
           >
             <XMarkIcon className="h-4 w-4" />

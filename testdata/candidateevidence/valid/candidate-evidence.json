@@ -10,7 +10,7 @@
       "id": "linux-amd64",
       "metadata": {
         "file": "build-metadata-linux-amd64.json",
-        "sha256": "6db9f21bf2de727de7c13dcca2c6be7c953152757aca6d89cd1dcd0b747ddd10"
+        "sha256": "ad8e4415ccef7e67075f33989ed9e0d0a356d759e6768ed80f3c82e9cec0a013"
       }
     },
     {
@@ -23,7 +23,7 @@
       "id": "linux-arm64",
       "metadata": {
         "file": "build-metadata-linux-arm64.json",
-        "sha256": "d9660201e893e8d9178d1e63b9a7ca0375b976a48ea6d1b8805bfe0d4a143a22"
+        "sha256": "c9d10cf91099f8233e4514063a1fc0978901cdd6a925cb5eb7d12127f2b3cdbf"
       }
     }
   ],
@@ -35,12 +35,12 @@
     "ref_pushed": false,
     "signed": false
   },
-  "contract_sha256": "92d9932b4bc1084a05c38e3aeb5f00a322098225f5c5ced14bf19f9581a82ef0",
+  "contract_sha256": "40397c15379e01353ef9672ce01da1e156fda7906fc57c4b74e1e422b13d9ccb",
   "oci_platforms": [
     {
       "evidence": {
         "file": "oci-evidence-amd64.json",
-        "sha256": "9e13098a6c86fc2e5676bc413b93326e821f1fa7f0354a5e8d8be19cb199e940"
+        "sha256": "8e9ffeafbe845093183e6b6338b496a5b212fd6746dc6c3e75afaea9d4e0a3e3"
       },
       "platform": "linux/amd64",
       "report": {
@@ -71,7 +71,7 @@
     {
       "evidence": {
         "file": "oci-evidence-arm64.json",
-        "sha256": "6b2db2c4e537264883b15ec1022b00a618f5f81d0086f231144ff7bc51c4d25a"
+        "sha256": "472d0d051efd2fbaa212c1f872c1004df711d06dd605a05de162c299f3b8d9cf"
       },
       "platform": "linux/arm64",
       "report": {
