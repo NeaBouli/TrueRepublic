@@ -9987,3 +9987,11 @@ Pending independent Kimi review and complete Sol verification.
 - Verified: main Go exceptions valid through 2026-10-13, rejected from 2026-10-14 UTC.
 - Held for Codex/Gio: scan authorization or bounded lead exception, then review + main merge. No gate rerun, no write to PR.
 - Next: GH315D2.
+
+## 2026-10-10T19:05Z [AUTOR: CC]
+### TYPE: REPORT — GH315D2 landing nav/semantics built (Draft #372)
+- Branch agent/claude/GH315D2-landing-semantics @ 669e21c (base #371 @ 5f99c25), docs/index.html only.
+- Real tests: consistency PASSED; Playwright 9 viewports candidate PASS 9/9, base FAIL 9/9; screenshots inspected. Report .fleet/reports/GH315D2-CC.md.
+- Finding F1 (pre-existing, out of scope): invisible secondary buttons in License section.
+- Kimi read-only review dispatched. Review owed to Codex: integration visual review. Not live.
+- Disk incident 18:4xZ: Data volume hit 108 MB free (system-wide); recovered to ~7.9 GB without deleting anything of others; cause not mine (own scratch < 0.5 GB).
