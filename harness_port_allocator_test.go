@@ -406,14 +406,42 @@ func TestLifecycleNodeExitFailsFastWithLogTail(t *testing.T) {
 		t.Fatalf("report lacks exit or log tail: %v", err)
 	}
 	// kill after exit must not block, double-Wait or panic.
-	done := make(chan struct{})
+	done := make(chan error, 1)
 	go func() {
-		node.kill()
-		close(done)
+		done <- node.kill(time.Now().Add(5 * time.Second))
 	}()
 	select {
-	case <-done:
+	case err := <-done:
+		if err != nil {
+			t.Fatalf("kill after exit failed: %v", err)
+		}
 	case <-time.After(5 * time.Second):
 		t.Fatal("kill after exit blocked")
+	}
+}
+
+func TestLifecycleNodeKillUsesOriginalDeadline(t *testing.T) {
+	for _, duration := range []time.Duration{-time.Millisecond, 50 * time.Millisecond} {
+		t.Run(duration.String(), func(t *testing.T) {
+			// Only our already reaped child is addressed. The deliberately pending
+			// exit signal models a failed Kill with no completion from the Wait owner.
+			cmd := exec.CommandContext(t.Context(), os.Args[0], "-test.run=^$")
+			if err := cmd.Run(); err != nil {
+				t.Fatal(err)
+			}
+			node := &lifecycleNode{cmd: cmd, exited: make(chan struct{})}
+			defer close(node.exited) // also release an unbounded-wait negative control
+			done := make(chan error, 1)
+			deadline := time.Now().Add(duration)
+			go func() { done <- node.kill(deadline) }()
+			select {
+			case err := <-done:
+				if err == nil || !errors.Is(err, os.ErrProcessDone) || !strings.Contains(err.Error(), "child may be unreaped") {
+					t.Fatalf("missing bounded pending-reap/Kill failure: %v", err)
+				}
+			case <-time.After(time.Second):
+				t.Fatal("kill ignored the original deadline")
+			}
+		})
 	}
 }

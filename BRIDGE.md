@@ -10190,3 +10190,13 @@ count is provisional for this newcandidate and will be replaced only by an actua
 Port policy separately held; mapped bounded cleanup work proceeds. Modern-head gates NOT RUN,
 official Codex Security NOT RUN; no main/protection/production/foreign cleanup action.
 ---
+
+## 2026-10-10T04:05:15Z — T3 bounded shutdown candidate, runtime pending
+
+Codex sole writer; existing mapped T3 helper/regression scope only. Shutdown cleanup observes
+the caller's original absolute deadline and sole Wait owner, without a second Wait or extra
+grace period; pending reap/Kill failure is reported. Focused regression covers expired/future
+budgets and kill-after-exit. Source formatting/diff and independent scoped fix review OK.
+Actual focused race74259 still cold-compiling on the overloaded host; no terminal PASS.
+Source checkpoint only, no push/main acceptance or count credit; independent allocator policy
+and modern-head full harness/negative qualification remain open. No foreign process touched.

@@ -6141,3 +6141,9 @@ One private-cache retry fixes npm signature EPERM; one supported Vitest invocati
 obsolete orchestration option. Original Go build passed/vet live. Publish existing draft365 for
 mandatory exact-head protected matrix; acceptance NOT GRANTED. Both authorized337/363 OCI retries
 success; Security setup-only0-cost approval recorded, scan NOT RUN and main/deployment held.
+
+## 2026-10-10T04:05:15Z — bounded T3 source checkpoint
+
+Mapped deadline cleanup and focused regression recorded; original deadlines/sole Wait retained.
+Independent narrow fix review OK, formatting/diff PASS. Focused race74259 RUNNING, negative
+control/full modern-head gates owed. No new counts, push, main, production or foreign cleanup.

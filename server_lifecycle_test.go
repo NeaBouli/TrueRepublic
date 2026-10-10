@@ -282,6 +282,7 @@ func TestNodeStartsStopsAndRestartsFromPersistentHome(t *testing.T) {
 	}
 	stop := func(node *lifecycleNode) {
 		t.Helper()
+		deadline := time.Now().Add(15 * time.Second)
 		if err := node.cmd.Process.Signal(os.Interrupt); err != nil {
 			_ = node.cmd.Process.Kill()
 		}
@@ -292,10 +293,10 @@ func TestNodeStartsStopsAndRestartsFromPersistentHome(t *testing.T) {
 				content, _ := os.ReadFile(node.logFile.Name())
 				t.Fatalf("node did not stop cleanly: %v\n%s", node.err, content)
 			}
-		case <-time.After(15 * time.Second):
-			node.kill()
+		case <-time.After(time.Until(deadline)):
+			cleanupErr := node.kill(deadline)
 			_ = node.logFile.Close()
-			t.Fatal("node did not stop within 15 seconds")
+			t.Fatalf("node did not stop within 15 seconds (cleanup: %v)", cleanupErr)
 		}
 		_ = node.logFile.Close()
 	}
@@ -392,10 +393,10 @@ func waitForApplicationMetrics(
 		}
 		time.Sleep(250 * time.Millisecond)
 	}
-	node.kill()
+	cleanupErr := node.kill(deadline)
 	_ = node.logFile.Close()
 	content, _ := os.ReadFile(node.logFile.Name())
-	t.Fatalf("application metrics did not reach height %d\n%s", minimumHeight, content)
+	t.Fatalf("application metrics did not reach height %d (cleanup: %v)\n%s", minimumHeight, cleanupErr, content)
 	return applicationMetricsSnapshot{}
 }
 
@@ -487,16 +488,17 @@ func waitForApplicationMetricsDisabled(t *testing.T, url string, node *lifecycle
 		}
 		time.Sleep(250 * time.Millisecond)
 	}
-	node.kill()
+	cleanupErr := node.kill(deadline)
 	_ = node.logFile.Close()
 	content, _ := os.ReadFile(node.logFile.Name())
 	if exposed {
-		t.Fatalf("disabled application telemetry exposed the metrics endpoint\n%s", content)
+		t.Fatalf("disabled application telemetry exposed the metrics endpoint (cleanup: %v)\n%s", cleanupErr, content)
 	}
 	t.Fatalf(
-		"disabled application telemetry did not settle on a 501 endpoint (last status=%d, last error=%v)\n%s",
+		"disabled application telemetry did not settle on a 501 endpoint (last status=%d, last error=%v, cleanup=%v)\n%s",
 		lastStatus,
 		lastErr,
+		cleanupErr,
 		content,
 	)
 }
@@ -536,11 +538,12 @@ func assertStructuredNodeLogs(t *testing.T, path string) {
 
 func waitForNodeHeight(t *testing.T, url string, minimum int64, node *lifecycleNode) int64 {
 	t.Helper()
-	height, err := nodeHeightWithin(url, minimum, node, 60*time.Second)
+	deadline := time.Now().Add(60 * time.Second)
+	height, err := nodeHeightWithin(url, minimum, node, time.Until(deadline))
 	if err != nil {
-		node.kill()
+		cleanupErr := node.kill(deadline)
 		_ = node.logFile.Close()
-		t.Fatal(err)
+		t.Fatalf("%v (cleanup: %v)", err, cleanupErr)
 	}
 	return height
 }
@@ -610,11 +613,28 @@ func (node *lifecycleNode) hasExited() bool {
 	}
 }
 
-// kill terminates the node and waits for the owned Wait to finish, so no
-// second Wait is issued and the goroutine never leaks.
-func (node *lifecycleNode) kill() {
-	_ = node.cmd.Process.Kill()
-	<-node.exited
+// kill attempts termination and observes the sole Wait within the caller's
+// original deadline. A failed kill cannot guarantee reaping; report it rather
+// than waiting indefinitely or extending an already expired shutdown budget.
+func (node *lifecycleNode) kill(deadline time.Time) error {
+	killErr := node.cmd.Process.Kill()
+	if node.hasExited() {
+		return nil
+	}
+	remaining := time.Until(deadline)
+	if remaining > 0 {
+		timer := time.NewTimer(remaining)
+		defer timer.Stop()
+		select {
+		case <-node.exited:
+			return nil
+		case <-timer.C:
+		}
+	}
+	if killErr != nil {
+		return fmt.Errorf("shutdown deadline reached; child may be unreaped (kill: %w)", killErr)
+	}
+	return errors.New("shutdown deadline reached; child may be unreaped")
 }
 
 func (node *lifecycleNode) exitReport() string {
