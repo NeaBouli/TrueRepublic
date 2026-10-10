@@ -6494,3 +6494,13 @@ ExistingClientCI now invokes the actual browser-WASM/native/Keeper runner in add
 unchanged Node runner. Local lockfile-pinned headless shell only; no rootdependency install.
 ScopedindependentreviewOK; local repositoryguardRUNNING/HostedNOTRUN. SourceC8 and consensus
 unchanged, productionfalse/isSubmittablefalse/test-only artifacts preserved.
+
+## 2026-10-10T03:21:06Z — GH300C7-H2 final transport qualification (Codex)
+
+Existing browser qualification script only: finalbloba4016a78 stable artifact completion
+queue and one original120s proof deadline, fixed-origin/known-route/HTTP200/pinned glueSHA.
+Final3068 terminalrc0: actual Chromium fresh proof/glue1/noartifact failures, native0.03s,
+Keeper reward/replay/adversarial/strict-handoff20.103s PASS. Four exact-source guard controls
+PASS; independent fix review OK, syntax/eslint/diff PASS. Server pretransform stderr retained,
+no suppression/general error-free claim. No product activation, crypto pin/dependency change,
+official scan, main merge, deployment or rollout credit; exact new-head CI still owed.
