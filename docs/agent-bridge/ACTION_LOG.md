@@ -108,6 +108,26 @@
   baseline), license policy and consistency pass. Not pushed.
 ---
 
+## 2026-10-03 - GH300B4B offline VK admission and genesis-evidence gate
+
+- Added `configs/security/zkp-vk-admission.json` (schema v1, empty production
+  allowlist, explicit denial of the frozen TEST-ONLY VK `80b92df9...e289`,
+  460 bytes) and the stdlib-only `x/truedemocracy/zkpadmission` classifier:
+  `absent`, `test-only-denied`, `unadmitted`, `production-admitted`.
+- Policy parsing rejects unknown/duplicate keys, trailing data, malformed
+  digests or sizes, duplicates, deny/allow overlap and incomplete provenance;
+  a contract test pins config == compiled policy and the denied key to both
+  TEST-ONLY manifests and the WASM prover pin.
+- Rollout genesis evidence gains a `zkp-verifying-key` check: only an
+  explicitly classified absent (or admitted) key passes; test-only,
+  unadmitted, partial, mismatched, oversized and non-canonical triples fail.
+  The manifest stays v1; checks carry an additive `classification` field.
+- Consensus is unchanged: a module test proves the frozen and a fresh setup
+  VK still pass `ValidateMembershipVerifyingKey` while classifying as denied
+  and unadmitted. No artifact, production digest, ceremony, push or rollout
+  credit.
+
+---
 ## 2026-10-03 - GH300B3a disabled preview voting status fixed
 
 - Codex's focused B3 review returned `changes` with one P3: while

@@ -29,6 +29,19 @@ negative or non-canonical amounts, mismatched custody and ambiguous validator
 sets fail closed. Ordinary indented Cosmos genesis JSON is accepted; its exact
 raw bytes, including whitespace, are covered by the SHA-256 binding.
 
+## ZKP verifying-key admission
+
+The `zkp-verifying-key` check (GH300B4B) classifies the genesis
+`truedemocracy` triple `zkp_circuit_id`, `verifying_key_hex` and
+`verifying_key_sha256` with `configs/security/zkp-vk-admission.json`. Its
+`classification` is `absent`, `test-only-denied`, `unadmitted` or
+`production-admitted`. Only an absent key (anonymous voting stays disabled on
+chain) or a production-admitted key passes. The frozen GH-198/GH-300 TEST-ONLY
+key, any other unadmitted key, and any partial, mismatched, oversized or
+non-canonical triple fail. The production allowlist is empty: no ceremony
+output is admitted yet. This is an offline evidence gate only; chain genesis
+validation is unchanged.
+
 ## Verify offline
 
 The pinned Go toolchain and the complete module cache must be prepared first;
