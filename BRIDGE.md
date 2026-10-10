@@ -10194,3 +10194,11 @@ Pending independent Kimi review and complete Sol verification.
   No new content/style/control or runtime change; existing inspected visual evidence retained.
 - Exact composed protected CI required; no previous PASS reassigned to this head. Main stillff63e9d,
   Codex Security NOT RUN, no scan/transfer/production acceptance or full314/rollout closure.
+
+## 2026-10-10T03:57:32Z — GH314B retained history classification
+
+Only optional-indexer/session-summary header metadata classifies superseded records and links
+the active roadmap/status. Historical bodies byte-identical; PDFs/UI artifacts untouched.
+Focused header/link/body checks, consistency41549rc0, licensing31476rc0 and diff-check PASS;
+independent narrow review OK. Existing Draft366 follow-up, not whole314/main/live acceptance.
+No metric/rollout/production change; preserved GH313 V0.3.0 banner not duplicated.

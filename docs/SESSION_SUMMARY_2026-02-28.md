@@ -1,5 +1,9 @@
 # Session Summary: v0.3.0 Week 1-7 Complete
 
+> Historical session record — superseded. Retained for reference only; not the active roadmap,
+> a release commitment, or current test/production evidence. See [ROLLOUT_ROADMAP.md](ROLLOUT_ROADMAP.md)
+> and [status.json](status.json).
+
 **Date:** Saturday, February 28, 2026
 **Scope:** v0.3.0 Weeks 1-7 complete
 **Developer:** Kaspartizan (with Claude Code assistance)

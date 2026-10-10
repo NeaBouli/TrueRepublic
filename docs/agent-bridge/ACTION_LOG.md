@@ -6163,3 +6163,9 @@ exact-head protected CI, independent acceptance and live Pages remain required, 
 Normal96371ac+6d1c79d, only additive log histories conflicted; unchanged content predicate/whitepapers,
 Landing combines previously verified independent text-only nodes. New protected-head CI required;
 no scan, main merge, runtime change, full314 closure or rollout credit. Claude stays paused.
+
+## 2026-10-10T03:57:32Z — D2 historical header qualification
+
+Two header-only classifications preserve full bodies and retained artifacts. Focused checks,
+consistency/license/diff PASS; bounded independent review OK. Draft366 update only; main,
+live publication, dependent308/313/count acceptance and whole314 closure remain open.
