@@ -10195,6 +10195,22 @@ Pending independent Kimi review and complete Sol verification.
 - New exact-head focused/full/protected qualification and independent delta review pending.
   Security scan NOT RUN; no main merge, deployment or rollout credit.
 
+### 2026-10-10 — GH309B4I1 reviewed lifecycle and truthful custody UI
+
+- Codex sole writer normally composes3405014302 +339b98e8c2. Accepted session/store/migration/
+  custody behavior and browser contracts preserved; eight mechanical Tailwindv4 class renames,
+  no new UI feature. Status45components/21services with current dependency/security/build pins.
+- Both histories retained. Fresh independent composition review, full client and28-state visual
+  evidence pending; pending tests are NOT PASS. No activation, plaintext removal, main/deploy,
+  official Security scan or rollout credit. Claude remains paused.
+
+### 2026-10-10 — lifecycle test completion synchronization
+
+- Original focused38PASS/4FAIL retained honestly. Test-only wrapper awaits real identity load,
+  including stale completion; unchanged production/KDF/assertions/timeouts, action restored.
+- Independent targeted reviewOK; identityStore10/10PASS. Lint/typecheck/full/visual pending.
+  No canonical activation, official scan, main/deploy or rollout credit. Claude paused.
+
 ### 2026-10-10 — explicit wallet race completion barrier
 
 - Old full suite344PASS/1timeout/4SKIP is NOT PASS. Test-only synchronous deferred-entry
@@ -10208,3 +10224,14 @@ Pending independent Kimi review and complete Sol verification.
   Entry73508/maxroute5054/totalJS364253 gzipbytes. Normal merge of33886fc26f retains both
   append histories and only its reviewed deterministic wallet test barrier; production unchanged.
 - New head focus/consistency and protected qualification pending; scan NOT RUN, main held.
+
+### 2026-10-10 — lifecycle visual qualification and prerequisite propagation
+
+- ce4e4f5 build/budget PASS77549entry/5697maxroute/367848totalJSgzipbytes. One corrected
+  process-permission invocation83088 PASS47 Chromium cases (24custody+4onboarding+19RPC).
+  All28actual screenshots opened/inspected by Codex; overflow/clipping/overlap/errors absent,
+  minimum notice text contrast5.02, disabled onboarding6.1,44px target, no broadcasts/secret DOM.
+- Earlier startup timeout and sandbox launchSIGTRAP/aborted143 remain NOT PASS; no assertions
+  or deadlines weakened. Own preview stopped after capture, no foreign process touched.
+- Normal merge33930fd630 brings only reviewed wallet test barrier and append logs; identity
+  fixture real-completion fix preserved. Full updated-client and protected qualification pending.

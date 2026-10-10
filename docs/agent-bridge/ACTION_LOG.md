@@ -6141,6 +6141,8 @@
 - Hosted CI on PR #337 (run 36826238887, job 110252443763): 156 passed, 2 skipped, 2 failed, only [firefox-desktop] at 820x1180 and 390x844, tab order expected [0,1] received [1,1]. Cause: two tabbables (Back link, floating menu) at those widths and Firefox keeping the sequential-focus start point at the removed "Create Anonymous Identity" button after blur(). Not a product defect.
 - Commit 2fca9ca (spec only): focus the first tabbable explicitly, assert index 0, Tab forward through all tabbables in DOM order, Shift+Tab back in reverse; disabled control and positive tabindex still rejected.
 - Local: eslint browser-quality/ rc 0; strict standalone spec tsc rc 0; Playwright chromium-desktop + chromium-mobile 46/46 pass (2-tabbable path exercised at 820/390). Firefox/WebKit are not installed locally; Hosted-CI Firefox verification and push are Codex's. No product file changed; no push.
+
+## 2026-10-01 GH309B2B custody primitive and identity vault core (Claude Code, sole owner)
 ## 2026-10-04 — GH-350 GH350A1 dependency-security claim correction (CC)
 
 - Continued `agent/claude/GH350-landing-status-refresh @ 889cbfd` on worker
@@ -6181,6 +6183,33 @@
 - Codex opened issue #356 for the three pre-existing P2 UI follow-ups and linked
   that owner from TODO before publication.
 
+## 2026-10-09 — GH309B1I1 direct Codex reconciliation
+
+## 2026-10-01 GH309B2C1 migration semantic-integrity findings closed (Claude Code, sole owner)
+
+- Mapping first: stand-in branch commit 38d2eae adds the custody envelope, identity vault, legacy migration and historical preview hash nodes plus the edge canonical legacy preview bytes -> historical FNV consistency check -> migration class to docs/architecture/MAP.md (mapping only).
+- cf47646: client-web/src/services/previewIdentityHash.ts::previewMockIdentityHash (pure, preview/mock-named FNV-1a, documented as not MiMC/BN254); ZKPService.mockMiMCHash delegates to it unchanged.
+- d087158: identityMigration.ts — parseMarker accepts exactly 14 state/address/reason combinations (DETECTED null/null; PENDING/WRITTEN/VERIFIED canonical address + null reason; QUARANTINED null address + one of oversized/not-json/schema/non-canonical/preview-hash-mismatch; ERROR canonical address + vault-conflict/verify-mismatch/vault-corrupt, or legacy-changed with canonical or null address); anything else is corrupt-marker and left untouched. classifyLegacyIdentity quarantines (preview-hash-mismatch) any canonical record whose commitment != hash(secret) or nullifier != hash(secret + "00"); no vault write, plaintext kept. mimcBn254 is never used in production code. Identity-bytes encryption and full-raw SHA-256 binding unchanged.
+- Tests (identityMigration.test.ts 24): frozen vectors from the pre-extraction ZKPService (secret a1x32 -> e10df405x8 / ab84528dx8, empty -> 811c9dc5x8) and generator delegation; commitment-only, nullifier-only, swapped and BN254-MiMC commitments quarantined; migration-level mismatch -> QUARANTINED with one marker write and no vault; exhaustive 6x3x11 = 198 marker combinations, exactly 14 legal; a complete contradictory marker stays untouched on migrate. All prior transition/crash/lock/session tests kept (fixtures now FNV-consistent). Mutations caught: no hash check (2 fail), nullifier check removed (2), marker semantics disabled (1), helper seed changed (16).
+- Gates: npm run lint rc 0; tsc -b --noEmit rc 0; npm test -- --run 23 files passed / 2 skipped, 364 passed / 4 skipped; npm run build with bundle budget (entry 73515, total JS 364355); git diff --check clean. npm run audit:high hung twice (>10 min, then >3 min; registry reachable) and was stopped — not re-classified in this run; package.json/package-lock.json are identical to main, whose audit result on this branch 30 min earlier was only the known #332 advisory. Free disk 3.9 GiB (below the 5 GiB rule). No push.
+
+## 2026-10-01 GH309B2D1 custody lifecycle and recovery UI — partial (Claude Code, sole owner)
+
+- Branch agent/claude/GH309-lifecycle-ui = #337 head bbc067d + merge of #339 head d7e9249 (6bca794; only the append-only Action Log conflicted, both histories kept; both heads verified as ancestors).
+- 9ae110a (store + UI, atomic): stores/identityStore.ts memory-only (no persist middleware; `identity-store` never hydrated/rewritten/removed), states locked/loading/absent/legacy-pending/quarantined/error/ready, token-guarded load/migrateLegacy, file exports with bounded warnings, no create/import/clear API. stores/walletStore.ts: identity invalidated synchronously inside beginWalletSessionTransition (create/import/switch/lock/delete-current) before any await; startIdentitySession after successful create/import/switch with isCurrent = same generation + address + unlocked + password; exported currentIdentitySession and WALLET_DELETE_BLOCKED_BY_IDENTITY; deleteWallet refuses on an existing, corrupt or unreadable vault (invalid historical addresses stay deletable). UI: new IdentityCustodyNotice (all states, Encrypt Into This Wallet only on explicit click, Download Unencrypted Data File / Download Identity Backup File, disabled creation and deletion controls with descriptions); IdentitySetup and IdentityManager reduced to it; OnboardingFlow identity step shows "Identity Creation Unavailable" with a disabled control; utils/identityDownload.ts (Blob download, no clipboard).
+- Tests: stores/identityStore.test.ts 10 (reload never hydrates; absent; detect -> explicit migrate -> ready with plaintext kept and no secret in other storage keys; vault open memory-only; quarantined/corrupt/no-locks states; wrong password keeps wallet unlocked; synchronous invalidation on lock/switch/create/import/delete-current; stale completions dropped; delete refusal incl. corrupt vault; file exports only on request; generator/registration/clipboard never called). IdentityCustodyNotice.test.tsx 9; OnboardingFlow.test.tsx +1 (no creation, generator not called). Full suite 27 files passed / 2 skipped, 389 passed / 4 skipped; lint rc 0; tsc -b rc 0; git diff --check clean.
+- 926fe25: browser contracts written, lint and strict tsc clean, NOT YET EXECUTED: identity-custody.e2e.ts (6 states x 4 viewports) and the rewritten #337 contract (identity-creation-unavailable step, RPC sequence [status, Domain]).
+- Blocker: the lockfile-matched Chromium headless_shell-1193 was removed from ~/Library/Caches/ms-playwright when another project installed chromium-1228/1243 (11:42-11:55). Codex: reinstall only with >= 5 GiB free; currently 3.1 GiB. Build/budget, audit and the visual gate are pending. No push.
+
+## 2026-10-01 GH309B2D1 visual gate completed (Claude Code, sole owner) — supersedes the partial entry above
+
+- Preflight 10:15Z: 8.4-9.1 GiB free, no TrueRepublic build (only an orphaned Chrome from another session). Codex-approved `npx playwright install chromium --only-shell` restored the lockfile-matched Chromium Headless Shell 140.0.7339.186 (build 1193, 75 MiB). Builds took ~90 s under load, so the preview was started from the fresh build and reused by Playwright (reuseExistingServer); each product change was rebuilt before rerunning.
+- Visual-inspection fixes, 041c64a: distinct loading heading "Checking Preview Identity" (the first ready screenshot had captured the loading screen because both headings were "Preview Identity"); header aligned to the card width; last notice without trailing gap; header icons flex-shrink-0; onboarding identity step uses ShieldExclamationIcon (yellow) instead of a success checkmark.
+- Spec fixes, 4fea10c: accessible names from aria-labelledby / aria-label / text (the floating menu has aria-label "Navigation menu"); the ready state waits for its own marker and no loading heading may remain; keyboard focus cleared before the evidence screenshot.
+- Inventory, 0d31936: docs/status.json web_client components 44 -> 45, services 17 -> 21 (stores 9, routes 23 unchanged), matching scripts/check-consistency.sh counts.
+- Chromium (chromium-desktop): identity-custody.e2e.ts 24/24 (locked, absent, legacy-pending, quarantined, error, ready x 1440x1000, 1180x820, 820x1180, 390x844) and identity-registration-disabled.e2e.ts 23/23 (4 viewports + 19 RPC policy cases) = 47 passed. Every state: documentOverflow 0; all visible buttons >= 44x44 CSS px, text/button contrast >= 4.5 (min text contrast 5.02), no label or text overflow, texts inside the card; disabled controls inert for click/Enter/Space and absent from the tab order; tab order equals DOM order; aria-describedby targets resolve; role=status present except ready; the synthetic secret never in DOM or console; zero clipboard calls; RPC only canonical status (1 per wallet flow), zero violations/broadcasts; ready download = truerepublic-preview-identity.json with canonical:false and the warning. Onboarding RPC sequence [status, Domain].
+- All 28 final screenshots opened and inspected (4 onboarding + 24 custody); evidence copies with SHA256SUMS in the stand-in scratchpad gh309b2d1-final-evidence/.
+- Gates on the final head: npm test -- --run 27 files passed / 2 skipped, 389 passed / 4 skipped; npm run lint rc 0; tsc -b --noEmit rc 0; npm run build with bundle budget passed (entry 77557 gzip, total JS 367895; entry grew ~4 KiB because walletStore now imports the custody/migration core); git diff --check clean. npm run audit:high hung again locally (>4 min, stopped); package.json/package-lock.json are identical to main, so the hosted node-audit-client/build audit remains authoritative (expected: only the #332 advisory). Firefox/WebKit via Hosted CI. No push.
 ## 2026-10-09 — GH309B1I1 direct Codex reconciliation
 
 - Normal merge `954fc94` from reviewed `bbc067d` + exact main `ff63e9d`; conflicts limited to
@@ -6273,6 +6302,27 @@ change; plaintext remains, no unattended removal or canonical activation. New-he
 full and protected gates pending; independent composition review requested. Claude paused,
 Codex Security NOT RUN, no main/production action or rollout credit.
 
+## 2026-10-10 — GH309B4I1 existing wallet-session and custody UI composition (Codex)
+
+Normal reviewed3405014302 +339b98e8c2. Restore accepted IdentityManager custody notice,
+keep accepted stores/download/specs and every core custody/migration byte. Mechanical Tailwindv4
+adaptation exactly8 flex-shrink-0 -> shrink-0 (4 OnboardingFlow,4 IdentityCustodyNotice); no
+UI redesign. Status45components/21services retains current baseline metrics and365 pins.
+Both append histories preserved; duplicate heading anchors retained where necessary to avoid
+misattributing shared merge context. Two rejected patch preflights changed no file; final scoped
+apply_patch resolution inspected. New local/visual/protected qualification and independent delta
+review pending. No creation/import/identity deletion, canonical activation, unattended plaintext
+removal, scan, main merge/deployment or rollout credit; Claude remains paused.
+
+## 2026-10-10 — GH309 real identity completion in lifecycle tests (Codex)
+
+Old focused38PASS/three premature loading assertions/one wallet timeout, not PASS. Test wrapper
+delegates to the real load action and awaits its complete Promise; replaces silently expiring
+200x10ms polling and stale-completion1500ms delay. Original action restored afterEach. Production,
+crypto/KDF, expectedstates/secret-storage/lock assertions and deadlines remain unchanged.
+Independent focused reviewOK; identityStore10/10PASS. Lint/typecheck ongoing. Full/new-head
+and visual qualification remain open; no old PASS inheritance, official scan or main/deploy.
+
 ## 2026-10-10 — GH309 deterministic wallet race test barrier (Codex)
 
 Old e356 full client344PASS/1wallet5000ms timeout/4SKIP, not PASS; subsequent build/audit
@@ -6286,3 +6336,12 @@ qualification pending. No load-only verdict, security-scan claim, main merge or 
 Full b98e8c2 client56572rc0PASS369Vitest/4SKIP+19Node; lint/typecheck/build/budget/audit/graph
 PASS. Normal merge33886fc26f changes only its reviewed wallet test barrier plus append histories,
 no production/KDF/migration semantics. New focus/consistency/protected gates pending; main held.
+
+## 2026-10-10 — GH309B4I1 inspected Chromium qualification (Codex)
+
+ce4e4f5 actual build/budget PASS; corrected OS-process-permission gate83088rc0/47PASS.
+Root opened all28 screenshots/four viewports/six custody states: no measured/layout issue,
+notice contrast>=5.02, disabled onboarding6.1/44px, no broadcast/secretDOM/clipboard calls.
+Prior startup/launch-abort evidence retained, not PASS; no test/timeouts/source weakened.
+Normal33930fd630 merge only wallet test barrier+append history; production/UI bytes retained.
+New-head full/protected gates pending; own preview stopped, no official scan/main/production.

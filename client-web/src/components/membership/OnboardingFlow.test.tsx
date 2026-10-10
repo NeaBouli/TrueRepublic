@@ -1,11 +1,13 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { fireEvent, render, screen, within } from '@testing-library/react';
+import { act, fireEvent, render, screen, within } from '@testing-library/react';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { useWalletStore } from '@/stores/walletStore';
 import { useIdentityStore } from '@/stores/identityStore';
 import { useMembershipStore } from '@/stores/membershipStore';
 import { MembershipService, PREVIEW_IDENTITY_REGISTRATION_DISABLED } from '@/services/membership';
 import { WalletService } from '@/services/wallet';
+import { ZKPService } from '@/services/zkp';
+import { IDENTITY_CREATION_DISABLED } from '@/stores/identityStore';
 import { OnboardingFlow } from './OnboardingFlow';
 
 const DOMAIN = 'GH309';
@@ -34,7 +36,7 @@ function renderSubmitStep() {
     currentWallet: { address: ADDRESS, name: 'test', createdAt: 0 },
     password: 'synthetic-password',
   });
-  useIdentityStore.setState({ identity: SYNTHETIC_IDENTITY, hasIdentity: true, isInitialized: true });
+  useIdentityStore.setState({ identity: SYNTHETIC_IDENTITY, hasIdentity: true, status: 'ready', problem: null });
   useMembershipStore.setState({
     memberships: {
       [DOMAIN]: {
@@ -100,5 +102,27 @@ describe('OnboardingFlow identity registration step (issue #309)', () => {
     expect(getWalletForSigning).not.toHaveBeenCalled();
     expect(registerIdentity).not.toHaveBeenCalled();
     expect(screen.queryByRole('button', { name: 'Register Identity Commitment' })).not.toBeInTheDocument();
+  });
+
+  it('offers no identity creation in the identity step and never calls the generator', () => {
+    const generateIdentity = vi.spyOn(ZKPService.prototype, 'generateIdentity');
+    renderSubmitStep();
+    act(() => {
+      useIdentityStore.setState({ identity: null, hasIdentity: false, status: 'absent', problem: null });
+    });
+
+    expect(screen.getByRole('heading', { name: 'Identity Creation Unavailable' })).toBeInTheDocument();
+    expect(screen.getByTestId('identity-creation-disabled-notice')).toHaveTextContent(IDENTITY_CREATION_DISABLED);
+    expect(screen.queryByRole('button', { name: 'Create Anonymous Identity' })).not.toBeInTheDocument();
+    const control = screen.getByRole('button', { name: 'Identity Creation Disabled in Preview' });
+    expect(control).toBeDisabled();
+    expect(control).toHaveAttribute('aria-describedby', 'onboarding-identity-creation-disabled-reason');
+    fireEvent.click(control);
+    fireEvent.keyDown(control, { key: 'Enter' });
+    fireEvent.keyDown(control, { key: ' ' });
+    control.focus();
+    expect(control).not.toHaveFocus();
+    expect(generateIdentity).not.toHaveBeenCalled();
+    expect(useIdentityStore.getState().hasIdentity).toBe(false);
   });
 });
