@@ -79,7 +79,7 @@ The exact community licensing decision is recorded in
 
 | Layer | Recovery version |
 |---|---|
-| Go | 1.26.6 |
+| Go | 1.26.9 |
 | Cosmos SDK | v0.50.15 |
 | CometBFT | v0.38.26 |
 | ibc-go | v8.7.0 |

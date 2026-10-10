@@ -16,7 +16,7 @@ npm run build    # Production build
 - **Vite 8.2** (build tooling)
 - **CosmJS 0.39** (blockchain interaction)
 - **Zustand 4.5** (state management)
-- **TailwindCSS 3.4** (styling)
+- **TailwindCSS 4.3** (styling)
 - **React Router v7** (declarative SPA routing)
 - **Heroicons** (icons)
 

@@ -11,8 +11,8 @@ import (
 const (
 	zkpBrowserManifestSchema = "truerepublic/zkp-artifact-manifest/v1"
 	zkpTestClassification    = "TEST-ONLY SINGLE-PARTY TOXIC WASTE"
-	zkpBrowserWASMSize       = 18778166
-	zkpBrowserWASMSHA256     = "4771efb0fc6ca368bf9f3c79d7e1995eda2a24059d01309f77fe931a4e6552b4"
+	zkpBrowserWASMSize       = 18778260
+	zkpBrowserWASMSHA256     = "d2cf62c436055de543562347f877554c631fbffbdafa26155c96c07d6dc67d66"
 )
 
 type zkpBrowserArtifactDescriptor struct {

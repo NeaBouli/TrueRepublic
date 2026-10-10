@@ -20,7 +20,7 @@
   },
   "wasm": {
     "path": "__zkp/zkp-prover.wasm",
-    "size_bytes": 18778166,
-    "sha256_hex": "4771efb0fc6ca368bf9f3c79d7e1995eda2a24059d01309f77fe931a4e6552b4"
+    "size_bytes": 18778260,
+    "sha256_hex": "d2cf62c436055de543562347f877554c631fbffbdafa26155c96c07d6dc67d66"
   }
 }

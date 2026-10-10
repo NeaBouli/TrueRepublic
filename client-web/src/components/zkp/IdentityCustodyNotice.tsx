@@ -85,7 +85,7 @@ export function IdentityCustodyNotice() {
     return (
       <Card>
         <div className="flex items-center gap-3 mb-4">
-          <LockClosedIcon className="h-8 w-8 flex-shrink-0 text-gray-500" aria-hidden="true" />
+          <LockClosedIcon className="h-8 w-8 shrink-0 text-gray-500" aria-hidden="true" />
           <h2 className="text-xl font-bold">Preview Identity Locked</h2>
         </div>
         <p role="status" className="text-gray-700">
@@ -132,7 +132,7 @@ export function IdentityCustodyNotice() {
     return (
       <Card>
         <div className="flex items-center gap-3 mb-4">
-          <ExclamationTriangleIcon className="h-8 w-8 flex-shrink-0 text-yellow-600" aria-hidden="true" />
+          <ExclamationTriangleIcon className="h-8 w-8 shrink-0 text-yellow-600" aria-hidden="true" />
           <h2 className="text-xl font-bold">Unencrypted Preview Identity Found</h2>
         </div>
         <Notice tone="warning" testId="identity-legacy-notice">
@@ -156,7 +156,7 @@ export function IdentityCustodyNotice() {
     return (
       <Card>
         <div className="flex items-center gap-3 mb-4">
-          <ExclamationTriangleIcon className="h-8 w-8 flex-shrink-0 text-red-600" aria-hidden="true" />
+          <ExclamationTriangleIcon className="h-8 w-8 shrink-0 text-red-600" aria-hidden="true" />
           <h2 className="text-xl font-bold">
             {status === 'quarantined' ? 'Preview Identity Not Used' : 'Preview Identity Unavailable'}
           </h2>
@@ -181,7 +181,7 @@ export function IdentityCustodyNotice() {
   return (
     <Card>
       <div className="flex items-center gap-3 mb-6">
-        <ShieldCheckIcon className="h-8 w-8 flex-shrink-0 text-green-600" aria-hidden="true" />
+        <ShieldCheckIcon className="h-8 w-8 shrink-0 text-green-600" aria-hidden="true" />
         <div>
           <h2 className="text-xl font-bold">Preview Identity</h2>
           <p className="text-sm text-green-700 font-medium" data-testid="identity-ready-marker">

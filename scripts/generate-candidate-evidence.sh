@@ -76,7 +76,7 @@ bind_binary() {
     .artifact==$artifact and
     (.sha256|test("^[0-9a-f]{64}$")) and
     .reproducible_pair_sha256==[.sha256,.sha256] and
-    .go_version=="1.26.6" and
+    .go_version=="1.26.9" and
     .cgo_enabled=="1" and
     (.source_date_epoch|type=="number" and floor==. and .>0) and
     .build_flags=={trimpath:true,buildvcs:false,mod:"readonly",buildid:"",linker_build_id:"none",version_variable:"main.version"}
