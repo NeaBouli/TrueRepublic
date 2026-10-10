@@ -6110,3 +6110,30 @@ counts/metrics/rollout/main/live/scan/productioncredit; officialCodexSecurityNOT
 Consistency70325rc0PASS incl frozenprotocol/readiness/inventory/rollout; JSONparse/license/
 diffPASS. BoundedclaimreviewOK;20imageevidence unchanged. SelectedRoot82121RUNNING,
 protectedexacthead/livePages/officialscan remain separately unapproved orNOTRUN.
+
+## 2026-10-10T03:26:21Z — Landing C2 responsive source evidence (Codex)
+
+Only existing Phase5/status checkpoint receives actual final3055af2 synthetic browser proof
+receipt. Independent publicclaimreview OK. Fourviewport/eight before-after images opened;
+geometry/errors/egress0, contrast8.326, HTMLf901f9b9. JSON/diffPASS. Ambient consistency
+failed before gate due unavailable private toolchain routing; corrected invocation pending
+after current own race compile. No main/livePages/production/admission/rollout change.
+
+### 2026-10-10T03:43:25Z — C2 corrected source gate receipt
+
+Private-toolchain consistency97672rc0PASS, license70973rc0PASS; JSON/diff/HTMLf901f9b9 and
+eight inspected images unchanged. Selected repository contracts running, no inferred PASS.
+Protected new-head/main/live Pages and official scan remain separate; no rollout credit.
+
+## 2026-10-10T03:57:32Z — C2 final CI checkpoint qualification
+
+Protected3463055af24 completed21SUCCESS/1SKIPPED; exact new wording independently reviewed.
+Final eight responsive images inspected, HTML5ce0befa/geometry0/contrast8.326; source consistency
+PASS, final selected root contracts running. Test-only/no main/live/scan/rollout credit retained.
+Normal Draft367 update follows final source receipt; no production/deployment action.
+
+### 2026-10-10T04:00:30Z — final C2 source receipt
+
+13744rc0: consistency, three selected repository contracts2.299s, JSONparse/diff PASS.
+Final HTML5ce0befa matches eight inspected responsive images and scoped claim review OK.
+Normal existingDraft367 update only; accepted main/live/official scan and rollout unchanged.
