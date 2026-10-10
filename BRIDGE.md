@@ -10220,3 +10220,52 @@ Pending independent Kimi review and complete Sol verification.
   CS/PK/VK/circuit/glue, TEST-ONLY and production_allowed=false. Actual composed repeated
   builds/new local/protected gates pending, not PASS. Runtime remains the separate344 unit.
 - Claude paused; no duplicate writer, canonical activation, official scan, main/deploy or rollout credit.
+
+### 2026-10-10 — lifecycle test completion synchronization
+
+- Original focused38PASS/4FAIL retained honestly. Test-only wrapper awaits real identity load,
+  including stale completion; unchanged production/KDF/assertions/timeouts, action restored.
+- Independent targeted reviewOK; identityStore10/10PASS. Lint/typecheck/full/visual pending.
+  No canonical activation, official scan, main/deploy or rollout credit. Claude paused.
+
+### 2026-10-10 — explicit wallet race completion barrier
+
+- Old full suite344PASS/1timeout/4SKIP is NOT PASS. Test-only synchronous deferred-entry
+  assertion replaces zero-delay timer; every security-state assertion/deadline remains unchanged.
+- Independent scoped reviewOK and focused casePASS352ms. Lint/typecheck/new full protected
+  qualification pending. No crypto/store/UI change, official scan, main/deploy or rollout credit.
+
+### 2026-10-10 — migration qualification and prerequisite test-only merge
+
+- Full b98e8c2 client56572rc0:369Vitest/4SKIP+19Node, lint/typecheck/build/budget/audit/graph PASS.
+  Entry73508/maxroute5054/totalJS364253 gzipbytes. Normal merge of33886fc26f retains both
+  append histories and only its reviewed deterministic wallet test barrier; production unchanged.
+- New head focus/consistency and protected qualification pending; scan NOT RUN, main held.
+
+### 2026-10-10 — lifecycle visual qualification and prerequisite propagation
+
+- ce4e4f5 build/budget PASS77549entry/5697maxroute/367848totalJSgzipbytes. One corrected
+  process-permission invocation83088 PASS47 Chromium cases (24custody+4onboarding+19RPC).
+  All28actual screenshots opened/inspected by Codex; overflow/clipping/overlap/errors absent,
+  minimum notice text contrast5.02, disabled onboarding6.1,44px target, no broadcasts/secret DOM.
+- Earlier startup timeout and sandbox launchSIGTRAP/aborted143 remain NOT PASS; no assertions
+  or deadlines weakened. Own preview stopped after capture, no foreign process touched.
+- Normal merge33930fd630 brings only reviewed wallet test barrier and append logs; identity
+  fixture real-completion fix preserved. Full updated-client and protected qualification pending.
+
+### 2026-10-10 — identity-kind full result and reviewed fixture propagation
+
+- Full2620995 client98272rc1:397VitestPASS/3inherited identity loading assertionsFAIL/4SKIP;
+  Node19PASS. Build/audit after suite NOT RUN. Earlier schema focus/lint/typecheck retained,
+  whole suite explicitly NOT PASS, no host-only dismissal or canonical-source weakening.
+- Normal merge3405ccbbae retains its reviewed real-completion identity fixture and wallet
+  barrier, plus all actual visual evidence/log histories. Canonical validation/lazy/AAD unchanged.
+- Updated exact full/protected qualification pending; no activation/official scan/main/production.
+
+### 2026-10-10 — artifact candidate inherits reviewed completion fixtures
+
+- Normal merge3414e13402 retains reviewed wallet/identity test barriers and both histories;
+  loader/tests, test-only policy, WASM d2cf62c4/18778260 and Go1.26.9 pins unchanged.
+- Earlier0e9c32d repeated build/Go contract PASS20752 remains source-bound provenance; new
+  composed full client/consistency/protected qualification pending, not inherited acceptance.
+- No runtime/prover activation, secret transfer, official scan, main/production or rollout credit.

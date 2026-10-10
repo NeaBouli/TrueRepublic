@@ -6369,3 +6369,49 @@ Explicit Go1.26.9 test-WASM size/hash repin in JSON and exact Go constants; CS/P
 classification and production_allowed=false unchanged. Repeated composed-graph builds and
 new focused/full/protected gates pending; no old binary/CI acceptance inherited. Runtime is
 the next344 hop; no activation/promotion/admission change, official Security scan or main merge.
+
+## 2026-10-10 — GH309 real identity completion in lifecycle tests (Codex)
+
+Old focused38PASS/three premature loading assertions/one wallet timeout, not PASS. Test wrapper
+delegates to the real load action and awaits its complete Promise; replaces silently expiring
+200x10ms polling and stale-completion1500ms delay. Original action restored afterEach. Production,
+crypto/KDF, expectedstates/secret-storage/lock assertions and deadlines remain unchanged.
+Independent focused reviewOK; identityStore10/10PASS. Lint/typecheck ongoing. Full/new-head
+and visual qualification remain open; no old PASS inheritance, official scan or main/deploy.
+
+## 2026-10-10 — GH309 deterministic wallet race test barrier (Codex)
+
+Old e356 full client344PASS/1wallet5000ms timeout/4SKIP, not PASS; subsequent build/audit
+not run. Replace unrelated zero-delay timer with explicit deferred getWallet entry assertion,
+then unchanged lock->resolve->reject/alllocked-state checks. No production/KDF/deadline change.
+Independent scoped test reviewOK; focused racePASS352ms. Lint/typecheck ongoing, full new-head
+qualification pending. No load-only verdict, security-scan claim, main merge or activation.
+
+## 2026-10-10 — GH309B3I1 prerequisite test completion reconciliation
+
+Full b98e8c2 client56572rc0PASS369Vitest/4SKIP+19Node; lint/typecheck/build/budget/audit/graph
+PASS. Normal merge33886fc26f changes only its reviewed wallet test barrier plus append histories,
+no production/KDF/migration semantics. New focus/consistency/protected gates pending; main held.
+
+## 2026-10-10 — GH309B4I1 inspected Chromium qualification (Codex)
+
+ce4e4f5 actual build/budget PASS; corrected OS-process-permission gate83088rc0/47PASS.
+Root opened all28 screenshots/four viewports/six custody states: no measured/layout issue,
+notice contrast>=5.02, disabled onboarding6.1/44px, no broadcast/secretDOM/clipboard calls.
+Prior startup/launch-abort evidence retained, not PASS; no test/timeouts/source weakened.
+Normal33930fd630 merge only wallet test barrier+append history; production/UI bytes retained.
+New-head full/protected gates pending; own preview stopped, no official scan/main/production.
+
+## 2026-10-10 — GH309B5I1 explicit full-suite outcome and fixture reconciliation
+
+2620995 full397PASS/3inherited premature loading assertionsFAIL/4SKIP, Node19PASS; subsequent
+build/audit NOT RUN. Preserve actual failure; normal3405ccbbae merge brings reviewed real-load
+completion and wallet-entry test barriers only, source kind/AAD/lazy semantics unchanged.
+All histories/visual evidence retained. Updated full/protected qualification remains pending.
+
+## 2026-10-10 — GH300B1I1 reviewed test-only prerequisite propagation
+
+Normal3414e13402 merge preserves loader/manifest/Go contract and incoming365 graph/compiler,
+reviewed lifecycle/wallet fixtures and complete histories. Two-build d2cf62c4/18778260 evidence
+from0e9c32d remains actual unchanged-WASM-input provenance, not blanket new-head PASS.
+Fresh full client/consistency/protected qualification pending; test-only/no activation unchanged.
