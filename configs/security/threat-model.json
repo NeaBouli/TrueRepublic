@@ -223,7 +223,7 @@
         "governed_upgrade_harness_test.go",
         "upgrade_handlers.go"
       ],
-      "residual_risk": "The bounded fresh-genesis v0.4.1 path is locally rehearsed, but pre-GH-184 store introduction, clean private infrastructure reproduction, independent review, and production operation remain unqualified.",
+      "residual_risk": "The bounded fresh-genesis v0.4.1 path and the GH-306 v0.4.2 path (truedemocracy version 2 to 3, bound to the next release artifact) are locally rehearsed, but pre-GH-184 store introduction, clean private infrastructure reproduction, independent review, and production operation remain unqualified.",
       "residual_severity": "high",
       "owner": "security-maintainers",
       "next_gate": "GH-29 Phase 1 exit gate: reproduce the governed upgrade and recovery path on clean private infrastructure and obtain independent review",
@@ -345,6 +345,7 @@
         "Versioned signals bind chain, proposal, rating, and canonical reward-recipient context"
       ],
       "evidence": [
+        "configs/security/zkp-protocol-freeze-cv3.json",
         "configs/security/zkp-protocol-freeze.json",
         "docs/security/ZKP_PROTOCOL_FREEZE.md",
         "x/truedemocracy/anonymity.go",
@@ -375,6 +376,7 @@
         "Enabling any real prover is gated on external review"
       ],
       "evidence": [
+        "configs/security/zkp-protocol-freeze-cv3.json",
         "configs/security/zkp-protocol-freeze.json",
         "docs/security/ZKP_PROTOCOL_FREEZE.md",
         "x/truedemocracy/zkp.go",

@@ -417,3 +417,138 @@ func TestValidateGenesisStateRejectsMalformedResurrection(t *testing.T) {
 		})
 	}
 }
+
+// gh306PendingRemovalGenesis builds a genesis whose only validator fully
+// exited into an evidence-window hold, with the given transferred-stake
+// coverage and budget-exempt marker state.
+func gh306PendingRemovalGenesis(budgetExempt bool, transferred, payouts int64) GenesisState {
+	genesis := validDemocracyGenesis()
+	validator := genesis.Validators[0]
+	genesis.Validators = nil
+	genesis.Domains[0].TotalPayouts = payouts
+	genesis.Domains[0].TransferredStake = transferred
+	genesis.ConsensusKeyHistory = []ConsensusKeyRecord{{
+		ConsensusAddress: consensusAddressFromPubKey(validator.PubKey),
+		PubKey:           append([]byte(nil), validator.PubKey...),
+		OperatorAddr:     validator.OperatorAddr,
+		ActivatedHeight:  1,
+		RetiredHeight:    12,
+	}}
+	genesis.PendingValidatorRemovals = []PendingValidatorRemoval{{
+		Validator: Validator{
+			OperatorAddr: validator.OperatorAddr,
+			PubKey:       validator.PubKey,
+			Stake:        sdk.NewCoins(sdk.NewInt64Coin(PNYXDenom, validator.Stake)),
+			Domains:      []string{validator.Domain},
+			Power:        1,
+		},
+		RecipientAddr:          validator.OperatorAddr,
+		RemovedAtHeight:        10,
+		RemovedAtTimeNanos:     1,
+		ConsensusRetiredHeight: 12,
+		ReleaseAfterHeight:     20,
+		BudgetExempt:           budgetExempt,
+	}}
+	return genesis
+}
+
+// TestValidateGenesisStatePendingRemovalBudgetExemption proves the additive
+// marker split at the genesis boundary: legacy holds keep requiring
+// TransferredStake coverage, while budget-exempt holds never do — including
+// the zero-payout bootstrap case.
+func TestValidateGenesisStatePendingRemovalBudgetExemption(t *testing.T) {
+	stake := int64(100_000 * PNYXUnit)
+
+	if err := ValidateGenesisState(gh306PendingRemovalGenesis(true, 0, 0)); err != nil {
+		t.Fatalf("budget-exempt hold without payout history rejected: %v", err)
+	}
+	if err := ValidateGenesisState(gh306PendingRemovalGenesis(false, stake, stake*10)); err != nil {
+		t.Fatalf("covered legacy hold rejected: %v", err)
+	}
+	if err := ValidateGenesisState(gh306PendingRemovalGenesis(false, 0, stake*10)); err == nil {
+		t.Fatal("legacy hold without transferred-stake coverage accepted")
+	}
+}
+
+// TestValidateGenesisStateStoneRewardRecords pins validation of the consumed
+// first-placement reward markers: they must reference an existing domain and
+// a canonical member address and must be unique per scope, but deliberately
+// do not require a live issue or current membership.
+func TestValidateGenesisStateStoneRewardRecords(t *testing.T) {
+	member := sdk.AccAddress("stone-reward-member").String()
+	other := sdk.AccAddress("stone-reward-other").String()
+
+	valid := func() GenesisState {
+		genesis := validDemocracyGenesis()
+		genesis.StoneRewardRecords = []StoneRewardRecord{
+			{DomainName: "Test", MemberAddr: member},
+			{DomainName: "Test", IssueName: "CleanedUpIssue", MemberAddr: member},
+			{DomainName: "Test", IssueName: "CleanedUpIssue", MemberAddr: other},
+		}
+		return genesis
+	}
+	if err := ValidateGenesisState(valid()); err != nil {
+		t.Fatalf("valid stone reward records rejected: %v", err)
+	}
+
+	tests := []struct {
+		name   string
+		mutate func(*GenesisState)
+	}{
+		{"missing domain", func(g *GenesisState) {
+			g.StoneRewardRecords[0].DomainName = "missing"
+		}},
+		{"empty domain", func(g *GenesisState) {
+			g.StoneRewardRecords[0].DomainName = ""
+		}},
+		{"invalid member", func(g *GenesisState) {
+			g.StoneRewardRecords[0].MemberAddr = "not-an-address"
+		}},
+		{"duplicate issue scope", func(g *GenesisState) {
+			g.StoneRewardRecords = append(g.StoneRewardRecords, g.StoneRewardRecords[0])
+		}},
+		{"duplicate suggestion scope", func(g *GenesisState) {
+			g.StoneRewardRecords = append(g.StoneRewardRecords, g.StoneRewardRecords[1])
+		}},
+	}
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
+			genesis := valid()
+			tc.mutate(&genesis)
+			if err := ValidateGenesisState(genesis); err == nil {
+				t.Fatal("malformed stone reward record accepted")
+			}
+		})
+	}
+}
+
+func TestValidateGenesisStateStoneRewardRecordsNULTuples(t *testing.T) {
+	genesis := validDemocracyGenesis()
+	for _, name := range []string{"A", "A\x00"} {
+		domain := genesis.Domains[0]
+		domain.Name = name
+		genesis.Domains = append(genesis.Domains, domain)
+	}
+	member := sdk.AccAddress(make([]byte, 20))
+	member[0] = 0x31
+	genesis.StoneRewardRecords = []StoneRewardRecord{
+		{DomainName: "A", IssueName: "\x00B", MemberAddr: member.String()},
+		{DomainName: "A\x00", IssueName: "B", MemberAddr: member.String()},
+	}
+	if err := ValidateGenesisState(genesis); err != nil {
+		t.Fatalf("distinct reward tuples rejected: %v", err)
+	}
+	for _, tc := range []struct {
+		name  string
+		index int
+	}{{"first tuple", 0}, {"second tuple", 1}} {
+		t.Run(tc.name, func(t *testing.T) {
+			duplicate := genesis
+			duplicate.StoneRewardRecords = append([]StoneRewardRecord{}, genesis.StoneRewardRecords...)
+			duplicate.StoneRewardRecords = append(duplicate.StoneRewardRecords, genesis.StoneRewardRecords[tc.index])
+			if err := ValidateGenesisState(duplicate); err == nil || !strings.Contains(err.Error(), "duplicate stone reward record") {
+				t.Fatalf("identical reward tuple error = %v, want duplicate rejection", err)
+			}
+		})
+	}
+}

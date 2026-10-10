@@ -18,7 +18,7 @@ COPY . .
 RUN CGO_ENABLED=1 GOFLAGS=-mod=readonly go build \
     -trimpath \
     -buildvcs=false \
-    -ldflags="-s -w -buildid= -X main.version=${VERSION} -X main.upgradePlan=v0.4.1 -linkmode=external -extldflags=-Wl,--build-id=none" \
+    -ldflags="-s -w -buildid= -X main.version=${VERSION} -X main.upgradePlan=v0.4.2 -linkmode=external -extldflags=-Wl,--build-id=none" \
     -o /usr/local/bin/truerepublicd \
     ./
 RUN set -eux; \

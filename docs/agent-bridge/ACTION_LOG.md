@@ -6020,6 +6020,53 @@
 - No state repair, migration, deployment, release, production action, real key
   or real fund is authorized. Rollout remains 36/59 and production false.
 
+## 2026-09-19 EEST - GH-306 validator-exit and stone-reward block started
+
+- Created isolated branch `fix/GH-306-validator-exit-rewards` from exact main
+  `1283a4452d36784ea962f7fc8ba13f9ad45472cd` after the external audit reports
+  merged. The original dirty checkout and every unrelated worktree remain
+  untouched.
+- Kimi K3 completed the primary read-only source/test analysis. Sol froze the
+  minimum safe scope: full exits remain slashable through the existing dual
+  evidence-window hold but no longer consume the 10% payout-based transfer
+  budget; partial withdrawals remain fail-closed; a stone reward is eligible
+  only for the first placement by one member in one voting scope and never for
+  a move.
+- Existing stones are treated as already rewarded at the version boundary.
+  Jailed validators may still exit; the recipient remains the authenticated
+  operator; evidence remains fail-closed; no generalized partial-unbonding
+  queue is introduced in this block.
+- Work split is non-overlapping: Kimi owns the bounded chain implementation and
+  focused regression tests. Sol owns Bridge/docs, architecture and migration
+  review, complete integration gates, Git/GitHub actions and closure.
+- No deployment, live-chain repair, state migration execution, production
+  activation, real key/fund action or rollout credit is authorized. Rollout
+  remains 36/59 and production readiness remains false.
+
+## 2026-10-01 EEST - GH-306 stand-in completion (GH306C1/GH306C2, Claude Code)
+
+- Claude Code stood in for Sol (Codex paused) on branch
+  `agent/claude/GH306-reconcile` from exact main `1283a445`: `ee7a004` imports
+  the preserved uncommitted candidate verbatim; `192dccf` fixes F1 (a
+  domain-less budget-exempt exit hold no longer breaks genesis validation).
+- F2 closed in code: `22702f7` adds the distinct governed `v0.4.2` plan that
+  accepts only truedemocracy version 2, runs the 2→3 stone-reward baseline,
+  records its own marker and fails closed for wrong plan, source version or
+  repeated execution; `v0.4.1` is unchanged. `dce536f`/`ed2661a` add the v2→v3
+  four-validator harness (v2 base from `git archive 1283a445`, halt, discarded
+  failing fixture, exact-once migration, common app hash, one reward record).
+- `79bb33f` binds the next release artifact to `main.upgradePlan=v0.4.2` with
+  the dependent candidate/cross-run digest chain; `c331c65` (GH306C2) syncs the
+  threat-model residual risk and `docs/status.json` `ibc_upgrade`.
+- Evidence and open items are in `.fleet/reports/GH306C1.md` on the stand-in
+  branch: final `make verify` on the release-binding head hit ENOSPC and was not
+  repeated; public counts and the digest fixpoint stay provisional until PRs
+  #330/#331 land; independent consensus/security review remains required.
+- No push, PR, merge, migration execution, deployment or rollout credit.
+  Rollout remains 36/59 and production readiness remains false.
+
+---
+
 ## 2026-10-01 EEST - GH-335 ModuleQuery fetch receiver (GH335A, Claude Code)
 
 - Branch `agent/claude/GH335-modulequery-fetch` from exact main `1283a445`; commit
@@ -6147,3 +6194,22 @@ success; Security setup-only0-cost approval recorded, scan NOT RUN and main/depl
 Mapped deadline cleanup and focused regression recorded; original deadlines/sole Wait retained.
 Independent narrow fix review OK, formatting/diff PASS. Focused race74259 RUNNING, negative
 control/full modern-head gates owed. No new counts, push, main, production or foreign cleanup.
+
+## 2026-10-10T05:22:29Z — GH306I2 normal source integration
+
+Preserved5c9a1d1 plus modern6ca29b8, normal merge; mapped34 paths/49 conflict chunks resolved
+without resetting either parent. Only existing Go1.26.9/v0.4.2 contracts composed and their14
+literal fixture/config digest links repinned; invalid claims preserved. Count inventory labels
+the modern parent's historical2491/2137/governance691, with combined qualification pending.
+Source review OK; final digest review and runtime/full integration/negative/recount gates owed.
+Parent Hosted38025452892 passed8/8, not new-head acceptance. Scan NOT RUN; no main/production.
+
+## 2026-10-10T05:49:26Z — GH306I2 qualification coverage correction
+
+Three-file Q1 delta: independent governed-upgrade-v042 target/job and existing
+release-compatibility guard; original V041 selection/budgets preserved. Source
+review OK, archived-baseline fetch-depth0 and active-line controls included.
+b71 Hosted38027422218 actual eight-job PASS does not select V042. Recovery
+positive/old-negative/restored-positive proven; rootQ1 command16244 pending.
+Final-head protected nine-job qualification/recount/official acceptance remain
+open. No gate weakening, paused-worker ref change, main merge or deployment.

@@ -5,15 +5,20 @@
 - Tracking: [GH-297](https://github.com/NeaBouli/TrueRepublic/issues/297)
 
 This document records the immutable protocol boundary for the current
-anonymous-rating circuit. The machine-readable authority is
-[`configs/security/zkp-protocol-freeze.json`](../../configs/security/zkp-protocol-freeze.json).
+anonymous-rating circuit. The machine-readable authority for module consensus
+version 3 is
+[`configs/security/zkp-protocol-freeze-cv3.json`](../../configs/security/zkp-protocol-freeze-cv3.json).
+The original consensus-version-2 authority remains preserved, SHA-256 pinned
+and test-enforced at
+[`configs/security/zkp-protocol-freeze.json`](../../configs/security/zkp-protocol-freeze.json);
+it was not rewritten in place.
 The freeze earns the protocol-definition item in Phase 2; it does **not** make
 the ZKP path production-ready and does not enable anonymous submission.
 
 ## Frozen profile
 
-The candidate profile is `truerepublic/anonymous-rating/v2`, consensus version
-2, using circuit
+The candidate profile remains `truerepublic/anonymous-rating/v2`, now carried
+unchanged by module consensus version 3, using circuit
 `truerepublic/membership-vote/v2-bn254-mimc-depth20`. Public inputs are ordered
 exactly as follows:
 
@@ -44,6 +49,19 @@ The frozen profile is never edited in place:
 | Nullifier domain, bound fields or hash construction | Allocate a new nullifier keyspace and document replay/migration behavior. |
 | Any consensus-visible activation | Use fresh genesis or an explicit governed consensus upgrade with deterministic migration evidence. |
 | External review requires a semantic change | Publish a new version and migration plan; never rewrite this profile. |
+
+### Version history
+
+| Module consensus version | Authority | Change |
+|---|---|---|
+| 2 | `configs/security/zkp-protocol-freeze.json` | Original GH-297/GH-209 freeze. Historical file remains immutable and SHA-256 pinned. |
+| 3 | `configs/security/zkp-protocol-freeze-cv3.json` | GH-306 republishes the identical ZKP profile for the module's deterministic 2→3 state migration. No circuit, encoding, public input, nullifier, signal, artifact classification, submission gate or production claim changes. |
+
+The GH-306 migration baselines existing Stones Voting reward-consumption state;
+it does not migrate or enable ZKP proofs. Existing supported chains at module
+version 2 must use the governed `v0.4.2` plan, which runs the registered 2→3
+migration; a fresh genesis alone does not carry the baseline for imported
+version-2 state.
 
 The manifest digest-binds the existing circuit specification. That source
 specification and its CS/PK/VK fixtures remain classified

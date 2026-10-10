@@ -13,7 +13,17 @@ the scheduled height. Only a binary built with the exact release identity
 records completion atomically. Ordinary accounts cannot invoke the stock
 upgrade authority because it is the non-signing `truedemocracy` module account.
 
-This path is supported only for chains created with the upgrade store already
+GH-306 adds a second exact plan, `v0.4.2`, for a chain whose `truedemocracy`
+module already runs consensus version 2. Only a binary built with
+`main.upgradePlan=v0.4.2` registers it. The handler accepts no other source
+version, runs the deterministic 2→3 migration that baselines every existing
+Stones Voting scope as already rewarded, records its own marker, and fails
+closed on a wrong plan, a wrong source version, or a repeated execution. The
+`v0.4.1` plan is unchanged and still migrates a version-1 module to the
+current version. Schedule, halt, rollback and exact-once rules below apply to
+`v0.4.2` with the plan name substituted.
+
+These paths are supported only for chains created with the upgrade store already
 present. Introducing that store into an existing pre-GH-184 chain requires a
 separate reviewed store-loader release and is not covered here. IBC client
 upgrades, arbitrary plan names, public deployment, and real-funds operation

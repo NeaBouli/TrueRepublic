@@ -1,5 +1,10 @@
 # Testing Status
 
+> GH306I2 integration checkpoint: counts and coverage below are historical
+> references from `6ca29b808a07f1b74b97ba1fbbf4cfd3f24543cc`, not a recount or
+> runtime qualification of this composition. Combined qualification and recount
+> remain pending.
+
 The current **v0.4.0 recovery** source of truth records **2,491 verified
 standard-suite cases**. The Go subtotal includes GH-304's 15-case real-bech32
 ElectAdmin integrity/quarantine regression increment and GH-297's 62-case frozen ZKP

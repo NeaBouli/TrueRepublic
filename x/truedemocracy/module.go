@@ -128,14 +128,26 @@ func (am AppModule) RegisterServices(cfg module.Configurator) {
 	if err := cfg.RegisterMigration(ModuleName, 1, func(sdk.Context) error { return nil }); err != nil {
 		panic(err)
 	}
+	// GH-306 changes store semantics: full validator exits become budget-exempt
+	// and the first-placement stone reward gains persistent consumed markers.
+	// The 2→3 migration deterministically baselines every stone that exists at
+	// the upgrade boundary as already rewarded; nothing else is rewritten.
+	if err := cfg.RegisterMigration(ModuleName, 2, func(ctx sdk.Context) error {
+		am.keeper.BaselineStoneRewardMarkers(ctx)
+		return nil
+	}); err != nil {
+		panic(err)
+	}
 }
 
-// ConsensusVersion is 2 since GH-209: anonymous rating handlers require the
-// recipient-bound v2 payload and pay the bound recipient directly. Chains
-// running version 1 must adopt this through the registered governed no-op
-// store migration or a fresh genesis; version 1 submissions fail closed and
-// are never dual-accepted.
-func (am AppModule) ConsensusVersion() uint64 { return 2 }
+// ConsensusVersion is 3 since GH-306: full validator exits bypass the WP §7
+// transfer budget and mark their evidence-window holds budget-exempt, and the
+// VoteToEarn stone reward is paid at most once per member and voting scope
+// through persistent consumed markers. Chains running version 2 must adopt
+// this through the registered deterministic 2→3 migration, which baselines
+// every existing stone as already rewarded, or a fresh genesis. GH-209
+// shipped version 2 with the registered governed no-op store migration.
+func (am AppModule) ConsensusVersion() uint64 { return 3 }
 
 func (am AppModule) InitGenesis(ctx sdk.Context, cdc codec.JSONCodec, data json.RawMessage) []abci.ValidatorUpdate {
 	var genesisState GenesisState
@@ -209,6 +221,9 @@ func (am AppModule) InitGenesis(ctx sdk.Context, cdc codec.JSONCodec, data json.
 	}
 	for _, removal := range genesisState.PendingValidatorRemovals {
 		am.keeper.SetPendingValidatorRemoval(ctx, removal)
+	}
+	for _, record := range genesisState.StoneRewardRecords {
+		am.keeper.SetStoneRewardRecord(ctx, record)
 	}
 	for _, record := range genesisState.ConsensusKeyHistory {
 		am.keeper.setConsensusKeyRecord(ctx, record)
@@ -424,6 +439,14 @@ func (am AppModule) ExportGenesis(ctx sdk.Context, cdc codec.JSONCodec) json.Raw
 	if pendingValidatorRemovals == nil {
 		pendingValidatorRemovals = []PendingValidatorRemoval{}
 	}
+	var stoneRewardRecords []StoneRewardRecord
+	am.keeper.IterateStoneRewardRecords(ctx, func(record StoneRewardRecord) bool {
+		stoneRewardRecords = append(stoneRewardRecords, record)
+		return false
+	})
+	if stoneRewardRecords == nil {
+		stoneRewardRecords = []StoneRewardRecord{}
+	}
 	lastCommitCursor, _ := am.keeper.getLastCommitCursor(ctx)
 	usedNullifiers := make([]NullifierRecord, 0)
 	nullifierStore := storeprefix.NewStore(ctx.KVStore(am.keeper.StoreKey), []byte("nullifier:"))
@@ -455,6 +478,7 @@ func (am AppModule) ExportGenesis(ctx sdk.Context, cdc codec.JSONCodec) json.Raw
 		ValidatorSigningInfos:     validatorSigningInfos,
 		ProcessedInfractions:      processedInfractions,
 		PendingValidatorRemovals:  pendingValidatorRemovals,
+		StoneRewardRecords:        stoneRewardRecords,
 		LastCommitCursor:          lastCommitCursor,
 		UsedNullifiers:            usedNullifiers,
 		ZKPCircuitID:              circuitID,

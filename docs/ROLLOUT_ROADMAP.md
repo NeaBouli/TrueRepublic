@@ -19,6 +19,10 @@ separate mandatory release-freeze and accountable go/no-go subchecks.
 
 ## Current baseline
 
+Test totals and coverage below are historical references from
+`6ca29b808a07f1b74b97ba1fbbf4cfd3f24543cc`, not a recount or runtime qualification
+of the GH306I2 composition. Combined qualification and recount remain pending.
+
 - The ordered recovery merge chain is on `main`.
 - The maximum supply is fixed at 21,000,000 PNYX.
 - The source of truth records 2,491 recovery-verified tests: 2,137 Go, 26 Rust,
@@ -147,9 +151,10 @@ domain-separated `TrueRepublic/vote/v2` signal, and the treasury pays only
 that bound recipient atomically while the nullifier stays recipient- and
 rating-independent. Direct payout publicly links the vote/nullifier event to
 the chosen payout address; fresh addresses reduce address-reuse linkage but do
-not create shielded payout privacy. The module consensus version rises to 2,
-so adoption requires the registered governed no-op store migration or fresh
-genesis. This protocol
+not create shielded payout privacy. GH-209 raised the module consensus version
+to 2; GH-306 raises it to 3 for deterministic validator-exit and Stone-reward
+state migration without changing the frozen ZKP semantics. Adoption requires
+the registered governed migration chain or fresh genesis. This protocol
 binding alone does not complete the production prover, ceremony, submission,
 or independent-review checkboxes above.
 

@@ -82,7 +82,9 @@ func validatorRetirementHeight(removalHeight, maxAgeNumBlocks int64) (int64, int
 
 // newPendingValidatorRemoval snapshots the complete validator claim and the
 // consensus evidence limits at exit time. The time-based boundary is
-// deliberately unset until the retirement height is actually observed.
+// deliberately unset until the retirement height is actually observed. Every
+// hold created after GH-306 is budget-exempt: the exit bypassed the WP §7
+// transfer budget and never touched TransferredStake.
 func newPendingValidatorRemoval(ctx sdk.Context, validator Validator, recipientAddr string) (PendingValidatorRemoval, error) {
 	evidence := ctx.ConsensusParams().Evidence
 	if evidence == nil {
@@ -102,6 +104,7 @@ func newPendingValidatorRemoval(ctx sdk.Context, validator Validator, recipientA
 		RemovedAtTimeNanos:     ctx.BlockTime().UnixNano(),
 		ConsensusRetiredHeight: retiredHeight,
 		ReleaseAfterHeight:     releaseHeight,
+		BudgetExempt:           true,
 	}, nil
 }
 

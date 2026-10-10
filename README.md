@@ -39,6 +39,11 @@
 
 ---
 
+> GH306I2 integration checkpoint: the test badge, totals and coverage below are
+> historical references from `6ca29b808a07f1b74b97ba1fbbf4cfd3f24543cc`, not a
+> recount or runtime qualification of this composition. Combined qualification
+> and recount remain pending.
+
 > [!WARNING]
 > **Recovery foundation verified; rollout still active:** the completed recovery
 > evidence is preserved in [GitHub issue #4](https://github.com/NeaBouli/TrueRepublic/issues/4),
@@ -137,7 +142,7 @@ See [INSTALLATION.md](INSTALLATION.md) for detailed instructions.
 | **Anonymous Suggestion Ratings** | Frozen v2 protocol profile with domain keys; production proving/submission remains disabled | [ZKP Protocol Freeze](docs/security/ZKP_PROTOCOL_FREEZE.md) |
 | **Proof of Domain** | Validators must be active domain members | [Validator Guide](docs/validators/README.md) |
 | **DEX (stacked recovery)** | PR #18 adds custody/LP ownership/burns; PR #19 reconciles genesis and checks reserves/shares every block | [DEX Guide](docs/user-manual/dex-trading-guide.md) |
-| **VoteToEarn** | Earn PNYX rewards for active participation | [Stones Guide](docs/user-manual/stones-voting-guide.md) |
+| **VoteToEarn** | One treasury-funded reward for a member's first Stone placement in each voting scope; moves never repay | [Stones Guide](docs/user-manual/stones-voting-guide.md) |
 | **Suggestion Lifecycle** | Green/yellow/red zones with auto-delete | [Governance](docs/user-manual/governance-tutorial.md) |
 | **IBC Transfers** | GH-175/GH-178/GH-181 locally verify packet and compatible-restart recovery; GH-184 adds governed fresh-genesis application-upgrade recovery. External relayer and IBC client-upgrade qualification remain open | [IBC Setup](docs/IBC_RELAYER_SETUP.md) |
 
@@ -219,13 +224,13 @@ TrueRepublic/
 | Domain-Bank Bridge | ✅ | `x/truedemocracy/treasury_bridge.go` |
 | IBC Transfer (ICS-20) | 🟡 Two-chain lifecycle, channel replacement, compatible restart, and governed fresh-genesis app-upgrade recovery verified locally through GH-184; external relayer and IBC client-upgrade evidence pending | `app.go` (ibc-go v8.7.0) |
 | Stones Voting (WP S3.1) | ✅ | `x/truedemocracy/stones.go` |
-| VoteToEarn Rewards | ✅ | `x/truedemocracy/stones.go` |
+| VoteToEarn Rewards | ✅ First-placement-only per member/scope (GH-306) | `x/truedemocracy/stones.go` |
 | Suggestion Lifecycle (WP S3.1.2) | ✅ | `x/truedemocracy/lifecycle.go` |
 | Green/Yellow/Red Zones | ✅ | `x/truedemocracy/lifecycle.go` |
 | Auto-Delete & Fast Delete (2/3) | ✅ | `x/truedemocracy/lifecycle.go` |
 | Admin Election (WP S3.6) | ✅ | `x/truedemocracy/governance.go` |
 | Member Exclusion (2/3 vote) | ✅ | `x/truedemocracy/governance.go` |
-| PoD Transfer Limit (10%, WP S7) | ✅ | `x/truedemocracy/validator.go` |
+| PoD Transfer Limit (10%, WP S7) | ✅ Legacy/partial accounting retained; authenticated full exits use slashable budget-exempt holds (GH-306) | `x/truedemocracy/validator.go`, `x/truedemocracy/escrow.go` |
 | CLI Commands (26 tx + 9 query) | ✅ | `x/truedemocracy/cli.go` |
 | DEX CLI (7 tx + 9 query) | ✅ | `x/dex/cli.go` |
 | CosmWasm Contracts (7 crates) | ✅ | `contracts/` (workspace) |

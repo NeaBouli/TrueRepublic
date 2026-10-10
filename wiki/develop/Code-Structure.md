@@ -123,7 +123,7 @@ TrueRepublic/
 | Anonymous voting keys | `x/truedemocracy/anonymity.go` |
 | Validator registration | `x/truedemocracy/validator.go` → `RegisterValidator()` |
 | Slashing logic | `x/truedemocracy/slashing.go` |
-| Transfer limit (10%) | `x/truedemocracy/validator.go` → `WithdrawStake()` |
+| Transfer limit / slash-safe full exit | `x/truedemocracy/validator.go` → `WithdrawStake()`; `x/truedemocracy/escrow.go` → `RemoveValidatorWithEscrow()` |
 | DEX swap calculation | `x/dex/keeper.go` → `Swap()` |
 | Pool creation | `x/dex/keeper.go` → `CreatePool()` |
 | Liquidity provision | `x/dex/keeper.go` → `AddLiquidity()` / `RemoveLiquidity()` |

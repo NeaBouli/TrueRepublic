@@ -1,6 +1,7 @@
 package truedemocracy
 
 import (
+	"bytes"
 	"testing"
 	"time"
 
@@ -115,8 +116,8 @@ func TestMoveStone(t *testing.T) {
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
-	if !reward.AmountOf(PNYXDenom).IsPositive() {
-		t.Error("moving stone should also earn reward")
+	if !reward.Empty() {
+		t.Errorf("moving stone must not earn another reward, got %s", reward)
 	}
 
 	domain, _ = k.GetDomain(ctx, "StonesDomain")
@@ -347,5 +348,264 @@ func TestIssueAndSuggestionStonesIndependent(t *testing.T) {
 	}
 	if suggStone != "GreenDeal" {
 		t.Errorf("suggestion stone = %q, want 'GreenDeal'", suggStone)
+	}
+}
+
+// ---------- GH-306: first-placement VoteToEarn ----------
+
+// TestStoneRewardPaidOncePerScope proves the reward is paid exactly once per
+// member and voting scope: the first placement earns it, moves never pay, and
+// independent scopes (issue list, each suggestion list, other members) are
+// tracked separately.
+func TestStoneRewardPaidOncePerScope(t *testing.T) {
+	k, ctx := setupKeeper(t)
+	setupDomainWithIssues(t, k, ctx)
+
+	// First placement on the issue list pays.
+	reward, err := k.PlaceStoneOnIssue(ctx, "StonesDomain", "Climate", "alice")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !reward.AmountOf(PNYXDenom).IsPositive() {
+		t.Fatal("first issue placement must pay the VoteToEarn reward")
+	}
+	if !k.HasStoneRewardRecord(ctx, StoneRewardRecord{DomainName: "StonesDomain", MemberAddr: "alice"}) {
+		t.Fatal("first issue placement did not consume the reward marker")
+	}
+
+	// Moving the stone within the same scope never pays again.
+	reward, err = k.PlaceStoneOnIssue(ctx, "StonesDomain", "Education", "alice")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !reward.Empty() {
+		t.Fatalf("issue move paid %s, want no reward", reward)
+	}
+
+	// The suggestion list of one issue is an independent scope.
+	reward, err = k.PlaceStoneOnSuggestion(ctx, "StonesDomain", "Climate", "GreenDeal", "alice")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !reward.AmountOf(PNYXDenom).IsPositive() {
+		t.Fatal("first suggestion placement must pay the VoteToEarn reward")
+	}
+
+	// Moving inside that suggestion list never pays again.
+	reward, err = k.PlaceStoneOnSuggestion(ctx, "StonesDomain", "Climate", "CarbonTax", "alice")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !reward.Empty() {
+		t.Fatalf("suggestion move paid %s, want no reward", reward)
+	}
+
+	// Another issue's suggestion list is yet another independent scope.
+	reward, err = k.PlaceStoneOnSuggestion(ctx, "StonesDomain", "Education", "FreeTuition", "alice")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !reward.AmountOf(PNYXDenom).IsPositive() {
+		t.Fatal("first placement in a second suggestion scope must pay")
+	}
+
+	// The marker is per member: bob's first issue placement still pays.
+	reward, err = k.PlaceStoneOnIssue(ctx, "StonesDomain", "Climate", "bob")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !reward.AmountOf(PNYXDenom).IsPositive() {
+		t.Fatal("another member's first placement must pay")
+	}
+
+	// Eligibility is tied to the first placement, not to a later treasury
+	// refill. A zero-valued first reward is still consumed fail-closed.
+	emptyAdmin := sdk.AccAddress("empty-treasury-admin")
+	k.CreateDomain(ctx, "EmptyTreasury", emptyAdmin, sdk.NewCoins())
+	emptyDomain, _ := k.GetDomain(ctx, "EmptyTreasury")
+	emptyDomain.Issues = []Issue{{Name: "Zero", CreationDate: ctx.BlockTime().Unix()}}
+	saveDomain(t, k, ctx, emptyDomain)
+	reward, err = k.PlaceStoneOnIssue(ctx, "EmptyTreasury", "Zero", emptyAdmin.String())
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !reward.Empty() {
+		t.Fatalf("zero-treasury placement paid %s, want no reward", reward)
+	}
+	if !k.HasStoneRewardRecord(ctx, StoneRewardRecord{DomainName: "EmptyTreasury", MemberAddr: emptyAdmin.String()}) {
+		t.Fatal("zero-treasury first placement did not consume eligibility")
+	}
+	emptyDomain, _ = k.GetDomain(ctx, "EmptyTreasury")
+	emptyDomain.Treasury = sdk.NewCoins(sdk.NewInt64Coin(PNYXDenom, 100_000))
+	saveDomain(t, k, ctx, emptyDomain)
+	ctx.KVStore(k.StoreKey).Delete(issueStoneKey("EmptyTreasury", emptyAdmin.String()))
+	reward, err = k.PlaceStoneOnIssue(ctx, "EmptyTreasury", "Zero", emptyAdmin.String())
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !reward.Empty() {
+		t.Fatalf("treasury refill replay paid %s, want consumed eligibility", reward)
+	}
+}
+
+// TestStoneRewardMarkerSurvivesExclusionAndReentry proves the consumed marker
+// persists through exclusion cleanup and re-onboarding: a member who re-enters
+// the domain and places a stone in the same scope is never rewarded twice.
+func TestStoneRewardMarkerSurvivesExclusionAndReentry(t *testing.T) {
+	k, ctx := setupKeeper(t)
+	setupGovernanceDomain(t, k, ctx)
+	admin := sdk.AccAddress("admin1")
+
+	reward, err := k.PlaceStoneOnIssue(ctx, "GovDomain", "Climate", "judy")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !reward.AmountOf(PNYXDenom).IsPositive() {
+		t.Fatal("first placement must pay")
+	}
+	if _, err := k.PlaceStoneOnSuggestion(ctx, "GovDomain", "Climate", "GreenDeal", "judy"); err != nil {
+		t.Fatal(err)
+	}
+	domainBefore, _ := k.GetDomain(ctx, "GovDomain")
+	treasuryBefore := domainBefore.Treasury.AmountOf(PNYXDenom)
+	payoutsBefore := domainBefore.TotalPayouts
+
+	// Exclude judy (2/3 of the 9 remaining voters): stone keys are cleaned up.
+	for _, m := range []string{"alice", "bob", "charlie", "dave", "eve", "frank", "grace"} {
+		excluded, err := k.VoteToExclude(ctx, "GovDomain", "judy", m)
+		if err != nil {
+			t.Fatal(err)
+		}
+		_ = excluded
+	}
+	if _, found := k.GetMemberIssueStone(ctx, "GovDomain", "judy"); found {
+		t.Fatal("exclusion did not clean up the issue stone")
+	}
+
+	// The consumed markers survive the cleanup.
+	if !k.HasStoneRewardRecord(ctx, StoneRewardRecord{DomainName: "GovDomain", MemberAddr: "judy"}) {
+		t.Fatal("exclusion cleanup deleted the issue-scope reward marker")
+	}
+	if !k.HasStoneRewardRecord(ctx, StoneRewardRecord{DomainName: "GovDomain", IssueName: "Climate", MemberAddr: "judy"}) {
+		t.Fatal("exclusion cleanup deleted the suggestion-scope reward marker")
+	}
+
+	// Re-onboard and re-place: no second reward in either scope.
+	if err := k.AddMember(ctx, "GovDomain", "judy", admin); err != nil {
+		t.Fatal(err)
+	}
+	reward, err = k.PlaceStoneOnIssue(ctx, "GovDomain", "Climate", "judy")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !reward.Empty() {
+		t.Fatalf("re-entry issue placement paid %s, want no reward", reward)
+	}
+	reward, err = k.PlaceStoneOnSuggestion(ctx, "GovDomain", "Climate", "GreenDeal", "judy")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !reward.Empty() {
+		t.Fatalf("re-entry suggestion placement paid %s, want no reward", reward)
+	}
+	placed, found := k.GetMemberIssueStone(ctx, "GovDomain", "judy")
+	if !found || placed != "Climate" {
+		t.Fatalf("re-entry stone = %q, want Climate", placed)
+	}
+	domainAfter, _ := k.GetDomain(ctx, "GovDomain")
+	if !domainAfter.Treasury.AmountOf(PNYXDenom).Equal(treasuryBefore) || domainAfter.TotalPayouts != payoutsBefore {
+		t.Fatal("re-entry moved treasury or payout accounting")
+	}
+}
+
+// TestBaselineStoneRewardMarkersMigration proves the deterministic GH-306
+// 2→3 migration marks every stone that exists at the upgrade boundary as
+// already rewarded, stays idempotent, and does not block first-placement
+// rewards for scopes that had no stone at the boundary.
+func TestBaselineStoneRewardMarkersMigration(t *testing.T) {
+	k, ctx := setupKeeper(t)
+	setupDomainWithIssues(t, k, ctx)
+
+	if got := (AppModule{}).ConsensusVersion(); got != 3 {
+		t.Fatalf("ConsensusVersion = %d, want 3", got)
+	}
+
+	// Pre-upgrade state: stones exist without consumed markers.
+	if _, err := k.PlaceStoneOnIssue(ctx, "StonesDomain", "Climate", "alice"); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := k.PlaceStoneOnSuggestion(ctx, "StonesDomain", "Climate", "GreenDeal", "bob"); err != nil {
+		t.Fatal(err)
+	}
+	store := ctx.KVStore(k.StoreKey)
+	// A second domain makes the legacy delimiter key below ambiguous. The
+	// migration must fail closed by consuming both interpretations, while the
+	// new length-prefixed marker keys remain distinct.
+	k.CreateDomain(ctx, "StonesDomain:Cleaned", sdk.AccAddress("admin2"), sdk.NewCoins())
+	// Lifecycle cleanup may leave a historical suggestion-stone key after its
+	// issue disappears. It must still be baselined, including ':' in the scope.
+	orphanRecord := StoneRewardRecord{DomainName: "StonesDomain", IssueName: "Cleaned:Issue", MemberAddr: "bob"}
+	ambiguousRecord := StoneRewardRecord{DomainName: "StonesDomain:Cleaned", IssueName: "Issue", MemberAddr: "bob"}
+	if bytes.Equal(stoneRewardRecordKey(orphanRecord), stoneRewardRecordKey(ambiguousRecord)) {
+		t.Fatal("length-prefixed reward marker keys collided across domain/issue boundaries")
+	}
+	store.Set(suggestionStoneKey(orphanRecord.DomainName, orphanRecord.IssueName, orphanRecord.MemberAddr), []byte("LegacySuggestion"))
+	var markerKeys [][]byte
+	k.IterateStoneRewardRecords(ctx, func(record StoneRewardRecord) bool {
+		markerKeys = append(markerKeys, stoneRewardRecordKey(record))
+		return false
+	})
+	if len(markerKeys) != 2 {
+		t.Fatalf("consumed markers before reset = %d, want 2", len(markerKeys))
+	}
+	for _, key := range markerKeys {
+		store.Delete(key)
+	}
+
+	// The migration baselines exactly the existing stones.
+	k.BaselineStoneRewardMarkers(ctx)
+	if !k.HasStoneRewardRecord(ctx, StoneRewardRecord{DomainName: "StonesDomain", MemberAddr: "alice"}) {
+		t.Fatal("migration did not baseline alice's issue-scope stone")
+	}
+	if !k.HasStoneRewardRecord(ctx, StoneRewardRecord{DomainName: "StonesDomain", IssueName: "Climate", MemberAddr: "bob"}) {
+		t.Fatal("migration did not baseline bob's suggestion-scope stone")
+	}
+	if !k.HasStoneRewardRecord(ctx, orphanRecord) {
+		t.Fatal("migration did not baseline a lifecycle-cleaned suggestion scope")
+	}
+	if !k.HasStoneRewardRecord(ctx, ambiguousRecord) {
+		t.Fatal("migration did not conservatively baseline an ambiguous legacy suggestion key")
+	}
+	if k.HasStoneRewardRecord(ctx, StoneRewardRecord{DomainName: "StonesDomain", MemberAddr: "charlie"}) {
+		t.Fatal("migration baselined a scope without a stone")
+	}
+
+	// Idempotent: a second run adds nothing.
+	k.BaselineStoneRewardMarkers(ctx)
+	count := 0
+	k.IterateStoneRewardRecords(ctx, func(StoneRewardRecord) bool {
+		count++
+		return false
+	})
+	if count != 4 {
+		t.Fatalf("markers after idempotent re-run = %d, want 4", count)
+	}
+
+	// Baselined scopes never pay again, even after a move.
+	reward, err := k.PlaceStoneOnIssue(ctx, "StonesDomain", "Education", "alice")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !reward.Empty() {
+		t.Fatalf("baselined scope paid %s after migration", reward)
+	}
+
+	// A scope without a stone at the boundary still pays its first placement.
+	reward, err = k.PlaceStoneOnIssue(ctx, "StonesDomain", "Climate", "charlie")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !reward.AmountOf(PNYXDenom).IsPositive() {
+		t.Fatal("new scope after migration must pay its first placement")
 	}
 }

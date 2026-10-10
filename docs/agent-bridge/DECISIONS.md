@@ -338,3 +338,23 @@
 - Third-party implementation is blocked until the owner publishes a root
   project license and exact per-component compatibility review passes. This
   architecture does not choose a license for the owner.
+
+## 2026-09-19 - GH-306 exit and reward semantics freeze
+
+- The 10% cumulative payout rule remains a budget for future partial stake
+  transfers, not a veto over a validator's complete exit. A full exit uses the
+  existing slashable pending-removal hold and does not increase
+  `TransferredStake`.
+- Partial validator withdrawals remain disabled in GH-306. Adding a partial
+  unbonding queue is a separate consensus feature and must not be smuggled into
+  this audit remediation.
+- Full exits remain available while jailed or no longer eligible, pay only the
+  authenticated operator after both evidence limits strictly expire, and keep
+  fail-closed evidence handling. Pending key rotation still blocks exit.
+- Stone rewards are granted at most once per member and voting scope, on the
+  first placement only. Moving an existing stone never pays. Existing stones
+  are deterministically baselined as already rewarded when the new consensus
+  version activates, preventing a one-time legacy reward replay.
+- Rate-to-Earn and anonymous-key authority are outside GH-306 and remain tracked
+  by their dedicated audit tickets. This block changes no production, rollout,
+  deployment or live-chain state.

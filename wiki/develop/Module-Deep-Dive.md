@@ -191,9 +191,11 @@ Implemented in `x/truedemocracy/stones.go`.
 2. Remove member's previous stone on any issue (1 stone rule)
 3. Increment issue's stone count
 4. Re-sort issues by stone count (descending), then by date
-5. Calculate VoteToEarn reward: `treasury / CEarn` (eq.2)
-6. Transfer reward from domain treasury to voter
-7. Update domain's TotalPayouts
+5. On the member's first placement in this scope, consume the persistent
+   reward marker and calculate `treasury / CEarn` (eq.2)
+6. Transfer a positive first-placement reward from domain treasury to voter;
+   moves and re-entry never repay
+7. Update domain's `TotalPayouts` only for the actual reward
 
 #### MsgPlaceStoneOnSuggestion
 
@@ -272,6 +274,10 @@ Implemented in `x/truedemocracy/validator.go` and `slashing.go`.
 
 #### MsgWithdrawStake
 
+Partial validator withdrawals are disabled until a generalized unbonding queue
+can keep the withdrawn claim slashable through the evidence window. The legacy
+transfer-accounting path retains the WP S7 limit:
+
 **Transfer limit (WP S7):**
 ```
 max_withdrawal = domain.TotalPayouts * 10%
@@ -279,6 +285,11 @@ already_withdrawn = domain.TransferredStake
 remaining_limit = max_withdrawal - already_withdrawn
 actual_withdrawal = min(requested_amount, remaining_limit)
 ```
+
+An authenticated **full validator exit** bypasses this payout budget and does
+not increment `TransferredStake`. The complete stake enters the existing dual
+height/time pending-removal hold, remains slashable, blocks re-registration,
+and pays only the authenticated operator after both evidence limits expire.
 
 #### MsgUnjail
 

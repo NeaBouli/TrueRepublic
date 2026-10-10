@@ -174,3 +174,37 @@ func writeJSON(t *testing.T, path string, v any) {
 		t.Fatal(err)
 	}
 }
+
+// TestBuildContractBindsV042ReleasePlan proves the release artifact is bound to
+// the GH-306 v0.4.2 governed plan: the repository contract passes, while the
+// historical v0.4.1 identity, an unknown plan or a missing plan flag fail.
+func TestBuildContractBindsV042ReleasePlan(t *testing.T) {
+	var build BuildContract
+	if err := parseFile(filepath.Join("..", "configs", "build", "deterministic-linux-daemon.json"), &build); err != nil {
+		t.Fatal(err)
+	}
+	if !exactBuildContract(build) {
+		t.Fatal("repository build contract rejected")
+	}
+	planIndex := -1
+	for i, flag := range build.BuildFlags.LDFlags {
+		if flag == "main.upgradePlan=v0.4.2" {
+			planIndex = i
+		}
+	}
+	if planIndex < 0 {
+		t.Fatalf("release ldflags do not bind v0.4.2: %v", build.BuildFlags.LDFlags)
+	}
+	for name, replacement := range map[string]string{
+		"historical v0.4.1": "main.upgradePlan=v0.4.1",
+		"unknown plan":      "main.upgradePlan=v0.4.3",
+		"missing plan":      "main.upgradePlan=",
+	} {
+		mutated := build
+		mutated.BuildFlags.LDFlags = append([]string(nil), build.BuildFlags.LDFlags...)
+		mutated.BuildFlags.LDFlags[planIndex] = replacement
+		if exactBuildContract(mutated) {
+			t.Fatalf("%s accepted as release build contract", name)
+		}
+	}
+}

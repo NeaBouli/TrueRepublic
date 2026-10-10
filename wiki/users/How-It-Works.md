@@ -348,8 +348,14 @@ Result: Votes can't be linked
 ### How Rewards Are Earned
 
 **Activities that qualify:**
-- Placing a stone on an issue or suggestion
+- The first Stone placement by one member in a voting scope (the domain issue
+  list or one issue's suggestion list)
 - Active participation in governance
+
+Moving an existing Stone never pays again. Exclusion/re-entry and
+export/import preserve the consumed reward marker. If the treasury cannot
+produce a positive reward on the first placement, eligibility is still
+consumed.
 
 **Calculation:**
 ```
@@ -376,7 +382,7 @@ Alice balance increase: 1,000 PNYX
 
 ### Important Rules
 
-1. **One stone per member:** Moving stone triggers reward once
+1. **One reward per scope:** Only the member's first placement can pay; moving never repays
 2. **Treasury-limited:** Rewards decrease as treasury shrinks
 3. **Incentive alignment:** Encourages active participation
 4. **Self-balancing:** Popular domains have larger treasuries = bigger rewards
@@ -388,8 +394,8 @@ PlaceStoneOnIssue/Suggestion handler:
 1. Remove previous stone (if any)
 2. Place new stone on target
 3. Re-sort list by stone count
-4. Calculate reward: treasury / CEarn
-5. Transfer reward from domain treasury to voter
+4. On the first placement in this scope, consume the persistent reward marker
+5. Calculate and transfer a positive `treasury / CEarn` reward; moves never pay
 ```
 
 ---

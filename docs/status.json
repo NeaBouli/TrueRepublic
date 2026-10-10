@@ -19,7 +19,9 @@
     ]
   },
   "tests": {
-    "status": "recovery_verified_locally",
+    "status": "historical_parent_reference_combined_qualification_pending",
+    "reference_commit": "6ca29b808a07f1b74b97ba1fbbf4cfd3f24543cc",
+    "qualification_note": "Historical parent counts only; not a recount or runtime qualification of the GH306I2 composition. Combined qualification and recount remain pending.",
     "total": 2491,
     "go": 2137,
     "rust": 26,
@@ -222,7 +224,7 @@
   },
   "limitations": {
     "ibc_staking": "explicitly unsupported fail-closed compatibility adapter on GH-187; PoD consensus instead",
-    "ibc_upgrade": "real x/upgrade keeper and governed fresh-genesis v0.4.1 application migration verified locally on GH-184; pre-GH-184 store introduction and IBC client upgrades unsupported",
+    "ibc_upgrade": "historical author evidence covers GH-184 fresh-genesis v0.4.1 and preserved GH-306 governed v0.4.2 truedemocracy 2-to-3 migration; the GH306I2 composition retains the v0.4.2 release binding but its migration, digest and release gates remain runtime-unqualified; pre-GH-184 store introduction and IBC client upgrades unsupported",
     "x_staking": "not mounted; standard staking/distribution query and transaction surfaces reject fail-closed on GH-187",
     "zkp_client": "GH-297 freezes the candidate protocol only; real Groth16 Go/WASM compatibility remains test-only on GH-206 and mock/transaction submission stay fail-closed and non-submittable pending production artifacts, ceremony and independent review",
     "tx_history": "submitted-only newest-first pagination verified on GH-131; incoming-only history is not claimed",

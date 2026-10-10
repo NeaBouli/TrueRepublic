@@ -117,7 +117,8 @@ Stones affect ranking in lists.
 **Why Proof-of-Domain?**
 - Anti-whale: Can't accumulate unlimited power
 - Community-aligned: Validators care about domains
-- Transfer limits: Max 10% of domain payouts
+- Legacy transfer accounting: max 10% of domain payouts; authenticated full
+  exits instead use a slashable budget-exempt evidence hold
 
 ### 5. DEX (Decentralized Exchange)
 

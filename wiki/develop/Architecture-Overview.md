@@ -296,8 +296,10 @@ treasury/keeper/
    b. Remove sender's previous stone (if any)
    c. Increment target's stone count
    d. Re-sort lists by stone count (descending)
-   e. Calculate VoteToEarn reward: treasury / CEarn
-   f. Transfer reward from domain treasury to voter
+   e. On the member's first placement in this scope, consume the persistent
+      reward marker and calculate `treasury / CEarn`
+   f. Transfer a positive first-placement reward from treasury to voter;
+      moves and re-entry never repay
 4. UI updates to show new stone counts
 ```
 

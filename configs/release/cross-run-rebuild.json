@@ -1,6 +1,6 @@
 {
   "schema": "truerepublic.cross-run-rebuild/v1",
-  "candidate_contract_sha256": "40397c15379e01353ef9672ce01da1e156fda7906fc57c4b74e1e422b13d9ccb",
+  "candidate_contract_sha256": "5ca023520b27b7ea83283a7172dde9164aaaa71103e43c0eff384a2ef17c8d0c",
   "source": {
     "repository": "NeaBouli/TrueRepublic",
     "workflow_path": ".github/workflows/reproducible-daemon.yml",

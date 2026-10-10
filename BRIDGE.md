@@ -9985,6 +9985,32 @@ Pending independent Kimi review and complete Sol verification.
 
 ---
 
+## 2026-10-01 02:35 EEST [AUTOR: CC]
+### TYPE: MEMO — GH306C1 checkpoint (v0.4.2 plan; release binding pending)
+
+- **Branch:** `agent/claude/GH306-reconcile` @ `c89a151` (not pushed).
+- **Done:** governed `v0.4.2` plan (`upgrade_handlers.go`) accepts only
+  truedemocracy version 2, runs the 2→3 stone-reward baseline, records its own
+  marker and fails closed for wrong plan, wrong source version and repeated
+  execution; `v0.4.1` unchanged. Operator/security docs name `v0.4.2`.
+- **Evidence:** `TestGovernedUpgradeV042FromVersion2MultiValidator` PASS (453.56s;
+  v2 base binary from `git archive 1283a445`, pre-upgrade stone, halt, failing
+  fixture discarded, 2→3 exactly once, common app hash, exactly one reward record);
+  focused `-race` handler/plan-identity tests; truedemocracy `-race`
+  genesis/migration/stone/exit tests; `make governed-upgrade` (v0.4.1) 482s;
+  `make verify`; candidate-evidence contract; `check-consistency.sh`;
+  `git diff --check`. Recovery matrix 8/8: six tests in one 1500s invocation
+  before a package timeout under host load, then KeyRotation 101.88s and Slashing
+  196.25s in a second invocation with the same timeout.
+- **Pending (Codex decision 2026-09-30 22:59 UTC):** bind the next release artifact
+  to `main.upgradePlan=v0.4.2` (build contract, release evidence, compatibility).
+  Public test counts stay unchanged until final evidence. Independent consensus
+  review still owed.
+
+`TRUEREPUBLIC GH306C1 CHECKPOINT — RELEASE BINDING NEXT (AFTER GH331A)`
+
+---
+
 ## 2026-10-01 02:40 EEST [AUTOR: CC]
 ### TYPE: SECURITY — GH-331 maintained-client brace-expansion advisories
 
@@ -10200,3 +10226,31 @@ budgets and kill-after-exit. Source formatting/diff and independent scoped fix r
 Actual focused race74259 still cold-compiling on the overloaded host; no terminal PASS.
 Source checkpoint only, no push/main acceptance or count credit; independent allocator policy
 and modern-head full harness/negative qualification remain open. No foreign process touched.
+
+## 2026-10-10T05:22:29Z — GH306I2 normal integration source checkpoint
+
+Codex sole writer integrates preserved GH306R2 tuple-key fix5c9a1d1 with modern harness/dependency
+parent6ca29b8 in an isolated normal merge. All34 conflicted paths/49 chunks were mapped before
+resolution; both Bridge/ActionLog histories retained. Genesis fix bytes remain exactly5c9a1d1;
+no new migration, upgrade plan, storage schema or GH300 browser stack. Go1.26.9 and existing
+v0.4.2 release binding are composed; historical v0.4.1 handler/tests remain.
+Fourteen formatting-preserving release/fixture pins reach the build/candidate/cross-run digest
+fixpoint; negative production/hermetic claims and distinct synthetic cross-run metadata remain.
+Historical count reference is entirely6ca29b8 (2491/2137; governance691), not a new recount.
+Independent source-composition review found no unexpected source deviation; final digest check
+and runtime/release/upgrade/recovery/negative-control/recount gates remain pending at this commit.
+Parent6ca Hosted Go38025452892 passed8/8 jobs; that is parent evidence, not GH306I2 qualification.
+Official Codex Security NOT RUN; no main merge, production action, rollout credit or gate waiver.
+
+## 2026-10-10T05:49:26Z — independent V042 qualification selection (Codex)
+
+Earlierb71 Hosted38027422218 passed eight jobs with exact checkout in all logs;
+its selection excludes V042. Q1 adds a separate Make target/Hosted job with the
+original720s test and15min job budgets, full checkout for the archived v2 baseline,
+and nearest release-compatibility regression guard. Existing V041 job unchanged.
+Independent source review OK; guard rejects omitted/commented/disabled selections.
+Release/candidate/cross-run scripts and eight focused recovery tests PASS. Actual
+old-validation control failed both regressions; restored final positive36332PASS
+0.857s, Genesis source exactly committedb71. RootQ116244 still compiling/running;
+no final-head V042/full-matrix/recount claim. Publish only an owned stacked Draft.
+Official Security NOT RUN/main acceptance held; no live migration or production.

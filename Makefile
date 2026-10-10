@@ -34,6 +34,12 @@ governed-upgrade:
 		-run '^TestGovernedUpgradeMultiValidatorHaltFailureRecovery$$' \
 		-count=1 -timeout=720s -v
 
+.PHONY: governed-upgrade-v042
+governed-upgrade-v042:
+	TRUEREPUBLIC_MULTI_VALIDATOR_SMOKE=1 go test . \
+		-run '^TestGovernedUpgradeV042FromVersion2MultiValidator$$' \
+		-count=1 -timeout=720s -v
+
 security-contract:
 	go test . -run '^TestSecurityGateRepositoryContract$$' -count=1
 

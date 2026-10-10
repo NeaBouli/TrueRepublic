@@ -336,7 +336,8 @@ before the service may restart. The repository-owned procedure and fail-closed
 tool are documented in
 [Artifact Lifecycle](node-operators/installation/lifecycle.md).
 
-Only the governed `v0.4.1` migration path is currently implemented. Arbitrary
+Only the governed `v0.4.1` (module version 1→3) and `v0.4.2` (version 2→3,
+GH-306) migration paths are currently implemented. Arbitrary
 or breaking migrations, store-loader changes for pre-GH-184 chains, and
 destructive state resets are unsupported. Follow
 [Governed Application Upgrades and Rollback](node-operators/operations/upgrades.md)

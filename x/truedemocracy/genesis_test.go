@@ -527,3 +527,144 @@ func TestInitGenesisRejectsResurrectedInactiveClaim(t *testing.T) {
 		am2.InitGenesis(ctx2, nil, tampered)
 	}()
 }
+
+// TestGenesisRoundTripPreservesGH306ExitAndStoneMarkers proves the GH-306
+// state survives export/import exactly: the budget-exempt marker on a pending
+// validator removal and the consumed first-placement stone reward markers are
+// exported, validate, and re-import so neither accounting nor reward
+// consumption can regress.
+func TestGenesisRoundTripPreservesGH306ExitAndStoneMarkers(t *testing.T) {
+	am1, k1, ctx1 := setupModuleForGenesis(t)
+	ctx1 = withEvidenceWindow(ctx1.WithBlockHeight(50), 5, 10*time.Minute)
+
+	admin := sdk.AccAddress("gh306-rt-admin")
+	member := sdk.AccAddress("gh306-rt-member")
+	operator := sdk.AccAddress("gh306-rt-operator")
+	k1.CreateDomain(ctx1, "RoundTrip", admin, sdk.NewCoins(sdk.NewInt64Coin(PNYXDenom, 500_000*PNYXUnit)))
+	if err := k1.AddMember(ctx1, "RoundTrip", member.String(), admin); err != nil {
+		t.Fatal(err)
+	}
+	if err := k1.AddMember(ctx1, "RoundTrip", operator.String(), admin); err != nil {
+		t.Fatal(err)
+	}
+	domain, _ := k1.GetDomain(ctx1, "RoundTrip")
+	domain.Issues = []Issue{{Name: "Climate", CreationDate: ctx1.BlockTime().Unix()}}
+	saveDomain(t, k1, ctx1, domain)
+
+	// Consume the member's first-placement reward in the issue scope.
+	if _, err := k1.PlaceStoneOnIssue(ctx1, "RoundTrip", "Climate", member.String()); err != nil {
+		t.Fatal(err)
+	}
+
+	// Full validator exit with zero payouts: budget-exempt evidence hold.
+	stake := sdk.NewCoins(sdk.NewInt64Coin(PNYXDenom, 100_000*PNYXUnit))
+	if err := k1.RegisterValidator(ctx1, operator.String(), testPubKey("gh306-roundtrip"), stake, "RoundTrip"); err != nil {
+		t.Fatal(err)
+	}
+	backExistingEscrow(&k1, ctx1)
+	if err := k1.ValidateEscrowParity(ctx1); err != nil {
+		t.Fatalf("pre-exit escrow parity: %v", err)
+	}
+	if err := k1.RemoveValidatorWithEscrow(ctx1, operator, operator.String()); err != nil {
+		t.Fatalf("budget-exempt exit: %v", err)
+	}
+
+	exported := am1.ExportGenesis(ctx1, nil)
+	var genesis GenesisState
+	if err := json.Unmarshal(exported, &genesis); err != nil {
+		t.Fatal(err)
+	}
+	if len(genesis.PendingValidatorRemovals) != 1 || !genesis.PendingValidatorRemovals[0].BudgetExempt {
+		t.Fatalf("exported pending removals = %+v, want one budget-exempt hold", genesis.PendingValidatorRemovals)
+	}
+	if len(genesis.StoneRewardRecords) != 1 {
+		t.Fatalf("exported stone reward records = %v, want exactly one", genesis.StoneRewardRecords)
+	}
+	wantRecord := StoneRewardRecord{DomainName: "RoundTrip", MemberAddr: member.String()}
+	if genesis.StoneRewardRecords[0] != wantRecord {
+		t.Fatalf("exported stone reward record = %+v, want %+v", genesis.StoneRewardRecords[0], wantRecord)
+	}
+	if err := ValidateGenesisState(genesis); err != nil {
+		t.Fatalf("exported GH-306 state is invalid: %v", err)
+	}
+
+	am2, k2, ctx2 := setupModuleForGenesis(t)
+	am2.InitGenesis(ctx2, nil, exported)
+
+	removal, found := k2.GetPendingValidatorRemoval(ctx2, operator.String())
+	if !found || !removal.BudgetExempt {
+		t.Fatal("imported hold lost its budget-exempt marker")
+	}
+	if !k2.HasStoneRewardRecord(ctx2, wantRecord) {
+		t.Fatal("imported state lost the consumed stone reward marker")
+	}
+
+	// The member's stone key itself is not exported; a fresh placement after
+	// import is a first placement with an already-consumed marker and must
+	// never pay again.
+	reward, err := k2.PlaceStoneOnIssue(ctx2, "RoundTrip", "Climate", member.String())
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !reward.Empty() {
+		t.Fatalf("post-import placement paid %s, want no reward", reward)
+	}
+	placed, found := k2.GetMemberIssueStone(ctx2, "RoundTrip", member.String())
+	if !found || placed != "Climate" {
+		t.Fatalf("post-import stone = %q, want Climate", placed)
+	}
+}
+
+func TestGenesisRoundTripStoneRewardNULTuples(t *testing.T) {
+	am1, k1, ctx1 := setupModuleForGenesis(t)
+	admin := sdk.AccAddress(make([]byte, 20))
+	admin[0] = 0x32
+	member := sdk.AccAddress(make([]byte, 20))
+	member[0] = 0x33
+	for _, name := range []string{"A", "A\x00"} {
+		k1.CreateDomain(ctx1, name, admin, sdk.NewCoins())
+	}
+	want := []StoneRewardRecord{
+		{DomainName: "A", IssueName: "\x00B", MemberAddr: member.String()},
+		{DomainName: "A\x00", IssueName: "B", MemberAddr: member.String()},
+	}
+	for _, record := range want {
+		k1.SetStoneRewardRecord(ctx1, record)
+	}
+	exported := am1.ExportGenesis(ctx1, nil)
+	var genesis GenesisState
+	if err := json.Unmarshal(exported, &genesis); err != nil {
+		t.Fatal(err)
+	}
+	if err := ValidateGenesisState(genesis); err != nil {
+		t.Fatalf("exported distinct reward tuples rejected: %v", err)
+	}
+	am2, k2, ctx2 := setupModuleForGenesis(t)
+	am2.InitGenesis(ctx2, nil, exported)
+	for _, record := range want {
+		if !k2.HasStoneRewardRecord(ctx2, record) {
+			t.Fatalf("import lost reward tuple %+v", record)
+		}
+	}
+	for _, data := range []json.RawMessage{exported, am2.ExportGenesis(ctx2, nil)} {
+		var state GenesisState
+		if err := json.Unmarshal(data, &state); err != nil {
+			t.Fatal(err)
+		}
+		if len(state.StoneRewardRecords) != len(want) {
+			t.Fatalf("reward record count = %d, want %d", len(state.StoneRewardRecords), len(want))
+		}
+		seen := make(map[StoneRewardRecord]bool, len(want))
+		for _, record := range state.StoneRewardRecords {
+			seen[record] = true
+		}
+		for _, record := range want {
+			if !seen[record] {
+				t.Fatalf("export lost or changed reward tuple %+v", record)
+			}
+		}
+		if err := ValidateGenesisState(state); err != nil {
+			t.Fatalf("roundtrip reward state rejected: %v", err)
+		}
+	}
+}

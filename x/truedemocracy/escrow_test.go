@@ -302,13 +302,18 @@ func TestPendingValidatorRemovalBlocksReregistrationAndRemainsSlashable(t *testi
 	if !found {
 		t.Fatal("slashing deleted the pending exit")
 	}
+	if !removal.BudgetExempt {
+		t.Fatal("new exit hold must be marked budget-exempt")
+	}
 	wantStake := int64(95_000 * PNYXUnit)
 	if got := removal.Validator.Stake.AmountOf(PNYXDenom).Int64(); got != wantStake {
 		t.Fatalf("held stake after slash = %d, want %d", got, wantStake)
 	}
+	// The budget-exempt exit never incremented TransferredStake, so the slash
+	// must not decrement unrelated historical accounting either.
 	domain, _ = keeper.GetDomain(ctx, "HeldExit")
-	if domain.TransferredStake != wantStake {
-		t.Fatalf("transferred stake = %d, want slash-adjusted %d", domain.TransferredStake, wantStake)
+	if domain.TransferredStake != 0 {
+		t.Fatalf("transferred stake = %d, want untouched 0 for a budget-exempt hold", domain.TransferredStake)
 	}
 	if got := bank.burned.AmountOf(PNYXDenom).Int64(); got != stake-wantStake {
 		t.Fatalf("held stake burn = %d, want %d", got, stake-wantStake)

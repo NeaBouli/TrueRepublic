@@ -1,5 +1,9 @@
 # Feature Matrix
 
+Test totals and coverage below are historical references from
+`6ca29b808a07f1b74b97ba1fbbf4cfd3f24543cc`, not a recount or runtime qualification
+of the GH306I2 composition. Combined qualification and recount remain pending.
+
 The machine-readable project state is
 [`docs/status.json`](https://github.com/NeaBouli/TrueRepublic/blob/main/docs/status.json).
 The human-readable delivery boundary is maintained in the
