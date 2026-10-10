@@ -10062,4 +10062,187 @@ Pending independent Kimi review and complete Sol verification.
 - GitHub issue #356 now owns the three pre-existing P2 UI follow-ups: recovery-
   phrase/FAB collision, wallet address/copy overflow and the broken header logo.
 
+## 2026-10-10 — D2 public integration checkpoint candidate
+
+Codex owns a separate docs-only checkpoint based on exact main ff63e9d. Existing CI badge
+now says Review; existing dependency row/JSON distinguishes checked unmerged365/337/366 from
+main, conditional skips and separate official scan NOT RUN. Three candidate no-fix allowances
+throughOct20 vs four main throughOct13 remain distinct. Owner retains2.2.8;359declined/CLOSED.
+Headline/test/toolchain/rollout/production values unchanged. Responsive/gate/review evidence
+pending; no Pages publication or accepted main/security/production claim from this source edit.
+
+### D2 visual negative control and bounded link correction
+
+Initial offline layout8states passed geometry but root image inspection found new default-blue
+links hard to read. Added contrast check actually failed1.343:1; retain that negative evidence.
+Only the new checkpoint class inherits existing readable card text color; no global theme change.
+Final capture targets the entire changed paragraph, not a partial tall-card crop. Final visual
+and source checks remain pending; initial images are not accepted release evidence.
+
 ---
+
+## 2026-10-10T01:22Z — D2 final responsive evidence
+
+Final offline Chromium capture56826rc0:8 before/after states across1440x1000,1180x820,
+820x1180,390x844; root opened all12 final screenshots. Changed row is inside its card;
+overflow, clipping, overlaps, page errors and unexpected egress all0. Minimum measured
+text/link contrast8.326:1; the actual prior1.343:1 negative control remains retained.
+HTML SHA256dde1dfd237a27a3b16dcf8ee4dcc03cc5a8f80bcd4ccf3d354443d3a30129b10.
+check-consistency and license policy PASS; selected Go repository contracts16589 still
+RUNNING, not PASS. Source-delta review OK; no whole-site claim audit or live Pages proof.
+Public main re-read remainsff63e9d. Candidate only; protected publication and post-Pages
+critical layout/status assertions remain required. Rollout36/59 and productionfalse unchanged.
+---
+
+## 2026-10-10T02:26:04Z — D2 C1 evidence refresh → Review
+
+Codex sole writer. Only docs/index.html and docs/status.json public source changes: scoped
+Rust361/client345/offlineadmission346 receipts, exact checkpoint time, and honest Phase4
+implemented-verifier/test-only candidate wording. No main/Pages/production/rollout credit.
+Owned offline capture50561rc0:8before/afterstates/20screenshots, all individually opened by
+root. Both changed Phase4/5 rows inside cards; overflow/clipping/overlap/errors/unexpected
+egress0; minimum measured text/linkcontrast8.326:1. Chromium140.0.7339.186/Playwright1.55.1.
+FinalHTMLSHA256d041c043acbb9eb7fb10cbe45cfc57bdb09b2e1469d4e10c0d8ab7871e949c52.
+Source consistency/license/selectedcontracts pending at this checkpoint; no unrun PASS.
+Priorbef20ed hosted two unchanged-main advisory failures remain real, fixed only by separate
+365/362 candidates after acceptance. Mainff63e9d,36/59, headline metrics remain unchanged.
+Separate officialCodexSecurityNOTRUN; live post-Pages verification still required.
+### 2026-10-10T02:40:26Z — C1 source consistency receipt
+
+check-consistency70325terminalrc0PASS, including frozenprotocol/securityreview readiness/
+maintainedinventory/roadmap/rollout/counts. JSONparse/license52210rc0/diff65259rc0PASS.
+Independent boundedclaimreviewOK; sourceHTMLd041c043 unchanged since20inspectedimages.
+SelectedRootcontracts82121RUNNING, not a newPASS. NormalDraftpublication only; main/Pages
+acceptance and liveverification remain open, officialCodexSecurityNOTRUN.
+
+## 2026-10-10T03:26:21Z — C2 verified local browser-proof checkpoint → Review
+
+Existing Phase5 row/status checkpoint adds only final local C7-H2 receipt3055af2; actual
+Chromium/native/Keeper reward/replay/adversarial/strict-handoff PASS, transport verified.
+Test-only/new-head protected checks pending/mainff63e9d/emptyadmission/scanNOTRUN remain
+explicit, no metrics/tests/rollout/production changes. Independent scopedclaimreview OK.
+Owned offline41940rc0: eight before/after Phase5 images vs43301bf in four projectviewports;
+all individually opened by root, no overlap/overflow/outside/clipping/errors/egress;
+minimum contrast8.326:1. HTMLSHA f901f9b9bc27475874bb2a1a0f86c1cdebc252dba8c7f881d2f4889cd064fed6.
+JSONparse/diffPASS. Initial consistency invocation used ambient Go/cache and was blocked
+before its gate by sandbox toolchain download; not a PASS or source defect. Correct private
+toolchain consistency/repository checks follow after the single own heavy test. Live Pages
+and post-publication visual verification remain NOT RUN; ordinary Draft367 only next.
+
+### 2026-10-10T03:43:25Z — C2 source gate receipt
+
+Correct private-toolchain consistency97672terminalrc0PASS; license70973rc0PASS. Existing
+frozen-protocol/status/inventory/rollout/claim checks retained. JSON/diff and all eight visual
+images remain unchanged; final HTMLf901f9b9. Selected repository contracts running, no unrun
+PASS. Ordinary Draft367 publication only; exact protected/main/live Pages acceptance separate.
+
+## 2026-10-10T03:57:32Z — C2 completed CI wording and final responsive receipt
+
+Exact Draft346 head3055af24 snapshot:21SUCCESS/1SKIPPED, no pending/failure; official scan
+NOT RUN, no main/admission/rollout/production credit. Supersedes only earlier pending text.
+Final Landing HTML5ce0befa09f470dd1f6212a8e8a4be090c31d5c5916d8d681a1b30cad4bf7953:
+new offline eight before/after Phase5 images/four viewports inspected individually; geometry,
+clipping/overlap/errors/egress0, contrast8.326:1. Independent exact claim-delta review OK.
+Refreshed consistency PASS; final selected root contracts running, prior49733rc0PASS1.836s.
+JSON/format/license boundaries unchanged. Ordinary Draft367 update only; live Pages acceptance
+and post-publication assertions still separate, mainff63e9d/36of59/productionfalse unchanged.
+
+### 2026-10-10T04:00:30Z — C2 final source qualification complete
+
+Final13744 terminalrc0: refreshed consistency, selected release-compatibility/security-review/
+security-gate repository contracts PASS2.299s, JSONparse and diff-check PASS. Eight inspected
+images and independent final claim review match unchanged HTML5ce0befa. License70973PASS;
+license surfaces untouched by final CI text. Normal Draft367 push next; exact-head protected,
+accepted main/live Pages and post-publication assertions remain open, official scan NOT RUN.
+
+### 2026-10-10T04:32:10Z — C3 exact-head status-source receipt
+
+Read-only04:22 snapshot:36625f69c7 has only2successful review bots, protected workflows absent;
+367ca2075d16SUCCESS/2dependencyFAIL/1conditionalSKIP on unchanged main. Earlier qualified
+3662c8fef8 receipt now explicitly SHA-scoped, no inherited current-headPASS. Two source files
+only; numbers/versions/36of59/prodfalse unchanged. Independent claim delta OK; JSON/diff PASS.
+Capture38060terminalrc0:8before/after images/fourviewports individually opened, layout/clipping/
+overlap/errors/egress0, contrast8.326. HTMLc2281d52, Chromium140.0.7339.186. Refreshed
+consistency29194rc0PASS incl. frozen protocol0.104s and security-review contract. Go/build/gate
+sources exactC2; no new full Go-suite PASS claimed. Normal existingDraft367 update only;
+newhead protected/main/live/official scan acceptance remain separate and open.
+## 2026-10-10T05:03:08Z — C4 terminal-candidate receipts qualified
+
+Only existing Phase5/checkpoint and status JSON changed. Exact snapshots: main
+ff63e9d observed04:56:32, Draft367f6849ae16SUCCESS/2baselineFAIL/1conditionalSKIP
+asof04:45:40, Draft3684e628ec17SUCCESS/1conditionalSKIP; Go actual synthetic
+45d3e2a eight jobs/eight recovery scenarios PASS. GH30880b518d actual Rust
+host/five real wasm32 marker denials and Go8/8 PASS; no main/scan acceptance.
+Inherited36625f69c7 receipt stays04:22/two bots, no protected PASS assigned.
+
+Independent final source-claim review OK; corrected one receipt timestamp from
+query start to terminal snapshot end. JSON/diff PASS; consistency37773rc0 PASS,
+frozen protocol1.014s/security-review contract/inventory/rollout checks retained.
+Initial capture51786 bind EPERM before target, not product failure; corrected
+authorized7008rc0 captured eight before/after images in four viewports, all
+individually opened. Layout/overflow/outside/overlap/clipping/errors/egress0,
+inside true/min contrast8.326; HTML5e3d5a8e2d925838eb7280de601cf6125dafeba8e02c265425efc3ab6044a58b,
+Chromium140.0.7339.186. No new install/full Go rerun or inherited new-head PASS.
+Existing Draft367 normal update only; new-head protected/main/live Pages remain
+separate, official Codex Security NOT RUN.36/59/prodfalse/versions/metrics unchanged.
+
+## 2026-10-10T05:38:24Z — Landing C5 source/visual status qualification
+
+Same D2 publication hop: only index.html/status.json source delta; no metric,
+version/test-count/rollout/production or CSS change. Current367cee receipt
+16SUCCESS/2baselineFAIL/1conditionalSKIP uses actual synthetic55b077b/mainff63,
+snapshot05:24:07; main independently read05:25:52 unchanged. Modern6ca exact
+HostedGo38025452892 eight jobs PASS05:08:44, not focused mutation/T1 acceptance.
+OwnedGH306b71 source/digest and release/candidate/cross-run script evidence is
+recorded separately from still-pending root/runtime/mutation/recount gates.
+Independent scoped claims reviewOK after explicit mutation-pending wording;
+review-brief run-ID separator typo clarified without changing the correct ID.
+Initial22377 capture is superseded by final10545rc0: all eight before/after
+screenshots at1440/1180/820/390 individually opened. Geometry/errors/egress0,
+row-inside true/contrast8.326; cached Chromium140.0.7339.186, no installation.
+HTML12b4d389cd819f9644f1ce6d7ee138f3dfe7f6c08052d0a2bf8226f1fa4a8736.
+Consistency5339rc0 includes frozen-protocol0.101s/readiness/inventory/rollout,
+JSON/diff PASS. Normal existing Draft367 publication follows; no new-head
+protected/full-runtime/main/live Pages/official-scan PASS or production action.
+
+## 2026-10-10T06:16:34Z — C6 terminal Go qualification / truthful Landing checkpoint
+
+Owner Codex only; same D2 publication hop. Changed docs/index.html and docs/status.json
+only, plus this append and ActionLog. Draft369 head0c29a9f/base6ca: Go38028931964
+all nine jobs PASS on syntheticc3bcb8a; complete treed5ac2990 equals owned0c.
+Explicit V042226.84s, final root63329PASS1.844s, focused handler/tuple/restoration
+controls qualified. T3 final98745PASS18.356s; T1 allocator policy remains open.
+Mainff63 read06:12:26 unchanged. Recount/full protected-PR/main/separate official
+Security acceptance still open; scan NOT RUN, rollout36/59/prodfalse unchanged.
+Native scoped claims reviewOK after terminal matrix clarification, no second implementation.
+Capture94608rc0: eight before4289764/after images at1440/1180/820/390 individually
+opened and checked; geometry/errors/egress0, row-inside true, contrast8.326207589.
+Cached Chromium140.0.7339.186, no installation. HTMLSHA256
+efef22ecbe1889d761ebb85214bc5b560cffce4badf11fe7ed07af8331973235.
+JSON/diff PASS. Baseline consistency12502 still running at this checkpoint.
+Publish only existing Draft367 after terminal consistency; no main/live Pages claim.
+
+## 2026-10-10T06:18:20Z — C6 baseline consistency terminal PASS
+
+Consistency12502rc0, frozen-protocol0.615s/readiness/public counts2486/inventory/
+rollout guards PASS; JSON/diffPASS. Source/visual qualification now complete for
+this bounded documentation delta. Eight final images inspected. Existing367 normal
+publication follows; new-head protected/main/live/official-scan acceptance not implied.
+
+## 2026-10-10T07:05:19Z — C7 completed candidate-evidence checkpoint
+
+Mapped D2, sole owner Codex; only existing checkpoint row/JSON plus append-only logs.
+GH306 exact0c standard-only inventory2167namedPASS/0FAIL/22SKIP now complete;
+no opt-in double-counting and no main headline replacement. GH313 selected arity/
+negation expectedFAIL controls and exact restoredfourPASS complete. GH309338–341
+scoped receipts recorded;338 single failed-path retry terminalSUCCESS, cross-runSKIP.
+Draft370 API snapshot18SUCCESS/1conditionalSKIP, no protected-main acceptance.
+Mainff63 observed06:55:19 unchanged. Rollout36/59/prodfalse and metrics unchanged.
+Consistency13956 terminalrc0, JSON/diffPASS, native scoped claimsOK. Capture62673rc0:
+eight before5866c18/after images, four viewports individually opened; overflow/outside/
+overlaps/clipping/errors/egress0, rowsinside true, minimum contrast8.326207589.
+HTMLSHA256 07cf95d3886da780b092834d4306dd0a865fbf85748b49ef1bf7ccce94b05436.
+Missing shared browser caused prelaunch62072failure; existing pinned test-browser
+provision75483rc0 in own project cache only. Mistyped consistency path127 executed
+no test; corrected existing script passed. New-head/main/live/security acceptance
+remain separate; official scan NOT RUN. Normal existing367 publication follows.

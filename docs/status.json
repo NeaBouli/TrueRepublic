@@ -213,11 +213,68 @@
       "browser_fetch_receiver": "default_fetch_bound_to_globalthis_with_receiver_regression_on_gh335_pr336"
     },
     "dependency_security": {
-      "status": "no_blocking_high_or_critical_npm_or_fixable_reachable_go_advisory_on_merged_main_four_documented_bounded_no_fix_reachable_go_exceptions_remain",
+      "status": "historical_merged_remediation_on_pr332_pr347_pr349_current_main_requalification_pending",
       "go_no_fix_exceptions": ["GO-2023-1821", "GO-2023-1881", "GO-2026-4740", "GO-2026-5932"],
       "npm": "brace_expansion_patched_on_pr332_and_unfixed_braces_chain_removed_by_tailwindcss_4_3_on_pr347",
       "go": "opentelemetry_family_1_45_0_removes_go_2026_6505_on_pr349_documented_no_fix_ids_unchanged",
-      "note": "Dependency remediation only. It adds no rollout credit and does not change production readiness."
+      "note": "Historical merged dependency remediation only. Current integration qualification is recorded separately; no rollout credit or production approval.",
+      "integration_checkpoint": {
+        "as_of_utc": "2026-10-10T06:55:19Z",
+        "main_commit": "ff63e9d087f1bbf09c01b3182b896ce30ac9116c",
+        "main_observed_at_utc": "2026-10-10T06:55:19Z",
+        "status": "checked_candidates_not_merged_main_acceptance_pending",
+        "qualified_candidates": ["PR365@6d1c79d", "PR337@825e6f2", "PR366@2c8fef8", "PR368@4e628ec"],
+        "current_status_surface_checks": {
+          "PR366@25f69c7": {
+            "as_of_utc": "2026-10-10T04:22:19Z",
+            "success": 2,
+            "failure": 0,
+            "skipped": 0,
+            "pending": 0,
+            "scope": "review_bots_only_protected_workflow_checks_not_present_not_protected_pass"
+          },
+          "PR367@cee1ae4": {
+            "as_of_utc": "2026-10-10T05:24:07Z",
+            "success": 16,
+            "failure": 2,
+            "skipped": 1,
+            "pending": 0,
+            "failed_contexts": ["go-vuln", "node-audit-client"],
+            "scope": "synthetic_merge_55b077b_into_unchanged_main_dependency_failures_GH364_GH362_remediation_in_unmerged_PR365"
+          },
+          "PR368@4e628ec": {
+            "as_of_utc": "2026-10-10T04:56:32Z",
+            "success": 17,
+            "failure": 0,
+            "skipped": 1,
+            "pending": 0,
+            "scope": "exact_candidate_into_PR365_synthetic_merge_45d3e2a_not_merged_main_acceptance"
+          }
+        },
+        "scoped_candidate_evidence": {
+          "PR361@f931a53": "hosted_locked_rust_fmt_clippy_build_test_26_pass_0_fail",
+          "GH308I1@80b518d": "hosted_Rust_38024984512_host_fmt_clippy_build_test_and_real_wasm32_five_quarantine_marker_denials_pass_and_Go_38024984879_eight_jobs_pass_actual_checkout_80b518d_all_jobs_observed_04_59_06_UTC_separate_Codex_Security_and_main_acceptance_open",
+          "GH324I1@6ca29b8": "hosted_Go_38025452892_eight_jobs_pass_actual_checkout_6ca29b8_all_jobs_observed_05_08_44_UTC_full_race_suite_not_individual_focused_or_mutation_proof_allocator_policy_and_main_acceptance_open",
+          "GH306I2@b71dc71": "historical_C5_checkpoint_source_and_digest_graph_review_OK_script_contracts_PASS_runtime_root_mutation_and_recount_then_pending_superseded_by_Q1_receipt_below",
+          "GH306I2-Q1@0c29a9f": "Draft369_base6ca_Go_38028931964_all_nine_jobs_PASS_actual_synthetic_merge_c3bcb8a_complete_tree_d5ac2990_equals_candidate_root_contract_63329_PASS_1_844s_handler_plan_16244_PASS_4_140s_tuple_negative_57086_expected_FAIL_restored_36332_PASS_0_857s_wrong_target_43021_expected_FAIL_restored_source_clean_explicit_V042_226_84s_standard_only_named_pass_inventory_2167_PASS_0_FAIL_22_SKIP_whole_failed_package_attempts_replaced_no_optin_double_count_main_headline_unchanged_full_protected_main_and_separate_security_acceptance_open",
+          "PR338@86fc26f": "release_run_38010358701_attempt_2_terminal_SUCCESS_actual_synthetic_merge_b42ccf7_base_825e6f2_amd64_OCI_and_candidate_evidence_PASS_cross_run_SKIPPED_NOT_PASS_not_merged_main_and_separate_Codex_Security_acceptance_open",
+          "GH309338-341": "exact_stack_client_configured_browser_chain_test_only_WASM_and_high_critical_dependency_audit_PASS_source_heads_86fc26f_30fd630_5ccbbae_4e13402_not_main_or_production_acceptance",
+          "PR368-controls@4e628ec": "selected_arity_and_narrow_negation_mutations_expected_named_assertion_FAIL_exact_restore_four_selected_fixtures_PASS_source_blob_43e2b96_clean_no_product_change_no_main_Wiki_or_official_scan_acceptance",
+          "PR370@80b518d": "API_rollup_18_SUCCESS_1_conditional_SKIP_synthetic_01eb273_exact_parent_tree_equals_candidate_release_workflow_38030948468_terminal_seven_SUCCESS_cross_run_SKIPPED_individual_new_checkout_logs_not_reaudited_full_main_and_separate_security_acceptance_open",
+          "GH324I1-T3@6ca29b8": "bounded_original_deadline_controls_verified_focused_race_74259_PASS_14_872s_old_wait_77146_both_deadline_subcases_expected_FAIL_separate_Exit_setup_failure_not_mutation_verdict_restored_positive_98745_PASS_18_356s_T1_allocator_policy_and_main_acceptance_open",
+          "PR368@4e628ec": "hosted_Go_38024550101_eight_jobs_pass_actual_synthetic_merge_45d3e2a_root_race_coverage_pass_and_eight_explicit_multi_validator_recovery_scenarios_pass_not_individual_test_log_or_main_acceptance",
+          "PR345@b2c0934": "client_490_pass_4_skip_node_19_pass_build_budget_audits_pass_local_voting_chromium_4_viewports_pass_images_inspected",
+          "PR346@a3307ac": "offline_admission_and_genesis_evidence_tests_pass_production_allowlist_empty_consensus_unchanged",
+          "PR346@3055af2": "local_pinned_chromium_fresh_synthetic_proof_native_verifier_keeper_reward_replay_adversarial_handoff_pass_actual_fixed_artifact_transport_verified_test_only_protected_21_success_1_conditional_skip_not_merged"
+        },
+        "conditional_cross_run_comparisons": "SKIPPED_NOT_PASS",
+        "codex_security_scan": "NOT_RUN",
+        "candidate_go_allowances": "PR365_implements_GH355_three_no_fix_ids_expire_2026_10_20",
+        "main_go_allowances": "four_no_fix_ids_expire_2026_10_13_until_candidate_acceptance",
+        "basic_wasmvm": "2.2.8_retained_by_owner_PR359_declined_closed",
+        "rollout_credit": false,
+        "production_approval": false
+      }
     }
   },
   "limitations": {

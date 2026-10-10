@@ -6082,3 +6082,110 @@
   check-consistency PASSED. Not pushed.
 - Codex opened issue #356 for the three pre-existing P2 UI follow-ups and linked
   that owner from TODO before publication.
+
+## 2026-10-10 — D2 Landing/status checkpoint ownership (Codex)
+
+Bounded existing public documentation hop; only CI badge and dependency-status paragraph/JSON
+change. Checked immutable3656d1c79d/337825e6f2/3662c8fef8 candidates are not merged-main
+acceptance; conditional skip and official scan NOT RUN explicit. Main four expiryOct13 not
+prematurely replaced by candidate three expiryOct20. Owner retains2.2.8/declines359.
+Actual responsive/contract gates pending; no metric/rollout/production or live Pages claim.
+
+## 2026-10-10T01:22Z — Codex D2 visual verification
+
+Actual final capture8states/12images PASS; all12 opened by root. Four viewport geometry0,
+text/link contrast8.326:1; earlier1.343:1 failure retained and corrected only within new row.
+Consistency/license PASS, selected Go contractsRUNNING. Mainff63e9d unchanged; this is a
+separate docs candidate, not accepted publication, scan PASS or changed rollout readiness.
+---
+
+## 2026-10-10T02:26:04Z — D2 C1 scoped public checkpoint (Codex)
+
+Refreshed only checked-source receipts in docs/status.json and Phase5; corrected Phase4
+auditedZKP implication to test-only candidate/openproduction qualification.20responsive
+screenshots inspected,8statesPASS,8.326contrast/geometry0. Sourceguards pending. No headline
+counts/metrics/rollout/main/live/scan/productioncredit; officialCodexSecurityNOTRUN.
+### 2026-10-10T02:40:26Z — C1 source guards (Codex)
+
+Consistency70325rc0PASS incl frozenprotocol/readiness/inventory/rollout; JSONparse/license/
+diffPASS. BoundedclaimreviewOK;20imageevidence unchanged. SelectedRoot82121RUNNING,
+protectedexacthead/livePages/officialscan remain separately unapproved orNOTRUN.
+
+## 2026-10-10T03:26:21Z — Landing C2 responsive source evidence (Codex)
+
+Only existing Phase5/status checkpoint receives actual final3055af2 synthetic browser proof
+receipt. Independent publicclaimreview OK. Fourviewport/eight before-after images opened;
+geometry/errors/egress0, contrast8.326, HTMLf901f9b9. JSON/diffPASS. Ambient consistency
+failed before gate due unavailable private toolchain routing; corrected invocation pending
+after current own race compile. No main/livePages/production/admission/rollout change.
+
+### 2026-10-10T03:43:25Z — C2 corrected source gate receipt
+
+Private-toolchain consistency97672rc0PASS, license70973rc0PASS; JSON/diff/HTMLf901f9b9 and
+eight inspected images unchanged. Selected repository contracts running, no inferred PASS.
+Protected new-head/main/live Pages and official scan remain separate; no rollout credit.
+
+## 2026-10-10T03:57:32Z — C2 final CI checkpoint qualification
+
+Protected3463055af24 completed21SUCCESS/1SKIPPED; exact new wording independently reviewed.
+Final eight responsive images inspected, HTML5ce0befa/geometry0/contrast8.326; source consistency
+PASS, final selected root contracts running. Test-only/no main/live/scan/rollout credit retained.
+Normal Draft367 update follows final source receipt; no production/deployment action.
+
+### 2026-10-10T04:00:30Z — final C2 source receipt
+
+13744rc0: consistency, three selected repository contracts2.299s, JSONparse/diff PASS.
+Final HTML5ce0befa matches eight inspected responsive images and scoped claim review OK.
+Normal existingDraft367 update only; accepted main/live/official scan and rollout unchanged.
+
+### 2026-10-10T04:32:10Z — C3 current check-snapshot wording qualified
+
+Current366/367 snapshots are separated from prior qualified heads. Scoped claim reviewOK;
+JSON/diffPASS, consistency29194terminalrc0 incl. protocol/security contracts. Capture38060rc0,
+eight responsive images opened, geometry0/contrast8.326, HTMLc2281d52. Only existing status
+publication hop; no code/config/dependency/rollout/production change. Draft push next,
+exact-head protected/main/live/official-scan gates remain open; no unavailable-CI PASS.
+## 2026-10-10T05:03:08Z — C4 exact terminal evidence refresh (Codex)
+
+Two source files only, no headline metric/version/rollout change.368 exact scoped
+Go/Docs and308 exact Rust/Go terminal receipts added; unchanged-main/baseline
+failures and separate scan/main/live gates retained. Independent source review
+OK after timestamp correction. Consistency37773rc0, JSON/diff PASS. Initial
+capture bind EPERM followed by corrected7008rc0; all eight images/fourviewports
+opened, geometry/errors/egress0/contrast8.326, finalHTML5e3d5a8e. ExistingDraft367
+normal publication follows; no accepted-main/live/full-suite/official-scan PASS.
+
+## 2026-10-10T05:38:24Z — bounded Landing C5 checkpoint
+
+Two source files only: terminal367cee synthetic-merge/baseline failures,
+exact6ca HostedGo eight-job receipt and separately scopedGH306b71 source/script
+checkpoint. Mainff63 read again; root/runtime/mutation/recount/main/scan/live
+gates stay pending. Final claim reviewOK, consistency5339rc0, JSON/diffPASS.
+Final10545rc0/eightimages/fourviewports all opened, geometry/errors/egress0,
+contrast8.326/HTML12b4d389. No CSS/metric/version/count/rollout/production change.
+Publish only existing owned Draft367; no auto-main or live deployment.
+
+## 2026-10-10T06:16:34Z — Landing C6 exact-candidate evidence refresh
+
+Two source files, no CSS/metrics/versions/headline counts/rollout/production change.
+Record Draft3690c all nine Go jobs and verified synthetic/source-tree identity,
+explicit V042226.84s and bounded restored controls; T1/recount/full protected/main/
+separate Security remain open. Mainff63 read06:12. Claims reviewOK; capture94608rc0,
+eight screenshots opened, zero geometry/errors/egress, contrast8.326; JSON/diffPASS.
+Consistency12502 pending at entry; normal existing Draft367 push only after result.
+
+## 2026-10-10T06:18:20Z — C6 local documentation gate complete
+
+Consistency12502 terminalrc0 includes frozen protocol/readiness/inventory/rollout;
+JSON/diffPASS and eight inspected visual captures complete. No headline/release credit.
+Normal commit/push existing367 is authorized; main/live acceptance remains separate.
+
+## 2026-10-10T07:05:19Z — Landing C7 bounded evidence refresh
+
+Codex updates checkpoint row/JSON only: complete candidateGo2167/0/22, selected
+GH313 controls restoredPASS, GH309338–341 scoped receipts and one338 retryPASS,
+Draft37018SUCCESS/1SKIP. Mainff63 observed06:55 unchanged; no headline/rollout credit.
+Consistency13956rc0, JSON/diffPASS, scoped claimsOK; capture62673rc0, all eight
+images/four viewports opened, geometry/errors/egress0, contrast8.326. Existing pinned
+browser provisioned in own cache after prelaunch missing-build failure; no product
+dependency change. Official scan NOT RUN; protected new-head/main/live gates open.
