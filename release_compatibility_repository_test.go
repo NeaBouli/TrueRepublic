@@ -125,6 +125,54 @@ func TestReleaseCompatibilityRepositoryContract(t *testing.T) {
 	if violations := releaseCompatibilityViolations(contract); len(violations) != 0 {
 		t.Fatalf("contract violations:\n- %s", strings.Join(violations, "\n- "))
 	}
+	makefile := readRepositoryFile(t, "Makefile")
+	workflow := readRepositoryFile(t, ".github/workflows/go-ci.yml")
+	if !strings.Contains(makefile, ".PHONY: governed-upgrade-v042\n") {
+		t.Fatal("V042 qualification must not be skipped by a same-name file")
+	}
+	for _, gate := range []struct{ target, test string }{
+		{"governed-upgrade", "TestGovernedUpgradeMultiValidatorHaltFailureRecovery"},
+		{"governed-upgrade-v042", "TestGovernedUpgradeV042FromVersion2MultiValidator"},
+	} {
+		t.Run(gate.target, func(t *testing.T) {
+			recipe := regexp.MustCompile(`(?m)^` + regexp.QuoteMeta(gate.target) + `:\n(?:\t[^\n]*\n)+`).FindString(makefile)
+			want := gate.target + ":\n\tTRUEREPUBLIC_MULTI_VALIDATOR_SMOKE=1 go test . \\\n\t\t-run '^" + gate.test + "$$' \\\n\t\t-count=1 -timeout=720s -v\n"
+			if recipe != want {
+				t.Fatalf("%s must retain its exact independent opt-in selection and test budget", gate.target)
+			}
+			job := regexp.MustCompile(`(?m)^  ` + regexp.QuoteMeta(gate.target) + `:\n(?:    [^\n]*\n|\n)+`).FindString(workflow)
+			required := []string{"    runs-on: ubuntu-latest", "    timeout-minutes: 15", "          go-version: '1.26.9'", "        run: make " + gate.target}
+			if gate.target == "governed-upgrade-v042" {
+				required = append(required, "          fetch-depth: 0")
+			}
+			validJob := func(body string) bool {
+				if regexp.MustCompile(`(?m)^ +if:`).MatchString(body) {
+					return false
+				}
+				for _, line := range required {
+					if !regexp.MustCompile(`(?m)^` + regexp.QuoteMeta(line) + `$`).MatchString(body) {
+						return false
+					}
+				}
+				return true
+			}
+			if !validJob(job) {
+				t.Fatalf("%s Hosted job must be active and bind its exact budget, toolchain and selection", gate.target)
+			}
+			for _, line := range required {
+				for _, replacement := range []string{"", "#" + line} {
+					if validJob(strings.Replace(job, line, replacement, 1)) {
+						t.Fatalf("%s guard accepted omitted/commented %q", gate.target, line)
+					}
+				}
+			}
+			for _, condition := range []string{"    if: false\n", "        if: false\n"} {
+				if validJob(job + condition) {
+					t.Fatalf("%s guard accepted disabled job/step", gate.target)
+				}
+			}
+		})
+	}
 	if len(evidenceViolations([]string{"."})) == 0 {
 		t.Fatal("repository root accepted as evidence")
 	}

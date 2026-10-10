@@ -6203,3 +6203,13 @@ literal fixture/config digest links repinned; invalid claims preserved. Count in
 the modern parent's historical2491/2137/governance691, with combined qualification pending.
 Source review OK; final digest review and runtime/full integration/negative/recount gates owed.
 Parent Hosted38025452892 passed8/8, not new-head acceptance. Scan NOT RUN; no main/production.
+
+## 2026-10-10T05:49:26Z — GH306I2 qualification coverage correction
+
+Three-file Q1 delta: independent governed-upgrade-v042 target/job and existing
+release-compatibility guard; original V041 selection/budgets preserved. Source
+review OK, archived-baseline fetch-depth0 and active-line controls included.
+b71 Hosted38027422218 actual eight-job PASS does not select V042. Recovery
+positive/old-negative/restored-positive proven; rootQ1 command16244 pending.
+Final-head protected nine-job qualification/recount/official acceptance remain
+open. No gate weakening, paused-worker ref change, main merge or deployment.

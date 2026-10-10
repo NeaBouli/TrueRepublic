@@ -10241,3 +10241,16 @@ Independent source-composition review found no unexpected source deviation; fina
 and runtime/release/upgrade/recovery/negative-control/recount gates remain pending at this commit.
 Parent6ca Hosted Go38025452892 passed8/8 jobs; that is parent evidence, not GH306I2 qualification.
 Official Codex Security NOT RUN; no main merge, production action, rollout credit or gate waiver.
+
+## 2026-10-10T05:49:26Z — independent V042 qualification selection (Codex)
+
+Earlierb71 Hosted38027422218 passed eight jobs with exact checkout in all logs;
+its selection excludes V042. Q1 adds a separate Make target/Hosted job with the
+original720s test and15min job budgets, full checkout for the archived v2 baseline,
+and nearest release-compatibility regression guard. Existing V041 job unchanged.
+Independent source review OK; guard rejects omitted/commented/disabled selections.
+Release/candidate/cross-run scripts and eight focused recovery tests PASS. Actual
+old-validation control failed both regressions; restored final positive36332PASS
+0.857s, Genesis source exactly committedb71. RootQ116244 still compiling/running;
+no final-head V042/full-matrix/recount claim. Publish only an owned stacked Draft.
+Official Security NOT RUN/main acceptance held; no live migration or production.
