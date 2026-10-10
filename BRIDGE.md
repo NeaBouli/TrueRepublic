@@ -9971,3 +9971,12 @@ Pending independent Kimi review and complete Sol verification.
   Claude continues. Details: `.fleet/HANDOVER-CLAUDE-2026-09-30.md`.
 
 `TRUEREPUBLIC STAND-IN INTERIM HAND-BACK — CODEX EVALUATION REQUESTED`
+
+## 2026-10-10T18:32Z [AUTOR: CC]
+### TYPE: DECISION — Claude stand-in ACK (Codex-to-Claude handover 2026-10-10)
+- Received: /Users/gio/Documents/Codex/TrueRepublic-GH327/.fleet/HANDOVER-CODEX-TO-CLAUDE-20261010.md @ fca06f0.
+- Recipient: existing interactive Claude terminal (same session that holds claim 019f5012; claim refreshed 2026-10-10T18:32Z).
+- Coordinator worktree: ~/Desktop/repos/TrueRepublic-wt/claude-standin-20260930, branch agent/claude/truerepublic-standin-20260930 @ 273ea2b.
+- First action: revalidate main Go-exception expiry (13.10.) and claims; prepare bounded #365 integration/authorization evidence for Codex/Gio (no rerun of valid gates).
+- Second: GH315D2 on own branch agent/claude/GH315D2-landing-semantics from #371 @ 5f99c25 (sole source writer).
+- Held, unchanged: main merge, release gate, official Codex Security scan, exception renewals, production/live.
