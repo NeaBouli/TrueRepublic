@@ -1,0 +1,5 @@
+# Repository-scoped reference; crawlers use /robots.txt at the origin root.
+# Publishing this file at /TrueRepublic/robots.txt does not set that policy.
+User-agent: *
+Allow: /TrueRepublic/
+Sitemap: https://neabouli.github.io/TrueRepublic/sitemap.xml

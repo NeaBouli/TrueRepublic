@@ -10063,3 +10063,46 @@ Pending independent Kimi review and complete Sol verification.
   phrase/FAB collision, wallet address/copy overflow and the broken header logo.
 
 ---
+
+## 2026-10-10T07:33:15Z — GH315D1 discovery subset claimed
+
+Codex owns agent/codex/GH315-discovery from exact mainff63; no overlapping worker.
+Scope: head metadata and sitemap/robots/llms plus a narrow consistency regression.
+Recovery-only/production=false, canonical GitHub Pages/repository references;
+no executable script, tracking, body/CSS/assets, chain/client or security-policy change.
+Navigation/design/live identity and origin-root robots policy remain unverified.
+No #315 closure, rollout credit, main merge or deployment follows from this subset.
+
+## 2026-10-10T07:37:38Z — GH315D1 local discovery qualification
+
+Added truthful canonical/Open Graph/Twitter/inert WebSite JSON-LD in the Landing
+head; sitemap/robots/llms reference the same canonical project. Existing logo is
+referenced unchanged; artwork provenance/license exclusions are not altered.
+Maintained consistency regression parses metadata/JSON/XML and rejects executable
+scripts, duplicate/foreign URLs and status drift. Exact baseline body/style and
+status.json byte equality PASS; candidate contract plus nine negative controls PASS.
+bash -n, xmllint, diff check PASS. Initial consistency invocation stopped before
+tests due sandbox global-cache access; private-cache retry11556 terminalrc0 includes
+frozen-ZKP/readiness/inventory/2486/21M/36of59 guards and the new discovery contract.
+Frontend visual skill: non-rendered-only exemption, not a new visual PASS. No screenshots,
+live link/byte identity, origin-root robots policy, main integration or rollout credit.
+Full #315 nav/semantics/design acceptance remains OPEN; official Codex Security NOT RUN.
+
+## 2026-10-10T07:52:34Z — GH315D1 closeout, owner-requested pause
+
+Gio ordered completion of this subset then PAUSE until explicit reactivation.
+Implementation candidate daf270ba4299615c13698b33bd6c3d3cef687d9e was normally
+pushed as Draft #371; immutable local consistency42508rc0 and nine controls PASS.
+Docs38035259784/all8 steps SUCCESS; actual checkout-log binding UNKNOWN after
+connection failures. Latest aggregate has go-vuln/node-audit-client FAIL, not all-green.
+Main ff63e9d remains unchanged. #337–341/#343–346/#365–371 remain OPEN Draft;
+#342 already CLOSED/unmerged. Qualified candidate evidence is not main acceptance.
+Official Codex Security NOT RUN; exact authorization/lead acceptance still OPEN.
+Main's four Go exceptions expire October13; candidate365 renews three to October20,
+but is not merged policy. Landing367 C7 remains candidate/not live; README/main
+headline2486, rollout36/59 and productionfalse unchanged. No counter-only update.
+GH315D2 navigation/semantics is queued/NOT_STARTED; full #315 acceptance OPEN.
+This follow-up changes coordination only, not discovery/body/CSS/status or tests.
+No new block/worker/scan/rerun/merge/deploy; watcher/bilateral configuration unchanged.
+On Gio's resume: revalidate exact heads/expiry, resolve365 acceptance, then ordered
+GH309→GH300 integration. Paused Claude receives the closeout through the existing chat.

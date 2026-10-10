@@ -1,0 +1,12 @@
+# TrueRepublic
+
+> Community-governed open-source governance on Cosmos SDK. Recovery-only; production=false. Basic rollout and security qualification are in progress.
+
+## Canonical project references
+- [Landing](https://neabouli.github.io/TrueRepublic/)
+- [Source repository](https://github.com/NeaBouli/TrueRepublic)
+- [Machine-readable status](https://neabouli.github.io/TrueRepublic/status.json)
+- [Limitations](https://github.com/NeaBouli/TrueRepublic/blob/main/docs/LIMITATIONS.md)
+- [Basic rollout roadmap](https://github.com/NeaBouli/TrueRepublic/blob/main/docs/ROLLOUT_ROADMAP.md)
+
+This reference does not approve production use, anonymous voting or real-key custody.
