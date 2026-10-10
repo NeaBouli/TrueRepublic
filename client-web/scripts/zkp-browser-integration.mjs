@@ -88,6 +88,37 @@ try {
   page.on('console', (message) => {
     if (message.type() === 'error') browserErrors.push(message.text());
   });
+  const artifactChecks = [];
+  const artifactFailures = [];
+  let verifiedGlueResponses = 0;
+  const expectedOrigin = `http://127.0.0.1:${address.port}`;
+  page.context().on('request', (request) => {
+    if (!new URL(request.url()).pathname.startsWith('/__zkp/')) return;
+    artifactChecks.push((async () => {
+      const response = await request.response();
+      if (response === null) throw new Error('artifact request has no response');
+      await response.finished();
+    })().catch((error) => artifactFailures.push(error.message)));
+  });
+  page.context().on('requestfailed', (request) => {
+    if (new URL(request.url()).pathname.startsWith('/__zkp/')) {
+      artifactFailures.push('artifact request failed');
+    }
+  });
+  page.context().on('response', (response) => {
+    const url = new URL(response.url());
+    if (!url.pathname.startsWith('/__zkp/')) return;
+    artifactChecks.push((async () => {
+      if (url.origin !== expectedOrigin || !routes.has(url.pathname) || response.status() !== 200) {
+        throw new Error('artifact response has an unexpected origin, path or status');
+      }
+      if (url.pathname === '/__zkp/wasm_exec.js') {
+        const digest = createHash('sha256').update(await response.body()).digest('hex');
+        if (digest !== TRUSTED_WASM_EXEC_SHA256) throw new Error('served runtime glue digest mismatch');
+        verifiedGlueResponses += 1;
+      }
+    })().catch((error) => artifactFailures.push(error.message)));
+  });
   await page.goto(
     `http://127.0.0.1:${address.port}/browser-quality/zkp-browser-harness.html`,
     { waitUntil: 'networkidle' }
@@ -95,15 +126,27 @@ try {
   await page.waitForFunction(
     () => typeof window.runTrueRepublicZKPBrowserProof === 'function'
   );
-  const handoff = await Promise.race([
-    page.evaluate(() => window.runTrueRepublicZKPBrowserProof?.()),
-    new Promise((_, reject) =>
-      setTimeout(
-        () => reject(new Error('browser proof generation timed out')),
-        120_000
-      )
-    ),
-  ]);
+  let proofTimer;
+  const proofDeadline = new Promise((_, reject) => {
+    proofTimer = setTimeout(() => reject(new Error('browser proof generation timed out')), 120_000);
+  });
+  let handoff;
+  try {
+    handoff = await Promise.race([
+      page.evaluate(() => window.runTrueRepublicZKPBrowserProof?.()),
+      proofDeadline,
+    ]);
+    for (let checked = 0; checked < artifactChecks.length;) {
+      const batch = artifactChecks.slice(checked);
+      checked += batch.length;
+      await Promise.race([Promise.all(batch), proofDeadline]);
+    }
+  } finally {
+    clearTimeout(proofTimer);
+  }
+  if (verifiedGlueResponses === 0 || artifactFailures.length !== 0) {
+    throw new Error(`artifact transport verification failed: glue responses=${verifiedGlueResponses}, failures=${artifactFailures.join(' | ')}`);
+  }
   if (
     handoff === undefined ||
     handoff.schema !== 'truerepublic/zkp-wasm-handoff/v1' ||
@@ -127,6 +170,7 @@ try {
     mode: 0o600,
   });
   chmodSync(resultPath, 0o600);
+  process.stdout.write(`Pinned runtime glue HTTP200/bodySHA verified (${verifiedGlueResponses} response(s)); artifact failures=0.\n`);
   process.stdout.write('Real Chromium Go/WASM proof generation passed.\n');
 } finally {
   await browser?.close();

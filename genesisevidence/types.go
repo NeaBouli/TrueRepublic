@@ -56,6 +56,8 @@ type Check struct {
 	Name       string   `json:"name"`
 	Pass       bool     `json:"pass"`
 	Violations []string `json:"violations"`
+	// Classification is set only by an evaluated zkp-verifying-key check.
+	Classification string `json:"classification,omitempty"`
 }
 
 const (

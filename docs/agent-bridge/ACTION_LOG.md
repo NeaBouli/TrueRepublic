@@ -108,6 +108,26 @@
   baseline), license policy and consistency pass. Not pushed.
 ---
 
+## 2026-10-03 - GH300B4B offline VK admission and genesis-evidence gate
+
+- Added `configs/security/zkp-vk-admission.json` (schema v1, empty production
+  allowlist, explicit denial of the frozen TEST-ONLY VK `80b92df9...e289`,
+  460 bytes) and the stdlib-only `x/truedemocracy/zkpadmission` classifier:
+  `absent`, `test-only-denied`, `unadmitted`, `production-admitted`.
+- Policy parsing rejects unknown/duplicate keys, trailing data, malformed
+  digests or sizes, duplicates, deny/allow overlap and incomplete provenance;
+  a contract test pins config == compiled policy and the denied key to both
+  TEST-ONLY manifests and the WASM prover pin.
+- Rollout genesis evidence gains a `zkp-verifying-key` check: only an
+  explicitly classified absent (or admitted) key passes; test-only,
+  unadmitted, partial, mismatched, oversized and non-canonical triples fail.
+  The manifest stays v1; checks carry an additive `classification` field.
+- Consensus is unchanged: a module test proves the frozen and a fresh setup
+  VK still pass `ValidateMembershipVerifyingKey` while classifying as denied
+  and unadmitted. No artifact, production digest, ceremony, push or rollout
+  credit.
+
+---
 ## 2026-10-03 - GH300B3a disabled preview voting status fixed
 
 - Codex's focused B3 review returned `changes` with one P3: while
@@ -6466,3 +6486,21 @@ Both append histories remain complete/chronological; inventory23services/45compo
 current prerequisites retained. Existing accepted runtime/worker bytes not reimplemented.
 New exact-source gates/review pending, no whole inherited PASS. No C8, product import,
 activation, official scan, main merge, deployment or rollout credit; Claude remains paused.
+---
+
+## 2026-10-10T02:26:04Z — GH300C7-H1 existing hosted qualification (Codex)
+
+ExistingClientCI now invokes the actual browser-WASM/native/Keeper runner in addition to its
+unchanged Node runner. Local lockfile-pinned headless shell only; no rootdependency install.
+ScopedindependentreviewOK; local repositoryguardRUNNING/HostedNOTRUN. SourceC8 and consensus
+unchanged, productionfalse/isSubmittablefalse/test-only artifacts preserved.
+
+## 2026-10-10T03:21:06Z — GH300C7-H2 final transport qualification (Codex)
+
+Existing browser qualification script only: finalbloba4016a78 stable artifact completion
+queue and one original120s proof deadline, fixed-origin/known-route/HTTP200/pinned glueSHA.
+Final3068 terminalrc0: actual Chromium fresh proof/glue1/noartifact failures, native0.03s,
+Keeper reward/replay/adversarial/strict-handoff20.103s PASS. Four exact-source guard controls
+PASS; independent fix review OK, syntax/eslint/diff PASS. Server pretransform stderr retained,
+no suppression/general error-free claim. No product activation, crypto pin/dependency change,
+official scan, main merge, deployment or rollout credit; exact new-head CI still owed.

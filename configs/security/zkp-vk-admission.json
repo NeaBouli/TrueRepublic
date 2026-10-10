@@ -1,0 +1,24 @@
+{
+  "schema": "truerepublic/zkp-vk-admission/v1",
+  "circuit_id": "truerepublic/membership-vote/v2-bn254-mimc-depth20",
+  "production_admitted": [],
+  "test_only_denied": [
+    {
+      "sha256_hex": "80b92df9562e48d4b25df9e7105e54f6d79250a3f35171250fcfd45c1489e289",
+      "size_bytes": 460,
+      "sources": [
+        "configs/security/zkp-browser-artifacts.json",
+        "x/truedemocracy/testdata/zkp/manifest.json"
+      ]
+    }
+  ],
+  "required_production_provenance": [
+    "ceremony_id",
+    "phase1_source_sha256",
+    "phase2_transcript_sha256",
+    "contributor_count",
+    "random_beacon",
+    "independent_verification_report_sha256",
+    "review_reference"
+  ]
+}

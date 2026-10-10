@@ -10281,3 +10281,31 @@ Pending independent Kimi review and complete Sol verification.
 - Fresh exact-source focused/full/browser-native-Keeper/protected gates and independent
   composition review pending. No old PASS inheritance, production artifacts, canonical
   registration, official scan, main acceptance, deployment or rollout credit.
+---
+
+## 2026-10-10T02:26:04Z — GH300C7-H1 actual browser-proof CI routing → Review
+
+Codex sole writer at existing C7; only react-ci.yml extends its existing zkp-wasm-compatibility
+job with lock-pinned Chromium headless shell and existing test-zkp-browser-client.sh. Four
+pathfilterlines added. OriginalNode invocation/actions/pins/readpermissions/15minute bound
+unchanged; no sudo/with-deps/newjob/policy/activation. Independent scopedreviewOK, no blocker.
+Local repositoryguard99373RUNNING; exactHosted browser proofNOTRUN, download/systemlibs/
+runtime risks remain. Tests remain synthetic/test-only; no general sandbox/privacy claim.
+Current C8 emptyproductionallowlist/deniedVK/consensusboundary/source untouched. No official
+CodexSecurity/main/deployment/production approval from this normal protected candidate update.
+
+## 2026-10-10T03:21:06Z — C7-H2 final scoped qualification → Review
+
+Codex sole writer; final browser-script blob a4016a78e5847060af74113633046f96cdd258ab.
+Actual pinned Chromium pipeline3068 terminalrc0: fixed Worker glue HTTP200/bodySHA verified
+(one response), zero artifact failures, fresh Go/WASM proof; native verifier PASS0.03s;
+Keeper reward/replay/adversarial boundary and strict handoff PASS20.103s (package total).
+Existing proof/field/scope/output/console/native assertions retained; one original120s timer
+bounds proof and stable request/response queue drain. Four exact-source guard controls PASS
+in owned non-product fixture, including snapshot/unbounded mutants. Scoped independent
+fix review OK after two initial findings, syntax/eslint/diff PASS. Intermediate source run
+remains separately recorded, not used for final acceptance. Vite pretransform stderr remains
+visible; actual fixed artifact transport passed, precise internal warning cause not proven.
+No product import, activation, pin/dependency/consensus change, scan or production claim.
+Protected new-head CI, official Codex Security authorization/scan and main acceptance remain
+separate. Official scan NOT RUN; no main merge, deployment or rollout credit.
