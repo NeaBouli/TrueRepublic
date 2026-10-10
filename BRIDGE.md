@@ -10081,6 +10081,40 @@ Pending independent Kimi review and complete Sol verification.
 
 ---
 
+## 2026-10-10 02:08 EEST — GH314B / bounded documentation claim → In Progress
+
+- Codex exclusively, Claude paused; exact main ff63e9d, isolated agent/codex/GH314-whitepaper-recovery.
+- Existing #314 / TRR29-31,35: publication D2 mapped before source edits in coordinator MAP/diagrams;
+  product boundary docs/architecture/GH314_CONTENT_BOUNDARY.md. No new runtime node.
+- Limit source to EN/DE whitepapers, only Landing PoD sentence, narrow content-consistency guard.
+  Preserve licensing, machine counts/rollout, #308/#313 candidates, PDFs/binaries/history/donations.
+- Planned: versioned recovery/vision status, no absolute anonymity/live contracts/GG20/native-vault
+  or price guarantee; honest PoD provenance, DE trustee/DEX fee description. Not consensus enforcement.
+- Tests and four-viewport visual gate NOT RUN yet; live publication and remaining #314 acceptance open.
+  No deletion, scan, code transfer, rollout credit or main/deployment acceptance.
+
+### 2026-10-10 02:30 EEST — GH314B source / focused review and visual evidence
+
+- EN/DE recovery editionv1 qualifies historical models and removes the unsupported privacy,
+  TSS/native-vault/live-contract/financial/earned-only claims. Trustee deferred, DEX fees aligned;
+  only PoD sentence changed on Landing. No runtime/config/status count or historical asset edit.
+- Independent static review scopeOK;P3 overbroad text guard fixed and narrow closureOK. Actual
+  source function accepts2 truthful cases and rejects25 negative fixtures; bash/diff PASS.
+- Existing Chromium149/Playwright1.55.1 offline eight states/four viewports PASS; all8 images
+  opened/inspected. Overflow/outside/clipping/overlap0, inset33/32px, contrast5.45 unchanged,
+  errors/egress0. No controls changed; exact cards/text wrap legibly at390px.
+- Failed restricted browser startup and one brittle fixture-line selection disclosed in coordinator
+  reportGH314B; successful corrected gates above, no production rule relaxation/installation.
+- Full consistency/license50647 still LIVE; protected exact-head CI and live Pages NOT RUN.
+  Source is prepared, not Done; full #314 remains open for dependent history/count/inventory work.
+
+### 2026-10-10 02:46 EEST — GH314B local gates complete / publication candidate
+
+- Session50647 completed exit0: full repository documentation consistency, frozen ZKP/security
+  readiness contracts and licensing policy PASS. No source changed since inspected6a5d892.
+- Publish this bounded content slice as a draft PR; protected exact-head CI and live Pages remain
+  NOT RUN. Full issue314 stays open for retained dependent corrections; no rollout credit.
+
 ## 2026-10-09T22:00Z — GH364 / GH355 → In Progress
 
 - Owner: Codex; Claude paused. Branch agent/codex/GH364-go-advisories, exact main base ff63e9d.
@@ -10152,3 +10186,19 @@ Pending independent Kimi review and complete Sol verification.
   No additional retry. Publish this draft candidate for complete protected combined CI, not merge.
 - Gio approved Security setup/access preparation only at0 extra spend. Plugin available/not
   installed; entitlement/cost unknown, scan NOT RUN, no code transfer. Main/deployment HELD.
+
+### 2026-10-10 03:01 EEST — GH314I1 prerequisite refresh
+
+- Normal96371ac+6d1c79d composition; conflicts only two append logs, both histories preserved.
+  Whitepaper/content predicate untouched; Landing combines independent Go candidate and PoD text.
+  No new content/style/control or runtime change; existing inspected visual evidence retained.
+- Exact composed protected CI required; no previous PASS reassigned to this head. Main stillff63e9d,
+  Codex Security NOT RUN, no scan/transfer/production acceptance or full314/rollout closure.
+
+## 2026-10-10T03:57:32Z — GH314B retained history classification
+
+Only optional-indexer/session-summary header metadata classifies superseded records and links
+the active roadmap/status. Historical bodies byte-identical; PDFs/UI artifacts untouched.
+Focused header/link/body checks, consistency41549rc0, licensing31476rc0 and diff-check PASS;
+independent narrow review OK. Existing Draft366 follow-up, not whole314/main/live acceptance.
+No metric/rollout/production change; preserved GH313 V0.3.0 banner not duplicated.

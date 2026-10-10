@@ -6141,3 +6141,31 @@ One private-cache retry fixes npm signature EPERM; one supported Vitest invocati
 obsolete orchestration option. Original Go build passed/vet live. Publish existing draft365 for
 mandatory exact-head protected matrix; acceptance NOT GRANTED. Both authorized337/363 OCI retries
 success; Security setup-only0-cost approval recorded, scan NOT RUN and main/deployment held.
+
+## 2026-10-10 02:30 EEST — GH314B content recovery source prepared (Codex)
+
+Existing D2 publication node mapped before diff; root alone, Claude paused. EN/DE versioned
+vision/recovery claims, privacy/PoD/fees/trustee/economics corrected; narrow script regression.
+Independent static reviewP3 fixed/closureOK;2 positive/25 negative actual-function fixtures PASS.
+Offline four-viewports/eight before-after states and8 inspected PNGs PASS, contrast5.45/inset33px,
+no overflow/clipping/overlap/egress. Actual full consistency/license remains running, not PASS.
+No runtime/custody/keys/state/status-count/deferred-feature/historical artifact/donation change,
+deletion, scan, rollout credit or production claim. Full #314 acceptance/live publication pending.
+
+## 2026-10-10 02:46 EEST — GH314B local validation completed (Codex)
+
+Full consistency/security-readiness/frozen-ZKP and license-policy session50647 finished exit0.
+The previously inspected content/layout source is unchanged. Publish a bounded draft for issue314;
+exact-head protected CI, independent acceptance and live Pages remain required, no rollout credit.
+
+## 2026-10-10 03:01 EEST — GH314I1 prerequisite refresh (Codex)
+
+Normal96371ac+6d1c79d, only additive log histories conflicted; unchanged content predicate/whitepapers,
+Landing combines previously verified independent text-only nodes. New protected-head CI required;
+no scan, main merge, runtime change, full314 closure or rollout credit. Claude stays paused.
+
+## 2026-10-10T03:57:32Z — D2 historical header qualification
+
+Two header-only classifications preserve full bodies and retained artifacts. Focused checks,
+consistency/license/diff PASS; bounded independent review OK. Draft366 update only; main,
+live publication, dependent308/313/count acceptance and whole314 closure remain open.
