@@ -6154,3 +6154,13 @@ OK after timestamp correction. Consistency37773rc0, JSON/diff PASS. Initial
 capture bind EPERM followed by corrected7008rc0; all eight images/fourviewports
 opened, geometry/errors/egress0/contrast8.326, finalHTML5e3d5a8e. ExistingDraft367
 normal publication follows; no accepted-main/live/full-suite/official-scan PASS.
+
+## 2026-10-10T05:38:24Z — bounded Landing C5 checkpoint
+
+Two source files only: terminal367cee synthetic-merge/baseline failures,
+exact6ca HostedGo eight-job receipt and separately scopedGH306b71 source/script
+checkpoint. Mainff63 read again; root/runtime/mutation/recount/main/scan/live
+gates stay pending. Final claim reviewOK, consistency5339rc0, JSON/diffPASS.
+Final10545rc0/eightimages/fourviewports all opened, geometry/errors/egress0,
+contrast8.326/HTML12b4d389. No CSS/metric/version/count/rollout/production change.
+Publish only existing owned Draft367; no auto-main or live deployment.

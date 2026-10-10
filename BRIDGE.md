@@ -10185,3 +10185,22 @@ inside true/min contrast8.326; HTML5e3d5a8e2d925838eb7280de601cf6125dafeba8e02c2
 Chromium140.0.7339.186. No new install/full Go rerun or inherited new-head PASS.
 Existing Draft367 normal update only; new-head protected/main/live Pages remain
 separate, official Codex Security NOT RUN.36/59/prodfalse/versions/metrics unchanged.
+
+## 2026-10-10T05:38:24Z — Landing C5 source/visual status qualification
+
+Same D2 publication hop: only index.html/status.json source delta; no metric,
+version/test-count/rollout/production or CSS change. Current367cee receipt
+16SUCCESS/2baselineFAIL/1conditionalSKIP uses actual synthetic55b077b/mainff63,
+snapshot05:24:07; main independently read05:25:52 unchanged. Modern6ca exact
+HostedGo38025452892 eight jobs PASS05:08:44, not focused mutation/T1 acceptance.
+OwnedGH306b71 source/digest and release/candidate/cross-run script evidence is
+recorded separately from still-pending root/runtime/mutation/recount gates.
+Independent scoped claims reviewOK after explicit mutation-pending wording;
+review-brief run-ID separator typo clarified without changing the correct ID.
+Initial22377 capture is superseded by final10545rc0: all eight before/after
+screenshots at1440/1180/820/390 individually opened. Geometry/errors/egress0,
+row-inside true/contrast8.326; cached Chromium140.0.7339.186, no installation.
+HTML12b4d389cd819f9644f1ce6d7ee138f3dfe7f6c08052d0a2bf8226f1fa4a8736.
+Consistency5339rc0 includes frozen-protocol0.101s/readiness/inventory/rollout,
+JSON/diff PASS. Normal existing Draft367 publication follows; no new-head
+protected/full-runtime/main/live Pages/official-scan PASS or production action.
