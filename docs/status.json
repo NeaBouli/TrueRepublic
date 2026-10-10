@@ -219,29 +219,42 @@
       "go": "opentelemetry_family_1_45_0_removes_go_2026_6505_on_pr349_documented_no_fix_ids_unchanged",
       "note": "Historical merged dependency remediation only. Current integration qualification is recorded separately; no rollout credit or production approval.",
       "integration_checkpoint": {
-        "as_of_utc": "2026-10-10T04:22:19Z",
+        "as_of_utc": "2026-10-10T04:59:06Z",
         "main_commit": "ff63e9d087f1bbf09c01b3182b896ce30ac9116c",
+        "main_observed_at_utc": "2026-10-10T04:56:32Z",
         "status": "checked_candidates_not_merged_main_acceptance_pending",
-        "qualified_candidates": ["PR365@6d1c79d", "PR337@825e6f2", "PR366@2c8fef8"],
+        "qualified_candidates": ["PR365@6d1c79d", "PR337@825e6f2", "PR366@2c8fef8", "PR368@4e628ec"],
         "current_status_surface_checks": {
           "PR366@25f69c7": {
+            "as_of_utc": "2026-10-10T04:22:19Z",
             "success": 2,
             "failure": 0,
             "skipped": 0,
             "pending": 0,
             "scope": "review_bots_only_protected_workflow_checks_not_present_not_protected_pass"
           },
-          "PR367@ca2075d": {
+          "PR367@f6849ae": {
+            "as_of_utc": "2026-10-10T04:45:40Z",
             "success": 16,
             "failure": 2,
             "skipped": 1,
             "pending": 0,
             "failed_contexts": ["go-vuln", "node-audit-client"],
             "scope": "unchanged_main_dependency_failures_GH364_GH362_remediation_in_unmerged_PR365"
+          },
+          "PR368@4e628ec": {
+            "as_of_utc": "2026-10-10T04:56:32Z",
+            "success": 17,
+            "failure": 0,
+            "skipped": 1,
+            "pending": 0,
+            "scope": "exact_candidate_into_PR365_synthetic_merge_45d3e2a_not_merged_main_acceptance"
           }
         },
         "scoped_candidate_evidence": {
           "PR361@f931a53": "hosted_locked_rust_fmt_clippy_build_test_26_pass_0_fail",
+          "GH308I1@80b518d": "hosted_Rust_38024984512_host_fmt_clippy_build_test_and_real_wasm32_five_quarantine_marker_denials_pass_and_Go_38024984879_eight_jobs_pass_actual_checkout_80b518d_all_jobs_observed_04_59_06_UTC_separate_Codex_Security_and_main_acceptance_open",
+          "PR368@4e628ec": "hosted_Go_38024550101_eight_jobs_pass_actual_synthetic_merge_45d3e2a_root_race_coverage_pass_and_eight_explicit_multi_validator_recovery_scenarios_pass_not_individual_test_log_or_main_acceptance",
           "PR345@b2c0934": "client_490_pass_4_skip_node_19_pass_build_budget_audits_pass_local_voting_chromium_4_viewports_pass_images_inspected",
           "PR346@a3307ac": "offline_admission_and_genesis_evidence_tests_pass_production_allowlist_empty_consensus_unchanged",
           "PR346@3055af2": "local_pinned_chromium_fresh_synthetic_proof_native_verifier_keeper_reward_replay_adversarial_handoff_pass_actual_fixed_artifact_transport_verified_test_only_protected_21_success_1_conditional_skip_not_merged"

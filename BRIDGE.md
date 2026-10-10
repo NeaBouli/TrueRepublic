@@ -10166,3 +10166,22 @@ overlap/errors/egress0, contrast8.326. HTMLc2281d52, Chromium140.0.7339.186. Ref
 consistency29194rc0PASS incl. frozen protocol0.104s and security-review contract. Go/build/gate
 sources exactC2; no new full Go-suite PASS claimed. Normal existingDraft367 update only;
 newhead protected/main/live/official scan acceptance remain separate and open.
+## 2026-10-10T05:03:08Z — C4 terminal-candidate receipts qualified
+
+Only existing Phase5/checkpoint and status JSON changed. Exact snapshots: main
+ff63e9d observed04:56:32, Draft367f6849ae16SUCCESS/2baselineFAIL/1conditionalSKIP
+asof04:45:40, Draft3684e628ec17SUCCESS/1conditionalSKIP; Go actual synthetic
+45d3e2a eight jobs/eight recovery scenarios PASS. GH30880b518d actual Rust
+host/five real wasm32 marker denials and Go8/8 PASS; no main/scan acceptance.
+Inherited36625f69c7 receipt stays04:22/two bots, no protected PASS assigned.
+
+Independent final source-claim review OK; corrected one receipt timestamp from
+query start to terminal snapshot end. JSON/diff PASS; consistency37773rc0 PASS,
+frozen protocol1.014s/security-review contract/inventory/rollout checks retained.
+Initial capture51786 bind EPERM before target, not product failure; corrected
+authorized7008rc0 captured eight before/after images in four viewports, all
+individually opened. Layout/overflow/outside/overlap/clipping/errors/egress0,
+inside true/min contrast8.326; HTML5e3d5a8e2d925838eb7280de601cf6125dafeba8e02c265425efc3ab6044a58b,
+Chromium140.0.7339.186. No new install/full Go rerun or inherited new-head PASS.
+Existing Draft367 normal update only; new-head protected/main/live Pages remain
+separate, official Codex Security NOT RUN.36/59/prodfalse/versions/metrics unchanged.

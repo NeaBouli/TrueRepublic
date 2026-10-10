@@ -6145,3 +6145,12 @@ JSON/diffPASS, consistency29194terminalrc0 incl. protocol/security contracts. Ca
 eight responsive images opened, geometry0/contrast8.326, HTMLc2281d52. Only existing status
 publication hop; no code/config/dependency/rollout/production change. Draft push next,
 exact-head protected/main/live/official-scan gates remain open; no unavailable-CI PASS.
+## 2026-10-10T05:03:08Z — C4 exact terminal evidence refresh (Codex)
+
+Two source files only, no headline metric/version/rollout change.368 exact scoped
+Go/Docs and308 exact Rust/Go terminal receipts added; unchanged-main/baseline
+failures and separate scan/main/live gates retained. Independent source review
+OK after timestamp correction. Consistency37773rc0, JSON/diff PASS. Initial
+capture bind EPERM followed by corrected7008rc0; all eight images/fourviewports
+opened, geometry/errors/egress0/contrast8.326, finalHTML5e3d5a8e. ExistingDraft367
+normal publication follows; no accepted-main/live/full-suite/official-scan PASS.
