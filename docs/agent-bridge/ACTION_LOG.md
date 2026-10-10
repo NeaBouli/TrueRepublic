@@ -108,6 +108,25 @@
   baseline), license policy and consistency pass. Not pushed.
 ---
 
+## 2026-10-03 - GH300B3a disabled preview voting status fixed
+
+- Codex's focused B3 review returned `changes` with one P3: while
+  `isSubmittable` is hard false, the VotingPanel still derived a canonical
+  nullifier from preview secrets (mostly outside the BN254 field), showing a
+  false red "Nullifier status unavailable" error and querying the chain.
+- The status effect now returns before any derivation or query while
+  submission is disabled, and stale status is never rendered. The vote control
+  has a 44px minimum height (it measured 40px on wide viewports).
+- Evidence: component regression (3 tests, two guard mutations caught), a new
+  browser contract at 1440x1000, 1180x820, 820x1180 and 390x844 on all five
+  engines (20 passed, zero Nullifier queries, no red status, inert control),
+  existing identity e2e on Chromium (47 passed), full client suite 490 passed /
+  4 skipped, lint, `tsc -b`, build and bundle budget (entry 77941, max route
+  6190).
+- No prover, runtime, identity, submission or readiness-text change; not
+  pushed.
+
+---
 ## 2026-09-19 - GH-304 canonical bech32 identity edge hardened
 
 - Sol's integration review confirmed Cosmos bech32 decoding accepts an
@@ -6262,6 +6281,14 @@
 - Tests: zkpBrowserRuntime.test.ts 34 (5 new: late response after timeout -> new request, late error after timeout -> new request, late duplicate after a successful proof with a queued successor, worker scope/suppression source contract, glue pin before chromium.launch). Mutation removing the instance guard fails 3 tests. Tampered glue copy (one appended comment, sha256 690d40725c4f…) -> "untrusted Go wasm_exec.js glue" before any browser start.
 - Real pipeline scripts/test-zkp-browser-client.sh rc 0 on the final code: WASM x2 reproducible, Chromium proof passed with suppression verified (the Worker would otherwise refuse), TestWASMClientOutputIsAcceptedByNativeVerifier and x/truedemocracy TestWASMClient* ok. eslint, tsc -b and git diff --check clean. WASM/CS/PK/VK pins, schema, bounds, proof path, isSubmittable false, no product import and harness loaded.destroy() unchanged. No push.
 
+## 2026-10-02 GH300B3 test-only ZKPService prover wiring (Claude Code, exclusive)
+
+- Branch agent/claude/GH300-service-wiring from bd01d54; commit 9cc6f7d. Scope expansion recorded: types/zkp.ts (optional Groth16Prover.initialize, needed for typed fail-closed init) and browser-quality/zkp-browser-harness.ts (route the existing B2 proof through ZKPService; no second harness).
+- zkp.ts: explicit prover dependency (constructor param renamed testProver -> prover, chainId kept); initialize() throws preview-only without a prover, throws 'failed to initialize' if prover.initialize rejects, otherwise ready with status 'Test-only Groth16 prover ready; submission remains disabled'; generateProof requires prover + initialization and then assertCanonicalProofInputs (chain id match, 64-hex secret and leaf, mimcBn254([secret]) === leaf, externalNullifier === computeExternalNullifier(domain, issue, suggestion)) before prover.generate. computeExternalNullifier = bytesToHex(computeVoteNullifierScope(chainId, ...)); computeNullifierHash = mimcBn254([secret, external]) with 32-byte lowercase hex and canonical-field errors. generateIdentity unchanged (previewMockIdentityHash); isSubmittable false. Reused GH-300 test hunks (scope/MiMC nullifier, malformed inputs); the conflicting canonical generateIdentity hunk was not applied.
+- Behaviour note for review: VotingPanel's vote-status check now computes the canonical nullifier; with a preview secret outside the BN254 field it shows the bounded error instead of querying a meaningless FNV nullifier (no UI file changed).
+- Tests: zkp.test.ts 10 (not initialized, init failure, preview FNV identity random + deterministic field-secret with FNV leaf, out-of-field and short secrets, foreign chain, wrong scope, canonical fixture accepted only after init, scope/nullifier vectors, malformed/non-field nullifier inputs, preview generator unchanged). Mutations caught: no leaf binding (1), no init check (2), no scope check (1), no input validation (2).
+- Real pipeline scripts/test-zkp-browser-client.sh rc 0 with the harness proving via ZKPService.generateProof -> injected TestOnlyGroth16WasmProver -> Worker: Chromium proof passed, TestWASMClientOutputIsAcceptedByNativeVerifier and x/truedemocracy TestWASMClient* ok.
+- Gates: npm test -- --run 31 files passed / 2 skipped, 487 passed / 4 skipped; lint rc 0; tsc -b rc 0; build + bundle budget passed (entry 77940 gzip, max route 6168 <= 7000, total 369928); no dist asset contains the B2 runtime, worker protocol or test manifest classification; go test -run TestZKP ./x/truedemocracy ok; check-consistency PASSED; git diff --check clean; inventory unchanged. A standalone strict tsc of the harness cannot resolve app aliases/import.meta.env (browser-quality is outside the project tsconfig); it is type-checked through Vite in the real run. No push.
 ## 2026-10-09 — GH309B1I1 direct Codex reconciliation
 
 - Normal merge `954fc94` from reviewed `bbc067d` + exact main `ff63e9d`; conflicts limited to
