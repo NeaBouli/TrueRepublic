@@ -219,9 +219,9 @@
       "go": "opentelemetry_family_1_45_0_removes_go_2026_6505_on_pr349_documented_no_fix_ids_unchanged",
       "note": "Historical merged dependency remediation only. Current integration qualification is recorded separately; no rollout credit or production approval.",
       "integration_checkpoint": {
-        "as_of_utc": "2026-10-10T05:25:52Z",
+        "as_of_utc": "2026-10-10T06:12:26Z",
         "main_commit": "ff63e9d087f1bbf09c01b3182b896ce30ac9116c",
-        "main_observed_at_utc": "2026-10-10T05:25:52Z",
+        "main_observed_at_utc": "2026-10-10T06:12:26Z",
         "status": "checked_candidates_not_merged_main_acceptance_pending",
         "qualified_candidates": ["PR365@6d1c79d", "PR337@825e6f2", "PR366@2c8fef8", "PR368@4e628ec"],
         "current_status_surface_checks": {
@@ -255,7 +255,9 @@
           "PR361@f931a53": "hosted_locked_rust_fmt_clippy_build_test_26_pass_0_fail",
           "GH308I1@80b518d": "hosted_Rust_38024984512_host_fmt_clippy_build_test_and_real_wasm32_five_quarantine_marker_denials_pass_and_Go_38024984879_eight_jobs_pass_actual_checkout_80b518d_all_jobs_observed_04_59_06_UTC_separate_Codex_Security_and_main_acceptance_open",
           "GH324I1@6ca29b8": "hosted_Go_38025452892_eight_jobs_pass_actual_checkout_6ca29b8_all_jobs_observed_05_08_44_UTC_full_race_suite_not_individual_focused_or_mutation_proof_allocator_policy_and_main_acceptance_open",
-          "GH306I2@b71dc71": "owned_normal_composition_source_and_digest_graph_review_OK_release_candidate_cross_run_script_contracts_PASS_full_root_runtime_mutation_controls_and_recount_pending_Go_38027422218_dispatched_no_terminal_result_observed",
+          "GH306I2@b71dc71": "historical_C5_checkpoint_source_and_digest_graph_review_OK_script_contracts_PASS_runtime_root_mutation_and_recount_then_pending_superseded_by_Q1_receipt_below",
+          "GH306I2-Q1@0c29a9f": "Draft369_base6ca_Go_38028931964_all_nine_jobs_PASS_actual_synthetic_merge_c3bcb8a_complete_tree_d5ac2990_equals_candidate_root_contract_63329_PASS_1_844s_handler_plan_16244_PASS_4_140s_tuple_negative_57086_expected_FAIL_restored_36332_PASS_0_857s_wrong_target_43021_expected_FAIL_restored_source_clean_explicit_V042_226_84s_combined_recount_full_protected_PR_main_and_separate_security_acceptance_open",
+          "GH324I1-T3@6ca29b8": "bounded_original_deadline_controls_verified_focused_race_74259_PASS_14_872s_old_wait_77146_both_deadline_subcases_expected_FAIL_separate_Exit_setup_failure_not_mutation_verdict_restored_positive_98745_PASS_18_356s_T1_allocator_policy_and_main_acceptance_open",
           "PR368@4e628ec": "hosted_Go_38024550101_eight_jobs_pass_actual_synthetic_merge_45d3e2a_root_race_coverage_pass_and_eight_explicit_multi_validator_recovery_scenarios_pass_not_individual_test_log_or_main_acceptance",
           "PR345@b2c0934": "client_490_pass_4_skip_node_19_pass_build_budget_audits_pass_local_voting_chromium_4_viewports_pass_images_inspected",
           "PR346@a3307ac": "offline_admission_and_genesis_evidence_tests_pass_production_allowlist_empty_consensus_unchanged",

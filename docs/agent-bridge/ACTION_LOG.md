@@ -6164,3 +6164,18 @@ gates stay pending. Final claim reviewOK, consistency5339rc0, JSON/diffPASS.
 Final10545rc0/eightimages/fourviewports all opened, geometry/errors/egress0,
 contrast8.326/HTML12b4d389. No CSS/metric/version/count/rollout/production change.
 Publish only existing owned Draft367; no auto-main or live deployment.
+
+## 2026-10-10T06:16:34Z — Landing C6 exact-candidate evidence refresh
+
+Two source files, no CSS/metrics/versions/headline counts/rollout/production change.
+Record Draft3690c all nine Go jobs and verified synthetic/source-tree identity,
+explicit V042226.84s and bounded restored controls; T1/recount/full protected/main/
+separate Security remain open. Mainff63 read06:12. Claims reviewOK; capture94608rc0,
+eight screenshots opened, zero geometry/errors/egress, contrast8.326; JSON/diffPASS.
+Consistency12502 pending at entry; normal existing Draft367 push only after result.
+
+## 2026-10-10T06:18:20Z — C6 local documentation gate complete
+
+Consistency12502 terminalrc0 includes frozen protocol/readiness/inventory/rollout;
+JSON/diffPASS and eight inspected visual captures complete. No headline/release credit.
+Normal commit/push existing367 is authorized; main/live acceptance remains separate.

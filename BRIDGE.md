@@ -10204,3 +10204,27 @@ HTML12b4d389cd819f9644f1ce6d7ee138f3dfe7f6c08052d0a2bf8226f1fa4a8736.
 Consistency5339rc0 includes frozen-protocol0.101s/readiness/inventory/rollout,
 JSON/diff PASS. Normal existing Draft367 publication follows; no new-head
 protected/full-runtime/main/live Pages/official-scan PASS or production action.
+
+## 2026-10-10T06:16:34Z — C6 terminal Go qualification / truthful Landing checkpoint
+
+Owner Codex only; same D2 publication hop. Changed docs/index.html and docs/status.json
+only, plus this append and ActionLog. Draft369 head0c29a9f/base6ca: Go38028931964
+all nine jobs PASS on syntheticc3bcb8a; complete treed5ac2990 equals owned0c.
+Explicit V042226.84s, final root63329PASS1.844s, focused handler/tuple/restoration
+controls qualified. T3 final98745PASS18.356s; T1 allocator policy remains open.
+Mainff63 read06:12:26 unchanged. Recount/full protected-PR/main/separate official
+Security acceptance still open; scan NOT RUN, rollout36/59/prodfalse unchanged.
+Native scoped claims reviewOK after terminal matrix clarification, no second implementation.
+Capture94608rc0: eight before4289764/after images at1440/1180/820/390 individually
+opened and checked; geometry/errors/egress0, row-inside true, contrast8.326207589.
+Cached Chromium140.0.7339.186, no installation. HTMLSHA256
+efef22ecbe1889d761ebb85214bc5b560cffce4badf11fe7ed07af8331973235.
+JSON/diff PASS. Baseline consistency12502 still running at this checkpoint.
+Publish only existing Draft367 after terminal consistency; no main/live Pages claim.
+
+## 2026-10-10T06:18:20Z — C6 baseline consistency terminal PASS
+
+Consistency12502rc0, frozen-protocol0.615s/readiness/public counts2486/inventory/
+rollout guards PASS; JSON/diffPASS. Source/visual qualification now complete for
+this bounded documentation delta. Eight final images inspected. Existing367 normal
+publication follows; new-head protected/main/live/official-scan acceptance not implied.
