@@ -464,7 +464,7 @@ func ValidateGenesisState(genesis GenesisState) error {
 		if member.String() != record.MemberAddr {
 			return fmt.Errorf("stone reward record member %q is not canonical bech32", record.MemberAddr)
 		}
-		key := record.DomainName + "\x00" + record.IssueName + "\x00" + record.MemberAddr
+		key := string(stoneRewardRecordKey(record))
 		if _, exists := stoneRewards[key]; exists {
 			return fmt.Errorf("duplicate stone reward record for domain %q", record.DomainName)
 		}

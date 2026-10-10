@@ -521,3 +521,34 @@ func TestValidateGenesisStateStoneRewardRecords(t *testing.T) {
 		})
 	}
 }
+
+func TestValidateGenesisStateStoneRewardRecordsNULTuples(t *testing.T) {
+	genesis := validDemocracyGenesis()
+	for _, name := range []string{"A", "A\x00"} {
+		domain := genesis.Domains[0]
+		domain.Name = name
+		genesis.Domains = append(genesis.Domains, domain)
+	}
+	member := sdk.AccAddress(make([]byte, 20))
+	member[0] = 0x31
+	genesis.StoneRewardRecords = []StoneRewardRecord{
+		{DomainName: "A", IssueName: "\x00B", MemberAddr: member.String()},
+		{DomainName: "A\x00", IssueName: "B", MemberAddr: member.String()},
+	}
+	if err := ValidateGenesisState(genesis); err != nil {
+		t.Fatalf("distinct reward tuples rejected: %v", err)
+	}
+	for _, tc := range []struct {
+		name  string
+		index int
+	}{{"first tuple", 0}, {"second tuple", 1}} {
+		t.Run(tc.name, func(t *testing.T) {
+			duplicate := genesis
+			duplicate.StoneRewardRecords = append([]StoneRewardRecord{}, genesis.StoneRewardRecords...)
+			duplicate.StoneRewardRecords = append(duplicate.StoneRewardRecords, genesis.StoneRewardRecords[tc.index])
+			if err := ValidateGenesisState(duplicate); err == nil || !strings.Contains(err.Error(), "duplicate stone reward record") {
+				t.Fatalf("identical reward tuple error = %v, want duplicate rejection", err)
+			}
+		})
+	}
+}

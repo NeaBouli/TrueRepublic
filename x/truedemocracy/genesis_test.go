@@ -614,3 +614,57 @@ func TestGenesisRoundTripPreservesGH306ExitAndStoneMarkers(t *testing.T) {
 		t.Fatalf("post-import stone = %q, want Climate", placed)
 	}
 }
+
+func TestGenesisRoundTripStoneRewardNULTuples(t *testing.T) {
+	am1, k1, ctx1 := setupModuleForGenesis(t)
+	admin := sdk.AccAddress(make([]byte, 20))
+	admin[0] = 0x32
+	member := sdk.AccAddress(make([]byte, 20))
+	member[0] = 0x33
+	for _, name := range []string{"A", "A\x00"} {
+		k1.CreateDomain(ctx1, name, admin, sdk.NewCoins())
+	}
+	want := []StoneRewardRecord{
+		{DomainName: "A", IssueName: "\x00B", MemberAddr: member.String()},
+		{DomainName: "A\x00", IssueName: "B", MemberAddr: member.String()},
+	}
+	for _, record := range want {
+		k1.SetStoneRewardRecord(ctx1, record)
+	}
+	exported := am1.ExportGenesis(ctx1, nil)
+	var genesis GenesisState
+	if err := json.Unmarshal(exported, &genesis); err != nil {
+		t.Fatal(err)
+	}
+	if err := ValidateGenesisState(genesis); err != nil {
+		t.Fatalf("exported distinct reward tuples rejected: %v", err)
+	}
+	am2, k2, ctx2 := setupModuleForGenesis(t)
+	am2.InitGenesis(ctx2, nil, exported)
+	for _, record := range want {
+		if !k2.HasStoneRewardRecord(ctx2, record) {
+			t.Fatalf("import lost reward tuple %+v", record)
+		}
+	}
+	for _, data := range []json.RawMessage{exported, am2.ExportGenesis(ctx2, nil)} {
+		var state GenesisState
+		if err := json.Unmarshal(data, &state); err != nil {
+			t.Fatal(err)
+		}
+		if len(state.StoneRewardRecords) != len(want) {
+			t.Fatalf("reward record count = %d, want %d", len(state.StoneRewardRecords), len(want))
+		}
+		seen := make(map[StoneRewardRecord]bool, len(want))
+		for _, record := range state.StoneRewardRecords {
+			seen[record] = true
+		}
+		for _, record := range want {
+			if !seen[record] {
+				t.Fatalf("export lost or changed reward tuple %+v", record)
+			}
+		}
+		if err := ValidateGenesisState(state); err != nil {
+			t.Fatalf("roundtrip reward state rejected: %v", err)
+		}
+	}
+}
