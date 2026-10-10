@@ -1,5 +1,11 @@
 # Security Architecture
 
+> **Non-production (recovery status).** TrueRepublic v0.4 is not approved for
+> production, mainnet, real keys or real funds, and the project operates no
+> public seeds, RPC, snapshot or status services. See
+> [`SECURITY.md`](https://github.com/NeaBouli/TrueRepublic/security/policy) and
+> the [rollout roadmap](https://github.com/NeaBouli/TrueRepublic/blob/main/docs/ROLLOUT_ROADMAP.md).
+
 Comprehensive security design of TrueRepublic blockchain.
 
 ## Table of Contents
@@ -523,7 +529,6 @@ gpg --encrypt --recipient your@email.com backup/
 2. Sandboxing (Wasm isolation)
 3. Code audits required
 4. Governance approval
-5. Bug bounty program (future)
 ```
 
 ### 8. Private Key Compromise
@@ -646,14 +651,17 @@ gpg --encrypt --recipient your@email.com backup/
 
 ## Security Contact
 
-**Report vulnerabilities:**
-- Email: security@truerepublic.network
-- PGP Key: (see GitHub)
-- Response time: 24 hours
+Report vulnerabilities only through the repository's private flow described in
+[`SECURITY.md`](https://github.com/NeaBouli/TrueRepublic/security/policy):
 
-**Bug Bounty Program:**
-- Coming soon
-- Rewards: 100 - 10,000 PNYX
+- Use GitHub's private vulnerability reporting
+  ([Security Advisory form](https://github.com/NeaBouli/TrueRepublic/security/advisories/new)).
+- Do not publish exploitable details, credentials, private keys, mnemonics or
+  private infrastructure data in a public issue. If the private flow is
+  unavailable, open a public issue that only asks for a private contact channel.
+- The repository does not promise a bug-bounty payment or a production response
+  SLA; acknowledgement, triage, remediation and disclosure timing are agreed per
+  report.
 
 ---
 

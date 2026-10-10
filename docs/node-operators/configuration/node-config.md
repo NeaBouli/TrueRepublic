@@ -1,5 +1,11 @@
 # Node Configuration
 
+> **Non-production (recovery status).** TrueRepublic v0.4 is not approved for
+> production, mainnet, real keys or real funds, and the project operates no
+> public seeds, RPC, snapshot or status services. See
+> [`SECURITY.md`](https://github.com/NeaBouli/TrueRepublic/security/policy) and
+> the [rollout roadmap](https://github.com/NeaBouli/TrueRepublic/blob/main/docs/ROLLOUT_ROADMAP.md).
+
 ## Configuration Files
 
 All configuration is stored in `~/.truerepublic/config/`:
@@ -20,11 +26,12 @@ All configuration is stored in `~/.truerepublic/config/`:
 laddr = "tcp://YOUR_INTERFACE_IP:26656"
 external_address = "tcp://YOUR_PUBLIC_ADDRESS:26656"
 
-# Seeds for initial peer discovery
-seeds = "node-id@seed1.truerepublic.network:26656"
+# Seeds for initial peer discovery. The project operates no public seeds;
+# declare only peers from your qualified topology (topology-contract.md).
+seeds = "<node-id>@<qualified-seed-host>:26656"
 
-# Persistent peers (always maintain connection)
-persistent_peers = "node-id@peer1.truerepublic.network:26656"
+# Persistent peers (always maintain connection), also operator-qualified
+persistent_peers = "<node-id>@<qualified-peer-host>:26656"
 
 # Maximum number of peers
 max_num_inbound_peers = 40

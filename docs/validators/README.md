@@ -31,7 +31,7 @@ You must be a member of at least one domain:
 
 ```bash
 # Option A: Create a new domain with initial treasury
-truerepublicd tx truedemocracy create-domain my-domain 200000pnyx \
+truerepublicd tx truedemocracy create-domain my-domain 200000000000upnyx \
     --from mykey --chain-id truerepublic-1
 
 # Option B: Join an existing domain
@@ -170,14 +170,15 @@ truerepublicd query truedemocracy validator <your-operator-addr>
 # All validators
 truerepublicd query truedemocracy validators
 
-# Node sync status
-curl http://localhost:26657/status | jq .result.sync_info
+# Node sync status (native node host; Docker setup: http://127.0.0.1:8080/rpc/status)
+curl http://127.0.0.1:26657/status | jq .result.sync_info
 ```
 
 ### Withdrawing Stake
 
 ```bash
-truerepublicd tx truedemocracy withdraw-stake <amount>upnyx \
+# amount is a plain integer in upnyx (no denomination suffix)
+truerepublicd tx truedemocracy withdraw-stake <amount-in-upnyx> \
     --from mykey --chain-id truerepublic-1
 ```
 

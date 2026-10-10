@@ -135,14 +135,15 @@ Network stays decentralized
 ### Checking Provenance
 
 ```bash
-# Check your stake sources
-truerepublicd query bank balances YOUR_ADDRESS
-
 # Check domain payouts
 truerepublicd query truedemocracy domain YOUR_DOMAIN
 
 # System automatically validates provenance on registration
 ```
+
+`truerepublicd` registers no `bank` command (only `truedemocracy` and `dex`
+transactions and queries), so check account balances with the maintained client
+or another tool you have independently qualified.
 
 ---
 
@@ -151,13 +152,13 @@ truerepublicd query truedemocracy domain YOUR_DOMAIN
 ### Prerequisites Check
 
 ```bash
-# 1. Node fully synced
-curl localhost:26657/status | jq .result.sync_info.catching_up
+# 1. Node fully synced (native node host; in the Docker setup use
+#    curl -s http://127.0.0.1:8080/rpc/status)
+curl -s http://127.0.0.1:26657/status | jq .result.sync_info.catching_up
 # Should return: false
 
-# 2. Sufficient balance
-truerepublicd query bank balances YOUR_ADDRESS
-# Should show 100,000+ upnyx
+# 2. Sufficient balance: at least StakeMin = 100,000,000,000 upnyx
+#    (100,000 PNYX); check it with a qualified client (no bank CLI command)
 
 # 3. Domain membership
 truerepublicd query truedemocracy domain YOUR_DOMAIN
@@ -187,39 +188,32 @@ truerepublicd keys add validator --keyring-backend file
 
 ### Step 2: Fund Validator Address
 
-```bash
-# Send PNYX to validator address
-truerepublicd tx bank send \
-    YOUR_KEY \
-    VALIDATOR_ADDRESS \
-    100000000000upnyx \
-    --from YOUR_KEY \
-    --chain-id truerepublic-1 \
-    --gas auto \
-    --gas-adjustment 1.3
-```
-
-Note: `100000000000upnyx` = 100,000 PNYX (micro-PNYX)
+The operator address must already hold the stake. `truerepublicd` registers no
+`bank send` command; fund the address through the qualified genesis allocation
+or with a client you have independently qualified. `100000000000upnyx` =
+100,000 PNYX (`upnyx` is the only base denomination, 6 decimals).
 
 ### Step 3: Register Validator
 
+`register-validator` takes exactly three arguments: the hex-encoded 32-byte
+Ed25519 consensus public key of this node, the stake, and the domain:
+
 ```bash
+# Consensus public key of this node as hex
+PUBKEY_HEX=$(jq -r .pub_key.value ~/.truerepublic/config/priv_validator_key.json | base64 -d | xxd -p -c 64)
+
 truerepublicd tx truedemocracy register-validator \
-    YOUR_DOMAIN \
+    "$PUBKEY_HEX" \
     100000000000upnyx \
+    YOUR_DOMAIN \
     --from validator \
-    --chain-id truerepublic-1 \
-    --gas auto \
-    --gas-adjustment 1.3 \
+    --chain-id <chain-id> \
     --keyring-backend file
 ```
 
-This command:
-1. Checks domain membership
-2. Validates stake provenance
-3. Transfers stake to bonded pool
-4. Creates validator record
-5. Adds you to validator set
+This command requires domain membership, validates stake provenance, escrows
+the stake in the `truedemocracy` module and creates the validator record with
+power `stake / StakeMin`.
 
 ### Step 4: Verify Registration
 
@@ -227,20 +221,9 @@ This command:
 # Check validator status
 truerepublicd query truedemocracy validator VALIDATOR_ADDRESS
 
-# Output:
-{
-  "address": "cosmosvaloper1abc...",
-  "domain": "my-domain",
-  "stake_amount": "100000000000",
-  "jailed": false,
-  "status": "active"
-}
+# Fields: operator_addr, pub_key, stake, domains, power, jailed,
+# jailed_until, missed_blocks
 ```
-
-**Status meanings:**
-- `active` -- Validator is active
-- `jailed` -- Slashed and jailed
-- `unbonding` -- Withdrawing stake
 
 ---
 
@@ -249,42 +232,32 @@ truerepublicd query truedemocracy validator VALIDATOR_ADDRESS
 ### Monitoring Signing Status
 
 ```bash
-# Check if signing blocks
-truerepublicd query slashing signing-info $(truerepublicd tendermint show-validator)
-
-# Output shows:
-# - missed_blocks_counter
-# - jailed_until
-# - tombstoned
+# Signing health is part of the validator record (no slashing module/CLI)
+truerepublicd query truedemocracy validator VALIDATOR_ADDRESS
 ```
 
 **What to watch:**
-- `missed_blocks_counter` should stay low (<50)
-- `jailed_until` should be "1970-01-01" (not jailed)
+- `missed_blocks` should stay low (jail after more than 50 missed commits in
+  a complete 100-block window)
+- `jailed` should be `false`
 
 ### Checking Validator Set
 
 ```bash
 # View all validators
-truerepublicd query staking validators
+truerepublicd query truedemocracy validators
 
 # Your validator info
-truerepublicd query staking validator VALIDATOR_ADDRESS
+truerepublicd query truedemocracy validator VALIDATOR_ADDRESS
 
-# Validator set (active validators)
-curl localhost:26657/validators
+# Consensus validator set (native node host)
+curl -s http://127.0.0.1:26657/validators
 ```
 
 ### Updating Validator Info
 
-**Change commission:**
-
-```bash
-# (If implemented in future)
-truerepublicd tx staking edit-validator \
-    --commission-rate 0.05 \
-    --from validator
-```
+**Commission:** not available. TrueRepublic uses Proof of Domain without
+`x/staking`; there is no commission or `edit-validator` operation.
 
 **Change domain:**
 
@@ -344,13 +317,8 @@ APY: 630,720 / 100,000 = ~6.3%
 - Rewards added to bonded pool
 - Compound automatically
 
-**Manual withdrawal:**
-
-```bash
-truerepublicd tx distribution withdraw-validator-commission VALIDATOR_ADDRESS \
-    --from validator \
-    --chain-id truerepublic-1
-```
+**Manual withdrawal:** not available. There is no `x/distribution` module and
+no commission withdrawal command.
 
 ---
 
@@ -411,12 +379,11 @@ truerepublicd tx distribution withdraw-validator-commission VALIDATOR_ADDRESS \
 **Check if slashed:**
 
 ```bash
-truerepublicd query slashing signing-info $(truerepublicd tendermint show-validator)
+truerepublicd query truedemocracy validator VALIDATOR_ADDRESS
 
 # Look for:
 # - jailed: true
-# - jailed_until: <future timestamp>
-# - tombstoned: true (if double-sign)
+# - jailed_until: <future unix timestamp>
 ```
 
 ---
@@ -431,9 +398,10 @@ truerepublicd query slashing signing-info $(truerepublicd tendermint show-valida
 - Can rejoin validator set
 
 **Double-Sign Slash:**
-- Cannot unjail (tombstoned)
-- Permanently removed
-- Must create new validator
+- The offending consensus key is tombstoned and cannot be unjailed
+- Rotate to a freshly generated consensus key
+  ([Validator Consensus-Key Rotation](../../docs/node-operators/operations/validator-key-rotation.md)),
+  wait for the jail period, then unjail
 
 ### Unjail Process
 
@@ -441,19 +409,16 @@ truerepublicd query slashing signing-info $(truerepublicd tendermint show-valida
 
 ```bash
 # Check when you can unjail
-truerepublicd query slashing signing-info $(truerepublicd tendermint show-validator)
+truerepublicd query truedemocracy validator VALIDATOR_ADDRESS
 
-# Look at jailed_until:
-# "jailed_until": "2025-02-20T10:45:00Z"
-
-# Wait until this time passes
+# Look at jailed_until (unix timestamp) and wait until it has passed
 ```
 
 **Step 2: Ensure Node is Running**
 
 ```bash
-# Check sync status
-curl localhost:26657/status | jq .result.sync_info.catching_up
+# Check sync status (native node host)
+curl -s http://127.0.0.1:26657/status | jq .result.sync_info.catching_up
 # Should be: false
 
 # Check node is signing

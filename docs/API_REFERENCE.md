@@ -7,8 +7,10 @@
 TrueRepublic exposes APIs via:
 - **CLI:** `truerepublicd` binary (Cobra commands)
 - **RPC:** CometBFT RPC on port 26657
-- **REST:** LCD/API on port 1317
-- **gRPC:** On port 9090
+- **REST:** LCD/API on port 1317 (native defaults; in the Docker Compose stack
+  RPC and REST are reachable on the host only through nginx at
+  `127.0.0.1:8080/rpc/` and `/api/`)
+- **gRPC:** port 9090 on native nodes only; the Compose stack disables gRPC
 - **CosmWasm:** Custom query/message bindings
 
 ---
@@ -57,7 +59,8 @@ TrueRepublic exposes APIs via:
 | Message | CLI Command | Description |
 |---------|-------------|-------------|
 | `MsgRegisterValidator` | `tx truedemocracy register-validator` | Register as PoD validator |
-| `MsgUnregisterValidator` | `tx truedemocracy unregister-validator` | Unregister validator |
+| `MsgRemoveValidator` | `tx truedemocracy remove-validator` | Fully exit a validator (stake held through the evidence window) |
+| `MsgWithdrawStake` | `tx truedemocracy withdraw-stake` | Stake withdrawal (integer `upnyx` amount) |
 
 #### ZKP
 
@@ -168,8 +171,8 @@ truerepublicd tx truedemocracy register-identity \
 
 # Submit anonymous vote with proof
 truerepublicd tx truedemocracy rate-with-proof \
-  my-domain issue-1 suggestion-1 \
-  <proof-hex> <nullifier-hex> <rating> \
+  my-domain issue-1 suggestion-1 <rating> \
+  <proof-hex> <nullifier-hex> <reward-recipient> <merkle-root-hex> \
   --from alice
 ```
 
@@ -178,12 +181,12 @@ truerepublicd tx truedemocracy rate-with-proof \
 ```bash
 # Deposit to domain treasury
 truerepublicd tx truedemocracy deposit-to-domain \
-  my-domain 1000pnyx \
+  my-domain 1000000000upnyx \
   --from alice
 
 # Withdraw from domain treasury
 truerepublicd tx truedemocracy withdraw-from-domain \
-  my-domain 500pnyx \
+  my-domain <recipient-address> 500000000upnyx \
   --from admin
 ```
 
@@ -258,11 +261,10 @@ truerepublicd query truedemocracy merkle-proof my-domain <commitment>
 # Query registered assets through the supported CLI/gRPC client
 truerepublicd query dex registered-assets
 
-# Node status
-curl http://localhost:26657/status
-
-# Latest block
-curl http://localhost:26657/block
+# Node status and latest block (native node host; Docker setup:
+# http://127.0.0.1:8080/rpc/status and /rpc/block)
+curl http://127.0.0.1:26657/status
+curl http://127.0.0.1:26657/block
 ```
 
 TrueRepublic does not register custom-module grpc-gateway HTTP aliases on port

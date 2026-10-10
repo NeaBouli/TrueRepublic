@@ -1,0 +1,5 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Report a security vulnerability (private)
+    url: https://github.com/NeaBouli/TrueRepublic/security/policy
+    about: Do not open a public issue with exploit details, keys or credentials. Follow SECURITY.md and use GitHub private vulnerability reporting.

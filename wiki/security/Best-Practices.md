@@ -1,5 +1,11 @@
 # Best Practices
 
+> **Non-production (recovery status).** TrueRepublic v0.4 is not approved for
+> production, mainnet, real keys or real funds, and the project operates no
+> public seeds, RPC, snapshot or status services. See
+> [`SECURITY.md`](https://github.com/NeaBouli/TrueRepublic/security/policy) and
+> the [rollout roadmap](https://github.com/NeaBouli/TrueRepublic/blob/main/docs/ROLLOUT_ROADMAP.md).
+
 Security recommendations for all TrueRepublic stakeholders.
 
 ## Table of Contents
@@ -81,10 +87,11 @@ Security recommendations for all TrueRepublic stakeholders.
    - Suggested solution
    - External links (verify legitimacy)
 
-2. **Check Proposal Age**
-   - GREEN (0-7 days): New
-   - YELLOW (7-30 days): Mature
-   - RED (30+ days): Expiring
+2. **Check the Proposal Zone**
+   - GREEN: approval (stones) at or above the domain threshold (default 5%)
+   - YELLOW: below the threshold, for one dwell time (default 1 day)
+   - RED: still below after the yellow dwell time; deleted after another dwell time
+   - Any zone: removed immediately by a 2/3 member delete vote
 
 3. **Review Discussion**
    - Check domain chat/forum

@@ -45,12 +45,8 @@ word19 word20 word21 word22 word23 word24
 
 ### Step 2: Get PNYX Tokens (2 min)
 
-**Testnet:**
-
-1. Join TrueRepublic Discord
-2. Go to #faucet channel
-3. Type: `/faucet <your-address>`
-4. Receive 10,000 PNYX
+**Test networks:** the project operates no faucet. Test PNYX exist only in a
+test genesis allocation that you or your test-network operator control.
 
 There is no approved mainnet or real-funds flow during recovery.
 
@@ -91,12 +87,12 @@ sudo apt update && sudo apt upgrade -y
 curl -fsSL https://get.docker.com -o get-docker.sh
 sudo sh get-docker.sh
 
-# Install Docker Compose
-sudo apt install docker-compose -y
+# The Docker install script includes the Compose v2 plugin
+# (required: Docker 24.0+, Compose v2.20+)
 
 # Verify installation
 docker --version
-docker-compose --version
+docker compose version
 ```
 
 #### Step 2: Clone Repository (2 min)
@@ -117,11 +113,13 @@ cp .env.example .env
 nano .env
 ```
 
-**Set these values:**
+**Set these values** (the keys `.env.example` defines; there is no
+`EXTERNAL_IP` setting):
 ```
 MONIKER=my-node-name
-EXTERNAL_IP=your.server.ip
 CHAIN_ID=truerepublic-1
+BOOTSTRAP_OPERATOR=<independent operator address>
+GRAFANA_PASSWORD=<strong password>   # required; compose refuses to start without it
 ```
 
 #### Step 4: Start Node (2 min)
@@ -132,14 +130,14 @@ make docker-build
 make docker-up
 
 # Check logs
-docker-compose logs -f truerepublic-node
+docker compose logs -f truerepublic-node
 ```
 
 #### Step 5: Verify Node Running (1 min)
 
 ```bash
-# Check sync status
-curl localhost:26657/status | jq .result.sync_info
+# Check sync status (RPC is reachable on the host only through nginx)
+curl -s http://127.0.0.1:8080/rpc/status | jq .result.sync_info
 
 # Should show:
 # "catching_up": false  (when fully synced)
@@ -148,9 +146,9 @@ curl localhost:26657/status | jq .result.sync_info
 
 #### Step 6: Access Monitoring (2 min)
 
-Visit: `http://your-server-ip:3000`
-- Username: `admin`
-- Password: `admin` (change immediately)
+Grafana listens only on the host loopback: open `http://127.0.0.1:3000` on the
+node host (or through an SSH tunnel). Log in as `admin` with the
+`GRAFANA_PASSWORD` you set in `.env`; there is no default password.
 
 **Done! Your node is running.**
 
@@ -179,13 +177,12 @@ See [Node Setup Guide](../operations/Node-Setup) for native installation.
 Before starting, ensure:
 
 ```bash
-# 1. Node is fully synced
-curl localhost:26657/status | jq .result.sync_info.catching_up
+# 1. Node is fully synced (Docker setup: through nginx on the host)
+curl -s http://127.0.0.1:8080/rpc/status | jq .result.sync_info.catching_up
 # Should return: false
 
-# 2. Have sufficient PNYX
-truerepublicd query bank balances <your-address>
-# Should show: 100000+ upnyx
+# 2. Have sufficient PNYX: at least 100,000,000,000 upnyx (100,000 PNYX).
+#    truerepublicd has no bank command; check with a qualified client.
 
 # 3. Member of a domain
 truerepublicd query truedemocracy domains
@@ -194,15 +191,11 @@ truerepublicd query truedemocracy domains
 
 ### Step 1: Join a Domain (5 min)
 
-If not already a member:
-
-```bash
-truerepublicd tx truedemocracy join-domain <domain-name> \
-    --from <your-key> \
-    --chain-id truerepublic-1 \
-    --gas auto \
-    --gas-adjustment 1.3
-```
+If not already a member, the domain admin adds you
+(`truerepublicd tx truedemocracy add-member <domain-name> <your-address>`), or
+you request onboarding with `truerepublicd tx truedemocracy onboard-to-domain
+[domain] [domain-pubkey-hex] [global-pubkey-hex] [signature-hex]`, which the
+admin approves with `approve-onboarding`. There is no `join-domain` command.
 
 ### Step 2: Generate Validator Keys (5 min)
 
@@ -217,23 +210,24 @@ truerepublicd keys add validator \
 
 ### Step 3: Fund Validator Address (5 min)
 
-```bash
-# Send PNYX to validator address
-truerepublicd tx bank send <your-key> <validator-address> 100000000000upnyx \
-    --from <your-key> \
-    --chain-id truerepublic-1
-```
+The validator address must already hold the stake. `truerepublicd` has no
+`bank send` command; fund it through the qualified genesis allocation or a
+client you have independently qualified.
 
 ### Step 4: Register as Validator (10 min)
 
+`register-validator` takes `[pubkey-hex] [stake] [domain]`; the public key is
+this node's Ed25519 consensus key as hex:
+
 ```bash
+PUBKEY_HEX=$(jq -r .pub_key.value ~/.truerepublic/config/priv_validator_key.json | base64 -d | xxd -p -c 64)
+
 truerepublicd tx truedemocracy register-validator \
-    <domain-name> \
+    "$PUBKEY_HEX" \
     100000000000upnyx \
+    <domain-name> \
     --from validator \
-    --chain-id truerepublic-1 \
-    --gas auto \
-    --gas-adjustment 1.3
+    --chain-id truerepublic-1
 ```
 
 ### Step 5: Verify Validator Status (5 min)
@@ -242,20 +236,19 @@ truerepublicd tx truedemocracy register-validator \
 # Check validator info
 truerepublicd query truedemocracy validator <validator-address>
 
-# Should show:
-# - status: active
-# - jailed: false
-# - domain: <your-domain>
+# Should show your stake, power > 0, jailed: false and the domain
+# (fields: operator_addr, pub_key, stake, domains, power, jailed,
+#  jailed_until, missed_blocks)
 ```
 
 ### Step 6: Monitor Performance (10 min)
 
 ```bash
-# Check signing status
-truerepublicd query slashing signing-info <validator-consensus-address>
+# Signing health is part of the validator record (no slashing CLI)
+truerepublicd query truedemocracy validator <validator-address>
 
-# Monitor uptime
-# Uptime must stay above 95% to avoid slashing
+# missed_blocks: more than 50 missed commits in a complete 100-block
+# window jails the validator and burns 1% of its stake
 ```
 
 ### Step 7: Configure Monitoring Alerts (10 min)
@@ -285,7 +278,7 @@ not by itself qualify a production validator or authorize real funds.
 **Time:** 45 minutes
 **Requirements:**
 - Go 1.26.9
-- Node.js 18+
+- Node.js 22+ (required by `client-web/package.json`)
 - Git
 
 ### Step 1: Install Dependencies (15 min)
@@ -444,9 +437,10 @@ truerepublicd tx truedemocracy unjail \
 **Solution:**
 
 ```bash
-# Clean and rebuild
+# Clean and rebuild (do not run `go mod tidy`: dependencies are pinned and
+# release builds use -mod=readonly; verify the module cache instead)
 make clean
-go mod tidy
+go mod verify
 make build
 
 # If still fails, check Go version:

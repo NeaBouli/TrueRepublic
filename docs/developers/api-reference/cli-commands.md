@@ -33,7 +33,8 @@ truerepublicd tx truedemocracy register-validator \
     --from mykey --chain-id truerepublic-1
 
 # Withdraw validator stake (10% transfer limit)
-truerepublicd tx truedemocracy withdraw-stake [amount]upnyx \
+# [amount] is a plain integer in upnyx (no denomination suffix)
+truerepublicd tx truedemocracy withdraw-stake [amount] \
     --from mykey --chain-id truerepublic-1
 
 # Remove a validator
@@ -132,7 +133,7 @@ truerepublicd query dex pools
 
 ```bash
 # Create domain with 200,000 PNYX treasury
-truerepublicd tx truedemocracy create-domain "Climate" 200000pnyx \
+truerepublicd tx truedemocracy create-domain "Climate" 200000000000upnyx \
     --from alice --chain-id truerepublic-1
 
 # Submit a proposal
@@ -140,7 +141,7 @@ truerepublicd tx truedemocracy submit-proposal \
     "Climate" \
     "Carbon Emissions Reporting" \
     "Require quarterly carbon reports from all members" \
-    10000pnyx \
+    10000000000upnyx \
     "https://example.com/proposal-details" \
     --from alice --chain-id truerepublic-1
 ```
@@ -149,12 +150,12 @@ truerepublicd tx truedemocracy submit-proposal \
 
 ```bash
 # Create/join a domain first
-truerepublicd tx truedemocracy create-domain "Validators" 100000pnyx \
+truerepublicd tx truedemocracy create-domain "Validators" 100000000000upnyx \
     --from operator --chain-id truerepublic-1
 
 # Register as validator
 truerepublicd tx truedemocracy register-validator \
-    $(cat pubkey.hex) 150000pnyx "Validators" \
+    $(cat pubkey.hex) 150000000000upnyx "Validators" \
     --from operator --chain-id truerepublic-1
 
 # Check status

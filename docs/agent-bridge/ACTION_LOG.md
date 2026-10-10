@@ -6020,6 +6020,118 @@
 - No state repair, migration, deployment, release, production action, real key
   or real fund is authorized. Rollout remains 36/59 and production false.
 
+## 2026-10-01 EEST - GH-313 trust and reporting boundary (GH313B, Claude Code)
+
+- Branch `agent/claude/GH313-operator-docs` from exact main `1283a445`. All 13
+  maintained `truerepublic.network` seed, snapshot, state-sync, API, status and
+  security-contact references (8 files) are removed; examples require
+  operator-supplied, independently qualified endpoints and link the topology and
+  multi-validator recovery guides. No replacement endpoint was invented; external
+  DNS state remains unverified.
+- `wiki/security/Security-Architecture.md` now states the exact `SECURITY.md`
+  private-reporting boundary (no email, response SLA or bounty). The public
+  `.github/ISSUE_TEMPLATE/bug_bounty.md` (fictional API repro, reward address) is
+  deleted as authorized; `.github/ISSUE_TEMPLATE/config.yml` keeps community issues
+  open and routes security reports to the security policy. Six touched high-risk
+  guides carry a non-production caveat.
+- `operator_guidance_repository_test.go` enforces the contract over maintained
+  docs, wiki, `.github`, configs, nginx and root guides (historical audits,
+  archives and append-only logs excluded) with 10 negative and 4 positive
+  fixtures; a first run caught that a generic reward-amount rule flagged protocol
+  economics, so reward amounts are now checked only in security guidance.
+- Gates: `go vet`, focused operator-guidance tests, security/license/repository/
+  network-policy/observability/incident/install-lifecycle tests, `securityreview`,
+  license policy, `check-consistency.sh`, custom-query retirement, `git diff
+  --check`. No GitHub-Wiki push, DNS, deployment, push, PR or rollout credit.
+
+## 2026-10-01 EEST - GH-313 executable operator guidance (GH313C1, Claude Code)
+
+- Branch `agent/claude/GH313-operator-docs` on accepted GH313B head `e193e0e`;
+  implementation commit `8740f16`. Eleven writable guides (Validator-Guide,
+  Installation-Wizards, Node-Setup, Deployment-Options, Troubleshooting,
+  DEPLOYMENT, IBC_RELAYER_SETUP, API_REFERENCE, VALIDATOR_GUIDE,
+  validators/README, cli-commands) now match `server_lifecycle.go` command
+  registration, `x/truedemocracy`/`x/dex` CLI argument contracts,
+  `.env.example`, `docker-compose.yml`, `Dockerfile` and the operator runbooks.
+  Unavailable operations are stated as unavailable; no command, endpoint, image,
+  faucet, seed or checksum was invented. GH313B caveats are preserved.
+- Found while reconciling: `rate-with-proof` and `withdraw-from-domain` examples
+  had wrong argument order/count, and `withdraw-stake` examples appended a denom
+  to an integer argument.
+- `operator_guidance_repository_test.go` adds narrow rules (registered tx/query
+  modules, genesis commands, register-validator shape, withdraw-stake integer,
+  upnyx amounts, .env.example keys, Compose v2, no published image, non-root home,
+  no default Grafana password, no faucet) with 23 negative and 9 positive fixtures.
+- Gates: `go vet`, focused operator-guidance tests, security/license/repository/
+  network-policy/observability/incident/install-lifecycle tests,
+  `make security-review-contract-test` (readiness contract verified), license
+  policy, `check-consistency.sh`, custom-query retirement, `git diff --check`.
+- Open (outside the writable set, excluded from the new rules with a pointer to
+  the report): `docs/node-operators/installation/docker-setup.md` (`/root`
+  mount), `docs/node-operators/configuration/genesis-params.md` (`pnyx`
+  treasury example), `docs/V0.4.0_OPTIONAL_INDEXER_STACK.md` (Compose v1);
+  `RELEASE_NOTES_v0.3.0.md` treated as historical. No push, PR, Wiki push or
+  rollout credit.
+
+## 2026-10-01 EEST - GH-313 executable-guidance exclusions closed (GH313C1a, Claude Code)
+
+- Source `38fcab2`: `docs/node-operators/installation/docker-setup.md` mounts node
+  data at `/home/truerepublic/.truerepublic` and the warning no longer repeats the
+  root-home literal; `docs/node-operators/configuration/genesis-params.md` uses
+  `500000000000upnyx` / `100000000000upnyx` for the 500,000 / 100,000 PNYX
+  examples; `docs/V0.4.0_OPTIONAL_INDEXER_STACK.md` uses `docker compose` for both
+  invocations. The three files are removed from the command-rule exclusions;
+  GH308-owned and release-note exclusions are unchanged.
+- Test `585a0b5`: the Compose v1 rule also matches the `--profile <name>` and
+  `--profile=<name>` forms (one negative fixture), as approved.
+- Tests not run: data volume had 4.6 GiB free after the patch (threshold 5 GiB);
+  handed over as partial. No push, PR, Wiki push or rollout credit.
+- GH313C1a gates (2026-10-01, 7.5 GiB free, no other TrueRepublic build): `go vet .`;
+  `go test -p 1 -run '^TestOperatorGuidance' -v .` PASS (24 negative, 9 positive
+  fixtures); security/license/repository/network-policy/observability/incident/
+  install-lifecycle tests PASS; `make security-review-contract-test` (readiness
+  contract verified); license policy, `check-consistency.sh`, custom-query
+  retirement PASS; `git diff --check` clean; zero stale root-home, lowercase
+  `pnyx` amount or Compose v1 matches in the three files.
+
+## 2026-10-01 EEST - GH-313 conceptual status and architecture limits (GH313C2, Claude Code)
+
+- Branch `agent/claude/GH313-operator-docs` on approved head `3a497aa`; commit `82b3264`.
+  Known-Issues now records GH-184, GH-56, GH-55 and GH-71 as completed per
+  `docs/ROLLOUT_ROADMAP.md`; zone guidance follows `x/truedemocracy/lifecycle.go`
+  and `types.go` (approval threshold, dwell time, recovery, 2/3 fast delete) with the
+  unimplemented whitepaper green-zone limit stated as a difference; contract paths
+  name `contracts/{core,packages,examples}` as quarantined prototypes (GH308 wording
+  authority unchanged); `make install`, stale per-file test/guide counts and the
+  hard-coded DEX count are removed (canonical `docs/status.json` counts pinned by
+  `check-consistency.sh` stay); CONTRIBUTING requires Go 1.26.6 and Node.js 22+;
+  FAQ/user manual drop faucet claims; six high-risk guides carry the recovery caveat.
+- `operator_guidance_repository_test.go`: C2 rules with 30 negative and 12 positive
+  fixtures; `docs/V0.3.0_ROADMAP.md` classified as a historical past-version record
+  (flagged for Codex confirmation).
+- Gates (6.7 GiB free, no other TrueRepublic build, `-p 1`): `go vet .`; focused
+  operator-guidance tests; security/license/repository/network-policy/observability/
+  incident/install-lifecycle tests; `make security-review-contract-test`; license
+  policy; `check-consistency.sh`; custom-query retirement; `git diff --check`;
+  static searches for age-based zones, `contracts/src/`, Node.js 18, make install,
+  DEX test counts and faucet claims in the writable set: 0.
+- No product code, GH308 file, external Wiki, push, PR or rollout credit.
+
+## 2026-10-01 EEST - GH-313 superseded v0.3.0 roadmap (GH313C2a, Claude Code)
+
+- Commit `6e76037` on reviewed head `a182a21`: `docs/V0.3.0_ROADMAP.md` opens with
+  "Historical planning record — superseded", links `docs/ROLLOUT_ROADMAP.md` and
+  `docs/status.json`, states `Status: Historical — superseded` and a former Q3 2026
+  target with no current commitment; the body is unchanged history.
+- The exact-path exclusion is now bound to `TestOperatorGuidanceSupersededRoadmapContract`
+  (first 15 lines must carry marker, status, former-target wording and both links;
+  `Status: Planned` forbidden; four mutations rejected). No other rule, count, GH308
+  exclusion or document changed.
+- Gates (6.2 GiB free, `-p 1`): `go vet .`; operator-guidance tests; security/license/
+  repository/network-policy/observability/incident/install-lifecycle tests;
+  `make security-review-contract-test`; license policy; `check-consistency.sh`;
+  custom-query retirement; `git diff --check`. No push, PR or rollout credit.
+
 ## 2026-10-01 EEST - GH-335 ModuleQuery fetch receiver (GH335A, Claude Code)
 
 - Branch `agent/claude/GH335-modulequery-fetch` from exact main `1283a445`; commit

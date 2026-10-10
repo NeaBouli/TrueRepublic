@@ -1,5 +1,11 @@
 # Frequently Asked Questions
 
+> **Non-production (recovery status).** TrueRepublic v0.4 is not approved for
+> production, mainnet, real keys or real funds, and the project operates no
+> public seeds, RPC, snapshot or status services. See
+> [`SECURITY.md`](https://github.com/NeaBouli/TrueRepublic/security/policy) and
+> the [rollout roadmap](https://github.com/NeaBouli/TrueRepublic/blob/main/docs/ROLLOUT_ROADMAP.md).
+
 ## General
 
 ### What is TrueRepublic?
@@ -28,8 +34,11 @@ TrueRepublic's consensus mechanism that requires validators to be **active membe
 Maximum supply is **21,000,000 PNYX**. New PNYX is minted through staking rewards and domain interest, subject to release decay as supply approaches the cap.
 
 ### How do I get PNYX?
-- **Testnet:** From the faucet
-- **Mainnet:** From the DEX, or by participating in governance (VoteToEarn rewards)
+- **Test networks:** only from a test genesis allocation controlled by you or
+  your test-network operator; the project operates no faucet
+- **Mainnet:** none is approved during recovery; there is no real-funds flow.
+  On a chain, PNYX can also be earned through governance participation
+  (VoteToEarn rewards)
 - **Staking:** Validators earn 10% APY
 
 ### What are the fees?
