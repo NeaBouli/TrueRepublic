@@ -525,7 +525,7 @@ describe('wallet session invalidation', () => {
 
   it('cannot reopen a session when lock wins an in-flight unlock race', async () => {
     let resolveWallet: (value: Wallet) => void = () => {};
-    vi.spyOn(WalletService, 'getWallet').mockImplementation(
+    const getWallet = vi.spyOn(WalletService, 'getWallet').mockImplementation(
       () =>
         new Promise<Wallet>((resolve) => {
           resolveWallet = resolve;
@@ -535,7 +535,7 @@ describe('wallet session invalidation', () => {
     const pending = useWalletStore
       .getState()
       .switchWallet(OTHER_ADDRESS, 'other-password');
-    await new Promise((resolve) => setTimeout(resolve, 0));
+    expect(getWallet).toHaveBeenCalledWith(OTHER_ADDRESS, 'other-password');
     useWalletStore.getState().lock();
     resolveWallet(otherWallet);
 

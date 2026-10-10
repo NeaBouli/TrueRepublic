@@ -46,10 +46,11 @@ class FifoLocks {
   }
 }
 
+const originalIdentityLoad = useIdentityStore.getState().load;
+let latestIdentityLoad: Promise<void> = Promise.resolve();
+
 async function settled(): Promise<void> {
-  for (let i = 0; i < 200 && useIdentityStore.getState().status === 'loading'; i += 1) {
-    await new Promise((resolve) => setTimeout(resolve, 10));
-  }
+  await latestIdentityLoad;
 }
 
 async function createUnlockedWallet(name = 'Lifecycle'): Promise<string> {
@@ -73,10 +74,18 @@ describe('identity custody lifecycle', { timeout: 120_000 }, () => {
     vi.stubGlobal('navigator', { locks: new FifoLocks(), clipboard });
     useWalletStore.getState().lock();
     useWalletStore.setState({ wallets: [] });
+    latestIdentityLoad = Promise.resolve();
+    useIdentityStore.setState({
+      load: vi.fn((session) => {
+        latestIdentityLoad = originalIdentityLoad(session);
+        return latestIdentityLoad;
+      }),
+    });
     clipboard.writeText.mockClear();
   });
 
   afterEach(() => {
+    useIdentityStore.setState({ load: originalIdentityLoad });
     vi.unstubAllGlobals();
     vi.restoreAllMocks();
   });
@@ -204,7 +213,7 @@ describe('identity custody lifecycle', { timeout: 120_000 }, () => {
     // The vault open is now in flight; lock before it completes.
     expect(useIdentityStore.getState().status).toBe('loading');
     useWalletStore.getState().lock();
-    await new Promise((resolve) => setTimeout(resolve, 1_500));
+    await settled();
     expect(useIdentityStore.getState()).toMatchObject({ status: 'locked', identity: null });
 
     // A stale migrate request with a superseded session does nothing.

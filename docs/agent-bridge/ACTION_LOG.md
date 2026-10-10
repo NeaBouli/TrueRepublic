@@ -6338,3 +6338,42 @@ Both append histories retained; current365 toolchain/dependency/security pins an
 inventory and baseline metrics preserved. Fresh schema/lazy/full client/budget/docs/protected
 gates and independent composition review pending. Claude paused, Security NOT RUN, no main/
 production action or rollout credit.
+
+## 2026-10-10 — GH309 real identity completion in lifecycle tests (Codex)
+
+Old focused38PASS/three premature loading assertions/one wallet timeout, not PASS. Test wrapper
+delegates to the real load action and awaits its complete Promise; replaces silently expiring
+200x10ms polling and stale-completion1500ms delay. Original action restored afterEach. Production,
+crypto/KDF, expectedstates/secret-storage/lock assertions and deadlines remain unchanged.
+Independent focused reviewOK; identityStore10/10PASS. Lint/typecheck ongoing. Full/new-head
+and visual qualification remain open; no old PASS inheritance, official scan or main/deploy.
+
+## 2026-10-10 — GH309 deterministic wallet race test barrier (Codex)
+
+Old e356 full client344PASS/1wallet5000ms timeout/4SKIP, not PASS; subsequent build/audit
+not run. Replace unrelated zero-delay timer with explicit deferred getWallet entry assertion,
+then unchanged lock->resolve->reject/alllocked-state checks. No production/KDF/deadline change.
+Independent scoped test reviewOK; focused racePASS352ms. Lint/typecheck ongoing, full new-head
+qualification pending. No load-only verdict, security-scan claim, main merge or activation.
+
+## 2026-10-10 — GH309B3I1 prerequisite test completion reconciliation
+
+Full b98e8c2 client56572rc0PASS369Vitest/4SKIP+19Node; lint/typecheck/build/budget/audit/graph
+PASS. Normal merge33886fc26f changes only its reviewed wallet test barrier plus append histories,
+no production/KDF/migration semantics. New focus/consistency/protected gates pending; main held.
+
+## 2026-10-10 — GH309B4I1 inspected Chromium qualification (Codex)
+
+ce4e4f5 actual build/budget PASS; corrected OS-process-permission gate83088rc0/47PASS.
+Root opened all28 screenshots/four viewports/six custody states: no measured/layout issue,
+notice contrast>=5.02, disabled onboarding6.1/44px, no broadcast/secretDOM/clipboard calls.
+Prior startup/launch-abort evidence retained, not PASS; no test/timeouts/source weakened.
+Normal33930fd630 merge only wallet test barrier+append history; production/UI bytes retained.
+New-head full/protected gates pending; own preview stopped, no official scan/main/production.
+
+## 2026-10-10 — GH309B5I1 explicit full-suite outcome and fixture reconciliation
+
+2620995 full397PASS/3inherited premature loading assertionsFAIL/4SKIP, Node19PASS; subsequent
+build/audit NOT RUN. Preserve actual failure; normal3405ccbbae merge brings reviewed real-load
+completion and wallet-entry test barriers only, source kind/AAD/lazy semantics unchanged.
+All histories/visual evidence retained. Updated full/protected qualification remains pending.
