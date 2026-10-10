@@ -6313,3 +6313,12 @@ misattributing shared merge context. Two rejected patch preflights changed no fi
 apply_patch resolution inspected. New local/visual/protected qualification and independent delta
 review pending. No creation/import/identity deletion, canonical activation, unattended plaintext
 removal, scan, main merge/deployment or rollout credit; Claude remains paused.
+
+## 2026-10-10 — GH309 real identity completion in lifecycle tests (Codex)
+
+Old focused38PASS/three premature loading assertions/one wallet timeout, not PASS. Test wrapper
+delegates to the real load action and awaits its complete Promise; replaces silently expiring
+200x10ms polling and stale-completion1500ms delay. Original action restored afterEach. Production,
+crypto/KDF, expectedstates/secret-storage/lock assertions and deadlines remain unchanged.
+Independent focused reviewOK; identityStore10/10PASS. Lint/typecheck ongoing. Full/new-head
+and visual qualification remain open; no old PASS inheritance, official scan or main/deploy.
