@@ -10152,3 +10152,12 @@ Pending independent Kimi review and complete Sol verification.
   No additional retry. Publish this draft candidate for complete protected combined CI, not merge.
 - Gio approved Security setup/access preparation only at0 extra spend. Plugin available/not
   installed; entitlement/cost unknown, scan NOT RUN, no code transfer. Main/deployment HELD.
+
+## 2026-10-10 — GH361I1 narrow Rust patch integration
+
+Codex owns R1 host-workspace dependency lane; normal3656d1c79d+Dependabot36182371a7 merge.
+Only six CosmWasm core/crypto/derive/std/cw-schema/-derive version/checksum pairs3.0.9->3.0.10;
+Cargo.lock exactly Dependabot blob9d15f776,316packages. VM3.0.9/Wasmer5.0.6 retained; no360
+major graph, feature/manifest/source/policy or Go wasmvm change. Narrow independent deltaOK;
+actual locked Rust/audit/license gates pending, licence qualification not assumed. Own cache/
+target only. Official Security NOT RUN, no main/production/rollout credit; Claude paused.

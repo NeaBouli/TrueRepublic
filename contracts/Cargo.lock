@@ -412,15 +412,15 @@ dependencies = [
 
 [[package]]
 name = "cosmwasm-core"
-version = "3.0.9"
+version = "3.0.10"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ed3758a4671fda8e3b77bcc253207eb42e82872bdaaf7623c74e5dcd1361dcfc"
+checksum = "8ec786c7314e791ddf6f1fed11292e027fb1903fbde34f238a740214738c040d"
 
 [[package]]
 name = "cosmwasm-crypto"
-version = "3.0.9"
+version = "3.0.10"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "62b2722aafa882e43a3a89742c6ba15d3098b03c7a6b9007f6b880b2fe74257f"
+checksum = "a9654be766d8a4af25a3764994da8bd90a369f833f5728e53bb527ea761c98aa"
 dependencies = [
  "ark-bls12-381",
  "ark-ec",
@@ -443,9 +443,9 @@ dependencies = [
 
 [[package]]
 name = "cosmwasm-derive"
-version = "3.0.9"
+version = "3.0.10"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "61cefad2da3d372f4bba0fddb5bb1743ea5815e17b5741d11db0ef75b1142f17"
+checksum = "33cd02ae99ef8497d2566eeee1af6ce34a2a80d20a41f14cd380e8a3722548b5"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -454,9 +454,9 @@ dependencies = [
 
 [[package]]
 name = "cosmwasm-std"
-version = "3.0.9"
+version = "3.0.10"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c1dfb52c25116e3d0d1e56ee45979df28733a248490404b4eb3bbf5beaadf53a"
+checksum = "d64f857b1c7a79dfc0ef6effeb6a7660e6a3ecfaa753e34a86b10bbaffef216f"
 dependencies = [
  "base64",
  "bech32",
@@ -621,9 +621,9 @@ dependencies = [
 
 [[package]]
 name = "cw-schema"
-version = "3.0.9"
+version = "3.0.10"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "caa046af8081b00e1d63fbc8a54146143d5f7f8d14d4e92c8fa85ba0faff0905"
+checksum = "5cd06a62b711fd46b1907d7668714c882edc37d28bfb16bfbbe1c4fab501d8cc"
 dependencies = [
  "cw-schema-derive",
  "indexmap",
@@ -636,9 +636,9 @@ dependencies = [
 
 [[package]]
 name = "cw-schema-derive"
-version = "3.0.9"
+version = "3.0.10"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f3771a268ac9918651eff25468a5a0ae4ed98086e10564769c2473907f5ccf08"
+checksum = "5a4d0918bfeca5b43a9bf99002b56d13f85ed6ea640804c11bb042fcbfd70f69"
 dependencies = [
  "heck",
  "itertools",
