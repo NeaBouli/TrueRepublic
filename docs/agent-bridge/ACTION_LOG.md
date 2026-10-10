@@ -6486,3 +6486,11 @@ Both append histories remain complete/chronological; inventory23services/45compo
 current prerequisites retained. Existing accepted runtime/worker bytes not reimplemented.
 New exact-source gates/review pending, no whole inherited PASS. No C8, product import,
 activation, official scan, main merge, deployment or rollout credit; Claude remains paused.
+---
+
+## 2026-10-10T02:26:04Z — GH300C7-H1 existing hosted qualification (Codex)
+
+ExistingClientCI now invokes the actual browser-WASM/native/Keeper runner in addition to its
+unchanged Node runner. Local lockfile-pinned headless shell only; no rootdependency install.
+ScopedindependentreviewOK; local repositoryguardRUNNING/HostedNOTRUN. SourceC8 and consensus
+unchanged, productionfalse/isSubmittablefalse/test-only artifacts preserved.

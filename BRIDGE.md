@@ -10281,3 +10281,15 @@ Pending independent Kimi review and complete Sol verification.
 - Fresh exact-source focused/full/browser-native-Keeper/protected gates and independent
   composition review pending. No old PASS inheritance, production artifacts, canonical
   registration, official scan, main acceptance, deployment or rollout credit.
+---
+
+## 2026-10-10T02:26:04Z — GH300C7-H1 actual browser-proof CI routing → Review
+
+Codex sole writer at existing C7; only react-ci.yml extends its existing zkp-wasm-compatibility
+job with lock-pinned Chromium headless shell and existing test-zkp-browser-client.sh. Four
+pathfilterlines added. OriginalNode invocation/actions/pins/readpermissions/15minute bound
+unchanged; no sudo/with-deps/newjob/policy/activation. Independent scopedreviewOK, no blocker.
+Local repositoryguard99373RUNNING; exactHosted browser proofNOTRUN, download/systemlibs/
+runtime risks remain. Tests remain synthetic/test-only; no general sandbox/privacy claim.
+Current C8 emptyproductionallowlist/deniedVK/consensusboundary/source untouched. No official
+CodexSecurity/main/deployment/production approval from this normal protected candidate update.

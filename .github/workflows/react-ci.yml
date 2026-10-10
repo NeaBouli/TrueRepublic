@@ -14,6 +14,8 @@ on:
       - 'internal/zkpprover/**'
       - 'cmd/zkp-prover-wasm/**'
       - 'scripts/test-zkp-wasm-client.sh'
+      - 'scripts/test-zkp-browser-client.sh'
+      - 'configs/security/zkp-browser-artifacts.json'
       - 'configs/security/zkp-circuit.json'
       - 'configs/security/zkp-protocol-freeze.json'
       - 'go.mod'
@@ -29,6 +31,8 @@ on:
       - 'internal/zkpprover/**'
       - 'cmd/zkp-prover-wasm/**'
       - 'scripts/test-zkp-wasm-client.sh'
+      - 'scripts/test-zkp-browser-client.sh'
+      - 'configs/security/zkp-browser-artifacts.json'
       - 'configs/security/zkp-circuit.json'
       - 'configs/security/zkp-protocol-freeze.json'
       - 'go.mod'
@@ -148,3 +152,10 @@ jobs:
 
       - name: Prove real test-only Go-WASM-to-native-verifier compatibility
         run: ./scripts/test-zkp-wasm-client.sh
+
+      - name: Install lockfile-pinned Chromium headless shell
+        working-directory: client-web
+        run: ./node_modules/.bin/playwright install chromium --only-shell
+
+      - name: Prove real Chromium Go-WASM-to-native-keeper compatibility
+        run: ./scripts/test-zkp-browser-client.sh
