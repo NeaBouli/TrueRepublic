@@ -10204,6 +10204,14 @@ Pending independent Kimi review and complete Sol verification.
   evidence pending; pending tests are NOT PASS. No activation, plaintext removal, main/deploy,
   official Security scan or rollout credit. Claude remains paused.
 
+### 2026-10-10 — GH309B5I1 accepted identity-kind boundary
+
+- Root normally composes341e4ec3e4 +340870189a, no source conflict. Accepted preview-v1 bytes,
+  strict canonical record-v2 kind/AAD and lazy validation remain unchanged; no promotion or
+  activation. Incoming lifecycle/UI and365 pins preserved, both histories retained.
+- Independent delta/new exact-head schema/full client/build/budget/protected gates pending.
+  Official Codex Security NOT RUN; no main/deploy/real data migration or rollout credit.
+
 ### 2026-10-10 — lifecycle test completion synchronization
 
 - Original focused38PASS/4FAIL retained honestly. Test-only wrapper awaits real identity load,
@@ -10235,3 +10243,12 @@ Pending independent Kimi review and complete Sol verification.
   or deadlines weakened. Own preview stopped after capture, no foreign process touched.
 - Normal merge33930fd630 brings only reviewed wallet test barrier and append logs; identity
   fixture real-completion fix preserved. Full updated-client and protected qualification pending.
+
+### 2026-10-10 — identity-kind full result and reviewed fixture propagation
+
+- Full2620995 client98272rc1:397VitestPASS/3inherited identity loading assertionsFAIL/4SKIP;
+  Node19PASS. Build/audit after suite NOT RUN. Earlier schema focus/lint/typecheck retained,
+  whole suite explicitly NOT PASS, no host-only dismissal or canonical-source weakening.
+- Normal merge3405ccbbae retains its reviewed real-completion identity fixture and wallet
+  barrier, plus all actual visual evidence/log histories. Canonical validation/lazy/AAD unchanged.
+- Updated exact full/protected qualification pending; no activation/official scan/main/production.

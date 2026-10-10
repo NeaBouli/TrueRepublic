@@ -6210,6 +6210,21 @@
 - Chromium (chromium-desktop): identity-custody.e2e.ts 24/24 (locked, absent, legacy-pending, quarantined, error, ready x 1440x1000, 1180x820, 820x1180, 390x844) and identity-registration-disabled.e2e.ts 23/23 (4 viewports + 19 RPC policy cases) = 47 passed. Every state: documentOverflow 0; all visible buttons >= 44x44 CSS px, text/button contrast >= 4.5 (min text contrast 5.02), no label or text overflow, texts inside the card; disabled controls inert for click/Enter/Space and absent from the tab order; tab order equals DOM order; aria-describedby targets resolve; role=status present except ready; the synthetic secret never in DOM or console; zero clipboard calls; RPC only canonical status (1 per wallet flow), zero violations/broadcasts; ready download = truerepublic-preview-identity.json with canonical:false and the warning. Onboarding RPC sequence [status, Domain].
 - All 28 final screenshots opened and inspected (4 onboarding + 24 custody); evidence copies with SHA256SUMS in the stand-in scratchpad gh309b2d1-final-evidence/.
 - Gates on the final head: npm test -- --run 27 files passed / 2 skipped, 389 passed / 4 skipped; npm run lint rc 0; tsc -b --noEmit rc 0; npm run build with bundle budget passed (entry 77557 gzip, total JS 367895; entry grew ~4 KiB because walletStore now imports the custody/migration core); git diff --check clean. npm run audit:high hung again locally (>4 min, stopped); package.json/package-lock.json are identical to main, so the hosted node-audit-client/build audit remains authoritative (expected: only the #332 advisory). Firefox/WebKit via Hosted CI. No push.
+
+## 2026-10-01 GH309C1 versioned identity custody schema (Claude Code, sole owner)
+
+- Branch agent/claude/GH309-canonical-schema from accepted GH309B2D1 head 5014302; commit cd0f006.
+- identityVault.ts: vault document and storage key stay v1. Records are a strict union: record-v1 (exact v1 keys, unchanged bytes and AAD truerepublic/identity/v1|<address>) = preview-v0; record-v2 (v1 keys + kind) = exactly canonical-bn254-mimc-v1 with AAD truerepublic/identity/v2|canonical-bn254-mimc-v1|<address>. Unknown versions, wrong/missing/extra kind and v1 records carrying a kind are 'corrupt' before any KDF. openCustodyIdentity returns {kind:'preview-v0', ...} for v1 (storage never rewritten) or a CanonicalIdentity {kind, secret, commitment, createdAt} (no preview nullifier; secret must be a BN254 field element and commitment === mimcBn254([secret]), reusing the existing primitive). openIdentity stays preview-only and throws 'kind-mismatch' for v2. createIdentity still writes record-v1 only; no canonical write/create API, generation, registration, UI, flag, second hash or promotion.
+- identityMigration.ts maps 'kind-mismatch' to the existing 'conflict' (never overwrite); identityStore.ts maps it to 'vault-conflict'.
+- Tests: identityVaultSchema.test.ts 8 — frozen record-v1 (captured from the accepted custody code) opens unchanged as preview-v0 and storage is not rewritten; createIdentity writes v1 without kind; v2 opens only as canonical under its own AAD and openIdentity refuses it; 10 malformed version/kind records rejected with no importKey; swapped address, v2->v1 and v1->v2 relabels fail 'locked'; canonical plaintext has no nullifier, commitment recompute and out-of-field secret enforced; preview create and legacy migration both refuse to overwrite a canonical record; removal stays explicit and Web-Lock-guarded. Mutations caught: v2 AAD without version/kind (2 tests), no commitment recompute (1), any kind on v2 (1).
+- Gates: npm test -- --run 28 files passed / 2 skipped, 397 passed / 4 skipped; lint rc 0; tsc -b --noEmit rc 0; git diff --check clean; inventory unchanged (services 21, components 45). Not run: npm run build/bundle budget and audit — free disk 4.9 GiB (< 5 GiB rule); no dependency change (package files identical to main). No push.
+
+## 2026-10-01 GH309C1a lazy canonical validator chunk (Claude Code, sole owner) — partial
+
+- Hosted CI on #341 (8614414): build, browser-quality and reproducible OCI amd64/arm64 failed on one cause, "Bundle budget failed: entry 410686 raw > 260000, 138938 gzip > 85000" — GH309C1's static identityVault -> zkpEncoding import put the MiMC graph into the entry chunk (local build had been skipped at 4.9 GiB).
+- 5b6d651: static import removed; isValidCanonicalIdentity is now async and runs one literal `await import('./zkpEncoding')` only after the exact canonical shape check, i.e. after record-v2 shape, AAD decryption and JSON parsing; openCustodyIdentity maps a load rejection to 'storage' (not corrupt/locked) and keeps MiMC/hex/field mismatches 'corrupt'. Same primitive; no wrapper, flag, retry, manualChunks, preload, dependency or budget change. The only other static importer, zkpWasmProver.ts, was already outside the entry (B2D1 entry 77557 gzip).
+- Tests: new identityVaultLazyValidator.test.ts 3 (no static zkpEncoding import; a counting vi.mock factory that fails every load): frozen record-v1 opens with 0 load attempts and unchanged bytes; valid sealed record-v2 + load failure -> exactly 'storage', 1 attempt, record unchanged; wrong password -> 'locked' and bad canonical shape -> 'corrupt' with 0 attempts. identityVaultSchema.test.ts awaits the async validator; all v2 shape/AAD/swap/MiMC/no-overwrite tests retained. Mutations: static import restored -> file fails to load; load failure mapped to corrupt -> 1 test fails.
+- Gates: npm test -- --run 29 files passed / 2 skipped, 400 passed / 4 skipped; lint rc 0; tsc -b --noEmit rc 0; git diff --check clean. NOT run: build + bundle budget (free disk 4.3 GiB, earlier 1.5 GiB; < 5 GiB rule) — exact-head Hosted CI must prove the budget. Audit classification unchanged (no dependency change). No push.
 ## 2026-10-09 — GH309B1I1 direct Codex reconciliation
 
 - Normal merge `954fc94` from reviewed `bbc067d` + exact main `ff63e9d`; conflicts limited to
@@ -6314,6 +6329,16 @@ apply_patch resolution inspected. New local/visual/protected qualification and i
 review pending. No creation/import/identity deletion, canonical activation, unattended plaintext
 removal, scan, main merge/deployment or rollout credit; Claude remains paused.
 
+## 2026-10-10 — GH309B5I1 accepted identity-kind schema composition (Codex)
+
+Normal reviewed341e4ec3e4 + reviewed340870189a. No source conflict: retained record-v1 preview
+bytes/AAD, strict record-v2 kind/AAD and lazy authenticated canonical validation, existing
+migration/store kind-conflict mapping. No creation/promotion/registration/prover activation.
+Both append histories retained; current365 toolchain/dependency/security pins and340UI,45/21
+inventory and baseline metrics preserved. Fresh schema/lazy/full client/budget/docs/protected
+gates and independent composition review pending. Claude paused, Security NOT RUN, no main/
+production action or rollout credit.
+
 ## 2026-10-10 — GH309 real identity completion in lifecycle tests (Codex)
 
 Old focused38PASS/three premature loading assertions/one wallet timeout, not PASS. Test wrapper
@@ -6345,3 +6370,10 @@ notice contrast>=5.02, disabled onboarding6.1/44px, no broadcast/secretDOM/clipb
 Prior startup/launch-abort evidence retained, not PASS; no test/timeouts/source weakened.
 Normal33930fd630 merge only wallet test barrier+append history; production/UI bytes retained.
 New-head full/protected gates pending; own preview stopped, no official scan/main/production.
+
+## 2026-10-10 — GH309B5I1 explicit full-suite outcome and fixture reconciliation
+
+2620995 full397PASS/3inherited premature loading assertionsFAIL/4SKIP, Node19PASS; subsequent
+build/audit NOT RUN. Preserve actual failure; normal3405ccbbae merge brings reviewed real-load
+completion and wallet-entry test barriers only, source kind/AAD/lazy semantics unchanged.
+All histories/visual evidence retained. Updated full/protected qualification remains pending.
