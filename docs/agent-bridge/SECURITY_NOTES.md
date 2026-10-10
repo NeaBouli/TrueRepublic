@@ -647,3 +647,36 @@
   prove reproducible container images, deploy, or approve rollout. Production
   remains false. Fresh client build remains within budgets at 355.17 kB total JavaScript,
   71.16 kB entry and 4.94 kB maximum lazy route.
+
+## 2026-10-04 GH-331/GH-348 dependency-security remediation on main
+
+- PR #332 moved the brace-expansion override to 5.0.12 (three high DoS
+  advisories in a development-only lint path).
+- GHSA-vfj7-8cjw-p6xm (braces <= 3.0.3) has no patched release. PR #347 removed
+  the whole braces/micromatch/chokidar/fast-glob chain by migrating the
+  maintained client to Tailwind CSS 4.3 with pixel-parity visual evidence,
+  completed the optional oxide WASI lock graph and copied the palette bridge
+  into the client image build. No audit exception was added.
+- PR #349 updated the OpenTelemetry Go family to 1.45.0 for GO-2026-6505
+  (CVE-2026-81870); the four documented no-fix Go IDs are unchanged and the
+  test-only WASM prover stayed byte-identical.
+- Exact main 52aee79f reports no blocking high/critical npm advisory and only
+  the documented no-fix Go IDs. This is dependency hygiene only: no rollout
+  credit, deployment or production approval. Fresh client build remains within
+  budgets at 355.41 kB total JavaScript, 71.45 kB entry and 4.94 kB maximum lazy
+  route.
+
+## 2026-10-09 UTC — GH-364 / GH-355 candidate security maintenance
+
+- The completed symbol-level Go1.26.9 / govulncheck v1.6.0 scan clears the twelve newly
+  fixable Go/x-net findings and retains exactly GO-2023-1821, GO-2023-1881 and GO-2026-5932
+  with no published fixed version. The raw report digest is recorded in
+  docs/security/go-advisory-review-2026-10-09.md.
+- GO-2026-4740 was withdrawn upstream and is removed from the exact no-fix policy, not fixed
+  by an application change. Only the three remaining IDs are renewed through 2026-10-20;
+  approval 2026-10-09, next weekly review 2026-10-16. Maximum duration remains 30 days.
+- Completed-scan policy replay and adversarial fixtures pass without changing the scanner
+  or relaxing exact-ID/fixable/expiry/stale/duplicate/future-date rejection. Real exact-head CI
+  must rerun the scanner. No synthetic fixture is represented as a real scan.
+- Candidate pins/fixture hashes are coherent; full relevant gates and independent review remain
+  pending. Codex Security NOT CONNECTED / NOT RUN. Main acceptance and production are unchanged.

@@ -19,7 +19,7 @@
     {"id": "linux-arm64", "runtime": "linux-glibc", "evidence": ["configs/release/tool-platform.json", "configs/release/install-lifecycle.json"]}
   ],
   "toolchains": {
-    "go": "1.26.6",
+    "go": "1.26.9",
     "node": "22.22.2",
     "npm": "10.9.7",
     "rust": "1.95.0",

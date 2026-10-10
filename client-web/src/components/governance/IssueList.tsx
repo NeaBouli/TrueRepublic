@@ -131,11 +131,11 @@ export function IssueList() {
                           {issue.title}
                         </h3>
                         {issue.status === 'active' ? (
-                          <span className="px-2 py-1 bg-green-100 text-green-800 text-xs font-medium rounded">
+                          <span className="px-2 py-1 bg-green-100 text-green-800 text-xs font-medium rounded-sm">
                             Active
                           </span>
                         ) : (
-                          <span className="px-2 py-1 bg-gray-100 text-gray-800 text-xs font-medium rounded">
+                          <span className="px-2 py-1 bg-gray-100 text-gray-800 text-xs font-medium rounded-sm">
                             Closed
                           </span>
                         )}
@@ -151,7 +151,7 @@ export function IssueList() {
                       </div>
                     </div>
 
-                    <ChevronRightIcon className="h-5 w-5 text-gray-400 flex-shrink-0 ml-4" />
+                    <ChevronRightIcon className="h-5 w-5 text-gray-400 shrink-0 ml-4" />
                   </div>
                 </Card>
               </button>

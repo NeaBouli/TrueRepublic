@@ -105,7 +105,7 @@ function HistoryRow({ tx }: { tx: SubmittedTransaction }) {
         </p>
       )}
       {tx.error !== null && (
-        <p className="text-xs text-red-700 bg-red-50 rounded p-2 mt-1 break-words">
+        <p className="text-xs text-red-700 bg-red-50 rounded-sm p-2 mt-1 break-words">
           {tx.error}
         </p>
       )}
