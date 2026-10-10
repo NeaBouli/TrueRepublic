@@ -20,7 +20,7 @@ map: D2 header/nav -> existing anchors; content/footer -> landmarks/semantics (e
 - Screenshots (top/anchor/footer per viewport) opened and inspected: 320, 390, 769, 1025, 1440 top; 390+1440 footer; 1440 license anchor. Footer visuals unchanged.
 
 ## Findings (out of D2 scope, not fixed)
-- F1 docs/index.html License section: secondary buttons "Community Notice" / "Governance Record" render white text on the near-white section background (invisible). Pre-existing on base 5f99c25 and main. Needs its own bounded ticket.
+- F1 (issue #373) docs/index.html License section: secondary buttons "Community Notice" / "Governance Record" render white text on the near-white section background (invisible). Pre-existing on base 5f99c25 and main. Needs its own bounded ticket.
 
 ## NOT RUN / open
 - GitHub CI on #372 (pending at report time).

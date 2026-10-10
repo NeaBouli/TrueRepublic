@@ -10,7 +10,7 @@ ACK: 2026-10-10T18:32Z, coordinator branch agent/claude/truerepublic-standin-202
 
 ## Open (ordered)
 1. #365 integration/authorization evidence (held: main merge + exception decision with Codex/Gio; deadline 13.10.).
-2. GH315D2: await #372 CI + Kimi review (GH315D2-REVIEW-KIMI); F1 invisible License buttons needs own ticket.
+2. GH315D2: await #372 CI + Kimi review (GH315D2-REVIEW-KIMI); F1 invisible License buttons -> issue #373 (free bounded block, candidate for Kimi).
 3. Further free Basic work in dependency order per PLAN.
 
 ## Review owed to Codex
