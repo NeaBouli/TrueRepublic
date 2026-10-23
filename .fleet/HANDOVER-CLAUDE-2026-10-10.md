@@ -17,4 +17,5 @@ ACK: 2026-10-10T18:32Z, coordinator branch agent/claude/truerepublic-standin-202
 - #372 GH315D2 integration visual review (UI change).
 
 ## Status
+SUPERSEDED as entry point by .fleet/HANDOVER-CLAUDE-2026-10-24.md (2026-10-23T21:12Z).
 PAUSED by Gio after GH315D2 (Claude + Codex). Resume: #365 decision (13.10.), #373 (Kimi), then GH309 chain.

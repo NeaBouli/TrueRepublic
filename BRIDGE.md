@@ -10005,3 +10005,13 @@ Pending independent Kimi review and complete Sol verification.
 ### TYPE: STATUS — PAUSED (Gio: pause after task block)
 - #372 @ d3728f5: GitHub docs-check run 38078994518 success (manually dispatched; stacked PRs do not auto-trigger).
 - Claude PAUSED until Gio reactivates. Codex PAUSED. Resume order: #365 decision (deadline 13.10. 23:59Z, held for Codex/Gio) → #373 (free, suggested owner Kimi) → GH315 remaining slices / GH309 chain per HANDOVER-CODEX-TO-CLAUDE-20261010.
+
+## 2026-10-23T21:12Z [AUTOR: CC]
+### TYPE: DECISION — Full takeover handover (Gio: "absolute volle Uebernahme reibungslos")
+- New entry point: `.fleet/HANDOVER-CLAUDE-2026-10-24.md` (supersedes HANDOVER-CLAUDE-2026-10-10 as entry; that stays as history). Contains roles/limits, helpers (Codex CLI codex-worker, OpenCode isolation rule, Kimi), every branch/PR head, status quo, ordered open work, review owed, exact first steps.
+- State: TrueRepublic still PAUSED by Gio since 2026-10-10T19:18Z; no agent active; nothing built since.
+- Fresh facts 2026-10-23T21:07Z: main ff63e9d unchanged; all candidate PR heads identical to Codex's 2026-10-10 table.
+- SECURITY: scheduled Security Scan on main FAILED 2026-10-12 and 2026-10-19 (run 39224075570): go-vuln (4 allowances expired 2026-10-13 + new reachable GO-2026-6599/6600/6603/6605/6607-6613/6617), rust-audit (rustls 0.23.45 -> >=0.23.46, ruzstd 0.5.0 -> >=0.9.1, paste unmaintained), node-audit-client (1 high). No fix attempted (paused).
+- #365 @ 6d1c79d stale: its renewed allowances expired 2026-10-20 and new advisories uncovered; Oct-10 green CI no longer representative; needs refresh commit.
+- New Dependabot PRs #374 (actions), #375 (wasmvm 2.2.8->2.2.10, HOLD: consensus-critical, Gio retained 2.2.8), #377 (npm group) all red.
+- Owner decision needed (Gio): scan authorization or bounded lead exception; main merge stays Codex/Gio.

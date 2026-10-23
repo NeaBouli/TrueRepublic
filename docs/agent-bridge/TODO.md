@@ -1,5 +1,15 @@
 # Recovery Queue
 
+## Paused - 2026-10-24 full takeover handover (Claude stand-in)
+
+- [x] Record complete takeover packet `.fleet/HANDOVER-CLAUDE-2026-10-24.md` (coordinator branch).
+- [ ] Gio: decide official Codex Security scan authorization or bounded lead exception.
+- [ ] Refresh #365: expired allowances (2026-10-13 main, 2026-10-20 candidate), new GO-2026-66xx advisories, rustls >=0.23.46, ruzstd >=0.9.1, client npm high advisory.
+- [ ] After #365 on main: GH309 #337-#341, then GH300 #343-#346, then #366/#368-#371/#367/#372.
+- [ ] #373 License-section buttons (visual gate); #375 wasmvm bump HOLD.
+
+---
+
 ## Locally approved - GH-328 landing architecture visualization
 
 - [x] Add the four-strand architecture and remaining-work visualization to the maintained landing page without feature code or status inflation.
