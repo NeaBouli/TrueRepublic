@@ -10015,3 +10015,8 @@ Pending independent Kimi review and complete Sol verification.
 - #365 @ 6d1c79d stale: its renewed allowances expired 2026-10-20 and new advisories uncovered; Oct-10 green CI no longer representative; needs refresh commit.
 - New Dependabot PRs #374 (actions), #375 (wasmvm 2.2.8->2.2.10, HOLD: consensus-critical, Gio retained 2.2.8), #377 (npm group) all red.
 - Owner decision needed (Gio): scan authorization or bounded lead exception; main merge stays Codex/Gio.
+
+## 2026-10-24T01:44Z [AUTOR: CC]
+### TYPE: REPORT — Handover commit 5b5651a verified
+- ./scripts/check-consistency.sh on 5b5651a: PASSED (rc 0). Earlier run was aborted by CC at 2026-10-23 ~21:25Z because the Mac disk dropped to ~164 MB free; rerun after space recovered (30 GiB free). git diff --check clean.
+- No other change. TrueRepublic stays PAUSED; entry point .fleet/HANDOVER-CLAUDE-2026-10-24.md.
